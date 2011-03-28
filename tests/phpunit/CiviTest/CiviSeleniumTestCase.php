@@ -409,6 +409,44 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       return array( $firstName, $middleName, $lastName );
   }
 
+  function webtestAttachFile( $fieldLocator, $filePath = null ) {
+      if ( !$filePath ) {
+          $filePath = '/tmp/testfile_'.substr(sha1(rand()), 0, 7).".txt";
+          $fp       = @fopen($filePath, 'w');
+          fputs($fp, "Test file created by selenium test.");
+          @fclose($fp);
+      }
+
+      $this->assertTrue( file_exists($filePath) , 'Not able to locate file: ' . $filePath );
+      
+      $this->attachFile( $fieldLocator, "file://{$filePath}"); 
+
+      return $filePath;
+  }
+  
+  function webtestCreateCSV( $headers, $rows , $filePath = null ) {
+      if ( !$filePath ) {
+          $filePath = '/tmp/testcsv_'.substr(sha1(rand()), 0, 7).".csv";
+      }
+      
+      $data = implode(', ', $headers) . "\r\n";
+      
+      foreach ( $rows as $row ) {
+          $temp = array( );
+          foreach ( $headers as $field => $header ) {
+              $temp[$field]  = isset($row[$field]) ? $row[$field] : '';
+          }
+          $data .=  implode(', ', $temp) . "\r\n";
+      }
+      
+      $fp = @fopen($filePath, 'w');
+      @fwrite($fp, $data);
+      @fclose($fp);
+
+      $this->assertTrue( file_exists($filePath) , 'Not able to locate file: ' . $filePath );
+
+      return $filePath;
+  }
   
   /**
    * Create new relationship type w/ user specified params or default. 

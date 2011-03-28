@@ -138,7 +138,9 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->select("priority_id", "value=1");   
 
       // Adding attachment
-      // TODO TBD
+      $this->click( "css=.crm-activity-form-block-attachment div.crm-accordion-header" );
+      $this->waitForElementPresent("attachFile_1");
+      $filePath = $this->webtestAttachFile( "attachFile_1" );
       
       // Scheduling follow-up.
       $this->click( "css=.crm-activity-form-block-schedule_followup div.crm-accordion-header" );
@@ -173,6 +175,7 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
                                             // Tough luck filling in WYSIWYG editor, so skipping verification for now.
                                             //'Details'    => 'Really brief details information.',
                                             'Priority'     => 'Urgent',
+                                            'Current Attachment(s)' => basename($filePath)
                                              ),
                                       "/label"
                                        );

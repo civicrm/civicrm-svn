@@ -174,8 +174,9 @@ class api_v3_ContactTest extends CiviUnitTestCase
    */
   function testCreateEmailIndividual()
   {
+
     $params = array(
-                        'email'            => 'man2@yahoo.com',
+                        'email'            => 'man3@yahoo.com',
                         'contact_type'     => 'Individual',
                         'location_type_id' => 1,
                         'version'					 => $this->_apiversion,
@@ -185,7 +186,11 @@ class api_v3_ContactTest extends CiviUnitTestCase
     $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__
     . " error message: " . CRM_Utils_Array::value('error_message', $contact) );
     $this->assertEquals( 1, $contact['id'], "In line " . __LINE__ );
-
+    $email = civicrm_api('email','get',array('contact_id' => $contact['id'],'version' =>3));
+    $this->assertEquals( 0, $email['is_error'], "In line " . __LINE__);
+    $this->assertEquals( 1, $email['count'], "In line " . __LINE__);
+    $this->assertEquals( 'man3@yahoo.com', $email['values'][$email['id']]['email'], "In line " . __LINE__);
+    
     // delete the contact
     civicrm_api3_contact_delete( $contact );
   }

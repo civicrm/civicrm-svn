@@ -90,36 +90,36 @@
     <div id="{$searchForm}" class="crm-accordion-wrapper crm-survey_search_form-accordion crm-accordion-open">
     <div class="crm-accordion-header">
     <div class="icon crm-accordion-pointer"></div> 
-        {ts}Search Survey{/ts}
+        {ts}Search Surveys{/ts}
     </div><!-- /.crm-accordion-header -->
 
     <div class="crm-accordion-body">
     {strip} 
-        <table class="form-layout">
-	  <tr>
-              <td>{$form.survey_title.label}<br />
-		  {$form.survey_title.html}
-              </td>
-	  </tr>
+        <table class="form-layout-compressed">
+	    <tr>
+            <td>{$form.survey_title.label}<br />
+		        {$form.survey_title.html}
+             </td>
+	    </tr>
 
-	  <tr>
-              <td>{$form.activity_type_id.label}<br />
-	          {$form.activity_type_id.html}
-              </td>
-	      <td>{$form.survey_campaign_id.label}<br />
-	          {$form.survey_campaign_id.html}
-              </td>
-	  </tr>
+	    <tr>
+            <td>{$form.activity_type_id.label}<br />
+	            {$form.activity_type_id.html}
+            </td>
+	        <td>{$form.survey_campaign_id.label}<br />
+	            {$form.survey_campaign_id.html}
+            </td>
+	    </tr>
 
-          <tr>
-             <td colspan="2">
-             {if $context eq 'search'}    
-	         {$form.buttons.html}
-	     {else}
-	         <a class="searchSurvey button" style="float:left;" href="#" title={ts}Search{/ts} onClick="searchSurveys( '{$qfKey}' );return false;">{ts}Search{/ts}</a>
-	     {/if}
-	     </td>
-          </tr>
+        <tr>
+            <td colspan="2">
+            {if $context eq 'search'}    
+	            {$form.buttons.html}
+	        {else}
+	            <a class="searchSurvey button" style="float:left;" href="#" title={ts}Search{/ts} onClick="searchSurveys( '{$qfKey}' );return false;">{ts}Search{/ts}</a>
+	        {/if}
+	        </td>
+        </tr>
         </table>
     {/strip}
     </div>
@@ -193,7 +193,6 @@ function loadSurveyList( )
 	}
      }
      noRecordFoundMsg += searchQill.join( '<span class="font-italic"> ...AND... </span></div><div class="qill">' );
-     noRecordFoundMsg += '</div>';
      
      cj( '#surveys' ).dataTable({
      	        "bFilter"    : false,

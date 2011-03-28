@@ -85,30 +85,29 @@
     <div id="{$searchForm}" class="crm-accordion-wrapper crm-petition_search_form-accordion crm-accordion-open">
     <div class="crm-accordion-header">
     <div id="petitionSearch" class="icon crm-accordion-pointer"></div> 
-        {ts}Search Petition{/ts}
+        {ts}Search Petitions{/ts}
     </div><!-- /.crm-accordion-header -->
 
     <div class="crm-accordion-body">
     {strip} 
-        <table class="form-layout">
-	  <tr>
-              <td>{$form.petition_title.label}<br />
-		  {$form.petition_title.html}
-              </td>
-	      <td>{$form.petition_campaign_id.label}<br />
-	          {$form.petition_campaign_id.html}
-              </td>
-	  </tr>
-
-          <tr>
-             <td colspan="2">
-             {if $context eq 'search'}    
-	         {$form.buttons.html}
-	     {else}
-	         <a class="searchPetition button" style="float:left;" href="#" title={ts}Search{/ts} onClick="searchPetitions( '{$qfKey}' );return false;">{ts}Search{/ts}</a>
-	     {/if}
-	     </td>
-          </tr>
+        <table class="form-layout-compressed">
+	    <tr>
+            <td>{$form.petition_title.label}<br />
+    		    {$form.petition_title.html}
+            </td>
+    	    <td>{$form.petition_campaign_id.label}<br />
+    	        {$form.petition_campaign_id.html}
+            </td>
+	    </tr>
+        <tr>
+            <td colspan="2">
+            {if $context eq 'search'}    
+	            {$form.buttons.html}
+	        {else}
+	            <a class="searchPetition button" style="float:left;" href="#" title={ts}Search{/ts} onClick="searchPetitions( '{$qfKey}' );return false;">{ts}Search{/ts}</a>
+	        {/if}
+	        </td>
+        </tr>
         </table>
     {/strip}
     </div>
@@ -180,7 +179,6 @@ function loadPetitionList( )
 	}
      }
      noRecordFoundMsg += searchQill.join( '<span class="font-italic"> ...AND... </span></div><div class="qill">' );
-     noRecordFoundMsg += '</div>';
      
      cj( '#petitions' ).dataTable({
              "bFilter"    : false,

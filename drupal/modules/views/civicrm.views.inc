@@ -42,6 +42,8 @@
    *     CiviCRM Activities Base Table
    *     CiviCRM Relationships Base Table
    *     CiviCRM Memberships Base Table
+   *     CiviCRM Mailing Base Table
+   *     CiviCRM Campaign Base Table
    *     Text Links for each Base Table
    *     Custom Data Cache Query and Calls
    *
@@ -59,6 +61,10 @@
    *
    *  function civicrm_views_handlers ()
    *     Tells Views where to get the custom Handlers
+   *
+   *  function civicrm_date_api_tables()
+   *  function civicrm_date_api_fields()
+   *     Tells Views which fields to expose as Date API fields
    */
    
    
@@ -1703,6 +1709,17 @@ function civicrm_views_data() {
                                                                             'handler' => 'views_handler_sort',
                                                                             ),
                                                             );
+    // Link to Campaign Table
+    $data['civicrm_event']['campaign_id'] = array(
+                                                          'title' => t('Campaign'),
+                                                          'help' => t('Event -> Campaign'),
+                                                          'relationship' => array(
+                                                                          'base' => 'civicrm_campaign',
+                                                                          'field' => 'id',
+                                                                          'handler' => 'views_handler_relationship',
+                                                                          'label' => t('Event -> Campaign'),
+                                                          ),
+                                                        );
 
    // CHILLING OUT AT THE CIVICRM_LOC_BLOCK TABLE
 
@@ -1981,6 +1998,17 @@ function civicrm_views_data() {
                                                                        'handler' => 'views_handler_sort',
                                                                        ),
                                                        );
+    // Link to Campaign Table
+    $data['civicrm_participant']['campaign_id'] = array(
+                                                          'title' => t('Campaign'),
+                                                          'help' => t('Participant -> Campaign'),
+                                                          'relationship' => array(
+                                                                          'base' => 'civicrm_campaign',
+                                                                          'field' => 'id',
+                                                                          'handler' => 'views_handler_relationship',
+                                                                          'label' => t('Participant -> Campaign'),
+                                                          ),
+                                                        );
 
     // HOP SCOTCHING OUR WAY THROUGH THE CIVICRM_PARTICIPANT_PAYMENT
 
@@ -2185,7 +2213,6 @@ function civicrm_views_data() {
 
                                                           'filter' => array(
                                                                             'handler' => 'views_handler_filter_numeric',
-                                                                            'allow empty' => TRUE,
                                                                             ),
 
                                                           'sort' => array(
@@ -2484,6 +2511,39 @@ function civicrm_views_data() {
                                                                           'handler' => 'views_handler_sort',
                                                                           ),
                                                           );
+    $data['civicrm_contribution']['check_number'] = array(
+                                                    'title' => t('Check Number'),
+                                                    'help' => t('Contribution\'s Check Number'),
+                                                    'field' => array(
+                                                                     'handler' => 'views_handler_field',
+                                                                     'click sortable' => TRUE,
+                                                                     ),
+
+                                                    'argument' => array(
+                                                                        'handler' => 'views_handler_argument',
+                                                                        ),
+
+                                                    'filter' => array(
+                                                                      'handler' => 'views_handler_filter_string',
+                                                                      'allow empty' => TRUE,
+                                                                      ),
+
+                                                    'sort' => array(
+                                                                    'handler' => 'views_handler_sort',
+                                                                    ),
+                                                    );
+
+    
+    $data['civicrm_contribution']['campaign_id'] = array(
+                                                          'title' => t('Campaign'),
+                                                          'help' => t('Contribution -> Campaign'),
+                                                          'relationship' => array(
+                                                                          'base' => 'civicrm_campaign',
+                                                                          'field' => 'id',
+                                                                          'handler' => 'views_handler_relationship',
+                                                                          'label' => t('Contribution -> Campaign'),
+                                                          ),
+                                                        );
 
 
     /*
@@ -3352,6 +3412,40 @@ function civicrm_views_data() {
                                                                  'handler' => 'views_handler_sort',
                                                                  ),
                                                  );
+    // Link to Campaign Table
+    $data['civicrm_activity']['campaign_id'] = array(
+                                                          'title' => t('Campaign'),
+                                                          'help' => t('Activity -> Campaign'),
+                                                          'relationship' => array(
+                                                                          'base' => 'civicrm_campaign',
+                                                                          'field' => 'id',
+                                                                          'handler' => 'views_handler_relationship',
+                                                                          'label' => t('Activity -> Campaign'),
+                                                          ),
+                                                        );
+    $data['civicrm_activity']['engagement_level'] = array(
+                                                'title' => t('Engagement level'),
+                                                'help' => t('The Engagement Level of this Activity for this contact'),
+                                                'field' => array(
+                                                                 'handler' => 'views_handler_field_numeric',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument',
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'views_handler_filter_numeric',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+
+
 
     // CHILLING OUT AT THE CIVICRM_ACTIVTY_ASSIGNMENT TABLE
 
@@ -3951,6 +4045,17 @@ function civicrm_views_data() {
                                                                        'handler' => 'views_handler_sort',
                                                                        ),
                                                        );
+    // Link to Campaign Table
+    $data['civicrm_membership']['campaign_id'] = array(
+                                                          'title' => t('Campaign'),
+                                                          'help' => t('Membership -> Campaign'),
+                                                          'relationship' => array(
+                                                                          'base' => 'civicrm_campaign',
+                                                                          'field' => 'id',
+                                                                          'handler' => 'views_handler_relationship',
+                                                                          'label' => t('Membership -> Campaign'),
+                                                          ),
+                                                        );
 
     /*
      * Add support for CivicRM groups table
@@ -4404,6 +4509,18 @@ function civicrm_views_data() {
                                                                        'handler' => 'views_handler_sort',
                                                                        ),
                                                        );
+    // Link to Campaign Table
+    $data['civicrm_mailing']['campaign_id'] = array(
+                                                          'title' => t('Campaign'),
+                                                          'help' => t('Mailing -> Campaign'),
+                                                          'relationship' => array(
+                                                                          'base' => 'civicrm_campaign',
+                                                                          'field' => 'id',
+                                                                          'handler' => 'views_handler_relationship',
+                                                                          'label' => t('Mailing -> Campaign'),
+                                                          ),
+                                                        );
+
 
     // mailing_component table aliased as mailing_header
      $data['civicrm_mailing_header']['table']['group'] = ts('CiviCRM Mailings');
@@ -4990,7 +5107,280 @@ function civicrm_views_data() {
                                                          'handler' => 'views_handler_sort',
                                                          ),
                                          );
+    
+    
+    /**
+     *CiviCRM Campaign Base Table
+     */
+    
+    $data['civicrm_campaign']['table']['group']  = t('CiviCRM Campaigns');
 
+    $data['civicrm_campaign']['table']['base'] = array(
+                                                      'field' => 'id', // Governs the whole mozilla
+                                                      'title' => t('CiviCRM Campaigns'),
+                                                      'help' => t("View displays CiviCRM Campaigns Data"),
+                                                      );
+    // Campaign ID
+    $data['civicrm_campaign']['id'] = array(
+                                         'title' => t('Campaign ID'),
+                                         'help' => t('The numeric ID of the campaign'),
+                                         'field' => array(
+                                                          'handler' => 'views_handler_field_numeric',
+                                                          'click sortable' => TRUE,
+                                                          ),
+
+                                         'argument' => array(
+                                                             'handler' => 'views_handler_argument_numeric',
+                                                             'numeric' => TRUE,
+                                                             ),
+
+                                         'filter' => array(
+                                                           'handler' => 'views_handler_filter_numeric',
+                                                           'allow empty' => TRUE,
+                                                           ),
+
+                                         'sort' => array(
+                                                         'handler' => 'views_handler_sort',
+                                                         ),
+                                         );
+    // Campaign's Name
+    $data['civicrm_campaign']['name'] = array(
+                                                         'title' => t('Name'),
+                                                         'help' =>  t('Campaing\'s name'),
+                                                         'field' => array(
+                                                                          'handler' => 'views_handler_field',
+                                                                          'click sortable' => TRUE,
+                                                                          ),
+
+                                                         'argument' => array(
+                                                                             'handler' => 'views_handler_argument',
+                                                                             ),
+
+                                                         'filter' => array(
+                                                                           'handler' => 'views_handler_filter_string',
+                                                                           ),
+
+                                                         'sort' => array(
+                                                                         'handler' => 'views_handler_sort',
+                                                                         ),
+                                                            );
+
+    // Campaign Title
+    $data['civicrm_campaign']['title'] = array(
+                                                         'title' => t('Title'),
+                                                         'help' =>  t('Campaing\'s title'),
+                                                         'field' => array(
+                                                                          'handler' => 'views_handler_field',
+                                                                          'click sortable' => TRUE,
+                                                                          ),
+
+                                                         'argument' => array(
+                                                                             'handler' => 'views_handler_argument',
+                                                                             ),
+
+                                                         'filter' => array(
+                                                                           'handler' => 'views_handler_filter_string',
+                                                                           'allow empty' => TRUE,
+                                                                           ),
+
+                                                         'sort' => array(
+                                                                         'handler' => 'views_handler_sort',
+                                                                         ),
+                                                            );
+    //Campaign Description
+    $data['civicrm_campaign']['description'] = array(
+                                                         'title' => t('Description'),
+                                                         'help' =>  t('Campaing\'s description'),
+                                                         'field' => array(
+                                                                          'handler' => 'views_handler_field',
+                                                                          'click sortable' => TRUE,
+                                                                          ),
+                                                            );
+    //Mailing finish date
+    $data['civicrm_campaign']['start_date'] = array(
+                                                      'title' => t('Start Date'),
+                                                      'help' => t('The Campaign\'s Start Date'),
+                                                      'field' => array(
+                                                                       'handler' => 'civicrm_handler_field_datetime',
+                                                                       'click sortable' => TRUE,
+                                                                       ),
+
+                                                      'argument' => array(
+                                                                          'handler' => 'views_handler_argument_date',
+                                                                          ),
+
+                                                      'filter' => array(
+                                                                        'handler' => 'civicrm_handler_filter_datetime',
+                                                                        ),
+
+                                                      'sort' => array(
+                                                                      'handler' => 'civicrm_handler_sort_date',
+                                                                      ),
+                                                      );
+
+    civicrm_views_add_date_arguments($data['civicrm_campaign'],array('title' =>'Campaign Start Date',
+                                                                    'name' => 'start_date'));
+
+    //Mailing finish date
+    $data['civicrm_campaign']['end_date'] = array(
+                                                      'title' => t('End Date'),
+                                                      'help' => t('The Campaign\'s End Date'),
+                                                      'field' => array(
+                                                                       'handler' => 'civicrm_handler_field_datetime',
+                                                                       'click sortable' => TRUE,
+                                                                       ),
+
+                                                      'argument' => array(
+                                                                          'handler' => 'views_handler_argument_date',
+                                                                          ),
+
+                                                      'filter' => array(
+                                                                        'handler' => 'civicrm_handler_filter_datetime',
+                                                                        ),
+
+                                                      'sort' => array(
+                                                                      'handler' => 'civicrm_handler_sort_date',
+                                                                      ),
+                                                      );
+   
+    civicrm_views_add_date_arguments($data['civicrm_campaign'],array('title' =>'Campaign End Date',
+                                                                    'name' => 'end_date'));
+
+    //Campaign Type
+    $data['civicrm_campaign']['campaign_type'] = array(
+                                                               'title' => t('Campaign Type'),
+                                                               'real field' => 'campaign_type_id',
+                                                               'help' => t('The Type of Campaign, ie Direct Mail, Constituent Engagement etc'),
+                                                               'field' => array(
+                                                                                'handler' => 'civicrm_handler_field_campaign_type',
+                                                                                'click sortable' => TRUE,
+                                                                                ),
+
+                                                               'argument' => array(
+                                                                                   'handler' => 'views_handler_argument',
+                                                                                   ),
+
+                                                               'filter' => array(
+                                                                                 'handler' => 'civicrm_handler_filter_campaign_type',
+                                                                                 'allow empty' => TRUE,
+                                                                                 ),
+
+                                                               'sort' => array(
+                                                                               'handler' => 'views_handler_sort',
+                                                                               ),
+                                                               );
+    //Campaign Type
+    $data['civicrm_campaign']['campaign_status'] = array(
+                                                               'title' => t('Campaign Status'),
+                                                               'real field' => 'status_id',
+                                                               'help' => t('The Status of the Campaign, ie Completed, Cancelled etc'),
+                                                               'field' => array(
+                                                                                'handler' => 'civicrm_handler_field_campaign_status',
+                                                                                'click sortable' => TRUE,
+                                                                                ),
+
+                                                               'argument' => array(
+                                                                                   'handler' => 'views_handler_argument',
+                                                                                   ),
+
+                                                               'filter' => array(
+                                                                                 'handler' => 'civicrm_handler_filter_campaign_status',
+                                                                                 'allow empty' => TRUE,
+                                                                                 ),
+
+                                                               'sort' => array(
+                                                                               'handler' => 'views_handler_sort',
+                                                                               ),
+                                                               );
+    // Parent Campaign ID
+    $data['civicrm_campaign']['parent_id'] = array(
+                                         'title' => t('Parent Campaign ID'),
+                                         'help' => t('The ID of the campaign\'s parent campaign'),
+                                         'field' => array(
+                                                          'handler' => 'views_handler_field_numeric',
+                                                          'click sortable' => TRUE,
+                                                          ),
+
+                                         'argument' => array(
+                                                             'handler' => 'views_handler_argument_numeric',
+                                                             'numeric' => TRUE,
+                                                             ),
+
+                                         'filter' => array(
+                                                           'handler' => 'views_handler_filter_numeric',
+                                                           'allow empty' => TRUE,
+                                                           ),
+
+                                         'sort' => array(
+                                                         'handler' => 'views_handler_sort',
+                                                         ),
+                                         );
+    //BOOLEAN : IS Deceased
+    $data['civicrm_campaign']['is_active'] = array(
+                                                    'title' => t('Is Active'),
+                                                    'help' => t('Is the campaign active ?'),
+                                                    'field' => array(
+                                                                     'handler' => 'views_handler_field_boolean',
+                                                                     'click sortable' => TRUE,
+                                                                     ),
+
+                                                    'argument' => array(
+                                                                        'handler' => 'views_handler_argument',
+                                                                        ),
+
+                                                    'filter' => array(
+                                                                      'handler' => 'views_handler_filter_boolean_operator',
+                                                                      ),
+
+                                                    'sort' => array(
+                                                                    'handler' => 'views_handler_sort',
+                                                                    ),
+                                                    );
+    // Campaign's General Goal
+    $data['civicrm_campaign']['goal_general'] = array(
+                                                         'title' => t('General Goal'),
+                                                         'help' =>  t('Campaing\'s general goal'),
+                                                         'field' => array(
+                                                                          'handler' => 'views_handler_field',
+                                                                          'click sortable' => TRUE,
+                                                                          ),
+
+                                                         'argument' => array(
+                                                                             'handler' => 'views_handler_argument',
+                                                                             ),
+
+                                                         'filter' => array(
+                                                                           'handler' => 'views_handler_filter_string',
+                                                                           'allow empty' => TRUE,
+                                                                           ),
+
+                                                         'sort' => array(
+                                                                         'handler' => 'views_handler_sort',
+                                                                         ),
+                                                            );
+    // Campaign ID
+    $data['civicrm_campaign']['goal_revenue'] = array(
+                                         'title' => t('Campaign Monetary Goal'),
+                                         'help' => t('The Monetary goal of the campaign'),
+                                         'field' => array(
+                                                          'handler' => 'views_handler_field_numeric',
+                                                          'click sortable' => TRUE,
+                                                          ),
+
+                                         'argument' => array(
+                                                             'handler' => 'views_handler_argument_numeric',
+                                                             'numeric' => TRUE,
+                                                             ),
+
+                                         'filter' => array(
+                                                           'handler' => 'views_handler_filter_numeric',
+                                                           'allow empty' => TRUE,
+                                                           ),
+
+                                         'sort' => array(
+                                                         'handler' => 'views_handler_sort',
+                                                         ),
+                                         );
 
     //Activity Text Link
     $data['civicrm_activity']['text_link'] =
@@ -5390,6 +5780,8 @@ function civicrm_date_views_fields($field) {
     case 'civicrm_mailing_job.start_date':
     case 'civicrm_mailing_job.end_date':
     case 'civicrm_activity.activity_date_time':
+    case 'civicrm_campaign.start_date':
+    case 'civicrm_campaign.end_date':
     return $values;
   }
 }
@@ -5401,7 +5793,8 @@ function civicrm_date_views_fields($field) {
 function civicrm_date_views_tables() {
   return array('civicrm_mailing_job',
                'civicrm_event',
-               'civicrm_activity');
+               'civicrm_activity',
+               'civicrm_campaign',);
 }
 
 // Telling Views where to get the Handlers
@@ -5431,10 +5824,9 @@ function civicrm_views_handlers() {
                        'civicrm_handler_field_link_activity' => array(
                                                                       'parent' => 'views_handler_field',
                                                                       ),
-					   'civicrm_handler_field_link_relationship' => array(
+		       'civicrm_handler_field_link_relationship' => array(
                                                                           'parent' => 'views_handler_field',
                                                                           ),
-
                        'civicrm_handler_field_contact_link' => array(
                                                                      'parent' => 'views_handler_field',
                                                                      ),
@@ -5462,7 +5854,6 @@ function civicrm_views_handlers() {
                        'civicrm_handler_field_datetime' => array(
                                                                  'parent' => 'views_handler_field_date',
                                                                  ),
-
                        'civicrm_handler_field_event_type' => array(
                                                                    'parent' => 'views_handler_field',
                                                                    ),
@@ -5523,6 +5914,12 @@ function civicrm_views_handlers() {
                                                             'parent' => 'views_handler_field',
                                                            ),
                        'civicrm_handler_field_custom' => array(
+                                                               'parent' => 'views_handler_field',
+                                                               ),
+                       'civicrm_handler_field_campaign_type' => array(
+                                                               'parent' => 'views_handler_field',
+                                                               ),
+                       'civicrm_handler_field_campaign_status' => array(
                                                                'parent' => 'views_handler_field',
                                                                ),
                                                                           
@@ -5611,6 +6008,12 @@ function civicrm_views_handlers() {
                                                                       'parent' => 'views_handler_filter_in_operator',
                                                                       ),
                        'civicrm_handler_filter_custom_option' => array(
+                                                                       'parent' => 'views_handler_filter_in_operator',
+                                                                       ),
+                       'civicrm_handler_filter_campaign_status' => array(
+                                                                       'parent' => 'views_handler_filter_in_operator',
+                                                                       ),
+                       'civicrm_handler_filter_campaign_type' => array(
                                                                        'parent' => 'views_handler_filter_in_operator',
                                                                        ),
                        
