@@ -92,9 +92,6 @@ class CRM_Campaign_Form_Task_Release extends CRM_Campaign_Form_Task {
             $this->_interviewerId = CRM_Utils_Array::value( 'survey_interviewer_id', $this->get( 'formValues' ) );
         }
         
-        $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
-        $surveyActType  = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
-        
         if ( !$this->_surveyId ) {
             CRM_Core_Error::statusBounce( ts( "Please search with 'Survey', to apply this action.") );
         }

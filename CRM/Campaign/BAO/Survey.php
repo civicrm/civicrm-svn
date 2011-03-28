@@ -290,21 +290,29 @@ SELECT  survey.id    as id,
      *
      * @static
      */
-    static function getSurveyActivityType( ) 
+    static function getSurveyActivityType( $returnColumn = 'label', 
+                                           $includePetitionActivityType = false ) 
     {
         static $activityTypes;
+        $cacheKey = "{$returnColumn}_{$includePetitionActivity}";
         
-        if ( !isset( $activityTypes ) ) {
+        if ( !isset( $activityTypes[$cacheKey] ) ) {
             $activityTypes = array( );
             $campaignCompId = CRM_Core_Component::getComponentID('CiviCampaign');
             if ( $campaignCompId ) {
                 require_once 'CRM/Core/OptionGroup.php';
-                $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, 
-                                                               " AND v.component_id={$campaignCompId}" , 'name' );
+                $condition = " AND v.component_id={$campaignCompId}";
+                if ( ! $includePetitionActivityType ) {
+                    $condition .= " AND v.name != 'Petition'";
+                }
+                $activityTypes[$cacheKey] = CRM_Core_OptionGroup::values( 'activity_type', 
+                                                                          false, false, false, 
+                                                                          $condition, 
+                                                                          $returnColumn );
             }
         }
         
-        return $activityTypes;
+        return $activityTypes[$cacheKey];
     }
     
     /**

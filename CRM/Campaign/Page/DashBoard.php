@@ -354,7 +354,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         $petitions = CRM_Campaign_BAO_Petition::getPetitionSummary( $params );
         if ( !empty( $petitions ) ) {
             $campaigns     = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
-            $petitionType  = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
+            $petitionType  = CRM_Campaign_BAO_Survey::getSurveyActivityType( 'label', true );
             foreach( $petitions as $pid => $petition ) {
                 $petitionsData[$pid] = $petition;
                 $camapignId = CRM_Utils_Array::value( 'campaign_id', $petition );

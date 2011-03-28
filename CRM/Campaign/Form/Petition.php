@@ -118,9 +118,6 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey
         
         $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
         $this->addElement( 'hidden', 'activity_type_id', $petitionTypeID );
-//        $surveyActivityTypes = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
-        // Activity Type id
-//        $this->add('select', 'activity_type_id', ts('Select Activity Type'), array( '' => ts('- select -') ) + $surveyActivityTypes, true );
         
         // script / instructions / description of petition purpose
         $this->addWysiwyg('instructions',ts('Introduction'), $attributes['instructions']);
