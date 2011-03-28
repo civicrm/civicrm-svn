@@ -54,7 +54,42 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin();
+      
+      // Get sample import data.
+      list($headers, $rows) = $this->individualCSVData( );
+   
+      // Import and check Individual contacts
+      $this->importCSVContacts($headers, $rows);
+  }
 
+  function testOrganizationImport()
+  {
+      $this->open( $this->sboxPath );
+      
+      $this->webtestLogin();
+      
+      // Get sample import data.
+      list($headers, $rows) = $this->organizationCSVData( );
+   
+      // Import and check Organization contacts
+      $this->importCSVContacts($headers, $rows, 'Organization' );
+  }
+
+  function testHouseholdImport() 
+  {
+      $this->open( $this->sboxPath );
+      
+      $this->webtestLogin();
+      
+      // Get sample import data.
+      list($headers, $rows) = $this->householdCSVData( );
+   
+      // Import and check Household contacts
+      $this->importCSVContacts($headers, $rows, 'Household' );
+  }
+  
+  function importCSVContacts( $headers, $rows, $contactType = 'Individual' ) {
+      
       // Go to contact import page.
       $this->open($this->sboxPath . "civicrm/import/contact?reset=1");
       $this->waitForPageToLoad( '30000' );
@@ -62,9 +97,6 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       // check for upload field.
       $this->waitForElementPresent("uploadFile");
       
-      // Get sample import data.
-      list($headers, $rows) = $this->individualCSVData( );
-
       // Create csv file of sample data.
       $csvFile = $this->webtestCreateCSV($headers, $rows);
 
@@ -73,6 +105,12 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       
       // First row is header.
       $this->click('skipColumnHeader');
+
+      if ( $contactType == 'Organization' ) {
+          $this->click("CIVICRM_QFID_4_14");
+      } else if ( $contactType == 'Household' ) {
+          $this->click("CIVICRM_QFID_2_12");
+      }
 
       // Submit form.
       $this->click('_qf_DataSource_upload');
@@ -85,7 +123,7 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       $this->click('saveMapping');
       $mappingName = 'contactimport_'.substr(sha1(rand()), 0, 7);
       $this->type('saveMappingName', $mappingName);
-      $this->type('saveMappingDesc', 'Mapping for Individuals' );
+      $this->type('saveMappingDesc', "Mapping for {$contactType}" );
 
       // Submit form.
       $this->click('_qf_MapField_next');
@@ -96,15 +134,15 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       
       // Add imported contacts in new group.
       $this->click( "css=#new-group div.crm-accordion-header" );
-      $groupName = 'Individual Group '.substr(sha1(rand()), 0, 7);
+      $groupName = "{$contactType} Group " . substr(sha1(rand()), 0, 7);
       $this->type('newGroupName', $groupName);
-      $this->type('newGroupDesc', 'Group For Individuals' );
+      $this->type('newGroupDesc', "Group For {$contactType}" );
 
       // Assign new tag to the imported contacts.
       $this->click( "css=#new-tag div.crm-accordion-header" );
-      $tagName = 'indivi_'.substr(sha1(rand()), 0, 7);
+      $tagName = "{$contactType}_".substr(sha1(rand()), 0, 7);
       $this->type('newTagName', $tagName);
-      $this->type('newTagDesc', 'Tag for Individuals' );
+      $this->type('newTagDesc', "Tag for {$contactType}" );
       
       // Submit form.
       $this->click('_qf_Preview_next');
@@ -135,7 +173,7 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       foreach( $checkSummary as $label => $value ) {
           $this->verifyText("xpath=//table[@id='summary-counts']/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote($value));
       }
-      
+        
   }
 
   function checkImportMapperData( $headers, $rows ) {
@@ -163,42 +201,116 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
   }
   
   function individualCSVData( ) {
-      $headers = array( 'first_name'           => 'First Name',
-                        'middle_name'          => 'Middle Name',
-                        'last_name'            => 'Last Name',
-                        'email'                => 'Email',
-                        'phone'                => 'Phone',  
-                        'address_1'            => 'Additional Address 1',
-                        'address_2'            => 'Additional Address 2',
-                        'city'                 => 'City',
-                        'state'                => 'State',
-                        'country'              => 'Country'
+      $headers = array( 'first_name'  => 'First Name',
+                        'middle_name' => 'Middle Name',
+                        'last_name'   => 'Last Name',
+                        'email'       => 'Email',
+                        'phone'       => 'Phone',  
+                        'address_1'   => 'Additional Address 1',
+                        'address_2'   => 'Additional Address 2',
+                        'city'        => 'City',
+                        'state'       => 'State',
+                        'country'     => 'Country'
                         );
       
       $rows = 
           array( 
-                array(  'first_name'           => substr(sha1(rand()), 0, 7),
-                        'middle_name'          => substr(sha1(rand()), 0, 7) ,
-                        'last_name'            => 'Anderson',
-                        'email'                => substr(sha1(rand()), 0, 7).'@example.com',
-                        'phone'                => '6949912154',  
-                        'address_1'            => 'Add 1',
-                        'address_2'            => 'Add 2',
-                        'city'                 => 'Watson',
-                        'state'                => 'NY',
-                        'country'              => 'United States'
+                array(  'first_name'  => substr(sha1(rand()), 0, 7),
+                        'middle_name' => substr(sha1(rand()), 0, 7) ,
+                        'last_name'   => 'Anderson',
+                        'email'       => substr(sha1(rand()), 0, 7).'@example.com',
+                        'phone'       => '6949912154',  
+                        'address_1'   => 'Add 1',
+                        'address_2'   => 'Add 2',
+                        'city'        => 'Watson',
+                        'state'       => 'NY',
+                        'country'     => 'United States'
                         ),
                 
-                array(  'first_name'           => substr(sha1(rand()), 0, 7),
-                        'middle_name'          => substr(sha1(rand()), 0, 7) ,
-                        'last_name'            => 'Summerson',
-                        'email'                => substr(sha1(rand()), 0, 7).'@example.com',
-                        'phone'                => '6944412154',  
-                        'address_1'            => 'Add 1',
-                        'address_2'            => 'Add 2',
-                        'city'                 => 'Watson',
-                        'state'                => 'NY',
-                        'country'              => 'United States'
+                array(  'first_name'  => substr(sha1(rand()), 0, 7),
+                        'middle_name' => substr(sha1(rand()), 0, 7) ,
+                        'last_name'   => 'Summerson',
+                        'email'       => substr(sha1(rand()), 0, 7).'@example.com',
+                        'phone'       => '6944412154',  
+                        'address_1'   => 'Add 1',
+                        'address_2'   => 'Add 2',
+                        'city'        => 'Watson',
+                        'state'       => 'NY',
+                        'country'     => 'United States'
+                        )
+                 );
+
+      return array($headers, $rows);
+  }
+
+  function organizationCSVData( ) {
+      $headers = array( 'organization_name' => 'Organization Name',
+                        'email'             => 'Email',
+                        'phone'             => 'Phone',  
+                        'address_1'         => 'Additional Address 1',
+                        'address_2'         => 'Additional Address 2',
+                        'city'              => 'City',
+                        'state'             => 'State',
+                        'country'           => 'Country'
+                        );
+      
+      $rows = 
+          array( 
+                array(  'organization_name' => 'org_' . substr(sha1(rand()), 0, 7),
+                        'email'             => substr(sha1(rand()), 0, 7).'@example.org',
+                        'phone'             => '9949912154',  
+                        'address_1'         => 'Add 1',
+                        'address_2'         => 'Add 2',
+                        'city'              => 'Watson',
+                        'state'             => 'NY',
+                        'country'           => 'United States'
+                        ),
+                
+                array(  'organization_name' => 'org_' . substr(sha1(rand()), 0, 7),
+                        'email'             => substr(sha1(rand()), 0, 7).'@example.org',
+                        'phone'             => '6949412154',  
+                        'address_1'         => 'Add 1',
+                        'address_2'         => 'Add 2',
+                        'city'              => 'Watson',
+                        'state'             => 'NY',
+                        'country'           => 'United States'
+                        )
+                 );
+
+      return array($headers, $rows);
+  }
+
+  function householdCSVData( ) {
+      $headers = array( 'household_name' => 'Household Name',
+                        'email'          => 'Email',
+                        'phone'          => 'Phone',  
+                        'address_1'      => 'Additional Address 1',
+                        'address_2'      => 'Additional Address 2',
+                        'city'           => 'City',
+                        'state'          => 'State',
+                        'country'        => 'Country'
+                        );
+      
+      $rows = 
+          array( 
+                array(  'household_name' => 'household_' . substr(sha1(rand()), 0, 7),
+                        'email'          => substr(sha1(rand()), 0, 7).'@example.org',
+                        'phone'          => '3949912154',  
+                        'address_1'      => 'Add 1',
+                        'address_2'      => 'Add 2',
+                        'city'           => 'Watson',
+                        'state'          => 'NY',
+                        'country'        => 'United States'
+                        ),
+                
+                array(  'household_name' => 'household_' . substr(sha1(rand()), 0, 7),
+                        'email'          => substr(sha1(rand()), 0, 7).'@example.org',
+                        'phone'          => '5949412154',  
+                        'address_1'      => 'Add 1',
+                        'address_2'      => 'Add 2',
+                        'city'           => 'Watson',
+                        'state'          => 'NY',
+                        'country'        => 'United States'
                         )
                  );
 
