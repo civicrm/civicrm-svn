@@ -92,7 +92,7 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
 
       // Check mapping data.
-      $this->checkMapperData($headers, $rows);
+      $this->checkImportMapperData($headers, $rows);
       
       // Add imported contacts in new group.
       $this->click( "css=#new-group div.crm-accordion-header" );
