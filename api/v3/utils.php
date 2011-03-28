@@ -77,7 +77,10 @@ function civicrm_api3_verify_one_mandatory ($params, $daoName = null, $keyoption
  */
 
 function civicrm_api3_get_DAO ($name) {
-    require_once ('CRM/Core/DAO/.listAll.php');
+    static $dao = null; 
+    if (!$dao) {
+      require ('CRM/Core/DAO/.listAll.php');
+    }
     if (strpos($name, 'civicrm_') !== false) {
         $last = strrpos ($name, '_') ;
         $name = substr ($name, 8, $last -8);// len ('civicrm_') == 8
