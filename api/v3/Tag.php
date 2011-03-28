@@ -41,17 +41,6 @@
 require_once 'api/v3/utils.php';
 
 /**
- *  returns all the fields on this entity.
- */
-function civicrm_api3_tag_getfields( $params ) {
-    require_once 'CRM/Core/BAO/Tag.php';
-    $bao = new CRM_Core_BAO_Tag();
-    //function &exportableFields( $contactType = 'Individual', $status = false, $export = false, $search = false )
-    return ($bao->fields());
-    //return ($contact->fields());
-}
-
-/**
  *  Add a Tag. Tags are used to classify CRM entities (including Contacts, Groups and Actions).
  *
  * Allowed @params array keys are:
@@ -75,7 +64,9 @@ function civicrm_api3_tag_create( $params )
     if ( CRM_Utils_Array::value( 'tag', $params ) ) {
         $ids['tag'] = $params['tag'];
     }
-
+    if ( CRM_Utils_Array::value( 'id', $params ) ) {
+        $ids['tag'] = $params['id'];
+    }
     $tagBAO = CRM_Core_BAO_Tag::add($params, $ids);
 
     if ( is_a( $tagBAO, 'CRM_Core_Error' ) ) {
