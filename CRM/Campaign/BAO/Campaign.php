@@ -555,7 +555,7 @@ INNER JOIN  civicrm_group grp ON ( grp.id = campgrp.entity_id )
         }
         
         $includePastCampaignURL = null;
-        if ( $hasPastCampaigns ) {
+        if ( $hasPastCampaigns && $isCampaignEnabled && $hasAccessCampaign ) {
             $includePastCampaignURL = CRM_Utils_System::url( 'civicrm/ajax/rest', 
                                                              'className=CRM_Campaign_Page_AJAX&fnName=allActiveCampaigns',
                                                              false, null, false ); 
