@@ -33,12 +33,14 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
 {
 
     protected $_apiversion;
+    protected $_entity;
     protected $_contactID;
     protected $_contactID2;
     protected $_createdParticipants;
     protected $_participantID;
     protected $_eventID;
     protected $_individualId;
+    protected $_params;
 
     function get_info( )
     {
@@ -54,7 +56,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
 
         $this->_apiversion = 3;
         parent::setUp();
-
+        $this->_entity = 'participant';
         $event = $this->eventCreate(null);
         $this->_eventID = $event['id'];
 
@@ -67,6 +69,15 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
         $this->_contactID2 = $this->individualCreate( null) ;
         $this->_participantID2 = $this->participantCreate( array('contactID' => $this->_contactID2,'eventID' => $this->_eventID,'version' =>$this->_apiversion ));
         $this->_participantID3 = $this->participantCreate( array ('contactID' => $this->_contactID2, 'eventID' => $this->_eventID,'version' =>$this->_apiversion ));
+        $this->_params = array(
+                        'contact_id'    => $this->_contactID,
+                        'event_id'      => $this->_eventID,
+                        'status_id'     => 1,
+                        'role_id'       => 1,
+                        'register_date' => '2007-07-21 00:00:00', // to ensure it matches later on
+                        'source'        => 'Online Event Registration: API Testing',
+                        'version'       => $this->_apiversion,
+                        );
     }
 
     function tearDown()
@@ -365,18 +376,9 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
      */
     function testCreateAllParams()
     {
-        $params = array(
-                        'contact_id'    => $this->_contactID,
-                        'event_id'      => $this->_eventID,
-                        'status_id'     => 1,
-                        'role_id'       => 1,
-                        'register_date' => '2007-07-21 00:00:00', // to ensure it matches later on
-                        'source'        => 'Online Event Registration: API Testing',
-                        'version'       => $this->_apiversion,
-                        );
+        $params = $this->_params;
 
         $participant =  civicrm_api3_participant_create($params);
-        $this->documentMe($params,$participant ,__FUNCTION__,__FILE__);
         $this->assertNotEquals( $participant['is_error'],1 ,'in line ' . __LINE__);
         $this->_participantID = $participant['id'];
         if ( ! $participant['is_error'] ) {
@@ -386,6 +388,32 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
         }
     }
 
+    /**
+     * check with complete array + custom field 
+     * Note that the test is written on purpose without any
+     * variables specific to participant so it can be replicated into other entities
+     * and / or moved to the automated test suite
+     */
+    function testCreateWithCustom()
+    {
+        $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+        
+        $params = $this->_params;
+        $params['custom_'.$ids['custom_field_id']]  =  "custom string";
+ 
+        $result = civicrm_api($this->_entity,'create', $params);
+        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__);
+        $this->assertNotEquals( $result['is_error'],1 ,'in line ' . __LINE__);
+
+        $check = civicrm_api($this->_entity,'get',array('version' =>3, 'id' => $result['id']));
+        $this->assertEquals("custom string", $check['values'][$check['id']]['custom_' .$ids['custom_field_id'] ]);
+        
+        $this->customFieldDelete($ids['custom_field_id']);
+        $this->customGroupDelete($ids['custom_group_id']);      
+
+    }
+    
+    
     ///////////////// civicrm_participant_update methods
 
     /**

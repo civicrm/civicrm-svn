@@ -70,6 +70,7 @@ class CRM_Campaign_Form_Search_Petition extends CRM_Core_Form
         $this->assign( 'buildSelector',     $this->_search );
         $this->assign( 'searchFor',         $this->_searchTab );
         $this->assign( 'petitionCampaigns', json_encode( $this->get( 'petitionCampaigns' ) ) );
+        $this->assign( 'suppressForm',      true );
         
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Find Petition' ) );

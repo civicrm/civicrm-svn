@@ -72,8 +72,11 @@ function civicrm_api3_participant_create($params)
         if ( civicrm_api3_error( $errors ) ) {
             return $errors;
         }
-     
+        $value = array();
+        _civicrm_api3_custom_format_params( $params, $values, 'Participant' );
+        $params = array_merge($values,$params);  
         require_once 'CRM/Event/BAO/Participant.php';
+
         $participantBAO = CRM_Event_BAO_Participant::create($params);
         _civicrm_api3_object_to_array($participantBAO , $participant[$participantBAO->id]);
         return civicrm_api3_create_success( $participant );

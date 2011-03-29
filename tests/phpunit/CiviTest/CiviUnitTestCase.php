@@ -1210,7 +1210,27 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         return $result;    
     }
+
+    /*
+     * Create a custom group with a single text custom field.  See 
+     * participant:testCreateWithCustom for how to use this
+     * 
+     * @param string $function __FUNCTION__
+     * @param string $file __FILE__
+     * 
+     * @return array $ids ids of created objects
+     * 
+     */
     
+   function entityCustomGroupWithSingleFieldCreate( $function,$filename){
+      $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
+      $customGroup = $this->CustomGroupCreate($entity,$function);
+      
+      $customField = $this->customFieldCreate( $customGroup['id'], $function ) ;
+      return array('custom_group_id' =>$customGroup['id'], 'custom_field_id' =>$customField['id'] );   
+    }
+    
+  
     /**
      * Function to delete custom group
      * 

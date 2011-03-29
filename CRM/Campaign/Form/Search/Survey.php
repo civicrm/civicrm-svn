@@ -71,6 +71,7 @@ class CRM_Campaign_Form_Search_Survey extends CRM_Core_Form
         $this->assign( 'searchFor',       $this->_searchTab );
         $this->assign( 'surveyTypes',     json_encode( $this->get( 'surveyTypes' ) ) );
         $this->assign( 'surveyCampaigns', json_encode( $this->get( 'surveyCampaigns' ) ) );
+        $this->assign( 'suppressForm',    true );
         
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Find Survey' ) );
