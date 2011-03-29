@@ -58,10 +58,71 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       // Get sample import data.
       list($headers, $rows) = $this->individualCSVData( );
    
-      // Import and check Individual contacts
+      // Import and check Individual contacts in Skip mode.
       $this->importCSVContacts($headers, $rows);
-  }
+      
+      // Get imported contact Ids
+      $importedContactIds = $this->getImportedContactIds( $rows );
+          
+      // Build update mode import headers
+      $updateHeaders = array( 'contact_id' => 'Internal Contact ID',
+                              'first_name' => 'First Name',
+                              'last_name'  => 'Last Name' );
+      
+      // Create update mode import rows
+      $updateRows = array( );
+      foreach ( $importedContactIds as $cid ) {
+          $updateRows[$cid] = array( 'contact_id' => $cid,
+                                     'first_name' => substr(sha1(rand()), 0, 7),
+                                     'last_name'  => 'Anderson' . substr(sha1(rand()), 0, 7)  );
+      }
+      
+      // Import and check Individual contacts in Update mode.
+      $this->importCSVContacts( $updateHeaders, $updateRows, 'Individual', 'Update' ); 
+      
+      // Visit contacts to check updated data.
+      foreach ( $updateRows as $updatedRow ) {
+          $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$updatedRow['contact_id']}");
+          $this->waitForPageToLoad("30000");
 
+          $displayName = "{$updatedRow['first_name']} {$updatedRow['last_name']}"; 
+          $this->assertTrue($this->isTextPresent("$displayName"), "Contact did not update!");
+      }
+      
+      // Headers that should not updated.
+      $fillHeaders = $updateHeaders;
+      
+      // Headers that should fill.
+      $fillHeaders['gender'] = 'Gender';
+      $fillHeaders['dob']    = 'Birth Date';
+      
+      $fillRows = array( );
+      foreach ( $importedContactIds as $cid ) {
+          $fillRows[$cid] = array( 'contact_id' => $cid,
+                                   'first_name' => substr(sha1(rand()), 0, 7), // should not update
+                                   'last_name'  => 'Anderson' . substr(sha1(rand()), 0, 7), // should not update
+                                   'gender'     => 'Male',
+                                   'dob'        => '1986-04-16'
+                                   );
+      }
+      
+      // Import and check Individual contacts in Update mode.
+      $this->importCSVContacts( $fillHeaders, $fillRows, 'Individual', 'Fill' );
+
+      // Visit contacts to check filled data.
+      foreach ( $fillRows as $cid => $fillRow ) {
+          $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$fillRow['contact_id']}");
+          $this->waitForPageToLoad("30000");
+
+          // Check old display name.
+          $displayName = "{$updateRows[$cid]['first_name']} {$updateRows[$cid]['last_name']}"; 
+          $this->assertTrue($this->isTextPresent("$displayName"), "Contact should not update in fill mode!");
+
+          $this->verifyText("xpath=//div[@id='contact-summary']/div[2]/div[3]/div[2]/table/tbody/tr[1]/td[2]", preg_quote($fillRow['gender']));
+      } 
+      
+  }
+  
   function testOrganizationImport()
   {
       $this->open( $this->sboxPath );
@@ -73,6 +134,62 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
    
       // Import and check Organization contacts
       $this->importCSVContacts($headers, $rows, 'Organization' );
+
+      // Get imported contact Ids
+      $importedContactIds = $this->getImportedContactIds( $rows, 'Organization' );
+          
+      // Build update mode import headers
+      $updateHeaders = array( 'contact_id'        => 'Internal Contact ID',
+                              'organization_name' => 'Organization Name',
+                              );
+      
+      // Create update mode import rows
+      $updateRows = array( );
+      foreach ( $importedContactIds as $cid ) {
+          $updateRows[$cid] = array( 'contact_id'        => $cid,
+                                     'organization_name' => 'UpdatedOrg ' . substr(sha1(rand()), 0, 7) );
+      }
+      
+      // Import and check Individual contacts in Update mode.
+      $this->importCSVContacts( $updateHeaders, $updateRows, 'Organization', 'Update' ); 
+      
+      // Visit contacts to check updated data.
+      foreach ( $updateRows as $updatedRow ) {
+          $organizationName = $updatedRow['organization_name']; 
+          $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$updatedRow['contact_id']}");
+          $this->waitForPageToLoad("30000");
+
+          $this->assertTrue($this->isTextPresent("$organizationName"), "Contact did not update!");
+      }
+     
+      // Headers that should not updated.
+      $fillHeaders = $updateHeaders;
+      
+      // Headers that should fill.
+      $fillHeaders['legal_name'] = 'Legal Name';
+      
+      $fillRows = array( );
+      foreach ( $importedContactIds as $cid ) {
+          $fillRows[$cid] = array( 'contact_id'        => $cid,
+                                   'organization_name' => 'UpdateOrg ' . substr(sha1(rand()), 0, 7), // should not update
+                                   'legal_name'        => 'org '. substr(sha1(rand()), 0, 7)
+                                   );
+      }
+      
+      // Import and check Individual contacts in Update mode.
+      $this->importCSVContacts( $fillHeaders, $fillRows, 'Organization', 'Fill' );
+
+      // Visit contacts to check filled data.
+      foreach ( $fillRows as $cid => $fillRow ) {
+          $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$fillRow['contact_id']}");
+          $this->waitForPageToLoad("30000");
+
+          // Check old Organization name.
+          $organizationName = $updateRows[$cid]['organization_name']; 
+          $this->assertTrue($this->isTextPresent("$organizationName"), "Contact should not update in fill mode!");
+          $this->verifyText("xpath=//div[@id='contactTopBar']/table/tbody/tr/td[4]", preg_quote($fillRow['legal_name']));
+      }
+      
   }
 
   function testHouseholdImport() 
@@ -85,10 +202,66 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       list($headers, $rows) = $this->householdCSVData( );
    
       // Import and check Household contacts
-      $this->importCSVContacts($headers, $rows, 'Household' );
+      $this->importCSVContacts($headers, $rows, 'Household');
+
+      // Get imported contact Ids
+      $importedContactIds = $this->getImportedContactIds($rows, 'Household');
+      
+      // Build update mode import headers
+      $updateHeaders = array( 'contact_id'     => 'Internal Contact ID',
+                              'household_name' => 'Household Name'
+                              );
+      
+      // Create update mode import rows
+      $updateRows = array( );
+      foreach ( $importedContactIds as $cid ) {
+          $updateRows[$cid] = array( 'contact_id'     => $cid,
+                                     'household_name' => 'UpdatedHousehold ' . substr(sha1(rand()), 0, 7) );
+      }
+      
+      // Import and check Individual contacts in Update mode.
+      $this->importCSVContacts( $updateHeaders, $updateRows, 'Household', 'Update'); 
+      
+      // Visit contacts to check updated data.
+      foreach ( $updateRows as $updatedRow ) {
+          $householdName = $updatedRow['household_name']; 
+          $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$updatedRow['contact_id']}");
+          $this->waitForPageToLoad("30000");
+
+          $this->assertTrue($this->isTextPresent("$householdName"), "Contact did not update!");
+      }   
+
+     // Headers that should not updated.
+      $fillHeaders = $updateHeaders;
+      
+      // Headers that should fill.
+      $fillHeaders['nick_name'] = 'Nick Name';
+      
+      $fillRows = array( );
+      foreach ( $importedContactIds as $cid ) {
+          $fillRows[$cid] = array( 'contact_id'     => $cid,
+                                   'household_name' => 'UpdatedHousehold ' . substr(sha1(rand()), 0, 7), // should not update
+                                   'nick_name'      => 'Household '. substr(sha1(rand()), 0, 7)
+                                   );
+      }
+      
+      // Import and check Individual contacts in Update mode.
+      $this->importCSVContacts( $fillHeaders, $fillRows, 'Household', 'Fill' );
+      
+      // Visit contacts to check filled data.
+      foreach ( $fillRows as $cid => $fillRow ) {
+          $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$fillRow['contact_id']}");
+          $this->waitForPageToLoad("30000");
+
+          // Check old Household name.
+          $householdName = $updateRows[$cid]['household_name']; 
+          $this->assertTrue($this->isTextPresent("$householdName"), "Contact should not update in fill mode!");
+          $this->verifyText("xpath=//div[@id='contactTopBar']/table/tbody/tr/td[4]", preg_quote($fillRow['nick_name']));
+      }
+   
   }
-  
-  function importCSVContacts( $headers, $rows, $contactType = 'Individual' ) {
+
+  function importCSVContacts( $headers, $rows, $contactType = 'Individual', $mode = 'Skip' ) {
       
       // Go to contact import page.
       $this->open($this->sboxPath . "civicrm/import/contact?reset=1");
@@ -105,7 +278,17 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       
       // First row is header.
       $this->click('skipColumnHeader');
+      
+      // select mode, default is 'Skip'.
+      if ( $mode == 'Update' ) {
+          $this->click("CIVICRM_QFID_4_4");
+      } else if ( $mode == 'Fill' ) {
+          $this->click("CIVICRM_QFID_8_6");
+      } else if ( $mode == 'No Duplicate Checking' ) {
+          $this->click("CIVICRM_QFID_16_8");  
+      }
 
+      // select contact type, default is 'Individual'.
       if ( $contactType == 'Organization' ) {
           $this->click("CIVICRM_QFID_4_14");
       } else if ( $contactType == 'Household' ) {
@@ -200,6 +383,45 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
 
   }
   
+  function getImportedContactIds($rows, $contactType = 'Individual') {
+      $contactIds = array( );
+
+      foreach ( $rows as $row ) {
+          $searchName = '';
+          
+          // Build search name.
+          if ( $contactType == 'Individual' ) {
+              $searchName = "{$row['last_name']}, {$row['first_name']}";
+          } else if ( $contactType == 'Organization' ) {
+              $searchName = $row['organization_name'];
+          } else if ( $contactType == 'Household' ) {
+              $searchName = $row['household_name'];
+          }
+          
+          $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
+          $this->waitForPageToLoad("30000");
+
+          
+          // Type search name in autocomplete.
+          $this->typeKeys("css=input#sort_name_navigation", $searchName);
+          $this->click("css=input#sort_name_navigation");
+          
+          // Wait for result list.
+          $this->waitForElementPresent("css=div.ac_results-inner li");
+          
+          // Visit contact summary page.
+          $this->click("css=div.ac_results-inner li");
+          $this->waitForPageToLoad("30000");
+
+          // Get contact id from url.
+          $matches = array();
+          preg_match('/cid=([0-9]+)/', $this->getLocation(), $matches);
+          $contactIds[]  = $matches[1];
+      }
+      
+      return $contactIds;
+  }
+
   function individualCSVData( ) {
       $headers = array( 'first_name'  => 'First Name',
                         'middle_name' => 'Middle Name',
