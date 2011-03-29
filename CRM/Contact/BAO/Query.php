@@ -291,6 +291,15 @@ class CRM_Contact_BAO_Query
     static $_considerCompActivities;
     
     /**
+     * Consider with contact activities only,
+     * during activity search.
+     *
+     * @var array
+     * @static
+     */
+    static $_withContactActivitiesOnly;
+    
+    /**
      * use distinct component clause for component searches
      *
      * @var string
@@ -436,6 +445,7 @@ class CRM_Contact_BAO_Query
         //reset cache, CRM-5803
         self::$_activityRole = null;
         self::$_considerCompActivities = null;
+        self::$_withContactActivitiesOnly = null;
         
         $this->_select['contact_id']      = 'contact_a.id as contact_id';
         $this->_element['contact_id']     = 1; 
@@ -1351,8 +1361,10 @@ INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRel
         case 'sort_name':
         case 'display_name':
             $this->sortName( $values );
+            //force civicrm_activity_target, CRM-7812
+            self::$_withContactActivitiesOnly = true;
             return;
-
+            
         case 'email':
             $this->email( $values );
             return;
