@@ -1,41 +1,42 @@
-{php}
-$ogNames = array( 'petition' => ts('Message Template Workflow for Petition', array('escape' => 'sql')) );
-        
-$ovNames = array( 'petition' => 
-                  array( 'petition_sign' => ts('Petition - signature added', array('escape' => 'sql')),
-                         'petition_confirmation_needed' => ts('Petition - need verification', array('escape' => 'sql')),
-                         ), 
-                );
-  $this->assign('ogNames',  $ogNames);
-  $this->assign('ovNames',  $ovNames);
-{/php}
+-- CRM-7817
+{if $addPetitionOptionGroup}
 
 INSERT INTO `civicrm_option_group` 
     ( `name`, {localize field='label'}label{/localize}, {localize field='description'}description{/localize}, `is_reserved`, `is_active` ) 
 VALUES 
-    ( 'msg_tpl_workflow_petition', {localize}'Message Template Workflow for Petition'{/localize},{localize}'Message Template Workflow for Petition'{/localize}, 0, 1 );
+     ( 'msg_tpl_workflow_petition', {localize}'{ts escape="sql"}Message Template Workflow for Petition{/ts}'{/localize},{localize}'{ts escape="sql"}Message Template Workflow for Petition{/ts}'{/localize}, 0, 1 );
 
 SELECT @option_group_id := MAX(id) from civicrm_option_group WHERE name = 'msg_tpl_workflow_petition';
 
 INSERT INTO `civicrm_option_value` 
-    ( `option_group_id`, {localize field='label'}label{/localize}, `name`, `value`, `weight`, `is_active` ) 
+ ( `option_group_id`, {localize field='label'}label{/localize}, `name`, `value`, `weight`, `is_active` ) 
 VALUES
-        ( @option_group_id, {localize}'Petition - signature added'{/localize}, 'petition_sign', 1, 1, 1 ),
-        ( @option_group_id, {localize}'Petition - need verification'{/localize}, 'petition_confirmation_needed', 2, 2, 1 );
+ ( @option_group_id, {localize}'{ts escape="sql"}Petition - signature added{/ts}'{/localize}, 'petition_sign', 1, 1, 1 ),
+ ( @option_group_id, {localize}'{ts escape="sql"}Petition - need verification{/ts}'{/localize}, 'petition_confirmation_needed', 2, 2, 1 );
 
-{foreach from=$ovNames key=gName item=ovs}
-{foreach from=$ovs key=vName item=label}
-    SELECT @tpl_ovid_{$vName} := MAX(id) FROM civicrm_option_value WHERE option_group_id = @option_group_id AND name = '{$vName}';
-{/foreach}
-{/foreach}
+SELECT @tpl_ovid_petition_sign := MAX(id) FROM civicrm_option_value WHERE option_group_id = @option_group_id AND name = 'petition_sign';
+SELECT @tpl_ovid_petition_confirmation_needed := MAX(id) FROM civicrm_option_value WHERE option_group_id = @option_group_id AND name = 'petition_confirmation_needed';
+
+-- get the petition sign template values.
+{fetch assign=subject_petition_sign file="`$smarty.const.SMARTY_DIR`/../../CRM/Upgrade/3.4.beta2.msg_template/message_templates/petition_sign_subject.tpl"}
+{fetch assign=text_petition_sign  file="`$smarty.const.SMARTY_DIR`/../../CRM/Upgrade/3.4.beta2.msg_template/message_templates/petition_sign_text.tpl"}
+{fetch assign=html_petition_sign  file="`$smarty.const.SMARTY_DIR`/../../CRM/Upgrade/3.4.beta2.msg_template/message_templates/petition_sign_html.tpl"}
+
+-- get the petition confirmation needed template values.
+{fetch assign=subject_petition_confirmation_needed file="`$smarty.const.SMARTY_DIR`/../../CRM/Upgrade/3.4.beta2.msg_template/message_templates/petition_confirmation_needed_subject.tpl"}
+{fetch assign=text_petition_confirmation_needed  file="`$smarty.const.SMARTY_DIR`/../../CRM/Upgrade/3.4.beta2.msg_template/message_templates/petition_confirmation_needed_text.tpl"}
+{fetch assign=html_petition_confirmation_needed  file="`$smarty.const.SMARTY_DIR`/../../CRM/Upgrade/3.4.beta2.msg_template/message_templates/petition_confirmation_needed_html.tpl"}
 
 INSERT INTO civicrm_msg_template 
-    (msg_title, msg_subject, msg_text, msg_html, workflow_id, is_default, is_reserved) VALUES
-{foreach from=$ovNames key=gName item=ovs name=for_groups}
-{foreach from=$ovs key=vName item=title name=for_values}
-    {fetch assign=subject file="`$smarty.const.SMARTY_DIR`/../../CRM/Upgrade/3.4.beta2.msg_template/message_templates/`$vName`_subject.tpl"}    {fetch assign=text    file="`$smarty.const.SMARTY_DIR`/../../CRM/Upgrade/3.4.beta2.msg_template/message_templates/`$vName`_text.tpl"}
-    {fetch assign=html    file="`$smarty.const.SMARTY_DIR`/../../CRM/Upgrade/3.4.beta2.msg_template/message_templates/`$vName`_html.tpl"}
-    ('{$title}', '{$subject|escape:"quotes"}', '{$text|escape:"quotes"}', '{$html|escape:"quotes"}', @tpl_ovid_{$vName}, 1, 0),
-    ('{$title}', '{$subject|escape:"quotes"}', '{$text|escape:"quotes"}', '{$html|escape:"quotes"}', @tpl_ovid_{$vName}, 0, 1){if $smarty.foreach.for_groups.last and $smarty.foreach.for_values.last};{else},{/if}
-{/foreach}
-{/foreach}
+    (msg_title, msg_subject, msg_text, msg_html, workflow_id, is_default, is_reserved) 
+    VALUES
+    ( '{ts escape="sql"}Petition - signature added{/ts}', '{$subject_petition_sign|escape:"quotes"}', '{$text_petition_sign|escape:"quotes"}', '{$html_petition_sign|escape:"quotes"}', @tpl_ovid_petition_sign, 1, 0),
+
+    ('{ts escape="sql"}Petition - signature added{/ts}', '{$subject_petition_sign|escape:"quotes"}', '{$text_petition_sign|escape:"quotes"}', '{$html_petition_sign|escape:"quotes"}', @tpl_ovid_petition_sign, 0, 1),
+
+    ('{ts escape="sql"}Petition - need verification{/ts}', '{$subject_petition_confirmation_needed|escape:"quotes"}', '{$text_petition_confirmation_needed|escape:"quotes"}', '{$html_petition_confirmation_needed|escape:"quotes"}', @tpl_ovid_petition_confirmation_needed, 1, 0),
+
+    ('{ts escape="sql"}Petition - need verification{/ts}', '{$subject_petition_confirmation_needed|escape:"quotes"}', '{$text_petition_confirmation_needed|escape:"quotes"}', '{$html_petition_confirmation_needed|escape:"quotes"}', @tpl_ovid_petition_confirmation_needed, 0, 1);
+
+{/if}
+
