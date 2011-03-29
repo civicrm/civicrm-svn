@@ -1335,12 +1335,18 @@ SELECT contact_id
 
         if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
             CRM_Core_Error::setCallback();
+            if ( $view ) {
+                $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
+            }
             return false;
         }
 
         $dao->query('DROP TRIGGER IF EXISTS civicrm_domain_trigger');
         if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
             CRM_Core_Error::setCallback();
+            if ( $view ) {
+                $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
+            }
             return false;
         }
 
