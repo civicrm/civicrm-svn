@@ -319,48 +319,41 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
                                           strlen($membershipTypeDetails['fixed_period_start_day'])-2);
                 $startDay       = substr( $membershipTypeDetails['fixed_period_start_day'], -2 );
 
-                $fixedStartDate = date('Y-m-d', mktime( 0, 0, 0, $startMonth, $startDay, $year) );
-
+                $fixedStartDate = date('Y-m-d', mktime( 0, 0, 0, $startMonth, $startDay, $year ) );
+                
                 //get start rollover day
                 $rolloverMonth     = substr( $membershipTypeDetails['fixed_period_rollover_day'], 0,
                                              strlen($membershipTypeDetails['fixed_period_rollover_day']) - 2 );
                 $rolloverDay       = substr( $membershipTypeDetails['fixed_period_rollover_day'],-2);
                 
-                $fixedRolloverDate = date('Y-m-d', mktime( 0, 0, 0, $rolloverMonth, $rolloverDay, $year) );
+                $fixedRolloverDate = date('Y-m-d', mktime( 0, 0, 0, $rolloverMonth, $rolloverDay, $year ) );
                 
-                //store orginal fixed rollover date calculated based on joining date
+                //CRM-7825 -membership date rules are :
+                //1. Membership should not be start in future.
+                //2. rollover window should be subset of membership window.
+                
+                //store original fixed start date as per current year.
+                $actualStartDate = $fixedStartDate;
+                
+                //store original fixed rollover date as per current year.
                 $actualRolloverDate = $fixedRolloverDate;
                 
-                // check if rollover date is less than fixed start date,
-                // if yes increment, another edge case handling 
-                if ( $fixedRolloverDate <= $fixedStartDate  ) {
-                    $year = $year + 1;
-                    $actualRolloverDate = date( 'Y-m-d', mktime( 0, 0, 0, $rolloverMonth, $rolloverDay, $year ) );
+                //make sure membership should not start in future.
+                if ( $joinDate < $actualStartDate ) {
+                    $actualStartDate = date('Y-m-d', mktime( 0, 0, 0, $startMonth, $startDay, --$year ) );
                 }
                 
-                // if join date is less than start date as well as rollover date
-                // then decrement the year by 1
-                if ( ( $joinDate < $fixedStartDate ) && ( $joinDate < $actualRolloverDate ) ) {
-                    $year = $year - 1;
-                    $actualRolloverDate = date( 'Y-m-d', mktime( 0, 0, 0, $rolloverMonth, $rolloverDay, $year ) );
+                //make sure rollover window should be 
+                //subset of membership period window.
+                if ( $fixedStartDate < $actualRolloverDate ) {
+                    $actualRolloverDate = date('Y-m-d', mktime( 0, 0, 0, $rolloverMonth, $rolloverDay, --$year ) );
                 }
                 
-                // calculate start date if join date is in rollover window
-                // if join date is greater than the rollover date,
-                // then consider the following year as the start date
+                //do check signup is in rollover window.
                 if ( $actualRolloverDate <= $joinDate ) {
                     $fixed_period_rollover = true;
-                    $year = $year + 1;
-                } 
-                
-                //CRM-7392 --now we have all dates in hand,
-                //in case join date is less than fixed start and 
-                //calculated roll over date, lets reduce year by one 
-                if ( ( $joinDate < $fixedStartDate ) && ( $joinDate < $actualRolloverDate ) ) {
-                    $year = $year - 1;
                 }
                 
-                $actualStartDate = date( 'Y-m-d', mktime( 0, 0, 0, $startMonth, $startDay, $year ) );
                 if ( !$startDate ) {
                     $startDate = $actualStartDate;
                 }
@@ -387,6 +380,10 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
                 
             case 'year' :
                 $year  = $year + $membershipTypeDetails['duration_interval'];
+                //extend membership date by duration interval.
+                if ( $fixed_period_rollover ) {
+                    $year += $membershipTypeDetails['duration_interval'];
+                }
                 
                 break;
             case 'month':
