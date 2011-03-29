@@ -54,8 +54,7 @@
     <div class="messages status">
         <div class="icon inform-icon"></div>&nbsp;       
         <span class="font-red bold">{ts}WARNING: Deleting this pledge will also delete any related pledge payments.{/ts} {ts}This action cannot be undone.{/ts}</span>
-        <p>{ts}Consider cancelling the pledge instead if you want to maintain an audit trail and avoid losing payment data. To set the pledge status to Cancelled and cancel any not-yet-paid pledge payments,
-        first click Cancel on this form. Then click the more > link from the pledge listing, and select the Cancel action.{/ts}</p>
+        <p>{ts}Consider cancelling the pledge instead if you want to maintain an audit trail and avoid losing payment data. To set the pledge status to Cancelled and cancel any not-yet-paid pledge payments, first click Cancel on this form. Then click the more &gt; link from the pledge listing, and select the Cancel action.{/ts}</p>
     </div>
    {else}
       <table class="form-layout-compressed">
