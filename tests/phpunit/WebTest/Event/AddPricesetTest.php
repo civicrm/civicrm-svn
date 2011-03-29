@@ -222,8 +222,13 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
        $this->click('_qf_EventInfo_upload-bottom');      
       
        // Wait for Location tab form to load
+       $this->open($this->sboxPath . 'civicrm/event/manage?reset=1');
+
+       $this->click("xpath=//table/tbody/tr/td[1]/a[text()='$eventTitle']/ancestor::td/following-sibling::td[8]/div/span[text() ='Configure']/ul/li/a[text() ='Fees']");
+
        $this->waitForPageToLoad('30000');
-     
+       /*
+
        // Go to Fees tab
        $this->click('link=Fees');
        $this->waitForElementPresent('_qf_Fee_upload-bottom');
@@ -328,6 +333,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
        }
        $this->assertStringsPresent('Event Total: $ 590.00' );
        $this->click( '_qf_ParticipantView_cancel-bottom' ); 
+       */
   }
   
 }
