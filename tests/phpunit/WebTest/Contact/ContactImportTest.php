@@ -78,7 +78,7 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       }
       
       // Import and check Individual contacts in Update mode.
-      $this->importCSVContacts( $updateHeaders, $updateRows, 'Individual', 'Update' ); 
+      $this->importCSVContacts($updateHeaders, $updateRows, 'Individual', 'Update'); 
       
       // Visit contacts to check updated data.
       foreach ( $updateRows as $updatedRow ) {
@@ -107,7 +107,7 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       }
       
       // Import and check Individual contacts in Update mode.
-      $this->importCSVContacts( $fillHeaders, $fillRows, 'Individual', 'Fill' );
+      $this->importCSVContacts($fillHeaders, $fillRows, 'Individual', 'Fill');
 
       // Visit contacts to check filled data.
       foreach ( $fillRows as $cid => $fillRow ) {
@@ -120,7 +120,9 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
 
           $this->verifyText("xpath=//div[@id='contact-summary']/div[2]/div[3]/div[2]/table/tbody/tr[1]/td[2]", preg_quote($fillRow['gender']));
       } 
-      
+
+      // Recreate same conacts using 'No Duplicate Checking'
+      $this->importCSVContacts($headers, $rows, 'Individual', 'No Duplicate Checking');
   }
   
   function testOrganizationImport()
@@ -136,7 +138,7 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       $this->importCSVContacts($headers, $rows, 'Organization' );
 
       // Get imported contact Ids
-      $importedContactIds = $this->getImportedContactIds( $rows, 'Organization' );
+      $importedContactIds = $this->getImportedContactIds($rows, 'Organization');
           
       // Build update mode import headers
       $updateHeaders = array( 'contact_id'        => 'Internal Contact ID',
@@ -151,7 +153,7 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       }
       
       // Import and check Individual contacts in Update mode.
-      $this->importCSVContacts( $updateHeaders, $updateRows, 'Organization', 'Update' ); 
+      $this->importCSVContacts($updateHeaders, $updateRows, 'Organization', 'Update'); 
       
       // Visit contacts to check updated data.
       foreach ( $updateRows as $updatedRow ) {
@@ -177,7 +179,7 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       }
       
       // Import and check Individual contacts in Update mode.
-      $this->importCSVContacts( $fillHeaders, $fillRows, 'Organization', 'Fill' );
+      $this->importCSVContacts($fillHeaders, $fillRows, 'Organization', 'Fill');
 
       // Visit contacts to check filled data.
       foreach ( $fillRows as $cid => $fillRow ) {
@@ -190,6 +192,8 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
           $this->verifyText("xpath=//div[@id='contactTopBar']/table/tbody/tr/td[4]", preg_quote($fillRow['legal_name']));
       }
       
+      // Recreate same conacts using 'No Duplicate Checking'
+      $this->importCSVContacts($headers, $rows, 'Organization', 'No Duplicate Checking');
   }
 
   function testHouseholdImport() 
@@ -220,7 +224,7 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       }
       
       // Import and check Individual contacts in Update mode.
-      $this->importCSVContacts( $updateHeaders, $updateRows, 'Household', 'Update'); 
+      $this->importCSVContacts($updateHeaders, $updateRows, 'Household', 'Update'); 
       
       // Visit contacts to check updated data.
       foreach ( $updateRows as $updatedRow ) {
@@ -246,7 +250,7 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       }
       
       // Import and check Individual contacts in Update mode.
-      $this->importCSVContacts( $fillHeaders, $fillRows, 'Household', 'Fill' );
+      $this->importCSVContacts($fillHeaders, $fillRows, 'Household', 'Fill');
       
       // Visit contacts to check filled data.
       foreach ( $fillRows as $cid => $fillRow ) {
@@ -259,6 +263,8 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
           $this->verifyText("xpath=//div[@id='contactTopBar']/table/tbody/tr/td[4]", preg_quote($fillRow['nick_name']));
       }
    
+      // Recreate same conacts using 'No Duplicate Checking'
+      $this->importCSVContacts($headers, $rows, 'Household', 'No Duplicate Checking');
   }
 
   function importCSVContacts( $headers, $rows, $contactType = 'Individual', $mode = 'Skip' ) {
