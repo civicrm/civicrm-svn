@@ -1210,13 +1210,6 @@ AND civicrm_membership.is_test = %2";
             }
         }
         
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
-        CRM_Core_BAO_CustomValueTable::postProcess( $form->_params,
-                                                    CRM_Core_DAO::$_nullArray,
-                                                    'civicrm_membership',
-                                                    $membership->id,
-                                                    'Membership' );
-        
         if ( ! empty( $errors ) ) {
             foreach ($errors as $error ) {
                 if ( is_string( $error ) ) {
@@ -1229,6 +1222,14 @@ AND civicrm_membership.is_test = %2";
             CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/contribute/transact',
                                                                "_qf_Main_display=true&qfKey={$form->_params['qfKey']}" ) );
         }
+
+        // CRM-7851
+        require_once 'CRM/Core/BAO/CustomValueTable.php';
+        CRM_Core_BAO_CustomValueTable::postProcess( $form->_params,
+                                                    CRM_Core_DAO::$_nullArray,
+                                                    'civicrm_membership',
+                                                    $membership->id,
+                                                    'Membership' );
         
         $form->_params['membershipID'] = $membership->id;
         if ( $form->_contributeMode == 'notify' ) {
