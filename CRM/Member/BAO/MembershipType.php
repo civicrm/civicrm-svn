@@ -340,13 +340,20 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
                 
                 //make sure membership should not start in future.
                 if ( $joinDate < $actualStartDate ) {
-                    $actualStartDate = date('Y-m-d', mktime( 0, 0, 0, $startMonth, $startDay, --$year ) );
+                    $actualStartDate = date('Y-m-d', mktime( 0, 0, 0, $startMonth, $startDay, $year - 1 ) );
                 }
+                
+                //get the fixed end date here.
+                $dateParts    = explode( '-', $actualStartDate );
+                $fixedEndDate = date('Y-m-d',mktime( 0, 0, 0, 
+                                                     $dateParts[1], 
+                                                     $dateParts[2] - 1, 
+                                                     $dateParts[0] + $membershipTypeDetails['duration_interval'] ) );
                 
                 //make sure rollover window should be 
                 //subset of membership period window.
-                if ( $fixedStartDate < $actualRolloverDate ) {
-                    $actualRolloverDate = date('Y-m-d', mktime( 0, 0, 0, $rolloverMonth, $rolloverDay, --$year ) );
+                if ( $fixedEndDate < $actualRolloverDate ) {
+                    $actualRolloverDate = date('Y-m-d', mktime( 0, 0, 0, $rolloverMonth, $rolloverDay, $year - 1 ) );
                 }
                 
                 //do check signup is in rollover window.
