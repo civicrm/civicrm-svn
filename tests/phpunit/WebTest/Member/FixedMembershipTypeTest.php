@@ -130,8 +130,13 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         // fill in Source
         $this->type( 'source', $sourceText );
 
+        $currentYear  = date( 'Y' );
+        $previousYear = $currentYear - 1;
+        $nextYear     = $currentYear + 1;
+        
+        $joinDate = "25 March $currentYear";
         // fill in Join Date
-        $this->webtestFillDate( 'join_date', '25 March 2011' );
+        $this->webtestFillDate( 'join_date', $joinDate );
         
         // Clicking save.
         $this->click( '_qf_Membership_upload' );
@@ -152,9 +157,9 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
                                         array( 'Membership Type' => "Membership Type $title",
                                                'Status'          => 'New',
                                                'Source'          => $sourceText,
-                                               'Member Since'    => 'March 25th, 2011',
-                                               'Start date'      => 'April 1st, 2010',
-                                               'End date'        => 'March 31st, 2012'
+                                               'Member Since'    => "March 25th, $currentYear",
+                                               'Start date'      => "April 1st, $previousYear",
+                                               'End date'        => "March 31st, $nextYear"
                                                )
                                          );
     }
@@ -250,8 +255,12 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         // fill in Source
         $this->type( 'source', $sourceText );
 
+        $currentYear  = date( 'Y' );
+        $previousYear = $currentYear - 1;
+        
+        $joinDate = "15 January $currentYear";
         // fill in Join Date
-        $this->webtestFillDate( 'join_date', '15 January 2011' );
+        $this->webtestFillDate( 'join_date', $joinDate );
         
         // Clicking save.
         $this->click( '_qf_Membership_upload' );
@@ -272,9 +281,9 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
                                         array( 'Membership Type' => "Membership Type $title",
                                                'Status'          => 'New',
                                                'Source'          => $sourceText,
-                                               'Member Since'    => 'January 15th, 2011',
-                                               'Start date'      => 'September 1st, 2010',
-                                               'End date'        => 'August 31st, 2011'
+                                               'Member Since'    => "January 15th, $currentYear",
+                                               'Start date'      => "September 1st, $previousYear",
+                                               'End date'        => "August 31st, $currentYear"
                                                )
                                          );
     }
@@ -370,8 +379,13 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         // fill in Source
         $this->type( 'source', $sourceText );
 
+        $currentYear  = date( 'Y' );
+        $previousYear = $currentYear - 1;
+        $nextYear     = $currentYear + 1;
+
+        $joinDate = "5 January $currentYear";
         // fill in Join Date
-        $this->webtestFillDate( 'join_date', '5 January 2011' );
+        $this->webtestFillDate( 'join_date', $joinDate );
         
         // Clicking save.
         $this->click( '_qf_Membership_upload' );
@@ -392,9 +406,9 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
                                         array( 'Membership Type' => "Membership Type $title",
                                                'Status'          => 'New',
                                                'Source'          => $sourceText,
-                                               'Member Since'    => 'January 5th, 2011',
-                                               'Start date'      => 'June 1st, 2010',
-                                               'End date'        => 'May 31st, 2012'
+                                               'Member Since'    => "January 5th, $currentYear",
+                                               'Start date'      => "June 1st, $previousYear",
+                                               'End date'        => "May 31st, $nextYear"
                                                )
                                          );
     }
