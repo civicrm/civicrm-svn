@@ -35,7 +35,7 @@ function setStatusesTo(statusId)
     {/foreach}
     {literal}
     for (k = 0; k < cId.length; k++) {
-        document.getElementById("field_"+cId[k]+"_participant_status_id").value = statusId;
+        document.getElementById("field_"+cId[k]+"_participant_status").value = statusId;
     }
 }
 

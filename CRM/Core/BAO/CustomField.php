@@ -1656,7 +1656,7 @@ AND    cf.id = %1";
             }
             
             $query = "
-    SELECT  g.id, f.label
+    SELECT  g.id, g.label
       FROM  civicrm_option_group g
 INNER JOIN  civicrm_custom_field f ON ( g.id = f.option_group_id ) 
      WHERE  {$whereClause}";

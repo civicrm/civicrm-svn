@@ -209,7 +209,7 @@
          {if $relTypeID neq 'client'} 
            <tr>
                <td class="crm-case-caseview-role-relName label">{$relName}</td>
-               <td class="crm-case-caseview-role-relName_{$rowNumber}" id="relName_{$rowNumber}">(not assigned)</td>
+               <td class="crm-case-caseview-role-relName_{$rowNumber}" id="relName_{$rowNumber}">{ts}(not assigned){/ts}</td>
                <td class="crm-case-caseview-role-phone" id="phone_{$rowNumber}"></td>
                <td class="crm-case-caseview-role-email" id="email_{$rowNumber}"></td>
 	       {if $hasAccessToAllCases}               
