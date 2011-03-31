@@ -57,10 +57,45 @@ function civicrm_api3_phone_create( $params )
 	/*
 	 * if is_primary is not set in params, set default = 0
 	 */
-	if ( !array_key_exists('is_primary', $params )) {
+	if ( !CRM_Utils_Array::value('is_primary', $params )) {
 		$params['is_primary'] = 0; 
-	}	
-	
+	}
+	/*
+	 * if phone_type_id in params, it should exist as option value
+	 */
+	if (CRM_Utils_Array::value('phone_type_id', $params)) {
+		$option_group_params = array(
+			'version'	=>	'3',
+			'name'		=>	'phone_type');
+		$option_group = civicrm_api('OptionGroup', 'Get', $option_group_params);
+		if ($option_group['count'] == 0) {
+			return civicrm_api3_create_error("There is no option group 
+				phone_type in CiviCRM, can not create phone.");
+		} else {
+			$option_value_params = array(
+				'version'			=>	'3',
+				'option_group_id'	=>	$option_group['id'],
+				'value'				=>	$params['phone_type_id']);
+			$option_value = civicrm_api('OptionValue', 'Get', $option_value_params);
+			if ($option_value['count'] == 0) {
+				return civicrm_api3_create_error("Phone_type_id does not
+					exist, could not create phone");
+			}
+		}
+	}
+	/*
+	 * if location_type_id in params, it should exist as option value
+	 */
+	if (CRM_Utils_Array::value('location_type_id', $params)) {
+		$location_params = array(
+			'version'			=>	'3',
+			'id'				=>	$params['location_type_id']);
+		$location_value = civicrm_api('LocationType', 'Get', $location_params);
+		if ($location_value['count'] == 0) {
+			return civicrm_api3_create_error("Location_type_id does not
+				exist, could not create phone");
+		}
+	}
     require_once 'CRM/Core/BAO/Phone.php';
     $phoneBAO = CRM_Core_BAO_Phone::add($params);
     
@@ -69,11 +104,9 @@ function civicrm_api3_phone_create( $params )
 	 } else {
 		 $values = array( );
 		 unset($phoneBAO->location_type_id);
-		 _civicrm_api3_object_to_array($phoneBAO, $values[$phoneBAO->id]);
+		 CRM_Core_DAO::storeValues($phoneBAO, $values[$phoneBAO->id]);
 		 return civicrm_api3_create_success($values, $params,$phoneBAO);
 	 }
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   }
@@ -105,7 +138,6 @@ function civicrm_api3_phone_delete( $params )
 		}
 	} else {
 		return civicrm_api3_create_error( 'Could not delete phone with id '.$phoneID);
-		//recoverable fatal error: Object of class stdClass could not be converted to string in /home/www-home/apps/civicrm-3.3.5/civicrm/api/v3/Phone.php on line 107.
 	}
     
   } catch (Exception $e) {
@@ -139,7 +171,7 @@ function civicrm_api3_phone_get($params)
     $fields = array_keys($phoneBAO->fields());
 
     foreach ( $fields as $name) {
-        if (array_key_exists($name, $params)) {
+        if (CRM_Utils_Array::value($name, $params)) {
             $phoneBAO->$name = $params[$name];
         }
     }
@@ -155,8 +187,6 @@ function civicrm_api3_phone_get($params)
       return civicrm_api3_create_success(array(),$params,$phoneBAO);
     }
 				
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   }

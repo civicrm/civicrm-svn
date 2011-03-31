@@ -48,8 +48,8 @@
     </thead>
     {foreach from=$rows item=row}
     	<tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class} crm-contactType {if NOT $row.is_active} disabled{/if}">
-        <td class="crm-contactType-label">{$row.label}</td>
-        <td class="crm-contactType-parent">{if $row.parent}{$row.parent_label}{else}{ts}(built-in){/ts}{/if}</td>
+        <td class="crm-contactType-label">{ts}{$row.label}{/ts}</td>
+        <td class="crm-contactType-parent">{if $row.parent}{ts}{$row.parent_label}{/ts}{else}{ts}(built-in){/ts}{/if}</td>
         <td class="crm-contactType-description">{$row.description}</td>
         <td>{$row.action|replace:'xx':$row.id}</td>
     </tr>
