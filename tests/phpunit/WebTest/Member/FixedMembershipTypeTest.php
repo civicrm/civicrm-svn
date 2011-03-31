@@ -130,11 +130,21 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         // fill in Source
         $this->type( 'source', $sourceText );
 
+        //build the membership dates.
+        require_once 'CRM/Core/Config.php';
+        require_once 'CRM/Utils/Array.php';
+        require_once 'CRM/Utils/Date.php';
         $currentYear  = date( 'Y' );
         $previousYear = $currentYear - 1;
         $nextYear     = $currentYear + 1;
+        $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 3, 25, $currentYear ) ); 
+        $startDate    = date('Y-m-d', mktime( 0, 0, 0, 4, 1,  $previousYear  ) );
+        $endDate      = date('Y-m-d', mktime( 0, 0, 0, 3, 31, $nextYear ) );
+        $configVars   = new CRM_Core_Config_Variables( );        
+        foreach ( array( 'joinDate', 'startDate', 'endDate' ) as $date ) {
+            $$date = CRM_Utils_Date::customFormat( $$date, $configVars->dateformatFull ); 
+        }
         
-        $joinDate = "25 March $currentYear";
         // fill in Join Date
         $this->webtestFillDate( 'join_date', $joinDate );
         
@@ -157,9 +167,9 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
                                         array( 'Membership Type' => "Membership Type $title",
                                                'Status'          => 'New',
                                                'Source'          => $sourceText,
-                                               'Member Since'    => "March 25th, $currentYear",
-                                               'Start date'      => "April 1st, $previousYear",
-                                               'End date'        => "March 31st, $nextYear"
+                                               'Member Since'    => $joinDate,
+                                               'Start date'      => $startDate,
+                                               'End date'        => $endDate
                                                )
                                          );
     }
@@ -254,11 +264,21 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         $sourceText = "Membership ContactAddTest with Fixed Membership Type";
         // fill in Source
         $this->type( 'source', $sourceText );
-
+        
+        //build the membership dates.
+        require_once 'CRM/Core/Config.php';
+        require_once 'CRM/Utils/Array.php';
+        require_once 'CRM/Utils/Date.php';
         $currentYear  = date( 'Y' );
         $previousYear = $currentYear - 1;
+        $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 1, 15, $currentYear ) ); 
+        $startDate    = date('Y-m-d', mktime( 0, 0, 0, 9, 1,  $previousYear  ) );
+        $endDate      = date('Y-m-d', mktime( 0, 0, 0, 8, 31, $currentYear ) );
+        $configVars   = new CRM_Core_Config_Variables( );        
+        foreach ( array( 'joinDate', 'startDate', 'endDate' ) as $date ) {
+            $$date = CRM_Utils_Date::customFormat( $$date, $configVars->dateformatFull ); 
+        }
         
-        $joinDate = "15 January $currentYear";
         // fill in Join Date
         $this->webtestFillDate( 'join_date', $joinDate );
         
@@ -281,9 +301,9 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
                                         array( 'Membership Type' => "Membership Type $title",
                                                'Status'          => 'New',
                                                'Source'          => $sourceText,
-                                               'Member Since'    => "January 15th, $currentYear",
-                                               'Start date'      => "September 1st, $previousYear",
-                                               'End date'        => "August 31st, $currentYear"
+                                               'Member Since'    => $joinDate,
+                                               'Start date'      => $startDate,
+                                               'End date'        => $endDate
                                                )
                                          );
     }
@@ -379,11 +399,21 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         // fill in Source
         $this->type( 'source', $sourceText );
 
+        //build the membership dates.
+        require_once 'CRM/Core/Config.php';
+        require_once 'CRM/Utils/Array.php';
+        require_once 'CRM/Utils/Date.php';
         $currentYear  = date( 'Y' );
         $previousYear = $currentYear - 1;
         $nextYear     = $currentYear + 1;
-
-        $joinDate = "5 January $currentYear";
+        $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 1, 5,  $currentYear ) ); 
+        $startDate    = date('Y-m-d', mktime( 0, 0, 0, 6, 1,  $previousYear  ) );
+        $endDate      = date('Y-m-d', mktime( 0, 0, 0, 5, 31, $nextYear ) );
+        $configVars   = new CRM_Core_Config_Variables( );        
+        foreach ( array( 'joinDate', 'startDate', 'endDate' ) as $date ) {
+            $$date = CRM_Utils_Date::customFormat( $$date, $configVars->dateformatFull ); 
+        }
+        
         // fill in Join Date
         $this->webtestFillDate( 'join_date', $joinDate );
         
@@ -406,9 +436,9 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
                                         array( 'Membership Type' => "Membership Type $title",
                                                'Status'          => 'New',
                                                'Source'          => $sourceText,
-                                               'Member Since'    => "January 5th, $currentYear",
-                                               'Start date'      => "June 1st, $previousYear",
-                                               'End date'        => "May 31st, $nextYear"
+                                               'Member Since'    => $joinDate,
+                                               'Start date'      => $startDate,
+                                               'End date'        => $endDate
                                                )
                                          );
     }
