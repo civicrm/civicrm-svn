@@ -207,6 +207,8 @@ class CRM_Core_I18n_Schema
         foreach ($columns as $table => $hash) {
             // add new columns
             foreach ($hash as $column => $type) {
+                // CRM-7854: skip existing columns
+                if (CRM_Core_DAO::checkFieldExists($table, "{$column}_{$locale}", false)) continue;
                 $queries[] = "ALTER TABLE {$table} ADD {$column}_{$locale} {$type}";
                 $queries[] = "UPDATE {$table} SET {$column}_{$locale} = {$column}_{$source}";
             }
@@ -346,6 +348,8 @@ class CRM_Core_I18n_Schema
 
         $queries = array();
         foreach ($indices[$table] as $index) {
+            // CRM-7854: skip existing indices
+            if (CRM_Core_DAO::checkConstraintExists($table, $index['name'])) continue;
             $unique = isset($index['unique']) && $index['unique'] ? 'UNIQUE' : '';
             foreach ($index['field'] as $i => $col) {
                 // if a given column is localizable, extend its name with the locale

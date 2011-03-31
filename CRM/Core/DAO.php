@@ -494,11 +494,12 @@ class CRM_Core_DAO extends DB_DataObject
      *
      * @param string $tableName
      * @param string $columnName
+     * @param bool   $i18nRewrite  whether to rewrite the query on multilingual setups
      * 
      * @return boolean true if exists, else false
      * @static
      */
-    function checkFieldExists( $tableName, $columnName ) 
+    function checkFieldExists($tableName, $columnName, $i18nRewrite = true)
     {
         $query = "
 SHOW COLUMNS
@@ -506,7 +507,7 @@ FROM $tableName
 LIKE %1
 ";
         $params = array( 1 => array( $columnName, 'String' ) );
-        $dao = CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery($query, $params, true, null, false, $i18nRewrite);
         $result = $dao->fetch( ) ? true : false;
         $dao->free( );
         return $result;
