@@ -1114,7 +1114,11 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             }
         }
 
-        $headers['To'] = "{$mailParams['toName']} <{$mailParams['toEmail']}>";
+        //format the recipient name, CRM-7818 
+        $toName = CRM_Utils_Mail::formatRFC2822Name( $mailParams['toName'] );
+        
+        $headers['To'] = "$toName <{$mailParams['toEmail']}>";
+        
         $headers['Precedence'] = 'bulk';
         // Will test in the mail processor if the X-VERP is set in the bounced email.
         // (As an option to replace real VERP for those that can't set it up)

@@ -305,6 +305,32 @@ class CRM_Utils_Mail
         $result .= "<{$email}>";
         return $result;
     }
+    
+    /**
+     * Takes a string and checks to see if it needs to be escaped / double quoted
+     * and if so does the needful and return the formatted name
+     *
+     * This code has been copied and adapted from ezc/Mail/src/tools.php
+     */
+    static function formatRFC2822Name( $name ) 
+    {
+        $name = trim( $name );
+        if ( $name !== '' ) {
+            // remove the quotes around the name part if they are already there
+            if ( $name{0} === '"' && $name{strlen( $name ) - 1} === '"' ) {
+                $name = substr( $name, 1, -1 );
+            }
+            
+            // add slashes to " and \ and surround the name part with quotes
+            if ( strpbrk( $name, ",@<>:;'\"" ) !== false ) {
+                $name = str_replace( '\\', '\\\\', $name );
+                $name = str_replace( '"', '\"', $name );
+                $name = "\"{$name}\"";
+            }
+        }
+        
+        return $name;
+    }
 
 }
 
