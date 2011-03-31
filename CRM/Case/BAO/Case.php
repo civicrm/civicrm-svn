@@ -879,25 +879,30 @@ WHERE is_deleted =0
     static function getCaseRoles( $contactID, $caseID, $relationshipID = null )
     {
         $query = '
-SELECT civicrm_relationship.id as civicrm_relationship_id, civicrm_contact.sort_name as sort_name, civicrm_email.email as email, civicrm_phone.phone as phone, civicrm_relationship.contact_id_b as civicrm_contact_id, civicrm_relationship_type.label_b_a as relation, civicrm_relationship_type.id as relation_type 
-FROM civicrm_relationship INNER JOIN civicrm_relationship_type ON civicrm_relationship.relationship_type_id = civicrm_relationship_type.id
-INNER JOIN civicrm_contact ON civicrm_relationship.contact_id_b = civicrm_contact.id
-LEFT OUTER JOIN civicrm_phone ON (civicrm_phone.contact_id = civicrm_contact.id AND civicrm_phone.is_primary = 1) 
-LEFT JOIN civicrm_email ON (civicrm_email.contact_id = civicrm_contact.id ) 
-WHERE civicrm_relationship.contact_id_a = %1 AND civicrm_relationship.case_id = %2
-';
-
-        $params = array( 1 => array( $contactID, 'Integer' ),
-                         2 => array( $caseID, 'Integer' )
-                         );
-
+    SELECT  civicrm_relationship.id as civicrm_relationship_id, 
+            civicrm_contact.sort_name as sort_name, 
+            civicrm_email.email as email, 
+            civicrm_phone.phone as phone, 
+            civicrm_relationship.contact_id_b as civicrm_contact_id, 
+            civicrm_relationship_type.label_a_b as relation, 
+            civicrm_relationship_type.id as relation_type 
+      FROM  civicrm_relationship 
+INNER JOIN  civicrm_relationship_type ON civicrm_relationship.relationship_type_id = civicrm_relationship_type.id
+INNER JOIN  civicrm_contact ON civicrm_relationship.contact_id_b = civicrm_contact.id
+ LEFT JOIN  civicrm_phone ON (civicrm_phone.contact_id = civicrm_contact.id AND civicrm_phone.is_primary = 1) 
+ LEFT JOIN  civicrm_email ON (civicrm_email.contact_id = civicrm_contact.id ) 
+     WHERE  civicrm_relationship.contact_id_a = %1 AND civicrm_relationship.case_id = %2';
+        
+        $params = array( 1 => array( $contactID, 'Positive' ),
+                         2 => array( $caseID,    'Positive' ) );
+        
 		if ( $relationshipID ) {
 			$query .= ' AND civicrm_relationship.id = %3 ';
 			$params[3] = array( $relationshipID, 'Integer' );
 		}
         
         $dao =& CRM_Core_DAO::executeQuery( $query, $params );
-
+        
         $values = array( );
         while ( $dao->fetch( ) ) {
             $rid = $dao->civicrm_relationship_id;
