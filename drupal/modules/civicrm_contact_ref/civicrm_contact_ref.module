@@ -233,7 +233,7 @@ function civicrm_contact_ref_autocomplete_validate($element, &$form_state) {
         if (!empty($matches)) {
             // Explicit [cid:n].
             list(, $title, $cid) = $matches;
-            $cids[] = $cid;
+            $cids[] = array( 'contact_id' => $cid );
         }
         else {
             // No explicit cid.
@@ -246,7 +246,7 @@ function civicrm_contact_ref_autocomplete_validate($element, &$form_state) {
                 // the best thing would be to present the user with an additional form,
                 // allowing the user to choose between valid candidates with the same title
                 // ATM, we pick the first matching candidate...
-                $cids = array_shift(array_keys($cids));
+                $cids[] = array( 'contact_id' => array_shift(array_keys($cids)) );
             }
         }
     }
