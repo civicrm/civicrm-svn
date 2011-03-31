@@ -703,7 +703,7 @@ function addRole() {
     <div id="manageTags">
         <div class="label">{$form.case_tag.label}</div>
         <div class="view-value"><div class="crm-select-container">{$form.case_tag.html}</div>
-        <div style="text-align:left;">{include file="CRM/common/Tag.tpl"}</div>
+        <div style="text-align:left;">{include file="CRM/common/Tag.tpl" tagsetType='case'}</div>
     </div>
     </div>
 
@@ -751,7 +751,7 @@ function addTags() {
                 });
                 
                 var tagList = '';
-                cj("#manageTags input[name^=taglist]").each( function( ) {
+                cj("#manageTags input[name^=case_taglist]").each( function( ) {
                     if ( !tagsChecked ) {
                         tagsChecked = cj(this).val() + '';
                     } else {

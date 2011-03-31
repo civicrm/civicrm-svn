@@ -81,7 +81,7 @@ class CRM_Case_Form_Search extends CRM_Core_Form
      * @var array 
      * @access protected 
      */ 
-    protected $_formValues; 
+    public $_formValues; 
 
     /**
      * the params that are sent to the query

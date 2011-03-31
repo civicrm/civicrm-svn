@@ -252,8 +252,8 @@
                  </tr>
              {/if}
              
-             {if $tagset}
-                <tr class="crm-activity-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl"}</td></tr>
+             {if $tagsetInfo_activity}
+                <tr class="crm-activity-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl" tagsetType='activity'}</td></tr>
              {/if}
              
              {if $action neq 4 OR $viewCustomData} 

@@ -389,7 +389,6 @@ class CRM_Case_BAO_Query
             return;
 
         case 'case_activity_status_id':
-
             $names = $value;
             require_once "CRM/Core/OptionGroup.php";
             if ( $activityStatus = CRM_Core_OptionGroup::getLabel( 'activity_status', $value, 'value' ) ) {
@@ -413,7 +412,6 @@ class CRM_Case_BAO_Query
             return;
             
         case 'case_activity_medium_id':
-            
             $names = $value;
             require_once "CRM/Core/OptionGroup.php";
             if ( $activityMedium = CRM_Core_OptionGroup::getLabel( 'encounter_medium', $value, 'value' ) ) {
@@ -452,11 +450,25 @@ class CRM_Case_BAO_Query
             $query->_tables['civicrm_case']         = $query->_whereTables['civicrm_case']           = 1;
             $query->_tables['civicrm_case_contact'] = $query->_whereTables['civicrm_case_contact']   = 1;
             return; 
-                
+
+        case 'case_taglist':
+            $taglist = $value;
+            $value = array( );
+            foreach( $taglist as $val ) {
+                if ( $val ) {
+                    $val = explode(',', $val );
+                    foreach( $val as $tId ) {
+                        if ( is_numeric( $tId ) ) {
+                            $value[$tId] = 1;
+                        }
+                    }
+                }
+            } 
+
         case 'case_tags':
             require_once 'CRM/Core/BAO/Tag.php';
-        	$tags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_case'), true );
-        	
+            $tags = CRM_Core_PseudoConstant::tag( );
+
             $names = array( );
             $val   = array( );
             if ( is_array( $value ) ) {
@@ -469,8 +481,9 @@ class CRM_Case_BAO_Query
             }
             
             $query->_where[$grouping][] = " civicrm_case_tag.tag_id IN (" . implode( ',', $val ). " )";
-            
             $query->_qill[$grouping ][] = ts( 'Case Tags %1', array( 1 => $op))  . ' ' . implode( ' ' . ts('or') . ' ', $names );
+            $query->_tables['civicrm_case']  = $query->_whereTables['civicrm_case']  = 1;
+            $query->_tables['civicrm_case_contact'] = $query->_whereTables['civicrm_case_contact'] = 1;
             $query->_tables['civicrm_case_tag'] = $query->_whereTables['civicrm_case_tag'] = 1;
             return;    
         }
@@ -537,8 +550,7 @@ case_relation_type.id = case_relationship.relationship_type_id )";
             break;
             
         case 'civicrm_case_tag':            
-			$from .= " $side JOIN civicrm_entity_tag as civicrm_case_tag ON ( civicrm_case_tag.entity_table = 'civicrm_case' AND
-                                                          					  civicrm_case_tag.entity_id = civicrm_case.id ) ";
+            $from .= " $side JOIN civicrm_entity_tag as civicrm_case_tag ON ( civicrm_case_tag.entity_table = 'civicrm_case' AND civicrm_case_tag.entity_id = civicrm_case.id ) ";
 			break;
 			
         }
@@ -664,7 +676,12 @@ case_relation_type.id = case_relationship.relationship_type_id )";
                 $form->_tagElement =& $form->addElement('checkbox', "case_tags[$tagID]", null, $tagName);         
             }
         }
-        
+
+        require_once 'CRM/Core/Form/Tag.php';
+        require_once 'CRM/Core/BAO/Tag.php';
+        $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_case' );
+        CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_case', null, true );
+
         require_once"CRM/Core/Permission.php";
         if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) { 
             $form->addElement( 'checkbox', 'case_deleted' , ts( 'Deleted Cases' ) );
