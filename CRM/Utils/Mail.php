@@ -315,23 +315,21 @@ class CRM_Utils_Mail
     static function formatRFC2822Name( $name ) 
     {
         $name = trim( $name );
-        if ( $name !== '' ) {
+        if ( ! empty( $name ) ) {
             // remove the quotes around the name part if they are already there
-            if ( $name{0} === '"' && $name{strlen( $name ) - 1} === '"' ) {
+            if ( substr( $name, 0, 1 ) == '"' && substr( $name, -1 ) == '"' ) {
                 $name = substr( $name, 1, -1 );
             }
             
             // add slashes to " and \ and surround the name part with quotes
             if ( strpbrk( $name, ",@<>:;'\"" ) !== false ) {
-                $name = str_replace( '\\', '\\\\', $name );
-                $name = str_replace( '"', '\"', $name );
-                $name = "\"{$name}\"";
+                $name = '"'. addcslashes( $name, '\\"' ) . '"';
             }
         }
         
         return $name;
     }
-
+    
 }
 
 
