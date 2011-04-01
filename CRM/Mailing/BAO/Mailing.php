@@ -1113,16 +1113,20 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                                          $attach['cleanName'] );
             }
         }
-
-        if ( $mailParams['toName'] == $email ||
-             strpos( '@', $mailParams['toName'] ) !== false ) {
-            $toName = null;
+        
+        //pickup all from mail params.
+        $toName  = trim( $mailParams['toName']  );
+        $toEmail = trim( $mailParams['toEmail'] );
+        if ( $toName == $toEmail || 
+             strpos( $toName, '@') !== false ) {
+            $formattedTo = $toEmail;
         } else {
             $toName = CRM_Utils_Mail::formatRFC2822Name( $mailParams['toName'] );
+            $formattedTo = "$toName <$toEmail>";
         }
-
-        $headers['To'] = "$toName <{$mailParams['toEmail']}>";
-
+        
+        $headers['To'] = $formattedTo; 
+        
         $headers['Precedence'] = 'bulk';
         // Will test in the mail processor if the X-VERP is set in the bounced email.
         // (As an option to replace real VERP for those that can't set it up)
