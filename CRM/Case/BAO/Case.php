@@ -1730,33 +1730,37 @@ AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
             $relationshipClause = " civicrm_relationship.id IN ($relationshipId)";
         } else {
             $relationshipClause = " civicrm_relationship.id = %1";
-            $queryParam[1] = array( $relationshipId, 'Integer' );
+            $queryParam[1] = array( $relationshipId, 'Positive' );
         }
-
-        $query = "
-                  SELECT civicrm_relationship.contact_id_b as rel_contact_id, civicrm_relationship.contact_id_a as assign_contact_id, 
-                  civicrm_relationship_type.label_b_a as relation, civicrm_relationship.case_id as caseId,
-                  cc.display_name as clientName, cca.display_name as  assigneeContactName  
-                  FROM civicrm_relationship_type,  civicrm_relationship 
-                  LEFT JOIN civicrm_contact cc  ON cc.id  = civicrm_relationship.contact_id_b  
-                  LEFT JOIN civicrm_contact cca ON cca.id = civicrm_relationship.contact_id_a
-                  WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id AND {$relationshipClause}";
         
-              
+        $query = "
+   SELECT  cc.display_name as clientName, 
+           cca.display_name as  assigneeContactName,  
+           civicrm_relationship.case_id as caseId,
+           civicrm_relationship_type.label_a_b as relation_a_b,
+           civicrm_relationship_type.label_b_a as relation_b_a,
+           civicrm_relationship.contact_id_b as rel_contact_id,            
+           civicrm_relationship.contact_id_a as assign_contact_id 
+     FROM  civicrm_relationship_type,  civicrm_relationship 
+LEFT JOIN  civicrm_contact cc  ON cc.id  = civicrm_relationship.contact_id_b  
+LEFT JOIN  civicrm_contact cca ON cca.id = civicrm_relationship.contact_id_a
+    WHERE  civicrm_relationship.relationship_type_id = civicrm_relationship_type.id AND {$relationshipClause}";
+        
         $dao = CRM_Core_DAO::executeQuery( $query,$queryParam );
-              
+        
         while ( $dao->fetch() ) {
-            $caseRelationship  = $dao->relation;
             //to get valid assignee contact(s).
-             if ( isset($dao->caseId) || $dao->rel_contact_id != $contactId ) { 
-                 $assigneContactIds[$dao->rel_contact_id]  = $dao->rel_contact_id;
-                 $assigneContactName = $dao->clientName;
-             } else {
-                 $assigneContactIds[$dao->assign_contact_id]  = $dao->assign_contact_id; 
-                 $assigneContactName = $dao->assigneeContactName;
-             }
+            if ( isset($dao->caseId) || $dao->rel_contact_id != $contactId ) { 
+                $caseRelationship = $dao->relation_a_b;
+                $assigneContactName = $dao->clientName;
+                $assigneContactIds[$dao->rel_contact_id] = $dao->rel_contact_id;
+            } else {
+                $caseRelationship = $dao->relation_b_a;
+                $assigneContactName = $dao->assigneeContactName;
+                $assigneContactIds[$dao->assign_contact_id] = $dao->assign_contact_id; 
+            }
         }
-
+        
         require_once 'CRM/Core/OptionGroup.php';
         $session = & CRM_Core_Session::singleton();
         $activityParams = array('source_contact_id'    => $session->get( 'userID' ),
