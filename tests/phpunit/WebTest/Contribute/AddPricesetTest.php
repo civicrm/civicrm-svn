@@ -155,7 +155,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       $this->assertStringsPresent( $validateStrings );
   }
   
-  function testRegisterWithPriceSet()
+  function testContributeWithPriceSet()
   {
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
@@ -164,7 +164,74 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       
       // Log in using webtestLogin() method
       $this->webtestLogin();
+
+      $setTitle = 'Conference Fees - '.substr(sha1(rand()), 0, 7);
+      $usedFor = 'Contribution';
+      $setHelp = 'Select your conference options.';
+      $this->_testAddSet( $setTitle, $usedFor, $setHelp );
       
+      // Get the price set id ($sid) by retrieving and parsing the URL of the New Price Field form
+      // which is where we are after adding Price Set.
+      $elements = $this->parseURL( );
+      $sid = $elements['queryString']['sid'];
+      $this->assertType( 'numeric', $sid );
+      
+      $validStrings = array( );
+      $fields = array( 'Full Conference'        => 'Text',
+                       'Meal Choice'            => 'Select',
+                       'Pre-conference Meetup?' => 'Radio',
+                       'Evening Sessions'       => 'CheckBox',
+                       );
+      $this->_testAddPriceFields( $fields, $validateStrings );
+      
+      // load the Price Set Preview and check for expected values
+      $this->_testVerifyPriceSet( $validateStrings, $sid );      
+            
       $this->open($this->sboxPath . 'civicrm/contribute/add?reset=1&action=add&context=standalone');
+
+      // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
+      // button at the end of this page to show up, to make sure it's fully loaded.
+      $this->waitForElementPresent('_qf_Contribution_upload');
+
+      // Let's start filling the form with values.
+      
+      // create new contact using dialog
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestNewDialogContact( $firstName, 'Contributor', $firstName . '@example.com' );
+      
+      // select contribution type
+      $this->select('contribution_type_id', 'value=1');
+      
+      // fill in Received Date
+      $this->webtestFillDate('receive_date');
+     
+      // source
+      $this->type('source', 'Mailer 1');
+      
+      // total amount
+      // $this->type('total_amount', '100');
+      $label = 'Conference Fees - 9456bdc';
+      $this->select('price_set_id', "label=$setTitle");
+      // select payment instrument type = Check and enter chk number
+      $this->select('payment_instrument_id', 'value=4');
+      $this->waitForElementPresent('check_number');
+      $this->type('check_number', 'check #1041');
+
+      $this->type('trxn_id', 'P20901X1' . rand(100, 10000));
+      
+      //Additional Detail section
+      $this->click('AdditionalDetail');
+      $this->waitForElementPresent('thankyou_date');
+
+      $this->type('note', 'This is a test note.');
+      $this->type('non_deductible_amount', '10');
+      $this->type('fee_amount', '0');
+      $this->type('net_amount', '0');
+      $this->type('invoice_id', time());
+      $this->webtestFillDate('thankyou_date');
+     
+
+      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent('thankyou_datedd');
   }
 }
