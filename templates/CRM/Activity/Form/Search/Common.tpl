@@ -87,6 +87,7 @@
    </td>
 </tr>
 
+<tr><td colspan="3">{include file="CRM/common/Tag.tpl" tagsetType='activity'}</td></tr>
 
 {* campaign in activity search *}
 {include file="CRM/Campaign/Form/addCampaignToComponent.tpl" 

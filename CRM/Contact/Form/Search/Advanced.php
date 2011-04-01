@@ -244,7 +244,7 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
                 $this->set( 'id', '' );
             }
         }
-
+        
         // retrieve ssID values only if formValues is null, i.e. form has never been posted
         if ( empty( $this->_formValues ) && isset( $this->_ssID ) ) {
             $this->_formValues = CRM_Contact_BAO_SavedSearch::getFormValues( $this->_ssID );
@@ -337,10 +337,10 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
             }
         }
         
-        $taglist = CRM_Utils_Array::value( 'taglist', $this->_formValues );
+        $taglist = CRM_Utils_Array::value( 'contact_taglist', $this->_formValues );
         
         if ( $taglist && is_array( $taglist ) ) {
-            unset( $this->_formValues['taglist'] );
+            unset( $this->_formValues['contact_taglist'] );
             foreach( $taglist as $value ) {
                 if ( $value ) {
                     $value = explode(',', $value );

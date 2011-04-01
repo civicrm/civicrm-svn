@@ -678,7 +678,7 @@ function addRole() {
     <div class="crm-block crm-content-block crm-case-caseview-display-tags">{$tags}</div>
   {/if}
 
-  {foreach from=$tagset item=displayTagset}
+  {foreach from=$tagsetInfo_case item=displayTagset}
       {if $displayTagset.entityTagsArray}
           <div class="crm-block crm-content-block crm-case-caseview-display-tagset">
               &nbsp;&nbsp;{$displayTagset.parentName}:
@@ -689,7 +689,7 @@ function addRole() {
       {/if}
   {/foreach}
 
-  {if !tags and !$displayTagset.entityTagsArray }
+  {if !$tags and !$displayTagset.entityTagsArray }
     <div class="status">
         {ts}There are no tags currently assigend to this case.{/ts}
     </div>
@@ -703,7 +703,7 @@ function addRole() {
     <div id="manageTags">
         <div class="label">{$form.case_tag.label}</div>
         <div class="view-value"><div class="crm-select-container">{$form.case_tag.html}</div>
-        <div style="text-align:left;">{include file="CRM/common/Tag.tpl"}</div>
+        <div style="text-align:left;">{include file="CRM/common/Tag.tpl" tagsetType='case'}</div>
     </div>
     </div>
 
@@ -751,7 +751,7 @@ function addTags() {
                 });
                 
                 var tagList = '';
-                cj("#manageTags input[name^=taglist]").each( function( ) {
+                cj("#manageTags input[name^=case_taglist]").each( function( ) {
                     if ( !tagsChecked ) {
                         tagsChecked = cj(this).val() + '';
                     } else {

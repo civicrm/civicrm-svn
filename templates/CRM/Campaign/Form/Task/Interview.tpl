@@ -153,6 +153,7 @@
 	//load jQuery data table.
         cj('#voterRecords').dataTable( {
 		"sPaginationType": "full_numbers",
+		"bJQueryUI"  : true,
 		"aaSorting"  : sortColumn,
 		"aoColumns"  : columns
         });        

@@ -60,7 +60,10 @@
       {/foreach}
   </td>
 {/if}
-</tr>    
+</tr>
+
+<tr><td colspan="3">{include file="CRM/common/Tag.tpl" tagsetType='case'}</td></tr>
+
 {literal}
 <script type="text/javascript">
     var verifyCaseInput = new Array();

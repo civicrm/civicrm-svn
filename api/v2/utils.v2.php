@@ -754,7 +754,7 @@ function _civicrm_participant_formatted_param( &$params, &$values, $create=false
             } 
             break;
         case 'participant_status':
-            $values['status_id'] = $values['participnat_status_id'] = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_ParticipantStatusType', $value, 'id', 'label');
+            $values['status_id'] = $values['participant_status_id'] = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_ParticipantStatusType', $value, 'id', 'label');
             break;
         case 'participant_status_id':
             if ((int) $value) {

@@ -1401,6 +1401,7 @@ INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRel
         case 'activity_type_id':
         case 'activity_survey_id':
         case 'activity_tags': 
+        case 'activity_taglist': 
         case 'activity_test':   
         case 'activity_contact_name':
         case 'activity_campaign_id':
@@ -3538,7 +3539,6 @@ WHERE  id IN ( $groupIDs )
         $query = "$select $from $where $having $groupBy $order $limit";
         // CRM_Core_Error::debug('query', $query);
         // CRM_Core_Error::debug('query', $where);
-
 
         if ( $returnQuery ) {
             return $query;

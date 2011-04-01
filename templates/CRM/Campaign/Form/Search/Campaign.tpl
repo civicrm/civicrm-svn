@@ -224,7 +224,7 @@ function loadCampaignList( )
 		"sPaginationType": "full_numbers",
 		"sDom"       : 'rt<"crm-datatable-pager-bottom"ip>',
 	   	"bServerSide": true,
-        "bJQueryUI": true,
+                "bJQueryUI": true,
 	   	"sAjaxSource": sourceUrl,
 		"oLanguage":{"sEmptyTable"  : noRecordFoundMsg,
 		             "sZeroRecords" : noRecordFoundMsg },
