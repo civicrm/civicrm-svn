@@ -680,7 +680,7 @@ case_relation_type.id = case_relationship.relationship_type_id )";
         require_once 'CRM/Core/Form/Tag.php';
         require_once 'CRM/Core/BAO/Tag.php';
         $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_case' );
-        CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_case', null, true );
+        CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_case', null, true, false, true );
 
         require_once"CRM/Core/Permission.php";
         if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) { 

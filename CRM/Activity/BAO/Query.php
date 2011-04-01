@@ -479,7 +479,7 @@ class CRM_Activity_BAO_Query
         require_once 'CRM/Core/Form/Tag.php';
         require_once 'CRM/Core/BAO/Tag.php';
         $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_activity' );
-        CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_activity', null, true );
+        CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_activity', null, true, false, true );
 
         require_once ('CRM/Campaign/BAO/Survey.php');
         $surveys = CRM_Campaign_BAO_Survey::getSurveys( );

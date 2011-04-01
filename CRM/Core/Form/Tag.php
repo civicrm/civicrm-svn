@@ -54,7 +54,8 @@ class CRM_Core_Form_Tag
      * @access public
      * @static
      */
-    static function buildQuickForm( &$form, $parentNames, $entityTable, $entityId = null, $skipTagCreate = false, $skipEntityAction = false ) {        
+    static function buildQuickForm( &$form, $parentNames, $entityTable, $entityId = null, $skipTagCreate = false, 
+                                    $skipEntityAction = false, $searchMode = false ) {        
         $tagset = $form->_entityTagValues = array( );
 
         foreach( $parentNames as &$parentNameItem ) {
@@ -69,8 +70,14 @@ class CRM_Core_Form_Tag
                 $tagset[$tagsetItem]['parentID'  ] =  $parentId;        
 
                 //tokeninput url
+                $qparams = "parentId={$parentId}";
+
+                if ( $searchMode ) {
+                    $qparams .= '&search=1';
+                }
+
                 $tagUrl = CRM_Utils_System::url( 'civicrm/ajax/taglist',
-                                                 "parentId={$parentId}",
+                                                 $qparams,
                                                  false, null, false );
 
                 $tagset[$tagsetItem]['tagUrl'          ] = $tagUrl;
