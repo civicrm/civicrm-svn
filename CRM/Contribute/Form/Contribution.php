@@ -521,6 +521,11 @@ WHERE  contribution_id = {$this->_id}
                 $defaults["billing_country_id-{$this->_bltID}"] = $config->defaultContactCountry;
             }
 
+
+            // now fix all state country selectors
+            require_once 'CRM/Core/BAO/Address.php';
+            CRM_Core_BAO_Address::fixAllStateSelects( $this, $defaults );
+
 //             // hack to simplify credit card entry for testing
 //             $defaults['credit_card_type']     = 'Visa';
 //             $defaults['total_amount']         = 50;
