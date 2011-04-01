@@ -128,6 +128,7 @@ function loadVoterList( )
      	        "bFilter"    : false,
 		"bAutoWidth" : false,
 	    	"bProcessing": true,
+		"bJQueryUI"  : true,
                 "aaSorting": [[0,''],[1,'asc'], [2,'asc'], [3,'asc'], [4,'asc'], [5,'asc'] ],
 		"aoColumns":[{bSortable:false},{sClass:""},{sClass:""},{sClass:""},{sClass:""},{sClass:""},{bSortable:false}],
 		"sPaginationType": "full_numbers",
