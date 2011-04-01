@@ -678,7 +678,7 @@ function addRole() {
     <div class="crm-block crm-content-block crm-case-caseview-display-tags">{$tags}</div>
   {/if}
 
-  {foreach from=$tagset item=displayTagset}
+  {foreach from=$tagsetInfo_case item=displayTagset}
       {if $displayTagset.entityTagsArray}
           <div class="crm-block crm-content-block crm-case-caseview-display-tagset">
               &nbsp;&nbsp;{$displayTagset.parentName}:
@@ -689,7 +689,7 @@ function addRole() {
       {/if}
   {/foreach}
 
-  {if !tags and !$displayTagset.entityTagsArray }
+  {if !$tags and !$displayTagset.entityTagsArray }
     <div class="status">
         {ts}There are no tags currently assigend to this case.{/ts}
     </div>
