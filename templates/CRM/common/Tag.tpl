@@ -1,6 +1,6 @@
 {if !$tagsetType or $tagsetType eq 'contact'}
 {foreach from=$tagsetInfo_contact item=tagset}
-<div class="crm-section tag-section tag-{$tagset.parentID}-section">
+<div class="crm-section tag-section contact-tagset-{$tagset.parentID}-section">
 <div class="label">
 <label>{$tagset.parentName}</label>
 </div>
@@ -21,18 +21,18 @@
     eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
     
     var tagUrl = {/literal}"{$tagset.tagUrl}&key={crmKey name='civicrm/ajax/taglist'}"{literal};
-    var entityTags = '';
+    var contactEntityTags = '';
     {/literal}{if $tagset.entityTags}{literal}
-        eval( 'entityTags = ' + {/literal}'{$tagset.entityTags}'{literal} );
+        eval( 'contactEntityTags = ' + {/literal}'{$tagset.entityTags}'{literal} );
     {/literal}{/if}{literal}
     var hintText = "{/literal}{ts}Type in a partial or complete name of an existing tag.{/ts}{literal}";
     
-    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) input")
-        .addClass("taglist_{/literal}{$tagset.parentID}{literal}")
-    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) .taglist_{/literal}{$tagset.parentID}{literal}"  )
-        .tokenInput( tagUrl, { prePopulate: entityTags, classes: tokenClass, hintText: hintText, ajaxCallbackFunction: 'processTags_{/literal}{$tagset.parentID}{literal}'});
-    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input)").addClass("crm-processed-input");    
-    function processTags_{/literal}{$tagset.parentID}{literal}( action, id ) {
+    cj( ".contact-tagset-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) input")
+        .addClass("contact-taglist_{/literal}{$tagset.parentID}{literal}")
+    cj( ".contact-tagset-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) .contact-taglist_{/literal}{$tagset.parentID}{literal}"  )
+        .tokenInput( tagUrl, { prePopulate: contactEntityTags, classes: tokenClass, hintText: hintText, ajaxCallbackFunction: 'processContactTags_{/literal}{$tagset.parentID}{literal}'});
+    cj( ".contact-tagset-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input)").addClass("crm-processed-input");    
+    function processContactTags_{/literal}{$tagset.parentID}{literal}( action, id ) {
         var postUrl          = "{/literal}{crmURL p='civicrm/ajax/processTags' h=0}{literal}";
         var parentId         = "{/literal}{$tagset.parentID}{literal}";
         var entityId         = "{/literal}{$tagset.entityId}{literal}";
@@ -45,7 +45,7 @@
             function ( response ) {
                 // update hidden element
                 if ( response.id ) {
-                    var curVal   = cj( ".taglist_{/literal}{$tagset.parentID}{literal}" ).val( );
+                    var curVal   = cj( ".contact-taglist_{/literal}{$tagset.parentID}{literal}" ).val( );
                     var valArray = curVal.split(',');
                     var setVal   = Array( );
                     if ( response.action == 'delete' ) {
@@ -60,7 +60,7 @@
                     }
                     
                     var actualValue = setVal.join( ',' );
-                    cj( ".taglist_{/literal}{$tagset.parentID}{literal}" ).val( actualValue );
+                    cj( ".contact-taglist_{/literal}{$tagset.parentID}{literal}" ).val( actualValue );
                 }
             }, "json" );
     }
@@ -80,7 +80,7 @@
 
 {elseif $tagsetType eq 'activity'}
 {foreach from=$tagsetInfo_activity item=tagset}
-<div class="crm-section tag-section tag-{$tagset.parentID}-section">
+<div class="crm-section tag-section activity-tagset-{$tagset.parentID}-section">
 <div class="label">
 <label>{$tagset.parentName}</label>
 </div>
@@ -101,18 +101,18 @@
     eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
     
     var tagUrl = {/literal}"{$tagset.tagUrl}&key={crmKey name='civicrm/ajax/taglist'}"{literal};
-    var entityTags = '';
+    var activityEntityTags = '';
     {/literal}{if $tagset.entityTags}{literal}
-        eval( 'entityTags = ' + {/literal}'{$tagset.entityTags}'{literal} );
+        eval( 'activityEntityTags = ' + {/literal}'{$tagset.entityTags}'{literal} );
     {/literal}{/if}{literal}
     var hintText = "{/literal}{ts}Type in a partial or complete name of an existing tag.{/ts}{literal}";
     
-    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) input")
-        .addClass("taglist_{/literal}{$tagset.parentID}{literal}")
-    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) .taglist_{/literal}{$tagset.parentID}{literal}"  )
-        .tokenInput( tagUrl, { prePopulate: entityTags, classes: tokenClass, hintText: hintText, ajaxCallbackFunction: 'processTags_{/literal}{$tagset.parentID}{literal}'});
-    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input)").addClass("crm-processed-input");    
-    function processTags_{/literal}{$tagset.parentID}{literal}( action, id ) {
+    cj( ".activity-tagset-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) input")
+        .addClass("activity-taglist_{/literal}{$tagset.parentID}{literal}")
+    cj( ".activity-tagset-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) .activity-taglist_{/literal}{$tagset.parentID}{literal}"  )
+        .tokenInput( tagUrl, { prePopulate: activityEntityTags, classes: tokenClass, hintText: hintText, ajaxCallbackFunction: 'processActivityTags_{/literal}{$tagset.parentID}{literal}'});
+    cj( ".activity-tagset-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input)").addClass("crm-processed-input");    
+    function processActivityTags_{/literal}{$tagset.parentID}{literal}( action, id ) {
         var postUrl          = "{/literal}{crmURL p='civicrm/ajax/processTags' h=0}{literal}";
         var parentId         = "{/literal}{$tagset.parentID}{literal}";
         var entityId         = "{/literal}{$tagset.entityId}{literal}";
@@ -125,7 +125,7 @@
             function ( response ) {
                 // update hidden element
                 if ( response.id ) {
-                    var curVal   = cj( ".taglist_{/literal}{$tagset.parentID}{literal}" ).val( );
+                    var curVal   = cj( ".activity-taglist_{/literal}{$tagset.parentID}{literal}" ).val( );
                     var valArray = curVal.split(',');
                     var setVal   = Array( );
                     if ( response.action == 'delete' ) {
@@ -140,7 +140,7 @@
                     }
                     
                     var actualValue = setVal.join( ',' );
-                    cj( ".taglist_{/literal}{$tagset.parentID}{literal}" ).val( actualValue );
+                    cj( ".activity-taglist_{/literal}{$tagset.parentID}{literal}" ).val( actualValue );
                 }
             }, "json" );
     }
@@ -180,18 +180,18 @@
     eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
     
     var tagUrl = {/literal}"{$tagset.tagUrl}&key={crmKey name='civicrm/ajax/taglist'}"{literal};
-    var entityTags = '';
+    var caseEntityTags = '';
     {/literal}{if $tagset.entityTags}{literal}
-        eval( 'entityTags = ' + {/literal}'{$tagset.entityTags}'{literal} );
+        eval( 'caseEntityTags = ' + {/literal}'{$tagset.entityTags}'{literal} );
     {/literal}{/if}{literal}
     var hintText = "{/literal}{ts}Type in a partial or complete name of an existing tag.{/ts}{literal}";
     
-    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) input")
-        .addClass("taglist_{/literal}{$tagset.parentID}{literal}")
-    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) .taglist_{/literal}{$tagset.parentID}{literal}"  )
-        .tokenInput( tagUrl, { prePopulate: entityTags, classes: tokenClass, hintText: hintText, ajaxCallbackFunction: 'processTags_{/literal}{$tagset.parentID}{literal}'});
-    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input)").addClass("crm-processed-input");    
-    function processTags_{/literal}{$tagset.parentID}{literal}( action, id ) {
+    cj( ".case-tagset-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) input")
+        .addClass("case-taglist_{/literal}{$tagset.parentID}{literal}")
+    cj( ".case-tagset-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) .case-taglist_{/literal}{$tagset.parentID}{literal}"  )
+        .tokenInput( tagUrl, { prePopulate: caseEntityTags, classes: tokenClass, hintText: hintText, ajaxCallbackFunction: 'processCaseTags_{/literal}{$tagset.parentID}{literal}'});
+    cj( ".case-tagset-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input)").addClass("crm-processed-input");    
+    function processCaseTags_{/literal}{$tagset.parentID}{literal}( action, id ) {
         var postUrl          = "{/literal}{crmURL p='civicrm/ajax/processTags' h=0}{literal}";
         var parentId         = "{/literal}{$tagset.parentID}{literal}";
         var entityId         = "{/literal}{$tagset.entityId}{literal}";
@@ -204,7 +204,7 @@
             function ( response ) {
                 // update hidden element
                 if ( response.id ) {
-                    var curVal   = cj( ".taglist_{/literal}{$tagset.parentID}{literal}" ).val( );
+                    var curVal   = cj( ".case-taglist_{/literal}{$tagset.parentID}{literal}" ).val( );
                     var valArray = curVal.split(',');
                     var setVal   = Array( );
                     if ( response.action == 'delete' ) {
@@ -219,7 +219,7 @@
                     }
                     
                     var actualValue = setVal.join( ',' );
-                    cj( ".taglist_{/literal}{$tagset.parentID}{literal}" ).val( actualValue );
+                    cj( ".case-taglist_{/literal}{$tagset.parentID}{literal}" ).val( actualValue );
                 }
             }, "json" );
     }
