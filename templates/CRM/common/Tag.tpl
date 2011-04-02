@@ -159,7 +159,7 @@
 {/foreach}
 {elseif $tagsetType eq 'case'}
 {foreach from=$tagsetInfo_case item=tagset}
-<div class="crm-section tag-section tag-{$tagset.parentID}-section">
+<div class="crm-section tag-section case-tagset-{$tagset.parentID}-section">
 <div class="label">
 <label>{$tagset.parentName}</label>
 </div>
