@@ -215,6 +215,13 @@ class CRM_Contact_BAO_Query
      */
     public $_strict = false;
 
+    /**
+     * What operator to use to group the clauses
+     *
+     * @var string
+     */
+    public $_operator = 'AND';
+
     public $_mode = 1;
 
     /** 
@@ -369,12 +376,13 @@ class CRM_Contact_BAO_Query
     function __construct( $params = null, $returnProperties = null, $fields = null,
                           $includeContactIds = false, $strict = false, $mode = 1,
                           $skipPermission = false, $searchDescendentGroups = true,
-                          $smartGroupCache = true, $displayRelationshipType = null ) 
+                          $smartGroupCache = true, $displayRelationshipType = null,
+                          $operator = 'AND' ) 
     {
         require_once 'CRM/Contact/BAO/Contact.php';
 
         // CRM_Core_Error::backtrace( );
-        // CRM_Core_Error::debug_var( 'params', $params );
+        // CRM_Core_Error::debug( 'params', $params );
          
         // CRM_Core_Error::debug( 'post', $_POST );
         // CRM_Core_Error::debug( 'r', $returnProperties );
@@ -395,6 +403,7 @@ class CRM_Contact_BAO_Query
         $this->_skipPermission          = $skipPermission;
         $this->_smartGroupCache         = $smartGroupCache;
         $this->_displayRelationshipType = $displayRelationshipType;
+        $this->setOperator( $operator );
 
         if ( $fields ) {
             $this->_fields =& $fields;
@@ -1251,7 +1260,7 @@ INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRel
 
         if  ( ! $skipWhere ) {
             $skipWhere   = array( 'task', 'radio_ts', 'uf_group_id',
-                                  'component_mode', 'qfKey',
+                                  'component_mode', 'qfKey', 'operator',
                                   'display_relationship_type' );
         }
 
@@ -1534,13 +1543,13 @@ INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRel
         if ( ! empty( $this->_where ) ) {
             foreach ( $this->_where as $grouping => $values ) {
                 if ( $grouping > 0 && ! empty( $values ) ) {
-                    $clauses[$grouping] = ' ( ' . implode( ' AND ', $values ) . ' ) ';
+                    $clauses[$grouping] = ' ( ' . implode( " {$this->_operator} ", $values ) . ' ) ';
                     $validClauses++;
                 }
             }
 
             if ( ! empty( $this->_where[0] ) ) {
-                $andClauses[] = ' ( ' . implode( ' AND ', $this->_where[0] ) . ' ) ';
+                $andClauses[] = ' ( ' . implode( " {$this->_operator} ", $this->_where[0] ) . ' ) ';
             }
             if ( ! empty( $clauses ) ) {
                 $andClauses[] = ' ( ' . implode( ' OR ', $clauses ) . ' ) ';
@@ -2401,7 +2410,6 @@ INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRel
        
         $qill = ts( 'Contacts %1', array( 1 => $op ) );
         $qill .= ' ' . implode( ' ' . ts('or') . ' ', $names );
-        $this->_qill[$grouping][] = $qill;
         
         $groupClause = null;
 
@@ -2409,7 +2417,7 @@ INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRel
             $groupClause = "{$gcTable}.group_id $op ( $groupIds )";
             if ( ! empty( $statii ) ) {
                 $groupClause .= " AND {$gcTable}.status IN (" . implode(', ', $statii) . ")";
-                $this->_qill[$grouping][] = ts('Group Status') . ' - ' . implode( ' ' . ts('or') . ' ', $statii );
+                $qill        .= " " . ts('AND') . " " . ts('Group Status') . ' - ' . implode( ' ' . ts('or') . ' ', $statii );
             }
         }
 
@@ -2425,6 +2433,7 @@ INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRel
         }
         
         $this->_where[$grouping][] = $groupClause;
+        $this->_qill[$grouping][]  = $qill;
     }
     
     /**
@@ -3893,6 +3902,14 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
         }
 
         return self::$_openedPanes;
+    }
+
+    function setOperator( $operator ) {
+        $validOperators = array( 'AND', 'OR' );
+        if ( ! in_array( $operator, $validOperators ) ) {
+            $operator = 'AND';
+        }
+        $this->_operator = $operator;
     }
 
 }

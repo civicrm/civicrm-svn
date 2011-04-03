@@ -147,6 +147,13 @@ class CRM_Contact_Form_Search_Criteria {
                               $componentModes );
         }
 
+        $form->addElement( 'select', 
+                           'operator', 
+                           ts('SQL Operator'), 
+                           array( 'AND' => ts( 'AND' ),
+                                  'OR'  => ts( 'OR'  ) ) );
+
+        require_once 'CRM/Contact/Form/Search.php';
         // add the option to display relationships
         $rTypes  = CRM_Core_PseudoConstant::relationshipType( );
         $rSelect = array( '' => ts('- Select Relationship Type-') );
