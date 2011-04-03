@@ -108,6 +108,15 @@ function civicrm_api3_activity_create( $params )
     }
 }
 
+
+function civicrm_api3_activity_getfields( $params ) {
+    require_once 'CRM/Activity/BAO/Activity.php';
+    $bao = new CRM_Activity_BAO_Activity();
+    return ($bao->exportableFields('Activity'));
+}
+
+
+
 /**
  *
  * @param array $params
