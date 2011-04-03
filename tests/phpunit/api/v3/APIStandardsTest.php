@@ -76,8 +76,7 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
 
         // functions to skip from utils.php mainly since they get sucked in via
         // a require chain in the include files
-        $this->_skipFunctionList = array( 'civicrm_api3_activity_processemail',
-
+        $this->_skipFunctionList = array( 
                                           // location api is deprecated
 
                                           'civicrm_api3_location_create',
@@ -85,13 +84,10 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
                                           'civicrm_api3_location_delete',
 
                                           // most of these seem to be internal functions
-                                          'civicrm_api3_participant_check_params',
-                                          'civicrm_api3_entity_tag_common',
-                                          'civicrm_api3_file_by_entity_add',
-                                          'civicrm_api3_group_contact_common',
-                                          'civicrm_api3_create_participant_formatted',
+                                          
+
                                           'civicrm_api3_survey_respondant_count',
-                                          'civicrm_api3_uf_field_update',
+
                                           
                                           // should getfields be internal? if not, we should make it
                                           // follow the standard
@@ -158,7 +154,7 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
             if ( strstr($file,".php")  &&
                  $file != 'Entity.php' &&
                  $file !='utils.php' ){
-                $files[]=$file;
+                 $files[]=$file;
             } 
         }
    

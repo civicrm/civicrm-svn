@@ -72,12 +72,28 @@ function civicrm_api3_uf_field_create( $params)
 
     $ids = array();
     $ids['uf_group'] = $groupId;
-
     require_once 'CRM/Core/BAO/UFField.php';
+   //   
+   
+    $fieldId = CRM_Utils_Array::value('id', $params);
+    if (!empty($fieldId)){
+    $UFField = new CRM_core_BAO_UFField();
+    $UFField->id = $fieldId;
+    if ( $UFField->find(true) ) {
+        $ids['uf_group'] =  $UFField->uf_group_id;
+        if ( !( CRM_Utils_Array::value('group_id', $params) ) ) {
+          // this copied here from previous api function - not sure if required
+          $params['group_id'] =  $UFField->uf_group_id;
+        }
+      } else {
+        return civicrm_api3_create_error("there is no field for this fieldId");
+      }
+      $ids['uf_field'] = $fieldId;
+    }  
+    
     if (CRM_Core_BAO_UFField::duplicateField($params, $ids) ) {
       return civicrm_api3_create_error("The field was not added. It already exists in this profile.");
     }
-
     $ufField = CRM_Core_BAO_UFField::add( $params,$ids );
     _civicrm_api3_object_to_array( $ufField, $ufFieldArray[$ufField->id]);
     return civicrm_api3_create_success($ufFieldArray,$params);
@@ -88,62 +104,6 @@ function civicrm_api3_uf_field_create( $params)
   }
 }
 
-/**
- * Use this API to update uf field . See the CRM Data Model for uf_field property definitions
- *
- * @param $params  array   Associative array of property name/value pairs to update in field.
- *
- * @param $fieldId int  A valid uf field id that to be updated.
- *
- * @return  updated  $ufFieldArray array
- *
- * @access public
- */
-function civicrm_api3_uf_field_update( $params , $fieldId ) {
-
-  _civicrm_api3_initialize( );
-
-  if(! is_array( $params ) ) {
-    return civicrm_api3_create_error("Input variable `params` is not an array");
-  }
-
-  if(! isset( $fieldId ) ) {
-    return civicrm_api3_create_error("parameter fieldId is not set");
-  }
-
-  $field_type       = CRM_Utils_Array::value ( 'field_type'       , $params );
-  $field_name       = CRM_Utils_Array::value ( 'field_name'       , $params );
-  $location_type_id = CRM_Utils_Array::value ( 'location_type_id' , $params );
-  $phone_type       = CRM_Utils_Array::value ( 'phone_type'       , $params );
-
-  $params['field_name'] =  array( $field_type, $field_name, $location_type_id, $phone_type);
-
-  require_once 'CRM/Core/BAO/UFField.php';
-  $UFField = new CRM_core_BAO_UFField();
-  $UFField->id = $fieldId;
-
-  if ( !( CRM_Utils_Array::value('group_id', $params) ) && $UFField->find(true) ) {
-    $params['group_id'] =  $UFField->uf_group_id;
-  }
-
-  $ids = array();
-
-  if ( $UFField->find(true) ) {
-    $ids['uf_group'] =  $UFField->uf_group_id;
-  } else {
-    return civicrm_api3_create_error("there is no field for this fieldId");
-  }
-  $ids['uf_field'] = $fieldId;
-
-  if (CRM_Core_BAO_UFField::duplicateField($params, $ids) ) {
-    return civicrm_api3_create_error("The field was not added. It already exists in this profile.");
-  }
-
-  $ufField = CRM_Core_BAO_UFField::add( $params,$ids );
-  _civicrm_api3_object_to_array( $ufField, $ufFieldArray);
-
-  return $ufFieldArray;
-}
 
 /**
  * Delete uf field
