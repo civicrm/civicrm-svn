@@ -129,46 +129,10 @@ class CRM_Core_I18n_Schema
         // break early if the db is already single-lang
         if (!$locales) return;
 
-        // build the column-dropping SQL queries
-        $columns =& CRM_Core_I18n_SchemaStructure::columns();
-        $indices =& CRM_Core_I18n_SchemaStructure::indices();
-        $queries = array();
-        foreach ($columns as $table => $hash) {
-            // drop old indices
-            if (isset($indices[$table])) {
-                foreach ($indices[$table] as $index) {
-                    foreach ($locales as $loc) {
-                        $queries[] = "DROP INDEX {$index['name']}_{$loc} ON {$table}";
-                    }
-                }
-            }
-
-            // drop triggers
-            $queries[] = "DROP TRIGGER IF EXISTS {$table}_before_insert";
-            $queries[] = "DROP TRIGGER IF EXISTS {$table}_before_update";
-
-            // deal with columns
-            foreach ($hash as $column => $type) {
-                $queries[] = "ALTER TABLE {$table} ADD {$column} {$type}";
-                $queries[] = "UPDATE {$table} SET {$column} = {$column}_{$retain}";
-                foreach ($locales as $loc) {
-                    $queries[] = "ALTER TABLE {$table} DROP {$column}_{$loc}";
-                }
-            }
-
-            // drop views
-            foreach ($locales as $loc) {
-                $queries[] = "DROP VIEW {$table}_{$loc}";
-            }
-
-            // add original indices
-            $queries = array_merge($queries, self::createIndexQueries(null, $table));
-        }
-
-        // execute the queries without i18n rewriting
-        $dao = new CRM_Core_DAO;
-        foreach ($queries as $query) {
-            $dao->query($query, false);
+        // turn subsequent tables singlelingual
+        $tables =& CRM_Core_I18n_SchemaStructure::tables();
+        foreach ($tables as $table) {
+            self::makeSinglelingualTable($retain, $table);
         }
 
         // update civicrm_domain.locales
@@ -188,7 +152,7 @@ class CRM_Core_I18n_Schema
      * @param $class  string  schema structure class to use to recreate indices
      * @return void
      */
-    static function makeSinglelingualTable($retain, $table, $class)
+    static function makeSinglelingualTable($retain, $table, $class = 'CRM_Core_I18n_SchemaStructure')
     {
         $domain = new CRM_Core_DAO_Domain;
         $domain->find(true);
