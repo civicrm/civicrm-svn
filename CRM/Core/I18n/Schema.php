@@ -181,6 +181,64 @@ class CRM_Core_I18n_Schema
     }
 
     /**
+     * Switch a given table from multi-lang to single (by retaining only the selected locale).
+     *
+     * @param $retain string  the locale to retain
+     * @param $table  string  the table containing the column
+     * @param $class  string  schema structure class to use to recreate indices
+     * @return void
+     */
+    static function makeSinglelingualTable($retain, $table, $class)
+    {
+        $domain = new CRM_Core_DAO_Domain;
+        $domain->find(true);
+        $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
+
+        // break early if the db is already single-lang
+        if (!$locales) return;
+
+        eval("\$columns =& $class::columns();");
+        eval("\$indices =& $class::indices();");
+        $queries = array();
+
+        // drop indices
+        if (isset($indices[$table])) {
+            foreach ($indices[$table] as $index) {
+                foreach ($locales as $loc) {
+                    $queries[] = "DROP INDEX {$index['name']}_{$loc} ON {$table}";
+                }
+            }
+        }
+
+        // drop triggers
+        $queries[] = "DROP TRIGGER IF EXISTS {$table}_before_insert";
+        $queries[] = "DROP TRIGGER IF EXISTS {$table}_before_update";
+
+        // deal with columns
+        foreach ($columns[$table] as $column => $type) {
+            $queries[] = "ALTER TABLE {$table} ADD {$column} {$type}";
+            $queries[] = "UPDATE {$table} SET {$column} = {$column}_{$retain}";
+            foreach ($locales as $loc) {
+                $queries[] = "ALTER TABLE {$table} DROP {$column}_{$loc}";
+            }
+        }
+
+        // drop views
+        foreach ($locales as $loc) {
+            $queries[] = "DROP VIEW {$table}_{$loc}";
+        }
+
+        // add original indices
+        $queries = array_merge($queries, self::createIndexQueries(null, $table));
+
+        // execute the queries without i18n rewriting
+        $dao = new CRM_Core_DAO;
+        foreach ($queries as $query) {
+            $dao->query($query, false);
+        }
+    }
+
+    /**
      * Add a new locale to a multi-lang db, setting 
      * its values to the current default locale.
      *
