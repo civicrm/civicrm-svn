@@ -68,7 +68,7 @@ class CRM_Core_I18n_Schema
      * @param $locale string  the first locale to create (migrate to)
      * @return void
      */
-    function makeMultilingual($locale)
+    static function makeMultilingual($locale)
     {
         $domain = new CRM_Core_DAO_Domain();
         $domain->find(true);
@@ -120,7 +120,7 @@ class CRM_Core_I18n_Schema
      * @param $retain string  the locale to retain
      * @return void
      */
-    function makeSinglelingual($retain)
+    static function makeSinglelingual($retain)
     {
         $domain = new CRM_Core_DAO_Domain;
         $domain->find(true);
@@ -188,7 +188,7 @@ class CRM_Core_I18n_Schema
      * @param $source string  the locale to copy from
      * @return void
      */
-    function addLocale($locale, $source)
+    static function addLocale($locale, $source)
     {
         // get the current supported locales 
         $domain = new CRM_Core_DAO_Domain();
@@ -340,7 +340,7 @@ class CRM_Core_I18n_Schema
      * @param $class string   schema structure class to use
      * @return array          array of CREATE INDEX queries
      */
-    private function createIndexQueries($locale, $table, $class = 'CRM_Core_I18n_SchemaStructure')
+    private static function createIndexQueries($locale, $table, $class = 'CRM_Core_I18n_SchemaStructure')
     {
         eval("\$indices =& $class::indices();");
         eval("\$columns =& $class::columns();");
@@ -371,7 +371,7 @@ class CRM_Core_I18n_Schema
      * @param $class string   schema structure class to use
      * @return array          array of CREATE TRIGGER queries
      */
-    private function createTriggerQueries($locales, $locale, $class = 'CRM_Core_I18n_SchemaStructure')
+    private static function createTriggerQueries($locales, $locale, $class = 'CRM_Core_I18n_SchemaStructure')
     {
         eval("\$columns =& $class::columns();");
         $queries = array();
@@ -486,7 +486,7 @@ class CRM_Core_I18n_Schema
      * @param $class string   schema structure class to use
      * @return array          array of CREATE INDEX queries
      */
-    private function createViewQuery($locale, $table, &$dao, $class = 'CRM_Core_I18n_SchemaStructure')
+    private static function createViewQuery($locale, $table, &$dao, $class = 'CRM_Core_I18n_SchemaStructure')
     {
         eval("\$columns =& $class::columns();");
         $cols = array();
