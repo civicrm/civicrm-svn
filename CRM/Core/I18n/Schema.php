@@ -348,8 +348,6 @@ class CRM_Core_I18n_Schema
 
         $queries = array();
         foreach ($indices[$table] as $index) {
-            // CRM-7854: skip existing indices
-            if (CRM_Core_DAO::checkConstraintExists($table, $index['name'])) continue;
             $unique = isset($index['unique']) && $index['unique'] ? 'UNIQUE' : '';
             foreach ($index['field'] as $i => $col) {
                 // if a given column is localizable, extend its name with the locale
@@ -358,6 +356,8 @@ class CRM_Core_I18n_Schema
             $cols = implode(', ', $index['field']);
             $name = $index['name'];
             if ($locale) $name .= '_' . $locale;
+            // CRM-7854: skip existing indices
+            if (CRM_Core_DAO::checkConstraintExists($table, $name)) continue;
             $queries[$index['name']] = "CREATE {$unique} INDEX {$name} ON {$table} ({$cols})";
         }
         return $queries;
