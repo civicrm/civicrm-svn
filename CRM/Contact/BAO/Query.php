@@ -359,7 +359,13 @@ class CRM_Contact_BAO_Query
                                               'email',
                                               'im',
                                               'address_name' );
-    
+
+    /**
+     * Rememeber if we handle either end of a number or date range
+     * so we can skip the other
+     */
+    protected $_rangeCache = array( );
+
     /**
      * class constructor which also does all the work
      *
@@ -3752,30 +3758,92 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
                                $appendTimeStamp = true ) 
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
-        
-        if ( $name == $fieldName . '_low' ) {
-            $op     = '>=';
-            $phrase = 'greater than or equal to';
-        } else if ( $name == $fieldName . '_high' ) {
-            $op     = '<=';
-            $phrase = 'less than or equal to';
-        } else if ( $name == $fieldName ) {
-            $op     = '=';
-            $phrase = '=';
-        } else {
+
+        if ( ! $value ) {
             return;
         }
 
-        if ( $value ) {
-            $date    = $value;
-            // add 235959 if its less that or equal to
-            if ( $op == '<='      &&
-                 $appendTimeStamp &&
-                 strlen( $date ) == 10 ) {
-                $date .= ' 23:59:59';
+        if ( $name == "{$fieldName}_low" ||
+             $name == "{$fieldName}_high" ) {
+            if ( isset( $this->_rangeCache[$fieldName] ) ) {
+                return;
+            }
+            $this->_rangeCache[$fieldName] = 1;
+
+            $secondOP = $secondPhrase = $secondValue = $secondDate = $secondDateFormat = null;
+
+            if ( $name == $fieldName . '_low' ) {
+                $firstOP      = '>=';
+                $firstPhrase  = 'greater than or equal to';
+                $firstDate    = CRM_Utils_Date::processDate( $value );
+
+                $secondValues = $this->getWhereValues( "{$fieldName}_high", $grouping );
+                if ( ! empty( $secondValues ) &&
+                     $secondValues[2] ) {
+                    $secondOP          = '<=';
+                    $secondPhrase      = 'less than or equal to';
+                    $secondValue       = $secondValues[2];
+
+                    if ( $appendTimeStamp &&
+                         strlen( $secondValue ) == 10 ) {
+                        $secondValue .= ' 23:59:59';
+                    }
+                    $secondDate = CRM_Utils_Date::processDate( $secondValue );
+                }
+
+            } else if ( $name == $fieldName . '_high' ) {
+                $firstOP           = '<=';
+                $firstPhrase       = 'less than or equal to';
+
+                if ( $appendTimeStamp &&
+                     strlen( $value ) == 10 ) {
+                    $value .= ' 23:59:59';
+                }
+                $firstDate    = CRM_Utils_Date::processDate( $value );
+
+                $secondValues = $this->getWhereValues( "{$fieldName}_low", $grouping );
+                if ( ! empty( $secondValues ) &&
+                     $secondValues[2] ) {
+                    $secondOP          = '>=';
+                    $secondPhrase      = 'greater than or equal to';
+                    $secondValue       = $secondValues[2];
+                    $secondDate = CRM_Utils_Date::processDate( $secondValue );
+                }
             }
 
-            $date = CRM_Utils_Date::processDate( $date );
+            if ( ! $appendTimeStamp ) {
+                $firstDate = substr(  $date, 0, 8 );
+            }
+            $firstDateFormat = CRM_Utils_Date::customFormat( $firstDate );
+
+            if ( $secondDate ) {
+                if ( ! $appendTimeStamp ) {
+                    $secondDate = substr(  $secondDate, 0, 8 );
+                }
+                $secondDateFormat = CRM_Utils_Date::customFormat( $secondDate );
+            }
+
+            $this->_tables[$tableName] = $this->_whereTables[$tableName] = 1;
+            if ( $secondDate ) {
+                $this->_where[$grouping][] = "
+( {$tableName}.{$dbFieldName} $firstOP '$firstDate' ) AND
+( {$tableName}.{$dbFieldName} $secondOP '$secondDate' )
+";
+                $this->_qill[$grouping][]  = 
+                    "$fieldTitle - $firstPhrase \"$firstDateFormat\" " .
+                    ts('AND') .
+                    " $secondPhrase \"$secondDateFormat\"";
+            } else {
+                $this->_where[$grouping][] = "{$tableName}.{$dbFieldName} $firstOP '$firstDate'";
+                $this->_qill[$grouping][]  = "$fieldTitle - $firstPhrase \"$firstDateFormat\"";
+            }
+        }
+
+        if ( $name == $fieldName ) {
+            $op     = '=';
+            $phrase = '=';
+
+            $date = CRM_Utils_Date::processDate( $value );
 
             if ( !$appendTimeStamp ) {
                 $date = substr(  $date, 0, 8 );
@@ -3801,30 +3869,77 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
     }
 
     function numberRangeBuilder( &$values,
-                                 $tableName, $fieldName, $dbFieldName, $fieldTitle, $options = null ) 
+                                 $tableName, $fieldName,
+                                 $dbFieldName, $fieldTitle,
+                                 $options = null ) 
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
+        
+        if ( $name == "{$fieldName}_low" ||
+             $name == "{$fieldName}_high" ) {
+            if ( isset( $this->_rangeCache[$fieldName] ) ) {
+                return;
+            }
+            $this->_rangeCache[$fieldName] = 1;
 
-        if ( $name == $fieldName . '_low' ) {
-            $op     = '>=';
-            $phrase = 'greater than';
-        } else if ( $name == $fieldName . '_high' ) {
-            $op     = '<=';
-            $phrase = 'less than';
-        } else if ( $name == $fieldName ) {
+            $secondOP = $secondPhrase = $secondValue = null;
+
+            if ( $name == "{$fieldName}_low" ) {
+                $firstOP           = '>=';
+                $firstPhrase       = 'greater than';
+
+                $secondValues = $this->getWhereValues( "{$fieldName}_high", $grouping );
+                if ( ! empty( $secondValues ) ) {
+                    $secondOP          = '<=';
+                    $secondPhrase      = 'less than';
+                    $secondValue       = $secondValues[2];
+                }
+            } else {
+                $firstOP           = '<=';
+                $firstPhrase       = 'less than';
+
+                $secondValues = $this->getWhereValues( "{$fieldName}_low", $grouping );
+                if ( ! empty( $secondValues ) ) {
+                    $secondOP          = '>=';
+                    $secondPhrase      = 'greater than';
+                    $secondValue       = $secondValues[2];
+                }
+            }
+
+            if ( $secondOP ) {
+                $this->_where[$grouping][] = "
+( {$tableName}.{$dbFieldName} $firstOP {$value} ) AND 
+( {$tableName}.{$dbFieldName} $secondOP {$secondValue} )
+";
+                $displayValue = $options ? $options[$value] : $value;
+                $secondDisplayValue = $options ? $options[$secondValue] : $secondValue;
+
+                $this->_qill[$grouping][]  = 
+                    "$fieldTitle - $firstPhrase \"$displayValue\" " .
+                    ts('AND') .
+                    " $secondPhrase \"$secondDisplayValue\"";
+            } else {
+                $this->_where[$grouping][] = "{$tableName}.{$dbFieldName} $firstOP {$value}";
+                $displayValue = $options ? $options[$value] : $value;
+                $this->_qill[$grouping][]  = "$fieldTitle - $phrase \"$displayValue\"";
+            }
+            $this->_tables[$tableName] = $this->_whereTables[$tableName] = 1;
+
+            return;
+        } 
+
+        if ( $name == $fieldName ) {
             $op     = '=';
             $phrase = '=';
-        } else {
-            return;
+
+            $this->_where[$grouping][] = "{$tableName}.{$dbFieldName} $op {$value}";
+
+            $this->_tables[$tableName] = $this->_whereTables[$tableName] = 1;
+            $displayValue = $options ? $options[$value] : $value;
+            $this->_qill[$grouping][]  = "$fieldTitle - $phrase \"$displayValue\"";
         }
 
-        $this->_where[$grouping][] = "{$tableName}.{$dbFieldName} $op {$value}";
-        $this->_tables[$tableName] = $this->_whereTables[$tableName] = 1;
-        if ( !$options ) { 
-            $this->_qill[$grouping][]  = "$fieldTitle - $phrase \"$value\"";
-        } else {
-            $this->_qill[$grouping][]  = "$fieldTitle - $phrase \"$options[$value]\"";
-        }
+        return;
     }
 
     /**
@@ -3912,4 +4027,8 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
         $this->_operator = $operator;
     }
 
+    function getOperator( ) {
+        return $this->_operator;
+    }
+    
 }

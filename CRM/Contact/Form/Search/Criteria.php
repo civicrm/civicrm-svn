@@ -149,7 +149,7 @@ class CRM_Contact_Form_Search_Criteria {
 
         $form->addElement( 'select', 
                            'operator', 
-                           ts('SQL Operator'), 
+                           ts('Search Operator'), 
                            array( 'AND' => ts( 'AND' ),
                                   'OR'  => ts( 'OR'  ) ) );
 
