@@ -106,6 +106,35 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         return $email;
     }
 
+    function webtestAddHousehold( $householdName = "Smith's Home", $email = null ) {
+        
+        $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Household");
+        $this->click("household_name");
+        $this->type("household_name", $householdName );
+
+        if ($email === true) $email = substr(sha1(rand()), 0, 7) . '@example.org';
+        if ($email) $this->type("email_1_email", $email);
+
+        $this->click("_qf_Contact_upload_view");
+        $this->waitForPageToLoad("30000");        
+        return $email;
+    }
+
+
+    function webtestAddOrganization( $organizationName = "Smith's Home", $email = null ) {
+        
+        $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Organization");
+        $this->click("organization_name");
+        $this->type("organization_name", $organizationName );
+
+        if ($email === true) $email = substr(sha1(rand()), 0, 7) . '@example.org';
+        if ($email) $this->type("email_1_email", $email);
+
+        $this->click("_qf_Contact_upload_view");
+        $this->waitForPageToLoad("30000");        
+        return $email;
+    }
+
   /**
    */
    function webtestFillAutocomplete( $sortName ) {
@@ -447,7 +476,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
       return $filePath;
   }
-  
+
   /**
    * Create new relationship type w/ user specified params or default. 
    *
