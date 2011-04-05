@@ -77,7 +77,7 @@ function civicrm_api3_group_contact_create($params) {
 	try {
 		civicrm_api3_verify_mandatory ( $params, 'CRM_Contact_BAO_GroupContact' );
 		
-		return civicrm_api3_group_contact_common ( $params, 'add' );
+		return _civicrm_api3_group_contact_common ( $params, 'add' );
 	} catch ( PEAR_Exception $e ) {
 		return civicrm_api3_create_error ( $e->getMessage () );
 	} catch ( Exception $e ) {
@@ -94,7 +94,7 @@ function civicrm_api3_group_contact_delete($params) {
 	_civicrm_api3_initialize ( true );
 	try {
 		civicrm_api3_verify_mandatory ( $params, null, array ('contact_id', 'group_id' ) );
-		return civicrm_api3_group_contact_common ( $params, 'remove' );
+		return _civicrm_api3_group_contact_common ( $params, 'remove' );
 	} catch ( PEAR_Exception $e ) {
 		return civicrm_api3_create_error ( $e->getMessage () );
 	} catch ( Exception $e ) {
@@ -112,7 +112,7 @@ function civicrm_api3_group_contact_pending($params) {
 	_civicrm_api3_initialize ( true );
 	try {
 		civicrm_api3_verify_mandatory ( $params );
-		return civicrm_api3_group_contact_common ( $params, 'pending' );
+		return _civicrm_api3_group_contact_common ( $params, 'pending' );
 	} catch ( PEAR_Exception $e ) {
 		return civicrm_api3_create_error ( $e->getMessage () );
 	} catch ( Exception $e ) {
@@ -126,7 +126,7 @@ function civicrm_api3_group_contact_pending($params) {
  * @param <type> $op
  * @return <type>
  */
-function civicrm_api3_group_contact_common($params, $op = 'add') {
+function _civicrm_api3_group_contact_common($params, $op = 'add') {
 	
 	$contactIDs = array ();
 	$groupIDs = array ();

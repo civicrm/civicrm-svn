@@ -476,13 +476,13 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         require_once 'CRM/Core/BAO/OptionGroup.php';
         
         $updateResultSet = false;
+        $resultSetOptGrpId = null;
         if ( (CRM_Utils_Array::value('option_type', $params) == 2) &&
              CRM_Utils_Array::value('option_group_id', $params) ) {
-            if ( $params['option_group_id'] == CRM_Utils_Array::value('result_id', $this->_values) ) {
-                $updateResultSet  = true;
-            }
+            $updateResultSet   = true;
+            $resultSetOptGrpId = $params['option_group_id'];
         }
-
+        
         if ( $this->_surveyId ) {
 
             if ( $this->_action & CRM_Core_Action::DELETE ) {
@@ -507,10 +507,10 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         
         if ( $updateResultSet ) {
             $optionValue = new CRM_Core_DAO_OptionValue( );
-            $optionValue->option_group_id =  $this->_values['result_id'];
+            $optionValue->option_group_id = $resultSetOptGrpId;
             $optionValue->delete();
 
-            $params['result_id'] = $this->_values['result_id'];
+            $params['result_id'] = $resultSetOptGrpId;
             
         } else {
             $opGroupName = 'civicrm_survey_'.rand(10,1000).'_'.date( 'YmdHis' );
@@ -551,16 +551,17 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             
         $surveyId = CRM_Campaign_BAO_Survey::create( $params  );
         
-        if ( CRM_Utils_Array::value('result_id', $this->_values) && !$updateResultSet ) {
+        if ( CRM_Utils_Array::value('result_id', $this->_values) ) {
             $query       = "SELECT COUNT(*) FROM civicrm_survey WHERE result_id = %1";
-            $countSurvey = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array($this->_values['result_id'], 'Integer') ) );
-
+            $countSurvey = (int)CRM_Core_DAO::singleValueQuery( $query, 
+                                                                array( 1 => array( $this->_values['result_id'], 
+                                                                                   'Positive') ) );
             // delete option group if no any survey is using it.
-            if ( !($countSurvey >= 1) ) {
+            if ( ! $countSurvey ) {
                 CRM_Core_BAO_OptionGroup::del($this->_values['result_id']);
             }
         }
-
+        
         require_once 'CRM/Core/BAO/UFJoin.php';
         
         // also update the ProfileModule tables 

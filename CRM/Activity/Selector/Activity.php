@@ -368,6 +368,9 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
 
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
         
+        require_once 'CRM/Campaign/PseudoConstant.php';
+        $engagementLevels = CRM_Campaign_PseudoConstant::engagementLevel();
+        
         //CRM-4418
         $permissions = array( $this->_permission );
         if ( CRM_Core_Permission::check( 'delete activities' ) ) {
@@ -400,6 +403,10 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
             }
                   
             $row['status'] = $row['status_id']?$activityStatus[$row['status_id']]:null;
+            
+            if ( $engagementLevel = CRM_Utils_Array::value( 'engagement_level', $row ) ) {
+                $row['engagement_level'] = CRM_Utils_Array::value( $engagementLevel, $engagementLevels, $engagementLevel );
+            }
             
             //CRM-3553
             $accessMailingReport = false;

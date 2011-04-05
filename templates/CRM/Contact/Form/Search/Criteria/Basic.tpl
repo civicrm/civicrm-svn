@@ -91,7 +91,7 @@
 {/if}
 
 {if $form.contact_tags}
-            <td colspan="3"><label>{ts}Tag(s){/ts}</label>
+            <td><label>{ts}Tag(s){/ts}</label>
                 {$form.contact_tags.html}
                 {literal}
                 <script type="text/javascript">
@@ -109,8 +109,9 @@
                 {/literal}   
             </td>
 {else}
-            <td colspan="3">&nbsp;</td>
+            <td>&nbsp;</td>
 {/if}
+            <td colspan="2">{$form.operator.label}<br />{$form.operator.html}</td>
 	    </tr>
         <tr>
             <td>

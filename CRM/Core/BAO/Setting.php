@@ -191,8 +191,14 @@ class CRM_Core_BAO_Setting
         require_once "CRM/Core/DAO/Domain.php";
         $domain = new CRM_Core_DAO_Domain();
         $domain->selectAdd( );
-
-        if ( CRM_Utils_Array::value( 'q', $_GET ) == 'civicrm/upgrade' ) {
+        
+        //we are initializing config, really can't use, CRM-7863
+        $urlVar = 'q';
+        if ( defined( 'CIVICRM_UF' ) && CIVICRM_UF == 'Joomla' ) {
+            $urlVar = 'task';
+        }
+        if ( CRM_Utils_Array::value( $urlVar, $_GET ) == 'civicrm/upgrade' ||
+             CRM_Utils_Array::value( $urlVar, $_GET ) == 'admin/modules/list/confirm' ) {
             $domain->selectAdd( 'config_backend' );
         } else {
             $domain->selectAdd( 'config_backend, locales, locale_custom_strings' );

@@ -64,6 +64,12 @@ class CRM_Campaign_PseudoConstant extends CRM_Core_PseudoConstant
     private static $campaignStatus = array();
     
     /**
+     * Engagement Level 
+     * @static
+     */
+    private static $engagementLevel;
+    
+    /**
      * Get all the survey activity types
      *
      * @access public
@@ -125,6 +131,25 @@ class CRM_Campaign_PseudoConstant extends CRM_Core_PseudoConstant
         }
         asort( self::$campaignStatus );
         return self::$campaignStatus;
+    }
+    
+    /**
+     * Get all Engagement Level.
+     *
+     * The static array Engagement Level is returned
+     *
+     * @access public
+     * @static
+     * @return array - array reference of all Engagement Level.
+     */
+    public static function &engagementLevel( )
+    {
+        if ( ! isset( self::$engagementLevel ) ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            self::$engagementLevel = CRM_Core_OptionGroup::values('engagement_index');
+        }
+        
+        return self::$engagementLevel;
     }
     
 }

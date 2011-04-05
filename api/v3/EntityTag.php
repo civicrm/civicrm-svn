@@ -152,7 +152,7 @@ function civicrm_api3_entity_tag_create( $params ) {
   _civicrm_api3_initialize(true);
     try{
 
-    return civicrm_api3_entity_tag_common( $params, 'add' );
+    return _civicrm_api3_entity_tag_common( $params, 'add' );
           
     } catch (PEAR_Exception $e) {
       return civicrm_api3_create_error( $e->getMessage() );
@@ -169,7 +169,7 @@ function civicrm_api3_entity_tag_create( $params ) {
 function civicrm_api3_entity_tag_delete( $params ) {
     _civicrm_api3_initialize(true);
     try{
-      return civicrm_api3_entity_tag_common( $params, 'remove' );
+      return _civicrm_api3_entity_tag_common( $params, 'remove' );
     } catch (PEAR_Exception $e) {
       return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {
@@ -183,7 +183,7 @@ function civicrm_api3_entity_tag_delete( $params ) {
  * @param <type> $op
  * @return <type> 
  */
-function civicrm_api3_entity_tag_common( $params, $op = 'add' ) {
+function _civicrm_api3_entity_tag_common( $params, $op = 'add' ) {
     civicrm_api3_verify_mandatory($params);
     $entityIDs    = array( );
     $tagsIDs      = array( );

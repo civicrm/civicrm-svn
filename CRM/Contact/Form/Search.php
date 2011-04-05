@@ -212,7 +212,17 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
      */
     static $csv = array('contact_type', 'group', 'tag');
 
+    /**
+     * @var string how to display the results. Should we display as
+     *             contributons, members, cases etc
+     */
     protected $_componentMode;
+
+    /**
+     * @var string what operator should we use, AND or OR
+     */
+    protected $_operator;
+
     protected $_modeValue;
 
     /**
@@ -542,6 +552,10 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         $this->_componentMode   = CRM_Utils_Request::retrieve( 'component_mode' , 'Positive',
                                                                $this,
                                                                false, 1, $_REQUEST );
+        $this->_operator        = CRM_Utils_Request::retrieve( 'operator', 'String',
+                                                               $this,
+                                                               false, 1, $_REQUEST,
+                                                               'AND' );
 
         /**
          * set the button names
@@ -599,6 +613,11 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
 
             // also get the object mode directly from the post value
             $this->_componentMode = CRM_Utils_Array::value( 'component_mode', $_POST, $this->_componentMode );
+
+            // also get the operator from the post value if set
+            $this->_operator = CRM_Utils_Array::value( 'operator', $_POST, $this->_operator );
+            $this->_formValues['operator'] = $this->_operator;
+            $this->set( 'operator', $this->_operator );
         } else {
             $this->_formValues = $this->get( 'formValues' );
             $this->_params =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
@@ -633,10 +652,20 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                 if ( isset( $this->_componentMode ) ) {
                     $this->_formValues['component_mode'] = $this->_componentMode;
                 }
+                if ( isset( $this->_operator ) ) {
+                    $this->_formValues['operator'] = $this->_operator;
+                }
             }
         }
-        $this->assign( 'id', CRM_Utils_Array::value( 'uf_group_id', $this->_formValues ) );
-        
+        $this->assign( 'id',
+                       CRM_Utils_Array::value( 'uf_group_id', $this->_formValues ) );
+        $operator = CRM_Utils_Array::value( 'operator', $this->_formValues, 'AND' );
+        if ( $operator == 'OR' ) {
+            $this->assign( 'operator', ts( 'OR' ) );
+        } else {
+            $this->assign( 'operator', ts( 'AND' ) );
+        }
+                       
         // show the context menu only when we’re not searching for deleted contacts; CRM-5673
         if ( !CRM_Utils_Array::value( 'deleted_contacts', $this->_formValues ) ) {
             require_once 'CRM/Contact/BAO/Contact.php';
@@ -734,6 +763,11 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         if ( isset( $this->_componentMode ) &&
              ! CRM_Utils_Array::value( 'component_mode', $this->_formValues ) ) { 
             $this->_formValues['component_mode'] = $this->_componentMode;
+        }
+
+        if ( isset( $this->_operator ) &&
+             ! CRM_Utils_Array::value( 'operator', $this->_formValues ) ) { 
+            $this->_formValues['operator'] = $this->_operator;
         }
 
         if ( ! CRM_Utils_Array::value( 'qfKey', $this->_formValues ) ) {

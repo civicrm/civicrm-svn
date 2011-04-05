@@ -231,8 +231,10 @@ class CRM_Event_BAO_Query
             }
         }
 
-        if ( $grouping !== null &&
-             ! $isTest ) {
+        if ( $grouping !== null && 
+             ! $isTest &&
+             // we dont want to include all tests for sql OR CRM-7827
+             $query->getOperator( ) != 'OR' ) {
             $values = array( 'participant_test', '=', 0, $grouping, 0 );
             self::whereClauseSingle( $values, $query );
         }

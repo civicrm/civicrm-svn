@@ -102,6 +102,11 @@ class CRM_Activity_Form_ActivityView extends CRM_Core_Form
             $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( $campaignId );
             $values['campaign'] = $campaigns[$campaignId];
         }
+        if ( $engagementLevel = CRM_Utils_Array::value( 'engagement_level', $defaults ) ) {
+            require_once 'CRM/Campaign/PseudoConstant.php';
+            $engagementLevels = CRM_Campaign_PseudoConstant::engagementLevel();
+            $values['engagement_level'] = CRM_Utils_Array::value( $engagementLevel, $engagementLevels, $engagementLevel );
+        }
         
         require_once 'CRM/Core/BAO/File.php';
         $values['attachment'] = CRM_Core_BAO_File::attachmentInfo( 'civicrm_activity',

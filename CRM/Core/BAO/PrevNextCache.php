@@ -108,7 +108,7 @@ WHERE  entity_id1 = %1 AND
         
         if ( isset( $cacheKey ) ) {
             $sql .= " AND cacheKey LIKE %3";
-            $params[3] = array( $cacheKey, 'String' );
+            $params[3] = array( "{$cacheKey}%", 'String' );
         }
 
         CRM_Core_DAO::executeQuery( $sql, $params );

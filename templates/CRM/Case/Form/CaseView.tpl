@@ -674,8 +674,10 @@ function addRole() {
   {ts}Case Tags{/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
+  {assign var="tagExits" value=0}
   {if $tags}
     <div class="crm-block crm-content-block crm-case-caseview-display-tags">{$tags}</div>
+    {assign var="tagExits" value=1}
   {/if}
 
   {foreach from=$tagsetInfo_case item=displayTagset}
@@ -686,16 +688,17 @@ function addRole() {
                   &nbsp;{$val.name}{if !$smarty.foreach.tagsetList.last},{/if}
               {/foreach}
           </div>
+        {assign var="tagExits" value=1}
       {/if}
   {/foreach}
 
-  {if !$tags and !$displayTagset.entityTagsArray }
+  {if !$tagExits }
     <div class="status">
         {ts}There are no tags currently assigend to this case.{/ts}
     </div>
   {/if}
 
-  <div class="crm-submit-buttons"><input type="button" class="form-submit" onClick="javascript:addTags()" value={if $tags || $displayTagset.entityTagsArray}"{ts}Edit Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
+  <div class="crm-submit-buttons"><input type="button" class="form-submit" onClick="javascript:addTags()" value={if $tagExits}"{ts}Edit Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
 
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
@@ -722,19 +725,9 @@ function addTags() {
     cj("#manageTags").show( );
 
     cj("#manageTags").dialog({
-        title: "Change Case Tags",
+        title: "{/literal}{ts}Change Case Tags{/ts}{literal}",
         modal: true,
-        bgiframe: true,
-        width : 450,
-        overlay: { 
-            opacity: 0.5, 
-            background: "black" 
-        },
-
-        open:function() {
-            /* set defaults if editing */
-        },
-
+        width: '550',
         buttons: { 
             "Save": function() { 
                 var tagsChecked = '';	    

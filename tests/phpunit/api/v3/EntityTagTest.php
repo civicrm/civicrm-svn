@@ -403,7 +403,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
     function testCommonAddEmptyParams( ) 
     {
         $params = array( 'version' =>$this->_apiversion , );                             
-        $individualEntity = civicrm_api3_entity_tag_common( $params, 'add' ); 
+        $individualEntity = _civicrm_api3_entity_tag_common( $params, 'add' ); 
         $this->assertEquals( $individualEntity['is_error'], 1 ); 
         $this->assertEquals( $individualEntity['error_message'], 'contact_id is a required field' );
     }
@@ -412,7 +412,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
     {
         $params = array('contact_id' => $this->_individualID,
                         'version' =>$this->_apiversion , );              
-        $individualEntity = civicrm_api3_entity_tag_common( $params, 'add' ); 
+        $individualEntity = _civicrm_api3_entity_tag_common( $params, 'add' ); 
         $this->assertEquals( $individualEntity['is_error'], 1 );
         $this->assertEquals( $individualEntity['error_message'], 'tag_id is a required field' );
     }
@@ -421,7 +421,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
     {
         $params = array('tag_id' => $this->_tagID,
                          'version' =>$this->_apiversion ,);              
-        $individualEntity = civicrm_api3_entity_tag_common( $params, 'add' ); 
+        $individualEntity = _civicrm_api3_entity_tag_common( $params, 'add' ); 
         $this->assertEquals( $individualEntity['is_error'], 1 );
         $this->assertEquals( $individualEntity['error_message'], 'contact_id is a required field' );
     }
@@ -433,7 +433,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
                         'tag_id'     =>  $this->_tagID,
                         'version' =>$this->_apiversion ,);
         
-        $individualEntity = civicrm_api3_entity_tag_common( $params, 'add' ); 
+        $individualEntity = _civicrm_api3_entity_tag_common( $params, 'add' ); 
         $this->assertEquals( $individualEntity['is_error'], 0 );
         $this->assertEquals( $individualEntity['added'], 1 );
     }
@@ -453,7 +453,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
                         'version' =>$this->_apiversion ,
                         );
                 
-        $result = civicrm_api3_entity_tag_common( $params, 'remove' );
+        $result = _civicrm_api3_entity_tag_common( $params, 'remove' );
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'contact_id is a required field' );
     }
@@ -474,7 +474,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
                         'version' =>$this->_apiversion ,
                         );
                 
-        $result = civicrm_api3_entity_tag_common( $params, 'remove' );
+        $result = _civicrm_api3_entity_tag_common( $params, 'remove' );
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'tag_id is a required field' );
     }
@@ -496,7 +496,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
                         'version' =>$this->_apiversion ,
                         );
         
-        $result = civicrm_api3_entity_tag_common( $params, 'remove' );
+        $result = _civicrm_api3_entity_tag_common( $params, 'remove' );
         
         $this->assertEquals( $result['is_error'], 0 );
         $this->assertEquals( $result['removed'], 2 );
@@ -518,7 +518,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
                         'version' =>$this->_apiversion ,
                         );
                 
-        $result = civicrm_api3_entity_tag_common( $params, 'remove' );
+        $result = _civicrm_api3_entity_tag_common( $params, 'remove' );
         $this->assertEquals( $result['removed'], 1 );
     }
     
@@ -539,7 +539,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
                         'version' =>$this->_apiversion ,
                         );
                 
-        $result = civicrm_api3_entity_tag_common( $params, 'remove' );
+        $result = _civicrm_api3_entity_tag_common( $params, 'remove' );
         $this->assertEquals( $result['removed'], 1 );
         $this->assertEquals( $result['not_removed'], 1 );
     }    

@@ -68,7 +68,7 @@ function civicrm_api3_participant_create($params)
 
 
 
-        $errors= civicrm_api3_participant_check_params( $params );
+        $errors= _civicrm_api3_participant_check_params( $params );
         if ( civicrm_api3_error( $errors ) ) {
             return $errors;
         }
@@ -110,30 +110,7 @@ function civicrm_api3_participant_get( $params ) {
             unset( $params['id'] );
         }
 
-        $participant  =& _civicrm_api3_participant_search( $params );
-
-        return civicrm_api3_create_success($participant,$params);
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
-}
-
-/**
- * Get contact participant record.
- *
- * This api is used for finding an existing participant record.
- *
- * @param  array  $params     an associative array of name/value property values of civicrm_participant
- *
- * @return  participant property values.
- * @access public
- */
-
-function &_civicrm_api3_participant_search( $params ) {
-
-    $inputParams      = array( );
+            $inputParams      = array( );
     $returnProperties = array( );
     $otherVars = array( 'sort', 'offset', 'rowCount' );
 
@@ -177,46 +154,14 @@ function &_civicrm_api3_participant_search( $params ) {
     while ( $dao->fetch( ) ) {
         $participant[$dao->participant_id] = $query->store( $dao );
     }
-    $dao->free( );
 
-    return $participant;
-
+        return civicrm_api3_create_success($participant,$params,$dao);
+    } catch (PEAR_Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    }
 }
-
-/**
- * Update an existing contact participant
- *
- * This api is used for updating an existing contact participant.
- * Required parrmeters : id of a participant
- *
- * @param  Array   $params  an associative array of name/value property values of civicrm_participant
- *
- * @return array of updated participant property values
- * @access public
- */
-function &civicrm_api3_participant_update($params)
-{
-    _civicrm_api3_initialize();
-    if ( !is_array( $params ) ) {
-        return civicrm_api3_create_error( 'Input variable `params` is not an array' );
-    }
-
-    if ( !isset($params['id']) ) {
-        $error = civicrm_api3_create_error( 'Required parameter missing' );
-        return $error;
-    }
-    $errors= civicrm_api3_participant_check_params( $params );
-    if ( civicrm_api3_error( $errors ) ) {
-        return $errors;
-    }
-    require_once 'CRM/Event/BAO/Participant.php';
-    $participantBAO = CRM_Event_BAO_Participant::create( $params );
-
-    $participant = array();
-    _civicrm_api3_object_to_array( $participantBAO, $participant );
-    return $participant;
-}
-
 
 
 /**
@@ -261,7 +206,7 @@ function &civicrm_api3_participant_delete( $params )
  * @param <type> $onDuplicate
  * @return <type>
  */
-function civicrm_api3_create_participant_formatted( $params , $onDuplicate )
+function _civicrm_api3_create_participant_formatted( $params , $onDuplicate )
 {
     _civicrm_api3_initialize( );
 
@@ -273,7 +218,7 @@ function civicrm_api3_create_participant_formatted( $params , $onDuplicate )
     require_once 'CRM/Event/Import/Parser.php';
     if ( $onDuplicate != CRM_Event_Import_Parser::DUPLICATE_NOCHECK) {
         CRM_Core_Error::reset( );
-        $error = civicrm_api3_participant_check_params( $params ,true );
+        $error = _civicrm_api3_participant_check_params( $params ,true );
         if ( civicrm_api3_error( $error ) ) {
             return $error;
         }
@@ -287,7 +232,7 @@ function civicrm_api3_create_participant_formatted( $params , $onDuplicate )
  * @param <type> $params
  * @return <type>
  */
-function civicrm_api3_participant_check_params( $params ,$checkDuplicate = false )
+function _civicrm_api3_participant_check_params( $params ,$checkDuplicate = false )
 {
     require_once 'CRM/Event/BAO/Participant.php';
     //check if participant id is valid or not

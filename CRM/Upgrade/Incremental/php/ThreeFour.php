@@ -113,4 +113,26 @@ class CRM_Upgrade_Incremental_php_ThreeFour {
         $upgrade->assign( 'addPetitionOptionGroup', $addPetitionOptionGroup );
         $upgrade->processSQL( $rev );
     }
+
+    function upgrade_3_4_beta3($rev)
+    {
+        // do the regular upgrade
+        $upgrade = new CRM_Upgrade_Form;
+        $upgrade->processSQL($rev);
+
+        if ($upgrade->multilingual) {
+            require_once 'CRM/Core/I18n/Schema.php';
+            require_once 'CRM/Core/I18n/SchemaStructure_3_4_beta2.php';
+
+            // rebuild schema, because due to a CRM-7854 mis-fix some indices might be missing
+            CRM_Core_I18n_Schema::rebuildMultilingualSchema($upgrade->locales, $rev);
+
+            // turn a set of columns singlelingual
+            $config =& CRM_Core_Config::singleton();
+            $tables = array('civicrm_address', 'civicrm_contact', 'civicrm_mailing', 'civicrm_mailing_component');
+            foreach ($tables as $table) {
+                CRM_Core_I18n_Schema::makeSinglelingualTable($config->lcMessages, $table, 'CRM_Core_I18n_SchemaStructure_3_4_beta2');
+            }
+        }
+    }
   }

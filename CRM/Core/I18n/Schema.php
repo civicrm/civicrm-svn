@@ -68,7 +68,7 @@ class CRM_Core_I18n_Schema
      * @param $locale string  the first locale to create (migrate to)
      * @return void
      */
-    function makeMultilingual($locale)
+    static function makeMultilingual($locale)
     {
         $domain = new CRM_Core_DAO_Domain();
         $domain->find(true);
@@ -120,7 +120,7 @@ class CRM_Core_I18n_Schema
      * @param $retain string  the locale to retain
      * @return void
      */
-    function makeSinglelingual($retain)
+    static function makeSinglelingual($retain)
     {
         $domain = new CRM_Core_DAO_Domain;
         $domain->find(true);
@@ -129,46 +129,10 @@ class CRM_Core_I18n_Schema
         // break early if the db is already single-lang
         if (!$locales) return;
 
-        // build the column-dropping SQL queries
-        $columns =& CRM_Core_I18n_SchemaStructure::columns();
-        $indices =& CRM_Core_I18n_SchemaStructure::indices();
-        $queries = array();
-        foreach ($columns as $table => $hash) {
-            // drop old indices
-            if (isset($indices[$table])) {
-                foreach ($indices[$table] as $index) {
-                    foreach ($locales as $loc) {
-                        $queries[] = "DROP INDEX {$index['name']}_{$loc} ON {$table}";
-                    }
-                }
-            }
-
-            // drop triggers
-            $queries[] = "DROP TRIGGER IF EXISTS {$table}_before_insert";
-            $queries[] = "DROP TRIGGER IF EXISTS {$table}_before_update";
-
-            // deal with columns
-            foreach ($hash as $column => $type) {
-                $queries[] = "ALTER TABLE {$table} ADD {$column} {$type}";
-                $queries[] = "UPDATE {$table} SET {$column} = {$column}_{$retain}";
-                foreach ($locales as $loc) {
-                    $queries[] = "ALTER TABLE {$table} DROP {$column}_{$loc}";
-                }
-            }
-
-            // drop views
-            foreach ($locales as $loc) {
-                $queries[] = "DROP VIEW {$table}_{$loc}";
-            }
-
-            // add original indices
-            $queries = array_merge($queries, self::createIndexQueries(null, $table));
-        }
-
-        // execute the queries without i18n rewriting
-        $dao = new CRM_Core_DAO;
-        foreach ($queries as $query) {
-            $dao->query($query, false);
+        // turn subsequent tables singlelingual
+        $tables =& CRM_Core_I18n_SchemaStructure::tables();
+        foreach ($tables as $table) {
+            self::makeSinglelingualTable($retain, $table);
         }
 
         // update civicrm_domain.locales
@@ -181,6 +145,64 @@ class CRM_Core_I18n_Schema
     }
 
     /**
+     * Switch a given table from multi-lang to single (by retaining only the selected locale).
+     *
+     * @param $retain string  the locale to retain
+     * @param $table  string  the table containing the column
+     * @param $class  string  schema structure class to use to recreate indices
+     * @return void
+     */
+    static function makeSinglelingualTable($retain, $table, $class = 'CRM_Core_I18n_SchemaStructure')
+    {
+        $domain = new CRM_Core_DAO_Domain;
+        $domain->find(true);
+        $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
+
+        // break early if the db is already single-lang
+        if (!$locales) return;
+
+        eval("\$columns =& $class::columns();");
+        eval("\$indices =& $class::indices();");
+        $queries = array();
+
+        // drop indices
+        if (isset($indices[$table])) {
+            foreach ($indices[$table] as $index) {
+                foreach ($locales as $loc) {
+                    $queries[] = "DROP INDEX {$index['name']}_{$loc} ON {$table}";
+                }
+            }
+        }
+
+        // drop triggers
+        $queries[] = "DROP TRIGGER IF EXISTS {$table}_before_insert";
+        $queries[] = "DROP TRIGGER IF EXISTS {$table}_before_update";
+
+        // deal with columns
+        foreach ($columns[$table] as $column => $type) {
+            $queries[] = "ALTER TABLE {$table} ADD {$column} {$type}";
+            $queries[] = "UPDATE {$table} SET {$column} = {$column}_{$retain}";
+            foreach ($locales as $loc) {
+                $queries[] = "ALTER TABLE {$table} DROP {$column}_{$loc}";
+            }
+        }
+
+        // drop views
+        foreach ($locales as $loc) {
+            $queries[] = "DROP VIEW {$table}_{$loc}";
+        }
+
+        // add original indices
+        $queries = array_merge($queries, self::createIndexQueries(null, $table));
+
+        // execute the queries without i18n rewriting
+        $dao = new CRM_Core_DAO;
+        foreach ($queries as $query) {
+            $dao->query($query, false);
+        }
+    }
+
+    /**
      * Add a new locale to a multi-lang db, setting 
      * its values to the current default locale.
      *
@@ -188,7 +210,7 @@ class CRM_Core_I18n_Schema
      * @param $source string  the locale to copy from
      * @return void
      */
-    function addLocale($locale, $source)
+    static function addLocale($locale, $source)
     {
         // get the current supported locales 
         $domain = new CRM_Core_DAO_Domain();
@@ -340,7 +362,7 @@ class CRM_Core_I18n_Schema
      * @param $class string   schema structure class to use
      * @return array          array of CREATE INDEX queries
      */
-    private function createIndexQueries($locale, $table, $class = 'CRM_Core_I18n_SchemaStructure')
+    private static function createIndexQueries($locale, $table, $class = 'CRM_Core_I18n_SchemaStructure')
     {
         eval("\$indices =& $class::indices();");
         eval("\$columns =& $class::columns();");
@@ -348,8 +370,6 @@ class CRM_Core_I18n_Schema
 
         $queries = array();
         foreach ($indices[$table] as $index) {
-            // CRM-7854: skip existing indices
-            if (CRM_Core_DAO::checkConstraintExists($table, $index['name'])) continue;
             $unique = isset($index['unique']) && $index['unique'] ? 'UNIQUE' : '';
             foreach ($index['field'] as $i => $col) {
                 // if a given column is localizable, extend its name with the locale
@@ -358,6 +378,8 @@ class CRM_Core_I18n_Schema
             $cols = implode(', ', $index['field']);
             $name = $index['name'];
             if ($locale) $name .= '_' . $locale;
+            // CRM-7854: skip existing indices
+            if (CRM_Core_DAO::checkConstraintExists($table, $name)) continue;
             $queries[$index['name']] = "CREATE {$unique} INDEX {$name} ON {$table} ({$cols})";
         }
         return $queries;
@@ -371,7 +393,7 @@ class CRM_Core_I18n_Schema
      * @param $class string   schema structure class to use
      * @return array          array of CREATE TRIGGER queries
      */
-    private function createTriggerQueries($locales, $locale, $class = 'CRM_Core_I18n_SchemaStructure')
+    private static function createTriggerQueries($locales, $locale, $class = 'CRM_Core_I18n_SchemaStructure')
     {
         eval("\$columns =& $class::columns();");
         $queries = array();
@@ -486,7 +508,7 @@ class CRM_Core_I18n_Schema
      * @param $class string   schema structure class to use
      * @return array          array of CREATE INDEX queries
      */
-    private function createViewQuery($locale, $table, &$dao, $class = 'CRM_Core_I18n_SchemaStructure')
+    private static function createViewQuery($locale, $table, &$dao, $class = 'CRM_Core_I18n_SchemaStructure')
     {
         eval("\$columns =& $class::columns();");
         $cols = array();

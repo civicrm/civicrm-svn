@@ -1895,6 +1895,7 @@ AND cl.modified_id  = c.id
      */
     function &exportableFields( $name = 'Activity' ) 
     {
+        require_once ('CRM/Core/BAO/CustomField.php');
         if ( ! isset( self::$_exportableFields[$name] ) ) {
             self::$_exportableFields[$name] = array( );
             

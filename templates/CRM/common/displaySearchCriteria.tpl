@@ -54,7 +54,11 @@
             <div class="qill">
             {$item}
             {if !$smarty.foreach.criteria.last}
-                <span class="font-italic">{ts}...AND...{/ts}</span>
+                {if $operator}
+                  <span class="font-italic">...{$operator}...</span>
+                {else}
+                  <span class="font-italic">...{ts}AND{/ts}...</span>
+                {/if}
             {/if}
             </div>
         {/foreach}
