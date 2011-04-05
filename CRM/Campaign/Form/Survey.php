@@ -480,10 +480,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         if ( (CRM_Utils_Array::value('option_type', $params) == 2) &&
              CRM_Utils_Array::value('option_group_id', $params) ) {
             $updateResultSet   = true;
-            $resultSetOptGrpId = CRM_Utils_Array::value( 'result_id', $this->_values );
-            if ( !$resultSetOptGrpId ) {
-                $resultSetOptGrpId = $params['option_group_id'];
-            }
+            $resultSetOptGrpId = $params['option_group_id'];
         }
         
         if ( $this->_surveyId ) {
