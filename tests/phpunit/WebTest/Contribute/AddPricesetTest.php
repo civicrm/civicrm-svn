@@ -208,10 +208,11 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       // source
       $this->type('source', 'Mailer 1');
       
-      // total amount
-      // $this->type('total_amount', '100');
-      $label = 'Conference Fees - 9456bdc';
+      // select price set items
       $this->select('price_set_id', "label=$setTitle");
+      $this->type("xpath=//input[@class='form-text four required']", "1");
+      $this->click("xpath=//input[@class='form-radio']");
+      $this->click("xpath=//input[@class='form-checkbox']");
       // select payment instrument type = Check and enter chk number
       $this->select('payment_instrument_id', 'value=4');
       $this->waitForElementPresent('check_number');
@@ -230,8 +231,28 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       $this->type('invoice_id', time());
       $this->webtestFillDate('thankyou_date');
      
-
+      // Clicking save.
+      $this->click('_qf_Contribution_upload');
       $this->waitForPageToLoad('30000');
-      $this->waitForElementPresent('thankyou_datedd');
+      
+      // Is status message correct?
+      $this->assertTrue($this->isTextPresent('The contribution record has been saved.'), "Status message didn't show up after saving!");
+
+      $this->waitForElementPresent( "xpath=//div[@id='Contributions']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
+      
+      //click through to the Membership view screen
+      $this->click( "xpath=//div[@id='Contributions']//table/tbody/tr[1]/td[8]/span/a[text()='View']" );
+      $this->waitForElementPresent('_qf_ContributionView_cancel-bottom');
+
+      $expected = array(
+                        2  => 'Donation', 
+                        3  => '590.00',
+                        8  => 'Completed',
+                        9  => 'Check',
+                        10 => 'check #1041' );
+      foreach ( $expected as $label => $value ) {
+          $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
+      }
+
   }
 }
