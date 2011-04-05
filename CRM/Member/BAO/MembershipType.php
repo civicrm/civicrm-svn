@@ -355,6 +355,9 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
                 if ( $fixedEndDate < $actualRolloverDate ) {
                     $actualRolloverDate = date('Y-m-d', mktime( 0, 0, 0, $rolloverMonth, $rolloverDay, $year - 1 ) );
                 }
+                if ( $actualRolloverDate < $actualStartDate ) {
+                    $actualRolloverDate = date('Y-m-d', mktime( 0, 0, 0, $rolloverMonth, $rolloverDay, $year + 1 ) );
+                }
                 
                 //do check signup is in rollover window.
                 if ( $actualRolloverDate <= $joinDate ) {
