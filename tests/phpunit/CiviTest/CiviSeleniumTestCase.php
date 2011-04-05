@@ -524,7 +524,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                                        $premiums      = true,
                                        $widget        = true, 
                                        $pcp           = true ,
-                                       $isAddPaymentProcessor = true
+                                       $isAddPaymentProcessor = true,
+                                       $isPcpApprovalNeeded = false
                                        ) 
   {
       if ( !$pageTitle ) {
@@ -750,7 +751,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
           $this->waitForElementPresent("_qf_PCP_next-bottom");
 
           $this->click('pcp_active');
-          $this->click('is_approval_needed');
+          if( !$isPcpApprovalNeeded ) $this->click('is_approval_needed');
           $this->type('notify_email', "$hash@example.name");
           $this->select('supporter_profile_id', 'value=2');
           $this->type('tellfriend_limit', 7);
