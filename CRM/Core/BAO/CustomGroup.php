@@ -1107,8 +1107,15 @@ SELECT $select
                     $groupTree[$groupID]['fields'][$fieldId]['customValue']['data'] = 'NULL';
                 }
 
-                $v = CRM_Utils_Array::value( 'custom_' . $field['id'], $params );
-                
+                $v = null;
+                foreach ( $params as $key => $val ) {
+                    if (preg_match('/^custom_(\d+)_?(-?\d+)?$/', $key, $match) && 
+                        $match[1] == $field['id'] ) {
+                        $v = $val;
+                    }
+                }
+
+
                 if ( ! isset($groupTree[$groupID]['fields'][$fieldId]['customValue'] ) ) {
                     // field exists in db so populate value from "form".
                     $groupTree[$groupID]['fields'][$fieldId]['customValue'] = array();
@@ -1144,7 +1151,7 @@ SELECT $select
                     break;
 
                 case 'Select Date':
-                    $date = CRM_Utils_Date::format( $v );
+                    $date = CRM_Utils_Date::processDate( $v );
                     $groupTree[$groupID]['fields'][$fieldId]['customValue']['data'] = $date;
                     break;
          
