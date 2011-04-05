@@ -254,5 +254,15 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
           $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
       }
 
+      $exp = array ( 
+                    2 => '$ 525.00',
+                    3 => '$ 50.00',
+                    4 => '$ 15.00'
+                     );
+      
+      foreach ( $exp as $lab => $val ) {
+          $this->verifyText( "xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[3]/td[2]/table/tbody/tr[$lab]/td[3]", 
+                             preg_quote($val) );
+      }
   }
 }
