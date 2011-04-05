@@ -119,7 +119,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
         $this->type( "cms_name",  $cmsUserName);
         $this->click( "checkavailability" );
         $this->type( "first_name", $firstName );
-        $this->type( "last_name", $firstName );  
+        $this->type( "last_name",  $lastName);  
         $this->type( "email-Primary", $email ); 
         $this->click( "_qf_PCPAccount_next-bottom" );   
         $this->waitForElementPresent( "_qf_Campaign_upload-bottom" );
@@ -196,6 +196,8 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
             $this->verifyText( "xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote( $label ) ); 
         }
         
+        //Check for SoftCredit
+        $this->verifyText( "xpath=id('ContributionView')/div[2]/div[2]/div[2]/table/tbody/tr[1]/td[2]/a", preg_quote( $pcpTitle ) ); 
+        $this->verifyText( "xpath=id('ContributionView')/div[2]/div[2]/div[2]/table/tbody/tr[2]/td[2]/a", preg_quote( "{$firstName} {$lastName}" ) ); 
     }
-    
 }
