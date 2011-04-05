@@ -164,8 +164,10 @@ class CRM_Core_Form_Tag
                 }
             }
         }
-
-        $form->assign( "tagsetInfo_$mode", $tagset );
+	
+        if ( !empty( $tagset ) ) {
+            $form->assign( "tagsetInfo_$mode", $tagset );
+        }
     }
     
     /**
