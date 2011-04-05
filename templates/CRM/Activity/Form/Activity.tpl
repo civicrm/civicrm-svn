@@ -185,9 +185,9 @@
     	     {* build engagement level CRM-7775 *}
     	     {if $buildEngagementLevel}
         	     <tr class="crm-activity-form-block-engagement_level">
-                    <td class="label">{$form.engagement_level.label}</td>
-        		    <td class="view-value">{$form.engagement_level.html|crmReplace:class:four}</td>
-                 </tr>
+                         <td class="label">{$form.engagement_level.label}</td>
+        		 <td class="view-value">{$form.engagement_level.html}</td>
+                     </tr>
     	     {/if}
 	     
              <tr class="crm-activity-form-block-location">

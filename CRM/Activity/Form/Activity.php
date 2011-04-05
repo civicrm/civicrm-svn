@@ -654,7 +654,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         $buildEngagementLevel = false;
         if ( CRM_Campaign_BAO_Campaign::isCampaignEnable( ) ) {
             $buildEngagementLevel = true;
-            $this->add( 'text', 'engagement_level', ts( 'Engagement Index' ), $attributes['engagement_level'] );
+            require_once 'CRM/Campaign/PseudoConstant.php';
+            $this->add( 'select', 'engagement_level', 
+                        ts( 'Engagement Index' ), 
+                        array( '' => ts( '- select -' ) ) + CRM_Campaign_PseudoConstant::engagementLevel( ) );
             $this->addRule( 'engagement_level', 
                             ts('Please enter the engagement index as a number (integers only).'), 
                             'positiveInteger');

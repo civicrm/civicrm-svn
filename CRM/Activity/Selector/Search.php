@@ -85,7 +85,8 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                 'activity_type_id',
                                 'activity_type',
                                 'activity_is_test',
-                                'activity_campaign_id'
+                                'activity_campaign_id',
+                                'activity_engagement_level'
                                 );
     
     /** 
@@ -249,6 +250,9 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
          require_once 'CRM/Campaign/BAO/Campaign.php';
          $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
          
+         require_once 'CRM/Campaign/PseudoConstant.php';
+         $engagementLevels = CRM_Campaign_PseudoConstant::engagementLevel();
+         
          while ( $result->fetch( ) ) {
              $row = array( );
              
@@ -314,6 +318,11 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
             //carry campaign to selector.
             $row['campaign'] = CRM_Utils_Array::value( $result->activity_campaign_id, $allCampaigns );
             $row['campaign_id'] = $result->activity_campaign_id;
+            
+            if ( $engagementLevel = CRM_Utils_Array::value( 'activity_engagement_level', $row ) ) {
+                $row['activity_engagement_level'] = CRM_Utils_Array::value( $engagementLevel, 
+                                                                            $engagementLevels, $engagementLevel );
+            }
             
             $rows[] = $row;
          }

@@ -194,7 +194,8 @@ VALUES
    ('system_extensions'             , '{ts escape="sql"}CiviCRM Extensions{/ts}'                 , 0, 1),
    ('directory_preferences'         , '{ts escape="sql"}Directory Preferences{/ts}'              , 0, 1),
    ('url_preferences'               , '{ts escape="sql"}URL Preferences{/ts}'                    , 0, 1),
-   ('mail_approval_status'          , '{ts escape="sql"}CiviMail Approval Status{/ts}'           , 0, 1);
+   ('mail_approval_status'          , '{ts escape="sql"}CiviMail Approval Status{/ts}'           , 0, 1),
+   ('engagement_index'              , '{ts escape="sql"}Engagement Index{/ts}'                   , 0, 1);
 
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
@@ -253,6 +254,7 @@ SELECT @option_group_id_extensions     := max(id) from civicrm_option_group wher
 SELECT @option_group_id_directory_pref := max(id) from civicrm_option_group where name = 'directory_preferences';
 SELECT @option_group_id_url_pref       := max(id) from civicrm_option_group where name = 'url_preferences';
 SELECT @option_group_id_mail_approval_status := max(id) from civicrm_option_group where name = 'mail_approval_status';
+SELECT @option_group_id_engagement_index := max(id) from civicrm_option_group where name = 'engagement_index';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -666,7 +668,14 @@ VALUES
   (@option_group_id_campaignStatus, '{ts escape="sql"}Planned{/ts}', 1, 'Planned',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL), 
   (@option_group_id_campaignStatus, '{ts escape="sql"}In Progress{/ts}', 2, 'In Progress',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_campaignStatus, '{ts escape="sql"}Completed{/ts}', 3, 'Completed',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_campaignStatus, '{ts escape="sql"}Cancelled{/ts}', 4, 'Cancelled',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL);
+  (@option_group_id_campaignStatus, '{ts escape="sql"}Cancelled{/ts}', 4, 'Cancelled',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+
+-- Engagement Level
+  (@option_group_id_engagement_index, '{ts escape="sql"}1{/ts}', 1, '1',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL ),
+  (@option_group_id_engagement_index, '{ts escape="sql"}2{/ts}', 2, '2',  NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL ),
+  (@option_group_id_engagement_index, '{ts escape="sql"}3{/ts}', 3, '3',  NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL ),
+  (@option_group_id_engagement_index, '{ts escape="sql"}4{/ts}', 4, '4',  NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL ),
+  (@option_group_id_engagement_index, '{ts escape="sql"}5{/ts}', 5, '5',  NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL );
 
 -- Now insert option values which require domainID
 --
