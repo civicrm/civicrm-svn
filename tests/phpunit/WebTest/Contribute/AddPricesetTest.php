@@ -27,7 +27,8 @@
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
  
-class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
+class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase
+{
 
   protected function setUp()
   {
@@ -155,7 +156,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       $this->assertStringsPresent( $validateStrings );
   }
   
-  function testContributeWithPriceSet()
+  function testContributeOfflineWithPriceSet()
   {
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
@@ -253,7 +254,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       foreach ( $expected as $label => $value ) {
           $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
       }
-
+      
       $exp = array ( 
                     2 => '$ 525.00',
                     3 => '$ 50.00',
@@ -264,5 +265,78 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
           $this->verifyText( "xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[3]/td[2]/table/tbody/tr[$lab]/td[3]", 
                              preg_quote($val) );
       }
+  }
+
+  function _testVerifyRegisterPage( $contributionPageTitle )
+  {
+      $this->open( $this->sboxPath . "civicrm/admin/contribute?reset=1" );
+      $this->waitForElementPresent( "_qf_SearchContribution_refresh" );
+      $this->type( 'title', $contributionPageTitle );
+      $this->click( "_qf_SearchContribution_refresh" );
+      $this->waitForPageToLoad( '50000' );
+      $id = $this->getAttribute("//div[@id='configure_contribution_page']//div[@class='dataTables_wrapper']/table/tbody/tr@id");
+      $id = explode( '_', $id );
+      $registerUrl = "civicrm/contribute/transact?reset=1&id=$id[1]";
+      return $registerUrl;
+  }
+  
+  function testContributeOnlineWithPriceSet()
+  {
+      // This is the path where our testing install resides. 
+      // The rest of URL is defined in CiviSeleniumTestCase base class, in
+      // class attributes.
+      $this->open( $this->sboxPath );
+
+      // Logging in. Remember to wait for page to load. In most cases,
+      // you can rely on 30000 as the value that allows your test to pass, however,
+      // sometimes your test might fail because of this. In such cases, it's better to pick one element
+      // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+      // page contents loaded and you can continue your test execution.
+      $this->webtestLogin();
+      
+      // We need a payment processor
+      $processorName = 'Webtest Dummy' . substr( sha1( rand( ) ), 0, 7 );
+      $this->webtestAddPaymentProcessor( $processorName );
+      
+      $this->open( $this->sboxPath . 'civicrm/admin/contribute/add&reset=1&action=add' );
+      
+      $contributionTitle = substr( sha1( rand( ) ), 0, 7 );
+      $rand = 2 * rand( 2, 50 );
+        
+      // fill in step 1 (Title and Settings)
+      $contributionPageTitle = "Title $contributionTitle";
+      $this->type( 'title', $contributionPageTitle );
+      $this->select( 'contribution_type_id', 'value=1' );
+      $this->fillRichTextField( 'intro_text','This is Test Introductory Message','CKEditor' );
+      $this->fillRichTextField( 'footer_text','This is Test Footer Message','CKEditor' );
+      
+      // go to step 2
+      $this->click( '_qf_Settings_next' );
+      $this->waitForElementPresent( '_qf_Amount_next-bottom' );
+
+      //this contribution page for online contribution 
+      $this->select( 'payment_processor_id', 'label=' . $processorName );
+      $this->isTextPresent( 'Contribution Amounts section enabled' );
+      $this->type( 'label_1', 'amount 1' );
+      $this->type( 'value_1', '100' );
+      $this->type( 'label_2', 'amount 2' );
+      $this->type( 'value_2', '200' );
+      $this->click( 'CIVICRM_QFID_1_2' );
+      
+      $this->click( '_qf_Amount_next-bottom' );
+      $this->waitForPageToLoad( '30000' );    
+
+      //get Url for Live Contribution Page
+      $registerUrl = $this->_testVerifyRegisterPage( $contributionPageTitle );
+   
+      //logout
+      $this->open( $this->sboxPath . 'civicrm/logout&reset=1' );
+      $this->waitForPageToLoad( '30000' );
+      
+      //Open Live Contribution Page
+      $this->open( $this->sboxPath . $registerUrl );
+      $this->waitForElementPresent( '_qf_Main_upload-bottom' );
+
+      
   }
 }
