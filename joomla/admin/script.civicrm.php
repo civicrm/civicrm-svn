@@ -33,9 +33,6 @@ class Com_CiviCRMInstallerScript {
 
         global $civicrmUpgrade;
     
-        require_once'CRM/Core/Config.php';
-        $config = CRM_Core_Config::singleton( );
-
         $script          = 'index.php';
         $liveSite        = substr_replace(JURI::root(), '', -1, 1);
         $configTaskUrl   = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/admin/configtask&reset=1";
