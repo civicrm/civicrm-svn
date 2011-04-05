@@ -173,8 +173,10 @@ SELECT  count( id ) as statusCount
             
             //turning some tables to monolingual during 3.4.beta3, CRM-7869
             if ( $upgrade->multilingual && 
-                 version_compare( $currentVer, '3.4.beta3' ) == -1 &&
-                 version_compare( $latestVer,  '3.4.beta3' ) >= 0 ) {
+                 ( ( version_compare( $currentVer, '3.4.beta3'  ) == -1   &&
+                     version_compare( $latestVer,  '3.4.beta3'  ) >=  0 ) || 
+                   ( version_compare( $currentVer, '4.0.alpha1' ) >=  0   &&
+                     version_compare( $latestVer,  '4.0.beta3'  ) >=  0 ) ) ) {
                 $config = CRM_Core_Config::singleton( );
                 $preUpgradeMessage .= '<br />' . ts( "As per <a href='%1'>the related blog post</a>, we are making contact names, addresses and mailings monolingual; the values entered for the default locale (%2) will be preserved and values for other locales removed.", array( 1 => 'http://civicrm.org/blogs/shot/multilingual-civicrm-3440-making-some-fields-monolingual', 2 => $config->lcMessages ) );
             }
