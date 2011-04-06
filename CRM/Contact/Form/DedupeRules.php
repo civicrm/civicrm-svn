@@ -215,7 +215,7 @@ UPDATE civicrm_dedupe_rule_group
         
         //need to clear cache of deduped contacts 
         //based on the previous rule
-        $cacheKey = "merge {$this->_contactType}_{$this->_rgid}";
+        $cacheKey = "merge {$this->_contactType}_{$this->_rgid}_%";
         
         require_once 'CRM/Core/BAO/PrevNextCache.php';
         CRM_Core_BAO_PrevNextCache::deleteItem( null, $cacheKey );

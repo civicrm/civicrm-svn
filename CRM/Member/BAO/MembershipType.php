@@ -468,13 +468,6 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
         require_once 'CRM/Member/BAO/Membership.php';
         require_once 'CRM/Member/BAO/MembershipStatus.php';
         $params = array('id' => $membershipId);
-        
-        $membership = new CRM_Member_BAO_Membership( );
-        
-        //$membership->copyValues( $params );
-        $membership->id = $membershipId;
-        $membership->find(true);
-        
         $membershipDetails = CRM_Member_BAO_Membership::getValues( $params, $values );
         $statusID          = $membershipDetails[$membershipId]->status_id;
         // CRM-7297 Membership Upsell
@@ -525,120 +518,41 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
                                                $year));
             }
             $today = date( 'Y-m-d' );
+            $membershipDates = array();
+            $membershipDates['today']      = CRM_Utils_Date::customFormat($today    ,'%Y%m%d' );
+            $membershipDates['start_date'] = CRM_Utils_Date::customFormat($startDate,'%Y%m%d' );
+            $membershipDates['end_date'  ] = CRM_Utils_Date::customFormat($endDate  ,'%Y%m%d' );
+            if ( $endDate && CRM_Utils_Array::value( "renewal_reminder_day", $membershipTypeDetails ) ) {
+                $date = explode('-', $endDate );
+                $year  = $date[0];
+                $month = $date[1];
+                $day   = $date[2];
+                $day = $day - $membershipTypeDetails["renewal_reminder_day"];
+                $reminderDate = date('Y-m-d',mktime( 0, 0, 0,
+                                                     $month,
+                                                     $day - 1,
+                                                     $year ) );
+                $membershipDates['reminder_date'] = CRM_Utils_Date::customFormat($reminderDate,'%Y%m%d');
+            } 
+            $membershipDates['log_start_date' ] = CRM_Utils_Date::customFormat($logStartDate,'%Y%m%d');
+        
         } else {
-            //get date in 'Ymd' format, CRM-5795
-            $today = date( 'Ymd' );
-            if ( $changeToday ) {
-                $today = CRM_Utils_Date::processDate( $changeToday, null, false, 'Ymd' );
-            }
-            
-            $rollover = false;
-                        
-            if ( CRM_Utils_Array::value( 'period_type', $membershipTypeDetails ) == 'rolling' ) {
-                $startDate = $logStartDate = CRM_Utils_Date::mysqlToIso( $today );
-            } else if ( CRM_Utils_Array::value( 'period_type', $membershipTypeDetails ) == 'fixed' ) {
-                // Renewing expired membership is two step process. 
-                // 1. Renew the start date
-                // 2. Renew the end date
-                
-                // 1.
-                $date = explode( '-', $membershipDetails[$membershipId]->start_date );
-
-                $yearValue = date( 'Y' );
-                $startDate = $logStartDate = date( 'Y-m-d', mktime( 0, 0, 0,
-                                                                    (double) $date[1],
-                                                                    (double) $date[2],
-                                                                    $yearValue ) );
-                // before moving to the step 2, check if TODAY is in
-                // rollover window.
-                $rolloverDay   = substr( $membershipTypeDetails['fixed_period_rollover_day'], -2 );
-                $rolloverMonth = substr( $membershipTypeDetails['fixed_period_rollover_day'], 0, -2 );
-                
-                $fixedStartMonth = substr( $membershipTypeDetails['fixed_period_start_day'], 0, -2 );
-                
-                if ( ( $rolloverMonth - $fixedStartMonth ) < 0 ) { 
-                    $rolloverDate = date( 'Ymd', 
-                                          mktime( 0, 0, 0, 
-                                                  (double) $rolloverMonth,
-                                                  (double) $rolloverDay, 
-                                                  $yearValue + 1 ) );
-                } else {
-                    $rolloverDate = date( 'Ymd', 
-                                          mktime( 0, 0, 0, 
-                                                  (double) $rolloverMonth,
-                                                  (double) $rolloverDay, 
-                                                  $yearValue ) );
-                }
-                
-                if ( $today > $rolloverDate ) {
-                    $rollover = true;
-                }
-            }
-            
-            // 2.
-            $date         = explode('-', $startDate);
-            
-            $year  = (double) $date[0];
-            $month = (double) $date[1];
-            $day   = (double) $date[2];
-            
-            switch ( $membershipTypeDetails['duration_unit'] ) {
-            case 'year' :
-                $year  = $year   + $membershipTypeDetails['duration_interval'];
-                
-                if ( $rollover ) {
-                    $year  = $year   + $membershipTypeDetails['duration_interval'];
-                }
-                
-                break;
-            case 'month':
-                $month = $month  + $membershipTypeDetails['duration_interval'];
-                
-                if ( $rollover ) {
-                    $month  = $month   + $membershipTypeDetails['duration_interval'];
-                }
-                
-                break;
-            case 'day':
-                $day   = $day    + $membershipTypeDetails['duration_interval'];
-                
-                if ( $rollover ) {
-                    $day  = $day   + $membershipTypeDetails['duration_interval'];
-                }
-                
-                break;
-            }
-            
-            if ($membershipTypeDetails['duration_unit'] =='lifetime') {
-                $endDate = null;
-            } else {
-                $endDate = date( 'Y-m-d',
-                                 mktime( 0, 0, 0,
-                                         $month,
-                                         $day - 1,
-                                         $year ) );
-            }
+            $today = date( 'Y-m-d' );
+            if ( $changeToday ) { 
+                $today = CRM_Utils_Date::processDate( $changeToday, null, false, 'Y-m-d' ); 
+            } 
+            // Calculate new start/end/reminder dates when join date is today
+            $renewalDates = self::getDatesForMembershipType( $membershipTypeDetails['id'],
+                                                             $today );
+            $membershipDates = array();
+            $membershipDates['today']      = CRM_Utils_Date::customFormat($today,'%Y%m%d' );
+            $membershipDates['start_date'] = $renewalDates['start_date'];
+            $membershipDates['end_date']   = $renewalDates['end_date'];
+            if ( $renewalDates['reminder_date'] ) {
+                $membershipDates['reminder_date'] = $renewalDates['reminder_date'];
+            } 
+            $membershipDates['log_start_date'] = $renewalDates['start_date'];
         }
-        
-        $membershipDates = array();
-        $membershipDates['today']      = CRM_Utils_Date::customFormat($today    ,'%Y%m%d' );
-        $membershipDates['start_date'] = CRM_Utils_Date::customFormat($startDate,'%Y%m%d' );
-        $membershipDates['end_date'  ] = CRM_Utils_Date::customFormat($endDate  ,'%Y%m%d' );
-        
-        if ( CRM_Utils_Array::value( "renewal_reminder_day", $membershipTypeDetails ) ) {
-            $date = explode('-', $endDate );
-            $year  = $date[0];
-            $month = $date[1];
-            $day   = $date[2];
-            $day = $day - $membershipTypeDetails["renewal_reminder_day"];
-            $reminderDate = date('Y-m-d',mktime( 0, 0, 0,
-                                                 $month,
-                                                 $day - 1,
-                                                 $year ) );
-            $membershipDates['reminder_date']   = CRM_Utils_Date::customFormat($reminderDate,'%Y%m%d');
-        }
-        
-        $membershipDates['log_start_date' ] = CRM_Utils_Date::customFormat($logStartDate,'%Y%m%d');
         
         return $membershipDates;
     }
