@@ -1192,7 +1192,7 @@ WHERE  v.option_group_id = g.id
                 $optMax  = $optionsMaxValueDetails[$fieldId]['options'][$optId];
                 $total  += CRM_Utils_Array::value( 'db_total_count', $options[$optId], 0 );
                 if ( $optMax && $total > $optMax ) {
-                    $errors[$currentParticipantNum]["price_{$fieldId}"] = ts( 'It looks like this field participant count extending its maximum limit.' );
+                    $errors[$currentParticipantNum]["price_{$fieldId}"] = ts( 'Sorry, this option is currently sold out.' );
                 }
             }
         }
