@@ -1323,7 +1323,7 @@ SELECT contact_id
         // test for create view and trigger permissions and if allowed, add the option to go multilingual
         // and logging
         CRM_Core_Error::ignoreException();
-        $dao = new CRM_Core_DAO;
+        $dao = new CRM_Core_DAO( );
         if ( $view ) {
             $dao->query('CREATE OR REPLACE VIEW civicrm_domain_view AS SELECT * FROM civicrm_domain');
             if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
