@@ -102,51 +102,62 @@ class CRM_Core_Form_Tag
                 $tagset[$tagsetItem]['tagsetElementName'  ] = $tagsetElementName;
 
                 $form->add( 'text', "{$tagsetElementName}[{$parentId}]", null );
-                
                 if ( $entityId ) {
                     $tagset[$tagsetItem]['entityId'] = $entityId;
                     require_once 'CRM/Core/BAO/EntityTag.php';
                     $entityTags = CRM_Core_BAO_EntityTag::getChildEntityTags( $parentId, $entityId, $entityTable );                    
-                } elseif ( !empty( $form->_submitValues['case_taglist'] ) && 
+                } else {
+
+                    switch ( $entityTable ) {
+                    case 'civicrm_activity':
+                        if ( !empty( $form->_submitValues['activity_taglist'] ) && 
+                            CRM_Utils_Array::value( $parentId, $form->_submitValues['activity_taglist']) ) {
+                            $allTags = CRM_Core_Pseudoconstant::tag( );
+                            $tagIds  = explode( ',', $form->_submitValues['activity_taglist'][$parentId] );
+                            foreach( $tagIds as $tagId ) {
+                                if ( is_numeric( $tagId ) ) {
+                                    $tagName = $allTags[$tagId];
+                                } else {
+                                    $tagName = $tagId;
+                                }
+                                $entityTags[$tagId] = array( 'id'   => $tagId,
+                                                             'name' => $tagName );
+                            } 
+                        }
+                        break;
+
+                    case 'civicrm_case':
+                        if ( !empty( $form->_submitValues['case_taglist'] ) && 
                            CRM_Utils_Array::value( $parentId, $form->_submitValues['case_taglist']) ) {
-                    $allTags = CRM_Core_Pseudoconstant::tag( );
-                    $tagIds  = explode( ',', $form->_submitValues['case_taglist'][$parentId] );
-                    foreach( $tagIds as $tagId ) {
-                        if ( is_numeric( $tagId ) ) {
-                            $tagName = $allTags[$tagId];
-                        } else {
-                            $tagName = $tagId;
-                        }
-                        
-                        $entityTags[$tagId] = array( 'id'   => $tagId,
-                                                     'name' => $tagName );
-                    } 
-                } elseif ( !empty( $form->_submitValues['activity_taglist'] ) && 
-                           CRM_Utils_Array::value( $parentId, $form->_submitValues['activity_taglist']) ) {
-                    $allTags = CRM_Core_Pseudoconstant::tag( );
-                    $tagIds  = explode( ',', $form->_submitValues['activity_taglist'][$parentId] );
-                    foreach( $tagIds as $tagId ) {
-                        if ( is_numeric( $tagId ) ) {
-                            $tagName = $allTags[$tagId];
-                        } else {
-                            $tagName = $tagId;
-                        }
-                        
-                        $entityTags[$tagId] = array( 'id'   => $tagId,
-                                                     'name' => $tagName );
-                    } 
-                } elseif ( !empty($form->_formValues['contact_tags']) ) {
-                    require_once 'CRM/Core/BAO/Tag.php';
-                    $contactTags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact', true, false, $parentId );
+                           $allTags = CRM_Core_Pseudoconstant::tag( );
+                           $tagIds  = explode( ',', $form->_submitValues['case_taglist'][$parentId] );
+                           foreach( $tagIds as $tagId ) {
+                               if ( is_numeric( $tagId ) ) {
+                                   $tagName = $allTags[$tagId];
+                               } else {
+                                   $tagName = $tagId;
+                               }
+                               $entityTags[$tagId] = array( 'id'   => $tagId,
+                                                            'name' => $tagName );
+                           }
+                        }    
+                        break;
+                    
+                    default: 		
+                        if ( !empty($form->_formValues['contact_tags']) ) {
+                            require_once 'CRM/Core/BAO/Tag.php';
+                            $contactTags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact', true, false, $parentId );
 
-                    foreach( array_keys($form->_formValues['contact_tags']) as $tagId ) {
-                        if ( CRM_Utils_Array::value($tagId, $contactTags) ) {
-                            $tagName = $tagId;
-                            if ( is_numeric($tagId) ) $tagName = $contactTags[$tagId];
+                            foreach( array_keys($form->_formValues['contact_tags']) as $tagId ) {
+                                if ( CRM_Utils_Array::value($tagId, $contactTags) ) {
+                                    $tagName = $tagId;
+                                    if ( is_numeric($tagId) ) $tagName = $contactTags[$tagId];
 
-                            $entityTags[$tagId] = array( 'id'   => $tagId,
-                                                         'name' => $tagName );
-                        }
+                                    $entityTags[$tagId] = array( 'id'   => $tagId,
+                                                                 'name' => $tagName );
+                                }
+                            }
+                        }                  
                     }
                 }    
                 
