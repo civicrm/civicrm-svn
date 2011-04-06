@@ -269,10 +269,10 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase
 
   function _testVerifyRegisterPage( $contributionPageTitle )
   {
-      $this->open( $this->sboxPath . "civicrm/admin/contribute?reset=1" );
-      $this->waitForElementPresent( "_qf_SearchContribution_refresh" );
+      $this->open( $this->sboxPath . 'civicrm/admin/contribute?reset=1' );
+      $this->waitForElementPresent( '_qf_SearchContribution_refresh' );
       $this->type( 'title', $contributionPageTitle );
-      $this->click( "_qf_SearchContribution_refresh" );
+      $this->click( '_qf_SearchContribution_refresh' );
       $this->waitForPageToLoad( '50000' );
       $id = $this->getAttribute("//div[@id='configure_contribution_page']//div[@class='dataTables_wrapper']/table/tbody/tr@id");
       $id = explode( '_', $id );
@@ -294,6 +294,28 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin();
       
+      $setTitle = 'Conference Fees - '.substr(sha1(rand()), 0, 7);
+      $usedFor = 'Contribution';
+      $setHelp = 'Select your conference options.';
+      $this->_testAddSet( $setTitle, $usedFor, $setHelp );
+      
+      // Get the price set id ($sid) by retrieving and parsing the URL of the New Price Field form
+      // which is where we are after adding Price Set.
+      $elements = $this->parseURL( );
+      $sid = $elements['queryString']['sid'];
+      $this->assertType( 'numeric', $sid );
+      
+      $validStrings = array( );
+      $fields = array( 'Full Conference'        => 'Text',
+                       'Meal Choice'            => 'Select',
+                       'Pre-conference Meetup?' => 'Radio',
+                       'Evening Sessions'       => 'CheckBox',
+                       );
+      $this->_testAddPriceFields( $fields, $validateStrings );
+      
+      // load the Price Set Preview and check for expected values
+      $this->_testVerifyPriceSet( $validateStrings, $sid );      
+    
       // We need a payment processor
       $processorName = 'Webtest Dummy' . substr( sha1( rand( ) ), 0, 7 );
       $this->webtestAddPaymentProcessor( $processorName );
@@ -316,13 +338,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase
 
       //this contribution page for online contribution 
       $this->select( 'payment_processor_id', 'label=' . $processorName );
-      $this->isTextPresent( 'Contribution Amounts section enabled' );
-      $this->type( 'label_1', 'amount 1' );
-      $this->type( 'value_1', '100' );
-      $this->type( 'label_2', 'amount 2' );
-      $this->type( 'value_2', '200' );
-      $this->click( 'CIVICRM_QFID_1_2' );
-      
+      $this->select( 'price_set_id', 'label=' . $setTitle );
       $this->click( '_qf_Amount_next-bottom' );
       $this->waitForPageToLoad( '30000' );    
 
