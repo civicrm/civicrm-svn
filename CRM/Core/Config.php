@@ -249,18 +249,33 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
 
         if ( defined( 'CIVICRM_UF_BASEURL' ) ) {
             $this->userFrameworkBaseURL = CRM_Utils_File::addTrailingSlash( CIVICRM_UF_BASEURL, '/' );
-            if ($userFramework == 'Drupal' and function_exists('variable_get')) {
+            
+            //CRM-7803 -specific to d7.
+            if ( $userFramework == 'Drupal' && 
+                 function_exists( 'variable_get' ) && 
+                 module_exists('locale') && 
+                 function_exists( 'language_negotiation_get' ) ) {
                 global $language;
-                if (module_exists('locale') && $mode = variable_get('language_negotiation', LANGUAGE_NEGOTIATION_NONE)) {
-                    if (isset($language->prefix) and $language->prefix
-                        and ($mode == LANGUAGE_NEGOTIATION_PATH_DEFAULT or $mode == LANGUAGE_NEGOTIATION_PATH)) {
-                        $this->userFrameworkBaseURL .= $language->prefix . '/';
-                }
-                    if (isset($language->domain) and $language->domain and $mode == LANGUAGE_NEGOTIATION_DOMAIN) {
-                        $this->userFrameworkBaseURL = CRM_Utils_File::addTrailingSlash( $language->domain, '/' );
+                
+                //does user configuration allow language 
+                //support from the URL (Path prefix or domain)
+                if ( language_negotiation_get( 'language' ) == 'locale-url' ) {
+                    $urlType = variable_get( 'locale_language_negotiation_url_part' );
+                    //url prefix
+                    if ( $urlType == LOCALE_LANGUAGE_NEGOTIATION_URL_PREFIX ) {
+                        if ( isset( $language->prefix ) && $language->prefix ) {
+                            $this->userFrameworkBaseURL .= $language->prefix . '/';
+                        }
+                    }
+                    //domain
+                    if ( $urlType == LOCALE_LANGUAGE_NEGOTIATION_URL_DOMAIN ) {
+                        if ( isset( $language->domain ) && $language->domain ) {
+                            $this->userFrameworkBaseURL = CRM_Utils_File::addTrailingSlash( $language->domain, '/' );
+                        }
                     }
                 }
             }
+            
             if ( isset( $_SERVER['HTTPS'] ) &&
                  strtolower( $_SERVER['HTTPS'] ) != 'off' ) {
                 $this->userFrameworkBaseURL     = str_replace( 'http://', 'https://', 
