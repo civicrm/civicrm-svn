@@ -733,6 +733,7 @@ function _civicrm_cck_potential_references_standard( $field, $string = '', $exac
     AND sort_name NOT LIKE '- -%%'
     AND sort_name NOT LIKE ',%%'
     AND sort_name NOT LIKE '..%%'
+    AND is_deleted = 0
     ". $string_clause ." LIMIT $limit";
     $params = array( 1 => array( $args[0], "String" ) );
     $dao = CRM_Core_DAO::executeQuery( $q, $params );
