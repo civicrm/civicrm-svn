@@ -460,7 +460,7 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                 }
             }
             if ( array_key_exists('civicrm_case_case_type_id', $row ) ) {
-                if ( $value = str_replace( CRM_Case_BAO_Case::VALUE_SEPERATOR, '', $row['civicrm_case_case_type_id'] )) {
+                if ( $value = str_replace( CRM_Core_DAO::VALUE_SEPARATOR, '', $row['civicrm_case_case_type_id'] )) {
                     $rows[$rowNum]['civicrm_case_case_type_id'] = $this->case_types[$value];
                     
                     $entryFound = true;
