@@ -70,8 +70,8 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase
       $this->_testVerifyPriceSet( $validateStrings, $sid );      
   }
 
- 
-  function _testAddSet( $setTitle, $usedFor, $setHelp ) {
+  function _testAddSet( $setTitle, $usedFor, $setHelp )
+  {
       $this->open($this->sboxPath . 'civicrm/admin/price&reset=1&action=add');
       $this->waitForPageToLoad('30000');
       $this->waitForElementPresent('_qf_Set_next-bottom');
@@ -93,8 +93,9 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase
       $this->waitForElementPresent('_qf_Field_next-bottom');
   }
   
-  function _testAddPriceFields( &$fields, &$validateStrings ) {
-      foreach ($fields as $label => $type ){
+  function _testAddPriceFields( &$fields, &$validateString, $dateSpecificFields = false  )
+  {
+      foreach ( $fields as $label => $type ) {
           $validateStrings[] = $label;
           
           $this->type('label', $label);
@@ -104,29 +105,42 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase
              case 'Text':
                 $validateStrings[] = '525.00';
                 $this->type('price', '525.00');
-                $this->check('is_required');
+                if ( $dateSpecificFields == true ) {
+                    $this->webtestFillDateTime('active_on', '+1 week');
+                } else {
+                    $this->check('is_required');
+                }
                 break;
              case 'Select':
-                $options = array( 1 => array( 'label' => 'Chicken',
-                                              'amount'  => '30.00' ),
-                                  2 => array( 'label' => 'Vegetarian', 
-                                              'amount'  => '25.00' ) );
+                $options = array( 1 => array( 'label'  => 'Chicken',
+                                              'amount' => '30.00' ),
+                                  2 => array( 'label'  => 'Vegetarian', 
+                                              'amount' => '25.00' ) );
                 $this->addMultipleChoiceOptions( $options, $validateStrings );
+                if ( $dateSpecificFields == true ) {
+                    $this->webtestFillDateTime('expire_on', '-1 week');
+                }
                 break;
              case 'Radio':
-                $options = array( 1 => array( 'label' => 'Yes',
-                                              'amount'  => '50.00' ),
-                                  2 => array( 'label' => 'No', 
-                                              'amount'  => '0' ) );
+                $options = array( 1 => array( 'label'  => 'Yes',
+                                              'amount' => '50.00' ),
+                                  2 => array( 'label'  => 'No', 
+                                              'amount' => '0' ) );
                 $this->addMultipleChoiceOptions( $options, $validateStrings );
                 $this->check('is_required');
+                if ( $dateSpecificFields == true ) {
+                    $this->webtestFillDateTime('active_on', '-1 week');
+                }
                 break;
              case 'CheckBox':
                 $options = array( 1 => array( 'label' => 'First Night',
-                                              'amount'  => '15.00' ),
+                                              'amount' => '15.00' ),
                                   2 => array( 'label' => 'Second Night', 
-                                              'amount'  => '15.00' ) );
+                                              'amount' => '15.00' ) );
                 $this->addMultipleChoiceOptions( $options, $validateStrings );
+                if ( $dateSpecificFields == true ) {
+                    $this->webtestFillDateTime('expire_on', '+1 week');
+                }
                 break;
              default:
                 break;
@@ -310,6 +324,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase
                        'Pre-conference Meetup?' => 'Radio',
                        'Evening Sessions'       => 'CheckBox',
                        );
+      //$this->_testAddPriceFields( $fields, $validateStrings, true );
       $this->_testAddPriceFields( $fields, $validateStrings );
       
       // load the Price Set Preview and check for expected values
@@ -354,42 +369,42 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase
       
       $firstName = 'Ma'.substr( sha1( rand( ) ), 0, 4 );
       $lastName  = 'An'.substr( sha1( rand( ) ), 0, 7 );
-      
-      $this->type( "email-5", $firstName . "@example.com" );
-      $this->type( "first_name", $firstName );
-      $this->type( "last_name",$lastName );
+       $this->waitForElementPresent( '_qf_Main_upload-bottom' );
+      $this->type( 'email-5', $firstName . '@example.com' );
+      $this->type( 'first_name', $firstName );
+      $this->type( 'last_name',$lastName );
       $this->type("xpath=//input[@class='form-text four required']", "1");
       $this->click("xpath=//input[@class='form-radio']");
       $this->click("xpath=//input[@class='form-checkbox']");
       
-      $streetAddress = "100 Main Street";
-      $this->type( "billing_street_address-5", $streetAddress );
-      $this->type( "billing_city-5", "San Francisco" );
-      $this->type( "billing_postal_code-5", "94117" );
-      $this->select( "billing_country_id-5", "value=1228" );
-      $this->select( "billing_state_province_id-5", "value=1001" );
+      $streetAddress = '100 Main Street';
+      $this->type( 'billing_street_address-5', $streetAddress );
+      $this->type( 'billing_city-5', 'San Francisco' );
+      $this->type( 'billing_postal_code-5', '94117' );
+      $this->select( 'billing_country_id-5', 'value=1228' );
+      $this->select( 'billing_state_province_id-5', 'value=1001' );
       
       //Credit Card Info
-      $this->select( "credit_card_type", "value=Visa" );
-      $this->type( "credit_card_number", "4111111111111111" );
-      $this->type( "cvv2", "000" );
-      $this->select( "credit_card_exp_date[M]", "value=1" );
-      $this->select( "credit_card_exp_date[Y]", "value=2020" );
+      $this->select( 'credit_card_type', 'value=Visa' );
+      $this->type( 'credit_card_number', '4111111111111111' );
+      $this->type( 'cvv2', '000' );
+      $this->select( 'credit_card_exp_date[M]', 'value=1' );
+      $this->select( 'credit_card_exp_date[Y]', 'value=2020' );
       
       //Billing Info
-      $this->type( "billing_first_name", $firstName."billing" );
-      $this->type( "billing_last_name", $lastName."billing"  );
-      $this->type( "billing_street_address-5", "15 Main St." );
-      $this->type( " billing_city-5", "San Jose" );
-      $this->select( "billing_country_id-5", "value=1228" );
-      $this->select( "billing_state_province_id-5", "value=1004" );
-      $this->type( "billing_postal_code-5", "94129" );  
-      $this->click( "_qf_Main_upload-bottom" );
+      $this->type( 'billing_first_name', $firstName.'billing' );
+      $this->type( 'billing_last_name', $lastName.'billing'  );
+      $this->type( 'billing_street_address-5', '15 Main St.' );
+      $this->type( ' billing_city-5', 'San Jose' );
+      $this->select( 'billing_country_id-5', 'value=1228' );
+      $this->select( 'billing_state_province_id-5', 'value=1004' );
+      $this->type( 'billing_postal_code-5', '94129' );  
+      $this->click( '_qf_Main_upload-bottom' );
       
       $this->waitForPageToLoad( '30000' );
-      $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
+      $this->waitForElementPresent( '_qf_Confirm_next-bottom' );
       
-      $this->click( "_qf_Confirm_next-bottom" );
+      $this->click( '_qf_Confirm_next-bottom' );
       $this->waitForPageToLoad( '30000' );
 
       //login to check contribution
@@ -399,12 +414,12 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase
       $this->webtestLogin( );
       
       //Find Contribution
-      $this->open( $this->sboxPath . "civicrm/contribute/search&reset=1" );
+      $this->open( $this->sboxPath . 'civicrm/contribute/search&reset=1' );
       
-      $this->waitForElementPresent( "contribution_date_low" );
+      $this->waitForElementPresent( 'contribution_date_low' );
       
-      $this->type( "sort_name", "$firstName $lastName" );
-      $this->click( "_qf_Search_refresh" );
+      $this->type( 'sort_name', "$firstName $lastName" );
+      $this->click( '_qf_Search_refresh' );
         
       $this->waitForPageToLoad( '30000' );
       
@@ -414,15 +429,156 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase
       $this->waitForElementPresent( "_qf_ContributionView_cancel-bottom" );
       
       //View Contribution Record
-      //View Contribution Record
       $expected = array( 3  => 'Donation',  
                          3  => '590.00', 
                          7  => 'Completed', 
-                         //                         1  => "{$firstName} {$lastName}" 
                          ); 
       foreach ( $expected as  $value => $label ) { 
           $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote($label)); 
       }
+  }
 
+  function testContributeWithDateSpecificPriceSet()
+  {
+      // This is the path where our testing install resides. 
+      // The rest of URL is defined in CiviSeleniumTestCase base class, in
+      // class attributes.
+      $this->open( $this->sboxPath );
+
+      // Logging in. Remember to wait for page to load. In most cases,
+      // you can rely on 30000 as the value that allows your test to pass, however,
+      // sometimes your test might fail because of this. In such cases, it's better to pick one element
+      // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+      // page contents loaded and you can continue your test execution.
+      $this->webtestLogin();
+      
+      $setTitle = 'Conference Fees - '.substr(sha1(rand()), 0, 7);
+      $usedFor = 'Contribution';
+      $setHelp = 'Select your conference options.';
+      $this->_testAddSet( $setTitle, $usedFor, $setHelp );
+      
+      // Get the price set id ($sid) by retrieving and parsing the URL of the New Price Field form
+      // which is where we are after adding Price Set.
+      $elements = $this->parseURL( );
+      $sid = $elements['queryString']['sid'];
+      $this->assertType( 'numeric', $sid );
+      
+      $validStrings = array( );
+      $fields = array( 'Full Conference'        => 'Text',
+                       'Meal Choice'            => 'Select',
+                       'Pre-conference Meetup?' => 'Radio',
+                       'Evening Sessions'       => 'CheckBox',
+                       );
+      $this->_testAddPriceFields( $fields, $validateStrings, true );
+      //$this->_testAddPriceFields( $fields, $validateStrings );
+      
+      // load the Price Set Preview and check for expected values
+      $this->_testVerifyPriceSet( $validateStrings, $sid );      
+    
+      // We need a payment processor
+      $processorName = 'Webtest Dummy' . substr( sha1( rand( ) ), 0, 7 );
+      $this->webtestAddPaymentProcessor( $processorName );
+      
+      $this->open( $this->sboxPath . 'civicrm/admin/contribute/add&reset=1&action=add' );
+      
+      $contributionTitle = substr( sha1( rand( ) ), 0, 7 );
+      $rand = 2 * rand( 2, 50 );
+        
+      // fill in step 1 (Title and Settings)
+      $contributionPageTitle = "Title $contributionTitle";
+      $this->type( 'title', $contributionPageTitle );
+      $this->select( 'contribution_type_id', 'value=1' );
+      $this->fillRichTextField( 'intro_text','This is Test Introductory Message','CKEditor' );
+      $this->fillRichTextField( 'footer_text','This is Test Footer Message','CKEditor' );
+      
+      // go to step 2
+      $this->click( '_qf_Settings_next' );
+      $this->waitForElementPresent( '_qf_Amount_next-bottom' );
+
+      //this contribution page for online contribution 
+      $this->select( 'payment_processor_id', 'label=' . $processorName );
+      $this->select( 'price_set_id', 'label=' . $setTitle );
+      $this->click( '_qf_Amount_next-bottom' );
+      $this->waitForPageToLoad( '30000' );    
+
+      //get Url for Live Contribution Page
+      $registerUrl = $this->_testVerifyRegisterPage( $contributionPageTitle );
+   
+      //logout
+      $this->open( $this->sboxPath . 'civicrm/logout&reset=1' );
+      $this->waitForPageToLoad( '30000' );
+      
+      //Open Live Contribution Page
+      $this->open( $this->sboxPath . $registerUrl );
+      $this->waitForElementPresent( '_qf_Main_upload-bottom' );
+      
+      $firstName = 'Ma'.substr( sha1( rand( ) ), 0, 4 );
+      $lastName  = 'An'.substr( sha1( rand( ) ), 0, 7 );
+       $this->waitForElementPresent( '_qf_Main_upload-bottom' );
+      $this->type( 'email-5', $firstName . '@example.com' );
+      $this->type( 'first_name', $firstName );
+      $this->type( 'last_name',$lastName );
+      $this->click("xpath=//input[@class='form-radio']");
+      $this->click("xpath=//input[@class='form-checkbox']");
+      
+      $streetAddress = '100 Main Street';
+      $this->type( 'billing_street_address-5', $streetAddress );
+      $this->type( 'billing_city-5', 'San Francisco' );
+      $this->type( 'billing_postal_code-5', '94117' );
+      $this->select( 'billing_country_id-5', 'value=1228' );
+      $this->select( 'billing_state_province_id-5', 'value=1001' );
+      
+      //Credit Card Info
+      $this->select( 'credit_card_type', 'value=Visa' );
+      $this->type( 'credit_card_number', '4111111111111111' );
+      $this->type( 'cvv2', '000' );
+      $this->select( 'credit_card_exp_date[M]', 'value=1' );
+      $this->select( 'credit_card_exp_date[Y]', 'value=2020' );
+      
+      //Billing Info
+      $this->type( 'billing_first_name', $firstName.'billing' );
+      $this->type( 'billing_last_name', $lastName.'billing'  );
+      $this->type( 'billing_street_address-5', '15 Main St.' );
+      $this->type( ' billing_city-5', 'San Jose' );
+      $this->select( 'billing_country_id-5', 'value=1228' );
+      $this->select( 'billing_state_province_id-5', 'value=1004' );
+      $this->type( 'billing_postal_code-5', '94129' );  
+      $this->click( '_qf_Main_upload-bottom' );
+      
+      $this->waitForPageToLoad( '30000' );
+      $this->waitForElementPresent( '_qf_Confirm_next-bottom' );
+      
+      $this->click( '_qf_Confirm_next-bottom' );
+      $this->waitForPageToLoad( '30000' );
+
+      //login to check contribution
+      $this->open( $this->sboxPath );
+      
+      // Log in using webtestLogin() method
+      $this->webtestLogin( );
+      
+      //Find Contribution
+      $this->open( $this->sboxPath . 'civicrm/contribute/search&reset=1' );
+      
+      $this->waitForElementPresent( 'contribution_date_low' );
+      
+      $this->type( 'sort_name', "$firstName $lastName" );
+      $this->click( '_qf_Search_refresh' );
+        
+      $this->waitForPageToLoad( '30000' );
+      
+      $this->waitForElementPresent( "xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']" );
+      $this->click( "xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']" );
+      $this->waitForPageToLoad( '30000' );
+      $this->waitForElementPresent( '_qf_ContributionView_cancel-bottom' );
+      
+      //View Contribution Record
+      $expected = array( 3  => 'Donation',  
+                         3  => '65.00', 
+                         7  => 'Completed', 
+                         ); 
+      foreach ( $expected as  $value => $label ) { 
+          $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote($label)); 
+      }
   }
 }
