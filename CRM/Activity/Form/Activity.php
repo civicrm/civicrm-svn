@@ -652,7 +652,8 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         
         //add engagement level CRM-7775
         $buildEngagementLevel = false;
-        if ( CRM_Campaign_BAO_Campaign::isCampaignEnable( ) ) {
+        if ( CRM_Campaign_BAO_Campaign::isCampaignEnable( ) &&
+             CRM_Campaign_BAO_Campaign::accessCampaign( ) ) {
             $buildEngagementLevel = true;
             require_once 'CRM/Campaign/PseudoConstant.php';
             $this->add( 'select', 'engagement_level', 
@@ -663,6 +664,32 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                             'positiveInteger');
         }
         $this->assign( 'buildEngagementLevel', $buildEngagementLevel );
+
+        // check for survey activity
+        $this->_isSurveyActivity = false;
+
+        if ( $this->_activityId && CRM_Campaign_BAO_Campaign::isCampaignEnable( ) &&
+             CRM_Campaign_BAO_Campaign::accessCampaign( ) ) {
+
+            require_once 'CRM/Campaign/BAO/Survey.php';
+            $this->_isSurveyActivity = CRM_Campaign_BAO_Survey::isSurveyActivity( $this->_activityId );
+            if ( $this->_isSurveyActivity ) {
+                $surveyId = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', 
+                                                         $this->_activityId, 
+                                                         'source_record_id' );
+                $responseOptions = CRM_Campaign_BAO_Survey::getResponsesOptions( $surveyId );
+                if ( $responseOptions ) {
+                    $this->add( 'select', 'result', ts('Result'),
+                                array( '' => ts('- select -') ) + array_combine( $responseOptions, $responseOptions ) );
+                }
+                $surveyTitle = null;
+                if ( $surveyId ) {
+                    $surveyTitle = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $surveyId, 'title' );
+                }
+                $this->assign( 'surveyTitle', $surveyTitle );
+            }
+        }
+        $this->assign( 'surveyActivity', $this->_isSurveyActivity );
         
         $this->addRule('duration', 
                        ts('Please enter the duration as number of minutes (integers only).'), 'positiveInteger');  
@@ -738,29 +765,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_activity' );
             CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_activity', $this->_activityId, false, true );
         }
-
-        // check for survey activity
-        $this->_isSurveyActivity = false;
-        if ( $this->_activityId ) {
-            require_once 'CRM/Campaign/BAO/Survey.php';
-            $this->_isSurveyActivity = CRM_Campaign_BAO_Survey::isSurveyActivity( $this->_activityId );
-            if ( $this->_isSurveyActivity ) {
-                $surveyId = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', 
-                                                         $this->_activityId, 
-                                                         'source_record_id' );
-                $responseOptions = CRM_Campaign_BAO_Survey::getResponsesOptions( $surveyId );
-                if ( $responseOptions ) {
-                    $this->add( 'select', 'result', ts('Result'),
-                                array( '' => ts('- select -') ) + array_combine( $responseOptions, $responseOptions ) );
-                }
-                $surveyTitle = null;
-                if ( $surveyId ) {
-                    $surveyTitle = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $surveyId, 'title' );
-                }
-                $this->assign( 'surveyTitle', $surveyTitle );
-            }
-        }
-        $this->assign( 'surveyActivity', $this->_isSurveyActivity );
         
         // if we're viewing, we're assigning different buttons than for adding/editing
         if ( $this->_action & CRM_Core_Action::VIEW ) { 
