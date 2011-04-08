@@ -24,6 +24,11 @@
  +--------------------------------------------------------------------+
 *}
 {if $recaptchaHTML}
+{literal}
+<script type="text/javascript">
+var RecaptchaOptions = {{/literal}{$recaptchaOptions}{literal}};
+</script>
+{/literal}
 <div class="crm-section recaptcha-section">
     <table class="form-layout-compressed">
         <tr>

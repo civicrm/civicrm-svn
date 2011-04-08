@@ -87,6 +87,11 @@
             <td class="label">{$form.recaptchaPrivateKey.label}</td>
             <td>{$form.recaptchaPrivateKey.html}</td>
         </tr>
+        <tr class="crm-miscellaneous-form-block-recaptchaOptions">
+            <td class="label">{$form.recaptchaOptions.label}</td>
+            <td>{$form.recaptchaOptions.html}<br />
+                <span class="description">{ts}You can specify the reCAPTCHA theme options as an comma seperated data.(eg: theme:'blackglass', lang : 'fr' ){/ts}</span></td>
+        </tr>
         </table>
            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     </fieldset>
