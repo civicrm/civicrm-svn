@@ -49,3 +49,10 @@
 {/foreach}
 
 {include file="CRM/common/customData.tpl"}
+ <script type="text/javascript">
+  {literal}
+       cj(function() {
+           cj().crmaccordions(); 
+        });        
+  {/literal}
+ </script>
