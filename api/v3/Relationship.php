@@ -203,12 +203,9 @@ function civicrm_api3_relationship_update( $params ) {
 /**
  * Function to get the relationship
  *
- * @param array   $contact_a          (reference ) input parameters.
- * @param array   $contact_b          (reference ) input parameters.
- * @param array   $relationshipTypes  an array of Relationship Type Name.
- * @param string  $sort               sort all relationship by relationshipId (eg asc/desc)
- * @todo doesn't take a single array - but may also need to be an internal function (prefaced by _)?
- * @return        Array of all relationship.
+ * @param array   $params          (reference ) input parameters.
+ * @todo fix - function treats 'contact_id_a' as 'contact_id' - ie. returns all relationships for that contact
+ * @return        Array of all relevant relationships.
  *
  * @access  public
  */

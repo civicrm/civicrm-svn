@@ -42,55 +42,61 @@
 require_once 'api/v3/utils.php';
 
 /**
- * Generic file to retrieve all the constants and
- * pseudo constants used in CiviCRM
- * @todo - think this returns all not a search
+ * Get CiviCRM domain details
+ * @todo - is there too much stuff being returned?
  *
  */
 function civicrm_api3_domain_get($params ) {
   _civicrm_api3_initialize(true);
-
   try{
     civicrm_api3_verify_mandatory($params);
+    $params['version'] = CRM_Utils_array::value('domain_version',$params);
+    unset($params['version']);
+
     require_once 'CRM/Core/BAO/Domain.php';
-    $dao = CRM_Core_BAO_Domain::getDomain();
+    $bao = new CRM_Core_BAO_Domain( );
+    if ($params['current_domain']){
+      $bao = CRM_Core_BAO_Domain::getDomain();
+    }else{
+      _civicrm_api3_dao_set_filter ( $bao, $params );
+    }
+    $domains = _civicrm_api3_dao_to_array ($bao,$params);
+
+    foreach ($domains as $domain) {
+ 
     $values = array();
-    $params = array(
-                    'entity_id'    => $dao->id,
+    $locparams = array(
+                    'entity_id'    => $domain['id'],
                     'entity_table' => 'civicrm_domain'
                     );
                     require_once 'CRM/Core/BAO/Location.php';
-                    $values['location'] = CRM_Core_BAO_Location::getValues( $params, true );
+                    $values['location'] = CRM_Core_BAO_Location::getValues( $locparams, true );
+
                     $address_array = array ( 'street_address', 'supplemental_address_1', 'supplemental_address_2',
                                              'city', 'state_province_id', 'postal_code', 'country_id',
                                              'geo_code_1', 'geo_code_2' );
                     require_once 'CRM/Core/OptionGroup.php';
-                    $domain[$dao->id] = array(
-                              'id'           => $dao->id,
-                              'domain_name'  => $dao->name,
-                              'description'  => $dao->description,
-                              'domain_email' => CRM_Utils_Array::value( 'email', $values['location']['email'][1] ),
-                              'domain_phone' => array(
+                    $domain['domain_email'] = CRM_Utils_Array::value( 'email', $values['location']['email'][1] );
+                    $domain['domain_phone'] = array(
                                                       'phone_type'=> CRM_Core_OptionGroup::getLabel( 'phone_type',
                                                                                                      CRM_Utils_Array::value('phone_type_id',
                                                                                                                             $values['location']['phone'][1] ) ),
                                                       'phone'     => CRM_Utils_Array::value( 'phone',
                                                                                              $values['location']['phone'][1] )
-                                                      )
+                                                      
                                               );
                     foreach ( $address_array as $value ) {
-                      $domain[$dao->id]['domain_address'][$value] =
+                      $domain['domain_address'][$value] =
                           CRM_Utils_Array::value( $value,
                                                   $values['location']['address'][1] );
                     }
-                    list( $domain[$dao->id]['from_name'],
-                          $domain[$dao->id]['from_email'] ) =
+                    list( $domain['from_name'],
+                          $domain['from_email'] ) =
                         CRM_Core_BAO_Domain::getNameAndEmail( true );
-
-                    // add version info here. Not sure why we dont call create_sucess here? 
-                    // maybe because we dont want to move this into a sub-array?
-                    $domain['version'] = 3;
-                    return $domain;
+           $domains[$domain['id']] = array_merge($domains[$domain['id']], $domain);
+    }
+   return civicrm_api3_create_success($domains,$params,$dao);
+                
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
@@ -111,10 +117,10 @@ function civicrm_api3_domain_create( $params ) {
     require_once 'CRM/Core/BAO/Domain.php';
 
     civicrm_api3_verify_mandatory($params,'CRM_Core_BAO_Domain');
-
+    unset($params['version']);
     $domain = CRM_Core_BAO_Domain::create( $params );
     $domain_array = array( );
-    _civicrm_api3_object_to_array( $domain, $domain_array );
+    _civicrm_api3_object_to_array( $domain, $domain_array[$domain->id] );
     return civicrm_api3_create_success($domain_array,$params);
 
   } catch (PEAR_Exception $e) {
@@ -123,3 +129,18 @@ function civicrm_api3_domain_create( $params ) {
     return civicrm_api3_create_error( $e->getMessage() );
   }
 }
+
+/* 
+ * Gets field for civicrm_domain functions
+ * 
+ * @return array fields valid for other functions
+ */
+
+ function civicrm_api3_domain_getfields(){
+   $fields = $dao->getfields();
+   $fields['domain_version'] = "version of domain";
+   $fields['current_domain'] = "get loaded domain";
+   unset ($fields['version']);
+   
+   return $fields;
+ }
