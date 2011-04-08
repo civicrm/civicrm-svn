@@ -45,7 +45,7 @@ class WebTest_Event_ParticipantImportTest extends CiviSeleniumTestCase {
         $this->importCSVParticipants( $headers, $rows );
     }
    
-    function testParticipantImportOrganizatio()
+    function testParticipantImportOrganization()
     {
         $this->open( $this->sboxPath );
 
@@ -154,9 +154,9 @@ class WebTest_Event_ParticipantImportTest extends CiviSeleniumTestCase {
     
     function checkParticipantImportMapperData( $headers, $rows ) {
         
-        $checkMapperHeaders = array( 1 => 'Column Names',
-                                     2 => 'Import Data (row 1)',
-                                     3 => 'Import Data (row 2)',
+        $checkMapperHeaders = array( 1 => 'Column Headers',
+                                     2 => 'Import Data (row 2)',
+                                     3 => 'Import Data (row 3)',
                                      4 => 'Matching CiviCRM Field' );
         
         foreach ($checkMapperHeaders as $rownum => $value ) {
