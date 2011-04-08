@@ -89,7 +89,7 @@ class CRM_Utils_ReCAPTCHA {
         $html = recaptcha_get_html( $config->recaptchaPublicKey, $error, $useSSL );
 
         $form->assign( 'recaptchaHTML', $html );
-	$form->assign( 'recaptchaOptions', $config->recaptchaOptions );
+        $form->assign( 'recaptchaOptions', $config->recaptchaOptions );
         $form->add( 'text',
                     'recaptcha_challenge_field',
                     null,

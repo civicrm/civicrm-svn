@@ -76,7 +76,7 @@
 </fieldset>
 <fieldset><legend>{ts}reCAPTCHA Keys{/ts}</legend>
     <div class="description">
-        {ts}reCAPTCHA is a free service that helps prevent automated abuse of your site. To use reCAPTCHA on public-facing CiviCRM forms: sign up at <a href="http://recaptcha.net">recaptcha.net</a>; enter the provided public and private reCAPTCHA keys here; then enable reCAPTCHA under Advanced Settings in any Profile.{/ts}
+        {ts}reCAPTCHA is a free service that helps prevent automated abuse of your site. To use reCAPTCHA on public-facing CiviCRM forms: sign up at <a href="http://recaptcha.net" "target=_blank">recaptcha.net</a>; enter the provided public and private reCAPTCHA keys here; then enable reCAPTCHA under Advanced Settings in any Profile.{/ts}
     </div>
     <table class="form-layout">
         <tr class="crm-miscellaneous-form-block-recaptchaPublicKey">
@@ -90,7 +90,7 @@
         <tr class="crm-miscellaneous-form-block-recaptchaOptions">
             <td class="label">{$form.recaptchaOptions.label}</td>
             <td>{$form.recaptchaOptions.html}<br />
-                <span class="description">{ts}You can specify the reCAPTCHA theme options as an comma seperated data.(eg: theme:'blackglass', lang : 'fr' ){/ts}</span></td>
+                <span class="description">{ts}You can specify the reCAPTCHA theme options as an comma seperated data.(eg: theme:'blackglass', lang : 'fr' ).<br />You can check the available options for reCAPTCHA here <a href="http://code.google.com/apis/recaptcha/docs/customization.html" "target=_blank">Customizing the Look and Feel of reCAPTCHA</a>.{/ts}</span></td>
         </tr>
         </table>
            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
