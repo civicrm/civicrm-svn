@@ -34,7 +34,7 @@ class WebTest_Mailing_AddMessageTemplateTest extends CiviSeleniumTestCase {
         parent::setUp();
     }
     
-    function testTemplateAdd ( )
+    function testTemplateAdd ( $useTokens = false ,$msgTitle = null )
     {
         // This is the path where our testing install resides. 
         // The rest of URL is defined in CiviSeleniumTestCase base class, in
@@ -55,21 +55,44 @@ class WebTest_Mailing_AddMessageTemplateTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad("30000");
         
         // Fill message title.
-        $msgTitle = 'msg_'.substr(sha1(rand()), 0, 7);
+        if ( !$msgTitle ) $msgTitle = 'msg_'.substr(sha1(rand()), 0, 7);
         $this->type("msg_title", $msgTitle);
-        
-        // Fill message subject.
-        $msgSubject = "This is subject for message";
-        $this->type("msg_subject", $msgSubject);
-        
-        // Fill text message.
-        $txtMsg = "This is text message";
-        $this->type("msg_text", $txtMsg);
-        
-        // Fill html message.
-        $htmlMsg = "This is HTML message";
-        $this->type("msg_html", $htmlMsg);
-        
+        if( $useTokens ) {
+            //Add Tokens
+            $this->click("//div[@id='message_templates']/table[1]/tbody/tr[2]/td[2]/a/label");
+            $this->waitForElementPresent("//button[@type='button']");
+            $this->type("filter3", "display");
+            $this->addSelection("token3", "label=Display Name");
+            $this->type("filter3", "contact");
+            $this->addSelection("token3", "label=Contact Type");
+            $this->click("//button[@type='button']");
+            $this->click("//span[@id='helptext']/a/label");
+            $this->waitForElementPresent("//button[@type='button']");
+            $this->type("filter1", "display");
+            $this->addSelection("token1", "label=Display Name");
+            $this->type("filter1", "contact");
+            $this->addSelection("token1", "label=Contact Type");
+            $this->click("//button[@type='button']");
+            $this->click("//span[@id='helphtml']/a/label");
+            $this->waitForElementPresent("//button[@type='button']");
+            $this->type("filter2", "display");
+            $this->addSelection("token2", "label=Display Name");
+            $this->type("filter2", "contact");
+            $this->addSelection("token2", "label=Contact Type");
+            $this->click("//button[@type='button']");
+        } else {
+            // Fill message subject.
+            $msgSubject = "This is subject for message";
+            $this->type("msg_subject", $msgSubject);
+            
+            // Fill text message.
+            $txtMsg = "This is text message";
+            $this->type("msg_text", $txtMsg);
+            
+            // Fill html message.
+            $htmlMsg = "This is HTML message";
+            $this->type("msg_html", $htmlMsg);
+        } 
         // Clicking save.
         $this->click("_qf_MessageTemplates_next");
         $this->waitForPageToLoad("30000");
@@ -79,7 +102,8 @@ class WebTest_Mailing_AddMessageTemplateTest extends CiviSeleniumTestCase {
         
         // Verify text.
         $this->assertTrue( $this->isTextPresent( $msgTitle ) );
-        $this->assertTrue( $this->isTextPresent( $msgSubject ) );
+        if( !$useTokens ) $this->assertTrue( $this->isTextPresent( $msgSubject ) );
+        
     }
     
 }
