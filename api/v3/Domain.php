@@ -117,7 +117,7 @@ function civicrm_api3_domain_create( $params ) {
     require_once 'CRM/Core/BAO/Domain.php';
 
     civicrm_api3_verify_mandatory($params,'CRM_Core_BAO_Domain');
-    unset($params['version']);
+    $params['version'] = CRM_Utils_Array::value('domain_version',$params);
     $domain = CRM_Core_BAO_Domain::create( $params );
     $domain_array = array( );
     _civicrm_api3_object_to_array( $domain, $domain_array[$domain->id] );
