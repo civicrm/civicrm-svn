@@ -481,43 +481,52 @@ SELECT username, email
      * 
      * @access public
      * @static
-     */
+     */    
     static function createDrupalUser( &$params, $mail )
     {
-        $form_state['values']  = array (
+        $form_state['input']  = array (
                                     'name' => $params['cms_name'],
                                     'mail' => $params[$mail],
                                     'op'   => 'Create new account'
                                     );
         if ( !variable_get('user_email_verification', TRUE )) {
-            $form_state['values']['pass']['pass1'] = $params['cms_pass'];
-            $form_state['values']['pass']['pass2'] = $params['cms_pass'];
+            $form_state['input']['pass']['pass1'] = $params['cms_pass'];
+            $form_state['input']['pass']['pass2'] = $params['cms_pass'];
         }
+       
+        
+        $form_state['rebuild']    = FALSE;
+        $form_state['programmed'] = TRUE;
+        $form_state['method']     = 'post';
+        $form_state['build_info']['args'] = array();
 
         $config = CRM_Core_Config::singleton( );
 
         // we also need to redirect b
         $config->inCiviCRM = true;
 
-        $form = drupal_retrieve_form('user_register', $form_state);
-        $form['#post'] = $form_state['values'];
-        drupal_prepare_form('user_register', $form, $form_state);
+        $form = drupal_retrieve_form('user_register_form', $form_state);
+       
+        drupal_prepare_form('user_register_form', $form, $form_state);
 
         // remove the captcha element from the form prior to processing
         unset($form['captcha']);
-        
-        drupal_process_form('user_register', $form, $form_state);
-        
+       
+        $form_state['process_input'] = 1;
+        $form_state['submitted'] = 1;
+       
+        drupal_process_form('user_register_form', $form, $form_state);
+       
         $config->inCiviCRM = false;
-        
+       
         if ( form_get_errors( ) ) {
             return false;
         }
 
         // looks like we created a drupal user, lets make another db call to get the user id!
         $db_cms = DB::connect($config->userFrameworkDSN);
-        if ( DB::isError( $db_cms ) ) { 
-            die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) ); 
+        if ( DB::isError( $db_cms ) ) {
+            die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) );
         }
 
         //Fetch id of newly added user
