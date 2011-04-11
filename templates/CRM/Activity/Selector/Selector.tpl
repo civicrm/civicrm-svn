@@ -1,4 +1,5 @@
 <span id='fileOnCaseStatusMsg' style="display:none;"></span>
+<div class="crm-activity-selector-{$context}">
 <div class="crm-accordion-wrapper crm-search_filters-accordion crm-accordion-closed">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
@@ -18,8 +19,7 @@
   </table>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
-
-<table id="contact-activity-selector">
+<table id="contact-activity-selector-{$context}">
     <thead>
         <tr>
             <th class='crm-contact-activity-activity_type'>{ts}Type{/ts}</th>
@@ -34,65 +34,67 @@
         </tr>
     </thead>
 </table>
+</div>
 {include file="CRM/Case/Form/ActivityToCase.tpl" contactID=$contactId}
 {literal}
 <script type="text/javascript">
-var oTable;
+var {/literal}{$context}{literal}oTable;
 
 cj( function ( ) {
    cj().crmaccordions(); 
-   buildContactActivities( false );
-   cj('#activity_type_filter_id').change( function( ) {
-       buildContactActivities( true );
+   var context = {/literal}"{$context}"{literal}; 
+   buildContactActivities{/literal}{$context}{literal}( false );
+   cj('.crm-activity-selector-'+ context +' #activity_type_filter_id').change( function( ) {
+       buildContactActivities{/literal}{$context}{literal}( true );
    });
 });
 
-function buildContactActivities( filterSearch ) {
+function buildContactActivities{/literal}{$context}{literal}( filterSearch ) {
     if ( filterSearch ) {
-        oTable.fnDestroy();
+        {/literal}{$context}{literal}oTable.fnDestroy();
     }
-    
+    var context = {/literal}"{$context}"{literal}; 
     var columns = '';
     var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/contactactivity" h=0 q="snippet=4&context=$context&cid=$contactId"}'{literal};
 
-    cj('#contact-activity-selector th').each( function( ) {
-        if ( !cj(this).hasClass('nosort') ) {
-            columns += '{"sClass": "' + cj(this).attr('class') +'"},';
-        } else {
-            columns += '{ "bSortable": false },';
-        }
-    });
-    
     var ZeroRecordText = {/literal}{ts}'No matches found'{/ts}{literal};
-    if ( cj("select#activity_type_filter_id").val( ) ) {
-      ZeroRecordText += {/literal}{ts}' for Activity Type = "'{/ts}{literal} +  cj("select#activity_type_filter_id :selected").text( ) + '"';
+    if ( cj('.crm-activity-selector-'+ context +' select#activity_type_filter_id').val( ) ) {
+      ZeroRecordText += {/literal}{ts}' for Activity Type = "'{/ts}{literal} +  cj('.crm-activity-selector-'+ context +' select#activity_type_filter_id :selected').text( ) + '"';
     } else {
       ZeroRecordText += '.';
     }
 
-    columns    = columns.substring(0, columns.length - 1 );
-    eval('columns =[' + columns + ']');
-    oTable = cj('#contact-activity-selector').dataTable({
+    {/literal}{$context}{literal}oTable = cj('#contact-activity-selector-' + context ).dataTable({
         "bFilter"    : false,
         "bAutoWidth" : false,
         "aaSorting"  : [],
-        "aoColumns"  : columns,
+        "aoColumns"  : [
+                        {sClass:'crm-contact-activity-activity_type'},
+                        {sClass:'crm-contact-activity_subject'},
+                        {sClass:'crm-contact-activity-source_contact'},
+                        {sClass:'crm-contact-activity-target_contact', bSortable:false},
+                        {sClass:'crm-contact-activity-assignee_contact', bSortable:false},
+                        {sClass:'crm-contact-activity-activity_date'},
+                        {sClass:'crm-contact-activity-activity_status'},
+                        {sClass:'crm-contact-activity-links', bSortable:false},
+                        {sClass:'hiddenElement', bSortable:false}
+                       ],
         "bProcessing": true,
         "sPaginationType": "full_numbers",
         "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',	
         "bServerSide": true,
         "bJQueryUI": true,
         "sAjaxSource": sourceUrl,
-        "iDisplayLength": 50,
+        "iDisplayLength": 25,
         "oLanguage": { "sZeroRecords":  ZeroRecordText },
-        "fnDrawCallback": function() { setSelectorClass(); },
+        "fnDrawCallback": function() { setSelectorClass{/literal}{$context}{literal}( context ); },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
             aoData.push( {name:'contact_id', value: {/literal}{$contactId}{literal}},
                          {name:'admin',   value: {/literal}'{$admin}'{literal}}
             );
             if ( filterSearch ) {
                 aoData.push(	     
-                    {name:'activity_type_id', value: cj("select#activity_type_filter_id").val()}
+                    {name:'activity_type_id', value: cj('.crm-activity-selector-'+ context +' select#activity_type_filter_id').val()}
                 );                
             }	
             cj.ajax( {
@@ -106,8 +108,8 @@ function buildContactActivities( filterSearch ) {
     });
 }
 
-function setSelectorClass( ) {
-    cj("#contact-activity-selector td:last-child").each( function( ) {
+function setSelectorClass{/literal}{$context}{literal}( context ) {
+    cj('#contact-activity-selector-' + context + ' td:last-child').each( function( ) {
        cj(this).parent().addClass(cj(this).text() );
     });
 }
