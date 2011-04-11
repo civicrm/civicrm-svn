@@ -215,7 +215,15 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
 
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
-
+        // delete the soft credit record if no soft credit contact ID AND no PCP is set in the form
+        if ( CRM_Utils_Array::value( 'contribution', $ids ) && 
+             ( !CRM_Utils_Array::value( 'soft_credit_to', $params ) &&
+             !CRM_Utils_Array::value( 'pcp_made_through_id', $params ) ) &&
+             CRM_Utils_Array::value( 'softID', $params ) ) {
+            $softCredit = new CRM_Contribute_DAO_ContributionSoft( );
+            $softCredit->id = $params['softID'];
+            $softCredit->delete( );
+        }
         $contribution = self::add($params, $ids);
 
         if ( is_a( $contribution, 'CRM_Core_Error') ) {
@@ -253,14 +261,14 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
 
         // check if activity record exist for this contribution, if
         // not add activity
-        require_once "CRM/Activity/DAO/Activity.php";
+        require_once 'CRM/Activity/DAO/Activity.php';
         $activity = new CRM_Activity_DAO_Activity( );
         $activity->source_record_id = $contribution->id;
         $activity->activity_type_id = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                                       'Contribution',
                                                                       'name' );
         if ( ! $activity->find( ) ) {
-            require_once "CRM/Activity/BAO/Activity.php";
+            require_once 'CRM/Activity/BAO/Activity.php';
             CRM_Activity_BAO_Activity::addActivity( $contribution, 'Offline' );
         }
 
