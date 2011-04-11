@@ -713,7 +713,13 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
         case 'AdvMulti-Select': 
             $selectOption =& CRM_Core_BAO_CustomOption::valuesByID( $field->id,
                                                                     $field->option_group_id );
-            $include =& $qf->addElement('advmultiselect', $elementName, 
+            if ( $search &&
+                 count( $selectOption ) > 1 ) {
+                $selectOption['CiviCRM_OP_OR'] = ts( 'Select to match ANY; unselect to match ALL' );
+            }
+            
+            $include =& $qf->addElement('advmultiselect',
+                                        $elementName, 
                                         $label, $selectOption,
                                         array('size' => 5,
                                               'style'=> '',
@@ -775,6 +781,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             $stateOption = array('' => ts('- select -')) + CRM_Core_PseudoConstant::stateProvince();
             $qf->add('select', $elementName, $label, $stateOption, (($useRequired && $field->is_required) && !$search));
             break;
+
         case 'Multi-Select State/Province':
             //Add Multi-select State/Province
             $stateOption = CRM_Core_PseudoConstant::stateProvince();
