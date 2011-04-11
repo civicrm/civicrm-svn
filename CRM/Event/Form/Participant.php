@@ -1526,6 +1526,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                 $this->assign( 'customGroup', $customGroup );
                 $this->assign( 'contactID', $contactID);
                 $this->assign( 'participantID', $participants[$num]->id );
+                $this->_id = $participants[$num]->id;
                 
                 if ( $this->_isPaidEvent ) {
                     // fix amount for each of participants ( for bulk mode )
