@@ -382,7 +382,8 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                 unset($relTables[$name]);
                 continue;
             }
-            $this->addElement('checkbox', "move_$name");
+            $el = $this->addElement('checkbox', "move_$name");
+            $el->setChecked (true);
             $relTables[$name]['main_url']  = str_replace('$cid', $cid, $relTables[$name]['url']);
             $relTables[$name]['other_url'] = str_replace('$cid', $oid, $relTables[$name]['url']);
             if ( $name == 'rel_table_users' ) {
