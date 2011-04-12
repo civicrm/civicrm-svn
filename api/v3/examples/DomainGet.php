@@ -4,6 +4,7 @@ function domain_get_example(){
     $params = array(
     
                   'version' 		=> '3',
+                  'current_domain' 		=> '1',
 
   );
   require_once 'api/api.php';
@@ -19,20 +20,20 @@ function domain_get_expectedresult(){
 
   $expectedResult = 
      array(
-           '1' 		=> array(           'id' => '1',                      'domain_name' => 'Default Domain Name',                      'description' => '',                      'domain_email' => '',                      'domain_phone' =>  array(
-                      'phone_type' => '',
-                      'phone' => '',
-           ),                      'domain_address' =>  array(
-                      'street_address' => '',
-                      'supplemental_address_1' => '',
-                      'supplemental_address_2' => '',
-                      'city' => '',
-                      'state_province_id' => '',
-                      'postal_code' => '',
-                      'country_id' => '',
-                      'geo_code_1' => '',
-                      'geo_code_2' => '',
-           ),                      'from_email' => 'info@FIXME.ORG',                      'from_name' => 'FIXME',           ),
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '1',
+           'id' 		=> '1',
+           'values' 		=> array(           '1' =>  array(
+                      'id' => '1',
+                      'name' => 'Default Domain Name',
+                      'version' => '3.4.beta3',
+                      'domain_email' => '',
+                      'domain_phone' => 'Array',
+                      'domain_address' => 'Array',
+                      'from_email' => 'info@FIXME.ORG',
+                      'from_name' => 'FIXME',
+           ),           ),
       );
 
   return $expectedResult  ;

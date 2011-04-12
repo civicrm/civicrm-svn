@@ -1000,8 +1000,8 @@ class CRM_Contact_BAO_Query
             foreach ( $addressCustomFieldIds as $cfID => $locTypeName ) {
                 foreach ( $locTypeName as $name => $dnc ) {
                     $fieldName = "$name-custom_{$cfID}";
-                    $tName     = "$name-address-custom";
-                    $aName     = "`$name-address-custom`";
+                    $tName     = "$name-address-custom-{$cfID}";
+                    $aName     = "`$name-address-custom-{$cfID}`";
                     $this->_select["{$tName}_id"]  = "`$tName`.id as `{$tName}_id`"; 
                     $this->_element["{$tName}_id"] = 1; 
                     $this->_select[$fieldName]     = 

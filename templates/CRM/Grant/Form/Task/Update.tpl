@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -23,36 +23,23 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-
-<script type="text/javascript">var showTab = Array( );</script>
-
-{foreach from=$groupTree item=cd_edit key=group_id}    
-	<div class="crm-accordion-wrapper crm-address-accordion {if $cd_edit.collapse_display}crm-accordion-closed{else}crm-accordion-open{/if}">
-		<div class="crm-accordion-header">
-			<div id="custom{$group_id}" class="icon crm-accordion-pointer"></div> 
-			{$cd_edit.title}
-			</div><!-- /.crm-accordion-header -->
-			
-			<div id="customData{$group_id}" class="crm-accordion-body">
-				{include file="CRM/Custom/Form/CustomData.tpl" formEdit=true}
-			</div>
-		<script type="text/javascript">
-			{if $cd_edit.collapse_display eq 0 }
-				var eleSpan          = "span#custom{$group_id}";
-				var eleDiv           = "div#customData{$group_id}";
-				showTab[{$group_id}] = {literal}{"spanShow":eleSpan,"divShow":eleDiv}{/literal};
-			{else}
-				showTab[{$group_id}] = {literal}{"spanShow":""}{/literal};
-			{/if}
-		</script>
-	</div>
-{/foreach}
-
-{include file="CRM/common/customData.tpl"}
- <script type="text/javascript">
-  {literal}
-       cj(function() {
-           cj().crmaccordions(); 
-        });        
-  {/literal}
- </script>
+{* Update Grants *} 
+<div class="crm-block crm-form-block crm-grants-update-form-block">
+    <p>{ts}Enter values for the fields you wish to update. Leave fields blank to preserve existing values.{/ts}</p>
+    <table class="form-layout-compressed">
+        {* Loop through all defined search criteria fields (defined in the buildForm() function). *}
+        {foreach from=$elements item=element}
+            <tr class="crm-contact-custom-search-form-row-{$element}">
+                <td class="label">{$form.$element.label}</td>
+                {if $element eq 'decision_date'}
+                    <td>{include file="CRM/common/jcalendar.tpl" elementName=decision_date}<br />
+                    <span class="description">{ts}Date on which the grant decision was finalized.{/ts}</span></td>
+                {else}
+                    <td>{$form.$element.html}</td>
+                {/if}
+            </tr>
+        {/foreach}
+    </table>
+    <p>{ts 1=$totalSelectedGrants}Number of selected grants: %1{/ts}</p>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+</div><!-- /.crm-form-block -->

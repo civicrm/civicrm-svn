@@ -23,6 +23,10 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+
+{* enclosed all tabs and its content in a block *}	
+<div class="crm-block crm-content-block">
+
 {if $tabHeader and count($tabHeader) gt 1}
 <div id="mainTabContainer">
 <ul>
@@ -83,3 +87,6 @@ function stopSpinner( ) {
     });
 {/literal}
 </script>
+
+<div class="clear"></div>
+</div> {* crm-content-block ends here *}

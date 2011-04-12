@@ -87,7 +87,7 @@ class CRM_Contact_Form_Task_AddToTag extends CRM_Contact_Form_Task {
     
     static function formRule( $form, $rule) {
         $errors =array();
-        if ( empty( $form['tag'] ) && empty( $form['taglist'] ) ) {
+        if ( empty( $form['tag'] ) && empty( $form['contact_taglist'] ) ) {
             $errors['_qf_default'] = "Please select atleast one tag.";
         }
         return $errors;
@@ -109,8 +109,8 @@ class CRM_Contact_Form_Task_AddToTag extends CRM_Contact_Form_Task {
         }
         
         // check if tags are selected from taglists
-        if ( CRM_Utils_Array::value( 'taglist', $params ) ) {
-            foreach( $params['taglist'] as $val ) {
+        if ( CRM_Utils_Array::value( 'contact_taglist', $params ) ) {
+            foreach( $params['contact_taglist'] as $val ) {
                 if ( $val ) {
                     if ( is_numeric( $val ) ) {
                         $tagList[ $val ] = 1;

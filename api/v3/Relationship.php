@@ -203,12 +203,10 @@ function civicrm_api3_relationship_update( $params ) {
 /**
  * Function to get the relationship
  *
- * @param array   $contact_a          (reference ) input parameters.
- * @param array   $contact_b          (reference ) input parameters.
- * @param array   $relationshipTypes  an array of Relationship Type Name.
- * @param string  $sort               sort all relationship by relationshipId (eg asc/desc)
- * @todo doesn't take a single array - but may also need to be an internal function (prefaced by _)?
- * @return        Array of all relationship.
+ * @param array   $params          (reference ) input parameters.
+ * @todo  function in not a search - just returns all relationships for 'contact_id'
+ * 
+ * @return        Array of all relevant relationships.
  *
  * @access  public
  */
@@ -216,48 +214,17 @@ function civicrm_api3_relationship_get($params)
 {
     _civicrm_api3_initialize(true );
     try{
-        civicrm_api3_verify_mandatory($params);
-   
-        if ( !isset( $params['contact_id_a'] ) ) {
-            return civicrm_api3_create_error(  'Could not find contact_id_a in input parameters.'  );
-        }
+        civicrm_api3_verify_mandatory($params, null,array('contact_id'));
+ 
         require_once 'CRM/Contact/BAO/Relationship.php';
-        $contactID     = $params['contact_id_a'];
-        $relationships = CRM_Contact_BAO_Relationship::getRelationship($contactID);
+        $contactID     = $params['contact_id'];
+        $relationships = CRM_Contact_BAO_Relationship::getRelationship($contactID,
+                                        CRM_Utils_Array::value('status_id',$params),
+                                         0,
+                                         0,
+                                         CRM_Utils_Array::value('id',$params),null );
 
-        if ( !empty( $relationshipTypes ) ) {
-            $result = array();
-            foreach ( $relationshipTypes as $relationshipName ) {
-                foreach( $relationships as $key => $relationship ) {
-                    if ( $relationship['relation'] ==  $relationshipName ) {
-                        $result[$key] = $relationship;
-                    }
-                }
-            }
-            $relationships = $result;
-        }
-    
-        if( isset( $params['contact_id_b']) ) {
-            $cid = $params['contact_id_b'];
-            $result = array( );
-        
-            foreach($relationships as $key => $relationship) {
-                if ($relationship['cid'] == $cid ) {
-                    $result[$key] = $relationship;
-                }
-            }
-            $relationships = $result;
-        }
-    
-        //sort by relationship id
-        if ( $sort ) {
-            if ( strtolower( $sort ) == 'asc' ) {
-                ksort( $relationships );
-            } 
-            else if ( strtolower( $sort ) == 'desc' ) {
-                krsort( $relationships );
-            }
-        }
+     
     
         //handle custom data.
         require_once 'CRM/Core/BAO/CustomGroup.php';

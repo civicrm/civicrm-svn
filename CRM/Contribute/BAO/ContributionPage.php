@@ -219,7 +219,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 }
                 self::buildCustomDisplay( $postID, 'customPost', $userID, $template, $params['custom_post_id'] );
             }
-            
+
             // set email in the template here
             $tplParams = array(
                 'email'            => $email,
@@ -235,6 +235,10 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 $tplParams['contributionTypeId']   = $contributionTypeId;
                 $tplParams['contributionTypeName'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
                                                                                   $contributionTypeId );
+            }
+
+            if ( $contributionPageId = CRM_Utils_Array::value('id', $values ) ) {
+                $tplParams['contributionPageId']   = $contributionPageId;
             }
                         
             // address required during receipt processing (pdf and email receipt)

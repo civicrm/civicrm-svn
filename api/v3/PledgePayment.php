@@ -66,7 +66,7 @@ require_once 'CRM/Utils/Rule.php';
 function civicrm_api3_pledge_payment_create( $params ) {
   _civicrm_api3_initialize(true );
   try{
-    civicrm_api3_verify_mandatory($params,null,array('pledge_id','status_id', 'contribution_id'));
+    civicrm_api3_verify_mandatory($params,null,array('pledge_id','status_id'));
 
     require_once 'CRM/Pledge/BAO/Payment.php';
     if (empty($params['id'])){

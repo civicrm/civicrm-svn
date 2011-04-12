@@ -1,8 +1,7 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -22,37 +21,35 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
+*/
+/*
+ * Heavily based on anonymous code contribution. No claim.
+ *
+ * civicrm_handler_field_contribution_status.inc
+ * Displays Grant Status after grabbing the label from the database
+ *
+ */
+class civicrm_handler_field_grant_status extends views_handler_field {
+    static $_grantStatus;
 
-<script type="text/javascript">var showTab = Array( );</script>
+    function construct( ) {
+        if ( ! self::$_grantStatus ) {
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
+            require_once 'CRM/Grant/PseudoConstant.php';
+            self::$_grantStatus = CRM_Grant_PseudoConstant::grantStatus( );
+        }
+    }
 
-{foreach from=$groupTree item=cd_edit key=group_id}    
-	<div class="crm-accordion-wrapper crm-address-accordion {if $cd_edit.collapse_display}crm-accordion-closed{else}crm-accordion-open{/if}">
-		<div class="crm-accordion-header">
-			<div id="custom{$group_id}" class="icon crm-accordion-pointer"></div> 
-			{$cd_edit.title}
-			</div><!-- /.crm-accordion-header -->
-			
-			<div id="customData{$group_id}" class="crm-accordion-body">
-				{include file="CRM/Custom/Form/CustomData.tpl" formEdit=true}
-			</div>
-		<script type="text/javascript">
-			{if $cd_edit.collapse_display eq 0 }
-				var eleSpan          = "span#custom{$group_id}";
-				var eleDiv           = "div#customData{$group_id}";
-				showTab[{$group_id}] = {literal}{"spanShow":eleSpan,"divShow":eleDiv}{/literal};
-			{else}
-				showTab[{$group_id}] = {literal}{"spanShow":""}{/literal};
-			{/if}
-		</script>
-	</div>
-{/foreach}
+    function render( $values ) {
+        $lid = $values->{$this->field_alias};
+        if ( empty( $lid ) ||
+             (int ) $lid <= 0 ) {
+            return null;
+        }
 
-{include file="CRM/common/customData.tpl"}
- <script type="text/javascript">
-  {literal}
-       cj(function() {
-           cj().crmaccordions(); 
-        });        
-  {/literal}
- </script>
+        return self::$_grantStatus[$values->{$this->field_alias}];
+    }
+}
+

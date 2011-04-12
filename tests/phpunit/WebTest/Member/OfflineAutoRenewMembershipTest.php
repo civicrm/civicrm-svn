@@ -105,24 +105,23 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
       // Use Find Members to make sure membership exists
       $this->open($this->sboxPath . "civicrm/member/search&reset=1");
       $this->waitForElementPresent("member_end_date_high");
-
+      
       $this->type("sort_name", "$firstName $lastName" );
       $this->click("member_test");
       $this->click("_qf_Search_refresh");
-
       $this->waitForPageToLoad('30000');
-
-      $this->waitForElementPresent('css=#memberSearch table tbody tr td span a.action-item-first');
-      $this->click('css=#memberSearch table tbody tr td span a.action-item-first');
+      
+      $this->waitForElementPresent("xpath=//div[@id='memberSearch']/table/tbody/tr[1]/td[11]/span/a[text()='View']" );
+      $this->click("xpath=//div[@id='memberSearch']/table/tbody/tr[1]/td[11]/span/a[text()='View']");
       $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
 
       // View Membership Record
       $verifyData = array(
-                         'Member'          => "$firstName $lastName",
-                         'Membership Type' => 'General (test)',
-                         'Source'          => 'Online Membership: Admin Interface',
-                         'Status'          => 'Pending',
-                         'Auto-renew'      => 'Yes',
+                          'Member'          => "$firstName $lastName",
+                          'Membership Type' => 'General (test)',
+                          'Source'          => 'Online Membership: Admin Interface',
+                          'Status'          => 'Pending',
+                          'Auto-renew'      => 'Yes',
                           );
       foreach ( $verifyData as $label => $value ) {
           $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 

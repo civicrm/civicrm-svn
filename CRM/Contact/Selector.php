@@ -572,9 +572,19 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
 
             // for CRM-3157 purposes
             require_once 'CRM/Core/PseudoConstant.php';
-            if (in_array('country',        $names)) $countries =& CRM_Core_PseudoConstant::country();
-            if (in_array('state_province', $names)) $provinces =& CRM_Core_PseudoConstant::stateProvince();
-            if (in_array('world_region',   $names)) $regions   =& CRM_Core_PseudoConstant::worldRegions();
+            if ( in_array('country',        $names ) ) {
+                $countries =& CRM_Core_PseudoConstant::country();
+            }
+
+            if ( in_array('state_province', $names ) ) {
+                $provinces =& CRM_Core_PseudoConstant::stateProvince();
+            }
+
+            if ( in_array('world_region',   $names ) ) {
+                $regions   =& CRM_Core_PseudoConstant::worldRegions();
+            }
+
+            $empty = true;
 
             // the columns we are interested in
             foreach ($names as $property) {
@@ -731,6 +741,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     $row['id'  ] = $result->contact_id;
                 }
             }
+
             // Dedupe contacts        
             if ( ! $empty ) {
                 $duplicate = false;
@@ -743,7 +754,9 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     $rows[] = $row;
                 }
             }
+
         }
+
         //CRM_Core_Error::debug( '$rows', $rows );
         return $rows;
     }

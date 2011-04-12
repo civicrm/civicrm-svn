@@ -1,8 +1,7 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -22,37 +21,40 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
+*/
 
-<script type="text/javascript">var showTab = Array( );</script>
+/*
+ * Heavily based on anonymous code contribution. No claim.
+ * CiviCRM Views Integration
+ *
+ * civicrm_handler_filter_grant_type.inc
+ * Filters Grant Types, and is configured using the labels from the database
+ *
+ */
 
-{foreach from=$groupTree item=cd_edit key=group_id}    
-	<div class="crm-accordion-wrapper crm-address-accordion {if $cd_edit.collapse_display}crm-accordion-closed{else}crm-accordion-open{/if}">
-		<div class="crm-accordion-header">
-			<div id="custom{$group_id}" class="icon crm-accordion-pointer"></div> 
-			{$cd_edit.title}
-			</div><!-- /.crm-accordion-header -->
-			
-			<div id="customData{$group_id}" class="crm-accordion-body">
-				{include file="CRM/Custom/Form/CustomData.tpl" formEdit=true}
-			</div>
-		<script type="text/javascript">
-			{if $cd_edit.collapse_display eq 0 }
-				var eleSpan          = "span#custom{$group_id}";
-				var eleDiv           = "div#customData{$group_id}";
-				showTab[{$group_id}] = {literal}{"spanShow":eleSpan,"divShow":eleDiv}{/literal};
-			{else}
-				showTab[{$group_id}] = {literal}{"spanShow":""}{/literal};
-			{/if}
-		</script>
-	</div>
-{/foreach}
+class civicrm_handler_filter_grant_type extends views_handler_filter_in_operator {
+    static $_grantType;
 
-{include file="CRM/common/customData.tpl"}
- <script type="text/javascript">
-  {literal}
-       cj(function() {
-           cj().crmaccordions(); 
-        });        
-  {/literal}
- </script>
+    function construct( ) {
+        parent::construct();
+        if ( ! self::$_grantType ) {
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
+            require_once 'CRM/Grant/PseudoConstant.php';
+            self::$_grantType = CRM_Grant_PseudoConstant::grantType( );
+        }
+    }
+
+    function get_value_options() {
+        if (!isset($this->value_options)) {
+            $this->value_title = t('Grant Type');
+            $options = array( );
+            foreach (self::$_grantType as $id => $name ) {
+                $options[$id] = $name;
+            }
+            $this->value_options = $options;
+        }
+    }
+
+}

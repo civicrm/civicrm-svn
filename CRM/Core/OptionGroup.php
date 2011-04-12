@@ -276,6 +276,29 @@ WHERE  v.option_group_id = g.id
         return null;
     }
 
+    /**
+     * Creates a new option group with the passed in values
+     * @TODO: Should update the group if it already exists intelligently, so multi-lingual is
+     * not messed up. Currently deletes the old group
+     *
+     * @param string $groupName the name of the option group - make sure there is no conflict
+     * @param array  $values    the associative array that has information on the option values
+     *                          the keys of this array are:
+     *                          string 'label'       (required)
+     *                          string 'value'       (required)
+     *                          string 'name'        (optional)
+     *                          string 'description' (optional)
+     *                          int    'weight'      (optional) - the order in which the value are displayed
+     *                          bool   'is_default'  (optional) - is this the default one to display when rendered in form
+     *                          bool   'is_active'   (optional) - should this element be rendered
+     * @param int    $defaultID (reference) - the option value ID of the default element (if set) is returned else 'null'
+     * @param string $groupLabel            - the optional label of the option group else set to group name
+     * 
+     * @access public
+     * @static
+     * @return int   the option group ID
+     *
+     */
     static function createAssoc( $groupName, &$values, &$defaultID, $groupLabel = null ) 
     {
         self::deleteAssoc( $groupName );
@@ -283,7 +306,7 @@ WHERE  v.option_group_id = g.id
             require_once 'CRM/Core/DAO/OptionGroup.php';
             $group = new CRM_Core_DAO_OptionGroup( );
             $group->name        = $groupName;
-            $group->label       = $groupLabel;
+            $group->label       = empty( $groupLabel ) ? $groupName : $groupLabel;
             $group->is_reserved = 1;
             $group->is_active   = 1;
             $group->save( );

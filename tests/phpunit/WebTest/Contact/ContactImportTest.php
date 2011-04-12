@@ -271,7 +271,6 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
       
       // Go to contact import page.
       $this->open($this->sboxPath . "civicrm/import/contact?reset=1");
-      $this->waitForPageToLoad( '30000' );
       
       // check for upload field.
       $this->waitForElementPresent("uploadFile");

@@ -54,7 +54,9 @@ class CRM_Dashlet_Page_Activity extends CRM_Core_Page
         $contactID = $session->get('userID');
         $this->assign( 'contactID', $contactID );
         $this->assign( 'contactId', $contactID );
-        $this->assign( 'context'   , 'activityDashlet');
+        
+        $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'dashlet' );
+        $this->assign('context', $context );
         
         // a user can always view their own activity
         // if they have access CiviCRM permission
