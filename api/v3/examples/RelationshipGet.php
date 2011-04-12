@@ -3,7 +3,7 @@
 function relationship_get_example(){
     $params = array(
     
-                  'contact_id_a' 		=> '2',
+                  'contact_id' 		=> '2',
                   'version' 		=> '3',
 
   );

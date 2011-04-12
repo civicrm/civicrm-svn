@@ -204,7 +204,8 @@ function civicrm_api3_relationship_update( $params ) {
  * Function to get the relationship
  *
  * @param array   $params          (reference ) input parameters.
- * @todo fix - function treats 'contact_id_a' as 'contact_id' - ie. returns all relationships for that contact
+ * @todo  function in not a search - just returns all relationships for 'contact_id'
+ * 
  * @return        Array of all relevant relationships.
  *
  * @access  public
@@ -213,13 +214,10 @@ function civicrm_api3_relationship_get($params)
 {
     _civicrm_api3_initialize(true );
     try{
-        civicrm_api3_verify_mandatory($params);
-   
-        if ( !isset( $params['contact_id_a'] ) ) {
-            return civicrm_api3_create_error(  'Could not find contact_id_a in input parameters.'  );
-        }
+        civicrm_api3_verify_mandatory($params, null,array('contact_id'));
+ 
         require_once 'CRM/Contact/BAO/Relationship.php';
-        $contactID     = $params['contact_id_a'];
+        $contactID     = $params['contact_id'];
         $relationships = CRM_Contact_BAO_Relationship::getRelationship($contactID);
 
         if ( !empty( $relationshipTypes ) ) {
@@ -234,18 +232,7 @@ function civicrm_api3_relationship_get($params)
             $relationships = $result;
         }
     
-        if( isset( $params['contact_id_b']) ) {
-            $cid = $params['contact_id_b'];
-            $result = array( );
-        
-            foreach($relationships as $key => $relationship) {
-                if ($relationship['cid'] == $cid ) {
-                    $result[$key] = $relationship;
-                }
-            }
-            $relationships = $result;
-        }
-    
+  
         //sort by relationship id
         if ( $sort ) {
             if ( strtolower( $sort ) == 'asc' ) {

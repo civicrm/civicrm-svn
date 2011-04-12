@@ -89,7 +89,6 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $params = array( 'version'  => $this->_apiversion);
         $result =& civicrm_api3_relationship_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: contact_id_a, contact_id_b, relationship_type_id, contact_id_a, contact_id_b, one of (relationship_type_id, relationship_type)' );
     }
     
     /**
@@ -100,7 +99,6 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $params = 'relationship_type_id = 5';                            
         $result =& civicrm_api3_relationship_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array' );
     }
     
     /**
@@ -116,7 +114,6 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         
         $result =& civicrm_api3_relationship_create($params);
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: contact_id_a, contact_id_b, relationship_type_id, contact_id_a, contact_id_b, one of (relationship_type_id, relationship_type), version' );
     }
     
     /**
@@ -575,11 +572,10 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
     function testRelationshipGetEmptyParams( )
     {
         //get relationship
-        $params = array( );
+        $params = array('version' => $this->_apiversion );
         $result =& civicrm_api3_relationship_get( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: version' );
-    }
+   }
     
     /**
      * check with params Not Array.
@@ -590,7 +586,6 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         
         $result =& civicrm_api3_relationship_get( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array' );
     }
     
     /**
@@ -611,7 +606,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $result = civicrm_api3_relationship_create( $relParams );
         
         //get relationship
-        $params = array( 'contact_id_a' => $this->_cId_b ,
+        $params = array( 'contact_id' => $this->_cId_b ,
                           'version'     => $this->_apiversion);
         $result =& civicrm_api3_relationship_get( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
@@ -651,7 +646,6 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         //no relationship has been created
         $result =& civicrm_api3_relationship_get( $contact_a, $contact_b, null , 'asc' );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertContains( 'Mandatory key(s) missing from params array', $result['error_message'] );
     } 
     
     
@@ -672,7 +666,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
 
         $relationship = & civicrm_api3_relationship_create( $relParams );
 
-        $contacts = array( 'contact_id_a' => $this->_cId_a ,
+        $contacts = array( 'contact_id' => $this->_cId_a ,
                            'contact_id_b' => $this->_cId_b,
                            'version'	  => $this->_apiversion );
 
@@ -702,11 +696,11 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
 
         $relationship = & civicrm_api3_relationship_create( $relParams );
         
-        $contact_a = array( 'contact_id_a' => $this->_cId_a,
+        $contact_a = array( 'contact_id' => $this->_cId_a,
                             'relationship_type_id' => $this->_relTypeID,
                             'version'      => $this->_apiversion, );
 
-        $result =& civicrm_api3_relationship_get( $contact_a, null, $relationshipTypes, 'desc' );
+        $result =& civicrm_api3_relationship_get( $contact_a);
 
         $this->assertEquals( $result['is_error'], 0,'in line ' .__LINE__ );
 
