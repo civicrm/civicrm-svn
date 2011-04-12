@@ -49,13 +49,13 @@ class CRM_Upgrade_Incremental_php_ThreeTwo {
             // CRM-7896
             $roles = user_roles(false, 'access CiviCase');
             if ( !empty($roles) ) {
-                $chagePermissions = array( 'access CiviCase'                 => false,
+                $changePermissions = array( 'access CiviCase'                 => false,
                                            'access my cases and activities'  => true,
                                            'access all cases and activities' => true,
                                            'administer CiviCase'             => true
                                            );
                 foreach( array_keys($roles) as $rid ) {
-                    user_role_change_permissions($rid, $chagePermissions);
+                    user_role_change_permissions($rid, $changePermissions);
                 }
             }
             
