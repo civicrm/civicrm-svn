@@ -47,9 +47,6 @@ function civicrm_contact_ref_field_widget_info() {
                                            'size' => 60,
                                            'autocomplete_path' => 'civicrm_contact_ref/autocomplete',
                                            ),
-                       'behaviors' => array(
-                                            'multiple values' => FIELD_BEHAVIOR_CUSTOM,
-                                            ),
                        )
                  );
                  
@@ -166,17 +163,18 @@ function civicrm_contact_ref_field_widget_form(&$form, &$form_state, $field, $in
         $sort_name       = _civicrm_contact_ref_titles( $item['contact_id'], 'sort_name' );
         $defaultValues[] = "$sort_name [cid:{$item['contact_id']}]";
     }
-  $element += array(
-    '#type'              => 'textfield',    
-    '#autocomplete_path' => $instance['widget']['settings']['autocomplete_path'] . '/' . $field['field_name'],
-    '#size'              => $instance['widget']['settings']['size'],
-    '#maxlength'         => 1024,
-    '#default_value'     => empty($defaultValues)? '' : implode(', ', $defaultValues),
-    '#element_validate'  => array('civicrm_contact_ref_autocomplete_validate'),
+    
+    $element += array(
+                      '#type'              => 'textfield',    
+                      '#autocomplete_path' => $instance['widget']['settings']['autocomplete_path'] . '/' . $field['field_name'],
+                      '#size'              => $instance['widget']['settings']['size'],
+                      '#maxlength'         => 1024,
+                      '#default_value'     => empty($defaultValues[$delta])? '' : $defaultValues[$delta],
+                      '#element_validate'  => array('civicrm_contact_ref_autocomplete_validate'),
+                      );
+  
+  return array('contact_id' => $element);
 
-  );
-
-  return $element;
 }
 
 /**
@@ -227,13 +225,12 @@ function civicrm_contact_ref_autocomplete_validate($element, &$form_state) {
     $delta = $element['#delta'];
     $value = $element['#value'];
   
-    $cids = array();
+    $cid = null;
     if (!empty($value)) {
         preg_match('/^(?:\s*|(.*) )?\[\s*cid\s*:\s*(\d+)\s*\]$/', $value, $matches);
         if (!empty($matches)) {
             // Explicit [cid:n].
-            list(, $title, $cid) = $matches;
-            $cids[] = array( 'contact_id' => $cid );
+            $cid = $matches[2];
         }
         else {
             // No explicit cid.
@@ -246,25 +243,12 @@ function civicrm_contact_ref_autocomplete_validate($element, &$form_state) {
                 // the best thing would be to present the user with an additional form,
                 // allowing the user to choose between valid candidates with the same title
                 // ATM, we pick the first matching candidate...
-                $cids[] = array( 'contact_id' => array_shift(array_keys($cids)) );
+                $cid = array_shift(array_keys($cids));
             }
         }
     }
     
-    form_set_value($element, $cids, $form_state);
-}
-
-function civicrm_contact_ref_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) {
-    // unset 'cardinality' field in case of autocomplete, and use
-    // cardinality = 1;
-    if ( isset($form['#field']) && isset($form['#instance']) &&
-         $form['#field']['module'] == 'civicrm_contact_ref' &&
-         $form['#instance']['widget']['type'] == 'civicrm_contact_ref_autocomplete' &&
-         isset($form['field']['cardinality']) ) {
-        $form['field']['cardinality'] = array( '#type'  => 'value',
-                                               '#value' => 1 );
-    }
-
+    form_set_value($element, $cid, $form_state);
 }
 
 /*
