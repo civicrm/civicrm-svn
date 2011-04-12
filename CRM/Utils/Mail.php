@@ -84,6 +84,7 @@ class CRM_Utils_Mail
         $attachments = CRM_Utils_Array::value( 'attachments', $params );
 
         // CRM-6224
+        require_once 'CRM/Utils/String.php';
         if (trim(CRM_Utils_String::htmlToText($htmlMessage)) == '') {
             $htmlMessage = false;
         }
