@@ -482,8 +482,11 @@ SELECT  count( id ) as statusCount
         $config =& CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Drupal' ) {
             $roles = user_roles(false, 'access CiviEvent');
-            if ( ! empty( $roles ) ) {
-                db_query( 'UPDATE {permission} SET perm = CONCAT( perm, \', edit all events\') WHERE rid IN (' . implode(',', array_keys($roles)) . ')' );
+            if ( !empty($roles) ) {
+                // CRM-7896
+                foreach( array_keys($roles) as $rid ) {
+                    user_role_grant_permissions($rid, array( 'edit all events' ));
+                }
             }
         }
 
