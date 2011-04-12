@@ -218,30 +218,13 @@ function civicrm_api3_relationship_get($params)
  
         require_once 'CRM/Contact/BAO/Relationship.php';
         $contactID     = $params['contact_id'];
-        $relationships = CRM_Contact_BAO_Relationship::getRelationship($contactID);
+        $relationships = CRM_Contact_BAO_Relationship::getRelationship($contactID,
+                                        CRM_Utils_Array::value('status_id',$params),
+                                         0,
+                                         0,
+                                         CRM_Utils_Array::value('id',$params),null );
 
-        if ( !empty( $relationshipTypes ) ) {
-            $result = array();
-            foreach ( $relationshipTypes as $relationshipName ) {
-                foreach( $relationships as $key => $relationship ) {
-                    if ( $relationship['relation'] ==  $relationshipName ) {
-                        $result[$key] = $relationship;
-                    }
-                }
-            }
-            $relationships = $result;
-        }
-    
-  
-        //sort by relationship id
-        if ( $sort ) {
-            if ( strtolower( $sort ) == 'asc' ) {
-                ksort( $relationships );
-            } 
-            else if ( strtolower( $sort ) == 'desc' ) {
-                krsort( $relationships );
-            }
-        }
+     
     
         //handle custom data.
         require_once 'CRM/Core/BAO/CustomGroup.php';

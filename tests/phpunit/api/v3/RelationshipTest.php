@@ -667,12 +667,11 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $relationship = & civicrm_api3_relationship_create( $relParams );
 
         $contacts = array( 'contact_id' => $this->_cId_a ,
-                           'contact_id_b' => $this->_cId_b,
                            'version'	  => $this->_apiversion );
 
         $result =& civicrm_api3_relationship_get( $contacts );
         $this->assertEquals( $result['is_error'], 0 ,'in line ' .__LINE__);
-
+        $this->assertGreaterThan( 0,  $result['count'],'in line ' .__LINE__);
         $params = array('id' => $relationship['id'] ,
                         'version' => $this->_apiversion,);
         $result = & civicrm_api3_relationship_delete( $params );
@@ -697,7 +696,6 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $relationship = & civicrm_api3_relationship_create( $relParams );
         
         $contact_a = array( 'contact_id' => $this->_cId_a,
-                            'relationship_type_id' => $this->_relTypeID,
                             'version'      => $this->_apiversion, );
 
         $result =& civicrm_api3_relationship_get( $contact_a);
