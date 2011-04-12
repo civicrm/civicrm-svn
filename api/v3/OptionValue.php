@@ -5,10 +5,17 @@ function civicrm_api3_option_value_get( $params ) {
     _civicrm_api3_initialize(true);
     try{
      civicrm_api3_verify_mandatory($params);
-
+     if (empty($params['option_group_id']) && !empty($params['option_group_name'])){
+       $opt = array('version' =>3, 'name' => $params['option_group_name']);
+       $optionGroup = civicrm_api('OptionGroup', 'Get', $opt);   
+       if(empty($optionGroup['id'])){
+         return civicrm_api3_create_error("option group name does not correlate to a single option group");    
+       }
+       $params['option_group_id'] = $optionGroup['id'];
+      }    
+      
       require_once 'CRM/Core/BAO/OptionValue.php';
       $bao = new CRM_Core_BAO_OptionValue( );
-//      $bao = civicrm_api3_get_DAO ('OptionValue');
 
       _civicrm_api3_dao_set_filter ( $bao, $params );
 

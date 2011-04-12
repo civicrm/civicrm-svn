@@ -139,7 +139,7 @@ function civicrm_api3_domain_create( $params ) {
  function civicrm_api3_domain_getfields(){
    $fields = $dao->getfields();
    $fields['domain_version'] = "version of domain";
-   $fields['current_domain'] = "get loaded domain";
+   $fields['current_domain'] = "BOOL get loaded domain";
    unset ($fields['version']);
    
    return $fields;
