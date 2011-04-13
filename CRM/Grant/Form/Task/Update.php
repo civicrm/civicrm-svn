@@ -44,14 +44,6 @@ require_once 'CRM/Grant/Form/Task.php';
 class CRM_Grant_Form_Task_Update extends CRM_Grant_Form_Task 
 {
     /**
-     * Are we operating in "single mode", i.e. updating one
-     * specific grant?
-     *
-     * @var boolean
-     */
-    protected $_single = false;
-
-    /**
      * build all the data structures needed to build the form
      *
      * @return void
@@ -111,22 +103,14 @@ class CRM_Grant_Form_Task_Update extends CRM_Grant_Form_Task
 
         if ( ! empty( $params ) ) {
             require_once 'CRM/Grant/BAO/Grant.php';
+            foreach ( $params as $key => $value ) {
+                $values[$key] = $value;
+            }
             foreach ( $this->_grantIds as $grantId ) {
-                $grant = new CRM_Grant_DAO_Grant( );
-                $grant->id = $grantId;
-                if ( $grant->find( true ) ) {
-                    // get existing grant and update fields from the form
-                    $values = array();
-                    CRM_Core_DAO::storeValues( $grant, $values );
-                    
-                    foreach ( $params as $key => $value ) {
-                        $values[$key] = $value;
-                    }
-                    $ids['grant'] = $grant->id ;
-                    
-                    CRM_Grant_BAO_Grant::add($values, $ids);
-                    $updatedGrants++;
-                }
+                $ids['grant'] = $grantId;
+                
+                CRM_Grant_BAO_Grant::add( $values, $ids );
+                $updatedGrants++;
             }
         }
         
