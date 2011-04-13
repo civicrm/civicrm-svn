@@ -24,6 +24,9 @@
  +--------------------------------------------------------------------+
 *}
 
+{if $cdType }
+   {include file="CRM/Custom/Form/CustomData.tpl"}
+{else}
 <div class="crm-block crm-form-block crm-campaign-survey-form-block">
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 {if $action eq 8}
@@ -100,9 +103,25 @@
            <td class="view-value">{$form.is_default.html}
 	       <div class="description">{ts}Is this the default survey?{/ts}</div></td>
        </tr>
+       <tr class="crm-campaign-form-block-custom_data">
+           <td colspan="2">
+               <div id="customData"></div>
+           </td>
+       </tr>
       </table>
 {/if}
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-
 </div>
 
+{include file="CRM/common/customData.tpl"}
+{literal}
+  <script type="text/javascript">
+    cj(document).ready(function() {
+      {/literal}
+        buildCustomData( 'Survey' );
+      {literal}
+    });
+  </script>
+{/literal}
+
+{/if}

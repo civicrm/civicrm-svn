@@ -34,6 +34,8 @@
  *
  */
 
+require_once 'CRM/Core/OptionGroup.php';
+
 /**
  * This class holds all the Pseudo constants that are specific to Grant. This avoids
  * polluting the core class and isolates the Grant
@@ -67,8 +69,7 @@ class CRM_Grant_PseudoConstant extends CRM_Core_PseudoConstant
     {
         if ( ! self::$grantStatus ) {
             self::$grantStatus = array( );
-            require_once "CRM/Core/OptionGroup.php";
-            self::$grantStatus =  CRM_Core_OptionGroup::values("grant_status");
+            self::$grantStatus = CRM_Core_OptionGroup::values( 'grant_status' );
         }
         
         if( $id ) {
@@ -89,8 +90,7 @@ class CRM_Grant_PseudoConstant extends CRM_Core_PseudoConstant
     {
         if ( ! self::$grantType ) {
             self::$grantType = array( );
-            require_once "CRM/Core/OptionGroup.php";
-            self::$grantType =  CRM_Core_OptionGroup::values("grant_type");
+            self::$grantType = CRM_Core_OptionGroup::values( 'grant_type' );
         }
         
         If( $id ) {

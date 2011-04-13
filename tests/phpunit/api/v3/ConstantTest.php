@@ -168,9 +168,9 @@ class api_v3_ConstantTest extends CiviUnitTestCase
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn, $dataset );
 
-
-        $result = civicrm_api3_constant_get( array( 'name' => 'locationType',
-                                                     'version' => $this->_apiversion,) );       
+        $params =array( 'name' => 'locationType',
+                                                     'version' => $this->_apiversion,);
+        $result = civicrm_api3_constant_get( $params );       
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);  
         $this->assertEquals( 4,  $result['count'], "In line " . __LINE__  );
         $this->assertContains( 'Home',  $result['values'], "In line " . __LINE__  );

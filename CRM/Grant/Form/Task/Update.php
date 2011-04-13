@@ -44,14 +44,6 @@ require_once 'CRM/Grant/Form/Task.php';
 class CRM_Grant_Form_Task_Update extends CRM_Grant_Form_Task 
 {
     /**
-     * Are we operating in "single mode", i.e. updating one
-     * specific grant?
-     *
-     * @var boolean
-     */
-    protected $_single = false;
-
-    /**
      * build all the data structures needed to build the form
      *
      * @return void
@@ -104,40 +96,24 @@ class CRM_Grant_Form_Task_Update extends CRM_Grant_Form_Task
         $params = $this->controller->exportValues( $this->_name );
         $qfKey = $params['qfKey'];
         foreach ( $params as $key => $value ) {
-            if ( $value == '' || $key == 'qfKey' ) unset( $params[$key] );
-        }
-        if ( ! empty($params) ) {
-            foreach ( $this->_grantIds as $grantId ) {
-                require_once 'CRM/Grant/DAO/Grant.php';
-                $grant  = new CRM_Grant_DAO_Grant( );
-                $grant->id = $grantId;
-                if ( $grant->find( true ) ) {
-    
-                    // get existing grant and update fields from the form
-                    $values = array();
-                    CRM_Core_DAO::storeValues( $grant, $values );
-                    foreach ( $params as $key => $value ) {
-                        $values[$key] = $value;
-                    }
-                    // convert dates to mysql format
-                    $dates = array( 'application_received_date',
-                                    'decision_date',
-                                    'money_transfer_date',
-                                    'grant_due_date' );
-                    foreach ( $dates as $d ) {
-                        if ( $values[$d] ) {
-                            $values[$d] = CRM_Utils_Date::processDate( $values[$d], null, true );
-                        }
-                    }
-
-                    require_once 'CRM/Grant/BAO/Grant.php';
-                    $ids['grant'] = $grant->id ;
-                    CRM_Grant_BAO_Grant::add($values, $ids);
-                    $updatedGrants++;
-                }
+            if ( $value == '' || $key == 'qfKey' ) {
+                unset( $params[$key] );
             }
         }
 
+        if ( ! empty( $params ) ) {
+            require_once 'CRM/Grant/BAO/Grant.php';
+            foreach ( $params as $key => $value ) {
+                $values[$key] = $value;
+            }
+            foreach ( $this->_grantIds as $grantId ) {
+                $ids['grant'] = $grantId;
+                
+                CRM_Grant_BAO_Grant::add( $values, $ids );
+                $updatedGrants++;
+            }
+        }
+        
         $status = array(
                         ts( 'Updated Grant(s): %1',        array( 1 => $updatedGrants ) ),
                         ts( 'Total Selected Grant(s): %1', array( 1 => count($this->_grantIds ) ) ),

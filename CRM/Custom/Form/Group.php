@@ -272,6 +272,8 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         $sel2['Household' ]           = CRM_Contact_BAO_ContactType::subTypePairs( 'Household', false, null );
         $sel2['Organization']         = CRM_Contact_BAO_ContactType::subTypePairs( 'Organization', false, null );
 
+        CRM_Core_BAO_CustomGroup::getExtendedObjectTypes( $sel2 );
+
         foreach ( $sel2 as $main => $sub ) {
             if ( !empty($sel2[$main]) ) {
                 if ( $main == 'Relationship' ) {

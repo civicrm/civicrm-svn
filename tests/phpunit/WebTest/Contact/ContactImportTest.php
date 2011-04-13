@@ -352,10 +352,12 @@ class WebTest_Contact_ContactImportTest extends CiviSeleniumTestCase {
 
       // Check summary Details.
       $importedContacts = count($rows);
+      $importedContactsCount = ( $importedContacts == 1 ) ? 'One contact' : "$importedContacts contacts";
+      $taggedContactsCount   = ( $importedContacts == 1 ) ? 'One contact is' : "$importedContacts contacts are";
       $checkSummary = array( 'Total Rows'               => $importedContacts,
                              'Total Contacts'           => $importedContacts,
-                             'Import to Groups'         => "{$groupName}: {$importedContacts} contacts added to this new group.",
-                             'Tagged Imported Contacts' => "{$tagName}: {$importedContacts} contacts are tagged with this tag."
+                             'Import to Groups'         => "{$groupName}: {$importedContactsCount} added to this new group.",
+                             'Tagged Imported Contacts' => "{$tagName}: {$taggedContactsCount} tagged with this tag."
                              );
       
       foreach( $checkSummary as $label => $value ) {

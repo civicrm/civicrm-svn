@@ -44,7 +44,7 @@ class CRM_Report_Form_Grant_Statistics extends CRM_Report_Form {
 
     protected $_customGroupExtends = array( 'Grant' );
 
-    protected $_report = 'Grant';
+    protected $_add2groupSupported = false;
 
     function __construct( ) 
     {
@@ -226,7 +226,7 @@ class CRM_Report_Form_Grant_Statistics extends CRM_Report_Form {
                         
                         $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
                         
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
+                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = CRM_Utils_Array::value( 'title', $field );
                         $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
                     }
                 }
@@ -330,6 +330,7 @@ WHERE {$this->_aliases['civicrm_grant']}.amount_total IS NOT NULL
     {
         $totalStatistics = parent::statistics( $rows );
         $awardedGrantsAmount = $grantsReceived = $totalAmount = $awardedGrants = $grantReportsReceived = 0;
+        $grantStatistics = array( );
         
         $grantTypes      = CRM_Grant_PseudoConstant::grantType( );
         $countries       = CRM_Core_PseudoConstant::country( );
@@ -340,7 +341,10 @@ SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count ,
          SUM({$this->_aliases['civicrm_grant']}.amount_total) as totalAmount 
   {$this->_from} ";
         
-        $query .= " {$this->_whereClause}";
+        if ( isset($this->_whereClause) ) {
+            $query .= " {$this->_whereClause}";
+        }
+        
         $result = CRM_Core_DAO::executeQuery( $query );
         while ( $result->fetch( ) ) {
             $grantsReceived = $result->count;

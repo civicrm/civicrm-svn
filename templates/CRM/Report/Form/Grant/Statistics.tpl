@@ -113,8 +113,5 @@
       {/foreach}
     </table>
     {/if}
-
-    <br />
-        {include file="CRM/Report/Form/ErrorMessage.tpl"}
     </div>
 {/if}

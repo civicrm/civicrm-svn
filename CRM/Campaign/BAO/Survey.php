@@ -105,6 +105,11 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
         $dao->copyValues( $params );
         $dao->save();
 
+        if ( CRM_Utils_Array::value( 'custom', $params ) &&
+             is_array( $params['custom'] ) ) {
+            require_once 'CRM/Core/BAO/CustomValueTable.php';
+            CRM_Core_BAO_CustomValueTable::store( $params['custom'], 'civicrm_survey', $dao->id );
+        }
         return $dao;
     }
     
