@@ -207,13 +207,13 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
     static function add( &$params, &$ids )
     {
         require_once 'CRM/Utils/Hook.php';
-
+        
         if ( CRM_Utils_Array::value( 'grant', $ids ) ) {
             CRM_Utils_Hook::pre( 'edit', 'Grant', $ids['grant_id'], $params );
         } else {
             CRM_Utils_Hook::pre( 'create', 'Grant', null, $params ); 
         }
-
+        
         // first clean up all the money fields
         $moneyFields = array( 'amount_total',
                               'amount_granted',
@@ -223,28 +223,39 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
                 $params[$field] = CRM_Utils_Rule::cleanMoney( $params[$field] );
             }
         }
+        // convert dates to mysql format
+        $dates = array( 'application_received_date',
+                        'decision_date',
+                        'money_transfer_date',
+                        'grant_due_date' );
+        
+        foreach ( $dates as $d ) {
+            if ( isset( $params[$d] ) ) {
+                $params[$d] = CRM_Utils_Date::processDate( $params[$d], null, true );
+            }
+        }           
         $grant = new CRM_Grant_DAO_Grant( );
         $grant->id = CRM_Utils_Array::value( 'grant', $ids );
-
+        
         $grant->copyValues( $params );
-
-	// set currency for CRM-1496
-	if ( ! isset( $grant->currency ) ) {
-	  $config =& CRM_Core_Config::singleton( );
-	  $grant->currency = $config->defaultCurrency;
-	}
-
+        
+        // set currency for CRM-1496
+        if ( ! isset( $grant->currency ) ) {
+            $config =& CRM_Core_Config::singleton( );
+            $grant->currency = $config->defaultCurrency;
+        }
+        
         $result = $grant->save( );
-
+        
         require_once 'CRM/Utils/Recent.php';
         require_once 'CRM/Grant/PseudoConstant.php';
         require_once 'CRM/Contact/BAO/Contact.php';
         $url = CRM_Utils_System::url( 'civicrm/contact/view/grant', 
                                       "action=view&reset=1&id={$grant->id}&cid={$grant->contact_id}&context=home" );
-
+        
         $grantTypes = CRM_Grant_PseudoConstant::grantType();
         $title = CRM_Contact_BAO_Contact::displayName( $grant->contact_id ) . ' - ' . ts('Grant') . ': ' . $grantTypes[$grant->grant_type_id];
-
+        
         $recentOther = array( );
         if ( CRM_Core_Permission::checkActionPermission( 'CiviGrant', CRM_Core_Action::UPDATE ) ) {
             $recentOther['editUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/grant', 

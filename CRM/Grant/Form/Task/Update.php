@@ -111,10 +111,6 @@ class CRM_Grant_Form_Task_Update extends CRM_Grant_Form_Task
 
         if ( ! empty( $params ) ) {
             require_once 'CRM/Grant/BAO/Grant.php';
-            $dates = array( 'application_received_date',
-                            'decision_date',
-                            'money_transfer_date',
-                            'grant_due_date' );
             foreach ( $this->_grantIds as $grantId ) {
                 $grant = new CRM_Grant_DAO_Grant( );
                 $grant->id = $grantId;
@@ -126,20 +122,14 @@ class CRM_Grant_Form_Task_Update extends CRM_Grant_Form_Task
                     foreach ( $params as $key => $value ) {
                         $values[$key] = $value;
                     }
-                    // convert dates to mysql format
-                    foreach ( $dates as $d ) {
-                        if ( $values[$d] ) {
-                            $values[$d] = CRM_Utils_Date::processDate( $values[$d], null, true );
-                        }
-                    }
-                    
                     $ids['grant'] = $grant->id ;
+                    
                     CRM_Grant_BAO_Grant::add($values, $ids);
                     $updatedGrants++;
                 }
             }
         }
-
+        
         $status = array(
                         ts( 'Updated Grant(s): %1',        array( 1 => $updatedGrants ) ),
                         ts( 'Total Selected Grant(s): %1', array( 1 => count($this->_grantIds ) ) ),

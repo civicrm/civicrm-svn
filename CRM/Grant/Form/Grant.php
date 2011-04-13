@@ -284,14 +284,7 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form
         
         $params['contact_id'] = $this->_contactID;
 
-        $dates = array( 'application_received_date',
-                        'decision_date',
-                        'money_transfer_date',
-                        'grant_due_date' );
         
-        foreach ( $dates as $d ) {
-            $params[$d] = CRM_Utils_Date::processDate( $params[$d], null, true );
-        }
      
         $ids['note'] = array( );
         if ( $this->_noteId ) {
