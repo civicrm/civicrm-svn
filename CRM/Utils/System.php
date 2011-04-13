@@ -1260,12 +1260,8 @@ class CRM_Utils_System {
                 if ( $addLanguagePart ) {
                     $url = CRM_Utils_File::addTrailingSlash( $language->domain, '/' );
                 }
-                if ( $removeLanguagePart ) {
-                    if ( isset( $config->enableSSL ) && $config->enableSSL ) {
-                        $url = str_replace( "https://{$language->language}.", 'https://', $url );    
-                    } else {
-                        $url = str_replace( "http://{$language->language}.",  'http://',  $url );
-                    }
+                if ( $removeLanguagePart && defined( 'CIVICRM_UF_BASEURL' ) ) {
+                    $url = CRM_Utils_File::addTrailingSlash( CIVICRM_UF_BASEURL, '/' );
                 }
             }
         }
