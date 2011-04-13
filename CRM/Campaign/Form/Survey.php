@@ -37,6 +37,7 @@
 require_once 'CRM/Core/Form.php';
 require_once 'CRM/Core/ShowHideBlocks.php';
 require_once 'CRM/Campaign/BAO/Survey.php';
+require_once 'CRM/Custom/Form/CustomData.php';
 
 /**
  * This class generates form components for processing a survey 
@@ -109,6 +110,19 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             }
         }
 
+        $this->_cdType = CRM_Utils_Array::value( 'type', $_GET );
+        $this->assign('cdType', false);
+        if ( $this->_cdType ) {
+            $this->assign('cdType', true);
+            return CRM_Custom_Form_CustomData::preProcess( $this );
+        }
+
+        // when custom data is included in this page
+        if ( CRM_Utils_Array::value( 'hidden_custom', $_POST ) ) {
+            CRM_Custom_Form_CustomData::preProcess( $this );
+            CRM_Custom_Form_CustomData::buildQuickForm( $this );
+        }
+
         $session = CRM_Core_Session::singleton();
         $url     = CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=survey'); 
         $session->pushUserContext( $url );
@@ -129,6 +143,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         
         $this->assign( 'action',   $this->_action );
         $this->assign( 'surveyId', $this->_surveyId );
+        $this->assign( 'entityID', $this->_surveyId ); // for custom data
     }
     
     /**
@@ -142,6 +157,10 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
      */
     function setDefaultValues()
     {
+        if ( $this->_cdType ) {
+            return CRM_Custom_Form_CustomData::setDefaultValues( $this );
+        }
+
         $defaults = $this->_values;
 
         if ( $this->_surveyId ) {
@@ -205,6 +224,10 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
                                      )
                                );
             return;
+        }
+
+        if ( $this->_cdType ) {
+            return CRM_Custom_Form_CustomData::buildQuickForm( $this );
         }
 
         require_once 'CRM/Event/PseudoConstant.php';
@@ -466,7 +489,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
     {
         // store the submitted values in an array
         $params = $this->controller->exportValues( $this->_name );
-               
+
         $session = CRM_Core_Session::singleton( );
 
         $params['last_modified_id'] = $session->get( 'userID' );
@@ -549,7 +572,11 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         
         $params['recontact_interval'] = serialize($recontactInterval);
             
-        $surveyId = CRM_Campaign_BAO_Survey::create( $params  );
+        $params['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
+                                                                   $customFields,
+                                                                   $this->_surveyId,
+                                                                   'Survey' );
+        $surveyId = CRM_Campaign_BAO_Survey::create( $params );
         
         if ( CRM_Utils_Array::value('result_id', $this->_values) ) {
             $query       = "SELECT COUNT(*) FROM civicrm_survey WHERE result_id = %1";

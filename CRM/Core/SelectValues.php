@@ -265,7 +265,8 @@ class CRM_Core_SelectValues
             unset( $contactTypes[''] ); 
             $contactTypes = !empty( $contactTypes ) ? array( 'Contact' => 'Contacts' ) 
                 + $contactTypes : array( );
-            $customGroupExtends = array_merge( $contactTypes, $customGroupExtends );
+            $extendObjs   = CRM_Core_OptionGroup::values( 'cg_extend_objects' );
+            $customGroupExtends = array_merge( $contactTypes, $customGroupExtends, $extendObjs );
         }
         return $customGroupExtends;
     }

@@ -1428,6 +1428,10 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
             if ( $result ) {
                 return 'civicrm_contact';
             } else {
+                $extendObjs = CRM_Core_OptionGroup::values( 'cg_extend_objects', false, false, false, null, 'name' );
+                if ( array_key_exists($table, $extendObjs) ) {
+                    return $extendObjs[$table];
+                }
                 CRM_Core_Error::fatal( );
             }
         }
@@ -1877,5 +1881,46 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
         }
         
         return false;
+    }
+
+    /**
+     * Get the list of types for objects that a custom group extends to.
+     *
+     * @param  array $types - var which should have the list appended.
+     * @return array of types.
+     * @access public
+     */
+    static function getExtendedObjectTypes( &$types = array() ) {
+        static $flag = false, $objTypes = array();
+
+        if ( !$flag ) {
+            CRM_Core_OptionValue::getValues( array( 'name' => 'cg_extend_objects' ), $extendObjs );
+        
+            foreach ( $extendObjs as $ovId => $ovValues ) {
+                list($callback,  $args) = explode(';', trim($ovValues['description']) );
+
+                if ( !empty($args) ) {
+                    eval('$args = ' . $args . ';');
+                } else {
+                    $args = array( );
+                }
+                
+                if ( ! is_array( $args ) ) {
+                    CRM_Core_Error::fatal( 'Arg is not of type array' );
+                }
+                
+                list( $className ) = explode('::', $callback );
+                require_once( str_replace( '_',
+                                           DIRECTORY_SEPARATOR,
+                                           $className ) . '.php' );
+                
+                $objTypes[$ovValues['value']] = call_user_func_array( $callback, $args );
+            }
+
+            $flag = true;
+        }
+
+        $types = array_merge( $types, $objTypes );
+        return $objTypes;
     }
 }
