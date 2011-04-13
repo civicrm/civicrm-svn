@@ -84,14 +84,15 @@ function civicrm_api3_phone_create( $params )
 		}
 	}
 	/*
-	 * if location_type_id in params, it should exist as option value
+	 * if location_type_id in params, it should exist.
 	 */
 	if (CRM_Utils_Array::value('location_type_id', $params)) {
 		$location_params = array(
 			'version'			=>	'3',
-			'id'				=>	$params['location_type_id']);
-		$location_value = civicrm_api('LocationType', 'Get', $location_params);
-		if ($location_value['count'] == 0) {
+			'name'				=>	'locationType');
+		$locTypes = civicrm_api('Constant', 'Get', $location_params);
+		if (!CRM_Utils_Array::value($params['location_type_id'], 
+			$locTypes['values'])) {
 			return civicrm_api3_create_error("Location_type_id does not
 				exist, could not create phone");
 		}
