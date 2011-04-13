@@ -298,7 +298,9 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         
         //format params
         $params['start_date']      = CRM_Utils_Date::processDate( $params['start_date'], $params['start_date_time'] );
-        $params['end_date'  ]      = CRM_Utils_Date::processDate( $params['end_date'], $params['end_date_time'], true );
+        $params['end_date'  ]      = CRM_Utils_Date::processDate( CRM_Utils_Array::value( 'end_date', $params ),
+                                                                  CRM_Utils_Array::value( 'end_date_time', $params ),
+                                                                  true );
         $params['has_waitlist']    = CRM_Utils_Array::value('has_waitlist', $params, false);
         $params['is_map'    ]      = CRM_Utils_Array::value('is_map', $params, false);
         $params['is_active' ]      = CRM_Utils_Array::value('is_active', $params, false);
