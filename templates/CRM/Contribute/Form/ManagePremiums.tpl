@@ -145,7 +145,7 @@
  {/if}
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </fieldset>
-<div>
+</div>
 {if $action eq 1 or $action eq 2 }		 
 
 <script type="text/javascript">
