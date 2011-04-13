@@ -1215,4 +1215,62 @@ class CRM_Utils_System {
         return $baseURL . $url;
     }
     
-}
+    
+    /**
+     * Format the url as per language Negotiation.
+     * 
+     * @param string $url
+     *
+     * @return string $url, formatted url.
+     * @static
+     */
+    static function languageNegotiationURL( $url, 
+                                            $addLanguagePart    = true, 
+                                            $removeLanguagePart = false ) 
+    {
+        if ( empty( $url ) ) return $url;
+        
+        //upto d6 only, already we have code in place for d7 
+        $config = CRM_Core_Config::singleton( );
+        if ( $config->userFramework == 'Drupal' && 
+             function_exists('variable_get') && 
+             module_exists('locale') ) {
+            global $language;
+            
+            //get the mode.
+            $mode = variable_get('language_negotiation', LANGUAGE_NEGOTIATION_NONE );
+            
+            //url prefix / path.
+            if ( isset( $language->prefix ) &&
+                 $language->prefix &&
+                 in_array( $mode, array( LANGUAGE_NEGOTIATION_PATH,
+                                         LANGUAGE_NEGOTIATION_PATH_DEFAULT ) ) ) {
+                
+                if ( $addLanguagePart ) {
+                    $url .=  $language->prefix . '/';
+                }
+                if ( $removeLanguagePart ) {
+                    $url = str_replace( "/{$language->prefix}/", '/', $url );
+                }
+            }
+            if ( isset( $language->domain ) &&
+                 $language->domain &&
+                 $mode == LANGUAGE_NEGOTIATION_DOMAIN ) {
+                
+                if ( $addLanguagePart ) {
+                    $url = CRM_Utils_File::addTrailingSlash( $language->domain, '/' );
+                }
+                if ( $removeLanguagePart ) {
+                    if ( isset( $config->enableSSL ) && $config->enableSSL ) {
+                        $url = str_replace( "https://{$language->language}.", 'https://', $url );    
+                    } else {
+                        $url = str_replace( "http://{$language->language}.",  'http://',  $url );
+                    }
+                }
+            }
+        }
+        
+        return $url;
+    }
+    
+  }
