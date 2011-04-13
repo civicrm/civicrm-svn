@@ -40,24 +40,11 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
 {
 
     /**
-        * the name of option value group from civicrm_option_group table
-        * that stores grant statuses
-        */
-    static $statusGroupName = 'grant_status';    
-
-    /**
-        * the name of option value group from civicrm_option_group table
-        * that stores grant statuses
-        */
-    static $typeGroupName = 'grant_type';
-
-    /**
         * static field for all the grant information that we can potentially export
         * @var array
         * @static
         */
     static $_exportableFields = null;
-
 
     /**
         * class constructor
@@ -125,37 +112,6 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
         }
 
         return $og;
-    }
-
-    static function getGrantStatuses( ) 
-    {
-        $og = CRM_Grant_BAO_Grant::getGrantStatusOptGroup();
-
-        require_once 'CRM/Core/BAO/OptionValue.php';
-        $dao = new CRM_Core_DAO_OptionValue( );
-
-        $dao->option_group_id = $og->id;
-        $dao->find();
-
-        $statuses = array();
-
-        while ( $dao->fetch( ) ) {
-            $statuses[$dao->id] = $dao->label;
-        }
-
-        return $statuses;
-    }
-
-    /**
-        * Function to retrieve grant types.
-        * 
-        * @static
-        * @return array Array of grant summary statistics
-        */
-    static function getGrantTypes( )
-    {
-        require_once 'CRM/Core/BAO/OptionValue.php';
-        return CRM_Core_OptionGroup::values( CRM_Grant_BAO_Grant::$typeGroupName );
     }
 
     /**
