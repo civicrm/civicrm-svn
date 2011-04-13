@@ -783,21 +783,14 @@ WHERE id={$id}; ";
             $userFrameworkBaseURL = trim( str_replace( '/administrator/', '', $config->userFrameworkBaseURL ) );
             $customFileUploadDirectory = strstr( str_replace('\\', '/', $absolutePath), '/media' );
             $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;
-        }
-	elseif ( $config->userFramework == 'Drupal' ) {   
+        } else if ( $config->userFramework == 'Drupal' ) {   
             require_once 'CRM/Utils/System/Drupal.php';
             $rootPath = CRM_Utils_System_Drupal::cmsRootPath( );
             $baseUrl = $config->userFrameworkBaseURL;
-            if ( module_exists('locale') && 
-                 $mode = variable_get( 'language_negotiation', LANGUAGE_NEGOTIATION_NONE ) ) {
-                global $language;
-                if( isset( $language->prefix ) &&
-                    ! empty( $language->prefix ) ) {
-                    $baseUrl=  str_replace( $language->prefix . '/',
-                                            '', 
-                                            $config->userFrameworkBaseURL );
-                }
-            }
+            
+            //format url for language negotiation, CRM-7135
+            $baseUrl = CRM_Utils_System::languageNegotiationURL( $baseUrl, false, true );
+            
             $relativePath = str_replace( "{$rootPath}/",
                                          $baseUrl, 
                                          str_replace('\\', '/', $absolutePath ) );

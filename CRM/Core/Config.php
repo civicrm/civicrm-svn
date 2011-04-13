@@ -250,31 +250,8 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         if ( defined( 'CIVICRM_UF_BASEURL' ) ) {
             $this->userFrameworkBaseURL = CRM_Utils_File::addTrailingSlash( CIVICRM_UF_BASEURL, '/' );
             
-            //CRM-7803 -specific to d7.
-            if ( $userFramework == 'Drupal' && 
-                 function_exists( 'variable_get' ) && 
-                 module_exists('locale') && 
-                 function_exists( 'language_negotiation_get' ) ) {
-                global $language;
-                
-                //does user configuration allow language 
-                //support from the URL (Path prefix or domain)
-                if ( language_negotiation_get( 'language' ) == 'locale-url' ) {
-                    $urlType = variable_get( 'locale_language_negotiation_url_part' );
-                    //url prefix
-                    if ( $urlType == LOCALE_LANGUAGE_NEGOTIATION_URL_PREFIX ) {
-                        if ( isset( $language->prefix ) && $language->prefix ) {
-                            $this->userFrameworkBaseURL .= $language->prefix . '/';
-                        }
-                    }
-                    //domain
-                    if ( $urlType == LOCALE_LANGUAGE_NEGOTIATION_URL_DOMAIN ) {
-                        if ( isset( $language->domain ) && $language->domain ) {
-                            $this->userFrameworkBaseURL = CRM_Utils_File::addTrailingSlash( $language->domain, '/' );
-                        }
-                    }
-                }
-            }
+            //format url for language negotiation, CRM-7803 
+            $this->userFrameworkBaseURL = CRM_Utils_System::languageNegotiationURL( $this->userFrameworkBaseURL );
             
             if ( isset( $_SERVER['HTTPS'] ) &&
                  strtolower( $_SERVER['HTTPS'] ) != 'off' ) {

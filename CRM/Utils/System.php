@@ -1238,4 +1238,65 @@ class CRM_Utils_System {
         
         return $url;
     }
-}
+    
+    /**
+     * Format the url as per language Negotiation.
+     * 
+     * @param string $url
+     *
+     * @return string $url, formatted url.
+     * @static
+     */
+    static function languageNegotiationURL( $url, 
+                                            $addLanguagePart    = true, 
+                                            $removeLanguagePart = false ) 
+    {
+        if ( empty( $url ) ) return $url;
+        
+        //CRM-7803 -from d7 onward.
+        $config = CRM_Core_Config::singleton( );
+        if ( $config->userFramework == 'Drupal' && 
+             function_exists( 'variable_get' ) && 
+             module_exists('locale') && 
+             function_exists( 'language_negotiation_get' ) ) {
+            global $language;
+            
+            //does user configuration allow language 
+            //support from the URL (Path prefix or domain)
+            if ( language_negotiation_get( 'language' ) == 'locale-url' ) {
+                $urlType = variable_get( 'locale_language_negotiation_url_part' );
+                
+                //url prefix
+                if ( $urlType == LOCALE_LANGUAGE_NEGOTIATION_URL_PREFIX ) {
+                    if ( isset( $language->prefix ) && $language->prefix ) {
+                        if ( $addLanguagePart ) {
+                            $url .=  $language->prefix . '/';
+                        }
+                        if ( $removeLanguagePart ) {
+                            $url = str_replace( "/{$language->prefix}/", '/', $url );
+                        }
+                    }
+                }
+                //domain
+                if ( $urlType == LOCALE_LANGUAGE_NEGOTIATION_URL_DOMAIN ) {
+                    if ( isset( $language->domain ) && $language->domain ) {
+                        if ( $addLanguagePart ) {
+                            $url = CRM_Utils_File::addTrailingSlash( $language->domain, '/' );
+                        }
+                        if ( $removeLanguagePart ) {
+                            if ( isset( $config->enableSSL ) && $config->enableSSL ) {
+                                $url = str_replace( "https://{$language->language}.", 'https://', $url );    
+                            } else {
+                                $url = str_replace( "http://{$language->language}.",  'http://',  $url );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return $url;
+    }
+    
+    
+  }
