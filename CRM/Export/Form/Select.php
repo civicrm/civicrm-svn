@@ -147,13 +147,14 @@ class CRM_Export_Form_Select extends CRM_Core_Form
         if ( $this->_exportMode == self::CONTACT_EXPORT ) {
             $contactTasks = CRM_Contact_Task::taskTitles(); 
             $taskName = $contactTasks[$this->_task]; 
-            
+            $component = false;
             require_once "CRM/Contact/Form/Task.php";
             CRM_Contact_Form_Task::preProcessCommon( $this, true );
         } else {
             $this->assign( 'taskName', "Export $componentName[1]" ); 
             eval( '$componentTasks = CRM_'. $componentName[1] .'_Task::tasks();' );
             $taskName = $componentTasks[$this->_task];
+            $component = true;
         }
 
         if ( $this->_componentTable ) {
@@ -167,7 +168,7 @@ FROM   {$this->_componentTable}
         }
         $this->assign( 'totalSelectedRecords', $totalSelectedRecords );
         $this->assign('taskName', $taskName);
-
+        $this->assign('component', $component);
         // all records actions = save a search 
         if (($values['radio_ts'] == 'ts_all') || ($this->_task == CRM_Contact_Task::SAVE_SEARCH)) { 
             $this->_selectAll = true;
