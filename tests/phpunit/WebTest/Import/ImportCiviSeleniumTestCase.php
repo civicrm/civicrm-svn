@@ -80,12 +80,12 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
         
         // Date format, default: yyyy-mm-dd OR yyyymmdd
         if ( isset($other['dateFormat']) ) {
-            $dateFormatMapper = array( 'yyyy-mm-dd OR yyyymmdd'   => 'CIVICRM_QFID_1_14', // default
-                                       'mm/dd/yy OR mm-dd-yy'     => 'CIVICRM_QFID_2_16',
-                                       'mm/dd/yyyy OR mm-dd-yyyy' => 'CIVICRM_QFID_4_18',
-                                       'Month dd, yyyy'           => 'CIVICRM_QFID_8_20',       
-                                       'dd-mon-yy OR dd/mm/yy'    => 'CIVICRM_QFID_16_22',
-                                       'dd/mm/yyyy'               => 'CIVICRM_QFID_32_24'
+            $dateFormatMapper = array( 'yyyy-mm-dd OR yyyymmdd'   => 'CIVICRM_QFID_1_16', // default
+                                       'mm/dd/yy OR mm-dd-yy'     => 'CIVICRM_QFID_2_18',
+                                       'mm/dd/yyyy OR mm-dd-yyyy' => 'CIVICRM_QFID_4_20',
+                                       'Month dd, yyyy'           => 'CIVICRM_QFID_8_22',       
+                                       'dd-mon-yy OR dd/mm/yy'    => 'CIVICRM_QFID_16_24',
+                                       'dd/mm/yyyy'               => 'CIVICRM_QFID_32_26'
                                        );
             
             $this->click( $dateFormatMapper[$other['dateFormat']] );
