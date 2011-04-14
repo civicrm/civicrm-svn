@@ -31,10 +31,7 @@ function phone_create_expectedresult(){
                       'id' => '2',
                       'contact_id' => '1',
                       'is_primary' => '1',
-                      'is_billing' => '',
-                      'mobile_provider_id' => '',
                       'phone' => '021 512 755',
-                      'phone_type_id' => '',
            ),           ),
       );
 
