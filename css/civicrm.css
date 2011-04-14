@@ -1035,6 +1035,7 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 
 /* Recently Viewed bar */
 .block-civicrm div#recently-viewed ul {
+    list-style-image: none;
     font-size: .9em;
     /* overflow: hidden; */
     margin: 0px;
