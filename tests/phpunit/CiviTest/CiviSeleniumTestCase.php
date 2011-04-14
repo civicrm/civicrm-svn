@@ -458,12 +458,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
           $filePath = '/tmp/testcsv_'.substr(sha1(rand()), 0, 7).".csv";
       }
       
-      $data = implode(', ', $headers) . "\r\n";
+      $data = '"' . implode('", "', $headers) . '"'. "\r\n";
       
       foreach ( $rows as $row ) {
           $temp = array( );
           foreach ( $headers as $field => $header ) {
-              $temp[$field]  = isset($row[$field]) ? $row[$field] : '';
+              $temp[$field]  = isset($row[$field]) ? '"'. $row[$field] . '"' : '""';
           }
           $data .=  implode(', ', $temp) . "\r\n";
       }
