@@ -82,7 +82,7 @@ class WebTest_Contact_TagAddTest extends CiviSeleniumTestCase {
       // sort by ID desc
       $this->click("xpath=//table//tr/th[text()=\"ID\"]");
       $this->waitForElementPresent("css=table.display tbody tr td");
-
+      
       // verify text       
       $this->waitForElementPresent("xpath=//table//tbody/tr/td[1][text()= '$tagName']");
       $this->waitForElementPresent("xpath=//table//tbody/tr/td[1][text()= '$tagName']/following-sibling::td[2][text()='Adding new tag. ']");
@@ -90,6 +90,45 @@ class WebTest_Contact_TagAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("xpath=//table//tbody/tr/td[1][text()= '$tagName']/following-sibling::td[7]/span/a[text()= 'Edit']");
       
   }  
-
+  function testAddTagSet( ){
+      $this->open( $this->sboxPath );
+      $this->webtestLogin( );
+      
+      // Go directly to the URL of the screen that you will be testing (New Tag).
+      $this->open( $this->sboxPath . "civicrm/admin/tag?action=add&reset=1&tagset=1" );
+      
+      // take a tagset name
+      $tagSetName = 'tagset_'.substr(sha1(rand()), 0, 7);
+      
+      // fill tagset name
+      $this->type("name", $tagSetName);
+      
+      // fill description
+      $this->type("description", "Adding new tag set.");
+      
+      // select used for contact
+      $this->select("used_for", "value=civicrm_contact");
+      
+      // check reserved
+      $this->click("is_reserved");
+      
+      // Clicking save.
+      $this->click("_qf_Tag_next");
+      $this->waitForPageToLoad("30000");
+      
+      // Is status message correct?
+      $this->assertTrue($this->isTextPresent("The tag '$tagSetName' has been saved."));
+      
+      // sort by ID desc
+      $this->click("xpath=//table//tr/th[text()=\"ID\"]");
+      $this->waitForElementPresent("css=table.display tbody tr td");
+      
+      // verify text       
+      $this->waitForElementPresent("xpath=//table//tbody/tr/td[1][text()= '$tagSetName']");
+      $this->waitForElementPresent("xpath=//table//tbody/tr/td[1][text()= '$tagSetName']/following-sibling::td[2][text()='Adding new tag set. ']");
+      $this->waitForElementPresent("xpath=//table//tbody/tr/td[1][text()= '$tagSetName']/following-sibling::td[4][text()= 'Contacts']");
+      $this->waitForElementPresent("xpath=//table//tbody/tr/td[1][text()= '$tagSetName']/following-sibling::td[7]/span/a[text()= 'Edit']"); 
+      
+  }
 }
 ?>

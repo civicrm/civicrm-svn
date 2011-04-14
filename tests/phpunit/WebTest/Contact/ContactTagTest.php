@@ -91,11 +91,83 @@ class WebTest_Contact_ContactTagTest extends CiviSeleniumTestCase {
       // check tag we have created
       $this->click("xpath=//ul/li/label[text()=\"$tagName\"]");
       $this->waitForElementPresent("css=.msgok");
-
+      
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("Saved"));
-
   }  
-
+  
+  function testTagSetContact( )
+  {
+      // This is the path where our testing install resides. 
+      // The rest of URL is defined in CiviSeleniumTestCase base class, in
+      // class attributes.
+      $this->open( $this->sboxPath );
+      
+      // Logging in. Remember to wait for page to load. In most cases,
+      // you can rely on 30000 as the value that allows your test to pass, however,
+      // sometimes your test might fail because of this. In such cases, it's better to pick one element
+      // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+      // page contents loaded and you can continue your test execution.
+      $this->webtestLogin( );
+      
+      // Go directly to the URL of the screen that you will be testing (New Tag).
+      $this->open( $this->sboxPath . "civicrm/admin/tag?action=add&reset=1&tagset=1" );
+      
+      // take a tagset name
+      $tagSetName = 'tagset_'.substr(sha1(rand()), 0, 7);
+      
+      // fill tagset name
+      $this->type("name", $tagSetName);
+      
+      // fill description
+      $this->type("description", "Adding new tag set.");
+      
+      // select used for contact
+      $this->select("used_for", "value=civicrm_contact");
+      
+      // check reserved
+      $this->click("is_reserved");
+      
+      // Clicking save.
+      $this->click("_qf_Tag_next");
+      $this->waitForPageToLoad("30000");
+      
+      // Is status message correct?
+      $this->assertTrue($this->isTextPresent("The tag '$tagSetName' has been saved."));
+      
+      // Adding contact
+      // We're using Quick Add block on the main page for this.
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName, "Anderson", "$firstName@anderson.name" );
+      
+      // visit tag tab
+      $this->click("css=li#tab_tag a");
+      $this->waitForElementPresent("css=div#tagtree");
+      
+      //add Tagset to contact
+      $this->click("//div[@id='Tag']/div[3]/div[2]/ul/li[1]/input");
+      $this->typeKeys("//div[@id='Tag']/div[3]/div[2]/ul/li[1]/input",'tagset1');
+      $this->waitForElementPresent("//div[@id='Tag']/div[3]/div[2]/div/ul/li");
+      $this->click("//div[@id='Tag']/div[3]/div[2]/div/ul/li");
+      
+      
+      $this->click("//div[@id='Tag']/div[3]/div[2]/ul/li[2]/input");
+      $this->typeKeys("//div[@id='Tag']/div[3]/div[2]/ul/li[2]/input",'tagset2');
+      $this->waitForElementPresent("//div[@id='Tag']/div[3]/div[2]/div/ul/li");
+      $this->click("//div[@id='Tag']/div[3]/div[2]/div/ul/li");
+      
+      // Type search name in autocomplete.
+      $this->typeKeys("css=input#sort_name_navigation", $firstName);
+      $this->click("css=input#sort_name_navigation");
+      
+      // Wait for result list.
+      $this->waitForElementPresent("css=div.ac_results-inner li");
+      
+      // Visit contact summary page.
+      $this->click("css=div.ac_results-inner li");
+      $this->waitForPageToLoad("30000");
+      $this->verifyText("xpath=//div[@id='contact-summary']/div[@id='contactTopBar']/table/tbody/tr[2]/td[@id='tags']", 'tagset1, tagset2');
+      
+  }  
 }
 ?>
