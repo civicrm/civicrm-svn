@@ -70,12 +70,12 @@ function civicrm_api3_survey_create( $params )
  * @return array  (referance) Array of matching surveys
  * @access public
  */
-function _civicrm_api3_survey_get( $params )
+function civicrm_api3_survey_get( $params )
 {
   try{
 
     civicrm_api3_verify_mandatory($params);
-    return civicrm_api3_basic_get(civicrm_api3_get_BAO(__FUNCTION__), $params);
+    return _civicrm_api3_basic_get(civicrm_api3_get_BAO(__FUNCTION__), $params);
     
   } catch (Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
@@ -96,12 +96,12 @@ function _civicrm_api3_survey_get( $params )
  *
  * @access public
  */
-function _civicrm_api3_survey_delete( $params )
+function civicrm_api3_survey_delete( $params )
 {
   _civicrm_api3_initialize( true);
   try{
 
-    return civicrm_api3_basic_delete(civicrm_api3_get_BAO(__FUNCTION__), $params);
+    return _civicrm_api3_basic_delete(civicrm_api3_get_BAO(__FUNCTION__), $params);
 
   } catch (Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );

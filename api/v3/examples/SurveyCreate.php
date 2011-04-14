@@ -26,9 +26,9 @@ function survey_create_expectedresult(){
            'is_error' 		=> '0',
            'version' 		=> '3',
            'count' 		=> '1',
-           'id' 		=> '5',
-           'values' 		=> array(           '5' =>  array(
-                      'id' => '5',
+           'id' 		=> '6',
+           'values' 		=> array(           '6' =>  array(
+                      'id' => '6',
                       'title' => 'survey title',
                       'campaign_id' => '',
                       'activity_type_id' => '',
@@ -40,7 +40,7 @@ function survey_create_expectedresult(){
                       'is_active' => '',
                       'is_default' => '',
                       'created_id' => '',
-                      'created_date' => '20110414232014',
+                      'created_date' => '20110415101150',
                       'last_modified_id' => '',
                       'last_modified_date' => '',
                       'result_id' => '',

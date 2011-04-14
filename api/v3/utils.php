@@ -1744,15 +1744,14 @@ function _civicrm_api3_basic_get($bao_name, $params){
  * Function to do a 'standard' api create - when the api is only doing a $bao::create then use this
  */
 function _civicrm_api3_basic_create($bao_name, &$params){
-     if(!$bao_name == 'CRM_Campaign_BAO_Survey'){
-       return;
-     }
-    $bao = eval('$result = '.$bao_name . '::create($params); return $result;');    
+
+    $args = array(&$params);
+    $bao = call_user_func_array(array($bao_name, 'create'), $args);
     if ( is_null( $bao) ) {
       return civicrm_api3_create_error( 'Entity not created' );
     } else {
       $values = array();
-      _civicrm_api3_object_to_array( $bao, $values[ $bao->id]);
+      _civicrm_api3_object_to_array($bao, $values[ $bao->id]);
       return civicrm_api3_create_success($values,$params,$bao );
     }
 }
@@ -1761,11 +1760,10 @@ function _civicrm_api3_basic_create($bao_name, &$params){
  * Function to do a 'standard' api del - when the api is only doing a $bao::del then use this
  */
 function _civicrm_api3_basic_delete($bao_name, &$params){
-     if(!$bao_name == 'CRM_Campaign_BAO_Survey'){
-       return;
-     }
+
     civicrm_api3_verify_mandatory($params,null,array('id'));
-    $bao = eval('$result = '.$bao_name . '::del($params[\'id\']); return $result;');    
+    $args = array(&$params['id']);
+    $bao = call_user_func_array(array($bao_name, 'del'), $args);
     return civicrm_api3_create_success( true );
 }
 
