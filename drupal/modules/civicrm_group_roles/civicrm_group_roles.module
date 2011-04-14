@@ -76,19 +76,8 @@ function civicrm_group_roles_user($op, $edit, &$user, $category = NULL)
             $roles = array_diff( $all = user_roles(TRUE), array( 'anonymous user', 'authenticated user' ) );
 
             //find the contact record
-            $api_version = civicrm_get_api_version();
-            if ($api_version === 2) {
-              civicrm_api_include('uf_group');
-              $contact = civicrm_uf_match_id_get( $user->uid );
-            }
-            else {
-              // TODO: What is the correct replacement for civicrm_uf_match_id_get() in v3 ?
-              // What is uf_id anyway?
-              civicrm_api_include('uf_match');
-              $params = array('uf_id' => $user->uid);
-              // civicrm_uf_match_get(&$params)
-              $contact = civicrm_uf_match_get($params);
-            }
+            require_once 'api/v2/UFGroup.php';
+            $contact = civicrm_uf_match_id_get( $user->uid );
 
             if ( empty( $contact ) ) {
                 return;
@@ -179,8 +168,7 @@ function civicrm_group_roles_civicrm_post( $op, $objectName, $objectId, &$object
         foreach ($objectRef AS $contact_id) {
             
             //Do we have a Drupal Account?
-            civicrm_api_include('uf_group');
-            // TODO: Does civicrm_uf_id_get() exist in v3 api?
+            require_once 'api/v2/UFGroup.php';
             $uid = civicrm_uf_id_get( $contact_id );
             if (!$uid) { //make sure we have an actual user account
                 continue;
