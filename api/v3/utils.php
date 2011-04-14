@@ -73,7 +73,7 @@ function civicrm_api3_verify_one_mandatory ($params, $daoName = null, $keyoption
  * Function to return the DAO of the function or Entity
  * @param  $name is either a function of the api (civicrm_{entity}_create or the entity name 
  * return the DAO name to manipulate this function
- * eg. "civicrm_contact_create" or "Contact" will return "CRM_Contact_BAO_Contact"
+ * eg. "civicrm_api3_contact_create" or "Contact" will return "CRM_Contact_BAO_Contact"
  */
 
 function civicrm_api3_get_DAO ($name) {
@@ -81,13 +81,30 @@ function civicrm_api3_get_DAO ($name) {
     if (!$dao) {
       require ('CRM/Core/DAO/.listAll.php');
     }
-    if (strpos($name, 'civicrm_') !== false) {
+    
+    
+    if (strpos($name, 'civicrm_api3') !== false) {
         $last = strrpos ($name, '_') ;
-        $name = substr ($name, 8, $last -8);// len ('civicrm_') == 8
+        $name = substr ($name, 13, $last -13);// len ('civicrm_api3_') == 13
         $name = ucfirst ($name);
     }
     return $dao[$name];
 }
+
+/*
+ * Function to return the DAO of the function or Entity
+ * @param  $name is either a function of the api (civicrm_{entity}_create or the entity name 
+ * return the DAO name to manipulate this function
+ * eg. "civicrm_contact_create" or "Contact" will return "CRM_Contact_BAO_Contact"
+ */
+
+function civicrm_api3_get_BAO ($name) {
+    $dao = civicrm_api3_get_DAO($name);
+    $dao = str_replace("DAO","BAO", $dao);
+    return $dao;
+}
+
+
 
 /*
  * Function to check mandatory fields are included
@@ -1709,3 +1726,38 @@ function civicrm_api3_api_check_permission($api, $params, $throw = false)
     }
     return true;
 }
+
+/*
+ * Function to do a 'standard' api get - when the api is only doing a $bao->find then use this
+ */
+function _civicrm_api3_basic_get($bao_name, $params){
+     $bao = new $bao_name( );
+     _civicrm_api3_dao_set_filter ( $bao, $params );
+     return civicrm_api3_create_success(_civicrm_api3_dao_to_array ($bao,$params),$params,$bao);
+     
+}
+
+/*
+ * Function to do a 'standard' api create - when the api is only doing a $bao::create then use this
+ */
+function _civicrm_api3_basic_create($bao_name, &$params){
+   
+    $bao = eval('$result = '.$bao_name . '::create($params); return $result;');    
+    if ( is_null( $bao) ) {
+      return civicrm_api3_create_error( 'Entity not created' );
+    } else {
+      $values = array();
+      _civicrm_api3_object_to_array( $bao, $values[ $bao->id]);
+      return civicrm_api3_create_success($values,$params,$bao );
+    }
+}
+
+/*
+ * Function to do a 'standard' api del - when the api is only doing a $bao::del then use this
+ */
+function _civicrm_api3_basic_delete($bao_name, &$params){
+    civicrm_api3_verify_mandatory($params,null,array('id'));
+    $bao = eval('$result = '.$bao_name . '::del($params[\'id\']); return $result;');    
+    return civicrm_api3_create_success( true );
+}
+
