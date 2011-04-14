@@ -2795,6 +2795,10 @@ tbody.scrollContent tr.alternateRow {
     background-color: #EFEFEF;
 }
 
+#crm-container td.checkbox {
+    vertical-align: middle;
+    text-align: center;
+}
 #crm-container tr.columnheader a.sorting {
 	color:#a7a7a7;
 }
