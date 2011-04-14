@@ -36,6 +36,11 @@ require_once 'api/v2/Domain.php';
 class api_v2_DomainTest extends CiviUnitTestCase
 {
 
+    /* This test case doesn't require DB reset - apart from 
+       where cleanDB() is called. */
+    public $DBResetRequired = false;
+
+
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
@@ -66,6 +71,8 @@ class api_v2_DomainTest extends CiviUnitTestCase
      */
     public function testGet()
     {
+        $this->cleanDB();
+
         $result = civicrm_domain_get();
 
         $this->assertType( 'array', $result, 'In line' . __LINE__ );
