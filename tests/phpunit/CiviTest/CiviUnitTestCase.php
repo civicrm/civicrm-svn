@@ -211,7 +211,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                 echo "Cannot set global? Huh?";
                 exit;
             }
-            
+
+            if ( self::$utils->do_query("SET foreign_key_checks = 1") === false ) {
+                echo "Cannot get foreign keys back? Huh?";
+                exit;
+            }
+
             unset( $query, $query1, $query2);
     }
 
