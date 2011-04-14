@@ -163,15 +163,23 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             return;
         }
         self::$populateOnce = null;
-       
-        $queries = array( "DROP DATABASE IF EXISTS civicrm_tests_dev;", 
-                          "CREATE DATABASE civicrm_tests_dev DEFAULT" . 
-                          " CHARACTER SET utf8 COLLATE utf8_unicode_ci;", 
-            							"USE civicrm_tests_dev;",                               
+
+        $pdo = self::$utils->pdo;
+        $tables = $pdo->query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'civicrm_tests_dev'");
+
+        $truncates = array();
+        foreach( $tables as $table ) {
+            $truncates[] = 'TRUNCATE ' . $table['table_name'] . ';';
+        }
+
+        
+        $queries = array( "USE civicrm_tests_dev;",
+                          "SET foreign_key_checks = 0",
                           // SQL mode needs to be strict, that's our standard
                           "SET SQL_MODE='STRICT_ALL_TABLES';" ,
                           "SET global innodb_flush_log_at_trx_commit = 2;"
                              );
+        $queries = array_merge( $queries, $truncates );
             foreach( $queries as $query ) {
                 if ( self::$utils->do_query($query) === false ) {
 
@@ -180,20 +188,15 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                 }
             }
 
+
+            
             //  initialize test database
-            $sql_file1 = dirname( dirname( dirname( dirname( __FILE__ ) ) ) )
-                . "/sql/civicrm.mysql";
             $sql_file2 = dirname( dirname( dirname( dirname( __FILE__ ) ) ) )
                 . "/sql/civicrm_data.mysql";
             $sql_file3 = dirname( dirname( dirname( dirname( __FILE__ ) ) ) )
                 . "/sql/test_data.mysql";
-            $query1 = file_get_contents( $sql_file1 );
             $query2 = file_get_contents( $sql_file2 );
             $query3 = file_get_contents( $sql_file3 );
-            if ( self::$utils->do_query($query1) === false ) {
-                echo "Loading schema in setUp crapped out. Aborting.";
-                exit;
-            }
             if ( self::$utils->do_query($query2) === false ) {
                 echo "Cannot load civicrm_data.mysql. Aborting.";
                 exit;
@@ -207,7 +210,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             if ( self::$utils->do_query("set global innodb_flush_log_at_trx_commit = 1;") === false ) {
                 echo "Cannot set global? Huh?";
                 exit;
-            }            
+            }
             
             unset( $query, $query1, $query2);
     }
