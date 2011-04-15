@@ -1720,23 +1720,15 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
             'create' => array('all' => array('access CiviEvent')),
         ),
     );
-    // FIXME: use map the array of perms to an array of check() calls and require that either all or any is true
     foreach ($requirements[$entity][$action] as $condition => $perms) {
-        switch ($condition) {
-        case 'all':
-            foreach ($perms as $perm) {
-                if (!CRM_Core_Permission::check($perm)) {
-                    if ($throw) {
-                        throw new Exception("API permission check failed for $entity/$action call; missing permission: $perm.");
-                    } else {
-                        return false;
-                    }
-                }
+        $checks = array_map('CRM_Core_Permission::check', $perms);
+        if (($condition == 'all' and in_array(false, $checks)) or
+            ($condition == 'any' and !in_array(true, $checks))) {
+            if ($throw) {
+                throw new Exception("API permission check failed for $entity/$action call.");
+            } else {
+                return false;
             }
-            break;
-        case 'any':
-            // FIXME: handle
-            break;
         }
     }
     return true;
