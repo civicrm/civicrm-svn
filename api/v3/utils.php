@@ -1711,17 +1711,27 @@ function civicrm_api3_api_check_permission($api, $params, $throw = true)
 
     require_once 'CRM/Core/Permission.php';
     $requirements = array(
-                          'civicrm_api3_contact_create' => array('access CiviCRM', 'add contacts'),
-                          'civicrm_api3_contact_update' => array('access CiviCRM', 'add contacts'),
-                          'civicrm_api3_event_create'   => array('access CiviEvent'),
+                          'civicrm_api3_contact_create' => array('all' => array('access CiviCRM', 'add contacts')),
+                          'civicrm_api3_contact_update' => array('all' => array('access CiviCRM', 'add contacts')),
+                          'civicrm_api3_event_create'   => array('all' => array('access CiviEvent')),
                           );
-    foreach ($requirements[$api] as $perm) {
-        if (!CRM_Core_Permission::check($perm)) {
-            if ($throw) {
-                throw new Exception("API permission check failed for $api call; missing permission: $perm.");
-            } else {
-                return false;
+    // FIXME: use map the array of perms to an array of check() calls and require that either all or any is true
+    foreach ($requirements[$api] as $condition => $perms) {
+        switch ($condition) {
+        case 'all':
+            foreach ($perms as $perm) {
+                if (!CRM_Core_Permission::check($perm)) {
+                    if ($throw) {
+                        throw new Exception("API permission check failed for $api call; missing permission: $perm.");
+                    } else {
+                        return false;
+                    }
+                }
             }
+            break;
+        case 'any':
+            // FIXME: handle
+            break;
         }
     }
     return true;
