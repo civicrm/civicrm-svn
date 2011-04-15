@@ -529,12 +529,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
 
     }
-
-   
-
     
     function contactMembershipCreate( $params) {
-
+        
         $pre = array('join_date'   => '2007-01-21',
                      'start_date'  => '2007-01-21',
                      'end_date'    => '2007-12-21',
