@@ -65,7 +65,7 @@ function civicrm_api3_contact_create( $params )
   _civicrm_api3_initialize( true );
   try {
     civicrm_api3_verify_mandatory($params,null,array('contact_type'));
-    civicrm_api3_api_check_permission(__FUNCTION__, $params);
+    civicrm_api3_api_check_permission('contact', 'create', $params);
 
     require_once 'CRM/Utils/Array.php';
     $contactID = CRM_Utils_Array::value( 'contact_id', $params );

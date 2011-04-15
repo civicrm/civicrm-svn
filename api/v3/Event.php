@@ -60,7 +60,7 @@ function civicrm_api3_event_create( $params )
 {
   _civicrm_api3_initialize( true );
   try {
-    civicrm_api3_api_check_permission(__FUNCTION__, $params);
+    civicrm_api3_api_check_permission('event', 'create', $params);
     civicrm_api3_verify_mandatory ($params,'CRM_Event_DAO_Event',array ('start_date','event_type_id','title'));
 
     $ids['eventTypeId'] = (int) $params['event_type_id'];

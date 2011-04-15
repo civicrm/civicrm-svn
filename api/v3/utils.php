@@ -1698,31 +1698,36 @@ function civicrm_api3_check_contact_dedupe( $params ) {
 /**
  * Check permissions for a given API call.
  *
- * @param $api string    API method being called
+ * @param $entity string API entity being accessed
+ * @param $action string API action being performed
  * @param $params array  params of the API call
  * @param $throw bool    whether to throw exception instead of returning false
  *
  * @return bool whether the current API user has the permission to make the call
  */
-function civicrm_api3_api_check_permission($api, $params, $throw = true)
+function civicrm_api3_api_check_permission($entity, $action, $params, $throw = true)
 {
     // return early if we’re told explicitly to skip the permission check
     if (isset($params['check_permissions']) and $params['check_permissions'] == false) return true;
 
     require_once 'CRM/Core/Permission.php';
     $requirements = array(
-                          'civicrm_api3_contact_create' => array('all' => array('access CiviCRM', 'add contacts')),
-                          'civicrm_api3_contact_update' => array('all' => array('access CiviCRM', 'add contacts')),
-                          'civicrm_api3_event_create'   => array('all' => array('access CiviEvent')),
-                          );
+        'contact' => array(
+            'create' => array('all' => array('access CiviCRM', 'add contacts')),
+            'update' => array('all' => array('access CiviCRM', 'add contacts')),
+        ),
+        'event' => array(
+            'create' => array('all' => array('access CiviEvent')),
+        ),
+    );
     // FIXME: use map the array of perms to an array of check() calls and require that either all or any is true
-    foreach ($requirements[$api] as $condition => $perms) {
+    foreach ($requirements[$entity][$action] as $condition => $perms) {
         switch ($condition) {
         case 'all':
             foreach ($perms as $perm) {
                 if (!CRM_Core_Permission::check($perm)) {
                     if ($throw) {
-                        throw new Exception("API permission check failed for $api call; missing permission: $perm.");
+                        throw new Exception("API permission check failed for $entity/$action call; missing permission: $perm.");
                     } else {
                         return false;
                     }
