@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -36,6 +36,13 @@ require_once 'api/v3/Domain.php';
 class api_v3_DomainTest extends CiviUnitTestCase
 {
 
+    /* This test case doesn't require DB reset - apart from 
+       where cleanDB() is called. */
+    public $DBResetRequired = false;
+
+    protected $_apiversion;
+    protected $params;
+    
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
@@ -45,6 +52,12 @@ class api_v3_DomainTest extends CiviUnitTestCase
     protected function setUp()
     {
         parent::setUp();
+        $this->_apiversion =3;
+        $this->params = array( 'name' => 'A-team domain', 
+                         'description' => 'domain of chaos',
+                         'version'		=>3,
+                         'domain_version' => '3.4.1',
+                          );
 
     }
 
@@ -66,20 +79,52 @@ class api_v3_DomainTest extends CiviUnitTestCase
      */
     public function testGet()
     {
+        $this->cleanDB();
+
         $params = array('version' => 3);
         $result = civicrm_api3_domain_get($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);     
- 
+
         $this->assertType( 'array', $result, 'In line' . __LINE__ );
 
-        foreach( $result as $domain ) {
-            $this->assertEquals( 'info@FIXME.ORG', $domain['from_email'], 'In line' . __LINE__ );
-            $this->assertEquals( 'FIXME', $domain['from_name'], 'In line' . __LINE__);
+        foreach( $result['values'] as $key => $domain ) {
+            if ( $key == 'version' ) {
+                continue;
+            }
+
+            $this->assertEquals( "info@FIXME.ORG", $domain['from_email'], 'In line ' . __LINE__ );
+            $this->assertEquals( "FIXME", $domain['from_name'], 'In line' . __LINE__);
             
             // checking other important parts of domain information
             // test will fail if backward incompatible changes happen
             $this->assertArrayHasKey( 'id', $domain, 'In line' . __LINE__ );
-            $this->assertArrayHasKey( 'domain_name', $domain, 'In line' . __LINE__ );
+            $this->assertArrayHasKey( 'name', $domain, 'In line' . __LINE__ );
+            $this->assertArrayHasKey( 'domain_email', $domain, 'In line' . __LINE__ );
+            $this->assertArrayHasKey( 'domain_phone', $domain, 'In line' . __LINE__ );
+            $this->assertArrayHasKey( 'domain_address', $domain, 'In line' . __LINE__ ); 
+        }
+    }
+    
+    public function testGetCurrentDomain()
+    {
+        $params = array('version' => 3, 'current_domain' => 1);
+        $result = civicrm_api3_domain_get($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);     
+
+        $this->assertType( 'array', $result, 'In line' . __LINE__ );
+
+        foreach( $result['values'] as $key => $domain ) {
+            if ( $key == 'version' ) {
+                continue;
+            }
+
+            $this->assertEquals( "info@FIXME.ORG", $domain['from_email'], 'In line ' . __LINE__ );
+            $this->assertEquals( "FIXME", $domain['from_name'], 'In line' . __LINE__);
+            
+            // checking other important parts of domain information
+            // test will fail if backward incompatible changes happen
+            $this->assertArrayHasKey( 'id', $domain, 'In line' . __LINE__ );
+            $this->assertArrayHasKey( 'name', $domain, 'In line' . __LINE__ );
             $this->assertArrayHasKey( 'domain_email', $domain, 'In line' . __LINE__ );
             $this->assertArrayHasKey( 'domain_phone', $domain, 'In line' . __LINE__ );
             $this->assertArrayHasKey( 'domain_address', $domain, 'In line' . __LINE__ ); 
@@ -93,16 +138,14 @@ class api_v3_DomainTest extends CiviUnitTestCase
      */
     public function testCreate()
     {
-        $params = array( 'name' => 'New Domain', 
-                         'description' => 'Description of a new domain',
-                         'version'		=>3,
-                          );
-
-        $result =& civicrm_api3_domain_create($params);
-        $this->documentMe($params,$result,__FUNCTION__,__FILE__);     
-        
+        $result =& civicrm_api3_domain_create($this->params);
+        $this->documentMe($this->params,$result,__FUNCTION__,__FILE__);       
         $this->assertType( 'array', $result );
-        $this->assertDBState( 'CRM_Core_DAO_Domain', $result['id'], $params );
+        $this->assertEquals($result['is_error'], 0);
+        $this->assertEquals($result['count'], 1); 
+        
+        $this->assertNotNull($result['id']);
+        $this->assertEquals($result['values'][$result['id']]['name'], $this->params['name']) ;
     }    
 
     /**

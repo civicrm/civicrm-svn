@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -456,13 +456,16 @@ class CRM_Core_Payment_BaseIPN {
             $participant->status_id = 1;
             $participant->save( );
         }
-        if ( $input['net_amount'] == 0 && $input['fee_amount'] != 0 ) {
+
+        if ( CRM_Utils_Array::value( 'net_amount', $input, 0 ) == 0 && 
+             CRM_Utils_Array::value( 'fee_amount', $input, 0 ) != 0 ) {
             $input['net_amount'] = $input['amount'] - $input['fee_amount'];
         }
+
         $contribution->contribution_status_id  = 1;
         $contribution->is_test      = $input['is_test'];
-        $contribution->fee_amount   = $input['fee_amount'];
-        $contribution->net_amount   = $input['net_amount'];
+        $contribution->fee_amount   = CRM_Utils_Array::value( 'fee_amount', $input, 0 );
+        $contribution->net_amount   = CRM_Utils_Array::value( 'net_amount', $input, 0 );
         $contribution->trxn_id      = $input['trxn_id'];
         $contribution->receive_date = CRM_Utils_Date::isoToMysql($contribution->receive_date);
         $contribution->cancel_date  = 'null';
@@ -547,7 +550,7 @@ class CRM_Core_Payment_BaseIPN {
         // get the billing location type
         require_once "CRM/Core/PseudoConstant.php";
         $locationTypes  =& CRM_Core_PseudoConstant::locationType( );
-        $ids['billing'] =  array_search( 'Billing',  $locationTypes );
+        $ids['billing'] =  array_search( ts('Billing'),  $locationTypes );
         if ( ! $ids['billing'] ) {
             CRM_Core_Error::debug_log_message( ts( 'Please set a location type of %1', array( 1 => 'Billing' ) ) );
             echo "Failure: Could not find billing location type<p>";

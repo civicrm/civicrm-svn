@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -52,14 +52,16 @@ class CRM_Utils_System {
      * @return string the url fragment
      * @access public
      */
-    static function makeURL( $urlVar, $includeReset = false, $includeForce = true ) {
-        $config   = CRM_Core_Config::singleton( );
-
-        if ( ! isset( $_GET[$config->userFrameworkURLVar] ) ) {
-            return '';
+    static function makeURL( $urlVar, $includeReset = false, $includeForce = true, $path = null ) {
+        if ( empty( $path ) ) {
+            $config = CRM_Core_Config::singleton( );
+            $path   = CRM_Utils_Array::value( $config->userFrameworkURLVar, $_GET );
+            if ( empty( $path ) ) {
+                return '';
+            }
         }
 
-        return self::url( $_GET[$config->userFrameworkURLVar],
+        return self::url( $path,
                           CRM_Utils_System::getLinksUrl( $urlVar, $includeReset, $includeForce ) );
     }
 
@@ -75,7 +77,7 @@ class CRM_Utils_System {
      * @return string
      * @access public
      */
-    static function getLinksUrl( $urlVar, $includeReset = false, $includeForce = true ) {
+    static function getLinksUrl( $urlVar, $includeReset = false, $includeForce = true, $skipUFVar = true ) {
         // Sort out query string to prevent messy urls
         $querystring = array();
         $qs          = array();
@@ -107,11 +109,15 @@ class CRM_Utils_System {
         if ($includeForce ) {
             $qs['force'] = 1;
         }
-        foreach ($qs as $name => $value) {
-            if ( $name == 'snippet' ) {
-                continue;
-            }
 
+        unset( $qs['snippet'] );
+
+        if ( $skipUFVar ) {
+            $config = CRM_Core_Config::singleton( );
+            unset( $qs[$config->userFrameworkURLVar] );
+        }
+
+        foreach ($qs as $name => $value) {
             if ( $name != 'reset' || $includeReset ) {
                 $querystring[] = $name . '=' . $value;
             }
@@ -798,11 +804,13 @@ class CRM_Utils_System {
         
         if ( ! $version ) {
             $verFile = implode( DIRECTORY_SEPARATOR, 
-                                array(dirname(__FILE__), '..', '..', 'civicrm-version.txt') );
+                                array(dirname(__FILE__), '..', '..', 'civicrm-version.php') );
             if ( file_exists( $verFile ) ) {
-                $str     = file_get_contents( $verFile );
-                $parts   = explode( ' ', $str );
-                $version = trim( $parts[0] );
+                require_once( $verFile );
+                if ( function_exists( 'civicrmVersion' ) ) {
+                    $info = civicrmVersion( );
+                    $version = $info['version'];
+                }
             } else {
                 // svn installs don't have version.txt by default. In that case version.xml should help - 
                 $verFile = implode( DIRECTORY_SEPARATOR,
@@ -1207,4 +1215,58 @@ class CRM_Utils_System {
         return $baseURL . $url;
     }
     
-}
+    
+    /**
+     * Format the url as per language Negotiation.
+     * 
+     * @param string $url
+     *
+     * @return string $url, formatted url.
+     * @static
+     */
+    static function languageNegotiationURL( $url, 
+                                            $addLanguagePart    = true, 
+                                            $removeLanguagePart = false ) 
+    {
+        if ( empty( $url ) ) return $url;
+        
+        //upto d6 only, already we have code in place for d7 
+        $config = CRM_Core_Config::singleton( );
+        if ( $config->userFramework == 'Drupal' && 
+             function_exists('variable_get') && 
+             module_exists('locale') ) {
+            global $language;
+            
+            //get the mode.
+            $mode = variable_get('language_negotiation', LANGUAGE_NEGOTIATION_NONE );
+            
+            //url prefix / path.
+            if ( isset( $language->prefix ) &&
+                 $language->prefix &&
+                 in_array( $mode, array( LANGUAGE_NEGOTIATION_PATH,
+                                         LANGUAGE_NEGOTIATION_PATH_DEFAULT ) ) ) {
+                
+                if ( $addLanguagePart ) {
+                    $url .=  $language->prefix . '/';
+                }
+                if ( $removeLanguagePart ) {
+                    $url = str_replace( "/{$language->prefix}/", '/', $url );
+                }
+            }
+            if ( isset( $language->domain ) &&
+                 $language->domain &&
+                 $mode == LANGUAGE_NEGOTIATION_DOMAIN ) {
+                
+                if ( $addLanguagePart ) {
+                    $url = CRM_Utils_File::addTrailingSlash( $language->domain, '/' );
+                }
+                if ( $removeLanguagePart && defined( 'CIVICRM_UF_BASEURL' ) ) {
+                    $url = CRM_Utils_File::addTrailingSlash( CIVICRM_UF_BASEURL, '/' );
+                }
+            }
+        }
+        
+        return $url;
+    }
+    
+  }

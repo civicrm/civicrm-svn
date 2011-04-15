@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,10 +29,11 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
+
 
 /**
  * WordPress specific stuff goes here
@@ -166,6 +167,9 @@ class CRM_Utils_System_WordPress {
                  $frontend = false ) {
         $config = CRM_Core_Config::singleton( );
         $script =  'index.php';
+
+        require_once 'CRM/Utils/String.php';
+        $path = CRM_Utils_String::stripPathChars( $path );
 
         if (isset($fragment)) {
             $fragment = '#'. $fragment;

@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -215,6 +215,13 @@ class CRM_Contact_BAO_Query
      */
     public $_strict = false;
 
+    /**
+     * What operator to use to group the clauses
+     *
+     * @var string
+     */
+    public $_operator = 'AND';
+
     public $_mode = 1;
 
     /** 
@@ -291,6 +298,15 @@ class CRM_Contact_BAO_Query
     static $_considerCompActivities;
     
     /**
+     * Consider with contact activities only,
+     * during activity search.
+     *
+     * @var array
+     * @static
+     */
+    static $_withContactActivitiesOnly;
+    
+    /**
      * use distinct component clause for component searches
      *
      * @var string
@@ -343,7 +359,13 @@ class CRM_Contact_BAO_Query
                                               'email',
                                               'im',
                                               'address_name' );
-    
+
+    /**
+     * Rememeber if we handle either end of a number or date range
+     * so we can skip the other
+     */
+    protected $_rangeCache = array( );
+
     /**
      * class constructor which also does all the work
      *
@@ -360,12 +382,13 @@ class CRM_Contact_BAO_Query
     function __construct( $params = null, $returnProperties = null, $fields = null,
                           $includeContactIds = false, $strict = false, $mode = 1,
                           $skipPermission = false, $searchDescendentGroups = true,
-                          $smartGroupCache = true, $displayRelationshipType = null ) 
+                          $smartGroupCache = true, $displayRelationshipType = null,
+                          $operator = 'AND' ) 
     {
         require_once 'CRM/Contact/BAO/Contact.php';
 
         // CRM_Core_Error::backtrace( );
-        // CRM_Core_Error::debug_var( 'params', $params );
+        // CRM_Core_Error::debug( 'params', $params );
          
         // CRM_Core_Error::debug( 'post', $_POST );
         // CRM_Core_Error::debug( 'r', $returnProperties );
@@ -386,6 +409,7 @@ class CRM_Contact_BAO_Query
         $this->_skipPermission          = $skipPermission;
         $this->_smartGroupCache         = $smartGroupCache;
         $this->_displayRelationshipType = $displayRelationshipType;
+        $this->setOperator( $operator );
 
         if ( $fields ) {
             $this->_fields =& $fields;
@@ -436,6 +460,7 @@ class CRM_Contact_BAO_Query
         //reset cache, CRM-5803
         self::$_activityRole = null;
         self::$_considerCompActivities = null;
+        self::$_withContactActivitiesOnly = null;
         
         $this->_select['contact_id']      = 'contact_a.id as contact_id';
         $this->_element['contact_id']     = 1; 
@@ -896,7 +921,12 @@ class CRM_Contact_BAO_Query
                                 $this->_tables[$tName] = "\nLEFT JOIN $tableName `$tName` ON contact_a.id = `$tName`.contact_id AND `$tName`.$lCond";
                                 // this special case to add phone type
                                 if ( $cond ) {
-                                    $this->_tables[$tName] .= " AND `$tName`.$cond ";
+                                    $phoneTypeCondition = " AND `$tName`.$cond ";
+                                    //gross hack to pickup corrupted data also, CRM-7603
+                                    if ( strpos( $cond, 'phone_type_id' ) !== false ) {
+                                        $phoneTypeCondition = " AND ( `$tName`.$cond OR `$tName`.phone_type_id IS NULL ) ";
+                                    }
+                                    $this->_tables[$tName] .= $phoneTypeCondition;
                                 }
 
                                 //build locationType join
@@ -970,8 +1000,8 @@ class CRM_Contact_BAO_Query
             foreach ( $addressCustomFieldIds as $cfID => $locTypeName ) {
                 foreach ( $locTypeName as $name => $dnc ) {
                     $fieldName = "$name-custom_{$cfID}";
-                    $tName     = "$name-address-custom";
-                    $aName     = "`$name-address-custom`";
+                    $tName     = "$name-address-custom-{$cfID}";
+                    $aName     = "`$name-address-custom-{$cfID}`";
                     $this->_select["{$tName}_id"]  = "`$tName`.id as `{$tName}_id`"; 
                     $this->_element["{$tName}_id"] = 1; 
                     $this->_select[$fieldName]     = 
@@ -1144,7 +1174,7 @@ SELECT contact_a.id
                     $relationshipTypeLabel = $rTypes[$this->_displayRelationshipType]['label_a_b'];
                     $_rTypeFrom = "
 INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id OR displayRelType.contact_id_b = contact_a.id )
-INNER JOIN $tableName contact_c ON ( contact_c.contact_id = displayRelType.contact_id_a OR contact_c.contact_id = displayRelType.contact_id_b )
+INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a OR transform_temp.contact_id = displayRelType.contact_id_b )
 ";
                     $_rTypeWhere = " WHERE displayRelType.relationship_type_id = {$this->_displayRelationshipType} ";
                 } else {
@@ -1153,13 +1183,13 @@ INNER JOIN $tableName contact_c ON ( contact_c.contact_id = displayRelType.conta
                         $relationshipTypeLabel = $rTypes[$relType]['label_a_b'];
                         $_rTypeFrom .= "
 INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id )
-INNER JOIN $tableName contact_c ON ( contact_c.contact_id = displayRelType.contact_id_b )
+INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_b )
 ";
                     } else {
                         $relationshipTypeLabel = $rTypes[$relType]['label_b_a'];
                         $_rTypeFrom .= "
 INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_b = contact_a.id )
-INNER JOIN $tableName contact_c ON ( contact_c.contact_id = displayRelType.contact_id_a )
+INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a )
 ";
                     }
                     $_rTypeWhere = " WHERE displayRelType.relationship_type_id = $relType ";
@@ -1236,7 +1266,7 @@ INNER JOIN $tableName contact_c ON ( contact_c.contact_id = displayRelType.conta
 
         if  ( ! $skipWhere ) {
             $skipWhere   = array( 'task', 'radio_ts', 'uf_group_id',
-                                  'component_mode', 'qfKey',
+                                  'component_mode', 'qfKey', 'operator',
                                   'display_relationship_type' );
         }
 
@@ -1346,8 +1376,10 @@ INNER JOIN $tableName contact_c ON ( contact_c.contact_id = displayRelType.conta
         case 'sort_name':
         case 'display_name':
             $this->sortName( $values );
+            //force civicrm_activity_target, CRM-7812
+            self::$_withContactActivitiesOnly = true;
             return;
-
+            
         case 'email':
             $this->email( $values );
             return;
@@ -1384,6 +1416,7 @@ INNER JOIN $tableName contact_c ON ( contact_c.contact_id = displayRelType.conta
         case 'activity_type_id':
         case 'activity_survey_id':
         case 'activity_tags': 
+        case 'activity_taglist': 
         case 'activity_test':   
         case 'activity_contact_name':
         case 'activity_campaign_id':
@@ -1516,13 +1549,13 @@ INNER JOIN $tableName contact_c ON ( contact_c.contact_id = displayRelType.conta
         if ( ! empty( $this->_where ) ) {
             foreach ( $this->_where as $grouping => $values ) {
                 if ( $grouping > 0 && ! empty( $values ) ) {
-                    $clauses[$grouping] = ' ( ' . implode( ' AND ', $values ) . ' ) ';
+                    $clauses[$grouping] = ' ( ' . implode( " {$this->_operator} ", $values ) . ' ) ';
                     $validClauses++;
                 }
             }
 
             if ( ! empty( $this->_where[0] ) ) {
-                $andClauses[] = ' ( ' . implode( ' AND ', $this->_where[0] ) . ' ) ';
+                $andClauses[] = ' ( ' . implode( " {$this->_operator} ", $this->_where[0] ) . ' ) ';
             }
             if ( ! empty( $clauses ) ) {
                 $andClauses[] = ' ( ' . implode( ' OR ', $clauses ) . ' ) ';
@@ -2383,7 +2416,6 @@ INNER JOIN $tableName contact_c ON ( contact_c.contact_id = displayRelType.conta
        
         $qill = ts( 'Contacts %1', array( 1 => $op ) );
         $qill .= ' ' . implode( ' ' . ts('or') . ' ', $names );
-        $this->_qill[$grouping][] = $qill;
         
         $groupClause = null;
 
@@ -2391,7 +2423,7 @@ INNER JOIN $tableName contact_c ON ( contact_c.contact_id = displayRelType.conta
             $groupClause = "{$gcTable}.group_id $op ( $groupIds )";
             if ( ! empty( $statii ) ) {
                 $groupClause .= " AND {$gcTable}.status IN (" . implode(', ', $statii) . ")";
-                $this->_qill[$grouping][] = ts('Group Status') . ' - ' . implode( ' ' . ts('or') . ' ', $statii );
+                $qill        .= " " . ts('AND') . " " . ts('Group Status') . ' - ' . implode( ' ' . ts('or') . ' ', $statii );
             }
         }
 
@@ -2407,6 +2439,7 @@ INNER JOIN $tableName contact_c ON ( contact_c.contact_id = displayRelType.conta
         }
         
         $this->_where[$grouping][] = $groupClause;
+        $this->_qill[$grouping][]  = $qill;
     }
     
     /**
@@ -3081,7 +3114,7 @@ WHERE  id IN ( $groupIDs )
         $targetName = $this->getWhereValues( 'relation_target_name', $grouping );
         $relStatus  = $this->getWhereValues( 'relation_status', $grouping );
         
-        $nameClause = null;
+        $nameClause = $name = null;
         if ( $targetName ) {
             $name = trim( $targetName[2] );
             if ( substr( $name, 0 , 1 ) == '"' &&
@@ -3211,7 +3244,7 @@ WHERE  id IN ( $groupIDs )
                                                                'do_not_phone'           => 1,
                                                                'do_not_trade'           => 1,
                                                                'is_opt_out'             => 1,
-							       'contact_is_deleted'	=> 1,
+                                                               'contact_is_deleted'	    => 1,
                                                                ); 
             }
         }
@@ -3371,6 +3404,17 @@ WHERE  id IN ( $groupIDs )
                 $this->_fromClause       = self::fromClause( $this->_tables     , null, null, $this->_primaryLocation, $this->_mode ); 
                 $this->_simpleFromClause = self::fromClause( $this->_whereTables, null, null, $this->_primaryLocation, $this->_mode );
             }
+        } else {
+            // add delete clause if needed even if we are skipping permission
+            // CRM-7639
+            if ( ! $this->_skipDeleteClause ) {
+                if (CRM_Core_Permission::check('access deleted contacts') and $onlyDeleted) {
+                    $permission = '(contact_a.is_deleted)';
+                } else {
+                    // CRM-6181
+                    $permission = '(contact_a.is_deleted = 0)';
+                }
+            }
         }
         
         list( $select, $from, $where, $having ) = $this->query( $count, $sortByChar, $groupContacts );
@@ -3510,7 +3554,6 @@ WHERE  id IN ( $groupIDs )
         $query = "$select $from $where $having $groupBy $order $limit";
         // CRM_Core_Error::debug('query', $query);
         // CRM_Core_Error::debug('query', $where);
-
 
         if ( $returnQuery ) {
             return $query;
@@ -3715,30 +3758,92 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
                                $appendTimeStamp = true ) 
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
-        
-        if ( $name == $fieldName . '_low' ) {
-            $op     = '>=';
-            $phrase = 'greater than or equal to';
-        } else if ( $name == $fieldName . '_high' ) {
-            $op     = '<=';
-            $phrase = 'less than or equal to';
-        } else if ( $name == $fieldName ) {
-            $op     = '=';
-            $phrase = '=';
-        } else {
+
+        if ( ! $value ) {
             return;
         }
 
-        if ( $value ) {
-            $date    = $value;
-            // add 235959 if its less that or equal to
-            if ( $op == '<='      &&
-                 $appendTimeStamp &&
-                 strlen( $date ) == 10 ) {
-                $date .= ' 23:59:59';
+        if ( $name == "{$fieldName}_low" ||
+             $name == "{$fieldName}_high" ) {
+            if ( isset( $this->_rangeCache[$fieldName] ) ) {
+                return;
+            }
+            $this->_rangeCache[$fieldName] = 1;
+
+            $secondOP = $secondPhrase = $secondValue = $secondDate = $secondDateFormat = null;
+
+            if ( $name == $fieldName . '_low' ) {
+                $firstOP      = '>=';
+                $firstPhrase  = 'greater than or equal to';
+                $firstDate    = CRM_Utils_Date::processDate( $value );
+
+                $secondValues = $this->getWhereValues( "{$fieldName}_high", $grouping );
+                if ( ! empty( $secondValues ) &&
+                     $secondValues[2] ) {
+                    $secondOP          = '<=';
+                    $secondPhrase      = 'less than or equal to';
+                    $secondValue       = $secondValues[2];
+
+                    if ( $appendTimeStamp &&
+                         strlen( $secondValue ) == 10 ) {
+                        $secondValue .= ' 23:59:59';
+                    }
+                    $secondDate = CRM_Utils_Date::processDate( $secondValue );
+                }
+
+            } else if ( $name == $fieldName . '_high' ) {
+                $firstOP           = '<=';
+                $firstPhrase       = 'less than or equal to';
+
+                if ( $appendTimeStamp &&
+                     strlen( $value ) == 10 ) {
+                    $value .= ' 23:59:59';
+                }
+                $firstDate    = CRM_Utils_Date::processDate( $value );
+
+                $secondValues = $this->getWhereValues( "{$fieldName}_low", $grouping );
+                if ( ! empty( $secondValues ) &&
+                     $secondValues[2] ) {
+                    $secondOP          = '>=';
+                    $secondPhrase      = 'greater than or equal to';
+                    $secondValue       = $secondValues[2];
+                    $secondDate = CRM_Utils_Date::processDate( $secondValue );
+                }
             }
 
-            $date = CRM_Utils_Date::processDate( $date );
+            if ( ! $appendTimeStamp ) {
+                $firstDate = substr(  $date, 0, 8 );
+            }
+            $firstDateFormat = CRM_Utils_Date::customFormat( $firstDate );
+
+            if ( $secondDate ) {
+                if ( ! $appendTimeStamp ) {
+                    $secondDate = substr(  $secondDate, 0, 8 );
+                }
+                $secondDateFormat = CRM_Utils_Date::customFormat( $secondDate );
+            }
+
+            $this->_tables[$tableName] = $this->_whereTables[$tableName] = 1;
+            if ( $secondDate ) {
+                $this->_where[$grouping][] = "
+( {$tableName}.{$dbFieldName} $firstOP '$firstDate' ) AND
+( {$tableName}.{$dbFieldName} $secondOP '$secondDate' )
+";
+                $this->_qill[$grouping][]  = 
+                    "$fieldTitle - $firstPhrase \"$firstDateFormat\" " .
+                    ts('AND') .
+                    " $secondPhrase \"$secondDateFormat\"";
+            } else {
+                $this->_where[$grouping][] = "{$tableName}.{$dbFieldName} $firstOP '$firstDate'";
+                $this->_qill[$grouping][]  = "$fieldTitle - $firstPhrase \"$firstDateFormat\"";
+            }
+        }
+
+        if ( $name == $fieldName ) {
+            $op     = '=';
+            $phrase = '=';
+
+            $date = CRM_Utils_Date::processDate( $value );
 
             if ( !$appendTimeStamp ) {
                 $date = substr(  $date, 0, 8 );
@@ -3764,30 +3869,77 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
     }
 
     function numberRangeBuilder( &$values,
-                                 $tableName, $fieldName, $dbFieldName, $fieldTitle, $options = null ) 
+                                 $tableName, $fieldName,
+                                 $dbFieldName, $fieldTitle,
+                                 $options = null ) 
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
+        
+        if ( $name == "{$fieldName}_low" ||
+             $name == "{$fieldName}_high" ) {
+            if ( isset( $this->_rangeCache[$fieldName] ) ) {
+                return;
+            }
+            $this->_rangeCache[$fieldName] = 1;
 
-        if ( $name == $fieldName . '_low' ) {
-            $op     = '>=';
-            $phrase = 'greater than';
-        } else if ( $name == $fieldName . '_high' ) {
-            $op     = '<=';
-            $phrase = 'less than';
-        } else if ( $name == $fieldName ) {
+            $secondOP = $secondPhrase = $secondValue = null;
+
+            if ( $name == "{$fieldName}_low" ) {
+                $firstOP           = '>=';
+                $firstPhrase       = 'greater than';
+
+                $secondValues = $this->getWhereValues( "{$fieldName}_high", $grouping );
+                if ( ! empty( $secondValues ) ) {
+                    $secondOP          = '<=';
+                    $secondPhrase      = 'less than';
+                    $secondValue       = $secondValues[2];
+                }
+            } else {
+                $firstOP           = '<=';
+                $firstPhrase       = 'less than';
+
+                $secondValues = $this->getWhereValues( "{$fieldName}_low", $grouping );
+                if ( ! empty( $secondValues ) ) {
+                    $secondOP          = '>=';
+                    $secondPhrase      = 'greater than';
+                    $secondValue       = $secondValues[2];
+                }
+            }
+
+            if ( $secondOP ) {
+                $this->_where[$grouping][] = "
+( {$tableName}.{$dbFieldName} $firstOP {$value} ) AND 
+( {$tableName}.{$dbFieldName} $secondOP {$secondValue} )
+";
+                $displayValue = $options ? $options[$value] : $value;
+                $secondDisplayValue = $options ? $options[$secondValue] : $secondValue;
+
+                $this->_qill[$grouping][]  = 
+                    "$fieldTitle - $firstPhrase \"$displayValue\" " .
+                    ts('AND') .
+                    " $secondPhrase \"$secondDisplayValue\"";
+            } else {
+                $this->_where[$grouping][] = "{$tableName}.{$dbFieldName} $firstOP {$value}";
+                $displayValue = $options ? $options[$value] : $value;
+                $this->_qill[$grouping][]  = "$fieldTitle - $phrase \"$displayValue\"";
+            }
+            $this->_tables[$tableName] = $this->_whereTables[$tableName] = 1;
+
+            return;
+        } 
+
+        if ( $name == $fieldName ) {
             $op     = '=';
             $phrase = '=';
-        } else {
-            return;
+
+            $this->_where[$grouping][] = "{$tableName}.{$dbFieldName} $op {$value}";
+
+            $this->_tables[$tableName] = $this->_whereTables[$tableName] = 1;
+            $displayValue = $options ? $options[$value] : $value;
+            $this->_qill[$grouping][]  = "$fieldTitle - $phrase \"$displayValue\"";
         }
 
-        $this->_where[$grouping][] = "{$tableName}.{$dbFieldName} $op {$value}";
-        $this->_tables[$tableName] = $this->_whereTables[$tableName] = 1;
-        if ( !$options ) { 
-            $this->_qill[$grouping][]  = "$fieldTitle - $phrase \"$value\"";
-        } else {
-            $this->_qill[$grouping][]  = "$fieldTitle - $phrase \"$options[$value]\"";
-        }
+        return;
     }
 
     /**
@@ -3851,6 +4003,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
                               'Relationships'   => 'civicrm_relationship',
                               'Activities'      => 'civicrm_activity',
                               'Pledges'         => 'civicrm_pledge',
+                              'Cases'           => 'civicrm_case',
                               'Grants'          => 'civicrm_grant',
                               'Address Fields'  => 'civicrm_address',
                               'Notes'           => 'civicrm_note',
@@ -3866,4 +4019,16 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
         return self::$_openedPanes;
     }
 
+    function setOperator( $operator ) {
+        $validOperators = array( 'AND', 'OR' );
+        if ( ! in_array( $operator, $validOperators ) ) {
+            $operator = 'AND';
+        }
+        $this->_operator = $operator;
+    }
+
+    function getOperator( ) {
+        return $this->_operator;
+    }
+    
 }

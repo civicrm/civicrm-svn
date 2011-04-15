@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -127,7 +127,7 @@
 
       function buildSubTypes( )
       {
-        element = cj("'input[name=contactType]:checked'").val();
+        element = cj('input[name="contactType"]:checked').val( );
         var postUrl = {/literal}"{crmURL p='civicrm/ajax/subtype' h=0 }"{literal};
         var param = 'parentId='+ element;
         cj.ajax({ type: "POST", url: postUrl, data: param, async: false, dataType: 'json',

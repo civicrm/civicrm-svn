@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -170,13 +170,18 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         
         $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'basic' );
         $urlParams = 'force=1';
+        $urlString = "civicrm/contact/search/$context";
+
         if ( CRM_Utils_Rule::qfKey( $this->_searchKey ) ) {
             $urlParams .= "&qfKey=$this->_searchKey";
         } elseif ( $context == 'search' ) {
             $urlParams .= "&qfKey={$this->controller->_key}";
+            $urlString = 'civicrm/contact/search';
+        } else {
+            $urlParams = "reset=1";
+            $urlString = 'civicrm/dashboard';
         }
-        $urlString = "civicrm/contact/search/$context";
-        if ( $context == 'search' ) $urlString = 'civicrm/contact/search';  
+
         
         $selfDelete = false;
         $deletedContacts = 0;

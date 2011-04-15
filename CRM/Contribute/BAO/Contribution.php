@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -639,7 +639,15 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
             require_once 'CRM/Price/BAO/LineItem.php';
             CRM_Price_BAO_LineItem::deleteLineItems( $id, 'civicrm_contribution' );
         }
-
+        
+        //delete note.
+        require_once 'CRM/Core/BAO/Note.php';
+        $note = CRM_Core_BAO_Note::getNote( $id, 'civicrm_contribution' );
+        $noteId = key( $note );
+        if ( $noteId ) {
+            CRM_Core_BAO_Note::del( $noteId, false );
+        }
+        
         $dao     = new CRM_Contribute_DAO_Contribution( );
         $dao->id = $id;
              

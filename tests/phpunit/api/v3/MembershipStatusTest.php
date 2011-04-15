@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -52,10 +52,10 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
     {
         parent::setUp();
 
-        $this->_contactID           = $this->individualCreate(null,3 ) ;
+        $this->_contactID           = $this->individualCreate(null ) ;
         $this->_apiversion = 3;
-        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID , $this->_apiversion  );
-        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status',$this->_apiversion );
+        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID   );
+        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );
     }
 
     function tearDown( ) 
@@ -73,7 +73,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
         $result =& civicrm_api3_membership_status_get($params);
 
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Params is not an array.', 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__ );
     }
 
     /**
@@ -81,7 +81,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
      */
      function testGetEmptyParams()
      {
-        $params = array();
+        $params = array('version' =>3);
         $result =& civicrm_api3_membership_status_get($params);
 
         // It should be 8 statuses, 7 default from mysql_data 
@@ -219,7 +219,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
                          'start_date'  => $start_date->format('Y-m-d'),
                          'end_date'    => $end_date->format('Y-m-d') );
                          
-        $membershipID = $this->contactMembershipCreate( $params,$this->_apiversion );
+        $membershipID = $this->contactMembershipCreate( $params );
         $membershipStatusID = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership',$membershipID,'status_id');
         $calcParams = array( 'membership_id' => $membershipID );
         $result = civicrm_api3_membership_status_calc( $calcParams );

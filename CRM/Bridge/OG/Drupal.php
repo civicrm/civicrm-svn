@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -74,6 +74,7 @@ class CRM_Bridge_OG_Drupal {
                 $params['group_type'] = $groupType;
             }
             
+            $params['version'] = 3;
             $group = civicrm_api('group', 'add', $params );
             if ( ! civicrm_error( $group ) ) {
                 $params['group_id'] = $group['result'];
@@ -195,8 +196,11 @@ SELECT v.id
         $groupID   = CRM_Bridge_OG_Utils::groupID( CRM_Bridge_OG_Utils::ogSyncName( $params['og_id'] ),
                                                    null, true );
         
-        $groupParams = array( 'contact_id' => $contactID,
-                              'group_id'   => $groupID  );
+        $groupParams = array(
+            'contact_id' => $contactID,
+            'group_id'   => $groupID,
+            'version'    => 3,
+        );
 
         if ( $op == 'add' ) {
             $groupParams['status'] = $params['is_active'] ? 'Added' : 'Pending';

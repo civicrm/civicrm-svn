@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -62,6 +62,12 @@ class CRM_Campaign_PseudoConstant extends CRM_Core_PseudoConstant
      * @static
      */
     private static $campaignStatus = array();
+    
+    /**
+     * Engagement Level 
+     * @static
+     */
+    private static $engagementLevel;
     
     /**
      * Get all the survey activity types
@@ -125,6 +131,25 @@ class CRM_Campaign_PseudoConstant extends CRM_Core_PseudoConstant
         }
         asort( self::$campaignStatus );
         return self::$campaignStatus;
+    }
+    
+    /**
+     * Get all Engagement Level.
+     *
+     * The static array Engagement Level is returned
+     *
+     * @access public
+     * @static
+     * @return array - array reference of all Engagement Level.
+     */
+    public static function &engagementLevel( )
+    {
+        if ( ! isset( self::$engagementLevel ) ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            self::$engagementLevel = CRM_Core_OptionGroup::values('engagement_index');
+        }
+        
+        return self::$engagementLevel;
     }
     
 }

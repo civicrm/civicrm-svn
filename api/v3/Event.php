@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -33,7 +33,7 @@
  * @package CiviCRM_APIv3
  * @subpackage API_Event
  *
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * @version $Id: Event.php 30964 2010-11-29 09:41:54Z shot $
  *
  */
@@ -109,19 +109,21 @@ function civicrm_api3_event_get( $params )
     $inputParams            = array( );
     $returnProperties       = array( );
     $returnCustomProperties = array( );
-    $otherVars              = array( 'sort', 'offset', 'rowCount' );
+    $otherVars              = array( 'sort', 'offset', 'rowCount', 'isCurrent' );
 
     $sort     =  array_key_exists( 'return.sort', $params ) ? $params['return.sort'] : false;
     // don't check if empty, more meaningful error for API user instead of silent defaults
     $offset   = array_key_exists( 'return.offset', $params ) ? $params['return.offset'] : 0;
     $rowCount = array_key_exists( 'return.max_results', $params ) ? $params['return.max_results'] : 25;
+    $isCurrent = array_key_exists( 'isCurrent', $params ) ? $params['isCurrent'] : 0;
+    
 
     foreach ( $params as $n => $v ) {
       if ( substr( $n, 0, 7 ) == 'return.' ) {
         if ( substr( $n, 0, 14 ) == 'return.custom_') {
           //take custom return properties separate
           $returnCustomProperties[] = substr( $n, 7 );
-        } elseif( !in_array( substr( $n, 7 ) ,array( 'sort', 'offset', 'max_results' ) ) ) {
+        } elseif( !in_array( substr( $n, 7 ) ,array( 'sort', 'offset', 'max_results', 'isCurrent' ) ) ) {
           $returnProperties[] = substr( $n, 7 );
         }
       } elseif ( in_array( $n, $otherVars ) ) {
@@ -146,7 +148,10 @@ function civicrm_api3_event_get( $params )
       $eventDAO->selectAdd( implode( ',' , $returnProperties ) );
     }
     $eventDAO->whereAdd( '( is_template IS NULL ) OR ( is_template = 0 )' );
-
+    
+    if ( $isCurrent ) {
+        $eventDAO->whereAdd( '(start_date >= CURDATE() || end_date >= CURDATE())' );
+    }
     $eventDAO->orderBy( $sort );
     $eventDAO->limit( (int)$offset, (int)$rowCount );
     $eventDAO->find( );

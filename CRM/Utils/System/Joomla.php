@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -179,10 +179,18 @@ class CRM_Utils_System_Joomla {
     function url($path = null, $query = null, $absolute = true,
                  $fragment = null, $htmlize = true,
                  $frontend = false ) {
-        $config        = CRM_Core_Config::singleton( );
+        $config    = CRM_Core_Config::singleton( );
+ 		$separator = $htmlize ? '&amp;' : '&';
+ 		$Itemid    = '';
+
+        require_once 'CRM/Utils/String.php';
+        $path = CRM_Utils_String::stripPathChars( $path );
 
         if ( $config->userFrameworkFrontend ) {
             $script = 'index.php';
+            if ( JRequest::getVar("Itemid") ) {
+                $Itemid = "{$separator}&Itemid=" . JRequest::getVar("Itemid");
+            }
         } else {
             $script = 'index2.php';
         }
@@ -196,12 +204,11 @@ class CRM_Utils_System_Joomla {
             $config->useFrameworkRelativeBase = $base['path'];
         }
         $base = $absolute ? $config->userFrameworkBaseURL : $config->useFrameworkRelativeBase;
-        $separator = $htmlize ? '&amp;' : '&';
 
-        if ( isset( $query ) ) {
-            $url = "{$base}{$script}?option=com_civicrm{$separator}task={$path}{$separator}{$query}{$fragment}";
+        if ( !empty ( $query ) ) {
+            $url = "{$base}{$script}?option=com_civicrm{$separator}task={$path}{$separator}{$query}{$Itemid}{$fragment}";
         } else {
-            $url ="{$base}{$script}?option=com_civicrm{$separator}task={$path}{$separator}{$fragment}";
+            $url ="{$base}{$script}?option=com_civicrm{$separator}task={$path}{$Itemid}{$fragment}";
         }
 
         // gross hack for joomla, we are in the backend and want to send a frontend url

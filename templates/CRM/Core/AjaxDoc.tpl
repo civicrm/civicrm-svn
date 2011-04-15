@@ -95,7 +95,7 @@ function generateQuery () {
 }
 
 function runQuery(query) {
-    var vars = [], hash,smarty = '',php = "params = array (",json = "{", link ="";
+    var vars = [], hash,smarty = '',php = " array (",json = "{", link ="";
     $('#result').html('<i>Loading...</i>');
     $.get(query,function(data) {
       $('#result').text(data);
@@ -124,7 +124,9 @@ function runQuery(query) {
              json = json+"'"+ hash[0] +"' :'"+hash[1]+ "', ";
         }
     }
-    $('#php').html(php + '};<br>$results=civicrm_api("'+entity+'","'+action+'",$params);');
+    json = json.slice (0,-2) + '}';
+    php = php.slice (0,-2) + ')';
+    $('#php').html('$results=civicrm_api("'+entity+'","'+action+"\",\n  "+php+');');
     $('#jQuery').html ("$().crmAPI ('"+entity+"','"+action+"',"+json+"}<br>&nbsp;&nbsp;,{ success:function (data){&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.each(data, function(key, value) {// do something  });<br> &nbsp;&nbsp;&nbsp;&nbsp;}<br> });");
 
     if (action == "get") {//using smarty only make sense for get action
@@ -161,7 +163,7 @@ cj(function ($) {
 <label>entity</label>
 <select id="entity">
   <option value="" selected="selected">Choose...</option>
-{crmAPI entity="entity" action="get" var="entities" version=3}
+{crmAPI entity="Entity" action="get" var="entities" version=3}
 {foreach from=$entities.values item=entity}
   <option value="{$entity}">{$entity}</option>
 {/foreach}
@@ -182,7 +184,7 @@ cj(function ($) {
 <br>
 <div id="selector"></div>
 <div id="extra"></div>
-<input size="90" id="query" value="{crmURL p="civicrm/ajax/rest" q="json=1&debug=on&entity=contact&action=get&sequential=1&return=display_name,email,phone"}"/>
+<input size="90" id="query" value="{crmURL p="civicrm/ajax/rest" q="json=1&debug=on&entity=Contact&action=get&sequential=1&return=display_name,email,phone"}"/>
 <table id="generated" border=1 style="display:none;">
 <caption>Generated codes for this api call</caption>
 <tr><td>URL<td><div id="link"></div></td></tr>

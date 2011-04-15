@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -212,7 +212,17 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
      */
     static $csv = array('contact_type', 'group', 'tag');
 
+    /**
+     * @var string how to display the results. Should we display as
+     *             contributons, members, cases etc
+     */
     protected $_componentMode;
+
+    /**
+     * @var string what operator should we use, AND or OR
+     */
+    protected $_operator;
+
     protected $_modeValue;
 
     /**
@@ -364,7 +374,8 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
 
         // some tasks.. what do we want to do with the selected contacts ?
         $tasks = array( '' => ts('- actions -') );
-        if ( $this->_componentMode == 1 ) {
+        if ( $this->_componentMode == 1 ||
+             $this->_componentMode == 7 ) {
             $tasks += CRM_Contact_Task::permissionedTaskTitles( $permission, 
                                                                 CRM_Utils_Array::value( 'deleted_contacts',
                                                                                         $this->_formValues ) );
@@ -391,22 +402,25 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                 //$this->_groupElement->freeze( );
             }
             
-            // also set the group title
-            $groupValues = array( 'id' => $this->_groupID, 'title' => $this->_group[$this->_groupID] );
-            $this->assign_by_ref( 'group', $groupValues );
+            if ( ! empty( $this->_groupID ) ) {
+                // also set the group title
+                $groupValues = array( 'id' => $this->_groupID, 'title' => $this->_group[$this->_groupID] );
+                $this->assign_by_ref( 'group', $groupValues );
 
-            // also set ssID if this is a saved search
-            $ssID = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group', $this->_groupID, 'saved_search_id' );
-            $this->assign( 'ssID', $ssID );
+                // also set ssID if this is a saved search
+                $ssID = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group', $this->_groupID, 'saved_search_id' );
+                $this->assign( 'ssID', $ssID );
             
-            //get the saved search mapping id
-            if ( $ssID ) {
-                $ssMappingId = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch', $ssID, 'mapping_id' );
-            }
+                //get the saved search mapping id
+                if ( $ssID ) {
+                    $ssMappingId = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch', $ssID, 'mapping_id' );
+                }
             
-            if (isset ( $ssMappingId ) ) {
-                $this->assign( 'ssMappingID', $ssMappingId );
+                if (isset ( $ssMappingId ) ) {
+                    $this->assign( 'ssMappingID', $ssMappingId );
+                }
             }
+
             $group_contact_status = array();
             foreach(CRM_Core_SelectValues::groupContactStatus() as $k => $v) {
                 if (! empty($k)) {
@@ -424,16 +438,17 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
              *                  ts( 'Please select at least Group Status value.' ), 'required', null, 1 );
             */
 
-            // Set dynamic page title for 'Show Members of Group'
-            CRM_Utils_System::setTitle( ts( 'Contacts in Group: %1', array( 1 => $this->_group[$this->_groupID] ) ) );
+            $this->assign( 'permissionedForGroup', false );
+            if ( ! empty( $this->_groupID ) ) {
+                // Set dynamic page title for 'Show Members of Group'
+                CRM_Utils_System::setTitle( ts( 'Contacts in Group: %1', array( 1 => $this->_group[$this->_groupID] ) ) );
 
-            // check if user has permission to edit members of this group
-            require_once 'CRM/Contact/BAO/Group.php';
-            $permission = CRM_Contact_BAO_Group::checkPermission( $this->_groupID, $this->_group[$this->_groupID] );
-            if ( $permission && in_array(CRM_Core_Permission::EDIT, $permission) ) {
-                $this->assign( 'permissionedForGroup', true );
-            } else {
-                $this->assign( 'permissionedForGroup', false );
+                // check if user has permission to edit members of this group
+                require_once 'CRM/Contact/BAO/Group.php';
+                $permission = CRM_Contact_BAO_Group::checkPermission( $this->_groupID, $this->_group[$this->_groupID] );
+                if ( $permission && in_array(CRM_Core_Permission::EDIT, $permission) ) {
+                    $this->assign( 'permissionedForGroup', true );
+                }
             }
         }
         
@@ -537,6 +552,10 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         $this->_componentMode   = CRM_Utils_Request::retrieve( 'component_mode' , 'Positive',
                                                                $this,
                                                                false, 1, $_REQUEST );
+        $this->_operator        = CRM_Utils_Request::retrieve( 'operator', 'String',
+                                                               $this,
+                                                               false, 1, $_REQUEST,
+                                                               'AND' );
 
         /**
          * set the button names
@@ -594,6 +613,11 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
 
             // also get the object mode directly from the post value
             $this->_componentMode = CRM_Utils_Array::value( 'component_mode', $_POST, $this->_componentMode );
+
+            // also get the operator from the post value if set
+            $this->_operator = CRM_Utils_Array::value( 'operator', $_POST, $this->_operator );
+            $this->_formValues['operator'] = $this->_operator;
+            $this->set( 'operator', $this->_operator );
         } else {
             $this->_formValues = $this->get( 'formValues' );
             $this->_params =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
@@ -628,10 +652,20 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                 if ( isset( $this->_componentMode ) ) {
                     $this->_formValues['component_mode'] = $this->_componentMode;
                 }
+                if ( isset( $this->_operator ) ) {
+                    $this->_formValues['operator'] = $this->_operator;
+                }
             }
         }
-        $this->assign( 'id', CRM_Utils_Array::value( 'uf_group_id', $this->_formValues ) );
-        
+        $this->assign( 'id',
+                       CRM_Utils_Array::value( 'uf_group_id', $this->_formValues ) );
+        $operator = CRM_Utils_Array::value( 'operator', $this->_formValues, 'AND' );
+        if ( $operator == 'OR' ) {
+            $this->assign( 'operator', ts( 'OR' ) );
+        } else {
+            $this->assign( 'operator', ts( 'AND' ) );
+        }
+                       
         // show the context menu only when we’re not searching for deleted contacts; CRM-5673
         if ( !CRM_Utils_Array::value( 'deleted_contacts', $this->_formValues ) ) {
             require_once 'CRM/Contact/BAO/Contact.php';
@@ -729,6 +763,11 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         if ( isset( $this->_componentMode ) &&
              ! CRM_Utils_Array::value( 'component_mode', $this->_formValues ) ) { 
             $this->_formValues['component_mode'] = $this->_componentMode;
+        }
+
+        if ( isset( $this->_operator ) &&
+             ! CRM_Utils_Array::value( 'operator', $this->_formValues ) ) { 
+            $this->_formValues['operator'] = $this->_operator;
         }
 
         if ( ! CRM_Utils_Array::value( 'qfKey', $this->_formValues ) ) {

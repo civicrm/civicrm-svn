@@ -4,6 +4,7 @@ function group_contact_create_example(){
     $params = array(
     
                   'contact_id' 		=> '1',
+                  'contact_id.2' 		=> '2',
                   'group_id' 		=> '1',
                   'version' 		=> '3',
 
@@ -24,7 +25,7 @@ function group_contact_create_expectedresult(){
            'is_error' 		=> '0',
            'version' 		=> '3',
            'count' 		=> '3',
-           'values' 		=> array(           'not_added' => '1',                      'added' => '0',                      'total_count' => '1',           ),
+           'values' 		=> array(           'not_added' => '1',                      'added' => '1',                      'total_count' => '2',           ),
       );
 
   return $expectedResult  ;

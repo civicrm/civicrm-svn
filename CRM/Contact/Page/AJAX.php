@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  *
  */
 
@@ -95,15 +95,18 @@ class CRM_Contact_Page_AJAX
             $where .= " AND contact_type = \"Organization\"";
             //set default for current_employer
             if ( $orgId = CRM_Utils_Array::value( 'id', $_GET) ) {
-                 $where .= " AND cc.id = {$orgId}";
+                $orgId = CRM_Utils_Type::escape( CRM_Utils_Array::value( 'id', $_GET ), 'Positive' );
+                $where .= " AND cc.id = {$orgId}";
              }
 
             // CRM-7157, hack: get current employer details when
             // employee_id is present.
             $currEmpDetails  = array( );
             if ( CRM_Utils_Array::value( 'employee_id', $_GET) ) {
-                if ( $currentEmployer = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', CRM_Utils_Type::escape( $_GET['employee_id'], 'Positive' ), 'employer_id' ) ) {
-
+                if ( $currentEmployer = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                                                                     CRM_Utils_Type::escape( $_GET['employee_id'],
+                                                                                             'Positive' ),
+                                                                     'employer_id' ) ) {
                     if ( $config->includeWildCardInName ) {
                         $strSearch = "%$name%";
                     } else {
@@ -342,11 +345,12 @@ class CRM_Contact_Page_AJAX
     static function customField( ) 
     {
         $fieldId = CRM_Utils_Type::escape( $_POST['id'], 'Integer' );
-
-        $helpPost = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField',
-                                                 $fieldId,
-                                                 'help_post' );
-        echo $helpPost;
+        $params = array( 'id' => $fieldId );
+        $returnProperties = array( 'help_pre', 'help_post');
+        $values = array();
+        
+        CRM_Core_DAO::commonRetrieve('CRM_Core_DAO_CustomField', $params, $values, $returnProperties );
+        echo json_encode( $values );
         CRM_Utils_System::civiExit( );
     }
 

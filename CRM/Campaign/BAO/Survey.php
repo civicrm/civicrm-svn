@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -105,26 +105,93 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
         $dao->copyValues( $params );
         $dao->save();
 
+        if ( CRM_Utils_Array::value( 'custom', $params ) &&
+             is_array( $params['custom'] ) ) {
+            require_once 'CRM/Core/BAO/CustomValueTable.php';
+            CRM_Core_BAO_CustomValueTable::store( $params['custom'], 'civicrm_survey', $dao->id );
+        }
         return $dao;
     }
+
+    
     
     /**
      * Function to retrieve surveys for dashboard.
      * 
      * @static
      */
-    static function getSurveySummary( ) 
+    static function getSurveySummary( $params = array( ), $onlyCount = false ) 
     {
+        //build the limit and order clause.
+        $limitClause = $orderByClause = $lookupTableJoins = null;
+        if ( !$onlyCount ) {
+            $sortParams = array( 'sort'      => 'created_date', 
+                                 'offset'    => 0, 
+                                 'rowCount'  => 10, 
+                                 'sortOrder' => 'desc'  ); 
+            foreach ( $sortParams as $name => $default ) {
+                if ( CRM_Utils_Array::value( $name, $params ) ) {
+                    $sortParams[$name] = $params[$name];
+                }
+            }
+
+
+            //need to lookup tables.
+            $orderOnSurveyTable = true;
+            if ( $sortParams['sort'] == 'campaign' ) {
+                $orderOnSurveyTable = false;
+                $lookupTableJoins = '
+ LEFT JOIN civicrm_campaign campaign ON ( campaign.id = survey.campaign_id )';
+                $orderByClause = "ORDER BY campaign.title {$sortParams['sortOrder']}";
+            } else if ( $sortParams['sort'] == 'activity_type' ) {
+                $orderOnSurveyTable = false;
+                $lookupTableJoins = "
+ LEFT JOIN civicrm_option_value activity_type ON ( activity_type.value = survey.activity_type_id 
+                                                   OR survey.activity_type_id IS NULL )
+INNER JOIN civicrm_option_group grp ON ( activity_type.option_group_id = grp.id AND grp.name = 'activity_type' )"; 
+                $orderByClause = "ORDER BY activity_type.label {$sortParams['sortOrder']}";
+            } else if ( $sortParams['sort'] == 'isActive' ) {
+                $sortParams['sort'] = 'is_active';
+            }
+            if ( $orderOnSurveyTable ) {
+                $orderByClause = "ORDER BY survey.{$sortParams['sort']} {$sortParams['sortOrder']}";
+            }
+            $limitClause   = "LIMIT {$sortParams['offset']}, {$sortParams['rowCount']}";            
+        }
+        
+        //build the where clause.
+        $queryParams = $where = array( );
+        
         //we only have activity type as a 
         //difference between survey and petition.
         require_once 'CRM/Core/OptionGroup.php';
         $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
-        $whereClause    = '( 1 )';
         if ( $petitionTypeID ) {
-            $whereClause = "( survey.activity_type_id != $petitionTypeID )";
+            $where[] = "( survey.activity_type_id != %1 )";
+            $queryParams[1] = array( $petitionTypeID, 'Positive' );
         }
         
-        $query = "
+        if ( CRM_Utils_Array::value( 'title', $params ) ) {
+            $where[] = "( survey.title LIKE %2 )";
+            $queryParams[2] = array( '%'.trim($params['title']).'%', 'String' );
+        }
+        if ( CRM_Utils_Array::value( 'campaign_id', $params ) ) {
+            $where[] = '( survey.campaign_id = %3 )';
+            $queryParams[3] = array( $params['campaign_id'], 'Positive' );
+        }
+        if ( CRM_Utils_Array::value( 'activity_type_id', $params ) ) {
+            $typeId = $params['activity_type_id'];
+            if ( is_array( $params['activity_type_id'] ) ) {
+                $typeId = implode( ' , ', $params['activity_type_id'] );
+            }
+            $where[] = "( survey.activity_type_id IN ( {$typeId} ) )";
+        }
+        $whereClause = null;
+        if ( !empty( $where ) ) {
+            $whereClause = ' WHERE '. implode( " \nAND ", $where ); 
+        }
+        
+        $selectClause ='
 SELECT  survey.id                         as id,
         survey.title                      as title,
         survey.is_active                  as is_active,
@@ -134,15 +201,24 @@ SELECT  survey.id                         as id,
         survey.activity_type_id           as activity_type_id,
         survey.release_frequency          as release_frequency,
         survey.max_number_of_contacts     as max_number_of_contacts,
-        survey.default_number_of_contacts as default_number_of_contacts
-  FROM  civicrm_survey survey
- WHERE  {$whereClause}";
+        survey.default_number_of_contacts as default_number_of_contacts'; 
+        if ( $onlyCount ) {
+            $selectClause = 'SELECT COUNT(*)';
+        }
+        $fromClause = 'FROM  civicrm_survey survey';
+        
+        $query = "{$selectClause} {$fromClause} {$lookupTableJoins} {$whereClause} {$orderByClause} {$limitClause}";
+        
+        //return only count.
+        if ( $onlyCount ) {
+            return (int)CRM_Core_DAO::singleValueQuery( $query, $queryParams );
+        }
         
         $surveys    = array( );
         $properties = array( 'id', 'title', 'campaign_id', 'is_active', 'is_default', 'result_id', 'activity_type_id',
                              'release_frequency', 'max_number_of_contacts', 'default_number_of_contacts' );
         
-        $survey = CRM_Core_DAO::executeQuery( $query );
+        $survey = CRM_Core_DAO::executeQuery( $query, $queryParams );
         while ( $survey->fetch( ) ) {
             foreach ( $properties as $property ) {
                 $surveys[$survey->id][$property] = $survey->$property;
@@ -151,6 +227,18 @@ SELECT  survey.id                         as id,
         
         return $surveys;
     }
+    
+    
+    /**
+     * Get the survey count.
+     *
+     * @static
+     */
+    static function getSurveyCount( ) 
+    {
+        return (int)CRM_Core_DAO::singleValueQuery( 'SELECT COUNT(*) FROM civicrm_survey' );
+    }
+    
     
     /**
      * Function to get Surveys
@@ -209,21 +297,29 @@ SELECT  survey.id    as id,
      *
      * @static
      */
-    static function getSurveyActivityType( ) 
+    static function getSurveyActivityType( $returnColumn = 'label', 
+                                           $includePetitionActivityType = false ) 
     {
         static $activityTypes;
+        $cacheKey = "{$returnColumn}_{$includePetitionActivity}";
         
-        if ( !isset( $activityTypes ) ) {
+        if ( !isset( $activityTypes[$cacheKey] ) ) {
             $activityTypes = array( );
             $campaignCompId = CRM_Core_Component::getComponentID('CiviCampaign');
             if ( $campaignCompId ) {
                 require_once 'CRM/Core/OptionGroup.php';
-                $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, 
-                                                               " AND v.component_id={$campaignCompId}" , 'name' );
+                $condition = " AND v.component_id={$campaignCompId}";
+                if ( ! $includePetitionActivityType ) {
+                    $condition .= " AND v.name != 'Petition'";
+                }
+                $activityTypes[$cacheKey] = CRM_Core_OptionGroup::values( 'activity_type', 
+                                                                          false, false, false, 
+                                                                          $condition, 
+                                                                          $returnColumn );
             }
         }
         
-        return $activityTypes;
+        return $activityTypes[$cacheKey];
     }
     
     /**
@@ -630,7 +726,7 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
      * @return $url array of permissioned links
      * @static
      */
-    static function buildPermissionLinks( $surveyId ) 
+    static function buildPermissionLinks( $surveyId, $enclosedInUL = false, $extraULName = 'more' ) 
     {
         $menuLinks = array( );
         if ( !$surveyId ) return $menuLinks;  
@@ -677,8 +773,76 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
                                         $link['title'] );
             }
         }
+        if ( $enclosedInUL ) {
+            $extraLinksName = strtolower( $extraULName );
+            $allLinks = '';
+            CRM_Utils_String::append( $allLinks, '</li><li>', $menuLinks );
+            $allLinks = "$extraULName <ul id='panel_{$extraLinksName}_xx' class='panel'><li>{$allLinks}</li></ul>"; 
+            $menuLinks = "<span class='btn-slide' id={$extraLinksName}_xx>{$allLinks}</span>";
+        }
         
         return $menuLinks;
+    }
+    
+    /**
+     * Function to retrieve survey associated profile id.
+     *
+     **/
+    public Static function getSurveyProfileId( $surveyId )
+    {
+        if ( ! $surveyId ) {
+            return null;
+        }
+        
+        static $ufIds = array( );
+        if ( !array_key_exists( $surveyId, $ufIds ) ) {
+            //get the profile id.
+            require_once 'CRM/Core/BAO/UFJoin.php'; 
+            $ufJoinParams = array( 'entity_id'    => $surveyId,
+                                   'entity_table' => 'civicrm_survey',   
+                                   'module'       => 'CiviCampaign' );
+            $ufIds[$surveyId] = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );
+        }
+        
+        return $ufIds[$surveyId];
+    }
+
+    /**
+     * Function to decides the contact type for given survey.
+     *
+     **/
+    public Static function getSurveyContactType( $surveyId )
+    {
+        $contactType = null;
+        
+        //apply filter of profile type on search.
+        $profileId = self::getSurveyProfileId( $surveyId );
+        if ( $profileId ) {
+            require_once 'CRM/Core/BAO/UFField.php';
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $profileType = CRM_Core_BAO_UFField::getProfileType( $profileId );
+            if ( in_array( $profileType, CRM_Contact_BAO_ContactType::basicTypes( ) ) ) {
+                $contactType = $profileType;
+            }
+        }
+        
+        return $contactType;
+    }
+    
+    /**
+     * Function to get survey supportable profile types
+     *
+     **/
+    public Static function surveyProfileTypes( )
+    {
+        static $profileTypes;
+        
+        if ( !isset( $profileTypes ) ) {
+            require_once 'CRM/Contact/BAO/ContactType.php';
+            $profileTypes = array_merge( array( 'Activity', 'Contact' ), CRM_Contact_BAO_ContactType::basicTypes( ) ); 
+        }
+        
+        return $profileTypes;
     }
     
     /* Get the valid survey response fields those 
@@ -704,12 +868,7 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         
         $responseFields[$cacheKey] = array( );
         
-        //get the profile id.
-        require_once 'CRM/Core/BAO/UFJoin.php'; 
-        $ufJoinParams = array( 'entity_id'    => $surveyId,
-                               'entity_table' => 'civicrm_survey',   
-                               'module'       => 'CiviCampaign' );
-        $profileId = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );
+        $profileId = self::getSurveyProfileId( $surveyId );
         
         if ( !$profileId ) return $responseFields;
         if ( !$surveyTypeId ) {
@@ -723,7 +882,16 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         //don't load these fields in grid.
         $removeFields = array( 'File', 'Autocomplete-Select', 'RichTextEditor' );
         require_once 'CRM/Core/BAO/CustomField.php';
+        
+        require_once 'CRM/Contact/BAO/ContactType.php';
+        $supportableFieldTypes = self::surveyProfileTypes( );
+        
         foreach ( $profileFields as $name => $field ) {
+            //get only contact and activity fields.
+            //later stage we might going to consider contact type also.
+            if ( !in_array( $field['field_type'], $supportableFieldTypes ) ) {
+                continue;
+            }
             if ( CRM_Core_BAO_CustomField::getKeyID( $name ) &&
                  !in_array( $field['html_type'], $removeFields ) ) {
                 

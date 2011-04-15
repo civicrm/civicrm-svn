@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -31,18 +31,16 @@
  * @package CiviCRM_APIv3
  * @subpackage API_UF
  * 
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * @version $Id: UFGroup.php 30171 2010-10-14 09:11:27Z mover $
  *
  */
 
-
 /**
  * Files required for this package
  */
-require_once 'api/v3/utils.php'; 
+require_once 'api/v3/utils.php';
 require_once 'CRM/Core/BAO/UFGroup.php';
-
 
 /**
  * Use this API to create a new group. See the CRM Data Model for uf_group property definitions
@@ -53,33 +51,30 @@ require_once 'CRM/Core/BAO/UFGroup.php';
  *
  * @access public 
  */
-function civicrm_api3_uf_group_create($params)
-{
-    _civicrm_api3_initialize(true );
-    try{
-    civicrm_api3_verify_mandatory($params,'CRM_Core_DAO_UFGroup');        
-    
-    $ids = array();
-    $ids['ufgroup'] = $params['id'];
-    
-    require_once 'CRM/Core/BAO/UFGroup.php';
-    
-    $ufGroup = CRM_Core_BAO_UFGroup::add( $params,$ids );
-    _civicrm_api3_object_to_array( $ufGroup, $ufGroupArray[$ufGroup->id]);
-    
-    return civicrm_api3_create_success($ufGroupArray,$params);
-    } catch (PEAR_Exception $e) {
-       return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+function civicrm_api3_uf_group_create($params) {
+	_civicrm_api3_initialize ( true );
+	try {
+		civicrm_api3_verify_mandatory ( $params, 'CRM_Core_DAO_UFGroup' );
+		
+		$ids = array ();
+		$ids ['ufgroup'] = $params ['id'];
+		
+		require_once 'CRM/Core/BAO/UFGroup.php';
+		
+		$ufGroup = CRM_Core_BAO_UFGroup::add ( $params, $ids );
+		_civicrm_api3_object_to_array ( $ufGroup, $ufGroupArray [$ufGroup->id] );
+		
+		return civicrm_api3_create_success ( $ufGroupArray, $params );
+	} catch ( PEAR_Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	}
 }
-
-
 
 /**
  * Delete uf group
- *  
+ * 
  * @param $groupId int  Valid uf_group id that to be deleted
  *
  * @return true on successful delete or return error
@@ -87,16 +82,16 @@ function civicrm_api3_uf_group_create($params)
  * @access public
  *
  */
-function civicrm_api3_uf_group_delete( $params) {
-    _civicrm_api3_initialize( true);
-    try{
-            
-    require_once 'CRM/Core/BAO/UFGroup.php';
-    return CRM_Core_BAO_UFGroup::del($params['id']);
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }  
+function civicrm_api3_uf_group_delete($params) {
+	_civicrm_api3_initialize ( true );
+	try {
+		civicrm_api3_verify_mandatory ( $params, null, array ('id' ) );
+		require_once 'CRM/Core/BAO/UFGroup.php';
+		return CRM_Core_BAO_UFGroup::del ( $params ['id'] );
+	} catch ( PEAR_Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	}
 
 }

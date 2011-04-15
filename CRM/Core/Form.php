@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -32,7 +32,7 @@
  * machine. Each form can also operate in various modes
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -954,7 +954,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
      *  @param string $label  label of the element
      *  @param array  $attributes key / value pair 
      *                
-     *  $arrtibutes = array ( 'addTime' => true, // if you need time 
+     *  $attributes = array ( 'addTime' => true, // if you need time 
      *                        'formatType' => 'relative' or 'birth' etc check advanced date settings    
      *                      );            
      *  @param boolean $required  true if required

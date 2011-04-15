@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -44,7 +44,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         parent::setUp();
         $this->_apiversion = 3;
         $this->_contributionTypeId = 1;
-        $this->_individualId = $this->individualCreate(null, $this->_apiversion);
+        $this->_individualId = $this->individualCreate(null);
     }
     
     function tearDown() 
@@ -119,10 +119,10 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     {
 
     
-      $params = array( );
+      $params = array('version' => $this->_apiversion );
         $contribution = civicrm_api3_contribution_create($params);
         $this->assertEquals( $contribution['is_error'], 1 ,'In line ' . __LINE__ );
-        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contact_id, total_amount, one of (contribution_type_id, contribution_type), version','In line ' . __LINE__  );
+        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contact_id, total_amount, one of (contribution_type_id, contribution_type)', 'In line ' . __LINE__  );
     }
     
 
@@ -201,7 +201,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     function testCreateUpdateContribution()
     {
   
-        $contributionID = $this->contributionCreate($this->_individualId,$this->_contributionTypeId,$this->_apiversion);
+        $contributionID = $this->contributionCreate($this->_individualId,$this->_contributionTypeId);
         $old_params = array(
                             'contribution_id' => $contributionID,   
                             'version'					=> $this->_apiversion, 
@@ -273,10 +273,10 @@ class api_v3_ContributionTest extends CiviUnitTestCase
 
     function testDeleteEmptyParamsContribution()
     {
-        $params = array( );
+        $params = array('version' => $this->_apiversion );
         $contribution = civicrm_api3_contribution_delete($params);
         $this->assertEquals( $contribution['is_error'], 1 );
-        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contribution_id, version' );
+        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contribution_id' );
     }
     
     
@@ -291,17 +291,18 @@ class api_v3_ContributionTest extends CiviUnitTestCase
      
     function testDeleteWrongParamContribution()
     {
-        $params = array( 'contribution_source' => 'SSF' );
+        $params = array( 'contribution_source' => 'SSF',
+                          'version'            =>$this->_apiversion );
         $contribution =& civicrm_api3_contribution_delete( $params );
         $this->assertEquals($contribution['is_error'], 1);
-        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contribution_id, version' );
+        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contribution_id' );
     }
     
     
     function testDeleteContribution()
     {
      
-        $contributionID = $this->contributionCreate( $this->_individualId , $this->_contributionTypeId,$this->_apiversion );
+        $contributionID = $this->contributionCreate( $this->_individualId , $this->_contributionTypeId );
         $params         = array( 'contribution_id' => $contributionID ,
                                   'version'        => $this->_apiversion,);
         $result   = civicrm_api3_contribution_delete( $params );
@@ -414,99 +415,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
          $this->assertEquals( 'Pending',                    $res['contribution_status'], 'In line ' . __LINE__ ); 
          
      }
-     
-///////////////// civicrm_contribution_format_create methods
-
-     /**
-     *  Test civicrm_contribution_format_creat with Empty params 
-     */
-    function testFormatCreateEmptyParams()
-    {
-
-        $params = array( );
-        $result =& civicrm_api3_contribution_format_create($params);
-
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
-    }
-    
-    /**
-     *  Test civicrm_contribution_format_creat with wrong params type
-     */
-    function testFormatCreateParamsType()
-    {
-
-        $params = 'a string';
-        $result =& civicrm_api3_contribution_format_create($params);
-
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-    }
-
-    /**
-     *  Test civicrm_contribution_format_creat with invalid data
-     */
-    function testFormatCreateInvalidData()
-    {
-        require_once 'CRM/Contribute/DAO/Contribution.php';
-        $validParams = array( 'contact_id'   => $this->_individualId,
-                              'receive_date' => date('Ymd'),
-                              'total_amount'           => 100.00,
-                              'contribution_type_id'   => $this->_contributionTypeId,
-                              'contribution_status_id' => 1
-                              );
-        $params = $validParams;
-        $params['receive_date'] = 'invalid';
-        $result =& civicrm_api3_contribution_format_create($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-
-        $params = $validParams;
-        $params['total_amount'] = 'invalid';
-        $result =& civicrm_api3_contribution_format_create($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-
-        $params = $validParams;
-        $params['currency'] = 'invalid';
-        $result =& civicrm_api3_contribution_format_create($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-
-        $params = $validParams;
-        $params['contribution_contact_id'] = 'invalid';
-        $result =& civicrm_api3_contribution_format_create($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-
-        $params = $validParams;
-        $params['contribution_contact_id'] = 999;
-        $result =& civicrm_api3_contribution_format_create($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-    }
-
-    /**
-     *  Test civicrm_contribution_format_creat success expected
-     */
-    function testFormatCreate()
-    {
-        require_once 'CRM/Contribute/DAO/Contribution.php';
-        require_once 'CRM/Contribute/PseudoConstant.php';
-
-        $params = array( 'contact_id'             => $this->_individualId,
-                         'receive_date'           => date('Ymd'),
-                         'total_amount'           => 100.00,
-                         'contribution_type_id'   => $this->_contributionTypeId,
-                         'contribution_status_id' => 1,
-                         'contribution_type'      => 'Donation',
-                         'note'                   => 'note'
-                         );
-       
-        $result =& civicrm_api3_contribution_format_create($params);
-
-        $this->assertEquals( $result['total_amount'],100.00, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['contribution_status_id'],1, 'In line ' . __LINE__ );
-
-        $params         = array( 'contribution_id' => $result['id'] );
-        $contribution   = civicrm_api3_contribution_delete( $params );
-    }
-
-/////////////////  _civicrm_contribute_format_params for $create
+///////////////  _civicrm_contribute_format_params for $create
     
     function testFormatParams() {
         require_once 'CRM/Contribute/DAO/Contribution.php';

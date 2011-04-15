@@ -81,20 +81,11 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
                         'is_default' => 0, 
                         );
         $result = & civicrm_api3_activity_type_create($params);
-        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+
         $this->assertEquals( $result['is_error'], 0);
        
     }
-            /**
-     *  Test  using example code
-     */
-    function testActivityTypeCreateExample( )
-    {
-      require_once 'api/v3/examples/ActivityTypeCreate.php';
-      $result = activity_type_create_example();
-      $expectedResult = activity_type_create_expectedresult();
-      $this->assertEquals($result,$expectedResult);
-    }   
+
     /**
      *  Test civicrm_activity_type_create - check id
      */

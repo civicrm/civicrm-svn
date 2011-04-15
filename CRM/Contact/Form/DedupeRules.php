@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -215,7 +215,7 @@ UPDATE civicrm_dedupe_rule_group
         
         //need to clear cache of deduped contacts 
         //based on the previous rule
-        $cacheKey = "merge {$this->_contactType}_{$this->_rgid}";
+        $cacheKey = "merge {$this->_contactType}_{$this->_rgid}_%";
         
         require_once 'CRM/Core/BAO/PrevNextCache.php';
         CRM_Core_BAO_PrevNextCache::deleteItem( null, $cacheKey );

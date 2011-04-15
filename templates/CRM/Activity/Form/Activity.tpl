@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -178,9 +178,17 @@
                 <td class="label">{$form.subject.label}</td><td class="view-value">{$form.subject.html|crmReplace:class:huge}</td>
              </tr>
 	     
-	     {* CRM-7362 --add campaign to activities *}
-	     {include file="CRM/Campaign/Form/addCampaignToComponent.tpl" 
-	     campaignTrClass="crm-activity-form-block-campaign_id"}
+    	     {* CRM-7362 --add campaign to activities *}
+    	     {include file="CRM/Campaign/Form/addCampaignToComponent.tpl" 
+    	     campaignTrClass="crm-activity-form-block-campaign_id"}
+
+    	     {* build engagement level CRM-7775 *}
+    	     {if $buildEngagementLevel}
+        	     <tr class="crm-activity-form-block-engagement_level">
+                         <td class="label">{$form.engagement_level.label}</td>
+        		 <td class="view-value">{$form.engagement_level.html}</td>
+                     </tr>
+    	     {/if}
 	     
              <tr class="crm-activity-form-block-location">
                 <td class="label">{$form.location.label}</td><td class="view-value">{$form.location.html|crmReplace:class:huge}</td>
@@ -244,8 +252,8 @@
                  </tr>
              {/if}
              
-             {if $tagset}
-                <tr class="crm-activity-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl"}</td></tr>
+             {if $tagsetInfo_activity}
+                <tr class="crm-activity-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl" tagsetType='activity'}</td></tr>
              {/if}
              
              {if $action neq 4 OR $viewCustomData} 

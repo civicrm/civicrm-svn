@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -306,6 +306,7 @@ UNION
             // set current employer
             self::setCurrentEmployer( array( $contactID => $organizationId ) );
             
+            $relationshipParams['relationship_ids'] = $relationshipIds;
             // handle related meberships. CRM-3792
             self::currentEmployerRelatedMembership( $contactID, $organizationId, $relationshipParams, $duplicate );
         }
@@ -343,7 +344,7 @@ UNION
             }
             $relationship->free( );
         }
-        
+
         //need to handle related meberships. CRM-3792
         CRM_Contact_BAO_Relationship::relatedMemberships( $contactID, $relationshipParams, $ids, $action );
     }

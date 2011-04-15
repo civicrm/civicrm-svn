@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -66,7 +66,8 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
         CRM_Utils_System::setTitle( ts('Make Mailing Labels') );
 
         //add select for label
-        $label = array("5160" => "5160",
+        $label = array("3475" => "3475",
+	                "5160" => "5160",
                        "5161" => "5161",
                        "5162" => "5162", 
                        "5163" => "5163", 

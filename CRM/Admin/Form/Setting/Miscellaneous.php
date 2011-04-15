@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -77,6 +77,8 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
 
         $this->addElement('text', 'dashboardCacheTimeout', ts('Dashboard cache timeout'),
                           array( 'size' => 3, 'maxlength' => 5 ) );
+        $this->addElement('text','recaptchaOptions', ts('Recaptcha Options'),
+                          array( 'size' => 64, 'maxlength' => 64 ) );
 
         $this->addRule('maxAttachments', ts('Value should be a positive number') , 'positiveInteger');
         $this->addRule('maxFileSize', ts('Value should be a positive number') , 'positiveInteger');

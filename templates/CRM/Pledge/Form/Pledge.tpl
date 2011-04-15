@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -51,10 +51,11 @@
 <div class="crm-block crm-form-block crm-pledge-form-block">
  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div> 
    {if $action eq 8} 
-      <div class="messages status"> 
-          <div class="icon inform-icon"></div>
-          {ts}WARNING: Deleting this pledge will result in the loss of the associated financial transactions (if any).{/ts} {ts}Do you want to continue?{/ts}
-      </div> 
+    <div class="messages status">
+        <div class="icon inform-icon"></div>&nbsp;       
+        <span class="font-red bold">{ts}WARNING: Deleting this pledge will also delete any related pledge payments.{/ts} {ts}This action cannot be undone.{/ts}</span>
+        <p>{ts}Consider cancelling the pledge instead if you want to maintain an audit trail and avoid losing payment data. To set the pledge status to Cancelled and cancel any not-yet-paid pledge payments, first click Cancel on this form. Then click the more &gt; link from the pledge listing, and select the Cancel action.{/ts}</p>
+    </div>
    {else}
       <table class="form-layout-compressed">
         {if $context eq 'standalone'}
@@ -235,7 +236,7 @@ cj(function() {
 	showHideByValue( 'is_acknowledge', '', 'fromEmail', 'table-row', 'radio', false );
     });
     function checkEmail( ) {
-        var contactID = cj("input[name=contact_select_id[1]]").val();
+        var contactID = cj("input[name='contact_select_id[1]']").val();
         if ( contactID ) {
             var postUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' h=0}{literal}";
             cj.post( postUrl, {contact_id: contactID},

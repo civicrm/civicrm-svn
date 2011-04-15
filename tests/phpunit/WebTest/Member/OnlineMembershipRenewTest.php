@@ -4,7 +4,7 @@
    +--------------------------------------------------------------------+
    | CiviCRM version 3.4                                                |
    +--------------------------------------------------------------------+
-   | Copyright CiviCRM LLC (c) 2004-2010                                |
+   | Copyright CiviCRM LLC (c) 2004-2011                                |
    +--------------------------------------------------------------------+
    | This file is a part of CiviCRM.                                    |
    |                                                                    |
@@ -27,7 +27,7 @@
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 
-class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
+class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     
     protected function setUp()
     {

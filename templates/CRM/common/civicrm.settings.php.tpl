@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -155,11 +155,6 @@ define( 'CIVICRM_UF_BASEURL'      , '%%baseURL%%' );
  * More info at http://wiki.civicrm.org/confluence/display/CRMDOC/Command-line+Script+Configuration
  */
 define( 'CIVICRM_SITE_KEY', '%%siteKey%%' );
-
-/* 
- * If you want to keep the previous version of API, set it to 2, but beware that it will not be maintained forever
- */
-define( 'CIVICRM_API_VERSION', '3' );
 
 /*
  * If you want to disable IDS, set this to 0.

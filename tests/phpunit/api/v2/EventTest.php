@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -287,12 +287,12 @@ class api_v2_EventTest extends CiviUnitTestCase
 
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
         $result = civicrm_event_create($params);
-        $this->assertEquals(1,                                                                                                  $result['is_error'],      'lacking permissions should not be enough to create an event');
+        $this->assertEquals(1,  $result['is_error'],      'lacking permissions should not be enough to create an event');
         $this->assertEquals('API permission check failed for civicrm_event_create call; missing permission: access CiviEvent.', $result['error_message'], 'lacking permissions should not be enough to create an event');
 
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviEvent', 'add contacts');
         $result = civicrm_event_create($params);
-        $this->assertEquals(1, $result['is_error'], 'overfluous permissions should be enough to create an event');
+        $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to create an event');
 
         CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
     }

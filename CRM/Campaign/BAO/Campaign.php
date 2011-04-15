@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -173,7 +173,7 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
             $where = array( '( camp.title IS NOT NULL )' );
             if ( $excludeId  ) $where[] = "( camp.id != $excludeId )";
             if ( $onlyActive ) $where[] = '( camp.is_active = 1 )';
-            if ( $onlyCurrent ) $where[] = '( camp.end_date IS NULL OR camp.end_date >= CURDATE() )'; 
+            if ( $onlyCurrent ) $where[] = '( camp.end_date IS NULL OR camp.end_date >= NOW() )'; 
             $whereClause = implode( ' AND ', $where );
             if ( $includeId ) $whereClause .= " OR ( camp.id = $includeId )"; 
             
@@ -191,13 +191,15 @@ Order By  camp.title";
             
             $campaign = CRM_Core_DAO::executeQuery( $query );
             $campaigns[$cacheKey] = array( );
+            $config = CRM_Core_Config::singleton( );
+            
             while ( $campaign->fetch( ) ) {
                 $title = $campaign->title;
                 if ( $appendDatesToTitle ) {
                     $dates = array( );
                     foreach ( array( 'start_date', 'end_date' ) as $date ) {
                         if ( $campaign->$date ) {
-                            $dates[] = CRM_Utils_Date::customFormat( $campaign->$date, '%b%e, %Y' );
+                            $dates[] = CRM_Utils_Date::customFormat( $campaign->$date, $config->dateformatFull );
                         }
                     }
                     if ( !empty( $dates ) ) {
@@ -292,27 +294,135 @@ Order By  camp.title";
      *
      * @static
      */
-    static function getCampaignSummary( ) 
+    static function getCampaignSummary( $params = array( ), $onlyCount = false ) 
     {
         $campaigns = array( );
         
-        $query = '
-  SELECT  campaign.id               as id,
-          campaign.name             as name,
-          campaign.title            as title,
-          campaign.is_active        as is_active,
-          campaign.status_id        as status_id,
-          campaign.end_date         as end_date,
-          campaign.start_date       as start_date,
-          campaign.description      as description,
-          campaign.campaign_type_id as campaign_type_id
-    FROM  civicrm_campaign campaign
-ORDER BY  campaign.start_date desc';
+        //build the limit and order clause.
+        $limitClause = $orderByClause = $lookupTableJoins = null;
+        if ( !$onlyCount ) {
+            $sortParams = array( 'sort'      => 'start_date', 
+                                 'offset'    => 0, 
+                                 'rowCount'  => 10, 
+                                 'sortOrder' => 'desc'  ); 
+            foreach ( $sortParams as $name => $default ) {
+                if ( CRM_Utils_Array::value( $name, $params ) ) {
+                    $sortParams[$name] = $params[$name];
+                }
+            }
+
+            
+            //need to lookup tables.
+            $orderOnCampaignTable = true;
+            if ( $sortParams['sort'] == 'status' ) {
+                $orderOnCampaignTable = false;
+                $lookupTableJoins = "
+ LEFT JOIN civicrm_option_value status ON ( status.value = campaign.status_id OR campaign.status_id IS NULL )
+INNER JOIN civicrm_option_group grp ON ( status.option_group_id = grp.id AND grp.name = 'campaign_status' )"; 
+                $orderByClause = "ORDER BY status.label {$sortParams['sortOrder']}";
+            } else if ( $sortParams['sort'] == 'campaign_type' ) {
+                $orderOnCampaignTable = false;
+                $lookupTableJoins = "
+ LEFT JOIN civicrm_option_value campaign_type ON ( campaign_type.value = campaign.campaign_type_id 
+                                                   OR campaign.campaign_type_id IS NULL )
+INNER JOIN civicrm_option_group grp ON ( campaign_type.option_group_id = grp.id AND grp.name = 'campaign_type' )"; 
+                $orderByClause = "ORDER BY campaign_type.label {$sortParams['sortOrder']}";
+            } else if ( $sortParams['sort'] == 'isActive' ) {
+                $sortParams['sort'] = 'is_active';
+            }
+            if ( $orderOnCampaignTable ) {
+                $orderByClause = "ORDER BY campaign.{$sortParams['sort']} {$sortParams['sortOrder']}";
+            }
+            $limitClause   = "LIMIT {$sortParams['offset']}, {$sortParams['rowCount']}";
+        }
         
-        $properties = array( 'id', 'name', 'title', 'status_id', 'description', 
-                             'campaign_type_id', 'is_active', 'start_date', 'end_date' );
+        //build the where clause.
+        $queryParams = $where = array( );
+        if ( CRM_Utils_Array::value( 'id', $params ) ) {
+            $where[] = "( campaign.id = %1 )";
+            $queryParams[1] = array( $params['id'], 'Positive' );
+        }
+        if ( CRM_Utils_Array::value( 'name', $params ) ) {
+            $where[] = "( campaign.name LIKE %2 )";
+            $queryParams[2] = array( '%'.trim($params['name']).'%', 'String' );
+        }
+        if ( CRM_Utils_Array::value( 'title', $params ) ) {
+            $where[] = "( campaign.title LIKE %3 )";
+            $queryParams[3] = array( '%'.trim($params['title']).'%', 'String' );
+        }
+        if ( CRM_Utils_Array::value( 'start_date', $params ) ) {
+            $startDate = CRM_Utils_Date::processDate( $params['start_date'] );
+            $where[] = "( campaign.start_date >= %4 OR campaign.start_date IS NULL )";
+            $queryParams[4] = array( $startDate, 'String' );
+        }
+        if ( CRM_Utils_Array::value( 'end_date', $params ) ) {
+            $endDate = CRM_Utils_Date::processDate( $params['end_date'], '235959' );
+            $where[] = "( campaign.end_date <= %5 OR campaign.end_date IS NULL )";
+            $queryParams[5] = array( $endDate, 'String' );
+        }
+        if ( CRM_Utils_Array::value( 'description', $params ) ) {
+            $where[] = "( campaign.description LIKE %6 )";
+            $queryParams[6] = array( '%'.trim($params['description']).'%', 'String' );
+        }
+        if ( CRM_Utils_Array::value( 'campaign_type_id', $params ) ) {
+            $typeId = $params['campaign_type_id'];
+            if ( is_array( $params['campaign_type_id'] ) ) {
+                $typeId = implode( ' , ', $params['campaign_type_id'] );
+            }
+            $where[] = "( campaign.campaign_type_id IN ( {$typeId} ) )";
+        }
+        if ( CRM_Utils_Array::value( 'status_id', $params ) ) {
+            $statusId = $params['status_id'];
+            if ( is_array( $params['status_id'] ) ) {
+                $statusId = implode( ' , ', $params['status_id'] );
+            }
+            $where[] = "( campaign.status_id IN ( {$statusId} ) )";
+        }
+        if ( array_key_exists( 'is_active', $params ) ) {
+            $active = "( campaign.is_active = 1 )";
+            if ( CRM_Utils_Array::value( 'is_active', $params ) ) {
+                $active = "( campaign.is_active = 0 OR campaign.is_active IS NULL )";
+            }
+            $where[] = $active;
+        }
+        $whereClause = null;
+        if ( !empty( $where ) ) {
+            $whereClause = ' WHERE '. implode( " \nAND ", $where ); 
+        }
         
-        $campaign = CRM_Core_DAO::executeQuery( $query );
+        $properties = array( 'id',  
+                             'name',
+                             'title',
+                             'start_date',
+                             'end_date',
+                             'status_id',
+                             'is_active',
+                             'description',
+                             'campaign_type_id' );
+        
+        $selectClause =  '
+SELECT  campaign.id               as id,
+        campaign.name             as name,
+        campaign.title            as title,
+        campaign.is_active        as is_active,
+        campaign.status_id        as status_id,
+        campaign.end_date         as end_date,
+        campaign.start_date       as start_date,
+        campaign.description      as description,
+        campaign.campaign_type_id as campaign_type_id';
+        if ( $onlyCount ) {
+            $selectClause = 'SELECT COUNT(*)';
+        }
+        $fromClause = 'FROM  civicrm_campaign campaign';
+        
+        $query = "{$selectClause} {$fromClause} {$lookupTableJoins} {$whereClause} {$orderByClause} {$limitClause}";
+        
+        //in case of only count.
+        if ( $onlyCount ) {
+            return (int)CRM_Core_DAO::singleValueQuery( $query, $queryParams );   
+        }
+        
+        $campaign = CRM_Core_DAO::executeQuery( $query, $queryParams );
         while ( $campaign->fetch( ) ) {
             foreach ( $properties as $property ) {
                 $campaigns[$campaign->id][$property] = $campaign->$property;
@@ -322,6 +432,15 @@ ORDER BY  campaign.start_date desc';
         return $campaigns;
     }
     
+    /**
+     * Get the campaign count.
+     *
+     * @static
+     */
+    static function getCampaignCount( ) 
+    {
+        return (int)CRM_Core_DAO::singleValueQuery( 'SELECT COUNT(*) FROM civicrm_campaign' );
+    }
     
     /**
      * Function to get Campaigns groups
@@ -436,7 +555,7 @@ INNER JOIN  civicrm_group grp ON ( grp.id = campgrp.entity_id )
         }
         
         $includePastCampaignURL = null;
-        if ( $hasPastCampaigns ) {
+        if ( $hasPastCampaigns && $isCampaignEnabled && $hasAccessCampaign ) {
             $includePastCampaignURL = CRM_Utils_System::url( 'civicrm/ajax/rest', 
                                                              'className=CRM_Campaign_Page_AJAX&fnName=allActiveCampaigns',
                                                              false, null, false ); 

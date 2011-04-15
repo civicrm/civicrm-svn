@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -55,8 +55,8 @@
 		<div class="clear"></div> 
       {/if}
   </div>
-  
-  {if $taskName eq 'Export Contacts'}
+
+  {if $taskName eq 'Export Contacts' OR $component eq false}
   <div class="crm-section crm-export-mergeOptions-section">
     <div class="label crm-label-mergeOptions">{ts}Merge Options{/ts} {help id="id-export_merge_options"}</div>
     <div class="content crm-content-mergeSameAddress">

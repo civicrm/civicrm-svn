@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -449,6 +449,12 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
                     $this->_formValues[$param][$value] = 1;
                 }
             }
+        }
+        
+        //apply filter of survey contact type for search.
+        $contactType = CRM_Campaign_BAO_Survey::getSurveyContactType( $this->_formValues['campaign_survey_id'] );
+        if ( $contactType && in_array( $this->_operation, array( 'reserve', 'interview' ) ) ) {
+            $this->_formValues['contact_type'][$contactType] = 1 ;
         }
         
         if ( $this->_operation == 'reserve' ) {

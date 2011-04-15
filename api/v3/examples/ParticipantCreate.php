@@ -7,12 +7,10 @@ function participant_create_example(){
                   'event_id' 		=> '1',
                   'status_id' 		=> '1',
                   'role_id' 		=> '1',
-                  'register_date' 		=> '20070721',
+                  'register_date' 		=> '2007-07-21 00:00:00',
                   'source' 		=> 'Online Event Registration: API Testing',
-                  'event_level' 		=> 'Tenor',
                   'version' 		=> '3',
-                  'participant_status_id' 		=> '1',
-                  'participant_id' 		=> '4',
+                  'custom_1' 		=> 'custom string',
 
   );
   require_once 'api/api.php';
@@ -38,7 +36,7 @@ function participant_create_expectedresult(){
                       'event_id' => '1',
                       'status_id' => '1',
                       'role_id' => '1',
-                      'register_date' => '20070721',
+                      'register_date' => '20070721000000',
                       'source' => 'Online Event Registration: API Testing',
                       'fee_level' => '',
                       'is_test' => '',

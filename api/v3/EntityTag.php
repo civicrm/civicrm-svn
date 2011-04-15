@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -31,7 +31,7 @@
  * @package CiviCRM_APIv3
  * @subpackage API_EntityTag
  * 
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * @version $Id: EntityTag.php 30879 2010-11-22 15:45:55Z shot $
  */
 
@@ -49,7 +49,7 @@ function civicrm_api3_entity_tag_get( $params ) {
   _civicrm_api3_initialize(true);
 
   try{
-    civicrm_api3_verify_mandatory($params);
+    civicrm_api3_verify_one_mandatory($params, null,array('entity_id','contact_id'));
     
     $entityID    = null;
     $entityTable = 'civicrm_contact';
@@ -58,9 +58,6 @@ function civicrm_api3_entity_tag_get( $params ) {
         $entityID = CRM_Utils_Array::value( 'contact_id', $params );
     }
     
-    if ( empty($entityID) ) {
-        return civicrm_api3_create_error(  'entity_id is a required field.'  );  
-    }
 
     if ( CRM_Utils_Array::value( 'entity_table', $params ) ) {
         $entityTable = $params['entity_table'];
@@ -88,33 +85,37 @@ function civicrm_api3_entity_tag_get( $params ) {
  * @todo EM 7 Jan 2011 - believe this should be deleted
  */
 function civicrm_api3_entity_tag_display( $params ) {
-    if ( !is_array($params) ) {
-        return civicrm_api3_create_error( 'params should be an array.'  );
-    }
+    _civicrm_api3_initialize(true);
+
+    try{
+        civicrm_api3_verify_one_mandatory($params,null,array('entity_id','contact_id'));
     
-    $entityID    = null;
-    $entityTable = 'civicrm_contact';
+        $entityID    = null;
+        $entityTable = 'civicrm_contact';
    
-    if ( !( $entityID = CRM_Utils_Array::value( 'entity_id', $params ) ) ) {
-        $entityID = CRM_Utils_Array::value( 'contact_id', $params );
-    }
+        if ( !( $entityID = CRM_Utils_Array::value( 'entity_id', $params ) ) ) {
+            $entityID = CRM_Utils_Array::value( 'contact_id', $params );
+        }
     
-    if ( empty($entityID) ) {
-        return civicrm_api3_create_error( 'entity_id is a required field.'  );  
-    }
 
-    if ( CRM_Utils_Array::value( 'entity_table', $params ) ) {
-        $entityTable = $params['entity_table'];
-    }
+        if ( CRM_Utils_Array::value( 'entity_table', $params ) ) {
+            $entityTable = $params['entity_table'];
+        }
 
-    require_once 'CRM/Core/BAO/EntityTag.php';
-    $values =& CRM_Core_BAO_EntityTag::getTag( $entityID, $entityTable );
-    $result = array( );
-    $tags   = CRM_Core_PseudoConstant::tag( );
-    foreach ( $values as $v ) {
-        $result[] = $tags[$v];
+        require_once 'CRM/Core/BAO/EntityTag.php';
+        $values =& CRM_Core_BAO_EntityTag::getTag( $entityID, $entityTable );
+        $result = array( );
+        $tags   = CRM_Core_PseudoConstant::tag( );
+        foreach ( $values as $v ) {
+            $result[] = $tags[$v];
+        }
+        return implode( ',', $result );
+  
+    } catch (PEAR_Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
     }
-    return implode( ',', $result );
 }
 
 /**
@@ -125,12 +126,21 @@ function civicrm_api3_entity_tag_display( $params ) {
  */
 function civicrm_api3_tag_entities_get( $params )
 {
+    _civicrm_api3_initialize(true);
+    try{
+    civicrm_api3_verify_mandatory($params, null,array('tag_id'));
+ 
     require_once 'CRM/Core/BAO/Tag.php';
     require_once 'CRM/Core/BAO/EntityTag.php';
     $tag      = new CRM_Core_BAO_Tag();
     $tag->id  = CRM_Utils_Array::value( 'tag_id', $params ) ? $params['tag_id'] : null;
     $entities =& CRM_Core_BAO_EntityTag::getEntitiesByTag($tag);    
     return $entities;   
+    } catch (PEAR_Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    }
 }
 
 /**
@@ -141,7 +151,8 @@ function civicrm_api3_tag_entities_get( $params )
 function civicrm_api3_entity_tag_create( $params ) {
   _civicrm_api3_initialize(true);
     try{
-    return civicrm_api3_entity_tag_common( $params, 'add' );
+
+    return _civicrm_api3_entity_tag_common( $params, 'add' );
           
     } catch (PEAR_Exception $e) {
       return civicrm_api3_create_error( $e->getMessage() );
@@ -156,7 +167,14 @@ function civicrm_api3_entity_tag_create( $params ) {
  * @return <type>
  */
 function civicrm_api3_entity_tag_delete( $params ) {
-    return civicrm_api3_entity_tag_common( $params, 'remove' );
+    _civicrm_api3_initialize(true);
+    try{
+      return _civicrm_api3_entity_tag_common( $params, 'remove' );
+    } catch (PEAR_Exception $e) {
+      return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+      return civicrm_api3_create_error( $e->getMessage() );
+    }
 }
 
 /**
@@ -165,7 +183,8 @@ function civicrm_api3_entity_tag_delete( $params ) {
  * @param <type> $op
  * @return <type> 
  */
-function civicrm_api3_entity_tag_common( $params, $op = 'add' ) {
+function _civicrm_api3_entity_tag_common( $params, $op = 'add' ) {
+    civicrm_api3_verify_mandatory($params);
     $entityIDs    = array( );
     $tagsIDs      = array( );
     $entityTable  = 'civicrm_contact';

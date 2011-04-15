@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -713,7 +713,13 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
         case 'AdvMulti-Select': 
             $selectOption =& CRM_Core_BAO_CustomOption::valuesByID( $field->id,
                                                                     $field->option_group_id );
-            $include =& $qf->addElement('advmultiselect', $elementName, 
+            if ( $search &&
+                 count( $selectOption ) > 1 ) {
+                $selectOption['CiviCRM_OP_OR'] = ts( 'Select to match ANY; unselect to match ALL' );
+            }
+            
+            $include =& $qf->addElement('advmultiselect',
+                                        $elementName, 
                                         $label, $selectOption,
                                         array('size' => 5,
                                               'style'=> '',
@@ -775,6 +781,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             $stateOption = array('' => ts('- select -')) + CRM_Core_PseudoConstant::stateProvince();
             $qf->add('select', $elementName, $label, $stateOption, (($useRequired && $field->is_required) && !$search));
             break;
+
         case 'Multi-Select State/Province':
             //Add Multi-select State/Province
             $stateOption = CRM_Core_PseudoConstant::stateProvince();
@@ -807,14 +814,19 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
         case 'Autocomplete-Select':
             $qf->add( 'text', $elementName, $label, $field->attributes, 
                     (( $useRequired ||( $useRequired && $field->is_required) ) && !$search));
-            $qf->addElement( 'hidden', $elementName . '_id', '', array( 'id' => $elementName. '_id' ) );
-
-            static $customUrls = array( );            
+            
+            $hiddenEleName = $elementName . '_id';
+            if ( substr( $elementName, -1 ) == ']' ) { 
+                $hiddenEleName = substr( $elementName, 0, $elementName.length - 1 ).'_id]';
+            }
+            $qf->addElement( 'hidden', $hiddenEleName, '', array( 'id' =>  str_replace( array( ']', '[' ), array(''  , '_' ), $hiddenEleName ) ) );
+            
+            static $customUrls = array( );
             if ( $field->data_type == 'ContactReference' )  {
                 $customUrls[$elementName] = CRM_Utils_System::url( "civicrm/ajax/rest",                                                     "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&reset=1&context=customfield&id={$field->id}",
                                                                    false, null, false );                
                
-                $actualElementValue = $qf->_submitValues[ $elementName .'_id'];    
+                $actualElementValue = $qf->getSubmitValue( $hiddenEleName );
                 $qf->addRule($elementName, ts('Select a valid contact for %1.', array(1 => $label)), 'validContact', $actualElementValue );
             } else {
                 $customUrls[$elementName] = CRM_Utils_System::url( "civicrm/ajax/auto",
@@ -824,7 +836,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                                           'autocomplete', array( 'fieldID'       => $field->id,
                                                                  'optionGroupID' => $field->option_group_id ) );
             }
-                                                
+                                   
             $qf->assign( "customUrls", $customUrls );                                          
             break;
         }
@@ -1651,7 +1663,7 @@ AND    cf.id = %1";
             }
             
             $query = "
-    SELECT  g.id, f.label
+    SELECT  g.id, g.label
       FROM  civicrm_option_group g
 INNER JOIN  civicrm_custom_field f ON ( g.id = f.option_group_id ) 
      WHERE  {$whereClause}";

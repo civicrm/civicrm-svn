@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
  *
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -64,7 +64,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
      * @var int
      * @protected
      */
-    protected $_participantIDs;
+    protected $_participantIDS;
     
     /**
      * the id of the participant we are proceessing
@@ -437,7 +437,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             
             // get the billing location type
             $locationTypes =& CRM_Core_PseudoConstant::locationType( );
-            $this->_bltID = array_search( 'Billing',  $locationTypes );
+            $this->_bltID = array_search( ts('Billing'),  $locationTypes );
             if ( ! $this->_bltID ) {
                 CRM_Core_Error::fatal( ts( 'Please set a location type of %1', array( 1 => 'Billing' ) ) );
             }
@@ -690,12 +690,9 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
     {
         // get price info
         require_once 'CRM/Price/BAO/Set.php';
-        
-        $validFieldsOnly = true;
-        if ( CRM_Utils_System::getClassName($form) == 'CRM_Event_Form_Participant' ) {
-            $validFieldsOnly = false;
-        }
-        $price = CRM_Price_BAO_Set::initSet( $form, $eventID, 'civicrm_event', $validFieldsOnly );
+         
+        // retrive all active price set fields.
+        $price = CRM_Price_BAO_Set::initSet( $form, $eventID, 'civicrm_event', true );
         
         if ( $price == false ) {
             require_once 'CRM/Core/OptionGroup.php'; 
@@ -724,7 +721,9 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             $isPaidEvent = CRM_Utils_Array::value( 'is_monetary', $form->_values['event'] );    
         }
         if ( $isPaidEvent && empty( $form->_values['fee'] ) ) {
-            CRM_Core_Error::fatal( ts('No Fee Level(s) or Price Set is configured for this event.<br />Click <a href=\'%1\'>CiviEvent >> Manage Event >> Configure >> Event Fees</a> to configure the Fee Level(s) or Price Set for this event.', array( 1 => CRM_Utils_System::url('civicrm/event/manage/fee', 'reset=1&action=update&id='.$form->_eventId ))));  
+            if ( CRM_Utils_System::getClassName($form) != 'CRM_Event_Form_Participant' ) {
+                CRM_Core_Error::fatal( ts('No Fee Level(s) or Price Set is configured for this event.<br />Click <a href=\'%1\'>CiviEvent >> Manage Event >> Configure >> Event Fees</a> to configure the Fee Level(s) or Price Set for this event.', array( 1 => CRM_Utils_System::url('civicrm/event/manage/fee', 'reset=1&action=update&id='.$form->_eventId ))));
+            }
         }
     }
 
@@ -1193,7 +1192,7 @@ WHERE  v.option_group_id = g.id
                 $optMax  = $optionsMaxValueDetails[$fieldId]['options'][$optId];
                 $total  += CRM_Utils_Array::value( 'db_total_count', $options[$optId], 0 );
                 if ( $optMax && $total > $optMax ) {
-                    $errors[$currentParticipantNum]["price_{$fieldId}"] = ts( 'It looks like this field participant count extending its maximum limit.' );
+                    $errors[$currentParticipantNum]["price_{$fieldId}"] = ts( 'Sorry, this option is currently sold out.' );
                 }
             }
         }

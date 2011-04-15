@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -184,6 +184,11 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 list( $displayName, $email ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $contactID );
             }
             
+            if ( empty( $displayName ) ) {
+                require_once 'CRM/Contact/BAO/Contact.php';
+                $displayName = CRM_Contact_BAO_Contact::displayName( $contactID );
+            }
+            
             //for display profile need to get individual contact id,  
             //hence get it from related_contact if on behalf of org true CRM-3767.
                        
@@ -214,7 +219,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 }
                 self::buildCustomDisplay( $postID, 'customPost', $userID, $template, $params['custom_post_id'] );
             }
-            
+
             // set email in the template here
             $tplParams = array(
                 'email'            => $email,
@@ -230,6 +235,10 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 $tplParams['contributionTypeId']   = $contributionTypeId;
                 $tplParams['contributionTypeName'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
                                                                                   $contributionTypeId );
+            }
+
+            if ( $contributionPageId = CRM_Utils_Array::value('id', $values ) ) {
+                $tplParams['contributionPageId']   = $contributionPageId;
             }
                         
             // address required during receipt processing (pdf and email receipt)

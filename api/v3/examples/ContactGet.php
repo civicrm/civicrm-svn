@@ -3,9 +3,8 @@
 function contact_get_example(){
     $params = array(
     
-                  'email' 		=> 'man2',
+                  'email' 		=> 'man2@yahoo.com',
                   'version' 		=> '3',
-                  'contact_is_deleted' 		=> '0',
 
   );
   require_once 'api/api.php';

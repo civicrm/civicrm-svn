@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -85,10 +85,14 @@
 	    <td class="label">{$form.external_identifier.label}</td>
 	    <td class="view-value">{$form.external_identifier.html}</td>
 	</tr>
+	
+	{* Suppress parent-child feature for now. dgg *}
+	{*
 	<tr class="crm-campaign-form-block-parent_id">
 	    <td class="label">{$form.parent_id.label}</td>
 	    <td class="view-value">{$form.parent_id.html}</td>
-	</tr>
+	</tr> *}
+	
 	<tr class="crm-campaign-form-block-is_active">
 	    <td class="label">{$form.is_active.label}</td>
 	    <td class="view-value">{$form.is_active.html}</td>

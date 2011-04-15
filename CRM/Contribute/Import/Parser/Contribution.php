@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -250,7 +250,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
 
         $params =& $this->getActiveFieldParams( );            
                 
-        $formatted = array( );
+        $formatted = array('version' => 3);
 
         // don't add to recent items, CRM-4399
         $formatted['skipRecentView'] = true;
@@ -439,7 +439,8 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                 } else {
                     $cid = $matchedIDs[0];
                     $formatted['contact_id'] = $cid;
-                    
+                    $formatted['version'] = 2;
+
                     $newContribution = civicrm_api('contribution', 'format_create', $formatted);
                     if ( civicrm_error( $newContribution ) ) { 
                         if ( is_array( $newContribution['error_message'] ) ) {
@@ -507,6 +508,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                     return CRM_Contribute_Import_Parser::ERROR;
                 }
             }
+            $formatted['version'] = 2;
             $newContribution = civicrm_api('contribution', 'format_create', $formatted);
             if ( civicrm_error( $newContribution ) ) { 
                 if ( is_array( $newContribution['error_message'] ) ) {

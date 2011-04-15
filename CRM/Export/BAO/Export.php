@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -40,7 +40,10 @@
  */
 class CRM_Export_BAO_Export
 {
-    const EXPORT_ROW_COUNT = 100;
+    // increase this number a lot to avoid making too many queries
+    // LIMIT is not much faster than a no LIMIT query
+    // CRM-7675
+    const EXPORT_ROW_COUNT = 10000;
 
     /**
      * Function to get the list the export fields
@@ -331,7 +334,7 @@ class CRM_Export_BAO_Export
             $returnProperties = array_merge( $returnProperties, $moreReturnProperties );
         }
 
-        $query = new CRM_Contact_BAO_Query( 0, $returnProperties, null, false, false, $queryMode );
+        $query = new CRM_Contact_BAO_Query( null, $returnProperties, null, false, false, $queryMode );
         
         list( $select, $from, $where, $having ) = $query->query( );
         
@@ -360,7 +363,7 @@ class CRM_Export_BAO_Export
             if ( $relationReturnProperties = CRM_Utils_Array::value( $rel, $returnProperties ) ) {
                 $allRelContactArray[$rel] = array();
                 // build Query for each relationship
-                $relationQuery[$rel] = new CRM_Contact_BAO_Query( 0, $relationReturnProperties,
+                $relationQuery[$rel] = new CRM_Contact_BAO_Query( null, $relationReturnProperties,
                                                                   null, false, false, $queryMode );
                 list( $relationSelect, $relationFrom, $relationWhere, $relationHaving ) = $relationQuery[$rel]->query( );
                 
@@ -513,8 +516,9 @@ class CRM_Export_BAO_Export
         $componentDetails = $headerRows = $sqlColumns = array( );
         $setHeader = true;
 
-        $rowCount = self::EXPORT_ROW_COUNT;
-        $offset   = 0;
+        $rowCount     = self::EXPORT_ROW_COUNT;
+        $offset       = 0;
+        $tempRowCount = 100; // we write to temp table often to avoid using too much memory
 
         $count = -1;
 
@@ -829,8 +833,8 @@ class CRM_Export_BAO_Export
                 // write the row to a file
                 $componentDetails[] = $row;
 
-                // output every $rowCount rows
-                if ( $count % $rowCount == 0 ) {
+                // output every $tempRowCount rows
+                if ( $count % $tempRowCount == 0 ) {
                     self::writeDetailsToTable( $exportTempTable, $componentDetails, $sqlColumns );
                     $componentDetails = array( );
                 }
@@ -839,30 +843,38 @@ class CRM_Export_BAO_Export
             $dao->free( );
             $offset += $rowCount;
         }
-        
-        self::writeDetailsToTable( $exportTempTable, $componentDetails, $sqlColumns );
 
-        // do merge same address and merge same household processing
-        if ( $mergeSameAddress ) {
-            self::mergeSameAddress( $exportTempTable, $headerRows, $sqlColumns, $drop );
+        if ( $exportTempTable ) {
+            self::writeDetailsToTable( $exportTempTable, $componentDetails, $sqlColumns );
+            
+            // do merge same address and merge same household processing
+            if ( $mergeSameAddress ) {
+                self::mergeSameAddress( $exportTempTable, $headerRows, $sqlColumns, $drop );
+            }
+            
+            // merge the records if they have corresponding households
+            if ( $mergeSameHousehold ) {
+                self::mergeSameHousehold( $exportTempTable, $headerRows, $sqlColumns, $relationKey );
+            }
+            
+            // fix the headers for rows with relationship type
+            if ( !empty( $relName ) ) {
+                self::manipulateHeaderRows( $headerRows, $contactRelationshipTypes );
+            }
+            
+            // call export hook
+            require_once 'CRM/Utils/Hook.php';
+            CRM_Utils_Hook::export( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
+            
+            // now write the CSV file
+            self::writeCSVFromTable( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
+            
+            // delete the export temp table and component table
+            $sql = "DROP TABLE IF EXISTS {$exportTempTable}";
+            CRM_Core_DAO::executeQuery( $sql );
+        } else {
+            CRM_Core_Error::fatal( ts( 'No records to export' ) );
         }
-        
-        // merge the records if they have corresponding households
-        if ( $mergeSameHousehold ) {
-            self::mergeSameHousehold( $exportTempTable, $headerRows, $sqlColumns, $relationKey );
-        }
-
-        // fix the headers for rows with relationship type
-        if ( !empty( $relName ) ) {
-            self::manipulateHeaderRows( $headerRows, $contactRelationshipTypes );
-        }
-
-        // call export hook
-        require_once 'CRM/Utils/Hook.php';
-        CRM_Utils_Hook::export( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
-        
-        // now write the CSV file
-        self::writeCSVFromTable( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
 
         CRM_Utils_System::civiExit( );
     }
@@ -1122,7 +1134,7 @@ VALUES $sqlValueString
     static function createTempTable( &$sqlColumns )
     {
         //creating a temporary table for the search result that need be exported
-        $exportTempTable = CRM_Core_DAO::createTempTableName( 'civicrm_export', false );
+        $exportTempTable = CRM_Core_DAO::createTempTableName( 'civicrm_export', true );
 
         // also create the sql table
         $sql = "DROP TABLE IF EXISTS {$exportTempTable}";

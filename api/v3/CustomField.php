@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -32,7 +32,7 @@
  * @package CiviCRM_APIv3
  * @subpackage API_CustomField
  *
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * @version $Id: CustomField.php 30879 2010-11-22 15:45:55Z shot $
  */
 
@@ -82,7 +82,6 @@ function civicrm_api3_custom_field_create( $params )
       }
     }
      
-    $error = _civicrm_api3_check_required_fields($params, 'CRM_Core_DAO_CustomField');
     if (is_a($error, 'CRM_Core_Error')) {
       return civicrm_api3_create_error( $error->_errors[0]['message'] );
     }
@@ -99,7 +98,7 @@ function civicrm_api3_custom_field_create( $params )
     require_once 'CRM/Core/BAO/CustomField.php';
     $customField = CRM_Core_BAO_CustomField::create($params);
     _civicrm_api3_object_to_array_unique_fields($customField , $values[$customField->id]);
-    return civicrm_api3_create_success($values,$params);
+    return civicrm_api3_create_success($values,$params, $customField);
     
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
@@ -163,7 +162,7 @@ function civicrm_api3_custom_field_get($params)
       $result[$key] = $value['label'];
 
     }
-    return $result;
+    return civicrm_api3_create_success($result,$params,$customfieldBAO) ;
 
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );

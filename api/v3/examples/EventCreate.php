@@ -3,7 +3,6 @@
 function event_create_example(){
     $params = array(
     
-                  'custom' 		=> 'Array',
                   'title' 		=> 'Annual CiviCRM meet',
                   'summary' 		=> 'If you have any CiviCRM realted issues or want to track where CiviCRM is heading, Sign up now',
                   'description' 		=> 'This event is intended to give brief idea about progess of CiviCRM and giving solutions to common user issues',

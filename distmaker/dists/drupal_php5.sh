@@ -70,8 +70,13 @@ cp $SRC/README.txt $TRG
 cp $SRC/drupal/civicrm.config.php.drupal $TRG/civicrm.config.php
 
 # final touch
-echo "$DM_VERSION Drupal PHP5 $DM_REVISION" > $TRG/civicrm-version.txt
-
+echo "<?php
+function civicrmVersion( ) {
+  return array( 'version'  => '$DM_VERSION',
+                'cms'      => 'Drupal',
+                'revision' => '$DM_REVISION' );
+}
+" > $TRG/civicrm-version.php
 
 # gen tarball
 cd $TRG/..

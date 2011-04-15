@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -73,7 +73,7 @@ class CRM_Contact_Form_Search_Criteria {
             require_once 'CRM/Core/Form/Tag.php';
             require_once 'CRM/Core/BAO/Tag.php';
             $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_contact' );
-            CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_contact', null, true );
+            CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_contact', null, true, false, true );
         }
 
         // add text box for last name, first name, street name, city
@@ -147,6 +147,13 @@ class CRM_Contact_Form_Search_Criteria {
                               $componentModes );
         }
 
+        $form->addElement( 'select', 
+                           'operator', 
+                           ts('Search Operator'), 
+                           array( 'AND' => ts( 'AND' ),
+                                  'OR'  => ts( 'OR'  ) ) );
+
+        require_once 'CRM/Contact/Form/Search.php';
         // add the option to display relationships
         $rTypes  = CRM_Core_PseudoConstant::relationshipType( );
         $rSelect = array( '' => ts('- Select Relationship Type-') );

@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.2                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -44,8 +44,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $this->_apiversion = 3;    
         parent::setUp();
 
-     //   $this->_pledgeTypeId = 1;
-        $this->_individualId = $this->individualCreate(null,$this->_apiversion);
+        $this->_individualId = $this->individualCreate(null);
     }
     
     function tearDown() 
@@ -182,7 +181,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
     {
 
   // we test 'sequential' param here too     
-        $pledgeID = $this->pledgeCreate($this->_individualId,$this->_apiversion);
+        $pledgeID = $this->pledgeCreate($this->_individualId);
         $old_params = array(
                             'id' => $pledgeID,  
                             'sequential' =>1,  
@@ -262,7 +261,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
     function testDeletePledge()
     {
 
-        $pledgeID = $this->pledgeCreate( $this->_individualId , $this->_apiversion );
+        $pledgeID = $this->pledgeCreate( $this->_individualId  );
         $params         = array( 'pledge_id' => $pledgeID,
                                   'version'  => $this->_apiversion );
         $result   = civicrm_api3_pledge_delete( $params );

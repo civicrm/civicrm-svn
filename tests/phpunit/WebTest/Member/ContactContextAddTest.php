@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -100,16 +100,18 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
                         "Status message didn't show up after saving!");
       
       // click through to the membership view screen
-      $this->click("xpath=//x:tr[td/text()='$sourceText']/x:td/x:span/x:a[text()='View']");
+      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
       $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
-      $this->webtestVerifyTabularData( array(
-                                             'Membership Type' => 'General',
-                                             'Status'          => 'New',
-                                             'Source'          => $sourceText,
-                                             )
-                                       );
-
+      $verifyData = array(
+                          'Membership Type' => 'General',
+                          'Status'          => 'New',
+                          'Source'          => $sourceText,
+                          );
+      foreach ( $verifyData as $label => $value ) {
+          $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
+                             preg_quote( $value ) );   
+      }
       $this->click("_qf_MembershipView_cancel-bottom");
       $this->waitForPageToLoad("30000");
       // page was loaded
@@ -121,17 +123,19 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->waitForTextPresent( 'Membership Signup' );
 
       // click through to the activiy view screen (which is the membership view
-      $this->click("xpath=//x:tr[td/text()='Membership Signup']/x:td/x:span/x:a[text()='View']");
+      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
       $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
       
-      $this->webtestVerifyTabularData( array(
-                                             'Membership Type' => 'General',
-                                             'Status'          => 'New',
-                                             'Source'          => $sourceText,
-                                             )
-                                       );
+      $verifyData = array(
+                          'Membership Type' => 'General',
+                          'Status'          => 'New',
+                          'Source'          => $sourceText,
+                          );
+      foreach ( $verifyData as $label => $value ) {
+          $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
+                             preg_quote( $value ) );   
+      }
   }
   
-
 }
 ?>

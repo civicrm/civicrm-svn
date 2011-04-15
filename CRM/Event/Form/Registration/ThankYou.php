@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -30,7 +30,7 @@
  *
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -105,9 +105,9 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
         $this->assign( 'receive_date', $this->_receiveDate );
         $this->assign( 'trxn_id', $this->_trxnId );
         
-        if( CRM_Utils_Array::value( 'amount', $this->_params[0] ) == 0 ) {
-            $this->assign( 'isAmountzero', 1 );
-        }
+        //cosider total amount.
+        $this->assign( 'isAmountzero', ( $this->_totalAmount <= 0 ) ? true : false );
+        
         $this->assign( 'defaultRole', false );
         if( CRM_Utils_Array::value( 'defaultRole', $this->_params[0] ) == 1 ) {
             $this->assign( 'defaultRole', true );

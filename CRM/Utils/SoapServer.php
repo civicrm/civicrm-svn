@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -39,13 +39,13 @@
  * This class handles all SOAP client requests.
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
 
-civicrm_api_include('utils');
-civicrm_api_include('mailer');
+civicrm_api_include('utils', false, 3);
+civicrm_api_include('mailer', false, 3);
 
 class CRM_Utils_SoapServer
 {
@@ -219,6 +219,7 @@ class CRM_Utils_SoapServer
     
     public function get_contact($key, $params) { 
         $this->verify($key);
+        $params['version'] = 3;
         return civicrm_api('contact', 'get', $params);
     }
 

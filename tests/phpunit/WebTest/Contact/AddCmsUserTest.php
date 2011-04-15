@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -101,12 +101,12 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
       $this->type( "street_address-1", "902C El Camino Way SW" );
       $this->type( "city-1", "Dumfries" );
       $this->type( "postal_code-1", "1234" );
-      $this->assertTrue( $this->isTextPresent( "- select - United States" ) );
+      $this->assertTrue( $this->isTextPresent( "United States" ) );
       $this->select( "state_province-1", "value=1019" );
       
       $this->click( "edit-submit" );
       $this->waitForPageToLoad( "30000" );
-      $this->assertTrue( $this->isTextPresent( "Thank you for applying for an account. Your account is currently pending approval by the site administrator." ) );
+      $this->assertTrue( $this->isTextPresent( "Your password and further instructions have been sent to your e-mail address." ) );
       $this->webtestLogin( );
       
       $this->open( $this->sboxPath . "civicrm/contact/search&reset=1" );

@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -82,7 +82,7 @@ class CRM_Bridge_OG_Utils {
     }
 
     static function contactID( $ufID ) {
-        civicrm_api_include('uf_group');
+        civicrm_api_include('uf_group', false, 3);
         $contactID = civicrm_uf_match_id_get( $ufID );
         if ( $contactID ) {
             return $contactID;
@@ -90,8 +90,11 @@ class CRM_Bridge_OG_Utils {
 
         // else create a contact for this user
         $user = user_load( array( 'uid' => $ufID ) );
-        $params = array( 'contact_type' => 'Individual',
-                         'email'        => $user->mail, );
+        $params = array(
+            'contact_type' => 'Individual',
+            'email'        => $user->mail,
+            'version'      => 3,
+        );
 
         $values = civicrm_api('contact', 'create', $params );
         if ( $values['is_error'] ) {

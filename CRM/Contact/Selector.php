@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -199,6 +199,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         }
 
         $displayRelationshipType = CRM_Utils_Array::value( 'display_relationship_type', $this->_formValues );
+        $operator                = CRM_Utils_Array::value( 'operator', $this->_formValues, 'AND' );
 
         // rectify params to what proximity search expects if there is a value for prox_distance
         // CRM-7021
@@ -216,7 +217,9 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                                                      false, 
                                                      $searchDescendentGroups,
                                                      false,
-                                                     $displayRelationshipType );
+                                                     $displayRelationshipType,
+                                                     $operator );
+
         $this->_options =& $this->_query->_options;
     }//end of constructor
 
@@ -569,9 +572,19 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
 
             // for CRM-3157 purposes
             require_once 'CRM/Core/PseudoConstant.php';
-            if (in_array('country',        $names)) $countries =& CRM_Core_PseudoConstant::country();
-            if (in_array('state_province', $names)) $provinces =& CRM_Core_PseudoConstant::stateProvince();
-            if (in_array('world_region',   $names)) $regions   =& CRM_Core_PseudoConstant::worldRegions();
+            if ( in_array('country',        $names ) ) {
+                $countries =& CRM_Core_PseudoConstant::country();
+            }
+
+            if ( in_array('state_province', $names ) ) {
+                $provinces =& CRM_Core_PseudoConstant::stateProvince();
+            }
+
+            if ( in_array('world_region',   $names ) ) {
+                $regions   =& CRM_Core_PseudoConstant::worldRegions();
+            }
+
+            $empty = true;
 
             // the columns we are interested in
             foreach ($names as $property) {
@@ -623,6 +636,17 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     $row[$property] = CRM_Utils_Array::value( $result->state_province_id, $provinces );
                 } elseif ($property == 'world_region') {
                     $row[$property] = $regions[$result->world_region_id];
+                } elseif ( strpos( $property, '-url' ) !== false ) {
+                    $websiteUrl = '';
+                    $websiteKey = 'website-1';
+                    $websiteFld = $websiteKey . '-' . array_pop( explode( '-', $property ) );
+                    if ( !empty( $result->$websiteFld ) ) {
+                        $websiteTypes = CRM_Core_PseudoConstant::websiteType( );
+                        $websiteType  = $websiteTypes[$result->{"$websiteKey-website_type_id"}];
+                        $websiteValue = $result->$websiteFld;
+                        $websiteUrl = "<a href=\"{$websiteValue}\">{$websiteValue}  ({$websiteType})</a>";
+                    }
+                    $row[$property] = $websiteUrl;
                 } else {
                     $row[$property] = $result->$property;
                 }
@@ -717,6 +741,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     $row['id'  ] = $result->contact_id;
                 }
             }
+
             // Dedupe contacts        
             if ( ! $empty ) {
                 $duplicate = false;
@@ -729,7 +754,9 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     $rows[] = $row;
                 }
             }
+
         }
+
         //CRM_Core_Error::debug( '$rows', $rows );
         return $rows;
     }

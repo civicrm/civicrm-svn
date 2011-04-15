@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -32,7 +32,7 @@
  * @package CiviCRM_APIv3
  * @subpackage API_CustomGroup
  *
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * @version $Id: CustomGroup.php 30879 2010-11-22 15:45:55Z shot $
  */
 
@@ -54,7 +54,9 @@ require_once 'api/v3/utils.php';
  */
 
 /**
- * Use this API to create a new group. See the CRM Data Model for custom_group property definitions
+ * Use this API to create a new group.  The 'extends' value accepts an array or a comma separated string.
+ * e.g array('Individual','Contact') or 'Individual,Contact' 
+ * See the CRM Data Model for custom_group property definitions
  * $params['class_name'] is a required field, class being extended.
  *
  * @param $params     array   Associative array of property name/value pairs to insert in group.
@@ -69,36 +71,22 @@ function civicrm_api3_custom_group_create( $params )
 {
     _civicrm_api3_initialize(true );
     try{
-    civicrm_api3_verify_one_mandatory($params,null,array('extends','class_name'));  
     
-    // Require either param['class_name'] (string) - for backwards compatibility - OR parm['extends'] (array)
-    // If passing extends array - set class_name (e.g. 'Contact', 'Participant'...) as extends[0]. You may optionally
-    // pass an extends_entity_column_value as extends[1] (e.g. an Activity Type ID).
-
-    if( isset( $params['class_name'] ) && is_string($params['class_name'] ) && trim( $params['class_name'] ) ) {
-        $params['extends'][0] = trim( $params['class_name'] );
-    } else {
-        if ( ! isset( $params['extends'] ) || ! is_array( $params['extends'] ) ) { 
-            return civicrm_api3_create_error( "Params must include either 'class_name' (string) or 'extends' (array)." );
-        } else {
-            if ( ! isset( $params['extends'][0] ) || ! trim( $params['extends'][0] ) ) {
-                return civicrm_api3_create_error( "First item in params['extends'] must be a class name (e.g. 'Contact')." );
-            }
-        }
-    }
-
-    $error = _civicrm_api3_check_required_fields($params, 'CRM_Core_DAO_CustomGroup');
-    
-    require_once 'CRM/Utils/String.php';
-    if (! isset( $params['title'] ) ||
-        ! trim($params['title'] ) ) {
-        return civicrm_api3_create_error( "Title parameter is required." );
-    } 
-
-    if ( ! isset( $params['style'] ) || ! trim( $params['style'] ) ) {
+    civicrm_api3_verify_mandatory($params,null,array('extends','title'));  
+    if ( ! CRM_Utils_Array::value('style', $params)  ) {
         $params['style'] = 'Inline';
-    }
-        
+    }    
+      
+    
+    if (is_string($params['extends'])){
+     $extends = explode(",",$params['extends']);
+     unset ($params['extends']);
+     $params['extends'] =  $extends;
+   }
+   if ( ! isset( $params['extends'][0] ) || ! trim( $params['extends'][0] ) ) {
+          return civicrm_api3_create_error( "First item in params['extends'] must be a class name (e.g. 'Contact')." );
+   }
+           
     
     require_once 'CRM/Core/BAO/CustomGroup.php';
     $customGroup = CRM_Core_BAO_CustomGroup::create($params);                             
@@ -111,7 +99,7 @@ function civicrm_api3_custom_group_create( $params )
                         'label'           => 'api created field');// should put something cleverer here but this will do for now
         require_once 'api/v3/CustomField.php';
         $fieldValues = civicrm_api3_custom_field_create( $fparams );
-        $values      = array_merge( $values[$customGroup->id] , $fieldValues['values'][$fieldValues['id']] );
+        $values[$fieldValues['id']]      = array_merge( $values[$customGroup->id] , $fieldValues['values'][$fieldValues['id']] );
     }
     return civicrm_api3_create_success($values,$params);
     } catch (PEAR_Exception $e) {

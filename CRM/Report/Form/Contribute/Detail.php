@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -51,7 +51,7 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
             array( 'civicrm_contact'      =>
                    array( 'dao'     => 'CRM_Contact_DAO_Contact',
                           'fields'  =>
-                          array( 'display_name' => 
+                          array( 'sort_name' => 
                                  array( 'title' => ts( 'Contact Name' ),
                                         'required'  => true,
                                         'no_repeat' => true ),
@@ -248,9 +248,15 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
         $this->_from = "
         FROM  civicrm_contact      {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
               INNER JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']} 
-                      ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND {$this->_aliases['civicrm_contribution']}.is_test = 0
+                      ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND {$this->_aliases['civicrm_contribution']}.is_test = 0";
+
+        if ( !empty($this->_params['ordinality_value']) ) {
+            $this->_from .= "
               INNER JOIN (SELECT c.id, IF(COUNT(oc.id) = 0, 0, 1) AS ordinality FROM civicrm_contribution c LEFT JOIN civicrm_contribution oc ON c.contact_id = oc.contact_id AND oc.receive_date < c.receive_date GROUP BY c.id) {$this->_aliases['civicrm_contribution_ordinality']} 
-                      ON {$this->_aliases['civicrm_contribution_ordinality']}.id = {$this->_aliases['civicrm_contribution']}.id
+                      ON {$this->_aliases['civicrm_contribution_ordinality']}.id = {$this->_aliases['civicrm_contribution']}.id";
+        }
+
+        $this->_from .= "
                LEFT JOIN  civicrm_phone {$this->_aliases['civicrm_phone']} 
                       ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND 
                          {$this->_aliases['civicrm_phone']}.is_primary = 1)";
@@ -277,7 +283,7 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
     }
 
     function orderBy( ) {
-        $this->_orderBy = " ORDER BY {$this->_aliases['civicrm_contact']}.id ";
+        $this->_orderBy = " ORDER BY {$this->_aliases['civicrm_contact']}.sort_name, {$this->_aliases['civicrm_contact']}.id ";
     }
 
     function statistics( &$rows ) {
@@ -382,14 +388,14 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
             }
 
             // convert display name to links
-            if ( array_key_exists('civicrm_contact_display_name', $row) && 
-                 CRM_Utils_Array::value( 'civicrm_contact_display_name', $rows[$rowNum] ) && 
+            if ( array_key_exists('civicrm_contact_sort_name', $row) && 
+                 CRM_Utils_Array::value( 'civicrm_contact_sort_name', $rows[$rowNum] ) && 
                  array_key_exists('civicrm_contact_id', $row) ) {
                 $url = CRM_Utils_System::url( "civicrm/contact/view"  , 
                                               'reset=1&cid=' . $row['civicrm_contact_id'],
                                               $this->_absoluteUrl );
-                $rows[$rowNum]['civicrm_contact_display_name_link' ] = $url;
-                $rows[$rowNum]['civicrm_contact_display_name_hover'] =  
+                $rows[$rowNum]['civicrm_contact_sort_name_link' ] = $url;
+                $rows[$rowNum]['civicrm_contact_sort_name_hover'] =  
                     ts("View Contact Summary for this Contact.");
             }
             if ( $value = CRM_Utils_Array::value( 'civicrm_contribution_contribution_type_id', $row ) ) {

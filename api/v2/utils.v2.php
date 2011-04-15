@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -31,7 +31,7 @@
  * @package CiviCRM_APIv2
  * @subpackage API_utils
  * 
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * @version $Id: utils.php 31877 2011-01-19 04:23:54Z shot $
  *
  */
@@ -753,9 +753,16 @@ function _civicrm_participant_formatted_param( &$params, &$values, $create=false
                 return civicrm_create_error("Invalid Event ID: There is no event record with event_id = $value.");
             } 
             break;
+        case 'participant_status':
+            $values['status_id'] = $values['participant_status_id'] = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_ParticipantStatusType', $value, 'id', 'label');
+            break;
         case 'participant_status_id':
-            $id = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_ParticipantStatusType', $value, 'id', 'label');
-            $values[$key] = $id;
+            if ((int) $value) {
+                $values['status_id'] = $values[$key] = $value;
+            } else {
+                $id = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_ParticipantStatusType', $value, 'id', 'label');
+                $values['status_id'] = $values[$key] = $id;
+            }
             break;
         case 'participant_role_id':
         case 'participant_role':

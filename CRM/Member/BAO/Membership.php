@@ -2,9 +2,9 @@
 
  /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -140,6 +140,17 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         // reset the group contact cache since smart groups might be affected due to this
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::remove( );
+
+
+        if ( empty( $membership->contact_id ) ) {
+            // this means we are in renewal mode and are just updating the membership
+            // record and all fields are not present in the update record
+            // however the hooks dont care and want all data CRM-7784
+            $tempMembership = new CRM_Member_DAO_Membership();
+            $tempMembership->id = $membership->id;
+            $tempMembership->find( true );
+            $membership = $tempMembership;
+        }
 
         if ( CRM_Utils_Array::value( 'membership', $ids ) ) {
             CRM_Utils_Hook::post( 'edit', 'Membership', $membership->id, $membership );
@@ -1199,13 +1210,6 @@ AND civicrm_membership.is_test = %2";
             }
         }
         
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
-        CRM_Core_BAO_CustomValueTable::postProcess( $form->_params,
-                                                    CRM_Core_DAO::$_nullArray,
-                                                    'civicrm_membership',
-                                                    $membership->id,
-                                                    'Membership' );
-        
         if ( ! empty( $errors ) ) {
             foreach ($errors as $error ) {
                 if ( is_string( $error ) ) {
@@ -1218,6 +1222,14 @@ AND civicrm_membership.is_test = %2";
             CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/contribute/transact',
                                                                "_qf_Main_display=true&qfKey={$form->_params['qfKey']}" ) );
         }
+
+        // CRM-7851
+        require_once 'CRM/Core/BAO/CustomValueTable.php';
+        CRM_Core_BAO_CustomValueTable::postProcess( $form->_params,
+                                                    CRM_Core_DAO::$_nullArray,
+                                                    'civicrm_membership',
+                                                    $membership->id,
+                                                    'Membership' );
         
         $form->_params['membershipID'] = $membership->id;
         if ( $form->_contributeMode == 'notify' ) {

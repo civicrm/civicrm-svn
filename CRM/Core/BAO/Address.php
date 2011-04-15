@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -266,7 +266,22 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
             }
         }
 
+        // add county id if county is set
+        // CRM-7837
+        if ( ( ! isset( $params['county_id'] ) || ! is_numeric( $params['county_id'] ) )
+             && isset( $params['county'] ) && ! empty( $params['county'] ) ) {
+            $county       = new CRM_Core_DAO_County();
+            $county->name = $params['county'];   
             
+            if ( isset( $params['state_province_id'] ) ) {
+                $county->state_province_id = $params['state_province_id'];
+            }
+
+            if ( $county->find( true ) ) {
+                $params['county_id'] = $county->id;
+            }      
+        }
+             
         // currently copy values populates empty fields with the string "null"
         // and hence need to check for the string null
         if ( isset( $params['state_province_id'] ) && 
@@ -750,17 +765,17 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
                                     'OFC',  'OFFICE',     'PH',    'PENTHOUSE', 'TRLR', 'TRAILER', 
                                     'UPPR', 'RM',         'ROOM',  'SIDE',      'SLIP', 'KEY',  
                                     'LOT',  'PIER',       'REAR',  'SPC',       'SPACE', 
-                                    'STOP', 'STE',        'SUITE', 'UNIT',      '#',     'ST' );
+                                    'STOP', 'STE',        'SUITE', 'UNIT',      '#'  );
         
         // overwriting $streetUnitFormats for 'en_CA' and 'fr_CA' locale
         if ( in_array( $locale, array ( 'en_CA', 'fr_CA') ) ) {   
             $streetUnitFormats = array( 'APT', 'APP', 'SUITE', 'BUREAU', 'UNIT' );
         }
         
-        $streetUnitPreg = '/('. implode( '\s|\s', $streetUnitFormats ) . ')(.+)?/i';
+        $streetUnitPreg = '/('. implode( '|\s', $streetUnitFormats ) . ')(.+)?/i';
         $matches = array( );
         if ( preg_match( $streetUnitPreg, $streetAddress, $matches ) ) {
-            $parseFields['street_unit'] = $matches[0];
+            $parseFields['street_unit'] = trim($matches[0]);
             $streetAddress = str_replace( $matches[0], '', $streetAddress );
             $streetAddress = trim( $streetAddress );
         }
@@ -926,7 +941,7 @@ SELECT is_primary,
         if ( !$masterAddressId ) {
             return;
         }
-        
+        require_once 'CRM/Contact/BAO/Contact.php';
         // get the contact type of contact being edited / created
         $currentContactType = CRM_Contact_BAO_Contact::getContactType( $params['contact_id'] );      
         $currentContactId   = $params['contact_id'];

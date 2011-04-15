@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,13 +29,14 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
 
 require_once 'CRM/Core/Form.php';
 require_once "CRM/Activity/BAO/Activity.php";
+require_once 'CRM/Campaign/BAO/Campaign.php';
 
 /**
  * This class handle activity view mode
@@ -100,6 +101,11 @@ class CRM_Activity_Form_ActivityView extends CRM_Core_Form
             require_once 'CRM/Campaign/BAO/Campaign.php';
             $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( $campaignId );
             $values['campaign'] = $campaigns[$campaignId];
+        }
+        if ( $engagementLevel = CRM_Utils_Array::value( 'engagement_level', $defaults ) ) {
+            require_once 'CRM/Campaign/PseudoConstant.php';
+            $engagementLevels = CRM_Campaign_PseudoConstant::engagementLevel();
+            $values['engagement_level'] = CRM_Utils_Array::value( $engagementLevel, $engagementLevels, $engagementLevel );
         }
         
         require_once 'CRM/Core/BAO/File.php';

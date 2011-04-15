@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 
 
- 
+
 class WebTest_Contact_GroupAddTest extends CiviSeleniumTestCase {
 
   protected function setUp()
@@ -36,20 +36,22 @@ class WebTest_Contact_GroupAddTest extends CiviSeleniumTestCase {
       parent::setUp();
   }
 
-  function testGroupAdd( )
+  function testGroupAdd( $params = array( ) )
   {
-      // This is the path where our testing install resides. 
+      // This is the path where our testing install resides.
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
       // class attributes.
       $this->open( $this->sboxPath );
-      
+
       // Logging in. Remember to wait for page to load. In most cases,
       // you can rely on 30000 as the value that allows your test to pass, however,
       // sometimes your test might fail because of this. In such cases, it's better to pick one element
       // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin( );
-      
+
+      // create a new group with given parameters
+
       // Go directly to the URL of the screen that you will be testing (New Group).
       $this->open($this->sboxPath . "civicrm/group/add&reset=1");
 
@@ -58,30 +60,41 @@ class WebTest_Contact_GroupAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_Edit_upload");
 
       // take group name
-      $groupName = 'group_'.substr(sha1(rand()), 0, 7);
+      if ( empty( $params['name'] ) ) {
+          $params['name'] = 'group_'.substr(sha1(rand()), 0, 7);
+      }
 
       // fill group name
-      $this->type("title", $groupName);
-      
+      $this->type("title", $params['name']);
+
       // fill description
       $this->type("description", "Adding new group.");
 
       // check Access Control
-      $this->click("group_type[1]");
+      if ( isset ( $params['type1'] ) && $params['type1'] !== FALSE ) {
+          $this->click("group_type[1]");
+      }
 
       // check Mailing List
-      $this->click("group_type[2]");
+      if ( isset ( $params['type2'] ) && $params['type2'] !== FALSE ) {
+          $this->click("group_type[2]");
+      }
 
       // select Visibility as Public Pages
-      $this->select("visibility", "value=Public Pages");
-      
+      if ( empty( $params['visibility'] ) ) {
+          $params['visibility'] = 'Public Pages';
+      }
+
+      $this->select("visibility", "value={$params['visibility']}");
+
       // Clicking save.
       $this->click("_qf_Edit_upload");
       $this->waitForPageToLoad("30000");
 
       // Is status message correct?
-      $this->assertTrue($this->isTextPresent("The Group '$groupName' has been saved."));
-  }  
+      $this->assertTrue($this->isTextPresent("The Group '{$params['name']}' has been saved."));
+
+  }
 
 }
 ?>

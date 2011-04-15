@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -37,6 +37,7 @@
 require_once 'CRM/Core/Form.php';
 require_once 'CRM/Core/ShowHideBlocks.php';
 require_once 'CRM/Campaign/BAO/Survey.php';
+require_once 'CRM/Custom/Form/CustomData.php';
 
 /**
  * This class generates form components for processing a survey 
@@ -109,6 +110,19 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             }
         }
 
+        $this->_cdType = CRM_Utils_Array::value( 'type', $_GET );
+        $this->assign('cdType', false);
+        if ( $this->_cdType ) {
+            $this->assign('cdType', true);
+            return CRM_Custom_Form_CustomData::preProcess( $this );
+        }
+
+        // when custom data is included in this page
+        if ( CRM_Utils_Array::value( 'hidden_custom', $_POST ) ) {
+            CRM_Custom_Form_CustomData::preProcess( $this );
+            CRM_Custom_Form_CustomData::buildQuickForm( $this );
+        }
+
         $session = CRM_Core_Session::singleton();
         $url     = CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=survey'); 
         $session->pushUserContext( $url );
@@ -129,6 +143,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         
         $this->assign( 'action',   $this->_action );
         $this->assign( 'surveyId', $this->_surveyId );
+        $this->assign( 'entityID', $this->_surveyId ); // for custom data
     }
     
     /**
@@ -142,6 +157,10 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
      */
     function setDefaultValues()
     {
+        if ( $this->_cdType ) {
+            return CRM_Custom_Form_CustomData::setDefaultValues( $this );
+        }
+
         $defaults = $this->_values;
 
         if ( $this->_surveyId ) {
@@ -207,6 +226,10 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             return;
         }
 
+        if ( $this->_cdType ) {
+            return CRM_Custom_Form_CustomData::buildQuickForm( $this );
+        }
+
         require_once 'CRM/Event/PseudoConstant.php';
         require_once 'CRM/Core/BAO/UFGroup.php';
         require_once 'CRM/Core/BAO/CustomField.php';
@@ -222,7 +245,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( CRM_Utils_Array::value( 'campaign_id', $this->_values ) );
         $this->add('select', 'campaign_id', ts('Campaign'), array( '' => ts('- select -') ) + $campaigns );
         
-        $customProfiles = CRM_Core_BAO_UFGroup::getProfiles( array('Activity') );
+        $customProfiles = CRM_Core_BAO_UFGroup::getProfiles( CRM_Campaign_BAO_Survey::surveyProfileTypes( ) );
         // custom group id
         $this->add('select', 'profile_id', ts('Profile'), 
                    array( '' => ts('- select -')) + $customProfiles );
@@ -466,7 +489,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
     {
         // store the submitted values in an array
         $params = $this->controller->exportValues( $this->_name );
-               
+
         $session = CRM_Core_Session::singleton( );
 
         $params['last_modified_id'] = $session->get( 'userID' );
@@ -476,13 +499,13 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         require_once 'CRM/Core/BAO/OptionGroup.php';
         
         $updateResultSet = false;
+        $resultSetOptGrpId = null;
         if ( (CRM_Utils_Array::value('option_type', $params) == 2) &&
              CRM_Utils_Array::value('option_group_id', $params) ) {
-            if ( $params['option_group_id'] == CRM_Utils_Array::value('result_id', $this->_values) ) {
-                $updateResultSet  = true;
-            }
+            $updateResultSet   = true;
+            $resultSetOptGrpId = $params['option_group_id'];
         }
-
+        
         if ( $this->_surveyId ) {
 
             if ( $this->_action & CRM_Core_Action::DELETE ) {
@@ -507,10 +530,10 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         
         if ( $updateResultSet ) {
             $optionValue = new CRM_Core_DAO_OptionValue( );
-            $optionValue->option_group_id =  $this->_values['result_id'];
+            $optionValue->option_group_id = $resultSetOptGrpId;
             $optionValue->delete();
 
-            $params['result_id'] = $this->_values['result_id'];
+            $params['result_id'] = $resultSetOptGrpId;
             
         } else {
             $opGroupName = 'civicrm_survey_'.rand(10,1000).'_'.date( 'YmdHis' );
@@ -549,18 +572,23 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         
         $params['recontact_interval'] = serialize($recontactInterval);
             
-        $surveyId = CRM_Campaign_BAO_Survey::create( $params  );
+        $params['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
+                                                                   $customFields,
+                                                                   $this->_surveyId,
+                                                                   'Survey' );
+        $surveyId = CRM_Campaign_BAO_Survey::create( $params );
         
-        if ( CRM_Utils_Array::value('result_id', $this->_values) && !$updateResultSet ) {
+        if ( CRM_Utils_Array::value('result_id', $this->_values) ) {
             $query       = "SELECT COUNT(*) FROM civicrm_survey WHERE result_id = %1";
-            $countSurvey = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array($this->_values['result_id'], 'Integer') ) );
-
+            $countSurvey = (int)CRM_Core_DAO::singleValueQuery( $query, 
+                                                                array( 1 => array( $this->_values['result_id'], 
+                                                                                   'Positive') ) );
             // delete option group if no any survey is using it.
-            if ( !($countSurvey >= 1) ) {
+            if ( ! $countSurvey ) {
                 CRM_Core_BAO_OptionGroup::del($this->_values['result_id']);
             }
         }
-
+        
         require_once 'CRM/Core/BAO/UFJoin.php';
         
         // also update the ProfileModule tables 

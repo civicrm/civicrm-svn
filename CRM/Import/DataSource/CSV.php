@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -73,7 +73,8 @@ class CRM_Import_DataSource_CSV extends CRM_Import_DataSource
     {
         $file = $params['uploadFile']['name'];
         
-        $result = self::_CsvToTable( $db, $file, $params['skipColumnHeader'],
+        $result = self::_CsvToTable( $db, $file, 
+                                     CRM_Utils_Array::value( 'skipColumnHeader', $params, false ),
                                      CRM_Utils_Array::value( 'import_table_name', $params ) );
         
         $this->set('originalColHeader', CRM_Utils_Array::value( 'original_col_header', $result ) );

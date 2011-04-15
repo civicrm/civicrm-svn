@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -1504,13 +1504,13 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->addDate( $name, $title, $required, array( 'formatType' => 'birth') );
         } else if ( in_array($fieldName, array( 'membership_start_date','membership_end_date','join_date')) ) {  
             $form->addDate( $name, $title, $required, array( 'formatType' => 'custom') );
-        }  else if ($field['name'] == 'membership_type_id' ) { 
+        }  else if ($field['name'] == 'membership_type' ) { 
             require_once 'CRM/Member/PseudoConstant.php';
-            $form->add('select', 'membership_type_id', $title,
+            $form->add('select', $name, $title,
                        array(''=>ts( '- select -' )) + CRM_Member_PseudoConstant::membershipType( ), $required );            
-        } else if ($field['name'] == 'status_id'  && ( $mode && CRM_Contact_BAO_Query::MODE_MEMBER ) ) { 
+        } else if ($field['name'] == 'membership_status'  ) { 
             require_once 'CRM/Member/PseudoConstant.php';
-            $form->add('select', 'status_id', $title,
+            $form->add('select', $name, $title,
                        array('' => ts('- select -')) + CRM_Member_PseudoConstant::membershipStatus(null, null, 'label'), $required);
         } else if ( $fieldName === 'gender' ) {  
             $genderOptions = array( );   
@@ -1649,11 +1649,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             require_once 'CRM/Contribute/PseudoConstant.php';
             $form->add('select', $name, $title,
                        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionType( ), $required);
-        } else if ($fieldName == 'contribution_status_id' ) {
-            require_once 'CRM/Contribute/PseudoConstant.php';
-            $form->add('select', $name, $title,
-                       array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionStatus( ), $required);
-       } else if ($fieldName == 'contribution_page_id' ) {
+        } else if ($fieldName == 'contribution_page_id' ) {
            require_once 'CRM/Contribute/PseudoConstant.php';
            $form->add('select', $name, $title,
                       array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionPage( ), $required, 'class="big"');
@@ -2447,7 +2443,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 $noteDetails = array( );
                 $noteDetails = CRM_Core_BAO_Note::getNote( $componentId, 'civicrm_participant' );
                 $defaults[$fldName] = array_pop($noteDetails);  
-            }  else if ( in_array( $name, array( 'contribution_type', 'payment_instrument') ) )  {
+            }  else if ( in_array( $name, array( 'contribution_type', 'payment_instrument', 'participant_status', 'participant_role', 'membership_status', 'membership_type' ) ) )  {
                 $defaults[$fldName] = $values["{$name}_id"];
             } else if ( $customFieldInfo = CRM_Core_BAO_CustomField::getKeyID( $name, true ) ) {
                 if ( empty( $formattedGroupTree ) ) {

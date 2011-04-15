@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -31,7 +31,7 @@
  * @package CiviCRM_APIv3
  * @subpackage API_Tag
  * 
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * @version $Id: Tag.php 30486 2010-11-02 16:12:09Z shot $
  */
 
@@ -39,17 +39,6 @@
  * Include utility functions
  */
 require_once 'api/v3/utils.php';
-
-/**
- *  returns all the fields on this entity.
- */
-function civicrm_api3_tag_getfields( $params ) {
-    require_once 'CRM/Core/BAO/Tag.php';
-    $bao = new CRM_Core_BAO_Tag();
-    //function &exportableFields( $contactType = 'Individual', $status = false, $export = false, $search = false )
-    return ($bao->fields());
-    //return ($contact->fields());
-}
 
 /**
  *  Add a Tag. Tags are used to classify CRM entities (including Contacts, Groups and Actions).
@@ -75,7 +64,9 @@ function civicrm_api3_tag_create( $params )
     if ( CRM_Utils_Array::value( 'tag', $params ) ) {
         $ids['tag'] = $params['tag'];
     }
-
+    if ( CRM_Utils_Array::value( 'id', $params ) ) {
+        $ids['tag'] = $params['id'];
+    }
     $tagBAO = CRM_Core_BAO_Tag::add($params, $ids);
 
     if ( is_a( $tagBAO, 'CRM_Core_Error' ) ) {

@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -56,37 +56,26 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
             return false;
         }
 
-        // check for visibility, if visibility is user pages
+        // check for visibility, if visibility is Public Pages and they have the permission
         // return true
-        if ( $this->_mailing->visibility == 'Public Pages' ) {
+		require_once 'CRM/Core/Permission.php';
+        if ( $this->_mailing->visibility == 'Public Pages' 
+		&& CRM_Core_Permission::check( 'view CiviMail content' )) {
             return true;
         }
-
+		
+		// need to check to see if the user has received the mail before
+		// can potentially use checksum
+		if ( $this->_mailing->visibility == 'User and User Admin Only' ) {
+			
+		}
 
         // if user is an admin, return true
-        require_once 'CRM/Core/Permission.php';
+
         if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ||
              CRM_Core_Permission::check( 'access CiviMail' ) ) {
             return true;
         }
-
-        // if anon user return false
-        if ( empty( $this->_contactID ) ) {
-            return false;
-        }
-
-        // if user has recd this mailing return true, else return false
-        // check in mailing event table for this contact
-        $sql = "
-SELECT     id
-FROM       civicrm_mailing_event_queue q
-INNER JOIN civicrm_mailing_job j ON q.job_id = j.id
-WHERE      j.mailing_id = %1
-AND        q.contact_id = %2
-";
-        $params = array( 1 => array( $this->_mailingID, 'Integer' ),
-                         2 => array( $this->_contactID, 'Integer' ) );
-        return CRM_Core_DAO::singleValueQuery( $sql, $params ) ? true : false;
     }
 
     /** 
@@ -94,7 +83,7 @@ AND        q.contact_id = %2
      * 
      * @return void
      */ 
-    function run( $id = null, $print = true )
+    function run( $id = null, $contact_id = null, $print = true )
     {               
         if ( is_numeric( $id ) ) {
             $this->_mailingID = $id;
@@ -103,8 +92,15 @@ AND        q.contact_id = %2
             $this->_mailingID = CRM_Utils_Request::retrieve( 'id', 'Integer', CRM_Core_DAO::$_nullObject, true );
         }        
 
-        $session   =& CRM_Core_Session::singleton( );
-        $this->_contactID = $session->get( 'userID' );
+		// # CRM-7651
+		// override contactID from the function level if passed in
+		if ( isset( $contactID ) &&
+             is_numeric( $contactID )) {
+			$this->_contactID = $contactID;
+		} else {
+			$session   =& CRM_Core_Session::singleton( );
+			$this->_contactID = $session->get( 'userID' );
+        }
 
         require_once 'CRM/Mailing/BAO/Mailing.php';
         $this->_mailing     = new CRM_Mailing_BAO_Mailing();
@@ -126,17 +122,21 @@ AND        q.contact_id = %2
         require_once 'CRM/Core/BAO/File.php';
         $attachments =& CRM_Core_BAO_File::getEntityFile( 'civicrm_mailing',
                                                           $this->_mailing->id );
-
-        //get details of contact with token value including Custom Field Token Values.CRM-3734
-        $returnProperties = $this->_mailing->getReturnProperties( );
-        $params  = array( 'contact_id' => $this->_contactID );
-
-        $details = $this->_mailing->getDetails( $params, $returnProperties );
-       
-        $mime =& $this->_mailing->compose( null, null, null, $this->_contactID,
+		
+		// get contact detail and compose if contact id exists
+		if(isset($this->_contactID)) {
+			//get details of contact with token value including Custom Field Token Values.CRM-3734
+			$returnProperties = $this->_mailing->getReturnProperties( );
+			$params  = array( 'contact_id' => $this->_contactID );
+			$details = $this->_mailing->getDetails( $params, $returnProperties );
+			$details = $details[0][$this->_contactID];
+		} else {
+			$details = array('test');
+		}
+        $mime =& $this->_mailing->compose( null, null, null, 0,
                                            $this->_mailing->from_email,
                                            $this->_mailing->from_email,
-                                           true, $details[0][$this->_contactID], $attachments );
+                                           true, $details, $attachments );
 
         if ( isset( $this->_mailing->body_html ) ) {
             $header = 'Content-Type: text/html; charset=utf-8';
@@ -155,5 +155,3 @@ AND        q.contact_id = %2
         }
     }
 }
-
-

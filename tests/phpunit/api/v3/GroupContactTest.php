@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -33,7 +33,8 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
    
     protected $_contactId;
     protected $_contactId1;
-    protected $_apiversion;    
+    protected $_apiversion; 
+    protected $_groupId1;   
 
     function get_info( )
     {
@@ -54,9 +55,9 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
       $this->_apiversion =3;     
         parent::setUp();
 
-        $this->_contactId = $this->individualCreate(null,3);
+        $this->_contactId = $this->individualCreate(null);
 
-        $this->_groupId1  = $this->groupCreate( null,3);
+        $this->_groupId1  = $this->groupCreate( null);
         $params = array( 'contact_id' => $this->_contactId,
                          'group_id'     => $this->_groupId1,
                          'version'			=> $this->_apiversion, );
@@ -183,9 +184,10 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
                        'contact_type'     => 'Individual',
                        'version'			=> $this->_apiversion, );
         
-        $this->_contactId1 = $this->individualCreate( $cont, $this->_apiversion );
+        $this->_contactId1 = $this->individualCreate( $cont );
         $params = array(
                         'contact_id' => $this->_contactId,
+                        'contact_id.2' => $this->_contactId1,
                         'group_id'     => $this->_groupId1,
                         'version'			=> $this->_apiversion, );
         

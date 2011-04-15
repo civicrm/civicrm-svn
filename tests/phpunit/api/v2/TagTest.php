@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -83,13 +83,13 @@ class api_v2_TagTest extends CiviUnitTestCase
         $tag = $this->tagCreate();
         $this->assertEquals( 0, $tag['is_error'], 'In line ' . __LINE__ );
         
-        $params = array( 'id' => $tag['tag_id'],
-                         'name' => $tag['name'] );
+        $params = array( 'id' => $tag['id'],
+                         'name' => $tag['values'][$tag['id']]['name'], );
         $result = civicrm_tag_get($params);
 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         //$this->assertEquals( $tag['description'], $result['description'], 'In line ' . __LINE__ );
-        $this->assertEquals( $tag['name'], $result['name'], 'In line ' . __LINE__ ); 
+        $this->assertEquals( $tag['values'][$tag['id']]['name'], $result['name'], 'In line ' . __LINE__ ); 
     }  
     
 

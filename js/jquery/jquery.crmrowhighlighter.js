@@ -2,7 +2,7 @@
 * +--------------------------------------------------------------------+
 * | CiviCRM version 3.4                                                |
 * +--------------------------------------------------------------------+
-* | Copyright CiviCRM LLC (c) 2004-2010                                |
+* | Copyright CiviCRM LLC (c) 2004-2011                                |
 * +--------------------------------------------------------------------+
 * | This file is a part of CiviCRM.                                    |
 * |                                                                    |
@@ -25,7 +25,7 @@
 */ 
 (function($){ $.fn.crmrowhighlighter = function(){
     if ($('.crm-row-highlighter-processed').length == 0){
-        $('.selector tr').hover(function(){
+        $(this).find('tr').hover(function(){
             $(this).addClass('crm-row-highlight');
         },function(){
             $(this).removeClass('crm-row-highlight');

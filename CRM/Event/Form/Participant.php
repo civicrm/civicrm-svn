@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -30,7 +30,7 @@
  *
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -266,7 +266,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
             // also check for billing information
             // get the billing location type
             $locationTypes =& CRM_Core_PseudoConstant::locationType( );
-            $this->_bltID = array_search( 'Billing',  $locationTypes );
+            $this->_bltID = array_search( ts('Billing'),  $locationTypes );
             if ( ! $this->_bltID ) {
                 CRM_Core_Error::fatal( ts( 'Please set a location type of %1', array( 1 => 'Billing' ) ) );
             }
@@ -946,7 +946,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
     {   
         // get the submitted form values.  
         $params = $this->controller->exportValues( $this->_name );
-     
+        
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             require_once "CRM/Event/BAO/Participant.php";
             if(  CRM_Utils_Array::value( 'delete_participant', $params ) == 2 ) {
@@ -1255,11 +1255,6 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
 
         } else {
             $participants = array();
-            // fix note if deleted
-            if ( !$params['note'] ) {
-                $params['note'] = 'null';
-            }
-
             if ( $this->_single ) {
                 if ( $params['role_id'] ) {
                     foreach ( $params['role_id'] as $k => $v ) {
@@ -1531,6 +1526,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                 $this->assign( 'customGroup', $customGroup );
                 $this->assign( 'contactID', $contactID);
                 $this->assign( 'participantID', $participants[$num]->id );
+                $this->_id = $participants[$num]->id;
                 
                 if ( $this->_isPaidEvent ) {
                     // fix amount for each of participants ( for bulk mode )

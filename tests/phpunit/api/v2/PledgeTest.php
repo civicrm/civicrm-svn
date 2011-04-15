@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.2                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -36,13 +36,11 @@ class api_v2_PledgeTest extends CiviUnitTestCase
      */
     protected $_individualId;    
     protected $_pledge;
-   // protected $_pledgeTypeId;
     
     function setUp() 
     {
         parent::setUp();
 
-     //   $this->_pledgeTypeId = 1;
         $this->_individualId = $this->individualCreate();
     }
     
@@ -245,7 +243,7 @@ class api_v2_PledgeTest extends CiviUnitTestCase
     
     function testDeletePledge()
     {
-        $pledgeID = $this->pledgeCreate( $this->_individualId , $this->_pledgeTypeId );
+        $pledgeID = $this->pledgeCreate( $this->_individualId );
         $params         = array( 'pledge_id' => $pledgeID );
         $pledge   = civicrm_pledge_delete( $params );
         $this->assertEquals( $pledge['is_error'], 0 );

@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -104,7 +104,7 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
             if ( CRM_Utils_Array::value( 'is_current_member', $statusANDType[$dao->id] ) ) {
                 $membership[$dao->id]['active'] = true;
             }
-            if ( ! $dao->owner_membership_id ) {
+            if ( empty($dao->owner_membership_id) ) {
                 // unset renew and followup link for deceased membership
                 $currentMask = $mask;
                 if ( $dao->status_id == $deceasedStatusId ) { 

@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -58,6 +58,8 @@ function smarty_function_crmAPI( $params, &$smarty ) {
     unset ($params ['entity']);
     unset ($params ['method']);
     unset ($params ['assign']);
+    $params['version'] = 3;
+    require_once 'api/api.php';
     $result = civicrm_api ($entity, $action,$params); 
     CRM_Core_Error::setCallback( );
     if ( $result === false ) {

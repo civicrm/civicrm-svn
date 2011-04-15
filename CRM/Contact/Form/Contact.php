@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -564,8 +564,11 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
 		}
         
         $this->addFormRule( array( 'CRM_Contact_Form_Edit_'. $this->_contactType,   'formRule' ), $this->_contactId );
-        $this->addFormRule( array( 'CRM_Contact_Form_Edit_Address',   'formRule' ) );
         
+        if ( array_key_exists('Address', $this->_editOptions) ) {
+            $this->addFormRule( array( 'CRM_Contact_Form_Edit_Address',   'formRule' ) );
+        }
+
         if ( array_key_exists('CommunicationPreferences', $this->_editOptions) ) {
             $this->addFormRule( array( 'CRM_Contact_Form_Edit_CommunicationPreferences','formRule' ), $this );
         }
@@ -843,11 +846,13 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $params['deceased_date'] = null;
         }
 
-        // process membership status for deceased contact
-        $deceasedParams = array( 'contact_id'  => $params['contact_id'],
-                                 'is_deceased'   => $params['is_deceased'],
-                                 'deceased_date' => $params['deceased_date'] );
-        $updateMembershipMsg = $this->updateMembershipStatus( $deceasedParams );
+        if ( isset($params['contact_id']) ) {
+            // process membership status for deceased contact
+            $deceasedParams = array( 'contact_id'  => $params['contact_id'],
+                                     'is_deceased'   => !empty($params['is_deceased']),
+                                     'deceased_date' => empty($params['deceased_date']) ? NULL : $params['deceased_date'] );
+            $updateMembershipMsg = $this->updateMembershipStatus( $deceasedParams );
+        }
         
         // action is taken depending upon the mode
         require_once 'CRM/Utils/Hook.php';
@@ -921,20 +926,20 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                                             $params['contact_id'] );
         
             //save free tags
-            if ( isset( $params['taglist'] ) && !empty( $params['taglist'] ) ) {
+            if ( isset( $params['contact_taglist'] ) && !empty( $params['contact_taglist'] ) ) {
                 require_once 'CRM/Core/Form/Tag.php';
-                CRM_Core_Form_Tag::postProcess( $params['taglist'], $params['contact_id'], 'civicrm_contact', $this );
+                CRM_Core_Form_Tag::postProcess( $params['contact_taglist'], $params['contact_id'], 'civicrm_contact', $this );
             }
         }
         
         $statusMsg = ts('Your %1 contact record has been saved.', array( 1 => $contact->contact_type_display ) );
-        if ( $parseStatusMsg ) {
+        if ( !empty($parseStatusMsg) ) {
             $statusMsg =  "$statusMsg <br > $parseStatusMsg";
         }
-        if ( $uploadFailMsg  ) {
+        if ( !empty($uploadFailMsg)  ) {
             $statusMsg = "$statusMsg <br > $uploadFailMsg";
         }
-        if ( $updateMembershipMsg ) {
+        if ( !empty($updateMembershipMsg) ) {
             $statusMsg = "$statusMsg <br > $updateMembershipMsg";
         }
 

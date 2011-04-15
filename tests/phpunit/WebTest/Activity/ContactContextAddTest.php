@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -132,10 +132,10 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");
 
-      $this->waitForElementPresent("xpath=//div[@id='Activities']//table/tbody/tr[3]/td[8]/span/a[text()='View']");
+      $this->waitForElementPresent("xpath=//div[@id='Activities']//table/tbody/tr[2]/td[8]/span/a[text()='View']");
       
       // click through to the Activity view screen
-      $this->click("xpath=//div[@id='Activities']//table/tbody/tr[3]/td[8]/span/a[text()='View']");
+      $this->click("xpath=//div[@id='Activities']//table/tbody/tr[2]/td[8]/span/a[text()='View']");
       $this->waitForElementPresent('_qf_Activity_cancel-bottom');
 
       // verify Activity created

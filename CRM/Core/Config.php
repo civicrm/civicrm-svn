@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -32,7 +32,7 @@
  * The default values in general, should reflect production values (minimizes chances of screwing up)
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -249,18 +249,10 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
 
         if ( defined( 'CIVICRM_UF_BASEURL' ) ) {
             $this->userFrameworkBaseURL = CRM_Utils_File::addTrailingSlash( CIVICRM_UF_BASEURL, '/' );
-            if ($userFramework == 'Drupal' and function_exists('variable_get')) {
-                global $language;
-                if (module_exists('locale') && $mode = variable_get('language_negotiation', LANGUAGE_NEGOTIATION_NONE)) {
-                    if (isset($language->prefix) and $language->prefix
-                        and ($mode == LANGUAGE_NEGOTIATION_PATH_DEFAULT or $mode == LANGUAGE_NEGOTIATION_PATH)) {
-                        $this->userFrameworkBaseURL .= $language->prefix . '/';
-                }
-                    if (isset($language->domain) and $language->domain and $mode == LANGUAGE_NEGOTIATION_DOMAIN) {
-                        $this->userFrameworkBaseURL = CRM_Utils_File::addTrailingSlash( $language->domain, '/' );
-                    }
-                }
-            }
+            
+            //format url for language negotiation, CRM-7803 
+            $this->userFrameworkBaseURL = CRM_Utils_System::languageNegotiationURL( $this->userFrameworkBaseURL );
+            
             if ( isset( $_SERVER['HTTPS'] ) &&
                  strtolower( $_SERVER['HTTPS'] ) != 'off' ) {
                 $this->userFrameworkBaseURL     = str_replace( 'http://', 'https://', 
@@ -619,6 +611,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         foreach ( $queries as $query ) {
             CRM_Core_DAO::executeQuery( $query );
         }
+
+        // also delete all the import and export temp tables
+        self::clearTempTables( );
     }
 
     /**
@@ -626,24 +621,27 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
      */
     function clearTempTables( ) {
         // CRM-5645
-        require_once 'CRM/Contact/DAO/Contact.php';
-        $dao = new CRM_Contact_DAO_Contact( );
+        $dao = new CRM_Core_DAO( );
         $query = "
- SELECT TABLE_NAME as import_table
-   FROM INFORMATION_SCHEMA.TABLES
-  WHERE TABLE_SCHEMA = %1 AND TABLE_NAME LIKE 'civicrm_import_job_%'";
+SELECT TABLE_NAME as tableName
+FROM   INFORMATION_SCHEMA.TABLES
+WHERE  TABLE_SCHEMA = %1 
+AND    ( TABLE_NAME LIKE 'civicrm_import_job_%'
+OR       TABLE_NAME LIKE 'civicrm_export_temp%'
+OR       TABLE_NAME LIKE 'civicrm_task_action_temp%' )
+";
+
         $params = array( 1 => array( $dao->database(), 'String' ) );
         $tableDAO = CRM_Core_DAO::executeQuery( $query, $params );
-        $importTables = array();
+        $tables = array();
         while ( $tableDAO->fetch() ) {
-            $importTables[] = $tableDAO->import_table;
+            $tables[] = $tableDAO->tableName;
         }
-        if ( !empty( $importTables ) ) {
-                $importTable = implode(',', $importTables);
-                // drop leftover import temporary tables
-                CRM_Core_DAO::executeQuery( "DROP TABLE $importTable" );
+        if ( !empty( $tables ) ) {
+            $table = implode(',', $tables);
+            // drop leftover temporary tables
+            CRM_Core_DAO::executeQuery( "DROP TABLE $table" );
         }
-
     }
     
     /**

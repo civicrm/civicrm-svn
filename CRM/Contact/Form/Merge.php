@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -178,13 +178,14 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         
         $diffs = CRM_Dedupe_Merger::findDifferences($cid, $oid);
         
-        $mainParams  = array('contact_id' => $cid, 'return.display_name' => 1, 'return.contact_sub_type' => 1);
-        $otherParams = array('contact_id' => $oid, 'return.display_name' => 1, 'return.contact_sub_type' => 1);
+        $mainParams  = array('contact_id' => $cid, 'return.display_name' => 1, 'return.contact_sub_type' => 1, 'version' => 2);
+        $otherParams = array('contact_id' => $oid, 'return.display_name' => 1, 'return.contact_sub_type' => 1, 'version' => 2);
         // API 2 has to have the requested fields spelt-out for it
         foreach (CRM_Dedupe_Merger::$validFields as $field) {
             $mainParams["return.$field"] = $otherParams["return.$field"] = 1;
         }
-        $main  =& civicrm_api('contact', 'get', $mainParams);
+
+        $main =& civicrm_api('contact', 'get', $mainParams);
         //CRM-4524
         $main  = reset( $main );
         if ( $main['contact_id'] != $cid ) {
@@ -266,8 +267,6 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         }
         
         // handle location blocks.
-        $mainParams['version'] = $otherParams['version'] = '3.0';
-        
         $locations['main']  =& civicrm_api('location', 'get', $mainParams);
         $locations['other'] =& civicrm_api('location', 'get', $otherParams);
         $allLocationTypes   = CRM_Core_PseudoConstant::locationType( );
@@ -383,7 +382,8 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                 unset($relTables[$name]);
                 continue;
             }
-            $this->addElement('checkbox', "move_$name");
+            $el = $this->addElement('checkbox', "move_$name");
+            $el->setChecked (true);
             $relTables[$name]['main_url']  = str_replace('$cid', $cid, $relTables[$name]['url']);
             $relTables[$name]['other_url'] = str_replace('$cid', $oid, $relTables[$name]['url']);
             if ( $name == 'rel_table_users' ) {
@@ -706,7 +706,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         
         // move other's belongings and delete the other contact
         CRM_Dedupe_Merger::moveContactBelongings( $this->_cid, $this->_oid );
-        $otherParams = array( 'contact_id' => $this->_oid );
+        $otherParams = array('id' => $this->_oid, 'version' => 3);
 
         if ( CRM_Core_Permission::check( 'merge duplicate contacts' ) && 
              CRM_Core_Permission::check( 'delete contacts' ) ) {

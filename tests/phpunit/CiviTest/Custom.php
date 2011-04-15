@@ -22,7 +22,7 @@ class Custom extends CiviUnitTestCase
                            'style'       => 'Inline',
                            'is_multiple' => $isMultiple,
                            'is_active'   => 1,
-                           'version'		 => 3,
+                           'version'     => 3
                            );
             
         } else {
@@ -47,9 +47,6 @@ class Custom extends CiviUnitTestCase
         $group->id = $result['id'];
         $group->find( true );
 
-
-
-
         return $group;
     }
     
@@ -69,20 +66,21 @@ class Custom extends CiviUnitTestCase
                             'is_required'     => 1,
                             'is_searchable'   => 0,
                             'is_active'       => 1,
-                            'version'					=> 3,
+                            'version'		      => 3
                             );
         }
         
         $result = civicrm_api('custom_field', 'create', $params );
 
         if ( $result['is_error'] ) {
+          print_r($result);
             return null;
         }
-
+        
         // this is done for backward compatibility
         // with tests older than 3.2.3
         $customField = new CRM_Core_DAO_CustomField();
-        $customField->id = $result['result']['customFieldId'];
+        $customField->id = $result['id'];
         $customField->find( true );
 
         return $customField;

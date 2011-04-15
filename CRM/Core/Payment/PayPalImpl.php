@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /** 
  * 
  * @package CRM 
- * @copyright CiviCRM LLC (c) 2004-2010 
+ * @copyright CiviCRM LLC (c) 2004-2011 
  * $Id$ 
  * 
  */ 
@@ -420,8 +420,14 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
         $returnURL = CRM_Utils_System::url( $url,
                                             "_qf_ThankYou_display=1&qfKey={$params['qfKey']}",
                                             true, null, false );
+
+        $cancelUrlString = "$cancel=1&cancel=1&qfKey={$params['qfKey']}";
+        if ( CRM_Utils_Array::value( 'is_recur', $params ) ) {
+            $cancelUrlString .= "&isRecur=1&recurId={$params['contributionRecurID']}&contribId={$params[contributionID]}"; 
+        }
+        
         $cancelURL = CRM_Utils_System::url( $url,
-                                            "$cancel=1&cancel=1&qfKey={$params['qfKey']}",
+                                            $cancelUrlString,
                                             true, null, false );
 
         // ensure that the returnURL is absolute.

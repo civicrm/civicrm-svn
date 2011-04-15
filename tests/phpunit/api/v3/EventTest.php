@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -173,6 +173,20 @@ class api_v3_EventTest extends CiviUnitTestCase
         $this->assertArrayHasKey( 'id', $result['values'][$result['id']], 'In line ' . __LINE__  );
     }
 
+    
+    function testUpdateEvent( )
+    {
+        $result = civicrm_api3_event_create( $this->_params );
+
+        $this->assertEquals( $result['is_error'], 0 );
+        $params =array('id' => $result['id'], 'version'=>3, 'max_participants'        => 150,);
+        $updated = civicrm_api('Event','Update',$params);
+        $this->documentMe($this->_params,$updated,__FUNCTION__,__FILE__); 
+        $this->assertEquals(  $updated['is_error'], 0 );
+        $this->assertEquals( 150, $updated['values'][$updated['id']]['max_participants'] );
+ 
+    }
+    
 ///////////////// civicrm_event_delete methods
 
     function testDeleteWrongParamsType()
@@ -297,7 +311,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
         $result = civicrm_api3_event_create($params);
         $this->assertEquals(1,                                                                                                  $result['is_error'],      'lacking permissions should not be enough to create an event');
-        $this->assertEquals('API permission check failed for civicrm_event_create call; missing permission: access CiviEvent.', $result['error_message'], 'lacking permissions should not be enough to create an event');
+        $this->assertEquals('API permission check failed for civicrm_api3_event_create call; missing permission: access CiviEvent.', $result['error_message'], 'lacking permissions should not be enough to create an event');
 
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviEvent', 'add contacts');
         $result = civicrm_api3_event_create($params);

@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,14 +29,14 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
 
 require_once 'CRM/Import/Parser.php';
 
-civicrm_api_include('utils');
+civicrm_api_include('utils', false, 2);
 
 /**
  * class to parse contact csv files
@@ -481,7 +481,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     array_unshift($values, $errorMessage);
                     $importRecordParams = array($statusFieldName => 'ERROR', "${statusFieldName}Msg" => $errorMessage);
                     $this->updateImportRecord( $values[count($values)-1], $importRecordParams );
-                    return CRM_Import_Parser::ERROR;
+                    return CRM_Import_Parser::DUPLICATE;
                 }
             }
         }
@@ -1100,7 +1100,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         }
                     }
                     // need not check for label filed import
-                    $htmlType = array('CheckBox','Multi-Select','AdvMulti-Select','Select','Radio','Multi-Select State/Province' ,'Multi-Select Country','Text' );
+                    $htmlType = array( 'CheckBox','Multi-Select','AdvMulti-Select','Select',
+                                       'Radio','Multi-Select State/Province' ,'Multi-Select Country' );
                     if ( ! in_array( $customFields[$customFieldID]['html_type'], $htmlType ) ||
                          $customFields[$customFieldID]['data_type'] =='Boolean' || 
                          $customFields[$customFieldID]['data_type'] == 'ContactReference' ) {
@@ -1558,7 +1559,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         //get the prefix id etc if exists
         CRM_Contact_BAO_Contact::resolveDefaults($formatted, true);
         
-        civicrm_api_include('contact');
+        civicrm_api_include('contact', false, 2);
         // setting required check to false, CRM-2839
         // plus we do our own required check in import
         $error = civicrm_contact_check_params( $formatted, $dupeCheck, true, false );

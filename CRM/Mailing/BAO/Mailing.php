@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -1113,8 +1113,19 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                                          $attach['cleanName'] );
             }
         }
-
-        $headers['To'] = "{$mailParams['toName']} <{$mailParams['toEmail']}>";
+        
+        //pickup both params from mail params.
+        $toName  = trim( $mailParams['toName']  );
+        $toEmail = trim( $mailParams['toEmail'] );
+        if ( $toName == $toEmail || 
+             strpos( $toName, '@' ) !== false ) {
+            $toName = null;
+        } else {
+            $toName = CRM_Utils_Mail::formatRFC2822Name( $toName );
+        }
+        
+        $headers['To'] = "$toName <$toEmail>";
+        
         $headers['Precedence'] = 'bulk';
         // Will test in the mail processor if the X-VERP is set in the bounced email.
         // (As an option to replace real VERP for those that can't set it up)
@@ -1893,7 +1904,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                             'archived'      => $dao->archived,
                             'approval_status_id' => $dao->approval_status_id,
                             'campaign_id'   => $dao->campaign_id,
-                            'campaign'      => $allCampaigns[$dao->campaign_id]
+                            'campaign'      => empty($dao->campaign_id) ? NULL : $allCampaigns[$dao->campaign_id],
                             );
         }
         return $rows;
@@ -2008,6 +2019,11 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                         $skipDeceased = true,
                         $extraParams = null ) 
     {
+        if ( empty( $contactIDs ) ) {
+            // putting a fatal here so we can trck if/when this happens
+            CRM_Core_Error::fatal( );
+        }
+
         $params = array( );
         foreach ( $contactIDs  as $key => $contactID ) {
             $params[] = array( CRM_Core_Form::CB_PREFIX . $contactID,

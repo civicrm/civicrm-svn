@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -57,7 +57,7 @@
                 <span class="bold">{ts}Your registration has been submitted.{/ts}
                 {ts}Once your registration has been reviewed, you will receive an email with a link to a web page where you can complete the registration process.{/ts}</span>
             </p>
-        {elseif $is_pay_later and $paidEvent}
+        {elseif $is_pay_later and $paidEvent and !$isAmountzero}
             <div class="bold">{$pay_later_receipt}</div>
             {if $is_email_confirm}
                 <p>{ts 1=$email}An email with event details has been sent to %1.{/ts}</p>

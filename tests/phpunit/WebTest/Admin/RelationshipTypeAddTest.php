@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -101,6 +101,7 @@ class WebTest_Admin_RelationshipTypeAddTest extends CiviSeleniumTestCase
         
         $this->select('contact_types_a', 'value=Individual');
         $this->select('contact_types_b', 'value=Individual');
+        $description = 'Test Relationship Type Description';
         $this->type('description', $description );
         
         $this->click('_qf_RelationshipType_next-bottom');

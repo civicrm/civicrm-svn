@@ -3,7 +3,7 @@
 function group_organization_get_example(){
     $params = array(
     
-                  'organization_id' 		=> '',
+                  'organization_id' 		=> '1',
                   'version' 		=> '3',
 
   );
@@ -23,7 +23,7 @@ function group_organization_get_expectedresult(){
            'is_error' 		=> '0',
            'version' 		=> '3',
            'count' 		=> '3',
-           'values' 		=> array(           'id' => '',                      'group_id' => '',                      'organization_id' => '',           ),
+           'values' 		=> array(           'id' => '',                      'group_id' => '',                      'organization_id' => '1',           ),
       );
 
   return $expectedResult  ;

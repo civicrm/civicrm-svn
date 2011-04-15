@@ -62,12 +62,13 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                         'weight'          => 4,
                         'is_required'     => 1,
                         'is_searchable'   => 0,
-                        'is_active'       => 1
+                        'is_active'       => 1,
+                        'version'					=> $this->_apiversion,
                         );
         
         $customField =& civicrm_api3_custom_field_create($params);
         $this->assertEquals($customField['is_error'],1);
-        $this->assertEquals( $customField['error_message'],'Mandatory key(s) missing from params array: label, version' );
+        $this->assertEquals( $customField['error_message'],'Mandatory key(s) missing from params array: label' );
 
     } 
 
@@ -96,8 +97,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
 
         $this->assertEquals($customField['is_error'],0,'in line ' . __LINE__);
         $this->assertNotNull($customField['id'],'in line ' . __LINE__);
-        $this->customFieldDelete($customField['id'],$this->_apiversion); 
-        $this->customGroupDelete($customGroup['id'],$this->_apiversion); 
+        $this->customFieldDelete($customField['id']); 
+        $this->customGroupDelete($customGroup['id']); 
 
     } 
 
@@ -114,12 +115,13 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                              'weight'         => 4,
                              'is_required'    => 1,
                              'is_searchable'  => 0,
-                             'is_active'      => 1
+                             'is_active'      => 1,
+                             'version'				=>$this->_apiversion,
                              );
                
         $customField =& civicrm_api3_custom_field_create($fieldParams);
         $this->assertEquals($customField['is_error'], 1);
-        $this->assertEquals( $customField['error_message'],'Mandatory key(s) missing from params array: custom_group_id, version' );
+        $this->assertEquals( $customField['error_message'],'Mandatory key(s) missing from params array: custom_group_id' );
     }    
 
     /**
@@ -144,8 +146,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $customField =& civicrm_api3_custom_field_create($params);
         $this->assertEquals($customField['is_error'],0,'in line' . __LINE__);
         $this->assertNotNull($customField['id'],'in line' . __LINE__);
-        $this->customFieldDelete($customField['id'],$this->_apiversion); 
-        $this->customGroupDelete($customGroup['id'],$this->_apiversion); 
+        $this->customFieldDelete($customField['id']); 
+        $this->customGroupDelete($customGroup['id']); 
     } 
     
     /**
@@ -170,8 +172,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
         $this->assertEquals($result['is_error'],0);
         $this->assertNotNull($result['id']);
-        $this->customFieldDelete($result['id'],$this->_apiversion);
-        $this->customGroupDelete($customGroup['id'],$this->_apiversion); 
+        $this->customFieldDelete($result['id']);
+        $this->customGroupDelete($customGroup['id']); 
 
     } 
             /**
@@ -207,8 +209,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $customField =& civicrm_api3_custom_field_create($params);
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
-        $this->customFieldDelete($customField['id'],$this->_apiversion);
-        $this->customGroupDelete($customGroup['id'],$this->_apiversion); 
+        $this->customFieldDelete($customField['id']);
+        $this->customGroupDelete($customGroup['id']); 
     }
     
     /**
@@ -233,8 +235,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $customField =& civicrm_api3_custom_field_create($params);
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
-        $this->customFieldDelete($customField['id'],$this->_apiversion);
-        $this->customGroupDelete($customGroup['id'],$this->_apiversion); 
+        $this->customFieldDelete($customField['id']);
+        $this->customGroupDelete($customGroup['id']); 
     } 
     
     /**
@@ -262,8 +264,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
 
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
-        $this->customFieldDelete($customField['id'],$this->_apiversion);
-        $this->customGroupDelete($customGroup['id'],$this->_apiversion); 
+        $this->customFieldDelete($customField['id']);
+        $this->customGroupDelete($customGroup['id']); 
     } 
      
     /**
@@ -301,8 +303,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
 
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
-        $this->customFieldDelete($customField['id'],$this->_apiversion);
-        $this->customGroupDelete($customGroup['id'],$this->_apiversion); 
+        $this->customFieldDelete($customField['id']);
+        $this->customGroupDelete($customGroup['id']); 
     }
     /**
      * check with data type - Select Option array
@@ -328,8 +330,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
 
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
-        $this->customFieldDelete($customField['id'],$this->_apiversion);
-        $this->customGroupDelete($customGroup['id'],$this->_apiversion); 
+        $this->customFieldDelete($customField['id']);
+        $this->customGroupDelete($customGroup['id']); 
     }
     
     /**
@@ -358,8 +360,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
 
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
-        $this->customFieldDelete($customField['id'],$this->_apiversion);
-        $this->customGroupDelete($customGroup['id'],$this->_apiversion); 
+        $this->customFieldDelete($customField['id']);
+        $this->customGroupDelete($customGroup['id']); 
     }   
 
     /**
@@ -387,8 +389,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
 
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
-        $this->customFieldDelete($customField['id'],$this->_apiversion);
-        $this->customGroupDelete($customGroup['id'],$this->_apiversion); 
+        $this->customFieldDelete($customField['id']);
+        $this->customGroupDelete($customGroup['id']); 
     } 
     
     /**
@@ -416,8 +418,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
 
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
-        $this->customFieldDelete($customField['id'],$this->_apiversion);
-        $this->customGroupDelete($customGroup['id'],$this->_apiversion); 
+        $this->customFieldDelete($customField['id']);
+        $this->customGroupDelete($customGroup['id']); 
     }     
 
 ///////////////// civicrm_custom_field_delete methods
@@ -437,10 +439,10 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
      */
     function testCustomFieldDeleteWithoutFieldID( )
     {
-        $params = array( ); 
+        $params = array('version' => $this->_apiversion ); 
         $customField =& civicrm_api3_custom_field_delete($params); 
         $this->assertEquals($customField['is_error'], 1);
-        $this->assertEquals($customField['error_message'], 'Mandatory key(s) missing from params array: id, version');
+        $this->assertEquals($customField['error_message'], 'Mandatory key(s) missing from params array: id');
     }    
 
     /**
@@ -448,8 +450,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
      */
     function testCustomFieldDelete( )
     {
-        $customGroup = $this->customGroupCreate('Individual','test_group',$this->_apiversion);
-        $customField = $this->customFieldCreate($customGroup['id'],'test_name', $this->_apiversion); 
+        $customGroup = $this->customGroupCreate('Individual','test_group');
+        $customField = $this->customFieldCreate($customGroup['id'],'test_name'); 
         $this->assertNotNull($customField['id'],'in line ' .__LINE__);
         $params = array('version'					=> $this->_apiversion,
                          'id'							=> $customField );
@@ -457,7 +459,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);   
 
         $this->assertEquals($result['is_error'], 0,'in line ' .__LINE__);
-        $this->customGroupDelete($customGroup['id'],$this->_apiversion);
+        $this->customGroupDelete($customGroup['id']);
 
     } 
       
@@ -466,15 +468,15 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
      */    
     function testCustomFieldOptionValueDelete( )
     {
-        $customGroup = $this->customGroupCreate('Contact','ABC',$this->_apiversion );  
-        $customOptionValueFields = $this->customFieldOptionValueCreate($customGroup,'fieldABC',$this->_apiversion );
+        $customGroup = $this->customGroupCreate('Contact','ABC' );  
+        $customOptionValueFields = $this->customFieldOptionValueCreate($customGroup,'fieldABC' );
         $customOptionValueFields['version'] = $this->_apiversion;
         $params = array('version'					=> $this->_apiversion,
                          'id'							=> $customOptionValueFields);
         
         $customField =& civicrm_api3_custom_field_delete($customOptionValueFields);
         $this->assertEquals($customField['is_error'], 0);
-        $this->customGroupDelete($customGroup['id'],$this->_apiversion); 
+        $this->customGroupDelete($customGroup['id']); 
     } 
  
 }

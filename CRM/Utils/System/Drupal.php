@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,10 +29,11 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
+
 
 /**
  * Drupal specific stuff goes here
@@ -166,6 +167,9 @@ class CRM_Utils_System_Drupal {
                  $frontend = false ) {
         $config = CRM_Core_Config::singleton( );
         $script =  'index.php';
+
+        require_once 'CRM/Utils/String.php';
+        $path = CRM_Utils_String::stripPathChars( $path );
 
         if (isset($fragment)) {
             $fragment = '#'. $fragment;
@@ -353,7 +357,8 @@ class CRM_Utils_System_Drupal {
         
         $path = $_SERVER['SCRIPT_FILENAME'];
         if ( function_exists( 'drush_get_context' ) ) {
-            $path = drush_get_context('DRUSH_DRUPAL_ROOT');
+            // drush anyway takes care of multisite install etc
+            return drush_get_context('DRUSH_DRUPAL_ROOT');
         }
         // CRM-7582
         $pathVars = explode( '/', 

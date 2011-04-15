@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -83,7 +83,7 @@
      {/foreach}
   {else}
       {foreach from=$rows item=row}
-         <tr id='rowid{$row.contact_id}' class="{cycle values="odd-row,even-row"}" title="{ts}Click contact name to view a summary. Right-click anywhere in the row for an actions menu."{/ts}>
+         <tr id='rowid{$row.contact_id}' class="{cycle values="odd-row,even-row"}" title="{ts}Click contact name to view a summary. Right-click anywhere in the row for an actions menu.{/ts}">
             {assign var=cbName value=$row.checkbox}
             <td>{$form.$cbName.html}</td>
             {if $context eq 'smog'}
@@ -155,7 +155,7 @@ cj(".selector tr").contextMenu({
         window.location = locationUrl + '&destination=' + encodeURIComponent(destination);
    });
 
-    cj().crmrowhighlighter( );
+    cj('.selector').crmrowhighlighter( );
 });
 
 cj('ul#contactMenu').mouseup( function(e){ 

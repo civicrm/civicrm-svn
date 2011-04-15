@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -91,7 +91,7 @@
 {/if}
 
 {if $form.contact_tags}
-            <td colspan="3"><label>{ts}Tag(s){/ts}</label>
+            <td><label>{ts}Tag(s){/ts}</label>
                 {$form.contact_tags.html}
                 {literal}
                 <script type="text/javascript">
@@ -109,8 +109,9 @@
                 {/literal}   
             </td>
 {else}
-            <td colspan="3">&nbsp;</td>
+            <td>&nbsp;</td>
 {/if}
+            <td colspan="2">{$form.operator.label} {help id="id-search-operator"}<br />{$form.operator.html}</td>
 	    </tr>
         <tr>
             <td>

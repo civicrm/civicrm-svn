@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -51,7 +51,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       // sometimes your test might fail because of this. In such cases, it's better to pick one element
       // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
       // page contents loaded and you can continue your test execution.
-      $this->webtestLogin(true);
+      $this->webtestLogin();
 
 
       // Enable CiviCampaign module if necessary
@@ -155,16 +155,24 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       $this->click("_qf_Petition_next-bottom");
       $this->waitForPageToLoad("30000");
 
-
       $this->assertTrue($this->isTextPresent("Petition has been saved."));
-      $this->waitForElementPresent("xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Sign']");
-      $url = $this->getAttribute( "xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Sign']/@href" );
+      
+      $this->waitForElementPresent( "link=Add Petition" );
+
+      $this->waitForElementPresent( "petitions" );
+      $this->click( "petitionSearch" );
+      $this->type( "petition_title", $title );
+
+      $this->click( "xpath=//div[@class='crm-accordion-body']/table/tbody/tr[2]/td/a[text()='Search']" );
+
+      $this->waitForElementPresent( "xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more ']/ul/li/a[text()='Sign']" );
+      $url = $this->getAttribute( "xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more ']/ul/li/a[text()='Sign']/@href" );
       
       ////////////// Retrieve Sign Petition Url /////////////////////////
       
       // logout and sign as anonymous.
-      $this->open( $this->sboxPath ."logout" );
-      $this->waitForElementPresent("op");
+      $this->open( $this->sboxPath ."civicrm/logout?reset=1" );
+      $this->waitForElementPresent("edit-submit");
       
       // go to the link that you will be sign as anonymous
       $this->open($url);
@@ -196,8 +204,13 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("link=Add Petition");
 
       // check for unconfirmed petition signature
-      $this->waitForElementPresent("xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Signatures']");
-      $this->click("xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Signatures']");
+      $this->waitForElementPresent( "petitions" );
+      $this->click( "petitionSearch" );
+      $this->type( "petition_title", $title );
+      $this->click( "xpath=//div[@class='crm-accordion-body']/table/tbody/tr[2]/td/a[text()='Search']" );
+
+      $this->waitForElementPresent( "xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more ']" );
+      $this->click("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more ']/ul/li/a[text()='Signatures']");
       $this->waitForPageToLoad("30000");
 
       // verify tabular data

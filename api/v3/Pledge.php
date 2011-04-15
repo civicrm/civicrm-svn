@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.2                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -25,37 +25,13 @@
  +--------------------------------------------------------------------+
 */
 
-/*
-*DRAFT CODE WRITTEN BY EILEEN still dev version 
-*Starting point was Contribute API. I tried to use the format params from 
-*contribute API to handle incorrect data prior to hitting core & help
-*prevent CORE errors (the bane of API users since there is a proper API
-*error format). However, I found many fields needed to be manipulated after 
-*doing the field rationalisation in the contribute module. The way I have done it
-*is cumbersome from a coding point of view in order to allow a lot of commenting / clarity
-* I concluded that in the absence
-*of a clear standard to say when the fields unique name & when it's table name should
-*be used I should facilitate both as much as possible as either would be a reasonable 
-*expectation from a developer and I know from experience what huge amounts of developer
-*time go into 'trial and error' & 'guessing' what the paramaters might be for the api
-*Also, the version of a variable that is returned is a bit variable - ie. pledge_ vs not so
-*acceptable params should reflect that
-*Note my attempt at a couple of things that have been discussed:
-*1) interrogate function - feedback on possible variables (I presume that 'check_permissions' or similar might
-*be relevant here too)? What should default for check_permissions be?
-*2) $params['sequential'] - array not indexed by id
-*Would be nice to keep explanatory
-*notes in - I know 'dumb comments' normally get removed by core team when committing
-*but they do help dumb developers:-)
-*/
-
 /**
  * File for the CiviCRM APIv3 Pledge functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Pledge
  *
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * @version $Id: Pledge.php
  *
  */
@@ -288,6 +264,9 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
   }
   if ( array_key_exists( 'status_id', $params ) ){
     $values['pledge_status_id'] = $params['status_id'];
+  }
+  if ( empty( $values['status_id'] ) ){
+    $values['status_id'] = $values['pledge_status_id'];
   }
   if (empty($values['id'])){
     //at this point both should be the same so unset both if not set - passing in empty

@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -53,17 +53,6 @@ var isMailing    = false;
 {literal}
 
 var editor = {/literal}"{$editor}"{literal};
-function loadEditor()
-{
-    var msg =  {/literal}"{$htmlContent}"{literal};
-    if (msg) {
-        if ( editor == "ckeditor" ) {
-            oEditor = CKEDITOR.instances[html_message];
-            oEditor.setData( msg );
-        }
-    }
-}
-
 function showSaveUpdateChkBox()
 {
     if ( document.getElementById('template') == null ) {
@@ -186,12 +175,10 @@ function selectValue( val ) {
     {if $editor eq "ckeditor"}
         {literal}
         cj( function() {
-            oEditor = CKEDITOR.instances[html_message];
-            oEditor.setData( {/literal}'{$message_html}'{literal});
+            oEditor = CKEDITOR.instances['html_message'];
             oEditor.BaseHref = '' ;
             oEditor.UserFilesPath = '' ; 
-            loadEditor();
-	        oEditor.on( 'focus', verify );
+	    oEditor.on( 'focus', verify );
         });
         {/literal}
     {else if $editor eq "tinymce"}

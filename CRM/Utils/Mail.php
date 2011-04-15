@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -84,6 +84,7 @@ class CRM_Utils_Mail
         $attachments = CRM_Utils_Array::value( 'attachments', $params );
 
         // CRM-6224
+        require_once 'CRM/Utils/String.php';
         if (trim(CRM_Utils_String::htmlToText($htmlMessage)) == '') {
             $htmlMessage = false;
         }
@@ -305,7 +306,31 @@ class CRM_Utils_Mail
         $result .= "<{$email}>";
         return $result;
     }
-
+    
+    /**
+     * Takes a string and checks to see if it needs to be escaped / double quoted
+     * and if so does the needful and return the formatted name
+     *
+     * This code has been copied and adapted from ezc/Mail/src/tools.php
+     */
+    static function formatRFC2822Name( $name ) 
+    {
+        $name = trim( $name );
+        if ( ! empty( $name ) ) {
+            // remove the quotes around the name part if they are already there
+            if ( substr( $name, 0, 1 ) == '"' && substr( $name, -1 ) == '"' ) {
+                $name = substr( $name, 1, -1 );
+            }
+            
+            // add slashes to " and \ and surround the name part with quotes
+            if ( strpbrk( $name, ",@<>:;'\"" ) !== false ) {
+                $name = '"'. addcslashes( $name, '\\"' ) . '"';
+            }
+        }
+        
+        return $name;
+    }
+    
 }
 
 

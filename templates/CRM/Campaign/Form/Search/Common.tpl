@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -180,7 +180,6 @@
 {literal}
 <script type="text/javascript">
 
-    {/literal}{if !$doNotReloadCRMAccordion}{literal}	
     cj(function() {
       cj().crmaccordions();
 
@@ -190,7 +189,6 @@
       {/if}
       {literal}
     });
-    {/literal}{/if}{literal}
 
   //load interviewer autocomplete.
   var interviewerDataUrl = "{/literal}{$dataUrl}{literal}";

@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -262,7 +262,14 @@ class CRM_GCD {
 
     private function _getRandomElement(&$array1)
     {
-        return $array1[mt_rand(1, count($array1))-1];
+        if ( empty($array1) ) {
+            return;
+        }
+        $count = count($array1);
+        if ( $count > 1 ) {
+            $count--;
+        }
+        return $array1[mt_rand(1, $count)];
     }
     
     private function _getRandomIndex(&$array1)

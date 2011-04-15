@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -43,7 +43,7 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->webtestLogin();
 
       $firstName = substr(sha1(rand()), 0, 7);
-      $this->webtestAddContact( $firstName, "Memberson", "memberino@memberson.name" );
+      $this->webtestAddContact( $firstName, "Memberson", "Memberson{$firstName}@memberson.name" );
       $contactName = "Memberson, $firstName";
 
       $this->open($this->sboxPath . "civicrm/member/add&reset=1&action=add&context=standalone");
@@ -92,7 +92,7 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->webtestLogin();
       
       $firstName = substr(sha1(rand()), 0, 7);
-      $this->webtestAddContact( $firstName, "Memberson", "memberino@memberson.name" );
+      $this->webtestAddContact( $firstName, "Memberson", "Memberson{$firstName}@memberson.name" );
       $contactName = "Memberson, $firstName";
       
       $this->open($this->sboxPath . "civicrm/member/add&reset=1&action=add&context=standalone");

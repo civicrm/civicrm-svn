@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -55,12 +55,12 @@ class WebTest_Contact_ContactAdvanceSearch extends CiviSeleniumTestCase {
       
       // take group name and create group
       $groupName = 'group_'.substr(sha1(rand()), 0, 7);
-      include_once 'WebTest/Contact/ContactSearch.php';
-      WebTest_Contact_ContactSearch::addGroup( $groupName );
+      include_once 'WebTest/Contact/SearchTest.php';
+      WebTest_Contact_SearchTest::addGroup( $groupName );
       
       // take a tag name and create tag
       $tagName = 'tag_'.substr(sha1(rand()), 0, 7);
-      WebTest_Contact_ContactSearch::addTag( $tagName );
+      WebTest_Contact_SearchTest::addTag( $tagName );
       
       //---------- create detailed contact ---------
       

@@ -1,7 +1,7 @@
 -- +--------------------------------------------------------------------+
--- | CiviCRM version 3.3                                                |
+-- | CiviCRM version 3.4                                                |
 -- +--------------------------------------------------------------------+
--- | Copyright CiviCRM LLC (c) 2004-2010                                |
+-- | Copyright CiviCRM LLC (c) 2004-2011                                |
 -- +--------------------------------------------------------------------+
 -- | This file is a part of CiviCRM.                                    |
 -- |                                                                    |
@@ -194,7 +194,8 @@ VALUES
    ('system_extensions'             , '{ts escape="sql"}CiviCRM Extensions{/ts}'                 , 0, 1),
    ('directory_preferences'         , '{ts escape="sql"}Directory Preferences{/ts}'              , 0, 1),
    ('url_preferences'               , '{ts escape="sql"}URL Preferences{/ts}'                    , 0, 1),
-   ('mail_approval_status'          , '{ts escape="sql"}CiviMail Approval Status{/ts}'           , 0, 1);
+   ('mail_approval_status'          , '{ts escape="sql"}CiviMail Approval Status{/ts}'           , 0, 1),
+   ('engagement_index'              , '{ts escape="sql"}Engagement Index{/ts}'                   , 0, 1);
 
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
@@ -253,6 +254,7 @@ SELECT @option_group_id_extensions     := max(id) from civicrm_option_group wher
 SELECT @option_group_id_directory_pref := max(id) from civicrm_option_group where name = 'directory_preferences';
 SELECT @option_group_id_url_pref       := max(id) from civicrm_option_group where name = 'url_preferences';
 SELECT @option_group_id_mail_approval_status := max(id) from civicrm_option_group where name = 'mail_approval_status';
+SELECT @option_group_id_engagement_index := max(id) from civicrm_option_group where name = 'engagement_index';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -348,10 +350,10 @@ VALUES
    (@option_group_id_acc, 'Discover'  ,  4, 'Discover'  , NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
 
   (@option_group_id_pi, '{ts escape="sql"}Credit Card{/ts}',  1, 'Credit Card', NULL, 0, NULL, 1, NULL, 0, 1, 1, NULL, NULL),
-  (@option_group_id_pi, '{ts escape="sql"}Debit Card{/ts}',  2, 'Debit Card', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_pi, '{ts escape="sql"}Cash{/ts}',  3, 'Cash', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_pi, '{ts escape="sql"}Check{/ts}',  4, 'Check', NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_pi, '{ts escape="sql"}EFT{/ts}',  5, 'EFT', NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_pi, '{ts escape="sql"}Debit Card{/ts}',   2, 'Debit Card',  NULL, 0, NULL, 2, NULL, 0, 1, 1, NULL, NULL),
+  (@option_group_id_pi, '{ts escape="sql"}Cash{/ts}',         3, 'Cash',        NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_pi, '{ts escape="sql"}Check{/ts}',        4, 'Check',       NULL, 0, NULL, 4, NULL, 0, 1, 1, NULL, NULL),
+  (@option_group_id_pi, '{ts escape="sql"}EFT{/ts}',          5, 'EFT',         NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
 
   (@option_group_id_cs, '{ts escape="sql"}Completed{/ts}'  , 1, 'Completed'  , NULL, 0, NULL, 1, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_cs, '{ts escape="sql"}Pending{/ts}'    , 2, 'Pending'    , NULL, 0, NULL, 2, NULL, 0, 1, 1, NULL, NULL),
@@ -519,8 +521,9 @@ VALUES
   (@option_group_id_report, {localize}'{ts escape="sql"}Contact Logging Report (Detail){/ts}'{/localize}, 'logging/contact/detail', 'CRM_Report_Form_Contact_LoggingDetail', NULL, 0, NULL, 39, {localize}'{ts escape="sql"}Contact modification report for the logging infrastructure (detail).{/ts}'{/localize}, 0, 0, 0, NULL, NULL),
   (@option_group_id_report, {localize}'{ts escape="sql"}Contribute Logging Report (Summary){/ts}'{/localize}, 'logging/contribute/summary', 'CRM_Report_Form_Contribute_LoggingSummary', NULL, 0, NULL, 40, {localize}'{ts escape="sql"}Contribute modification report for the logging infrastructure (summary).{/ts}'{/localize}, 0, 0, 0, @contributeCompId, NULL),
   (@option_group_id_report, {localize}'{ts escape="sql"}Contribute Logging Report (Detail){/ts}'{/localize}, 'logging/contribute/detail', 'CRM_Report_Form_Contribute_LoggingDetail', NULL, 0, NULL, 41, {localize}'{ts escape="sql"}Contribute modification report for the logging infrastructure (detail).{/ts}'{/localize}, 0, 0, 0, @contributeCompId, NULL),
-  (@option_group_id_report, {localize}'{ts escape="sql"}Grant Report (Statistics){/ts}'{/localize}, 'grant/statistics', 'CRM_Report_Form_Grant_Statistics', NULL, 0, NULL, 40, {localize}'{ts escape="sql"}Shows statistics for Grants.{/ts}'{/localize}, 0, 0, 1, @grantCompId, NULL),
-  (@option_group_id_report, {localize}'{ts escape="sql"}Walk List Survey Report{/ts}'{/localize},    'survey/detail', 'CRM_Report_Form_Campaign_SurveyDetails',  NULL, 0, NULL, 41, {localize}'{ts escape="sql"}Provides a detailed report for your walk list survey{/ts}'{/localize}, 0, 0, 1, @campaignCompId, NULL),
+  (@option_group_id_report, {localize}'{ts escape="sql"}Grant Report (Statistics){/ts}'{/localize}, 'grant/statistics', 'CRM_Report_Form_Grant_Statistics', NULL, 0, NULL, 42, {localize}'{ts escape="sql"}Shows statistics for Grants.{/ts}'{/localize}, 0, 0, 1, @grantCompId, NULL),
+  (@option_group_id_report, {localize}'{ts escape="sql"}Survey Report (Detail){/ts}'{/localize},    'survey/detail', 'CRM_Report_Form_Campaign_SurveyDetails',  NULL, 0, NULL, 43, {localize}'{ts escape="sql"}Detailed report for canvassing, phone-banking, walk lists or other surveys.{/ts}'{/localize}, 0, 0, 1, @campaignCompId, NULL),
+  (@option_group_id_report, {localize}'{ts escape="sql"}Personal Campaign Page Report{/ts}'{/localize}, 'contribute/pcp', 'CRM_Report_Form_Contribute_PCP', NULL, 0, NULL, 44, {localize}'{ts escape="sql"}Shows Personal Campaign Page Report{/ts}'{/localize}, 0, 0, 1, @contributeCompId, NULL),
   (@option_group_id_acs, '{ts escape="sql"}Scheduled{/ts}',  1, 'Scheduled',  NULL, 0, 1,    1, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_acs, '{ts escape="sql"}Completed{/ts}',  2, 'Completed',  NULL, 0, NULL, 2, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_acs, '{ts escape="sql"}Cancelled{/ts}',  3, 'Cancelled',  NULL, 0, NULL, 3, NULL, 0, 1, 1, NULL, NULL),
@@ -647,9 +650,10 @@ VALUES
    (@option_group_id_currency, 'USD ($)',      'USD',     'USD',       NULL, 0, 1, 1, NULL, 0, 0, 1, NULL, NULL),
 
 -- event name badges
-  (@option_group_id_eventBadge, '{ts escape="sql"}Name Only{/ts}'     , 1, 'CRM_Event_Badge_Simple',  NULL, 0, 0, 1, '{ts escape="sql"}Simple Event Name Badge{/ts}', 0, 1, 1, NULL, NULL),
-  (@option_group_id_eventBadge, '{ts escape="sql"}Name Tent{/ts}'     , 2, 'CRM_Event_Badge_NameTent',  NULL, 0, 0, 2, '{ts escape="sql"}Name Tent{/ts}', 0, 1, 1, NULL, NULL),
-  (@option_group_id_eventBadge , '{ts escape="sql"}With Logo{/ts}'    , 3, 'CRM_Event_Badge_Logo', NULL, 0, 0, 3, '{ts escape="sql"}You can set your own background image{/ts}',  0, 1, 1, NULL, NULL ),
+  (@option_group_id_eventBadge,  '{ts escape="sql"}Name Only{/ts}'     , 1, 'CRM_Event_Badge_Simple'  ,  NULL, 0, 0, 1, '{ts escape="sql"}Simple Event Name Badge{/ts}', 0, 1, 1, NULL, NULL),
+  (@option_group_id_eventBadge,  '{ts escape="sql"}Name Tent{/ts}'     , 2, 'CRM_Event_Badge_NameTent',  NULL, 0, 0, 2, '{ts escape="sql"}Name Tent{/ts}', 0, 1, 1, NULL, NULL),
+  (@option_group_id_eventBadge , '{ts escape="sql"}With Logo{/ts}'     , 3, 'CRM_Event_Badge_Logo'    ,  NULL, 0, 0, 3, '{ts escape="sql"}You can set your own background image{/ts}',                               0, 1, 1, NULL, NULL ),
+  (@option_group_id_eventBadge , '{ts escape="sql"}5395 with Logo{/ts}', 4, 'CRM_Event_Badge_Logo5395',  NULL, 0, 0, 4, '{ts escape="sql"}Avery 5395 compatible labels with logo (4 up by 2, 59.2mm x 85.7mm){/ts}', 0, 1, 1, NULL, NULL ),
 
 -- note privacy levels
   (@option_group_id_notePrivacy, '{ts escape="sql"}None{/ts}'           , 0, '',  NULL, 0, 1, 1, NULL, 0, 1, 1, NULL, NULL),
@@ -664,7 +668,14 @@ VALUES
   (@option_group_id_campaignStatus, '{ts escape="sql"}Planned{/ts}', 1, 'Planned',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL), 
   (@option_group_id_campaignStatus, '{ts escape="sql"}In Progress{/ts}', 2, 'In Progress',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_campaignStatus, '{ts escape="sql"}Completed{/ts}', 3, 'Completed',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_campaignStatus, '{ts escape="sql"}Cancelled{/ts}', 4, 'Cancelled',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL);
+  (@option_group_id_campaignStatus, '{ts escape="sql"}Cancelled{/ts}', 4, 'Cancelled',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+
+-- Engagement Level
+  (@option_group_id_engagement_index, '{ts escape="sql"}1{/ts}', 1, '1',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL ),
+  (@option_group_id_engagement_index, '{ts escape="sql"}2{/ts}', 2, '2',  NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL ),
+  (@option_group_id_engagement_index, '{ts escape="sql"}3{/ts}', 3, '3',  NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL ),
+  (@option_group_id_engagement_index, '{ts escape="sql"}4{/ts}', 4, '4',  NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL ),
+  (@option_group_id_engagement_index, '{ts escape="sql"}5{/ts}', 5, '5',  NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL );
 
 -- Now insert option values which require domainID
 --
@@ -1078,7 +1089,7 @@ INSERT INTO civicrm_uf_field
        (8,  2,           'first_name',            1,           0,           1,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}First Name{/ts}',            		'Individual',  NULL,  NULL),
        (9,  2,           'last_name',             1,           0,           2,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Last Name{/ts}',             		'Individual',  NULL,  NULL),
        (10, 2,           'email',                 1,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Email Address{/ts}',         		'Contact',     NULL,  NULL),
-       (11, 3,           'participant_status_id', 1,           1,           1,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Participant Status{/ts}',    		'Participant', NULL,  NULL),
+       (11, 3,           'participant_status', 1,           1,           1,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Participant Status{/ts}',    		'Participant', NULL,  NULL),
        (12, 4,           'first_name',            1,           0,           1,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}First Name{/ts}',            		'Individual',  NULL,  NULL),
        (13, 4,           'last_name',             1,           0,           2,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Last Name{/ts}',             		'Individual',  NULL,  NULL),
        (14, 4,           'email',                 0,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Email Address{/ts}',         		'Contact',     NULL,  NULL),

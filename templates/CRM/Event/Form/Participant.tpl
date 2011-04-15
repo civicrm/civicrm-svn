@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -284,7 +284,7 @@
                     cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
                 }
                 cj('#past-event').hide( );
-                cj('input[name=past_event]').val(1);
+                cj('input[name="past_event"]').val(1);
                 cj("#feeBlock").html( '' );
             }
         );

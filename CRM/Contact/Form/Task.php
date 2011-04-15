@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -122,7 +122,9 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $form );
         require_once 'CRM/Utils/Rule.php';
         $urlParams = 'force=1';
-        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) {
+            $urlParams .= "&qfKey=$qfKey";
+        }
         
         $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, $urlParams );
         $session = CRM_Core_Session::singleton( );
@@ -134,7 +136,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         $form->assign( 'taskName', CRM_Utils_Array::value( $form->_task, $crmContactTaskTasks ) );
        
         if ( $useTable ) {
-            $form->_componentTable = CRM_Core_DAO::createTempTableName( 'civicrm_task_action', false );
+            $form->_componentTable = CRM_Core_DAO::createTempTableName( 'civicrm_task_action', true, $qfKey );
             $sql = " DROP TABLE IF EXISTS {$form->_componentTable}";
             CRM_Core_DAO::executeQuery( $sql );
 

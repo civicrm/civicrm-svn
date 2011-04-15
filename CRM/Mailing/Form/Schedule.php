@@ -2,9 +2,9 @@
 
  /*
   +--------------------------------------------------------------------+
-  | CiviCRM version 3.3                                                |
+  | CiviCRM version 3.4                                                |
   +--------------------------------------------------------------------+
-  | Copyright CiviCRM LLC (c) 2004-2010                                |
+  | Copyright CiviCRM LLC (c) 2004-2011                                |
   +--------------------------------------------------------------------+
   | This file is a part of CiviCRM.                                    |
   |                                                                    |
@@ -29,7 +29,7 @@
  /**
   *
   * @package CRM
-  * @copyright CiviCRM LLC (c) 2004-2010
+  * @copyright CiviCRM LLC (c) 2004-2011
   * $Id$
   *
   */
@@ -172,7 +172,7 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
       */
      public static function formRule( $params, $files, $self ) 
      {
-         if ( $params['_qf_Schedule_submit'] ) {
+         if ( !empty($params['_qf_Schedule_submit']) ) {
              //when user perform mailing from search context 
              //redirect it to search result CRM-3711.
              $ssID = $self->get( 'ssID' );
@@ -250,7 +250,7 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
             $job = new CRM_Mailing_BAO_Job();
             $job->mailing_id = $mailing->id;
 
-            if ( ! $mailing->is_template) {
+            if ( empty($mailing->is_template)) {
                 $job->status = 'Scheduled';
                 if ($params['now']) {
                     $job->scheduled_date = date('YmdHis');

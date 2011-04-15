@@ -3,9 +3,10 @@
 function domain_create_example(){
     $params = array(
     
-                  'name' 		=> 'New Domain',
-                  'description' 		=> 'Description of a new domain',
+                  'name' 		=> 'A-team domain',
+                  'description' 		=> 'domain of chaos',
                   'version' 		=> '3',
+                  'domain_version' 		=> '3.4.1',
 
   );
   require_once 'api/api.php';
@@ -23,9 +24,18 @@ function domain_create_expectedresult(){
      array(
            'is_error' 		=> '0',
            'version' 		=> '3',
-           'count' 		=> '8',
+           'count' 		=> '1',
            'id' 		=> '2',
-           'values' 		=> array(           'id' => '2',                      'name' => 'New Domain',                      'description' => 'Description of a new domain',                      'config_backend' => '',                      'version' => '3',                      'loc_block_id' => '',                      'locales' => '',                      'locale_custom_strings' => '',           ),
+           'values' 		=> array(           '2' =>  array(
+                      'id' => '2',
+                      'name' => 'A-team domain',
+                      'description' => 'domain of chaos',
+                      'config_backend' => '',
+                      'version' => '',
+                      'loc_block_id' => '',
+                      'locales' => '',
+                      'locale_custom_strings' => '',
+           ),           ),
       );
 
   return $expectedResult  ;

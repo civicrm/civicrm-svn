@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -36,7 +36,7 @@ require_once 'CRM/Core/Extensions/ExtensionType.php';
  * information on single extension's operations.
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -117,8 +117,12 @@ class CRM_Core_Extensions
             $tmp = $this->_extDir . DIRECTORY_SEPARATOR . 'tmp';
             $cache = $this->_extDir . DIRECTORY_SEPARATOR . 'cache';
             require_once 'CRM/Utils/File.php';
-            if( !file_exists( $tmp ) ) { CRM_Utils_File::createDir( $tmp ); }
-            if( !file_exists( $cache ) ) { CRM_Utils_File::createDir( $cache ); }
+            if( is_writable( $this->_extDir ) ) {
+                if( !file_exists( $tmp ) ) { CRM_Utils_File::createDir( $tmp ); }
+                if( !file_exists( $cache ) ) { CRM_Utils_File::createDir( $cache ); }
+            } else {
+                CRM_Core_Error::fatal( 'Your extensions directory is not web server writable.' );
+            }
         }
     }
 

@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -473,10 +473,19 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
             //use appropriate join depend on operator.
             if ( !empty( $voterIds ) ) {
                 $voterIdCount  = count( $voterIds );
-                $tempTableName = 'temporary_survey_contact_ids_'.time();
+                
+                //create temporary table to store voter ids.
+                $tempTableName = CRM_Core_DAO::createTempTableName( 'civicrm_survey_respondent' );
                 CRM_Core_DAO::executeQuery( "DROP TABLE IF EXISTS {$tempTableName}" );
-                $query = "CREATE TEMPORARY TABLE {$tempTableName}(survey_contact_id INT(10) UNSIGNED)";
+                
+                $query = "
+     CREATE TEMPORARY TABLE {$tempTableName} (
+            id int unsigned NOT NULL AUTO_INCREMENT,
+            survey_contact_id int unsigned NOT NULL,  
+PRIMARY KEY ( id ),
+ CONSTRAINT FK_civicrm_survey_respondent FOREIGN KEY (survey_contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE )";
                 CRM_Core_DAO::executeQuery( $query );
+                
                 $batch = 100;
                 $insertedCount = 0;
                 do {

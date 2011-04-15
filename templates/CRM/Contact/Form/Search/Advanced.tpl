@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -113,46 +113,46 @@ cj(function() {
             case '2':
             cj('.crm-CiviContribute-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
             cj('#crm-display_relationship_type').hide( );
-	    cj('#display_relationship_type').val('');
+            cj('#display_relationship_type').val('');
             loadPanes('CiviContribute');
             break;
 
             case '3':
             cj('.crm-CiviEvent-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
-	    cj('#display_relationship_type').val('');
+            cj('#display_relationship_type').val('');
             cj('#crm-display_relationship_type').hide( );
             loadPanes('CiviEvent');
             break;
 
             case '4':
             cj('.crm-activity-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
-	    cj('#display_relationship_type').val('');
+            cj('#display_relationship_type').val('');
             cj('#crm-display_relationship_type').hide( );
             loadPanes('activity');
             break;
 
             case '5':
             cj('.crm-CiviMember-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
-	    cj('#display_relationship_type').val('');
+            cj('#display_relationship_type').val('');
             cj('#crm-display_relationship_type').hide( );
             loadPanes('CiviMember');
             break;
 
             case '6':
             cj('.crm-CiviCase-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
-	    cj('#display_relationship_type').val('');
+            cj('#display_relationship_type').val('');
             cj('#crm-display_relationship_type').hide( );
             loadPanes('CiviCase');
             break;
 
 	    case '7':
             cj('#crm-display_relationship_type').show( );
-	    break;
+            break;
 
             default:
             cj('#crm-display_relationship_type').hide( );
-	    cj('#display_relationship_type').val('');
-	    break;
+            cj('#display_relationship_type').val('');
+            break;
         } 
     });
 });

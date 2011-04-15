@@ -1,4 +1,5 @@
-<?
+<?php
+
 require_once 'api/v3/utils.php';
 
 /**
@@ -6,38 +7,43 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_entity_get ($params) {
   _civicrm_api3_initialize( true );
-   $entities = array ();
-   $iterator = new DirectoryIterator(dirname(__FILE__));
-   foreach ($iterator as $fileinfo) {
-     $file = $fileinfo->getFilename();
-     $parts = explode(".", $file);  
-     if (end($parts) == "php" &&  $file != "utils.php" ) {
-       $entities [] = substr ($file, 0, -4); // without the ".php"
-     }
+   try {
+     civicrm_api3_verify_mandatory ($params);
+     $entities = array ();
+     $iterator = new DirectoryIterator(dirname(__FILE__));
+     foreach ($iterator as $fileinfo) {
+       $file = $fileinfo->getFilename();
+       $parts = explode(".", $file);  
+       if (end($parts) == "php" &&  $file != "utils.php" ) {
+         $entities [] = substr ($file, 0, -4); // without the ".php"
+       }
+    }
+    sort($entities);
+    return civicrm_api3_create_success ($entities);
+  } catch (PEAR_Exception $e) {
+    return civicrm_api3_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_api3_create_error( $e->getMessage() );
   }
-  sort($entities);
-  return civicrm_api3_create_success ($entities);
 }
 
 /**
  *  Placeholder function. This should never be called, as it doesn't have any meaning
  */
 function civicrm_api3_entity_create ($params) {
-  return civicrm_api3_create_error ("Creating a new entity means modifying the source code of civiCRM.");
+  return civicrm_api3_create_error ("API (Entity,Create) does not exist Creating a new entity means modifying the source code of civiCRM.");
 }
 
 /**
  *  Placeholder function. This should never be called, as it doesn't have any meaning
  */
 function civicrm_api3_entity_delete ($params) {
-  return civicrm_api3_create_error ("Deleting an entity means modifying the source code of civiCRM.");
+  return civicrm_api3_create_error ("API (Entity,Delete) does not exist Deleting an entity means modifying the source code of civiCRM.");
 }
 
 /**
  *  Placeholder function. This should never be called, as it doesn't have any meaning
  */
 function civicrm_api3_entity_getfields ($params) {
-  return civicrm_api3_create_error ("entity_get only returns the list of entities you can access from the API, no fields");
+  return civicrm_api3_create_error ("API (Entity,getfields) does not exist entity_get only returns the list of entities you can access from the API, no fields");
 }
-
-?>

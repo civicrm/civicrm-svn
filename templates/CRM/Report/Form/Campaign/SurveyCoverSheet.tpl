@@ -2,7 +2,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -51,8 +51,6 @@
 </table>
 </div>
 
-{* break the page *}
-<div style="page-break-after: always"></div>
 {/if }
 
 

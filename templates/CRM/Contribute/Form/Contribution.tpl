@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* this template is used for adding/editing/deleting contribution *}
+{* this template is used for adding/editing/deleting contributions and pledge payments *}
 
 {if $cdType}
   {include file="CRM/Custom/Form/CustomData.tpl"}
@@ -105,7 +105,7 @@
 	            <br /><span class="description">{ts}Actual amount given by contributor.{/ts}</span>
 	    </td>
         </tr>
-	    {if $buildRecurBlock}
+	    {if $buildRecurBlock && !$ppID}
 	    <tr id='recurringPaymentBlock' class='hiddenElement'>
 	       <td></td>		
 	       <td>
@@ -137,8 +137,12 @@
 
         {if $contributionMode}
             {if $email and $outBound_option != 2}
-                <tr class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html}</td></tr>
-                <tr><td class="label">&nbsp;</td><td class="description">{ts 1=$email}Automatically email a receipt for this contribution to %1?{/ts}</td></tr>
+                <tr class="crm-contribution-form-block-is_email_receipt">
+                    <td class="label">
+                        {$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html}&nbsp;
+                        <span class="description">{ts 1=$email}Automatically email a receipt for this contribution to %1?{/ts}</span>
+                    </td>
+                </tr>
             {elseif $context eq 'standalone' and $outBound_option != 2 }
                 <tr id="email-receipt" style="display:none;" class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this contribution to {/ts}<span id="email-address"></span>?</span></td></tr>
             {/if}
@@ -308,7 +312,7 @@ function loadPanes( id ) {
 	showHideByValue( 'is_email_receipt', '', 'fromEmail', 'table-row', 'radio', false );
     });
     function checkEmail( ) {
-        var contactID = cj("input[name=contact_select_id[1]]").val();
+        var contactID = cj("input[name='contact_select_id[1]']").val();
         if ( contactID ) {
             var postUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' h=0}{literal}";
             cj.post( postUrl, {contact_id: contactID},
@@ -378,16 +382,25 @@ function loadPanes( id ) {
 
 
 {if $action neq 8}  
-    {if $email and $outBound_option != 2}
-    {include file="CRM/common/showHideByFieldValue.tpl" 
-        trigger_field_id    ="is_email_receipt"
-        trigger_value       =""
-        target_element_id   ="receiptDate" 
-        target_element_type ="table-row"
-        field_type          ="radio"
-        invert              = 1
+{literal}
+<script type="text/javascript">
+    cj( function( ) {
+        checkEmailDependancies( );
+        cj('#is_email_receipt').click( function( ) {
+            checkEmailDependancies( );
+        });
+    });
+    function checkEmailDependancies( ) {
+        if ( cj('#is_email_receipt').attr( 'checked' ) ) {
+            cj('#fromEmail').show( );
+            cj('#receiptDate').hide( );
+        } else {
+            cj('#fromEmail').hide( );
+            cj('#receiptDate').show( );
+        }
     }
-    {/if}
+</script>
+{/literal}
     {if !$contributionMode} 
         {include file="CRM/common/showHideByFieldValue.tpl" 
             trigger_field_id    ="contribution_status_id"
@@ -469,7 +482,6 @@ cj(function() {
 
 {literal}
 function buildAmount( priceSetId ) {
-
   if ( !priceSetId ) priceSetId = cj("#price_set_id").val( );
 
   var fname = '#priceset';
@@ -483,17 +495,15 @@ function buildAmount( priceSetId ) {
 
       //we might want to build recur block.
       if ( cj( "#is_recur" ) ) buildRecurBlock( null );
-
       return;
   }
 
   //don't allow recurring w/ priceset.
-  if ( cj( "#is_recur" ) && cj( 'input:radio[name=is_recur]:checked').val( ) ) {
+  if ( cj( "#is_recur" ) && cj( 'input:radio[name="is_recur"]:checked').val( ) ) {
       //reset the values of recur block. 
       cj("#installments").val('');
       cj("#frequency_interval").val('');
-      cj( 'input:radio[name=is_recur]')[0].checked = true;
-
+      cj( 'input:radio[name="is_recur"]')[0].checked = true;
       cj( "#recurringPaymentBlock" ).hide( );
   }
       
@@ -501,20 +511,21 @@ function buildAmount( priceSetId ) {
   
   var response = cj.ajax({
 		         url: dataUrl,
-			 async: false
-			}).responseText;
+                 async: false
+                 }).responseText;
+  
   cj( fname ).show( ).html( response );
   // freeze total amount text field.
   cj( "#total_amount").val( '' );
 
   cj( "#totalAmountORPriceSet" ).hide( );
   cj( "#totalAmount").hide( );
-  
 }
+
 function adjustPayment( ) {
-cj('#adjust-option-type').show();		    	    
-cj("#total_amount").removeAttr("READONLY");
-cj("#total_amount").css('background-color', '#ffffff');
+    cj('#adjust-option-type').show();		    	    
+    cj("#total_amount").removeAttr("READONLY");
+    cj("#total_amount").css('background-color', '#ffffff');
 }
 
 </script>

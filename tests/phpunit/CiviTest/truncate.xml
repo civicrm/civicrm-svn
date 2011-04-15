@@ -103,10 +103,6 @@
 
   <civicrm_tell_friend />
 
-  <civicrm_openid_nonces />
-
-  <civicrm_openid_associations />
-
   <civicrm_pledge_block />
 
   <civicrm_report_instance />

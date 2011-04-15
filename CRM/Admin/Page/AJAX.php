@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -217,17 +217,28 @@ class CRM_Admin_Page_AJAX
         $name     = CRM_Utils_Type::escape( $_GET['name'], 'String' );
         $parentId = CRM_Utils_Type::escape( $_GET['parentId'], 'Integer' );
         
+        $isSearch = null;
+        if ( isset( $_GET['search'] ) ) {
+            $isSearch = CRM_Utils_Type::escape( $_GET['search'], 'Integer' );
+        }
+
         $tags = array( );
         
         // always add current search term as possible tag
         // here we append :::value to determine if existing / new tag should be created
-        $tags[] = array( 'name' => $name,
-                         'id'   => $name. ":::value" );            
-        
+        if ( !$isSearch ) {
+            $tags[] = array( 'name' => $name,
+                             'id'   => $name. ":::value" );            
+        }
+
         $query = "SELECT id, name FROM civicrm_tag WHERE parent_id = {$parentId} and name LIKE '%{$name}%'";
         $dao = CRM_Core_DAO::executeQuery( $query );
         
         while( $dao->fetch( ) ) {
+            // make sure we return tag name entered by user only if it does not exists in db
+            if ( $name == $dao->name ) {
+                $tags = array();
+            }
             // escape double quotes, which break results js
             $tags[] = array( 'name' =>  addcslashes($dao->name, '"'),
                              'id'   => $dao->id );

@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -466,7 +466,11 @@ ORDER BY parent_id, weight";
             if ( substr( $url, 0, 4 ) === 'http' ) {
                 $url = $url;
             } else {
-                $url = CRM_Utils_System::url( $url );
+                //CRM-7656 --make sure to separate out url path from url params,
+                //as we'r going to validate url path across cross-site scripting.
+                $urlVars = explode( '&amp;', $url, 2 );
+                $url = CRM_Utils_System::url( $urlVars[0],
+                                              CRM_Utils_Array::value( 1, $urlVars ) );
             }
             $makeLink = true;
         }
@@ -570,8 +574,10 @@ ORDER BY parent_id, weight";
             $homeNav         = array( );
             self::retrieve( $homeParams, $homeNav );
             if ( $homeNav ) {
-                $homeURL     = CRM_Utils_System::url( $homeNav['url'] );
+                list( $path, $q ) = explode( '&', $homeNav['url'] );
+                $homeURL     = CRM_Utils_System::url( $path, $q );                
                 $homeLabel   = $homeNav['label'];
+                if ($homeLabel == 'Home') $homeLabel = ts('Home');   // CRM-6804 (we need to special-case this as we don’t ts()-tag variables)
             } else {
                 $homeURL     = CRM_Utils_System::url( 'civicrm/dashboard', 'reset=1');
                 $homeLabel   = ts('Home');

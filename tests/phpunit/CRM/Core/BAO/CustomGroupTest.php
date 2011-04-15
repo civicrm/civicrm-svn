@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -44,8 +44,6 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
     function setUp( ) 
     {
         parent::setUp();
-        require_once 'CRM/Core/Config.php';
-        $config =& CRM_Core_Config::singleton( );
     }
     
     /**
@@ -61,10 +59,12 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'name'       => 'my_custom_group',
                              'style'      => 'Tab',
                              'extends'    => 'Individual',
-                             'is_active'  => 1
+                             'is_active'  => 1,
+                             'version'    => 3
                              );
         
         $customGroup = Custom::createGroup( $groupParams );
+        
         $customGroupId = $customGroup->id;
         
         $fields      = array (
@@ -92,7 +92,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
      * Function to test retrieve() with Empty Params
      */
     function testRetrieveEmptyParams( )
-    { 
+    {     
         $params = array( ); 
         require_once 'CRM/Core/BAO/CustomGroup.php';
         $customGroup = CRM_Core_BAO_CustomGroup::retrieve( $params, $dafaults );
@@ -125,7 +125,8 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'help_post'        => 'Custom Group Help Post',
                              'is_active'        => 1,
                              'collapse_display' => 1,
-                             'weight'           => 2
+                             'weight'           => 2,
+                             'version'          => 3
                              );
         
         $customGroup = Custom::createGroup( $groupParams );
@@ -139,6 +140,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         
         $this->assertEquals( $customGrouptitle, $dbCustomGroupTitle );
         //check retieve values
+        unset( $groupParams['version'] );
         $this->assertAttributesEquals( $groupParams, $dafaults ); 
         
         //cleanup DB by deleting customGroup
@@ -156,7 +158,8 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'name'       => 'my_custom_group',
                              'style'      => 'Tab',
                              'extends'    => 'Individual',
-                             'is_active'  => 0
+                             'is_active'  => 0,
+                             'version'    => 3
                              );
         
         $customGroup = Custom::createGroup( $groupParams );
@@ -211,6 +214,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'help_post'        => 'Custom Group Help Post',
                              'is_active'        => 1,
                              'collapse_display' => 1,
+                             'version'          => 3
                              );
         
         $customGroup = Custom::createGroup( $groupParams );
@@ -223,7 +227,8 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'data_type'       => 'String',
                              'is_required'     => 1,
                              'is_searchable'   => 0,
-                             'is_active'       => 1
+                             'is_active'       => 1,
+                             'version'         => 3
                              );
         
         $customField = Custom::createField( $fieldParams );
@@ -236,12 +241,14 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         //check retieve values of custom group
         unset( $groupParams['is_active'] );
         unset( $groupParams['title'] );
+        unset( $groupParams['version'] );
         $this->assertAttributesEquals( $groupParams, $groupTree[$customGroupId] ); 
         
         //check retieve values of custom field
         unset( $fieldParams['is_active'] );
         unset( $fieldParams['custom_group_id'] );
-        $this->assertAttributesEquals( $fieldParams, $groupTree[$customGroupId]['fields'][$customFieldId] ); 
+        unset( $fieldParams['version'] );
+        $this->assertAttributesEquals( $fieldParams, $groupTree[$customGroupId]['fields'][$customFieldId] , " in line " . __LINE__); 
         
         //cleanup DB by deleting customGroup
         Custom::deleteField( $customField ); 
@@ -272,7 +279,8 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'name'       => 'my_custom_group',
                              'style'      => 'Tab',
                              'extends'    => 'Individual',
-                             'is_active'  => 0
+                             'is_active'  => 0,
+                             'version'    => 3
                              );
         
         $customGroup = Custom::createGroup( $groupParams );
@@ -300,7 +308,8 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'name'       => 'my_custom_group',
                              'style'      => 'Tab',
                              'extends'    => 'Individual',
-                             'is_active'  => 1
+                             'is_active'  => 1,
+                             'version'    => 3
                              );
         
         $customGroup = Custom::createGroup( $groupParams );
@@ -336,7 +345,8 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'name'       => 'my_custom_group',
                              'style'      => 'Tab',
                              'extends'    => 'Individual',
-                             'is_active'  => 1
+                             'is_active'  => 1,
+                             'version'    => 3
                              );
         
         require_once 'CRM/Core/BAO/CustomGroup.php';
@@ -377,11 +387,13 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'help_post'        => 'Custom Group Help Post',
                              'is_active'        => 1,
                              'collapse_display' => 1,
+                             'version'          => 3
                              );
         
         $customGroup = Custom::createGroup( $groupParams );
+        $this->assertNotNull($customGroup->id,'pre-requisite group not created successfully');
         $customGroupId = $customGroup->id;
-        
+
         $customFieldLabel = 'Test Custom Field';
         $fieldParams = array(
                              'custom_group_id' => $customGroupId,
@@ -390,12 +402,15 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'data_type'       => 'String',
                              'is_required'     => 1,
                              'is_searchable'   => 0,
-                             'is_active'       => 1
+                             'is_active'       => 1,
+                             'version'         => 3
                              );
-        
+       
         $customField = Custom::createField( $fieldParams );
-        $customFieldId = $customField->id;
+        $this->assertNotNull($customField->id,'pre-requisite field not created successfully');
         
+        $customFieldId = $customField->id;
+         
         //check db for custom group
         $dbCustomGroupTitle = $this->assertDBNotNull( 'CRM_Core_DAO_CustomGroup', $customGroupId, 'title', 'id',
                                                       'Database check for custom group record.' );
@@ -442,7 +457,8 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'style'      => 'Tab',
                              'extends'    => 'Individual',
                              'weight'     => 10,
-                             'is_active'  => 1
+                             'is_active'  => 1,
+                             'version'    => 3
                              );
 
         
@@ -476,7 +492,8 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                          'style'            => 'Inline',
                          'help_pre'         => 'This is Pre Help For Test Group 1',
                          'help_post'        => 'This is Post Help For Test Group 1',
-                         'is_active'        => 1
+                         'is_active'        => 1,
+                         'version'          => 3
                          );
         require_once 'CRM/Core/BAO/CustomGroup.php';
         $customGroup =  CRM_Core_BAO_CustomGroup::create( $params );
@@ -500,7 +517,8 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'style'      => 'Tab',
                              'extends'    => 'Individual',
                              'weight'     => 10,
-                             'is_active'  => 1
+                             'is_active'  => 1,
+                             'version'    => 3
                              );
         
         require_once 'CRM/Core/BAO/CustomGroup.php';
@@ -510,9 +528,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         
         $this->assertEquals( $isEmptyGroup , true,  'Check that custom Group is Empty.' );
         Custom::deleteGroup( $customGroup );
-    }
-    
-    
+    }  
     
     /**
      * Function to test getGroupTitles() with Invalid Params()
@@ -537,7 +553,8 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'style'      => 'Tab',
                              'extends'    => 'Individual',
                              'weight'     => 10,
-                             'is_active'  => 1
+                             'is_active'  => 1,
+                             'version'    => 3
                              );
         
         require_once 'CRM/Core/BAO/CustomGroup.php';
@@ -553,7 +570,8 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'data_type'       => 'String',
                              'is_required'     => 1,
                              'is_searchable'   => 0,
-                             'is_active'       => 1
+                             'is_active'       => 1,
+                             'version'         => 3
                              );
         
         $customField = Custom::createField( $fieldParams );
@@ -566,5 +584,4 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         $this->assertEquals( $groupTitles[$customGroup->id]['groupTitle'] ,'Test Custom Group' ,  'Check Group Title.' );
         Custom::deleteGroup( $customGroup );
     }
-
 }

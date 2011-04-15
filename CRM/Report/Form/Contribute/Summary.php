@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -52,7 +52,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
             array( 'civicrm_contact'  =>
                    array( 'dao'       => 'CRM_Contact_DAO_Contact',
                           'fields'    =>
-                          array( 'display_name'      => 
+                          array( 'sort_name'      => 
                                  array( 'title'      => ts( 'Contact Name' ),
                                         'no_repeat'  => true ),
                                  'postal_greeting_display' =>
@@ -64,7 +64,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                           'group_bys' => 
                           array( 'id'                =>
                                  array( 'title'      => ts( 'Contact ID' ) ),
-                                 'display_name'      => 
+                                 'sort_name'      => 
                                  array( 'title'      => ts( 'Contact Name' ), ), ),
                           ),
                    
@@ -315,7 +315,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
         $errors = $grouping = array( );
         //check for searching combination of dispaly columns and
         //grouping criteria
-        $ignoreFields = array( 'total_amount', 'display_name' );
+        $ignoreFields = array( 'total_amount', 'sort_name' );
         $errors       = $self->customDataFormRule( $fields, $ignoreFields );
         
         if ( CRM_Utils_Array::value( 'receive_date', $fields['group_bys'] ) ) {
@@ -324,7 +324,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                     foreach ( $table['fields'] as $fieldName => $field ) {
                         if ( CRM_Utils_Array::value( $field['name'], $fields['fields'] ) && 
                              $fields['fields'][$field['name']] && 
-                             in_array( $field['name'], array( 'display_name', 'postal_greeting_display', 'contribution_source', 'contribution_type' ) ) ) {
+                             in_array( $field['name'], array( 'sort_name', 'postal_greeting_display', 'contribution_source', 'contribution_type' ) ) ) {
                             $grouping[] = $field['title'];
                         }
                     }
@@ -567,13 +567,13 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
             }
             
             // convert display name to links
-            if ( array_key_exists('civicrm_contact_display_name', $row) && 
+            if ( array_key_exists('civicrm_contact_sort_name', $row) && 
                  array_key_exists('civicrm_contact_id', $row) ) {
                 $url = CRM_Report_Utils_Report::getNextUrl( 'contribute/detail', 
                                                             'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id'],
                                                             $this->_absoluteUrl, $this->_id );
-                $rows[$rowNum]['civicrm_contact_display_name_link'] = $url;
-                $rows[$rowNum]['civicrm_contact_display_name_hover'] = 
+                $rows[$rowNum]['civicrm_contact_sort_name_link'] = $url;
+                $rows[$rowNum]['civicrm_contact_sort_name_hover'] = 
                     ts("Lists detailed contribution(s) for this record.");
                 $entryFound = true;
             }

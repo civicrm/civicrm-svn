@@ -313,7 +313,7 @@ class api_v2_CustomGroupTest extends CiviUnitTestCase
     {
         $customGroup = $this->customGroupCreate('Individual', 'test_group'); 
         $params = array('id' => $customGroup['id']);                         
-        $customGroup =& civicrm_custom_group_delete($params);
+        $customGroup =civicrm_custom_group_delete($params);
         $this->assertEquals($customGroup['is_error'], 0);
     } 
     
@@ -709,10 +709,10 @@ class api_v2_CustomGroupTest extends CiviUnitTestCase
     {
         $customGroup = $this->customGroupCreate('Individual','test_group');
         $customField = $this->customFieldCreate($customGroup['id'],'test_name'); 
-        $this->assertNotNull($customField['result']['customFieldId']);
+        $this->assertNotNull($customField['id'], 'in line ' . __LINE__);
 
-        $params = array( 'id' => $customField['result']['customFieldId'] );
-        $customField =& civicrm_custom_field_delete( $params );
+        $params = array( 'id' => $customField['id'] );
+        $customField = civicrm_custom_field_delete( $params );
         $this->assertEquals($customField['is_error'], 0);
         $this->customGroupDelete($customGroup['id']);
     } 
@@ -725,7 +725,7 @@ class api_v2_CustomGroupTest extends CiviUnitTestCase
         $customGroup = $this->customGroupCreate('Contact','ABC' );  
         $customOptionValueFields = $this->customFieldOptionValueCreate($customGroup,'fieldABC' );
 
-        $params = array( 'id' => $customOptionValueFields['result']['customFieldId'] );
+        $params = array( 'id' => $customOptionValueFields['id'] );
         $customField =& civicrm_custom_field_delete($params);
         $this->assertEquals($customField['is_error'], 0);
         $this->customGroupDelete($customGroup['id']); 

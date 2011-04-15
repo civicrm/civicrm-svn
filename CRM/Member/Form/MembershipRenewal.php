@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -38,6 +38,7 @@ require_once 'CRM/Member/Form.php';
 require_once 'CRM/Member/PseudoConstant.php';
 require_once "CRM/Custom/Form/CustomData.php";
 require_once "CRM/Core/BAO/CustomGroup.php";
+require_once "CRM/Utils/Date.php";
 
 /**
  * This class generates form components for Membership Renewal
@@ -126,7 +127,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
             // also check for billing information
             // get the billing location type
             $locationTypes =& CRM_Core_PseudoConstant::locationType( );
-            $this->_bltID = array_search( 'Billing',  $locationTypes );
+            $this->_bltID = array_search( ts('Billing'),  $locationTypes );
             if ( ! $this->_bltID ) {
                 CRM_Core_Error::fatal( ts( 'Please set a location type of %1', array( 1 => 'Billing' ) ) );
             }
@@ -172,9 +173,11 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
         $defaults = array( );
         $defaults =& parent::setDefaultValues( );
         $this->_memType = $defaults['membership_type_id'];
-        $defaults['renewal_date'] = CRM_Utils_Date::getToday( CRM_Utils_Array::value( 'renewal_date', $defaults ),
-                                                              'm/d/Y' );
-
+        
+        // set renewal_date to today in correct input format (setDateDefaults uses today if no value passed)
+        list( $now ) = CRM_Utils_Date::setDateDefaults( );
+        $defaults['renewal_date']    = $now;
+        
         if ($defaults['id']) {
             $defaults['record_contribution'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipPayment', 
                                                                             $defaults['id'], 

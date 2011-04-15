@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -104,7 +104,7 @@ LEFT JOIN civicrm_email      ON contact_a.id = civicrm_email.contact_id
         $transaction = new CRM_Core_Transaction( );
 
         if ( ! $contact_id ) {
-            civicrm_api_include('contact');
+            civicrm_api_include('contact', false, 3);
             require_once 'CRM/Core/BAO/LocationType.php';
             /* If the contact does not exist, create one. */
             $formatted = array('contact_type' => 'Individual');
@@ -116,8 +116,9 @@ LEFT JOIN civicrm_email      ON contact_a.id = civicrm_email.contact_id
             require_once 'CRM/Import/Parser.php';
             $formatted['onDuplicate'] = CRM_Import_Parser::DUPLICATE_SKIP;
             $formatted['fixAddress'] = true;
+            require_once 'api/v2/Contact.php';
             $contact =& civicrm_contact_format_create($formatted);
-            if (civicrm_error($contact, 'CRM_Core_Error')) {
+            if ( civicrm_error( $contact ) ) {
                 return $success;
             }
             $contact_id = $contact['id'];

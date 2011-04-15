@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -127,7 +127,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
         $group->max_multiple =  isset( $params['is_multiple'] )  ? ( isset( $params['max_multiple'] ) &&
                                                                      $params['max_multiple'] >= '0' ) ? $params['max_multiple'] : 'null' : 'null' ;
         
-        $tableName = null;
+        $tableName = $oldTableName = null;
         if ( isset( $params['id'] ) ) {
             $group->id = $params['id'] ;
             //check whether custom group was changed from single-valued to multiple-valued
@@ -135,7 +135,8 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
                                                        $params['id'],
                                                        'is_multiple' );
             
-            if ( ($params['is_multiple'] != $isMultiple) && (CRM_Utils_Array::value('is_multiple', $params) || $isMultiple) ) {
+            if ( ( CRM_Utils_Array::value('is_multiple', $params) || $isMultiple ) &&
+                 ( $params['is_multiple'] != $isMultiple ) ) {
                 $oldTableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',
                                                              $params['id'],
                                                              'table_name' );
@@ -175,6 +176,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
             require_once 'CRM/Core/BAO/SchemaHandler.php';
             CRM_Core_BAO_SchemaHandler::changeUniqueToIndex( $oldTableName, CRM_Utils_Array::value('is_multiple', $params) );
         }
+
         if ( CRM_Utils_Array::value( 'overrideFKConstraint', $params ) == 1 ) {
             $table = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',
                                                   $params['id'],
@@ -1022,7 +1024,7 @@ SELECT $select
                     
                 case 'Select Date':
                     if ( isset( $value ) ) {
-                        if ( !$field[ 'time_format'] ) {
+                        if ( empty($field[ 'time_format']) ) {
                             list( $defaults[$elementName] ) = CRM_Utils_Date::setDateDefaults( $value, null, 
                                                                                                $field['date_format'] );
                         } else {
@@ -1057,16 +1059,20 @@ SELECT $select
                     break;
 
                 case 'Autocomplete-Select':
+                    $hiddenEleName = $elementName . '_id';
+                    if ( substr( $elementName, -1 ) == ']' ) { 
+                        $hiddenEleName = substr( $elementName, 0, $elementName.length - 1 ).'_id]';
+                    }
                     if ($field['data_type'] == "ContactReference") {
                         require_once 'CRM/Contact/BAO/Contact.php';
                         if ( is_numeric( $value ) ) {
-                            $defaults[$elementName.'_id'] = $value; 
-                            $defaults[$elementName] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value, 'sort_name' );
+                            $defaults[$hiddenEleName] = $value; 
+                            $defaults[$elementName]   = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value, 'sort_name' );
                         }
                     } else {
                         $label = CRM_Core_BAO_CustomOption::getOptionLabel( $field['id'], $value );
-                        $defaults[$elementName.'_id'] = $value;
-                        $defaults[$elementName] = $label;
+                        $defaults[$hiddenEleName] = $value;
+                        $defaults[$elementName]   = $label;
                     }
                     break;
                     
@@ -1101,8 +1107,15 @@ SELECT $select
                     $groupTree[$groupID]['fields'][$fieldId]['customValue']['data'] = 'NULL';
                 }
 
-                $v = CRM_Utils_Array::value( 'custom_' . $field['id'], $params );
-                
+                $v = null;
+                foreach ( $params as $key => $val ) {
+                    if (preg_match('/^custom_(\d+)_?(-?\d+)?$/', $key, $match) && 
+                        $match[1] == $field['id'] ) {
+                        $v = $val;
+                    }
+                }
+
+
                 if ( ! isset($groupTree[$groupID]['fields'][$fieldId]['customValue'] ) ) {
                     // field exists in db so populate value from "form".
                     $groupTree[$groupID]['fields'][$fieldId]['customValue'] = array();
@@ -1138,7 +1151,7 @@ SELECT $select
                     break;
 
                 case 'Select Date':
-                    $date = CRM_Utils_Date::format( $v );
+                    $date = CRM_Utils_Date::processDate( $v );
                     $groupTree[$groupID]['fields'][$fieldId]['customValue']['data'] = $date;
                     break;
          
@@ -1415,6 +1428,10 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
             if ( $result ) {
                 return 'civicrm_contact';
             } else {
+                $extendObjs = CRM_Core_OptionGroup::values( 'cg_extend_objects', false, false, false, null, 'name' );
+                if ( array_key_exists($table, $extendObjs) ) {
+                    return $extendObjs[$table];
+                }
                 CRM_Core_Error::fatal( );
             }
         }
@@ -1864,5 +1881,46 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
         }
         
         return false;
+    }
+
+    /**
+     * Get the list of types for objects that a custom group extends to.
+     *
+     * @param  array $types - var which should have the list appended.
+     * @return array of types.
+     * @access public
+     */
+    static function getExtendedObjectTypes( &$types = array() ) {
+        static $flag = false, $objTypes = array();
+
+        if ( !$flag ) {
+            CRM_Core_OptionValue::getValues( array( 'name' => 'cg_extend_objects' ), $extendObjs );
+        
+            foreach ( $extendObjs as $ovId => $ovValues ) {
+                list($callback,  $args) = explode(';', trim($ovValues['description']) );
+
+                if ( !empty($args) ) {
+                    eval('$args = ' . $args . ';');
+                } else {
+                    $args = array( );
+                }
+                
+                if ( ! is_array( $args ) ) {
+                    CRM_Core_Error::fatal( 'Arg is not of type array' );
+                }
+                
+                list( $className ) = explode('::', $callback );
+                require_once( str_replace( '_',
+                                           DIRECTORY_SEPARATOR,
+                                           $className ) . '.php' );
+                
+                $objTypes[$ovValues['value']] = call_user_func_array( $callback, $args );
+            }
+
+            $flag = true;
+        }
+
+        $types = array_merge( $types, $objTypes );
+        return $objTypes;
     }
 }

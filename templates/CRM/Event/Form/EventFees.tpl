@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{assign var=isRecordPayment value=1 }
 {if $paid} {* We retrieve this tpl when event is selected - keep it empty if event is not paid *} 
     <table class="form-layout">
     {if $priceSet}
@@ -39,11 +40,16 @@
                 </tr>
             {/if}
         {else} {* New participant *}
+	{if $priceSet.fields}
     	<fieldset id="priceset" class="crm-group priceset-group">
             <tr class="crm-event-eventfees-form-block-price_set_amount">  
             <td class="label" style="padding-top: 10px;">{$form.amount.label}</td>
 	    <td class="view-value"><table class="form-layout">{include file="CRM/Price/Form/PriceSet.tpl"}</td>
      	</fieldset>
+        {else}
+	    {assign var=isRecordPayment value=0 }
+            <div class='messages status'>{ts}No any active price fields found for this event!{/ts}</div>   
+        {/if}
     </table>
 
     {/if}	
@@ -70,7 +76,7 @@
      </tr>
     {/if}
 
-    { if $accessContribution and ! $participantMode and ($action neq 2 or !$rows.0.contribution_id or $onlinePendingContributionId) }
+    { if $accessContribution and ! $participantMode and ($action neq 2 or !$rows.0.contribution_id or $onlinePendingContributionId) and $isRecordPayment }
         <tr class="crm-event-eventfees-form-block-record_contribution">
             <td class="label">{$form.record_contribution.label}</td>
             <td>{$form.record_contribution.html}<br />
@@ -214,7 +220,7 @@ cj( function( ) {
     checkEmail( );
 });
 function checkEmail( ) {
-    var contactID =  cj("input[name=contact_select_id[1]]").val();
+    var contactID =  cj("input[name='contact_select_id[1]']").val();
     if ( contactID ) {
         var postUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' h=0}{literal}";
         cj.post( postUrl, {contact_id: contactID},

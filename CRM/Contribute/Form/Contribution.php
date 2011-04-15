@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -272,7 +272,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
         // also check for billing information
         // get the billing location type
         $locationTypes = CRM_Core_PseudoConstant::locationType( );
-        $this->_bltID = array_search( 'Billing',  $locationTypes );
+        $this->_bltID = array_search( ts('Billing'),  $locationTypes );
         if ( ! $this->_bltID ) {
             CRM_Core_Error::fatal( ts( 'Please set a location type of %1', array( 1 => 'Billing' ) ) );
         }
@@ -520,6 +520,11 @@ WHERE  contribution_id = {$this->_id}
             if ( !CRM_Utils_Array::value( "billing_country_id-{$this->_bltID}", $defaults ) ) { 
                 $defaults["billing_country_id-{$this->_bltID}"] = $config->defaultContactCountry;
             }
+
+
+            // now fix all state country selectors
+            require_once 'CRM/Core/BAO/Address.php';
+            CRM_Core_BAO_Address::fixAllStateSelects( $this, $defaults );
 
 //             // hack to simplify credit card entry for testing
 //             $defaults['credit_card_type']     = 'Visa';
@@ -837,8 +842,7 @@ WHERE  contribution_id = {$this->_id}
                             array( 'CRM_Contribute_DAO_Contribution', $this->_id, 'trxn_id' ) );
         }
         //add receipt for offline contribution
-        $this->addElement( 'checkbox','is_email_receipt', ts('Send Receipt?'), null,
-                           array( 'onclick' => "showHideByValue( 'is_email_receipt', '', 'receiptDate', 'table-row', 'radio', true); showHideByValue( 'is_email_receipt', '', 'fromEmail', 'table-row', 'radio', false );" ) );
+        $this->addElement( 'checkbox','is_email_receipt', ts('Send Receipt?') );
 
         $this->add( 'select', 'from_email_address', ts('Receipt From'), $this->_fromEmails );
 

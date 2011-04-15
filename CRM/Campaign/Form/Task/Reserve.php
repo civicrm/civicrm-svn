@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -250,7 +250,7 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
                                      'activity_date_time'  => date('YmdHis'),
                                      'status_id'           => $statusHeld,
                                      'skipRecentView'      => 1,
-                                     'campaign_id'         => $campaignId
+                                     'campaign_id'         => CRM_Utils_Array::value('campaign_id',$this->_surveyDetails)
                                      );
             $activity = CRM_Activity_BAO_Activity::create( $activityParams );
             if ( $activity->id ) {

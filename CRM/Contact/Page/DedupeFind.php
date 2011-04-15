@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -161,6 +161,7 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                     while ( $dao->fetch() ) {
                         $displayNames[$dao->id] = $dao->display_name;
                     }
+
                     // FIXME: sort the contacts; $displayName 
                     // is already sort_name-sorted, so use that
                     // (also, consider sorting by dupe count first)
@@ -194,7 +195,7 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                                                         'weight'  => $dupes[2],
                                                         'canMerge'=> $canMerge );
                         
-                        $data = serialize( $row );
+                        $data = CRM_Core_DAO::escapeString( serialize( $row ) );
                         $values[] = " ( 'civicrm_contact', $srcID, $dstID, '$cacheKeyString', '$data' ) ";
                     }
                     if ( $cid ) {

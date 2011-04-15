@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -108,7 +108,7 @@ WHERE  entity_id1 = %1 AND
         
         if ( isset( $cacheKey ) ) {
             $sql .= " AND cacheKey LIKE %3";
-            $params[3] = array( $cacheKey, 'String' );
+            $params[3] = array( "{$cacheKey}%", 'String' );
         }
 
         CRM_Core_DAO::executeQuery( $sql, $params );

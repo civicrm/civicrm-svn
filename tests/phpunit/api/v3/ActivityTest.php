@@ -176,7 +176,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'details'             => 'a test activity',
                         'status_id'           => 1,
                         'activity_name'       => 'Test activity type',
-                        'version' => $this->_apiversion
+                        'version'             => $this->_apiversion
                         );
 
         $result = & civicrm_api3_activity_create($params);
@@ -288,13 +288,14 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $params = array(
                         'source_contact_id'   => 17,
                         'subject'             => 'Make-it-Happen Meeting',
-                        'activity_date_time'  => date('Ymd'),
+                        'activity_date_time'  => '20110316',
                         'duration'            => 120,
                         'location'            => 'Pensulvania',
                         'details'             => 'a test activity',
                         'status_id'           => 1,
                         'activity_name'       => 'Test activity type',
                         'version'							=> $this->_apiversion,
+                        'priority_id'				  =>2,
                         );
         
         $result = & civicrm_api3_activity_create( $params );
@@ -304,7 +305,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->assertEquals( $result['values'][$result['id']]['source_contact_id'], 17,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['duration'], 120 ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['subject'], 'Make-it-Happen Meeting','in line ' . __LINE__ );
-        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], date('Ymd')  ,'in line ' . __LINE__);
+        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], '20110316'  ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['location'], 'Pensulvania','in line ' . __LINE__ );
         $this->assertEquals( $result['values'][$result['id']]['details'], 'a test activity' ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['status_id'], 1,'in line ' . __LINE__ );
@@ -323,7 +324,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     /**
      *  Test civicrm_activity_create() with valid parameters for unique fields - 
      *  set up to see if unique fields work but activity_subject doesn't
-     */
+
     function testActivityCreateUniqueName( )
     {
       $this->markTestSkipped('test to see if api will take unique names but it doesn\'t yet');
@@ -332,7 +333,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
        * activity_location, activity_status_id
        * activity_is_test
        * activity_medium_id
-       */
+       
         $params = array(
                         'source_contact_id'   => 17,
                         'activity_subject'             => 'Make-it-Happen Meeting',
@@ -345,12 +346,10 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version'							=> $this->_apiversion,
                         );
         
-        $result = & civicrm_api3_activity_create( $params );
+        $result =  civicrm_api3_activity_create( $params );
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
-        /*
-         * @todo - get doesn't return in unique name format so test only tests input of unique format
-         */
+ 
         $this->assertEquals( $result['values'][$result['id']]['source_contact_id'], 17 );
         $this->assertEquals( $result['values'][$result['id']]['duration'], 120 );
         $this->assertEquals( $result['values'][$result['id']]['subject'], 'Make-it-Happen Meeting' ); //This field gets lost
@@ -360,6 +359,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->assertEquals( $result['values'][$result['id']]['status_id'], 1 );
 
     }
+         */
+    
     /**
      *  Test civicrm_activity_create() with valid parameters
      *  and some custom data
@@ -409,7 +410,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         CRM_Core_BAO_CustomGroup::createTable( $group );
 
         //  Add column activity_custom_11 to the custom table
-        $customField =& new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->column_name = 'activity_custom_11';
         $customField->custom_group_id = 9;
         $customField->is_required = 0;
@@ -648,7 +649,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         CRM_Core_BAO_CustomGroup::createTable( $group );
 
         //  Add column activity_custom_11 to the custom table
-        $customField =& new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->column_name = 'activity_custom_11';
         $customField->custom_group_id = 9;
         $customField->is_required = 0;
@@ -750,113 +751,10 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
     }
 
-    /**
-     *  Test civicrm_activity_processemail()
-     */
-    function testActivityProcessEMail()
-    {
-        //  Give contact 17 an email address
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/email_contact_17.xml') );
-        
-        $result = civicrm_api3_activity_processemail(
-                   dirname( __FILE__ ) . '/dataset/activity_email' , 5 );
 
-        //  civicrm_activity should show the new activity
-        $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                 dirname( __FILE__ )
-                 . '/dataset/activity_1_emailed.xml' );
-        $actual = new PHPUnit_Extensions_Database_DataSet_QueryDataset(
-                                       $this->_dbconn );
-        $actual->addTable( 'civicrm_activity' );
-        $expected->assertEquals( $actual );
-    }
 
-    /**
-     *  Test civicrm_activity_processmail() with non-existent file
-     */
-    function testActivityProcessEMailNoFile()
-    {
-        $result = civicrm_api3_activity_processemail( 'no/such/file/nohow' , 5 );
-        $this->assertEquals( $result['is_error'], 1,
-                             "In line " . __LINE__ );
-    }
 
-    /**
-     *  Test civicrm_activity_processmail() with unparseable file
-     *  @todo Fix the bug that causes CiviCRM to crash and stop the test
-     */
-    //function testActivityProcessEMailUnparseableFile()
-    //{
-    //    $result = civicrm_activity_process_email( 
-    //        dirname( __FILE__ ) . '/dataset/activity_email_unparseable' , 5 );
-    //    $this->assertEquals( $result['is_error'], 1,
-    //                         "In line " . __LINE__ );
-    //}
-
-    /**
-     *  Test civicrm_activity_processmail()
-     */
-    function testActivityProcessEMail2()
-    {
-        //  Give contact 17 an email address
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/email_contact_17.xml') );
-
-        //  Truncate the tables
-        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                             dirname(__FILE__) . '/../../CiviTest/truncate-option.xml') );
-
-        //  Insert a row in civicrm_option_group creating option group
-        //  activity_type 
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/option_group_activity.xml') );
-
-        //  Insert rows in civicrm_option_value defining activity status
-        //  values of 'Scheduled', 'Completed', 'Cancelled'
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/option_value_activity.xml') );
-
-        $result = civicrm_api3_activity_processemail(
-                   dirname( __FILE__ ) . '/dataset/activity_email' , 5 );
-
-        $this->assertEquals( $result['is_error'], 0,
-                                     "In line " . __LINE__ );
-
-        //  civicrm_activity should show the new activity
-        $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                 dirname( __FILE__ )
-                 . '/dataset/activity_1_emailed.xml' );
-        $actual = new PHPUnit_Extensions_Database_DataSet_QueryDataSet(
-                                       $this->_dbconn );
-        $actual->addTable( 'civicrm_activity' );
-        
-        $expected->assertEquals( $actual );
-
-        //  civicrm_activity_target should show the target of the new activity
-        $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                 dirname( __FILE__ )
-                 . '/dataset/activity_target_1_emailed.xml' );
-        $actual = new PHPUnit_Extensions_Database_DataSet_QueryDataSet(
-                                       $this->_dbconn );
-        $actual->addTable( 'civicrm_activity_target' );
-        $expected->assertEquals( $actual );
-    }
-    
+     
     /**
      * check with empty array
      */
@@ -926,6 +824,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'subject'             => 'this case should fail',
                         'scheduled_date_time' => date('Ymd'),
                         'version'							=> $this->_apiversion,
+                        'source_contact_id'   => 17,
                         );
 
         $result =& civicrm_api3_activity_create($params);
@@ -1020,7 +919,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         CRM_Core_BAO_CustomGroup::createTable( $group );
 
         //  Add column activity_custom_11 to the custom table
-        $customField =& new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->column_name = 'activity_custom_11';
         $customField->custom_group_id = 9;
         $customField->is_required = 0;
@@ -1040,7 +939,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                 'details'             => 'a test activity to check the update api',
                 'status_id'           => 1,
                 'activity_name'       => 'Test activity type',
-                'version'							=> $this->_apiversion,
+                'version'		      => $this->_apiversion,
                 'custom_11'           => 'bite my test data', 
          );
         $result = civicrm_api3_activity_create( $params );
@@ -1063,16 +962,21 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         
          //  Update the activity with custom data
          $params = array(
-                 'id'                  => $activityId,
-                 'source_contact_id'   => 17,
-                 'subject'             => 'Make-it-Happen',
-                 'status_id'           => 1,
-                 'activity_name'       => 'Test activity type',
-                 'custom_11'           => 'Updated my test data',
-                 'version'						 => $this->_apiversion,
+                         'id'                  => $activityId,
+                         'source_contact_id'   => 17,
+                         'subject'             => 'Make-it-Happen Meeting',
+                         'status_id'           => 1,
+                         'activity_name'       => 'Test activity type',
+                         'activity_date_time'  => date('Ymd'), // add this since dates are messed up
+                         'custom_11'           => 'Updated my test data',
+                         'version'		       => $this->_apiversion,
                          );
-         $result = civicrm_api3_activity_create( $params );
-         
+         $result = civicrm_api('Activity','Update', $params );
+         $this->assertEquals( 0, $result['is_error'],
+                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+
+         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+
          //  Retrieve and check the activity created
          $params = array( 'activity_id' => $activityId,
                           'activity_type_id' => 1 ,
@@ -1081,14 +985,15 @@ class api_v3_ActivityTest extends CiviUnitTestCase
          
          $this->assertEquals( 0, $result['is_error'],
                               "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
-         $this->assertEquals( 'Make-it-Happen', $result['values'][$activityId]['subject'],
+         $this->assertEquals( 'Make-it-Happen Meeting', $result['values'][$activityId]['subject'],
                               'In line ' . __LINE__ );
-         
+
          // Check that the custom field value is update
          $params = array( 'entityID'   => $activityId,
                           'custom_11' => 1
                           );
          $values = CRM_Core_BAO_CustomValueTable::getValues( $params );
+
          // check for updated custom value
          $this->assertEquals( 'Updated my test data',
                               $values['custom_11'],

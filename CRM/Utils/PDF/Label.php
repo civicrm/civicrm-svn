@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
      *  Class to print labels in Avery or custom formats
      * functionality and smarts to the base PDF_Label.
      *
-     * @copyright CiviCRM LLC (c) 2004-2010
+     * @copyright CiviCRM LLC (c) 2004-2011
      * 
      *
      */
@@ -58,7 +58,10 @@ class CRM_Utils_PDF_Label extends TCPDF {
     
     // Listing of labels size
     protected  $averyLabels =
-        array (
+        array ('3475' => array('name' => '3475', 'paper-size' => 'A4', 'metric' => 'mm',
+                                 'lMargin' => 1, 'tMargin' => 5, 'NX' => '3', 'NY' => 8,
+                                 'SpaceX' => 0, 'SpaceY' => 0, 'width' => 70, 'height' => 36,
+                                 'font-size' => 10),
                '5160' => array('name' => '5160', 'paper-size' => 'letter', 'metric' => 'mm',
                                'lMargin' => 4.7625, 'tMargin' => 12.7, 'NX' => 3, 'NY' => 10,
                                'SpaceX' => 3.96875, 'SpaceY' => 0, 'width' => 65.875, 'height' => 25.4,

@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -291,6 +291,9 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
         }
 
         $subTypes['Contact']  =  $contactSubTypes;
+
+        CRM_Core_BAO_CustomGroup::getExtendedObjectTypes( $subTypes );
+
         foreach ($customGroup as $key => $values ) {
             $subValue = CRM_Utils_Array::value( 'extends_entity_column_value', $customGroup[$key] );
 			$subName  = CRM_Utils_Array::value( 'extends_entity_column_id', $customGroup[$key] );

@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -231,8 +231,10 @@ class CRM_Event_BAO_Query
             }
         }
 
-        if ( $grouping !== null &&
-             ! $isTest ) {
+        if ( $grouping !== null && 
+             ! $isTest &&
+             // we dont want to include all tests for sql OR CRM-7827
+             $query->getOperator( ) != 'OR' ) {
             $values = array( 'participant_test', '=', 0, $grouping, 0 );
             self::whereClauseSingle( $values, $query );
         }

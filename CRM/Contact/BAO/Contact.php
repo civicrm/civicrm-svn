@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -195,11 +195,11 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         }
 
         if ( $contact->contact_type == 'Individual' &&
-             (array_key_exists( 'current_employer', $params ) || 
-              array_key_exists( 'employer_id', $params )) ) {
+             (isset($params['current_employer']) || 
+              isset($params['employer_id'])) ) {
             // create current employer
             require_once 'CRM/Contact/BAO/Contact/Utils.php';
-            if ( $params['employer_id']  ) {
+            if ( isset($params['employer_id'])  ) {
                 CRM_Contact_BAO_Contact_Utils::createCurrentEmployerRelationship( $contact->id, 
                                                                                   $params['employer_id'] );
             } elseif ( $params['current_employer'] ) {
@@ -717,7 +717,7 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
 
             // delete the log entries since we dont have triggers enabled as yet
             require_once 'CRM/Core/DAO/Log.php';
-            $logDAO =& new CRM_Core_DAO_Log();
+            $logDAO = new CRM_Core_DAO_Log();
             $logDAO->entity_table = 'civicrm_contact';
             $logDAO->entity_id    = $id;
             $logDAO->delete();
@@ -787,23 +787,17 @@ WHERE id={$id}; ";
             require_once 'CRM/Utils/System/Drupal.php';
             $rootPath = CRM_Utils_System_Drupal::cmsRootPath( );
             $baseUrl = $config->userFrameworkBaseURL;
-            if ( module_exists('locale') && 
-                 $mode = variable_get( 'language_negotiation', LANGUAGE_NEGOTIATION_NONE ) ) {
-                global $language;
-                if( isset( $language->prefix ) &&
-                    ! empty( $language->prefix ) ) {
-                    $baseUrl=  str_replace( $language->prefix . '/',
-                                            '', 
-                                            $config->userFrameworkBaseURL );
-                }
-            }
+            
+            //format url for language negotiation, CRM-7135
+            $baseUrl = CRM_Utils_System::languageNegotiationURL( $baseUrl, false, true );
+            
             $relativePath = str_replace( "{$rootPath}/",
                                          $baseUrl, 
                                          str_replace('\\', '/', $absolutePath ) );
         }
         return $relativePath;
     }
- 	
+
     /**
      * function to return proportional height and width of the image
      *
@@ -1737,21 +1731,23 @@ ORDER BY civicrm_email.is_primary DESC";
         $privacy = CRM_Core_SelectValues::privacy( );
         foreach ($privacy as $key => $value) {
             if (array_key_exists($key, $fields)) {
-                if ( CRM_Utils_Array::value( $key, $params ) ) {
+                if ( array_key_exists( $key, $params ) ) {
                     $data[$key] = $params[$key];
-                } else {
+                } else if ( ! $contactID ) { // dont reset it for existing contacts
                     $data[$key] = 0;
                 }
             }
         }
         
         // manage is_opt_out
-        if (array_key_exists('is_opt_out', $fields)) {
+        if (array_key_exists('is_opt_out', $fields) &&
+            array_key_exists('is_opt_out', $params) ) {
             $wasOptOut = CRM_Utils_Array::value( 'is_opt_out', $contactDetails, false );
             $isOptOut  = CRM_Utils_Array::value( 'is_opt_out', $params, false );
             $data['is_opt_out'] = $isOptOut;
             // on change, create new civicrm_subscription_history entry
-            if (($wasOptOut != $isOptOut) && CRM_Utils_Array::value('contact_id', $contactDetails ) ) {
+            if (($wasOptOut != $isOptOut) && 
+                CRM_Utils_Array::value('contact_id', $contactDetails ) ) {
                 $shParams = array(
                                   'contact_id' => $contactDetails['contact_id'],
                                   'status'     => $isOptOut ? 'Removed' : 'Added',
@@ -2184,7 +2180,11 @@ UNION
             
         case 'activity' :
             require_once 'CRM/Activity/BAO/Activity.php';
-            return CRM_Activity_BAO_Activity::getActivitiesCount( $contactId, false, null, null );
+            $input = array( 'contact_id' => $contactId,
+                            'admin'      => false,
+                            'caseId'     => null,
+                            'context'    => null );
+            return CRM_Activity_BAO_Activity::getActivitiesCount( $input );
         
 		default :
 			$custom = explode( '_', $component );

@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -32,7 +32,7 @@
  *
  * @package CiviCRM_APIv2
  * @subpackage API_Contact
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -150,8 +150,8 @@ function civicrm_contact_update( &$params, $create_new = false )
     }
     
     $error = _civicrm_greeting_format_params( $params );
-    if ( $error['error_message'] ) {
-        return $error['error_message'];
+    if ( civicrm_error( $error ) ) {
+        return $error;
     }
     
     $values   = array( );
@@ -709,6 +709,7 @@ function _civicrm_contact_update( &$params, $contactID = null )
 
 /**
  * @todo Move this to ContactFormat.php 
+ * @deprecated
  */
 function civicrm_contact_format_create( &$params )
 {
@@ -722,12 +723,12 @@ function civicrm_contact_format_create( &$params )
     }
 
     $error = _civicrm_required_formatted_contact($params);
-    if (civicrm_error( $error, 'CRM_Core_Error')) {
+    if ( civicrm_error( $error ) ) {
         return $error;
     }
     
     $error = _civicrm_validate_formatted_contact($params);
-    if (civicrm_error( $error, 'CRM_Core_Error')) {
+    if ( civicrm_error( $error ) ) {
         return $error;
     }
 
@@ -739,7 +740,7 @@ function civicrm_contact_format_create( &$params )
     if ( CRM_Utils_Array::value('onDuplicate', $params) != CRM_Import_Parser::DUPLICATE_NOCHECK) {
         CRM_Core_Error::reset( );
         $error = _civicrm_duplicate_formatted_contact($params);
-        if (civicrm_error( $error, 'CRM_Core_Error')) {
+        if ( civicrm_error( $error ) ) {
             return $error;
         }
     }
