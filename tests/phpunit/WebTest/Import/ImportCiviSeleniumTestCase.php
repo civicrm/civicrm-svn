@@ -70,12 +70,11 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
         } else if ( $mode == 'No Duplicate Checking' ) {
             $this->click("CIVICRM_QFID_16_6");  
         }
-        
+       
         // select contact type, default is 'Individual'.
-        if ( $contactType == 'Organization' ) {
-            $this->click("CIVICRM_QFID_4_12");
-        } else if ( $contactType == 'Household' ) {
-            $this->click("CIVICRM_QFID_2_10");
+        if ( $component != 'Activity' ) {
+            $contactTypeOption = $this->_getImportComponentContactType( $component, $contactType );
+            $this->click( $contactTypeOption );
         }
         
         // Date format, default: yyyy-mm-dd OR yyyymmdd
@@ -376,9 +375,32 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
 
         $importComponentUrl = array( 'Event'        => 'civicrm/event/import?reset=1',
                                      'Contribution' => 'civicrm/contribute/import?reset=1',
-                                     'Membership'   => 'civicrm/member/import?reset=1');
+                                     'Membership'   => 'civicrm/member/import?reset=1',
+                                     'Activity'     => 'civicrm/import/activity?reset=1');
 
         return $importComponentUrl[$component];
+    }
+    
+     /*
+     * Helper function to get the import url of the component.
+     *
+     * @params string $component component name
+     *
+     * @return string import url 
+     */
+    function _getImportComponentContactType( $component, $contactType ) {
+        $importComponentMode = array('Event'        => array('Individual'   => 'CIVICRM_QFID_1_8',
+                                                             'Household'    => 'CIVICRM_QFID_2_10',
+                                                             'Organization' => 'CIVICRM_QFID_4_12'),
+                                     'Contribution' => array('Individual'   => 'CIVICRM_QFID_1_6',
+                                                             'Household'    => 'CIVICRM_QFID_2_8',
+                                                             'Organization' => 'CIVICRM_QFID_4_10'),
+                                     'Membership'   => array('Individual'   => 'CIVICRM_QFID_1_6',
+                                                             'Household'    => 'CIVICRM_QFID_2_8',
+                                                             'Organization' => 'CIVICRM_QFID_4_10')
+                                     );
+        
+        return $importComponentMode[$component][$contactType];
     }
     
     /*
