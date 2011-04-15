@@ -90,8 +90,10 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
         }
 
         // Use already created mapping
+        $existingMapping = null;
         if ( isset($other['useMappingName']) ) {
             $this->select('savedMapping', "label=" . $other['useMappingName'] );
+            $existingMapping = $other['useMappingName'];
         }
         
         // Submit form.
@@ -106,7 +108,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
         }
         
         // Check mapping data.
-        $this->_checkImportMapperData($headers, $rows, isset($other['checkMapperHeaders']) ? $other['checkMapperHeaders'] : array( ));
+        $this->_checkImportMapperData($headers, $rows, $existingMapping, isset($other['checkMapperHeaders']) ? $other['checkMapperHeaders'] : array( ));
         
         // Save mapping
         if ( isset($other['saveMapping']) ) {
@@ -122,7 +124,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
         $this->waitForPageToLoad("30000");
         
         // Check mapping data.
-        $this->_checkImportMapperData($headers, $rows, isset($other['checkMapperHeaders']) ? $other['checkMapperHeaders'] : array( ));
+        $this->_checkImportMapperData($headers, $rows, $existingMapping, isset($other['checkMapperHeaders']) ? $other['checkMapperHeaders'] : array( ));
       
         // Submit form.
         $this->click('_qf_Preview_next');
@@ -221,8 +223,10 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
       }
 
       // Use already created mapping
+      $existingMapping = null;
       if ( isset($other['useMappingName']) ) {
           $this->select('savedMapping', "label=" . $other['useMappingName'] );
+          $existingMapping = $other['useMappingName'];
       }
 
       // Date format, default: yyyy-mm-dd OR yyyymmdd
@@ -251,7 +255,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
       }
 
       // Check mapping data.
-      $this->_checkImportMapperData($headers, $rows, $checkMapperHeaders, 'td');
+      $this->_checkImportMapperData($headers, $rows, $existingMapping, $checkMapperHeaders, 'td');
 
       // Select matching field for cvs data.
       if ( !empty($fieldMapper) ) {
@@ -273,7 +277,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
       
       // Check mapping data.
-      $this->_checkImportMapperData($headers, $rows, $checkMapperHeaders, 'td');
+      $this->_checkImportMapperData($headers, $rows, $existingMapping, $checkMapperHeaders, 'td');
       
       // Add imported contacts in new group.
       $groupName = null;
@@ -431,7 +435,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
      * @params array  $rows               field rows
      * @params array  $checkMapperHeaders override default mapper headers
      */
-    function _checkImportMapperData( $headers, $rows, $checkMapperHeaders = array(), $headerSelector = 'th' ) {
+    function _checkImportMapperData( $headers, $rows, $existingMapping = null, $checkMapperHeaders = array(), $headerSelector = 'th' ) {
         
         if ( empty($checkMapperHeaders) ) { 
             $checkMapperHeaders = array( 1 => 'Column Headers',
@@ -439,17 +443,23 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
                                          3 => 'Import Data (row 3)',
                                          4 => 'Matching CiviCRM Field' );
         }
-        
+
+        $rowNumber = 1;
+        if ( $existingMapping ) {
+            $this->verifyText("xpath=//div[@id='map-field']//table[1]/tbody/tr[{$rowNumber}]/th[1]", preg_quote("Saved Field Mapping: {$existingMapping}"));
+            $rowNumber++;
+        }
+
         foreach ($checkMapperHeaders as $rownum => $value ) {
             $this->verifyText("xpath=//div[@id='map-field']//table[1]/tbody/tr[1]/{$headerSelector}[{$rownum}]", preg_quote($value));
         }
+        $rowNumber++;
         
-        $rownum = 2;
         foreach ( $headers as $field => $header ) {
-            $this->verifyText("xpath=//div[@id='map-field']//table[1]/tbody/tr[{$rownum}]/td[1]", preg_quote($header));
+            $this->verifyText("xpath=//div[@id='map-field']//table[1]/tbody/tr[{$rowNumber}]/td[1]", preg_quote($header));
             $colnum = 2;
             foreach( $rows as $row ) {
-                $this->verifyText("xpath=//div[@id='map-field']//table[1]/tbody/tr[{$rownum}]/td[{$colnum}]", preg_quote($row[$field]));  
+                $this->verifyText("xpath=//div[@id='map-field']//table[1]/tbody/tr[{$rowNumber}]/td[{$colnum}]", preg_quote($row[$field]));  
                 $colnum++;   
             }
             $rownum++;
