@@ -1711,6 +1711,8 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
     if (isset($params['check_permissions']) and $params['check_permissions'] == false) return true;
 
     require_once 'CRM/Core/Permission.php';
+
+    // FIXME: split the below out to its own file (and auto-generate from XML?)
     $requirements = array(
         'contact' => array(
             'create' => array('all' => array('access CiviCRM', 'add contacts')),
@@ -1719,7 +1721,11 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
         'event' => array(
             'create' => array('all' => array('access CiviEvent')),
         ),
+        'mailing' => array(
+            'create' => array('any' => array('access CiviMail', 'create mailings')),
+        ),
     );
+
     foreach ($requirements[$entity][$action] as $condition => $perms) {
         $checks = array_map('CRM_Core_Permission::check', $perms);
         if (($condition == 'all' and in_array(false, $checks)) or
