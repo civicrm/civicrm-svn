@@ -156,6 +156,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
      * @params string $mode        import mode
      * @params array  $fieldMapper select mapper fields while import
      * @params array  $other       other parameters
+     *                             contactSubtype     : import for selected Contact Subtype           
      *                             useMappingName     : to reuse mapping
      *                             dateFormat         : date format of data
      *                             checkMapperHeaders : to override default check mapper headers
@@ -165,6 +166,8 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
      *                             createGroupName    : to override new Group name
      *                             createTag          : create new tag?
      *                             createTagName      : to override new Tag name
+     *                             selectGroup        : select existing group for contacts
+     *                             selectTag          : select existing tag for contacts
      *
      * @params string $type        import type (csv/sql)
      *                             @todo:currently only supports csv, need to work on sql import 
@@ -200,6 +203,16 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
           $this->click("CIVICRM_QFID_4_14");
       } else if ( $contactType == 'Household' ) {
           $this->click("CIVICRM_QFID_2_12");
+      }
+
+      // Select contact subtype
+      if ( isset($other['contactSubtype']) ) {
+          if ( $contactType != 'Individual' ) {
+              // wait for contact subtypes to repopulate.
+              sleep(5);
+          }
+          $this->waitForElementPresent("subType");
+          $this->select('subType', 'label=' . $other['contactSubtype'] );
       }
 
       // Use already created mapping
@@ -252,25 +265,49 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
       
       // Add imported contacts in new group.
       $groupName = null;
+      $existingGroups = array( );
       if ( isset($other['createGroup']) ) {
           $groupName = isset($other['createGroupName']) ? $other['createGroupName'] :'ContactImport_' . substr(sha1(rand()), 0, 7);
 
           $this->click( "css=#new-group div.crm-accordion-header" );
           $this->type('newGroupName', $groupName);
           $this->type('newGroupDesc', "Group For {$contactType}" );
+      } 
+      if ( isset($other['selectGroup']) ) {
+          // reuse existing groups.
+          if ( is_array($other['selectGroup']) ) {
+              foreach( $other['selectGroup'] as $existingGroup ) {
+                  $this->select( 'groups[]', 'label='. $existingGroup );
+                  $existingGroups[] = $existingGroup;
+              }
+          } else {
+              $this->select( 'groups[]', 'label='. $other['selectGroup'] );
+              $existingGroups[] = $other['selectGroup'];
+          }
       }
-      // @TODO: select existing group
       
       // Assign new tag to the imported contacts.
       $tagName = null;
+      $existingTags = array( );
       if ( isset($other['createTag']) ) {
           $tagName = isset($other['createTagName']) ? $other['createTagName'] : "{$contactType}_".substr(sha1(rand()), 0, 7);
 
           $this->click( "css=#new-tag div.crm-accordion-header" );
           $this->type('newTagName', $tagName);
           $this->type('newTagDesc', "Tag for {$contactType}" );
+      } 
+      if ( isset($other['selectTag']) ) {
+          // reuse existing tags.
+          if ( is_array($other['selectTag']) ) {
+              foreach( $other['selectTag'] as $existingTag ) {
+                  $this->click( "xpath=//div[@id='existing-tags']//div[@class='crm-accordion-body']//label[text()='{$existingTag}']" );  
+                  $existingTags[] = $existingTag;
+              }
+          } else {
+              $this->click( "xpath=//div[@id='existing-tags']//div[@class='crm-accordion-body']//label[text()='". $other['selectTag'] ."']" );
+              $existingTags[] = $other['selectTag'];
+          }
       }
-      // @TODO: select existing tag
 
       // Submit form.
       $this->click('_qf_Preview_next');
@@ -305,6 +342,23 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
           $checkSummary['Tagged Imported Contacts'] = "{$tagName}: {$taggedContactsCount} tagged with this tag.";
       }
 
+      if ( $existingGroups ) {
+          if ( !isset($checkSummary['Import to Groups']) ) {
+              $checkSummary['Import to Groups'] = '';  
+          }
+          foreach( $existingGroups as $existingGroup ) {
+              $checkSummary['Import to Groups'] .= "{$existingGroup}: {$importedContactsCount} added to this existing group.";
+          }
+      }
+          
+      if ( $existingTags ) {
+          if ( !isset($checkSummary['Tagged Imported Contacts']) ) {
+              $checkSummary['Tagged Imported Contacts'] = '';  
+          }
+          foreach( $existingTags as $existingTag ) {
+              $checkSummary['Tagged Imported Contacts'] .= "{$existingTag}: {$taggedContactsCount} tagged with this tag.";
+          }
+      }
       foreach( $checkSummary as $label => $value ) {
           $this->verifyText("xpath=//table[@id='summary-counts']/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote($value));
       }

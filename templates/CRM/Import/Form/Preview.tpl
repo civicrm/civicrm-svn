@@ -169,7 +169,7 @@ function verify( ) {
 
       {* Existing Group *}
 
-<div class="crm-accordion-wrapper crm-existing_group-accordion {if $form.groups}crm-accordion-open{else}crm-accordion-closed{/if}">
+<div id="existing-groups" class="crm-accordion-wrapper crm-existing_group-accordion {if $form.groups}crm-accordion-open{else}crm-accordion-closed{/if}">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div>
   {$form.groups.label}
@@ -207,7 +207,7 @@ function verify( ) {
 </div><!-- /.crm-accordion-wrapper -->
     {* Existing Tag Imported Contact *}
 
-<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+<div id="existing-tags" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div>
   {ts}Tag imported records{/ts}
