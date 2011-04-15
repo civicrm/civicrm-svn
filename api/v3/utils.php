@@ -1704,7 +1704,7 @@ function civicrm_api3_check_contact_dedupe( $params ) {
  *
  * @return bool whether the current API user has the permission to make the call
  */
-function civicrm_api3_api_check_permission($api, $params, $throw = false)
+function civicrm_api3_api_check_permission($api, $params, $throw = true)
 {
     // return early if we’re told explicitly to skip the permission check
     if (isset($params['check_permissions']) and $params['check_permissions'] == false) return true;
