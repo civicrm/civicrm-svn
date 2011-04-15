@@ -334,7 +334,7 @@ class CRM_Export_BAO_Export
             $returnProperties = array_merge( $returnProperties, $moreReturnProperties );
         }
 
-        $query = new CRM_Contact_BAO_Query( 0, $returnProperties, null, false, false, $queryMode );
+        $query = new CRM_Contact_BAO_Query( null, $returnProperties, null, false, false, $queryMode );
         
         list( $select, $from, $where, $having ) = $query->query( );
         
@@ -363,7 +363,7 @@ class CRM_Export_BAO_Export
             if ( $relationReturnProperties = CRM_Utils_Array::value( $rel, $returnProperties ) ) {
                 $allRelContactArray[$rel] = array();
                 // build Query for each relationship
-                $relationQuery[$rel] = new CRM_Contact_BAO_Query( 0, $relationReturnProperties,
+                $relationQuery[$rel] = new CRM_Contact_BAO_Query( null, $relationReturnProperties,
                                                                   null, false, false, $queryMode );
                 list( $relationSelect, $relationFrom, $relationWhere, $relationHaving ) = $relationQuery[$rel]->query( );
                 
@@ -843,34 +843,38 @@ class CRM_Export_BAO_Export
             $dao->free( );
             $offset += $rowCount;
         }
-        
-        self::writeDetailsToTable( $exportTempTable, $componentDetails, $sqlColumns );
 
-        // do merge same address and merge same household processing
-        if ( $mergeSameAddress ) {
-            self::mergeSameAddress( $exportTempTable, $headerRows, $sqlColumns, $drop );
+        if ( $exportTempTable ) {
+            self::writeDetailsToTable( $exportTempTable, $componentDetails, $sqlColumns );
+            
+            // do merge same address and merge same household processing
+            if ( $mergeSameAddress ) {
+                self::mergeSameAddress( $exportTempTable, $headerRows, $sqlColumns, $drop );
+            }
+            
+            // merge the records if they have corresponding households
+            if ( $mergeSameHousehold ) {
+                self::mergeSameHousehold( $exportTempTable, $headerRows, $sqlColumns, $relationKey );
+            }
+            
+            // fix the headers for rows with relationship type
+            if ( !empty( $relName ) ) {
+                self::manipulateHeaderRows( $headerRows, $contactRelationshipTypes );
+            }
+            
+            // call export hook
+            require_once 'CRM/Utils/Hook.php';
+            CRM_Utils_Hook::export( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
+            
+            // now write the CSV file
+            self::writeCSVFromTable( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
+            
+            // delete the export temp table and component table
+            $sql = "DROP TABLE IF EXISTS {$exportTempTable}";
+            CRM_Core_DAO::executeQuery( $sql );
+        } else {
+            CRM_Core_Error::fatal( ts( 'No records to export' ) );
         }
-        
-        // merge the records if they have corresponding households
-        if ( $mergeSameHousehold ) {
-            self::mergeSameHousehold( $exportTempTable, $headerRows, $sqlColumns, $relationKey );
-        }
-
-        // fix the headers for rows with relationship type
-        if ( !empty( $relName ) ) {
-            self::manipulateHeaderRows( $headerRows, $contactRelationshipTypes );
-        }
-
-        // call export hook
-        require_once 'CRM/Utils/Hook.php';
-        CRM_Utils_Hook::export( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
-        
-        // now write the CSV file
-        self::writeCSVFromTable( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
-
-        // delete the export temp table and component table
-        $sql = "DROP TABLE IF EXISTS {$exportTempTable}";
-        CRM_Core_DAO::executeQuery( $sql );
 
         CRM_Utils_System::civiExit( );
     }
