@@ -276,10 +276,10 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
 									$base_table_column = explode('.', $field['statistics']['base']);
 									$top_table_column = explode('.', $field['statistics']['top']);
 									
-									$select[] = "round(
+									$select[] = "CONCAT(round(
 										count(DISTINCT {$this->_columns[$top_table_column[0]]['fields'][$top_table_column[1]]['dbAlias']}) / 
-										count(DISTINCT {$this->_columns[$base_table_column[0]]['fields'][$base_table_column[1]]['dbAlias']}), 4
-									) * 100 as {$tableName}_{$fieldName}"; 
+										count(DISTINCT {$this->_columns[$base_table_column[0]]['fields'][$base_table_column[1]]['dbAlias']}) * 100, 2
+									), '%') as {$tableName}_{$fieldName}"; 
 								break;
 							}
 						} else {

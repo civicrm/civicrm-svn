@@ -111,7 +111,7 @@
 {else}
             <td>&nbsp;</td>
 {/if}
-            <td colspan="2">{$form.operator.label}<br />{$form.operator.html}</td>
+            <td colspan="2">{$form.operator.label} {help id="id-search-operator"}<br />{$form.operator.html}</td>
 	    </tr>
         <tr>
             <td>

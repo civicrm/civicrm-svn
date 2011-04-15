@@ -36,8 +36,13 @@ require_once 'api/v3/Domain.php';
 class api_v3_DomainTest extends CiviUnitTestCase
 {
 
-  protected $_apiversion;
-  protected $params;
+    /* This test case doesn't require DB reset - apart from 
+       where cleanDB() is called. */
+    public $DBResetRequired = false;
+
+    protected $_apiversion;
+    protected $params;
+    
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
@@ -74,6 +79,8 @@ class api_v3_DomainTest extends CiviUnitTestCase
      */
     public function testGet()
     {
+        $this->cleanDB();
+
         $params = array('version' => 3);
         $result = civicrm_api3_domain_get($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);     

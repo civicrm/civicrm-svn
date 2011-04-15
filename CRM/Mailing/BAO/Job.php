@@ -475,7 +475,9 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
 
             if ( $config->mailerBatchLimit > 0 &&
                  $mailsProcessed >= $config->mailerBatchLimit ) {
-                $this->deliverGroup( $fields, $mailing, $mailer, $job_date, $attachments );
+                if ( ! empty( $fields ) ) {
+                    $this->deliverGroup( $fields, $mailing, $mailer, $job_date, $attachments );
+                }
                 return false;
             }
             $mailsProcessed++;
@@ -493,12 +495,15 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
             }
         }
 
-        $isDelivered = $this->deliverGroup( $fields, $mailing, $mailer, $job_date, $attachments );
+        if ( ! empty( $fields ) ) {
+            $isDelivered = $this->deliverGroup( $fields, $mailing, $mailer, $job_date, $attachments );
+        }
         return $isDelivered;
     }
 
     public function deliverGroup ( &$fields, &$mailing, &$mailer, &$job_date, &$attachments ) {
-        if ( ! is_object( $mailer ) ) {
+        if ( ! is_object( $mailer ) ||
+             empty( $fields ) ) {
             CRM_Core_Error::fatal( );
         }
 

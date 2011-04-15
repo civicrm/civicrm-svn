@@ -55,8 +55,8 @@
 		<div class="clear"></div> 
       {/if}
   </div>
-  
-  {if $taskName eq 'Export Contacts'}
+
+  {if $taskName eq 'Export Contacts' OR $component eq false}
   <div class="crm-section crm-export-mergeOptions-section">
     <div class="label crm-label-mergeOptions">{ts}Merge Options{/ts} {help id="id-export_merge_options"}</div>
     <div class="content crm-content-mergeSameAddress">

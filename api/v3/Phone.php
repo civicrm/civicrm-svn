@@ -84,14 +84,15 @@ function civicrm_api3_phone_create( $params )
 		}
 	}
 	/*
-	 * if location_type_id in params, it should exist as option value
+	 * if location_type_id in params, it should exist.
 	 */
 	if (CRM_Utils_Array::value('location_type_id', $params)) {
 		$location_params = array(
 			'version'			=>	'3',
-			'id'				=>	$params['location_type_id']);
-		$location_value = civicrm_api('LocationType', 'Get', $location_params);
-		if ($location_value['count'] == 0) {
+			'name'				=>	'locationType');
+		$locTypes = civicrm_api('Constant', 'Get', $location_params);
+		if (!CRM_Utils_Array::value($params['location_type_id'], 
+			$locTypes['values'])) {
 			return civicrm_api3_create_error("Location_type_id does not
 				exist, could not create phone");
 		}
@@ -163,28 +164,22 @@ function civicrm_api3_phone_get($params)
 {   
   _civicrm_api3_initialize(true );
   try {
-    civicrm_api3_verify_one_mandatory($params, null, 
-		array('id', 'contact_id', 'location_type_id', 'phone_type_id'));
+    civicrm_api3_verify_one_mandatory($params, null);
 	
     require_once 'CRM/Core/BAO/Phone.php';
-    $phoneBAO = new CRM_Core_BAO_Phone();
-    $fields = array_keys($phoneBAO->fields());
+    $bao = new CRM_Core_BAO_Phone();
+    _civicrm_api3_dao_set_filter ( $bao, $params );
 
-    foreach ( $fields as $name) {
-        if (CRM_Utils_Array::value($name, $params)) {
-            $phoneBAO->$name = $params[$name];
-        }
-    }
     
-    if ( $phoneBAO->find() ) {
+    if ( $bao->find() ) {
       $phones = array();
-      while ( $phoneBAO->fetch() ) {
-        CRM_Core_DAO::storeValues( $phoneBAO, $phone );
-        $phones[$phoneBAO->id] = $phone;
+      while ( $bao->fetch() ) {
+        CRM_Core_DAO::storeValues( $bao, $phone );
+        $phones[$bao->id] = $phone;
       }
-      return civicrm_api3_create_success($phones,$params,$phoneBAO);
+      return civicrm_api3_create_success($phones,$params,$bao);
     } else {
-      return civicrm_api3_create_success(array(),$params,$phoneBAO);
+      return civicrm_api3_create_success(array(),$params,$bao);
     }
 				
   } catch (Exception $e) {

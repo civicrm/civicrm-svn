@@ -57,6 +57,7 @@ class CRM_Core_Form_Tag
     static function buildQuickForm( &$form, $parentNames, $entityTable, $entityId = null, $skipTagCreate = false, 
                                     $skipEntityAction = false, $searchMode = false ) {        
         $tagset = $form->_entityTagValues = array( );
+        $mode   = null;
 
         foreach( $parentNames as &$parentNameItem ) {
             // get the parent id for tag list input for keyword

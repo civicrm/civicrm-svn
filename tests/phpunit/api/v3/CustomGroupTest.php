@@ -146,7 +146,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                          );
         
         $result =& civicrm_api3_custom_group_create($params);
-        $this->documentMe($params,$result,__FUNCTION__,__FILE__);         $this->assertEquals($result['is_error'], 0);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);         
+        $this->assertEquals($result['is_error'], 0);
         $this->assertNotNull($result['id']);
         $this->assertEquals($result['values'][$result['id']]['extends'], 'Individual');
         $this->customGroupDelete($result['id']);

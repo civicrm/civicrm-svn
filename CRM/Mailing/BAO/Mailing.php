@@ -2019,6 +2019,11 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                         $skipDeceased = true,
                         $extraParams = null ) 
     {
+        if ( empty( $contactIDs ) ) {
+            // putting a fatal here so we can trck if/when this happens
+            CRM_Core_Error::fatal( );
+        }
+
         $params = array( );
         foreach ( $contactIDs  as $key => $contactID ) {
             $params[] = array( CRM_Core_Form::CB_PREFIX . $contactID,

@@ -113,7 +113,7 @@ function civicrm_group_roles_add_groups_oncreate( $account, $roles ) {
     if ( empty($groups) ) {
         return;
     }
-
+    
     require_once 'CRM/Contact/BAO/GroupContact.php';
     foreach( $groups as $group ) {
         $groupContact = new CRM_Contact_DAO_GroupContact( );
@@ -211,8 +211,7 @@ function civicrm_group_roles_civicrm_post( $op, $objectName, $objectId, &$object
             }
             
             //Do we have a Drupal Account?
-            civicrm_api_include('uf_group');
-            // TODO: Does civicrm_uf_id_get() exist in v3 api?
+            require_once 'api/v2/UFGroup.php';
             $uid = civicrm_uf_id_get( $contact_id );
             if (!$uid) { //make sure we have an actual user account
                 continue;
