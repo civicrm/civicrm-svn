@@ -849,6 +849,13 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         $sortOrder =& $this->getSortOrder( $this->_action );
         $sort      = new CRM_Utils_Sort( $sortOrder, $sortID );
 
+        // rectify params to what proximity search expects if there is a value for prox_distance
+        // CRM-7021 CRM-7905
+        if ( !empty( $params ) ) { 
+            require_once 'CRM/Contact/BAO/ProximityQuery.php';
+            CRM_Contact_BAO_ProximityQuery::fixInputParams( $params );
+        }
+
         $query = new CRM_Contact_BAO_Query( $params, $this->_returnProperties );
         $value =  $query->searchQuery( 0, 0, $sort,
                                        false, false, false,
