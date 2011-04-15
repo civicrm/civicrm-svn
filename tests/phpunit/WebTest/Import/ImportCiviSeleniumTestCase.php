@@ -171,13 +171,19 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
      * @params string $type        import type (csv/sql)
      *                             @todo:currently only supports csv, need to work on sql import 
      */
-    function importContacts( $headers, $rows, $contactType = 'Individual', $mode = 'Skip', $fieldmapper = array( ), $other = array( ), $type = 'csv' ) {
+    function importContacts( $headers, $rows, $contactType = 'Individual', $mode = 'Skip', $fieldMapper = array( ), $other = array( ), $type = 'csv' ) {
       
       // Go to contact import page.
       $this->open($this->sboxPath . "civicrm/import/contact?reset=1");
       
       // check for upload field.
       $this->waitForElementPresent("uploadFile");
+      
+      $originalHeaders = $headers;
+      $originalRows    = $rows;
+      
+      // format headers and row to import contacts with relationship data.
+      $this->_formatContactCSVdata($headers, $rows);
       
       // Create csv file of sample data.
       $csvFile = $this->webtestCreateCSV($headers, $rows);
@@ -247,6 +253,13 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
       // Check mapping data.
       $this->_checkImportMapperData($headers, $rows, $checkMapperHeaders, 'td');
 
+      // Select matching field for cvs data.
+      if ( !empty($fieldMapper) ) {
+          foreach( $fieldMapper as $field => $value ) {
+              $this->select($field, "value={$value}" );
+          }          
+      }
+      
       // Save mapping
       if ( isset($other['saveMapping']) ) {
             $mappingName = isset($other['saveMappingName']) ? $other['saveMappingName'] : 'ContactImport_' . substr(sha1(rand()), 0, 7);
@@ -326,10 +339,18 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("Import has completed successfully. The information below summarizes the results."));
 
       // Check summary Details.
-      $importedContacts = count($rows);
+      $importedContacts = $totalRows = count($originalRows);
+
+      // Include relationships contacts ( if exists )
+      if ( isset($originalHeaders['contact_relationships'] ) && is_array($originalHeaders['contact_relationships']) ) {
+          foreach( $originalRows as $row ) {
+              $importedContacts += count($row['contact_relationships']); 
+          }
+      }
+      
       $importedContactsCount = ( $importedContacts == 1 ) ? 'One contact' : "$importedContacts contacts";
       $taggedContactsCount   = ( $importedContacts == 1 ) ? 'One contact is' : "$importedContacts contacts are";
-      $checkSummary = array( 'Total Rows'               => $importedContacts,
+      $checkSummary = array( 'Total Rows'               => $totalRows,
                              'Total Contacts'           => $importedContacts
                              );
       
@@ -480,6 +501,37 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
         }
         
         return $contactIds;
-  }
+    }
     
+    /*
+     * Helper function to format headers and rows for contact relationship data.
+     *
+     * @params array  $headers data headers
+     * @params string $rows    data rows
+     */
+    function _formatContactCSVdata(&$headers, &$rows) {
+        if ( !isset($headers['contact_relationships']) ) {
+            return;
+        }
+
+        $relationshipHeaders = $headers['contact_relationships'];
+        unset($headers['contact_relationships']);
+
+        if ( empty($relationshipHeaders) || !is_array($relationshipHeaders) ) {
+            return;
+        }
+        
+        foreach( $relationshipHeaders as $relationshipHeader ) {
+            $headers = array_merge($headers, $relationshipHeader);
+        }
+        
+        foreach( $rows as &$row ) {
+            $relationshipRows = $row['contact_relationships'];
+            unset($row['contact_relationships']);
+            foreach( $relationshipRows as $relationshipRow ) {
+                $row = array_merge($row, $relationshipRow);
+            }
+        }
+    }
+
 }
