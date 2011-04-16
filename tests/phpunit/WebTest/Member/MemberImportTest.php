@@ -38,6 +38,8 @@ class WebTest_Member_MemberImportTest extends CiviSeleniumTestCase {
         $this->open( $this->sboxPath );
 
         $this->webtestLogin();
+        // make sure default strict dedupe rules are in place
+        $this->webtestStrictDedupeRuleDefault( "Individual" );
         
         // Get sample import data.
         list( $headers, $rows ) = $this->memberIndividualCSVData( );
@@ -100,8 +102,10 @@ class WebTest_Member_MemberImportTest extends CiviSeleniumTestCase {
         }
         
         // Submit form.
-        $this->click( '_qf_UploadFile_upload' );
+        $this->click( '_qf_UploadFile_upload-bottom' );
         $this->waitForPageToLoad( "30000" );
+        $this->waitForElementPresent( '_qf_MapField_next-bottom' );
+        $this->waitForElementPresent( "mapper[0][0]" );
 
         $rowCount = 0;
         foreach ( $headers as $field => $header ) {

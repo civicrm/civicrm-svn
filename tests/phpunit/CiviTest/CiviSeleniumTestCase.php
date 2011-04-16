@@ -801,7 +801,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       return $pageId;      
   }  
 
-  function webtestStrictDedupeRuleDefault( ) {
+  function webtestStrictDedupeRuleDefault( $contactType = 'Individual' ) {
          // set default strict rule.
          $this->open( $this->sboxPath . "civicrm/contact/deduperules?action=update&id=4" );
          $this->waitForPageToLoad("30000");
