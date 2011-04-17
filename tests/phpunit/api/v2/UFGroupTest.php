@@ -105,21 +105,18 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     function testGetUFProfileTitle()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $ufProfile = civicrm_uf_profile_title_get($this->_ufGroupId);
         $this->assertEquals($ufProfile, 'Test Profile');
     }
 
     function testGetUFProfileTitleWithEmptyParam()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_uf_profile_title_get(array());
         $this->assertEquals($result['is_error'], 1);
     }
 
     function testGetUFProfileTitleWithWrongParam()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_uf_profile_title_get('a string');
         $this->assertEquals($result['is_error'], 1);
     }
@@ -129,7 +126,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     function testGetUFProfileHTML()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $profileHTML = civicrm_uf_profile_html_get($this->_contactId, 'Test Profile');
         // check if html / content is returned
         $this->assertNotNull($profileHTML);
@@ -137,7 +133,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
 
     function testGetUFProfileHTMLWithWrongParams()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_uf_profile_html_get($this->_contactId, 42);
         $this->assertEquals($result['is_error'], 1);
         $result = civicrm_uf_profile_html_get('a string', 'Test Profile');
@@ -149,7 +144,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     function testGetUFProfileHTMLById()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $profileHTML = civicrm_uf_profile_html_by_id_get($this->_contactId, $this->_ufGroupId);
         // check if html / content is returned
         $this->assertNotNull($profileHTML);
@@ -157,7 +151,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
 
     function testGetUFProfileHTMLByIdWithWrongParams()
     {
-         $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_uf_profile_html_by_id_get('a string', $this->_ufGroupId);
         $this->assertEquals($result['is_error'], 1);
         $result = civicrm_uf_profile_html_by_id_get($this->_contactId, 'a string');
@@ -168,7 +161,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
 
     public function testUFJoinEditWrongParamsType()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $params = 'a string';
         $result = civicrm_uf_join_edit($params);
 
@@ -178,7 +170,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
     
     public function testUFJoinEditEmptyParams()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $params = array();
         $result = civicrm_uf_join_edit($params);
 
@@ -188,7 +179,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
 
     public function testUFJoinEditWithoutUFGroupId()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $params = array(
             'module'       => 'CiviContribute',
             'entity_table' => 'civicrm_contribution_page',
@@ -206,7 +196,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     public function testGetUFProfileCreateHTML()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $fieldsParams = array(
             'field_name'       => 'first_name',
             'field_type'       => 'Individual',
@@ -232,7 +221,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
 
     function testGetUFProfileCreateHTMLWithWrongParam()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_uf_create_html_get('a string');
         $this->assertEquals($result['is_error'], 1);
     }
@@ -242,7 +230,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     public function testGetUFProfileFields()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $params = array(
             'field_name'       => 'country',
             'field_type'       => 'Contact',
@@ -271,14 +258,12 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
 
     function testGetUFProfileFieldsWithEmptyParam()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_uf_profile_fields_get(array());
         $this->assertEquals($result['is_error'], 1);
     }
 
     function testGetUFProfileFieldsWithWrongParam()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_uf_profile_fields_get('a string');
         $this->assertEquals($result['is_error'], 1);
     }
@@ -288,14 +273,12 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     public function testGetUFMatchID()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $ufMatchId = civicrm_uf_match_id_get(42);
         $this->assertEquals($ufMatchId, 69);
     }
 
     function testGetUFMatchIDWrongParam()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_uf_match_id_get('a string');
         $this->assertEquals($result['is_error'], 1);
     }
@@ -305,14 +288,12 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     public function testGetUFID()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $ufIdFetced = civicrm_uf_id_get(69);
         $this->assertEquals($ufIdFetced, 42);
     }
 
     function testGetUFIDWrongParam()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_uf_id_get('a string');
         $this->assertEquals($result['is_error'], 1);
     }
@@ -322,7 +303,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     public function testUpdateUFGroup()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $params = array(
             'title'     => 'Edited Test Profile',
             'help_post' => 'Profile Pro help text.',
@@ -341,7 +321,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     public function testCreateUFField()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $params = array(
             'field_name'       => 'country',
             'field_type'       => 'Contact',
@@ -372,14 +351,12 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
 
     function testCreateUFFieldWithEmptyParams()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_uf_field_create($this->_ufGroupId, array());
         $this->assertEquals($result['is_error'], 1);
     }
 
     function testCreateUFFieldWithWrongParams()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_uf_field_create('a string', array('field_name' => 'test field'));
         $this->assertEquals($result['is_error'], 1);
         $result = civicrm_uf_field_create($this->_ufGroupId, 'a string');
@@ -393,7 +370,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     public function testDeleteUFField()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $params = array(
             'field_name'       => 'country',
             'field_type'       => 'Contact',
@@ -419,7 +395,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     public function testValidateProfileHTML()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_profile_html_validate($this->_contactId, 'Test Profile');
         $this->assertEquals($result, true);
     }
@@ -430,7 +405,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     public function testEditUFJoin()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $params =  array(
             'module'       => 'CiviContribute',
             'entity_table' => 'civicrm_contribution_page',
@@ -461,7 +435,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
 
     public function testFindUFJoinWrongParamsType()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $params = 'a string';
         $result = civicrm_uf_join_add($params);
 
@@ -471,7 +444,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
     
     public function testFindUFJoinEmptyParams()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $params = array();
         $result = civicrm_uf_join_add($params);
 
@@ -481,7 +453,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
 
     public function testFindUFJoinWithoutUFGroupId()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $params = array(
             'module'       => 'CiviContribute',
             'entity_table' => 'civicrm_contribution_page',
@@ -500,7 +471,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     public function testFindUFJoinId()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $params = array(
             'module'       => 'CiviContribute',
             'entity_table' => 'civicrm_contribution_page',
@@ -524,7 +494,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     public function testFindUFGroupId()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $params =  array(
             'module'       => 'CiviContribute',
             'entity_table' => 'civicrm_contribution_page',
@@ -548,14 +517,12 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     public function testGetUFProfileGroups()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $ufProfileGroup = civicrm_uf_profile_groups_get();
         $this->assertEquals(9, count($ufProfileGroup));
     }
 
     function testGroupCreate()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $params = array(
             'add_captcha'          => 1,
             'add_contact_to_group' => 2,
@@ -589,14 +556,12 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
 
     function testGroupCreateWithEmptyParams()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_uf_group_create(array());
         $this->assertEquals($result['is_error'], 1);
     }
 
     function testGroupCreateWithWrongParams()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_uf_group_create('a string');
         $this->assertEquals($result['is_error'], 1);
         $result = civicrm_uf_group_create(array('name' => 'A title-less group'));
@@ -605,7 +570,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
 
     function testGroupUpdate()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $params = array(
             'add_captcha'          => 1,
             'add_contact_to_group' => 2,
@@ -639,14 +603,12 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
 
     function testGroupUpdateWithEmptyParams()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_uf_group_update(array(), $this->_ufGroupId);
         $this->assertEquals($result['is_error'], 1);
     }
 
     function testGroupUpdateWithWrongParams()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $result = civicrm_uf_group_update('a string', $this->_ufGroupId);
         $this->assertEquals($result['is_error'], 1);
         $result = civicrm_uf_group_update(array('title' => 'Title'), 'a string');
