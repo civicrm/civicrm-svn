@@ -259,7 +259,7 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         
         $this->assertTrue( $this->isTextPresent( 'Your Individual contact record has been saved.' ) );
         
-        // click through to the membership view screen
+        // click through to the membership add screen
         $this->click( 'css=li#tab_member a' );
 
         $this->waitForElementPresent( 'link=Add Membership' );
@@ -268,8 +268,10 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent( '_qf_Membership_cancel-bottom' );
         
         // fill in Membership Organization and Type
-        $this->select( 'membership_type_id[0]', "label=Organization $title" );
-        $this->select( 'membership_type_id[1]', "label=Membership Type $title");
+        $this->select( 'membership_type_id[0]', "label=Organization {$title}" );
+        // Wait for membership type select to reload
+        $this->waitForTextPresent( "Membership Type {$title}" );
+        $this->select( 'membership_type_id[1]', "label=Membership Type {$title}");
         
         $sourceText = "Membership ContactAddTest with Fixed Membership Type";
         // fill in Source
@@ -308,8 +310,8 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
         
         $this->webtestVerifyTabularData( 
-                                        array( 'Membership Type' => "Membership Type $title",
-                                               'Status'          => 'New',
+                                        array( 'Membership Type' => "Membership Type {$title}",
+                                               'Status'          => 'Current',
                                                'Source'          => $sourceText,
                                                'Member Since'    => $joinDate,
                                                'Start date'      => $startDate,
@@ -407,8 +409,11 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent( '_qf_Membership_cancel-bottom' );
         
         // fill in Membership Organization and Type
-        $this->select( 'membership_type_id[0]', "label=Organization $title" );
-        $this->select( 'membership_type_id[1]', "label=Membership Type $title");
+        $this->select( 'membership_type_id[0]', "label=Organization {$title}" );
+        // Wait for membership type select to reload
+        $this->waitForTextPresent( "Membership Type {$title}" );
+        $this->select( 'membership_type_id[1]', "label=Membership Type {$title}");
+
         
         $sourceText = "Membership ContactAddTest with Fixed Membership Type";
         // fill in Source
@@ -448,8 +453,8 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
         
         $this->webtestVerifyTabularData( 
-                                        array( 'Membership Type' => "Membership Type $title",
-                                               'Status'          => 'New',
+                                        array( 'Membership Type' => "Membership Type {$title}",
+                                               'Status'          => 'Current',
                                                'Source'          => $sourceText,
                                                'Member Since'    => $joinDate,
                                                'Start date'      => $startDate,
