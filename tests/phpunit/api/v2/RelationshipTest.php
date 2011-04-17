@@ -166,7 +166,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
                          'is_active'            => 1
                          );
         
-        $result = & civicrm_relationship_create( $params );
+        $result = civicrm_relationship_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
         
         // both the contact of type Organization
@@ -177,7 +177,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
                          'is_active'            => 1
                          );
         
-        $result = & civicrm_relationship_create( $params );
+        $result = civicrm_relationship_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
 
     } 
@@ -194,7 +194,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
                          'end_date'             => null,
                          'is_active'            => 1
                          );
-        $relationship = & civicrm_relationship_create( $params );
+        $relationship = civicrm_relationship_create( $params );
         
         $params = array( 'contact_id_a'         => $this->_cId_a,
                          'contact_id_b'         => $this->_cId_b,
@@ -202,13 +202,13 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
                          'start_date'           => array('d'=>'10','M'=>'1','Y'=>'2008'),
                          'is_active'            => 1
                          );
-        $result = & civicrm_relationship_create( $params );
+        $result = civicrm_relationship_create( $params );
 
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'Relationship already exists' ); 
         
         $params['id'] = $relationship['result']['id'] ; 
-        $result = & civicrm_relationship_delete( $params );
+        $result = civicrm_relationship_delete( $params );
     } 
 
     /**
@@ -224,7 +224,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
                          'note'                 => 'note'
                          );
         
-        $result = & civicrm_relationship_create( $params );
+        $result = civicrm_relationship_create( $params );
         $this->assertNotNull( $result['result']['id'] );   
         
         $relationParams = array(
@@ -234,7 +234,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         $this->assertDBState( 'CRM_Contact_DAO_Relationship', $result['result']['id'], $relationParams ); 
         
         $params['id'] = $result['result']['id'] ; 
-        $result = & civicrm_relationship_delete( $params );
+        $result = civicrm_relationship_delete( $params );
     }
     
     /**
@@ -259,7 +259,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
                          'is_active'            => 1
                          );
         $params = array_merge( $params, $custom_params );
-        $result = & civicrm_relationship_create( $params );
+        $result = civicrm_relationship_create( $params );
         
         $this->assertNotNull( $result['result']['id'] );   
         $relationParams = array(
@@ -269,7 +269,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         $this->assertDBState( 'CRM_Contact_DAO_Relationship', $result['result']['id'], $relationParams ); 
         
         $params['id'] = $result['result']['id'] ; 
-        $result = & civicrm_relationship_delete( $params );
+        $result = civicrm_relationship_delete( $params );
         $this->relationshipTypeDelete( $this->_relTypeID ); 
     }
 
@@ -449,14 +449,14 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
                          'is_active'            => 1
                          );
         
-        $result = & civicrm_relationship_create( $params );
+        $result = civicrm_relationship_create( $params );
         $this->assertNotNull( $result['result']['id'] );
 
         //Delete relationship
         $params = array();
         $params['id']= $result['result']['id'];
         
-        $result = & civicrm_relationship_delete( $params );
+        $result = civicrm_relationship_delete( $params );
         $this->relationshipTypeDelete( $this->_relTypeID ); 
     }
     
@@ -516,7 +516,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
                                'is_active'            => 1
                                );
 
-        $result = & civicrm_relationship_create( $relParams );
+        $result = civicrm_relationship_create( $relParams );
         $this->assertNotNull( $result['result']['id'], 'In line ' . __LINE__ );  
         $this->_relationID = $result['result']['id'];
 
@@ -530,14 +530,14 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
                         'is_active'            => 0
                         );
         
-        $result = & civicrm_relationship_update( $params );
+        $result = civicrm_relationship_update( $params );
         
         $this->assertEquals( $result['is_error'], 1 );
         //delete created relationship
         $params = array();
         $params['id']=$this->_relationID;
         
-        $result = & civicrm_relationship_delete( $params );
+        $result = civicrm_relationship_delete( $params );
         $this->assertEquals( $result['is_error'], 0 );
         
         //delete created relationship type        
@@ -585,7 +585,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
                            'is_active'            => 1
                            );
 
-        $result = & civicrm_relationship_create( $relParams );
+        $result = civicrm_relationship_create( $relParams );
         
         //get relationship
         $params = array( 'contact_id' => $this->_cId_b );
@@ -643,7 +643,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
                            'is_active'            => 1
                            );
 
-        $relationship = & civicrm_relationship_create( $relParams );
+        $relationship = civicrm_relationship_create( $relParams );
         
         $contact_a = array( 'contact_id' => $this->_cId_a );
         $contact_b = array( 'contact_id' => $this->_cId_b );
@@ -652,7 +652,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         $this->assertEquals( $result['is_error'], 0 );
 
         $params['id'] = $relationship['result']['id'] ;
-        $result = & civicrm_relationship_delete( $params );
+        $result = civicrm_relationship_delete( $params );
         $this->relationshipTypeDelete( $relTypeID );
     }
 
@@ -670,7 +670,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
                            'is_active'            => 1
                            );
 
-        $relationship = & civicrm_relationship_create( $relParams );
+        $relationship = civicrm_relationship_create( $relParams );
         
         $contact_a = array( 'contact_id' => $this->_cId_a );
         $relationshipTypes = array('Relation 1 for delete');
@@ -680,7 +680,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         $this->assertEquals( $result['is_error'], 0 );
 
         $params['id'] = $relationship['result']['id'] ;
-        $result = & civicrm_relationship_delete( $params );
+        $result = civicrm_relationship_delete( $params );
         $this->relationshipTypeDelete( $relTypeID );
     } 
 
