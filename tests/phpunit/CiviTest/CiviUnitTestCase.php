@@ -168,11 +168,15 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $tables = $pdo->query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'civicrm_tests_dev'");
 
         $truncates = array();
+        $drops = array();
         foreach( $tables as $table ) {
-            $truncates[] = 'TRUNCATE ' . $table['table_name'] . ';';
+            if( substr( $table['table_name'], 0, 14 ) == 'civicrm_value_' ) {
+                $drops[] = 'DROP TABLE ' . $table['table_name'] . ';';
+            } else {
+                $truncates[] = 'TRUNCATE ' . $table['table_name'] . ';';
+            }
         }
 
-        
         $queries = array( "USE civicrm_tests_dev;",
                           "SET foreign_key_checks = 0",
                           // SQL mode needs to be strict, that's our standard
@@ -180,6 +184,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                           "SET global innodb_flush_log_at_trx_commit = 2;"
                              );
         $queries = array_merge( $queries, $truncates );
+        $queries = array_merge( $queries, $drops );        
             foreach( $queries as $query ) {
                 if ( self::$utils->do_query($query) === false ) {
 
