@@ -153,9 +153,11 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("Subject\n Notes"));
       
       //Demographics section
-      $this->click("demographics");
+      $this->click("//div[@class='crm-accordion-header' and contains(.,'Demographics')]");
+//      $this->click("id=demographics");
+      $this->waitForElementPresent("CIVICRM_QFID_1_16");      
       
-      $this->click("CIVICRM_QFID_1_8");
+      $this->click("CIVICRM_QFID_1_16");
       $this->webtestFillDate('birth_date', "-1 year");
       
       //Tags and Groups section
@@ -376,7 +378,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("Your Organization contact record has been saved."));    
   }
 
-  function testIndividualAddWithSharedAddress( )
+  function testIndividualAdWithSharedAddress( )
   {
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
