@@ -46,6 +46,9 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->open( $this->sboxPath );
       $this->webtestLogin();
 
+      // Create a membership type to use for this test
+      $memTypeParams = $this->webtestAddMembershipType( );
+      
       // Go directly to the URL of the screen that you will be testing (New Individual).
       $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual");
 
@@ -77,7 +80,10 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_Membership_cancel-bottom");
 
       // fill in Membership Organization and Type
-      $this->select("membership_type_id[1]", "value=1");
+      $this->select("membership_type_id[0]", "label={$memTypeParams['member_org']}");
+      // Wait for membership type select to reload
+      $this->waitForTextPresent( $memTypeParams['membership_type'] );
+      $this->select("membership_type_id[1]", "label={$memTypeParams['membership_type']}");
 
       $sourceText = "Membership ContactAddTest Webtest";
       // fill in Source
@@ -104,7 +110,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
       $verifyData = array(
-                          'Membership Type' => 'General',
+                          'Membership Type' => $memTypeParams['membership_type'],
                           'Status'          => 'New',
                           'Source'          => $sourceText,
                           );
@@ -127,7 +133,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
       
       $verifyData = array(
-                          'Membership Type' => 'General',
+                          'Membership Type' => $memTypeParams['membership_type'],
                           'Status'          => 'New',
                           'Source'          => $sourceText,
                           );

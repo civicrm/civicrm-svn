@@ -834,6 +834,43 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
          $this->waitForPageToLoad( "30000" );
 
   }
+  
+  function webtestAddMembershipType( $periodType = "rolling" ) {
+      $membershipTitle = substr(sha1(rand()), 0, 7);
+      $membershipOrg   = $membershipTitle . ' memorg';
+      $this->webtestAddOrganization( $membershipOrg, true );
 
+      $title = "Membership Type " . substr(sha1(rand()), 0, 7);
+      $memTypeParams = array( 'membership_type'   => $title,
+                              'member_org'        => $membershipOrg,
+                              'contribution_type' => 2,
+                              'period_type'       => $periodType,
+                              );
+      
+      $this->open( $this->sboxPath . "civicrm/admin/member/membershipType?reset=1&action=browse" );
+      $this->waitForPageToLoad("30000");
+
+      $this->click( "link=Add Membership Type" );
+      $this->waitForElementPresent( '_qf_MembershipType_cancel-bottom' );
+      
+      $this->type( 'name', $memTypeParams['membership_type'] );
+      $this->type( 'member_org', $membershipTitle );
+      $this->click( '_qf_MembershipType_refresh' );
+      $this->waitForElementPresent( "xpath=//div[@id='membership_type_form']/fieldset/table[2]/tbody/tr[2]/td[2]" );
+      
+      $this->type( 'minimum_fee', '100' );
+      $this->select( 'contribution_type_id', "value={$memTypeParams['contribution_type']}" );
+      
+      $this->type( 'duration_interval', 1 );
+      $this->select( 'duration_unit', "label=year" );
+      
+      $this->select( 'period_type', "label={$periodType}" );
+      
+      $this->click( '_qf_MembershipType_upload-bottom' );
+      $this->waitForElementPresent( 'link=Add Membership Type' );
+      $this->assertTrue( $this->isTextPresent( "The membership type '$title' has been saved." ) );
+
+      return $memTypeParams;
+  }
 
 }
