@@ -171,7 +171,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
 
       // Search → Find Contributions
       $this->click("//ul[@id='civicrm-menu']/li[3]");
-      $this->click("//div[@id='root-menu-div']/div[2]/ul/li[6]/div/a");
+      $this->click("//div[@id='root-menu-div']/div[2]/ul/li[7]/div/a");
       $this->waitForPageToLoad();
 
       $this->assertTextPresent("Edit Search Criteria");
