@@ -371,8 +371,8 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase
       $lastName  = 'An'.substr( sha1( rand( ) ), 0, 7 );
        $this->waitForElementPresent( '_qf_Main_upload-bottom' );
       $this->type( 'email-5', $firstName . '@example.com' );
-      $this->type( 'first_name', $firstName );
-      $this->type( 'last_name',$lastName );
+      $this->type( 'billing_first_name', $firstName );
+      $this->type( 'billing_last_name',$lastName );
       $this->type("xpath=//input[@class='form-text four required']", "1");
       $this->click("xpath=//input[@class='form-radio']");
       $this->click("xpath=//input[@class='form-checkbox']");
@@ -516,8 +516,8 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase
       $lastName  = 'An'.substr( sha1( rand( ) ), 0, 7 );
        $this->waitForElementPresent( '_qf_Main_upload-bottom' );
       $this->type( 'email-5', $firstName . '@example.com' );
-      $this->type( 'first_name', $firstName );
-      $this->type( 'last_name',$lastName );
+      $this->type( 'billing_first_name', $firstName );
+      $this->type( 'billing_last_name',$lastName );
       $this->click("xpath=//input[@class='form-radio']");
       $this->click("xpath=//input[@class='form-checkbox']");
       
