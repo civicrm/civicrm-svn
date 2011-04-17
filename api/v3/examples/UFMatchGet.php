@@ -23,8 +23,13 @@ function uf_match_get_expectedresult(){
            'is_error' 		=> '0',
            'version' 		=> '3',
            'count' 		=> '1',
-           'id' 		=> 'uf_id',
-           'values' 		=> array(           'uf_id' => '42',           ),
+           'id' 		=> '1',
+           'values' 		=> array(           '1' =>  array(
+                      'id' => '1',
+                      'domain_id' => '1',
+                      'uf_id' => '42',
+                      'contact_id' => '69',
+           ),           ),
       );
 
   return $expectedResult  ;
