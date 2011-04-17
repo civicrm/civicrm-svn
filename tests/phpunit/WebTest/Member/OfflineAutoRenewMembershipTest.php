@@ -47,25 +47,13 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
       $processorName = "Webtest AuthNet" . substr(sha1(rand()), 0, 7);
       $this->webtestAddPaymentProcessor($processorName, 'AuthNet');
 
-      // -- start updating membership types 
-      $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=1&reset=1");
-
-      $this->waitForElementPresent("CIVICRM_QFID_1_10");
-      $this->click("CIVICRM_QFID_1_10");
-
-      $this->type("duration_interval", "1");
-      $this->select("duration_unit", "label=year");
-
-      $this->click("_qf_MembershipType_upload-bottom");
-      $this->waitForPageToLoad("30000");
-
-      $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=2&reset=1");
-
-      $this->type("duration_interval", "6");
-      $this->select("duration_unit", "label=month");
-
-      $this->click("_qf_MembershipType_upload-bottom");
-      $this->waitForPageToLoad("30000");
+      // Create a membership type to use for this test
+      $periodType = 'rolling';
+      $duration_interval = 1;
+      $duration_unit = 'year';
+      $auto_renew = "optional"; 
+      
+      $memTypeParams = $this->webtestAddMembershipType( $periodType, $duration_interval, $duration_unit, $auto_renew );
 
       // create a new contact for whom membership is to be created
       $firstName = 'Apt'.substr( sha1( rand( ) ), 0, 4 );
@@ -87,10 +75,17 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
       // start filling membership form
       $this->waitForElementPresent('payment_processor_id');
       $this->select("payment_processor_id",  "label={$processorName}");
-      $this->select("membership_type_id[1]", "label=General");
+
+      // fill in Membership Organization and Type
+      $this->select("membership_type_id[0]", "label={$memTypeParams['member_org']}");
+      // Wait for membership type select to reload
+      $this->waitForTextPresent( $memTypeParams['membership_type'] );
+      $this->select("membership_type_id[1]", "label={$memTypeParams['membership_type']}");
+
       $this->click("source");
       $this->type("source", "Online Membership: Admin Interface");
 
+      $this->waitForElementPresent('auto_renew');
       $this->click("auto_renew");
 
       $this->webtestAddCreditCardDetails();
@@ -118,7 +113,7 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
       // View Membership Record
       $verifyData = array(
                           'Member'          => "$firstName $lastName",
-                          'Membership Type' => 'General (test)',
+                          'Membership Type' => $memTypeParams['membership_type'],
                           'Source'          => 'Online Membership: Admin Interface',
                           'Status'          => 'Pending',
                           'Auto-renew'      => 'Yes',

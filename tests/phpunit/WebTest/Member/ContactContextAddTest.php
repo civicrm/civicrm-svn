@@ -46,7 +46,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->open( $this->sboxPath );
       $this->webtestLogin();
 
-      // Create a membership type to use for this test
+      // Create a membership type to use for this test (defaults for this helper function are rolling 1 year membership)
       $memTypeParams = $this->webtestAddMembershipType( );
       
       // Go directly to the URL of the screen that you will be testing (New Individual).
