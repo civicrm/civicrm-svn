@@ -113,7 +113,7 @@ class api_v2_RelationshipTypeTest extends CiviUnitTestCase
                                'name_a_b' => 'Relation 1 without contact type',
                                'name_b_a' => 'Relation 2 without contact type'
                                );
-        $result = & civicrm_relationship_type_add( $relTypeParams ); 
+        $result = civicrm_relationship_type_add( $relTypeParams ); 
         
         $this->assertNotNull( $result['id'] );
         
@@ -134,7 +134,7 @@ class api_v2_RelationshipTypeTest extends CiviUnitTestCase
                                'is_reserved'    => 1,
                                'is_active'      => 1
                                );
-        $relationshiptype =& civicrm_relationship_type_add( $relTypeParams );
+        $relationshiptype = civicrm_relationship_type_add( $relTypeParams );
         
         $this->assertNotNull( $relationshiptype['id'] );   
         
@@ -214,7 +214,7 @@ class api_v2_RelationshipTypeTest extends CiviUnitTestCase
         // create sample relationship type.
         $params['id'] = $this->_relationshipTypeCreate( );
         
-        $result = & civicrm_relationship_type_delete( $params );
+        $result = civicrm_relationship_type_delete( $params );
         
         $this->assertEquals( $result['is_error'], 0 );
     }
@@ -262,7 +262,7 @@ class api_v2_RelationshipTypeTest extends CiviUnitTestCase
                                'is_active'      => 0
                                );
         
-        $result = & civicrm_relationship_type_update( $relTypeParams );  
+        $result = civicrm_relationship_type_update( $relTypeParams );  
         
         $this->assertNotNull( $result['id'] );   
         
@@ -289,7 +289,7 @@ class api_v2_RelationshipTypeTest extends CiviUnitTestCase
                                'is_active'      => 0
                                );
         
-        $result = & civicrm_relationship_type_update( $relTypeParams );  
+        $result = civicrm_relationship_type_update( $relTypeParams );  
         $this->assertNotNull( $result['id'] );   
         
         // assertDBState compares expected values in $result to actual values in the DB          
