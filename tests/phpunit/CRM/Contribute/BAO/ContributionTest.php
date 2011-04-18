@@ -212,19 +212,22 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
     
     function testcreateAndGetHonorContact( ) 
     {
-        $this->markTestSkipped('Fatals');
+        $firstName = 'John_' .substr(sha1(rand()), 0, 7);
+        $lastName  = 'Smith_'.substr(sha1(rand()), 0, 7);
+        $email     = "{$firstName}.{$lastName}@example.com"; 
+        
         $honorId = null;
         $params  = array (
                           'honor_type_id'    => 1,
                           'honor_prefix_id'  => 3,
-                          'honor_first_name' => 'John',
-                          'honor_last_name'  => 'Smith',
-                          'honor_email'      => 'john.smith@example.org'
+                          'honor_first_name' => $firstName,
+                          'honor_last_name'  => $lastName,
+                          'honor_email'      => $email
                           );
         require_once 'CRM/Contribute/BAO/Contribution.php';
         $contact = CRM_Contribute_BAO_Contribution::createHonorContact( $params, $honorId );
         
-        $this->assertDBCompareValue( 'CRM_Contact_DAO_Contact', $contact , 'first_name', 'id','John',
+        $this->assertDBCompareValue( 'CRM_Contact_DAO_Contact', $contact , 'first_name', 'id', $firstName,
                                      'Database check for created honor contact record.' );
         //create contribution on behalf of honary.
 
@@ -250,13 +253,15 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
         //get honory information
         $getHonorContact = CRM_Contribute_BAO_Contribution::getHonorContacts( $contact );
 
-        $this->assertDBCompareValue( 'CRM_Contact_DAO_Contact', $contact , 'first_name', 'id','John',
+        $this->assertDBCompareValue( 'CRM_Contact_DAO_Contact', $contact , 'first_name', 'id', $firstName,
                                      'Database check for created honor contact record.' );
+        
         //get annual contribution information
         $annual = CRM_Contribute_BAO_Contribution::annual( $contactId );
-	require_once 'CRM/Core/DAO.php';
-	$config =& CRM_Core_Config::singleton();
-	$currencySymbol = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Currency',$config->defaultCurrency,'symbol','name') ;
+        require_once 'CRM/Core/DAO.php';
+        
+        $config =& CRM_Core_Config::singleton();
+        $currencySymbol = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Currency',$config->defaultCurrency,'symbol','name') ;
         $this->assertDBCompareValue('CRM_Contribute_DAO_Contribution',  $id, 'total_amount', 
                                     'id', ltrim( $annual[2], $currencySymbol ), 'Check DB for total amount of the contribution'); 
         
