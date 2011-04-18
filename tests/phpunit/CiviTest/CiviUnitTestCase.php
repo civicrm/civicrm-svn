@@ -1197,7 +1197,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * @param string $className
      * @param string $title  name of custom group
      */
-    function customGroupCreate( $extends,$title) {
+    function customGroupCreate( $extends, $title = '' ) {
 
         if (CRM_Utils_Array::value('title',$extends)){
           $params = $extends;
