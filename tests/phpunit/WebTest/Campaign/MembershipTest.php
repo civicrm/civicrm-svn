@@ -151,35 +151,43 @@ class WebTest_Campaign_MembershipTest extends CiviSeleniumTestCase {
 
   function memberAddTest( $campaignTitle, $id )
   {
+      //Add new memebershipType
+      $memTypeParams = $this->webtestAddMembershipType( );
+      
       // Adding Adding contact with randomized first name for test testContactContextActivityAdd
       // We're using Quick Add block on the main page for this.
       $firstName = substr(sha1(rand()), 0, 7);
       $this->webtestAddContact( $firstName, "John", $firstName . "john@gmail.com" );
+      $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
       
       // click through to the membership view screen
       $this->click("css=li#tab_member a");
-
+      
       $this->waitForElementPresent("link=Add Membership");
       $this->click("link=Add Membership");
-
+      
       $this->waitForElementPresent("_qf_Membership_cancel-bottom");
-
+      
       // fill in Membership Organization and Type
-      $this->select("membership_type_id[1]", "value=1");
+      $this->select("membership_type_id[0]", "label={$memTypeParams['member_org']}");
 
+      // Wait for membership type select to reload
+      $this->waitForTextPresent( $memTypeParams['membership_type'] );
+      $this->select("membership_type_id[1]", "label={$memTypeParams['membership_type']}");
+      
       $sourceText = "Membership ContactAddTest Webtest";
       // fill in Source
       $this->type("source", $sourceText );
-
+      
       // select campaign
       $this->click("campaign_id");
       $this->select("campaign_id", "value=$id" );
-
+      
+      
       // Let Join Date stay default
-
       // fill in Start Date
       $this->webtestFillDate('start_date');
-
+      
       // Clicking save.
       $this->click("_qf_Membership_upload");
       $this->waitForPageToLoad("30000");
@@ -188,13 +196,13 @@ class WebTest_Campaign_MembershipTest extends CiviSeleniumTestCase {
       $this->waitForTextPresent( $sourceText );
       
       // Is status message correct?
-      $this->assertTrue( $this->isTextPresent( "membership for $firstName John has been added." ),
-                         "Status message didn't show up after saving!" );
+      $this->assertTrue($this->isTextPresent("membership for $firstName John has been added."),
+                        "Status message didn't show up after saving!");
       
       // click through to the membership view screen
-      $this->click("xpath=//x:tr[td/text()='$sourceText']/x:td/x:span/x:a[text()='View']");
+      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
       $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
-
+      
       $this->webtestVerifyTabularData( array( 'Campaign' => $campaignTitle ) );
   }
   
