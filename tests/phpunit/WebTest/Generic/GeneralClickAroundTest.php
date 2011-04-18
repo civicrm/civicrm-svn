@@ -59,7 +59,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
       $this->select("tag", "label=Major Donor");
       $this->click("_qf_Basic_refresh");
       $this->waitForElementPresent("search-status");
-      $this->assertText("search-status","Contact Type - 'Individual' ...AND...");
+      $this->assertText("search-status","Contact Type - 'Individual'");
       $this->assertText("search-status","Tagged IN Major Donor");
       
       // Advanced Search by Tag
@@ -171,7 +171,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
 
       // Search → Find Contributions
       $this->click("//ul[@id='civicrm-menu']/li[3]");
-      $this->click("//div[@id='root-menu-div']/div[2]/ul/li[7]/div/a");
+      $this->click("//div[@id='root-menu-div']/div[2]/ul/li[6]/div/a");
       $this->waitForPageToLoad();
 
       $this->assertTextPresent("Edit Search Criteria");
