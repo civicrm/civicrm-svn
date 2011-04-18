@@ -451,7 +451,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
         }
 
         foreach ($checkMapperHeaders as $rownum => $value ) {
-            $this->verifyText("xpath=//div[@id='map-field']//table[1]/tbody/tr[1]/{$headerSelector}[{$rownum}]", preg_quote($value));
+            $this->verifyText("xpath=//div[@id='map-field']//table[1]/tbody/tr[{$rowNumber}]/{$headerSelector}[{$rownum}]", preg_quote($value));
         }
         $rowNumber++;
         
@@ -462,7 +462,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
                 $this->verifyText("xpath=//div[@id='map-field']//table[1]/tbody/tr[{$rowNumber}]/td[{$colnum}]", preg_quote($row[$field]));  
                 $colnum++;   
             }
-            $rownum++;
+           $rowNumber++;
         }
     }
     
