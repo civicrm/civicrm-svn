@@ -333,7 +333,6 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
       $this->assertTrue( (bool)preg_match("/^Are you sure you want to Import now[\s\S]$/", $this->getConfirmation()) );
       $this->chooseOkOnNextConfirmation( );
 
-      $this->waitForElementPresent("id-processing");
       sleep(10);
 
       // Visit summary page.
