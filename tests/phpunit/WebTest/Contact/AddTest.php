@@ -154,10 +154,8 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //Demographics section
       $this->click("//div[@class='crm-accordion-header' and contains(.,'Demographics')]");
-//      $this->click("id=demographics");
-      $this->waitForElementPresent("CIVICRM_QFID_1_16");      
+      $this->waitForElementPresent("birth_date");      
       
-      $this->click("CIVICRM_QFID_1_16");
       $this->webtestFillDate('birth_date', "-1 year");
       
       //Tags and Groups section
@@ -272,12 +270,12 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click("_qf_Contact_upload_view");
       $this->waitForPageToLoad("30000");
       
-      $this->assertTrue($this->isTextPresent("Your Household contact record has been saved."));    
+      $this->assertTrue($this->isTextPresent("Your Household contact record has been saved."));
   }
   
   function testOrganizationAdd( )
   {
-      // This is the path where our testing install resides. 
+      // This is the path where our testing install resides.
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
       // class attributes.
       $this->open( $this->sboxPath );
@@ -375,12 +373,12 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click("_qf_Contact_upload_view");
       $this->waitForPageToLoad("30000");
       
-      $this->assertTrue($this->isTextPresent("Your Organization contact record has been saved."));    
+      $this->assertTrue($this->isTextPresent("Your Organization contact record has been saved."));
   }
 
   function testIndividualAdWithSharedAddress( )
   {
-      // This is the path where our testing install resides. 
+      // This is the path where our testing install resides.
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
       // class attributes.
       $this->open( $this->sboxPath );
@@ -423,11 +421,11 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       //fill in source
       $this->type("contact_source", "johnSource");
 
-      //address section    
+      //address section
       $this->click("addressBlock");
       $this->waitForElementPresent("address_1_street_address");
 
-      $this->select( 'address_1_location_type_id', 'value=2');  
+      $this->select( 'address_1_location_type_id', 'value=2');
 
       $this->click('address[1][use_shared_address]');
 
@@ -450,13 +448,13 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("New contact has been created."), "Status message didn't show up after saving!");
 
       //make sure shared address is selected
-      $this->waitForElementPresent( 'selected_shared_address-1'); 
+      $this->waitForElementPresent( 'selected_shared_address-1');
 
       //fill in address 2
       $this->click("//div[@id='addMoreAddress1']/a/span");
       $this->waitForElementPresent("address_2_street_address");
 
-      $this->select( 'address_2_location_type_id', 'value=1' );  
+      $this->select( 'address_2_location_type_id', 'value=1' );
 
       $this->click('address[2][use_shared_address]');
 
@@ -467,7 +465,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("css=div#contact-dialog-2");
       $this->waitForElementPresent("_qf_Edit_next");
 
-      $sharedHousehold = 'Smith Household' . substr(sha1(rand()), 0, 7 ) ;  
+      $sharedHousehold = 'Smith Household' . substr(sha1(rand()), 0, 7 ) ;
       $this->type( 'household_name', $sharedHousehold );
       $this->type( 'street_address-1', '2782Y Dowlen Path W' );
       $this->type( 'city-1', 'Birmingham' );
@@ -480,7 +478,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("New contact has been created."), "Status message didn't show up after saving!");
 
       //make sure shared address is selected
-      $this->waitForElementPresent( 'selected_shared_address-2'); 
+      $this->waitForElementPresent( 'selected_shared_address-2');
 
       // Clicking save.
       $this->click("_qf_Contact_upload_view");
@@ -500,9 +498,9 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->verifyText("xpath=id('contact-summary')/x:div[2]/x:div[2]/x:div[2]/x:table/x:tbody/x:tr/x:td[2]/x:a[text()]", $sharedHousehold );
 
       // make sure relationships are created
-      $this->click("xpath=id('tab_rel')/x:a"); 
+      $this->click("xpath=id('tab_rel')/x:a");
       $this->isTextPresent( 'Employee of' );
-      $this->isTextPresent( 'Household Member of' );    
+      $this->isTextPresent( 'Household Member of' );
   }
 }
 ?>
