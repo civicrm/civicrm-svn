@@ -187,7 +187,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         }
 
         // create event.
-        $eventTitle = 'My Conference - '.substr(sha1(rand()), 0, 7);
+        $eventTitle = 'Meeting - '.substr(sha1(rand()), 0, 7);
         $paramsEvent = array( 'title'              => $eventTitle,
                               'template_id'        => 6,
                               'event_type_id'      => 4,
@@ -237,23 +237,16 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->open( $this->sboxPath );
         $this->webtestLogin( );
         
-        // visit event dashboard page
-        $this->open( $this->sboxPath. 'civicrm/event?reset=1' );
-        $this->waitForPageToLoad('30000');
-        
-        // check event present
-        $this->assertStringsPresent( array( $eventTitle )  );
+        //Find Participant
+        $this->open( $this->sboxPath . 'civicrm/event/search&reset=1' );
+        $this->waitForElementPresent( 'participant_fee_amount_low' );
+        $this->click( "event_name" );
+        $this->typeKeys( "event_name",  $eventTitle  );
+        $this->waitForElementPresent( "css=div.ac_results-inner li" );
+        $this->click( "css=div.ac_results-inner li" );
+        $this->click( '_qf_Search_refresh' );
+        $this->waitForPageToLoad( '30000' );
 
-        // check number of counted participants
-        $this->verifyText("xpath=//form[@id='Search']//table[@class='display']/tbody/tr/td/a[text()='$eventTitle']/../../td[6]", preg_quote( 'Counted: 24' ) );   
-
-        // check number of registered participants
-        $this->verifyText("xpath=//form[@id='Search']//table[@class='display']/tbody/tr/td/a[text()='$eventTitle']/../../td[6]", preg_quote( 'Registered: 24' ) );
-
-        // visit counted participant page
-        $this->click("xpath=//form[@id='Search']//table[@class='display']/tbody/tr/td/a[text()='$eventTitle']/../../td[6]/a[1]" );
-        $this->waitForPageToLoad('30000');
-        
         // verify number of participants records and total participant count
         $this->assertStringsPresent( array( '2 Result', 'Actual participant count : 24' ) );
     }
