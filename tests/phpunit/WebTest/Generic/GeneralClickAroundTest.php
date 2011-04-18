@@ -48,30 +48,28 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
   function testSearchMenu()
   {
       $this->login();
-
       // click Search -> Find Contacts
-      $this->click("//ul[@id='civicrm-menu']/li[3]");
-      $this->click("//div[@id='root-menu-div']/div[2]/ul/li[1]/div/a");
-      $this->waitForElementPresent("tag");
+      $this->click("//ul[@id='civicrm-menu']/li[3]/ul/li[@class='crm-Find_Contacts']/a");
+      $this->waitForElementPresent('tag');
 
-      $this->click("contact_type");
-      $this->select("contact_type", "label=Individual");
-      $this->select("tag", "label=Major Donor");
-      $this->click("_qf_Basic_refresh");
-      $this->waitForElementPresent("search-status");
-      $this->assertText("search-status","Contact Type - 'Individual'");
-      $this->assertText("search-status","Tagged IN Major Donor");
+      $this->click('contact_type');
+      $this->select('contact_type', 'label=Individual');
+      $this->select('tag', 'label=Major Donor');
+      $this->click('_qf_Basic_refresh');
+      $this->waitForElementPresent('search-status');
+      $this->assertText('search-status',"Contact Type - 'Individual'");
+      $this->assertText('search-status','Tagged IN Major Donor');
       
       // Advanced Search by Tag
-      $this->click("//ul[@id='civicrm-menu']/li[3]");
-      $this->click("//div[@id='root-menu-div']/div[2]/ul/li[2]/div/a");
-      $this->waitForElementPresent("_qf_Advanced_refresh");
-      $this->click("crmasmSelect2");
-      $this->select("crmasmSelect2", "label=Major Donor");
+      $this->click("//ul[@id='civicrm-menu']/li[3]/ul/li[@class='crm-Advanced_Search']/a");
+      $this->waitForElementPresent('_qf_Advanced_refresh');
+      $this->click('crmasmSelect2');
+      $this->select('crmasmSelect2', 'label=Major Donor');
       $this->waitForElementPresent("//ul[@id='crmasmList2']/li/span");
-      $this->click("_qf_Advanced_refresh");
-      $this->waitForElementPresent("search-status");
-      $this->assertText("search-status","Tagged IN Major Donor");
+      $this->click('_qf_Advanced_refresh');
+      $this->waitForElementPresent('search-status');
+      $this->assertText('search-status','Tagged IN Major Donor');
+
   }
 
   function testNewIndividual()
@@ -363,5 +361,5 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
       $this->assertTextPresent("Personal Campaign Pages - Supporter Status Change Notification");
       $this->assertTextPresent("Profiles - Admin Notification");
       $this->assertTextPresent("Tell-a-Friend Email");
-  }
+      }
 }
