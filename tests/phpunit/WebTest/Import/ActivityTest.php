@@ -24,9 +24,9 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'CiviTest/CiviSeleniumTestCase.php';
+require_once 'WebTest/Import/ImportCiviSeleniumTestCase.php';
 
-class WebTest_Activity_ActivityImportTest extends CiviSeleniumTestCase {
+class WebTest_Import_ActivityTest extends ImportCiviSeleniumTestCase {
     
     protected function setUp( )
     {
@@ -40,12 +40,12 @@ class WebTest_Activity_ActivityImportTest extends CiviSeleniumTestCase {
         $this->webtestLogin( );
         
         // Get sample import data.
-        list( $headers, $rows ) = $this->activityCSVData( );
-        
-        $this->importCSVActivities( $headers, $rows );
+        list( $headers, $rows ) = $this->_activityCSVData( );
+         $fieldMapper = array( 'mapper[0][0]' => 'email' );
+        $this->importCSVComponent( 'Activity', $headers, $rows, null, null, $fieldMapper );
     }
     
-    function activityCSVData( ) {
+    function _activityCSVData( ) {
         
         $firstName1 = substr( sha1( rand( ) ), 0, 7 );
         $email1     = 'mail_' . substr( sha1( rand( ) ), 0, 7 ) . '@example.com'; 
@@ -85,92 +85,5 @@ class WebTest_Activity_ActivityImportTest extends CiviSeleniumTestCase {
                        );
         
         return array( $headers, $rows );
-        
-    }
-    function importCSVActivities( $headers, $rows, $contactType = 'Individual', $mode = 'Skip' ) {
-        
-        // Go to contact import page.
-        $this->open( $this->sboxPath . "civicrm/import/activity?reset=1" );
-        $this->waitForPageToLoad( '30000' );
-        
-        // check for upload field.
-        $this->waitForElementPresent( "uploadFile" );
-        
-        // Create csv file of sample data.
-        $csvFile = $this->webtestCreateCSV( $headers, $rows );
-        
-        // Attach csv file.
-        $this->webtestAttachFile( 'uploadFile', $csvFile );
-        
-        // First row is header.
-        $this->click( 'skipColumnHeader' );
-        
-        // Submit form.
-        $this->click( '_qf_UploadFile_upload' );
-        $this->waitForPageToLoad( "30000" );
-        
-        if ( isset( $headers['email'] ) ) {
-            $this->select( "mapper[0][0]", "value=email" );
-        } 
-        
-        // Check mapping data.
-        $this->checkActivityImportMapperData( $headers, $rows );
-        
-        // Create new mapping
-        $this->click( 'saveMapping' );
-        $mappingName = 'activityImport_'.substr( sha1( rand( ) ), 0, 7 );
-        $this->type( 'saveMappingName', $mappingName );
-        $this->type( 'saveMappingDesc', "Mapping for {$contactType}" );
-        
-        // Submit form.
-        $this->click( '_qf_MapField_next' );
-        $this->waitForPageToLoad( "30000" );
-        
-        // Check mapping data.
-        $this->checkActivityImportMapperData( $headers, $rows );
-        
-        // Submit form.
-        $this->click( '_qf_Preview_next' );
-        
-        sleep( 10 );
-        
-        // Visit summary page.
-        $this->waitForElementPresent( "_qf_Summary_next" );
-        
-        // Check success message.
-        $this->assertTrue( $this->isTextPresent( "Import has completed successfully. The information below summarizes the results." ) );
-        
-        // Check summary Details.
-        $importedRecords = count( $rows );
-        $checkSummary = array( 'Total Rows'       => $importedRecords,
-                               'Records Imported' => $importedRecords,
-                               );
-        
-        foreach( $checkSummary as $label => $value ) {
-            $this->verifyText( "xpath=//table[@id='summary-counts']/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote( $value ) );
-        }
-        
-    }
-    function checkActivityImportMapperData( $headers, $rows ) {
-        
-        $checkMapperHeaders = array( 1 => 'Column Headers',
-                                     2 => 'Import Data (row 2)',
-                                     3 => 'Import Data (row 3)',
-                                     4 => 'Matching CiviCRM Field' );
-        
-        foreach ( $checkMapperHeaders as $rownum => $value ) {
-            $this->verifyText( "xpath=//div[@id='map-field']//table[1]/tbody/tr[1]/th[{$rownum}]", preg_quote( $value ) );
-        }
-        
-        $rownum = 2;
-        foreach ( $headers as $field => $header ) {
-            $this->verifyText( "xpath=//div[@id='map-field']//table[1]/tbody/tr[{$rownum}]/td[1]", preg_quote( $header ) );
-            $colnum = 2;
-            foreach( $rows as $row ) {
-                $this->verifyText( "xpath=//div[@id='map-field']//table[1]/tbody/tr[{$rownum}]/td[{$colnum}]", preg_quote( $row[$field] ) );  
-                $colnum++;   
-            }
-            $rownum++;
-        }
     }
 }
