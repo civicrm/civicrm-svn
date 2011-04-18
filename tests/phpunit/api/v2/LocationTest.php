@@ -242,7 +242,6 @@ class api_v2_LocationTest extends CiviUnitTestCase
 
     function testDelete( )
     {
-        $this->markTestSkipped('fatal');
         $location  = $this->locationAdd( $this->_contactID );
         $locationTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_LocationType', 'New Location Type', 'id', 'name' );
         
