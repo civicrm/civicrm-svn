@@ -40,7 +40,7 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         parent::setUp();
     }
     
-    function testMembershipTypeScenaio1( ) 
+    function testMembershipTypeScenario1( ) 
     {
         // Scenario 1
         // Rollover Date < Start Date 
@@ -179,7 +179,7 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
                                          );
     }
 
-    function testMembershipTypeScenaio2( ) 
+    function testMembershipTypeScenario2( ) 
     {
         // Scenario 2
         // Rollover Date < Start Date 
