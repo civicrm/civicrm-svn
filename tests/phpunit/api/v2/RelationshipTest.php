@@ -27,6 +27,7 @@
 
 
 require_once 'api/v2/Relationship.php';
+require_once 'api/v2/RelationshipType.php';
 require_once 'api/v2/CustomGroup.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 
