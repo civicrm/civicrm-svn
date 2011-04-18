@@ -54,7 +54,7 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
     $this->waitForElementPresent("_qf_Component_next-bottom");
     $enabledComponents = $this->getSelectOptions("enableComponents-t");
-    if (! array_search( "CiviCase", $enabledComponents ) ) {
+    if (! in_array( "CiviCase", $enabledComponents ) ) {
       $this->addSelection("enableComponents-f", "label=CiviCase");
       $this->click("//option[@value='CiviCase']");
       $this->click("add");
