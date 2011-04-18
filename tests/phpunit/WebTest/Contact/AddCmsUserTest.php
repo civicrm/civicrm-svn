@@ -40,7 +40,7 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
   {
       $this->open( $this->sboxPath );
       
-      $this->webtestLogin( true );
+      $this->webtestLogin( );
       
       // Go directly to the URL of the screen that will Create User Authentically.
       $this->open( $this->sboxPath . "admin/user/user/create" );
