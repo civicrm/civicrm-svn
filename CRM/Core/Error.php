@@ -466,8 +466,6 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         }
 
         $message = implode( "\n", $msgs );
-        echo $message;
-        return;
         if ( ! $log ) {
             CRM_Core_Error::debug( $msg, $message );
         } else {
