@@ -991,25 +991,27 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */    
     function locationAdd( $contactID ) {
         $address = array( 1 => array(
-                         'location_type'          => 'New Location Type',
-                         'is_primary'             => 1,
-                         'name'                   => 'Saint Helier St',
-                         'county'                 => 'Marin',
-                         'country'                => 'United States', 
-                         'state_province'         => 'Michigan',
-                         'supplemental_address_1' => 'Hallmark Ct', 
-                         'supplemental_address_2' => 'Jersey Village'      
-                     ));
+                                     'location_type'          => 'New Location Type',
+                                     'is_primary'             => 1,
+                                     'name'                   => 'Saint Helier St',
+                                     'county'                 => 'Marin',
+                                     'country'                => 'United States', 
+                                     'state_province'         => 'Michigan',
+                                     'supplemental_address_1' => 'Hallmark Ct', 
+                                     'supplemental_address_2' => 'Jersey Village'      
+                                     ) );
 
         $params = array( 'contact_id'             => $contactID,
                          'address'                => $address,
-                         'version'                => 2
+                         'version'                => 2,
+                         'location_format'        => '2.0',
+                         'location_type'          => 'New Location Type',
                        );
     
         $result = civicrm_api_legacy( 'civicrm_location_create','Location',$params );       
-        
+
         if ( civicrm_error( $result ) ) {
-            throw new Exception( 'Could not create location', $result );
+            throw new Exception( "Could not create location: {$result['error_message']}" );
         }
         
         return $result;
