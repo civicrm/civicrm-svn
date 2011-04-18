@@ -41,23 +41,23 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->webtestLogin();
 
         // We need a payment processor
-        $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
+        $processorName = 'Webtest Dummy' . substr(sha1(rand()), 0, 7);
         $this->webtestAddPaymentProcessor($processorName);
         
         // create an event
-        $eventTitle = 'My Conference - '.substr(sha1(rand()), 0, 7);
+        $eventTitle = 'A Conference - '.substr(sha1(rand()), 0, 7);
         $paramsEvent = array( 'title'              => $eventTitle,
                               'template_id'        => 6,
                               'event_type_id'      => 4,
                               'payment_processor'  => $processorName,
-                              'fee_level'          => array( 'Member'     => "250.00",
-                                                             'Non-Member' => "325.00" )
+                              'fee_level'          => array( 'Member'     => '250.00',
+                                                             'Non-Member' => '325.00' )
                               );
         
         $infoEvent  = $this->_testAddEvent( $paramsEvent );
         
         // logout to register for event.
-        $this->open($this->sboxPath . "civicrm/logout?reset=1");
+        $this->open($this->sboxPath . 'civicrm/logout?reset=1');
         $this->waitForPageToLoad('30000'); 
 
         // Register Participant 1
@@ -66,12 +66,12 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad('30000');
  
         // register for event
-        $this->click("link=Register Now");
-        $this->waitForElementPresent("_qf_Register_upload-bottom");
+        $this->click('link=Register Now');
+        $this->waitForElementPresent('_qf_Register_upload-bottom');
         $this->click("xpath=//input[@class='form-radio']");
         
-        $email = "jane_".substr(sha1(rand()), 0, 5) ."@example.org"; 
-        $this->type("email-5", $email);
+        $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
+        $this->type('email-5', $email);
         
         // fill billing details and register
         $this->_testRegisterWithBillingInfo( );
@@ -81,12 +81,12 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->open( $infoEvent );
 
         // register for event
-        $this->click("link=Register Now");
-        $this->waitForElementPresent("_qf_Register_upload-bottom");
+        $this->click('link=Register Now');
+        $this->waitForElementPresent('_qf_Register_upload-bottom');
         
         $this->click("xpath=//input[@class='form-radio']");
-        $email = "jane_".substr(sha1(rand()), 0, 5) ."@example.org"; 
-        $this->type("email-5", $email);
+        $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
+        $this->type('email-5', $email);
 
         // fill billing details and register
         $this->_testRegisterWithBillingInfo( );
@@ -101,19 +101,19 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         
         // check event present
         $this->assertStringsPresent( array( $eventTitle )  );
-        
+
         // check number of counted participants
         $this->verifyText("xpath=//form[@id='Search']//table[@class='display']/tbody/tr/td/a[text()='$eventTitle']/../../td[6]", preg_quote( "Counted: 2" ) );   
 
         // check number of registered participants
-        $this->verifyText("xpath=//form[@id='Search']//table[@class='display']/tbody/tr/td/a[text()='$eventTitle']/../../td[6]", preg_quote( "Registered: 2" ) );
+        $this->verifyText("xpath=//form[@id='Search']//table[@class='display']/tbody/tr/td/a[text()='$eventTitle']/../../td[6]", preg_quote( 'Registered: 2' ) );
 
         // visit counted participant page
         $this->click("xpath=//form[@id='Search']//table[@class='display']/tbody/tr/td/a[text()='$eventTitle']/../../td[6]/a[1]" );
         $this->waitForPageToLoad('30000');
         
         // verify number of registered participants
-        $this->assertStringsPresent( array( "2 Result" ) );
+        $this->assertStringsPresent( array( '2 Result' ) );
     }
 
     function testParticipantCountWithPriceset()
@@ -124,7 +124,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->webtestLogin();
 
         // We need a payment processor
-        $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
+        $processorName = 'Webtest Dummy' . substr(sha1(rand()), 0, 7);
         $this->webtestAddPaymentProcessor($processorName);
 
         // create priceset 
@@ -132,10 +132,10 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->_testAddSet( $priceset );
         
         // create price fields
-        $fields = array( "Full Conference" => array( 'type'    => 'Text',
+        $fields = array( 'Full Conference' => array( 'type'    => 'Text',
                                                      'amount'  => '525.00',
                                                      'count'   => '2' ),
-                         "Meal Choice"     => array( 'type'    => 'Select',
+                         'Meal Choice'     => array( 'type'    => 'Select',
                                                      'options' => array( 1 => array( 'label'  => 'Chicken',
                                                                                      'amount' => '525.00',
                                                                                      'count'  => '2', 
@@ -145,17 +145,17 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
                                                                                      'count'  => '2', 
                                                                                      )
                                                                          ) ),
-                         "Pre-conference Meetup?" => array ( 'type'  => 'Radio',
+                         'Pre-conference Meetup?' => array ( 'type'  => 'Radio',
                                                              'options' => array( 1 => array( 'label'  => 'Yes',
-                                                                                     'amount' => '50.00',
-                                                                                     'count'  => '2', 
-                                                                                     ),
-                                                                         2 => array( 'label'  => 'No',
-                                                                                     'amount' => '0',
-                                                                                     )
-                                                                                     ) ),
+                                                                                             'amount' => '50.00',
+                                                                                             'count'  => '2', 
+                                                                                             ),
+                                                                                 2 => array( 'label'  => 'No',
+                                                                                             'amount' => '0',
+                                                                                             )
+                                                                                 ) ),
                          
-                         "Evening Sessions" => array ( 'type' => 'CheckBox',
+                         'Evening Sessions' => array ( 'type' => 'CheckBox',
                                                        'options' => array( 1 => array( 'label'  => 'First Five',
                                                                                        'amount' => '100.00',
                                                                                        'count'  => '5', 
@@ -169,33 +169,36 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
 
         foreach ( $fields as $label => $field ) {
             
-            $this->type("label", $label);
-            $this->select("html_type", "value={$field['type']}");
+            $this->type('label', $label);
+            $this->select('html_type', "value={$field['type']}");
             
             if ( $field['type'] == 'Text') {
                 $this->type('price', $field['amount'] );
+                //yash 
+                $this->waitForElementPresent('count');
                 $this->type('count', $field['count'] );
-                $this->check("is_required");
+                $this->check('is_required');
             } else {
                 $this->_testAddMultipleChoiceOptions( $field['options'] );
             }
-            $this->click("_qf_Field_next_new-bottom");
+            $this->click('_qf_Field_next_new-bottom');
             $this->waitForPageToLoad('30000');
-            $this->waitForElementPresent("_qf_Field_next-bottom");
+            $this->waitForElementPresent('_qf_Field_next-bottom');
         }
-        
+
         // create event.
         $eventTitle = 'My Conference - '.substr(sha1(rand()), 0, 7);
         $paramsEvent = array( 'title'              => $eventTitle,
                               'template_id'        => 6,
                               'event_type_id'      => 4,
                               'payment_processor'  => $processorName,
-                              'price_set'          => $priceset );
+                              'price_set'          => $priceset 
+                              );
             
         $infoEvent  = $this->_testAddEvent( $paramsEvent );
           
         // logout to register for event.
-        $this->open($this->sboxPath . "civicrm/logout?reset=1");
+        $this->open($this->sboxPath . 'civicrm/logout?reset=1');
         $this->waitForPageToLoad('30000'); 
 
         // Register Participant 1
@@ -204,13 +207,13 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad('30000');
  
         // register for event
-        $this->click("link=Register Now");
-        $this->waitForElementPresent("_qf_Register_upload-bottom");
+        $this->click('link=Register Now');
+        $this->waitForElementPresent('_qf_Register_upload-bottom');
         
-        $this->type("xpath=//input[@class='form-text four required']", "1");
+        $this->type("xpath=//input[@class='form-text four required']", '1');
 
-        $email = "jane_".substr(sha1(rand()), 0, 5) ."@example.org"; 
-        $this->type("email-5", $email);
+        $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
+        $this->type('email-5', $email);
         
         // fill billing related info and register
         $this->_testRegisterWithBillingInfo( );
@@ -220,12 +223,12 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->open( $infoEvent );
 
         // register for event
-        $this->click("link=Register Now");
-        $this->waitForElementPresent("_qf_Register_upload-bottom");
+        $this->click('link=Register Now');
+        $this->waitForElementPresent('_qf_Register_upload-bottom');
         
-        $this->type("xpath=//input[@class='form-text four required']", "2");
-        $email = "jane_".substr(sha1(rand()), 0, 5) ."@example.org"; 
-        $this->type("email-5", $email);
+        $this->type("xpath=//input[@class='form-text four required']", '2');
+        $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
+        $this->type('email-5', $email);
 
         // fill billing related info and register
         $this->_testRegisterWithBillingInfo( );
@@ -242,86 +245,88 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->assertStringsPresent( array( $eventTitle )  );
 
         // check number of counted participants
-        $this->verifyText("xpath=//form[@id='Search']//table[@class='display']/tbody/tr/td/a[text()='$eventTitle']/../../td[6]", preg_quote( "Counted: 24" ) );   
+        $this->verifyText("xpath=//form[@id='Search']//table[@class='display']/tbody/tr/td/a[text()='$eventTitle']/../../td[6]", preg_quote( 'Counted: 24' ) );   
 
         // check number of registered participants
-        $this->verifyText("xpath=//form[@id='Search']//table[@class='display']/tbody/tr/td/a[text()='$eventTitle']/../../td[6]", preg_quote( "Registered: 24" ) );
+        $this->verifyText("xpath=//form[@id='Search']//table[@class='display']/tbody/tr/td/a[text()='$eventTitle']/../../td[6]", preg_quote( 'Registered: 24' ) );
 
         // visit counted participant page
         $this->click("xpath=//form[@id='Search']//table[@class='display']/tbody/tr/td/a[text()='$eventTitle']/../../td[6]/a[1]" );
         $this->waitForPageToLoad('30000');
         
         // verify number of participants records and total participant count
-        $this->assertStringsPresent( array( "2 Result", "Actual participant count : 24" ) );
+        $this->assertStringsPresent( array( '2 Result', 'Actual participant count : 24' ) );
     }
      
     function _testAddSet( $setTitle  ) {
-        $this->open($this->sboxPath . "civicrm/admin/price&reset=1&action=add");
+        $this->open($this->sboxPath . 'civicrm/admin/price&reset=1&action=add');
         $this->waitForPageToLoad('30000');
-        $this->waitForElementPresent("_qf_Set_next-bottom");
+        $this->waitForElementPresent('_qf_Set_next-bottom');
         
         // Enter Priceset fields (Title, Used For ...)
-        $this->type("title", $setTitle);
-        $this->check("extends[1]");        
-        $this->type("help_pre", 'This is test priceset.');
+        $this->type('title', $setTitle);
+        $this->check('extends[1]');        
+        $this->type('help_pre', 'This is test priceset.');
         
-        $this->assertChecked("is_active", "Verify that Is Active checkbox is set.");
-        $this->click("_qf_Set_next-bottom");      
+        $this->assertChecked('is_active', 'Verify that Is Active checkbox is set.');
+        $this->click('_qf_Set_next-bottom');      
         
         $this->waitForPageToLoad('30000');
-        $this->waitForElementPresent("_qf_Field_next-bottom");
+        $this->waitForElementPresent('_qf_Field_next-bottom');
     }
 
     function _testAddMultipleChoiceOptions( $options  ) {
         foreach ( $options as $oIndex => $oValue ) {
             $this->type("option_label_{$oIndex}", $oValue['label'] ); 
             $this->type("option_amount_{$oIndex}" , $oValue['amount']  );
-            if ( $oValue['count'] ) {
+            if ( array_key_exists( 'count', $oValue ) ) {
+                $this->waitForElementPresent("option_count_{$oIndex}");
                 $this->type("option_count_{$oIndex}" , $oValue['count']  ); 
             }
-            $this->click("link=another choice");
+            $this->click('link=another choice');
         }    
-        $this->click("CIVICRM_QFID_1_2");
+        $this->click('CIVICRM_QFID_1_2');
     }
     
     function _testAddEvent( $params ) {
-        $this->open($this->sboxPath . "civicrm/event/add&reset=1&action=add");
+        $this->open($this->sboxPath . 'civicrm/event/add&reset=1&action=add');
         
-        $this->waitForElementPresent("_qf_EventInfo_upload-bottom");
+        $this->waitForElementPresent('_qf_EventInfo_upload-bottom');
         
         // Let's start filling the form with values.
-        $this->select("event_type_id", "value={$params['event_type_id']}");
+        $this->select('event_type_id', "value={$params['event_type_id']}");
         
         // Attendee role s/b selected now.
-        $this->select("default_role_id", "value=1");
+        $this->select('default_role_id', 'value=1');
         
         // Enter Event Title, Summary and Description
-        $this->type("title", $params['title'] );
-        $this->type("summary", "This is a great conference. Sign up now!");
-        $this->fillRichTextField( "description", "Here is a description for this event.", 'CKEditor' );
+        $this->type('title', $params['title'] );
+        $this->type('summary', 'This is a great conference. Sign up now!');
+        $this->fillRichTextField( 'description', 'Here is a description for this event.', 'CKEditor' );
         
         // Choose Start and End dates.
         // Using helper webtestFillDate function.
-        $this->webtestFillDateTime("start_date", "+1 week");
-        $this->webtestFillDateTime("end_date", "+1 week 1 day 8 hours ");
+        $this->webtestFillDateTime('start_date', '+1 week');
+        $this->webtestFillDateTime('end_date', '+1 week 1 day 8 hours ');
         
-        $this->type("max_participants", "50");
-        $this->click("is_map");
-        $this->click("_qf_EventInfo_upload-bottom");      
+        $this->type('max_participants', '50');
+        $this->click('is_map');
+        $this->click('_qf_EventInfo_upload-bottom');      
         
         // Wait for Location tab form to load
-        $this->waitForPageToLoad("30000");
+        $this->waitForPageToLoad('30000');
         
         // Go to Fees tab
-        $this->click("link=Fees");
-        $this->waitForElementPresent("_qf_Fee_upload-bottom");
-        $this->click("CIVICRM_QFID_1_2");
-        $this->select("payment_processor_id", "label=" . $params['payment_processor']);
-        $this->select("contribution_type_id", "value=4");
+        $this->click('link=Fees');
+        $this->waitForElementPresent('_qf_Fee_upload-bottom');
+        $this->click('CIVICRM_QFID_1_2');
+        $this->select('payment_processor_id', 'label=' . $params['payment_processor']);
+        $this->select('contribution_type_id', 'value=4');
         
-        if ( $params['price_set'] ) {
-            $this->select("price_set_id", "label=" . $params['price_set'] );
-        } else {
+        if ( array_key_exists( 'price_set', $params ) ) {
+            $this->select('price_set_id', 'label=' . $params['price_set'] );
+        } 
+        if ( array_key_exists( 'fee_level', $params ) ) {
             $counter = 1;
             foreach ( $params['fee_level'] as $label => $amount ) { 
                 $this->type("label_{$counter}", $label );
@@ -330,58 +335,58 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
             }      
         }
         
-        $this->click("_qf_Fee_upload-bottom");
-        $this->waitForPageToLoad("30000");
+        $this->click('_qf_Fee_upload-bottom');
+        $this->waitForPageToLoad('30000');
         
         // Go to Online Registration tab
-        $this->click("link=Online Registration");
-        $this->waitForElementPresent("_qf_Registration_upload-bottom");
+        $this->click('link=Online Registration');
+        $this->waitForElementPresent('_qf_Registration_upload-bottom');
         
-        $this->check("is_online_registration");
-        $this->assertChecked("is_online_registration");
+        $this->check('is_online_registration');
+        $this->assertChecked('is_online_registration');
         
-        $this->fillRichTextField("intro_text", "Fill in all the fields below and click Continue." );
+        $this->fillRichTextField('intro_text', 'Fill in all the fields below and click Continue.' );
         
         // enable confirmation email
-        $this->click("CIVICRM_QFID_1_2");
-        $this->type("confirm_from_name", "Jane Doe");
-        $this->type("confirm_from_email", "jane.doe@example.org");
+        $this->click('CIVICRM_QFID_1_2');
+        $this->type('confirm_from_name', 'Jane Doe');
+        $this->type('confirm_from_email', 'jane.doe@example.org');
         
-        $this->click("_qf_Registration_upload-bottom");
-        $this->waitForPageToLoad("30000");
+        $this->click('_qf_Registration_upload-bottom');
+        $this->waitForPageToLoad('30000');
         $this->waitForTextPresent("'Registration' information has been saved.");
         
         // verify event input on info page
         // start at Manage Events listing
-        $this->open($this->sboxPath . "civicrm/event/manage&reset=1");
-        $this->click("link=". $params['title']);
+        $this->open($this->sboxPath . 'civicrm/event/manage&reset=1');
+        $this->click('link='. $params['title']);
         
         $this->waitForPageToLoad('30000');
         return $this->getLocation();
     }
     
     function _testRegisterWithBillingInfo( ) {
-        $this->select("credit_card_type", "value=Visa");
-        $this->type("credit_card_number", "4111111111111111");
-        $this->type("cvv2", "000");
-        $this->select("credit_card_exp_date[M]", "value=1");
-        $this->select("credit_card_exp_date[Y]", "value=2020");
-        $this->type("billing_first_name", "Jane_". substr(sha1(rand()), 0, 5) );
-        $this->type("billing_last_name", "San_". substr(sha1(rand()), 0, 5) );
-        $this->type("billing_street_address-5", "15 Main St.");
-        $this->type(" billing_city-5", "San Jose");
-        $this->select("billing_country_id-5", "value=1228");
-        $this->select("billing_state_province_id-5", "value=1004");
-        $this->type("billing_postal_code-5", "94129");
+        $this->select('credit_card_type', 'value=Visa');
+        $this->type('credit_card_number', '4111111111111111');
+        $this->type('cvv2', '000');
+        $this->select('credit_card_exp_date[M]', 'value=1');
+        $this->select('credit_card_exp_date[Y]', 'value=2020');
+        $this->type('billing_first_name', 'Jane_'. substr(sha1(rand()), 0, 5) );
+        $this->type('billing_last_name', 'San_'. substr(sha1(rand()), 0, 5) );
+        $this->type('billing_street_address-5', '15 Main St.');
+        $this->type(' billing_city-5', 'San Jose');
+        $this->select('billing_country_id-5', 'value=1228');
+        $this->select('billing_state_province_id-5', 'value=1004');
+        $this->type('billing_postal_code-5', '94129');
         
-        $this->click("_qf_Register_upload-bottom");
+        $this->click('_qf_Register_upload-bottom');
         $this->waitForPageToLoad('30000');
-        $this->waitForElementPresent("_qf_Confirm_next-bottom");
-        $confirmStrings = array("Event Fee(s)", "Billing Name and Address", "Credit Card Information");
+        $this->waitForElementPresent('_qf_Confirm_next-bottom');
+        $confirmStrings = array('Event Fee(s)', 'Billing Name and Address', 'Credit Card Information');
         $this->assertStringsPresent( $confirmStrings );
-        $this->click("_qf_Confirm_next-bottom");
+        $this->click('_qf_Confirm_next-bottom');
         $this->waitForPageToLoad('30000');
-        $thankStrings = array("Thank You for Registering", "Event Total", "Transaction Date");
+        $thankStrings = array('Thank You for Registering', 'Event Total', 'Transaction Date');
         $this->assertStringsPresent( $thankStrings );
     }   
 }
