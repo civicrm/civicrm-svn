@@ -846,7 +846,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
 
         if ( !$this->_allowConfirmation ) {
             // check if the participant is already registered
-            if (!$self->_skipDupeRegistrationCheck) {
+            if (! $this->_skipDupeRegistrationCheck) {
                 $params['contact_id'] = self::checkRegistration( $params, $this, false, true );
             }
         }
