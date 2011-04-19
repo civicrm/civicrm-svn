@@ -89,7 +89,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     }
     $result = isset($extra) ? $function($params, $extra) : $function($params);
 
-    if ($result['is_error'] == 0 && is_array($params['entities']) && strtolower($action) == 'create'){
+    if ($result['is_error'] == 0 && isset($params['entities']) && is_array($params['entities']) && strtolower($action) == 'create'){
       foreach ($params['entities'] as $subentity => $subParams) {      
         $subParams[strtolower($entity) . "_id"] = $result['id'];
         $subParams['version'] = $version;

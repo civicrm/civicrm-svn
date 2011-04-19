@@ -648,7 +648,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     }
                     $row[$property] = $websiteUrl;
                 } else {
-                    $row[$property] = $result->$property;
+                    $row[$property] = isset($result->$property)? $result->$property : null;
                 }
 
                 if ( ! empty( $result->$property ) ) {
