@@ -395,7 +395,7 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     public function testValidateProfileHTML()
     {
-        $result = civicrm_profile_html_validate($this->_contactId, 'Test Profile', null, true);
+        $result = civicrm_profile_html_validate( $this->_contactId, 'Test Profile', null, null );
         $this->assertEquals($result, true);
     }
 
