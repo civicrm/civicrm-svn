@@ -226,5 +226,11 @@ class WebTest_Event_EventWaitListTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad('30000');
       $thankStrings = array("Thank You for Registering", "Event Total", "Transaction Date");
       $this->assertStringsPresent( $thankStrings );
+      
+      if ( $anonymous ) {
+          // log back in so we're in the same state
+          $this->open( $this->sboxPath );
+          $this->webtestLogin();
+      }
   }
 }
