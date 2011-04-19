@@ -1713,18 +1713,311 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
     require_once 'CRM/Core/Permission.php';
 
     // FIXME: split the below out to its own file (and auto-generate from XML?)
+    // FIXME: should we permission getfields calls?
+    // FIXME: should ‘access CiviCRM’ be mandatory for all calls?
+    // FIXME: should we have different permission sets for create/update/delete?
     $requirements = array(
+        'activity' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'activity_type' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'address' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'case' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'case_activity' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'constant' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
         'contact' => array(
             'create' => array('all' => array('access CiviCRM', 'add contacts')),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
             'update' => array('all' => array('access CiviCRM', 'add contacts')),
+        ),
+        'contribution' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'custom_field' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'custom_group' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'domain' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'email' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'entity' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'entity_file' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'entity_tag' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
         ),
         'event' => array(
             'create' => array('all' => array('access CiviEvent')),
+            'get'       => array('all' => array('access CiviEvent')),
+            'delete' => array('all' => array()),
+            'update' => array('all' => array()),
         ),
-        'mailing' => array(
-            'create' => array('any' => array('access CiviMail', 'create mailings')),
+        'file' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'files_by_entity' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'group' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'group_contact' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'group_nesting' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'group_organization' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'location' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'membership' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'membership_payment' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'membership_status' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'membership_type' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'note' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'note_tree' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'option_group' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'option_value' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'participant' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'participant_payment' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'phone' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'pledge' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'pledge_payment' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'relationship' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'relationship_type' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'survey' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'survey_respondant' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'tag' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'tag_entities' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'uf_field' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'uf_group' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'uf_join' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'uf_match' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
+        ),
+        'website' => array(
+            'create' => array('all' => array()),
+            'delete' => array('all' => array()),
+            'get'    => array('all' => array()),
+            'update' => array('all' => array()),
         ),
     );
+
+    # FIXME: not sure how to permission the following API 3 calls:
+    # contribution_transact (make online contributions)
+    # entity_tag_display
+    # group_contact_pending
+    # group_contact_update_status
+    # mailing_event_bounce
+    # mailing_event_click
+    # mailing_event_confirm
+    # mailing_event_forward
+    # mailing_event_open
+    # mailing_event_reply
+    # mailing_group_event_domain_unsubscribe
+    # mailing_group_event_resubscribe
+    # mailing_group_event_subscribe
+    # mailing_group_event_unsubscribe
+    # membership_status_calc
+    # survey_respondant_count
 
     foreach ($requirements[$entity][$action] as $condition => $perms) {
         $checks = array_map('CRM_Core_Permission::check', $perms);
