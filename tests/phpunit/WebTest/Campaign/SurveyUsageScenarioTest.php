@@ -345,6 +345,8 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_Release_done-bottom");
       $this->click("_qf_Release_done-bottom");
       $this->waitForPageToLoad("30000");
+      // wait for Access Keys div to appear at bottom of page - since this page may take a while
+      $this->waitForElementPresent('access');
       $this->assertTrue($this->isTextPresent("1 respondent(s) have been released."),
                         "Status message didn't show up after releasing respondents!");
 
@@ -590,8 +592,10 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
 
       $this->click( '_qf_Reserve_done_reserve-bottom' );
       $this->waitForPageToLoad( "30000" );
+      // wait for Access Keys div to appear at bottom of page - since this page may take a while
+      $this->waitForElementPresent('access');
       $this->assertTrue( $this->isTextPresent( "Reservation has been added for 2 Contact(s)." ),
-                         "Status message didn't show up after releasing respondents!");
+                         "Status message didn't show up after reserving respondents!");
 
       $this->open( $this->sboxPath . "civicrm/report/survey/detail?reset=1" );
       $this->waitForElementPresent( '_qf_SurveyDetails_submit' );
