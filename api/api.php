@@ -45,16 +45,17 @@ function civicrm_api_legacy($function, $class, $params) {
 function civicrm_api($entity, $action, $params, $extra = NULL) {
     require_once ('api/v3/utils.php');
     require_once 'CRM/Utils/String.php';
+    _civicrm_api3_initialize(true );
     $entity = CRM_Utils_String::munge($entity);
     $action = CRM_Utils_String::munge($action);
     $version = civicrm_get_api_version($params);
     $errorFnName = ( $version == 2 ) ? 'civicrm_create_error' : 'civicrm_api3_create_error';
     $function = civicrm_api_get_function_name($entity, $action,$version);
     civicrm_api_include($entity,null,$version);
-    if ( !function_exists ($function )) {
+    if ( !function_exists ($function ) ) {
         if ( strtolower($action) == "getfields") { 
             $version = 3;
-            $dao = civicrm_api3_get_DAO ($entity);
+            $dao = _civicrm_api3_get_DAO ($entity);
             if (empty($dao)) {
                 return $errorFnName("API for $entity does not exist (join the API team and implement $function" );
             }
