@@ -460,7 +460,14 @@ function _civicrm_api3_contact_check_custom_params( $params, $csType = null )
     empty($csType) ? $onlyParent = true : $onlyParent = false;
     
     require_once 'CRM/Core/BAO/CustomField.php';
-    $customFields = CRM_Core_BAO_CustomField::getFields( $params['contact_type'], false, false, $csType, null, $onlyParent );
+    $customFields = CRM_Core_BAO_CustomField::getFields( $params['contact_type'],
+                                                         false,
+                                                         false,
+                                                         $csType,
+                                                         null,
+                                                         $onlyParent,
+                                                         false,
+                                                         false );
     
     foreach ($params as $key => $value) {
         if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
