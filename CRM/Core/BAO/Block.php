@@ -140,7 +140,7 @@ class CRM_Core_BAO_Block
     static function dataExists( $blockFields, &$params ) 
     {
         foreach ( $blockFields as $field ) {
-            if ( CRM_Utils_System::isNull( $params[$field] ) ) {
+            if ( CRM_Utils_System::isNull( CRM_Utils_Array::value( $field, $params ) ) ) {
                 return false;
             }
         }
@@ -267,7 +267,7 @@ class CRM_Core_BAO_Block
         foreach ( $params[$blockName] as $count => $value ) {
             if ( !is_array( $value ) ) continue;
             $contactFields = array( 'contact_id'       => $contactId,
-                                    'location_type_id' => $value['location_type_id'] );
+                                    'location_type_id' => CRM_Utils_Array::value( 'location_type_id', $value ) );
             
             //check for update 
             if ( !CRM_Utils_Array::value( 'id', $value ) && 
