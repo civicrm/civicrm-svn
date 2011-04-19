@@ -128,7 +128,11 @@ class CRM_Contact_BAO_ContactType_ContactTest extends CiviUnitTestCase
                          'contact_type'     => 'Individual',
                          'contact_sub_type' => $this->sponsor
                          );
-        $contact = CRM_Contact_BAO_Contact::add( $params );
+        $contact = null;
+        try {
+            $contact = CRM_Contact_BAO_Contact::add( $params );
+        } catch ( Exception $expected ) {
+        }
         $this->assertNull( $contact , 'In line '. __LINE__ );
         
         //check for Type:invalid , Subtype:Student
@@ -137,7 +141,11 @@ class CRM_Contact_BAO_ContactType_ContactTest extends CiviUnitTestCase
                          'contact_type'      => 'Invalid',
                          'contact_sub_type' => $this->student
                          );
-        $contact = CRM_Contact_BAO_Contact::add( $params );
+        $contact = null;
+        try {
+            $contact = CRM_Contact_BAO_Contact::add( $params );
+        } catch ( Exception $expected ) {
+        }
         $this->assertNull( $contact , 'In line '. __LINE__ );
         
         //check for Type:Individual, Subtype:Sponsor
@@ -145,15 +153,24 @@ class CRM_Contact_BAO_ContactType_ContactTest extends CiviUnitTestCase
                          'contact_type'      => 'Individual',
                          'contact_sub_type'  => $this->sponsor
                          ); 
-        $contact = CRM_Contact_BAO_Contact::add( $params );
+        $contact = null;
+        try {
+            $contact = CRM_Contact_BAO_Contact::add( $params );
+        } catch ( Exception $expected ) {
+        }
         $this->assertNull( $contact , 'In line '. __LINE__ );
+        
 
         //check for Type:Household, Subtype:Student
         $params = array( 'household_name'    => 'John Does home',
                          'contact_type'      => 'Household',
                          'contact_sub_type'  => $this->student
                          );
-        $contact = CRM_Contact_BAO_Contact::add( $params );
+        $contact = null;
+        try {
+            $contact = CRM_Contact_BAO_Contact::add( $params );
+        } catch ( Exception $expected ) {
+        }
         $this->assertNull( $contact , 'In line '. __LINE__ );
     }
 
@@ -212,7 +229,11 @@ class CRM_Contact_BAO_ContactType_ContactTest extends CiviUnitTestCase
         $updateParams = array( 'contact_sub_type'  => $this->sponsor,
                                'contact_type'      => 'Individual',
                                'contact_id'        => $contact->id );
-        $updatedContact = CRM_Contact_BAO_Contact::add( $updateParams );
+        $updatedContact = null;
+        try {
+            $updatedContact = CRM_Contact_BAO_Contact::add( $updateParams );
+        } catch ( Exception $expected ) {
+        }
  
         $this->assertNull( $updatedContact , 'In line '. __LINE__ );
         CRM_Contact_BAO_Contact::deleteContact( $contact->id );
@@ -226,7 +247,11 @@ class CRM_Contact_BAO_ContactType_ContactTest extends CiviUnitTestCase
         $updateParams = array( 'contact_sub_type'  => $this->student,
                                'contact_type'      => 'Organization',
                                'contact_id'        => $contact->id );
-        $updatedContact = CRM_Contact_BAO_Contact::add( $updateParams );
+        $updatedContact = null;
+        try {
+            $updatedContact = CRM_Contact_BAO_Contact::add( $updateParams );
+        } catch ( Exception $expected ) {
+        }
 
         $this->assertNull( $updatedContact , 'In line '. __LINE__ );
         CRM_Contact_BAO_Contact::deleteContact( $contact->id );
@@ -238,7 +263,11 @@ class CRM_Contact_BAO_ContactType_ContactTest extends CiviUnitTestCase
         $updateParams = array( 'contact_sub_type'  => $this->student,
                                'contact_type'      => 'Household',
                                'contact_id'        => $contact->id );
-        $updatedContact = CRM_Contact_BAO_Contact::add( $updateParams );
+        $updatedContact = null;
+        try {
+            $updatedContact = CRM_Contact_BAO_Contact::add( $updateParams );
+        } catch ( Exception $expected ) {
+        }
 
         $this->assertNull( $updatedContact , 'In line '. __LINE__ );
         CRM_Contact_BAO_Contact::deleteContact( $contact->id );
@@ -323,7 +352,11 @@ class CRM_Contact_BAO_ContactType_ContactTest extends CiviUnitTestCase
                                'contact_type'      => 'Individual',
                                'contact_id'        => $contact->id 
                                );
-        $updatedContact = CRM_Contact_BAO_Contact::add( $updateParams );
+        $updatedContact = null;
+        try {
+            $updatedContact = CRM_Contact_BAO_Contact::add( $updateParams );
+        } catch ( Exception $expected ) {
+        }
  
         $this->assertNull( $updatedContact , 'In line '. __LINE__ );
         CRM_Contact_BAO_Contact::deleteContact( $contact->id );
@@ -339,7 +372,11 @@ class CRM_Contact_BAO_ContactType_ContactTest extends CiviUnitTestCase
                                'contact_type'      => 'Organization',
                                'contact_id'        => $contact->id 
                                );
-        $updatedContact = CRM_Contact_BAO_Contact::add( $updateParams );
+        $updatedContact = null;
+        try {
+            $updatedContact = CRM_Contact_BAO_Contact::add( $updateParams );
+        } catch ( Exception $expected ) {
+        }
 
         $this->assertNull( $updatedContact , 'In line '. __LINE__ );
         CRM_Contact_BAO_Contact::deleteContact( $contact->id );
