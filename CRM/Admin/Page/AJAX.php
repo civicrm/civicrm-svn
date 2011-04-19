@@ -209,8 +209,7 @@ class CRM_Admin_Page_AJAX
         $statusMessage['show']   = $show;
         
         echo json_encode( $statusMessage );
-        
-        exit;
+        CRM_Utils_System::civiExit();
     }
     
     static function getTagList( ) {

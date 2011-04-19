@@ -203,8 +203,7 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
                                        array(1 => $request->getResponseCode())) );
         }
         CRM_Utils_System::redirect( $request->getResponseHeader( 'location' ) );
-
-        exit( );
+        CRM_Utils_System::civiExit( );
     }
 
     /**

@@ -199,6 +199,6 @@ class CRM_Core_Page_AJAX_Location
         $result['count_loc_used'] = CRM_Event_BAO_Event::countEventsUsingLocBlockId( $_POST['lbid'] );
 
         echo json_encode( $result );
-        exit();
+        CRM_Utils_System::civiExit( ); 
     }
 }
