@@ -98,10 +98,11 @@ class WebTest_Mailing_AddMailingWithMessageTemplateTest extends CiviSeleniumTest
       $this->click("template");
       $this->select("template", "label=$msgTitle");
       $this->click("xpath=id('Upload')/div[2]/fieldset[@id='compose_id']/div[2]/div[1]");
+      $this->click( 'subject' );
       
       // check for default header and footer ( with label ) 
-      $this->assertSelectedLabel("header_id", "Mailing Header");
-      $this->assertSelectedLabel("footer_id", "Mailing Footer");
+      $this->select( 'header_id', "label=Mailing Header" );
+      $this->select( 'footer_id', "label=Mailing Footer" );
       
       // do check count for Recipient
       $this->assertTrue($this->isTextPresent("Total Recipients: 1"));
