@@ -1,4 +1,4 @@
-<?php
+in_array<?php
 
 /*
  +--------------------------------------------------------------------+
@@ -92,7 +92,7 @@ class WebTest_Campaign_MembershipTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad('30000');
       $this->waitForElementPresent("_qf_Component_next-bottom");
       $enabledComponents = $this->getSelectOptions("enableComponents-t");
-      if (! array_search( "CiviCampaign", $enabledComponents ) ) {
+      if (! in_array( "CiviCampaign", $enabledComponents ) ) {
           $this->addSelection("enableComponents-f", "label=CiviCampaign");
           $this->click("//option[@value='CiviCampaign']");
           $this->click("add");

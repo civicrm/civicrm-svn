@@ -42,20 +42,15 @@ class WebTest_Grant_ContactContextAddTest extends CiviSeleniumTestCase {
         // class attributes.
         $this->open( $this->sboxPath );
         
-        // Logging in. Remember to wait for page to load. In most cases,
-        // you can rely on 30000 as the value that allows your test to pass, however,
-        // sometimes your test might fail because of this. In such cases, it's better to pick one element
-        // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-        // page contents loaded and you can continue your test execution.
-        $this->webtestLogin();
-        
+        // Log in as admin first to verify permissions for CiviGrant
+        $this->webtestLogin( true );        
         
         // Enable CiviGrant module if necessary
         $this->open($this->sboxPath . 'civicrm/admin/setting/component?reset=1');
         $this->waitForPageToLoad('30000');
         $this->waitForElementPresent('_qf_Component_next-bottom');
         $enabledComponents = $this->getSelectOptions('enableComponents-t');
-        if (! array_search( 'CiviGrant', $enabledComponents ) ) {
+        if (! in_array( 'CiviGrant', $enabledComponents ) ) {
             $this->addSelection('enableComponents-f', 'label=CiviGrant');
             $this->click("//option[@value='CiviGrant']");
             $this->click('add');
@@ -76,6 +71,12 @@ class WebTest_Grant_ContactContextAddTest extends CiviSeleniumTestCase {
         $this->click("edit-submit");
         $this->waitForPageToLoad("30000");
         $this->assertTrue($this->isTextPresent("The changes have been saved."));        
+        $this->open($this->sboxPath . "civicrm/logout&reset=1");
+        $this->waitForPageToLoad('30000');          
+
+        // Log in as demo user
+        $this->open( $this->sboxPath );
+        $this->webtestLogin( );
         
         // create unique name
         $name      = substr(sha1(rand()), 0, 7);
