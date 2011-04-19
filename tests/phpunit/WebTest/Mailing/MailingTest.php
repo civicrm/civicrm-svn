@@ -121,20 +121,23 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
       // let from email address be default
       
       // fill subject for mailing
-      $this->type("subject", "Test subject $mailingName for Webtest");
+      $this->type("subject", "Test subject {$mailingName} for Webtest");
       
       // check for default option enabled
       $this->assertChecked("CIVICRM_QFID_1_4");
       
-      // fill message (presently using script for simple text area)
+      // HTML format message
+      $HTMLMessage = "This is HTML formatted content for Mailing {$mailingName} Webtest.";
+      $this->fillRichTextField("html_message", $HTMLMessage);
+      
+      // Open Plain-text Format pane and type text format msg
       $this->click("//fieldset[@id='compose_id']/div[2]/div[1]");
-      $this->type("text_message", "this is test content for Mailing $mailingName Webtest");
+      $this->type("text_message", "This is text formatted content for Mailing {$mailingName} Webtest.");
       
-      // add attachment?
       
-      // check for default header and footer ( with label ) 
-      $this->assertSelectedLabel("header_id", "Mailing Header");
-      $this->assertSelectedLabel("footer_id", "Mailing Footer");
+      // select default header and footer ( with label ) 
+      $this->select("header_id", "label=Mailing Header");
+      $this->select("footer_id", "label=Mailing Footer");      
       
       // do check count for Recipient
       $this->assertTrue($this->isTextPresent("Total Recipients: 1"));
