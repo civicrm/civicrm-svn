@@ -2653,6 +2653,10 @@ div#crm-toolTip #hide-tooltip {
     margin-right : 45px;
 }
 
+#crm-container ul.token-input-list-facebook, ul.token-input-list-facebook li.leaf {
+  list-style-image:none;
+}
+
 /* "don't do this" icons */
 #crm-container div.contact_panel span.email-hold, 
 #crm-container div.contact_panel span.do-not-email, 
