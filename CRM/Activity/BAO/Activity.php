@@ -2223,7 +2223,8 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
         $params['rowCount'] = $params['rp'];
         $params['sort']     = $params['sortBy'];
         $params['caseId']   = null;
-
+        $context = CRM_Utils_Array::value('context', $params);
+ 
         // get contact activities
         $activities =& CRM_Activity_BAO_Activity::getActivities( $params );
         
