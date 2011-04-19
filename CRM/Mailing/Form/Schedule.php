@@ -210,7 +210,7 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
                  CRM_Utils_System::redirect($url);
              }
          }
-         if ( isset($params['now']) || $params['_qf_Schedule_back'] == '<< Previous' ) {
+         if ( isset($params['now']) || CRM_Utils_Array::value('_qf_Schedule_back', $params) == '<< Previous' ) {
              return true;
          }
 
