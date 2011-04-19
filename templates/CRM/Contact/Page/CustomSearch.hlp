@@ -23,23 +23,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{strip}
-<fieldset>
-<div id="help">
-    <div class="icon info-icon"></div>&nbsp;
-    {ts}Custom searches are developed and contributed by members of the CiviCRM community.{/ts} {help id="id-custom-searches"}
-</div>
-{if $rows}
-    {foreach from=$rows item=customTitle key=csid}
-        <div class="action-link">
-            <a href="{crmURL p="civicrm/contact/search/custom" q="csid=`$csid`&reset=1"}" title="{ts}Use this search{/ts}">&raquo; {$customTitle}</a>
-        </div>
-    {/foreach}
-{else}
-    <div class="messages status">
-      <div class="icon alert-icon"></div>
-       {ts}There are currently no Custom Searches.{/ts}
-    </div>
-{/if}
-</fieldset>
-{/strip}
+{htxt id="id-custom-searches"}
+<p>
+{ts}Custom searches are developed and contributed by members of the CiviCRM community. Consider adding any custom searches which you
+use often to your Search menu (from Administer > Customize > Navigation Menu). As new custom searches become
+available they can be viewed (and installed if useful) from Administer > Customize > Manage Extensions.{/ts}  {docURL page="Extensions Admin"}
+</p>
+<p>
+{ts}NOTE: Some of these searches may rely on specific site configurations - and may not work as expected on your site.{/ts}
+</p>
+{/htxt}

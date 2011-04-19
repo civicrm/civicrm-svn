@@ -78,16 +78,7 @@ VALUES
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES     
-    ( @domainID, 'civicrm/contact/search/custom/list&reset=1',              '{ts escape="sql" skip="true"}Custom Searches...{/ts}', 'Custom Searches...', NULL, '',                 @searchlastID, '1', NULL, 12 );
-
-SET @customSearchlastID:=LAST_INSERT_ID();
-INSERT INTO civicrm_navigation
-    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES    
-    ( @domainID, 'civicrm/contact/search/custom&reset=1&csid=8',            '{ts escape="sql" skip="true"}Activity Search{/ts}',                  'Activity Search',                  NULL, '', @customSearchlastID, '1', NULL, 1 ), 
-    ( @domainID, 'civicrm/contact/search/custom&reset=1&csid=11',           '{ts escape="sql" skip="true"}Contacts by Date Added{/ts}',           'Contacts by Date Added',           NULL, '', @customSearchlastID, '1', NULL, 2 ), 
-    ( @domainID, 'civicrm/contact/search/custom&reset=1&csid=2',            '{ts escape="sql" skip="true"}Contributors by Aggregate Totals{/ts}', 'Contributors by Aggregate Totals', NULL, '', @customSearchlastID, '1', NULL, 3 ),
-    ( @domainID, 'civicrm/contact/search/custom&reset=1&csid=6',            '{ts escape="sql" skip="true"}Proximity Search{/ts}',                 'Proximity Search',                 NULL, '', @customSearchlastID, '1', NULL, 4 );
+    ( @domainID, 'civicrm/contact/search/custom/list&reset=1',              '{ts escape="sql" skip="true"}Custom Searches{/ts}', 'Custom Searches', NULL, '',                 @searchlastID, '1', NULL, 12 );
 
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
