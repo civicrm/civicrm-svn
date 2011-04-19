@@ -326,7 +326,7 @@ SELECT  count(*)
     if ( !empty( $params['priority_id'] ) && is_numeric( $params['priority_id'] ) ) {
         require_once "CRM/Core/PseudoConstant.php";
         $activityPriority = CRM_Core_PseudoConstant::priority( );
-        if ( !array_key_exists( $params['priority_id'], $activityStatus ) ) {
+        if ( !array_key_exists( $params['priority_id'], $activityPriority ) ) {
             return civicrm_api3_create_error( 'Invalid Priority' );
         }
     }

@@ -136,7 +136,11 @@ function civicrm_api3_pledge_get( $params ) {
   _civicrm_api3_initialize(true );
   try{
     civicrm_api3_verify_mandatory ($params);
-
+    if(!empty($params['id'])  && empty($params['pledge_id'])){
+      //if you pass in 'id' it will be treated by the query as contact_id
+      $params['pledge_id'] = $params['id'];
+      unset ($params['id']);
+    }
     $inputParams      = array( );
     $returnProperties = array( );
     $otherVars = array( 'sort', 'offset', 'rowCount' );

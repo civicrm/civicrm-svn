@@ -273,8 +273,9 @@ class EmailProcessor {
 
                     case 'c':
                     case 'confirm':
-                        $params = array ( 'job_id'         => $job,
-                                          'event_queue_id' => $queue,
+                        // CRM-7921
+                        $params = array ( 'contact_id'     => $job,
+                                          'subscribe_id'   => $queue,
                                           'hash'           => $hash
                                           );
                         civicrm_mailer_event_confirm( $params );

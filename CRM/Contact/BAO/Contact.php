@@ -111,8 +111,12 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
 
         //fix for validate contact sub type CRM-5143
         $subType = CRM_Utils_Array::value('contact_sub_type', $params );
-        if ( $subType && !(CRM_Contact_BAO_ContactType::isExtendsContactType($subType, $params['contact_type'], true)) ) {
-            return;     
+        if ( $subType && 
+             !  CRM_Contact_BAO_ContactType::isExtendsContactType($subType, $params['contact_type'], true) ) {
+            // we'll need to fix tests to handle this
+            // CRM-7925
+            require_once 'CRM/Core/Error.php';
+            CRM_Core_Error::fatal( ts( 'The Contact Sub Type does not match the Contact type for this record' ) );
         }
         
         //fixed contact source
@@ -268,7 +272,10 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
 
         $contact = self::add( $params );
         if ( ! $contact ) {
-            // CRM_Core_Error::fatal( ts( 'THe contact was not created, not set up to handle error' ) );
+            // not dying here is stupid, since we get into wierd situation and into a bug that
+            // is impossible to figure out for the user or for us
+            // CRM-7925
+            CRM_Core_Error::fatal( );
         }
 
         $params['contact_id'] = $contact->id;

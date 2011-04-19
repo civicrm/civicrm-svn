@@ -28,7 +28,7 @@
 require_once 'WebTest/Import/ImportCiviSeleniumTestCase.php';
 
  
-class WebTest_Import_MultipleRelationship extends ImportCiviSeleniumTestCase {
+class WebTest_Import_MultipleRelationshipTest extends ImportCiviSeleniumTestCase {
 
   protected $captureScreenshotOnFailure = TRUE;
   protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';

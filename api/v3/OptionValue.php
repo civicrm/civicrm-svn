@@ -40,6 +40,7 @@ function civicrm_api3_option_value_create( $params )
 {
   _civicrm_api3_initialize( true );
   try {
+    civicrm_api3_verify_mandatory ($params);//need to check it's an array before the next part so it meets standards. better solution later
     $weight=0;
     if ( !array_key_exists ('is_active', $params)) {
       $params ['is_active'] = 1;

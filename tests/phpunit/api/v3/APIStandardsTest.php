@@ -47,15 +47,9 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
     protected $_apiDir;
     protected $_functionFiles;
     protected $_regexForGettingAPIStdFunctions;
-  
-    /**
-     *  Constructor
-     *
-     *  Initialize configuration
-     */
-    function __construct( ) {
-        parent::__construct( );
-    }
+     /* This test case doesn't require DB reset */
+    public $DBResetRequired = false; 
+ 
 
     /**
      *  Test setup for every test
@@ -72,7 +66,7 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
         $this->_functionFiles = array('Entity.php', 'utils.php');
 
         //should possibly insert variable rather than '3' in below
-        $this->_regexForGettingAPIStdFunctions = '/^civicrm_api3.*_*$/';
+        $this->_regexForGettingAPIStdFunctions = '/^civicrm_api3_.*?_(?:(?!getfields).*)/';
 
         // functions to skip from utils.php mainly since they get sucked in via
         // a require chain in the include files
@@ -89,12 +83,6 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
                                           'civicrm_api3_survey_respondant_count',
 
                                           
-                                          // should getfields be internal? if not, we should make it
-                                          // follow the standard
-                                          'civicrm_api3_contact_getfields',
-                                          'civicrm_api3_note_getfields',
-                                          'civicrm_api3_relationship_getfields',
-                                          'civicrm_api3_tag_getfields',
 
                                           // functions from utils.php
                                           'civicrm_api3_verify_one_mandatory',

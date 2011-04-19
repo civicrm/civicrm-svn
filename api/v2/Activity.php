@@ -366,12 +366,11 @@ SELECT  count(*)
             }
         }
     }
-    
+
     if ( isset( $params['priority_id'] ) && is_numeric( $params['priority_id'] ) ) { 
         require_once "CRM/Core/PseudoConstant.php";
         $activityPriority = CRM_Core_PseudoConstant::priority( );
-        
-        if ( !array_key_exists( $params['priority_id'], $activityStatus ) ) { 
+        if ( !array_key_exists( $params['priority_id'], $activityPriority ) ) { 
             return civicrm_create_error( ts('Invalid Priority') );
         }
     }
@@ -434,7 +433,6 @@ function _civicrm_activity_buildmailparams( $result, $activityTypeID ) {
 
     $params['activity_type_id']   = $activityTypeID;
     $params['status_id']          = 2;
-    $params['priority_id']        = 0;
     $params['source_contact_id']  = $params['assignee_contact_id'] = $result['from']['id'];
     $params['target_contact_id']  = array( );
     $keys = array( 'to', 'cc', 'bcc' );

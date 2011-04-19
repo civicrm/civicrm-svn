@@ -27,7 +27,7 @@
 
 require_once 'WebTest/Import/ImportCiviSeleniumTestCase.php';
 
-class WebTest_Import_DateFormats extends ImportCiviSeleniumTestCase {
+class WebTest_Import_DateFormatTest extends ImportCiviSeleniumTestCase {
     
   protected $captureScreenshotOnFailure = TRUE;
   protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';

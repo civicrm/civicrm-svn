@@ -74,7 +74,7 @@ class CRM_Event_Import_Form_UploadFile extends CRM_Core_Form
         
         $this->assign('uploadSize', $uploadSize );
         
-        $this->add( 'file', 'uploadFile', ts('Import Data File'), 'size=30 maxlength=60', true );
+        $this->add( 'file', 'uploadFile', ts('Import Data File'), 'size=30 maxlength=255', true );
         
         $this->addRule( 'uploadFile', ts('A valid file must be uploaded.'), 'uploadedfile' );
         $this->addRule( 'uploadFile', ts('File size should be less than %1 MBytes (%2 bytes)', array(1 => $uploadSize, 2 => $uploadFileSize)), 'maxfilesize', $uploadFileSize );

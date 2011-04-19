@@ -47,61 +47,61 @@ require_once 'api/v3/utils.php';
  *
  */
 function civicrm_api3_domain_get($params ) {
-  _civicrm_api3_initialize(true);
-  try{
-    civicrm_api3_verify_mandatory($params);
-    $params['version'] = CRM_Utils_array::value('domain_version',$params);
-    unset($params['version']);
+    _civicrm_api3_initialize(true);
+    try{
+        civicrm_api3_verify_mandatory($params);
+        $params['version'] = CRM_Utils_array::value('domain_version',$params);
+        unset($params['version']);
 
-    require_once 'CRM/Core/BAO/Domain.php';
-    $bao = new CRM_Core_BAO_Domain( );
-    if ($params['current_domain']){
-      $bao = CRM_Core_BAO_Domain::getDomain();
-    }else{
-      _civicrm_api3_dao_set_filter ( $bao, $params );
-    }
-    $domains = _civicrm_api3_dao_to_array ($bao,$params);
+        require_once 'CRM/Core/BAO/Domain.php';
+        $bao = new CRM_Core_BAO_Domain( );
+        if ($params['current_domain']){
+            $bao = CRM_Core_BAO_Domain::getDomain();
+        }else{
+            _civicrm_api3_dao_set_filter ( $bao, $params );
+        }
+        $domains = _civicrm_api3_dao_to_array ($bao,$params);
 
-    foreach ($domains as $domain) {
+        foreach ($domains as $domain) {
  
-    $values = array();
-    $locparams = array(
-                    'entity_id'    => $domain['id'],
-                    'entity_table' => 'civicrm_domain'
-                    );
-                    require_once 'CRM/Core/BAO/Location.php';
-                    $values['location'] = CRM_Core_BAO_Location::getValues( $locparams, true );
+            $values = array();
+            $locparams = array(
+                               'entity_id'    => $domain['id'],
+                               'entity_table' => 'civicrm_domain'
+                               );
+            require_once 'CRM/Core/BAO/Location.php';
+            $values['location'] = CRM_Core_BAO_Location::getValues( $locparams, true );
 
-                    $address_array = array ( 'street_address', 'supplemental_address_1', 'supplemental_address_2',
-                                             'city', 'state_province_id', 'postal_code', 'country_id',
-                                             'geo_code_1', 'geo_code_2' );
-                    require_once 'CRM/Core/OptionGroup.php';
-                    $domain['domain_email'] = CRM_Utils_Array::value( 'email', $values['location']['email'][1] );
-                    $domain['domain_phone'] = array(
-                                                      'phone_type'=> CRM_Core_OptionGroup::getLabel( 'phone_type',
-                                                                                                     CRM_Utils_Array::value('phone_type_id',
-                                                                                                                            $values['location']['phone'][1] ) ),
-                                                      'phone'     => CRM_Utils_Array::value( 'phone',
-                                                                                             $values['location']['phone'][1] )
+            $address_array = array ( 'street_address', 'supplemental_address_1', 'supplemental_address_2',
+                                     'city', 'state_province_id', 'postal_code', 'country_id',
+                                     'geo_code_1', 'geo_code_2' );
+            require_once 'CRM/Core/OptionGroup.php';
+            $domain['domain_email'] = CRM_Utils_Array::value( 'email', $values['location']['email'][1] );
+            $domain['domain_phone'] = array(
+                                            'phone_type'=> CRM_Core_OptionGroup::getLabel( 'phone_type',
+                                                                                           CRM_Utils_Array::value('phone_type_id',
+                                                                                                                  $values['location']['phone'][1] ) ),
+                                            'phone'     => CRM_Utils_Array::value( 'phone',
+                                                                                   $values['location']['phone'][1] )
                                                       
-                                              );
-                    foreach ( $address_array as $value ) {
-                      $domain['domain_address'][$value] =
-                          CRM_Utils_Array::value( $value,
-                                                  $values['location']['address'][1] );
-                    }
-                    list( $domain['from_name'],
-                          $domain['from_email'] ) =
-                        CRM_Core_BAO_Domain::getNameAndEmail( true );
-           $domains[$domain['id']] = array_merge($domains[$domain['id']], $domain);
-    }
-   return civicrm_api3_create_success($domains,$params,$dao);
+                                            );
+            foreach ( $address_array as $value ) {
+                $domain['domain_address'][$value] =
+                    CRM_Utils_Array::value( $value,
+                                            $values['location']['address'][1] );
+            }
+            list( $domain['from_name'],
+                  $domain['from_email'] ) =
+                CRM_Core_BAO_Domain::getNameAndEmail( true );
+            $domains[$domain['id']] = array_merge($domains[$domain['id']], $domain);
+        }
+        return civicrm_api3_create_success($domains,$params,$dao);
                 
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+    } catch (PEAR_Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    }
 }
 
 /**
@@ -112,22 +112,22 @@ function civicrm_api3_domain_get($params ) {
  * @example
  */
 function civicrm_api3_domain_create( $params ) {
-  _civicrm_api3_initialize(true);
-  try{
-    require_once 'CRM/Core/BAO/Domain.php';
+    _civicrm_api3_initialize(true);
+    try{
+        require_once 'CRM/Core/BAO/Domain.php';
 
-    civicrm_api3_verify_mandatory($params,'CRM_Core_BAO_Domain');
-    $params['version'] = CRM_Utils_Array::value('domain_version',$params);
-    $domain = CRM_Core_BAO_Domain::create( $params );
-    $domain_array = array( );
-    _civicrm_api3_object_to_array( $domain, $domain_array[$domain->id] );
-    return civicrm_api3_create_success($domain_array,$params);
+        civicrm_api3_verify_mandatory($params,'CRM_Core_BAO_Domain');
+        $params['version'] = CRM_Utils_Array::value('domain_version',$params);
+        $domain = CRM_Core_BAO_Domain::create( $params );
+        $domain_array = array( );
+        _civicrm_api3_object_to_array( $domain, $domain_array[$domain->id] );
+        return civicrm_api3_create_success($domain_array,$params);
 
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+    } catch (PEAR_Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    }
 }
 
 /* 
@@ -136,11 +136,14 @@ function civicrm_api3_domain_create( $params ) {
  * @return array fields valid for other functions
  */
 
- function civicrm_api3_domain_getfields(){
-   $fields = $dao->getfields();
-   $fields['domain_version'] = "version of domain";
-   $fields['current_domain'] = "BOOL get loaded domain";
-   unset ($fields['version']);
-   
-   return $fields;
- }
+function civicrm_api3_domain_getfields(){
+    require_once 'CRM/Core/DAO/Domain.php';
+    $dao = new CRM_Core_DAO_Domain( );
+
+    $fields = $dao->getFields();
+    $fields['domain_version'] = "version of domain";
+    $fields['current_domain'] = "BOOL get loaded domain";
+    unset ($fields['version']);
+    
+    return $fields;
+}

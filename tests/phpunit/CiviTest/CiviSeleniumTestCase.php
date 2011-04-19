@@ -164,8 +164,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
        $day  = date('j', $timeStamp);
 
        $this->click ($dateElement);
-       $this->select("css=div#ui-datepicker-div div.ui-datepicker-title select.ui-datepicker-month", "value=$mon");
-       $this->select("css=div#ui-datepicker-div div.ui-datepicker-title select.ui-datepicker-year", "value=$year");
+       $this->select("css=div#ui-datepicker-div div.ui-datepicker-header div.ui-datepicker-title select.ui-datepicker-month", "value=$mon");
+       $this->select("css=div#ui-datepicker-div div.ui-datepicker-header div.ui-datepicker-title select.ui-datepicker-year", "value=$year");
        $this->click ("link=$day");
    }
 
@@ -800,4 +800,91 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       // pass $pageId back to any other tests that call this class
       return $pageId;      
   }  
+
+  function webtestStrictDedupeRuleDefault( $contactType = 'Individual' ) {
+         // set default strict rule.
+         $this->open( $this->sboxPath . "civicrm/contact/deduperules?action=update&id=4" );
+         $this->waitForPageToLoad("30000");
+         $this->waitForElementPresent( "_qf_DedupeRules_next-bottom" );
+
+         $this->select( "where_0","value=civicrm_email.email" );
+         $this->type( "length_0", "" );
+         $this->type( "weight_0", 10 );
+         
+         $this->select( "where_1","label=- none -" );
+         $this->type( "length_1", "" );
+         $this->type( "weight_1", "" );
+
+         $this->select( "where_2","label=- none -" );
+         $this->type( "length_2", "" );
+         $this->type( "weight_2", "" );
+
+         $this->select( "where_3","label=- none -" );
+         $this->type( "length_3", "" );
+         $this->type( "weight_3", "" );
+
+         $this->select( "where_4","label=- none -" );
+         $this->type( "length_4", "" );
+         $this->type( "weight_4", "" );
+
+         $this->type( "threshold", 10 );
+
+         // click save 
+         $this->click( "_qf_DedupeRules_next-bottom" );
+         $this->waitForPageToLoad( "30000" );
+
+  }
+  
+  function webtestAddMembershipType( $period_type = "rolling", $duration_interval = 1, $duration_unit = 'year', $auto_renew = 'no' ) {
+      $membershipTitle = substr(sha1(rand()), 0, 7);
+      $membershipOrg   = $membershipTitle . ' memorg';
+      $this->webtestAddOrganization( $membershipOrg, true );
+
+      $title = "Membership Type " . substr(sha1(rand()), 0, 7);
+      $memTypeParams = array( 'membership_type'   => $title,
+                              'member_org'        => $membershipOrg,
+                              'contribution_type' => 2,
+                              'period_type'       => $period_type,
+                              );
+      
+      $this->open( $this->sboxPath . "civicrm/admin/member/membershipType?reset=1&action=browse" );
+      $this->waitForPageToLoad("30000");
+
+      $this->click( "link=Add Membership Type" );
+      $this->waitForElementPresent( '_qf_MembershipType_cancel-bottom' );
+      
+      $this->type( 'name', $memTypeParams['membership_type'] );
+      
+      // if auto_renew optional or required - a valid payment processor must be created first (e.g Auth.net)
+      // select the radio first since the element id changes after membership org search results are loaded
+      switch ($auto_renew) {
+          case 'optional':
+            $this->click("CIVICRM_QFID_1_10");
+            break;
+          case 'required':
+            $this->click("CIVICRM_QFID_2_12");
+            break;
+          default:
+            break;
+      }      
+      
+      $this->type( 'member_org', $membershipTitle );
+      $this->click( '_qf_MembershipType_refresh' );
+      $this->waitForElementPresent( "xpath=//div[@id='membership_type_form']/fieldset/table[2]/tbody/tr[2]/td[2]" );
+      
+      $this->type( 'minimum_fee', '100' );
+      $this->select( 'contribution_type_id', "value={$memTypeParams['contribution_type']}" );
+      
+      $this->type( 'duration_interval', $duration_interval );
+      $this->select( 'duration_unit', "label={$duration_unit}" );
+      
+      $this->select( 'period_type', "label={$period_type}" );
+      
+      $this->click( '_qf_MembershipType_upload-bottom' );
+      $this->waitForElementPresent( 'link=Add Membership Type' );
+      $this->assertTrue( $this->isTextPresent( "The membership type '$title' has been saved." ) );
+
+      return $memTypeParams;
+  }
+
 }

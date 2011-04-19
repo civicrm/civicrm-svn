@@ -242,7 +242,6 @@ class api_v2_LocationTest extends CiviUnitTestCase
 
     function testDelete( )
     {
-        $this->markTestSkipped('fatal');
         $location  = $this->locationAdd( $this->_contactID );
         $locationTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_LocationType', 'New Location Type', 'id', 'name' );
         
@@ -250,7 +249,11 @@ class api_v2_LocationTest extends CiviUnitTestCase
                          'location_type' => $locationTypeId );
         $locationDelete =& civicrm_location_delete( $params );
         $this->assertNull( $locationDelete );
-        $this->assertDBNull( 'CRM_Core_DAO_Address', $location['result']['address'][0],'contact_id','id', 'Check DB for deleted Location.');
+        $this->assertDBNull( 'CRM_Core_DAO_Address',
+                             $location['result']['address'][0],
+                             'contact_id',
+                             'id',
+                             'Check DB for deleted Location.' );
     }
 
 ///////////////// civicrm_location_get methods

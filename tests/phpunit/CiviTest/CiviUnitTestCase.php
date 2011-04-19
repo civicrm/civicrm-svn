@@ -168,11 +168,15 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $tables = $pdo->query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'civicrm_tests_dev'");
 
         $truncates = array();
+        $drops = array();
         foreach( $tables as $table ) {
-            $truncates[] = 'TRUNCATE ' . $table['table_name'] . ';';
+            if( substr( $table['table_name'], 0, 14 ) == 'civicrm_value_' ) {
+                $drops[] = 'DROP TABLE ' . $table['table_name'] . ';';
+            } else {
+                $truncates[] = 'TRUNCATE ' . $table['table_name'] . ';';
+            }
         }
 
-        
         $queries = array( "USE civicrm_tests_dev;",
                           "SET foreign_key_checks = 0",
                           // SQL mode needs to be strict, that's our standard
@@ -180,6 +184,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                           "SET global innodb_flush_log_at_trx_commit = 2;"
                              );
         $queries = array_merge( $queries, $truncates );
+        $queries = array_merge( $queries, $drops );        
             foreach( $queries as $query ) {
                 if ( self::$utils->do_query($query) === false ) {
 
@@ -986,25 +991,27 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */    
     function locationAdd( $contactID ) {
         $address = array( 1 => array(
-                         'location_type'          => 'New Location Type',
-                         'is_primary'             => 1,
-                         'name'                   => 'Saint Helier St',
-                         'county'                 => 'Marin',
-                         'country'                => 'United States', 
-                         'state_province'         => 'Michigan',
-                         'supplemental_address_1' => 'Hallmark Ct', 
-                         'supplemental_address_2' => 'Jersey Village'      
-                     ));
+                                     'location_type'          => 'New Location Type',
+                                     'is_primary'             => 1,
+                                     'name'                   => 'Saint Helier St',
+                                     'county'                 => 'Marin',
+                                     'country'                => 'United States', 
+                                     'state_province'         => 'Michigan',
+                                     'supplemental_address_1' => 'Hallmark Ct', 
+                                     'supplemental_address_2' => 'Jersey Village'      
+                                     ) );
 
         $params = array( 'contact_id'             => $contactID,
                          'address'                => $address,
-                         'version'                => 2
+                         'version'                => 2,
+                         'location_format'        => '2.0',
+                         'location_type'          => 'New Location Type',
                        );
     
         $result = civicrm_api_legacy( 'civicrm_location_create','Location',$params );       
-        
+
         if ( civicrm_error( $result ) ) {
-            throw new Exception( 'Could not create location', $result );
+            throw new Exception( "Could not create location: {$result['error_message']}" );
         }
         
         return $result;
@@ -1192,7 +1199,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * @param string $className
      * @param string $title  name of custom group
      */
-    function customGroupCreate( $extends,$title) {
+    function customGroupCreate( $extends, $title = '' ) {
 
         if (CRM_Utils_Array::value('title',$extends)){
           $params = $extends;

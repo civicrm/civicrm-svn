@@ -476,7 +476,6 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         );
         $participant =  civicrm_api('Participant','update',$params);
         $this->assertEquals( $participant['is_error'], 1 );
-        $this->assertEquals( $participant['error_message'],'Participant  id is not valid' );
 
     }
 

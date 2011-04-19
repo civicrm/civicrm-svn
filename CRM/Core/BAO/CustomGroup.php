@@ -1897,26 +1897,28 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
             CRM_Core_OptionValue::getValues( array( 'name' => 'cg_extend_objects' ), $extendObjs );
         
             foreach ( $extendObjs as $ovId => $ovValues ) {
-                list($callback,  $args) = explode(';', trim($ovValues['description']) );
+                if ( $ovValues['description'] ) { 
+                    // description is expected to be a callback func to subtypes
+                    list($callback,  $args) = explode(';', trim($ovValues['description']) );
 
-                if ( !empty($args) ) {
-                    eval('$args = ' . $args . ';');
-                } else {
-                    $args = array( );
+                    if ( !empty($args) ) {
+                        eval('$args = ' . $args . ';');
+                    } else {
+                        $args = array( );
+                    }
+                    
+                    if ( ! is_array( $args ) ) {
+                        CRM_Core_Error::fatal( 'Arg is not of type array' );
+                    }
+                    
+                    list( $className ) = explode('::', $callback );
+                    require_once( str_replace( '_',
+                                               DIRECTORY_SEPARATOR,
+                                               $className ) . '.php' );
+                    
+                    $objTypes[$ovValues['value']] = call_user_func_array( $callback, $args );
                 }
-                
-                if ( ! is_array( $args ) ) {
-                    CRM_Core_Error::fatal( 'Arg is not of type array' );
-                }
-                
-                list( $className ) = explode('::', $callback );
-                require_once( str_replace( '_',
-                                           DIRECTORY_SEPARATOR,
-                                           $className ) . '.php' );
-                
-                $objTypes[$ovValues['value']] = call_user_func_array( $callback, $args );
             }
-
             $flag = true;
         }
 

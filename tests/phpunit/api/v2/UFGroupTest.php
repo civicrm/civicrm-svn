@@ -126,7 +126,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     function testGetUFProfileHTML()
     {
-        $this->markTestSkipped( 'PHP fatal' );
         $profileHTML = civicrm_uf_profile_html_get($this->_contactId, 'Test Profile');
         // check if html / content is returned
         $this->assertNotNull($profileHTML);
@@ -396,7 +395,7 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
      */
     public function testValidateProfileHTML()
     {
-        $result = civicrm_profile_html_validate($this->_contactId, 'Test Profile');
+        $result = civicrm_profile_html_validate($this->_contactId, 'Test Profile', null, true);
         $this->assertEquals($result, true);
     }
 

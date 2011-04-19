@@ -52,13 +52,16 @@ class WebTest_Contact_AddViaProfileTest extends CiviSeleniumTestCase {
       
       // Go directly to the URL of the screen that you will be testing (Create Profile).
       $this->open($this->sboxPath . "civicrm/profile/create&reset=1&gid=1");
-
+       
+      $firstName = 'Jo'.substr(sha1(rand()), 0, 4);
+      $lastName  = 'Ad'.substr(sha1(rand()), 0, 7);
+      
       //contact details section
       //fill in first name
-      $this->type("first_name", "John");
+      $this->type( "first_name", $firstName );
       
       //fill in last name
-      $this->type("last_name", "Smith");
+      $this->type( "last_name", $lastName );
       
       //address section    
       $this->type("street_address-1", "902C El Camino Way SW");

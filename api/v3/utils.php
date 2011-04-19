@@ -76,7 +76,7 @@ function civicrm_api3_verify_one_mandatory ($params, $daoName = null, $keyoption
  * eg. "civicrm_api3_contact_create" or "Contact" will return "CRM_Contact_BAO_Contact"
  */
 
-function civicrm_api3_get_DAO ($name) {
+function _civicrm_api3_get_DAO ($name) {
     static $dao = null; 
     if (!$dao) {
       require ('CRM/Core/DAO/.listAll.php');
@@ -98,8 +98,8 @@ function civicrm_api3_get_DAO ($name) {
  * eg. "civicrm_contact_create" or "Contact" will return "CRM_Contact_BAO_Contact"
  */
 
-function civicrm_api3_get_BAO ($name) {
-    $dao = civicrm_api3_get_DAO($name);
+function _civicrm_api3_get_BAO ($name) {
+    $dao = _civicrm_api3_get_DAO($name);
     $dao = str_replace("DAO","BAO", $dao);
     return $dao;
 }
@@ -213,7 +213,7 @@ function civicrm_api3_create_success( $values = 1,$params=array(),&$dao = null )
     //if ( array_key_exists ('debug',$params) && is_object ($dao)) {
     if ( is_array($params) && array_key_exists ('debug',$params)) {
         if(!is_object ($dao)){
-            $d = civicrm_api3_get_DAO ($params['entity']);
+            $d = _civicrm_api3_get_DAO ($params['entity']);
             if (!empty($d)) {
                 $file = str_replace ('_','/',$d).".php";
                 require_once ($file);
