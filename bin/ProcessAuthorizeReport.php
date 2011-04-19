@@ -150,7 +150,7 @@ class CRM_ProcessAuthorizeReport {
     var $_debug = false;
     
     function CRM_ProcessAuthorizeReport( ) {
-        _civicrm_initialize( );
+        _civicrm_api3_initialize( );
 
         $config = CRM_Core_Config::singleton( );
         
