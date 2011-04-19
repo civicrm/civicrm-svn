@@ -118,10 +118,6 @@ class WebTest_Mailing_AddMailingWithMessageTemplateTest extends CiviSeleniumTest
       
       $this->assertChecked("now");
       
-      // uncheck now option and schedule with date and time 
-      $this->uncheck("now");
-      $this->webtestFillDateTime("start_date", "+0 month");
-      
       // do check count for Recipient
       $this->assertTrue($this->isTextPresent("Total Recipients: 1"));
       
