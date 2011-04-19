@@ -250,6 +250,7 @@ class CRM_Member_Page_DashBoard extends CRM_Core_Page
         $renewCountPreMonth = $renewCountMonth = $renewCountYear = 0;
         
         $totalCountPreMonth = $totalCountMonth = $totalCountYear = $totalCountCurrent = $totalCountTotal = 0;
+        $totalCountPreMonth_owner = $totalCountMonth_owner = $totalCountYear_owner = $totalCountCurrent_owner = $totalCountTotal_owner = 0;
         foreach( $membershipSummary as $key => $value ) {
             $newCountPreMonth     = $newCountPreMonth     +  $value['premonth']['new']['count'];
             $renewCountPreMonth   = $renewCountPreMonth   +  $value['premonth']['renew']['count'];
