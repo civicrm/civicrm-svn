@@ -1718,10 +1718,10 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
     // FIXME: should we have different permission sets for create/update/delete?
     $requirements = array(
         'activity' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array('all' => array('access CiviCRM')),
+            'delete' => array('all' => array('access CiviCRM')),
+            'get'    => array('all' => array('access CiviCRM')),
+            'update' => array('all' => array('access CiviCRM')),
         ),
         'activity_type' => array(
             'create' => array('all' => array()),
@@ -1754,16 +1754,16 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
             'update' => array('all' => array()),
         ),
         'contact' => array(
-            'create' => array('all' => array('access CiviCRM', 'add contacts')),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
+            'create' => array('all' => array('access CiviCRM', 'add contacts')), // FIXME: XML does not enforce ‘add contacts’
+            'delete' => array('all' => array('access CiviCRM')),
+            'get'    => array('all' => array('access CiviCRM')),
             'update' => array('all' => array('access CiviCRM', 'add contacts')),
         ),
         'contribution' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array('all' => array('access CiviContribute')),
+            'delete' => array('all' => array('access CiviContribute')),
+            'get'    => array('all' => array('access CiviContribute')),
+            'update' => array('all' => array('access CiviContribute')),
         ),
         'custom_field' => array(
             'create' => array('all' => array()),
@@ -1809,9 +1809,9 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
         ),
         'event' => array(
             'create' => array('all' => array('access CiviEvent')),
-            'get'       => array('all' => array('access CiviEvent')),
-            'delete' => array('all' => array()),
-            'update' => array('all' => array()),
+            'get'    => array('all' => array('access CiviEvent')),
+            'delete' => array('all' => array('access CiviEvent')),
+            'update' => array('all' => array('access CiviEvent')),
         ),
         'file' => array(
             'create' => array('all' => array()),
@@ -1826,10 +1826,10 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
             'update' => array('all' => array()),
         ),
         'group' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array('all' => array('edit groups')),
+            'delete' => array('all' => array('edit groups')), // FIXME: XML does not enforce ‘edit groups’
+            'get'    => array('all' => array('access CiviCRM')),
+            'update' => array('all' => array('edit groups')), // FIXME: XML does not enforce ‘edit groups’
         ),
         'group_contact' => array(
             'create' => array('all' => array()),
@@ -1856,10 +1856,10 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
             'update' => array('all' => array()),
         ),
         'membership' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array('all' => array('access CiviMember', 'edit memberships')), // FIXME: XML does not enforce ‘edit memberships’
+            'delete' => array('all' => array('access CiviMember', 'edit memberships')), // FIXME: XML does not enforce ‘edit memberships’
+            'get'    => array('all' => array('access CiviMember')),
+            'update' => array('all' => array('access CiviMember', 'edit memberships')),
         ),
         'membership_payment' => array(
             'create' => array('all' => array()),
@@ -1904,10 +1904,10 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
             'update' => array('all' => array()),
         ),
         'participant' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array('all' => array('access CiviEvent')),
+            'delete' => array('all' => array('access CiviEvent')),
+            'get'    => array('all' => array('access CiviEvent', 'view event participants')),
+            'update' => array('all' => array('access CiviEvent')),
         ),
         'participant_payment' => array(
             'create' => array('all' => array()),
@@ -1922,10 +1922,10 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
             'update' => array('all' => array()),
         ),
         'pledge' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array('all' => array('access CiviPledge')),
+            'delete' => array('all' => array('access CiviPledge')),
+            'get'    => array('all' => array('access CiviPledge')),
+            'update' => array('all' => array('access CiviPledge')),
         ),
         'pledge_payment' => array(
             'create' => array('all' => array()),
