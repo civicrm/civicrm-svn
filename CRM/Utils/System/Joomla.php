@@ -186,14 +186,12 @@ class CRM_Utils_System_Joomla {
         require_once 'CRM/Utils/String.php';
         $path = CRM_Utils_String::stripPathChars( $path );
 
-        if ( $config->userFrameworkFrontend || $config->userFrameworkVersion > 1.5 ) {
+        if ( $config->userFrameworkFrontend ) {
             $script = 'index.php';
             if ( JRequest::getVar("Itemid") ) {
                 $Itemid = "{$separator}&Itemid=" . JRequest::getVar("Itemid");
             }
-        } else {
-            $script = 'index2.php';
-        }
+        } 
 
         if (isset($fragment)) {
             $fragment = '#'. $fragment;
@@ -214,7 +212,7 @@ class CRM_Utils_System_Joomla {
         // gross hack for joomla, we are in the backend and want to send a frontend url
         if ( $frontend &&
              $config->userFramework == 'Joomla' ) {
-            $url = str_replace( '/administrator/index2.php', '/index.php', $url );
+            $url = str_replace( '/administrator/index.php', '/index.php', $url );
         }
         return $url;
     }
