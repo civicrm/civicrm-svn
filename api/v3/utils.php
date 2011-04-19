@@ -1719,8 +1719,8 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
     $requirements = array(
         'activity' => array(
             'create' => array('all' => array('access CiviCRM')),
-            'delete' => array('all' => array('access CiviCRM')),
-            'get'    => array('all' => array('access CiviCRM')),
+            'delete' => array('all' => array('access CiviCRM', 'delete activities')), // FIXME: XML does not enforce ‘delete activities’
+            'get'    => array('all' => array('access CiviCRM', 'view all activities')), // FIXME: XML does not enforce ‘view all activities’
             'update' => array('all' => array('access CiviCRM')),
         ),
         'activity_type' => array(
@@ -1755,9 +1755,9 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
         ),
         'contact' => array(
             'create' => array('all' => array('access CiviCRM', 'add contacts')), // FIXME: XML does not enforce ‘add contacts’
-            'delete' => array('all' => array('access CiviCRM')),
-            'get'    => array('all' => array('access CiviCRM')),
-            'update' => array('all' => array('access CiviCRM', 'add contacts')),
+            'delete' => array('all' => array('access CiviCRM', 'delete contacts')), // FIXME: XML does not enforce ‘add contacts’
+            'get'    => array('all' => array('access CiviCRM', 'view all contacts')), // FIXME: XML does not enforce ‘view all contacts’
+            'update' => array('all' => array('access CiviCRM', 'add contacts', 'edit all contacts')), // FIXME: XML does not enforce ‘edit all contacts’
         ),
         'contribution' => array(
             'create' => array('all' => array('access CiviContribute')),
@@ -1766,16 +1766,16 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
             'update' => array('all' => array('access CiviContribute')),
         ),
         'custom_field' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
+            'delete' => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
+            'get'    => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
+            'update' => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
         ),
         'custom_group' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
+            'delete' => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
+            'get'    => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
+            'update' => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
         ),
         'domain' => array(
             'create' => array('all' => array()),
