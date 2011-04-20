@@ -195,7 +195,8 @@ VALUES
    ('directory_preferences'         , '{ts escape="sql"}Directory Preferences{/ts}'              , 0, 1),
    ('url_preferences'               , '{ts escape="sql"}URL Preferences{/ts}'                    , 0, 1),
    ('mail_approval_status'          , '{ts escape="sql"}CiviMail Approval Status{/ts}'           , 0, 1),
-   ('engagement_index'              , '{ts escape="sql"}Engagement Index{/ts}'                   , 0, 1);
+   ('engagement_index'              , '{ts escape="sql"}Engagement Index{/ts}'                   , 0, 1),
+   ('cg_extend_objects'             , '{ts escape="sql"}Objects a custom group extends to{/ts}'  , 0, 1);
 
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
@@ -255,6 +256,7 @@ SELECT @option_group_id_directory_pref := max(id) from civicrm_option_group wher
 SELECT @option_group_id_url_pref       := max(id) from civicrm_option_group where name = 'url_preferences';
 SELECT @option_group_id_mail_approval_status := max(id) from civicrm_option_group where name = 'mail_approval_status';
 SELECT @option_group_id_engagement_index := max(id) from civicrm_option_group where name = 'engagement_index';
+SELECT @option_group_id_cgeo           := max(id) from civicrm_option_group where name = 'cg_extend_objects';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -484,7 +486,7 @@ VALUES
   (@option_group_id_report , '{ts escape="sql"}Constituent Report (Detail){/ts}',             'contact/detail',                 'CRM_Report_Form_Contact_Detail',                 NULL, 0, NULL, 2,  '{ts escape="sql"}Provides contact-related information on contributions, memberships, events and activities.{/ts}',   0, 0, 1, NULL, NULL),
   (@option_group_id_report , '{ts escape="sql"}Activity Report{/ts}',                         'activity',                       'CRM_Report_Form_Activity',                       NULL, 0, NULL, 3,  '{ts escape="sql"}Provides a list of constituent activity including activity statistics for one/all contacts during a given date range(required){/ts}', 0, 0, 1, NULL, NULL),
   (@option_group_id_report , '{ts escape="sql"}Walk / Phone List Report{/ts}',                'walklist',                       'CRM_Report_Form_Walklist_Walklist',                       NULL, 0, NULL, 4,  '{ts escape="sql"}Provides a detailed report for your walk/phonelist for targetted contacts{/ts}', 0, 0, 0, NULL, NULL),
-  (@option_group_id_report , '{ts escape="sql"}Current Employer Report{/ts}',                 'contact/currentEmployer',        'CRM_Report_Form_Contact_CurrentEmployer',        NULL, 0, NULL, 5,  '{ts escape="sql"}Provides detail list of employer employee relationships along with employment details Ex Join Date{/ts}', 0, 0, 0, NULL, NULL),
+  (@option_group_id_report , '{ts escape="sql"}Current Employer Report{/ts}',                 'contact/currentEmployer',        'CRM_Report_Form_Contact_CurrentEmployer',        NULL, 0, NULL, 5,  '{ts escape="sql"}Provides detail list of employer employee relationships along with employment details Ex Join Date{/ts}', 0, 0, 1, NULL, NULL),
   (@option_group_id_report , '{ts escape="sql"}Donor Report (Summary){/ts}',                  'contribute/summary',             'CRM_Report_Form_Contribute_Summary',             NULL, 0, NULL, 6,  '{ts escape="sql"}Shows contribution statistics by month / week / year .. country / state .. type.{/ts}', 0, 0, 1, @contributeCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Donor Report (Detail){/ts}',                   'contribute/detail',              'CRM_Report_Form_Contribute_Detail',              NULL, 0, NULL, 7,  '{ts escape="sql"}Lists detailed contribution(s) for one / all contacts. Contribution summary report points to this report for specific details.{/ts}', 0, 0, 1, @contributeCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Donation Summary Report (Repeat){/ts}',        'contribute/repeat',              'CRM_Report_Form_Contribute_Repeat',              NULL, 0, NULL, 8,  '{ts escape="sql"}Given two date ranges, shows contacts (and their contributions) who contributed in both the date ranges with percentage increase / decrease.{/ts}', 0, 0, 1, @contributeCompId, NULL),
@@ -708,8 +710,10 @@ VALUES
 -- Mail Approval Status Preferences
   (@option_group_id_mail_approval_status, '{ts escape="sql"}Approved{/ts}' , 1, 'Approved', NULL, 0, 1, 1, NULL, 0, 1, 1, @mailCompId, @domainID, NULL),
   (@option_group_id_mail_approval_status, '{ts escape="sql"}Rejected{/ts}' , 2, 'Rejected', NULL, 0, 0, 2, NULL, 0, 1, 1, @mailCompId, @domainID, NULL),
-  (@option_group_id_mail_approval_status, '{ts escape="sql"}None{/ts}' , 3, 'None', NULL, 0, 0, 3, NULL, 0, 1, 1, @mailCompId, @domainID, NULL);
+  (@option_group_id_mail_approval_status, '{ts escape="sql"}None{/ts}' , 3, 'None', NULL, 0, 0, 3, NULL, 0, 1, 1, @mailCompId, @domainID, NULL),
 
+-- Survey custom group object
+  (@option_group_id_cgeo, '{ts escape="sql"}Survey{/ts}', 'Survey', 'civicrm_survey', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL, NULL);
 
 -- CRM-6138
 {include file='languages.tpl'}

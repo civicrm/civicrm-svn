@@ -121,6 +121,7 @@ class CRM_Mailing_Selector_Browse   extends CRM_Core_Selector_Base
         $mailing = CRM_Mailing_BAO_Mailing::getTableName();
         $job = CRM_Mailing_BAO_Job::getTableName();
         if ( ! isset( self::$_columnHeaders ) ) {
+            $completedOrder = null;
             
             // Set different default sort depending on type of mailings (CRM-7652)
             $unscheduledOrder = $scheduledOrder = $archivedOrder = CRM_Utils_Sort::DONTCARE;

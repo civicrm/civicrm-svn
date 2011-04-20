@@ -111,7 +111,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
                 continue;
             }
             
-            if ( $isPrimary && $value['is_primary'] ) {
+            if ( $isPrimary && CRM_Utils_Array::value( 'is_primary', $value ) ) {
                 $isPrimary = false;
             } else {
                 $value['is_primary'] = 0;

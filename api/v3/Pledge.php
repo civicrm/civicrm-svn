@@ -59,8 +59,13 @@ function civicrm_api3_pledge_create( $params ) {
       //acceptable in unique format or DB format but change to unique format here
       $params['amount'] = $params['pledge_amount'];
     }
-    $required =  array('contact_id', 'amount', array('pledge_contribution_type_id','contribution_type_id') , 'installments','start_date');
-    civicrm_api3_verify_mandatory ($params,null,$required);
+     $required =  array('contact_id', 'amount', array('pledge_contribution_type_id','contribution_type_id') , 'installments','start_date');
+    
+    if(CRM_Utils_Array::value('id',$params)){
+      //todo move this into civicrm_api3_verify mandatory in some way - or civicrm_api
+      $required =  array('id');
+    }
+   civicrm_api3_verify_mandatory ($params,null,$required);
      
     $values  = array( );
     require_once 'CRM/Pledge/BAO/Pledge.php';
@@ -136,7 +141,11 @@ function civicrm_api3_pledge_get( $params ) {
   _civicrm_api3_initialize(true );
   try{
     civicrm_api3_verify_mandatory ($params);
-
+    if(!empty($params['id'])  && empty($params['pledge_id'])){
+      //if you pass in 'id' it will be treated by the query as contact_id
+      $params['pledge_id'] = $params['id'];
+      unset ($params['id']);
+    }
     $inputParams      = array( );
     $returnProperties = array( );
     $otherVars = array( 'sort', 'offset', 'rowCount' );

@@ -1261,7 +1261,18 @@ class CRM_Utils_System {
                     $url = CRM_Utils_File::addTrailingSlash( $language->domain, '/' );
                 }
                 if ( $removeLanguagePart && defined( 'CIVICRM_UF_BASEURL' ) ) {
-                    $url = CRM_Utils_File::addTrailingSlash( CIVICRM_UF_BASEURL, '/' );
+                    $url = str_replace( '\\', '/', $url );
+                    $parseUrl = parse_url( $url );
+                    
+                    //kinda hackish but not sure how to do it right		
+                    //hope http_build_url() will help at some point.
+                    if ( is_array( $parseUrl ) && !empty( $parseUrl ) ) {
+                        $urlParts   = explode( '/', $url );
+                        $hostKey    = array_search( $parseUrl['host'], $urlParts );
+                        $ufUrlParts = parse_url( CIVICRM_UF_BASEURL );
+                        $urlParts[$hostKey] = $ufUrlParts['host'];
+                        $url = implode( '/', $urlParts );
+                    }
                 }
             }
         }

@@ -55,12 +55,13 @@ function civicrm_invoke( ) {
         $item       =  $menu->getItems('componentid', $component->id, true);
         $params     =  $menu->getParams( $_GET['Itemid'] );
         $args = array( 'task', 'id', 'gid', 'pageId', 'action' ); 
-		if ( CRM_Utils_Array::value( 'view', $_GET ) ) {
-			$args[] = 'reset';
-		}
+		$view =  CRM_Utils_Array::value( 'view', $_GET );
+		if ( $view ) {
+		    $args[] = 'reset';
+ 		}
         foreach ( $args as $a ) {
 			$val = $params->get( $a, null ); 
-            if ( $val !== null ) { 
+            if ( $val !== null && $view ) { 
                 $_GET[$a] = $val; 
             } 
         }

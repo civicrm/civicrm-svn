@@ -59,7 +59,7 @@ class CRM_Import_DataSource_CSV extends CRM_Import_DataSource
         $uploadFileSize = $config->maxImportFileSize >= 8388608 ? 8388608 : $config->maxImportFileSize;
         $uploadSize = round(($uploadFileSize / (1024*1024)), 2);
         $form->assign('uploadSize', $uploadSize);
-        $form->add('file', 'uploadFile', ts('Import Data File'), 'size=30 maxlength=60', true);
+        $form->add('file', 'uploadFile', ts('Import Data File'), 'size=30 maxlength=255', true);
 
         $form->setMaxFileSize($uploadFileSize);
         $form->addRule('uploadFile', ts('File size should be less than %1 MBytes (%2 bytes)', array(1 => $uploadSize, 2 => $uploadFileSize)), 'maxfilesize', $uploadFileSize);

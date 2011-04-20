@@ -40,13 +40,52 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
         // The rest of URL is defined in CiviSeleniumTestCase base class, in
         // class attributes.
         $this->open( $this->sboxPath );
+
+        // Log in as admin first to verify permissions for CiviGrant
+        $this->webtestLogin( true );        
         
-        // Logging in. Remember to wait for page to load. In most cases,
-        // you can rely on 30000 as the value that allows your test to pass, however,
-        // sometimes your test might fail because of this. In such cases, it's better to pick one element
-        // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-        // page contents loaded and you can continue your test execution.
-        $this->webtestLogin();
+        // Enable CiviCampaign module and CiviPledge module if necessary
+        $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
+        $this->waitForPageToLoad('30000');
+        $this->waitForElementPresent("_qf_Component_next-bottom");
+        $enabledComponents = $this->getSelectOptions("enableComponents-t");
+        if (! in_array( "CiviCampaign", $enabledComponents ) ) {
+            $this->addSelection("enableComponents-f", "label=CiviCampaign");
+            $this->click("//option[@value='CiviCampaign']");
+            $this->click("add");
+            $this->click("_qf_Component_next-bottom");
+            $this->waitForPageToLoad("30000");          
+            $this->assertTrue($this->isTextPresent("Your changes have been saved."));    
+        }
+
+        $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
+        $this->waitForPageToLoad('30000');
+        $this->waitForElementPresent("_qf_Component_next-bottom");
+        $enabledComponents = $this->getSelectOptions("enableComponents-t");
+        if (! in_array( "CiviPledge", $enabledComponents ) ) {
+            $this->addSelection("enableComponents-f", "label=CiviPledge");
+            $this->click("//option[@value='CiviPledge']");
+            $this->click("add");
+            $this->click("_qf_Component_next-bottom");
+            $this->waitForPageToLoad("30000");          
+            $this->assertTrue($this->isTextPresent("Your changes have been saved."));    
+        }
+        
+        // add the required Drupal permission
+        $this->open("{$this->sboxPath}admin/user/permissions");
+        $this->waitForElementPresent('edit-submit');
+        $this->check('edit-2-access-CiviPledge');
+        $this->check('edit-2-edit-pledges');
+        $this->click('edit-submit');
+        $this->waitForPageToLoad();
+        $this->assertTrue($this->isTextPresent('The changes have been saved.'));
+        
+        $this->open($this->sboxPath . "civicrm/logout&reset=1");
+        $this->waitForPageToLoad('30000');          
+
+        // Log in as demo user
+        $this->open( $this->sboxPath );
+        $this->webtestLogin( );
         
         // Create new group
         $title = substr(sha1(rand()), 0, 7);
@@ -80,28 +119,6 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
         $this->select("group_id", "label=$groupName");
         $this->click("_qf_GroupContact_next");
         $this->waitForPageToLoad("30000");
-        
-        // Enable CiviCampaign module if necessary
-        $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-        $this->waitForPageToLoad('30000');
-        $this->waitForElementPresent("_qf_Component_next-bottom");
-        $enabledComponents = $this->getSelectOptions("enableComponents-t");
-        if (! array_search( "CiviCampaign", $enabledComponents ) ) {
-            $this->addSelection("enableComponents-f", "label=CiviCampaign");
-            $this->click("//option[@value='CiviCampaign']");
-            $this->click("add");
-            $this->click("_qf_Component_next-bottom");
-            $this->waitForPageToLoad("30000");          
-            $this->assertTrue($this->isTextPresent("Your changes have been saved."));    
-        }
-        
-        // add the required Drupal permission
-        $this->open("{$this->sboxPath}admin/user/permissions");
-        $this->waitForElementPresent('edit-submit');
-        $this->check('edit-2-administer-CiviCampaign');
-        $this->click('edit-submit');
-        $this->waitForPageToLoad();
-        $this->assertTrue($this->isTextPresent('The changes have been saved.'));
         
         // Go directly to the URL of the screen that you will be testing
         $this->open($this->sboxPath . "civicrm/campaign/add&reset=1");

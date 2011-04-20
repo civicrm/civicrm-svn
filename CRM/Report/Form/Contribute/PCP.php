@@ -67,12 +67,12 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
                   array( 'dao'          => 'CRM_Contribute_DAO_ContributionPage',
                          'fields'       =>
                          array( 'page_title' => 
-                                array( 'title'   => ts( 'Page Title' ), 
+                                array( 'title'   => ts( 'Contribution Page Title' ), 
                                        'name'    => 'title', 
                                        'default' => true ), ),
                          'filters'      => 
                          array( 'page_title'  => 
-                                array( 'title' => ts( 'Page Title' ),
+                                array( 'title' => ts( 'Contribution Page Title' ),
                                        'name'  => 'title',
                                        'type'  => CRM_Utils_Type::T_STRING ) ),
                          'grouping'     => 'pcp-fields',
@@ -82,7 +82,7 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
                   array( 'dao'    => 'CRM_Contribute_DAO_PCP',
                          'fields' =>
                          array( 'title'        => 
-                                array( 'title'   => ts( 'Campaign Title' ),  
+                                array( 'title'   => ts( 'Pesonal Campaign Title' ),  
                                        'default' => true ), 
                                 'goal_amount'  => 
                                 array( 'title'   => ts( 'Goal Amount' ), 
@@ -90,7 +90,7 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
                                        'default' => true ), ),
                          'filters' =>
                           array( 'title' =>
-                                 array( 'title' => ts( 'Campaign Title' ),
+                                 array( 'title' => ts( 'Personal Campaign Title' ),
                                         'type'  => CRM_Utils_Type::T_STRING ), ),
                          'grouping'      => 'pcp-fields',
                          ),

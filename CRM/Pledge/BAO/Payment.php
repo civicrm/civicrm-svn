@@ -199,6 +199,13 @@ WHERE     pledge_id = %1
      */
     static function add( $params )
     {
+        require_once 'CRM/Utils/Hook.php';
+        if ( CRM_Utils_Array::value( 'id', $params ) ) {
+            CRM_Utils_Hook::pre( 'edit',  'PledgePayment', $params['id'], $params );
+        } else {
+            CRM_Utils_Hook::pre( 'create',  'PledgePayment', null, $params ); 
+        }
+        
         require_once 'CRM/Pledge/DAO/Payment.php';
         $payment = new CRM_Pledge_DAO_Payment( );
         $payment->copyValues( $params );
@@ -210,7 +217,14 @@ WHERE     pledge_id = %1
         }
         
         $result = $payment->save( );
+
+        if ( CRM_Utils_Array::value( 'id', $params ) ) {
+            CRM_Utils_Hook::post( 'edit', 'PledgePayment', $payment->id, $payment);
+        } else {
+            CRM_Utils_Hook::post( 'create', 'PledgePayment', $payment->id, $payment );
+        }
         
+    
         return $result;
     }
 

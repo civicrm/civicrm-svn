@@ -128,25 +128,25 @@
                         {if !empty($contact_type_label) OR !empty($userRecordUrl) OR !empty($current_employer_id) OR !empty($job_title) OR !empty($legal_name) OR $sic_code OR !empty($nick_name)}
                         <tr>
                             <td class="label">{ts}Contact Type{/ts}</td>
-                            <td>{if isset($contact_type_label)}{$contact_type_label}{/if}</td>
+                            <td class="crm-contact_type_label">{if isset($contact_type_label)}{$contact_type_label}{/if}</td>
                             {if !empty($current_employer_id)}
                             <td class="label">{ts}Employer{/ts}</td>
-                            <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$current_employer_id`"}" title="{ts}view current employer{/ts}">{$current_employer}</a></td>
+                            <td class="crm-contact-current_employer"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$current_employer_id`"}" title="{ts}view current employer{/ts}">{$current_employer}</a></td>
                             {/if}
                             {if !empty($job_title)}
                             <td class="label">{ts}Position{/ts}</td>
-                            <td>{$job_title}</td>
+                            <td class="crm-contact-job_title">{$job_title}</td>
                             {/if}
                             {if !empty($legal_name)}
                             <td class="label">{ts}Legal Name{/ts}</td>
-                            <td>{$legal_name}</td>
+                            <td class="crm-contact-legal_name">{$legal_name}</td>
                             {if $sic_code}
                             <td class="label">{ts}SIC Code{/ts}</td>
-                            <td>{$sic_code}</td>
+                            <td class="crm-contact-sic_code">{$sic_code}</td>
                             {/if}
                             {elseif !empty($nick_name)}
                             <td class="label">{ts}Nickname{/ts}</td>
-                            <td>{$nick_name}</td>
+                            <td class="crm-contact-nick_name">{$nick_name}</td>
                             {/if}
                         </tr>
                         {/if}
@@ -156,10 +156,10 @@
                             <td class="label" id="tagLink"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contactId&selectedChild=tag"}" title="{ts}Edit Tags{/ts}">{ts}Tags{/ts}</a></td><td id="tags">{$contactTag}</td>
                             {/if}
                             {if !empty($userRecordUrl)}
-                            <td class="label">{ts}User ID{/ts}</td><td><a title="View user record" class="user-record-link" href="{$userRecordUrl}">{$userRecordId}</a></div>
+                            <td class="label">{ts}User ID{/ts}</td><td class="crm-contact-user_record_id"><a title="View user record" class="user-record-link" href="{$userRecordUrl}">{$userRecordId}</a></div>
                             {/if}
                             {if !empty($source)}
-                            <td class="label">{ts}Source{/ts}</td><td>{$source}</td>
+                            <td class="label">{ts}Source{/ts}</td><td class="crm-contact_source">{$source}</td>
                             {/if}
                         </tr>
                         {/if}
@@ -176,7 +176,7 @@
                                     {if $item.email}
                                     <tr>
                                         <td class="label">{$item.location_type}&nbsp;{ts}Email{/ts}</td>
-                                        <td><span class={if $privacy.do_not_email}"do-not-email" title="{ts}Privacy flag: Do Not Email{/ts}" {elseif $item.on_hold}"email-hold" title="{ts}Email on hold - generally due to bouncing.{/ts}" {elseif $item.is_primary eq 1}"primary"{/if}><a href="mailto:{$item.email}">{$item.email}</a>{if $item.on_hold}&nbsp;({ts}On Hold{/ts}){/if}{if $item.is_bulkmail}&nbsp;({ts}Bulk{/ts}){/if}</span></td>
+                                        <td class="crm-contact_email"><span class={if $privacy.do_not_email}"do-not-email" title="{ts}Privacy flag: Do Not Email{/ts}" {elseif $item.on_hold}"email-hold" title="{ts}Email on hold - generally due to bouncing.{/ts}" {elseif $item.is_primary eq 1}"primary"{/if}><a href="mailto:{$item.email}">{$item.email}</a>{if $item.on_hold}&nbsp;({ts}On Hold{/ts}){/if}{if $item.is_bulkmail}&nbsp;({ts}Bulk{/ts}){/if}</span></td>
 					                    <td class="description">{if $item.signature_text OR $item.signature_html}<a href="#" title="{ts}Signature{/ts}" onClick="showHideSignature( '{$blockId}' ); return false;">{ts}(signature){/ts}</a>{/if}</td>
                                     </tr>
                                     <tr id="Email_Block_{$blockId}_signature" class="hiddenElement">
@@ -191,7 +191,7 @@
                                     {if !empty($item.url)}
                                     <tr>
                                         <td class="label">{$item.website_type} {ts}Website{/ts}</td>
-                                        <td><a href="{$item.url}" target="_blank">{$item.url}</a></td>
+                                        <td class="crm-contact_website"><a href="{$item.url}" target="_blank">{$item.url}</a></td>
                                         <td></td>
                                     </tr>
                                     {/if}
@@ -200,7 +200,7 @@
                                 {if $user_unique_id}
                                     <tr>
                                         <td class="label">{ts}Unique Id{/ts}</td>
-                                        <td>{$user_unique_id}</td>
+                                        <td class="crm-contact-user_unique_id">{$user_unique_id}</td>
                                         <td></td>
                                     </tr>
                                 {/if}
@@ -214,20 +214,20 @@
                                         {if $item.phone}
                                         <tr>
                                             <td class="label">{$item.location_type}&nbsp;{$item.phone_type}</td>
-                                            <td {if $item.is_primary eq 1}class="primary"{/if}><span {if $privacy.do_not_phone} class="do-not-phone" title={ts}"Privacy flag: Do Not Phone"{/ts} {/if}>{$item.phone}</span></td>
+                                            <td class="crm-contact_phone{if $item.is_primary eq 1} primary{/if}"><span {if $privacy.do_not_phone} class="do-not-phone" title={ts}"Privacy flag: Do Not Phone"{/ts} {/if}>{$item.phone}</span></td>
                                         </tr>
                                         {/if}
                                     {/foreach}
                                     {foreach from=$im item=item}
                                         {if $item.name or $item.provider}
-                                        {if $item.name}<tr><td class="label">{$item.provider}&nbsp;({$item.location_type})</td><td {if $item.is_primary eq 1}class="primary"{/if}>{$item.name}</td></tr>{/if}
+                                        {if $item.name}<tr><td class="label">{$item.provider}&nbsp;({$item.location_type})</td><td class="crm-contact_im{if $item.is_primary eq 1} primary{/if}">{$item.name}</td></tr>{/if}
                                         {/if}
                                     {/foreach}
                                     {foreach from=$openid item=item}
                                         {if $item.openid}
                                             <tr>
                                                 <td class="label">{$item.location_type}&nbsp;{ts}OpenID{/ts}</td>
-                                                <td {if $item.is_primary eq 1}class="primary"{/if}><a href="{$item.openid}">{$item.openid|mb_truncate:40}</a>
+                                                <td class="crm-contact_openid{if $item.is_primary eq 1} primary{/if}"><a href="{$item.openid}">{$item.openid|mb_truncate:40}</a>
                                                     {if $config->userFramework eq "Standalone" AND $item.allowed_to_login eq 1}
                                                         <br/> <span style="font-size:9px;">{ts}(Allowed to login){/ts}</span>
                                                     {/if}
@@ -252,7 +252,7 @@
                                         {if $config->mapAPIKey AND $add.geo_code_1 AND $add.geo_code_2}
                                             <br /><a href="{crmURL p='civicrm/contact/map' q="reset=1&cid=`$contactId`&lid=`$add.location_type_id`"}" title="{ts 1=`$add.location_type`}Map %1 Address{/ts}"><span class="geotag">{ts}Map{/ts}</span></a>
                                         {/if}</td>
-                                    <td>
+                                    <td class="crm-contact-address_display">
                                         {if $sharedAddresses.$locationIndex.shared_address_display.name}
                                              <strong>{ts}Shared with:{/ts}</strong><br />
                                              {$sharedAddresses.$locationIndex.shared_address_display.name}<br />
@@ -272,7 +272,7 @@
 			                <div class="crm-accordion-body">
 				            <table>
 				                {foreach from=$customValue.fields item=customField key=cfId}
-					            <tr><td class="label">{$customField.field_title}</td><td>{$customField.field_value}</td></tr>
+					            <tr><td class="label">{$customField.field_title}</td><td class="crm-contact_custom_field_value">{$customField.field_value}</td></tr>
 	                  	                {/foreach}
 			                    </table>
 			                </div>
@@ -297,7 +297,7 @@
                         <div class="contactCardLeft">
                             <table>
                                 <tr><td class="label">{ts}Privacy{/ts}</td>
-                                    <td><span class="font-red upper">
+                                    <td class="crm-contact-privacy_values"><span class="font-red upper">
                                         {foreach from=$privacy item=priv key=index}
                                             {if $priv}{$privacy_values.$index}<br />{/if}
                                         {/foreach}
@@ -305,15 +305,15 @@
                                     </span></td>
                                 </tr>
                                 <tr>
-                                    <td class="label">{ts}Preferred Method(s){/ts}</td><td>{$preferred_communication_method_display}</td>
+                                    <td class="label">{ts}Preferred Method(s){/ts}</td><td class="crm-contact-preferred_communication_method_display">{$preferred_communication_method_display}</td>
                                 </tr>
                                 {if $preferred_language}
                                 <tr>
-                                    <td class="label">{ts}Preferred Language{/ts}</td><td>{$preferred_language}</td>
+                                    <td class="label">{ts}Preferred Language{/ts}</td><td class="crm-contact-preferred_language">{$preferred_language}</td>
                                 </tr>
                                 {/if}
                                 <tr>
-                                    <td class="label">{ts}Email Format{/ts}</td><td>{$preferred_mail_format}</td>
+                                    <td class="label">{ts}Email Format{/ts}</td><td class="crm-contact-preferred_mail_format">{$preferred_mail_format}</td>
                                 </tr>
                             </table>
                         </div>
@@ -328,11 +328,11 @@
 						 <table>
 							<tr>
 								<td class="label">{ts}Email Greeting{/ts}{if !empty($email_greeting_custom)}<br/><span style="font-size:8px;">({ts}Customized{/ts})</span>{/if}</td>
-								<td>{$email_greeting_display}</td>
+								<td class="crm-contact-email_greeting_display">{$email_greeting_display}</td>
 							</tr>
 							<tr>
 								<td class="label">{ts}Postal Greeting{/ts}{if !empty($postal_greeting_custom)}<br/><span style="font-size:8px;">({ts}Customized{/ts})</span>{/if}</td>
-								<td>{$postal_greeting_display}</td>
+								<td class="crm-contact-postal_greeting_display">{$postal_greeting_display}</td>
 							</tr>
 						 </table>
 						 {/if}
@@ -341,7 +341,7 @@
 						 <table>
 							<tr>
 								<td class="label">{ts}Addressee{/ts}{if !empty($addressee_custom)}<br/><span style="font-size:8px;">({ts}Customized{/ts})</span>{/if}</td>
-								<td>{$addressee_display}</td>
+								<td class="crm-contact-addressee_display">{$addressee_display}</td>
 							</tr>
 						 </table>
 						</div>

@@ -3,7 +3,7 @@
 function pledge_payment_delete_example(){
     $params = array(
     
-                  'id' 		=> '1',
+                  'id' 		=> '32',
                   'version' 		=> '3',
 
   );
@@ -24,7 +24,7 @@ function pledge_payment_delete_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> 'id',
-           'values' 		=> array(           'id' => '1',           ),
+           'values' 		=> array(           'id' => '32',           ),
       );
 
   return $expectedResult  ;

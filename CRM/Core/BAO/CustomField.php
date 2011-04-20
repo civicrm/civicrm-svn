@@ -328,6 +328,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
      * @param int         $customDataSubType   Custom Data sub type value
 	 * @param int         $customDataSubName   Custom Data sub name value
      * @param boolean     $onlyParent          return only top level custom data, for eg, only Participant and ignore subname and subtype  
+     * @param boolean     $onlySubType         return only custom data for subtype
+     * @param boolean     $checkPermission     if false, do not include permissioning clause
 	 *
      * @return array      $fields - an array of active custom fields.
      *
@@ -338,9 +340,10 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                                        $showAll = false,
                                        $inline = false,
                                        $customDataSubType = null,
- 									   $customDataSubName = null,
- 									   $onlyParent = false,
-                                       $onlySubType = false ) 
+                                       $customDataSubName = null,
+                                       $onlyParent = false,
+                                       $onlySubType = false,
+                                       $checkPermission = true ) 
     {
         //$onlySubType = false;
         
@@ -375,13 +378,18 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
         $cacheKey .= $inline  ? "_1_" : "_0_";
 		$cacheKey .= $onlyParent  ? "_1_" : "_0_";
 		$cacheKey .= $onlySubType  ? "_1_" : "_0_";
+		$cacheKey .= $checkPermission  ? "_1_" : "_0_";
         
         $cgTable = CRM_Core_DAO_CustomGroup::getTableName();
 
         // also get the permission stuff here
-        require_once 'CRM/Core/Permission.php';
-        $permissionClause = CRM_Core_Permission::customGroupClause( CRM_Core_Permission::VIEW,
-                                                                    "{$cgTable}." );
+        if ($checkPermission) {
+            require_once 'CRM/Core/Permission.php';
+            $permissionClause = CRM_Core_Permission::customGroupClause( CRM_Core_Permission::VIEW,
+                                                                        "{$cgTable}." );
+        } else {
+            $permissionClause = '(1)';
+        }
 
         // lets md5 permission clause and take first 8 characters
         $cacheKey .= substr( md5( $permissionClause ), 0, 8 );
@@ -468,9 +476,13 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                 }
 
                 // also get the permission stuff here
-                require_once 'CRM/Core/Permission.php';
-                $permissionClause = CRM_Core_Permission::customGroupClause( CRM_Core_Permission::VIEW,
-                                                                            "{$cgTable}.", true );
+                if ($checkPermission) {
+                    require_once 'CRM/Core/Permission.php';
+                    $permissionClause = CRM_Core_Permission::customGroupClause( CRM_Core_Permission::VIEW,
+                                                                                "{$cgTable}.", true );
+                } else {
+                    $permissionClause = '(1)';
+                }
 
                 $query .= " $extends AND $permissionClause
                         ORDER BY $cgTable.weight, $cgTable.title,
@@ -1279,11 +1291,13 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
      * Format custom fields before inserting
      *
      * @param int    $customFieldId       custom field id
-     * @param array  $customFormatted     formatted array
-     * @param mix    $value               value of custom field
-     * @param string $customFieldExtend   custom field extends
-     * @param int    $customValueId custom option value id
-     * @param int    $entityId            entity id (contribution, membership...)
+     * @param array   $customFormatted     formatted array
+     * @param mix     $value               value of custom field
+     * @param string  $customFieldExtend   custom field extends
+     * @param int     $customValueId       custom option value id
+     * @param int     $entityId            entity id (contribution, membership...)
+     * @param boolean $inline              consider inline custom groups only
+     * @param boolean $checkPermission     if false, do not include permissioning clause
      *
      * @return array $customFormatted formatted custom field array
      * @static
@@ -1291,7 +1305,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
     static function formatCustomField( $customFieldId, &$customFormatted, $value, 
                                        $customFieldExtend, $customValueId = null,
                                        $entityId = null, 
-                                       $inline = false ) 
+                                       $inline = false,
+                                       $checkPermission = true ) 
     {
         //get the custom fields for the entity
         //subtype and basic type
@@ -1304,7 +1319,14 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             $customFieldExtend = CRM_Contact_BAO_ContactType::getBasicType( $customDataSubType );
         }
         
-        $customFields = CRM_Core_BAO_CustomField::getFields( $customFieldExtend, false, $inline, $customDataSubType );
+        $customFields = CRM_Core_BAO_CustomField::getFields( $customFieldExtend,
+                                                             false,
+                                                             $inline,
+                                                             $customDataSubType,
+                                                             null,
+                                                             false,
+                                                             false,
+                                                             $checkPermission );
         
         if ( ! array_key_exists( $customFieldId, $customFields )) {
             return;

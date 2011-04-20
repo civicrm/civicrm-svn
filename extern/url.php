@@ -32,10 +32,21 @@ unset($query_param['q'], $query_param['qid'], $query_param['u']);
 $query_string = http_build_query($query_param);
 
 if ( strlen( $query_string ) > 0 ) {
-    if ( stristr( $url, '?' ) ) {
-        $url .= '&' . $query_string;
-    } else {
-        $url .= '?' . $query_string;
+    // parse the url to preserve the fragment
+    $pieces = parse_url($url);
+    $url    = str_replace('#' . $pieces['fragment'], '', $url);
+    // handle additional query string params
+    if ( $query_string ) {
+        if( stristr($url, '?') ) {
+            $url .= '&'. $query_string;
+        } else {
+            $url .= '?'. $query_string;
+        }
+    }
+
+    // slap the fragment onto the end per URL spec
+    if ( $pieces['fragment'] ) {
+        $url .= '#' . $pieces['fragment'];
     }
 }
 

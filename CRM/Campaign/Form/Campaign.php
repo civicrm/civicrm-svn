@@ -221,7 +221,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         //lets assign custom data type and subtype.
         $this->assign( 'customDataType',    'Campaign' );
         $this->assign( 'entityID',          $this->_campaignId );
-        $this->assign( 'customDataSubType', $this->_values['campaign_type_id'] );
+        $this->assign( 'customDataSubType', CRM_Utils_Array::value('campaign_type_id', $this->_values) );
         
         $attributes = CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Campaign');
         
@@ -368,7 +368,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
                                                              CRM_Utils_Array::value( 'campaign_type_id', $params ) );
         $params['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
                                                                    $customFields,
-                                                                   $this->_id,
+                                                                   $this->_campaignId,
                                                                    'Campaign' );
         
         require_once 'CRM/Campaign/BAO/Campaign.php';

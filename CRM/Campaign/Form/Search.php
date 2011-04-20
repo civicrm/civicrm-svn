@@ -452,7 +452,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         }
         
         //apply filter of survey contact type for search.
-        $contactType = CRM_Campaign_BAO_Survey::getSurveyContactType( $this->_formValues['campaign_survey_id'] );
+        $contactType = CRM_Campaign_BAO_Survey::getSurveyContactType( CRM_Utils_Array::value('campaign_survey_id', $this->_formValues) );
         if ( $contactType && in_array( $this->_operation, array( 'reserve', 'interview' ) ) ) {
             $this->_formValues['contact_type'][$contactType] = 1 ;
         }

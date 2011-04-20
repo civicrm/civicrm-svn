@@ -523,31 +523,48 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
      */
     function testStaleMembership( ) 
     {
-        $this->markTestSkipped('fatal');
+        //$this->markTestSkipped('fatal');
+        
+        $statusId = 3;
         $contactId = Contact::createIndividual( );
         $joinDate = $startDate = date( "Ymd", strtotime( date("Ymd") . " -1 year -15 days" ) );
         $endDate = date( "Ymd", strtotime(  $joinDate . " +1 year -1 day" ) );
         $params = array(
                         'contact_id'         => $contactId,  
-                        'membership_type_id' => '1',
+                        'membership_type_id' => $this->_membershipTypeID,
                         'join_date'          => $joinDate,
                         'start_date'         => $startDate,
                         'end_date'           => $endDate,
                         'source'             => 'Payment',
-                        'is_override'        => 1,
-                        'status_id'          => 3
+                        'status_id'          => $statusId
                         );
         
-        $ids = array( );
+        $ids = array( );        
         $membership = CRM_Member_BAO_Membership::create( $params, $ids );
+        
         $membershipId = $this->assertDBNotNull( 'CRM_Member_BAO_Membership', $contactId, 'id', 
                                                 'contact_id', 'Database check for created membership.' );
+        
+        $this->assertEquals( $membership->status_id, $statusId, 'Verify correct status id is calculated.' );
+        $this->assertEquals( $membership->membership_type_id, $this->_membershipTypeID, 
+                             'Verify correct membership type id.' );
+        
+        //verify all dates.
+        $dates = array( 'startDate' => 'start_date',
+                        'joinDate'  => 'join_date',
+                        'endDate'   => 'end_date' );
+        
+        foreach ( $dates as $date => $dbDate ) {
+            $this->assertEquals( $membership->$dbDate, date( 'Y-m-d', strtotime( $$date ) ), 
+                                 "Verify correct {$date} is present." );
+        }
+        
         $this->assertDBNotNull( 'CRM_Member_BAO_MembershipLog', 
                                 $membership->id , 
                                 'membership_id', 
                                 'id', 
                                 'Database checked on membershiplog record.' );
-        
+
         require_once 'CRM/Core/Controller.php';
         require_once 'CRM/Core/Form.php';
         $membershipRenewal = new CRM_Core_Form( );

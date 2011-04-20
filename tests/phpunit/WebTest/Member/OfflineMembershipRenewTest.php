@@ -45,17 +45,9 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
 
       // make sure period is correct for the membership type we testing for,
       // since it might have been modified by other tests
-      $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=1&reset=1");
-
-      $this->waitForElementPresent("//input[@name='auto_renew'][1]");
-      $this->click("//input[@name='auto_renew'][1]");
-
-      $this->type("duration_interval", "2");
-      $this->select("duration_unit", "label=year");
-
-      $this->click("_qf_MembershipType_upload-bottom");
-      $this->waitForPageToLoad("30000");
-
+      // add membership type  
+      $membershipTypes = $this->webtestAddMembershipType( 'rolling', 2 );
+      
       // quick create a contact
       $firstName = substr(sha1(rand()), 0, 7);
       $this->webtestAddContact($firstName, "Memberson", "{$firstName}@memberson.com");
@@ -70,7 +62,8 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent('_qf_Membership_cancel-bottom');
 
       // fill in Membership Organization and Type
-      $this->select('membership_type_id[1]', 'value=1');
+      $this->select( 'membership_type_id[0]', "label={$membershipTypes['member_org']}" );
+      $this->select( 'membership_type_id[1]', "label={$membershipTypes['membership_type']}" );
 
       // fill in Source
       $sourceText = 'Offline Membership Renewal Webtest';
@@ -89,7 +82,7 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       $this->waitForTextPresent( $sourceText );
       
       // Is status message correct?
-      $this->assertTrue($this->isTextPresent("General membership for $firstName Memberson has been added."), "Status message didn't show up after saving!");
+      $this->assertTrue($this->isTextPresent("{$membershipTypes['membership_type']} membership for $firstName Memberson has been added."), "Status message didn't show up after saving!");
 
       $this->waitForElementPresent("xpath=//div[@id='Memberships']//table/tbody/tr/td[7]/span[2][text()='more ']/ul/li/a[text()='Renew']");
 
@@ -119,7 +112,7 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       // verify membership renewed
       $verifyMembershipRenewData = array(
                                          'Member'          => $contactName,
-                                         'Membership Type' => 'General',
+                                         'Membership Type' => $membershipTypes['membership_type'],
                                          'Status'          => 'Current',
                                          'Source'          => $sourceText,
                                          'Member Since'    => $joinDate,
@@ -136,6 +129,9 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       $this->open( $this->sboxPath );
       $this->webtestLogin();
 
+      // add membership type  
+      $membershipTypes = $this->webtestAddMembershipType( 'rolling', 2 );
+
       $firstName = substr(sha1(rand()), 0, 7);
       $this->webtestAddContact($firstName, "Memberson", "{$firstName}@memberson.com");
       $contactName = "$firstName Memberson";
@@ -149,8 +145,9 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent('_qf_Membership_cancel-bottom');
 
       // fill in Membership Organization and Type
-      $this->select('membership_type_id[1]', 'value=1');
-
+      $this->select( 'membership_type_id[0]', "label={$membershipTypes['member_org']}" );
+      $this->select( 'membership_type_id[1]', "label={$membershipTypes['membership_type']}" );
+ 
       // fill in Source
       $sourceText = 'Offline Membership Renewal Webtest';
       $this->type('source', $sourceText);
@@ -194,8 +191,7 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       $this->waitForTextPresent( $sourceText );
       
       // Is status message correct?
-      $this->assertTrue($this->isTextPresent("General membership for $firstName Memberson has been added."),
-                        "Status message didn't show up after saving!");
+      $this->assertTrue($this->isTextPresent("{$membershipTypes['membership_type']} membership for $firstName Memberson has been added."), "Status message didn't show up after saving!");
 
       $this->waitForElementPresent("xpath=//div[@id='Memberships']//table/tbody/tr/td[7]/span[2][text()='more ']/ul/li/a[text()='Renew']");
       
@@ -226,7 +222,7 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       // verify membership renew override
       $verifyMembershipRenewOverrideData =  array(
                                                   'Member'          => $contactName,
-                                                  'Membership Type' => 'General',
+                                                  'Membership Type' => $membershipTypes['membership_type'],
                                                   'Status'          => 'New',
                                                   'Source'          => $sourceText,
                                                   'Member Since'    => $joinDate,
@@ -245,16 +241,9 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       
       // make sure period is correct for the membership type we testing for, 
       // since it might have been modified by other tests 
-      $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=2&reset=1");
-
-      $this->waitForElementPresent("//input[@name='auto_renew'][1]");
-      $this->click("//input[@name='auto_renew'][1]");
-
-      $this->type("duration_interval", "1");
-      $this->select("duration_unit", "label=year");
-
-      $this->click("_qf_MembershipType_upload-bottom");
-      $this->waitForPageToLoad("30000");
+      // add membership type  
+      $membershipTypes   = $this->webtestAddMembershipType( 'rolling', 1 );
+      $newMembershipType = $this->webtestAddMembershipType( 'rolling', 1 );
 
       $firstName = substr( sha1( rand( ) ), 0, 7 );
       $this->webtestAddContact( $firstName, "Memberson", "{$firstName}@memberson.com" );
@@ -269,7 +258,8 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent( '_qf_Membership_cancel-bottom' );
       
       // fill in Membership Organization and Type
-      $this->select( 'membership_type_id[1]', 'value=1' );
+      $this->select( 'membership_type_id[0]', "label={$membershipTypes['member_org']}" );
+      $this->select( 'membership_type_id[1]', "label={$membershipTypes['membership_type']}" );
       
       // fill in Source
       $sourceText = 'Offline Membership Renewal Webtest';
@@ -288,7 +278,7 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       $this->waitForTextPresent( $sourceText );
       
       // Is status message correct?
-      $this->assertTrue( $this->isTextPresent( "General membership for $firstName Memberson has been added."), "Status message didn't show up after saving!" );
+      $this->assertTrue( $this->isTextPresent( "{$membershipTypes['membership_type']} membership for $firstName Memberson has been added."), "Status message didn't show up after saving!" );
 
       $this->waitForElementPresent( "xpath=//div[@id='Memberships']//table/tbody/tr/td[7]/span[2][text()='more ']/ul/li/a[text()='Renew']" );
       
@@ -299,7 +289,13 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       
       //change membership type
       $this->click( "changeMembershipOrgType" );
-      $this->select( 'membership_type_id[1]', 'value=2' );
+      $this->waitForElementPresent( 'membership_type_id[1]' );
+      $this->select( 'membership_type_id[0]', "label={$newMembershipType['member_org']}" );
+      $this->select( 'membership_type_id[1]', "label={$newMembershipType['membership_type']}" );
+
+      $this->click( 'membership_type_id[0]' );
+      sleep(2);
+
       // save the renewed membership
       $this->click( '_qf_MembershipRenewal_upload-bottom' );
 
@@ -315,21 +311,22 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
 
       $this->waitForElementPresent( '_qf_MembershipView_cancel-bottom' );
       
-      $joinDate = $startDate = date( 'F jS, Y', strtotime( "-2 year" ) );
-      $endDate  = date( 'F jS, Y', strtotime( "+1 year -1 day" ) );
+      $joinDate  = date( 'F jS, Y', strtotime( "-2 year" ) );
+      $startDate = date( 'F jS, Y', strtotime( "0 year" ) );
+      $endDate   = date( 'F jS, Y', strtotime( "+1 year -1 day" ) );
       
       // verify membership renewed and the membership type is changed
-        $verifyMembershipData =  array(
-                                       'Member'          => $contactName,
-                                       'Membership Type' => 'Student',
-                                       'Status'          => 'Current',
-                                       'Source'          => $sourceText,
-                                       'Member Since'    => $joinDate,
-                                       'Start date'      => $startDate,
-                                       'End date'        => $endDate,
-                                       );
-        foreach ( $verifyMembershipData as $label => $value ) {
-            $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote( $value ) );
-        }
+      $verifyMembershipData =  array(
+                                     'Member'          => $contactName,
+                                     'Membership Type' => $membershipTypes['membership_type'],
+                                     'Status'          => 'Current',
+                                     'Source'          => $sourceText,
+                                     'Member Since'    => $joinDate,
+                                     'Start date'      => $startDate,
+                                     'End date'        => $endDate,
+                                     );
+      foreach ( $verifyMembershipData as $label => $value ) {
+          $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote( $value ) );
+      }
   }
 }
