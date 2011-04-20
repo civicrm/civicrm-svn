@@ -492,7 +492,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     private function _contactCreate( $params ) {
         $result = civicrm_api( 'Contact','create',$params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ||(
-             ! CRM_Utils_Array::value( 'contact_id', $result ) &&! CRM_Utils_Array::value( 'id', $result )) ) {
+             ! CRM_Utils_Array::value( 'contact_id', $result ) && ! CRM_Utils_Array::value( 'id', $result )) ) {
             throw new Exception( 'Could not create test contact.' );
         }
         return isset($result['contact_id'])?$result['contact_id']:CRM_Utils_Array::value( 'id', $result );
@@ -1204,7 +1204,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * @param string $className
      * @param string $title  name of custom group
      */
-    function customGroupCreate( $extends, $title = '' ) {
+    function customGroupCreate( $extends, $title = 'title' ) {
 
         if (CRM_Utils_Array::value('title',$extends)){
           $params = $extends;
@@ -1455,6 +1455,17 @@ function documentMe($params,$result,$function,$filename){
         return $result;    
     }      
 
+    function confirmEntitiesDeleted($entities){
+      foreach ($entities as $entity ){
+        
+        $result = civicrm_api($entity,'Get', array('version' => 3, ));
+        if ($result['error'] ==1 || $result['count'] > 0){// > than $entity[0] to allow a value to be passed in? e.g. domain?
+          return TRUE;
+        }
+        
+      }
+      
+    }
 }
 
 function CiviUnitTestCase_fatalErrorHandler( $message ) {

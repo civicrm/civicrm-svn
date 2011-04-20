@@ -40,7 +40,8 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
     protected $_apiversion;
     protected $_contributionID;
     protected $_contributionTypeId;   
-
+    public $DBResetRequired = false;
+    
     function setUp() 
     {
         $this->_apiversion = 3;    
@@ -57,6 +58,9 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
       $this->contributionDelete($this->_contributionID);
       civicrm_api3_pledge_delete(array('id'			 => $this->_pledgeID,
                                        'version' => 3,));
+      $this->contactDelete($this->_individualId);
+      $error = $this->confirmEntitiesDeleted(array('pledge', 'pledge_payment', 'contribution', 'contact'));
+      $this->assertNotEquals(1, $error);
     }
 
 
@@ -154,6 +158,49 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
       $this->assertEquals($this->_contributionID, $getIndPaymentAgain['values'][$result['id']]['contribution_id'], " in line " . __LINE__); 
       
     }
+
+    /*
+     * test checks behaviour when more payments are created than should be possible
+     */
+        function testCreatePledgePaymentAllCreated()
+    {
+      $params = array('version' => 3, 
+      								'pledge_id' => $this->_pledgeID,
+                      'status_id' => 1,);
+// create one more pledge than there are spaces for
+    $i = 0;
+    while ($i <= 5) {
+       $contributionParams = array('version' => 3,
+                                  'total_amount'  => 20,
+                                  'contact_id' =>$this->_individualId,
+                                  'contribution_type_id' => $this->_contributionTypeId);
+      $contribution = civicrm_api('contribution','create',$contributionParams);
+
+      $this->assertEquals(0,  $contribution['is_error'], " in line " . __LINE__);  
+
+      $params['contribution_id'] =  $contribution['id'];
+      $resultCont2= civicrm_api3_pledge_payment_create($params);
+      $i++;
+    }
+     // check that only 5 exist & we got an error setting the 6th
+      $result = civicrm_api('PledgePayment','Get',array('version' => 3, 
+                                                        $pledge_id => $this->_pledgeID));
+
+      $this->assertEquals(5,$result['count']);
+      $this->assertEquals(1,$resultCont2['is_error']);   
+      $this->assertEquals("There are no unmatched payment on this pledge. Pass in the pledge_payment id to specify one or 'option.create_new' to create one", $resultCont2['error_message']);  
+      
+      //
+      $params['option.create_new'] =1;
+      $resultcreatenew = civicrm_api3_pledge_payment_create($params);
+      $this->assertEquals(0,$resultcreatenew['is_error'], "in line " . __LINE__); 
+      $result = civicrm_api('PledgePayment','Get',array('version' => 3, 
+                                                        $pledge_id => $this->_pledgeID));
+
+      $this->assertEquals(6,$result['count']);
+      
+    }
+    
     
     function testUpdatePledgePayment(){
       $params = array(
@@ -200,5 +247,16 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
         $this->assertEquals(0, $result['is_error'], " in line " . __LINE__);
         
     }
+        
+    /*function testGetFields()
+    {
+      $result = civicrm_api3_pledge_payment_getfields();
+      print_r($result);
+      $this->assertType('array', $result);
+    }
+    */
+    
+
+
 }
  

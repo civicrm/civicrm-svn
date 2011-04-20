@@ -78,7 +78,8 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
                                           'civicrm_api3_location_delete',
 
                                           // most of these seem to be internal functions
-                                          
+                                          'civicrm_api3_entity_create',
+        																	'civicrm_api3_entity_delete',
 
                                           'civicrm_api3_survey_respondant_count',
 

@@ -48,7 +48,7 @@
  */
 require_once 'api/v3/utils.php';
 require_once 'CRM/Utils/Rule.php';
-
+require_once 'CRM/Pledge/BAO/Payment.php';
 /**
  * Add or update a plege payment. Pledge Payment API doesn't actually add a pledge 
  *  if the request is to 'create' and 'id' is not passed in
@@ -68,14 +68,17 @@ function civicrm_api3_pledge_payment_create( $params ) {
   try{
     civicrm_api3_verify_mandatory($params,null,array('pledge_id','status_id'));
 
-    require_once 'CRM/Pledge/BAO/Payment.php';
-    if (empty($params['id'])){
+    require_once 'CRM/Pledge/BAO/Payment.php'; 
+    $paymentParams =$params;
+    if (empty($params['id']) && !CRM_Utils_Array::value('option.create_new',$params)){
       $paymentDetails = CRM_Pledge_BAO_Payment::getOldestPledgePayment($params['pledge_id']);
-      $paymentParams = array_merge($params,$paymentDetails);
-    } else{
-      $paymentParams =$params;
+      if(empty($paymentDetails) ){
+        return civicrm_api3_create_error("There are no unmatched payment on this pledge. Pass in the pledge_payment id to specify one or 'option.create_new' to create one");
+      }elseif(is_array($paymentDetails)){
+        $paymentParams = array_merge($params,$paymentDetails);
+      }
     }
-   
+
     $dao = CRM_Pledge_BAO_Payment::add( $paymentParams );
      _civicrm_api3_object_to_array($dao, $result[$dao->id]);
     
@@ -92,44 +95,6 @@ function civicrm_api3_pledge_payment_create( $params ) {
    
 }
 
-/**
- * Retrieve a specific pledge, given a set of input params
- * If more than one pledge exists, return an error, unless
- * the client has requested to return the first found contact
- *
- * @param  array   $params           (reference ) input parameters
- *
- * @return array (reference )        array of properties, if error an array with an error id and error message
- * @static void
- * @access public
-
- function &civicrm_pledge_payment_get( $params ) {
- _civicrm_initialize( );
- // copied from contribute code - not touched at all to make work for pledge or tested
- $values = array( );
- if ( empty( $params ) ) {
- return civicrm_create_error( ts( 'No input parameters present' ) );
- }
-
- if ( ! is_array( $params ) ) {
- return civicrm_create_error( ts( 'Input parameters is not an array' ) );
- }
-
- $pledges =& civicrm_pledge_search( $params );
- if ( civicrm_error( $pledges ) ) {
- return $pledges;
- }
-
- if ( count( $pledges ) != 1 &&
- ! $params['returnFirst'] ) {
- return civicrm_create_error( ts( '%1 pledges matching input params', array( 1 => count( $pledges ) ) ),
- $pledges );
- }
-
- $payments = array_values( $pledges );
- return $pledges[0];
- }
- */
 /**
  * Delete a pledge Payment - Note this deletes the contribution not just the link
  *
@@ -176,7 +141,7 @@ try {
   _civicrm_api3_initialize( true );
 
     civicrm_api3_verify_mandatory($params);
-    require_once 'CRM/Pledge/BAO/Payment.php';
+
     $bao = new CRM_Pledge_BAO_Payment();
     $fields = array_keys($bao->fields());
     foreach ( $fields as $name) {
@@ -217,3 +182,21 @@ function updatePledgePayments( $pledgeId, $paymentStatusId, $paymentIds  ){
 
 }
 
+/* 
+ * Gets field for civicrm_pledge_payment functions
+ * 
+ * @return array fields valid for other functions
+ */
+
+function civicrm_api3_pledge_payment_getfields($action = 'get'){
+
+    $dao = new CRM_Pledge_BAO_Payment();
+
+    $fields = $dao->getFields();
+    switch ($action){
+      case 'create' :
+        $fields['option.create_new'] = "Create new field rather than update an unpaid payment";
+    }
+    
+    return $fields;
+}
