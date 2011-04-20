@@ -68,7 +68,7 @@ class HTML_QuickForm_JoomlaEditor extends HTML_QuickForm_textarea
             $html = null;
 			
 			//tinymce and its relatives require 'double-loading' when inside jquery tab
-            $editorName = $editor->get( 'name' );
+            $editorName = $editor->get( '_name' );
 			if ( $editorName == 'jce' || $editorName == 'tinymce' ) {
                 if( !empty( $this->_value ) ) {
                     $html .= sprintf( '<script type="text/javascript">
