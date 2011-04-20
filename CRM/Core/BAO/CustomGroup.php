@@ -1894,6 +1894,7 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
         static $flag = false, $objTypes = array();
 
         if ( !$flag ) {
+            $extendObjs = array( );
             CRM_Core_OptionValue::getValues( array( 'name' => 'cg_extend_objects' ), $extendObjs );
         
             foreach ( $extendObjs as $ovId => $ovValues ) {

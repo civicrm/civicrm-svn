@@ -27,10 +27,10 @@
 {* add single row *}
 {if $soInstance}
 <tr id="string_override_row_{$soInstance}">
-  <td class="even-row" style="text-align: center; vertical-align: middle;">{$form.enabled.$soInstance.html}</td>	
+  <td class="even-row checkbox">{$form.enabled.$soInstance.html}</td>	
   <td class="even-row">{$form.old.$soInstance.html}</td>
   <td class="even-row">{$form.new.$soInstance.html}</td>
-  <td class="even-row" style="text-align: center; vertical-align: middle;">{$form.cb.$soInstance.html}</td>
+  <td class="even-row checkbox">{$form.cb.$soInstance.html}</td>
 </tr>
 
 {else}

@@ -522,7 +522,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             self::formatFieldsForOptionFull( $form );
             
             require_once 'CRM/Event/BAO/Participant.php';
-            $form->addGroup( $elements, 'amount', ts('Event Fee(s)'), '<br />' );      
             $form->add( 'hidden', 'priceSetId', $form->_priceSetId );
             
             require_once 'CRM/Price/BAO/Field.php';                       

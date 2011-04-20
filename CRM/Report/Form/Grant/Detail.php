@@ -240,6 +240,7 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
     }
     function where( ) {
         $clauses = array( );
+        $this->_where = '';
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('filters', $table) ) { 
                 foreach ( $table['filters'] as $fieldName => $field ) {
