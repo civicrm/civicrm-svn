@@ -172,8 +172,8 @@ SELECT  count( id ) as statusCount
             self::setPreUpgradeMessage( $preUpgradeMessage, $currentVer, $latestVer );
             
             //turning some tables to monolingual during 3.4.beta3, CRM-7869
-            $upgradeTo   = str_replace( '4.0', '3.4', $latestVer  );
-            $upgradeFrom = str_replace( '4.0', '3.4', $currentVer );
+            $upgradeTo   = str_replace( '4.0.', '3.4.', $latestVer  );
+            $upgradeFrom = str_replace( '4.0.', '3.4.', $currentVer );
             if ( $upgrade->multilingual && 
                  version_compare( $upgradeFrom, '3.4.beta3'  ) == -1 &&
                  version_compare( $upgradeTo,   '3.4.beta3'  ) >=  0  ) {
@@ -190,7 +190,7 @@ SELECT  count( id ) as statusCount
             // hack to make 4.0.x (D7,J1.6) codebase go through 3.4.x (d6, J1.5) upgrade files, 
             // since schema wise they are same
             if ( CRM_Upgrade_Form::getRevisionPart( $currentVer ) == '4.0' ) {
-                $currentVer = str_replace( '4.0', '3.4', $currentVer );
+                $currentVer = str_replace( '4.0.', '3.4.', $currentVer );
             }
 
             if ( CRM_Utils_Array::value('upgrade', $_POST) ) {
