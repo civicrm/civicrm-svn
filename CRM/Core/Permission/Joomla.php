@@ -90,13 +90,18 @@ class CRM_Core_Permission_Joomla {
     static function check( $str ) {
         $config = CRM_Core_Config::singleton( );
 
-        require_once 'CRM/Utils/String.php';
-        $permissionStr = 'civicrm.' . CRM_Utils_String::munge( strtolower( $str ) );
-        $permission = JFactory::getUser()->authorise( $permissionStr,
-                                                      'com_civicrm' );
-
-        // echo "{$permissionStr}:{$permission}:<p>";
-        return $permission;
+       // ensure that we are running in a joomla context
+       // we've not yet figured out how to bootstrap joomla, so we should
+       // not execute hooks if joomla is not loaded
+        if ( defined( '_JEXEC' ) ) {
+            require_once 'CRM/Utils/String.php';
+            $permissionStr = 'civicrm.' . CRM_Utils_String::munge( strtolower( $str ) );
+            $permission = JFactory::getUser()->authorise( $permissionStr,
+                                                          'com_civicrm' );
+            return $permission;
+        } else {
+            return '(1)';
+        }
     }
 
 }
