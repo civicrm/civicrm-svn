@@ -39,6 +39,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
     protected $_apiversion;
     protected $params;
     protected $scheduled_date;
+    public $DBResetRequired = false;
 
     
     function setUp() 

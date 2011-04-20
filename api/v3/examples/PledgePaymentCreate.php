@@ -3,9 +3,9 @@
 function pledge_payment_create_example(){
     $params = array(
     
-                  'contact_id' 		=> '1',
-                  'pledge_id' 		=> '1',
-                  'contribution_id' 		=> '1',
+                  'contact_id' 		=> '4',
+                  'pledge_id' 		=> '4',
+                  'contribution_id' 		=> '4',
                   'version' 		=> '3',
                   'status_id' 		=> '1',
                   'actual_amount' 		=> '20',
@@ -27,11 +27,11 @@ function pledge_payment_create_expectedresult(){
            'is_error' 		=> '0',
            'version' 		=> '3',
            'count' 		=> '1',
-           'id' 		=> '1',
-           'values' 		=> array(           '1' =>  array(
-                      'id' => '1',
-                      'pledge_id' => '1',
-                      'contribution_id' => '1',
+           'id' 		=> '16',
+           'values' 		=> array(           '16' =>  array(
+                      'id' => '16',
+                      'pledge_id' => '4',
+                      'contribution_id' => '4',
                       'scheduled_amount' => '',
                       'actual_amount' => '20',
                       'currency' => 'USD',
