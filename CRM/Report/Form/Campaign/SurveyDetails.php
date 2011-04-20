@@ -223,8 +223,8 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
                     if ( $fieldName == 'survey_response' ) continue;
                     
                     $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
-                    $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
-                    $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = $field['type'];
+                    $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = CRM_Utils_Array::value('title', $field);
+                    $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value('type', $field);
                 }
             }
         }
@@ -236,7 +236,7 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
         $this->_from = " FROM civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom} ";
         
         //get the activity table joins.
-        $this->_from .= " INNER JOIN civicrm_activity_target {$this->_aliases['civicrm_activity_target']} ON ( {$this->_aliases['civicrm_contact']}.id = civicrm_activity_target.target_contact_id )\n";
+        $this->_from .= " INNER JOIN civicrm_activity_target ON ( {$this->_aliases['civicrm_contact']}.id = civicrm_activity_target.target_contact_id )\n";
         $this->_from .= " INNER JOIN civicrm_activity {$this->_aliases['civicrm_activity']} ON ( {$this->_aliases['civicrm_activity']}.id = civicrm_activity_target.activity_id )\n";
         $this->_from .= " INNER JOIN civicrm_activity_assignment {$this->_aliases['civicrm_activity_assignment']} ON ( {$this->_aliases['civicrm_activity']}.id = {$this->_aliases['civicrm_activity_assignment']}.activity_id )\n";
         
@@ -259,7 +259,7 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
                 foreach ( $table['filters'] as $fieldName => $field ) {
                     $clause = null;
                     
-                    if ( $field['type'] & CRM_Utils_Type::T_DATE ) {
+                    if ( CRM_Utils_Array::value('type', $field) & CRM_Utils_Type::T_DATE ) {
                         $relative = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params );
                         $from     = CRM_Utils_Array::value( "{$fieldName}_from"    , $this->_params );
                         $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );

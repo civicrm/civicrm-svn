@@ -97,7 +97,7 @@ class CRM_Admin_Form_Navigation extends CRM_Admin_Form
         $this->add('checkbox', 'has_separator', ts('Separator?'));
         $active = $this->add('checkbox', 'is_active', ts('Enabled?'));
         
-        if ( $this->_defaults['name'] == 'Home' ) {
+        if ( CRM_Utils_Array::value('name', $this->_defaults) == 'Home' ) {
             $active->freeze( );
         } else {
             $parentMenu = CRM_Core_BAO_Navigation::getNavigationList( );
