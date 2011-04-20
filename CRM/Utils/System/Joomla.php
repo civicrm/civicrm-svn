@@ -182,7 +182,7 @@ class CRM_Utils_System_Joomla {
         $config    = CRM_Core_Config::singleton( );
  		$separator = $htmlize ? '&amp;' : '&';
  		$Itemid    = '';
-
+        $script    = '';
         require_once 'CRM/Utils/String.php';
         $path = CRM_Utils_String::stripPathChars( $path );
 
