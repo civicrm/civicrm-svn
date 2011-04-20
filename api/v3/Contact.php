@@ -244,8 +244,22 @@ function civicrm_api3_contact_get( $params )
                                                                    $offset,
                                                                    $rowCount,
                                                                    $smartGroupCache );
-
-    return civicrm_api3_create_success($contacts,$params);
+    // CRM-7929 Quick fix by colemanw
+    // TODO: Figure out what function is responsible for prepending 'individual_' to these keys
+    // and sort it out there rather than going to all this trouble here.
+    $returnContacts = array();
+    if (is_array($contacts)) {
+      foreach ($contacts as $cid => $contact) {
+        if (is_array($contact)) {
+          $returnContacts[$cid] = array();
+          foreach ($contact as $key => $value) {
+            $key = str_replace(array('individual_prefix', 'individual_suffix'), array('prefix', 'suffix'), $key);
+            $returnContacts[$cid][$key] = $value; 
+          }
+        }
+      }
+    }
+    return civicrm_api3_create_success($returnContacts, $params);
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
