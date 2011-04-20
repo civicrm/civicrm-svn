@@ -66,7 +66,8 @@ function civicrm_invoke( ) {
      * to avoid any serious non-recoverable error 
      * which might hinder the upgrade process. 
      */
-    if ( $_REQUEST['task'] != 'civicrm/upgrade' ) {
+    require_once 'CRM/Utils/Array.php';
+    if ( CRM_Utils_Array::value( 'task', $_REQUEST ) != 'civicrm/upgrade' ) {
         require_once 'CRM/Core/BAO/UFMatch.php';
         CRM_Core_BAO_UFMatch::synchronize( $user, false, 'Joomla', 'Individual', true );
     }
