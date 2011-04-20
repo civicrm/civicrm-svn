@@ -614,7 +614,7 @@ function _civicrm_api3_add_formatted_param(&$values, $params)
     
     /* Check for custom field values */
     if ($fields['custom'] == null) {
-        $fields['custom'] =& CRM_Core_BAO_CustomField::getFields( $values['contact_type'] );
+        $fields['custom'] =& CRM_Core_BAO_CustomField::getFields( $values['contact_type'], false, false, null, null, false, false, false );
     }
     
     foreach ($values as $key => $value) {
@@ -860,7 +860,7 @@ function _civicrm_api3_custom_format_params( $params, &$values, $extends, $entit
         list( $customFieldID, $customValueID ) = CRM_Core_BAO_CustomField::getKeyID($key, true );
         if ( $customFieldID ) {
             CRM_Core_BAO_CustomField::formatCustomField( $customFieldID, $values['custom'], 
-                                                         $value, $extends, $customValueID, $entityId );
+                                                         $value, $extends, $customValueID, $entityId, false, false );
         }
     }
 }
@@ -945,7 +945,7 @@ function _civicrm_api3_participant_formatted_param( $params, &$values, $create=f
     _civicrm_api3_store_values( $fields, $params, $values );
     
     require_once 'CRM/Core/OptionGroup.php';
-    $customFields = CRM_Core_BAO_CustomField::getFields( 'Participant' );
+    $customFields = CRM_Core_BAO_CustomField::getFields( 'Participant', false, false, null, null, false, false, false );
 
     foreach ($params as $key => $value) {
         // ignore empty values or empty arrays etc
@@ -1098,7 +1098,7 @@ function _civicrm_api3_contribute_formatted_param( $params, &$values, $create=fa
     _civicrm_api3_store_values( $fields, $params, $values );
 
     require_once 'CRM/Core/OptionGroup.php';
-    $customFields = CRM_Core_BAO_CustomField::getFields( 'Contribution' );
+    $customFields = CRM_Core_BAO_CustomField::getFields( 'Contribution', false, false, null, null, false, false, false );
     
     foreach ($params as $key => $value) {
         // ignore empty values or empty arrays etc
@@ -1451,7 +1451,7 @@ function _civicrm_api3_membership_formatted_param( $params, &$values, $create=fa
     _civicrm_api3_store_values( $fields, $params, $values );
     
     require_once 'CRM/Core/OptionGroup.php';
-    $customFields = CRM_Core_BAO_CustomField::getFields( 'Membership' );
+    $customFields = CRM_Core_BAO_CustomField::getFields( 'Membership', false, false, null, null, false, false, false );
 
     foreach ($params as $key => $value) {
         // ignore empty values or empty arrays etc
@@ -1574,7 +1574,7 @@ function _civicrm_api3_activity_formatted_param( $params, &$values, $create=fals
     _civicrm_api3_store_values( $fields, $params, $values );
     
     require_once 'CRM/Core/OptionGroup.php';
-    $customFields = CRM_Core_BAO_CustomField::getFields( 'Activity' );
+    $customFields = CRM_Core_BAO_CustomField::getFields( 'Activity', false, false, null, null, false, false, false );
 
     foreach ($params as $key => $value) {
         // ignore empty values or empty arrays etc

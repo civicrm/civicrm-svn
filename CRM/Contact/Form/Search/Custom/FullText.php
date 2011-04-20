@@ -735,7 +735,7 @@ WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text
 
         $summary['Count'] = array( );
         foreach ( array_keys($summary) as $table ) {
-            $summary['Count'][$table] = $this->_foundRows[$table];
+            $summary['Count'][$table] = CRM_Utils_Array::value( $table, $this->_foundRows );
         }
 
         if ( ! $this->_table ) {

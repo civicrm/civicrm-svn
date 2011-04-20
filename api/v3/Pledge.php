@@ -59,8 +59,13 @@ function civicrm_api3_pledge_create( $params ) {
       //acceptable in unique format or DB format but change to unique format here
       $params['amount'] = $params['pledge_amount'];
     }
-    $required =  array('contact_id', 'amount', array('pledge_contribution_type_id','contribution_type_id') , 'installments','start_date');
-    civicrm_api3_verify_mandatory ($params,null,$required);
+     $required =  array('contact_id', 'amount', array('pledge_contribution_type_id','contribution_type_id') , 'installments','start_date');
+    
+    if(CRM_Utils_Array::value('id',$params)){
+      //todo move this into civicrm_api3_verify mandatory in some way - or civicrm_api
+      $required =  array('id');
+    }
+   civicrm_api3_verify_mandatory ($params,null,$required);
      
     $values  = array( );
     require_once 'CRM/Pledge/BAO/Pledge.php';

@@ -244,8 +244,22 @@ function civicrm_api3_contact_get( $params )
                                                                    $offset,
                                                                    $rowCount,
                                                                    $smartGroupCache );
-
-    return civicrm_api3_create_success($contacts,$params);
+    // CRM-7929 Quick fix by colemanw
+    // TODO: Figure out what function is responsible for prepending 'individual_' to these keys
+    // and sort it out there rather than going to all this trouble here.
+    $returnContacts = array();
+    if (is_array($contacts)) {
+      foreach ($contacts as $cid => $contact) {
+        if (is_array($contact)) {
+          $returnContacts[$cid] = array();
+          foreach ($contact as $key => $value) {
+            $key = str_replace(array('individual_prefix', 'individual_suffix'), array('prefix', 'suffix'), $key);
+            $returnContacts[$cid][$key] = $value; 
+          }
+        }
+      }
+    }
+    return civicrm_api3_create_success($returnContacts, $params);
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
@@ -371,7 +385,7 @@ function _civicrm_api3_contact_check_params( $params, $dupeCheck = true, $dupeEr
         // person does not have permission to carry out de-dupes
         // this is similar to the front end form
         if (isset($params['check_permission'])){
-            $dedupeParams['check_permission'] = $fields['check_permission'];
+            $dedupeParams['check_permission'] = $params['check_permission'];
         }
 
         $ids = implode(',', CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']));
@@ -460,7 +474,14 @@ function _civicrm_api3_contact_check_custom_params( $params, $csType = null )
     empty($csType) ? $onlyParent = true : $onlyParent = false;
     
     require_once 'CRM/Core/BAO/CustomField.php';
-    $customFields = CRM_Core_BAO_CustomField::getFields( $params['contact_type'], false, false, $csType, null, $onlyParent );
+    $customFields = CRM_Core_BAO_CustomField::getFields( $params['contact_type'],
+                                                         false,
+                                                         false,
+                                                         $csType,
+                                                         null,
+                                                         $onlyParent,
+                                                         false,
+                                                         false );
     
     foreach ($params as $key => $value) {
         if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {

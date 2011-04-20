@@ -458,10 +458,16 @@ class CRM_Member_Import_Form_MapField extends CRM_Core_Form {
                              in_array('membership_id', $importKeys) ) {
                             continue;    
                         } else {
+                            if ( !isset($errors['_qf_default']) ) {
+                                $errors['_qf_default'] = '';
+                            }
                             $errors['_qf_default'] .= ts('Missing required contact matching fields.') . " $fieldMessage " . ts('(Sum of all weights should be greater than or equal to threshold: %1).',array(1 => $threshold)) . ' ' . ts('(OR Membership ID if update mode.)') . '<br />';
                         }
                         
                     } else {
+                        if ( !isset($errors['_qf_default']) ) {
+                            $errors['_qf_default'] = '';
+                        }
                         $errors['_qf_default'] .= ts('Missing required field: %1', array(1 => $title)) . '<br />';
                     }
                 }

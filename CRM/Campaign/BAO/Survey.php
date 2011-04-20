@@ -301,7 +301,7 @@ SELECT  survey.id    as id,
                                            $includePetitionActivityType = false ) 
     {
         static $activityTypes;
-        $cacheKey = "{$returnColumn}_{$includePetitionActivity}";
+        $cacheKey = "{$returnColumn}_{$includePetitionActivityType}";
         
         if ( !isset( $activityTypes[$cacheKey] ) ) {
             $activityTypes = array( );

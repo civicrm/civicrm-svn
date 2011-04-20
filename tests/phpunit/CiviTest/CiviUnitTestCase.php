@@ -254,6 +254,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
         // when running unit tests, use mockup user framework
         $config->setUserFramework( 'UnitTests' );
+
+        // also fix the fatal error handler to throw exceptions,
+        // rather than exit
+        $config->fatalErrorHandler = 'CiviUnitTestCase_fatalErrorHandler';
+
         // enable backtrace to get meaningful errors
         $config->backtrace = 1;
     }
@@ -1450,6 +1455,10 @@ function documentMe($params,$result,$function,$filename){
         return $result;    
     }      
 
+}
+
+function CiviUnitTestCase_fatalErrorHandler( $message ) {
+    throw new Exception( "{$message['message']}: {$message['code']}" );
 }
 
 // -- set Emacs parameters --

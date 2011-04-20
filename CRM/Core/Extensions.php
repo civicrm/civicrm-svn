@@ -601,23 +601,34 @@ class CRM_Core_Extensions
      */
     public function grabRemoteKeyList( ) {
 
-        $handl = fopen ( self::PUBLIC_EXTENSIONS_REPOSITORY , "r");
+        require_once 'CRM/Utils/VersionCheck.php';
+        ini_set('default_socket_timeout', CRM_Utils_VersionCheck::CHECK_TIMEOUT);
+        set_error_handler(array('CRM_Utils_VersionCheck', 'downloadError'));
 
-        while (!feof ($handl)) {
-            $ln = fgets ($handl, 2048);
+        $extdir = file_get_contents( self::PUBLIC_EXTENSIONS_REPOSITORY );
+
+        if( $extdir === FALSE ) {
+            CRM_Core_Error::fatal('Public directory down or too slow - please contact CiviCRM team on forums.');
+        }
+
+        $lines = explode( "\n", $extdir );
+        
+        foreach( $lines as $ln ) {
             if (preg_match ("@\<li\>(.*)\</li\>@i", $ln, $out)) {
                 $extsRaw[] = $out;// success
                 $key = strip_tags($out[1]);
                 if( substr( $key, -4 ) == '.xml' ) {
                     $exts[] = array( 'key' => trim( $key, '.xml' ) );
                 }
-                
-            } else {
-                //fail
             }
         }
 
-        fclose($handl);
+        if( empty( $exts ) ) {
+            CRM_Core_Error::fatal('Malformed extensions list on public directory - please contact CiviCRM team on forums.');
+        }
+
+        ini_restore('default_socket_timeout');
+        restore_error_handler();
         
         return $exts;
     }

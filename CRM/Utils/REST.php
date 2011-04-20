@@ -423,15 +423,20 @@ class CRM_Utils_REST
         // this is driven by the menu system, so we can use permissioning to
         // restrict calls to this etc
         // the request has to be sent by an ajax call. First line of protection against csrf
-        if (!array_key_exists ('HTTP_X_REQUESTED_WITH',$_SERVER) || $_SERVER['HTTP_X_REQUESTED_WITH'] != "XMLHttpRequest") {
-          require_once ('api/v3/utils.php');
-          echo json_encode(civicrm_api3_create_error("SECURITY ALERT: Ajax requests can only be issued by javascript clients, eg. $().crmAPI().",
-            array('IP'=>$_SERVER['REMOTE_ADDR'],
-                  'level' => 'security',
-                  'referer' => $_SERVER['HTTP_REFERER'],
-                  'reason' => 'CSRF suspected' )));
-          exit();
+        if ( ! array_key_exists ( 'HTTP_X_REQUESTED_WITH',
+                                  $_SERVER ) ||
+             $_SERVER['HTTP_X_REQUESTED_WITH'] != "XMLHttpRequest" ) {
+            require_once 'api/v3/utils.php';
+            $error =
+                civicrm_api3_create_error( "SECURITY ALERT: Ajax requests can only be issued by javascript clients, eg. $().crmAPI().",
+                                           array( 'IP'      => $_SERVER['REMOTE_ADDR'],
+                                                  'level'   => 'security',
+                                                  'referer' => $_SERVER['HTTP_REFERER'],
+                                                  'reason'  => 'CSRF suspected' ) );
+            echo json_encode( $error );
+            CRM_Utils_System::civiExit( );
         }
+
         $q = CRM_Utils_Array::value( 'fnName', $_REQUEST );
         if (!$q) {
           $entity = CRM_Utils_Array::value( 'entity', $_REQUEST );

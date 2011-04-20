@@ -1,3 +1,4 @@
+
 <?php
 
 /*
@@ -767,7 +768,7 @@ LIMIT {$offset}, {$rowCount}
        $subTypes = CRM_Contact_BAO_ContactType::subTypePairs( $contactType, false, null );
        asort($subTypes);
        echo json_encode( $subTypes );
-       exit;
+       CRM_Utils_System::civiExit( );
     }
     
     /**
