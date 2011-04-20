@@ -41,6 +41,8 @@
 
 function _civicrm_api3_permissions($entity, $action)
 {
+    $entity = strtolower($entity);
+    $action = strtolower($action);
     $permissions = array(
         'activity' => array(
             'create' => array('all' => array('access CiviCRM')),
