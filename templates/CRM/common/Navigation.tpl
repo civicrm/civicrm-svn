@@ -76,7 +76,7 @@ function getSearchURLValue( )
         }
     }
     
-    if ( contactId && !isNaN(parseInt(contactId) ) ) {
+    if ( contactId && !isNaN(parseInt(contactId)) ) {
         var url = {/literal}"{crmURL p='civicrm/contact/view' h=0 q='reset=1&cid='}"{literal} + contactId;
         document.getElementById('id_search_block').action = url;
     }
