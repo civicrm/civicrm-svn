@@ -313,6 +313,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
           $this->type('newTagDesc', "Tag for {$contactType}" );
       } 
       if ( isset($other['selectTag']) ) {
+          $this->click( "css=#existing-tags div.crm-accordion-header" );
           // reuse existing tags.
           if ( is_array($other['selectTag']) ) {
               foreach( $other['selectTag'] as $existingTag ) {
