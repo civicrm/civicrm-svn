@@ -857,7 +857,7 @@ function civitest_civicrm_alterPaymentProcessorParams( $paymentObj,
         $occupation = empty($rawParams['custom_2']) ? '' : $rawParams['custom_2'];
         $cookedParams['custom'] = "$employer|$occupation";
         
-    } else if ( $paymentObj instanceof CRM_Contribute_Payment_AuthorizeNet ) {
+    } else if ( $paymentObj instanceof CRM_Core_Payment_AuthorizeNet ) {
         //Actual translation for one application:
         //Employer > Ship to Country (x_ship_to_country)
         //Occupation > Company (x_company)
