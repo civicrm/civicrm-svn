@@ -336,7 +336,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
             $this->_membershipBlock = CRM_Member_BAO_Membership::getMembershipBlock( $this->_id );
             $this->set( 'membershipBlock', $this->_membershipBlock );
             
-            require_once "CRM/Core/BAO/UFField.php";
+            require_once 'CRM/Core/BAO/UFField.php';
             if ( $this->_values['custom_pre_id'] ) {
                 $preProfileType  = CRM_Core_BAO_UFField::getProfileType( $this->_values['custom_pre_id'] );
             }
@@ -509,9 +509,11 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
 
         if ( ! empty($this->_membershipBlock) &&
              CRM_Utils_Array::value( 'is_separate_payment', $this->_membershipBlock ) &&
-             ( ! ( $this->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM ) ) ) {
+             ( $this->_paymentProcessor['class_name'] && 
+               ! ( $this->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM ) ) ) {
             CRM_Core_Error::fatal( ts( 'This contribution page is configured to support separate contribution and membership payments. This %1 plugin does not currently support multiple simultaneous payments. Please contact the site administrator and notify them of this error',
                                        array( 1 => $this->_paymentProcessor['payment_processor_type'] ) ) );
+
         }
 
         $this->_contributeMode = $this->get( 'contributeMode' );
@@ -720,7 +722,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
 
             $fields = null;
             if ( $contactID ) {
-                require_once "CRM/Core/BAO/UFGroup.php";
+                require_once 'CRM/Core/BAO/UFGroup.php';
                 if ( CRM_Core_BAO_UFGroup::filterUFGroups($id, $contactID)  ) {
                     $fields = CRM_Core_BAO_UFGroup::getFields( $id, false,CRM_Core_Action::ADD );
                 }
@@ -738,7 +740,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
                 
                 if (array_intersect_key($fields, $fieldsToIgnore)) {
                     $fields = array_diff_key( $fields, $fieldsToIgnore );
-                    CRM_Core_Session::setStatus("Some of the profile fields cannot be configured for this page.");
+                    CRM_Core_Session::setStatus( ts('Some of the profile fields cannot be configured for this page.') );
                 }
                 
                 $fields = array_diff_assoc( $fields, $this->_fields );
@@ -777,7 +779,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
                     require_once 'CRM/Utils/ReCAPTCHA.php';
                     $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
                     $captcha->add( $this );
-                    $this->assign( "isCaptcha" , true );
+                    $this->assign( 'isCaptcha', true );
                 }
             }
         }
