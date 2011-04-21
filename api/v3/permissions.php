@@ -327,7 +327,15 @@ function _civicrm_api3_permissions($entity, $action)
             'update' => array('all' => array()),
         ),
     );
-    return $permissions[$entity][$action];
+
+    $requested = $permissions[$entity][$action];
+
+    // if none set, require ‘access CiviCRM’
+    if (empty($requested['all']) and empty($requested['any'])) {
+        $requested['all'] = array('access CiviCRM');
+    }
+
+    return $requested;
 }
 
 # FIXME: not sure how to permission the following API 3 calls:
