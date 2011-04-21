@@ -507,10 +507,10 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
             $this->set('amount_block_is_active',$this->_values['amount_block_is_active' ]);
         }
 
-        if ( ! empty($this->_membershipBlock) &&
+        if ( ! empty( $this->_membershipBlock ) &&
              CRM_Utils_Array::value( 'is_separate_payment', $this->_membershipBlock ) &&
-             ( $this->_paymentProcessor['class_name'] && 
-               ! ( $this->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM ) ) ) {
+             ( CRM_Utils_Array::value( 'class_name', $this->_paymentProcessor ) && 
+               ! ( CRM_Utils_Array::value( 'billing_mode',  $this->_paymentProcessor ) & CRM_Core_Payment::BILLING_MODE_FORM ) ) ) {
             CRM_Core_Error::fatal( ts( 'This contribution page is configured to support separate contribution and membership payments. This %1 plugin does not currently support multiple simultaneous payments. Please contact the site administrator and notify them of this error',
                                        array( 1 => $this->_paymentProcessor['payment_processor_type'] ) ) );
 
