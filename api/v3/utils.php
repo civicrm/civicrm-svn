@@ -1712,7 +1712,7 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
 
     require_once 'CRM/Core/Permission.php';
 
-    require_once 'api/v3/permissions.php';
+    require_once 'CRM/Core/DAO/.permissions.php';
     $permissions = _civicrm_api3_permissions($entity, $action);
 
     foreach ($permissions as $condition => $perms) {
