@@ -41,7 +41,7 @@ class WebTest_Import_ContactSubtypeTest extends ImportCiviSeleniumTestCase {
   /*
    *  Test contact import for Individuals Subtype.
    */
-  function testIndividualImport()
+  function testIndividualSubtypeImport()
   {
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
@@ -130,7 +130,7 @@ class WebTest_Import_ContactSubtypeTest extends ImportCiviSeleniumTestCase {
   /*
    *  Test contact import for Organization Subtype.
    */
-  function testOrganizationImport()
+  function testOrganizationSubtypeImport()
   {
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
@@ -216,7 +216,7 @@ class WebTest_Import_ContactSubtypeTest extends ImportCiviSeleniumTestCase {
   /*
    *  Test contact import for Household Subtype.
    */
-  function testHouseholdImport() 
+  function testHouseholdSubtypeImport() 
   {
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
@@ -310,7 +310,6 @@ class WebTest_Import_ContactSubtypeTest extends ImportCiviSeleniumTestCase {
 
       // Create Household subtype
       $householdSubtype=substr(sha1(rand()), 0, 7);
-      $this->type("label", "");
       $this->type("label",$householdSubtype);
       $this->select("parent_id", "label=Household");
       $this->click("_qf_ContactType_next-bottom");
