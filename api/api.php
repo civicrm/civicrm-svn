@@ -43,6 +43,7 @@ function civicrm_api_legacy($function, $class, $params) {
  *   array to be passed to function
  */
 function civicrm_api($entity, $action, $params, $extra = NULL) {
+  try {
     require_once ('api/v3/utils.php');
     require_once 'CRM/Utils/String.php';
     _civicrm_api3_initialize(true );
@@ -98,8 +99,12 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     }
     
     return $result;
+  } catch (PEAR_Exception $e) {
+    return civicrm_api3_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_api3_create_error( $e->getMessage() );
+  }
 }
-
 
 function civicrm_api_get_function_name($entity, $action,$version = NULL) {
     static $_map;
