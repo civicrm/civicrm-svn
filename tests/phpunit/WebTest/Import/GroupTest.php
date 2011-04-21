@@ -39,7 +39,7 @@ class WebTest_Import_GroupTest extends ImportCiviSeleniumTestCase {
     /*
      *  Test contact import for Individuals.
      */
-    function testIndividualImport() {
+    function testIndividualImportWithGroup() {
 
         // This is the path where our testing install resides. 
         // The rest of URL is defined in CiviSeleniumTestCase base class, in
