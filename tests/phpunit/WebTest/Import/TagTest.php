@@ -39,7 +39,7 @@ class WebTest_Import_TagTest extends ImportCiviSeleniumTestCase {
     /*
     *  Test contact import for Individuals.
     */
-    function testTagImport()
+    function testContactImportWithTag()
     {
         
         // This is the path where our testing install resides. 
