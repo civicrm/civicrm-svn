@@ -886,5 +886,40 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
       return $memTypeParams;
   }
+  function WebtestAddGroup( ) 
+  {
+      $this->open($this->sboxPath . "civicrm/group/add&reset=1");
+      
+      // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
+      // button at the end of this page to show up, to make sure it's fully loaded.
+      $this->waitForElementPresent("_qf_Edit_upload");
+      
+      // Create new group
+      $title = substr(sha1(rand()), 0, 7);
+      $groupName = "group_$title";
+      
+      // fill group name
+      $this->type("title", $groupName);
+      
+      // fill description
+      $this->type("description", "Adding new group.");
+      
+      // check Access Control
+      $this->click("group_type[1]");
+      
+      // check Mailing List
+      $this->click("group_type[2]");
 
+      // select Visibility as Public Pages
+      $this->select("visibility", "value=Public Pages");
+      
+      // Clicking save.
+      $this->click("_qf_Edit_upload");
+      $this->waitForPageToLoad("30000");
+      
+      // Is status message correct?
+      $this->assertTrue($this->isTextPresent("The Group '$groupName' has been saved."));
+      return $groupName;
+  }
+  
 }
