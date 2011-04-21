@@ -1,6 +1,4 @@
 <?php
-
-ini_set( 'include_path', '.' . PATH_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'packages' . PATH_SEPARATOR . '..' );
 ini_set( 'memory_limit', '512M' );
 
 $versionFile = "version.xml";
@@ -35,10 +33,10 @@ if ( !in_array($cms, array('drupal', 'standalone', 'joomla')) ) {
     copy("../{$cms}/civicrm.config.php.{$cms}", '../civicrm.config.php');
 }
 
+require_once '../civicrm.config.php';
+
 require_once 'Smarty/Smarty.class.php';
 require_once 'PHP/Beautifier.php';
-
-require_once '../civicrm.config.php';
 
 require_once 'CRM/Core/Config.php';
 require_once 'CRM/Core/I18n.php';

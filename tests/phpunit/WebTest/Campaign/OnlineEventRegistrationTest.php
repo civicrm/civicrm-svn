@@ -52,8 +52,7 @@ class WebTest_Campaign_OnlineEventRegistrationTest extends CiviSeleniumTestCase 
 
         // Create new group
         $title = substr(sha1(rand()), 0, 7);
-        $groupName = "group_$title";
-        $this->addGroup( $groupName );
+        $groupName = $this->WebtestAddGroup( );
       
         // Adding contact
         // We're using Quick Add block on the main page for this.
@@ -369,35 +368,5 @@ class WebTest_Campaign_OnlineEventRegistrationTest extends CiviSeleniumTestCase 
        $this->waitForElementPresent( "_qf_Participant_cancel-bottom" );
        $this->assertTrue($this->isTextPresent("$campaignTitle"));
    }
-  
-   function addGroup( $groupName = 'New Group' ) 
-   {
-       $this->open($this->sboxPath . "civicrm/group/add&reset=1");
-      
-       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-       // button at the end of this page to show up, to make sure it's fully loaded.
-       $this->waitForElementPresent("_qf_Edit_upload");
-       
-       // fill group name
-       $this->type("title", $groupName);
-      
-       // fill description
-       $this->type("description", "Adding new group.");
-
-       // check Access Control
-       $this->click("group_type[1]");
-
-       // check Mailing List
-       $this->click("group_type[2]");
-
-       // select Visibility as Public Pages
-       $this->select("visibility", "value=Public Pages");
-      
-       // Clicking save.
-       $this->click("_qf_Edit_upload");
-       $this->waitForPageToLoad("30000");
-
-       // Is status message correct?
-       $this->assertTrue($this->isTextPresent("The Group '$groupName' has been saved."));
-   }
+   
 }
