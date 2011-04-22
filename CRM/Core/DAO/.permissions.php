@@ -36,7 +36,6 @@
 
 // FIXME: auto-generate from XML?
 // FIXME: should we permission getfields calls?
-// FIXME: should ‘access CiviCRM’ be mandatory for all calls?
 // FIXME: should we have different permission sets for create/update/delete?
 
 function _civicrm_api3_permissions($entity, $action)
@@ -45,10 +44,10 @@ function _civicrm_api3_permissions($entity, $action)
     $action = strtolower($action);
     $permissions = array(
         'activity' => array(
-            'create' => array('all' => array('access CiviCRM')),
-            'delete' => array('all' => array('access CiviCRM', 'delete activities')), // FIXME: XML does not enforce ‘delete activities’
-            'get'    => array('all' => array('access CiviCRM', 'view all activities')), // FIXME: XML does not enforce ‘view all activities’
-            'update' => array('all' => array('access CiviCRM')),
+            'create' => array('all' => array()),
+            'delete' => array('all' => array('delete activities')), // FIXME: XML does not enforce ‘delete activities’
+            'get'    => array('all' => array('view all activities')), // FIXME: XML does not enforce ‘view all activities’
+            'update' => array('all' => array()),
         ),
         'activity_type' => array(
             'create' => array('all' => array()),
@@ -81,10 +80,10 @@ function _civicrm_api3_permissions($entity, $action)
             'update' => array('all' => array()),
         ),
         'contact' => array(
-            'create' => array('all' => array('access CiviCRM', 'add contacts')), // FIXME: XML does not enforce ‘add contacts’
-            'delete' => array('all' => array('access CiviCRM', 'delete contacts')), // FIXME: XML does not enforce ‘add contacts’
-            'get'    => array('all' => array('access CiviCRM', 'view all contacts')), // FIXME: XML does not enforce ‘view all contacts’
-            'update' => array('all' => array('access CiviCRM', 'add contacts', 'edit all contacts')), // FIXME: XML does not enforce ‘edit all contacts’
+            'create' => array('all' => array('add contacts')), // FIXME: XML does not enforce ‘add contacts’
+            'delete' => array('all' => array('delete contacts')), // FIXME: XML does not enforce ‘add contacts’
+            'get'    => array('all' => array('view all contacts')), // FIXME: XML does not enforce ‘view all contacts’
+            'update' => array('all' => array('add contacts', 'edit all contacts')), // FIXME: XML does not enforce ‘edit all contacts’
         ),
         'contribution' => array(
             'create' => array('all' => array('access CiviContribute')),
@@ -155,7 +154,7 @@ function _civicrm_api3_permissions($entity, $action)
         'group' => array(
             'create' => array('all' => array('edit groups')),
             'delete' => array('all' => array('edit groups')), // FIXME: XML does not enforce ‘edit groups’
-            'get'    => array('all' => array('access CiviCRM')),
+            'get'    => array('all' => array()),
             'update' => array('all' => array('edit groups')), // FIXME: XML does not enforce ‘edit groups’
         ),
         'group_contact' => array(
@@ -330,10 +329,9 @@ function _civicrm_api3_permissions($entity, $action)
 
     $requested = $permissions[$entity][$action];
 
-    // if none set, require ‘access CiviCRM’
-    if (empty($requested['all']) and empty($requested['any'])) {
-        $requested['all'] = array('access CiviCRM');
-    }
+    // always require ‘access CiviCRM’
+    if (!isset($requested['all'])) $requested['all'] = array();
+    $requested['all'][] = 'access CiviCRM';
 
     return $requested;
 }
