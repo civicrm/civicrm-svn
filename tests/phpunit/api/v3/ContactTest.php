@@ -64,8 +64,6 @@ class api_v3_ContactTest extends CiviUnitTestCase
     //  Connect to the database
     parent::setUp();
     $this->_apiversion = 3;
-    require_once 'CRM/Core/Permission/UnitTests.php';
-    CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
   }
 
   /**

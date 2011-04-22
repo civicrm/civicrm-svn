@@ -45,7 +45,6 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
      */
     protected function setUp() {
         parent::setUp ();
-        CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
         $this->_apiversion = 3;
     }
 

@@ -318,7 +318,5 @@ class api_v3_EventTest extends CiviUnitTestCase
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviEvent', 'access CiviEvent', 'add contacts');
         $result = civicrm_api('event', 'create', $params);
         $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to create an event');
-
-        CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
     }
 }
