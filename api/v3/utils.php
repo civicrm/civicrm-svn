@@ -1715,12 +1715,10 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
     require_once 'CRM/Core/DAO/.permissions.php';
     $permissions = _civicrm_api3_permissions($entity, $action);
 
-    foreach ($permissions as $condition => $perms) {
-        $checks = array_map('CRM_Core_Permission::check', $perms);
-        if (($condition == 'all' and in_array(false, $checks)) or
-            ($condition == 'any' and !in_array(true, $checks))) {
+    foreach ($permissions as $perm) {
+        if (!CRM_Core_Permission::check($perm)) {
             if ($throw) {
-                throw new Exception("API permission check failed for $entity/$action call.");
+                throw new Exception("API permission check failed for $entity/$action call; missing permission: $perm.");
             } else {
                 return false;
             }

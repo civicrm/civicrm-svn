@@ -44,294 +44,294 @@ function _civicrm_api3_permissions($entity, $action)
     $action = strtolower($action);
     $permissions = array(
         'activity' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array('delete activities')), // FIXME: XML does not enforce ‘delete activities’
-            'get'    => array('all' => array('view all activities')), // FIXME: XML does not enforce ‘view all activities’
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array('delete activities'), // FIXME: XML does not enforce ‘delete activities’
+            'get'    => array('view all activities'), // FIXME: XML does not enforce ‘view all activities’
+            'update' => array(),
         ),
         'activity_type' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'address' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'case' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'case_activity' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'constant' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'contact' => array(
-            'create' => array('all' => array('add contacts')), // FIXME: XML does not enforce ‘add contacts’
-            'delete' => array('all' => array('delete contacts')), // FIXME: XML does not enforce ‘add contacts’
-            'get'    => array('all' => array('view all contacts')), // FIXME: XML does not enforce ‘view all contacts’
-            'update' => array('all' => array('add contacts', 'edit all contacts')), // FIXME: XML does not enforce ‘edit all contacts’
+            'create' => array('add contacts'), // FIXME: XML does not enforce ‘add contacts’
+            'delete' => array('delete contacts'), // FIXME: XML does not enforce ‘add contacts’
+            'get'    => array('view all contacts'), // FIXME: XML does not enforce ‘view all contacts’
+            'update' => array('add contacts', 'edit all contacts'), // FIXME: XML does not enforce ‘edit all contacts’
         ),
         'contribution' => array(
-            'create' => array('all' => array('access CiviContribute')),
-            'delete' => array('all' => array('access CiviContribute')),
-            'get'    => array('all' => array('access CiviContribute')),
-            'update' => array('all' => array('access CiviContribute')),
+            'create' => array('access CiviContribute'),
+            'delete' => array('access CiviContribute'),
+            'get'    => array('access CiviContribute'),
+            'update' => array('access CiviContribute'),
         ),
         'custom_field' => array(
-            'create' => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
-            'delete' => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
-            'get'    => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
-            'update' => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
+            'create' => array('access all custom data'), // FIXME: XML does not enforce ‘access all custom data’
+            'delete' => array('access all custom data'), // FIXME: XML does not enforce ‘access all custom data’
+            'get'    => array('access all custom data'), // FIXME: XML does not enforce ‘access all custom data’
+            'update' => array('access all custom data'), // FIXME: XML does not enforce ‘access all custom data’
         ),
         'custom_group' => array(
-            'create' => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
-            'delete' => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
-            'get'    => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
-            'update' => array('all' => array('access all custom data')), // FIXME: XML does not enforce ‘access all custom data’
+            'create' => array('access all custom data'), // FIXME: XML does not enforce ‘access all custom data’
+            'delete' => array('access all custom data'), // FIXME: XML does not enforce ‘access all custom data’
+            'get'    => array('access all custom data'), // FIXME: XML does not enforce ‘access all custom data’
+            'update' => array('access all custom data'), // FIXME: XML does not enforce ‘access all custom data’
         ),
         'domain' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'email' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'entity' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'entity_file' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'entity_tag' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'event' => array(
-            'create' => array('all' => array('access CiviEvent')),
-            'get'    => array('all' => array('access CiviEvent')),
-            'delete' => array('all' => array('access CiviEvent')),
-            'update' => array('all' => array('access CiviEvent')),
+            'create' => array('access CiviEvent'),
+            'get'    => array('access CiviEvent'),
+            'delete' => array('access CiviEvent'),
+            'update' => array('access CiviEvent'),
         ),
         'file' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'files_by_entity' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'group' => array(
-            'create' => array('all' => array('edit groups')),
-            'delete' => array('all' => array('edit groups')), // FIXME: XML does not enforce ‘edit groups’
-            'get'    => array('all' => array()),
-            'update' => array('all' => array('edit groups')), // FIXME: XML does not enforce ‘edit groups’
+            'create' => array('edit groups'),
+            'delete' => array('edit groups'), // FIXME: XML does not enforce ‘edit groups’
+            'get'    => array(),
+            'update' => array('edit groups'), // FIXME: XML does not enforce ‘edit groups’
         ),
         'group_contact' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'group_nesting' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'group_organization' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'location' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'membership' => array(
-            'create' => array('all' => array('access CiviMember', 'edit memberships')), // FIXME: XML does not enforce ‘edit memberships’
-            'delete' => array('all' => array('access CiviMember', 'edit memberships')), // FIXME: XML does not enforce ‘edit memberships’
-            'get'    => array('all' => array('access CiviMember')),
-            'update' => array('all' => array('access CiviMember', 'edit memberships')),
+            'create' => array(), // FIXME: XML does not enforce ‘edit memberships’
+            'delete' => array(), // FIXME: XML does not enforce ‘edit memberships’
+            'get'    => array(),
+            'update' => array(),
         ),
         'membership_payment' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'membership_status' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'membership_type' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'note' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'note_tree' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'option_group' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'option_value' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'participant' => array(
-            'create' => array('all' => array('access CiviEvent')),
-            'delete' => array('all' => array('access CiviEvent')),
-            'get'    => array('all' => array('access CiviEvent', 'view event participants')),
-            'update' => array('all' => array('access CiviEvent')),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'participant_payment' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'phone' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'pledge' => array(
-            'create' => array('all' => array('access CiviPledge')),
-            'delete' => array('all' => array('access CiviPledge')),
-            'get'    => array('all' => array('access CiviPledge')),
-            'update' => array('all' => array('access CiviPledge')),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'pledge_payment' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'relationship' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'relationship_type' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'survey' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'survey_respondant' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'tag' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'tag_entities' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'uf_field' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'uf_group' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'uf_join' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'uf_match' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
         'website' => array(
-            'create' => array('all' => array()),
-            'delete' => array('all' => array()),
-            'get'    => array('all' => array()),
-            'update' => array('all' => array()),
+            'create' => array(),
+            'delete' => array(),
+            'get'    => array(),
+            'update' => array(),
         ),
     );
 
     $requested = $permissions[$entity][$action];
 
     // always require ‘access CiviCRM’
-    if (!isset($requested['all'])) $requested['all'] = array();
-    $requested['all'][] = 'access CiviCRM';
+    if (!isset($requested)) $requested = array();
+    $requested[] = 'access CiviCRM';
 
     return $requested;
 }
