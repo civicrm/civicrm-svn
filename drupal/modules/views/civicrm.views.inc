@@ -1759,7 +1759,7 @@ function civicrm_views_data() {
 
     //CiviCRM Participants - FIELDS
 
-    //Numeric Event ID
+    //Numeric Participant ID
     $data['civicrm_participant']['id'] = array(
                                                'title' => t('Participant ID'),
                                                'help' => t('The numeric ID of the Participant'),
@@ -1781,6 +1781,19 @@ function civicrm_views_data() {
                                                                'handler' => 'views_handler_sort',
                                                                ),
                                                );
+    //Numeric Event ID
+    $data['civicrm_participant']['event_id'] = array(
+                                               'title' => t('Event ID'),
+                                               'help' => t('The numeric ID of the Event'),
+
+                                               'relationship' => array(
+                                                                       'base' => 'civicrm_event',
+                                                                       'field' => 'id',
+                                                                       'handler' => 'views_handler_relationship',
+                                                                       'label' => t('CiviCRM Event, with custom fields'),
+                                                                       ),
+
+                                              );
 
     //Numeric Contact ID
     $data['civicrm_participant']['contact_id'] = array(
