@@ -580,8 +580,9 @@ class CRM_Export_BAO_Export
                             foreach ( $value as $relationField => $relationValue ) {
                                 // below block is same as primary block (duplicate)
                                 if ( isset( $relationQuery[$field]->_fields[$relationField]['title'] ) ) {
-                                    $headerName   = $field .'-' . $relationQuery[$field]->_fields[$relationField]['title'];
+                                    $headerName   = $field .'-' . $relationQuery[$field]->_fields[$relationField]['name'];
                                     $headerRows[] = $headerName;
+
                                     self::sqlColumnDefn( $query, $sqlColumns, $headerName );
                                 } else if ( $relationField == 'phone_type_id' ) {
                                     $headerName   = $field .'-' . 'Phone Type';
@@ -1008,7 +1009,7 @@ class CRM_Export_BAO_Export
              substr( $field, -4 ) == '_b_a' ) {
             return;
         }
-        
+
         $fieldName = CRM_Utils_String::munge( strtolower( $field ), '_', 64 );
         if ( $fieldName == 'id' ) {
             $fieldName = 'civicrm_primary_id';
@@ -1092,6 +1093,7 @@ class CRM_Export_BAO_Export
     {
         if ( empty( $details ) ) {
             return;
+
         }
         
         $sql = "
@@ -1298,22 +1300,14 @@ DROP  $drop";
 
         // name map of the non standard fields in header rows & sql columns
         $mappingFields = array (
-                                'civicrm_primary_id'  => 'internal contact id',
-                                'url'                 => 'website',
-                                'contact_sub_type'    => 'contact_subtype',
-                                'is_opt_out'          => 'no_bulk_emails__user_opt_out_',
-                                'external_identifier' => 'external_identifier__match_to_contact_',
-                                'contact_source'      => 'source_of_contact_data',
-                                'user_unique_id'      => 'unique_id__openid_',
-                                'contact_source'      => 'source_of_contact_data',
-                                'state_province'      => 'state',
-                                'is_bulkmail'         => 'use_for_bulk_mail',
-                                'im'                  => 'im_screen_name',
-                                'groups'              => 'group_s_',
-                                'tags'                => 'tag_s_',
-                                'notes'               => 'note_s_',
-                                'provider_id'         => 'im_service_provider',
-                                'phone_type_id'       => 'phone_type'
+                                'civicrm_primary_id'        => 'id',
+                                'contact_source'            => 'source',
+                                'current_employer_id'       => 'employer_id',
+                                'master_address_belongs_to' => 'master_address_belongs_to',
+                                'contact_is_deleted'        => 'is_deleted',
+                                'name'                      => 'address_name',
+                                'provider_id'               => 'im_service_provider',
+                                'phone_type_id'             => 'phone_type'
                                 );
 
         //figure out which columns are to be replaced by which ones
