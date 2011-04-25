@@ -56,8 +56,23 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
         $firstName2 = 'An_' . substr(sha1(rand()), 0, 7);
         $customGroupTitle = 'Custom '.substr(sha1(rand()), 0, 7);
         
+        $firstName3 = 'Ma'.substr(sha1(rand()), 0, 4);
+        $this->webtestAddContact( $firstName3, "Anderson", true );
+        $sortName3  = "$firstName3 Anderson";
+        $this->waitForPageToLoad("30000");
+        $url1 = explode( '&cid=', $this->getLocation( ) );
+        $id1  = $url1[1];
+
+        $firstName4 = 'Ma'.substr(sha1(rand()), 0, 4);
+        $this->webtestAddContact( $firstName4, "Anderson", true );
+        $sortName4  = "$firstName4 Anderson";
+        $this->waitForPageToLoad("30000");
+        $url2 = explode( '&cid=', $this->getLocation( ) );
+        $id2  = $url2[1];
+
         // Get sample import data.
-        list($headers, $rows) = $this->_individualCustomCSVData( $customGroupTitle, $firstName1, $firstName2 );
+        list($headers, $rows) = $this->_individualCustomCSVData( $customGroupTitle, $firstName1, $firstName2,
+                                                                 $id1, $id2 );
 
         // Import and check Individual contacts in Skip mode.
         $other = array( 'saveMapping' => true,
@@ -65,14 +80,35 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
                         'createTag'   => true );
       
         $this->importContacts($headers, $rows, 'Individual', 'Skip', array( ), $other );
+        
+        // Find the contact
+        $this->open( $this->sboxPath . "civicrm/contact/search?reset=1" );
+        $this->waitForElementPresent( '_qf_Basic_refresh' );
+        $this->type( 'sort_name', $firstName1 );
+        $this->click( '_qf_Basic_refresh' );
+        $this->waitForPageToLoad("30000");
+        $this->click( "xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']" );
+        $this->waitForPageToLoad("30000");
+        
+        // Verify if custom data added
+        $cnt = 1;
+        foreach ( $rows[0] as $key => $value ) {
+            if ( $cnt == 4 ) {
+                $value = date( 'F jS, Y' );
+            } else if ( $cnt == 7 ) {
+                $value = $sortName3;
+            } 
+            $this->assertTrue( $this->isTextPresent( $value ) );
+            $cnt++;
+        }
     }
     
     /*
      *  Helper function to provide data for custom data import.
      */
-    function _individualCustomCSVData( $customGroupTitle, $firstName1, $firstName2 ) 
+    function _individualCustomCSVData( $customGroupTitle, $firstName1, $firstName2, $id1, $id2 ) 
     {
-        $customDataParams = $this->_addCustomData( $customGroupTitle );
+        $customDataParams = $this->_addCustomData( $customGroupTitle, $id1, $id2 );
         
         $headers = array( 'first_name'  => 'First Name',
                           'last_name'   => 'Last Name',
@@ -105,7 +141,7 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
         return array($headers, $rows);
     }
 
-    function _addCustomData( $customGroupTitle )
+    function _addCustomData( $customGroupTitle, $id1, $id2 )
     {
         // Go directly to the URL of the screen that you will be testing (New Custom Group).
         $this->open( $this->sboxPath . "civicrm/admin/custom/group&reset=1" );
@@ -266,18 +302,6 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
         $this->assertTrue( $this->isTextPresent( "Your custom field '{$contactReferenceLabel}' has been saved." ) );
         $contactReferenceFieldId = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']//table/tbody//tr/td[text()='$contactReferenceLabel']/../td[7]/span/a@href" ) );
         $contactReferenceFieldId = $contactReferenceFieldId[1];
-
-        $firstName1 = 'Ma'.substr(sha1(rand()), 0, 4);
-        $this->webtestAddContact( $firstName1, "Anderson", true );
-        $this->waitForPageToLoad("30000");
-        $url1 = explode( '&cid=', $this->getLocation( ) );
-        $id1  = $url1[1];
-
-        $firstName2 = 'Ma'.substr(sha1(rand()), 0, 4);
-        $this->webtestAddContact( $firstName2, "Anderson", true );
-        $this->waitForPageToLoad("30000");
-        $url2 = explode( '&cid=', $this->getLocation( ) );
-        $id2  = $url2[1];
 
         $customDataParams = array( 'headers' => 
                                    array( "custom_{$dateFieldId}"             => "$dateFieldLabel :: $customGroupTitle",
