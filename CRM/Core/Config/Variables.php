@@ -465,9 +465,12 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
      */
     public function defaultContactCountry( ) {
         static $cachedContactCountry = null;
-        if ( ! $cachedContactCountry ) {
+        
+        if ( ! empty ($this->defaultContactCountry) &&
+             ! $cachedContactCountry ) {
             $countryIsoCodes = CRM_Core_PseudoConstant::countryIsoCode( );
-            $cachedContactCountry = $countryIsoCodes[$this->defaultContactCountry];
+            $cachedContactCountry = CRM_Utils_Array::value( $this->defaultContactCountry,
+                                                            $countryIsoCodes );
         }
         return $cachedContactCountry;
     }
