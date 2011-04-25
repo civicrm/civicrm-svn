@@ -627,7 +627,7 @@ class CRM_Contact_BAO_Query
                             }
                            
                             if ( $name == 'state_province' ) {
-                                $this->_select [$name]                 = "civicrm_state_province.abbreviation as `$name`, civicrm_state_province.name as state_province_name";
+                                $this->_select [$name] = "civicrm_state_province.abbreviation as `$name`, civicrm_state_province.name as state_province_name";
                                 $this->_element['state_province_name'] = 1;
                             } else if ( $tName == 'contact' ) {
                                 // special case, when current employer is set for Individual contact
@@ -1345,6 +1345,10 @@ class CRM_Contact_BAO_Query
             $this->stateProvince( $values );
             return;
 
+        case 'country':
+            // handled by state_province above
+            return;
+
         case 'postal_code':
         case 'postal_code_low':
         case 'postal_code_high':
@@ -1374,6 +1378,7 @@ class CRM_Contact_BAO_Query
         case 'deceased_date_high':   
             $this->demographics( $values );
             return;
+
         case 'log_date_low':
         case 'log_date_high':
             $this->modifiedDates( $values );
@@ -2852,7 +2857,7 @@ WHERE  id IN ( $groupIDs )
     }
     
     /**
-     * where / qill clause for state/province
+     * where / qill clause for state/province AND country (if present)
      *
      * @return void
      * @access public
@@ -2861,26 +2866,62 @@ WHERE  id IN ( $groupIDs )
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
         
-        if (is_array($value)) {
-            $this->_where[$grouping][] = 'civicrm_state_province.id IN (' . 
-                implode( ',', $value ) .
-                ')';
-            $this->_tables['civicrm_state_province'] = 1;
-            $this->_whereTables['civicrm_state_province'] = 1;
+        if (! is_array( $value ) ) {
+            // force the state to be an array
+            $value = array( $value );
+        }
+
+        $stateClause = 
+            'civicrm_state_province.id IN (' . 
+            implode( ',', $value ) .
+            ')';
+
+        $this->_tables['civicrm_state_province'] = 1;
+        $this->_whereTables['civicrm_state_province'] = 1;
             
-            $stateProvince =& CRM_Core_PseudoConstant::stateProvince();
-            $names = array( );
-            foreach ( $value as $id ) {
-                $names[] = $stateProvince[$id];
-            }
+        $stateProvince =& CRM_Core_PseudoConstant::stateProvince();
+        $names = array( );
+        foreach ( $value as $id ) {
+            $names[] = $stateProvince[$id];
+        }
             
-            if (!$status) {
-                $this->_qill[$grouping][] = ts('State/Province') . ' - ' . implode( ' ' . ts('or') . ' ', $names );
+
+        $countryValues = $this->getWhereValues( 'country', $grouping );
+        $countryClause = $countruQill = null;
+        if ( $countryValues &&
+             ! empty( $countryValues[2] ) ) {
+            $this->_tables['civicrm_country'] = 1;
+            $this->_whereTables['civicrm_country'] = 1;
+
+            if ( is_numeric( $countryValues[2] ) ) {
+                $countryClause = self::buildClause( 'civicrm_country.id',
+                                                    $countryValues[1],
+                                                    $countryValues[2],
+                                                    'Positive' );
+                $countries =& CRM_Core_PseudoConstant::country( );
+                $countryName = $countries[(int ) $countryValues[2]];
             } else {
-                return implode( ' ' . ts('or') . ' ', $names );
+                $wc = ( $countryValues[1] != 'LIKE' ) ? "LOWER('civicrm_country.name')" : 'civicrm_country.name';
+                $countryClause = self::buildClause( 'civicrm_country.name',
+                                                    $countryValues[1],
+                                                    $countryValues[2],
+                                                    'String' );
+                $countryName = $countryValues[2];
             }
+            $countryQill = " ...AND... " . ts('Country') . " {$countryValues[1]} '$countryName'";
+        }
+
+        if ( $countryClause ) {
+            $clause = $stateClause;
         } else {
-            return $this->restWhere( $values );
+            $clause = ( $stateClause AND $countryClause );
+        }
+
+        $this->_where[$grouping][] = $clause;
+        if ( ! $status ) {
+            $this->_qill[$grouping][] = ts('State/Province') . ' - ' . implode( ' ' . ts('or') . ' ', $names ) . $countryQill;
+        } else {
+            return implode( ' ' . ts('or') . ' ', $names ) . $countryQill;;
         }
     }
 
