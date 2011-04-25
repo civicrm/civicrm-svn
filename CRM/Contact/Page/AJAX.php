@@ -171,7 +171,7 @@ class CRM_Contact_Page_AJAX
         
         //CRM-5954
         $query = "
-SELECT id, data 
+SELECT DISTINCT(id), data 
 FROM   (
         ( SELECT 0 as exactFirst, cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
           FROM   civicrm_contact cc {$from}
