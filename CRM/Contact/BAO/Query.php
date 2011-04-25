@@ -1145,62 +1145,7 @@ class CRM_Contact_BAO_Query
         // if we are doing a transform, do it here
         // use the $from, $where and $having to get the contact ID
         if ( $this->_displayRelationshipType ) {
-            static $_rTypeProcessed = null;
-            static $_rTypeFrom      = null;
-            static $_rTypeWhere     = null;
-
-            if ( ! $_rTypeProcessed ) {
-                $_rTypeProcessed = true;
-                
-                // create temp table with contact ids
-                $tableName = CRM_Core_DAO::createTempTableName( 'civicrm_transform', true );
-                $sql = "CREATE TEMPORARY TABLE $tableName ( contact_id int primary key) ENGINE=HEAP";
-                CRM_Core_DAO::executeQuery( $sql );
-
-                $sql = "
-REPLACE INTO $tableName ( contact_id )
-SELECT contact_a.id
-       $from
-       $where
-       $having
-";
-                CRM_Core_DAO::executeQuery( $sql );
-
-
-                $qillMessage = ts( 'Contacts with a Relationship Type of: ' );
-                $rTypes  = CRM_Core_PseudoConstant::relationshipType( );
-            
-                if ( is_numeric( $this->_displayRelationshipType ) ) {
-                    $relationshipTypeLabel = $rTypes[$this->_displayRelationshipType]['label_a_b'];
-                    $_rTypeFrom = "
-INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id OR displayRelType.contact_id_b = contact_a.id )
-INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a OR transform_temp.contact_id = displayRelType.contact_id_b )
-";
-                    $_rTypeWhere = " WHERE displayRelType.relationship_type_id = {$this->_displayRelationshipType} ";
-                } else {
-                    list( $relType, $dirOne, $dirTwo ) = explode( '_', $this->_displayRelationshipType );
-                    if ( $dirOne == 'a' ) {
-                        $relationshipTypeLabel = $rTypes[$relType]['label_a_b'];
-                        $_rTypeFrom .= "
-INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id )
-INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_b )
-";
-                    } else {
-                        $relationshipTypeLabel = $rTypes[$relType]['label_b_a'];
-                        $_rTypeFrom .= "
-INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_b = contact_a.id )
-INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a )
-";
-                    }
-                    $_rTypeWhere = " WHERE displayRelType.relationship_type_id = $relType ";
-                }
-            
-                $this->_qill[0][] = $qillMessage . "'" . $relationshipTypeLabel . "'";
-            }
-
-            $from .= $_rTypeFrom;
-            $where = $_rTypeWhere;
-            $having = null;
+            $this->filterRelatedContacts( $from, $where, $having );
         }
 
         return array( $select, $from, $where, $having );
@@ -3551,6 +3496,12 @@ WHERE  id IN ( $groupIDs )
             $groupBy = 'GROUP BY civicrm_activity.id ';
         }
 
+        // if we are doing a transform, do it here
+        // use the $from, $where and $having to get the contact ID
+        if ( $this->_displayRelationshipType ) {
+            $this->filterRelatedContacts( $from, $where, $having );
+        }
+
         $query = "$select $from $where $having $groupBy $order $limit";
         // CRM_Core_Error::debug('query', $query);
         // CRM_Core_Error::debug('query', $where);
@@ -4030,5 +3981,68 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
     function getOperator( ) {
         return $this->_operator;
     }
-    
+
+    function filterRelatedContacts( &$from,
+                                    &$where,
+                                    &$having ) {
+        static $_rTypeProcessed = null;
+        static $_rTypeFrom      = null;
+        static $_rTypeWhere     = null;
+
+        if ( ! $_rTypeProcessed ) {
+            $_rTypeProcessed = true;
+                
+            // create temp table with contact ids
+            $tableName = CRM_Core_DAO::createTempTableName( 'civicrm_transform', true );
+            $sql = "CREATE TEMPORARY TABLE $tableName ( contact_id int primary key) ENGINE=HEAP";
+            CRM_Core_DAO::executeQuery( $sql );
+
+            $sql = "
+REPLACE INTO $tableName ( contact_id )
+SELECT contact_a.id
+       $from
+       $where
+       $having
+";
+            CRM_Core_DAO::executeQuery( $sql );
+
+            $qillMessage = ts( 'Contacts with a Relationship Type of: ' );
+            $rTypes  = CRM_Core_PseudoConstant::relationshipType( );
+            
+            if ( is_numeric( $this->_displayRelationshipType ) ) {
+                $relationshipTypeLabel = $rTypes[$this->_displayRelationshipType]['label_a_b'];
+                $_rTypeFrom = "
+INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id OR displayRelType.contact_id_b = contact_a.id )
+INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a OR transform_temp.contact_id = displayRelType.contact_id_b )
+";
+                $_rTypeWhere = " WHERE displayRelType.relationship_type_id = {$this->_displayRelationshipType} ";
+            } else {
+                list( $relType, $dirOne, $dirTwo ) = explode( '_', $this->_displayRelationshipType );
+                if ( $dirOne == 'a' ) {
+                    $relationshipTypeLabel = $rTypes[$relType]['label_a_b'];
+                    $_rTypeFrom .= "
+INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id )
+INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_b )
+";
+                } else {
+                    $relationshipTypeLabel = $rTypes[$relType]['label_b_a'];
+                    $_rTypeFrom .= "
+INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_b = contact_a.id )
+INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a )
+";
+                }
+                $_rTypeWhere = " WHERE displayRelType.relationship_type_id = $relType ";
+            }
+            
+            $this->_qill[0][] = $qillMessage . "'" . $relationshipTypeLabel . "'";
+        }
+
+        if ( strpos( $from, $_rTypeFrom ) === false ) {
+            $from .= $_rTypeFrom;
+            $where = $_rTypeWhere;
+        }
+        
+        $having = null;
+    }
+
 }
