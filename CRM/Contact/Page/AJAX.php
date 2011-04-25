@@ -146,14 +146,18 @@ class CRM_Contact_Page_AJAX
         $includeEmailFrom = $includeNickName = '';
         if ( $config->includeNickNameInName ) {
             $includeNickName = " OR nick_name LIKE '$strSearch'";
+            $exactIncludeNickName = " OR nick_name LIKE '$name'";
         }
+
         if( $config->includeEmailInName ) {
             if( !in_array( 'email', $list ) ) {
                 $includeEmailFrom ="LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )" ;  
             }
             $whereClause = " WHERE ( email LIKE '$strSearch' OR sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
+            $exactWhereClause = " WHERE ( email LIKE '$name' OR sort_name LIKE '$name' $exactIncludeNickName ) {$where} ";
         } else {
             $whereClause = " WHERE ( sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
+            $exactWhereClause = " WHERE ( sort_name LIKE '$name' $exactIncludeNickName ) {$where} ";
         }
         $additionalFrom = '';
         if ( $relType ) {
@@ -167,17 +171,26 @@ class CRM_Contact_Page_AJAX
         
         //CRM-5954
         $query = "
-            SELECT id, data 
-            FROM (
-                SELECT cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
-                FROM civicrm_contact cc {$from}
-        {$aclFrom}
-        {$additionalFrom}{$includeEmailFrom}
-        {$whereClause} 
-        LIMIT 0, {$limit}
-    ) t
-    ORDER BY sort_name
-    ";
+SELECT id, data 
+FROM   (
+        ( SELECT 0 as exactFirst, cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
+          FROM   civicrm_contact cc {$from}
+                 {$aclFrom}
+                 {$additionalFrom} {$includeEmailFrom}
+                 {$exactWhereClause}
+          LIMIT 0, {$limit} )
+        UNION
+        ( SELECT 1 as exactFirst, cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
+          FROM   civicrm_contact cc {$from}
+                 {$aclFrom}
+                 {$additionalFrom} {$includeEmailFrom}
+                 {$whereClause}
+          ORDER BY sort_name
+          LIMIT 0, {$limit} )
+       ) t
+ORDER BY exactFirst, sort_name
+LIMIT    0, {$limit}
+";
         
         // send query to hook to be modified if needed
         require_once 'CRM/Utils/Hook.php';
