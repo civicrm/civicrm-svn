@@ -238,7 +238,7 @@ function _civicrm_api3_activity_get( $activityId, $returnCustom = true ) {
  *
  * @return array $error array with errors
  */
-function _civicrm_api3_activity_check_params ( $params)
+function _civicrm_api3_activity_check_params ( & $params)
 {
 
 
@@ -285,7 +285,7 @@ SELECT  count(*)
 
 
     require_once 'CRM/Core/PseudoConstant.php';
-    $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name' );
+    $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name', true );
 
     $activityName   = CRM_Utils_Array::value( 'activity_name', $params );
     $activityTypeId = CRM_Utils_Array::value( 'activity_type_id', $params );
