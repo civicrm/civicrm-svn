@@ -1759,7 +1759,7 @@ function civicrm_views_data() {
 
     //CiviCRM Participants - FIELDS
 
-    //Numeric Event ID
+    //Numeric Participant ID
     $data['civicrm_participant']['id'] = array(
                                                'title' => t('Participant ID'),
                                                'help' => t('The numeric ID of the Participant'),
@@ -1781,6 +1781,19 @@ function civicrm_views_data() {
                                                                'handler' => 'views_handler_sort',
                                                                ),
                                                );
+    //Numeric Event ID
+    $data['civicrm_participant']['event_id'] = array(
+                                               'title' => t('Event ID'),
+                                               'help' => t('The numeric ID of the Event'),
+
+                                               'relationship' => array(
+                                                                       'base' => 'civicrm_event',
+                                                                       'field' => 'id',
+                                                                       'handler' => 'views_handler_relationship',
+                                                                       'label' => t('CiviCRM Event, with custom fields'),
+                                                                       ),
+
+                                              );
 
     //Numeric Contact ID
     $data['civicrm_participant']['contact_id'] = array(
@@ -5886,6 +5899,8 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
         $customHTMLTypes = array( 'Select', 'Multi-Select', 'AdvMulti-Select', 'Radio', 'CheckBox', 
                                   'Select State/Province', 'Select Country', 'Multi-Select Country',
                                   'Multi-Select State/Province', 'Autocomplete-Select' );
+        $customMultiValueHTMLTypes = array( 'Multi-Select', 'AdvMulti-Select','Multi-Select Country',
+                                   'Multi-Select State/Province');
         foreach ($currentgroupfields as $key => $currentfield) {
 	  if (empty($currentfield['help_post'])) { 
                 $currentfield['help_post'] = t('Custom Data Field');
@@ -5899,8 +5914,10 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
                 $handler = civicrm_get_field_handler( $currentfield['data_type'] );
             }
             
-            if ( !empty($currentfield['option_group_id']) ) {
+            if ( !empty($currentfield['option_group_id']) && in_array($currentfield['html_type'], $customMultiValueHTMLTypes) ){
                 $filter_handler = 'civicrm_handler_filter_custom_option';
+            } elseif ( !empty($currentfield['option_group_id']) ){
+                $filter_handler = 'civicrm_handler_filter_custom_single_option';  
             } else {
                 $filter_handler = civicrm_get_filter_handler( $currentfield['data_type'] );
             }
@@ -6323,6 +6340,10 @@ function civicrm_views_handlers() {
                        'civicrm_handler_filter_custom_option' => array(
                                                                        'parent' => 'views_handler_filter_in_operator',
                                                                        ),
+                       'civicrm_handler_filter_custom_single_option' => array(
+                                                                       'parent' => 'views_handler_filter_in_operator',
+                                                                       ),
+
                        'civicrm_handler_filter_campaign_status' => array(
                                                                        'parent' => 'views_handler_filter_in_operator',
                                                                        ),

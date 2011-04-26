@@ -112,7 +112,11 @@ function civicrm_api3_activity_create( $params )
 function civicrm_api3_activity_getfields( $params ) {
     require_once 'CRM/Activity/BAO/Activity.php';
     $bao = new CRM_Activity_BAO_Activity();
-    return civicrm_api3_create_success($bao->exportableFields('Activity'),$params,$bao);
+    $fields =$bao->exportableFields('Activity');
+    //activity_id doesn't appear to work so let's tell them to use 'id' (current focus is ensuring id works)
+    $fields['id'] = $fields['activity_id'];
+    unset ($fields['activity_id']);
+    return civicrm_api3_create_success($fields ,$params,$bao);
 }
 
 
@@ -234,7 +238,7 @@ function _civicrm_api3_activity_get( $activityId, $returnCustom = true ) {
  *
  * @return array $error array with errors
  */
-function _civicrm_api3_activity_check_params ( $params)
+function _civicrm_api3_activity_check_params ( & $params)
 {
 
 
@@ -281,7 +285,7 @@ SELECT  count(*)
 
 
     require_once 'CRM/Core/PseudoConstant.php';
-    $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name' );
+    $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name', true );
 
     $activityName   = CRM_Utils_Array::value( 'activity_name', $params );
     $activityTypeId = CRM_Utils_Array::value( 'activity_type_id', $params );

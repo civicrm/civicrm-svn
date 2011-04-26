@@ -324,15 +324,7 @@ function _civicrm_api3_contact_check_params( $params, $dupeCheck = true, $dupeEr
                                                   ),
                           );
         
-        // cannot create a contact with empty params
-        if ( empty( $params ) ) {
-            return civicrm_api3_create_error( 'Input Parameters empty' );
-        }
-        
-        if ( ! array_key_exists( 'contact_type', $params ) ) {
-            return civicrm_api3_create_error( 'Contact Type not specified' );
-        }
-        
+
         // contact_type has a limited number of valid values
         $fields = CRM_Utils_Array::value( $params['contact_type'], $required );
         if ( $fields == null ) {

@@ -41,7 +41,7 @@ class WebTest_Import_ActivityTest extends ImportCiviSeleniumTestCase {
         
         // Get sample import data.
         list( $headers, $rows ) = $this->_activityCSVData( );
-         $fieldMapper = array( 'mapper[0][0]' => 'email' );
+        $fieldMapper = array( 'mapper[0][0]' => 'target_contact_id' );
         $this->importCSVComponent( 'Activity', $headers, $rows, null, null, $fieldMapper );
     }
     
@@ -50,12 +50,16 @@ class WebTest_Import_ActivityTest extends ImportCiviSeleniumTestCase {
         $firstName1 = substr( sha1( rand( ) ), 0, 7 );
         $email1     = 'mail_' . substr( sha1( rand( ) ), 0, 7 ) . '@example.com'; 
         $this->webtestAddContact( $firstName1, 'Anderson', $email1 );
+        $url = explode( '&cid=', $this->getLocation( ) );
+        $id1 = $url[1];
         
         $firstName2 = substr( sha1( rand() ), 0, 7 );
         $email2     = 'mail_' . substr( sha1( rand( ) ), 0, 7 ) . '@example.com'; 
         $this->webtestAddContact( $firstName2, 'Anderson', $email2 );
-            
-        $headers = array( 'email'               => 'Email',
+        $url = explode( '&cid=', $this->getLocation( ) );
+        $id2 = $url[1];
+        
+        $headers = array( 'target_contact_id'   => 'Contact ID',
                           'activity_type_label' => 'Activity Type Label',
                           'subject'             => 'Subject',
                           'activity_date'       => 'Activity Date',
@@ -65,7 +69,7 @@ class WebTest_Import_ActivityTest extends ImportCiviSeleniumTestCase {
                           );
         
         $rows = array( 
-                      array( 'email'               => $email1, 
+                      array( 'target_contact_id'   => $id1, 
                              'activity_type_label' => 'Meeting',
                              'subject'             => 'Test Meeting',
                              'activity_date'       => '2009-10-01',
@@ -74,7 +78,7 @@ class WebTest_Import_ActivityTest extends ImportCiviSeleniumTestCase {
                              'location'            => 'UK'
                              ),
                       
-                      array( 'email'               => $email2,
+                      array( 'target_contact_id'   => $id2,
                              'activity_type_label' => 'Phone Call',
                              'subject'             => 'Test Phone Call',
                              'activity_date'       => '2010-10-15',
