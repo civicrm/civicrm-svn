@@ -1295,7 +1295,8 @@ AND civicrm_membership.is_test = %2";
         if ( ( $contributeMode == 'notify' || 
                CRM_Utils_Array::value( 'is_pay_later', $form->_params ) || 
                ( CRM_Utils_Array::value( 'is_recur', $form->_params ) && $contributeMode == 'direct' ) ) &&
-             ( $form->_values['is_monetary'] && $form->_amount > 0.0 ) ) {
+             ( ( $form->_values['is_monetary'] && $form->_amount > 0.0 ) ||
+               $form->_params['separate_membership_payment'] ) ) {
             $pending = true;
         }
 

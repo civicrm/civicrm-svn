@@ -1125,7 +1125,7 @@ WHERE id={$id}; ";
      * @access public
      */
     function &exportableFields( $contactType = 'Individual', $status = false, $export = false, $search = false ) 
-        {
+    {
         if ( empty( $contactType ) ) {
             $contactType = 'All';
         }
@@ -1143,17 +1143,11 @@ WHERE id={$id}; ";
             // check if we can retrieve from database cache
             require_once 'CRM/Core/BAO/Cache.php'; 
             $fields =& CRM_Core_BAO_Cache::getItem( 'contact fields', $cacheKeyString );
-            
-            $masterAddress['master_address_belongs_to'] = array ( 'name'  => 'master_id',
-                                                                  'title' => ts('Master Address Belongs To')
-                                                                  ) ;
-            
+                        
             if ( ! $fields ) {
                 $fields = array( );
-                $fields = array_merge($fields, CRM_Contact_DAO_Contact::export( ));
+                $fields = CRM_Contact_DAO_Contact::export( );
                 
-                // add master address display name for individual
-                $fields = array_merge( $fields, $masterAddress );
                 // the fields are meant for contact types
                 if ( in_array( $contactType, array('Individual', 'Household', 'Organization', 'All' ) ) ) {
                     require_once 'CRM/Core/OptionValue.php';
@@ -1164,7 +1158,6 @@ WHERE id={$id}; ";
                                                        array ( 'name'  => 'organization_name',
                                                                'title' => ts('Current Employer') )
                                                        ));
-                
                 $locationType = array( );
                 if ($status) {
                     $locationType['location_type'] = array ('name' => 'location_type',

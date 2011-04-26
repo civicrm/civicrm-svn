@@ -453,8 +453,8 @@ class CRM_Utils_Date
 
         $value = null;
         if ( CRM_Utils_Array::value( $dateParam, $params ) ) {
-            //suppress hh:mm if it exists
-            $value = preg_replace( "/(\s(([01]\d)|[2][0-3]):([0-5]\d))$/", "", $params[$dateParam] );
+            // suppress hh:mm or hh:mm:ss if it exists CRM-7957
+            $value = preg_replace( "/(\s(([01]\d)|[2][0-3])(:([0-5]\d)){1,2})$/", "", $params[$dateParam] );
         }
         
         switch( $dateType ) {

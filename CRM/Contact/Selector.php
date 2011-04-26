@@ -845,7 +845,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         return $this->_query->searchQuery( null, null, null, false, false, true );
     }
 
-    function contactIDQuery( $params, $action, $sortID ) {
+    function contactIDQuery( $params, $action, $sortID, $displayRelationshipType = null ) {
         $sortOrder =& $this->getSortOrder( $this->_action );
         $sort      = new CRM_Utils_Sort( $sortOrder, $sortID );
 
@@ -856,7 +856,13 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             CRM_Contact_BAO_ProximityQuery::fixInputParams( $params );
         }
 
-        $query = new CRM_Contact_BAO_Query( $params, $this->_returnProperties );
+        if ( ! $displayRelationshipType ) {
+            $query = new CRM_Contact_BAO_Query( $params, $this->_returnProperties );
+        } else {
+            $query = new CRM_Contact_BAO_Query( $params, $this->_returnProperties,
+                                                null, false, false, 1,
+                                                false, true, true, $displayRelationshipType );
+        }
         $value =  $query->searchQuery( 0, 0, $sort,
                                        false, false, false,
                                        false, false );
