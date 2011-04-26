@@ -534,6 +534,7 @@ WHERE cc.contact_id = %1
                   civicrm_contact.sort_name as sort_name,
                   civicrm_phone.phone as phone,
                   civicrm_contact.contact_type as contact_type,
+                  civicrm_contact.contact_sub_type as contact_sub_type,
                   civicrm_activity.activity_type_id,
                   cov_type.label as case_type,
                   cov_type.name as case_type_name,
@@ -749,12 +750,12 @@ AND civicrm_case.status_id != $closedId";
                         = CRM_Core_Action::formLink( $actions['primaryActions'], $mask,
                                                      array( 'id'  => $result->case_id,
                                                             'cid' => $result->contact_id,
-                                                            'cxt' => $this->_context ) );
+                                                           ) );
                     $casesList[$result->case_id]['moreActions'] 
                         = CRM_Core_Action::formLink( $actions['moreActions'], 
                                                      $mask, array( 'id'  => $result->case_id,
                                                                    'cid' => $result->contact_id,
-                                                                   'cxt' => $this->_context ),
+                                                             ),
                                                      ts( 'more' ),
                                                      true 
                                                      );
