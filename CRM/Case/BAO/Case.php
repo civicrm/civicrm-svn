@@ -690,7 +690,7 @@ AND civicrm_case.status_id != $closedId";
         $query = self::getCaseActivityQuery( $type, $userID, $condition );
  
         $queryParams = array();
-        $result = CRM_Core_DAO::executeQuery( $query,$queryParams );
+        $result = CRM_Core_DAO::executeQuery( $query, $queryParams );
 
         require_once 'CRM/Core/OptionGroup.php';
         $caseStatus = CRM_Core_OptionGroup::values( 'case_status', false, false, false, " AND v.name = 'Urgent' " );
