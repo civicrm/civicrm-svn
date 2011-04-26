@@ -73,6 +73,25 @@ function civicrm_api3_uf_group_create($params) {
 }
 
 /**
+ * Returns array of uf groups (profiles)  matching a set of one or more group properties
+ *
+ * @param array $params  (reference) Array of one or more valid
+ *                       property_name=>value pairs. If $params is set
+ *                       as null, all surveys will be returned
+ *
+ * @return array  (reference) Array of matching profiles
+ * @access public
+ */
+function civicrm_api3_uf_group_get( $params )
+{
+
+    civicrm_api3_verify_mandatory($params);
+    return _civicrm_api3_basic_get('CRM_Core_BAO_UFGroup', $params);
+
+}
+
+
+/**
  * Delete uf group
  * 
  * @param $groupId int  Valid uf_group id that to be deleted

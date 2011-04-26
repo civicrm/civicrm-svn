@@ -1,6 +1,6 @@
 <?php 
 
-function uf_group_create_example(){
+function uf_group_get_example(){
     $params = array(
     
                   'add_captcha' 		=> '1',
@@ -27,7 +27,7 @@ function uf_group_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'uf_group','create',$params );
+  $result = civicrm_api( 'uf_group','get',$params );
 
   return $result;
 }
@@ -35,7 +35,7 @@ function uf_group_create_example(){
 /*
  * Function returns array of result expected from previous function
  */
-function uf_group_create_expectedresult(){
+function uf_group_get_expectedresult(){
 
   $expectedResult = 
      array(
@@ -64,8 +64,8 @@ function uf_group_create_expectedresult(){
                       'is_reserved' => '1',
                       'name' => 'Test_Group',
                       'created_id' => '69',
-                      'created_date' => '2009-06-27 00:00:00',
-                      'is_proximity_search' => '',
+                      'created_date' => '0000-00-00 00:00:00',
+                      'is_proximity_search' => '0',
            ),           ),
       );
 
