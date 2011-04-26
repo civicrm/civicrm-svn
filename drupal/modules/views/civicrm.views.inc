@@ -5899,7 +5899,7 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
         $customHTMLTypes = array( 'Select', 'Multi-Select', 'AdvMulti-Select', 'Radio', 'CheckBox', 
                                   'Select State/Province', 'Select Country', 'Multi-Select Country',
                                   'Multi-Select State/Province', 'Autocomplete-Select' );
-        $customMultiValueHTMLTypes = array( 'Multi-Select', 'AdvMulti-Selec','Multi-Select Country',
+        $customMultiValueHTMLTypes = array( 'Multi-Select', 'AdvMulti-Select','Multi-Select Country',
                                    'Multi-Select State/Province');
         foreach ($currentgroupfields as $key => $currentfield) {
 	  if (empty($currentfield['help_post'])) { 
