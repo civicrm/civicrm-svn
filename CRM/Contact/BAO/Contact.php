@@ -1271,10 +1271,6 @@ WHERE id={$id}; ";
                                    self::$_exportableFields[$cacheKeyString] );
         }
 
-        if ( $fields['master_id'] ) {
-            $fields['master_id']['title'] = ts('Master Address Belongs To');
-        }
-
         return $fields;
     }
 

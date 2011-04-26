@@ -296,7 +296,7 @@
   </field>
   <field>
       <name>master_id</name>
-      <title>Master Address ID</title>
+      <title>Master Address Belongs To</title>
       <type>int unsigned</type>
       <import>true</import>
       <comment>FK to Address ID</comment>
