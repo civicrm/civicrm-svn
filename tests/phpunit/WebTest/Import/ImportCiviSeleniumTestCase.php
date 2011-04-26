@@ -169,6 +169,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
      *                             createTagName      : to override new Tag name
      *                             selectGroup        : select existing group for contacts
      *                             selectTag          : select existing tag for contacts
+     *                             callbackImportSummary : function to override default import summary assertions
      *
      * @params string $type        import type (csv/sql)
      *                             @todo:currently only supports csv, need to work on sql import 
@@ -383,8 +384,14 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
               $checkSummary['Tagged Imported Contacts'] .= "{$existingTag}: {$taggedContactsCount} tagged with this tag.";
           }
       }
-      foreach( $checkSummary as $label => $value ) {
-          $this->verifyText("xpath=//table[@id='summary-counts']/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote($value));
+      
+      if ( CRM_Utils_Array::value('callbackImportSummary', $other) && is_callable(array($this, $other['callbackImportSummary'])) ) {
+          $callbackImportSummary = $other['callbackImportSummary'];
+          $this->$callbackImportSummary($originalHeaders, $originalRows, $checkSummary);
+      } else {
+          foreach( $checkSummary as $label => $value ) {
+              $this->verifyText("xpath=//table[@id='summary-counts']/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote($value));
+          }
       }
         
     }
