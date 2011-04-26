@@ -181,11 +181,12 @@ function _civicrm_api3_permissions($entity, $action)
             'get'    => array(),
             'update' => array(),
         ),
+
         'membership' => array(
-            'create' => array(), // FIXME: XML does not enforce ‘edit memberships’
-            'delete' => array(), // FIXME: XML does not enforce ‘edit memberships’
-            'get'    => array(),
-            'update' => array(),
+            'create' => array('access CiviMember', 'edit memberships'), // FIXME: XML does not enforce ‘edit memberships’
+            'delete' => array('access CiviMember', 'edit memberships'), // FIXME: XML does not enforce ‘edit memberships’
+            'get'    => array('access CiviMember'),
+            'update' => array('access CiviMember', 'edit memberships'),
         ),
         'membership_payment' => array(
             'create' => array(),
@@ -230,10 +231,10 @@ function _civicrm_api3_permissions($entity, $action)
             'update' => array(),
         ),
         'participant' => array(
-            'create' => array(),
-            'delete' => array(),
-            'get'    => array(),
-            'update' => array(),
+            'create' => array('access CiviEvent'),
+            'delete' => array('access CiviEvent'),
+            'get'    => array('access CiviEvent', 'view event participants'),
+            'update' => array('access CiviEvent'),
         ),
         'participant_payment' => array(
             'create' => array(),
@@ -248,10 +249,10 @@ function _civicrm_api3_permissions($entity, $action)
             'update' => array(),
         ),
         'pledge' => array(
-            'create' => array(),
-            'delete' => array(),
-            'get'    => array(),
-            'update' => array(),
+            'create' => array('access CiviPledge'),
+            'delete' => array('access CiviPledge'),
+            'get'    => array('access CiviPledge'),
+            'update' => array('access CiviPledge'),
         ),
         'pledge_payment' => array(
             'create' => array(),
