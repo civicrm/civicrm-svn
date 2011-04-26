@@ -392,20 +392,19 @@
                 autoOpen: true,
                 title: widget.title,
                 modal: true,
+                height: 'auto',
+                width: 'auto',
+                position: 'center',
                 close: function(event, ui) {
                     cj(this).dialog("destroy");
                     $('#crm-dashlet-fullscreen-content').html('');
-                },
-                open: function(event, ui) {
-                    $(event.target).dialog('option', 'width', ($(event.target)[0].scrollWidth + 50) + 'px');
-                }      
+                }
             });
 
         $.ajax({
             url: widget.fullscreenUrl,
             success: function ( content ) {
                 $('#crm-dashlet-fullscreen-content').html( content );
-
             }
         }); 
       };
