@@ -395,7 +395,6 @@
                 modal: true,
                 height: 'auto',
                 width: 'auto',
-                position: 'center',
                 close: function(event, ui) {
                     cj(this).dialog("destroy");
                     $('#crm-dashlet-fullscreen-content').remove();
