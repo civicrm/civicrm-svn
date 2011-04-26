@@ -640,7 +640,7 @@ class CRM_Export_BAO_Export
                             }
                             $fieldValue = implode( ',', $viewRoles );
                         }
-                    } else if ( $field == 'master_address_belongs_to' ) {
+                    } else if ( $field == 'master_id' ) {
                         $masterAddressId = null;
                         if ( isset( $dao->master_id ) ) {
                             $masterAddressId = $dao->master_id;
@@ -1303,7 +1303,6 @@ DROP  $drop";
                                 'civicrm_primary_id'        => 'id',
                                 'contact_source'            => 'source',
                                 'current_employer_id'       => 'employer_id',
-                                'master_address_belongs_to' => 'master_address_belongs_to',
                                 'contact_is_deleted'        => 'is_deleted',
                                 'name'                      => 'address_name',
                                 'provider_id'               => 'im_service_provider',
