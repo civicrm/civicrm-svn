@@ -53,7 +53,6 @@
   {ts}Javascript must be enabled in your browser in order to use the dashboard features.{/ts}
 </div>
 <div class="clear"></div>
-<div id='crm-dashlet-fullscreen-content'></div>
 {literal}
 <script type="text/javascript">
   function addDashlet(  ) {

@@ -387,7 +387,8 @@
           return;
         }
 
-        $('#crm-dashlet-fullscreen-content')
+        $('<div id="crm-container"></div>')
+            .html('<div id="crm-dashlet-fullscreen-content">Loading...</div>')
             .dialog({
                 autoOpen: true,
                 title: widget.title,
@@ -397,7 +398,7 @@
                 position: 'center',
                 close: function(event, ui) {
                     cj(this).dialog("destroy");
-                    $('#crm-dashlet-fullscreen-content').html('');
+                    $('#crm-dashlet-fullscreen-content').remove();
                 }
             });
 
