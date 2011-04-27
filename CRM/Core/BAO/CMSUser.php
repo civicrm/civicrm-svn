@@ -484,6 +484,7 @@ SELECT username, email
      */    
     static function createDrupalUser( &$params, $mail )
     {
+        $form_state = array( );
         $form_state['input']  = array (
                                     'name' => $params['cms_name'],
                                     'mail' => $params[$mail],

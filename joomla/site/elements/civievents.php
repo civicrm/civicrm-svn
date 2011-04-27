@@ -49,7 +49,7 @@ class JFormFieldCiviEvents extends JFormField {
 		$params = array(
                         'version' 		     => '3',
                         'is_active'        	 => 1,
-                        'return.isCurrent'   => 1,
+                        'isCurrent'      => 1,
                         'return.title'		 => 1,
                         'return.id'          => 1,
                         'return.end_date'    => 1,
