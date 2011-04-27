@@ -568,7 +568,7 @@ WHERE  option_group_id = (
      * @static
      */
     static function enableComponent( $componentName ) {
-        $config = CRM_Core_Config::singleton( );
+        $config =& CRM_Core_Config::singleton( );
         if ( in_array( $componentName, $config->enableComponents ) ) {
             // component is already enabled
             return true;
@@ -597,6 +597,10 @@ WHERE  id = %1
         
         $configBackend['enableComponents'][] = $componentName;
         $configBackend['enableComponentIDs'][] = $components[$componentName]->componentID;
+
+        // fix the config object
+        $config->enableComponents   =  $configBackend['enableComponents'];
+        $config->enableComponentIDs =  $configBackend['enableComponentIDs'];
 
         // check if component is already there, is so return
         $configBackend = serialize( $configBackend );

@@ -83,6 +83,7 @@
     <column>is_optgroup</column>
     <column>is_reserved</column>
     <column>is_active</column>
+    <column>component_id</column>
     <row>
       <null />
       <value>2</value>
@@ -97,6 +98,7 @@
       <value>0</value>
       <value>0</value>
       <value>1</value>
+      <null />
     </row>
     <row>
       <null />
@@ -112,7 +114,24 @@
       <value>0</value>
       <value>0</value>
       <value>1</value>
+      <null />
     </row>    
+    <row>
+      <null />
+      <value>2</value>
+      <value>PhoneBank</value>
+      <value>29</value>
+      <value>PhoneBank</value>
+      <null />
+      <value>0</value>
+      <value>0</value>
+      <value>29</value>
+      <null />
+      <value>0</value>
+      <value>1</value>
+      <value>1</value>
+      <value>9</value>
+    </row> 
   </table>
   <table name="civicrm_option_value">
     <column>id</column>
@@ -143,5 +162,20 @@
       <value>0</value>
       <value>1</value>
     </row>
+        <row>
+      <null />
+      <value>2</value>
+      <value>Email processing Test activity type</value>
+      <value>5</value>
+      <value>Email processing Test activity type</value>
+      <null />
+      <value>0</value>
+      <null />
+      <value>2</value>
+      <null />
+      <value>0</value>
+      <value>0</value>
+      <value>1</value>
+    </row>    
   </table>
 </dataset>
