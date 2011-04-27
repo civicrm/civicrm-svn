@@ -209,7 +209,7 @@ class CRM_Case_Form_Activity_OpenCase
      * @static
      * @access public
      */
-    static function formRule( $values, $files, $form ) 
+    static function formRule( $fields, $files, $form ) 
     {
         if ( $form->_context == 'caseActivity' ) {
             return true;
@@ -221,7 +221,7 @@ class CRM_Case_Form_Activity_OpenCase
             $errors['contact[1]'] = ts('Please select a contact or create new contact');
         }
         //check selected contact for multi client option
-        if ( $form->_allowMultiClient && isset( $values[contact][1] ) && !$values[contact][1] ) {
+        if ( $form->_allowMultiClient && isset( $fields[contact][1] ) && !$fields[contact][1] ) {
             $errors['contact[1]'] = ts('Please select a valid contact or create new contact');
         }
         

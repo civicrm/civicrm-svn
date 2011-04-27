@@ -118,3 +118,51 @@ function civicrm_api3_constant_get($params)
 }
 
 
+
+function civicrm_api3_constant_getfields($params) {
+  _civicrm_api3_initialize(true);
+
+  return civicrm_api3_create_success (array (
+   'activityStatus',
+   'activityType',
+   'addressee',
+   'allGroup',
+   'country',
+   'countryIsoCode',
+   'county',
+   'currencyCode',
+   'currencySymbols',
+   'customGroup',
+   'emailGreeting',
+   'fromEmailAddress',
+   'gender',
+   'group',
+   'groupIterator',
+   'honor',
+   'IMProvider',
+   'individualPrefix',
+   'individualSuffix',
+   'locationType',
+   'locationVcardName',
+   'mailProtocol',
+   'mappingTypes',
+   'paymentProcessor',
+   'paymentProcessorType',
+   'pcm',
+   'phoneType',
+   'postalGreeting',
+   'priority',
+   'relationshipType',
+   'stateProvince',
+   'stateProvinceAbbreviation',
+   'stateProvinceForCountry',
+   'staticGroup',
+   'tag',
+   'tasks',
+   'ufGroup',
+   'visibility',
+   'worldRegion',
+   'wysiwygEditor'),
+   $params);
+} 
+

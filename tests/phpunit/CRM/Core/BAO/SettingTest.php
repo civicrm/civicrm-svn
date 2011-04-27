@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.4                                                |
@@ -26,47 +25,49 @@
  +--------------------------------------------------------------------+
 */
 
-/**
- *
- * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
- * $Id$
- *
- */
+require_once 'CiviTest/CiviUnitTestCase.php';
+require_once 'CRM/Core/BAO/Setting.php';
 
-require_once 'CRM/Core/Page.php';
-
-/**
- * Main page for Cases dashlet
- *
- */
-class CRM_Dashlet_Page_MyCases extends CRM_Core_Page 
+class CRM_Core_BAO_PreferencesTest extends CiviUnitTestCase 
 {
-    /**
-     * List activities as dashlet
-     *
-     * @return none
-     *
-     * @access public
-     */
-    function run( ) {
-        $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'dashlet' );
-        $this->assign('context', $context );
-        
-        require_once 'CRM/Case/BAO/Case.php';
-        //check for civicase access.
-        if ( !CRM_Case_BAO_Case::accessCiviCase( ) ) {
-            CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
-        }
-
-        require_once 'CRM/Core/OptionGroup.php';
-        $session  = CRM_Core_Session::singleton();
-        $userID   = $session->get('userID');        
-        $upcoming = CRM_Case_BAO_Case::getCases( false, $userID, 'upcoming');
-
-        if ( !empty( $upcoming ) ) {
-            $this->assign('upcomingCases', $upcoming);
-        }
-        return parent::run( );
+    function get_info( ) 
+    {
+        return array(
+                     'name'        => 'Setting BAO',
+                     'description' => 'Test set/get on setting variables.',
+                     'group'       => 'CiviCRM BAO Tests',
+                     );
     }
+    
+    function setUp( ) 
+    {
+        parent::setUp();
+    }
+
+    function testEnableComponentValid( ) {
+        $config = CRM_Core_Config::singleton( true, true );
+
+        $result = CRM_Core_BAO_Setting::enableComponent( 'CiviCampaign' );
+
+        $this->assertTrue( $result );
+    }
+
+    function testEnableComponentAlreadyPresent( ) {
+        $config = CRM_Core_Config::singleton( true, true );
+
+        $result = CRM_Core_BAO_Setting::enableComponent( 'CiviCampaign' );
+        $result = CRM_Core_BAO_Setting::enableComponent( 'CiviCampaign' );
+
+        $this->assertTrue( $result );
+    }
+
+
+    function testEnableComponentInvalid( ) {
+        $config = CRM_Core_Config::singleton( true, true );
+
+        $result = CRM_Core_BAO_Setting::enableComponent( 'CiviFake' );
+
+        $this->assertFalse( $result );
+    }
+
 }
