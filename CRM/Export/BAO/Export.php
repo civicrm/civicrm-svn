@@ -583,10 +583,15 @@ class CRM_Export_BAO_Export
                                     if ( $relationQuery[$field]->_fields[$relationField]['name'] == 'name' ) {
                                         $headerName = $field .'-' . $relationField;
                                     } else {
-                                        $headerName = $field .'-' . $relationQuery[$field]->_fields[$relationField]['name'];
+                                        if ($relationField == 'current_employer') {
+                                            $headerName = $field .'-' . 'current_employer';
+                                        } else {
+                                            $headerName = $field .'-' . $relationQuery[$field]->_fields[$relationField]['name'];
+                                        }
                                     }
                                     
                                     $headerRows[] = $headerName;
+
                                     self::sqlColumnDefn( $query, $sqlColumns, $headerName );
                                 } else if ( $relationField == 'phone_type_id' ) {
                                     $headerName   = $field .'-' . 'Phone Type';
