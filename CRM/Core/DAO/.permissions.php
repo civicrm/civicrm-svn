@@ -45,6 +45,12 @@ function _civicrm_api3_permissions($entity, $action)
             'get'    => array('view all activities'),
             'update' => array(),
         ),
+        'address' => array(
+            'create' => array('add contacts'),
+            'delete' => array('delete contacts'),
+            'get'    => array('view all contacts'),
+            'update' => array('edit all contacts'),
+        ),
         'contact' => array(
             'create' => array('add contacts'),
             'delete' => array('delete contacts'),
@@ -68,6 +74,12 @@ function _civicrm_api3_permissions($entity, $action)
             'delete' => array('access all custom data'),
             'get'    => array('access all custom data'),
             'update' => array('access all custom data'),
+        ),
+        'email' => array(
+            'create' => array('add contacts'),
+            'delete' => array('delete contacts'),
+            'get'    => array('view all contacts'),
+            'update' => array('edit all contacts'),
         ),
         'event' => array(
             'create' => array('access CiviEvent', 'edit all events'),
@@ -111,6 +123,12 @@ function _civicrm_api3_permissions($entity, $action)
             'get'    => array(),
             'update' => array('edit groups'),
         ),
+        'location' => array(
+            'create' => array('add contacts'),
+            'delete' => array('delete contacts'),
+            'get'    => array('view all contacts'),
+            'update' => array('edit all contacts'),
+        ),
         'membership' => array(
             'create' => array('access CiviMember', 'edit memberships'),
             'delete' => array('access CiviMember', 'delete in CiviMember'),
@@ -135,6 +153,12 @@ function _civicrm_api3_permissions($entity, $action)
             'get'    => array('access CiviMember'),
             'update' => array('access CiviMember', 'edit memberships'),
         ),
+        'note' => array(
+            'create' => array('add contacts'),
+            'delete' => array('delete contacts'),
+            'get'    => array('view all contacts'),
+            'update' => array('edit all contacts'),
+        ),
         'participant' => array(
             'create' => array('access CiviEvent', 'register for events'),
             'delete' => array('access CiviEvent', 'edit event participants'),
@@ -147,6 +171,12 @@ function _civicrm_api3_permissions($entity, $action)
             'get'    => array('access CiviEvent', 'view event participants'),
             'update' => array('access CiviEvent', 'edit event participants'),
         ),
+        'phone' => array(
+            'create' => array('add contacts'),
+            'delete' => array('delete contacts'),
+            'get'    => array('view all contacts'),
+            'update' => array('edit all contacts'),
+        ),
         'pledge' => array(
             'create' => array('access CiviPledge', 'edit pledges'),
             'delete' => array('access CiviPledge', 'delete in CiviPledge'),
@@ -158,6 +188,12 @@ function _civicrm_api3_permissions($entity, $action)
             'delete' => array('access CiviPledge', 'delete in CiviPledge'),
             'get'    => array('access CiviPledge'),
             'update' => array('access CiviPledge', 'edit pledges'),
+        ),
+        'website' => array(
+            'create' => array('add contacts'),
+            'delete' => array('delete contacts'),
+            'get'    => array('view all contacts'),
+            'update' => array('edit all contacts'),
         ),
     );
 
