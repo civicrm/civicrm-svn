@@ -580,9 +580,13 @@ class CRM_Export_BAO_Export
                             foreach ( $value as $relationField => $relationValue ) {
                                 // below block is same as primary block (duplicate)
                                 if ( isset( $relationQuery[$field]->_fields[$relationField]['title'] ) ) {
-                                    $headerName   = $field .'-' . $relationQuery[$field]->_fields[$relationField]['name'];
+                                    if ( $relationQuery[$field]->_fields[$relationField]['name'] == 'name' ) {
+                                        $headerName = $field .'-' . $relationField;
+                                    } else {
+                                        $headerName = $field .'-' . $relationQuery[$field]->_fields[$relationField]['name'];
+                                    }
+                                    
                                     $headerRows[] = $headerName;
-
                                     self::sqlColumnDefn( $query, $sqlColumns, $headerName );
                                 } else if ( $relationField == 'phone_type_id' ) {
                                     $headerName   = $field .'-' . 'Phone Type';
@@ -697,8 +701,9 @@ class CRM_Export_BAO_Export
                             } else {
                                 $fieldValue = '';
                             }
+                            $relationField = '_'. $relationField;
                             if ( $relationField == 'id' ) {
-                                $row[$field . $relationField] = $relDAO->contact_id;
+                                $row[$field .$relationField] = $relDAO->contact_id;
                             } else  if ( is_array( $relationValue ) && $relationField == 'location' ) {
                                 foreach ( $relationValue as $ltype => $val ) {
                                     foreach ( array_keys( $val ) as $fld ) {
@@ -826,7 +831,8 @@ class CRM_Export_BAO_Export
                 }
 
                 //remove organization name for individuals if it is set for current employer
-                if ( CRM_Utils_Array::value('contact_type', $row ) && $row['contact_type'] == 'Individual' && array_key_exists('organization_name', $row ) ) {
+                if ( CRM_Utils_Array::value('contact_type', $row ) && 
+                     $row['contact_type'] == 'Individual' && array_key_exists('organization_name', $row ) ) {
                     $row['organization_name'] = '';
                 }
 
@@ -1090,10 +1096,9 @@ class CRM_Export_BAO_Export
     }
 
     static function writeDetailsToTable( $tableName, &$details, &$sqlColumns )
-    {
+    {        
         if ( empty( $details ) ) {
             return;
-
         }
         
         $sql = "
@@ -1129,8 +1134,10 @@ FROM   $tableName
 INSERT INTO $tableName $sqlColumnString
 VALUES $sqlValueString
 ";
-        
+
+       
         CRM_Core_DAO::executeQuery( $sql );
+
     }
 
     static function createTempTable( &$sqlColumns )
