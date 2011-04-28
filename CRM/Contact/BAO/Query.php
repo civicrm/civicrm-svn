@@ -4086,6 +4086,9 @@ INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRel
         }
 
         if ( strpos( $from, $_rTypeFrom ) === false ) {
+            // lets replace all the INNER JOIN's in the $from so we dont exclude other data
+            // this happens when we have an event_type in the quert (CRM-7969)
+            $from  = str_replace( "INNER JOIN", "LEFT JOIN", $from );
             $from .= $_rTypeFrom;
             $where = $_rTypeWhere;
         }
