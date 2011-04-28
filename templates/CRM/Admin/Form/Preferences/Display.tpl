@@ -102,6 +102,14 @@
                </td>
             </tr>
 	{/if}
+    {if $form.wysiwyg_input_format.html}
+        <tr id="crm-preferences-display-form-block-wysiwyg_input_format" style="display:none;">
+            <td class="label">{$form.wysiwyg_input_format.label}</td>
+            <td>{$form.wysiwyg_input_format.html}{literal}<script type="text/javascript">cj(document).ready(function() { if (cj('#wysiwyg_editor').val() == 4) cj('#crm-preferences-display-form-block-wysiwyg_input_format').show(); });</script>{/literal}
+            </td>
+        </tr>    
+    {/if}
+
 	{if $form.display_name_format.html}
             <tr class="crm-preferences-display-form-block-display_name_format" >
                <td class="label">{$form.display_name_format.label}</td>

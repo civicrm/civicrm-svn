@@ -832,10 +832,9 @@ class CRM_Utils_Date
                                     );
         
         if ( array_key_exists( $birthDateFormat, $supportableFormats ) ) {
-            $birthDateFormat = array( 'qfMapping' => $supportableFormats[$birthDateFormat],
-                                      'dateParts' => $formatMapping );
+            $birthDateFormat = array( 'qfMapping' => $supportableFormats[$birthDateFormat] );
         }
-                
+ 
         return $birthDateFormat;
     }
 

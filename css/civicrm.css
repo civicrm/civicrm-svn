@@ -3108,3 +3108,8 @@ div#crm-toolTip
 #crm-container .crm-row-highlight {
     background-color: #FFFFCC !important;
 }
+
+#crm-container .civicrm-drupal-wysiwyg .collapsed {
+    background: transparent;
+    padding-left: 0px;
+} 

@@ -1168,7 +1168,8 @@ AND civicrm_membership.is_test = %2";
                 // irrespective of the value, CRM-2888
                 $tempParams['cms_create_account'] = 0;
                 
-                $pending  = $form->_params['is_pay_later'] ? true : false;
+                $pending  = $form->_params['is_pay_later'] ? 
+                    ( ( CRM_Utils_Array::value( 'minimum_fee', $membershipDetails, 0 ) > 0.0 ) ? true : false ) : false;
                 
                 //set this variable as we are not creating pledge for 
                 //separate membership payment contribution.
@@ -1289,14 +1290,18 @@ AND civicrm_membership.is_test = %2";
         require_once 'CRM/Member/PseudoConstant.php';
         $allStatus = CRM_Member_PseudoConstant::membershipStatus( );
 
+        $membershipTypeDetails = CRM_Member_BAO_MembershipType::getMembershipTypeDetails( $membershipTypeID );
+
         // check is it pending. - CRM-4555
         $pending = false;
-        if ( ( $form->_contributeMode == 'notify' || 
-               $form->_params['is_pay_later']     || 
-               ( $form->_params['is_recur']  && $form->_contributeMode == 'direct' ) ) &&
-             ( ( $form->_values['is_monetary'] && $form->_amount > 0.0 ) ||
-               $form->_params['separate_membership_payment'] ) ) {
-            $pending = true;
+        if ( CRM_Utils_Array::value( 'minimum_fee', $membershipTypeDetails ) > 0.0 ) {
+            if ( ( $form->_contributeMode == 'notify' || 
+                   $form->_params['is_pay_later']     || 
+                   ( $form->_params['is_recur']  && $form->_contributeMode == 'direct' ) ) &&
+                 ( ( $form->_values['is_monetary'] && $form->_amount > 0.0 ) ||
+                   CRM_Utils_Array::value( 'separate_membership_payment', $form->_params ) ) ) {
+                $pending = true;
+            }
         }
 
         //decide status here, if needed.
