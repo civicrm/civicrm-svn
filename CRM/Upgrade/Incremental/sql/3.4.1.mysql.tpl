@@ -30,3 +30,12 @@ VALUES
     ( {$domainID}, 'civicrm/admin/options/campaign_type&group=campaign_type&reset=1',      '{ts escape="sql" skip="true"}Campaign Types{/ts}',  'Campaign Types', 'administer CiviCampaign',    '', @adminCampaignID, '1', NULL, 2 ),
     ( {$domainID}, 'civicrm/admin/options/campaign_status&group=campaign_status&reset=1',      '{ts escape="sql" skip="true"}Campaign Status{/ts}',  'Campaign Status', 'administer CiviCampaign',    '', @adminCampaignID, '1', NULL, 3 ),
     ( {$domainID}, 'civicrm/admin/options/engagement_index&group=engagement_index&reset=1', '{ts escape="sql" skip="true"}Engagement Index{/ts}',  'Engagement Index', 'administer CiviCampaign', '', @adminCampaignID, '1', NULL, 4 );
+
+-- insert drupal wysiwyg editor option
+SELECT @option_group_id_we := max(id) from civicrm_option_group where name = 'wysiwyg_editor';
+
+INSERT INTO civicrm_option_value 
+  ( option_group_id, label, value, name, grouping, filter, is_default, weight, description, is_optgroup, is_active, component_id, domain_id, visibility_id )
+VALUES 
+  ( @option_group_id_we, 'Drupal Default Editor', 4, NULL, NULL, 0, NULL, 4, NULL, 0, 1, 1, NULL, NULL );
+
