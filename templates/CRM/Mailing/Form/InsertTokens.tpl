@@ -93,6 +93,8 @@ function selectValue( val ) {
         } else if ( editor == "joomlaeditor" ) { 
             document.getElementById(html_message).value = '' ;
             tinyMCE.execCommand('mceSetContent',false, '');               
+        } else if ( editor =="drupalwysiwyg" ) {
+            //doesn't work! WYSIWYG API doesn't support a clear or replace method       
         } else {	
             document.getElementById(html_message).value = '' ;
         }
@@ -126,6 +128,8 @@ function selectValue( val ) {
         } else if ( editor == "joomlaeditor" ) { 
             cj("#"+ html_message).val( html_body );
             tinyMCE.execCommand('mceSetContent',false, html_body);           
+        } else if ( editor =="drupalwysiwyg" ) {
+            Drupal.wysiwyg.instances[html_message].insert(html_body);
         } else {	
             cj("#"+ html_message).val( html_body );
         }
@@ -135,7 +139,6 @@ function selectValue( val ) {
 
  if ( isMailing ) { 
      document.getElementById("editMessageDetails").style.display = "block";
-    
 
     function verify( select )
     {

@@ -82,7 +82,12 @@ function stopSpinner( ) {
                 }
                 return true;
             },
-	    load: stopSpinner
+            load: function(event, ui) {
+            	stopSpinner();
+            	if (Drupal && Drupal.attachBehaviors) {
+            	 Drupal.attachBehaviors(ui.panel);
+            	}
+            }
         });        
     });
 {/literal}

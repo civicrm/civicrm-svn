@@ -786,7 +786,11 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         if ( $editor == 'joomla default editor' ) {
             $editor = 'joomlaeditor';
         }
-        
+
+        if ( $editor == 'drupal default editor' ) {
+            $editor = 'drupalwysiwyg';
+        }
+ 
         $this->addElement( $editor, $name, $label, $attributes );
         $this->assign('editor', $editor);
     }    

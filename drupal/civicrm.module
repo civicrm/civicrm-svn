@@ -59,12 +59,24 @@ function civicrm_html_head()
                 continue;
             }
             if ( strpos( $line, '.js' ) !== false ) {
-                drupal_add_js( drupal_get_path('module', 'civicrm' ) . '/../' . $line );
+                drupal_add_js( drupal_get_path('module', 'civicrm' ) . '/../' . $line, array(
+                    'group' => JS_LIBRARY,
+                    'weight' => 10,
+                    'scope' => 'header',
+                ) );
             } else if ( strpos( $line, '.css' ) !== false ) {
                 drupal_add_css( drupal_get_path('module', 'civicrm' ) . '/../' . $line );
             }
         }
-        
+
+        // add the final assignment
+        drupal_add_js( 'var cj = jQuery.noConflict(true);', array(
+            'type' => 'inline', 
+            'group' => JS_LIBRARY,
+            'weight' => 11,
+            'scope' => 'header',
+        ) );
+
         // add localized calendar js
         $localisation     = explode( '_', $config->lcMessages );
         $localizationFile = drupal_get_path('module', 'civicrm' ) . '/../packages/jquery/jquery-ui-1.8.11/development-bundle/ui/i18n/jquery.ui.datepicker-'. $localisation[0] . '.js';
@@ -75,11 +87,8 @@ function civicrm_html_head()
 
         // add Common.js
         drupal_add_js( drupal_get_path('module', 'civicrm' ) . '/../js/Common.js' );
-
-        // add the final assignment
-        drupal_add_js( 'var cj = jQuery.noConflict(); $ = cj;',
-                       'inline' );
     }
+   
     if ( isset( $config->customCSSURL ) && ! empty( $config->customCSSURL ) ) {
         $head  = "<style type=\"text/css\">@import url({$config->customCSSURL});</style>\n";
     } else {
@@ -310,6 +319,18 @@ function civicrm_initialize( )
         $header = civicrm_html_head();
         if ( ! empty( $header ) ) {
             drupal_add_html_head($header);
+        }
+        
+        if ( CRM_Core_BAO_Preferences::value( 'editor_id' ) == 4 ) { //drupal wysiwyg
+            //we have to ensure that wysiwyg is loaded since some
+            //pages load only with ajax callbacks
+            $formats = filter_formats();
+            foreach ($formats as $id => $format) {
+                wysiwyg_get_profile($id);
+            }
+            $path = drupal_get_path('module', 'filter');
+            drupal_add_js($path . '/filter.js');
+            drupal_add_css($path . '/filter.css');
         }
     }
 
@@ -755,4 +776,85 @@ function civicrm_preprocess_page(&$variables) {
   			$variables['styles'] = drupal_get_css( $variables['css'] ); 
   		} 
   	}
+}
+
+
+/**
+ * Supporting functions to allow using drupal input formats and WYSIWYG API 
+ * as a CiviCRM rich text editor. This code is in the Drupal module because it's
+ * Drupal-version dependent.
+ * 
+ */
+function civicrm_drupal_get_wysiwyg_html($attributes, $value='', $format = NULL) {
+  $form = drupal_get_form('civicrm_drupal_wysiwyg_form', $attributes, $value, $format);
+  unset($form['#theme_wrappers']);
+  
+  //fix the elements to work with civi/QuickForm
+  $id = $attributes['id'];
+  $name = $attributes['name'];
+  $form[$id]['value']['#name'] = $name . '[value]';
+  $form[$id]['format']['format']['#name'] = $name . '[format]';
+  $html = drupal_render($form);  
+  
+  //adds settings information. Required for instances loaded via ajax
+  $embed_prefix = "\n<!--//--><![CDATA[//><!--\n";
+  $embed_suffix = "\n//--><!]]>\n";
+  $element = array(
+    '#tag' => 'script',
+    '#value' => '',
+    '#attributes' => array(
+      'type' => 'text/javascript',
+    ),
+  );
+  $script = drupal_add_js();
+  
+  $js_element = $element;
+  $js_element['#value_prefix'] = $embed_prefix;
+  $js_element['#value'] = 'jQuery.extend(Drupal.settings, ' . drupal_json_encode(drupal_array_merge_deep_array($script['settings']['data'])) . ");";
+  $js_element['#value_suffix'] = $embed_suffix;
+  $html .= theme('html_tag', array('element' => $js_element));
+  return $html;
+}
+
+function civicrm_drupal_wysiwyg_form($form, $form_state, $attributes, $value='', $format = NULL) {
+  $id = $attributes['id'];
+  $form = array();
+  $form[$id] = array(
+    '#type' => 'text_format',
+    '#base_type' => 'textarea',
+    '#title' => '', //$attributes['label'],  //title comes from quickform output
+    '#default_value' => $value,
+    '#rows' => $attributes['rows'],
+    '#cols' => $attributes['cols'],
+    '#id' => $attributes['id'],
+    '#format' => $format,
+  );  
+
+  return $form;
+}
+
+function civicrm_drupal_wysiwyg_update_value($element, $caller) {
+  // constant values override both default and submitted ones
+  // default values are overriden by submitted
+  $value = $element->_findValue($caller->_constantValues);
+  if (null === $value) {
+    $value = $element->_findValue($caller->_submitValues);
+    if (null === $value) {
+        $value = $element->_findValue($caller->_defaultValues);
+    }
+    else {
+      if (is_array($value)) {
+        $element->format = $value['format'];
+        $value = $value['value'];
+      }
+    }
+  }
+  if (null !== $value) {
+    if (isset($element->format)) {
+      $element->setValue(check_markup($value, $element->format));
+    }
+    else {
+      $element->setValue($value);
+    }
+  } 
 }
