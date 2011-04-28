@@ -3503,6 +3503,13 @@ WHERE  id IN ( $groupIDs )
                     $this->_simpleFromClause = self::fromClause( $this->_whereTables, null, null,
                                                                  $this->_primaryLocation, $this->_mode );
 
+                    // if we are doing a transform, do it here
+                    // CRM-7969
+                    $having = null;
+                    if ( $this->_displayRelationshipType ) {
+                        $this->filterRelatedContacts( $this->_simpleFromClause, $where, $having );
+                    }
+
                     $limitQuery = "$limitSelect {$this->_simpleFromClause} $where $order $limit";
                     $limitDAO   = CRM_Core_DAO::executeQuery( $limitQuery );
                     $limitIDs   = array( );
