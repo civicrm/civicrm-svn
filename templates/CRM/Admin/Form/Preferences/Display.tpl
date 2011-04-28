@@ -96,20 +96,19 @@
                <td class="label">{$form.wysiwyg_editor.label}</td>
                <td>{$form.wysiwyg_editor.html}</td>
             </tr>
+            {if $form.wysiwyg_input_format.html}
+            <tr id="crm-preferences-display-form-block-wysiwyg_input_format" style="display:none;">
+                <td class="label">{$form.wysiwyg_input_format.label}</td>
+                <td>{$form.wysiwyg_input_format.html}{literal}<script type="text/javascript">cj(document).ready(function() { if (cj('#wysiwyg_editor').val() == 4) cj('#crm-preferences-display-form-block-wysiwyg_input_format').show(); });</script>{/literal}
+                </td>
+            </tr>    
+            {/if}
             <tr class="crm-preferences-display-form-block-description">
                <td>&nbsp;</td>
                <td class="description">{ts}Select the HTML WYSIWYG Editor provided for fields that allow HTML formatting. Select 'Textarea' if you don't want to provide a WYSIWYG Editor (users will type text and / or HTML code into plain text fields).{/ts} {help id="id-wysiwyg_editor"}
                </td>
             </tr>
 	{/if}
-    {if $form.wysiwyg_input_format.html}
-        <tr id="crm-preferences-display-form-block-wysiwyg_input_format" style="display:none;">
-            <td class="label">{$form.wysiwyg_input_format.label}</td>
-            <td>{$form.wysiwyg_input_format.html}{literal}<script type="text/javascript">cj(document).ready(function() { if (cj('#wysiwyg_editor').val() == 4) cj('#crm-preferences-display-form-block-wysiwyg_input_format').show(); });</script>{/literal}
-            </td>
-        </tr>    
-    {/if}
-
 	{if $form.display_name_format.html}
             <tr class="crm-preferences-display-form-block-display_name_format" >
                <td class="label">{$form.display_name_format.label}</td>
