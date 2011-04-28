@@ -262,17 +262,17 @@ class CRM_Export_BAO_Export
             switch ( $queryMode )  {
             case CRM_Contact_BAO_Query::MODE_EVENT :
                 $paymentFields  = true;
-                $paymentTableId = "participant_id";
+                $paymentTableId = 'participant_id';
                 break;
             case CRM_Contact_BAO_Query::MODE_MEMBER :
                 $paymentFields  = true;
-                $paymentTableId = "membership_id";
+                $paymentTableId = 'membership_id';
                 break;
             case CRM_Contact_BAO_Query::MODE_PLEDGE :
                 require_once 'CRM/Pledge/BAO/Query.php';
                 $extraReturnProperties = CRM_Pledge_BAO_Query::extraReturnProperties( $queryMode );
                 $paymentFields  = true;
-                $paymentTableId = "pledge_payment_id";
+                $paymentTableId = 'pledge_payment_id';
                 break;
             case CRM_Contact_BAO_Query::MODE_CASE :
                 require_once 'CRM/Case/BAO/Query.php';
@@ -601,11 +601,16 @@ class CRM_Export_BAO_Export
                                     $headerName   = $field .'-' . 'Im Service Provider';
                                     $headerRows[] = $headerName;
                                     self::sqlColumnDefn( $query, $sqlColumns, $headerName );
+                                } else if ( $relationField == 'state_province_id' ) {
+                                    $headerName   = $field .'-' . 'state_province_id';
+                                    $headerRows[] = $headerName;
+                                    self::sqlColumnDefn( $query, $sqlColumns, $headerName );
                                 } else if ( is_array( $relationValue ) && $relationField == 'location' ) {
                                     // fix header for location type case
                                     foreach ( $relationValue as $ltype => $val ) {
                                         foreach ( array_keys( $val ) as $fld ) {
                                             $type = explode( '-', $fld );
+
                                             $hdr = "{$ltype}-" . $relationQuery[$field]->_fields[$type[0]]['title'];
 
                                             if ( CRM_Utils_Array::value( 1, $type ) ) {
@@ -1140,7 +1145,6 @@ INSERT INTO $tableName $sqlColumnString
 VALUES $sqlValueString
 ";
 
-       
         CRM_Core_DAO::executeQuery( $sql );
 
     }
