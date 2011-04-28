@@ -271,6 +271,7 @@ SET    version = '$version'
 
     function processLocales($tplFile, $rev) {
         $smarty = CRM_Core_Smarty::singleton( );                                
+        $smarty->assign( 'domainID', CRM_Core_Config::domainID( ) );
         
         $this->source( $smarty->fetch($tplFile), true );
 
