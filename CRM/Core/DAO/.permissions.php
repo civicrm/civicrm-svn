@@ -130,10 +130,10 @@ function _civicrm_api3_permissions($entity, $action)
             'update' => array('access CiviCRM', 'access CiviMember', 'edit memberships'),
         ),
         'membership_payment' => array(
-            'create' => array('access CiviCRM', 'access CiviMember', 'edit memberships'),
-            'delete' => array('access CiviCRM', 'access CiviMember', 'delete in CiviMember'),
-            'get'    => array('access CiviCRM', 'access CiviMember'),
-            'update' => array('access CiviCRM', 'access CiviMember', 'edit memberships'),
+            'create' => array('access CiviCRM', 'access CiviMember', 'edit memberships', 'access CiviContribute', 'edit contributions'),
+            'delete' => array('access CiviCRM', 'access CiviMember', 'delete in CiviMember', 'access CiviContribute', 'delete in CiviContribute'),
+            'get'    => array('access CiviCRM', 'access CiviMember', 'access CiviContribute'),
+            'update' => array('access CiviCRM', 'access CiviMember', 'edit memberships', 'access CiviContribute', 'edit contributions'),
         ),
         'membership_status' => array(
             'create' => array('access CiviCRM', 'access CiviMember', 'edit memberships'),
@@ -160,10 +160,10 @@ function _civicrm_api3_permissions($entity, $action)
             'update' => array('access CiviCRM', 'access CiviEvent', 'edit event participants'),
         ),
         'participant_payment' => array(
-            'create' => array('access CiviCRM', 'access CiviEvent', 'register for events'),
-            'delete' => array('access CiviCRM', 'access CiviEvent', 'edit event participants'),
-            'get'    => array('access CiviCRM', 'access CiviEvent', 'view event participants'),
-            'update' => array('access CiviCRM', 'access CiviEvent', 'edit event participants'),
+            'create' => array('access CiviCRM', 'access CiviEvent', 'register for events', 'access CiviContribute', 'edit contributions'),
+            'delete' => array('access CiviCRM', 'access CiviEvent', 'edit event participants', 'access CiviContribute', 'delete in CiviContribute'),
+            'get'    => array('access CiviCRM', 'access CiviEvent', 'view event participants', 'access CiviContribute'),
+            'update' => array('access CiviCRM', 'access CiviEvent', 'edit event participants', 'access CiviContribute', 'edit contributions'),
         ),
         'phone' => array(
             'create' => array('access CiviCRM', 'add contacts'),
@@ -178,10 +178,10 @@ function _civicrm_api3_permissions($entity, $action)
             'update' => array('access CiviCRM', 'access CiviPledge', 'edit pledges'),
         ),
         'pledge_payment' => array(
-            'create' => array('access CiviCRM', 'access CiviPledge', 'edit pledges'),
-            'delete' => array('access CiviCRM', 'access CiviPledge', 'delete in CiviPledge'),
-            'get'    => array('access CiviCRM', 'access CiviPledge'),
-            'update' => array('access CiviCRM', 'access CiviPledge', 'edit pledges'),
+            'create' => array('access CiviCRM', 'access CiviPledge', 'edit pledges', 'access CiviContribute', 'edit contributions'),
+            'delete' => array('access CiviCRM', 'access CiviPledge', 'delete in CiviPledge', 'access CiviContribute', 'delete in CiviContribute'),
+            'get'    => array('access CiviCRM', 'access CiviPledge', 'access CiviContribute'),
+            'update' => array('access CiviCRM', 'access CiviPledge', 'edit pledges', 'access CiviContribute', 'edit contributions'),
         ),
         'website' => array(
             'create' => array('access CiviCRM', 'add contacts'),
