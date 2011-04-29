@@ -603,7 +603,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityGetEmpty()
     {
-        $params = array( );
+        $params = array('version' => $this->_apiversion);
         $result = civicrm_api3_activity_get( $params );
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
     }
@@ -647,12 +647,38 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                          'version'			=> $this->_apiversion,
                          'sequential'  =>1, );
         $result = civicrm_api3_activity_get( $params );
+
         $this->assertEquals( 0, $result['is_error'],
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( 13, $result['id'],  'In line ' . __LINE__ );
         $this->assertEquals( 17, $result['values'][0]['source_contact_id'], 'In line ' . __LINE__ );
+
         $this->assertEquals( 1, $result['values'][0]['activity_type_id'],'In line ' . __LINE__ );
         $this->assertEquals( "test activity type id",$result['values'][0]['subject'], 'In line ' . __LINE__ );
+    }
+    
+    /*
+     * test that get functioning does filtering
+     */
+    function testGetFilter(){
+      $params = array(
+                        'source_contact_id'   => 17,
+                        'subject'             => 'Make-it-Happen Meeting',
+                        'activity_date_time'  => '20110316',
+                        'duration'            => 120,
+                        'location'            => 'Pensulvania',
+                        'details'             => 'a test activity',
+                        'status_id'           => 1,
+                        'activity_name'       => 'Test activity type',
+                        'version'             => $this->_apiversion,
+                        'priority_id'         => 1,
+                        );
+      civicrm_api('Activity','Create', $params    );     
+      $result = civicrm_api('Activity','Get', array('version' => 3,'subject' => 'Make-it-Happen Meeting' ));
+      $this->assertEquals(1, $result['count']);
+      $this->assertEquals('Make-it-Happen Meeting', $result['values'][$result['id']]['subject']);
+      civicrm_api('Activity','Delete',array('version' => 3, 'id' => $result['id']));
+      
     }
 
     /**
@@ -709,7 +735,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
 
         //  Retrieve the test value
         $params = array( 'activity_id' => 4,
-                         'activity_type_id' => 5,
+                         'activity_type_id' => 1,
                          'version' =>3, 
                          'sequential' =>1,);
         $result = civicrm_api3_activity_get( $params, true );

@@ -327,18 +327,24 @@ function _civicrm_api3_store_values( &$fields, $params, &$values )
  */
 
 function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
-    $result = array();
+    $entity = substr ($dao->__table , 8);
     if ( !$dao->find() ) {
         return array();
     }
 
     $fields = _civicrm_api3_build_fields_array($dao,$unique);
     $fields = array_intersect(array_keys($fields),array_keys($params));
+    if( isset($params[$entity. "_id"])){
+      //if entity_id is set then treat it as ID (will be overridden by id if set)       
+      $dao->id = $params[$entity. "_id"];
+         
+    }
     if (!$fields) 
-        return;
+         return;
     foreach ($fields as $field) {
         $dao->$field = $params [$field];
     }
+
 }
 
 /*
@@ -1745,12 +1751,19 @@ function civicrm_api3_api_check_permission($api, $params, $throw = false)
 
 /*
  * Function to do a 'standard' api get - when the api is only doing a $bao->find then use this
+ * 
+ * @param string $bao_name name of BAO
+ * @param array $params params from api
+ * @param bool $returnAsSuccess return in api success format
  */
-function _civicrm_api3_basic_get($bao_name, $params){
+function _civicrm_api3_basic_get(&$bao_name, &$params, $returnAsSuccess = TRUE){
      $bao = new $bao_name();
      _civicrm_api3_dao_set_filter ( $bao, $params, FALSE );
-     return civicrm_api3_create_success(_civicrm_api3_dao_to_array ($bao,$params, FALSE),$params,$bao);
-     
+     if($returnAsSuccess){
+       return civicrm_api3_create_success(_civicrm_api3_dao_to_array ($bao,$params, FALSE),$params,$bao);
+     }else{
+       return _civicrm_api3_dao_to_array ($bao,$params, FALSE);
+     }
 }
 
 /*

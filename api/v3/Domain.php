@@ -139,8 +139,7 @@ function civicrm_api3_domain_create( $params ) {
 function civicrm_api3_domain_getfields(){
     require_once 'CRM/Core/DAO/Domain.php';
     $dao = new CRM_Core_DAO_Domain( );
-
-    $fields = $dao->getFields();
+    $fields = _civicrm_api3_build_fields_array($dao, FALSE);
     $fields['domain_version'] = "version of domain";
     $fields['current_domain'] = "BOOL get loaded domain";
     unset ($fields['version']);
