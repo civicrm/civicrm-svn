@@ -721,10 +721,6 @@ class CRM_Contact_BAO_Query
         require_once 'CRM/Core/Component.php';
         CRM_Core_Component::alterQuery( $this, 'select' );
 
-        CRM_Core_Error::debug( 'RP', $this->_returnProperties );
-        CRM_Core_Error::debug( 'EL', $this->_element );
-        CRM_Core_Error::debug( 'MO', $this->_mode );
-
         if ( ! empty( $this->_cfIDs ) ) {
             require_once 'CRM/Core/BAO/CustomQuery.php';
             $this->_customQuery = new CRM_Core_BAO_CustomQuery( $this->_cfIDs, true );
