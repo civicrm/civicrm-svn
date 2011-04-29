@@ -632,7 +632,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             
             if ( array_intersect_key( $fields, $fieldsToIgnore ) ) {
                 $fields = array_diff_key( $fields, $fieldsToIgnore );
-                CRM_Core_Session::setStatus( "Some of the profile fields cannot be configured for this page." );
+                CRM_Core_Session::setStatus( ts('Some of the profile fields cannot be configured for this page.') );
             }
             $addCaptcha = false;
             $fields = array_diff_assoc( $fields, $this->_fields );
@@ -680,7 +680,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                 require_once 'CRM/Utils/ReCAPTCHA.php';
                 $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
                 $captcha->add( $this );
-                $this->assign( "isCaptcha" , true );
+                $this->assign( 'isCaptcha' , true );
             }
 
         }
@@ -699,12 +699,13 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             CRM_Core_OptionGroup::getAssoc( "civicrm_event.amount.{$eventID}", $form->_values['fee'], true );
             
             require_once 'CRM/Core/BAO/Discount.php';
-            $discountedEvent = CRM_Core_BAO_Discount::getOptionGroup( $eventID, "civicrm_event");
+            $discountedEvent = CRM_Core_BAO_Discount::getOptionGroup( $eventID, 'civicrm_event' );
             if ( is_array( $discountedEvent ) ) {
                 foreach ( $discountedEvent as $key => $optionGroupId ) {
                     $name = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $optionGroupId );
                     CRM_Core_OptionGroup::getAssoc( $name, $form->_values['discount'][$key], true );
-                    $form->_values['discount'][$key]["name"] = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $optionGroupId, 'label');;
+                    $form->_values['discount'][$key]['name'] = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 
+                                                                                            $optionGroupId, 'label');;
                 }
             }
         }
@@ -745,7 +746,6 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         // create CMS user
         if ( CRM_Utils_Array::value( 'cms_create_account', $this->_params ) ) {
             $this->_params['contactID'] = $contactID;
-            
             $mail = 'email-5';
             
             // we should use primary email for 
@@ -758,11 +758,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                  !CRM_Utils_Array::value( 'is_monetary', $this->_values['event'] ) ) {
                 $mail = 'email-Primary';
             }
-            require_once "CRM/Core/BAO/CMSUser.php";
-            if ( ! CRM_Core_BAO_CMSUser::create( $this->_params, $mail ) ) {
-                CRM_Core_Error::statusBounce( ts('Your profile is not saved and Account is not created.') );
-            }
-        }
+                }
         //get the amount of primary participant
         if( CRM_Utils_Array::value('is_primary', $this->_params ) ) {
             $this->_params['fee_amount'] = $this->get( 'primaryParticipantAmount' );
@@ -807,7 +803,11 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             $this->_params['participantID'] = $participant->id;
             $this->set ( 'primaryParticipant',  $this->_params );
         } 
-        $this->assign('action',$this->_action); 
+        $this->assign('action',$this->_action);
+        require_once 'CRM/Core/BAO/CMSUser.php';
+        if ( ! CRM_Core_BAO_CMSUser::create( $this->_params, $mail ) ) {
+            CRM_Core_Error::statusBounce( ts('Your profile is not saved and Account is not created.') );
+        }
     }
 
     /**
