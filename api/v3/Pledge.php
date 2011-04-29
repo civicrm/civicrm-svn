@@ -249,10 +249,15 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
   
   if ( array_key_exists( 'original_installment_amount', $params ) ) {
     $values['installment_amount'] = $params['original_installment_amount'];
+    //it seems it will only create correctly with BOTH installment amount AND pledge_installment_amount set
+    //pledge installment amount required for pledge payments
+    $values['pledge_installment_amount'] = $params['original_installment_amount'];
   }
+
   if ( array_key_exists( 'pledge_original_installment_amount', $params ) ) {
     $values['installment_amount'] = $params['pledge_original_installment_amount'];
   }
+ 
   if ( array_key_exists( 'status_id', $params ) ){
     $values['pledge_status_id'] = $params['status_id'];
   }
