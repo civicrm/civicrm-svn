@@ -57,7 +57,7 @@ function civicrm_api3_participant_create($params)
 {
     _civicrm_api3_initialize(true);
     try{
-        if ( isset($params['status_id'] )) {
+        if ( ! isset($params['status_id'] )) {
             $params['participant_status_id']= $params['status_id'] = 1;
         }
 
@@ -148,7 +148,7 @@ function civicrm_api3_participant_get( $params ) {
         $sql .= " ORDER BY $sort ";
     }
     $sql .= " LIMIT $offset, $rowCount ";
-    $dao =& CRM_Core_DAO::executeQuery( $sql, CRM_Core_DAO::$_nullArray );
+    $dao =& CRM_Core_DAO::executeQuery( $sql );
 
     $participant = array( );
     while ( $dao->fetch( ) ) {
