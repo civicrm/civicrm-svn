@@ -771,6 +771,6 @@ class CRM_Utils_Hook {
         $config = CRM_Core_Config::singleton();
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userHookClass) . '.php');
         $null =& CRM_Core_DAO::$_nullObject;
-        return eval("return {$config->userHookClass}::invoke(4, \$entity, \$action, &\$params, &\$permissions, \$null, 'civicrm_alterAPIPermissions');");
+        return eval("return {$config->userHookClass}::invoke(4, \$entity, \$action, \$params, \$permissions, \$null, 'civicrm_alterAPIPermissions');");
     }
 }
