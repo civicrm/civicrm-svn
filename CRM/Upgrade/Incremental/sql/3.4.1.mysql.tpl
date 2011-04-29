@@ -39,3 +39,6 @@ INSERT INTO civicrm_option_value
 VALUES 
   ( @option_group_id_we, 'Drupal Default Editor', 4, NULL, NULL, 0, NULL, 4, NULL, 0, 1, 1, NULL, NULL );
 
+-- CRM-7988 allow negative start and end date offsets for custom fields
+ALTER TABLE civicrm_custom_field MODIFY start_date_years INT(10);
+ALTER TABLE civicrm_custom_field MODIFY end_date_years INT(10);
