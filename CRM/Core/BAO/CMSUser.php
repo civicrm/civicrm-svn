@@ -236,7 +236,7 @@ class CRM_Core_BAO_CMSUser
         $loginUrl =  $config->userFrameworkBaseURL;
         if ( $isJoomla ) {
             $loginUrl  = str_replace( 'administrator/', '', $loginUrl );
-            $loginUrl .= 'index.php?option=com_user&view=login';
+            $loginUrl .= 'index.php?option=com_users&view=login';
         } elseif ( $isDrupal ) {
             $loginUrl .= 'user';
             // For Drupal we can redirect user to current page after login by passing it as destination.

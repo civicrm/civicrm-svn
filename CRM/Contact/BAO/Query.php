@@ -3443,7 +3443,7 @@ WHERE  id IN ( $groupIDs )
 
                         $order = " ORDER BY $orderBy";
                         
-                        if ( $sortOrder ) {
+                       if ( $sortOrder ) {
                             $order .= " $sortOrder";
                         }
                     }
