@@ -539,20 +539,13 @@ class CRM_Contact_BAO_Query
 
         foreach ($this->_fields as $name => $field) {
 
-            //skip component fields
-            if ( substr( $name, 0, 12 ) == 'participant_' ) {
-                require_once 'CRM/Event/BAO/Query.php';
-                CRM_Event_BAO_Query::select( $this );
-            }
-
-            if  ( substr( $name, 0, 7  ) == 'pledge_' ) {
-                require_once 'CRM/Pledge/BAO/Query.php';
-                CRM_Pledge_BAO_Query::select( $this );
-            }
-            
-            if ( substr( $name, 0, 5  ) == 'case_' ) {
-                require_once 'CRM/Case/BAO/Query.php';
-                CRM_Case_BAO_Query::select( $this );
+            // skip component fields
+            // there are done by the alter query below
+            // and need not be done on every field
+            if ( ( substr( $name, 0, 12 ) == 'participant_' ) ||
+                 ( substr( $name, 0, 7  ) == 'pledge_' )      ||
+                 ( substr( $name, 0, 5  ) == 'case_' ) ) {
+                continue;
             }
 
             // redirect to activity select clause
@@ -715,6 +708,7 @@ class CRM_Contact_BAO_Query
                     }
                 }
             }
+
         }
         
         // add location as hierarchical elements
@@ -722,10 +716,14 @@ class CRM_Contact_BAO_Query
 
         // add multiple field like website
         $this->addMultipleElements( );
-        
+
         //fix for CRM-951
         require_once 'CRM/Core/Component.php';
         CRM_Core_Component::alterQuery( $this, 'select' );
+
+        CRM_Core_Error::debug( 'RP', $this->_returnProperties );
+        CRM_Core_Error::debug( 'EL', $this->_element );
+        CRM_Core_Error::debug( 'MO', $this->_mode );
 
         if ( ! empty( $this->_cfIDs ) ) {
             require_once 'CRM/Core/BAO/CustomQuery.php';
