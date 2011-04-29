@@ -117,21 +117,26 @@ function _civicrm_api3_get_BAO ($name) {
  * @param array $params array of fields to check
  * @param array $daoName string DAO to check for required fields (create functions only)
  * @param array $keys list of required fields. A value can be an array denoting that either this or that is required.
+ * @param bool $verifyDAO
  * @return null or throws error if there the required fields not present
  */
 
-function civicrm_api3_verify_mandatory ($params, $daoName = null, $keys = array() ) {
+function civicrm_api3_verify_mandatory ($params, $daoName = null, $keys = array(), $verifyDAO = TRUE ) {
     if ( ! is_array( $params ) ) {
         throw new Exception ('Input variable `params` is not an array');
     }
 
-    if ($daoName != null) {
+    if ($daoName != null && $verifyDAO) {
         if(!is_array($unmatched =_civicrm_api3_check_required_fields( $params, $daoName, true))){
             $unmatched = array();
         }
     }
-    $keys[] = 'version';//required from v3 onwards
-
+    require_once 'CRM/Utils/Array.php';
+    if(CRM_Utils_Array::value('id',$params)){
+      $keys = array('version');
+    }else{
+      $keys[] = 'version';//required from v3 onwards
+    } 
     foreach ($keys as $key) {
         if(is_array($key)){
             $match = 0;
@@ -1756,7 +1761,7 @@ function civicrm_api3_api_check_permission($api, $params, $throw = false)
  * @param array $params params from api
  * @param bool $returnAsSuccess return in api success format
  */
-function _civicrm_api3_basic_get(&$bao_name, &$params, $returnAsSuccess = TRUE){
+function _civicrm_api3_basic_get($bao_name, &$params, $returnAsSuccess = TRUE){
      $bao = new $bao_name();
      _civicrm_api3_dao_set_filter ( $bao, $params, FALSE );
      if($returnAsSuccess){
