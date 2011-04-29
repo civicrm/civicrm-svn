@@ -141,30 +141,7 @@ try {
   _civicrm_api3_initialize( true );
 
     civicrm_api3_verify_mandatory($params);
-
-    $bao = new CRM_Pledge_BAO_Payment();
-    $fields = array_keys($bao->fields());
-    foreach ( $fields as $name) {
-        if (array_key_exists($name, $params)) {
-            $bao->$name = $params[$name];
-        }
-    }
-
-    if(empty($params['pledge_payment_id']) && isset($params['id'])){
-      $bao->id = $params['id'];   
-    }
-
-    if ( $bao->find() ) {
-      $results = array();
-      while ( $bao->fetch() ) {
-        _civicrm_api3_object_to_array( $bao, $result );
-        $results[$bao->id] = $result;
-      }
- 
-      return civicrm_api3_create_success($results,$params,$bao);
-    } else {
-      return civicrm_api3_create_success(array(),$params,$bao);
-    }
+    return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);  
 
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
@@ -192,7 +169,7 @@ function civicrm_api3_pledge_payment_getfields($action = 'get'){
 
     $dao = new CRM_Pledge_BAO_Payment();
 
-    $fields = $dao->getFields();
+    $fields = $dao->fields();
     switch ($action){
       case 'create' :
         $fields['option.create_new'] = "Create new field rather than update an unpaid payment";

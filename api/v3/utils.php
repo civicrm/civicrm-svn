@@ -81,11 +81,16 @@ function _civicrm_api3_get_DAO ($name) {
     if (!$dao) {
       require ('CRM/Core/DAO/.listAll.php');
     }
+
     
     
     if (strpos($name, 'civicrm_api3') !== false) {
         $last = strrpos ($name, '_') ;
         $name = substr ($name, 13, $last -13);// len ('civicrm_api3_') == 13
+        if($name =='pledge_payment'){
+          //for some reason pledge_payment doesn't follow normal conventions of BAO being the same as table name
+          $name = 'Payment';
+        }
         $name = ucfirst ($name);
     }
     return $dao[$name];
@@ -317,13 +322,17 @@ function _civicrm_api3_store_values( &$fields, $params, &$values )
     return $valueFound;
 }
 
-function _civicrm_api3_dao_set_filter (&$dao,$params ) {
+/*
+ * Function transfers the filters being passed into the DAO onto the params object
+ */
+
+function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
     $result = array();
     if ( !$dao->find() ) {
         return array();
     }
 
-    $fields = $dao->fields();
+    $fields = _civicrm_api3_build_fields_array($dao,$unique);
     $fields = array_intersect(array_keys($fields),array_keys($params));
     if (!$fields) 
         return;
@@ -332,6 +341,21 @@ function _civicrm_api3_dao_set_filter (&$dao,$params ) {
     }
 }
 
+/*
+ * build fields array. This is the array of fields as it relates to the given DAO
+ * returns unique fields as keys by default but if set but can return by DB fields
+ */
+function _civicrm_api3_build_fields_array(&$dao, $unique = TRUE){
+      $fields = $dao->fields();
+      if ($unique){
+        return $fields;
+      }
+      
+      foreach($fields as $field){
+        $dbFields[$field['name']] = $field;
+      }
+      return $dbFields;
+}
 /**
  * Converts an DAO object to an array 
  *
@@ -340,17 +364,18 @@ function _civicrm_api3_dao_set_filter (&$dao,$params ) {
  * @static void
  * @access public
  */
-function _civicrm_api3_dao_to_array (&$dao, $params = null) {
+function _civicrm_api3_dao_to_array (&$dao, $params = null,$uniqueFields = TRUE) {
     $result = array();
     if ( !$dao->find() ) {
         return array();
     }
 
-    $tmpFields = $dao->fields();
-    $fields = array_keys($tmpFields);
+
+    $fields = array_keys(_civicrm_api3_build_fields_array(&$dao, $uniqueFields));
     if ($return) {
         $fields = array_intersect($fields,$return);
     }
+
     while ( $dao->fetch() ) {
         $tmp = array();
         foreach( $fields as $key ) {
@@ -377,17 +402,8 @@ function _civicrm_api3_dao_to_array (&$dao, $params = null) {
  */
 function _civicrm_api3_object_to_array( &$dao, &$values,$uniqueFields = FALSE )
 {
-    $tmpFields = $dao->fields();
-    $fields = array();
-    //rebuild $fields array to fix unique name of the fields
-    if(!empty($uniqueFields)){
-        $fields = $tmpFields;
-    }else{
-        foreach( $tmpFields as $key => $val ) {
-            $fields[$val["name"]]  = $val;
-        }
-    }
 
+    $fields = _civicrm_api3_build_fields_array($dao,$uniqueFields);
     foreach( $fields as $key => $value ) {
         if (array_key_exists($key, $dao)) {
             $values[$key] = $dao->$key;
@@ -1731,12 +1747,9 @@ function civicrm_api3_api_check_permission($api, $params, $throw = false)
  * Function to do a 'standard' api get - when the api is only doing a $bao->find then use this
  */
 function _civicrm_api3_basic_get($bao_name, $params){
-     if(!$bao_name == 'CRM_Campaign_BAO_Survey'){
-       return;
-     }
-     $bao = new $bao_name( );
-     _civicrm_api3_dao_set_filter ( $bao, $params );
-     return civicrm_api3_create_success(_civicrm_api3_dao_to_array ($bao,$params),$params,$bao);
+     $bao = new $bao_name();
+     _civicrm_api3_dao_set_filter ( $bao, $params, FALSE );
+     return civicrm_api3_create_success(_civicrm_api3_dao_to_array ($bao,$params, FALSE),$params,$bao);
      
 }
 
