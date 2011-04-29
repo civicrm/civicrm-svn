@@ -455,6 +455,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                     }
                     
                     $this->_newContributions[] = $newContribution['id'];
+                    $formatted['contribution_id'] = $newContribution['id'];
                                       
                     //return soft valid since we need to show how soft credits were added
                     if ( CRM_Utils_Array::value( 'soft_credit_to', $formatted ) ) {
@@ -523,6 +524,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
             }
             
             $this->_newContributions[] = $newContribution['id'];
+            $formatted['contribution_id'] = $newContribution['id'];
                     
             //return soft valid since we need to show how soft credits were added
             if ( CRM_Utils_Array::value( 'soft_credit_to', $formatted ) ) {
