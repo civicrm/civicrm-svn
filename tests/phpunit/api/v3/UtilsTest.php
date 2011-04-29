@@ -98,8 +98,10 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
 
     function testCheckPermissionSkip() {
         CRM_Core_Permission_UnitTests::$permissions = array ('access CiviCRM' );
-        $this->assertFalse(civicrm_api3_api_check_permission('contact', 'create', array('check_permissions' => true), false), 'lacking permissions should not be enough');
-        $this->assertTrue(civicrm_api3_api_check_permission('contact', 'create', array('check_permissions' => false), false), 'permission check should be skippable');
+        $params = array('check_permissions' => true);
+        $this->assertFalse(civicrm_api3_api_check_permission('contact', 'create', $params, false), 'lacking permissions should not be enough');
+        $params = array('check_permissions' => false);
+        $this->assertTrue(civicrm_api3_api_check_permission('contact', 'create', $params, false), 'permission check should be skippable');
     }
 
     /*
