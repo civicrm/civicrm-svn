@@ -1721,7 +1721,7 @@ function civicrm_api3_check_contact_dedupe( $params ) {
  *
  * @return bool whether the current API user has the permission to make the call
  */
-function civicrm_api3_api_check_permission($entity, $action, $params, $throw = true)
+function civicrm_api3_api_check_permission($entity, $action, &$params, $throw = true)
 {
     // return early if we’re told explicitly to skip the permission check
     if (isset($params['check_permissions']) and $params['check_permissions'] == false) return true;
@@ -1729,7 +1729,7 @@ function civicrm_api3_api_check_permission($entity, $action, $params, $throw = t
     require_once 'CRM/Core/Permission.php';
 
     require_once 'CRM/Core/DAO/.permissions.php';
-    $permissions = _civicrm_api3_permissions($entity, $action);
+    $permissions = _civicrm_api3_permissions($entity, $action, &$params);
 
     foreach ($permissions as $perm) {
         if (!CRM_Core_Permission::check($perm)) {

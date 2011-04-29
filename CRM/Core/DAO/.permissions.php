@@ -34,7 +34,7 @@
  *
  */
 
-function _civicrm_api3_permissions($entity, $action)
+function _civicrm_api3_permissions($entity, $action, &$params)
 {
     $entity = strtolower($entity);
     $action = strtolower($action);
