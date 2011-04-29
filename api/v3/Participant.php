@@ -139,7 +139,8 @@ function civicrm_api3_participant_get( $params ) {
     }
 
     $newParams =& CRM_Contact_BAO_Query::convertFormValues( $params);
-    $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null );
+    $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null,
+                                        false, false, CRM_Contact_BAO_Query::MODE_EVENT );
     list( $select, $from, $where , $having) = $query->query( );
 
     $sql = "$select $from $where $having";

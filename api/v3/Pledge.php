@@ -178,7 +178,8 @@ function civicrm_api3_pledge_get( $params ) {
 
     $newParams =& CRM_Contact_BAO_Query::convertFormValues( $inputParams );
 
-    $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null );
+    $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null,
+                                        false, false, CRM_Contact_BAO_Query::MODE_PLEDGE );
     list( $select, $from, $where ) = $query->query( );
 
     $sql = "$select $from $where";
