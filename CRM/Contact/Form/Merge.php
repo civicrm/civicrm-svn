@@ -203,8 +203,8 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $subtypes = CRM_Contact_BAO_ContactType::subTypePairs( null, true, '' );
 
         $this->assign('contact_type', $main['contact_type']);
-        $this->assign('main_contact_subtype',  $subtypes[$main['contact_sub_type']]);
-        $this->assign('other_contact_subtype', $subtypes[$other['contact_sub_type']]);
+        $this->assign('main_contact_subtype',  CRM_Utils_Array::value( 'contact_sub_type', $subtypes[$main] ) );
+        $this->assign('other_contact_subtype', CRM_Utils_Array::value( 'contact_sub_type', $subtypes[$other] ) );
         $this->assign('main_name',    $main['display_name']);
         $this->assign('other_name',   $other['display_name']);
         $this->assign('main_cid',     $main['contact_id']);

@@ -1095,7 +1095,7 @@ WHERE  contribution_id = {$this->_id}
             require_once 'CRM/Price/BAO/Set.php';
             CRM_Price_BAO_Set::processAmount( $this->_priceSet['fields'], 
                                               $submittedValues, $lineItem[$priceSetId] );
-            $submittedValues['total_amount'] = $submittedValues['amount'];
+            $submittedValues['total_amount'] = CRM_Utils_Array::value( 'amount', $submittedValues );
         } 
         if ( !CRM_Utils_Array::value( 'total_amount', $submittedValues ) ) {
             $submittedValues['total_amount'] = $this->_values['total_amount']; 
