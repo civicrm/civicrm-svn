@@ -833,8 +833,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      *
      * @return int id of created contribution
      */
-    function contributionCreate($cID,$cTypeID )
+    function contributionCreate($cID,$cTypeID, $invoiceID = 67890, $trxnID = 12345 )
     {
+
 
 
         $params = array(
@@ -847,8 +848,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'non_deductible_amount'  => 10.00,
                         'fee_amount'             => 50.00,
                         'net_amount'             => 90.00,
-                        'trxn_id'                => 12345,
-                        'invoice_id'             => 67890,
+                        'trxn_id'                => $trxnID,
+                        'invoice_id'             => $invoiceID,
                         'source'                 => 'SSF',
                         'version'								 => API_LATEST_VERSION,
                         'contribution_status_id' => 1,
@@ -856,7 +857,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         );
 
         $result = civicrm_api( 'Contribution','create',$params );
-
         return $result['id'];
         
     }

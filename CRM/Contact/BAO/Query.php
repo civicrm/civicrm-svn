@@ -3503,6 +3503,13 @@ WHERE  id IN ( $groupIDs )
                     $this->_simpleFromClause = self::fromClause( $this->_whereTables, null, null,
                                                                  $this->_primaryLocation, $this->_mode );
 
+                    // if we are doing a transform, do it here
+                    // CRM-7969
+                    $having = null;
+                    if ( $this->_displayRelationshipType ) {
+                        $this->filterRelatedContacts( $this->_simpleFromClause, $where, $having );
+                    }
+
                     $limitQuery = "$limitSelect {$this->_simpleFromClause} $where $order $limit";
                     $limitDAO   = CRM_Core_DAO::executeQuery( $limitQuery );
                     $limitIDs   = array( );
@@ -4079,6 +4086,9 @@ INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRel
         }
 
         if ( strpos( $from, $_rTypeFrom ) === false ) {
+            // lets replace all the INNER JOIN's in the $from so we dont exclude other data
+            // this happens when we have an event_type in the quert (CRM-7969)
+            $from  = str_replace( "INNER JOIN", "LEFT JOIN", $from );
             $from .= $_rTypeFrom;
             $where = $_rTypeWhere;
         }

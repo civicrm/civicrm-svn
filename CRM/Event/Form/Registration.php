@@ -1049,12 +1049,15 @@ WHERE  v.option_group_id = g.id
             return $optionsCount;
         }
         
-        $priceSetFields = array( );
-        if ( isset( $priceSet['optionsCountTotal'] ) 
-             && $priceSet['optionsCountTotal'] ) {
+        $priceSetFields = $priceMaxFieldDetails = array( );
+        if ( CRM_Utils_Array::value('optionsCountTotal', $priceSet) ) {
             $priceSetFields = $priceSet['optionsCountDetails']['fields'];
         }
         
+        if ( CRM_Utils_Array::value( 'optionsMaxValueTotal', $priceSet ) ) {
+            $priceMaxFieldDetails = $priceSet['optionsMaxValueDetails']['fields'];
+        }
+
         $addParticipantNum = substr( $form->_name, 12 );
         foreach ( $params as $pCnt => $values ) {
             if ( $values == 'skip' ||
@@ -1070,13 +1073,22 @@ WHERE  v.option_group_id = g.id
                 $priceFieldId = substr( $valKey, 6 );
                 if ( !$priceFieldId ||
                      !is_array( $value ) || 
-                     !array_key_exists( $priceFieldId, $priceSetFields ) ) {
+                     !( array_key_exists( $priceFieldId, $priceSetFields ) || array_key_exists( $priceFieldId, $priceMaxFieldDetails ) ) ) {
                     continue;
                 }
                 
                 foreach ( $value as $optId => $optVal ) {
-                    $currentCount = $priceSetFields[$priceFieldId]['options'][$optId]*$optVal;
-                    $optionsCount[$optId] = $currentCount + CRM_Utils_Array::value( $optId, $optionsCount );
+                    if ( CRM_Utils_Array::value( 'html_type', $priceSet['fields'][$priceFieldId] ) == 'Text' ) {
+                        $currentCount = $optVal;
+                    } else {
+                        $currentCount = 1;
+                    }
+                                                                        
+                    if ( isset($priceSetFields[$priceFieldId]) && isset($priceSetFields[$priceFieldId]['options'][$optId]) ) {
+                         $currentCount =  $priceSetFields[$priceFieldId]['options'][$optId]*$optVal;
+                    }
+                    
+                    $optionsCount[$optId] = $currentCount + CRM_Utils_Array::value( $optId, $optionsCount, 0 );
                 }
             }
         }
@@ -1176,9 +1188,18 @@ WHERE  v.option_group_id = g.id
                 }
                 $fieldSelected[$pNum] = true;
                 if ( !$hasOptMaxValue ) continue;
+
                 foreach ( $value as $optId => $optVal ) {
-                    $currentMaxValue = $optionsCountDetails[$priceFieldId]['options'][$optId]*$optVal;
-                    if ( !$currentMaxValue ) $currentMaxValue = 1; 
+                    if ( CRM_Utils_Array::value( 'html_type', $feeBlock[$priceFieldId] ) == 'Text' ) {
+                        $currentMaxValue = $optVal;
+                    } else {
+                        $currentMaxValue = 1;
+                    }
+
+                    if ( isset($optionsCountDetails[$priceFieldId]) && isset($optionsCountDetails[$priceFieldId]['options'][$optId]) ) {
+                        $currentMaxValue = $optionsCountDetails[$priceFieldId]['options'][$optId]*$optVal;   
+                    }
+
                     $optionMaxValues[$priceFieldId][$optId] = $currentMaxValue + 
                         CRM_Utils_Array::value( $optId, $optionMaxValues[$priceFieldId], 0 );
                 }
@@ -1189,10 +1210,17 @@ WHERE  v.option_group_id = g.id
         foreach ( $optionMaxValues as $fieldId => $values ) {
             $options = CRM_Utils_Array::value( 'options', $feeBlock[$fieldId], array( ) );
             foreach ( $values as $optId => $total ) {
-                $optMax  = $optionsMaxValueDetails[$fieldId]['options'][$optId];
-                $total  += CRM_Utils_Array::value( 'db_total_count', $options[$optId], 0 );
+                $optMax    = $optionsMaxValueDetails[$fieldId]['options'][$optId];
+                $opDbCount = CRM_Utils_Array::value( 'db_total_count', $options[$optId], 0 );
+                $total    += $opDbCount;
                 if ( $optMax && $total > $optMax ) {
-                    $errors[$currentParticipantNum]["price_{$fieldId}"] = ts( 'Sorry, this option is currently sold out.' );
+                    if ( $opDbCount && ( $opDbCount >= $optMax ) ) {
+                        $errors[$currentParticipantNum]["price_{$fieldId}"] = ts( 'Sorry, this option is currently sold out.' );
+                    } else if ( ($optMax - $opDbCount) == 1 ) {
+                        $errors[$currentParticipantNum]["price_{$fieldId}"] = ts( 'Sorry, currently only a single seat is avialble for this option.', array( 1 => ($optMax - $opDbCount) ) ); 
+                    } else {
+                        $errors[$currentParticipantNum]["price_{$fieldId}"] = ts( 'Sorry, currently only %1 seats are avialble for this option.', array( 1 => ($optMax - $opDbCount) ) ); 
+                    }
                 }
             }
         }

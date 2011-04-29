@@ -442,9 +442,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
                                           'name'      => ts('Cancel') ),
                                   )
                            );
-        
     }
-
        
     /**
      *  This function is called when the form is submitted 
@@ -584,13 +582,19 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         CRM_Core_BAO_Note::add( $noteParams , $noteIds );
         
         $params['relationship_ids'] = $relationshipIds;
+
         // Membership for related contacts CRM-1657
         if ( CRM_Core_Permission::access( 'CiviMember' ) && ( !$duplicate ) ) {
-            CRM_Contact_BAO_Relationship::relatedMemberships( $this->_contactId, 
-                                                              $params, $ids, 
-                                                              $this->_action );
+            if ($this->_action & CRM_Core_Action::ADD ) {
+                CRM_Contact_BAO_Relationship::relatedMemberships( $this->_contactId, 
+                                                                  $params, $ids, 
+                                                                  $this->_action );
+            } elseif ( $this->_action & CRM_Core_Action::UPDATE ) {
+                //fixes for CRM-7985
+                $active = CRM_Utils_Array::value( 'is_active', $params ) ? CRM_Core_Action::ENABLE : CRM_Core_Action::DISABLE;
+                CRM_Contact_BAO_Relationship::disableEnableRelationship( $this->_relationshipId, $active );
+            }
         }
-        
         //handle current employee/employer relationship, CRM-3532
         if ( $this->_allRelationshipNames[$relationshipTypeId]["name_{$this->_rtype}"] == 'Employee of' ) {
             $orgId = null;
@@ -609,6 +613,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
                     require_once 'CRM/Contact/BAO/Contact/Utils.php';
                     CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer( $this->_contactId );
                 }
+              
             }
             
             //set current employer
