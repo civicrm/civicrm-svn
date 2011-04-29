@@ -118,7 +118,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             $participantBAO->find(true);
             $participantBAO->register_date = CRM_Utils_Date::isoToMysql($participantBAO->register_date);
         }
-        
+
         $participantBAO->copyValues($params);
         
         //CRM-6910
