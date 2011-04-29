@@ -152,11 +152,8 @@ function civicrm_api3_activity_get( $params ) {
                 $activity = array_merge( $activity, $customdata );
             }
         }
-        if ( $activity ) {
-            return civicrm_api3_create_success( $activity ,$params);
-        } else {
-            return civicrm_api3_create_error(  'Invalid Data'  );
-        }
+         return civicrm_api3_create_success( $activity ,$params);
+
     } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {

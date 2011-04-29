@@ -605,29 +605,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     {
         $params = array('version' => $this->_apiversion);
         $result = civicrm_api3_activity_get( $params );
-        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-    }
-
-    /**
-     *  Test civicrm_activity_get() with a non-numeric activity ID
-     */
-    function testActivityGetNonNumericID()
-    {
-        $params = array( 'activity_id' => 'fubar',
-                         'version' => $this->_apiversion );
-        $result = civicrm_api3_activity_get( $params );
-        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-    }
-
-    /**
-     *  Test civicrm_activity_get() with a bad activity ID
-     */
-    function testActivityGetBadID()
-    {
-        $params = array( 'activity_id' => 42,
-                         'version' => $this->_apiversion );
-        $result = civicrm_api3_activity_get( $params );        
-        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+        $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
     }
 
     /**
