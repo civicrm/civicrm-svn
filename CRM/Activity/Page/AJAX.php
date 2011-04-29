@@ -144,7 +144,17 @@ class CRM_Activity_Page_AJAX
         $caseActivity->activity_id = $mainActivityId;
         $caseActivity->save( );
         $error_msg = $caseActivity->_lastError;
-		    $caseActivity->free( ); 
+        $caseActivity->free( ); 
+
+        // attach custom data to the new activity
+        require_once 'CRM/Core/BAO/CustomValueTable.php';
+        $customParams = array( );
+        $customValues = CRM_Core_BAO_CustomValueTable::getEntityValues( $activityID, 'Activity' );
+        foreach ( $customValues as $key => $value ) {
+            $customParams["custom_{$key}"] = $value;
+        }
+        CRM_Core_BAO_CustomValueTable::postProcess( $customParams, CRM_Core_DAO::$_nullArray, 'civicrm_activity',
+                                                    $mainActivityId, 'Activity' );
         
         // copy activity attachments ( if any )
         require_once "CRM/Core/BAO/File.php";

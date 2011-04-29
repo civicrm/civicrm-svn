@@ -395,7 +395,6 @@ WHERE      a.id = %1
                                        'value' => $this->redact( $reporter ),
                                        'type'  => 'String' );
         
-       
         if ( $activityDAO->assigneeID ) {
             //allow multiple assignee contacts.CRM-4503.
             require_once 'CRM/Activity/BAO/ActivityAssignment.php';
@@ -499,6 +498,10 @@ WHERE      a.id = %1
     
     function getActivityTypeCustomSQL( $activityTypeID, $dateFormat = null ) {
         static $cache = array( );
+
+        if ( is_null( $activityTypeID  ) ) {
+            $activityTypeID = 0;
+        }
         
         if ( ! isset( $cache[$activityTypeID] ) ) {
             $query = "
@@ -514,9 +517,13 @@ SELECT cg.title           as groupTitle,
 FROM   civicrm_custom_group cg,
        civicrm_custom_field cf
 WHERE  cf.custom_group_id = cg.id
-AND    cg.extends = 'Activity'
-AND    cg.extends_entity_column_value LIKE '" . CRM_Core_DAO::VALUE_SEPARATOR . "%1" . CRM_Core_DAO::VALUE_SEPARATOR . "'
-";
+AND    cg.extends = 'Activity'";
+
+            if ( $activityTypeID ) {
+                $query .= "AND ( cg.extends_entity_column_value IS NULL OR cg.extends_entity_column_value LIKE '%" . CRM_Core_DAO::VALUE_SEPARATOR . "%1" . CRM_Core_DAO::VALUE_SEPARATOR . "%' )";
+            } else {
+                $query .= "AND cg.extends_entity_column_value IS NULL";
+            }
             $params = array( 1 => array( $activityTypeID,
                                          'Integer' ) );
             $dao = CRM_Core_DAO::executeQuery( $query, $params );
