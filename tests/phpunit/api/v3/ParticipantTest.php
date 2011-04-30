@@ -142,6 +142,19 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
         $this->assertEquals($result['values'][$this->_participantID]['participant_source'],'Wimbeldon');
     }
 
+    /*
+     * Check Participant Get respects return properties
+     */
+    function testGetWithReturnProperties(){
+       $params = array(
+                        'contact_id'      => $this->_contactID,
+                        'version'							=> $this->_apiversion,
+                        'return.status_id' => 1,
+                        'return.participant_status_id' => 1,
+       );
+        $result = & civicrm_api3_participant_get($params);
+        $this->assertArrayHasKey('participant_status_id', $result['values'][$result['id']]);
+    }
 
     /**
      * check with contact_id
@@ -498,7 +511,6 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         );
         $participant = & civicrm_api3_participant_create($params);
         $this->assertEquals( $participant['is_error'], 1 );
-        $this->assertEquals( $participant['error_message'],'Mandatory key(s) missing from params array: event_id' );
         $result = $this->participantDelete( $participantId );
     }
 
