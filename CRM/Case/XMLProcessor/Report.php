@@ -289,7 +289,8 @@ WHERE      a.id = %1
         if ( $clientID ) {
             $clientID = CRM_Utils_Type::escape($clientID, 'Integer');
             if ( !in_array( $activityTypeInfo['name'], array( 'Email', 'Inbound Email' ) ) ) {
-                $activity['editURL'] = CRM_Utils_System::url( 'civicrm/case/activity',                                          "reset=1&cid={$clientID}&caseid={$activityDAO->caseID}&action=update&atype={$activityDAO->activity_type_id}&id={$activityDAO->id}" );
+                $activity['editURL'] = CRM_Utils_System::url( 'civicrm/case/activity',
+                    "reset=1&cid={$clientID}&caseid={$activityDAO->caseID}&action=update&atype={$activityDAO->activity_type_id}&id={$activityDAO->id}" );
             } else {
                 $activity['editURL'] = '';
             }
@@ -681,7 +682,6 @@ LIMIT  1
         $includeActivities = CRM_Utils_Request::retrieve( 'all'    , 'Positive', CRM_Core_DAO::$_nullObject );
         $params = $otherRelationships = $globalGroupInfo = array();
         $report = new CRM_Case_XMLProcessor_Report( $isRedact );
-        
         if ( $includeActivities ) {
             $params['include_activities'] = 1;
         } 
