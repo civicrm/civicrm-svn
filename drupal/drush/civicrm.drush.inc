@@ -172,6 +172,10 @@ function civicrm_drush_command() {
     $items['civicrm-civimail'] = 
         array('callback'    => 'drush_civicrm_civimail_cron',
               'description' => "Run the CiviMail cron.",
+              'examples'    => 
+              array('drush --uri=http://example.com civicrm-civimail -u admin -p admin -s 12345678912345678912345678' => 
+                    'Run CiviMail cron with admin credentials and site key.',
+                    ),
               );
     $items['civicrm-member-records'] = 
         array('callback'    => 'drush_civicrm_updatemembershiprecord_cron',
@@ -632,13 +636,9 @@ function civicrm_restore() {
 }
 
 function drush_civicrm_civimail_cron() {
-  _civicrm_init();
-
-  $_REQUEST['name'] = drush_get_option('civicrm_cron_username', NULL);
-  $_REQUEST['pass'] = drush_get_option('civicrm_cron_password', NULL);
-  $_REQUEST['key'] = drush_get_option('civicrm_sitekey', NULL);
-
-  include 'bin/civimail.cronjob.php';
+    $_GET['q'] = 'civicrm/mailing/queue';
+    $_GET['reset'] = '1';
+    menu_execute_active_handler();
 }
 
 function drush_civicrm_updatemembershiprecord_cron() {
@@ -767,7 +767,8 @@ function _civicrm_init( ) {
 
     if ( $init ) return $init; // return if already initialized
 
-    $drupal_root = drush_get_context('DRUSH_DRUPAL_ROOT');
+    global $cmsPath;
+    $cmsPath = $drupal_root = drush_get_context('DRUSH_DRUPAL_ROOT');
     $site_root   = drush_get_context('DRUSH_DRUPAL_SITE_ROOT', FALSE);
     $civicrmSettingsFile = "$drupal_root/$site_root/civicrm.settings.php";
 
