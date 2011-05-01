@@ -1687,7 +1687,7 @@ class CRM_Contact_BAO_Query
             } else {
                 $this->_qill[$grouping][]  = "$field[title] $op";
             }
-
+            self::$_openedPanes['Demographics'] = true;
         } else if ( $name === 'deceased_date' ) {
             $date = CRM_Utils_Date::processDate( $value );
             $this->_where[$grouping][] = self::buildClause( "contact_a.{$name}", $op, $date );
@@ -1697,9 +1697,11 @@ class CRM_Contact_BAO_Query
             } else {
                 $this->_qill[$grouping][]  = "$field[title] $op";
             }
+            self::$_openedPanes['Demographics'] = true;
         } else if ( $name === 'is_deceased' ) {
             $this->_where[$grouping][] = self::buildClause( "contact_a.{$name}", $op, $value );
             $this->_qill[$grouping][]  = "$field[title] $op \"$value\"";
+            self::$_openedPanes['Demographics'] = true;
         } else if ( $name === 'contact_id' ) {
             if ( is_int( $value ) ) {
                 $this->_where[$grouping][] = self::buildClause( $field['where'], $op, $value );
