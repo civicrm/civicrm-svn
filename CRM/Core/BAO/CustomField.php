@@ -1630,11 +1630,22 @@ SELECT $columnName
         CRM_Core_BAO_SchemaHandler::alterFieldSQL( $params, $indexExist );
     }
 
-    static function getTableColumnGroup( $fieldID ) 
+    /**
+     * Get the database table name and column name for a custom field
+     *
+     * @param int     $fieldID - the fieldID of the custom field
+     * @param boolean $force   - force the sql to be run again (primarily used for tests)
+     *
+     * @return array           - fatal is fieldID does not exists, else array of tableName, columnName
+     * @static
+     * @public
+     */
+    static function getTableColumnGroup( $fieldID, $force = false ) 
     {
         static $cache = array( );
 
-        if ( ! array_key_exists( $fieldID, $cache ) ) {
+        if ( ! array_key_exists( $fieldID, $cache ) ||
+             $force ) {
             $query = "
 SELECT cg.table_name, cf.column_name, cg.id
 FROM   civicrm_custom_group cg,
