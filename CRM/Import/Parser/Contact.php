@@ -675,11 +675,13 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             }
             $newContact = $this->createContact( $formatted, $contactFields, $onDuplicate );
         }
-        
+
+        $contactID = null;
         if ( is_object( $newContact ) || ( $newContact instanceof CRM_Contact_BAO_Contact ) ) { 
             $relationship = true;
             $newContact = clone( $newContact );
-            $this->_newContacts[] = $newContact->id;
+            $contactID            = $newContact->id;
+            $this->_newContacts[] = $contactID;
             
             //get return code if we create new contact in update mode, CRM-4148
             if ( $this->_updateWithId ) {
@@ -702,6 +704,23 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             }
         }
         
+        if ( $contactID ) {
+            // call import hook
+            require_once 'CRM/Utils/Hook.php';
+            $currentImportID  = end($values);
+        
+            $params = array( 'contactID'       => $contactID, 
+                             'importID'        => $currentImportID,
+                             'importTempTable' => $this->_tableName,
+                             'fieldHeaders'    => $this->_mapperKeys,
+                             'fields'          => $this->_activeFields );
+        
+            CRM_Utils_Hook::import( 'Contact',
+                                    'process', 
+                                    $this, 
+                                    $params );
+        }
+
         if ( $relationship ) {
             $primaryContactId = null;
             if ( civicrm_duplicate($newContact) ) {
