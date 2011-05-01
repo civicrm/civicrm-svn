@@ -85,10 +85,13 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
     $params = array( 'organization_name' => 'SubUrban' ,
                          'contact_type'      => 'Organization',
                          'contact_sub_type'  => 'Sponsor',
-                         'version'			=> $this->_apiversion,
-    );
-    $this->organizationSponsor = $this->organizationCreate( $params );
-
+                         'version'			=> $this->_apiversion );
+		$this->organizationSponsor = $this->organizationCreate ( $params );
+		//refresh php cached variables
+		CRM_Core_PseudoConstant::flush ( 'customGroup' );
+		CRM_Core_BAO_CustomField::getTableColumnGroup ( $this->IndividualField ['id'], True );
+		CRM_Core_BAO_CustomField::getTableColumnGroup ( $this->IndiStudentField[id], True );
+		
   }
 
   /**
@@ -225,10 +228,13 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
     $params = array(
                         'contact_id'           => $this->individual,
                         'contact_type' => 'Individual',
-                        "custom_". $this->IndividualField['id'] => 'Test String',  
+                         "custom_". $this->IndividualField['id'] => 'Test String',  
                         'version'		=>$this->_apiversion, 
     );
+
     $contact =& civicrm_api3_contact_create( $params );
+
+    $this->assertEquals(0,$contact['is_error'],$contact['error_message'] . " in line " . __LINE__ );
     $params = array(
                         'contact_id'   => $this->individual ,
                         'contact_type' => 'Individual',
@@ -255,7 +261,8 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                     );
 
     $contact = civicrm_api3_contact_create( $params );
-
+    $this->assertEquals(0,$contact['is_error'],$contact['error_message'] . " in line " . __LINE__ );
+ 
     $params = array(
                     'contact_id'       => $this->individualStudent ,
                     'contact_type'     => 'Individual',
