@@ -339,7 +339,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         $this->add('hidden', 'rel_contact_id' );
         $this->addDate( 'start_date', ts('Start Date'), false, array( 'formatType' => 'searchDate' ) );
         $this->addDate( 'end_date'  , ts('End Date')  , false, array( 'formatType' => 'searchDate' ) );
-        $this->addElement('advcheckbox', 'is_active', ts('Enabled?'), null, 'setChecked()');
+        $this->addElement('checkbox', 'is_active', ts('Enabled?'), null, 'setChecked()');
         
         $this->addElement('checkbox', 'is_permission_a_b', ts( 'Permission for contact a to view and update information for contact b' ) , null);
         $this->addElement('checkbox', 'is_permission_b_a', ts( 'permission for contact b to view and update information for contact a' ) , null);
