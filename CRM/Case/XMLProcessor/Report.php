@@ -192,7 +192,7 @@ class CRM_Case_XMLProcessor_Report extends CRM_Case_XMLProcessor {
         foreach ( $coreActivityTypes as $aType ) {
             $map[$aType['id']] = $aType;
         }               
-                
+        
         $activityTypeIDs = implode( ',', array_keys( $map ) );
         $query = "
 SELECT a.*, c.id as caseID
@@ -290,7 +290,7 @@ WHERE      a.id = %1
             $clientID = CRM_Utils_Type::escape($clientID, 'Integer');
             if ( !in_array( $activityTypeInfo['name'], array( 'Email', 'Inbound Email' ) ) ) {
                 $activity['editURL'] = CRM_Utils_System::url( 'civicrm/case/activity',
-                    "reset=1&cid={$clientID}&caseid={$activityDAO->caseID}&action=update&atype={$activityDAO->activity_type_id}&id={$activityDAO->id}" );
+                                                              "reset=1&cid={$clientID}&caseid={$activityDAO->caseID}&action=update&atype={$activityDAO->activity_type_id}&id={$activityDAO->id}" );
             } else {
                 $activity['editURL'] = '';
             }
@@ -483,6 +483,10 @@ WHERE      a.id = %1
                     if ( CRM_Utils_Array::value('type', $typeValue) == 'String' ||
                          CRM_Utils_Array::value('type', $typeValue) == 'Memo' ) {
                         $value = $this->redact($value );
+                    } else if ( CRM_Utils_Array::value( 'type', $typeValue ) == 'File' ) {
+                        require_once 'CRM/Core/BAO/File.php';
+                        $tableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_EntityFile', $value, 'entity_table' );
+                        $value     = CRM_Core_BAO_File::attachmentInfo( $tableName, $activityDAO->id );
                     }
 
                     //$typeValue
