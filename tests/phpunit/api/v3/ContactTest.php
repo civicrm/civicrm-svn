@@ -64,8 +64,6 @@ class api_v3_ContactTest extends CiviUnitTestCase
     //  Connect to the database
     parent::setUp();
     $this->_apiversion = 3;
-    require_once 'CRM/Core/Permission/UnitTests.php';
-    CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
   }
 
   /**
@@ -845,31 +843,32 @@ class api_v3_ContactTest extends CiviUnitTestCase
                     'version'     => $this->_apiversion);
 
     CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
-    $result = civicrm_api3_contact_create($params);
-    $this->assertEquals(1,                                                                                                $result['is_error'],      'lacking permissions should not be enough to create a contact');
-    $this->assertEquals('API permission check failed for civicrm_api3_contact_create call; missing permission: add contacts.', $result['error_message'], 'lacking permissions should not be enough to create a contact');
+    $result = civicrm_api('contact', 'create', $params);
+    $this->assertEquals(1,                                                                                        $result['is_error'],      'lacking permissions should not be enough to create a contact');
+    $this->assertEquals('API permission check failed for contact/create call; missing permission: add contacts.', $result['error_message'], 'lacking permissions should not be enough to create a contact');
 
     CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'import contacts');
-    $result = civicrm_api3_contact_create($params);
+    $result = civicrm_api('contact', 'create', $params);
     $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to create a contact');
   }
 
   function testContactUpdatePermissions()
   {
     $params = array('contact_type' => 'Individual', 'first_name' => 'Foo', 'last_name' => 'Bear', 'check_permissions' => true, 'version' =>3);
-    $result = civicrm_api3_contact_create($params);
+    $result = civicrm_api('contact', 'create', $params);
 
     $params = array('id' => $result['id'], 'contact_type' => 'Individual', 'last_name' => 'Bar', 'check_permissions' => true, 'version' =>3);
 
-        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
-        $result = civicrm_api('Contact','Update',$params);
-        $this->assertEquals(1,  $result['is_error'],      'lacking permissions should not be enough to update a contact');
-        $this->assertEquals('API permission check failed for civicrm_api3_contact_create call; missing permission: add contacts.', $result['error_message'], 'lacking permissions should not be enough to update a contact');
+    CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
+    $result = civicrm_api('contact', 'update', $params);
+    $this->assertEquals(1,                                                                                             $result['is_error'],      'lacking permissions should not be enough to update a contact');
+    $this->assertEquals('API permission check failed for contact/update call; missing permission: edit all contacts.', $result['error_message'], 'lacking permissions should not be enough to update a contact');
 
-        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'import contacts');
-        $result = civicrm_api('Contact','Update',$params);
-        $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to update a contact');
-    }
+    CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'view all contacts', 'edit all contacts', 'import contacts');
+
+    $result = civicrm_api('contact', 'update', $params);
+    $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to update a contact');
+  }
 
 } // class api_v3_ContactTest
 

@@ -52,21 +52,6 @@ class api_v2_ContactTest extends CiviUnitTestCase
     }
 
     /**
-     *  Test setup for every test
-     *
-     *  Connect to the database, truncate the tables that will be used
-     *  and redirect stdin to a temporary file
-     */
-    public function setUp()
-    {
-        //  Connect to the database
-        parent::setUp();
-
-        require_once 'CRM/Core/Permission/UnitTests.php';
-        CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
-    }
-
-    /**
      *  Test civicrm_contact_add()
      *
      *  Verify that attempt to create individual contact with only

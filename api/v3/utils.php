@@ -1725,27 +1725,27 @@ function civicrm_api3_check_contact_dedupe( $params ) {
 /**
  * Check permissions for a given API call.
  *
- * @param $api string    API method being called
+ * @param $entity string API entity being accessed
+ * @param $action string API action being performed
  * @param $params array  params of the API call
  * @param $throw bool    whether to throw exception instead of returning false
  *
  * @return bool whether the current API user has the permission to make the call
  */
-function civicrm_api3_api_check_permission($api, $params, $throw = false)
+function civicrm_api3_api_check_permission($entity, $action, &$params, $throw = true)
 {
-    // return early if we're to skip the permission check or if it’s unset
-    if (empty($params['check_permissions']) ) return true;
+    // return early if we’re told explicitly to skip the permission check
+    if (isset($params['check_permissions']) and $params['check_permissions'] == false) return true;
 
     require_once 'CRM/Core/Permission.php';
-    $requirements = array(
-                          'civicrm_api3_contact_create' => array('access CiviCRM', 'add contacts'),
-                          'civicrm_api3_contact_update' => array('access CiviCRM', 'add contacts'),
-                          'civicrm_api3_event_create'   => array('access CiviEvent'),
-                          );
-    foreach ($requirements[$api] as $perm) {
+
+    require_once 'CRM/Core/DAO/.permissions.php';
+    $permissions = _civicrm_api3_permissions($entity, $action, $params);
+
+    foreach ($permissions as $perm) {
         if (!CRM_Core_Permission::check($perm)) {
             if ($throw) {
-                throw new Exception("API permission check failed for $api call; missing permission: $perm.");
+                throw new Exception("API permission check failed for $entity/$action call; missing permission: $perm.");
             } else {
                 return false;
             }
