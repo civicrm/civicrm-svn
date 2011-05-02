@@ -206,7 +206,8 @@ WHERE      {$whereClause}
             } while ( ( ! isset( $params['geo_code_1'] ) ) &&
                       ( $maxTries > 1 ) );
             
-            if ( isset( $params['geo_code_1'] ) ) {
+            if ( isset( $params['geo_code_1'] ) &&
+                 $params['geo_code_1'] != 'null' ) {
                 $totalGeocoded++;
                 $addressParams['geo_code_1'] = $params['geo_code_1'];
                 $addressParams['geo_code_2'] = $params['geo_code_2'];
