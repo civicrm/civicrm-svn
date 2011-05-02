@@ -21,12 +21,11 @@ VALUES
 -- and because CiviCampaign admin links were not inserted during 3.3 upgrade
 -- fixing both issues in 3.4.1 upgrade: CRM-7956
 
-SELECT @domainID             := MIN(id) FROM civicrm_domain;
 SELECT @civiCampaignNavId    := MAX(id) FROM civicrm_navigation where name = 'CiviCampaign';
 SELECT @cmapaignNavMaxWeight := MAX(ROUND(weight)) from civicrm_navigation WHERE parent_id = @civiCampaignNavId;
 
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
-    ( @domainID, 'civicrm/admin/options/engagement_index&group=engagement_index&reset=1', '{ts escape="sql"}Engagement Index{/ts}', 'Engagement Index', 'administer CiviCampaign', '', @civiCampaignNavId, 1, NULL, @cmapaignNavMaxWeight + 1 );
+    ( {$domainID}, 'civicrm/admin/options/engagement_index&group=engagement_index&reset=1', '{ts escape="sql"}Engagement Index{/ts}', 'Engagement Index', 'administer CiviCampaign', '', @civiCampaignNavId, 1, NULL, @cmapaignNavMaxWeight + 1 );
 

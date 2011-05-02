@@ -602,6 +602,9 @@ WHERE  id = %1
         $config->enableComponents   =  $configBackend['enableComponents'];
         $config->enableComponentIDs =  $configBackend['enableComponentIDs'];
 
+        // also force reset of component array
+        CRM_Core_Component::getEnabledComponents( true );
+
         // check if component is already there, is so return
         $configBackend = serialize( $configBackend );
         $sql = "
