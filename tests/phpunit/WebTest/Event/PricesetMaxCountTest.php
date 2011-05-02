@@ -56,7 +56,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
                          'Meal Choice'     => array( 'type'    => 'Select',
                                                      'options' => array( 1 => array( 'label'     => 'Chicken',
                                                                                      'amount'    => '525.00',
-                                                                                     'max_count' => 2
+                                                                                     'max_count' => 1
                                                                                      ),
                                                                          2 => array( 'label'     => 'Vegetarian',
                                                                                      'amount'    => '200.00',
@@ -89,12 +89,44 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         // add price fields
         $this->_testAddPriceFields( $fields );
         
+        // get price set url.
+        $pricesetLoc = $this->getLocation();
+
         // get text field Id.
         $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[9]/span[1]/a[2]");
         $this->waitForPageToLoad('30000');
         $matches = array();
         preg_match('/fid=([0-9]+)/', $this->getLocation(), $matches);
         $textFieldId = $matches[1];
+
+        $this->open( $pricesetLoc );
+        $this->waitForPageToLoad('30000');
+
+        // get select field id
+        $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[8]/a");
+        $this->waitForPageToLoad('30000');
+        $selectFieldLoc = $this->getLocation();
+        $matches = array();
+        preg_match('/fid=([0-9]+)/', $this->getLocation(), $matches);
+        $selectFieldId = $matches[1];
+
+        // get select field ids
+        // get select field option1
+        $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[6]/span[1]/a[1]");
+        $this->waitForPageToLoad('30000');
+        $matches = array();
+        preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
+        $selectFieldOp1 = $matches[1];
+        
+        $this->open( $selectFieldLoc );
+        $this->waitForPageToLoad('30000');
+        
+        // get select field option2
+        $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[6]/span[1]/a[1]");
+        $this->waitForPageToLoad('30000');
+        $matches = array();
+        preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
+        $selectFieldOp2 = $matches[1];
 
         // create event.
         $eventTitle = 'Meeting - '.substr(sha1(rand()), 0, 7);
@@ -109,7 +141,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
           
         // logout to register for event.
         $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-        $this->waitForPageToLoad('30000'); 
+        $this->waitForPageToLoad('30000');  
 
         // Register Participant 1
         // visit event info page
@@ -120,8 +152,10 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->click('link=Register Now');
         $this->waitForElementPresent('_qf_Register_upload-bottom');
         
-        // check for form rule
+        // exceed maximun count for text field, check for form rule
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '3');
+
+        $this->select("price_{$selectFieldId}", "value={$selectFieldOp1}");
 
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
         $this->type('email-5', $email);
@@ -131,7 +165,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         
         $this->assertStringsPresent( array('Sorry, currently only 2 seats are avialble for this option.') );
         
-        // fill correct value and register
+        // fill correct value for text field
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '1');
         
         $this->click('_qf_Register_upload-bottom');
@@ -147,7 +181,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->click('link=Register Now');
         $this->waitForElementPresent('_qf_Register_upload-bottom');
 
-        // check for form rule
+        // exceed maximun count for text field, check for form rule
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '2');
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
         $this->type('email-5', $email);
@@ -157,8 +191,18 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
         $this->assertStringsPresent( array('Sorry, currently only a single seat is avialble for this option.') );
 
-        // fill correct value and register
+        // fill correct value for test field
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '1');
+        
+        // select sold option for select field, check for form rule
+        $this->select("price_{$selectFieldId}", "value={$selectFieldOp1}");
+        $this->click('_qf_Register_upload-bottom');
+        $this->waitForPageToLoad('30000');
+        
+        $this->assertStringsPresent( array('Sorry, this option is currently sold out.') );
+        
+        // fill correct available option for select field
+        $this->select("price_{$selectFieldId}", 'value={$selectFieldOp2}');
 
         $this->click('_qf_Register_upload-bottom');
         $this->waitForPageToLoad('30000');
@@ -191,7 +235,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
                          'Meal Choice'     => array( 'type'    => 'Select',
                                                      'options' => array( 1 => array( 'label'     => 'Chicken',
                                                                                      'amount'    => '525.00',
-                                                                                     'max_count' => 4,
+                                                                                     'max_count' => 2,
                                                                                      'count'     => 2
                                                                                      ),
                                                                          2 => array( 'label'     => 'Vegetarian',
@@ -230,12 +274,44 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         // add price fields
         $this->_testAddPriceFields( $fields );
         
+        // get price set url.
+        $pricesetLoc = $this->getLocation();
+
         // get text field Id.
         $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[9]/span[1]/a[2]");
         $this->waitForPageToLoad('30000');
         $matches = array();
         preg_match('/fid=([0-9]+)/', $this->getLocation(), $matches);
         $textFieldId = $matches[1];
+
+        $this->open( $pricesetLoc );
+        $this->waitForPageToLoad('30000');
+
+        // get select field id
+        $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[8]/a");
+        $this->waitForPageToLoad('30000');
+        $selectFieldLoc = $this->getLocation();
+        $matches = array();
+        preg_match('/fid=([0-9]+)/', $this->getLocation(), $matches);
+        $selectFieldId = $matches[1];
+
+        // get select field ids
+        // get select field option1
+        $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[6]/span[1]/a[1]");
+        $this->waitForPageToLoad('30000');
+        $matches = array();
+        preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
+        $selectFieldOp1 = $matches[1];
+        
+        $this->open( $selectFieldLoc );
+        $this->waitForPageToLoad('30000');
+        
+        // get select field option2
+        $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[6]/span[1]/a[1]");
+        $this->waitForPageToLoad('30000');
+        $matches = array();
+        preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
+        $selectFieldOp2 = $matches[1];
 
         // create event.
         $eventTitle = 'Meeting - '.substr(sha1(rand()), 0, 7);
@@ -272,6 +348,8 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         
         $this->assertStringsPresent( array('Sorry, currently only 4 seats are avialble for this option.') );
         
+        $this->select("price_{$selectFieldId}", "value={$selectFieldOp1}");
+
         // fill correct value and register
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '1');
         
@@ -300,6 +378,17 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
         // fill correct value and register
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '1');
+
+        // check for sold option for select field
+        $this->select("price_{$selectFieldId}", "value={$selectFieldOp1}");
+
+        $this->click('_qf_Register_upload-bottom');
+        $this->waitForPageToLoad('30000');
+
+        $this->assertStringsPresent( array('Sorry, this option is currently sold out.') );
+
+        // check for sold option for select field
+        $this->select("price_{$selectFieldId}", "value={$selectFieldOp2}");
 
         $this->click('_qf_Register_upload-bottom');
         $this->waitForPageToLoad('30000');
