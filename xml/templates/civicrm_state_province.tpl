@@ -3796,5 +3796,5 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (NULL, 1050, "20", "Tanganyika"),
 
 -- CRM-8009 Added Missing Provinces for Spain
-(NULL, 1198, 'Toledo', 'TO' ),
-(NULL, 1198, 'Córdoba', 'CO' );
+(NULL, 1198, 'TO', 'Toledo' ),
+(NULL, 1198, 'CO', 'Córdoba' );
