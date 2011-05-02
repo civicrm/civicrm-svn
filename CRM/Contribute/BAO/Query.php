@@ -721,6 +721,11 @@ class CRM_Contribute_BAO_Query
         if ( CRM_Utils_Array::value( 'civicrm_product', $tables ) ) {
             $tables = array_merge( array( 'civicrm_contribution' => 1), $tables );
         }
+
+        if ( CRM_Utils_Array::value( 'civicrm_contribution_product', $tables ) &&
+             !CRM_Utils_Array::value( 'civicrm_product', $tables ) ) {
+            $tables['civicrm_product'] = 1;
+        }
     }
 }
 
