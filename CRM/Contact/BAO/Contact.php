@@ -746,6 +746,10 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::remove( );
 
+        // delete any dupe cache entry
+        require_once 'CRM/Core/BAO/PrevNextCache.php';
+        CRM_Core_BAO_PrevNextCache::deleteItem( $id );
+
         $transaction->commit( );
 
         CRM_Utils_Hook::post( 'delete', $contactType, $contact->id, $contact );
