@@ -320,7 +320,7 @@ function civicrm_initialize( )
         if ( ! empty( $header ) ) {
             drupal_add_html_head($header);
         }
-        
+        require_once 'CRM/Core/BAO/Preferences.php';
         if ( CRM_Core_BAO_Preferences::value( 'editor_id' ) == 4 ) { //drupal wysiwyg
             //we have to ensure that wysiwyg is loaded since some
             //pages load only with ajax callbacks

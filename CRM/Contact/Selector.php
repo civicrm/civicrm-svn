@@ -567,23 +567,22 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         //check explicitly added contact to a Smart Group.
         $groupID   = CRM_Utils_Array::key( '1', $this->_formValues['group'] );  
 
+        // for CRM-3157 purposes
+        require_once 'CRM/Core/PseudoConstant.php';
+        if ( in_array('country',        $names ) ) {
+            $countries =& CRM_Core_PseudoConstant::country();
+        }
+
+        if ( in_array('state_province', $names ) ) {
+            $provinces =& CRM_Core_PseudoConstant::stateProvince();
+        }
+
+        if ( in_array('world_region',   $names ) ) {
+            $regions   =& CRM_Core_PseudoConstant::worldRegions();
+        }
+
         while ($result->fetch()) {
             $row = array( );
-
-            // for CRM-3157 purposes
-            require_once 'CRM/Core/PseudoConstant.php';
-            if ( in_array('country',        $names ) ) {
-                $countries =& CRM_Core_PseudoConstant::country();
-            }
-
-            if ( in_array('state_province', $names ) ) {
-                $provinces =& CRM_Core_PseudoConstant::stateProvince();
-            }
-
-            if ( in_array('world_region',   $names ) ) {
-                $regions   =& CRM_Core_PseudoConstant::worldRegions();
-            }
-
             $empty = true;
 
             // the columns we are interested in
@@ -592,7 +591,10 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     continue;
                 }
                 if ( $cfID = CRM_Core_BAO_CustomField::getKeyID($property)) {
-                    $row[$property] = CRM_Core_BAO_CustomField::getDisplayValue( $result->$property, $cfID, $this->_options, $result->contact_id );
+                    $row[$property] = CRM_Core_BAO_CustomField::getDisplayValue( $result->$property,
+                                                                                 $cfID,
+                                                                                 $this->_options,
+                                                                                 $result->contact_id );
                 }  else if ( $multipleSelectFields &&
                              array_key_exists($property, $multipleSelectFields ) ) {
                     //fix to display student checkboxes

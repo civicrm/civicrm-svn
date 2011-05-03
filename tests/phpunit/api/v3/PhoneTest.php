@@ -14,6 +14,7 @@ class api_v3_PhoneTest extends CiviUnitTestCase
         parent::setUp();
         $this->_contactID    = $this->organizationCreate(null);
         $this->_locationType = $this->locationTypeCreate(null); 
+        CRM_Core_PseudoConstant::flush('locationType');
         $this->params =   array('contact_id' => $this->_contactID,
                         'location_type_id' => $this->_locationType->id,
                         'phone'            => '021 512 755',

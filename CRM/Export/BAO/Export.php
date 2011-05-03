@@ -505,7 +505,7 @@ class CRM_Export_BAO_Export
             require_once 'CRM/Contribute/BAO/Contribution.php';
             $paymentDetails = CRM_Contribute_BAO_Contribution::getContributionDetails( $exportMode, $ids );
             if( !empty( $paymentDetails ) ) $addPaymentHeader = true;
-            $nullContributionDetails = array_fill_keys($paymentHeaders,null);    
+            $nullContributionDetails = array_fill_keys(array_keys($paymentHeaders), null);    
         }
 
         //get all campaigns.
@@ -821,7 +821,7 @@ class CRM_Export_BAO_Export
                 // add payment headers if required
                 if ( $addPaymentHeader && $paymentFields ) {
                     $headerRows = array_merge( $headerRows, $paymentHeaders );
-                    foreach ( $paymentHeaders as $paymentHdr ) {
+                    foreach ( array_keys($paymentHeaders) as $paymentHdr ) {
                         self::sqlColumnDefn( $query, $sqlColumns, $paymentHdr );
                     }
                     $addPaymentHeader = false;

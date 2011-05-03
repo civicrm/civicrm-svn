@@ -86,7 +86,7 @@ class WebTest_Import_AddressParsingTest extends ImportCiviSeleniumTestCase {
             $this->assertEquals( $expectedvalue, $actualvalue );
         }
         
-        //Go to the URL of Address Setting to enable street address parsing option
+        //Go to the URL of Address Setting to disable street address parsing option
         $this->open($this->sboxPath ."civicrm/admin/setting/preferences/address?reset=1");
         $this->waitForPageToLoad("30000");
         
@@ -123,7 +123,7 @@ class WebTest_Import_AddressParsingTest extends ImportCiviSeleniumTestCase {
         $this->importContacts( $headers, $rows );
         $this->assertTrue($this->isTextPresent("Records imported successfully but unable to parse some of the street addresses"));
         $this->assertTrue($this->isTextPresent("You can Download Street Address Records . You may then edit those contact records and update the street address accordingly."));        
-
+        
         // Get imported contact Ids
         $importedContactIds = $this->_getImportedContactIds( $rows ); 
         
@@ -146,10 +146,10 @@ class WebTest_Import_AddressParsingTest extends ImportCiviSeleniumTestCase {
             $this->assertEquals( $expectedvalue, $actualvalue );
         }
         
-        //Go to the URL of Address Setting to enable street address parsing option
+        //Go to the URL of Address Setting to disable street address parsing option
         $this->open($this->sboxPath ."civicrm/admin/setting/preferences/address?reset=1");
         $this->waitForPageToLoad("30000");
-
+        
         //Disable street address parsing
         $this->click("address_options[13]");
         $this->click("_qf_Address_next");
@@ -190,13 +190,13 @@ class WebTest_Import_AddressParsingTest extends ImportCiviSeleniumTestCase {
         $this->click("addressBlock");
         $this->click("//div[@id='addressBlockId']/div[1]");
         $this->waitForElementPresent("address_1_street_address");
-
+        
         //verify the address field
         $verifyData = array( 'address_1_street_address' => '22 Adams Avenue Unit 3c');
-        $actualvalue = $this->getValue('address_1_street_address' );
+        $actualvalue = $this->getValue( 'address_1_street_address' );
         $this->assertEquals( '22 Adams Avenue Unit 3c', $actualvalue );
     }
-
+    
     /*
      *  Helper function to provide csv data with Valid Street Address.
      */ 
@@ -267,7 +267,7 @@ class WebTest_Import_AddressParsingTest extends ImportCiviSeleniumTestCase {
             array( 
                   array(  'first_name'     => 'A'.substr(sha1(rand()), 0, 7),
                           'middle_name'    => substr(sha1(rand()), 0, 7),
-                          'last_name'      => substr(sha1(rand()), 0, 7) . 'and',
+                          'last_name'      => substr(sha1(rand()), 0, 7).'and',
                           'email'          => substr(sha1(rand()), 0, 7).'@example.com',
                           'phone'          => '6949912154',
                           'street_address' => 'West St. Apt 1', 

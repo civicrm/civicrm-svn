@@ -28,24 +28,25 @@
     {assign var='elementId'   value=$form.field.$elementIndex.$elementName.id}
     {assign var="tElement" value=$elementName|cat:"_time"}
     {assign var="timeElement" value=field_`$elementIndex`_`$elementName`_time}
-    {$form.field.$elementIndex.$elementName.html|crmReplace:class:dateplugin}
+    {$form.field.$elementIndex.$elementName.html|crmReplace:class:hiddenElement}
     &nbsp;&nbsp;{$form.field.$elementIndex.$tElement.label}&nbsp;&nbsp;{$form.field.$elementIndex.$tElement.html|crmReplace:class:six}
 {elseif $elementIndex}
     {assign var='elementId'   value=$form.$elementName.$elementIndex.id}
     {assign var="timeElement" value=$elementName|cat:"_time.$elementIndex"}
-    {$form.$elementName.$elementIndex.html|crmReplace:class:dateplugin}
+    {$form.$elementName.$elementIndex.html|crmReplace:class:hiddenElement}
 {elseif $blockId and $blockSection}
     {assign var='elementId'   value=$form.$blockSection.$blockId.$elementName.id}
     {assign var="tElement" value=`$elementName`_time}
-    {$form.$blockSection.$blockId.$elementName.html|crmReplace:class:dateplugin}
+    {$form.$blockSection.$blockId.$elementName.html|crmReplace:class:hiddenElement}
     {assign var="timeElement" value=`$blockSection`_`$blockId`_`$elementName`_time}
     &nbsp;&nbsp;{$form.$blockSection.$blockId.$tElement.label}&nbsp;&nbsp;{$form.$blockSection.$blockId.$tElement.html|crmReplace:class:six}
 {else}
     {assign var='elementId'   value=$form.$elementName.id}
     {assign var="timeElement" value=$elementName|cat:'_time'}
-    {$form.$elementName.html|crmReplace:class:dateplugin}
+    {$form.$elementName.html|crmReplace:class:hiddenElement}
 {/if}
-{assign var='dateFormated' value=$elementId|cat:"_hidden"}<input type="text" name="{$dateFormated}" id="{$dateFormated}" class="hiddenElement"/>
+{assign var='displayDate' value=$elementId|cat:"_display"}
+<input type="text" name="{$displayDate}" id="{$displayDate}" class="dateplugin"/>
 {if $timeElement AND !$tElement}
     &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;{$form.$timeElement.html|crmReplace:class:six}
 {/if}
@@ -56,7 +57,7 @@
     {literal}
     cj( function() {
       {/literal}	
-      var element_date   = "#{$elementId}"; 
+      var element_date   = "#{$displayDate}"; 
       {if $timeElement}
           var element_time  = "#{$timeElement}";
           var time_format   = cj( element_time ).attr('timeFormat');
@@ -65,11 +66,11 @@
           {/literal}
       {/if}
       var currentYear = new Date().getFullYear();
-      var date_format = cj( element_date ).attr('format');
-      var alt_field   = 'input#{$dateFormated}';
-      var yearRange   = currentYear - parseInt( cj( element_date ).attr('startOffset') ); 
+      var alt_field   = '#{$elementId}';
+      var date_format = cj( alt_field ).attr('format');
+      var yearRange   = currentYear - parseInt( cj( alt_field ).attr('startOffset') ); 
           yearRange  += ':';
-          yearRange  += currentYear + parseInt( cj( element_date ).attr('endOffset'  ) ); 
+          yearRange  += currentYear + parseInt( cj( alt_field ).attr('endOffset'  ) ); 
       {literal}
 
       var lcMessage = {/literal}"{$config->lcMessages}"{literal};
@@ -84,6 +85,9 @@
                                     yearRange         : yearRange,
                                     regional          : localisation[0]
                                 });
+
+      //set default value to display field
+      cj( element_date).val( cj(alt_field).val( ) );
 
       cj(element_date).click( function( ) {
           hideYear( this );
@@ -101,7 +105,7 @@
     }
     
     function clearDateTime( element ) {
-        cj('input#' + element + ',input#' + element + '_time').val('');
+        cj('input#' + element + ',input#' + element + '_time' + ',input#' + element + '_display').val('');
     }
     {/literal}
 </script>

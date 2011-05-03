@@ -66,8 +66,9 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
         $this->_functionFiles = array('Entity.php', 'utils.php');
 
         //should possibly insert variable rather than '3' in below
-        $this->_regexForGettingAPIStdFunctions = '/^civicrm_api3_.*?_(?:(?!getfields).*)/';
-
+        $this->_regexForGettingAPIStdFunctions = '/^civicrm_api3_  #starts with civicrm_api_3 (ignore internal functions)
+        																					.*_              #any number of characters up to the last _
+        																					(?:(?!getfields))/x'; # negative look ahead on string getfields
         // functions to skip from utils.php mainly since they get sucked in via
         // a require chain in the include files
         $this->_skipFunctionList = array( 
@@ -118,8 +119,8 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
             try {
                 $result = $function($params);
             } catch ( Exception $e ) {
-                echo "PLEASE ADD TO SKIP: $function\n";
-                continue;
+              $this->assertEquals("Input variable `params` is not an array", $e->getMessage());
+              continue;
             }
 
             $this->assertEquals(1,
@@ -168,7 +169,14 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
      */
     function getAllAPIStdFunctions(){
         $functionlist = get_defined_functions();
-        return preg_grep($this->_regexForGettingAPIStdFunctions, $functionlist['user']);
+        $functions =  preg_grep($this->_regexForGettingAPIStdFunctions, $functionlist['user']);
+        foreach ($functions as $key =>$function ){
+          if (stristr($function,'getfields')){
+            unset($functions[$key]);
+          }
+         
+        }
+        return $functions;
     }
     
 }

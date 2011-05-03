@@ -85,6 +85,32 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
         // _participant, _contact and _event tables cleaned up in truncate.xml
     }
 
+        /**
+     * check with complete array + custom field 
+     * Note that the test is written on purpose without any
+     * variables specific to participant so it can be replicated into other entities
+     * and / or moved to the automated test suite
+     */
+    function testCreateWithCustom()
+    {
+        $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+        
+        $params = $this->_params;
+        $params['custom_'.$ids['custom_field_id']]  =  "custom string";
+ 
+        $result = civicrm_api($this->_entity,'create', $params);
+        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__);
+        $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
+
+        $check = civicrm_api($this->_entity,'get',array('version' =>3, 'id' => $result['id']));
+        $this->assertEquals("custom string", $check['values'][$check['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
+   
+        $this->customFieldDelete($ids['custom_field_id']);
+        $this->customGroupDelete($ids['custom_group_id']);      
+
+    }
+    
+    
     ///////////////// civicrm_participant_get methods
 
     /**
@@ -142,6 +168,19 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
         $this->assertEquals($result['values'][$this->_participantID]['participant_source'],'Wimbeldon');
     }
 
+    /*
+     * Check Participant Get respects return properties
+     */
+    function testGetWithReturnProperties(){
+       $params = array(
+                        'contact_id'      => $this->_contactID,
+                        'version'							=> $this->_apiversion,
+                        'return.status_id' => 1,
+                        'return.participant_status_id' => 1,
+       );
+        $result = & civicrm_api3_participant_get($params);
+        $this->assertArrayHasKey('participant_status_id', $result['values'][$result['id']]);
+    }
 
     /**
      * check with contact_id
@@ -282,12 +321,12 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
         // Should 2 participant records since we're passing rowCount = 2.
         $params = array(
                         'event_id'      => $this->_eventID,
-                        'rowCount'      => 3,
+                        'rowCount'      => 2,
                         'version'							=> $this->_apiversion,
                         );
         $participant = & civicrm_api3_participant_get($params);
      
-        $this->assertEquals(  $participant['count'], 3,'in line ' . __LINE__);
+        $this->assertEquals(  $participant['count'], 2,'in line ' . __LINE__);
     }
 
     ///////////////// civicrm_participant_create methods
@@ -388,31 +427,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
         }
     }
 
-    /**
-     * check with complete array + custom field 
-     * Note that the test is written on purpose without any
-     * variables specific to participant so it can be replicated into other entities
-     * and / or moved to the automated test suite
-     */
-    function testCreateWithCustom()
-    {
-        $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
-        
-        $params = $this->_params;
-        $params['custom_'.$ids['custom_field_id']]  =  "custom string";
- 
-        $result = civicrm_api($this->_entity,'create', $params);
-        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__);
-        $this->assertNotEquals( $result['is_error'],1 ,'in line ' . __LINE__);
 
-        $check = civicrm_api($this->_entity,'get',array('version' =>3, 'id' => $result['id']));
-        $this->assertEquals("custom string", $check['values'][$check['id']]['custom_' .$ids['custom_field_id'] ]);
-        
-        $this->customFieldDelete($ids['custom_field_id']);
-        $this->customGroupDelete($ids['custom_group_id']);      
-
-    }
-    
     
     ///////////////// civicrm_participant_update methods
 
@@ -498,7 +513,6 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         );
         $participant = & civicrm_api3_participant_create($params);
         $this->assertEquals( $participant['is_error'], 1 );
-        $this->assertEquals( $participant['error_message'],'Mandatory key(s) missing from params array: event_id' );
         $result = $this->participantDelete( $participantId );
     }
 

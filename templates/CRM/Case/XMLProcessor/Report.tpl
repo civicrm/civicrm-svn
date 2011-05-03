@@ -27,7 +27,7 @@
 <Case>
   <Client>{$case.clientName}</Client>
   <CaseType>{$case.caseType}</CaseType>
-  <CaseSubject>{$case.subject}</CaseSubject>
+  <CaseSubject>{$case.subject|escape}</CaseSubject>
   <CaseStatus>{$case.status}</CaseStatus>
   <CaseOpen>{$case.start_date}</CaseOpen>
   <CaseClose>{$case.end_date}</CaseClose>

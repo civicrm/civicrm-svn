@@ -126,9 +126,7 @@ function civicrm_api3_activity_getfields( $params ) {
  * @param array $params
  * @return array
  *
- * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
- * @todo Erik Hommel 16 dec 2010 check if all DB fields are returned
- * @todo - this is a very limited GET not a search
+ * @todo - if you pass in contact_id do you / can you get custom fields
  * 
  * {@example ActivityGet.php 0}
  */
@@ -136,23 +134,26 @@ function civicrm_api3_activity_getfields( $params ) {
 function civicrm_api3_activity_get( $params ) {
     _civicrm_api3_initialize( true );
     try{
-
-        civicrm_api3_verify_one_mandatory($params,'',array('contact_id','activity_id','id'));
+ 
+        civicrm_api3_verify_one_mandatory($params);
+        
         if (!empty($params['contact_id'])){
             $activities = _civicrm_api3_activities_get_by_contact($params['contact_id']);
             return civicrm_api3_create_success($activities,$params);
         }
-        $activityId = CRM_Utils_Array::value( 'activity_id', $params );
-        if(empty($activityId)){
-            $activityId = CRM_Utils_Array::value( 'id', $params );  
+            
+        $activity = _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params, FALSE);
+        
+        if ( $returnCustom && !empty( $activity ) ) {
+            $customdata = array();
+            $customdata = _civicrm_api3_activity_custom_get( array( 'activity_id'      => $activityId,
+                                                                    'activity_type_id' => CRM_Utils_Array::value('activity_type_id',$activity[$dao->id]  ))  );
+            if ( is_array( $customdata ) && !empty( $customdata ) ) {
+                $activity = array_merge( $activity, $customdata );
+            }
         }
-        $activity = _civicrm_api3_activity_get( $activityId );
+         return civicrm_api3_create_success( $activity ,$params);
 
-        if ( $activity ) {
-            return civicrm_api3_create_success( $activity ,$params);
-        } else {
-            return civicrm_api3_create_error(  'Invalid Data'  );
-        }
     } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {
@@ -201,34 +202,6 @@ function civicrm_api3_activity_delete( $params )
     }
 }
 
-/**
- * Retrieve a specific Activity by Id.
- *
- * @param int $activityId
- * @todo this should probably be merged into main function
- * @return array (reference)  activity object
- * @access public
- *  */
-function _civicrm_api3_activity_get( $activityId, $returnCustom = true ) {
-    $dao = new CRM_Activity_BAO_Activity();
-    $dao->id = $activityId;
-    if( $dao->find( true ) ) {
-        $activity = array();
-        _civicrm_api3_object_to_array( $dao, $activity[$dao->id] );
-        //also return custom data if needed.
-        if ( $returnCustom && !empty( $activity ) ) {
-            $customdata = array();
-            $customdata = _civicrm_api3_activity_custom_get( array( 'activity_id'      => $activityId,
-                                                                    'activity_type_id' => CRM_Utils_Array::value('activity_type_id',$activity[$dao->id]  ))  );
-            if ( is_array( $customdata ) && !empty( $customdata ) ) {
-                $activity = array_merge( $activity, $customdata );
-            }
-        }
-        return $activity;
-    } else {
-        return false;
-    }
-}
 
 /**
  * Function to check for required params

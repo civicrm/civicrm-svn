@@ -180,7 +180,7 @@ function where( $includeContactIDs = false ) {
 
          if ( ! empty( $contactIDs ) ) {
                 $contactIDs = implode( ', ', $contactIDs );
-                $clauses[] = "contact_a.id IN ( $contactIDs )";
+                $clauses[] = "civicrm_contact.id IN ( $contactIDs )";
             }
         }
         return implode( ' AND ', $clauses );

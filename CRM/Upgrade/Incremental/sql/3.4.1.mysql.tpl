@@ -28,14 +28,36 @@ INSERT INTO civicrm_navigation
 VALUES     
     ( {$domainID}, 'civicrm/admin/campaign/surveyType&reset=1',                            '{ts escape="sql" skip="true"}Survey Types{/ts}',  'Survey Types', 'administer CiviCampaign',    '', @adminCampaignID, '1', NULL, 1 ),
     ( {$domainID}, 'civicrm/admin/options/campaign_type&group=campaign_type&reset=1',      '{ts escape="sql" skip="true"}Campaign Types{/ts}',  'Campaign Types', 'administer CiviCampaign',    '', @adminCampaignID, '1', NULL, 2 ),
-    ( {$domainID}, 'civicrm/admin/options/campaign_status&group=campaign_status&reset=1',      '{ts escape="sql" skip="true"}Campaign Status{/ts}',  'Campaign Status', 'administer CiviCampaign',    '', @adminCampaignID, '1', NULL, 3 ),
-    ( {$domainID}, 'civicrm/admin/options/engagement_index&group=engagement_index&reset=1', '{ts escape="sql" skip="true"}Engagement Index{/ts}',  'Engagement Index', 'administer CiviCampaign', '', @adminCampaignID, '1', NULL, 4 );
+    ( {$domainID}, 'civicrm/admin/options/campaign_status&group=campaign_status&reset=1',  '{ts escape="sql" skip="true"}Campaign Status{/ts}',  'Campaign Status', 'administer CiviCampaign',    '', @adminCampaignID, '1', NULL, 3 ),
+    ( {$domainID}, 'civicrm/admin/options/engagement_index&group=engagement_index&reset=1','{ts escape="sql" skip="true"}Engagement Index{/ts}',  'Engagement Index', 'administer CiviCampaign', '', @adminCampaignID, '1', NULL, 4 );
 
+-- CRM-7976
+DELETE FROM civicrm_navigation where name = 'Manage CiviCRM Extensions';
+
+SELECT @customizeID      := MAX(id) FROM civicrm_navigation where name = 'Customize';
+SELECT @extensionsWeight := MAX(weight)+1 FROM civicrm_navigation where parent_id = @customizeID;
+
+INSERT INTO civicrm_navigation
+    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+VALUES            
+    ( {$domainID}, 'civicrm/admin/extensions&reset=1',        '{ts escape="sql" skip="true"}Manage CiviCRM Extensions{/ts}', 'Manage CiviCRM Extensions', 'administer CiviCRM', '', @customizeID, '1', NULL, @extensionsWeight );
+
+-- CRM-7878
 -- insert drupal wysiwyg editor option
 SELECT @option_group_id_we := max(id) from civicrm_option_group where name = 'wysiwyg_editor';
 
 INSERT INTO civicrm_option_value 
-  ( option_group_id, label, value, name, grouping, filter, is_default, weight, description, is_optgroup, is_active, component_id, domain_id, visibility_id )
+  ( option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight, {localize field='description'}description{/localize}, is_optgroup, is_active, component_id, domain_id, visibility_id )
 VALUES 
-  ( @option_group_id_we, 'Drupal Default Editor', 4, NULL, NULL, 0, NULL, 4, NULL, 0, 1, 1, NULL, NULL );
-   
+  ( @option_group_id_we, {localize}'Drupal Default Editor'{/localize}, 4, NULL, NULL, 0, NULL, 4, {localize}NULL{/localize}, 0, 1, 1, NULL, NULL );
+
+-- CRM-7988 allow negative start and end date offsets for custom fields
+ALTER TABLE civicrm_custom_field MODIFY start_date_years INT(10);
+ALTER TABLE civicrm_custom_field MODIFY end_date_years INT(10);
+
+-- CRM-8009
+INSERT INTO civicrm_state_province
+  (`name`, `abbreviation`, `country_id` )
+VALUES
+  ( 'Toledo' , 'TO', '1198' ),
+  ( 'Córdoba', 'CO', '1198' );

@@ -88,8 +88,6 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         }
         if ( CRM_Utils_Array::value( 'end_date', $params ) ) {
             $params['end_date']   = CRM_Utils_Date::isoToMysql($params['end_date']);
-        } else {
-            $params['end_date']   = 'null';
         }
         if ( CRM_Utils_Array::value( 'reminder_date', $params ) ) { 
             $params['reminder_date']  = CRM_Utils_Date::isoToMysql($params['reminder_date']);

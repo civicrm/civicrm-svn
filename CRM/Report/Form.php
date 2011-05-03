@@ -233,8 +233,9 @@ class CRM_Report_Form extends CRM_Core_Form {
 	     }
         }
 
-        // set qfkey so that pager picks it up and use it in the "Next > Last >>" links, 
-        $_GET['qfKey'] = $this->controller->_key;
+        // set qfkey so that pager picks it up and use it in the "Next > Last >>" links.
+        // FIXME: Note setting it in $_GET doesn't work, since pager generates link based on QUERY_STRING
+        $_SERVER['QUERY_STRING'] .= "&qfKey={$this->controller->_key}"; 
 
         if ( $this->_id ) {
             $this->assign( 'instanceId', $this->_id );

@@ -348,6 +348,8 @@ WHERE     pledge_id = %1
                                         $isScriptUpdate = false )
     {
         $totalAmountClause = '';
+        $paymentContributionId = null;
+        $editScheduled = true;
         //get all status
         require_once 'CRM/Contribute/PseudoConstant.php';
         $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
@@ -548,6 +550,7 @@ WHERE  civicrm_pledge.id = %2
             $paymentClause = " AND civicrm_pledge_payment.id IN ( {$payments} )";
         }
         $actualAmountClause = NULL;
+        $contributionIdClause = NULL;
         if ( isset( $contributionId ) && !$isScriptUpdate ) {
             $contributionIdClause = ", civicrm_pledge_payment.contribution_id = {$contributionId}";
             $actualAmountClause =", civicrm_pledge_payment.actual_amount = {$actualAmount}";

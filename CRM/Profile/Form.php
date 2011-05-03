@@ -432,7 +432,7 @@ class CRM_Profile_Form extends CRM_Core_Form
         // cache the state country fields. based on the results, we could use our javascript solution
         // in create or register mode
         $stateCountryMap = array( );
-        
+
         // add the form elements
         foreach ($this->_fields as $name => $field ) {
             // make sure that there is enough permission to expose this field

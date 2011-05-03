@@ -539,9 +539,11 @@ class CRM_Contact_BAO_Query
 
         foreach ($this->_fields as $name => $field) {
 
-            //skip component fields
-            if ( ( substr( $name, 0, 12 ) == 'participant_' ) || 
-                 ( substr( $name, 0, 7  ) == 'pledge_' ) || 
+            // skip component fields
+            // there are done by the alter query below
+            // and need not be done on every field
+            if ( ( substr( $name, 0, 12 ) == 'participant_' ) ||
+                 ( substr( $name, 0, 7  ) == 'pledge_' )      ||
                  ( substr( $name, 0, 5  ) == 'case_' ) ) {
                 continue;
             }
@@ -706,6 +708,7 @@ class CRM_Contact_BAO_Query
                     }
                 }
             }
+
         }
         
         // add location as hierarchical elements
@@ -713,7 +716,7 @@ class CRM_Contact_BAO_Query
 
         // add multiple field like website
         $this->addMultipleElements( );
-        
+
         //fix for CRM-951
         require_once 'CRM/Core/Component.php';
         CRM_Core_Component::alterQuery( $this, 'select' );
@@ -1684,7 +1687,7 @@ class CRM_Contact_BAO_Query
             } else {
                 $this->_qill[$grouping][]  = "$field[title] $op";
             }
-
+            self::$_openedPanes['Demographics'] = true;
         } else if ( $name === 'deceased_date' ) {
             $date = CRM_Utils_Date::processDate( $value );
             $this->_where[$grouping][] = self::buildClause( "contact_a.{$name}", $op, $date );
@@ -1694,9 +1697,11 @@ class CRM_Contact_BAO_Query
             } else {
                 $this->_qill[$grouping][]  = "$field[title] $op";
             }
+            self::$_openedPanes['Demographics'] = true;
         } else if ( $name === 'is_deceased' ) {
             $this->_where[$grouping][] = self::buildClause( "contact_a.{$name}", $op, $value );
             $this->_qill[$grouping][]  = "$field[title] $op \"$value\"";
+            self::$_openedPanes['Demographics'] = true;
         } else if ( $name === 'contact_id' ) {
             if ( is_int( $value ) ) {
                 $this->_where[$grouping][] = self::buildClause( $field['where'], $op, $value );
@@ -3503,6 +3508,13 @@ WHERE  id IN ( $groupIDs )
                     $this->_simpleFromClause = self::fromClause( $this->_whereTables, null, null,
                                                                  $this->_primaryLocation, $this->_mode );
 
+                    // if we are doing a transform, do it here
+                    // CRM-7969
+                    $having = null;
+                    if ( $this->_displayRelationshipType ) {
+                        $this->filterRelatedContacts( $this->_simpleFromClause, $where, $having );
+                    }
+
                     $limitQuery = "$limitSelect {$this->_simpleFromClause} $where $order $limit";
                     $limitDAO   = CRM_Core_DAO::executeQuery( $limitQuery );
                     $limitIDs   = array( );
@@ -4079,6 +4091,9 @@ INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRel
         }
 
         if ( strpos( $from, $_rTypeFrom ) === false ) {
+            // lets replace all the INNER JOIN's in the $from so we dont exclude other data
+            // this happens when we have an event_type in the quert (CRM-7969)
+            $from  = str_replace( "INNER JOIN", "LEFT JOIN", $from );
             $from .= $_rTypeFrom;
             $where = $_rTypeWhere;
         }
