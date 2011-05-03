@@ -258,13 +258,9 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
 
         if ( $dao->is_fullscreen ) {                       
             $fullscreenUrl = $dao->fullscreen_url;
-             if ( substr( $fullscreenUrl, 0, 4 ) != 'http' ) {
-                 $urlParam = CRM_Utils_System::explode( '&', $dao->fullscreen_url, 2 );
-
-                 if ( $config->userFramework == 'Joomla' ||
-                     ( $config->userFramework == 'Drupal' && !variable_get('clean_url', '0' ) ) ) {
-                    $fullscreenUrl = CRM_Utils_System::url( $urlParam[0], $urlParam[1], true, null, false );
-                 }
+            if ( substr( $fullscreenUrl, 0, 4 ) != 'http' ) {
+                $urlParam = CRM_Utils_System::explode( '&', $dao->fullscreen_url, 2 );
+                $fullscreenUrl = CRM_Utils_System::url( $urlParam[0], $urlParam[1], true, null, false );
             }
             $dashletInfo['fullscreenUrl'] = $fullscreenUrl;
         }                     
