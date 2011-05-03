@@ -1603,7 +1603,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                             ts('External ID already exists in Database.'), 
                             'objectExists', 
                             array( 'CRM_Contact_DAO_Contact', $contID, 'external_identifier' ) );
-        } else if ( $fieldName === 'group' ) {
+        } else if ( $fieldName === 'groups' ) {
             require_once 'CRM/Contact/Form/Edit/TagsAndGroups.php';
             CRM_Contact_Form_Edit_TagsAndGroups::buildQuickForm( $form, $contactId,
 																  CRM_Contact_Form_Edit_TagsAndGroups::GROUP,
