@@ -742,28 +742,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         
         //to avoid conflict overwrite $this->_params
         $this->_params = $this->get('value');
-        
-        // create CMS user
-        if ( CRM_Utils_Array::value( 'cms_create_account', $this->_params ) ) {
-            $this->_params['contactID'] = $contactID;
-            $mail = 'email-5';
-            
-            // we should use primary email for 
-            // 1. free event registration.
-            // 2. pay later participant.
-            // 3. waiting list participant.
-            // 4. require approval participant.
-            if ( CRM_Utils_Array::value( 'is_pay_later', $this->_params ) ||
-                 $this->_allowWaitlist || $this->_requireApproval ||
-                 !CRM_Utils_Array::value( 'is_monetary', $this->_values['event'] ) ) {
-                $mail = 'email-Primary';
-            }
-            
-            require_once 'CRM/Core/BAO/CMSUser.php';
-            if ( ! CRM_Core_BAO_CMSUser::create( $this->_params, $mail ) ) {
-                CRM_Core_Error::statusBounce( ts('Your profile is not saved and Account is not created.') );
-            }
-        }
+
         //get the amount of primary participant
         if( CRM_Utils_Array::value('is_primary', $this->_params ) ) {
             $this->_params['fee_amount'] = $this->get( 'primaryParticipantAmount' );
@@ -810,6 +789,28 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         } 
      
         $this->assign('action',$this->_action);
+
+        // create CMS user
+        if ( CRM_Utils_Array::value( 'cms_create_account', $this->_params ) ) {
+            $this->_params['contactID'] = $contactID;
+            $mail = 'email-5';
+            
+            // we should use primary email for 
+            // 1. free event registration.
+            // 2. pay later participant.
+            // 3. waiting list participant.
+            // 4. require approval participant.
+            if ( CRM_Utils_Array::value( 'is_pay_later', $this->_params ) ||
+                 $this->_allowWaitlist || $this->_requireApproval ||
+                 !CRM_Utils_Array::value( 'is_monetary', $this->_values['event'] ) ) {
+                $mail = 'email-Primary';
+            }
+            
+            require_once 'CRM/Core/BAO/CMSUser.php';
+            if ( ! CRM_Core_BAO_CMSUser::create( $this->_params, $mail ) ) {
+                CRM_Core_Error::statusBounce( ts('Your profile is not saved and Account is not created.') );
+            }
+        }
     }
 
     /**
