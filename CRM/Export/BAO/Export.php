@@ -711,7 +711,7 @@ class CRM_Export_BAO_Export
                             } else {
                                 $fieldValue = '';
                             }
-                            $relationField = '_'. $relationField;
+                            $field = $field. '_';
                             if ( $relationField == 'id' ) {
                                 $row[$field .$relationField] = $relDAO->contact_id;
                             } else  if ( is_array( $relationValue ) && $relationField == 'location' ) {
@@ -722,17 +722,21 @@ class CRM_Export_BAO_Export
                                         if ( CRM_Utils_Array::value( 1, $type ) ) {
                                             $fldValue .= "-" . $type[1];
                                         }
-                                        // CRM-3157: localise country, region (both have ‘country’ context) and state_province (‘province’ context)
+                                        // CRM-3157: localise country, region (both have ‘country’ context) 
+                                        // and state_province (‘province’ context)
                                         switch (true) {
                                         case in_array('country',      $type):
                                         case in_array('world_region', $type):
-                                            $row[$field . $fldValue] = $i18n->crm_translate($relDAO->$fldValue, array('context' => 'country'));
+                                            $row[$field . '_' .$fldValue] = $i18n->crm_translate($relDAO->$fldValue, 
+                                                                                                 array('context' => 'country'));
+                                            
                                             break;
                                         case in_array('state_province', $type):
-                                            $row[$field . $fldValue] = $i18n->crm_translate($relDAO->$fldValue, array('context' => 'province'));
+                                            $row[$field . '_' .$fldValue] = $i18n->crm_translate($relDAO->$fldValue, 
+                                                                                                 array('context' => 'province'));
                                             break;
                                         default:
-                                            $row[$field . $fldValue] = $relDAO->$fldValue;
+                                            $row[$field . '_' .$fldValue] = $relDAO->$fldValue;
                                             break;
                                         }
                                     }
