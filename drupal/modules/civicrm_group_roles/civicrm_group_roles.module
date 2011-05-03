@@ -111,8 +111,7 @@ function civicrm_group_roles_form_alter(&$form, &$form_state, $form_id) {
          $form['#id'] == 'user-edit-form' ) {
     // make sure there is a civicrm record
     civicrm_initialize(true);
-    civicrm_api_include('uf_group');
-    // TODO: Does this function uf_match_id_get() exist in v3 api?
+    require_once 'api/v2/UFGroup.php';
     $contact_id = uf_match_id_get($form['#uid']);
     if (!$contact_id) {
       return;
