@@ -114,7 +114,7 @@ class CRM_UpdateGreeting {
         
         //process all contacts only when force pass. 
         $force = CRM_Utils_Request::retrieve( 'force', 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
-        $processAll = false;
+        $processAll = $processOnlyIdSet = false;
         if ( in_array( $force, array( 1, 'true' ) ) ) {
             $processAll = true;
         } elseif ( $force == 2 ) {
@@ -162,9 +162,11 @@ SELECT DISTINCT id, $idFldName
         $contactIds = array( );
         $cacheFieldQuery = "UPDATE civicrm_contact SET {$greeting}_display = CASE id ";
         foreach ( $greetingDetails as $contactID => $contactDetails ) {
-            if ( !$processAll && !array_key_exists( $contactID, $filterContactFldIds ) ) {
+            if ( ! $processAll && 
+                 ! array_key_exists( $contactID, $filterContactFldIds ) ) {
                 continue;
             }
+
             if ( $processOnlyIdSet ) { 
                 if ( !array_key_exists( $contactID, $filterIds ) ) {
                     continue;
