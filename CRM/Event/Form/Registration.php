@@ -1217,9 +1217,9 @@ WHERE  v.option_group_id = g.id
                     if ( $opDbCount && ( $opDbCount >= $optMax ) ) {
                         $errors[$currentParticipantNum]["price_{$fieldId}"] = ts( 'Sorry, this option is currently sold out.' );
                     } else if ( ($optMax - $opDbCount) == 1 ) {
-                        $errors[$currentParticipantNum]["price_{$fieldId}"] = ts( 'Sorry, currently only a single seat is avialble for this option.', array( 1 => ($optMax - $opDbCount) ) ); 
+                        $errors[$currentParticipantNum]["price_{$fieldId}"] = ts( 'Sorry, currently only a single seat is available for this option.', array( 1 => ($optMax - $opDbCount) ) ); 
                     } else {
-                        $errors[$currentParticipantNum]["price_{$fieldId}"] = ts( 'Sorry, currently only %1 seats are avialble for this option.', array( 1 => ($optMax - $opDbCount) ) ); 
+                        $errors[$currentParticipantNum]["price_{$fieldId}"] = ts( 'Sorry, currently only %1 seats are available for this option.', array( 1 => ($optMax - $opDbCount) ) ); 
                     }
                 }
             }
