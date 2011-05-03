@@ -76,6 +76,9 @@
         case 'mm/dd':
             altDateFormat = 'mm/dd';
             break;
+        case 'M yy':
+            altDateFormat = 'yy-mm';
+            break;
      }
       {/literal}
       var yearRange   = currentYear - parseInt( cj( alt_field ).attr('startOffset') ); 
