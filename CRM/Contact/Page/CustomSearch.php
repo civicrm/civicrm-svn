@@ -98,7 +98,7 @@ ORDER By  v.weight
                                                $this, false, 'browse' );
 
         $this->assign( 'action', $action );
-        $this->browse( );
+        return $this->browse( );
     }
 
 }
