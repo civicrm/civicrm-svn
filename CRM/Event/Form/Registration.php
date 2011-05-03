@@ -758,7 +758,12 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                  !CRM_Utils_Array::value( 'is_monetary', $this->_values['event'] ) ) {
                 $mail = 'email-Primary';
             }
-                }
+            
+            require_once 'CRM/Core/BAO/CMSUser.php';
+            if ( ! CRM_Core_BAO_CMSUser::create( $this->_params, $mail ) ) {
+                CRM_Core_Error::statusBounce( ts('Your profile is not saved and Account is not created.') );
+            }
+        }
         //get the amount of primary participant
         if( CRM_Utils_Array::value('is_primary', $this->_params ) ) {
             $this->_params['fee_amount'] = $this->get( 'primaryParticipantAmount' );
@@ -803,11 +808,8 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             $this->_params['participantID'] = $participant->id;
             $this->set ( 'primaryParticipant',  $this->_params );
         } 
+     
         $this->assign('action',$this->_action);
-        require_once 'CRM/Core/BAO/CMSUser.php';
-        if ( ! CRM_Core_BAO_CMSUser::create( $this->_params, $mail ) ) {
-            CRM_Core_Error::statusBounce( ts('Your profile is not saved and Account is not created.') );
-        }
     }
 
     /**
