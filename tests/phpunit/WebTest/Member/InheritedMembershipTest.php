@@ -171,7 +171,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
       
         // click through to the membership view screen
         $this->click( 'css=li#tab_member a' );
-        $this->waitForElementPresent('css=div#memberships');     
+        $this->waitForElementPresent('css=div#memberships');    
       
         // visit relationship tab
         $this->click('css=li#tab_rel a');
@@ -191,6 +191,27 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
         
         // click through to the membership view screen
         $this->click( 'css=li#tab_member a' );
-     }
+        $this->assertFalse($this->isElementPresent('css=div#memberships'));
+
+        // visit relationship tab and re-enable the relationship
+        $this->click('css=li#tab_rel a');
+        $this->waitForElementPresent('css=div.action-link');
+        $this->click("//li[@id='tab_rel']/a");
+        $this->click("//div[@id='squeeze']/div/div");
+        $this->waitForElementPresent("xpath=//div[@id='inactive-relationships']//div//table/tbody//tr/td[7]/span/a[text()='Edit']");
+        $this->click("xpath=//div[@id='inactive-relationships']//div//table/tbody//tr/td[7]/span/a[text()='Edit']");
+        $this->waitForElementPresent('is_active');
+        if (!$this->isChecked('is_active') ) {
+            $this->click('is_active');
+        }        
+        $this->click('_qf_Relationship_upload');
+        $this->waitForElementPresent('current-relationships');
+        //check the status message
+        $this->assertTrue($this->isTextPresent('Relationship record has been updated.'));
+ 
+        //check for memberships
+        $this->click( 'css=li#tab_member a' );
+        $this->waitForElementPresent('css=div#memberships');    
+    }
     
 }
