@@ -181,7 +181,16 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='Edit']");
         $this->click("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='Edit']");
         $this->waitForElementPresent('is_active');
-        $this->click('is_permission_a_b');
+        if ($this->isChecked('is_active') ) {
+            $this->click('is_active');
+        }        
+        $this->click('_qf_Relationship_upload');
+        $this->waitForElementPresent('inactive-relationships');
+        //check the status message
+        $this->assertTrue($this->isTextPresent('Relationship record has been updated.'));
+        
+        // click through to the membership view screen
+        $this->click( 'css=li#tab_member a' );
      }
     
 }
