@@ -239,6 +239,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
             $defaults['relationship_type_id'] = $this->_rtypeId;
         }
 
+        $this->_enabled = $defaults['is_active'];
         return $defaults;
     }
     
@@ -591,8 +592,11 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
                                                                   $this->_action );
             } elseif ( $this->_action & CRM_Core_Action::UPDATE ) {
                 //fixes for CRM-7985
-                $active = CRM_Utils_Array::value( 'is_active', $params ) ? CRM_Core_Action::ENABLE : CRM_Core_Action::DISABLE;
-                CRM_Contact_BAO_Relationship::disableEnableRelationship( $this->_relationshipId, $active );
+                //only if the relationship has been toggled to enable /disable
+                if ( CRM_Utils_Array::value( 'is_active', $params ) != $this->_enabled ) {
+                    $active = CRM_Utils_Array::value( 'is_active', $params ) ? CRM_Core_Action::ENABLE : CRM_Core_Action::DISABLE;
+                    CRM_Contact_BAO_Relationship::disableEnableRelationship( $this->_relationshipId, $active );
+                }
             }
         }
         //handle current employee/employer relationship, CRM-3532
