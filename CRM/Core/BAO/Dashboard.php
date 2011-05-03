@@ -232,11 +232,6 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
             $dao->content = NULL;
         }
 
-        if ( ! isset( $config->useFrameworkRelativeBase ) ) {
-            $base = parse_url( $config->userFrameworkBaseURL );
-            $config->useFrameworkRelativeBase = $base['path'];
-        }
- 
         // if content is empty and url is set, retrieve it from url
         if ( !$dao->content && $dao->url ) {
             $url = $dao->url;
@@ -244,10 +239,13 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
             // CRM-7087 
             // -lets use relative url for internal use.
             // -make sure relative url should not be htmlize.
-            if ( substr( $url, 0, 4 ) != 'http' ) {
+            if ( substr( $dao->url, 0, 4 ) != 'http' ) {
+                $urlParam = explode( '&', $dao->url );
+                $qParams  = substr( str_replace( $urlParam[0], '',  $dao->url ), 1 );
+
                 if ( $config->userFramework == 'Joomla' ||
-                     ( $config->userFramework == 'Drupal' && !variable_get('clean_url', '0' ) ) ) {
-                    $url = $config->useFrameworkRelativeBase . $url; 
+                    ( $config->userFramework == 'Drupal' && !variable_get('clean_url', '0' ) ) ) {
+                    $url = CRM_Utils_System::url( $urlParam[0], $qParams, false, null, false );
                 }
             }
             
@@ -261,13 +259,16 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
                               'content'    => $dao->content);
 
         if ( $dao->is_fullscreen ) {                       
-             $fullscreenUrl = $dao->fullscreen_url;
+            $fullscreenUrl = $dao->fullscreen_url;
              if ( substr( $fullscreenUrl, 0, 4 ) != 'http' ) {
-                if ( $config->userFramework == 'Joomla' ||
+                 $urlParam = explode( '&', $dao->fullscreen_url );
+                 $qParams  = substr( str_replace( $urlParam[0], '',  $dao->fullscreen_url ), 1 );
+
+                 if ( $config->userFramework == 'Joomla' ||
                      ( $config->userFramework == 'Drupal' && !variable_get('clean_url', '0' ) ) ) {
-                    $fullscreenUrl = $config->useFrameworkRelativeBase .  $fullscreenUrl;
-                }
-                $fullscreenUrl = $config->userFrameworkBaseURL . $fullscreenUrl;
+                    $fullscreenUrl = CRM_Utils_System::url( $urlParam[0], $qParams, false, null, false );
+                 }
+                 $fullscreenUrl = $config->userFrameworkBaseURL . $fullscreenUrl;
             }
             $dashletInfo['fullscreenUrl'] = $fullscreenUrl;
         }                     
