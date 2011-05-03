@@ -1080,12 +1080,12 @@ WHERE id={$id}; ";
                 }
                 
                 if ( $isProfile ) {
-                    $fields = array_merge( $fields, array ( 'groups' => array( 'title' => ts( 'Group(s)' ),
-                                                                               'name'  => 'groups' ),
-                                                            'tags'   => array( 'title'  => ts( 'Tag(s)'  ),
-                                                                               'name'  => 'tags' ),
-                                                            'notes'  => array( 'title'  => ts( 'Note(s)' ),
-                                                                               'name'  => 'notes' ) ) );
+                    $fields = array_merge( $fields, array ( 'group' => array( 'title' => ts( 'Group(s)' ),
+                                                                               'name'  => 'group' ),
+                                                            'tag'   => array( 'title'  => ts( 'Tag(s)'  ),
+                                                                               'name'  => 'tag' ),
+                                                            'note'  => array( 'title'  => ts( 'Note(s)' ),
+                                                                               'name'  => 'note' ) ) );
                 }
                 
                 //Sorting fields in alphabetical order(CRM-1507)
@@ -1226,12 +1226,12 @@ WHERE id={$id}; ";
                                                             'notes'  => array( 'title'  => ts( 'Note(s)' ),
                                                                                'name'  => 'notes' ) ) );
                 } else { 
-                    $fields = array_merge( $fields, array ( 'groups' => array( 'title' => ts( 'Group(s)' ),
-                                                                               'name'  => 'groups' ),
-                                                            'tags'   => array( 'title'  => ts( 'Tag(s)'  ),
-                                                                               'name'  => 'tags' ),
-                                                            'notes'  => array( 'title'  => ts( 'Note(s)' ),
-                                                                               'name'  => 'notes' ) ) );
+                    $fields = array_merge( $fields, array ( 'group' => array( 'title' => ts( 'Group(s)' ),
+                                                                               'name'  => 'group' ),
+                                                            'tag'   => array( 'title'  => ts( 'Tag(s)'  ),
+                                                                               'name'  => 'tag' ),
+                                                            'note'  => array( 'title'  => ts( 'Note(s)' ),
+                                                                               'name'  => 'note' ) ) );
                 }
             
                 //Sorting fields in alphabetical order(CRM-1507)
