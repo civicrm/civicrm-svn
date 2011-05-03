@@ -126,7 +126,7 @@ function civicrm_api3_verify_mandatory ($params, $daoName = null, $keys = array(
         throw new Exception ('Input variable `params` is not an array');
     }
 
-    if ($daoName != null && $verifyDAO) {
+    if ($daoName != null && $verifyDAO && !CRM_Utils_Array::value('id',$params)) {
         if(!is_array($unmatched =_civicrm_api3_check_required_fields( $params, $daoName, true))){
             $unmatched = array();
         }
@@ -375,7 +375,7 @@ function _civicrm_api3_build_fields_array(&$dao, $unique = TRUE){
  * @static void
  * @access public
  */
-function _civicrm_api3_dao_to_array (&$dao, $params = null,$uniqueFields = TRUE) {
+function _civicrm_api3_dao_to_array ($dao, $params = null,$uniqueFields = TRUE) {
     $result = array();
     if ( !$dao->find() ) {
         return array();
