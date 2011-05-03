@@ -270,9 +270,6 @@ class CRM_UF_Form_Field extends CRM_Core_Form
 
         $fields['Contact'] = array( );
 
-        CRM_Core_Error::debug( $fields['Individual'] );
-        exit( );
-
         //build the common contact fields array CRM-3037.
         foreach ( $fields['Individual'] as $key => $value ) {
             if ( CRM_Utils_Array::value( $key, $fields['Household'] ) && 
