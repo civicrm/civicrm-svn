@@ -167,13 +167,13 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
         //check the status message
         $this->assertTrue($this->isTextPresent('1 new relationship record created.'));
         
-        $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
+           $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
       
         // click through to the membership view screen
         $this->click( 'css=li#tab_member a' );
         $this->waitForElementPresent('css=div#memberships');    
       
-        // visit relationship tab
+        //1. change relationship on form
         $this->click('css=li#tab_rel a');
         $this->waitForElementPresent('css=div.action-link');
         $this->click("//li[@id='tab_rel']/a");
@@ -181,6 +181,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='Edit']");
         $this->click("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='Edit']");
         $this->waitForElementPresent('is_active');
+        //disable relationship
         if ($this->isChecked('is_active') ) {
             $this->click('is_active');
         }        
@@ -211,7 +212,40 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
  
         //check for memberships
         $this->click( 'css=li#tab_member a' );
-        $this->waitForElementPresent('css=div#memberships');    
+        $this->waitForElementPresent('css=div#memberships'); 
+
+        //2 . visit relationship tab and disable the relationship (by links)
+        //disable relationship
+        $this->click('css=li#tab_rel a');
+        $this->waitForElementPresent('css=div.action-link');
+        $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span[2][text()='more ']/ul/li[1]/a[text()='Disable']"); 
+        $this->click("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span[2][text()='more ']/ul/li[1]/a[text()='Disable']"); 
+        
+        $this->assertTrue( (bool)preg_match("/^Are you sure you want to disable this relationship?[\s\S]$/", 
+                                            $this->getConfirmation()) );
+        $this->chooseOkOnNextConfirmation();
+        sleep(10);
+
+        //verify membership
+        $this->waitForElementPresent('css=li#tab_member a' );
+        $this->click( 'css=li#tab_member a' );
+        $this->assertFalse($this->isElementPresent('css=div#memberships'));
+
+        //enable relationship
+        $this->click('css=li#tab_rel a');
+        $this->waitForElementPresent('css=div.action-link');
+        $this->waitForElementPresent("xpath=//div[@id='inactive-relationships']//div//table/tbody//tr/td[7]/span[2][text()='more ']/ul/li[1]/a[text()='Enable']"); 
+        $this->click("xpath=//div[@id='inactive-relationships']//div//table/tbody//tr/td[7]/span[2][text()='more ']/ul/li[1]/a[text()='Enable']"); 
+
+        $this->assertTrue( (bool)preg_match("/^Are you sure you want to re-enable this relationship?[\s\S]$/", 
+                                            $this->getConfirmation()) );
+        $this->chooseOkOnNextConfirmation();
+        sleep(10);
+
+        //verify membership
+        $this->click( 'css=li#tab_member a' );
+        $this->waitForElementPresent('css=div#memberships');
+
     }
     
 }
