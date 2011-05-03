@@ -540,9 +540,13 @@ LIKE %1
 
         $count = 0;
         while ( $dao->fetch( ) ) {
-            if (! isset($values[$dao->$fieldName])) {
-                $values[$dao->$fieldName] = 1;
+            if ( isset( $values[$dao->$fieldName] ) ||
+                 // ignore import and other temp tables
+                 strpos( $dao->$fieldName, 'civicrm_import_job_' ) !== false ||
+                 strpos( $dao->$fieldName, '_temp_' ) !== false ) {
+                continue;
             }
+            $values[$dao->$fieldName] = 1;
             $count++;
             if ( $maxTablesToCheck &&
                  $count >= $maxTablesToCheck ) {
