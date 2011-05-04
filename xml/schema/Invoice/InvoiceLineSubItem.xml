@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Invoice</base>
+  <class>InvoiceLineSubItem</class>
+  <name>civicrm_invoice_line_sub_item</name>
+  <formerName>civicrm_line_item</formerName>
+  <add>4.1</add>
+  <log>true</log>
+  <field>
+      <name>id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>Invoice Line Sub Item</comment>
+      <add>4.1</add>
+  </field>
+  <primaryKey>
+      <name>id</name>
+      <autoincrement>true</autoincrement>
+  </primaryKey>
+  <field>
+      <name>invoice_line_item_id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>FK to invoice_line_item</comment>
+      <add>4.1</add>
+  </field>
+  <foreignKey>
+      <name>invoice_line_item_id</name>
+      <table>civicrm_invoice_line_item</table>
+      <key>id</key>
+      <onDelete>CASCADE</onDelete>
+  </foreignKey>
+  <field>
+      <name>price_field_id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>FK to price_field</comment>
+      <add>1.7</add>
+  </field>
+  <foreignKey>
+      <name>price_field_id</name>
+      <table>civicrm_price_field</table>
+      <key>id</key>
+      <onDelete>CASCADE</onDelete>
+  </foreignKey>
+  <field>
+      <name>option_group_id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>FK to option group</comment>
+      <add>1.7</add>
+      <drop>3.3</drop>
+  </field>
+  <field>
+      <name>label</name>
+      <type>varchar</type>
+      <length>255</length>
+      <required>true</required>
+      <comment>descriptive label for item - from custom_option.label</comment>
+      <add>1.7</add>
+  </field>
+  <field>
+      <name>qty</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>How many items ordered</comment>
+      <add>1.7</add>
+  </field>
+  <field>
+      <name>unit_price</name>
+      <type>decimal</type>
+      <required>true</required>
+      <comment>price of each item</comment>
+      <add>1.7</add>
+  </field>
+  <field>
+      <name>line_total</name>
+      <type>decimal</type>
+      <required>true</required>
+      <comment>qty * unit_price</comment>
+      <add>1.7</add>
+  </field>
+  <field>  
+      <name>account_id</name>  
+      <title>Account</title>
+      <type>int unsigned</type>
+      <comment>FK to Account. NB: Account for (line_total - non_deductible_line_total), NOT line_total</comment>
+      <add>4.1</add> 
+      <devNote>copied from civicrm_price_field_value at time of contribution</devNote>
+  </field>    
+  <field>
+      <name>non_deductible_unit_price</name>
+      <type>decimal</type>
+      <required>true</required>
+      <comment>non deductible price of each item</comment>
+      <add>4.1</add>
+  </field>
+  <field>
+      <name>non_deductible_line_total</name>
+      <type>decimal</type>
+      <required>true</required>
+      <comment>qty * non_deductible_unit_price</comment>
+      <add>4.1</add>
+  </field>
+  <field>  
+      <name>non_deductible_account_id</name>  
+      <title>Non Deductible Account</title>
+      <type>int unsigned</type>
+      <comment>FK to Account. NB: Account for (line_total - non_deductible_line_total), NOT line_total</comment>
+      <add>4.1</add> 
+      <devNote>copied from civicrm_price_field_value at time of contribution</devNote>
+  </field>    
+  <foreignKey>  
+       <name>non_deductible_account_id</name>  
+       <table>civicrm_account</table>  
+       <key>id</key>         
+       <add>4.1</add>  
+       <onDelete>SET NULL</onDelete>
+  </foreignKey>  
+  <field>
+      <name>participant_count</name>
+      <type>int unsigned</type>
+      <default>NULL</default>
+      <comment>Participant count for line sub item</comment>
+      <add>3.2</add>
+  </field>
+  <index>
+      <name>UI_line_sub_item_value</name>
+      <fieldName>invoice_line_item_id</fieldName>
+      <fieldName>price_field_value_id</fieldName>
+      <fieldName>price_field_id</fieldName>
+      <unique>true</unique>
+      <add>4.1</add>
+  </index>
+  <field>
+      <name>price_field_value_id</name>
+      <type>int unsigned</type>
+      <default>NULL</default>
+      <comment>Implicit FK to civicrm_option_value</comment>
+      <add>3.3</add>
+  </field>
+  <foreignKey>
+      <name>price_field_value_id</name>
+      <table>civicrm_price_field_value</table>
+      <key>id</key>
+      <onDelete>SET NULL</onDelete>
+  </foreignKey>
+</table>
+

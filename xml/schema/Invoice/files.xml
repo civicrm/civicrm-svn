@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<tables xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<xi:include href="Discount.xml"            parse="xml" />
+<xi:include href="Invoice.xml"             parse="xml" />
+<xi:include href="InvoiceLineItem.xml"     parse="xml" />
+<xi:include href="InvoiceLineSubItem.xml"  parse="xml" />
+<xi:include href="CreditAdjustment.xml"    parse="xml" />
+</tables>

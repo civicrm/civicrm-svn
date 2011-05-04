@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="iso-8859-1" ?> 
+ 
+<table> 
+  <base>CRM/Invoice</base> 
+  <class>InvoiceLineItem</class> 
+  <name>civicrm_invoice_line_item</name> 
+  <formerName>civicrm_contribution</formerName>
+  <add>4.1</add> 
+  <log>true</log>
+  <field> 
+      <name>id</name> 
+      <uniqueName>invoice_line_item_id</uniqueName>
+      <type>int unsigned</type> 
+      <required>true</required>
+      <import>true</import> 
+      <title>Invoice Line Item ID</title>
+      <comment>Invoice Line Item ID</comment> 
+      <add>4.1</add> 
+  </field> 
+  <primaryKey> 
+       <name>id</name> 
+       <autoincrement>true</autoincrement> 
+  </primaryKey> 
+  <field> 
+      <name>invoice_id</name> 
+      <uniqueName>invoice_line_item_invoice_id</uniqueName>
+      <title>Invoice ID</title>
+      <type>int unsigned</type> 
+      <required>true</required> 
+      <import>true</import>
+      <headerPattern>/invoice(.?id)?/i</headerPattern>
+      <dataPattern>/^\d+$/</dataPattern>
+      <comment>FK to Invoice ID</comment> 
+      <add>4.1</add> 
+  </field> 
+  <foreignKey> 
+       <name>invoice_id</name> 
+       <table>civicrm_invoice</table> 
+       <key>id</key> 
+       <add>4.1</add> 
+       <onDelete>CASCADE</onDelete>
+  </foreignKey> 
+  <field> 
+      <name>solicitor_id</name> 
+      <title>Solicitor ID</title>
+      <type>int unsigned</type> 
+      <comment>FK to Solicitor ID</comment> 
+      <add>1.4</add> 
+      <drop>2.2</drop>
+  </field> 
+  <foreignKey> 
+      <name>solicitor_id</name> 
+      <table>civicrm_contact</table> 
+      <key>id</key> 
+      <add>1.4</add> 
+      <drop>2.2</drop>
+      <onDelete>SET NULL</onDelete>
+  </foreignKey> 
+  <field>     
+      <name>total_amount</name>  
+      <type>decimal</type>  
+      <required>true</required>
+      <import>true</import>
+      <headerPattern>/^total|(.?^am(ou)?nt)/i</headerPattern>
+      <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+      <comment>Total amount of this contribution. Use market value for non-monetary gifts.</comment>  
+      <add>1.3</add>  
+  </field>
+  <field>  
+      <name>account_id</name>  
+      <title>Account</title>
+      <type>int unsigned</type>
+      <comment>FK to Account. NB: Account for (total_amount - non_deductible_amount), NOT total_amount</comment>
+      <formerName>contribution_type_id</formerName>
+      <add>4.1</add>  
+  </field>    
+  <foreignKey>  
+       <name>account_id</name>  
+       <table>civicrm_account</table>  
+       <key>id</key>         
+       <add>4.1</add>  
+       <onDelete>SET NULL</onDelete>
+  </foreignKey>  
+  <field>     
+      <name>non_deductible_amount</name>  
+      <title>Non-deductible Amount</title>
+      <type>decimal</type>
+      <default>0</default>
+      <import>true</import>
+      <headerPattern>/non?.?deduct/i</headerPattern>
+      <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+      <comment>Portion of total amount which is NOT tax deductible. Equal to total_amount for non-deductible contribution types.</comment>  
+      <add>4.1</add>  
+  </field>
+  <field>  
+      <name>non_deductible_account_id</name>  
+      <title>Non-deductible Account</title>
+      <type>int unsigned</type>
+      <comment>FK to Account</comment>
+      <add>4.1</add>  
+  </field>    
+  <foreignKey>  
+       <name>non_deductible_account_id</name>  
+       <table>civicrm_account</table>  
+       <key>id</key>         
+       <add>4.1</add>  
+       <onDelete>SET NULL</onDelete>
+  </foreignKey>  
+  <field>      
+      <name>source</name>
+      <uniqueName>line_item_source</uniqueName>
+      <title>Line Item Source</title>
+      <type>varchar</type>   
+      <length>255</length>
+      <import>true</import>
+      <headerPattern>/source/i</headerPattern>
+      <comment>Origin of this Line Item.</comment>   
+      <add>4.1</add>   
+  </field> 
+  <field> 
+    <name>contribution_page_id</name> 
+    <title>Contribution Page</title>
+    <type>int unsigned</type> 
+    <import>true</import>
+    <comment>The Contribution Page which triggered this contribution</comment> 
+    <add>1.5</add> 
+  </field> 
+  <foreignKey> 
+    <name>contribution_page_id</name> 
+    <table>civicrm_contribution_page</table> 
+    <key>id</key> 
+    <add>1.5</add> 
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field> 
+    <name>contribution_recur_id</name> 
+    <type>int unsigned</type> 
+    <comment>Conditional foreign key to civicrm_contribution_recur id. Each contribution made in connection with a recurring contribution carries a foreign key to the recurring contribution record. This assumes we can track these processor initiated events.</comment> 
+    <add>1.4</add> 
+  </field> 
+  <foreignKey> 
+    <name>contribution_recur_id</name> 
+    <table>civicrm_contribution_recur</table> 
+    <key>id</key> 
+    <add>1.4</add> 
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>     
+      <name>is_test</name>  
+      <title>Test</title>
+      <type>boolean</type>
+      <default>0</default>
+      <import>true</import>
+  </field>
+  <field>     
+      <name>is_pay_later</name>  
+      <title>Is Pay Later</title>
+      <type>boolean</type>
+      <default>0</default>
+      <import>true</import>
+      <add>2.1</add> 
+  </field>
+  <field> 
+    <name>campaign_id</name>
+    <uniqueName>contribution_campaign_id</uniqueName>
+    <type>int unsigned</type>
+    <title>Campaign ID</title>
+    <import>true</import> 
+    <comment>The campaign from which this line item has been triggered.</comment> 
+    <add>3.4</add> 
+  </field> 
+  <foreignKey> 
+    <name>campaign_id</name> 
+    <table>civicrm_campaign</table> 
+    <key>id</key> 
+    <add>3.4</add>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>  
+      <name>cancel_date</name>  
+      <type>datetime</type>  
+      <import>true</import>
+      <headerPattern>/cancel(.?date)?/i</headerPattern>
+      <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
+      <comment>when was line item cancelled</comment>  
+      <add>1.3</add>  
+  </field> 
+  <field>   
+      <name>cancel_reason</name>   
+      <type>text</type>   
+      <import>true</import>
+      <headerPattern>/(cancel.?)?reason/i</headerPattern>
+      <add>1.3</add>   
+  </field>  
+</table>
