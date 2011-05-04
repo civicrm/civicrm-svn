@@ -30,6 +30,19 @@
       <add>3.3</add>
   </foreignKey>
   <field>
+      <name>account_id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>FK to civicrm_account</comment>
+      <add>4.1</add>
+  </field>
+  <foreignKey>
+      <name>account_id</name>
+      <table>civicrm_account</table>
+      <key>id</key>
+      <add>4.1</add>
+  </foreignKey>
+  <field>
       <name>name</name>
       <type>varchar</type>
       <title>Name</title>
@@ -68,6 +81,28 @@
       <comment>Price field option amount</comment>
       <add>3.3</add>
   </field>
+  <field>
+      <name>non_deductible_amount</name>
+      <type>varchar</type>
+      <title>Amount</title>
+      <length>512</length>
+      <required>true</required>
+      <comment>Price field option non-deductible amount</comment>
+      <add>4.1</add>
+  </field>
+    <field>
+      <name>non_deductible_account_id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>FK to civicrm_account</comment>
+      <add>4.1</add>
+  </field>
+  <foreignKey>
+      <name>non_deductible_account_id</name>
+      <table>civicrm_account</table>
+      <key>id</key>
+      <add>4.1</add>
+  </foreignKey>
   <field>
       <name>count</name>
       <type>int unsigned</type>

@@ -73,17 +73,41 @@
       <required>true</required>
       <comment>If membership is paid by a contribution - what contribution type should be used. FK to Contribution Type ID</comment>
       <add>1.5</add>
+      <drop>4.1</drop>
   </field>
   <foreignKey> 
       <name>contribution_type_id</name> 
       <table>civicrm_contribution_type</table> 
       <key>id</key> 
       <add>1.5</add>
+      <drop>4.1</drop>
   </foreignKey>
   <field>  
       <name>minimum_fee</name>  
       <type>decimal</type>                  
       <comment>Minimum fee for this membership (0 for free/complimentary memberships).</comment>  
+      <default>0</default>
+      <add>1.5</add>  
+  </field> 
+  <field>  
+      <name>account_id</name>  
+      <title>Account</title>
+      <type>int unsigned</type>
+      <comment>FK to Account. NB: Account for (total_amount - non_deductible_amount), NOT total_amount and NOT minimum_fee</comment>
+      <formerName>contribution_type_id</formerName>
+      <add>4.1</add>  
+  </field>    
+  <foreignKey>  
+       <name>account_id</name>  
+       <table>civicrm_account</table>  
+       <key>id</key>         
+       <add>4.1</add>  
+       <onDelete>SET NULL</onDelete>
+  </foreignKey>    
+  <field>  
+      <name>non_deductibe_amount</name>  
+      <type>decimal</type>                  
+      <comment>Non-deductible value of this membership type (0 for free/complimentary membership types).</comment>  
       <default>0</default>
       <add>1.5</add>  
   </field> 
