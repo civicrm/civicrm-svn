@@ -1754,7 +1754,22 @@ function civicrm_views_data() {
                                                           );
 
     //TABLE JOINS FOR CIVICRM PARTICIPANTS GO HERE!
-
+   // display user fields in Participant view
+    $tables['civicrm_participant']['table']['join']['users'] = array(
+                                                          'left_table'   => 'civicrm_uf_match',
+                                                          'left_field'   => 'contact_id',
+                                                          'field'        => 'contact_id',
+    );
+     $tables['users']['table']['join']['civicrm_participant'] = array(
+                                                          'left_table'   => 'civicrm_uf_match',
+                                                          'left_field'   => 'uf_id',
+                                                          'field'        => 'uid',
+    );
+      //Display Participants in User Views    
+    $tables['civicrm_uf_match']['table']['join']['civicrm_participant'] = array(
+                                                          'left_field'   => 'contact_id',
+                                                          'field'        => 'contact_id',
+    );
 
 
     //CiviCRM Participants - FIELDS
