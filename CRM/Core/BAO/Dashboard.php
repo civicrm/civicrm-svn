@@ -240,18 +240,8 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
             // -lets use relative url for internal use.
             // -make sure relative url should not be htmlize.
             if ( substr( $dao->url, 0, 4 ) != 'http' ) {
-                if ( $config->userFramework == 'Joomla' ) {
-                    $urlVars = explode( '&', $url, 2 );
-                    $url = CRM_Utils_System::url( $urlVars[0], CRM_Utils_Array::value( 1, $urlVars ), null, false, null, 
-                                                  false );
-                } else if ( $config->userFramework == 'Drupal' )  {
-                    if ( variable_get('clean_url', 0 ) ) {
-                        require_once 'CRM/Core/BAO/Navigation.php';
-                        $url = CRM_Utils_System::cleanUrl( $dao->url );
-                    } else {
-                        $url = CRM_Utils_System::url( $dao->url, null, false, null, false );
-                    }
-                }
+                $urlParam = CRM_Utils_System::explode( '&', $dao->url, 2 );
+                $url      = CRM_Utils_System::url( $urlParam[0], $urlParam[1], null, false, null, false ); 
             }
 
             //get content from url
@@ -264,25 +254,14 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
                               'content'    => $dao->content);
 
         if ( $dao->is_fullscreen ) {                       
-             $fullscreenUrl = $dao->fullscreen_url;
-             if ( substr( $fullscreenUrl, 0, 4 ) != 'http' ) {
-                 if ( $config->userFramework == 'Joomla' ) {
-                    $urlVars = explode( '&', $fullscreenUrl, 2 );
-                    $fullscreenUrl = CRM_Utils_System::url( $urlVars[0], CRM_Utils_Array::value( 1, $urlVars ), null, false, null, 
-                                                  false );
-                } else if ( $config->userFramework == 'Drupal' )  {
-                    if ( variable_get('clean_url', 0 ) ) {
-                        require_once 'CRM/Core/BAO/Navigation.php';
-                        $fullscreenUrl = CRM_Utils_System::cleanUrl( $fullscreenUrl );
-                    } else {
-                        $fullscreenUrl = CRM_Utils_System::url( $fullscreenUrl, null, false, null, false );
-                    }
-                }
-                $fullscreenUrl = $config->userFrameworkBaseURL . $fullscreenUrl;
+            $fullscreenUrl = $dao->fullscreen_url;
+            if ( substr( $fullscreenUrl, 0, 4 ) != 'http' ) {
+                $urlParam = CRM_Utils_System::explode( '&', $dao->fullscreen_url, 2 );
+                $fullscreenUrl = CRM_Utils_System::url( $urlParam[0], $urlParam[1], true, null, false );
             }
             $dashletInfo['fullscreenUrl'] = $fullscreenUrl;
         }                     
-        
+
         return $dashletInfo;
     }
      
