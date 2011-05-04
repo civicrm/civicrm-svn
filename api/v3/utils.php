@@ -1742,6 +1742,9 @@ function civicrm_api3_api_check_permission($entity, $action, &$params, $throw = 
     require_once 'CRM/Core/DAO/.permissions.php';
     $permissions = _civicrm_api3_permissions($entity, $action, $params);
 
+    // $params might’ve been reset by the alterAPIPermissions() hook
+    if (isset($params['check_permissions']) and $params['check_permissions'] == false) return true;
+
     foreach ($permissions as $perm) {
         if (!CRM_Core_Permission::check($perm)) {
             if ($throw) {
