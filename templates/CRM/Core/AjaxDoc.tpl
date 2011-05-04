@@ -7,6 +7,7 @@
 .required {font-weight:bold;}
 {/literal}
 </style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
 <script>
 resourceBase = '{$config->resourceBase}';
 restURL = '{crmURL p="civicrm/ajax/rest"}';
