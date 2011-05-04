@@ -1428,23 +1428,6 @@ SELECT id
         if ( $customFields[$customFieldId]['data_type'] == 'Date' ) {
             if ( ! CRM_Utils_System::isNull( $value ) ) {
                 $format = $customFields[$customFieldId]['date_format'];
-                
-                if ( in_array( $format, array('dd-mm', 'mm/dd' ) ) ) {
-                    $dateTimeArray = explode(' ', $value);
-
-                    $separator = '/';
-                    if ( $format == 'dd-mm' ) {
-                        $separator = '-';
-                    }
-                    $value = $dateTimeArray[0] . $separator . '1902';
-                    
-                    if ( array_key_exists( 1, $dateTimeArray) ) {
-                        $value .= ' ' . $dateTimeArray[1];
-                    }
-                } else if ( $format == 'yy' ) {
-                    $value = "01-01-{$value}";
-                }
-                
                 $date = CRM_Utils_Date::processDate( $value, null, false, 'YmdHis', $format );
             }
             $value = $date;
