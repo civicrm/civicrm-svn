@@ -1315,9 +1315,7 @@ class CRM_Utils_Date
         if ( !empty( $inputCustomFormat ) ) {
             $inputFormat = $inputCustomFormat;
         }
-        if ( $inputFormat == 'dd/mm/yy' ) {
-              $date = str_replace( '/', '-', $date );
-        }
+ 
         if ( trim( $date ) ) {
             $mysqlDate = date( $format, strtotime( $date . ' '. $time ) );
         }

@@ -68,6 +68,19 @@
       var currentYear = new Date().getFullYear();
       var alt_field   = '#{$elementId}';
       var date_format = cj( alt_field ).attr('format');
+      
+      var altDateFormat = 'mm/dd/yy';
+      {literal}
+      switch ( date_format ) {
+        case 'dd-mm':
+        case 'mm/dd':
+            altDateFormat = 'mm/dd';
+            break;
+        case 'M yy':
+            altDateFormat = 'yy-mm';
+            break;
+     }
+      {/literal}
       var yearRange   = currentYear - parseInt( cj( alt_field ).attr('startOffset') ); 
           yearRange  += ':';
           yearRange  += currentYear + parseInt( cj( alt_field ).attr('endOffset'  ) ); 
@@ -81,7 +94,7 @@
                                     changeMonth       : true,
                                     changeYear        : true,
                                     altField          : alt_field,
-                                    altFormat         : 'mm/dd/yy',
+                                    altFormat         : altDateFormat,
                                     yearRange         : yearRange,
                                     regional          : localisation[0]
                                 });

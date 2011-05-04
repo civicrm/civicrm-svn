@@ -697,7 +697,7 @@ WHERE sort_name LIKE '%$name%'";
             }
         } else {
 	        $noemail = CRM_Utils_Array::value( 'noemail', $_GET );
-
+            $queryString = null;
             if ( $name = CRM_Utils_Array::value( 'name', $_GET ) ) {
                 $name  = CRM_Utils_Type::escape(  $name, 'String' );
                 if ( $noemail ) {
@@ -705,22 +705,23 @@ WHERE sort_name LIKE '%$name%'";
                 } else {
                     $queryString = " ( cc.sort_name LIKE '%$name%' OR ce.email LIKE '%$name%' ) ";
                 }
-            } else {
-				$cid = CRM_Utils_Array::value( 'cid', $_GET );
+            } elseif ( $cid = CRM_Utils_Array::value( 'cid', $_GET ) ) {
+                $cid = CRM_Utils_Type::escape( $cid, 'Integer' );
 				$queryString = " cc.id IN ( $cid )";
 			}
 
-	        $offset   = CRM_Utils_Array::value( 'offset',   $_GET, 0 );
-	        $rowCount = CRM_Utils_Array::value( 'rowcount', $_GET, 20 );
+            if ( $queryString ) {
+                $offset   = CRM_Utils_Array::value( 'offset',   $_GET, 0 );
+                $rowCount = CRM_Utils_Array::value( 'rowcount', $_GET, 20 );
 
-            // add acl clause here
-            require_once 'CRM/Contact/BAO/Contact/Permission.php';
-            list( $aclFrom, $aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( 'cc' );
-            if ( $aclWhere ) {
-                $aclWhere = " AND $aclWhere";
-            }
-            if ( $noemail ) {
-              $query="
+                // add acl clause here
+                require_once 'CRM/Contact/BAO/Contact/Permission.php';
+                list( $aclFrom, $aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( 'cc' );
+                if ( $aclWhere ) {
+                    $aclWhere = " AND $aclWhere";
+                }
+                if ( $noemail ) {
+                    $query="
 SELECT sort_name name, cc.id
 FROM civicrm_contact cc 
      {$aclFrom}
@@ -729,13 +730,13 @@ WHERE cc.is_deceased = 0 AND {$queryString}
 LIMIT {$offset}, {$rowCount}
 ";
             
-              $dao = CRM_Core_DAO::executeQuery( $query );
-              while( $dao->fetch( ) ) {
-                  $result[]= array( 'name' => $dao->name,
-                                    'id'   => $dao->id);
-              }
-            } else {        
-              $query="
+                    $dao = CRM_Core_DAO::executeQuery( $query );
+                    while( $dao->fetch( ) ) {
+                        $result[]= array( 'name' => $dao->name,
+                                          'id'   => $dao->id);
+                    }
+                } else {        
+                    $query="
 SELECT sort_name name, ce.email, cc.id
 FROM   civicrm_email ce INNER JOIN civicrm_contact cc ON cc.id = ce.contact_id
        {$aclFrom}
@@ -743,19 +744,19 @@ WHERE  ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$query
        {$aclWhere}
 LIMIT {$offset}, {$rowCount}
 ";
-
             
-              $dao = CRM_Core_DAO::executeQuery( $query );
+                    $dao = CRM_Core_DAO::executeQuery( $query );
             
-              while( $dao->fetch( ) ) {
-                  $result[]= array( 'name' => '"'.$dao->name.'" &lt;'.$dao->email.'&gt;',
-                                    'id'   => (CRM_Utils_Array::value( 'id', $_GET ) ) ? "{$dao->id}::{$dao->email}" :'"'.$dao->name.'" <'.$dao->email.'>');
-              }
-            }
+                    while( $dao->fetch( ) ) {
+                        $result[]= array( 'name' => '"'.$dao->name.'" &lt;'.$dao->email.'&gt;',
+                                          'id'   => (CRM_Utils_Array::value( 'id', $_GET ) ) ? "{$dao->id}::{$dao->email}" :'"'.$dao->name.'" <'.$dao->email.'>');
+                    }
+                }
 
-            if ( $result ) {
-                echo json_encode( $result );
-            }
+                if ( $result ) {
+                    echo json_encode( $result );
+                }
+            }    
         }
         CRM_Utils_System::civiExit( );
     } 
