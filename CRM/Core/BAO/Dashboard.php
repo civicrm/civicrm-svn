@@ -241,10 +241,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
             // -make sure relative url should not be htmlize.
             if ( substr( $dao->url, 0, 4 ) != 'http' ) {
                 $urlParam = CRM_Utils_System::explode( '&', $dao->url, 2 );
-                if ( $config->userFramework == 'Joomla' ||
-                    ( $config->userFramework == 'Drupal' && !variable_get('clean_url', '0' ) ) ) {
-                    $url = CRM_Utils_System::url( $urlParam[0], $urlParam[1], false, null, false );
-                }
+                $url      = CRM_Utils_System::url( $urlParam[0], $urlParam[1], false, null, false );
             }
             
             //get content from url
