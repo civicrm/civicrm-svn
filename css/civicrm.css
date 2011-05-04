@@ -726,7 +726,6 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     background-image: url(menu-leaf.png);
 }
 
-#crm-container .crm-loading-element { background-image:url("../i/loading.gif"); width:20px; height:20px;}
 #crm-container .crm-form-block .crm-loading-element { background-image:url("../i/loading-E6E6DC.gif"); }
 
 #crm-container .crm-loading-element  {
