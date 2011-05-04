@@ -309,14 +309,13 @@ div.spacer,
 	font-weight:bold;
 	padding:4px;
     background: none;
-    border: none;
-    background-color: #E6E6DC;
+    border: medium none;
+    background-color: transparent;
     color: #3E3E3E;
     position: relative;
     text-indent: 0px;
     width: auto;
 }
-
 
 
 #crm-container fieldset.form-layout {
