@@ -84,9 +84,10 @@ cj(document).ready( function( ) {
            
 </script>
 {/literal}
+<div class="clear"></div>
+</div> {* crm-content-block ends here *}
 {/if}
 
 
-<div class="clear"></div>
-</div> {* crm-content-block ends here *}
+
 
