@@ -1379,4 +1379,26 @@ function civitest_civicrm_import( $object, $usage, &$objectRef, $params ) {
 		}
 	}
 }    
-    
+
+/**
+ *  alterAPIPermissions() hook allows you to change the permissions checked when doing API 3 calls.
+ */
+function civitest_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions)
+{
+    // skip permission checks for contact/create calls
+    // (but keep the ones for email, address, etc./create calls)
+    // note: unsetting the below would require the default ‘access CiviCRM’ permission
+    $permissions['contact']['create'] = array();
+
+    // enforce ‘view all contacts’ check for contact/get, but do not test ‘access CiviCRM’
+    $permissions['contact']['get'] = array('view all contacts');
+
+    // add a new permission requirement for your own custom API call
+    // (if all you want to enforce is ‘access CiviCRM’ you can skip the below altogether)
+    $permissions['foo']['get'] = array('access CiviCRM', 'get all foos');
+
+    // allow everyone to get info for a given event; also – another way to skip permissions
+    if ($entity == 'event' and $action == 'get' and $params['title'] == 'CiviCon 2038') {
+        $params['check_permissions'] = false;
+    }
+}
