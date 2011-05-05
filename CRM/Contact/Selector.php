@@ -581,9 +581,9 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             $regions   =& CRM_Core_PseudoConstant::worldRegions();
         }
 
+        $seenIDs = array( );
         while ($result->fetch()) {
             $row = array( );
-            $empty = true;
 
             // the columns we are interested in
             foreach ($names as $property) {
@@ -653,9 +653,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     $row[$property] = isset($result->$property)? $result->$property : null;
                 }
 
-                if ( ! empty( $result->$property ) ) {
-                    $empty = false;
-                }
             }
 
             if ( ! empty ( $result->postal_code_suffix ) ) {
@@ -744,19 +741,11 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                 }
             }
 
-            // Dedupe contacts        
-            if ( ! $empty ) {
-                $duplicate = false;
-                foreach( $rows as $checkRow ) {
-                    if ( $checkRow['contact_id'] == $row['contact_id'] ) {
-                        $duplicate = true;
-                    }
-                }
-                if ( ! $duplicate ) {
-                    $rows[] = $row;
-                }
+            // Dedupe contacts
+            if ( in_array( $row['contact_id'], $seenIDs ) === false ) {
+                $seenIDs[] = $row['contact_id'];
+                $rows[] = $row;
             }
-
         }
 
         //CRM_Core_Error::debug( '$rows', $rows );
