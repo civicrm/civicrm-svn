@@ -184,7 +184,7 @@ function selectValue( val ) {
 	    oEditor.on( 'focus', verify );
         });
         {/literal}
-    {else if $editor eq "tinymce"}
+    {elseif $editor eq "tinymce"}
         {literal}
         cj( function( ) {
 	if ( isMailing ) { 
@@ -207,7 +207,18 @@ function selectValue( val ) {
         }
         });
         {/literal}
-    {/if}
+    {elseif $editor eq "drupalwysiwyg"}
+      {literal}
+      cj( function( ) {
+        if ( isMailing ) { 
+          cj('div.html').hover(
+            verify,
+            verify
+          );  
+        }
+     });
+     {/literal}
+     {/if}
     {literal}
  }
 
