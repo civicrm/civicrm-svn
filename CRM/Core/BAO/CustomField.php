@@ -345,8 +345,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                                        $onlySubType = false,
                                        $checkPermission = true ) 
     {
-        //$onlySubType = false;
-        
         if ( $customDataType && 
              !is_array( $customDataType ) ) {
             
@@ -522,10 +520,11 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
     /**
      * Return the field ids and names (with groups) for import purpose.
      *
-     * @param int      $contactType   Contact type
-     * @param boolean  $showAll       If true returns all fields (includes disabled fields)
-     * @param boolean  $onlyParent    return fields ONLY related to basic types
-     * @param boolean  $search        when called from search and multiple records need to be returned
+     * @param int      $contactType     Contact type
+     * @param boolean  $showAll         If true returns all fields (includes disabled fields)
+     * @param boolean  $onlyParent      return fields ONLY related to basic types
+     * @param boolean  $search          when called from search and multiple records need to be returned
+     * @param boolean  $checkPermission if false, do not include permissioning clause 
      *
      * @return array   $fields - 
      *
@@ -533,12 +532,21 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
      * @static
      */
     public static function &getFieldsForImport( $contactType = 'Individual',
-                                                $showAll = false, $onlyParent = false,
-                                                $search = false ) 
+                                                $showAll = false,
+                                                $onlyParent = false,
+                                                $search = false,
+                                                $checkPermission = true ) 
     {
         // Note: there are situations when we want getFieldsForImport() return fields related 
         // ONLY to basic contact types, but NOT subtypes. And thats where $onlyParent is helpful
-        $fields =& self::getFields( $contactType, $showAll, false, null, null, $onlyParent );
+        $fields =& self::getFields( $contactType,
+                                    $showAll,
+                                    false,
+                                    null,
+                                    null,
+                                    $onlyParent,
+                                    false,
+                                    $checkPermission );
 
         $importableFields = array();
         foreach ($fields as $id => $values) {
