@@ -546,7 +546,12 @@ WHERE  civicrm_pledge.id = %2
      * @param bool  $isScriptUpdate, is function being called from bin script? 
      * @static
      */
-     static function updatePledgePayments( $pledgeId, $paymentStatusId, $paymentIds = null, $actualAmount = 0 ,$contributionId = null ,$isScriptUpdate = false )
+     static function updatePledgePayments( $pledgeId,
+                                           $paymentStatusId,
+                                           $paymentIds = null,
+                                           $actualAmount = 0,
+                                           $contributionId = null,
+                                           $isScriptUpdate = false )
      {
         $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         $paymentClause = null;
