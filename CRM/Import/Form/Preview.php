@@ -287,6 +287,10 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
           CRM_ACL_BAO_Cache::updateEntry( $userID );
         }
 
+        // clear all caches
+        require_once 'CRM/Contact/BAO/Contact/Utils.php';
+        CRM_Contact_BAO_Contact_Utils::clearContactCaches( );
+
         // add all the necessary variables to the form
         $importJob->setFormVariables( $this );
         
