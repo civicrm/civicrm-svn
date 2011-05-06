@@ -346,8 +346,10 @@ function selectValue( val ) {
     }
 
     cj(function() {
-        if ( !cj().find('div.crm-error').text() ) {            
-            setSignature( );
+        if ( !cj().find('div.crm-error').text() ) {
+          cj(window).load(function () {           
+            setSignature();
+          });
         }
 
         cj("#fromEmailAddress").change( function( ) {
@@ -379,6 +381,8 @@ function selectValue( val ) {
                         oEditor.setData( htmlMessage  );
                     } else if ( editor == "tinymce" ) {
                         cj('#'+ html_message).tinymce().execCommand('mceSetContent',false, htmlMessage );
+                    }  else if ( editor == "drupalwysiwyg" ) {
+                        Drupal.wysiwyg.instances[html_message].insert(htmlMessage);
                     } else {	
                         cj("#"+ html_message).val( htmlMessage );
                     }
