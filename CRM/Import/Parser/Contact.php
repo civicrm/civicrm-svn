@@ -709,16 +709,16 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             require_once 'CRM/Utils/Hook.php';
             $currentImportID  = end($values);
         
-            $params = array( 'contactID'       => $contactID, 
-                             'importID'        => $currentImportID,
-                             'importTempTable' => $this->_tableName,
-                             'fieldHeaders'    => $this->_mapperKeys,
-                             'fields'          => $this->_activeFields );
+            $hookParams = array( 'contactID'       => $contactID, 
+                                 'importID'        => $currentImportID,
+                                 'importTempTable' => $this->_tableName,
+                                 'fieldHeaders'    => $this->_mapperKeys,
+                                 'fields'          => $this->_activeFields );
         
             CRM_Utils_Hook::import( 'Contact',
                                     'process', 
                                     $this, 
-                                    $params );
+                                    $hookParams );
         }
 
         if ( $relationship ) {
@@ -772,7 +772,10 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                                                           'external_identifier' );
                     }                    
                     // check for valid related contact id in update/fill mode, CRM-4424
-                    if ( in_array( $onDuplicate, array( CRM_Import_Parser::DUPLICATE_UPDATE, CRM_Import_Parser::DUPLICATE_FILL ) ) && CRM_Utils_Array::value( 'id', $params[$key] ) ) {
+                    if ( in_array( $onDuplicate,
+                                   array( CRM_Import_Parser::DUPLICATE_UPDATE,
+                                          CRM_Import_Parser::DUPLICATE_FILL ) ) && 
+                         CRM_Utils_Array::value( 'id', $params[$key] ) ) {
                         $relatedContactType  = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
                                                                             $params[$key]['id'],
                                                                             'contact_type' );
