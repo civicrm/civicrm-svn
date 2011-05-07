@@ -118,8 +118,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
         //  create test database
         self::$utils = new Utils( $GLOBALS['mysql_host'],
-                                $GLOBALS['mysql_user'],
-                                $GLOBALS['mysql_pass'] );        
+                                  $GLOBALS['mysql_user'],
+                                  $GLOBALS['mysql_pass'] );        
         
     }
 
@@ -316,105 +316,52 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     * @delete   boolean  True if we're checking that a DELETE action occurred.
     */
     function assertDBState( $daoName, $id, $match, $delete=false ) {
-        if ( empty( $id ) ) {
-            // adding this here since developers forget to check for an id
-            // and hence we get the first value in the db
-            $this->fail( 'ID not populated. Please fix your assertDBState usage!!!' );
-        }
-        
-        require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-        eval( '$object   =& new ' . $daoName . '( );' );
-        $object->id =  $id;
-        $verifiedCount = 0;
-        
-        // If we're asserting successful record deletion, make sure object is NOT found.
-        if ( $delete ) {
-            if ( $object->find( true ) ) {
-                $this->fail("Object not deleted by delete operation: $daoName, $id");
-            }
-            return;
-        }
-
-        // Otherwise check matches of DAO field values against expected values in $match.
-        if ( $object->find( true ) ) {
-            $fields =& $object->fields( );
-            foreach ( $fields as $name => $value ) {
-                  $dbName = $value['name'];
-                  if ( isset( $match[$name] ) ) {
-                    $verifiedCount++;
-                    $this->assertEquals( $object->$dbName, $match[$name] );
-                  } 
-                  else if ( isset( $match[$dbName] ) ) {
-                    $verifiedCount++;
-                    $this->assertEquals( $object->$dbName, $match[$dbName] );
-                  }
-            }
-        } else {
-            $this->fail("Could not retrieve object: $daoName, $id");
-        }
-        $object->free( );
-        $matchSize = count( $match );
-        if ( $verifiedCount != $matchSize ) {
-            $this->fail("Did not verify all fields in match array: $daoName, $id. Verified count = $verifiedCount. Match array size = $matchSize");
-        }
+        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
+        return CiviDBAssert::assertDBState( $this, $daoName, $id, $match, $delete );
     }
 
     // Request a record from the DB by seachColumn+searchValue. Success if a record is found. 
     function assertDBNotNull(  $daoName, $searchValue, $returnColumn, $searchColumn, $message  ) 
     {
-        if(empty($searchValue)){
-           $this->fail("empty value passed to assertDBNotNull");
-        }
-        $value = CRM_Core_DAO::getFieldValue( $daoName, $searchValue, $returnColumn, $searchColumn );
-        $this->assertNotNull( $value, $message );
-        
-        return $value;
+        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
+        return CiviDBAssert::assertDBNotNull( $this, $daoName, $searchValue, $returnColumn, $searchColumn, $message  );
     }
 
     // Request a record from the DB by seachColumn+searchValue. Success if returnColumn value is NULL. 
     function assertDBNull(  $daoName, $searchValue, $returnColumn, $searchColumn, $message  ) 
     {
-        $value = CRM_Core_DAO::getFieldValue( $daoName, $searchValue, $returnColumn, $searchColumn );
-        $this->assertNull(  $value, $message );
+        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
+        return CiviDBAssert::assertDBNull( $this, $daoName, $searchValue, $returnColumn, $searchColumn, $message  );
     }
 
     // Request a record from the DB by id. Success if row not found. 
     function assertDBRowNotExist(  $daoName, $id, $message  ) 
     {
-        $value = CRM_Core_DAO::getFieldValue( $daoName, $id, 'id', 'id' );
-        $this->assertNull(  $value, $message );
+        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
+        return CiviDBAssert::assertDBRowNotExist( $this, $daoName, $id, $message );
     }
 
     // Compare a single column value in a retrieved DB record to an expected value
     function assertDBCompareValue(  $daoName, $searchValue, $returnColumn, $searchColumn,
                                     $expectedValue, $message  ) 
     {
-        $value = CRM_Core_DAO::getFieldValue( $daoName, $searchValue, $returnColumn, $searchColumn );
-        $this->assertEquals(  $value, $expectedValue, $message );
+        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
+        return CiviDBAssert::assertDBCompareValue( $daoName, $searchValue, $returnColumn, $searchColumn,
+                                                   $expectedValue, $message );
     }
 
     // Compare all values in a single retrieved DB record to an array of expected values
     function assertDBCompareValues( $daoName, $searchParams, $expectedValues )  
     {
-        //get the values from db 
-        $dbValues = array( );
-        CRM_Core_DAO::commonRetrieve( $daoName, $searchParams, $dbValues );
-        
-
-        // compare db values with expected values
-        self::assertAttributesEquals( $expectedValues, $dbValues);
+        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
+        return CiviDBAssert::assertDBCompareValues( $daoName, $searchParams, $expectedValues );
     }
 
 
     function assertAttributesEquals( &$expectedValues, &$actualValues ) 
     {
-        foreach( $expectedValues as $paramName => $paramValue ) {
-            if ( isset( $actualValues[$paramName] ) ) {
-                $this->assertEquals( $paramValue, $actualValues[$paramName] );
-            } else {
-                $this->fail( "Attribute '$paramName' not present in actual array." );
-            }
-        }        
+        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
+        return CiviDBAssert::assertAttributesEquals( $expectedValues, $actualValues );
     }
     
     function assertArrayKeyExists( $key, &$list ) {

@@ -58,6 +58,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         
         require_once 'CiviSeleniumSettings.php';
         $this->settings = new CiviSeleniumSettings();
+
+        require_once 'civicrm.settings.php';
+
+        // also initialize a connection to the db 
+        require_once 'CRM/Core/Config.php';
+        $config = CRM_Core_Config::singleton( );
     }
 
     protected function setUp()
@@ -922,4 +928,64 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       return $groupName;
   }
   
+
+                                            
+    /** 
+    * Generic function to compare expected values after an api call to retrieved
+    * DB values.
+    * 
+    * @daoName  string   DAO Name of object we're evaluating.
+    * @id       int      Id of object
+    * @match    array    Associative array of field name => expected value. Empty if asserting 
+    *                      that a DELETE occurred
+    * @delete   boolean  True if we're checking that a DELETE action occurred.
+    */
+    function assertDBState( $daoName, $id, $match, $delete=false ) {
+        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
+        return CiviDBAssert::assertDBState( $this, $daoName, $id, $match, $delete );
+    }
+
+    // Request a record from the DB by seachColumn+searchValue. Success if a record is found. 
+    function assertDBNotNull(  $daoName, $searchValue, $returnColumn, $searchColumn, $message  ) 
+    {
+        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
+        return CiviDBAssert::assertDBNotNull( $this, $daoName, $searchValue, $returnColumn, $searchColumn, $message  );
+    }
+
+    // Request a record from the DB by seachColumn+searchValue. Success if returnColumn value is NULL. 
+    function assertDBNull(  $daoName, $searchValue, $returnColumn, $searchColumn, $message  ) 
+    {
+        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
+        return CiviDBAssert::assertDBNull( $this, $daoName, $searchValue, $returnColumn, $searchColumn, $message  );
+    }
+
+    // Request a record from the DB by id. Success if row not found. 
+    function assertDBRowNotExist(  $daoName, $id, $message  ) 
+    {
+        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
+        return CiviDBAssert::assertDBRowNotExist( $this, $daoName, $id, $message );
+    }
+
+    // Compare a single column value in a retrieved DB record to an expected value
+    function assertDBCompareValue(  $daoName, $searchValue, $returnColumn, $searchColumn,
+                                    $expectedValue, $message  ) 
+    {
+        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
+        return CiviDBAssert::assertDBCompareValue( $daoName, $searchValue, $returnColumn, $searchColumn,
+                                                   $expectedValue, $message );
+    }
+
+    // Compare all values in a single retrieved DB record to an array of expected values
+    function assertDBCompareValues( $daoName, $searchParams, $expectedValues )  
+    {
+        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
+        return CiviDBAssert::assertDBCompareValues( $daoName, $searchParams, $expectedValues );
+    }
+
+
+    function assertAttributesEquals( &$expectedValues, &$actualValues ) 
+    {
+        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
+        return CiviDBAssert::assertAttributesEquals( $expectedValues, $actualValues );
+    }
 }
