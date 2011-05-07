@@ -164,7 +164,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     }
 
     /**
-     *  Test civicrm_activity_id() with missing source_contact_id
+     *  Test civicrm_activity_id() with missing source_contact_id is put with the current user
      */
     function testActivityCreateWithMissingContactId( )
     {
@@ -181,7 +181,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
 
         $result = & civicrm_api3_activity_create($params);
         
-        $this->assertEquals( $result['is_error'], 1,
+        $this->assertEquals( $result['is_error'], 0,
                              "In line " . __LINE__ );
     }
 
@@ -439,7 +439,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                                                                              . '/dataset/custom_group_activity_type.xml') );
 
         //  Drop and create table civicrm_value_activity_custom_9
-        $query = 'USE civicrm_tests_dev; ';
+        $query = "USE {$GLOBALS['mysql_test_db']}; ";
         self::$utils->do_query( $query );
         $query = 'DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
         self::$utils->do_query( $query );
@@ -682,7 +682,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                                                                              . '/dataset/custom_group_activity_type.xml') );
 
         //  Drop and create table civicrm_value_activity_custom_9
-        $query = 'USE civicrm_tests_dev; ';
+        $query = "USE {$GLOBALS['mysql_test_db']}; ";
         self::$utils->do_query( $query );
         $query = 'DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
         self::$utils->do_query( $query );        
@@ -704,7 +704,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         CRM_Core_BAO_CustomField::createField( $customField, 'add' );
 
         //  Insert a test value into the new table
-        $query = "USE civicrm_tests_dev; ";
+        $query = "USE {$GLOBALS['mysql_test_db']}; ";
         self::$utils->do_query( $query );
         $query = "INSERT INTO civicrm_value_activity_custom_9"
             . "( entity_id, activity_custom_11 )"
@@ -952,7 +952,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                                                                              . '/dataset/custom_group_activity_type.xml') );
  
         //  Drop and create table civicrm_value_activity_custom_9
-        $query = 'USE civicrm_tests_dev;';
+        $query = "USE {$GLOBALS['mysql_test_db']}; ";
         self::$utils->do_query( $query );
         $query = 'DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
         self::$utils->do_query( $query );
