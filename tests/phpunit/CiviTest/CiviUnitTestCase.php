@@ -346,7 +346,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                                     $expectedValue, $message  ) 
     {
         require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
-        return CiviDBAssert::assertDBCompareValue( $daoName, $searchValue, $returnColumn, $searchColumn,
+        return CiviDBAssert::assertDBCompareValue( $this, $daoName, $searchValue, $returnColumn, $searchColumn,
                                                    $expectedValue, $message );
     }
 
@@ -354,14 +354,14 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function assertDBCompareValues( $daoName, $searchParams, $expectedValues )  
     {
         require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
-        return CiviDBAssert::assertDBCompareValues( $daoName, $searchParams, $expectedValues );
+        return CiviDBAssert::assertDBCompareValues( $this, $daoName, $searchParams, $expectedValues );
     }
 
 
     function assertAttributesEquals( &$expectedValues, &$actualValues ) 
     {
         require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
-        return CiviDBAssert::assertAttributesEquals( $expectedValues, $actualValues );
+        return CiviDBAssert::assertAttributesEquals( $this, $expectedValues, $actualValues );
     }
     
     function assertArrayKeyExists( $key, &$list ) {
