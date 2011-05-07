@@ -34,11 +34,6 @@
  *
  */
 
-/*
- * variable to assign value to tpl
- *
- */
-$_tagGroup = null;
 
 class CRM_Contact_Form_Edit_TagsandGroups
 {
@@ -68,15 +63,18 @@ class CRM_Contact_Form_Edit_TagsandGroups
      * @access public
      */
     static function buildQuickForm(&$form,
-                                       $contactId = 0,
-                                       $type = CRM_Contact_Form_Edit_TagsandGroups::ALL,
-                                       $visibility = false,
-                                       $isRequired = null,
-                                       $groupName = 'Group(s)',
-                                       $tagName   = 'Tag(s)',
-                                       $fieldName = null ) 
+                                   $contactId = 0,
+                                   $type = CRM_Contact_Form_Edit_TagsandGroups::ALL,
+                                   $visibility = false,
+                                   $isRequired = null,
+                                   $groupName = 'Group(s)',
+                                   $tagName   = 'Tag(s)',
+                                   $fieldName = null ) 
     {
-        
+        if ( ! isset( $form->_tagGroup ) ) {
+            $form->_tagGroup = array( );
+        }
+
         $type = (int ) $type;
         if ( $type & CRM_Contact_Form_Edit_TagsandGroups::GROUP ) {
 
