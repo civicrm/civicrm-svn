@@ -277,60 +277,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     }
 
     /** 
-    * Generic function to compare expected values after an api call to retrieved
-    * DB values.
-    * 
-    * @daoName  string   DAO Name of object we're evaluating.
-    * @id       int      Id of object
-    * @match    array    Associative array of field name => expected value. Empty if asserting 
-    *                      that a DELETE occurred
-    * @delete   boolean  True if we're checking that a DELETE action occurred.
-    */
-    function assertDBState( $daoName, $id, $match, $delete=false ) {
-        if ( empty( $id ) ) {
-            // adding this here since developers forget to check for an id
-            // and hence we get the first value in the db
-            $this->fail( 'ID not populated. Please fix your asserDBState usage!!!' );
-        }
-        
-        require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-        eval( '$object   =& new ' . $daoName . '( );' );
-        $object->id =  $id;
-        $verifiedCount = 0;
-        
-        // If we're asserting successful record deletion, make sure object is NOT found.
-        if ( $delete ) {
-            if ( $object->find( true ) ) {
-                $this->fail("Object not deleted by delete operation: $daoName, $id");
-            }
-            return;
-        }
-
-        // Otherwise check matches of DAO field values against expected values in $match.
-        if ( $object->find( true ) ) {
-            $fields =& $object->fields( );
-            foreach ( $fields as $name => $value ) {
-                  $dbName = $value['name'];
-                  if ( isset( $match[$name] ) ) {
-                    $verifiedCount++;
-                    $this->assertEquals( $object->$dbName, $match[$name] );
-                  } 
-                  else if ( isset( $match[$dbName] ) ) {
-                    $verifiedCount++;
-                    $this->assertEquals( $object->$dbName, $match[$dbName] );
-                  }
-            }
-        } else {
-            $this->fail("Could not retrieve object: $daoName, $id");
-        }
-        $object->free( );
-        $matchSize = count( $match );
-        if ( $verifiedCount != $matchSize ) {
-            $this->fail("Did not verify all fields in match array: $daoName, $id. Verified count = $verifiedCount. Match array size = $matchSize");
-        }
-    }
-
-    /** 
     * Generic function to check that strings are present in the page
     * 
     * @strings  array    array of strings or a single string
