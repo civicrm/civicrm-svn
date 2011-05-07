@@ -538,7 +538,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
 
             // disable error reporting on real mailings (but leave error reporting for tests), CRM-5744
             if ($job_date) {
-	        CRM_Core_Error::ignoreException();
+                CRM_Core_Error::ignoreException();
             }
 
             // hack to stop mailing job at run time, CRM-4246.
