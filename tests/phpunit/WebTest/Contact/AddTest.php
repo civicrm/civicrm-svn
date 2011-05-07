@@ -271,6 +271,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
       
       $this->assertTrue($this->isTextPresent("Your Household contact record has been saved."));
+
   }
   
   function testOrganizationAdd( )
