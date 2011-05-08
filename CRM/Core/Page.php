@@ -176,7 +176,8 @@ class CRM_Core_Page {
             }
             if ( $this->_print == CRM_Core_Smarty::PRINT_PDF ) {
                 require_once 'CRM/Utils/PDF/Utils.php';
-                CRM_Utils_PDF_Utils::domlib( $content, "{$this->_name}.pdf" );
+                CRM_Utils_PDF_Utils::html2pdf( $content, "{$this->_name}.pdf", false,
+                                               array( 'paper_size' => 'a3', 'orientation' => 'landscape' ) );
             } else {
                 echo $content;
             }

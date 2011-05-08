@@ -89,13 +89,14 @@ class CRM_Contact_Form_Task_PDF extends CRM_Contact_Form_Task {
     }
     function setDefaultValues( ) 
     {
+        $defaults = array();
         if ( isset( $this->_activityId ) ) {
             $params = array( 'id' => $this->_activityId );
             CRM_Activity_BAO_Activity::retrieve( $params, $defaults );
             $defaults['html_message'] = $defaults['details'];
-            return $defaults;
         }
-        
+        $defaults = $defaults + CRM_Contact_Form_Task_PDFLetterCommon::setDefaultValues( );
+        return $defaults;        
     }
     
     /**

@@ -42,13 +42,13 @@
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
         <table class="form-layout-compressed">
         <tr>
-            <td class="label">{$form.msg_title.label}</td>
+            <td class="label-left">{$form.msg_title.label}</td>
             <td>{$form.msg_title.html}
-                <br /><span class="description html-adjust">{ts}Descriptive title of message - used for template selection.{/ts}
+                <br /><span class="description html-adjust">{ts}Descriptive title of message - used for template selection.{/ts}</span>
             </td>
         </tr>
         <tr>
-            <td class="label">{$form.msg_subject.label}</td>
+            <td class="label-left">{$form.msg_subject.label}</td>
             <td>
                   {$form.msg_subject.html|crmReplace:class:huge}
 	              <a href="#" onClick="return showToken('Subject', 3);">{$form.token3.label}</a>
@@ -58,7 +58,7 @@
 	                   <span class="description">{ts}Begin typing to filter list of tokens{/ts}</span><br/>
 	                   {$form.token3.html}
                   </div>
-	           <br /><span class="description">{ts}Subject for email message.{/ts} {ts 1=$tokenDocsRepeated}Tokens may be included (%1).{/ts}
+	           <br /><span class="description">{ts}Subject for email message.{/ts} {ts 1=$tokenDocsRepeated}Tokens may be included (%1).{/ts}</span>
             </td>
         </tr>
         <tr>
@@ -111,10 +111,25 @@
 		    </div><!-- /.crm-accordion-body -->
 	    </div><!-- /.crm-accordion-wrapper -->
 
+	    <div class="crm-accordion-wrapper crm-html_email-accordion crm-accordion-open">
+	    	<div class="crm-accordion-header">
+    		    <div class="icon crm-accordion-pointer"></div> 
+    		    {$form.pdf_format_id.label}
+		    </div><!-- /.crm-accordion-header -->
+ 		    <div class="crm-accordion-body">
+                <div class="spacer"></div>
+                <div class='html'>
+                    {$form.pdf_format_id.html}
+                    {help id="id-msg-template" file="CRM/Contact/Form/Task/PDFLetterCommon.hlp"}
+                    <div class="description">{ts}Page format to use when creating PDF files using this template.{/ts}</div>
+                </div>  
+		    </div><!-- /.crm-accordion-body -->
+	    </div><!-- /.crm-accordion-wrapper -->
+
     {if !$workflow_id}
 	<table class="form-layout-compressed">
           <tr>
-            <td class="label">{$form.is_active.label}</td>
+            <td class="label-left">{$form.is_active.label}</td>
             <td>{$form.is_active.html}</td>
           </tr>
 	</table>

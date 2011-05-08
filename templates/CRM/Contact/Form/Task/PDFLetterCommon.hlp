@@ -2,7 +2,8 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright (C) 2011 Marty Wright                                    |
+ | Licensed to CiviCRM under the Academic Free License version 3.0.   |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -23,28 +24,20 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* Confirmation of contribution deletes  *}
-<div class="messages status">
-  <div class="icon inform-icon"></div>
-      {include file="CRM/Contribute/Form/Task.tpl"}
-</div>
-<div id="help">
-    {ts}You may choose to Email receipts to Contributers OR Download a PDF file containing one receipt per page to your local computer by clicking <strong>Process Receipt(s)</strong>. Your browser may display the file for you automatically, or you may need to open it for printing using any PDF reader (such as Adobe&reg; Reader).{/ts}
-</div>
+{htxt id ="id-pdf-format"}
+<p>{ts}Select a page format from the list or configure your own format in the settings below.{/ts}</p>
+{capture assign="pdfFormatsURL"}{crmURL p="civicrm/admin/pdfFormats" q="reset=1"}{/capture}
+<p>{ts 1=$pdfFormatsURL}Go to <strong><a href="%1">Administer CiviCRM &raquo; Configure &raquo; PDF Page Formats</a></strong> to add or edit formats or set the default format.{/ts}</p>
+{/htxt}
 
-<table class="form-layout-compressed">
-  <tr>
-    <td>{$form.output.email_receipt.html}</td>
-  </tr>
-  <tr>
-    <td>{$form.output.pdf_receipt.html}</td>
-  </tr>
-  <tr id="selectPdfFormat" style="display: none;">
-    <td>{$form.pdf_format_id.html} {$form.pdf_format_id.label} {help id="id-contribution-receipt" file="CRM/Contact/Form/Task/PDFLetterCommon.hlp"}</td>
-  </tr>
-</table>
+{htxt id ="id-msg-template"}
+<p>{ts}Select a page format for PDF files created using this template if you wish to override the default format. Page formats define the paper size and margins.{/ts}</p>
+{capture assign="pdfFormatsURL"}{crmURL p="civicrm/admin/pdfFormats" q="reset=1"}{/capture}
+<p>{ts 1=$pdfFormatsURL}Go to <strong><a href="%1">Administer CiviCRM &raquo; Configure &raquo; PDF Page Formats</a></strong> to add or edit formats or set the default format.{/ts}</p>
+{/htxt}
 
-<div class="spacer"></div>
-<div class="form-item">
- {$form.buttons.html}
-</div>
+{htxt id ="id-contribution-receipt"}
+<p>{ts}Select a page format to use for the PDF file. Page formats define the paper size and margins.{/ts}</p>
+{capture assign="pdfFormatsURL"}{crmURL p="civicrm/admin/pdfFormats" q="reset=1"}{/capture}
+<p>{ts 1=$pdfFormatsURL}Go to <strong><a href="%1">Administer CiviCRM &raquo; Configure &raquo; PDF Page Formats</a></strong> to add or edit formats or set the default format.{/ts}</p>
+{/htxt}

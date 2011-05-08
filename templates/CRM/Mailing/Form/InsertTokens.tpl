@@ -27,6 +27,7 @@
 <script type="text/javascript" >
 var text_message = null;
 var html_message = null;
+var isPDF        = false;
 var isMailing    = false;
 
 {/literal}
@@ -40,6 +41,12 @@ var isMailing    = false;
     text_message = "text_message";
     html_message = "html_message";
     isMailing    = true;
+    {/literal}
+{/if}
+
+{if $form.formName eq 'PDF'}
+    {literal}
+    isPDF = true;
     {/literal}
 {/if}
 
@@ -83,8 +90,10 @@ function showSaveUpdateChkBox()
 
 function selectValue( val ) {
     if ( !val ) {
-        document.getElementById(text_message).value ="";
-        document.getElementById("subject").value ="";
+        if ( !isPDF ) {
+            document.getElementById(text_message).value ="";
+            document.getElementById("subject").value ="";
+        }
         if ( editor == "ckeditor" ) {
             oEditor = CKEDITOR.instances[html_message];
             oEditor.setData('');
@@ -98,23 +107,27 @@ function selectValue( val ) {
         } else {	
             document.getElementById(html_message).value = '' ;
         }
+        if ( isPDF ) {
+            showBindFormatChkBox();
+        }
         return;
     }
 
     var dataUrl = {/literal}"{crmURL p='civicrm/ajax/template' h=0 }"{literal};
 
     cj.post( dataUrl, {tid: val}, function( data ) {
-        cj("#subject").val( data.subject );
-
-        if ( data.msg_text ) {      
-            cj("#"+text_message).val( data.msg_text );
-            cj("div.text").show();
-            cj(".head").find('span').removeClass().addClass('ui-icon ui-icon-triangle-1-s');
-            cj("#helptext").show(); 
-        } else {
-            cj("#"+text_message).val("");
+        if ( !isPDF ) {
+            cj("#subject").val( data.subject );
+            
+            if ( data.msg_text ) {      
+                cj("#"+text_message).val( data.msg_text );
+                cj("div.text").show();
+                cj(".head").find('span').removeClass().addClass('ui-icon ui-icon-triangle-1-s');
+                cj("#helptext").show(); 
+            } else {
+                cj("#"+text_message).val("");
+            }
         }
-
         var html_body  = "";
         if (  data.msg_html ) {
             html_body = data.msg_html;
@@ -133,9 +146,15 @@ function selectValue( val ) {
         } else {
             cj("#"+ html_message).val( html_body );
         }
-
-        }, 'json');    
-    }
+        if ( isPDF ) {
+            var bind = data.pdf_format_id ? true : false ;
+            selectFormat( data.pdf_format_id, bind );
+            if ( !bind ) {
+                document.getElementById("bindFormat").style.display = "none";
+            }
+        }
+    }, 'json');    
+}
 
  if ( isMailing ) { 
      document.getElementById("editMessageDetails").style.display = "block";

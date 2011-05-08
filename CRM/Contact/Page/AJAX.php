@@ -1041,4 +1041,34 @@ LIMIT {$offset}, {$rowCount}
   
     }
 
+    /**
+     * Function to retrieve a PDF Page Format for the PDF Letter form
+     */
+    function pdfFormat(  ) 
+    {
+        require_once 'CRM/Utils/Type.php';
+        $formatId = CRM_Utils_Type::escape( $_POST['formatId'], 'Integer' );
+
+        require_once "CRM/Core/BAO/PdfFormat.php";
+        $pdfFormat = CRM_Core_BAO_PdfFormat::getById( $formatId );
+
+        echo json_encode( $pdfFormat );
+        CRM_Utils_System::civiExit( );
+    }
+
+    /**
+     * Function to retrieve Paper Size dimensions
+     */
+    function paperSize(  ) 
+    {
+        require_once 'CRM/Utils/Type.php';
+        $paperSizeName = CRM_Utils_Type::escape( $_POST['paperSizeName'], 'String' );
+
+        require_once "CRM/Core/BAO/PaperSize.php";
+        $paperSize = CRM_Core_BAO_PaperSize::getByName( $paperSizeName );
+
+        echo json_encode( $paperSize );
+        CRM_Utils_System::civiExit( );
+    }
+
 }
