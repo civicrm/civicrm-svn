@@ -44,13 +44,14 @@ require_once 'CRM/Case/PseudoConstant.php';
  * Open a new case, add client and manager roles, and add standard timeline
  *
  * @param  array( //REQUIRED:
- * 'case_type_id'     => int OR 'case_type' => str (provide one or the other)
+ * 'case_type_id'     => int OR
+ * 'case_type' => str (provide one or the other)
  * 'contact_id'       => int // case client
- * 'creator_id'       => int // case manager
  * 'subject'          => str
- * 'medium_id'        => int // see civicrm option values for possibilities
  *
  * //OPTIONAL
+ * 'medium_id'        => int // see civicrm option values for possibilities
+ * 'creator_id'       => int // case manager, default to the logged in user
  * 'status_id'        => int // defaults to 1 "ongoing"
  * 'location'         => str
  * 'start_date'       => str datestamp // defaults to: date('YmdHis')
