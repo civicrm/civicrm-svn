@@ -101,8 +101,16 @@ function civicrm_api3_activity_create( $params ) {
     $activityBAO = CRM_Activity_BAO_Activity::create( $params );
 
     if ( isset( $activityBAO->id ) ) {
-        _civicrm_api3_object_to_array( $activityBAO, $activityArray[$activityBAO->id]);
-        return civicrm_api3_create_success($activityArray,$params,$activityBAO);
+      if (array_key_exists ('case_id',$params)) {
+        require_once 'CRM/Case/DAO/CaseActivity.php';
+        $caseActivityDAO = new CRM_Case_DAO_CaseActivity();
+        $caseActivityDAO->activity_id = $activityBAO->id ;
+        $caseActivityDAO->case_id = $params['case_id'];
+        $caseActivityDAO->find( true );
+        $caseActivityDAO->save();
+      }
+      _civicrm_api3_object_to_array( $activityBAO, $activityArray[$activityBAO->id]);
+      return civicrm_api3_create_success($activityArray,$params,$activityBAO);
     }
 }
 
