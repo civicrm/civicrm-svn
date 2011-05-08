@@ -72,9 +72,15 @@ function civicrm_api3_case_create($params) {
 	_civicrm_api3_initialize ( true );
 	try {
 		
+    if (! array_key_exists ('status_id', $params )) 
+      $params['status_id'] = 1; // ongoing
+    if ( ! array_key_exists ('creator_id', $params )) {
+        $session = CRM_Core_Session::singleton( );
+        $params['creator_id']  =  $session->get( 'userID' );
+    }
 		//check parameters
 		$errors = _civicrm_api3_case_check_params ( $params, 'create' );
-		
+	
 		if ($errors)
 			return $errors;
 		
@@ -467,13 +473,10 @@ function _civicrm_api3_case_read($caseId) {
 /**
  * Internal function to format params for processing
  */
-function _civicrm_api3_case_format_params($params, $mode) {
+function _civicrm_api3_case_format_params(&$params, $mode) {
 	switch ($mode) {
 		
 		case 'create' :
-			// set defaults
-			if (! $params ['status_id'])
-				$params ['status_id'] = 1;
 			if (! $params ['start_date'])
 				$params ['start_date'] = date ( 'YmdHis' );
 			
@@ -518,11 +521,11 @@ function _civicrm_api3_case_check_params($params, $mode = NULL) {
 	switch ($mode) {
 		
 		case 'create' :
-			
+		
 			if (! $params ['case_type_id'] && ! $params ['case_type'])
 				return civicrm_api3_create_error ( 'Missing input parameters. Must provide case_type or case_type_id.' );
 			
-			$required = array ('contact_id' => 'num', 'status_id' => 'num', 'medium_id' => 'num', 'creator_id' => 'num', 'subject' => 'str' );
+			$required = array ('contact_id' => 'num', 'creator_id' => 'num', 'subject' => 'str' );
 			
 			if (! $params ['case_type'])
 				$required ['case_type_id'] = 'num';
@@ -557,7 +560,6 @@ function _civicrm_api3_case_check_params($params, $mode = NULL) {
 	}
 	
 	$caseTypes = CRM_Case_PseudoConstant::caseType ();
-	
 	if (CRM_Utils_Array::value ( 'case_type', $params ) && ! in_array ( $params ['case_type'], $caseTypes )) {
 		return civicrm_api3_create_error ( 'Invalid Case Type' );
 	}
