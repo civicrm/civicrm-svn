@@ -29,12 +29,8 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
 
 
  
-class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
-
-    protected $captureScreenshotOnFailure = TRUE;
-    protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
-    protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
-    
+class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase
+{    
     protected function setUp()
     {
         parent::setUp();
@@ -129,7 +125,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
         // click through to the membership view screen
         $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
         $this->waitForElementPresent('_qf_MembershipView_cancel-bottom');
-        
+
         $this->webtestVerifyTabularData( 
                                         array( 'Membership Type' => "Membership Type $title",
                                                'Status'          => 'New',
@@ -167,19 +163,23 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
         //check the status message
         $this->assertTrue($this->isTextPresent('1 new relationship record created.'));
         
-           $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
+        $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
       
         // click through to the membership view screen
         $this->click( 'css=li#tab_member a' );
         $this->waitForElementPresent('css=div#memberships');    
       
-        //1. change relationship on form
+        //1. change relationship status on form
         $this->click('css=li#tab_rel a');
         $this->waitForElementPresent('css=div.action-link');
         $this->click("//li[@id='tab_rel']/a");
         $this->click("//div[@id='squeeze']/div/div");
         $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='Edit']");
         $this->click("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='Edit']");
+        $matches = array();
+        preg_match('/cid=([0-9]+)/', $this->getLocation(), $matches);
+        $id  = $matches[1];
+
         $this->waitForElementPresent('is_active');
         //disable relationship
         if ($this->isChecked('is_active') ) {
@@ -192,8 +192,12 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
         
         // click through to the membership view screen
         $this->click( 'css=li#tab_member a' );
-        $this->assertFalse($this->isElementPresent('css=div#memberships'));
 
+        //verify inherited membership has been removed
+        $this->open( $this->sboxPath . "civicrm/contact/view?reset=1&cid=$id&selectedChild=member" );  
+        $this->waitForElementPresent("xpath=id('crm-container-snippet')/x:div/x:div[3]");
+        $this->assertTrue($this->isTextPresent('No memberships have been recorded for this contact.'));
+        
         // visit relationship tab and re-enable the relationship
         $this->click('css=li#tab_rel a');
         $this->waitForElementPresent('css=div.action-link');
@@ -226,10 +230,10 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
         $this->chooseOkOnNextConfirmation();
         sleep(10);
 
-        //verify membership
-        $this->waitForElementPresent('css=li#tab_member a' );
-        $this->click( 'css=li#tab_member a' );
-        $this->assertFalse($this->isElementPresent('css=div#memberships'));
+        //verify inherited membership has been removed
+        $this->open( $this->sboxPath . "civicrm/contact/view?reset=1&cid=$id&selectedChild=member" );  
+        $this->waitForElementPresent("xpath=id('crm-container-snippet')/x:div/x:div[3]");
+        $this->assertTrue($this->isTextPresent('No memberships have been recorded for this contact.'));
 
         //enable relationship
         $this->click('css=li#tab_rel a');
