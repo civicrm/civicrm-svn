@@ -161,8 +161,8 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
         $this->type( 'sort_name', $firstName );
         $this->check( 'deleted_contacts' );
         $this->click( '_qf_Advanced_refresh' );
-        $this->waitForElementPresent( 'Print' );
-        $this->assertTrue( $this->isTextPresent( '1 Contact' ) );
+        $this->waitForPageToLoad( "30000" );
+        $this->assertTrue( $this->isTextPresent( '1 Contact' ), "Deletion of duplicate contact during merge was not successful. Dupe contact not found when searching trash." );
 
         // Search for the main contact
         $this->open( $this->sboxPath . 'civicrm/contact/search/advanced?reset=1' );
