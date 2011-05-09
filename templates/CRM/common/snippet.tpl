@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -33,6 +33,8 @@
     {else}
         {include file=$tplFile}
     {/if}
+
+    {include file="CRM/common/action.tpl" isSnippet = true}
 {else}
     {if $smarty.get.snippet eq 2}
     {include file="CRM/common/print.tpl"}

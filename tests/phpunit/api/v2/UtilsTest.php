@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -37,19 +37,6 @@ require_once 'api/v2/utils.php';
  */
 class api_v2_UtilsTest extends CiviUnitTestCase
 {
-
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     *
-     * @access protected
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-        CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
-    }
-
     /**
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.

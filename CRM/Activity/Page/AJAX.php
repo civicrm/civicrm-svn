@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -144,7 +144,35 @@ class CRM_Activity_Page_AJAX
         $caseActivity->activity_id = $mainActivityId;
         $caseActivity->save( );
         $error_msg = $caseActivity->_lastError;
-		    $caseActivity->free( ); 
+        $caseActivity->free( ); 
+
+        // attach custom data to the new activity
+        require_once 'CRM/Core/BAO/CustomValueTable.php';
+        require_once 'CRM/Core/BAO/File.php';
+        $customParams = $htmlType = array( );
+        $customValues = CRM_Core_BAO_CustomValueTable::getEntityValues( $activityID, 'Activity' );
+
+        $fieldIds = implode( ', ', array_keys( $customValues ) );
+        $sql      = "SELECT id FROM civicrm_custom_field WHERE html_type = 'File' AND id IN ( {$fieldIds} )";
+        $result   = CRM_Core_DAO::executeQuery( $sql );
+        
+        while ( $result->fetch( ) ) {
+            $htmlType[] = $result->id;
+        }
+                
+        foreach ( $customValues as $key => $value ) {
+            if ( $value ) {
+                if ( in_array( $key, $htmlType ) ) {
+                    $fileValues = CRM_Core_BAO_File::path( $value, $activityID );
+                    $customParams["custom_{$key}_-1"] = array( 'name' => $fileValues[0],
+                                                               'path' => $fileValues[1] );
+                } else {
+                    $customParams["custom_{$key}_-1"] = $value;
+                }
+            }
+        }
+        CRM_Core_BAO_CustomValueTable::postProcess( $customParams, CRM_Core_DAO::$_nullArray, 'civicrm_activity',
+                                                    $mainActivityId, 'Activity' );
         
         // copy activity attachments ( if any )
         require_once "CRM/Core/BAO/File.php";

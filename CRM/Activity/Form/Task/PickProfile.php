@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -116,7 +116,7 @@ class CRM_Activity_Form_Task_PickProfile extends CRM_Activity_Form_Task {
                                               $activityTypeIds['Event Registration'],
                                               $activityTypeIds['Pledge Acknowledgment']
                                              );
-        
+        $notEditable = false;
         foreach ( $this->_activityHolderIds as $activityId ) {
             $typeId = CRM_Core_DAO::getFieldValue( "CRM_Activity_DAO_Activity", $activityId, 'activity_type_id' );
             if ( in_array ( $typeId, $nonEditableActivityTypeIds ) ) {

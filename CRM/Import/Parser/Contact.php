@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -675,11 +675,13 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             }
             $newContact = $this->createContact( $formatted, $contactFields, $onDuplicate );
         }
-        
+
+        $contactID = null;
         if ( is_object( $newContact ) || ( $newContact instanceof CRM_Contact_BAO_Contact ) ) { 
             $relationship = true;
             $newContact = clone( $newContact );
-            $this->_newContacts[] = $newContact->id;
+            $contactID            = $newContact->id;
+            $this->_newContacts[] = $contactID;
             
             //get return code if we create new contact in update mode, CRM-4148
             if ( $this->_updateWithId ) {
@@ -702,6 +704,23 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             }
         }
         
+        if ( $contactID ) {
+            // call import hook
+            require_once 'CRM/Utils/Hook.php';
+            $currentImportID  = end($values);
+        
+            $hookParams = array( 'contactID'       => $contactID, 
+                                 'importID'        => $currentImportID,
+                                 'importTempTable' => $this->_tableName,
+                                 'fieldHeaders'    => $this->_mapperKeys,
+                                 'fields'          => $this->_activeFields );
+        
+            CRM_Utils_Hook::import( 'Contact',
+                                    'process', 
+                                    $this, 
+                                    $hookParams );
+        }
+
         if ( $relationship ) {
             $primaryContactId = null;
             if ( civicrm_duplicate($newContact) ) {
@@ -753,7 +772,10 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                                                           'external_identifier' );
                     }                    
                     // check for valid related contact id in update/fill mode, CRM-4424
-                    if ( in_array( $onDuplicate, array( CRM_Import_Parser::DUPLICATE_UPDATE, CRM_Import_Parser::DUPLICATE_FILL ) ) && CRM_Utils_Array::value( 'id', $params[$key] ) ) {
+                    if ( in_array( $onDuplicate,
+                                   array( CRM_Import_Parser::DUPLICATE_UPDATE,
+                                          CRM_Import_Parser::DUPLICATE_FILL ) ) && 
+                         CRM_Utils_Array::value( 'id', $params[$key] ) ) {
                         $relatedContactType  = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
                                                                             $params[$key]['id'],
                                                                             'contact_type' );
@@ -1068,7 +1090,9 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         if ( CRM_Utils_Array::value('contact_sub_type', $params) ) {
             $csType = CRM_Utils_Array::value('contact_sub_type', $params);
         }
-        
+        if ( !CRM_Utils_Array::value( 'contact_type', $params ) ) {
+            $params['contact_type'] = 'Individual';
+        }
         $customFields = CRM_Core_BAO_CustomField::getFields( $params['contact_type'], false, false, $csType );
         
         $addressCustomFields = CRM_Core_BAO_CustomField::getFields( 'Address' );

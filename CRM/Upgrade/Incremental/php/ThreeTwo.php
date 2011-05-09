@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -45,7 +45,20 @@ class CRM_Upgrade_Incremental_php_ThreeTwo {
         //give all new permissions and drop access CiviCase.
         $config = CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Drupal' ) {
-            db_query( "UPDATE {permission} SET perm = REPLACE( perm, 'access CiviCase', 'access my cases and activities, access all cases and activities, administer CiviCase' )" );
+            
+            // CRM-7896
+            $roles = user_roles(false, 'access CiviCase');
+            if ( !empty($roles) ) {
+                $changePermissions = array( 'access CiviCase'                 => false,
+                                           'access my cases and activities'  => true,
+                                           'access all cases and activities' => true,
+                                           'administer CiviCase'             => true
+                                           );
+                foreach( array_keys($roles) as $rid ) {
+                    user_role_change_permissions($rid, $changePermissions);
+                }
+            }
+            
             //insert core acls.
             $casePermissions = array( 'delete in CiviCase',
                                       'administer CiviCase', 

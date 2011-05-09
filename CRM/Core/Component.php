@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -49,8 +49,8 @@ class CRM_Core_Component
 
     static $_contactSubTypes = null;
 
-    private function &_info( ) {
-        if( self::$_info == null ) {
+    private function &_info( $force = false ) {
+        if( self::$_info == null || $force ) {
             self::$_info = array( );
             $c = array();
             
@@ -101,9 +101,9 @@ class CRM_Core_Component
         return $_cache;
     }
 
-    public function &getEnabledComponents( )
+    public function &getEnabledComponents( $force = false )
     {
-        return self::_info();
+        return self::_info( $force );
     }
 
     public function &getNames( $translated = false )
@@ -376,6 +376,28 @@ class CRM_Core_Component
         }
     }
 
+    /**
+     * Function to get components info from info file
+     *
+     */
+    static function getComponentsFromFile( $crmFolderDir )
+    {
+        $components = array( );
+        //traverse CRM folder and check for Info file
+        if ( is_dir( $crmFolderDir ) ) {
+            $dir = opendir( $crmFolderDir );
+            while ( $subDir = readdir( $dir ) ) {
+                $infoFile = $crmFolderDir . "/{$subDir}/" . self::COMPONENT_INFO_CLASS . '.php';
+                if ( file_exists( $infoFile ) ) {
+                    $infoClass = 'CRM_' . $subDir . '_' . self::COMPONENT_INFO_CLASS;
+                    require_once( str_replace( '_', DIRECTORY_SEPARATOR, $infoClass ) . '.php' );
+                    $infoObject = new $infoClass( null, null, null );
+                    $components[$infoObject->info['name']] = $infoObject;
+                    unset( $infoObject );
+                }
+            }
+        }
+
+        return $components;
+    }
 }
-
-

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -494,7 +494,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
             }
             
         } else {
-            if ( $formatValues['external_identifier'] ) {
+            if ( CRM_Utils_Array::value( 'external_identifier', $formatValues ) ) {
                 $checkCid = new CRM_Contact_DAO_Contact();
                 $checkCid->external_identifier = $formatValues['external_identifier'];
                 $checkCid->find(true);
@@ -525,7 +525,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                                                                                       $joinDate,
                                                                                       'today',
                                                                                       $excludeIsAdmin );
-            if ( ! $formatted['status_id']) {
+            if ( ! CRM_Utils_Array::value( 'status_id', $formatted ) ) {
                 $formatted['status_id'] = $calcStatus['id'];
             } else if ( !CRM_Utils_Array::value('is_override', $formatted ) ) {
                 if ( empty( $calcStatus ) ) {

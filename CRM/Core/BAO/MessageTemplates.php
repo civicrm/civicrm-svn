@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -205,7 +205,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
                     $$bodyType = CRM_Utils_Token::replaceDomainTokens($$bodyType, $domain, true, $tokens[$value], true );
                     $$bodyType = CRM_Utils_Token::replaceContactTokens($$bodyType, $contact, false, $tokens[$value], false, true );
                     $$bodyType = CRM_Utils_Token::replaceComponentTokens($$bodyType, $contact, $tokens[$value], true );
-                    $$bodyType = CRM_Utils_Token::replaceHookTokens ( $$bodyType, $contactId , $categories, true );
+                    $$bodyType = CRM_Utils_Token::replaceHookTokens ( $$bodyType, $contact , $categories, true );
                 }
             }
             $html = $body_html;
@@ -263,7 +263,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             $messageSubject = CRM_Utils_Token::replaceContactTokens($body_subject, $contact, false, $subjectToken);
             $messageSubject = CRM_Utils_Token::replaceDomainTokens($messageSubject, $domain, true, $tokens[$value] );
             $messageSubject = CRM_Utils_Token::replaceComponentTokens($messageSubject, $contact, $tokens[$value], true );
-            $messageSubject = CRM_Utils_Token::replaceHookTokens ( $messageSubject,$contactId , $categories, true );
+            $messageSubject = CRM_Utils_Token::replaceHookTokens ( $messageSubject, $contact, $categories, true );
           
             $messageSubject = $smarty->fetch("string:{$messageSubject}");
 
@@ -440,8 +440,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             }
             list( $contact ) = $mailing->getDetails($contactParams, $returnProperties, false );
             $contact = $contact[$params['contactId']];
-            
-            
         }
 
         $subject = CRM_Utils_Token::replaceDomainTokens($subject, $domain, true, $tokens['text'], true);
@@ -451,10 +449,10 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             $subject = CRM_Utils_Token::replaceContactTokens($subject, $contact, false, $tokens['text'], false, true);
             $text    = CRM_Utils_Token::replaceContactTokens($text,    $contact, false, $tokens['text'], false, true);
             $html    = CRM_Utils_Token::replaceContactTokens($html,    $contact, false, $tokens['html'], false, true);
-            CRM_Utils_Hook::tokenValues( $contact[$params['contactId']], $params['contactId']);
-            $subject = CRM_Utils_Token::replaceHookTokens ( $subject,$contact[$params['contactId']] , $categories, true );
-            $text = CRM_Utils_Token::replaceHookTokens ( $text,$contact[$params['contactId']] , $categories, true );
-            $html = CRM_Utils_Token::replaceHookTokens ( $html,$contact[$params['contactId']] , $categories, true );
+            CRM_Utils_Hook::tokenValues( $contact, $params['contactId']);
+            $subject = CRM_Utils_Token::replaceHookTokens ( $subject, $contact , $categories, true );
+            $text = CRM_Utils_Token::replaceHookTokens ( $text, $contact , $categories, true );
+            $html = CRM_Utils_Token::replaceHookTokens ( $html, $contact, $categories, true );
       
         }
 

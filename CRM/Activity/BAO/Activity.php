@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -558,7 +558,10 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                     $title =  $activitySubject . ' - ';
                 }
                 
-                $title = $title . $recentContactDisplay .' (' . $activityTypes[$activity->activity_type_id] . ')';
+                $title = $title . $recentContactDisplay;
+                if ( CRM_Utils_Array::value($activity->activity_type_id, $activityTypes) ) {
+                    $title .= ' (' . $activityTypes[$activity->activity_type_id] . ')';  
+                }
                 
                 CRM_Utils_Recent::add( $title,
                                        $url,
@@ -583,7 +586,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         
         // if the subject contains a ‘[case #…]’ string, file that activity on the related case (CRM-5916)
         $matches = array();
-        if (preg_match('/\[case #([0-9a-h]{7})\]/', $params['subject'], $matches)) {
+        if ( CRM_Utils_Array::value( 'subject', $params ) && preg_match( '/\[case #([0-9a-h]{7})\]/', $params['subject'], $matches ) ) {
             $key   = CRM_Core_DAO::escapeString(CIVICRM_SITE_KEY);
             $hash  = $matches[1];
             $query = "SELECT id FROM civicrm_case WHERE SUBSTR(SHA1(CONCAT('$key', id)), 1, 7) = '$hash'";
@@ -1259,7 +1262,8 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
         $categories = array_keys( $tokens );
 
         $escapeSmarty = false;
-        if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+        if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
+             CIVICRM_MAIL_SMARTY ) {
             $smarty = CRM_Core_Smarty::singleton( );
 
             require_once 'CRM/Core/Smarty/resources/String.php';
@@ -1299,7 +1303,8 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
                 $tokenHtml = null;
             }
 
-            if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+            if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
+                 CIVICRM_MAIL_SMARTY ) {
                 // also add the contact tokens to the template
                 $smarty->assign_by_ref( 'contact', $values );
 
@@ -1405,7 +1410,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
      * @return array    array of importable Fields
      * @access public
      */
-    function &importableFields( ) 
+    function &importableFields( $status = false ) 
     {
         if ( ! self::$_importableFields ) {
             if ( ! self::$_importableFields ) {

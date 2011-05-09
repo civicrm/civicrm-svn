@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -84,6 +84,9 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
                                                                          'headerPattern' => '/(activity.)?type label?/i') ) );
         
         foreach ($fields as $name => $field) {
+            $field['type']          = CRM_Utils_Array::value( 'type', $field, CRM_Utils_Type::T_INT );
+            $field['dataPattern']   = CRM_Utils_Array::value( 'dataPattern', $field, '//' );
+            $field['headerPattern'] = CRM_Utils_Array::value( 'headerPattern', $field, '//' );
             $this->addField( $name, $field['title'], $field['type'], $field['headerPattern'], $field['dataPattern']);
         }
 
@@ -209,7 +212,8 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         //date-Format part ends
 
         //checking error in custom data
-        $params['contact_type'] =  $this->_contactType;
+        $params['contact_type'] = isset($this->_contactType) ? $this->_contactType : null;
+
         CRM_Import_Parser_Contact::isErrorInCustomData($params, $errorMessage);
 
         if ( $errorMessage ) {

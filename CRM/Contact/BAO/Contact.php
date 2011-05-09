@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -306,16 +306,6 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
             }
         }
 
-        if ( ! $config->doNotResetCache ) {
-            // Note: doNotResetCache flag is currently set by import contact process, since resetting and 
-            // rebuilding cache could be expensive (for many contacts). We might come out with better 
-            // approach in future. 
-
-            // clear acl cache if any.
-            require_once 'CRM/ACL/BAO/Cache.php';
-            CRM_ACL_BAO_Cache::resetCache( );
-        }
-        
         //add location Block data
         $blocks = CRM_Core_BAO_Location::create( $params, $fixAddress );
         foreach ( $blocks as $name => $value )  {
@@ -396,9 +386,13 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         // CRM-6367: fetch the right label for contact type’s display
         $contact->contact_type_display = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_ContactType', $contact->contact_type, 'label', 'name');
 
-        // reset the group contact cache for this group
-        require_once 'CRM/Contact/BAO/GroupContactCache.php';
-        CRM_Contact_BAO_GroupContactCache::remove( );
+        if ( ! $config->doNotResetCache ) {
+            // Note: doNotResetCache flag is currently set by import contact process, since resetting and 
+            // rebuilding cache could be expensive (for many contacts). We might come out with better 
+            // approach in future. 
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
+            CRM_Contact_BAO_Contact_Utils::clearContactCaches( );
+        }
 
         if ( $invokeHooks ) {
             if ( $isEdit ) {
@@ -746,6 +740,10 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::remove( );
 
+        // delete any dupe cache entry
+        require_once 'CRM/Core/BAO/PrevNextCache.php';
+        CRM_Core_BAO_PrevNextCache::deleteItem( $id );
+
         $transaction->commit( );
 
         CRM_Utils_Hook::post( 'delete', $contactType, $contact->id, $contact );
@@ -989,24 +987,29 @@ WHERE id={$id}; ";
      * scheme. Adding weight is super important and should be done in the
      * next week or so, before this can be called complete.
      *
-     * @param int     $contactType contact Type
-     * @param boolean $status  status is used to manipulate first title
-     * @param boolean $showAll if true returns all fields (includes disabled fields)
-     * @param boolean $isProfile if its profile mode
+     * @param int     $contactType     contact Type
+     * @param boolean $status          status is used to manipulate first title
+     * @param boolean $showAll         if true returns all fields (includes disabled fields)
+     * @param boolean $isProfile       if its profile mode
+     * @param boolean $checkPermission if false, do not include permissioning clause (for custom data)
      *
      * @return array array of importable Fields
      * @access public
      */
-    function &importableFields( $contactType = 'Individual', $status = false, $showAll = false, 
-                                $isProfile = false ) {
+    function &importableFields( $contactType = 'Individual',
+                                $status = false,
+                                $showAll = false, 
+                                $isProfile = false,
+                                $checkPermission = true ) {
         if ( empty( $contactType ) ) {
             $contactType = 'All';
         }
         
         $cacheKeyString  = "importableFields $contactType";
-        $cacheKeyString .= $status    ? '_1' : '_0';
-        $cacheKeyString .= $showAll   ? '_1' : '_0';
-        $cacheKeyString .= $isProfile ? '_1' : '_0';
+        $cacheKeyString .= $status          ? '_1' : '_0';
+        $cacheKeyString .= $showAll         ? '_1' : '_0';
+        $cacheKeyString .= $isProfile       ? '_1' : '_0';
+        $cacheKeyString .= $checkPermission ? '_1' : '_0';
 
         if ( ! self::$_importableFields || ! CRM_Utils_Array::value( $cacheKeyString, self::$_importableFields ) ) {
             if ( ! self::$_importableFields ) {
@@ -1034,7 +1037,11 @@ WHERE id={$id}; ";
                                                );
 
                 $locationFields = array_merge( $locationFields, 
-                                               CRM_Core_BAO_CustomField::getFieldsForImport( 'Address' ) );
+                                               CRM_Core_BAO_CustomField::getFieldsForImport( 'Address',
+                                                                                             false,
+                                                                                             false,
+                                                                                             false,
+                                                                                             false ) );
 
                 foreach ($locationFields as $key => $field) {
                     $locationFields[$key]['hasLocationType'] = true;
@@ -1052,8 +1059,12 @@ WHERE id={$id}; ";
                 
                 if ( $contactType != 'All' ) {  
                     $fields       = 
-                        array_merge($fields, 
-                                    CRM_Core_BAO_CustomField::getFieldsForImport($contactType, $showAll, true) );
+                        array_merge( $fields,
+                                     CRM_Core_BAO_CustomField::getFieldsForImport($contactType,
+                                                                                  $showAll,
+                                                                                  true,
+                                                                                  false,
+                                                                                  false ) );
                     //unset the fields, which are not related to their
                     //contact type.
                     $commonValues = array ( 'Individual'   => array( 'household_name','legal_name','sic_code','organization_name' ),
@@ -1071,17 +1082,22 @@ WHERE id={$id}; ";
                     }
                 } else {
                     foreach ( array( 'Individual', 'Household', 'Organization' ) as $type ) { 
-                        $fields = array_merge($fields, CRM_Core_BAO_CustomField::getFieldsForImport($type, $showAll));
+                        $fields = array_merge( $fields, 
+                                               CRM_Core_BAO_CustomField::getFieldsForImport($type,
+                                                                                            $showAll,
+                                                                                            false,
+                                                                                            false,
+                                                                                            false ) );
                     }
                 }
                 
                 if ( $isProfile ) {
-                    $fields = array_merge( $fields, array ( 'groups' => array( 'title' => ts( 'Group(s)' ),
-                                                                               'name'  => 'groups' ),
-                                                            'tags'   => array( 'title'  => ts( 'Tag(s)'  ),
-                                                                               'name'  => 'tags' ),
-                                                            'notes'  => array( 'title'  => ts( 'Note(s)' ),
-                                                                               'name'  => 'notes' ) ) );
+                    $fields = array_merge( $fields, array ( 'group' => array( 'title' => ts( 'Group(s)' ),
+                                                                               'name'  => 'group' ),
+                                                            'tag'   => array( 'title'  => ts( 'Tag(s)'  ),
+                                                                               'name'  => 'tag' ),
+                                                            'note'  => array( 'title'  => ts( 'Note(s)' ),
+                                                                               'name'  => 'note' ) ) );
                 }
                 
                 //Sorting fields in alphabetical order(CRM-1507)
@@ -1125,7 +1141,7 @@ WHERE id={$id}; ";
      * @access public
      */
     function &exportableFields( $contactType = 'Individual', $status = false, $export = false, $search = false ) 
-        {
+    {
         if ( empty( $contactType ) ) {
             $contactType = 'All';
         }
@@ -1143,17 +1159,11 @@ WHERE id={$id}; ";
             // check if we can retrieve from database cache
             require_once 'CRM/Core/BAO/Cache.php'; 
             $fields =& CRM_Core_BAO_Cache::getItem( 'contact fields', $cacheKeyString );
-            
-            $masterAddress['master_address_belongs_to'] = array ( 'name'  => 'master_id',
-                                                                  'title' => ts('Master Address Belongs To')
-                                                                  ) ;
-            
+                        
             if ( ! $fields ) {
                 $fields = array( );
-                $fields = array_merge($fields, CRM_Contact_DAO_Contact::export( ));
+                $fields = CRM_Contact_DAO_Contact::export( );
                 
-                // add master address display name for individual
-                $fields = array_merge( $fields, $masterAddress );
                 // the fields are meant for contact types
                 if ( in_array( $contactType, array('Individual', 'Household', 'Organization', 'All' ) ) ) {
                     require_once 'CRM/Core/OptionValue.php';
@@ -1164,7 +1174,6 @@ WHERE id={$id}; ";
                                                        array ( 'name'  => 'organization_name',
                                                                'title' => ts('Current Employer') )
                                                        ));
-                
                 $locationType = array( );
                 if ($status) {
                     $locationType['location_type'] = array ('name' => 'location_type',
@@ -1229,12 +1238,12 @@ WHERE id={$id}; ";
                                                             'notes'  => array( 'title'  => ts( 'Note(s)' ),
                                                                                'name'  => 'notes' ) ) );
                 } else { 
-                    $fields = array_merge( $fields, array ( 'groups' => array( 'title' => ts( 'Group(s)' ),
-                                                                               'name'  => 'groups' ),
-                                                            'tags'   => array( 'title'  => ts( 'Tag(s)'  ),
-                                                                               'name'  => 'tags' ),
-                                                            'notes'  => array( 'title'  => ts( 'Note(s)' ),
-                                                                               'name'  => 'notes' ) ) );
+                    $fields = array_merge( $fields, array ( 'group' => array( 'title' => ts( 'Group(s)' ),
+                                                                               'name'  => 'group' ),
+                                                            'tag'   => array( 'title'  => ts( 'Tag(s)'  ),
+                                                                               'name'  => 'tag' ),
+                                                            'note'  => array( 'title'  => ts( 'Note(s)' ),
+                                                                               'name'  => 'note' ) ) );
                 }
             
                 //Sorting fields in alphabetical order(CRM-1507)

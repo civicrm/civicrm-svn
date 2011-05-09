@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -164,11 +164,11 @@ class CRM_Contribute_BAO_Contribution_Utils
         } elseif ( $form->_contributeMode == 'express' ) {
             if ( $form->_values['is_monetary'] && $form->_amount > 0.0 ) {
 				
-				//LCD determine if express + recurring and direct accordingly
+				// determine if express + recurring and direct accordingly
 				if ( $paymentParams['is_recur'] == 1 ) {
 					$result =& $payment->createRecurringPayments( $paymentParams );
 				} else {
-                $result =& $payment->doExpressCheckout( $paymentParams );
+                    $result =& $payment->doExpressCheckout( $paymentParams );
 				}
 				
             }

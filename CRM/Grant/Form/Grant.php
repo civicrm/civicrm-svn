@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -273,7 +273,7 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form
         // get the submitted form values.  
         $params = $this->controller->exportValues( $this->_name );
 
-        if (!$params['grant_report_received']) {
+        if ( !CRM_Utils_Array::value( 'grant_report_received', $params ) ) {
             $params['grant_report_received'] = "null";
         } 
         

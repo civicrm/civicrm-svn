@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -93,6 +93,8 @@ function selectValue( val ) {
         } else if ( editor == "joomlaeditor" ) { 
             document.getElementById(html_message).value = '' ;
             tinyMCE.execCommand('mceSetContent',false, '');               
+        } else if ( editor =="drupalwysiwyg" ) {
+            //doesn't work! WYSIWYG API doesn't support a clear or replace method       
         } else {	
             document.getElementById(html_message).value = '' ;
         }
@@ -126,6 +128,8 @@ function selectValue( val ) {
         } else if ( editor == "joomlaeditor" ) { 
             cj("#"+ html_message).val( html_body );
             tinyMCE.execCommand('mceSetContent',false, html_body);           
+        } else if ( editor =="drupalwysiwyg" ) {
+            Drupal.wysiwyg.instances[html_message].insert(html_body);
         } else {	
             cj("#"+ html_message).val( html_body );
         }
@@ -135,7 +139,6 @@ function selectValue( val ) {
 
  if ( isMailing ) { 
      document.getElementById("editMessageDetails").style.display = "block";
-    
 
     function verify( select )
     {
@@ -181,7 +184,7 @@ function selectValue( val ) {
 	    oEditor.on( 'focus', verify );
         });
         {/literal}
-    {else if $editor eq "tinymce"}
+    {elseif $editor eq "tinymce"}
         {literal}
         cj( function( ) {
 	if ( isMailing ) { 
@@ -204,7 +207,18 @@ function selectValue( val ) {
         }
         });
         {/literal}
-    {/if}
+    {elseif $editor eq "drupalwysiwyg"}
+      {literal}
+      cj( function( ) {
+        if ( isMailing ) { 
+          cj('div.html').hover(
+            verify,
+            verify
+          );  
+        }
+     });
+     {/literal}
+     {/if}
     {literal}
  }
 

@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -94,7 +94,7 @@
             <a href="#" onclick="hide('registration_screen_show'); show('registration_screen'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Registration Screen{/ts}</label><br />
         </div>	
         <div id="registration_screen">
-        <fieldset><legend><a href="#" onclick= "hide('registration_screen'); show('registration_screen_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Registration Screen{/ts}</legend>
+        <h3><a href="#" onclick= "hide('registration_screen'); show('registration_screen_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Registration Screen{/ts}</h3>
         <table class= "form-layout-compressed">
          <tr class="crm-event-manage-registration-form-block-intro_text">
             <td scope="row" class="label" width="20%">{$form.intro_text.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='intro_text' id=$eventID}{/if}</td>
@@ -130,7 +130,6 @@
              </td>
         </tr>
         </table>
-        </fieldset>
         </div>
 
         {*Confirmation Block*}
@@ -139,7 +138,7 @@
         </div>	
 
         <div id="confirm">
-        <fieldset><legend><a href="#" onclick="hide('confirm'); show('confirm_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Confirmation Screen{/ts}</legend>
+        <h3><a href="#" onclick="hide('confirm'); show('confirm_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Confirmation Screen{/ts}</h3>
          <table class= "form-layout-compressed">
            <tr class="crm-event-manage-registration-form-block-confirm_title">
               <td scope="row" class="label" width="20%">{$form.confirm_title.label} <span class="marker">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='confirm_title' id=$eventID}{/if}</td>
@@ -160,8 +159,7 @@
               </td>
            </tr>
          </table>
-        </fieldset>
-        </div>
+       </div>
 
          {*ThankYou Block*}
         <div id="thankyou_show" class="section-hidden section-hidden-border">
@@ -169,7 +167,7 @@
         </div>	
 
         <div id="thankyou">
-        <fieldset><legend><a href="#" onclick="hide('thankyou'); show('thankyou_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Thank-you Screen{/ts}</legend>
+        <h3><a href="#" onclick="hide('thankyou'); show('thankyou_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Thank-you Screen{/ts}</h3>
          <table class= "form-layout-compressed">
            <tr class="crm-event-manage-registration-form-block-confirm_thankyou_title">           
               <td scope="row" class="label" width="20%">{$form.thankyou_title.label} <span class="marker">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='thankyou_title' id=$eventID}{/if}</td>
@@ -190,8 +188,7 @@
               </td>
             </tr>
          </table>
-        </fieldset>
-        </div>
+       </div>
 
         {* Confirmation Email Block *}
         <div id="mail_show" class="section-hidden section-hidden-border">
@@ -199,7 +196,7 @@
         </div>	
 
         <div id="mail">
-        <fieldset><legend><a href="#" onclick="hide('mail'); show('mail_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Confirmation Email{/ts}</legend>
+        <h3><a href="#" onclick="hide('mail'); show('mail_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Confirmation Email{/ts}</h3>
           <table class= "form-layout-compressed">
             <tr class="crm-event-manage-registration-form-block-is_email_confirm"> 
               <td scope="row" class="label" width="20%">{$form.is_email_confirm.label}</td>
@@ -241,8 +238,7 @@
              </tr>
            </table>
 	  </div>
-        </fieldset>
-        </div>
+       </div>
     </div> {*end of div registration_blocks*}
     </div>
  <div class="crm-submit-buttons">

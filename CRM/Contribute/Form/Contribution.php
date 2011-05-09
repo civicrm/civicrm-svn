@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -512,7 +512,7 @@ WHERE  contribution_id = {$this->_id}
                 CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_contactID, $fields, $defaults  );
             }
             foreach ( $billingFields as $name => $billingName ) {
-                $defaults[$billingName] = $defaults[$name];
+                $defaults[$billingName] = CRM_Utils_Array::value( $name, $defaults );                
             }
             
             $config = CRM_Core_Config::singleton( );
@@ -1095,7 +1095,7 @@ WHERE  contribution_id = {$this->_id}
             require_once 'CRM/Price/BAO/Set.php';
             CRM_Price_BAO_Set::processAmount( $this->_priceSet['fields'], 
                                               $submittedValues, $lineItem[$priceSetId] );
-            $submittedValues['total_amount'] = $submittedValues['amount'];
+            $submittedValues['total_amount'] = CRM_Utils_Array::value( 'amount', $submittedValues );
         } 
         if ( !CRM_Utils_Array::value( 'total_amount', $submittedValues ) ) {
             $submittedValues['total_amount'] = $this->_values['total_amount']; 

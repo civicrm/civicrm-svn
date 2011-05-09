@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -233,8 +233,9 @@ class CRM_Report_Form extends CRM_Core_Form {
 	     }
         }
 
-        // set qfkey so that pager picks it up and use it in the "Next > Last >>" links, 
-        $_GET['qfKey'] = $this->controller->_key;
+        // set qfkey so that pager picks it up and use it in the "Next > Last >>" links.
+        // FIXME: Note setting it in $_GET doesn't work, since pager generates link based on QUERY_STRING
+        $_SERVER['QUERY_STRING'] .= "&qfKey={$this->controller->_key}"; 
 
         if ( $this->_id ) {
             $this->assign( 'instanceId', $this->_id );
@@ -1508,7 +1509,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
         $printOnly = false;
         $this->assign( 'printOnly', false );
 
-        if ( $this->_printButtonName == $buttonName || $output == 'print' || $this->_sendmail ) {
+        if ( $this->_printButtonName == $buttonName || $output == 'print' || ($this->_sendmail && !$output) ) {
             $this->assign( 'printOnly', true );
             $printOnly = true;
             $this->assign( 'outputMode', 'print' );
@@ -1728,13 +1729,37 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
              $this->_sendmail              ) {
             $templateFile = parent::getTemplateFileName( );
             
+            $url = CRM_Utils_System::url("civicrm/report/instance/{$this->_id}", 
+                                         "reset=1", true);
+
             $content = $this->_formValues['report_header'] .
                 CRM_Core_Form::$_template->fetch( $templateFile ) .      
                 $this->_formValues['report_footer'] ;
 
             if ( $this->_sendmail ) {
+                require_once 'CRM/Report/Utils/Report.php';
+                $attachments = array();
+                if ( $this->_outputMode == 'csv' ) {
+                    $content = $this->_formValues['report_header'] .
+                        '<p>' . ts('Report URL') . ": {$url}</p>" .
+                        '<p>' . ts('The report is attached as a CSV file.') . '</p>' .
+                        $this->_formValues['report_footer'] ;
+
+                    require_once 'CRM/Utils/File.php';
+                    $config = CRM_Core_Config::singleton();
+                    $csvFilename = 'Report.csv';
+                    $csvFullFilename = $config->templateCompileDir . CRM_Utils_File::makeFileName( $csvFilename );
+                    $csvContent = CRM_Report_Utils_Report::makeCsv( $this, $rows );
+                    file_put_contents( $csvFullFilename, $csvContent);
+                    $attachments[] = array(
+                        'fullPath'  => $csvFullFilename,
+                        'mime_type' => 'text/csv',
+                        'cleanName' => $csvFilename,
+                    );
+                }
+
                 if ( CRM_Report_Utils_Report::mailReport( $content, $this->_id,
-                                                          $this->_outputMode  ) ) {
+                                                          $this->_outputMode, $attachments  ) ) {
                     CRM_Core_Session::setStatus( ts("Report mail has been sent.") );
                 } else {
                     CRM_Core_Session::setStatus( ts("Report mail could not be sent.") );
@@ -1855,6 +1880,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
         $group = new CRM_Contact_DAO_Group( );
         $group->is_active = 1;
         $group->find();
+        $smartGroups = array( );
         while( $group->fetch( ) ) {
              if( in_array( $group->id, $this->_params['gid_value'] ) && $group->saved_search_id ) {
                  $smartGroups[] = $group->id;

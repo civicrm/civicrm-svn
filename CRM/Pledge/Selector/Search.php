@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -395,7 +395,7 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
                                           array(
                                                 'name'      => ts('Pledged For'),
                                                 'sort'      => 'pledge_contribution_type',
-                                                'direction' => CRM_Utils_Sort::ASCENDING,
+                                                'direction' => CRM_Utils_Sort::DONTCARE,
                                                 ),
                                           array(
                                                 'name'      => ts('Pledge Made'),

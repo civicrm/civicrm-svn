@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -56,6 +56,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
 
     function setDefaultValues( ) {
         $defaults = array( );
+        $config =& CRM_Core_Config::singleton();
 
         parent::cbsDefaultValues( $defaults );
         if ( $this->_config->editor_id ) {
@@ -72,6 +73,11 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
         } else {
             $defaults['sort_name_format'] = $this->_config->sort_name_format;
         }
+
+        if ( $config->userFramework == 'Drupal' && module_exists("wysiwyg")) {
+            $defaults['wysiwyg_input_format'] = variable_get('civicrm_wysiwyg_input_format', 0);
+        }
+ 
         return $defaults;
     }
 
@@ -86,13 +92,30 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
         $wysiwyg_options = array( '' => ts( 'Textarea' ) ) + CRM_Core_PseudoConstant::wysiwygEditor( );
 
         $config =& CRM_Core_Config::singleton();
-        
-		//if not using Joomla, remove Joomla default editor option
-		if ( $config->userFramework != 'Joomla' ) {
-			unset( $wysiwyg_options[3] );
-		}
-        $this->addElement( 'select', 'wysiwyg_editor', ts('WYSIWYG Editor'), $wysiwyg_options, null );
+        $extra = array();
 
+        //if not using Joomla, remove Joomla default editor option
+        if ( $config->userFramework != 'Joomla' ) {
+            unset( $wysiwyg_options[3] );
+        }
+
+        if ( $config->userFramework != 'Drupal' || !module_exists("wysiwyg")) {
+            unset( $wysiwyg_options[4] );
+        } else {
+            $extra['onchange'] = 'if (this.value==4) { cj("#crm-preferences-display-form-block-wysiwyg_input_format").show(); } else {  cj("#crm-preferences-display-form-block-wysiwyg_input_format").hide() }';
+            $formats = filter_formats();
+            $format_options = array();
+            foreach ($formats as $id => $format) {
+                $format_options[$id] = $format->name;
+            }
+            $drupal_wysiwyg = true;
+        }
+        $this->addElement( 'select', 'wysiwyg_editor', ts('WYSIWYG Editor'), $wysiwyg_options, $extra);
+        
+        if ($drupal_wysiwyg) {
+          $this->addElement( 'select', 'wysiwyg_input_format', ts('Input Format'), $format_options, null);
+        }
+ 
         $this->addElement('textarea','display_name_format', ts('Individual Display Name Format'));  
         $this->addElement('textarea','sort_name_format',    ts('Individual Sort Name Format'));
                 
@@ -117,6 +140,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
      */
     public function postProcess() 
     {
+        $config =& CRM_Core_Config::singleton();
         if ( $this->_action == CRM_Core_Action::VIEW ) {
             return;
         }
@@ -133,6 +157,10 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
             require_once 'CRM/Core/BAO/OptionValue.php';
             $opGroupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup' , 'contact_edit_options', 'id', 'name' );
             CRM_Core_BAO_OptionValue::updateOptionWeights( $opGroupId, array_flip($preferenceWeights) );
+        }
+
+        if ( $config->userFramework == 'Drupal' && module_exists("wysiwyg")) {
+            variable_set('civicrm_wysiwyg_input_format', $this->_params['wysiwyg_input_format']);
         }
         
         $this->_config->editor_id = $this->_params['wysiwyg_editor'];

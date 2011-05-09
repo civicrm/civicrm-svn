@@ -1,7 +1,7 @@
 <?php
 /*
   +--------------------------------------------------------------------+
-  | CiviCRM version 3.4                                                |
+  | CiviCRM version 4.0                                                |
   +--------------------------------------------------------------------+
   | Copyright CiviCRM LLC (c) 2004-2011                                |
   +--------------------------------------------------------------------+
@@ -81,11 +81,16 @@ function _civicrm_api3_get_DAO ($name) {
     if (!$dao) {
       require ('CRM/Core/DAO/.listAll.php');
     }
+
     
     
     if (strpos($name, 'civicrm_api3') !== false) {
         $last = strrpos ($name, '_') ;
         $name = substr ($name, 13, $last -13);// len ('civicrm_api3_') == 13
+        if($name =='pledge_payment'){
+          //for some reason pledge_payment doesn't follow normal conventions of BAO being the same as table name
+          $name = 'Payment';
+        }
         $name = ucfirst ($name);
     }
     return $dao[$name];
@@ -112,21 +117,26 @@ function _civicrm_api3_get_BAO ($name) {
  * @param array $params array of fields to check
  * @param array $daoName string DAO to check for required fields (create functions only)
  * @param array $keys list of required fields. A value can be an array denoting that either this or that is required.
+ * @param bool $verifyDAO
  * @return null or throws error if there the required fields not present
  */
 
-function civicrm_api3_verify_mandatory ($params, $daoName = null, $keys = array() ) {
+function civicrm_api3_verify_mandatory ($params, $daoName = null, $keys = array(), $verifyDAO = TRUE ) {
     if ( ! is_array( $params ) ) {
         throw new Exception ('Input variable `params` is not an array');
     }
 
-    if ($daoName != null) {
+    if ($daoName != null && $verifyDAO && !CRM_Utils_Array::value('id',$params)) {
         if(!is_array($unmatched =_civicrm_api3_check_required_fields( $params, $daoName, true))){
             $unmatched = array();
         }
     }
-    $keys[] = 'version';//required from v3 onwards
-
+    require_once 'CRM/Utils/Array.php';
+    if(CRM_Utils_Array::value('id',$params)){
+      $keys = array('version');
+    }else{
+      $keys[] = 'version';//required from v3 onwards
+    } 
     foreach ($keys as $key) {
         if(is_array($key)){
             $match = 0;
@@ -317,21 +327,46 @@ function _civicrm_api3_store_values( &$fields, $params, &$values )
     return $valueFound;
 }
 
-function _civicrm_api3_dao_set_filter (&$dao,$params ) {
-    $result = array();
+/*
+ * Function transfers the filters being passed into the DAO onto the params object
+ */
+
+function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
+    $entity = substr ($dao->__table , 8);
     if ( !$dao->find() ) {
         return array();
     }
 
-    $fields = $dao->fields();
+    $fields = _civicrm_api3_build_fields_array($dao,$unique);
     $fields = array_intersect(array_keys($fields),array_keys($params));
+    if( isset($params[$entity. "_id"])){
+      //if entity_id is set then treat it as ID (will be overridden by id if set)       
+      $dao->id = $params[$entity. "_id"];
+         
+    }
     if (!$fields) 
-        return;
+         return;
     foreach ($fields as $field) {
         $dao->$field = $params [$field];
     }
+
 }
 
+/*
+ * build fields array. This is the array of fields as it relates to the given DAO
+ * returns unique fields as keys by default but if set but can return by DB fields
+ */
+function _civicrm_api3_build_fields_array(&$dao, $unique = TRUE){
+      $fields = $dao->fields();
+      if ($unique){
+        return $fields;
+      }
+      
+      foreach($fields as $field){
+        $dbFields[$field['name']] = $field;
+      }
+      return $dbFields;
+}
 /**
  * Converts an DAO object to an array 
  *
@@ -340,17 +375,18 @@ function _civicrm_api3_dao_set_filter (&$dao,$params ) {
  * @static void
  * @access public
  */
-function _civicrm_api3_dao_to_array (&$dao, $params = null) {
+function _civicrm_api3_dao_to_array ($dao, $params = null,$uniqueFields = TRUE) {
     $result = array();
     if ( !$dao->find() ) {
         return array();
     }
 
-    $tmpFields = $dao->fields();
-    $fields = array_keys($tmpFields);
+
+    $fields = array_keys(_civicrm_api3_build_fields_array(&$dao, $uniqueFields));
     if ($return) {
         $fields = array_intersect($fields,$return);
     }
+
     while ( $dao->fetch() ) {
         $tmp = array();
         foreach( $fields as $key ) {
@@ -377,17 +413,8 @@ function _civicrm_api3_dao_to_array (&$dao, $params = null) {
  */
 function _civicrm_api3_object_to_array( &$dao, &$values,$uniqueFields = FALSE )
 {
-    $tmpFields = $dao->fields();
-    $fields = array();
-    //rebuild $fields array to fix unique name of the fields
-    if(!empty($uniqueFields)){
-        $fields = $tmpFields;
-    }else{
-        foreach( $tmpFields as $key => $val ) {
-            $fields[$val["name"]]  = $val;
-        }
-    }
 
+    $fields = _civicrm_api3_build_fields_array($dao,$uniqueFields);
     foreach( $fields as $key => $value ) {
         if (array_key_exists($key, $dao)) {
             $values[$key] = $dao->$key;
@@ -1698,27 +1725,30 @@ function civicrm_api3_check_contact_dedupe( $params ) {
 /**
  * Check permissions for a given API call.
  *
- * @param $api string    API method being called
+ * @param $entity string API entity being accessed
+ * @param $action string API action being performed
  * @param $params array  params of the API call
  * @param $throw bool    whether to throw exception instead of returning false
  *
  * @return bool whether the current API user has the permission to make the call
  */
-function civicrm_api3_api_check_permission($api, $params, $throw = false)
+function civicrm_api3_api_check_permission($entity, $action, &$params, $throw = true)
 {
-    // return early if we're to skip the permission check or if it’s unset
-    if (empty($params['check_permissions']) ) return true;
+    // return early if we’re told explicitly to skip the permission check
+    if (isset($params['check_permissions']) and $params['check_permissions'] == false) return true;
 
     require_once 'CRM/Core/Permission.php';
-    $requirements = array(
-                          'civicrm_api3_contact_create' => array('access CiviCRM', 'add contacts'),
-                          'civicrm_api3_contact_update' => array('access CiviCRM', 'add contacts'),
-                          'civicrm_api3_event_create'   => array('access CiviEvent'),
-                          );
-    foreach ($requirements[$api] as $perm) {
+
+    require_once 'CRM/Core/DAO/.permissions.php';
+    $permissions = _civicrm_api3_permissions($entity, $action, $params);
+
+    // $params might’ve been reset by the alterAPIPermissions() hook
+    if (isset($params['check_permissions']) and $params['check_permissions'] == false) return true;
+
+    foreach ($permissions as $perm) {
         if (!CRM_Core_Permission::check($perm)) {
             if ($throw) {
-                throw new Exception("API permission check failed for $api call; missing permission: $perm.");
+                throw new Exception("API permission check failed for $entity/$action call; missing permission: $perm.");
             } else {
                 return false;
             }
@@ -1729,15 +1759,19 @@ function civicrm_api3_api_check_permission($api, $params, $throw = false)
 
 /*
  * Function to do a 'standard' api get - when the api is only doing a $bao->find then use this
+ * 
+ * @param string $bao_name name of BAO
+ * @param array $params params from api
+ * @param bool $returnAsSuccess return in api success format
  */
-function _civicrm_api3_basic_get($bao_name, $params){
-     if(!$bao_name == 'CRM_Campaign_BAO_Survey'){
-       return;
+function _civicrm_api3_basic_get($bao_name, &$params, $returnAsSuccess = TRUE){
+     $bao = new $bao_name();
+     _civicrm_api3_dao_set_filter ( $bao, $params, FALSE );
+     if($returnAsSuccess){
+       return civicrm_api3_create_success(_civicrm_api3_dao_to_array ($bao,$params, FALSE),$params,$bao);
+     }else{
+       return _civicrm_api3_dao_to_array ($bao,$params, FALSE);
      }
-     $bao = new $bao_name( );
-     _civicrm_api3_dao_set_filter ( $bao, $params );
-     return civicrm_api3_create_success(_civicrm_api3_dao_to_array ($bao,$params),$params,$bao);
-     
 }
 
 /*

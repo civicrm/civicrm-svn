@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -82,7 +82,12 @@ function stopSpinner( ) {
                 }
                 return true;
             },
-	    load: stopSpinner
+            load: function(event, ui) {
+            	stopSpinner();
+            	if (Drupal && Drupal.attachBehaviors) {
+            	 Drupal.attachBehaviors(ui.panel);
+            	}
+            }
         });        
     });
 {/literal}

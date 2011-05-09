@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -539,9 +539,11 @@ class CRM_Contact_BAO_Query
 
         foreach ($this->_fields as $name => $field) {
 
-            //skip component fields
-            if ( ( substr( $name, 0, 12 ) == 'participant_' ) || 
-                 ( substr( $name, 0, 7  ) == 'pledge_' ) || 
+            // skip component fields
+            // there are done by the alter query below
+            // and need not be done on every field
+            if ( ( substr( $name, 0, 12 ) == 'participant_' ) ||
+                 ( substr( $name, 0, 7  ) == 'pledge_' )      ||
                  ( substr( $name, 0, 5  ) == 'case_' ) ) {
                 continue;
             }
@@ -627,7 +629,7 @@ class CRM_Contact_BAO_Query
                             }
                            
                             if ( $name == 'state_province' ) {
-                                $this->_select [$name]                 = "civicrm_state_province.abbreviation as `$name`, civicrm_state_province.name as state_province_name";
+                                $this->_select [$name] = "civicrm_state_province.abbreviation as `$name`, civicrm_state_province.name as state_province_name";
                                 $this->_element['state_province_name'] = 1;
                             } else if ( $tName == 'contact' ) {
                                 // special case, when current employer is set for Individual contact
@@ -706,6 +708,7 @@ class CRM_Contact_BAO_Query
                     }
                 }
             }
+
         }
         
         // add location as hierarchical elements
@@ -713,7 +716,7 @@ class CRM_Contact_BAO_Query
 
         // add multiple field like website
         $this->addMultipleElements( );
-        
+
         //fix for CRM-951
         require_once 'CRM/Core/Component.php';
         CRM_Core_Component::alterQuery( $this, 'select' );
@@ -1145,62 +1148,7 @@ class CRM_Contact_BAO_Query
         // if we are doing a transform, do it here
         // use the $from, $where and $having to get the contact ID
         if ( $this->_displayRelationshipType ) {
-            static $_rTypeProcessed = null;
-            static $_rTypeFrom      = null;
-            static $_rTypeWhere     = null;
-
-            if ( ! $_rTypeProcessed ) {
-                $_rTypeProcessed = true;
-                
-                // create temp table with contact ids
-                $tableName = CRM_Core_DAO::createTempTableName( 'civicrm_transform', true );
-                $sql = "CREATE TEMPORARY TABLE $tableName ( contact_id int primary key) ENGINE=HEAP";
-                CRM_Core_DAO::executeQuery( $sql );
-
-                $sql = "
-REPLACE INTO $tableName ( contact_id )
-SELECT contact_a.id
-       $from
-       $where
-       $having
-";
-                CRM_Core_DAO::executeQuery( $sql );
-
-
-                $qillMessage = ts( 'Contacts with a Relationship Type of: ' );
-                $rTypes  = CRM_Core_PseudoConstant::relationshipType( );
-            
-                if ( is_numeric( $this->_displayRelationshipType ) ) {
-                    $relationshipTypeLabel = $rTypes[$this->_displayRelationshipType]['label_a_b'];
-                    $_rTypeFrom = "
-INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id OR displayRelType.contact_id_b = contact_a.id )
-INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a OR transform_temp.contact_id = displayRelType.contact_id_b )
-";
-                    $_rTypeWhere = " WHERE displayRelType.relationship_type_id = {$this->_displayRelationshipType} ";
-                } else {
-                    list( $relType, $dirOne, $dirTwo ) = explode( '_', $this->_displayRelationshipType );
-                    if ( $dirOne == 'a' ) {
-                        $relationshipTypeLabel = $rTypes[$relType]['label_a_b'];
-                        $_rTypeFrom .= "
-INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id )
-INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_b )
-";
-                    } else {
-                        $relationshipTypeLabel = $rTypes[$relType]['label_b_a'];
-                        $_rTypeFrom .= "
-INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_b = contact_a.id )
-INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a )
-";
-                    }
-                    $_rTypeWhere = " WHERE displayRelType.relationship_type_id = $relType ";
-                }
-            
-                $this->_qill[0][] = $qillMessage . "'" . $relationshipTypeLabel . "'";
-            }
-
-            $from .= $_rTypeFrom;
-            $where = $_rTypeWhere;
-            $having = null;
+            $this->filterRelatedContacts( $from, $where, $having );
         }
 
         return array( $select, $from, $where, $having );
@@ -1400,6 +1348,10 @@ INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRel
             $this->stateProvince( $values );
             return;
 
+        case 'country':
+            // handled by state_province above
+            return;
+
         case 'postal_code':
         case 'postal_code_low':
         case 'postal_code_high':
@@ -1429,6 +1381,7 @@ INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRel
         case 'deceased_date_high':   
             $this->demographics( $values );
             return;
+
         case 'log_date_low':
         case 'log_date_high':
             $this->modifiedDates( $values );
@@ -1734,7 +1687,7 @@ INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRel
             } else {
                 $this->_qill[$grouping][]  = "$field[title] $op";
             }
-
+            self::$_openedPanes['Demographics'] = true;
         } else if ( $name === 'deceased_date' ) {
             $date = CRM_Utils_Date::processDate( $value );
             $this->_where[$grouping][] = self::buildClause( "contact_a.{$name}", $op, $date );
@@ -1744,9 +1697,11 @@ INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRel
             } else {
                 $this->_qill[$grouping][]  = "$field[title] $op";
             }
+            self::$_openedPanes['Demographics'] = true;
         } else if ( $name === 'is_deceased' ) {
             $this->_where[$grouping][] = self::buildClause( "contact_a.{$name}", $op, $value );
             $this->_qill[$grouping][]  = "$field[title] $op \"$value\"";
+            self::$_openedPanes['Demographics'] = true;
         } else if ( $name === 'contact_id' ) {
             if ( is_int( $value ) ) {
                 $this->_where[$grouping][] = self::buildClause( $field['where'], $op, $value );
@@ -2907,7 +2862,7 @@ WHERE  id IN ( $groupIDs )
     }
     
     /**
-     * where / qill clause for state/province
+     * where / qill clause for state/province AND country (if present)
      *
      * @return void
      * @access public
@@ -2916,26 +2871,62 @@ WHERE  id IN ( $groupIDs )
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
         
-        if (is_array($value)) {
-            $this->_where[$grouping][] = 'civicrm_state_province.id IN (' . 
-                implode( ',', $value ) .
-                ')';
-            $this->_tables['civicrm_state_province'] = 1;
-            $this->_whereTables['civicrm_state_province'] = 1;
+        if (! is_array( $value ) ) {
+            // force the state to be an array
+            $value = array( $value );
+        }
+
+        $stateClause = 
+            'civicrm_state_province.id IN (' . 
+            implode( ',', $value ) .
+            ')';
+
+        $this->_tables['civicrm_state_province'] = 1;
+        $this->_whereTables['civicrm_state_province'] = 1;
             
-            $stateProvince =& CRM_Core_PseudoConstant::stateProvince();
-            $names = array( );
-            foreach ( $value as $id ) {
-                $names[] = $stateProvince[$id];
-            }
+        $stateProvince =& CRM_Core_PseudoConstant::stateProvince();
+        $names = array( );
+        foreach ( $value as $id ) {
+            $names[] = $stateProvince[$id];
+        }
             
-            if (!$status) {
-                $this->_qill[$grouping][] = ts('State/Province') . ' - ' . implode( ' ' . ts('or') . ' ', $names );
+
+        $countryValues = $this->getWhereValues( 'country', $grouping );
+        $countryClause = $countruQill = null;
+        if ( $countryValues &&
+             ! empty( $countryValues[2] ) ) {
+            $this->_tables['civicrm_country'] = 1;
+            $this->_whereTables['civicrm_country'] = 1;
+
+            if ( is_numeric( $countryValues[2] ) ) {
+                $countryClause = self::buildClause( 'civicrm_country.id',
+                                                    $countryValues[1],
+                                                    $countryValues[2],
+                                                    'Positive' );
+                $countries =& CRM_Core_PseudoConstant::country( );
+                $countryName = $countries[(int ) $countryValues[2]];
             } else {
-                return implode( ' ' . ts('or') . ' ', $names );
+                $wc = ( $countryValues[1] != 'LIKE' ) ? "LOWER('civicrm_country.name')" : 'civicrm_country.name';
+                $countryClause = self::buildClause( 'civicrm_country.name',
+                                                    $countryValues[1],
+                                                    $countryValues[2],
+                                                    'String' );
+                $countryName = $countryValues[2];
             }
+            $countryQill = " ...AND... " . ts('Country') . " {$countryValues[1]} '$countryName'";
+        }
+
+        if ( $countryClause ) {
+            $clause = $stateClause;
         } else {
-            return $this->restWhere( $values );
+            $clause = ( $stateClause AND $countryClause );
+        }
+
+        $this->_where[$grouping][] = $clause;
+        if ( ! $status ) {
+            $this->_qill[$grouping][] = ts('State/Province') . ' - ' . implode( ' ' . ts('or') . ' ', $names ) . $countryQill;
+        } else {
+            return implode( ' ' . ts('or') . ' ', $names ) . $countryQill;;
         }
     }
 
@@ -3457,7 +3448,7 @@ WHERE  id IN ( $groupIDs )
 
                         $order = " ORDER BY $orderBy";
                         
-                        if ( $sortOrder ) {
+                       if ( $sortOrder ) {
                             $order .= " $sortOrder";
                         }
                     }
@@ -3517,6 +3508,13 @@ WHERE  id IN ( $groupIDs )
                     $this->_simpleFromClause = self::fromClause( $this->_whereTables, null, null,
                                                                  $this->_primaryLocation, $this->_mode );
 
+                    // if we are doing a transform, do it here
+                    // CRM-7969
+                    $having = null;
+                    if ( $this->_displayRelationshipType ) {
+                        $this->filterRelatedContacts( $this->_simpleFromClause, $where, $having );
+                    }
+
                     $limitQuery = "$limitSelect {$this->_simpleFromClause} $where $order $limit";
                     $limitDAO   = CRM_Core_DAO::executeQuery( $limitQuery );
                     $limitIDs   = array( );
@@ -3549,6 +3547,12 @@ WHERE  id IN ( $groupIDs )
 		}	
         if ( $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY && ( ! $count ) ) {
             $groupBy = 'GROUP BY civicrm_activity.id ';
+        }
+
+        // if we are doing a transform, do it here
+        // use the $from, $where and $having to get the contact ID
+        if ( $this->_displayRelationshipType ) {
+            $this->filterRelatedContacts( $from, $where, $having );
         }
 
         $query = "$select $from $where $having $groupBy $order $limit";
@@ -4030,5 +4034,71 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
     function getOperator( ) {
         return $this->_operator;
     }
-    
+
+    function filterRelatedContacts( &$from,
+                                    &$where,
+                                    &$having ) {
+        static $_rTypeProcessed = null;
+        static $_rTypeFrom      = null;
+        static $_rTypeWhere     = null;
+
+        if ( ! $_rTypeProcessed ) {
+            $_rTypeProcessed = true;
+                
+            // create temp table with contact ids
+            $tableName = CRM_Core_DAO::createTempTableName( 'civicrm_transform', true );
+            $sql = "CREATE TEMPORARY TABLE $tableName ( contact_id int primary key) ENGINE=HEAP";
+            CRM_Core_DAO::executeQuery( $sql );
+
+            $sql = "
+REPLACE INTO $tableName ( contact_id )
+SELECT contact_a.id
+       $from
+       $where
+       $having
+";
+            CRM_Core_DAO::executeQuery( $sql );
+
+            $qillMessage = ts( 'Contacts with a Relationship Type of: ' );
+            $rTypes  = CRM_Core_PseudoConstant::relationshipType( );
+            
+            if ( is_numeric( $this->_displayRelationshipType ) ) {
+                $relationshipTypeLabel = $rTypes[$this->_displayRelationshipType]['label_a_b'];
+                $_rTypeFrom = "
+INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id OR displayRelType.contact_id_b = contact_a.id )
+INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a OR transform_temp.contact_id = displayRelType.contact_id_b )
+";
+                $_rTypeWhere = " WHERE displayRelType.relationship_type_id = {$this->_displayRelationshipType} ";
+            } else {
+                list( $relType, $dirOne, $dirTwo ) = explode( '_', $this->_displayRelationshipType );
+                if ( $dirOne == 'a' ) {
+                    $relationshipTypeLabel = $rTypes[$relType]['label_a_b'];
+                    $_rTypeFrom .= "
+INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id )
+INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_b )
+";
+                } else {
+                    $relationshipTypeLabel = $rTypes[$relType]['label_b_a'];
+                    $_rTypeFrom .= "
+INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_b = contact_a.id )
+INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a )
+";
+                }
+                $_rTypeWhere = " WHERE displayRelType.relationship_type_id = $relType ";
+            }
+            
+            $this->_qill[0][] = $qillMessage . "'" . $relationshipTypeLabel . "'";
+        }
+
+        if ( strpos( $from, $_rTypeFrom ) === false ) {
+            // lets replace all the INNER JOIN's in the $from so we dont exclude other data
+            // this happens when we have an event_type in the quert (CRM-7969)
+            $from  = str_replace( "INNER JOIN", "LEFT JOIN", $from );
+            $from .= $_rTypeFrom;
+            $where = $_rTypeWhere;
+        }
+        
+        $having = null;
+    }
+
 }

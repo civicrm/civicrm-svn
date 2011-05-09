@@ -13,12 +13,15 @@
         <authorUrl>civicrm.org</authorUrl>
         <version>3.2</version>
         <description>CiviCRM Personal Campaign Information Pages</description>
-		
-        <params addpath="/administrator/components/com_civicrm/civicrm/joomla/site/elements">
-	  		<param name="task" type="hidden" default="civicrm/contribute/pcp/info" label="Choose CiviCRM task" />
-			<param name="id" type="civipcps" label="Select Personal Campaign Page" description="Configured CiviCRM Personal Campaign Page" />
-	  		<param name="reset" type="hidden" size="5" default="1" label="Reset" description="Keep this set to 1. This is needed for the form to work properly." />
-        </params>
+	<config>	
+        <fields name="params" addfieldpath="/administrator/components/com_civicrm/civicrm/joomla/site/elements">
+	  <fieldset name="basic">
+	  		<field name="task" type="hidden" default="civicrm/contribute/pcp/info" label="Choose CiviCRM task" />
+			<field name="id" type="civipcps" label="Select Personal Campaign Page" description="Configured CiviCRM Personal Campaign Page" />
+	  		<field name="reset" type="hidden" size="5" default="1" label="Reset" description="Keep this set to 1. This is needed for the form to work properly." />
+          </fieldset>
+        </fields>
+        </config>
 		
     </state>
  </metadata>

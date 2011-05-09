@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -267,7 +267,9 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             unset( $fields['Household'   ]['county']);
             unset( $fields['Organization']['county']);
         }
-        
+
+        $fields['Contact'] = array( );
+
         //build the common contact fields array CRM-3037.
         foreach ( $fields['Individual'] as $key => $value ) {
             if ( CRM_Utils_Array::value( $key, $fields['Household'] ) && 
@@ -280,7 +282,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                 unset( $fields['Organization'][$key] );
             }
         }
-        
+
         // add current employer for individuals
         $fields['Contact']['id'] = array( 'name'  => 'id',
                                           'title' => ts('Internal Contact ID') );

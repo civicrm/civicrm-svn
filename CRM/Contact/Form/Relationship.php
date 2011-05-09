@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -239,6 +239,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
             $defaults['relationship_type_id'] = $this->_rtypeId;
         }
 
+        $this->_enabled = $defaults['is_active'];
         return $defaults;
     }
     
@@ -339,7 +340,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         $this->add('hidden', 'rel_contact_id' );
         $this->addDate( 'start_date', ts('Start Date'), false, array( 'formatType' => 'searchDate' ) );
         $this->addDate( 'end_date'  , ts('End Date')  , false, array( 'formatType' => 'searchDate' ) );
-        $this->addElement('advcheckbox', 'is_active', ts('Enabled?'), null, 'setChecked()');
+        $this->addElement('checkbox', 'is_active', ts('Enabled?'), null, 'setChecked()');
         
         $this->addElement('checkbox', 'is_permission_a_b', ts( 'Permission for contact a to view and update information for contact b' ) , null);
         $this->addElement('checkbox', 'is_permission_b_a', ts( 'permission for contact b to view and update information for contact a' ) , null);
@@ -442,9 +443,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
                                           'name'      => ts('Cancel') ),
                                   )
                            );
-        
     }
-
        
     /**
      *  This function is called when the form is submitted 
@@ -517,10 +516,10 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
                 CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer( $this->_values['current_employee_id'] );
             }
         } elseif ( $quickSave ) {
-            if ( $params['add_current_employee'] &&
+            if ( CRM_Utils_Array::value( 'add_current_employee', $params ) &&
                  $this->_allRelationshipNames[$relationshipTypeId]['name_a_b'] == 'Employee of' ) {
                 $params['employee_of'] = $params['rel_contact_id'];
-            } elseif ( $params['add_current_employer'] &&
+            } elseif ( CRM_Utils_Array::value( 'add_current_employer', $params ) &&
                        $this->_allRelationshipNames[$relationshipTypeId]['name_b_a'] == 'Employer of' ) {
                 $params['employer_of'] = array( $params['rel_contact_id'] => 1 );
             }
@@ -584,13 +583,22 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         CRM_Core_BAO_Note::add( $noteParams , $noteIds );
         
         $params['relationship_ids'] = $relationshipIds;
+
         // Membership for related contacts CRM-1657
         if ( CRM_Core_Permission::access( 'CiviMember' ) && ( !$duplicate ) ) {
-            CRM_Contact_BAO_Relationship::relatedMemberships( $this->_contactId, 
-                                                              $params, $ids, 
-                                                              $this->_action );
+            if ($this->_action & CRM_Core_Action::ADD ) {
+                CRM_Contact_BAO_Relationship::relatedMemberships( $this->_contactId, 
+                                                                  $params, $ids, 
+                                                                  $this->_action );
+            } elseif ( $this->_action & CRM_Core_Action::UPDATE ) {
+                //fixes for CRM-7985
+                //only if the relationship has been toggled to enable /disable
+                if ( CRM_Utils_Array::value( 'is_active', $params ) != $this->_enabled ) {
+                    $active = CRM_Utils_Array::value( 'is_active', $params ) ? CRM_Core_Action::ENABLE : CRM_Core_Action::DISABLE;
+                    CRM_Contact_BAO_Relationship::disableEnableRelationship( $this->_relationshipId, $active );
+                }
+            }
         }
-        
         //handle current employee/employer relationship, CRM-3532
         if ( $this->_allRelationshipNames[$relationshipTypeId]["name_{$this->_rtype}"] == 'Employee of' ) {
             $orgId = null;
@@ -609,6 +617,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
                     require_once 'CRM/Contact/BAO/Contact/Utils.php';
                     CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer( $this->_contactId );
                 }
+              
             }
             
             //set current employer
@@ -680,9 +689,9 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         }
         $contactTypeAdded = false;
         
-        $excludedContactIds = array( $this->_contactId );
+        $excludedContactIds = isset( $this->_contactId ) ? array( $this->_contactId ) : array( );
 
-        if ( $params['relationship_type_id'] ) {
+        if ( CRM_Utils_Array::value( 'relationship_type_id', $params ) ) {
             $relationshipType = new CRM_Contact_DAO_RelationshipType( );
             list( $rid, $direction ) = explode( '_', $params['relationship_type_id'], 2 );
            

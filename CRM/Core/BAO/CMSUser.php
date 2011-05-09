@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -236,7 +236,7 @@ class CRM_Core_BAO_CMSUser
         $loginUrl =  $config->userFrameworkBaseURL;
         if ( $isJoomla ) {
             $loginUrl  = str_replace( 'administrator/', '', $loginUrl );
-            $loginUrl .= 'index.php?option=com_user&view=login';
+            $loginUrl .= 'index.php?option=com_users&view=login';
         } elseif ( $isDrupal ) {
             $loginUrl .= 'user';
             // For Drupal we can redirect user to current page after login by passing it as destination.
@@ -357,33 +357,29 @@ class CRM_Core_BAO_CMSUser
 
 
         if ( $isDrupal ) {
-            _user_edit_validate(null, $params );
             $errors = form_get_errors( );
-        
             if ( $errors ) {
-                if ( CRM_Utils_Array::value( 'name', $errors ) ) {
-                    $errors['cms_name'] = $errors['name'];
-                } 
-            
-                if ( CRM_Utils_Array::value( 'mail', $errors ) ) {
-                    $errors[$emailName] = $errors['mail'];
-                } 
-            
-                // also unset drupal messages to avoid twice display of errors
+                // unset drupal messages to avoid twice display of errors
                 unset( $_SESSION['messages'] );
             }
-        
-            // drupal api sucks
-            // do the name check manually
-            $nameError = user_validate_name( $params['name'] );
-            if ( $nameError ) {
-                $errors['cms_name'] = $nameError;
+
+            if ( CRM_Utils_Array::value('name', $params) ) {
+                if ( $nameError = user_validate_name( $params['name'] ) ) {
+                    $errors['cms_name'] = $nameError;
+                } elseif ( (bool) db_select('users')->fields($config->userFrameworkUsersTableName, array('uid'))->condition('name', db_like($params['name']), 'LIKE')->range(0, 1)->execute()->fetchField() )  {
+                    $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', array( 1 => $params['name'] ) );
+                }
             }
-        
-            $sql = "
-SELECT name, mail
-  FROM {$config->userFrameworkUsersTableName}
- WHERE (LOWER(name) = LOWER('$name')) OR (LOWER(mail) = LOWER('$email'))";
+
+            if ( CRM_Utils_Array::value( 'mail', $params ) ) {
+                if ( $emailError = user_validate_mail($params['mail']) ) {
+                    $errors[$emailName] = $emailError;
+                } elseif ( (bool) db_select('users')->fields($config->userFrameworkUsersTableName, array('uid'))->condition('mail', db_like($params['mail']), 'LIKE')->range(0, 1)->execute()->fetchField() ) {
+                    $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
+                                              array( 1 => $params['mail']) );
+                }
+            }
+
         } elseif ( $isJoomla ) {
             //don't allow the special characters and min. username length is two
             //regex \\ to match a single backslash would become '/\\\\/' 
@@ -396,26 +392,29 @@ SELECT username, email
   FROM {$config->userFrameworkUsersTableName}
  WHERE (LOWER(username) = LOWER('$name')) OR (LOWER(email) = LOWER('$email'))
 ";
-        }
-        
-        $db_cms = DB::connect($config->userFrameworkDSN);
-        if ( DB::isError( $db_cms ) ) { 
-            die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) ); 
-        }
-        $query = $db_cms->query( $sql );
-        $row = $query->fetchRow( );
-        if ( !empty( $row ) ) {
-            $dbName  = CRM_Utils_Array::value( 0, $row );
-            $dbEmail = CRM_Utils_Array::value( 1, $row );
-            if ( strtolower( $dbName ) == strtolower( $name ) ) {
-                $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', 
-                                          array( 1 => $name ) );
+
+                    
+            $db_cms = DB::connect($config->userFrameworkDSN);
+            if ( DB::isError( $db_cms ) ) { 
+                die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) ); 
             }
-            if ( strtolower( $dbEmail ) == strtolower( $email ) ) {
-                $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
-                                          array( 1 => $email) );
+            
+            $query = $db_cms->query( $sql );
+            $row = $query->fetchRow( );
+            if ( !empty( $row ) ) {
+                $dbName  = CRM_Utils_Array::value( 0, $row );
+                $dbEmail = CRM_Utils_Array::value( 1, $row );
+                if ( strtolower( $dbName ) == strtolower( $name ) ) {
+                    $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', 
+                                              array( 1 => $name ) );
+                }
+                if ( strtolower( $dbEmail ) == strtolower( $email ) ) {
+                    $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
+                                              array( 1 => $email) );
+                }
             }
         }
+
     }
     
     /**
@@ -482,43 +481,53 @@ SELECT username, email
      * 
      * @access public
      * @static
-     */
+     */    
     static function createDrupalUser( &$params, $mail )
     {
-        $form_state['values']  = array (
+        $form_state = array( );
+        $form_state['input']  = array (
                                     'name' => $params['cms_name'],
                                     'mail' => $params[$mail],
                                     'op'   => 'Create new account'
                                     );
         if ( !variable_get('user_email_verification', TRUE )) {
-            $form_state['values']['pass']['pass1'] = $params['cms_pass'];
-            $form_state['values']['pass']['pass2'] = $params['cms_pass'];
+            $form_state['input']['pass']['pass1'] = $params['cms_pass'];
+            $form_state['input']['pass']['pass2'] = $params['cms_pass'];
         }
+       
+        
+        $form_state['rebuild']    = FALSE;
+        $form_state['programmed'] = TRUE;
+        $form_state['method']     = 'post';
+        $form_state['build_info']['args'] = array();
 
         $config = CRM_Core_Config::singleton( );
 
         // we also need to redirect b
         $config->inCiviCRM = true;
 
-        $form = drupal_retrieve_form('user_register', $form_state);
-        $form['#post'] = $form_state['values'];
-        drupal_prepare_form('user_register', $form, $form_state);
+        $form = drupal_retrieve_form('user_register_form', $form_state);
+       
+        drupal_prepare_form('user_register_form', $form, $form_state);
 
         // remove the captcha element from the form prior to processing
         unset($form['captcha']);
-        
-        drupal_process_form('user_register', $form, $form_state);
-        
+       
+        $form_state['process_input'] = 1;
+        $form_state['submitted'] = 1;
+       
+        drupal_process_form('user_register_form', $form, $form_state);
+       
         $config->inCiviCRM = false;
-        
+       
         if ( form_get_errors( ) ) {
             return false;
         }
 
         // looks like we created a drupal user, lets make another db call to get the user id!
         $db_cms = DB::connect($config->userFrameworkDSN);
-        if ( DB::isError( $db_cms ) ) { 
-            die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) ); 
+        if ( DB::isError( $db_cms ) ) {
+            die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) );
         }
 
         //Fetch id of newly added user
@@ -541,25 +550,20 @@ SELECT username, email
      */
     static function createJoomlaUser( &$params, $mail ) 
     {
-        $userParams = &JComponentHelper::getParams('com_users');
-
-        // get the default usertype
-        $userType = $userParams->get('new_usertype');
-        if ( !$usertype ) {
-            $usertype = 'Registered';
-        }
-
-        $acl = &JFactory::getACL();
-
+        $userParams = &JComponentHelper::getParams( 'com_users' );
+        
+        $defaultUserGroup = $userParams->get( 'new_usertype', 2 );
+        
         // Prepare the values for a new Joomla! user.
-        $values                 = array();
-        $values['name']         = trim($params['cms_name']);
-        $values['username']     = trim($params['cms_name']);
+        $values                 = array( );
+        $values['name']         = trim( $params['cms_name'] );
+        $values['username']     = trim( $params['cms_name'] );
         $values['password']     = $params['cms_pass'];
         $values['password2']    = $params['cms_confirm_pass'];
-        $values['email']        = trim($params[$mail]);
-        $values['gid']          = $acl->get_group_id( '', $userType);
-        $values['sendEmail']    = 0; 
+        $values['email']        = trim( $params[$mail] );
+        $values['groups']       = array( $defaultUserGroup );
+        $values['usertype']     = 'deprecated';
+        $values['sendEmail']    = 0;
         
         $useractivation = $userParams->get( 'useractivation' );
         if ( $useractivation == 1 ) { 
@@ -571,25 +575,20 @@ SELECT username, email
             // don't block the user
             $values['block'] = 0; 
         }
-
+        
         // Get an empty JUser instance.
         $user =& JUser::getInstance( 0 );
         $user->bind( $values );
-
+        
         // Store the Joomla! user.
         if ( ! $user->save( ) ) {
             // Error can be accessed via $user->getError();
             return false;
         }
-        //since civicrm don't have own tokens to use in user
-        //activation email. we have to use com_user tokens, CRM-5809
-        $lang =& JFactory::getLanguage();
-        $lang->load( 'com_user' );
-        require_once 'components/com_user/controller.php';
-        UserController::_sendMail( $user, $user->password2 );
+        
         return $user->get('id');
     }
-
+    
     static function updateUFName( $ufID, $ufName ) 
     {
         $config = CRM_Core_Config::singleton( );

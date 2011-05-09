@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -178,7 +178,8 @@ function civicrm_api3_pledge_get( $params ) {
 
     $newParams =& CRM_Contact_BAO_Query::convertFormValues( $inputParams );
 
-    $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null );
+    $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null,
+                                        false, false, CRM_Contact_BAO_Query::MODE_PLEDGE );
     list( $select, $from, $where ) = $query->query( );
 
     $sql = "$select $from $where";
@@ -249,10 +250,15 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
   
   if ( array_key_exists( 'original_installment_amount', $params ) ) {
     $values['installment_amount'] = $params['original_installment_amount'];
+    //it seems it will only create correctly with BOTH installment amount AND pledge_installment_amount set
+    //pledge installment amount required for pledge payments
+    $values['pledge_original_installment_amount'] = $params['original_installment_amount'];
   }
+
   if ( array_key_exists( 'pledge_original_installment_amount', $params ) ) {
     $values['installment_amount'] = $params['pledge_original_installment_amount'];
   }
+ 
   if ( array_key_exists( 'status_id', $params ) ){
     $values['pledge_status_id'] = $params['status_id'];
   }

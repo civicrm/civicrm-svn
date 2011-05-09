@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -50,7 +50,7 @@ class civicrm_handler_field_link_contact extends views_handler_field {
     $options = parent::option_definition();
     $options['link_to_civicrm_contact'] = array('default' => 'view');
     $options['custom_link'] = array('default' => '');
-    $options['link_text'] = array('default' => '');
+    $options['link_text'] = array('default' => 'View Contact');
     return $options;
   }
 
@@ -88,17 +88,15 @@ class civicrm_handler_field_link_contact extends views_handler_field {
 
 
   function render_link($data, $values) {
-    
     $link_text = $this->options['link_text'];
     $link_choice = $this->options['link_to_civicrm_contact'];
-    
     if ($link_choice == 'custom') {
        $custom_link = $this->options['custom_link'];
      }
 
 
     switch ($link_choice) {
-      
+
     // LINKING TO CONTACT VIEW PAGE
       case 'view':
            if (user_access('view all contacts') && $link_text !== NULL && $link_text !== '') {
@@ -128,13 +126,9 @@ class civicrm_handler_field_link_contact extends views_handler_field {
            if ($custom_link !== NULL && $custom_link !== '' && $link_text !== NULL && $link_text !== '') {
            return l($link_text, $custom_link . "{$values->id}" );
            }
-    
     // IF THE OTHER CASES AREN'T IN PLAY, THEN JUST PRINT THE TEXT
       default:
               return $link_text;
-
-
-
     }
   }
   
@@ -146,4 +140,6 @@ class civicrm_handler_field_link_contact extends views_handler_field {
   function render($values) {
     return $this->render_link(check_plain($values->{$this->field_alias}), $values);
   }
+
 }
+

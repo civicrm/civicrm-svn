@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -89,7 +89,7 @@ class CRM_Utils_REST
         require_once 'CRM/Core/DAO.php';
 
         $result =& CRM_Utils_System::authenticate($name, $pass);
-        
+
         if (empty($result)) {
             return self::error( 'Could not authenticate user, invalid name or password.' );
         }
@@ -132,12 +132,12 @@ class CRM_Utils_REST
         return $values;
     }
 
-    function run( &$config ) {
-        $result = self::handle( $config );
-        return self::output( $config, $result );
+    function run( ) {
+        $result = self::handle( );
+        return self::output( $result );
     }
 
-    function output( &$config, &$result ) {
+    function output( &$result ) {
         $hier = false;
         if ( is_scalar( $result ) ) {
             if ( ! $result ) {
@@ -248,7 +248,7 @@ class CRM_Utils_REST
       return $result;
     }
  
-    function handle( $config ) {
+    function handle( ) {
         
         // Get the function name being called from the q parameter in the query string
         $q = CRM_Utils_array::value( 'q', $_REQUEST );
@@ -406,8 +406,7 @@ class CRM_Utils_REST
         $error['to_string']     = $pearError->toString();
         $error['is_error']      = 1;
 
-        $config = CRM_Core_Config::singleton( );
-        echo self::output( $config, $error );
+        echo self::output( $error );
 
         CRM_Utils_System::civiExit( );
     }
@@ -416,16 +415,20 @@ class CRM_Utils_REST
 
       CRM_Utils_System::setTitle ("API explorer and generator");
       $template = CRM_Core_Smarty::singleton( );
-      return $template->fetch( 'CRM/Core/AjaxDoc.tpl' );
+      return CRM_Utils_System::theme( 'page',
+                                      $template->fetch( 'CRM/Core/AjaxDoc.tpl' ),
+                                      true );
     }
 
     static function ajax( ) {
         // this is driven by the menu system, so we can use permissioning to
         // restrict calls to this etc
         // the request has to be sent by an ajax call. First line of protection against csrf
-        if ( ! array_key_exists ( 'HTTP_X_REQUESTED_WITH',
+        require_once 'CRM/Core/Config.php';
+        $config = CRM_Core_Config::singleton( );
+        if ( !$config->debug && ( ! array_key_exists ( 'HTTP_X_REQUESTED_WITH',
                                   $_SERVER ) ||
-             $_SERVER['HTTP_X_REQUESTED_WITH'] != "XMLHttpRequest" ) {
+             $_SERVER['HTTP_X_REQUESTED_WITH'] != "XMLHttpRequest" ) ) {
             require_once 'api/v3/utils.php';
             $error =
                 civicrm_api3_create_error( "SECURITY ALERT: Ajax requests can only be issued by javascript clients, eg. $().crmAPI().",
@@ -442,9 +445,8 @@ class CRM_Utils_REST
           $entity = CRM_Utils_Array::value( 'entity', $_REQUEST );
           $action = CRM_Utils_Array::value( 'action', $_REQUEST );
           if (!$entity || !$action) {
-            $config = CRM_Core_Config::singleton( );
             $err = array ('error_message' => 'missing mandatory params "entity=" or "action="' , 'is_error'=> 1 );
-            echo self::output( $config, $err);
+            echo self::output( $err );
             CRM_Utils_System::civiExit( );
           }
           $args = array ( 'civicrm', $entity, $action);
@@ -463,8 +465,7 @@ class CRM_Utils_REST
 
         $result = self::process( $args, false );
 
-        $config = CRM_Core_Config::singleton( );
-        echo self::output( $config, $result );
+        echo self::output( $result );
 
         CRM_Utils_System::civiExit( );
     }
@@ -478,27 +479,31 @@ class CRM_Utils_REST
         if ( empty($args) || 
              $args[0] != 'civicrm' ||
              ( ( count( $args ) != 3 ) && ( $args[1] != 'login' ) && ( $args[1] != 'ping') ) ||
-             $args[1] == 'login' ||
              $args[1] == 'ping' ) {
+            return;
+        }
+
+        if ( !CRM_Utils_System::authenticateKey( false ) ) {
+            return;
+        }
+        
+        require_once 'CRM/Core/DAO.php';
+        if ( $args[1] == 'login' ) {
+            CRM_Utils_System::loadBootStrap( CRM_Core_DAO::$_nullArray, true, false );
             return;
         }
 
         $uid     = null;
         $session = CRM_Core_Session::singleton( );
 
-        if ( !CRM_Utils_System::authenticateKey( false ) ) {
-            return;
-        }
-        
         if ( $session->get('PHPSESSID') &&
              $session->get('cms_user_id') ) {
             $uid = $session->get('cms_user_id');
         }
-        
-        if ( !$uid ) {
-            require_once 'CRM/Core/DAO.php';
-            require_once 'CRM/Utils/Request.php';
 
+        if ( !$uid ) {
+            require_once 'CRM/Utils/Request.php';
+            
             $store      = null;
             $api_key    = CRM_Utils_Request::retrieve( 'api_key', 'String', $store, false, null, 'REQUEST' );
             $contact_id = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $api_key, 'id', 'api_key');
@@ -509,8 +514,9 @@ class CRM_Utils_REST
         }
 
         if ( $uid ) {
-            CRM_Utils_System::loadBootStrap( null, null, $uid );
+            CRM_Utils_System::loadBootStrap( array( 'uid' => $uid ), true, false );
         }
+        
     }
      
 }

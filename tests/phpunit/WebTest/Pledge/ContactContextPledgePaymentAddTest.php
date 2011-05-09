@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -79,6 +79,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         $this->type( "frequency_day", "2" );
         
         $this->webtestFillDate( 'acknowledge_date', 'now' );
+        $this->select( "contribution_type_id", "label=Donation");
         
         $this->select( "contribution_page_id", "value=3" );
         

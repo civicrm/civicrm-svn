@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -617,7 +617,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             // handle register date CRM-4320
             if ( $this->_allowConfirmation ) {
                 $registerDate = $params['participant_register_date'];
-            } else if ( is_array( $params['participant_register_date'] ) && !empty( $params['participant_register_date'] ) ) {
+            } else if ( CRM_Utils_Array::value( 'participant_register_date', $params ) && 
+                        is_array( $params['participant_register_date'] ) && 
+                        !empty( $params['participant_register_date'] ) ) {
                 $registerDate = CRM_Utils_Date::format( $params['participant_register_date'] ); 
             } else {
                 $registerDate =  date( 'YmdHis' );

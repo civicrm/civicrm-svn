@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -375,7 +375,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         // when custom data is included in this page
     	if ( CRM_Utils_Array::value( "hidden_custom", $_POST ) ) {
     		//custom data of type participant role
-            if ( $_POST['role_id'] ) {
+            if ( CRM_Utils_Array::value( 'role_id', $_POST ) ) {
                 foreach( $_POST['role_id'] as $k => $val ) {
                     $roleID = $val;
                     CRM_Custom_Form_Customdata::preProcess( $this, $this->_roleCustomDataTypeID, $k, 1, 'Participant', $this->_id );
@@ -890,6 +890,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             return true;
         }
         
+        $errorMsg = array( );
         //check if contact is selected in standalone mode
         if ( isset( $values['contact_select_id'][1] ) && !$values['contact_select_id'][1] ) {
             $errorMsg['contact[1]'] = ts('Please select a contact or create new contact');
@@ -928,7 +929,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         if ( ( !$self->_id && 
                !CRM_Utils_Array::value( 'total_amount', $values ) && 
                empty( $self->_values['line_items'] ) ) || 
-             ( $self->_id && !$self->_paymentId && is_array( $self->_values['line_items'] ) ) ) {
+             ( $self->_id && !$self->_paymentId && isset($self->_values['line_items']) && is_array( $self->_values['line_items'] ) ) ) {
             if ( $priceSetId = CRM_Utils_Array::value( 'priceSetId', $values ) ) {
                 require_once 'CRM/Price/BAO/Field.php';
                 CRM_Price_BAO_Field::priceSetValidation( $priceSetId, $values, $errorMsg );
@@ -1078,6 +1079,10 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
               $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $userID );
         require_once "CRM/Event/BAO/Participant.php";
         
+        if ( $this->_contactId ) { 
+            list( $this->_contributorDisplayName, $this->_contributorEmail, $this->_toDoNotEmail ) = CRM_Contact_BAO_Contact::getContactDetails( $this->_contactId );
+        }
+
         if ( $this->_mode ) {
             if ( ! $this->_isPaidEvent ) {
                 CRM_Core_Error::fatal( ts( 'Selected Event is not Paid Event ') );
@@ -1099,7 +1104,6 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             
             // set email for primary location.
             $fields["email-Primary"] = 1;
-            list( $this->_contributorDisplayName, $this->_contributorEmail, $this->_toDoNotEmail ) = CRM_Contact_BAO_Contact::getContactDetails( $this->_contactId );
             $params["email-Primary"] = $params["email-{$this->_bltID}"] = $this->_contributorEmail;
             
             $params['register_date'] = $now;
@@ -1394,6 +1398,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                                                                                $this->_statusId );
         }
         
+        $sent = array( );
         if ( CRM_Utils_Array::value( 'send_receipt', $params ) ) {
             if ( array_key_exists( $params['from_email_address'], $this->_fromEmails['from_email_id'] ) ) {
                 $receiptFrom = $params['from_email_address'];

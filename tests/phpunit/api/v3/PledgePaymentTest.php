@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -40,7 +40,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
     protected $_apiversion;
     protected $_contributionID;
     protected $_contributionTypeId;   
-    public $DBResetRequired = false;
+    public $DBResetRequired = true;
     
     function setUp() 
     {
@@ -79,9 +79,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
      * Test that passing in a single variable works
      */
       function testGetSinglePledgePayment(){
-/*this isn't working at the moment but leaving it 'broken' for now as this is using the
- //boiler plate code (e.g. same as tag_get so it seems we should work the 'best' way for this
- //since it is a new api should we push on to get the unique fields working?                           
+                         
  
              $createparams = array(
                         'contact_id'             => $this->_individualId,
@@ -94,15 +92,43 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
            $createResult = civicrm_api3_pledge_payment_create($createparams);
            $this->assertEquals(0, $createResult['is_error'], " in line " . __LINE__);
            $params = array('version'	=>$this->_apiversion,
-                           'pledge_payment_status_id' =>1,
-                           'status_id'								=>1, 	
+                           'contribution_id'        => $this->_contributionID, 	
                              );
           $result= civicrm_api3_pledge_payment_get($params);                     
-           $this->assertEquals(0, $result['is_error'], " in line " . __LINE__); 
-           $this->assertEquals(1, $result['count'], " in line " . __LINE__); 
-  */                   
+          $this->assertEquals(0, $result['is_error'], " in line " . __LINE__); 
+          $this->assertEquals(1, $result['count'], " in line " . __LINE__); 
+                     
       }  
+      
+          /*
+     * Test that passing in a single variable works:: status_id
+     */
+      function testGetSinglePledgePaymentByStatusID(){
+                         
+ 
+             $createparams = array(
+                        'contact_id'             => $this->_individualId,
+          							'pledge_id' 						 => $this->_pledgeID,
+                        'contribution_id'        => $this->_contributionID,  
+                        'version'									=>$this->_apiversion,
+                        'status_id'							 => 1,
+          
+                  );                        
+           $createResult = civicrm_api3_pledge_payment_create($createparams);
+           $this->assertEquals(0, $createResult['is_error'], " in line " . __LINE__);
+           $params = array('version'	=>$this->_apiversion,
+                           'status_id'  => 1,
+                             );
 
+          $result = civicrm_api3_pledge_payment_get($params);                     
+          $this->assertEquals(0, $result['is_error'], " in line " . __LINE__); 
+          $this->assertEquals(1, $result['count'], " in line " . __LINE__); 
+                     
+      }  
+      
+/*
+ * Test that creating a payment will add the contribution ID
+ */
     function testCreatePledgePayment()
     {
       //check that 5 pledge payments exist at the start
@@ -198,9 +224,58 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
                                                         $pledge_id => $this->_pledgeID));
 
       $this->assertEquals(6,$result['count']);
+
       
     }
-    
+  /*
+ * Test that creating a payment will add the contribution ID where only one pledge payment 
+ * in schedule
+ */
+    function testCreatePledgePaymentWhereOnlyOnePayment()
+    {
+      
+      $pledgeParams =    array(
+                        'contact_id'             => $this->_individualId,
+                        'pledge_create_date'    => date('Ymd'),
+                        'start_date'   					 => date('Ymd'),
+                        'scheduled_date'         => $this->scheduled_date,   
+                        'pledge_amount'         => 100.00,
+                        'pledge_status_id'         => '2',
+                        'pledge_contribution_type_id'  => '1',
+                        'pledge_original_installment_amount' => 20,
+                        'frequency_interval'             => 5,
+                        'frequency_unit'             => 'year',
+                        'frequency_day'            => 15,
+                        'installments'            =>1,
+                        'sequential'						  =>1,
+                        'version'									=>$this->_apiversion,
+          
+                  ); 
+         
+      $contributionID =   $this->contributionCreate($this->_individualId, $this->_contributionTypeId, 45,45);            
+      $pledge=& civicrm_api('Pledge','Create',$pledgeParams);
+      $this->assertEquals(0, $pledge['is_error'], " in line " . __LINE__);
+      
+      //test the pledge_payment_create function
+      $params = array(
+                        'contact_id'             => $this->_individualId,
+          							'pledge_id' 						 => $pledge['id'],
+                        'contribution_id'        => $contributionID ,  
+                        'version'									=>$this->_apiversion,
+                        'status_id'							 => 1,
+                        'actual_amount'					 => 20,
+          
+                  );                        
+      $result = civicrm_api3_pledge_payment_create($params);
+
+      $this->assertEquals(0, $result['is_error'], " in line " . __LINE__);
+      
+      //check existing updated not new one created - 'create' means add contribution_id in this context
+      $afterAdd=& civicrm_api3_pledge_payment_get(array('version' => 3,    'contribution_id'        => $contributionID ,) );
+      $this->assertEquals(1, $afterAdd['count'], " in line " . __LINE__);   
+
+       
+    }
     
     function testUpdatePledgePayment(){
       $params = array(
@@ -247,15 +322,12 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
         $this->assertEquals(0, $result['is_error'], " in line " . __LINE__);
         
     }
-        
-    /*function testGetFields()
+     
+    function testGetFields()
     {
-      $result = civicrm_api3_pledge_payment_getfields();
-      print_r($result);
+      $result = civicrm_api('PledgePayment', 'GetFields',array());
       $this->assertType('array', $result);
     }
-    */
-    
 
 
 }

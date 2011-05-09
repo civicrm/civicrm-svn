@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -41,7 +41,7 @@ class CRM_Mailing_Page_Unsubscribe extends CRM_Mailing_Page_Common
 {
     function run() {
         $this->_type = 'unsubscribe';
-        parent::run( );
+        return parent::run( );
     }
 }
 

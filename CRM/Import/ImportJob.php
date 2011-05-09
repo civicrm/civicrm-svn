@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -169,7 +169,7 @@ class CRM_Import_ImportJob {
             //set respective mapper value to null.
             foreach ( array_values( $mapperPeroperties ) as $perpertyVal ) $$perpertyVal = null;  
             
-            $header   = array( $this->_mapFields[$fldName] );
+            $header   = array( );
             $fldName  = CRM_Utils_Array::value( 0, $mapper[$key] );
             $selOne   = CRM_Utils_Array::value( 1, $mapper[$key] );
             $selTwo   = CRM_Utils_Array::value( 2, $mapper[$key] );

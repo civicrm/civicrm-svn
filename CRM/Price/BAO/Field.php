@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -346,7 +346,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             // CRM-6902
             $button = substr( $qf->controller->getButtonName(), -4 );
             if ( !empty($feezeOptions) && $button != 'skip' ) {
-                $qf->addRule($elementName, ts('Participant count for this option is full.') , 'regex', "/".implode('|', $allowedOptions )."/" ); 
+                $qf->addRule($elementName, ts('Sorry, this option is currently sold out.') , 'regex', "/".implode('|', $allowedOptions )."/" ); 
             }
             
             break;

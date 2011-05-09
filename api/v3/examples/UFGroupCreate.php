@@ -6,7 +6,7 @@ function uf_group_create_example(){
                   'add_captcha' 		=> '1',
                   'add_contact_to_group' 		=> '2',
                   'cancel_URL' 		=> 'http://example.org/cancel',
-                  'created_date' 		=> '2009-06-27',
+                  'created_date' 		=> '2009-06-27 00:00:00',
                   'created_id' 		=> '69',
                   'group' 		=> '2',
                   'group_type' 		=> 'Individual,Contact',
@@ -64,7 +64,7 @@ function uf_group_create_expectedresult(){
                       'is_reserved' => '1',
                       'name' => 'Test_Group',
                       'created_id' => '69',
-                      'created_date' => '2009-06-27',
+                      'created_date' => '2009-06-27 00:00:00',
                       'is_proximity_search' => '',
            ),           ),
       );

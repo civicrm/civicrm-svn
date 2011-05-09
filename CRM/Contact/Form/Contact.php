@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -848,9 +848,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
 
         if ( isset($params['contact_id']) ) {
             // process membership status for deceased contact
-            $deceasedParams = array( 'contact_id'  => $params['contact_id'],
-                                     'is_deceased'   => !empty($params['is_deceased']),
-                                     'deceased_date' => empty($params['deceased_date']) ? NULL : $params['deceased_date'] );
+            $deceasedParams = array( 'contact_id'    => CRM_Utils_Array::value( 'contact_id', $params ),
+                                     'is_deceased'   => CRM_Utils_Array::value( 'is_deceased', $params, false ),
+                                     'deceased_date' => CRM_Utils_Array::value( 'deceased_date', $params, null ) );
             $updateMembershipMsg = $this->updateMembershipStatus( $deceasedParams );
         }
         
@@ -935,9 +935,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         $statusMsg = ts('Your %1 contact record has been saved.', array( 1 => $contact->contact_type_display ) );
         if ( !empty($parseStatusMsg) ) {
             $statusMsg =  "$statusMsg <br > $parseStatusMsg";
-        }
-        if ( !empty($uploadFailMsg)  ) {
-            $statusMsg = "$statusMsg <br > $uploadFailMsg";
         }
         if ( !empty($updateMembershipMsg) ) {
             $statusMsg = "$statusMsg <br > $updateMembershipMsg";

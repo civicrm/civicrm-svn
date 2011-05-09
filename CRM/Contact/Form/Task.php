@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -176,7 +176,9 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
                  $sortByCharacter != 1 ) {
                 $params[] = array( 'sortByCharacter', '=', $sortByCharacter, 0, 0 );
             }
-            $dao =& $selector->contactIDQuery( $params, $form->_action, $sortID );
+            $dao =& $selector->contactIDQuery( $params, $form->_action, $sortID,
+                                               CRM_Utils_Array::value( 'display_relationship_type',
+                                                                       $fv ) );
 
             $form->_contactIds = array( );
             if ( $useTable ) {

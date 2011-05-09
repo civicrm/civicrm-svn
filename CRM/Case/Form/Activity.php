@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -246,7 +246,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
             return $this->_defaults;
         }
         
-        if ( $this->_encounterMedium ) {
+        if ( isset( $this->_encounterMedium ) ) {
             $this->_defaults['medium_id'] = $this->_encounterMedium;
         } else if ( empty($this->_defaults['medium_id']) ) {
             // set default encounter medium CRM-4816

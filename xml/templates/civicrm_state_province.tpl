@@ -1,5 +1,5 @@
 -- +--------------------------------------------------------------------+
--- | CiviCRM version 3.4                                                |
+-- | CiviCRM version 4.0                                                |
 -- +--------------------------------------------------------------------+
 -- | Copyright CiviCRM LLC (c) 2004-2011                                |
 -- +--------------------------------------------------------------------+
@@ -3793,4 +3793,8 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (NULL, 1050, "17", "Haut-Lomami"),
 (NULL, 1050, "18", "Lualaba"),
 (NULL, 1050, "19", "Haut-Katanga"),
-(NULL, 1050, "20", "Tanganyika");
+(NULL, 1050, "20", "Tanganyika"),
+
+-- CRM-8009 Added Missing Provinces for Spain
+(NULL, 1198, 'TO', 'Toledo' ),
+(NULL, 1198, 'CO', 'Córdoba' );

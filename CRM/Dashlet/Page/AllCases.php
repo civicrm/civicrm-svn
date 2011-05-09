@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -50,6 +50,9 @@ class CRM_Dashlet_Page_AllCases extends CRM_Core_Page
      * @access public
      */
     function run( ) {
+        $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'dashlet' );
+        $this->assign('context', $context );
+ 
         require_once 'CRM/Case/BAO/Case.php';
         //check for civicase access.
         if ( !CRM_Case_BAO_Case::accessCiviCase( ) ) {

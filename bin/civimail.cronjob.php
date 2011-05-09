@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -40,7 +40,6 @@ function processQueue($batch_size) {
     require_once 'CRM/Core/Error.php';
     CRM_Core_Error::debug_log_message( 'civimail.cronjob.php');
     
-    // load bootstrap to call hooks
     require_once 'CRM/Mailing/BAO/Job.php';
 	// Split up the parent jobs into multiple child jobs
 	CRM_Mailing_BAO_Job::runJobs_pre($batch_size);
@@ -61,9 +60,6 @@ function run( ) {
 
     // this does not return on failure
     CRM_Utils_System::authenticateScript( true );
-
-    require_once 'CRM/Utils/System.php';
-    CRM_Utils_System::loadBootStrap(  );
 
     // we now use DB locks on a per job basis
     processQueue($config->mailerJobSize);

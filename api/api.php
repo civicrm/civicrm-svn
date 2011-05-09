@@ -51,6 +51,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     $action = CRM_Utils_String::munge($action);
     $version = civicrm_get_api_version($params);
     $errorFnName = ( $version == 2 ) ? 'civicrm_create_error' : 'civicrm_api3_create_error';
+    if ($version > 2) civicrm_api3_api_check_permission($entity, $action, $params);
     $function = civicrm_api_get_function_name($entity, $action,$version);
     civicrm_api_include($entity,null,$version);
     if ( !function_exists ($function ) ) {

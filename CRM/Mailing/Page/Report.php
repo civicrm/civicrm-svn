@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -124,7 +124,7 @@ class CRM_Mailing_Page_Report extends CRM_Core_Page_Basic
         CRM_Utils_System::setTitle( ts( 'CiviMail Report: %1',
                                         array( 1 => $report['mailing']['name'] ) ) );
 
-        parent::run();
+        return parent::run();
     }
 
 }

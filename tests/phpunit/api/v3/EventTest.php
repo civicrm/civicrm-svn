@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -309,14 +309,12 @@ class api_v3_EventTest extends CiviUnitTestCase
                         'version' => $this->_apiversion);
 
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
-        $result = civicrm_api3_event_create($params);
-        $this->assertEquals(1,                                                                                                  $result['is_error'],      'lacking permissions should not be enough to create an event');
-        $this->assertEquals('API permission check failed for civicrm_api3_event_create call; missing permission: access CiviEvent.', $result['error_message'], 'lacking permissions should not be enough to create an event');
+        $result = civicrm_api('event', 'create', $params);
+        $this->assertEquals(1,                                                                                          $result['is_error'], 'lacking permissions should not be enough to create an event');
+        $this->assertEquals('API permission check failed for event/create call; missing permission: access CiviEvent.', $result['error_message'], 'lacking permissions should not be enough to create an event');
 
-        CRM_Core_Permission_UnitTests::$permissions = array('access CiviEvent', 'add contacts');
-        $result = civicrm_api3_event_create($params);
+        CRM_Core_Permission_UnitTests::$permissions = array('access CiviEvent', 'edit all events', 'access CiviCRM');
+        $result = civicrm_api('event', 'create', $params);
         $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to create an event');
-
-        CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
     }
 }

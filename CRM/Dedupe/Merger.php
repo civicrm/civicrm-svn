@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -59,11 +59,12 @@ class CRM_Dedupe_Merger
             $userRecordUrl = CRM_Utils_System::url( 'user/$ufid' );
             $title = ts('%1 User: %2; user id: %3', array(1 => $config->userFramework, 2 => '$ufname', 3 => '$ufid'));
         } else if ( $config->userFramework == 'Joomla' ) {
-            $userRecordUrl = $config->userFrameworkBaseURL . 
-                'index2.php?option=com_users&view=user&task=edit&cid[]=$ufid';
+            $userRecordUrl = $config->userFrameworkVersion > 1.5 ? 
+                $config->userFrameworkBaseURL ."index.php?option=com_users&view=user&task=user.edit&id=". '$ufid' : 
+                $config->userFrameworkBaseURL ."index2.php?option=com_users&view=user&task=edit&id[]=". '$ufid';
             $title = ts('%1 User: %2; user id: %3', array(1 => $config->userFramework, 2 => '$ufname', 3 => '$ufid'));
         }
-
+        
         if (!$relTables) {
             $relTables = array(
                 'rel_table_contributions' => array(

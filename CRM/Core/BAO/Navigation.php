@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -193,10 +193,6 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation
         $whereClause    = '';
 
         $config = CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Joomla' ) {
-            $whereClause = " AND name NOT IN ('Access Control') ";
-            $cacheKeyString .= "_1";
-        }
 
         // check if we can retrieve from database cache
         require_once 'CRM/Core/BAO/Cache.php'; 
@@ -263,6 +259,7 @@ FROM civicrm_navigation WHERE domain_id = $domainID {$whereClause} ORDER BY pare
      */
     static function buildNavigationTree( &$navigationTree, $parentID, $navigationMenu = true ) 
     {
+
         $whereClause = " parent_id IS NULL";
 
         if (  $parentID ) {
@@ -282,11 +279,6 @@ ORDER BY parent_id, weight";
         $navigation = CRM_Core_DAO::executeQuery( $query );
         $config = CRM_Core_Config::singleton( );
         while ( $navigation->fetch() ) {
-            // CRM-5336
-            if ( $config->userFramework == 'Joomla' &&  $navigation->name == 'Access Control' ) {
-                continue;
-            }
-
             $label = $navigation->label;
             if ( !$navigationMenu ) {
                 $label = addcslashes( $label, '"' );
@@ -584,9 +576,8 @@ ORDER BY parent_id, weight";
             }
 
             if ( ( $config->userFramework == 'Drupal' ) && 
-                 function_exists( 'module_exists' ) &&
-                 module_exists('admin_menu') &&
-                 user_access('access administration menu') ) {
+                 ( ( module_exists('toolbar') && user_access('access toolbar') ) ||
+                   module_exists('admin_menu') && user_access('access administration menu') ) ) {
                 $prepandString = "<li class=\"menumain crm-link-home\">" . $homeLabel . "<ul id=\"civicrm-home\"><li><a href=\"{$homeURL}\">" . $homeLabel . "</a></li><li><a href=\"#\" onclick=\"cj.Menu.closeAll( );cj('#civicrm-menu').toggle( );\">" . ts('Drupal Menu') . "</a></li></ul></li>";
             } else {
                 $prepandString = "<li class=\"menumain crm-link-home\"><a href=\"{$homeURL}\" title=\"" . $homeLabel . "\">" . $homeLabel . "</a></li>";

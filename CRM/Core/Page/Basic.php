@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -276,7 +276,7 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
         $newAction = $action;
         $hasDelete = $hasDisable = true;
         
-        if ( in_array( $values['name'] , array( 'encounter_medium', 'case_type', 'case_status' ) ) ) {
+        if ( CRM_Utils_Array::value( 'name', $values ) && in_array( $values['name'] , array( 'encounter_medium', 'case_type', 'case_status' ) ) ) {
             static $caseCount = null; 
             require_once 'CRM/Case/BAO/Case.php';
             if ( !isset( $caseCount ) ) {

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -91,7 +91,7 @@ class CRM_Bridge_OG_CiviCRM {
             return;
         }
 
-        civicrm_api_include('uf_group', false, 3);
+        require_once 'api/v2/UFGroup.php';
         foreach ( $contactIDs as $contactID ) {
             $drupalID = civicrm_uf_id_get( $contactID );
             if ( $drupalID ) {

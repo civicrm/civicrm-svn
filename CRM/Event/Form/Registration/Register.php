@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -636,8 +636,15 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 $maxValue          = CRM_Utils_Array::value( 'max_value',  $option, 0 );
                 $dbTotalCount      = CRM_Utils_Array::value( $optId,       $recordedOptionsCount, 0 );
                 $currentTotalCount = CRM_Utils_Array::value( $optId,       $currentOptionsCount,  0 );
-                $totalCount        = $currentTotalCount + $dbTotalCount;
                 
+                // Do not consider current count for select field,
+                // since we are not going to freeze the options.
+                if ( $field['html_type'] == 'Select' ) {
+                    $totalCount = $dbTotalCount;
+                } else {
+                    $totalCount = $currentTotalCount + $dbTotalCount;
+                }
+
                 $isFull = false;
                 if ( $maxValue && 
                      ( ( $totalCount >= $maxValue ) || ( $totalCount + $count > $maxValue ) ) ) {
@@ -659,7 +666,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 }
                 $option['is_full']            = $isFull;
                 $option['db_total_count']     = $dbTotalCount;
-                $option['total_option_count'] = $totalCount;
+                $option['total_option_count'] = $dbTotalCount + $currentTotalCount;
             }
             
             //ignore option full for offline registration.

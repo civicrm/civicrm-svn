@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -179,7 +179,7 @@ class CRM_Case_Form_Activity_OpenCase
         }
 
         // set the contact, when contact is selected
-        if ( $params['contact_select_id'][1] ) {
+        if ( isset( $params['contact_select_id'] ) && CRM_utils_Array::value( 1, $params['contact_select_id'] ) ) {
             $params['contact_id'] = $params['contact_select_id'][1];
             $form->_currentlyViewedContactId = $params['contact_id'];
         } elseif( $form->_allowMultiClient && $form->_context != 'case' ) {
@@ -209,7 +209,7 @@ class CRM_Case_Form_Activity_OpenCase
      * @static
      * @access public
      */
-    static function formRule( $values, $files, $form ) 
+    static function formRule( $fields, $files, $form ) 
     {
         if ( $form->_context == 'caseActivity' ) {
             return true;
@@ -221,7 +221,7 @@ class CRM_Case_Form_Activity_OpenCase
             $errors['contact[1]'] = ts('Please select a contact or create new contact');
         }
         //check selected contact for multi client option
-        if ( $form->_allowMultiClient && isset( $values[contact][1] ) && !$values[contact][1] ) {
+        if ( $form->_allowMultiClient && isset( $fields[contact][1] ) && !$fields[contact][1] ) {
             $errors['contact[1]'] = ts('Please select a valid contact or create new contact');
         }
         

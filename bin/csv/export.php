@@ -39,10 +39,10 @@ class EntityExporter extends civicrm_cli {
        if (sizeof($this->args >= 1)) {
          $this->entity = $this->args [0];
          // first one is an Entity ?
-         $dao = civicrm_api3_get_DAO ($this->entity);
+         $dao = _civicrm_api3_get_DAO ($this->entity);
 
          if (!$dao) 
-           die ("\nusage: cd /your/civicrm_root;php bin/import.php -u{username} -p{password} -s{site (or default)} {entity} and optionnaly field=value\n");
+           die ("\nusage: cd /your/civicrm_root;php bin/csv/export.php -u{username} -p{password} -s{site (or default)} {entity} and optionnaly field=value\n");
        }
 
        $result = civicrm_api ($this->entity , 'getfields', array ('version' => 3) );

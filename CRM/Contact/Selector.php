@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -567,24 +567,23 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         //check explicitly added contact to a Smart Group.
         $groupID   = CRM_Utils_Array::key( '1', $this->_formValues['group'] );  
 
+        // for CRM-3157 purposes
+        require_once 'CRM/Core/PseudoConstant.php';
+        if ( in_array('country',        $names ) ) {
+            $countries =& CRM_Core_PseudoConstant::country();
+        }
+
+        if ( in_array('state_province', $names ) ) {
+            $provinces =& CRM_Core_PseudoConstant::stateProvince();
+        }
+
+        if ( in_array('world_region',   $names ) ) {
+            $regions   =& CRM_Core_PseudoConstant::worldRegions();
+        }
+
+        $seenIDs = array( );
         while ($result->fetch()) {
             $row = array( );
-
-            // for CRM-3157 purposes
-            require_once 'CRM/Core/PseudoConstant.php';
-            if ( in_array('country',        $names ) ) {
-                $countries =& CRM_Core_PseudoConstant::country();
-            }
-
-            if ( in_array('state_province', $names ) ) {
-                $provinces =& CRM_Core_PseudoConstant::stateProvince();
-            }
-
-            if ( in_array('world_region',   $names ) ) {
-                $regions   =& CRM_Core_PseudoConstant::worldRegions();
-            }
-
-            $empty = true;
 
             // the columns we are interested in
             foreach ($names as $property) {
@@ -592,7 +591,10 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     continue;
                 }
                 if ( $cfID = CRM_Core_BAO_CustomField::getKeyID($property)) {
-                    $row[$property] = CRM_Core_BAO_CustomField::getDisplayValue( $result->$property, $cfID, $this->_options, $result->contact_id );
+                    $row[$property] = CRM_Core_BAO_CustomField::getDisplayValue( $result->$property,
+                                                                                 $cfID,
+                                                                                 $this->_options,
+                                                                                 $result->contact_id );
                 }  else if ( $multipleSelectFields &&
                              array_key_exists($property, $multipleSelectFields ) ) {
                     //fix to display student checkboxes
@@ -651,9 +653,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     $row[$property] = isset($result->$property)? $result->$property : null;
                 }
 
-                if ( ! empty( $result->$property ) ) {
-                    $empty = false;
-                }
             }
 
             if ( ! empty ( $result->postal_code_suffix ) ) {
@@ -742,19 +741,11 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                 }
             }
 
-            // Dedupe contacts        
-            if ( ! $empty ) {
-                $duplicate = false;
-                foreach( $rows as $checkRow ) {
-                    if ( $checkRow['contact_id'] == $row['contact_id'] ) {
-                        $duplicate = true;
-                    }
-                }
-                if ( ! $duplicate ) {
-                    $rows[] = $row;
-                }
+            // Dedupe contacts
+            if ( in_array( $row['contact_id'], $seenIDs ) === false ) {
+                $seenIDs[] = $row['contact_id'];
+                $rows[] = $row;
             }
-
         }
 
         //CRM_Core_Error::debug( '$rows', $rows );
@@ -845,7 +836,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         return $this->_query->searchQuery( null, null, null, false, false, true );
     }
 
-    function contactIDQuery( $params, $action, $sortID ) {
+    function contactIDQuery( $params, $action, $sortID, $displayRelationshipType = null ) {
         $sortOrder =& $this->getSortOrder( $this->_action );
         $sort      = new CRM_Utils_Sort( $sortOrder, $sortID );
 
@@ -856,7 +847,13 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             CRM_Contact_BAO_ProximityQuery::fixInputParams( $params );
         }
 
-        $query = new CRM_Contact_BAO_Query( $params, $this->_returnProperties );
+        if ( ! $displayRelationshipType ) {
+            $query = new CRM_Contact_BAO_Query( $params, $this->_returnProperties );
+        } else {
+            $query = new CRM_Contact_BAO_Query( $params, $this->_returnProperties,
+                                                null, false, false, 1,
+                                                false, true, true, $displayRelationshipType );
+        }
         $value =  $query->searchQuery( 0, 0, $sort,
                                        false, false, false,
                                        false, false );

@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -105,7 +105,7 @@
                 </span>
                 <div class="clear"></div>
                 <div class='html'>
-                    {$form.msg_html.html|crmReplace:class:huge}
+                    {$form.msg_html.html}
                     <div class="description">{ts}You may optionally create an HTML formatted version of this message. It will be sent to contacts whose Email Format preference is 'HTML' or 'Both'.{/ts} {ts 1=$tokenDocsRepeated}Tokens may be included (%1).{/ts}</div>
                 </div>  
 		    </div><!-- /.crm-accordion-body -->

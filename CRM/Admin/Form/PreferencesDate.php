@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -81,8 +81,8 @@ class CRM_Admin_Form_PreferencesDate extends CRM_Admin_Form
             $this->add( 'select', 'time_format', ts('Time'), 
                         array( '' => ts( '- none -') ) + CRM_Core_SelectValues::getTimeFormats( ) );
         }
-        $this->addRule( 'start', ts( 'Value should be a positive number' ) , 'positiveInteger');
-        $this->addRule( 'end'  , ts( 'Value should be a positive number' ) , 'positiveInteger');
+        $this->addRule( 'start', ts( 'Value must be an integer.' ) , 'integer');
+        $this->addRule( 'end'  , ts( 'Value must be an integer.' ) , 'integer');
     
         // add a form rule
         $this->addFormRule( array( 'CRM_Admin_Form_PreferencesDate', 'formRule' ) );

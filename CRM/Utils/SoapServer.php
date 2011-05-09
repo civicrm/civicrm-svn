@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -44,9 +44,7 @@
  *
  */
 
-civicrm_api_include('utils', false, 3);
-civicrm_api_include('mailer', false, 3);
-
+require_once 'api/v2/Mailer.php';
 class CRM_Utils_SoapServer
 {
     /**

@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -101,8 +101,9 @@ function tokenReplHtml ( )
 	} else if ( editor == "ckeditor" ) {
         oEditor = CKEDITOR.instances[html_message];
         oEditor.insertHtml(token1.toString() );        
+    } else if ( editor == "drupalwysiwyg" ) {
+        Drupal.wysiwyg.instances[html_message].insert(token1.toString());
     } else {
-        //document.getElementById("html_message").value =  document.getElementById("html_message").value + token1;
 		var msg       = document.getElementById(html_message).value;
         var cursorlen = document.getElementById(html_message).selectionStart;
         var textlen   = msg.length;

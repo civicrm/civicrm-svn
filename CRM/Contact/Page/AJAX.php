@@ -3,7 +3,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -146,14 +146,18 @@ class CRM_Contact_Page_AJAX
         $includeEmailFrom = $includeNickName = '';
         if ( $config->includeNickNameInName ) {
             $includeNickName = " OR nick_name LIKE '$strSearch'";
+            $exactIncludeNickName = " OR nick_name LIKE '$name'";
         }
+
         if( $config->includeEmailInName ) {
             if( !in_array( 'email', $list ) ) {
                 $includeEmailFrom ="LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )" ;  
             }
             $whereClause = " WHERE ( email LIKE '$strSearch' OR sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
+            $exactWhereClause = " WHERE ( email LIKE '$name' OR sort_name LIKE '$name' $exactIncludeNickName ) {$where} ";
         } else {
             $whereClause = " WHERE ( sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
+            $exactWhereClause = " WHERE ( sort_name LIKE '$name' $exactIncludeNickName ) {$where} ";
         }
         $additionalFrom = '';
         if ( $relType ) {
@@ -167,17 +171,26 @@ class CRM_Contact_Page_AJAX
         
         //CRM-5954
         $query = "
-            SELECT id, data 
-            FROM (
-                SELECT cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
-                FROM civicrm_contact cc {$from}
-        {$aclFrom}
-        {$additionalFrom}{$includeEmailFrom}
-        {$whereClause} 
-        LIMIT 0, {$limit}
-    ) t
-    ORDER BY sort_name
-    ";
+SELECT DISTINCT(id), data 
+FROM   (
+        ( SELECT 0 as exactFirst, cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
+          FROM   civicrm_contact cc {$from}
+                 {$aclFrom}
+                 {$additionalFrom} {$includeEmailFrom}
+                 {$exactWhereClause}
+          LIMIT 0, {$limit} )
+        UNION
+        ( SELECT 1 as exactFirst, cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
+          FROM   civicrm_contact cc {$from}
+                 {$aclFrom}
+                 {$additionalFrom} {$includeEmailFrom}
+                 {$whereClause}
+          ORDER BY sort_name
+          LIMIT 0, {$limit} )
+       ) t
+ORDER BY exactFirst, sort_name
+LIMIT    0, {$limit}
+";
         
         // send query to hook to be modified if needed
         require_once 'CRM/Utils/Hook.php';
@@ -684,7 +697,7 @@ WHERE sort_name LIKE '%$name%'";
             }
         } else {
 	        $noemail = CRM_Utils_Array::value( 'noemail', $_GET );
-
+            $queryString = null;
             if ( $name = CRM_Utils_Array::value( 'name', $_GET ) ) {
                 $name  = CRM_Utils_Type::escape(  $name, 'String' );
                 if ( $noemail ) {
@@ -692,22 +705,23 @@ WHERE sort_name LIKE '%$name%'";
                 } else {
                     $queryString = " ( cc.sort_name LIKE '%$name%' OR ce.email LIKE '%$name%' ) ";
                 }
-            } else {
-				$cid = CRM_Utils_Array::value( 'cid', $_GET );
+            } elseif ( $cid = CRM_Utils_Array::value( 'cid', $_GET ) ) {
+                $cid = CRM_Utils_Type::escape( $cid, 'Integer' );
 				$queryString = " cc.id IN ( $cid )";
 			}
 
-	        $offset   = CRM_Utils_Array::value( 'offset',   $_GET, 0 );
-	        $rowCount = CRM_Utils_Array::value( 'rowcount', $_GET, 20 );
+            if ( $queryString ) {
+                $offset   = CRM_Utils_Array::value( 'offset',   $_GET, 0 );
+                $rowCount = CRM_Utils_Array::value( 'rowcount', $_GET, 20 );
 
-            // add acl clause here
-            require_once 'CRM/Contact/BAO/Contact/Permission.php';
-            list( $aclFrom, $aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( 'cc' );
-            if ( $aclWhere ) {
-                $aclWhere = " AND $aclWhere";
-            }
-            if ( $noemail ) {
-              $query="
+                // add acl clause here
+                require_once 'CRM/Contact/BAO/Contact/Permission.php';
+                list( $aclFrom, $aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( 'cc' );
+                if ( $aclWhere ) {
+                    $aclWhere = " AND $aclWhere";
+                }
+                if ( $noemail ) {
+                    $query="
 SELECT sort_name name, cc.id
 FROM civicrm_contact cc 
      {$aclFrom}
@@ -716,13 +730,13 @@ WHERE cc.is_deceased = 0 AND {$queryString}
 LIMIT {$offset}, {$rowCount}
 ";
             
-              $dao = CRM_Core_DAO::executeQuery( $query );
-              while( $dao->fetch( ) ) {
-                  $result[]= array( 'name' => $dao->name,
-                                    'id'   => $dao->id);
-              }
-            } else {        
-              $query="
+                    $dao = CRM_Core_DAO::executeQuery( $query );
+                    while( $dao->fetch( ) ) {
+                        $result[]= array( 'name' => $dao->name,
+                                          'id'   => $dao->id);
+                    }
+                } else {        
+                    $query="
 SELECT sort_name name, ce.email, cc.id
 FROM   civicrm_email ce INNER JOIN civicrm_contact cc ON cc.id = ce.contact_id
        {$aclFrom}
@@ -730,19 +744,19 @@ WHERE  ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$query
        {$aclWhere}
 LIMIT {$offset}, {$rowCount}
 ";
-
             
-              $dao = CRM_Core_DAO::executeQuery( $query );
+                    $dao = CRM_Core_DAO::executeQuery( $query );
             
-              while( $dao->fetch( ) ) {
-                  $result[]= array( 'name' => '"'.$dao->name.'" &lt;'.$dao->email.'&gt;',
-                                    'id'   => (CRM_Utils_Array::value( 'id', $_GET ) ) ? "{$dao->id}::{$dao->email}" :'"'.$dao->name.'" <'.$dao->email.'>');
-              }
-            }
+                    while( $dao->fetch( ) ) {
+                        $result[]= array( 'name' => '"'.$dao->name.'" &lt;'.$dao->email.'&gt;',
+                                          'id'   => (CRM_Utils_Array::value( 'id', $_GET ) ) ? "{$dao->id}::{$dao->email}" :'"'.$dao->name.'" <'.$dao->email.'>');
+                    }
+                }
 
-            if ( $result ) {
-                echo json_encode( $result );
-            }
+                if ( $result ) {
+                    echo json_encode( $result );
+                }
+            }    
         }
         CRM_Utils_System::civiExit( );
     } 

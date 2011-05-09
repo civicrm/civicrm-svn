@@ -1,5 +1,5 @@
 -- +--------------------------------------------------------------------+
--- | CiviCRM version 3.4                                                |
+-- | CiviCRM version 4.0                                                |
 -- +--------------------------------------------------------------------+
 -- | Copyright CiviCRM LLC (c) 2004-2011                                |
 -- +--------------------------------------------------------------------+
@@ -122,10 +122,10 @@ INSERT INTO `civicrm_contact_type`
 -- Add sample dashlets 
 
 INSERT INTO `civicrm_dashboard` 
-    ( `domain_id`, `label`, `url`, `content`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `created_date`, `is_fullscreen`) 
+    ( `domain_id`, `label`, `url`, `content`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `created_date`, `is_fullscreen`, `fullscreen_url`) 
     VALUES 
-    ( @domain_id, '{ts escape="sql"}Donor Report (Summary){/ts}'       , 'civicrm/report/instance/3&reset=1&section=1&snippet=4&charts=barChart',  NULL, 'access CiviCRM,access CiviContribute', 'AND', 0, 0,'1', 4, NULL, '0'),
-    ( @domain_id, '{ts escape="sql"}Top Donors Report{/ts}'            , 'civicrm/report/instance/20&reset=1&section=2&snippet=4',                 NULL, 'access CiviCRM,access CiviContribute', 'AND', 0, 0,'1', 5, NULL, '1'),
-    ( @domain_id, '{ts escape="sql"}Event Income Report (Summary){/ts}', 'civicrm/report/instance/13&reset=1&section=1&snippet=4&charts=pieChart', NULL, 'access CiviCRM,access CiviEvent'     , 'AND', 0, 0,'1', 6, NULL, '0'),
-    ( @domain_id, '{ts escape="sql"}Membership Report (Summary){/ts}'  , 'civicrm/report/instance/9&reset=1&section=2&snippet=4',                  NULL, 'access CiviCRM,access CiviMember'    , 'AND', 0, 0,'1', 7, NULL, '1');
+    ( @domain_id, '{ts escape="sql"}Donor Report (Summary){/ts}'       , 'civicrm/report/instance/6&reset=1&section=1&snippet=4&charts=barChart',  NULL, 'access CiviContribute', 'AND', 0, 0,'1', 4, NULL, '1', 'civicrm/report/instance/6&reset=1&section=1&snippet=4&charts=barChart&context=dashletFullscreen'),
+    ( @domain_id, '{ts escape="sql"}Top Donors Report{/ts}'            , 'civicrm/report/instance/13&reset=1&section=2&snippet=4',                 NULL, 'access CiviContribute', 'AND', 0, 0,'1', 5, NULL, '1', 'civicrm/report/instance/13&reset=1&section=2&snippet=4&context=dashletFullscreen'),
+    ( @domain_id, '{ts escape="sql"}Event Income Report (Summary){/ts}', 'civicrm/report/instance/23&reset=1&section=1&snippet=4&charts=pieChart', NULL, 'access CiviEvent'     , 'AND', 0, 0,'1', 6, NULL, '1', 'civicrm/report/instance/23&reset=1&section=1&snippet=4&charts=pieChart&context=dashletFullscreen'),
+    ( @domain_id, '{ts escape="sql"}Membership Report (Summary){/ts}'  , 'civicrm/report/instance/19&reset=1&section=2&snippet=4',                  NULL, 'access CiviMember'    , 'AND', 0, 0,'1', 7, NULL, '1', 'civicrm/report/instance/19&reset=1&section=2&snippet=4&context=dashletFullscreen');
    

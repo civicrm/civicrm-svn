@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -93,7 +93,7 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
             switch ( ucfirst($config->userFramework) ) {
             case 'Joomla' : 
                 $loginUrl  = str_replace( 'administrator/', '', $loginUrl );
-                $loginUrl .= 'index.php?option=com_user&view=login';
+                $loginUrl .= 'index.php?option=com_users&view=login';
                 break;
                 
             case 'Drupal' :
@@ -263,7 +263,7 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
             return $controller->run();
         }
         $session->pushUserContext( CRM_Utils_System::url(CRM_Utils_System::currentPath( ),'reset=1&id='.$this->_id ));
-        parent::run();
+        return parent::run();
     }
     
     function getTemplateFileName() 

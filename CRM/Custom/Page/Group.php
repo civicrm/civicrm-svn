@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -156,7 +156,7 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
             $this->browse();
         }
         // parent run 
-        parent::run();
+        return parent::run();
     }
 
 
@@ -250,7 +250,7 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
         require_once 'CRM/Contact/BAO/ContactType.php';
         require_once 'CRM/Campaign/PseudoConstant.php';
         
-        $subTypes['Activity']     = CRM_Core_PseudoConstant::activityType( false, true );
+        $subTypes['Activity']     = CRM_Core_PseudoConstant::activityType( false, true, false, 'label', true );
         $subTypes['Contribution'] = CRM_Contribute_PseudoConstant::contributionType( );
         $subTypes['Membership']   = CRM_Member_BAO_MembershipType::getMembershipTypes( false );
         $subTypes['Event']        = CRM_Core_OptionGroup::values('event_type');
@@ -322,8 +322,8 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
                                     $subTypes[$type][$sub.'_b_a'] : $subTypes[$type][$sub.'_b_a'];
                             }
                         } else {
-                            $colValue = $colValue ? $colValue . ', ' . 
-                                $subTypes[$type][$sub] : $subTypes[$type][$sub];
+                            $colValue = $colValue ? ( $colValue . ( isset($subTypes[$type][$sub]) ? ', '. $subTypes[$type][$sub] : '' ) ) :
+                                ( isset($subTypes[$type][$sub]) ? $subTypes[$type][$sub] : '' );
                         } 
                     }
                 }

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -74,6 +74,12 @@ class CRM_Import_Field {
      * @var string
      */
      public $_dataPattern;
+
+     /**
+     * regexp to match the pattern of header from various column/fields
+     * @var string
+     */
+     public $_headerPattern;
 
     /**
      * location type

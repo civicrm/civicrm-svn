@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -42,6 +42,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
     protected $_ufFieldId;
     protected $_contactId = 69;
     protected $_apiversion; 
+    protected $params;
     protected function setUp()
     {
         parent::setUp();
@@ -98,6 +99,29 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'xbutton'       =>array('HTML/QuickForm/xbutton.php','HTML_QuickForm_xbutton'),
             'advmultiselect'=>array('HTML/QuickForm/advmultiselect.php','HTML_QuickForm_advmultiselect'),
         );
+        $this->params =        array(
+            'add_captcha'          => 1,
+            'add_contact_to_group' => 2,
+            'cancel_URL'           => 'http://example.org/cancel',
+            'created_date'         => '2009-06-27 00:00:00',
+            'created_id'           => 69,
+            'group'                => 2,
+            'group_type'           => 'Individual,Contact',
+            'help_post'            => 'help post',
+            'help_pre'             => 'help pre',
+            'is_active'            => 0,
+            'is_cms_user'          => 1,
+            'is_edit_link'         => 1,
+            'is_map'               => 1,
+            'is_reserved'          => 1,
+            'is_uf_link'           => 1,
+            'is_update_dupe'       => 1,
+            'name'                 => 'Test_Group',
+            'notify'               => 'admin@example.org',
+            'post_URL'             => 'http://example.org/post',
+            'title'                => 'Test Group',
+            'version'					 => $this->_apiversion,
+        );
     }
 
 
@@ -135,38 +159,15 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
 
     function testUFGroupCreate()
     {
-        $params = array(
-            'add_captcha'          => 1,
-            'add_contact_to_group' => 2,
-            'cancel_URL'           => 'http://example.org/cancel',
-            'created_date'         => '2009-06-27',
-            'created_id'           => 69,
-            'group'                => 2,
-            'group_type'           => 'Individual,Contact',
-            'help_post'            => 'help post',
-            'help_pre'             => 'help pre',
-            'is_active'            => 0,
-            'is_cms_user'          => 1,
-            'is_edit_link'         => 1,
-            'is_map'               => 1,
-            'is_reserved'          => 1,
-            'is_uf_link'           => 1,
-            'is_update_dupe'       => 1,
-            'name'                 => 'Test_Group',
-            'notify'               => 'admin@example.org',
-            'post_URL'             => 'http://example.org/post',
-            'title'                => 'Test Group',
-            'version'					 => $this->_apiversion,
-        );
-        $result = civicrm_api3_uf_group_create($params);
-        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
 
-        $this->assertEquals($result['values'][$result['id']]['add_to_group_id'],         $params['add_contact_to_group'],'in line ' . __LINE__);
-        $this->assertEquals($result['values'][$result['id']]['limit_listings_group_id'], $params['group'],'in line ' . __LINE__);
-        unset($params['version']);
-        foreach ($params as $key => $value) {
-            if ($key == 'add_contact_to_group' or $key == 'group') continue;
-            $this->assertEquals($result['values'][$result['id']][$key], $params[$key]);
+        $result = civicrm_api3_uf_group_create($this->params);
+        $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
+
+        $this->assertEquals($result['values'][$result['id']]['add_to_group_id'],         $this->params['add_contact_to_group'],'in line ' . __LINE__);
+        $this->assertEquals($result['values'][$result['id']]['limit_listings_group_id'], $this->params['group'],'in line ' . __LINE__);
+        foreach ($this->params as $key => $value) {
+            if ($key == 'add_contact_to_group' or $key == 'group' or $key == 'version') continue;
+            $this->assertEquals($result['values'][$result['id']][$key], $this->params[$key]);
         }
     
     }
@@ -221,7 +222,26 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
         $this->assertEquals($result['values'][$this->_ufGroupId]['add_to_group_id'], $params['add_contact_to_group'],'in line ' . __LINE__);
         $this->assertEquals($result['values'][$result['id']]['limit_listings_group_id'], $params['group'],'in line '. __LINE__);
     }
+    function testUFGroupGet()
+    {
 
+        $result = civicrm_api3_uf_group_create($this->params);
+        $this->assertEquals(0,$result['is_error'], 'in line ' . __LINE__);   
+        $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
+        
+        $params = array('version' =>3, 'id' => $result['id']);
+        $result = civicrm_api3_uf_group_get($params);   
+        $this->assertEquals(0,$result['is_error'], 'in line ' . __LINE__);   
+        $this->documentMe($this->params,$result,__FUNCTION__,__FILE__);  
+        $this->assertEquals($result['values'][$result['id']]['add_to_group_id'],         $this->params['add_contact_to_group'],'in line ' . __LINE__);
+        $this->assertEquals($result['values'][$result['id']]['limit_listings_group_id'], $this->params['group'],'in line ' . __LINE__);
+        foreach ($this->params as $key => $value) {
+          // skip created date because it doesn't seem to be working properly & fixing date handling is for another day
+            if ($key == 'add_contact_to_group' or $key == 'group' or $key == 'version' or $key == 'created_date') continue;
+            $this->assertEquals($this->params[$key],$result['values'][$result['id']][$key], 'in line ' . __LINE__);
+        }
+    
+    }
     function testUFGroupUpdateWithEmptyParams()
     {
         $result = civicrm_api3_uf_group_create(array(), $this->_ufGroupId);

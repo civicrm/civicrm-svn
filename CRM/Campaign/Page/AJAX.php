@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -585,7 +585,7 @@ class CRM_Campaign_Page_AJAX
             if ( $searchCount < $offset ) $offset = 0;
             foreach ( $campaigns as $campaignID => $values ) {
                 foreach ( $selectorCols as $col ) {
-                    $searchRows[$campaignID][$col] = CRM_Utils_Array::value( $col, $values );
+                    $searchRows[$campaignID][$col] = ($col == 'description') ? str_replace(array("\r\n", "\n", "\r"), '<br />', CRM_Utils_Array::value($col, $values, '')) : CRM_Utils_Array::value($col, $values);
                 }
             }
         }

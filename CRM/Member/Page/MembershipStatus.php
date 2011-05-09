@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -127,7 +127,7 @@ class CRM_Member_Page_MembershipStatus extends CRM_Core_Page_Basic
         $this->browse();
         
         // parent run 
-        parent::run();
+        return parent::run();
     }
 
     /**

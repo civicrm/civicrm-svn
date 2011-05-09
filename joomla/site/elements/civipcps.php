@@ -1,7 +1,7 @@
 <?php
   /*
    +--------------------------------------------------------------------+
-   | CiviCRM version 3.4                                                |
+   | CiviCRM version 4.0                                                |
    +--------------------------------------------------------------------+
    | This file is a part of CiviCRM.                                    |
    |                                                                    |
@@ -29,7 +29,7 @@
   // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die( 'Restricted access' );
 
-class JElementCiviPCPs extends JElement {
+class JFormFieldCiviPCPs extends JFormField {
 	/**
 	 * Element name
 	 *
@@ -38,8 +38,12 @@ class JElementCiviPCPs extends JElement {
 	 */
 	var	$_name = 'CiviPCPs';
 	
-	function fetchElement( $name, $value, &$node, $control_name )	{
-		// Initiate CiviCRM
+    protected function getInput()	{
+        
+        $value = $this->value;
+        $name  = $this->name;
+        
+        // Initiate CiviCRM
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 		require_once 'CRM/Core/Config.php';
 		$config =& CRM_Core_Config::singleton( );
@@ -52,7 +56,7 @@ class JElementCiviPCPs extends JElement {
         while ( $dao->fetch( ) ) {
             $options[] = JHTML::_( 'select.option', $dao->id, $dao->title ); 
         }
-		return JHTML::_( 'select.genericlist', $options, 'params[id]', null, 'value', 'text', $value );
+		return JHTML::_( 'select.genericlist', $options, $name, null, 'value', 'text', $value );
 	}
 }
 ?>

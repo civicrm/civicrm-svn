@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<install method="upgrade" type="component" version="1.5">
+<extension method="upgrade" type="component" version="1.6">
   <name>CiviCRM</name>
   <creationDate>{$creationDate}</creationDate>
   <copyright>(C) CiviCRM LLC</copyright>
@@ -21,20 +21,25 @@
       <queries>
       </queries>
   </uninstall>
-  <installfile>install.civicrm.php</installfile>
-  <uninstallfile>uninstall.civicrm.php</uninstallfile>
+  <scriptfile>script.civicrm.php</scriptfile>
   <administration>
-    <menu task="civicrm/dashboard&amp;reset=1">CiviCRM</menu>
+    <menu task="civicrm/dashboard&amp;reset=1">COM_CIVICRM_MENU</menu>
     <files folder="admin">
       <filename>admin.civicrm.php</filename>
       <filename>toolbar.civicrm.php</filename>
       <filename>toolbar.civicrm.html.php</filename>
       <filename>configure.php</filename>
+      <filename>access.xml</filename>
+      <filename>config.xml</filename>
 {if $pkgType eq 'alt'}
       <folder>civicrm</folder>
 {else}
       <filename>civicrm.zip</filename>
 {/if}
-    </files>
+    </files> 
+    <languages folder="admin">
+      <language tag="en-GB">language/en-GB/en-GB.com_civicrm.ini</language>
+      <language tag="en-GB">language/en-GB/en-GB.com_civicrm.sys.ini</language>
+    </languages>
   </administration>
-</install>
+</extension>

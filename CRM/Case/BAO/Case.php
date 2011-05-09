@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -534,6 +534,7 @@ WHERE cc.contact_id = %1
                   civicrm_contact.sort_name as sort_name,
                   civicrm_phone.phone as phone,
                   civicrm_contact.contact_type as contact_type,
+                  civicrm_contact.contact_sub_type as contact_sub_type,
                   civicrm_activity.activity_type_id,
                   cov_type.label as case_type,
                   cov_type.name as case_type_name,
@@ -689,7 +690,7 @@ AND civicrm_case.status_id != $closedId";
         $query = self::getCaseActivityQuery( $type, $userID, $condition );
  
         $queryParams = array();
-        $result = CRM_Core_DAO::executeQuery( $query,$queryParams );
+        $result = CRM_Core_DAO::executeQuery( $query, $queryParams );
 
         require_once 'CRM/Core/OptionGroup.php';
         $caseStatus = CRM_Core_OptionGroup::values( 'case_status', false, false, false, " AND v.name = 'Urgent' " );
@@ -749,12 +750,12 @@ AND civicrm_case.status_id != $closedId";
                         = CRM_Core_Action::formLink( $actions['primaryActions'], $mask,
                                                      array( 'id'  => $result->case_id,
                                                             'cid' => $result->contact_id,
-                                                            'cxt' => $this->_context ) );
+                                                           ) );
                     $casesList[$result->case_id]['moreActions'] 
                         = CRM_Core_Action::formLink( $actions['moreActions'], 
                                                      $mask, array( 'id'  => $result->case_id,
                                                                    'cid' => $result->contact_id,
-                                                                   'cxt' => $this->_context ),
+                                                             ),
                                                      ts( 'more' ),
                                                      true 
                                                      );

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -239,6 +239,7 @@ WHERE     openid = %1";
             require_once 'CRM/Core/Transaction.php';
             $transaction = new CRM_Core_Transaction( );
 
+            $dao = null;
             if ( ! empty( $_POST ) && ! $isLogin ) {
                 $params = $_POST;
                 $params['email'] = $uniqId;

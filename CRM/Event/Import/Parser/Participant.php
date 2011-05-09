@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -84,6 +84,9 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
         $fields['event_title'] = $eventfields['event_title'];
         
         foreach ($fields as $name => $field) {
+            $field['type']          = CRM_Utils_Array::value( 'type', $field, CRM_Utils_Type::T_INT );
+            $field['dataPattern']   = CRM_Utils_Array::value( 'dataPattern', $field, '//' );
+            $field['headerPattern'] = CRM_Utils_Array::value( 'headerPattern', $field, '//' );
             $this->addField( $name, $field['title'], $field['type'], $field['headerPattern'], $field['dataPattern']);
         }
         
@@ -181,7 +184,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             if ((!$params['event_id'] && !$params['event_title'])) {
                 CRM_Import_Parser_Contact::addToErrorMsg('Event', $missingField);
             } 
-            if (!$params['participant_status_id']) {
+            if ( !CRM_Utils_Array::value( 'participant_status_id', $params ) ) {
                 CRM_Import_Parser_Contact::addToErrorMsg('Participant Status', $missingField);
             } 
         } else { 
@@ -308,7 +311,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             } 
         }
 
-        if ( !( $params['participant_role_id'] || $params['participant_role'] ) ) {
+        if ( !( CRM_Utils_Array::value( 'participant_role_id', $params ) || CRM_Utils_Array::value( 'participant_role', $params ) ) ) {
             if ( $params['event_id'] ) {
                 $params['participant_role_id'] = 
                     CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Event", $params['event_id'] , 'default_role_id' );
@@ -435,7 +438,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             }
             
         } else {
-            if ( $formatValues['external_identifier'] ) {
+            if ( CRM_Utils_Array::value( 'external_identifier', $formatValues ) ) {
                 $checkCid = new CRM_Contact_DAO_Contact();
                 $checkCid->external_identifier = $formatValues['external_identifier'];
                 $checkCid->find(true);
@@ -468,7 +471,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
         }
         
         if ( ! ( is_array( $newParticipant ) && civicrm_error( $newParticipant ) ) ) {
-            $this->_newParticipants[] = $newParticipant['id'];
+            $this->_newParticipants[] = CRM_Utils_Array::value( 'id', $newParticipant );
         }
         
         return CRM_Event_Import_Parser::VALID;

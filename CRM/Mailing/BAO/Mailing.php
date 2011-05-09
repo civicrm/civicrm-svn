@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -988,7 +988,8 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             $headers['From'] = "<{$fromEmail}>";
         } 
 
-        if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+        if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
+             CIVICRM_MAIL_SMARTY ) {
             require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
         }
@@ -1054,7 +1055,8 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         
         $message = new Mail_mime("\n");
         
-        if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+        if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
+             CIVICRM_MAIL_SMARTY ) {
             $smarty = CRM_Core_Smarty::singleton( );
             // also add the contact tokens to the template
             $smarty->assign_by_ref( 'contact', $contact );
@@ -1065,7 +1067,8 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                        $contact['preferred_mail_format'] == 'Both' ||
                        ( $contact['preferred_mail_format'] == 'HTML' && !array_key_exists('html',$pEmails) ) ) ) {
             $textBody = join( '', $text );
-            if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+            if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
+                 CIVICRM_MAIL_SMARTY ) {
                 $smarty->security = true;
                 $textBody = $smarty->fetch( "string:$textBody" );
                 $smarty->security = false;
@@ -1076,7 +1079,8 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         if ( $html && ( $test ||  ( $contact['preferred_mail_format'] == 'HTML' ||
                                     $contact['preferred_mail_format'] == 'Both') ) ) {
             $htmlBody = join( '', $html );
-            if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+            if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
+                 CIVICRM_MAIL_SMARTY ) {
                 $smarty->security = true;
                 $htmlBody = $smarty->fetch( "string:$htmlBody" );
                 $smarty->security = false;
@@ -1189,7 +1193,7 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         $token = $token_a['token'];
         $data = $token;
 
-        $escapeSmarty = defined( 'CIVICRM_MAIL_SMARTY' ) ? true : false;
+        $escapeSmarty = defined( 'CIVICRM_MAIL_SMARTY' ) && CIVICRM_MAIL_SMARTY ? true : false;
 
         if ($type == 'embedded_url') {
             $embed_data = array( );

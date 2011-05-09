@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -453,8 +453,8 @@ class CRM_Utils_Date
 
         $value = null;
         if ( CRM_Utils_Array::value( $dateParam, $params ) ) {
-            //suppress hh:mm if it exists
-            $value = preg_replace( "/(\s(([01]\d)|[2][0-3]):([0-5]\d))$/", "", $params[$dateParam] );
+            // suppress hh:mm or hh:mm:ss if it exists CRM-7957
+            $value = preg_replace( "/(\s(([01]\d)|[2][0-3])(:([0-5]\d)){1,2})$/", "", $params[$dateParam] );
         }
         
         switch( $dateType ) {
@@ -832,10 +832,9 @@ class CRM_Utils_Date
                                     );
         
         if ( array_key_exists( $birthDateFormat, $supportableFormats ) ) {
-            $birthDateFormat = array( 'qfMapping' => $supportableFormats[$birthDateFormat],
-                                      'dateParts' => $formatMapping );
+            $birthDateFormat = array( 'qfMapping' => $supportableFormats[$birthDateFormat] );
         }
-                
+ 
         return $birthDateFormat;
     }
 
@@ -1316,9 +1315,7 @@ class CRM_Utils_Date
         if ( !empty( $inputCustomFormat ) ) {
             $inputFormat = $inputCustomFormat;
         }
-        if ( $inputFormat == 'dd/mm/yy' ) {
-              $date = str_replace( '/', '-', $date );
-        }
+ 
         if ( trim( $date ) ) {
             $mysqlDate = date( $format, strtotime( $date . ' '. $time ) );
         }

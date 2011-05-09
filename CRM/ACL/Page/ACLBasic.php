@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -120,11 +120,12 @@ class CRM_ACL_Page_ACLBasic extends CRM_Core_Page_Basic
         if ($action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD | CRM_Core_Action::DELETE)) {
             $this->edit($action, $id) ;
         } 
+
         // finally browse the acl's
-         $this->browse();
+        $this->browse();
         
         // parent run 
-        parent::run();
+        return parent::run();
     }
 
     /**

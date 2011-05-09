@@ -83,18 +83,21 @@ mkdir com_civicrm
 mkdir com_civicrm/admin
 mkdir com_civicrm/site
 mkdir com_civicrm/admin/civicrm
+mkdir com_civicrm/admin/language
+mkdir com_civicrm/admin/language/en-GB
 mkdir com_civicrm/admin/helpers
 
 # copying back end code to admin folder
 cp civicrm/joomla/admin/admin.civicrm.php        com_civicrm/admin
+cp civicrm/joomla/admin/config.xml               com_civicrm/admin
 cp civicrm/joomla/admin/configure.php            com_civicrm/admin
+cp -r -p civicrm/joomla/admin/helpers/*          com_civicrm/admin/helpers
+cp civicrm/joomla/admin/license.civicrm.txt      com_civicrm/admin
+cp civicrm/joomla/admin/script.civicrm.php       com_civicrm/
 cp civicrm/joomla/admin/toolbar.civicrm.php      com_civicrm/admin
 cp civicrm/joomla/admin/toolbar.civicrm.html.php com_civicrm/admin
+cp civicrm/joomla/admin/language/en-GB/*         com_civicrm/admin/language/en-GB
 
-cp -r -p civicrm/joomla/admin/helpers/*           com_civicrm/admin/helpers
-
-cp civicrm/joomla/admin/install.civicrm.php      com_civicrm/
-cp civicrm/joomla/admin/uninstall.civicrm.php    com_civicrm/
 
 # copying front end code
 cp civicrm/joomla/site/civicrm.html.php      com_civicrm/site

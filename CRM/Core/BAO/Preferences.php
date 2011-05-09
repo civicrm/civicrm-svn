@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -305,7 +305,8 @@ AND    v.is_active = 1
             if ( $dao->optionName == 'directory_preferences' ) {
                 $value = CRM_Utils_File::absoluteDirectory( $dao->value );
             } else {
-                $value = CRM_Utils_System::absoluteURL( $dao->value );
+                // CRM-7622: we need to remove the language part
+                $value = CRM_Utils_System::absoluteURL($dao->value, true);
             }
             $params[$dao->valueName] = $value;
             if ( $setInConfig ) {

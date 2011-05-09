@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -37,7 +37,7 @@ class civicrm_handler_field_website_type extends views_handler_field {
                 return;
             }
             require_once 'CRM/Core/PseudoConstant.php';
-            self::$_locationTypes = CRM_Core_PseudoConstant::websiteType( );
+            self::$_websiteTypes = CRM_Core_PseudoConstant::websiteType( );
         }
     }
 

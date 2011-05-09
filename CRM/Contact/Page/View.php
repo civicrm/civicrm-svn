@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -203,8 +203,9 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
             if ($config->userFramework == 'Drupal') {
                 $userRecordUrl = CRM_Utils_System::url( 'user/' . $uid );
             } else if ( $config->userFramework == 'Joomla' ) {
-                $userRecordUrl = $config->userFrameworkBaseURL . 
-                    'index2.php?option=com_users&view=user&task=edit&cid[]=' . $uid;
+                $userRecordUrl = $config->userFrameworkVersion > 1.5 ? 
+                    $config->userFrameworkBaseURL ."index.php?option=com_users&view=user&task=user.edit&id=". $uid : 
+                    $config->userFrameworkBaseURL ."index2.php?option=com_users&view=user&task=edit&id[]=". $uid;
             } else {
                 $userRecordUrl = null;
             }

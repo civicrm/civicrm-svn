@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -115,6 +115,10 @@ if ( framework != 'Joomla') {
 	   cj('#civicrm-menu').css({top: "scroll", position: "fixed", top: "0px"}); 
 	   cj('div.sticky-header').css({ 'top' : "23px", position: "fixed" });
 	});
+
+	if ( cj('#edit-shortcuts').length > 0 ) {
+	   cj('#civicrm-menu').css({ 'width': '97%' });
+	}
 } else {
 	   cj('div#toolbar-box div.m').html(cj("#menu-container").html());
 	   cj('#civicrm-menu').ready( function(){ 

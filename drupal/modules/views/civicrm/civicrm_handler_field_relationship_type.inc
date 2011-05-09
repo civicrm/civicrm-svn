@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -38,7 +38,7 @@ class civicrm_handler_field_relationship_type extends views_handler_field {
                 return;
             }
             require_once 'CRM/Core/PseudoConstant.php';
-            $relationshipType_array = CRM_Core_PseudoConstant::relationshipType( );
+            $relationshipType_array = CRM_Core_PseudoConstant::relationshipType( 'name' );
 			
 			// relationshipType() returns information about relations as array with fields
 			// 'name_a_b', 'name_b_a', 'contact_type_a' and 'contact_type_b'.

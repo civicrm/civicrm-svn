@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -450,7 +450,7 @@ AND        a.is_deleted = 0
         }
 
         $activityInstances = $this->activityTypes( $xml->ActivityTypes, true );
-        return $activityTypeName ? $activityInstances[$activityTypeName] : $activityInstances;
+        return $activityTypeName ? CRM_Utils_Array::value( $activityTypeName, $activityInstances ) : $activityInstances;
     }
 
     function getCaseManagerRoleId( $caseType ) {

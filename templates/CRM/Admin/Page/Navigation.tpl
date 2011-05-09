@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -51,7 +51,7 @@
                 ajax:{
                    dataType : "json",
                    async : true, 
-                   url : {/literal}"{crmURL p='civicrm/ajax/menu' h=0 }&key={crmKey name='civicrm/ajax/menu'}"{literal}
+                   url : {/literal}"{crmURL p='civicrm/ajax/menu' h=0 q='key='}{crmKey name='civicrm/ajax/menu'}"{literal}
                      }
             },
              rules : {
@@ -95,7 +95,7 @@
 
       var nodeID  = node.rslt.obj.attr('id').replace("node_","");
       var newName = node.rslt.new_name;
-      var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }&key={crmKey name='civicrm/ajax/menutree'}"{literal};
+      var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 q='key='}{crmKey name='civicrm/ajax/menutree'}"{literal};
           cj.get( postURL + '&type=rename&id=' + nodeID + '&data=' + newName, 
                           function (data) {
               			    cj("#reset-menu").show( );
@@ -107,7 +107,7 @@
       var isDelete  = confirm( deleteMsg );
           if( isDelete ) {
               var nodeID  = node.rslt.obj.attr('id').replace("node_","");
-              var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }&key={crmKey name='civicrm/ajax/menutree'}"{literal};
+              var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 q='key='}{crmKey name='civicrm/ajax/menutree'}"{literal};
               cj.get( postURL + '&type=delete&id=' + nodeID,
                  function (data) {
                 		cj("#reset-menu").show( );
@@ -122,7 +122,7 @@
                var refID  = node.rslt.np.attr('id').replace("node_","");
 	        if (isNaN( refID ) ){ refID =''; }
 	        var ps = node.rslt.cp+i;
-               var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }&key={crmKey name='civicrm/ajax/menutree'}"{literal};
+               var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 q='key='}{crmKey name='civicrm/ajax/menutree'}"{literal};
                cj.get( postURL + '&type=move&id=' +  nodeID + '&ref_id=' + refID + '&ps='+ps, 
                function (data) {
              		cj("#reset-menu").show( );

@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -161,7 +161,30 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $pledge   =& civicrm_api3_pledge_delete($pledgeID);
 
     }
-    
+/*
+ * test that using original_installment_amount rather than pledge_original_installment_amount works
+ * Pledge field behaviour is a bit random & so pledge has come to try to handle both unique & non -unique fields
+ */
+    function testCreatePledgeWithNonUnique()
+    {
+        $params = $this->params; 
+        $params['original_installment_amount']   =    $params['pledge_original_installment_amount'];
+        
+        unset ($params['pledge_original_installment_amount']);
+        $result=& civicrm_api3_pledge_create($params);
+        $result = civicrm_api('Pledge', 'Get', array('version' => 3, 'id' => $result['id'], 'sequential' => 1));
+        $pledge = $result['values'][0];
+ 
+        $this->assertEquals(0, $result['is_error'], "in line " . __LINE__);
+        $this->assertEquals(100.00, $pledge['pledge_amount']     , 'In line ' . __LINE__); 
+        $this->assertEquals('year',$pledge['pledge_frequency_unit'], 'In line ' . __LINE__);
+        $this->assertEquals(5,$pledge['pledge_frequency_interval'], 'In line ' . __LINE__);
+        $this->assertEquals(20, $pledge['pledge_next_pay_amount'],'In line ' . __LINE__);
+
+        $pledgeID = array( 'pledge_id' => $result['id'], 'version' => 3 );
+        $pledge   =& civicrm_api3_pledge_delete($pledgeID);
+
+    }
         function testCreateCancelPledge()
     {
 
@@ -290,8 +313,8 @@ class api_v3_PledgeTest extends CiviUnitTestCase
      */
     function testCheckTidyUpofPledge(){
       $result = civicrm_api3_pledge_get(array('version' => 3));
-      $this->assertEquals(0, $result['is_error']);
-      $this->assertEquals(0, $result['count']);
+      $this->assertEquals(0, $result['is_error'], 'in line ' . __LINE__);
+      $this->assertEquals(0, $result['count'], 'in line ' . __LINE__);
     }
 
 }

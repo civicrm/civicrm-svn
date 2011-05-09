@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -65,7 +65,6 @@ function civicrm_api3_contact_create( $params )
   _civicrm_api3_initialize( true );
   try {
     civicrm_api3_verify_mandatory($params,null,array('contact_type'));
-    civicrm_api3_api_check_permission(__FUNCTION__, $params, true);
 
     require_once 'CRM/Utils/Array.php';
     $contactID = CRM_Utils_Array::value( 'contact_id', $params );
@@ -325,15 +324,7 @@ function _civicrm_api3_contact_check_params( $params, $dupeCheck = true, $dupeEr
                                                   ),
                           );
         
-        // cannot create a contact with empty params
-        if ( empty( $params ) ) {
-            return civicrm_api3_create_error( 'Input Parameters empty' );
-        }
-        
-        if ( ! array_key_exists( 'contact_type', $params ) ) {
-            return civicrm_api3_create_error( 'Contact Type not specified' );
-        }
-        
+
         // contact_type has a limited number of valid values
         $fields = CRM_Utils_Array::value( $params['contact_type'], $required );
         if ( $fields == null ) {

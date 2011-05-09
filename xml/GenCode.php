@@ -1,4 +1,6 @@
 <?php
+
+ini_set( 'include_path', '.' . PATH_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'packages' . PATH_SEPARATOR . '..' );
 ini_set( 'memory_limit', '512M' );
 
 $versionFile = "version.xml";
@@ -33,10 +35,10 @@ if ( !in_array($cms, array('drupal', 'standalone', 'joomla')) ) {
     copy("../{$cms}/civicrm.config.php.{$cms}", '../civicrm.config.php');
 }
 
-require_once '../civicrm.config.php';
-
 require_once 'Smarty/Smarty.class.php';
 require_once 'PHP/Beautifier.php';
+
+require_once '../civicrm.config.php';
 
 require_once 'CRM/Core/Config.php';
 require_once 'CRM/Core/I18n.php';
@@ -106,9 +108,7 @@ foreach ($tables as $table) {
 }
 
 // TODO deal with the BAO's too ?
-$fd = fopen( $CoreDAOCodePath . ".listAll.php", "w" );
-fputs( $fd, $allDAO );
-fclose($fd);
+file_put_contents($CoreDAOCodePath . ".listAll.php", $allDAO );
 
 
 //echo "\n\n\n\n\n*****************************************************************************\n\n";
@@ -126,10 +126,7 @@ foreach( $tbls as $d => $t ) {
 }
 
 $truncate = $truncate . "</dataset>\n";
-$ft = fopen( $sqlCodePath . "../tests/phpunit/CiviTest/truncate.xml", "w" );
-fputs( $ft, $truncate );
-fclose( $ft );
-unset( $ft );
+file_put_contents( $sqlCodePath . "../tests/phpunit/CiviTest/truncate.xml", $truncate );
 unset( $truncate );
 
 $smarty->assign_by_ref( 'database', $database );
@@ -139,27 +136,15 @@ $tmpArray = array_reverse( $tmpArray );
 $smarty->assign_by_ref( 'dropOrder', $tmpArray );
 $smarty->assign( 'mysql', 'modern' );
 
-echo "Generating sql file\n";
-$sql = $smarty->fetch( 'schema.tpl' );
-
 createDir( $sqlCodePath );
-$fd = fopen( $sqlCodePath . "civicrm.mysql", "w" );
-fputs( $fd, $sql );
-fclose($fd);
+echo "Generating sql file\n";
+file_put_contents($sqlCodePath . "civicrm.mysql", $smarty->fetch( 'schema.tpl' ));
 
 echo "Generating sql drop tables file\n";
-$sql = $smarty->fetch( 'drop.tpl' );
-
-createDir( $sqlCodePath );
-$fd = fopen( $sqlCodePath . "civicrm_drop.mysql", "w" );
-fputs( $fd, $sql );
-fclose($fd);
+file_put_contents($sqlCodePath . "civicrm_drop.mysql", $smarty->fetch( 'drop.tpl' ));
 
 echo "Generating navigation file\n";
-$fd  = fopen( $sqlCodePath . "civicrm_navigation.mysql", "w" );
-$sql = $smarty->fetch( 'civicrm_navigation.tpl' );
-fputs( $fd, $sql );
-fclose($fd);
+file_put_contents($sqlCodePath . "civicrm_navigation.mysql", $smarty->fetch( 'civicrm_navigation.tpl' ));
 
 // write the civicrm data file
 // and translate the {ts}-tagged strings
@@ -200,23 +185,12 @@ foreach ($locales as $locale) {
 
     $data = implode("\n", $data);
 
+    $ext = ($locale != 'en_US' ? ".$locale" : '');
     // write the initialize base-data sql script
-    $filename = 'civicrm_data';
-    if ($locale != 'en_US') $filename .= ".$locale";
-    $filename .= '.mysql';
-    $fd = fopen( $sqlCodePath . $filename, "w" );
-    fputs( $fd, $data );
-    fclose( $fd );
+    file_put_contents( $sqlCodePath . "civicrm_data$ext.mysql", $data );
 
     // write the acl sql script
-    $data = $smarty->fetch('civicrm_acl.tpl');
-
-    $filename = 'civicrm_acl';
-    if ($locale != 'en_US') $filename .= ".$locale";
-    $filename .= '.mysql';
-    $fd = fopen( $sqlCodePath . $filename, "w" );
-    fputs( $fd, $data );
-    fclose( $fd );
+    file_put_contents( $sqlCodePath . "civicrm_acl$ext.mysql", $smarty->fetch('civicrm_acl.tpl') );
 }
 echo "\ncivicrm_domain.version := $db_version\n\n";
 
@@ -308,10 +282,7 @@ file_put_contents("$tplCodePath/CRM/common/version.tpl", $svnversion);
 echo "Generating civicrm-version file\n";
 $smarty->assign('db_version',$db_version);
 $smarty->assign('cms',ucwords($cms));
-$fd  = fopen( $phpCodePath . "civicrm-version.php", "w" );
-$sql = $smarty->fetch( 'civicrm_version.tpl' );
-fputs( $fd, $sql );
-fclose($fd);
+file_put_contents( $phpCodePath . "civicrm-version.txt", $smarty->fetch( 'civicrm_version.tpl' ));
 
 // unlink the templates_c directory
 foreach(glob($tempDir . '/templates_c/*') as $tempFile) {

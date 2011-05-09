@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -341,7 +341,15 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
         //CRM-7172
         require_once 'CRM/Mailing/Info.php';
         if ( CRM_Mailing_Info::workflowEnabled( ) ) {
-            db_query( "UPDATE {permission} SET perm = REPLACE( perm, 'access CiviMail', 'access CiviMail, create mailings, approve mailings, schedule mailings' )" );
+
+            // CRM-7896
+            $roles = user_roles(false, 'access CiviMail');
+            if ( !empty($roles) ) {
+                foreach( array_keys($roles) as $rid ) {
+                    user_role_grant_permissions($rid, array('create mailings', 'approve mailings', 'schedule mailings'));
+                }
+            }
+            
         }
 
         $upgrade =& new CRM_Upgrade_Form( );

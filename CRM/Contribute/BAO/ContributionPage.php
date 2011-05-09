@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -223,7 +223,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
             // set email in the template here
             $tplParams = array(
                 'email'            => $email,
-                'receiptFromEmail' => $values['receipt_from_email'],
+                'receiptFromEmail' => CRM_Utils_Array::value( 'receipt_from_email', $values ),
                 'contactID'        => $contactID,
                 'contributionID'   => $values['contribution_id'],
                 'membershipID'     => CRM_Utils_Array::value('membership_id', $values),

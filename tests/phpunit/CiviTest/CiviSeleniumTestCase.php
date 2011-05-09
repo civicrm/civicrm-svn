@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -163,12 +163,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
        $mon  = date('n', $timeStamp) - 1; // -1 ensures month number is inline with calender widget's month
        $day  = date('j', $timeStamp);
 
-       $this->click ($dateElement);
-       $this->select("css=div#ui-datepicker-div div.ui-datepicker-header div.ui-datepicker-title select.ui-datepicker-month", "value=$mon");
+       $this->click ("{$dateElement}_display");
+       $this->waitForElementPresent("css=div#ui-datepicker-div.ui-datepicker div.ui-datepicker-header div.ui-datepicker-title select.ui-datepicker-month");
+       $this->select("css=div#ui-datepicker-div.ui-datepicker div.ui-datepicker-header div.ui-datepicker-title select.ui-datepicker-month", "value=$mon");
        $this->select("css=div#ui-datepicker-div div.ui-datepicker-header div.ui-datepicker-title select.ui-datepicker-year", "value=$year");
        $this->click ("link=$day");
    }
-
    // 1. set both date and time.
    function webtestFillDateTime( $dateElement, $strToTimeArgs = null ) {
        $this->webtestFillDate( $dateElement, $strToTimeArgs );

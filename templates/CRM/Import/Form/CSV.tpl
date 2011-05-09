@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<fieldset><legend>{ts}Upload CSV File{/ts}</legend>
+<h3>{ts}Upload CSV File{/ts}</h3>
   <table class="form-layout">
     <tr>
         <td class="label">{$form.uploadFile.label}</td>
@@ -39,4 +39,4 @@
         </td>
     </tr>
   </table>
-</fieldset>
+

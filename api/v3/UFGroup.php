@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -71,6 +71,25 @@ function civicrm_api3_uf_group_create($params) {
 		return civicrm_api3_create_error ( $e->getMessage () );
 	}
 }
+
+/**
+ * Returns array of uf groups (profiles)  matching a set of one or more group properties
+ *
+ * @param array $params  (reference) Array of one or more valid
+ *                       property_name=>value pairs. If $params is set
+ *                       as null, all surveys will be returned
+ *
+ * @return array  (reference) Array of matching profiles
+ * @access public
+ */
+function civicrm_api3_uf_group_get( $params )
+{
+
+    civicrm_api3_verify_mandatory($params);
+    return _civicrm_api3_basic_get('CRM_Core_BAO_UFGroup', $params);
+
+}
+
 
 /**
  * Delete uf group

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -159,7 +159,7 @@ AND    {$this->_componentClause}";
             require_once 'CRM/Mailing/BAO/Mailing.php';
             list( $contactDetails ) = 
                 CRM_Mailing_BAO_Mailing::getDetails( $this->_contactIds, $returnProperties, false, false );
-            
+            $suppressedEmails = 0;
             foreach ( $contactDetails as $id => $values ) {
                 if ( empty( $values['email'] ) ||
                      CRM_Utils_Array::value( 'do_not_email', $values ) || 

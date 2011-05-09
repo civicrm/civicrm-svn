@@ -1,30 +1,30 @@
 <?php
 
 /*
-  +--------------------------------------------------------------------+
-  | CiviCRM version 3.4                                                |
-  +--------------------------------------------------------------------+
-  | Copyright CiviCRM LLC (c) 2004-2011                                |
-  +--------------------------------------------------------------------+
-  | This file is a part of CiviCRM.                                    |
-  |                                                                    |
-  | CiviCRM is free software; you can copy, modify, and distribute it  |
-  | under the terms of the GNU Affero General Public License           |
-  | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
-  |                                                                    |
-  | CiviCRM is distributed in the hope that it will be useful, but     |
-  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
-  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
-  | See the GNU Affero General Public License for more details.        |
-  |                                                                    |
-  | You should have received a copy of the GNU Affero General Public   |
-  | License and the CiviCRM Licensing Exception along                  |
-  | with this program; if not, contact CiviCRM LLC                     |
-  | at info[AT]civicrm[DOT]org. If you have questions about the        |
-  | GNU Affero General Public License or the licensing of CiviCRM,     |
-  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
-  +--------------------------------------------------------------------+
-*/
+ +--------------------------------------------------------------------+
+ | CiviCRM version 4.0                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+ */
 
 /**
  * File for the CiviCRM APIv3 activity functions
@@ -112,7 +112,11 @@ function civicrm_api3_activity_create( $params )
 function civicrm_api3_activity_getfields( $params ) {
     require_once 'CRM/Activity/BAO/Activity.php';
     $bao = new CRM_Activity_BAO_Activity();
-    return civicrm_api3_create_success($bao->exportableFields('Activity'),$params,$bao);
+    $fields =$bao->exportableFields('Activity');
+    //activity_id doesn't appear to work so let's tell them to use 'id' (current focus is ensuring id works)
+    $fields['id'] = $fields['activity_id'];
+    unset ($fields['activity_id']);
+    return civicrm_api3_create_success($fields ,$params,$bao);
 }
 
 
@@ -122,9 +126,7 @@ function civicrm_api3_activity_getfields( $params ) {
  * @param array $params
  * @return array
  *
- * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
- * @todo Erik Hommel 16 dec 2010 check if all DB fields are returned
- * @todo - this is a very limited GET not a search
+ * @todo - if you pass in contact_id do you / can you get custom fields
  * 
  * {@example ActivityGet.php 0}
  */
@@ -132,23 +134,26 @@ function civicrm_api3_activity_getfields( $params ) {
 function civicrm_api3_activity_get( $params ) {
     _civicrm_api3_initialize( true );
     try{
-
-        civicrm_api3_verify_one_mandatory($params,'',array('contact_id','activity_id','id'));
+ 
+        civicrm_api3_verify_one_mandatory($params);
+        
         if (!empty($params['contact_id'])){
             $activities = _civicrm_api3_activities_get_by_contact($params['contact_id']);
             return civicrm_api3_create_success($activities,$params);
         }
-        $activityId = CRM_Utils_Array::value( 'activity_id', $params );
-        if(empty($activityId)){
-            $activityId = CRM_Utils_Array::value( 'id', $params );  
+            
+        $activity = _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params, FALSE);
+        
+        if ( $returnCustom && !empty( $activity ) ) {
+            $customdata = array();
+            $customdata = _civicrm_api3_activity_custom_get( array( 'activity_id'      => $activityId,
+                                                                    'activity_type_id' => CRM_Utils_Array::value('activity_type_id',$activity[$dao->id]  ))  );
+            if ( is_array( $customdata ) && !empty( $customdata ) ) {
+                $activity = array_merge( $activity, $customdata );
+            }
         }
-        $activity = _civicrm_api3_activity_get( $activityId );
+         return civicrm_api3_create_success( $activity ,$params);
 
-        if ( $activity ) {
-            return civicrm_api3_create_success( $activity ,$params);
-        } else {
-            return civicrm_api3_create_error(  'Invalid Data'  );
-        }
     } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {
@@ -197,34 +202,6 @@ function civicrm_api3_activity_delete( $params )
     }
 }
 
-/**
- * Retrieve a specific Activity by Id.
- *
- * @param int $activityId
- * @todo this should probably be merged into main function
- * @return array (reference)  activity object
- * @access public
- *  */
-function _civicrm_api3_activity_get( $activityId, $returnCustom = true ) {
-    $dao = new CRM_Activity_BAO_Activity();
-    $dao->id = $activityId;
-    if( $dao->find( true ) ) {
-        $activity = array();
-        _civicrm_api3_object_to_array( $dao, $activity[$dao->id] );
-        //also return custom data if needed.
-        if ( $returnCustom && !empty( $activity ) ) {
-            $customdata = array();
-            $customdata = _civicrm_api3_activity_custom_get( array( 'activity_id'      => $activityId,
-                                                                    'activity_type_id' => CRM_Utils_Array::value('activity_type_id',$activity[$dao->id]  ))  );
-            if ( is_array( $customdata ) && !empty( $customdata ) ) {
-                $activity = array_merge( $activity, $customdata );
-            }
-        }
-        return $activity;
-    } else {
-        return false;
-    }
-}
 
 /**
  * Function to check for required params
@@ -234,7 +211,7 @@ function _civicrm_api3_activity_get( $activityId, $returnCustom = true ) {
  *
  * @return array $error array with errors
  */
-function _civicrm_api3_activity_check_params ( $params)
+function _civicrm_api3_activity_check_params ( & $params)
 {
 
 
@@ -281,7 +258,7 @@ SELECT  count(*)
 
 
     require_once 'CRM/Core/PseudoConstant.php';
-    $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name' );
+    $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name', true );
 
     $activityName   = CRM_Utils_Array::value( 'activity_name', $params );
     $activityTypeId = CRM_Utils_Array::value( 'activity_type_id', $params );

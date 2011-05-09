@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -60,7 +60,6 @@ function civicrm_api3_event_create( $params )
 {
   _civicrm_api3_initialize( true );
   try {
-    civicrm_api3_api_check_permission(__FUNCTION__, $params, true);
     civicrm_api3_verify_mandatory ($params,'CRM_Event_DAO_Event',array ('start_date','event_type_id','title'));
 
     $ids['eventTypeId'] = (int) $params['event_type_id'];

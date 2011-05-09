@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -465,9 +465,12 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
      */
     public function defaultContactCountry( ) {
         static $cachedContactCountry = null;
-        if ( ! $cachedContactCountry ) {
+        
+        if ( ! empty ($this->defaultContactCountry) &&
+             ! $cachedContactCountry ) {
             $countryIsoCodes = CRM_Core_PseudoConstant::countryIsoCode( );
-            $cachedContactCountry = $countryIsoCodes[$this->defaultContactCountry];
+            $cachedContactCountry = CRM_Utils_Array::value( $this->defaultContactCountry,
+                                                            $countryIsoCodes );
         }
         return $cachedContactCountry;
     }

@@ -70,12 +70,6 @@ function civicrm_invoke( ) {
     $task = CRM_Utils_Array::value( 'task', $_GET, '' );
     $args = explode( '/', trim( $task ) );
 
-    // check permission
-    if ( ! civicrm_check_permission( $args ) ) {
-        echo "You do not have permission to execute this url.";
-        return;
-    }
-
     require_once 'CRM/Utils/System/Joomla.php';
     CRM_Utils_System_Joomla::addHTMLHead( null, true );
 
@@ -85,71 +79,3 @@ function civicrm_invoke( ) {
 
     CRM_Core_Invoke::invoke( $args );
 }
-
-function civicrm_check_permission( $args ) {
-    if ( $args[0] != 'civicrm' ) {
-        return false;
-    }
-
-    // all profile and file urls, as well as user dashboard and tell-a-friend are valid
-    $arg1 = CRM_Utils_Array::value( 1, $args );
-    $validPaths = array( 'profile', 'user', 'dashboard', 'friend', 'file', 'ajax' );
-    if ( in_array( $arg1 , $validPaths ) ) {
-        return true;
-    }
-    
-    $config = CRM_Core_Config::singleton( );
-    
-    $arg2 = CRM_Utils_Array::value( 2, $args );
-    $arg3 = CRM_Utils_Array::value( 3, $args );
-
-    // allow editing of related contacts
-    if ( $arg1 == 'contact' &&
-         $arg2 == 'relatedcontact' ) {
-        return true;
-    }
-
-    // a contribution page / pcp page                                                                                                                                                                                                     
-    if ( in_array( 'CiviContribute', $config->enableComponents ) ) {
-        if ( $arg1 == 'contribute' &&
-            in_array( $arg2, array( 'transact', 'campaign', 'pcp') ) ) {
-            return true;
-        }
-    }
-
-    // an event registration page is valid
-    if ( in_array( 'CiviEvent', $config->enableComponents ) ) {
-        if ( $arg1 == 'event' &&
-             in_array( $arg2, array( 'register', 'info', 'participant', 'ical', 'confirm' ) ) ) {
-            return true;
-        }
-
-        // also allow events to be mapped
-        if ( $arg1 == 'contact' &&
-             $arg2 == 'map'     &&
-             $arg3 == 'event'   ) {
-            return true;
-        }
-    }
-    
-    // allow mailing urls to be processed
-    if ( $arg1 == 'mailing' &&
-         in_array( 'CiviMail', $config->enableComponents ) ) {
-        if ( in_array( $arg2,
-                       array( 'forward', 'unsubscribe', 'resubscribe', 'optout', 'subscribe', 'confirm' ) ) ) {
-            return true;
-        }
-    }
-
-    // allow petition sign in, CRM-7401
-    if ( in_array( 'CiviCampaign', $config->enableComponents ) ) {
-        if ( $arg1 == 'petition' &&
-             $arg2 == 'sign' ) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -795,7 +795,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         }
         $calcDates = CRM_Member_BAO_MembershipType::getDatesForMembershipType($params['membership_type_id'],
                                                                               $joinDate, $startDate, $endDate);
-        
         $dates = array( 'join_date',
                         'start_date',
                         'end_date',
@@ -809,7 +808,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             if ( !$date ) {
                 $date = CRM_Utils_Array::value( $d, $calcDates );
             }
-            $params[$d] = CRM_Utils_Date::processDate( $date );
+            $params[$d] = CRM_Utils_Date::processDate( $date, null, true );
         }
         
         if ( $this->_id ) {

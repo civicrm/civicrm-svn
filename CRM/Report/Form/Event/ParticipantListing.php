@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -203,7 +203,8 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                             CRM_Utils_Array::value( 'type', $field ); 
                         $this->_columnHeaders["{$tableName}_{$fieldName}"]['no_display'] =
                             CRM_Utils_Array::value( 'no_display', $field );
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
+                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = 
+                            CRM_Utils_Array::value( 'title', $field );
 
                     }
                 }

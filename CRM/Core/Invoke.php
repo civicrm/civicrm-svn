@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -130,7 +130,8 @@ class CRM_Core_Invoke
 
         if ( $item ) {
             // CRM-7656 - make sure we send a clean sanitized path to create printer friendly url
-            $printerFriendly = CRM_Utils_System::makeURL( 'snippet', false, false, $item['path'] ) . '2';
+            $printerFriendly = CRM_Utils_System::makeURL( 'snippet', false, false, 
+                                                          CRM_Utils_Array::value( 'path', $item ) ) . '2';
             $template->assign ( 'printerFriendly', $printerFriendly );
 
             if ( ! array_key_exists( 'page_callback', $item ) ) {

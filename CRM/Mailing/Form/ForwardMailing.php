@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -35,7 +35,7 @@
  */
 
 require_once 'CRM/Core/Form.php';
-civicrm_api_include('mailer', false, 3);
+civicrm_api_include('mailer', false, 2);
 
 class CRM_Mailing_Form_ForwardMailing extends CRM_Core_Form
 {

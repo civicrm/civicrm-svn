@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -40,7 +40,7 @@ class CRM_Mailing_Page_Optout extends CRM_Mailing_Page_Common
 {
     function run() {
         $this->_type = 'optout';
-        parent::run();
+        return parent::run();
     }
 }
 

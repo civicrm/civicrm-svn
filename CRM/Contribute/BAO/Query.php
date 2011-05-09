@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -720,6 +720,11 @@ class CRM_Contribute_BAO_Query
         //add contribution table
         if ( CRM_Utils_Array::value( 'civicrm_product', $tables ) ) {
             $tables = array_merge( array( 'civicrm_contribution' => 1), $tables );
+        }
+
+        if ( CRM_Utils_Array::value( 'civicrm_contribution_product', $tables ) &&
+             !CRM_Utils_Array::value( 'civicrm_product', $tables ) ) {
+            $tables['civicrm_product'] = 1;
         }
     }
 }

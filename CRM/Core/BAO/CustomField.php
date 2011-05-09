@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -345,8 +345,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                                        $onlySubType = false,
                                        $checkPermission = true ) 
     {
-        //$onlySubType = false;
-        
         if ( $customDataType && 
              !is_array( $customDataType ) ) {
             
@@ -522,10 +520,11 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
     /**
      * Return the field ids and names (with groups) for import purpose.
      *
-     * @param int      $contactType   Contact type
-     * @param boolean  $showAll       If true returns all fields (includes disabled fields)
-     * @param boolean  $onlyParent    return fields ONLY related to basic types
-     * @param boolean  $search        when called from search and multiple records need to be returned
+     * @param int      $contactType     Contact type
+     * @param boolean  $showAll         If true returns all fields (includes disabled fields)
+     * @param boolean  $onlyParent      return fields ONLY related to basic types
+     * @param boolean  $search          when called from search and multiple records need to be returned
+     * @param boolean  $checkPermission if false, do not include permissioning clause 
      *
      * @return array   $fields - 
      *
@@ -533,12 +532,21 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
      * @static
      */
     public static function &getFieldsForImport( $contactType = 'Individual',
-                                                $showAll = false, $onlyParent = false,
-                                                $search = false ) 
+                                                $showAll = false,
+                                                $onlyParent = false,
+                                                $search = false,
+                                                $checkPermission = true ) 
     {
         // Note: there are situations when we want getFieldsForImport() return fields related 
         // ONLY to basic contact types, but NOT subtypes. And thats where $onlyParent is helpful
-        $fields =& self::getFields( $contactType, $showAll, false, null, null, $onlyParent );
+        $fields =& self::getFields( $contactType,
+                                    $showAll,
+                                    false,
+                                    null,
+                                    null,
+                                    $onlyParent,
+                                    false,
+                                    $checkPermission );
 
         $importableFields = array();
         foreach ($fields as $id => $values) {
@@ -1428,23 +1436,6 @@ SELECT id
         if ( $customFields[$customFieldId]['data_type'] == 'Date' ) {
             if ( ! CRM_Utils_System::isNull( $value ) ) {
                 $format = $customFields[$customFieldId]['date_format'];
-                
-                if ( in_array( $format, array('dd-mm', 'mm/dd' ) ) ) {
-                    $dateTimeArray = explode(' ', $value);
-
-                    $separator = '/';
-                    if ( $format == 'dd-mm' ) {
-                        $separator = '-';
-                    }
-                    $value = $dateTimeArray[0] . $separator . '1902';
-                    
-                    if ( array_key_exists( 1, $dateTimeArray) ) {
-                        $value .= ' ' . $dateTimeArray[1];
-                    }
-                } else if ( $format == 'yy' ) {
-                    $value = "01-01-{$value}";
-                }
-                
                 $date = CRM_Utils_Date::processDate( $value, null, false, 'YmdHis', $format );
             }
             $value = $date;
@@ -1630,11 +1621,22 @@ SELECT $columnName
         CRM_Core_BAO_SchemaHandler::alterFieldSQL( $params, $indexExist );
     }
 
-    static function getTableColumnGroup( $fieldID ) 
+    /**
+     * Get the database table name and column name for a custom field
+     *
+     * @param int     $fieldID - the fieldID of the custom field
+     * @param boolean $force   - force the sql to be run again (primarily used for tests)
+     *
+     * @return array           - fatal is fieldID does not exists, else array of tableName, columnName
+     * @static
+     * @public
+     */
+    static function getTableColumnGroup( $fieldID, $force = false ) 
     {
         static $cache = array( );
 
-        if ( ! array_key_exists( $fieldID, $cache ) ) {
+        if ( ! array_key_exists( $fieldID, $cache ) ||
+             $force ) {
             $query = "
 SELECT cg.table_name, cf.column_name, cg.id
 FROM   civicrm_custom_group cg,

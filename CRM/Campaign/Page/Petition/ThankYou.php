@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -54,6 +54,6 @@ class CRM_Campaign_Page_Petition_ThankYou extends CRM_Core_Page
 			 * 2 = send a confirmation request email     
 			 */		
 		
-		parent::run();		
+		return parent::run();		
     }   
 }

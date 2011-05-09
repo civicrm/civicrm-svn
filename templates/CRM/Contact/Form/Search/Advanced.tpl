@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -105,7 +105,7 @@ cj(function() {
 
     cj('#component_mode').change( function( ) {
         // reset task dropdown if user changes component mode and it exists
-	    if ($("#task").length > 0) {
+	    if (cj("#task").length > 0) {
 	        cj('#task').val( '' );
 	    }
         var selectedValue = cj(this).val( );

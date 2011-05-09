@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -25,17 +25,11 @@
  +--------------------------------------------------------------------+
  */
 
-/*
- *DRAFT CODE WRITTEN BY EILEEN still dev version (pre-ALPHA)
- *Starting point was Contribute API & some portions are still just that with
- *contribute replaced by pledge & not yet tested
- * have only been using create, delete functionality
- */
 
 /**
- * File for the CiviCRM APIv2 Pledge functions
+ * File for the CiviCRM APIv3 Pledge functions
  *
- * @package CiviCRM_APIv2
+ * @package CiviCRM_APIv3
  * @subpackage API_Pledge_Payment
  *
  * @copyright CiviCRM LLC (c) 2004-2011
@@ -47,8 +41,8 @@
  * Include utility functions
  */
 require_once 'api/v3/utils.php';
-require_once 'CRM/Utils/Rule.php';
 require_once 'CRM/Pledge/BAO/Payment.php';
+
 /**
  * Add or update a plege payment. Pledge Payment API doesn't actually add a pledge 
  *  if the request is to 'create' and 'id' is not passed in
@@ -64,11 +58,9 @@ require_once 'CRM/Pledge/BAO/Payment.php';
  * @access public
  */
 function civicrm_api3_pledge_payment_create( $params ) {
-  _civicrm_api3_initialize(true );
-  try{
+
     civicrm_api3_verify_mandatory($params,null,array('pledge_id','status_id'));
 
-    require_once 'CRM/Pledge/BAO/Payment.php'; 
     $paymentParams =$params;
     if (empty($params['id']) && !CRM_Utils_Array::value('option.create_new',$params)){
       $paymentDetails = CRM_Pledge_BAO_Payment::getOldestPledgePayment($params['pledge_id']);
@@ -87,11 +79,6 @@ function civicrm_api3_pledge_payment_create( $params ) {
      CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $params['pledge_id']);
     
     return civicrm_api3_create_success( $result ,$params,$dao);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
    
 }
 
@@ -105,8 +92,7 @@ function civicrm_api3_pledge_payment_create( $params ) {
  * @access public
  */
 function civicrm_api3_pledge_payment_delete( $params ) {
-  _civicrm_api3_initialize(true );
-  try{
+
     civicrm_api3_verify_mandatory($params,null,array('id'));
     $id = CRM_Utils_Array::value( 'id', $params );
     require_once 'CRM/Pledge/BAO/Pledge.php';
@@ -116,11 +102,7 @@ function civicrm_api3_pledge_payment_delete( $params ) {
       return civicrm_api3_create_error(  'Could not delete payment'  );
     }
 
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -137,40 +119,9 @@ function civicrm_api3_pledge_payment_delete( $params ) {
  */
 function civicrm_api3_pledge_payment_get( $params ) {
 
-try {
-  _civicrm_api3_initialize( true );
-
     civicrm_api3_verify_mandatory($params);
+    return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);  
 
-    $bao = new CRM_Pledge_BAO_Payment();
-    $fields = array_keys($bao->fields());
-    foreach ( $fields as $name) {
-        if (array_key_exists($name, $params)) {
-            $bao->$name = $params[$name];
-        }
-    }
-
-    if(empty($params['pledge_payment_id']) && isset($params['id'])){
-      $bao->id = $params['id'];   
-    }
-
-    if ( $bao->find() ) {
-      $results = array();
-      while ( $bao->fetch() ) {
-        _civicrm_api3_object_to_array( $bao, $result );
-        $results[$bao->id] = $result;
-      }
- 
-      return civicrm_api3_create_success($results,$params,$bao);
-    } else {
-      return civicrm_api3_create_success(array(),$params,$bao);
-    }
-
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
 }
 
 
@@ -192,7 +143,7 @@ function civicrm_api3_pledge_payment_getfields($action = 'get'){
 
     $dao = new CRM_Pledge_BAO_Payment();
 
-    $fields = $dao->getFields();
+    $fields = $dao->fields();
     switch ($action){
       case 'create' :
         $fields['option.create_new'] = "Create new field rather than update an unpaid payment";

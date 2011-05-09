@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -182,12 +182,17 @@ class CRM_Core_Page {
             }
             CRM_Utils_System::civiExit( );
         }
-        $config = CRM_Core_Config::singleton();
-        $content = self::$_template->fetch( 'CRM/common/'. strtolower($config->userFramework) .'.tpl' );
-        echo CRM_Utils_System::theme( 'page', $content, true, $this->_print );
-        return;
-    }
 
+        $config = CRM_Core_Config::singleton();
+        $content = CRM_Utils_System::theme( 'page', 
+                                            self::$_template->fetch( 'CRM/common/'. strtolower($config->userFramework) .'.tpl' ),
+                                            true,
+                                            $this->_print );
+        if ( $config->userFramework == 'Drupal' ) {
+            return $content;
+        }
+    }
+    
     /**
      * Store the variable with the value in the form scope
      *

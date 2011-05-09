@@ -9,7 +9,14 @@
 </style>
 <script>
 resourceBase = '{$config->resourceBase}';
-restURL = '{crmURL p="civicrm/ajax/rest"}';
+if (jQuery) {ldelim}  
+   var head= document.getElementsByTagName('head')[0];
+   var script= document.createElement('script');
+   script.type= 'text/javascript';
+   script.src= resourceBase + 'js/packages/jquery/jquery.js';
+   head.appendChild(script);
+{rdelim} 
+restURL = '{crmURL p="civicrm/ajax/rest" h=0}';
 if (restURL.indexOf('?') == -1 )
   restURL = restURL + '?';
 else 

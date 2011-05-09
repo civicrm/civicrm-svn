@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -84,9 +84,10 @@ cj(document).ready( function( ) {
            
 </script>
 {/literal}
+<div class="clear"></div>
+</div> {* crm-content-block ends here *}
 {/if}
 
 
-<div class="clear"></div>
-</div> {* crm-content-block ends here *}
+
 

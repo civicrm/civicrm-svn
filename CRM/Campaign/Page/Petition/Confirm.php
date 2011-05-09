@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -80,7 +80,7 @@ class CRM_Campaign_Page_Petition_Confirm extends CRM_Core_Page
 		$params['activityId'] = $activity_id;
 		CRM_Campaign_BAO_Petition::sendEmail( $params, CRM_Campaign_Form_Petition_Signature::EMAIL_THANK );
 
-        parent::run();
+        return parent::run();
     }
     
     /**

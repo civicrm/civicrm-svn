@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -317,7 +317,7 @@ class CRM_Contact_Form_Task_EmailCommon
         $subject    = $formValues['subject'];
 
         // CRM-5916: prepend case id hash to CiviCase-originating emails’ subjects
-        if ($form->_caseId) {
+        if ( isset($form->_caseId) && is_numeric($form->_caseId) ) {
             $hash = substr(sha1(CIVICRM_SITE_KEY . $form->_caseId), 0, 7);
             $subject = "[case #$hash] $subject";
         }
@@ -387,8 +387,8 @@ class CRM_Contact_Form_Task_EmailCommon
         //Display the name and number of contacts for those email is not sent.
         $emailsNotSent = array_diff_assoc( $form->_allContactDetails, $form->_contactDetails );
         
+        $statusOnHold  = '';
         if ( !empty( $emailsNotSent ) ) {
-            $statusOnHold  = '';
             $statusDisplay = ts('Email not sent to contact(s) (no email address on file or communication preferences specify DO NOT EMAIL or Contact is deceased or Primary email address is On Hold): %1', array(1 => count($emailsNotSent))) . '<br />' . ts('Details') . ': ';
             foreach( $emailsNotSent as $contactId => $values ) {
                 $displayName    = $values['display_name'];
@@ -405,7 +405,7 @@ class CRM_Contact_Form_Task_EmailCommon
             $status[] = $statusDisplay;
         }
         
-        if ( $form->_caseId ) {
+        if ( isset($form->_caseId) && is_numeric($form->_caseId) ) {
             // if case-id is found in the url, create case activity record
             $caseParams = array( 'activity_id' => $activityId,
                                  'case_id'     => $form->_caseId );

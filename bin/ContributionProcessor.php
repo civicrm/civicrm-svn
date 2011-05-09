@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -386,10 +386,6 @@ CRM_Utils_System::authenticateScript(true);
 
 //log the execution of script
 CRM_Core_Error::debug_log_message( 'ContributionProcessor.php');
-
-//load bootstrap to call hooks
-require_once 'CRM/Utils/System.php';
-CRM_Utils_System::loadBootStrap(  );
 
 require_once 'CRM/Core/Lock.php';
 $lock = new CRM_Core_Lock('CiviContributeProcessor');

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -269,7 +269,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             } else if ( in_array( $format, array( 'yy-mm' ) ) ) {
                 $date = $date .'-01';
             } else if ( in_array( $format, array( 'M yy' ) ) ) {
-                $date = '01 '.$date;
+                $date = $date. '-01';
             } else if ( in_array( $format, array( 'yy' ) ) ) {
                 $date = $date.'-01-01';
             }
@@ -288,7 +288,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             } else if ( in_array( $format, array( 'yy-mm' ) ) ) {
                 $date = $date .'-01'; 
             } else if ( in_array( $format, array( 'M yy' ) ) ) {
-                $date = '01 '.$date;
+                $date = $date. '-01';
             } else if ( in_array( $format, array( 'yy' ) ) ) {
                 $date = $date.'-01-01';
             }

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -113,7 +113,8 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
 
         CRM_Mailing_BAO_Mailing::tokenReplace( $this->_mailing );
         
-        if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+        if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
+             CIVICRM_MAIL_SMARTY ) {
             require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
         }
@@ -137,7 +138,7 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
                                            $this->_mailing->from_email,
                                            $this->_mailing->from_email,
                                            true, $details, $attachments );
-
+        
         if ( isset( $this->_mailing->body_html ) ) {
             $header = 'Content-Type: text/html; charset=utf-8';
             $content = $mime->getHTMLBody();

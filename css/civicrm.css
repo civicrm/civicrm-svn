@@ -81,6 +81,7 @@ table.crm-table-group-summary tbody {
 
 #crm-container tr {
     font-size: .95em;
+    background: none;
 }
 
 #crm-container td,
@@ -307,8 +308,14 @@ div.spacer,
 	font-size:14px;
 	font-weight:bold;
 	padding:4px;
-	}
-
+    background: none;
+    border: medium none;
+    background-color: transparent;
+    color: #3E3E3E;
+    position: relative;
+    text-indent: 0px;
+    width: auto;
+}
 
 
 #crm-container fieldset.form-layout {
@@ -464,6 +471,7 @@ div.spacer,
     vertical-align: top;
     padding: 5px;
     white-space: normal;
+    border: none;
 }
 
 #crm-container .form-layout td.report, 
@@ -476,6 +484,7 @@ div.spacer,
 #crm-container .form-layout-compressed th {
     vertical-align: text-top;
     padding: 2px 5px;
+    border: none;
 }
 
 #crm-container .control-panel td {
@@ -569,6 +578,7 @@ div.spacer,
 
 #crm-container div.status {
     background-color:#FFFFCC;
+    background-image:none;
     border:1px solid #FFFF66;
     margin:0.5em 0px;
     padding:0.25em 0.5em;
@@ -715,7 +725,6 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     background-image: url(menu-leaf.png);
 }
 
-#crm-container .crm-loading-element { background-image:url("../i/loading.gif"); width:20px; height:20px;}
 #crm-container .crm-form-block .crm-loading-element { background-image:url("../i/loading-E6E6DC.gif"); }
 
 #crm-container .crm-loading-element  {
@@ -2462,6 +2471,9 @@ span.icon {
 
 
 /* civicrm admin menu */
+#civicrm-menu {
+    height:27px;
+}
 
 #civicrm-menu .ac_input, #crm-container .ac_input {
     background:white url(../i/magnify.gif) no-repeat scroll right center;
@@ -2647,6 +2659,10 @@ div#crm-toolTip #hide-tooltip {
     position    : relative;
     z-index     : 1;
     margin-right : 45px;
+}
+
+#crm-container ul.token-input-list-facebook, ul.token-input-list-facebook li.leaf {
+  list-style-image:none;
 }
 
 /* "don't do this" icons */
@@ -3108,3 +3124,7 @@ div#crm-toolTip
 #crm-container .crm-row-highlight {
     background-color: #FFFFCC !important;
 }
+#crm-container .civicrm-drupal-wysiwyg .collapsed {
+    background: transparent;
+    padding-left: 0px;
+} 

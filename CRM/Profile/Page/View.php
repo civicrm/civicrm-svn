@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -172,7 +172,7 @@ class CRM_Profile_Page_View extends CRM_Core_Page
     function run()
     {
         $this->preProcess();
-        parent::run();
+        return parent::run();
     }
 
     function getTemplateFileName() {

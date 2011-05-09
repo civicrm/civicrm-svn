@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -124,7 +124,7 @@ class CRM_Campaign_Page_Survey extends CRM_Core_Page
         $this->assign('action', $action);
         $this->browse();
 
-        parent::run();
+        return parent::run();
     }
 
 }

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -71,7 +71,13 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
 	  // Search for those two contacts
       $this->click("//ul[@id='civicrm-menu']/li[3]");
       $this->click("//div[@id='root-menu-div']/div[2]/ul/li[2]/div/a");
+
+      // Use class names for menu items since li array can change based on which components are enabled
+      $this->click("css=ul#civicrm-menu li.crm-Search");
+      $this->click("css=ul#civicrm-menu li.crm-Advanced_Search a");
+
       $this->waitForPageToLoad("30000");
+      $this->waitForElementPresent("email");
       $this->type("email", $emailString);
 	  $this->click("_qf_Advanced_refresh");
       $this->waitForPageToLoad("30000");
@@ -97,10 +103,11 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
 	  $this->assertTrue($this->isTextPresent("Total Contact(s) added to group: 2"));
 
 	  // Search by group membership in newly created group
-      $this->click("//ul[@id='civicrm-menu']/li[3]");
-      $this->click("//div[@id='root-menu-div']/div[2]/ul/li[2]/div/a");
+      // Use class names for menu items since li array can change based on which components are enabled
+      $this->click("css=ul#civicrm-menu li.crm-Search");
+      $this->click("css=ul#civicrm-menu li.crm-Advanced_Search a");
       $this->waitForPageToLoad("30000");
-      $this->select("group", "label=". $newGroupName);
+      $this->select("crmasmSelect1", "label=". $newGroupName);
       $this->click("_qf_Advanced_refresh");
       $this->waitForPageToLoad("30000");
 

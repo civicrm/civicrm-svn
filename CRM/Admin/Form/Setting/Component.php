@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -85,7 +85,8 @@ class CRM_Admin_Form_Setting_Component extends  CRM_Admin_Form_Setting
         $errors = array( ); 
         
         if ( is_array( $fields['enableComponents'] ) ) {
-            if ( in_array( 'CiviPledge', $fields['enableComponents'] ) && !in_array( 'CiviContribute', $fields['enableComponents'] ) ) {
+            if ( in_array( 'CiviPledge', $fields['enableComponents'] ) &&
+	     ! in_array( 'CiviContribute', $fields['enableComponents'] ) ) {
                 $errors['enableComponents'] = ts('You need to enable CiviContribute before enabling CiviPledge.');
             }
         }

@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -98,6 +98,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         // visit event dashboard page
         $this->open( $this->sboxPath. 'civicrm/event?reset=1' );
         $this->waitForPageToLoad('30000');
+        $this->waitForTextPresent("Recent Registrations");
         
         // check event present
         $this->assertStringsPresent( array( $eventTitle )  );

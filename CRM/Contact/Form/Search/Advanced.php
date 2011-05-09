@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -132,7 +132,7 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
         }
 
         $this->_paneTemplatePath = array( );
-        
+
         foreach ( $paneNames as $name => $type ) {
             if ( ! $this->_searchOptions[$type] ) {
                 continue;
@@ -162,6 +162,7 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
                 }
             }
         }   
+
         $this->assign( 'allPanes', $allPanes );
         if ( ! $this->_searchPane ) {
             parent::buildQuickForm();

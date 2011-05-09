@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -240,12 +240,10 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
             // -lets use relative url for internal use.
             // -make sure relative url should not be htmlize.
             if ( substr( $dao->url, 0, 4 ) != 'http' ) {
-                if ( $config->userFramework == 'Joomla' ||
-                     ( $config->userFramework == 'Drupal' && !variable_get('clean_url', '0' ) ) ) {
-                    $url = CRM_Utils_System::url( $dao->url, null, false, null, false );
-                }
+                $urlParam = CRM_Utils_System::explode( '&', $dao->url, 2 );
+                $url      = CRM_Utils_System::url( $urlParam[0], $urlParam[1], false, null, false );
             }
-            
+
             //get content from url
             $dao->content = CRM_Utils_System::getServerResponse( $url );
             $dao->created_date = date( "YmdHis" );
@@ -253,10 +251,15 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
         }
 
         $dashletInfo = array( 'title'      => $dao->label,
-            'content'    => $dao->content);
+                              'content'    => $dao->content);
 
         if ( $dao->is_fullscreen ) {                       
-            $dashletInfo['fullscreen'] = $dao->content;
+            $fullscreenUrl = $dao->fullscreen_url;
+            if ( substr( $fullscreenUrl, 0, 4 ) != 'http' ) {
+                $urlParam = CRM_Utils_System::explode( '&', $dao->fullscreen_url, 2 );
+                $fullscreenUrl = CRM_Utils_System::url( $urlParam[0], $urlParam[1], true, null, false );
+            }
+            $dashletInfo['fullscreenUrl'] = $fullscreenUrl;
         }                     
 
         return $dashletInfo;
@@ -356,7 +359,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
             $dashlet->id = $dashboardID;
         }
         
-        if ( is_array( $params['permission'] )) {           
+        if ( is_array( CRM_Utils_Array::value( 'permission', $params ) ) ) {           
             $params['permission'] = implode( ',', $params['permission'] );
         }
         $dashlet->copyValues( $params );
