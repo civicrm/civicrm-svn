@@ -345,7 +345,7 @@ class CRM_Utils_Rule
         //field and not defined in the decimal Point in config settings
         if ($config->monetaryDecimalPoint && 
             $config->monetaryDecimalPoint != '.' &&
-            // CRM-7122 also check for Thousands Separator in config settings
+            /* CRM-7122 also check for Thousands Separator in config settings */
             $config->monetaryThousandSeparator != '.' &&
             substr_count( $value, '.' ) ) {
             return false;
