@@ -274,7 +274,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         
         // handle location blocks.
         require_once 'api/v2/Location.php';
-        $mainParams['version'] = $otherParams['version'] = '3.0';
+        $mainParams['version'] = $otherParams['version'] = 3;
         
         $locations['main']  =& civicrm_location_get($mainParams);
         $locations['other'] =& civicrm_location_get($otherParams);

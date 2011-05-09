@@ -108,7 +108,7 @@ class bin_Email2Activity {
 
     function process( $file ) {
         if ( $this->_context == 'activity' ) {
-            civicrm_api_include('activity');
+            require 'api/v2/Activity.php';
             $result = civicrm_activity_process_email( $this->_mailDir . DIRECTORY_SEPARATOR . $file,
                                                       EMAIL_ACTIVITY_TYPE_ID );
         } elseif ( $this->_context == 'case' ) {
