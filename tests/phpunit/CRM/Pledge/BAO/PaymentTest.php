@@ -159,6 +159,116 @@ class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase
     {
 		$payment = CRM_Core_DAO::createTestObject('CRM_Pledge_BAO_Payment');
 		$paymentid = CRM_Pledge_BAO_Payment::deletePayments( 0 );
-		$this->assertEquals(count($paymentid),1,"No payments deleted");
-	}
+    }
+
+    /**
+     *  Test calculateBaseScheduleDate - should give 15th day of month
+     */
+    function testcalculateBaseScheduleDateMonth( ) 
+    {
+      $params =  array(  'scheduled_date'     => '20110510',
+      									 'frequency_unit'     => 'month',
+    										 'frequency_day'      =>  15,
+    										 'frequency_interval' => 2
+      );
+
+		$date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+		$this->assertEquals('20110515000000',$date);
+
+    }
+    
+     /**
+     *  Test calculateBaseScheduleDate - should give original date
+     */
+    function testcalculateBaseScheduleDateDay( ) 
+    {
+      $params =  array(  'scheduled_date'     => '20110510',
+      									 'frequency_unit'     => 'day',
+    										 'frequency_day'      =>  15,
+    										 'frequency_interval' => 2
+      );
+
+		$date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+		$this->assertEquals('20110510000000',$date);
+    }
+    
+     /**
+     * Test calculateBaseScheduleDateWeek - should give the day in the week as indicated
+     * testing each day as this is really the only unit that does anything
+     */
+    function testcalculateBaseScheduleDateWeek( )
+    {
+      $params =  array(  'scheduled_date'     => '20110510',
+      									 'frequency_unit'     => 'week',
+    										 'frequency_day'      =>  1,
+    										 'frequency_interval' => 2
+      );
+
+		$date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+		$this->assertEquals('20110509000000',$date);
+		$params['frequency_day'] =2;
+	  $date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+		$this->assertEquals('20110510000000',$date);
+		$params['frequency_day'] =3;
+	  $date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+		$this->assertEquals('20110511000000',$date);
+		$params['frequency_day'] =4;
+	  $date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+		$this->assertEquals('20110512000000',$date);
+		$params['frequency_day'] =5;
+	  $date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+		$this->assertEquals('20110513000000',$date);
+		$params['frequency_day'] =6;
+	  $date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+		$this->assertEquals('20110514000000',$date);
+	  $params['frequency_day'] =7;
+	  $date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+		$this->assertEquals('20110515000000',$date);
+
+    }
+     /**
+     *  Test calculateBaseScheduleDate - should give original date
+     */
+    function testcalculateBaseScheduleDateYear( ) 
+    {
+      $params =  array(  'scheduled_date'     => '20110510',
+      									 'frequency_unit'     => 'year',
+    										 'frequency_day'      =>  15,
+    										 'frequency_interval' => 2
+      );
+
+		$date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+		$this->assertEquals('20110510000000',$date);
+    }
+    
+     /**
+     *  Test calculateNextScheduledDate - no date provided
+     */
+    function testcalculateNextScheduledDateYear( ) 
+    {
+      $params =  array(  'scheduled_date'     => '20110510',
+      									 'frequency_unit'     => 'year',
+    										 'frequency_day'      =>  15,
+    										 'frequency_interval' => 2
+      );
+
+		$date = CRM_Pledge_BAO_Payment::calculateNextScheduledDate($params,1);
+		$this->assertEquals('20130510000000',$date);
+    }
+    
+     /**
+     *  Test calculateNextScheduledDate - no date provided
+     */
+    function testcalculateNextScheduledDateYearDateProvided( ) 
+    {
+      $params =  array(  'scheduled_date'     => '20110510',
+      									 'frequency_unit'     => 'year',
+    										 'frequency_day'      =>  15,
+    										 'frequency_interval' => 2
+      );
+
+		$date = CRM_Pledge_BAO_Payment::calculateNextScheduledDate($params,3,'20080510');
+		$this->assertEquals('20140510000000',$date);
+    }
 }
+

@@ -482,12 +482,8 @@ WHERE  civicrm_pledge.id = %2
      * @return array $newdate Next scheduled date as an array
      * @static
      */
-     static function calculateBaseScheduleDate( &$params, $force = false)
+     static function calculateBaseScheduleDate( &$params)
      {
-       if(!empty($newdate)&& !$force){
-         return $newdate;
-       }
-        static $newdate = array();
         $date = array();
         $scheduled_date =  CRM_Utils_Date::processDate( $params['scheduled_date']);
         $date['year']   = (int) substr($scheduled_date,  0, 4);
@@ -509,7 +505,7 @@ WHERE  civicrm_pledge.id = %2
                 $scheduleDate =  explode ( "-", date( 'n-j-Y', mktime ( 0, 0, 0, $date['month'], 
                                                                         $date['day'] + $frequencyDay, $date['year'] )) );
                 $date['month'] = $scheduleDate[0];
-                $date['month']   = $scheduleDate[1];
+                $date['day']  = $scheduleDate[1];
                 $date['year']  = $scheduleDate[2];
             }
         }
@@ -522,7 +518,7 @@ WHERE  civicrm_pledge.id = %2
      * Calculate next scheduled pledge payment date. Function calculates next pledge payment date. 
      * 
      * @param array params - must include frequency unit & frequency interval
-     * @param int paymentNo number of payment in sequence (e.g. 1 for first)
+     * @param int paymentNo number of payment in sequence (e.g. 1 for first calculated payment (treat initial payment as 0)
      * @param datestring basePaymentDate - date to calculate payments from. This would normally be the
      * first day of the pledge (default) & is calculated off the 'scheduled date' param. Returned date will 
      * be equal to basePaymentDate normalised to fit the 'pledge pattern' + number of installments
