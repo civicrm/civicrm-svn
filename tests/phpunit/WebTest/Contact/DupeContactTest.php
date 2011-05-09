@@ -36,7 +36,7 @@ class WebTest_Contact_DupeContactTest extends CiviSeleniumTestCase {
       parent::setUp();
   }
 
-  function testIndividualAdd( )
+  function testDuplicateContactAdd( )
   {
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
@@ -122,6 +122,22 @@ class WebTest_Contact_DupeContactTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad( "30000" );
       $this->isTextPresent( "Please correct the following errors in the form fields below: One matching contact was found. You can View or Edit the existing contact, or Merge this contact with an existing contact." );
       $this->click( "_qf_Contact_upload_duplicate" );
+      $this->waitForPageToLoad( "30000" );
+            
+      $matches = array();
+      preg_match('/cid=([0-9]+)/', $this->getLocation(), $matches);
+     
+      $contactId = $matches[1];
+     
+      $this->open( $this->sboxPath . "civicrm/contact/view/delete?reset=1&delete=1&cid={$contactId}" );
+      $this->click( "_qf_Delete_done" );
+
+      // edit the default Fuzzy rule
+      $this->open( $this->sboxPath . "civicrm/contact/deduperules?action=update&id=1" );
+      $this->click( "threshold" );
+      $this->type( "threshold", "20" );
+      $this->click( "_qf_DedupeRules_next-bottom" );
+      $this->waitForPageToLoad( "30000" );
   }  
 }
 ?>
