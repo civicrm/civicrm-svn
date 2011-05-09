@@ -479,15 +479,16 @@ WHERE  civicrm_pledge.id = %2
      *
      * @param array $params
      *
-     * @return array $date Next scheduled date as an array
+     * @return array $newdate Next scheduled date as an array
      * @static
      */
      static function calculateBaseScheduleDate( &$params, $force = false)
      {
-       if(!empty($date)&& !$force){
-         return $date;
+       if(!empty($newdate)&& !$force){
+         return $newdate;
        }
-        static $date = array();
+        static $newdate = array();
+        $date = array();
         $scheduled_date =  CRM_Utils_Date::processDate( $params['scheduled_date']);
         $date['year']   = (int) substr($scheduled_date,  0, 4);
         $date['month']  = (int) substr($scheduled_date,  4, 2);
