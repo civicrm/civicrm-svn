@@ -333,9 +333,12 @@ WHERE     pledge_id = %1
      * update Pledge Payment Status
      *
      * @param int   $pledgeID, id of pledge
-     * @param array $paymentIDs, ids of pledge payment
-     * @param int   $paymentStatus, payment status
-     * @param int   $pledgeStatus, pledge status
+     * @param array $paymentIDs, ids of pledge payment(s) to update
+     * @param int   $paymentStatusID, payment status to set
+     * @param int   $pledgeStatus, pledge status to change (if needed)
+     * @param float $actualAmount, actual amount being paid
+     * @param bool  $adjustTotalAmount, is amount being paid different from scheduled amount?
+     * @param bool  $isScriptUpdate, is function being called from bin script? 
      *
      * @return int $newStatus, updated status id (or 0)
      */
@@ -349,8 +352,9 @@ WHERE     pledge_id = %1
     {
         $totalAmountClause = '';
         $paymentContributionId = null;
-        $editScheduled = true;
-        //get all status
+        $editScheduled = false;        
+        
+        //get all statuses
         require_once 'CRM/Contribute/PseudoConstant.php';
         $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         
@@ -537,11 +541,19 @@ WHERE  civicrm_pledge.id = %2
      * Function to update pledge payment table
      *
      * @param int   $pledgeId pledge id
-     * @param array $paymentIds payment ids 
-     * @param int   $paymentStatusId payment status id
+     * @param array $paymentIds payment ids to be updated
+     * @param int   $paymentStatusId payment status id to set
+     * @param float $actualAmount, actual amount being paid
+     * @param int $contributionId, Id of associated contribution when payment is recorded
+     * @param bool  $isScriptUpdate, is function being called from bin script? 
      * @static
      */
-     static function updatePledgePayments( $pledgeId, $paymentStatusId, $paymentIds = null, $actualAmount = 0 ,$contributionId = null ,$isScriptUpdate = false )
+     static function updatePledgePayments( $pledgeId,
+                                           $paymentStatusId,
+                                           $paymentIds = null,
+                                           $actualAmount = 0,
+                                           $contributionId = null,
+                                           $isScriptUpdate = false )
      {
         $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         $paymentClause = null;

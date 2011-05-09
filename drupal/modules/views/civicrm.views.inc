@@ -1754,7 +1754,22 @@ function civicrm_views_data() {
                                                           );
 
     //TABLE JOINS FOR CIVICRM PARTICIPANTS GO HERE!
-
+   // display user fields in Participant view
+    $data['civicrm_participant']['table']['join']['users'] = array(
+                                                          'left_table'   => 'civicrm_uf_match',
+                                                          'left_field'   => 'contact_id',
+                                                          'field'        => 'contact_id',
+    );
+     $data['users']['table']['join']['civicrm_participant'] = array(
+                                                          'left_table'   => 'civicrm_uf_match',
+                                                          'left_field'   => 'uf_id',
+                                                          'field'        => 'uid',
+    );
+      //Display Participants in User Views    
+    $data['civicrm_uf_match']['table']['join']['civicrm_participant'] = array(
+                                                          'left_field'   => 'contact_id',
+                                                          'field'        => 'contact_id',
+    );
 
 
     //CiviCRM Participants - FIELDS
@@ -2073,7 +2088,12 @@ function civicrm_views_data() {
                                                                                   'left_field' => 'contribution_id',
                                                                                   'field' => 'id',
                                                                                   );
-    //CiviCRM Contributions - FIELDS
+	$data['civicrm_contribution']['table']['join']['civicrm_pledge'] = array(
+                                                                                  'left_table' => 'civicrm_pledge_payment',
+                                                                                  'left_field' => 'contribution_id',
+                                                                                  'field' => 'id',
+                                                                                  );
+   //CiviCRM Contributions - FIELDS
 
     //Numeric Contribution ID
     $data['civicrm_contribution']['id'] = array(
@@ -2711,10 +2731,39 @@ function civicrm_views_data() {
                                                                       'handler' => 'views_handler_sort',
                                                                       ),
                                                       );
+                                                      
+	$data['civicrm_contribution_recur']['contact_id'] = array(
+                                                'title' => t('Contact ID'),
+                                                'help'  => t('The contact who is paying the recurring pledge'),
+												'field' => array(
+                                                                 'handler' => 'views_handler_field_numeric',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+                                                'relationship' => array(
+                                                                                   'base' => 'civicrm_contact',
+                                                                                   'field' => 'id',
+                                                                                   'handler' => 'views_handler_relationship',
+                                                                                   'label' => t('CiviCRM Recurring payment Contact'),
+                                                                                   ),
+												'argument' => array(
+                                                                    'handler' => 'views_handler_argument_numeric',
+                                                                    'numeric' => TRUE,
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'views_handler_filter_numeric',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+  
     //Recurring Contribution Amount
     $data['civicrm_contribution_recur']['amount'] = array(
                                                           'title' => t('Amount'),
-                                                          'help' => t('The amunt of the recurring contribution'),
+                                                          'help' => t('The amount of the recurring contribution'),
                                                           'field' => array(
                                                                            'handler' => 'views_handler_field_numeric',
                                                                            'click sortable' => TRUE,
@@ -2942,7 +2991,7 @@ function civicrm_views_data() {
                                                                               'handler' => 'views_handler_sort',
                                                                               ),
                                                               );
-    //Participant Status
+    //recurring contributions Status
     $data['civicrm_contribution_recur']['contiribution_status'] = array(
                                                                         'title' => t('Contribution Status'),
                                                                         'real field' => 'contribution_status_id',
@@ -3093,7 +3142,59 @@ function civicrm_views_data() {
                                                               );
 
 
-    //----------------------------------------------------------------------------------------
+
+    $data['civicrm_pledge']['table']['base'] = array(
+                                                'field' => 'id',
+                                                'title' => t('CiviCRM Pledges'),
+                                                'help' => t("CiviCRM Pledges."),
+                                     );
+	$data['civicrm_pledge']['table']['group'] = t('CiviCRM Pledges');
+	$data['civicrm_pledge_payment']['table']['group'] = t('Pledge Payments');
+	$data['civicrm_pledge']['id'] = array(
+                                                'title' => t('CiviCRM Pledge ID'),
+                                                'help' => t('The numeric ID of the Pledge'),
+                                                'field' => array(
+                                                                 'handler' => 'views_handler_field_numeric',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument_numeric',
+                                                                    'numeric' => TRUE,
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'views_handler_filter_numeric',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+	$data['civicrm_pledge']['amount'] = array(
+                                                 'title' => t('Amount'),
+                                                 'help' => t('The total amount of the pledge'),
+                                                 'field' => array(
+                                                                 'handler' => 'views_handler_field_numeric',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument_numeric',
+                                                                    'numeric' => TRUE,
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'views_handler_filter_numeric',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+                                                              //----------------------------------------------------------------------------------------
     // CIVICRM Activities are here with all the activeness they can muster, base tabling it up.
     //----------------------------------------------------------------------------------------
 
@@ -5392,7 +5493,7 @@ function civicrm_views_data() {
                                                                           ),
 
                                                       'filter' => array(
-                                                                        'handler' => 'views_handler_filter_numeric',
+                                                                                                            'handler' => 'views_handler_filter_numeric',
                                                                         'allow empty' => TRUE,
                                                                         ),
 
@@ -5401,6 +5502,34 @@ function civicrm_views_data() {
                                                                       ),
                                                       );
 
+                                                      
+   /*
+    * UF Match table - expose drupal ID
+    */                                                   
+    $data['civicrm_uf_match']['table']['group'] = t("CiviCRM Drupal match table");
+    $data['civicrm_uf_match']['uf_id'] = array(
+                                                      'title' => t('Drupal User ID'),
+                                                      'help' => t('The user id of the User matched to a CiviCRM Contact'),
+                                                      'field' => array(
+                                                                       'handler' => 'views_handler_field_numeric',
+                                                                       'click sortable' => TRUE,
+                                                      ), 
+                                                      'argument' => array(
+                                                                       'handler' => 'views_handler_argument_numeric',
+                                                                       'numeric' => TRUE,
+                                                                       ),
+
+                                                      'filter' => array(
+                                                      'handler' => 'views_handler_filter_numeric',
+                                                      'allow empty' => TRUE,
+                                                                       ),
+
+                                                      'sort' => array(
+                                                      'handler' => 'views_handler_sort',
+                                                                       ),
+    
+                                                      );
+                                                      
     /*
      * CiviCRM Grants Base Table
      */

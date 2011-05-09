@@ -98,6 +98,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         // visit event dashboard page
         $this->open( $this->sboxPath. 'civicrm/event?reset=1' );
         $this->waitForPageToLoad('30000');
+        $this->waitForTextPresent("Recent Registrations");
         
         // check event present
         $this->assertStringsPresent( array( $eventTitle )  );
