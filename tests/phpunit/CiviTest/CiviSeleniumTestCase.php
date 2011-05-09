@@ -751,41 +751,68 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         // pass $pageId back to any other tests that call this class
         return $pageId;      
     }  
-
-    function webtestStrictDedupeRuleDefault( $contactType = 'Individual' ) {
+    
+    /**
+     * Function to update default strict rule. 
+     *
+     * @params  string   $contactType  Contact type
+     * @param   array    $fields       Fields to be set for strict rule
+     * @param   Integer  $threshold    Rule's threshold value
+     */
+    function webtestStrictDedupeRuleDefault( $contactType = 'Individual', $fields = array( ), $threshold = 10 ) {
         // set default strict rule.
-        $this->open( $this->sboxPath . "civicrm/contact/deduperules?action=update&id=4" );
+        $strictRuleId = 4;
+        if ( $contactType == 'Organization' ) {
+            $strictRuleId = 5;
+        } else if ( $contactType == 'Household' ) {
+            $strictRuleId = 6;
+        }
+        
+        // Default dedupe fields for each Contact type.
+        if ( empty($fields) ) {
+            $fields = array( 'civicrm_email.email' => 10 );
+            if ( $contactType == 'Organization' ) {
+                $fields = array( 'civicrm_contact.organization_name' => 10,
+                                 'civicrm_email.email'               => 10 );
+            } else if ( $contactType == 'Household' ) {
+                $fields = array( 'civicrm_contact.household_name' => 10,
+                                 'civicrm_email.email'            => 10 );
+            }
+        } 
+        
+        $this->open( $this->sboxPath . 'civicrm/contact/deduperules?action=update&id=' . $strictRuleId );
         $this->waitForPageToLoad("30000");
         $this->waitForElementPresent( "_qf_DedupeRules_next-bottom" );
-
-        $this->select( "where_0","value=civicrm_email.email" );
-        $this->type( "length_0", "" );
-        $this->type( "weight_0", 10 );
-         
-        $this->select( "where_1","label=- none -" );
-        $this->type( "length_1", "" );
-        $this->type( "weight_1", "" );
-
-        $this->select( "where_2","label=- none -" );
-        $this->type( "length_2", "" );
-        $this->type( "weight_2", "" );
-
-        $this->select( "where_3","label=- none -" );
-        $this->type( "length_3", "" );
-        $this->type( "weight_3", "" );
-
-        $this->select( "where_4","label=- none -" );
-        $this->type( "length_4", "" );
-        $this->type( "weight_4", "" );
-
-        $this->type( "threshold", 10 );
-
+        
+        $count = 0;
+        foreach ( $fields as $field => $weight ) {
+            $this->select( "where_{$count}","value={$field}" );
+            $this->type( "length_{$count}", '' );
+            $this->type( "weight_{$count}", $weight );
+            $count++;
+        }
+        
+        if ( $count > 4 ) {
+            $this->type( 'threshold', $threshold );
+            // click save 
+            $this->click( '_qf_DedupeRules_next-bottom' );
+            $this->waitForPageToLoad( '30000' );
+            return;
+        }
+        
+        for ( $i = $count; $i <= 4; $i++ ) { 
+            $this->select( "where_{$i}", 'label=- none -' );
+            $this->type( "length_{$i}", '' );
+            $this->type( "weight_{$i}", '' );
+        }
+        
+        $this->type( 'threshold', $threshold );
+        
         // click save 
         $this->click( "_qf_DedupeRules_next-bottom" );
         $this->waitForPageToLoad( "30000" );
-
     }
-  
+    
     function webtestAddMembershipType( $period_type = "rolling", $duration_interval = 1, $duration_unit = 'year', $auto_renew = 'no' ) {
         $membershipTitle = substr(sha1(rand()), 0, 7);
         $membershipOrg   = $membershipTitle . ' memorg';
