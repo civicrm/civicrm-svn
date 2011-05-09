@@ -68,19 +68,21 @@
       <onDelete>RESTRICT</onDelete>
   </foreignKey>
   <field>
-      <name>contribution_type_id</name>
+      <name>financial_account_id</name>
       <type>int unsigned</type>
       <required>true</required>
-      <comment>If membership is paid by a contribution - what contribution type should be used. FK to Contribution Type ID</comment>
+      <comment>If membership is paid by a contribution - what financial account should be used. FK to civicrm_financial_account.id</comment>
       <add>1.5</add>
-      <drop>4.1</drop>
+      <change>4.1</change>
+      <changedName>contribution_type_id</changedName>
   </field>
   <foreignKey> 
-      <name>contribution_type_id</name> 
-      <table>civicrm_contribution_type</table> 
+      <name>financial_account_id</name> 
+      <table>civicrm_financial_account</table> 
       <key>id</key> 
       <add>1.5</add>
-      <drop>4.1</drop>
+      <change>4.1</change>
+      <changedName>contribution_type_id</changedName> 
   </foreignKey>
   <field>  
       <name>minimum_fee</name>  
@@ -90,22 +92,7 @@
       <add>1.5</add>  
   </field> 
   <field>  
-      <name>account_id</name>  
-      <title>Account</title>
-      <type>int unsigned</type>
-      <comment>FK to Account. NB: Account for (total_amount - non_deductible_amount), NOT total_amount and NOT minimum_fee</comment>
-      <formerName>contribution_type_id</formerName>
-      <add>4.1</add>  
-  </field>    
-  <foreignKey>  
-       <name>account_id</name>  
-       <table>civicrm_account</table>  
-       <key>id</key>         
-       <add>4.1</add>  
-       <onDelete>SET NULL</onDelete>
-  </foreignKey>    
-  <field>  
-      <name>non_deductibe_amount</name>  
+      <name>non_deductible_amount</name>  
       <type>decimal</type>                  
       <comment>Non-deductible value of this membership type (0 for free/complimentary membership types).</comment>  
       <default>0</default>

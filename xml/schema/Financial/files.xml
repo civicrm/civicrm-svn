@@ -7,4 +7,5 @@
 <xi:include href="FinancialTrxn.xml"        parse="xml" />
 <xi:include href="PaymentProcessor.xml"     parse="xml" />
 <xi:include href="PaymentProcessorType.xml" parse="xml" />
+<xi:include href="Receipt.xml"              parse="xml" />
 </tables>

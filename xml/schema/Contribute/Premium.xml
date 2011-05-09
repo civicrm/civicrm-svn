@@ -77,5 +77,18 @@
       <comment>Boolean. Should we automatically display minimum contribution amount text after the premium descriptions.</comment>  
       <add>1.4</add>  
   </field>
-  
+  <field>
+      <name>financial_account_id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <add>4.1</add>
+      <comment>FK to civicrm_financial_account</comment>
+  </field>
+  <foreignKey> 
+       <name>financial_account_id</name> 
+       <table>civicrm_financial_account</table> 
+       <key>id</key> 
+       <add>4.1</add>
+  </foreignKey> 
+
 </table>

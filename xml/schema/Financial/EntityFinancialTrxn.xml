@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>  
   
 <table>  
-  <base>CRM/Core</base>  
+  <base>CRM/Financial</base>  
   <class>EntityFinancialTrxn</class>  
   <name>civicrm_entity_financial_trxn</name>  
   <add>3.2</add>  
@@ -23,6 +23,7 @@
       <required>true</required> 
       <import>true</import>
       <add>3.2</add>
+      <comment>May contain civicrm_invoice, civicrm_invoice_line_itme, civicrm_invoice_line_sub_item, civicrm_grant, civicrm_credit_adjustment</comment>
   </field>
   <field>  
       <name>entity_id</name>  

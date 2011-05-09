@@ -30,15 +30,15 @@
       <add>3.3</add>
   </foreignKey>
   <field>
-      <name>account_id</name>
+      <name>financial_account_id</name>
       <type>int unsigned</type>
       <required>true</required>
-      <comment>FK to civicrm_account</comment>
+      <comment>FK to financial_civicrm_account</comment>
       <add>4.1</add>
   </field>
   <foreignKey>
-      <name>account_id</name>
-      <table>civicrm_account</table>
+      <name>financial_account_id</name>
+      <table>civicrm_financial_account</table>
       <key>id</key>
       <add>4.1</add>
   </foreignKey>
@@ -91,15 +91,15 @@
       <add>4.1</add>
   </field>
     <field>
-      <name>non_deductible_account_id</name>
+      <name>non_deductible_financial_account_id</name>
       <type>int unsigned</type>
       <required>true</required>
-      <comment>FK to civicrm_account</comment>
+      <comment>FK to civicrm_financial_account</comment>
       <add>4.1</add>
   </field>
   <foreignKey>
-      <name>non_deductible_account_id</name>
-      <table>civicrm_account</table>
+      <name>non_deductible_financial_account_id</name>
+      <table>civicrm_financial_account</table>
       <key>id</key>
       <add>4.1</add>
   </foreignKey>

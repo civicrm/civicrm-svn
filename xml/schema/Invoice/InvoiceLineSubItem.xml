@@ -4,11 +4,13 @@
   <base>CRM/Invoice</base>
   <class>InvoiceLineSubItem</class>
   <name>civicrm_invoice_line_sub_item</name>
-  <formerName>civicrm_line_item</formerName>
-  <add>4.1</add>
+  <add>1.7</add> 
+  <change>4.1</change>
+  <changedName>civicrm_line_item</changedName>
   <log>true</log>
   <field>
       <name>id</name>
+      <uniqueName>invoice_line_sub_item_id</uniqueName>
       <type>int unsigned</type>
       <required>true</required>
       <comment>Invoice Line Sub Item</comment>
@@ -29,7 +31,6 @@
       <name>invoice_line_item_id</name>
       <table>civicrm_invoice_line_item</table>
       <key>id</key>
-      <onDelete>CASCADE</onDelete>
   </foreignKey>
   <field>
       <name>price_field_id</name>
@@ -42,7 +43,6 @@
       <name>price_field_id</name>
       <table>civicrm_price_field</table>
       <key>id</key>
-      <onDelete>CASCADE</onDelete>
   </foreignKey>
   <field>
       <name>option_group_id</name>
@@ -82,13 +82,18 @@
       <add>1.7</add>
   </field>
   <field>  
-      <name>account_id</name>  
-      <title>Account</title>
+      <name>financial_account_id</name>  
+      <title>Financial Account</title>
       <type>int unsigned</type>
-      <comment>FK to Account. NB: Account for (line_total - non_deductible_line_total), NOT line_total</comment>
+      <comment>FK to Financial Account. NB: Account for (line_total - non_deductible_line_total), NOT line_total</comment>
       <add>4.1</add> 
-      <devNote>copied from civicrm_price_field_value at time of contribution</devNote>
   </field>    
+  <foreignKey>  
+       <name>financial_account_id</name>  
+       <table>civicrm_financial_account</table>  
+       <key>id</key>         
+       <add>4.1</add>  
+  </foreignKey> 
   <field>
       <name>non_deductible_unit_price</name>
       <type>decimal</type>
@@ -104,19 +109,18 @@
       <add>4.1</add>
   </field>
   <field>  
-      <name>non_deductible_account_id</name>  
-      <title>Non Deductible Account</title>
+      <name>non_deductible_financial_account_id</name>  
+      <title>Non Deductible Financial Account</title>
       <type>int unsigned</type>
-      <comment>FK to Account. NB: Account for (line_total - non_deductible_line_total), NOT line_total</comment>
+      <comment>FK to Account. NB: Financial Account for (line_total - non_deductible_line_total), NOT line_total</comment>
       <add>4.1</add> 
       <devNote>copied from civicrm_price_field_value at time of contribution</devNote>
   </field>    
   <foreignKey>  
-       <name>non_deductible_account_id</name>  
-       <table>civicrm_account</table>  
+       <name>non_deductible_financial_account_id</name>  
+       <table>civicrm_financial_account</table>  
        <key>id</key>         
        <add>4.1</add>  
-       <onDelete>SET NULL</onDelete>
   </foreignKey>  
   <field>
       <name>participant_count</name>
@@ -146,5 +150,56 @@
       <key>id</key>
       <onDelete>SET NULL</onDelete>
   </foreignKey>
+ <field>
+      <name>invoice_status_id</name>
+      <title>Invoice Status</title>
+      <type>int unsigned</type>
+      <default>1</default>
+      <import>true</import>
+      <export>false</export>
+      <headerPattern>/status/i</headerPattern>
+      <add>1.6</add>
+      <change>4.1</change>
+      <changedName>contribution_status_id</changedName>
+  </field>
+  <index>
+    <name>index_invoice_status</name>
+    <fieldName>invoice_status_id</fieldName>
+    <add>1.6</add>
+    <change>4.1</change>
+    <changedName>index_contribution_status</changedName>
+  </index>
+  <field>  
+    <name>add_credit_adjustment_id</name>  
+    <type>int unsigned</type>  
+    <import>true</import>
+    <comment>FK to civicrm_credit_adjustment</comment>
+    <add>4.1</add>  
+  </field> 
+  <foreignKey> 
+    <name>add_credit_adjustment_id</name> 
+    <table>civicrm_credit_adjustment</table> 
+    <key>id</key> 
+    <add>4.1</add>
+    <default>NULL</default>
+    <comment>Non-null means this record added by adjustment.</comment>
+  </foreignKey>
+  <field>  
+    <name>delete_credit_adjustment_id</name>  
+    <type>int unsigned</type>  
+    <import>true</import>
+    <comment>FK to civicrm_credit_adjustment</comment>  
+    <add>4.1</add>  
+  </field> 
+  <foreignKey> 
+    <name>delete_credit_adjustment_id</name> 
+    <table>civicrm_credit_adjustment</table> 
+    <key>id</key> 
+    <add>4.1</add>
+    <default>NULL</default>
+    <comment>Non-null means this record deleted (ie cancelled) by adjustment.</comment>
+  </foreignKey>
+
+ 
 </table>
 

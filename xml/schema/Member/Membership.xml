@@ -93,32 +93,30 @@
       <add>1.5</add>  
   </field> 
   <field>  
-      <name>account_id</name>  
-      <title>Account</title>
+      <name>financial_account_id</name>
+      <title>Financial Account</title>
       <type>int unsigned</type>
-      <comment>FK to Account. NB: Account for (total_amount - non_deductible_amount), NOT total_amount</comment>
+      <comment>FK to Financial Account. NB: Account for (total_amount - non_deductible_amount), NOT total_amount</comment>
       <add>4.1</add>  
   </field>    
   <foreignKey>  
-       <name>account_id</name>  
-       <table>civicrm_account</table>  
+       <name>financial_account_id</name>  
+       <table>civicrm_financial_account</table>  
        <key>id</key>         
        <add>4.1</add>  
-       <onDelete>SET NULL</onDelete>
   </foreignKey>  
   <field>  
-      <name>non_deductible_account_id</name>  
+      <name>non_deductible_financial_account_id</name>  
       <title>Non-deductible Account</title>
       <type>int unsigned</type>
       <comment>FK to Account</comment>
       <add>4.1</add>  
   </field>    
   <foreignKey>  
-       <name>non_deductible_account_id</name>  
-       <table>civicrm_account</table>  
+       <name>non_deductible_financial_account_id</name>  
+       <table>civicrm_financial_account</table>  
        <key>id</key>         
        <add>4.1</add>  
-       <onDelete>SET NULL</onDelete>
   </foreignKey>  
   <field>  
       <name>source</name>     
@@ -185,7 +183,7 @@
   </index>
   <field>
       <name>payor_snapshot</name>
-      <type>text</text>
+      <type>text</type>
       <comment>Serialized array of contact info fields stored at time of membership purchase or renewal</comment>
       <add>4.1</add>
   </field>

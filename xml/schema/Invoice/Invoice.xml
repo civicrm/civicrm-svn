@@ -43,40 +43,29 @@
        <onDelete>SET NULL</onDelete>
   </foreignKey> 
   <field> 
-      <name>solicitor_id</name> 
-      <title>Solicitor ID</title>
-      <type>int unsigned</type> 
-      <comment>FK to Solicitor ID</comment> 
-      <add>1.4</add> 
-      <drop>2.2</drop>
+    <name>contact_snapshot</name> 
+    <type>text</type>
+    <comment>Note and/or Comment.</comment>
+    <htmlType>textarea</htmlType>
+    <rows>4</rows>
+    <cols>80</cols>
+    <comment>Serialized array of contact info of payor at time invoice is created</comment> 
+    <add>4.1</add>
+    <writeOnce>true</writeOnce>
+  </field>
+  <field> 
+    <name>address_id</name> 
+    <type>int unsigned</type> 
+    <comment>Conditional foreign key to civicrm_address.id. We insert an address record for each invoice when we have associated billing name and address data.</comment> 
+    <add>2.2</add> 
   </field> 
   <foreignKey> 
-       <name>solicitor_id</name> 
-       <table>civicrm_contact</table> 
-       <key>id</key> 
-       <add>1.4</add> 
-       <drop>2.2</drop>
-       <onDelete>SET NULL</onDelete>
-  </foreignKey> 
-  <field>
-      <name>account_id</name>
-      <title>Account</title>
-      <export>false</export>
-      <type>int unsigned</type>
-      <comment>FK to Account</comment>
-      <add>1.3</add>
-      <change>4.1</change>
-      <changedName>contribution_type_id</changedName>
-  </field>    
-  <foreignKey>  
-      <name>account_id</name>
-      <table>civicrm_contribution_type</table>  
-      <key>id</key>         
-      <add>1.3</add>  
-      <change>4.1</change>
-      <changedName>contribution_type_id</changedName>
-      <onDelete>SET NULL</onDelete>
-  </foreignKey>  
+    <name>address_id</name> 
+    <table>civicrm_address</table> 
+    <key>id</key> 
+    <add>2.2</add> 
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
   <field> 
       <name>invoice_date</name> 
       <type>datetime</type> 
@@ -103,9 +92,27 @@
       <import>true</import>
       <headerPattern>/non?.?deduct/i</headerPattern>
       <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
-      <comment>Portion of total amount which is NOT tax deductible. Equal to total_amount for non-deductible accounts.</comment>  
+      <comment>Portion of total amount which is NOT tax deductible. Equal to total_amount for non-deductible financial_accounts.</comment>  
       <add>1.3</add>  
   </field>
+  <field>
+      <name>non_deductible_financial_account_id</name>
+      <title>Non-deductible Financial Account</title>
+      <export>false</export>
+      <type>int unsigned</type>
+      <comment>FK to Financial Account</comment>
+      <add>1.3</add>
+      <change>4.1</change>
+      <changedName>contribution_type_id</changedName>
+  </field>    
+  <foreignKey>  
+      <name>non_deductible_financial_account_id</name>
+      <table>civicrm_financial_account</table>  
+      <key>id</key>         
+      <add>1.3</add>  
+      <change>4.1</change>
+      <changedName>contribution_type_id</changedName>
+  </foreignKey>  
   <field>     
       <name>total_amount</name>  
       <type>decimal</type>  
@@ -116,6 +123,24 @@
       <comment>Total amount of this invoice. Use market value for non-monetary gifts.</comment>  
       <add>1.3</add>  
   </field>
+  <field>
+      <name>financial_account_id</name>
+      <title>Financial Account</title>
+      <export>false</export>
+      <type>int unsigned</type>
+      <comment>FK to Financial Account</comment>
+      <add>1.3</add>
+      <change>4.1</change>
+      <changedName>contribution_type_id</changedName>
+  </field>    
+  <foreignKey>  
+      <name>financial_account_id</name>
+      <table>civicrm_financial_account</table>  
+      <key>id</key>         
+      <add>1.3</add>  
+      <change>4.1</change>
+      <changedName>contribution_type_id</changedName>
+  </foreignKey>  
   <field>        
       <name>external_invoice_id</name>
       <title>External Invoice ID</title>
@@ -154,7 +179,7 @@
       <import>true</import>
       <headerPattern>/thank(s|(.?you))?(.?date)?/i</headerPattern>
       <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
-      <comment>when (if) donor was thanked</comment>    
+      <comment>when (if) payor was thanked</comment>    
       <add>1.3</add>    
   </field>   
   <field>      
@@ -217,16 +242,46 @@
     <change>4.1</change>
     <changedName>index_contribution_status</changedName>
   </index>
-  <field> 
-    <name>contact_snapshot</name> 
-    <type>text</type>
-    <comment>Note and/or Comment.</comment>
-    <htmlType>textarea</htmlType>
-    <rows>4</rows>
-    <cols>80</cols>
-    <comment>Serialized array of contact info of payor at time invoice is created</comment> 
+  <field>  
+    <name>add_credit_adjustment_id</name>  
+    <type>int unsigned</type>  
+    <import>true</import>
+    <comment>FK to civicrm_credit_adjustment</comment>  
+    <add>4.1</add>  
+  </field> 
+  <foreignKey> 
+    <name>add_credit_adjustment_id</name> 
+    <table>civicrm_credit_adjustment</table> 
+    <key>id</key> 
     <add>4.1</add>
-    <readOnly>true</readOnly></field>
+    <comment>Non-null means this record added by adjustment</comment>
+  </foreignKey>
+  <field>  
+    <name>delete_credit_adjustment_id</name>  
+    <type>int unsigned</type>  
+    <import>true</import>
+    <comment>FK to civicrm_credit_adjustment</comment>  
+    <add>4.1</add>  
+  </field> 
+  <foreignKey> 
+    <name>delete_credit_adjustment_id</name> 
+    <table>civicrm_credit_adjustment</table> 
+    <key>id</key> 
+    <add>4.1</add>
+    <comment>Non-null means this record deleted (ie cancelled) by adjustment.</comment>
+  </foreignKey>
+  <field> 
+    <name>msg_template_id</name> 
+    <type>int unsigned</type>
+    <comment>template used to generate invoice</comment> 
+    <add>4.1</add>
+  </field>
+  <foreignKey> 
+    <name>msg_template_id</name> 
+    <table>civicrm_msg_template</table> 
+    <key>id</key> 
+    <add>4.1</add>
+  </foreignKey>
   <field> 
     <name>campaign_id</name>
     <uniqueName>contribution_campaign_id</uniqueName>

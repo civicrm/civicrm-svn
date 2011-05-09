@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
 
 <table>
-  <base>CRM/Core</base>
+  <base>CRM/Financial</base>
   <class>PaymentProcessorType</class>
   <name>civicrm_payment_processor_type</name>
   <add>1.8</add>

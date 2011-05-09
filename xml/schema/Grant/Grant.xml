@@ -126,14 +126,13 @@
        <name>financial_account_id</name>
        <table>civicrm_financial_account</table>
        <key>id</key>
-       <add>1.8</add>
-       <onDelete>CASCADE</onDelete>
+       <add>4.1</add>
   </foreignKey>  
   <field>
       <name>currency</name>
       <type>varchar</type>
-      <length>8</length>
-      <default>NULL</default> 
+      <length>3</length>
+      <required>true</required> 
       <comment>3 character string, value from config setting or input via user.</comment>
       <add>3.2</add>
   </field>
