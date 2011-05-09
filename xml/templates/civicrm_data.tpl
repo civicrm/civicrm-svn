@@ -260,7 +260,7 @@ SELECT @option_group_id_mail_approval_status := max(id) from civicrm_option_grou
 SELECT @option_group_id_engagement_index := max(id) from civicrm_option_group where name = 'engagement_index';
 SELECT @option_group_id_cgeo           := max(id) from civicrm_option_group where name = 'cg_extend_objects';
 SELECT @option_group_id_paperSize      := max(id) from civicrm_option_group where name = 'paper_size';
-SELECT @option_group_id_label          := max(id) from civicrm_option_group where name = 'label_format';p
+SELECT @option_group_id_label          := max(id) from civicrm_option_group where name = 'label_format';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
