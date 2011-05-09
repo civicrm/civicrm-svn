@@ -156,7 +156,15 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $this->assertEquals($result['values'][0]['create_date'],date('Ymd'), 'In line ' . __LINE__);
         $this->assertEquals($result['values'][0]['start_date'],date('Ymd'), 'In line ' . __LINE__);        
         $this->assertEquals($result['is_error'], 0 , 'In line ' . __LINE__);
-
+        $payments = civicrm_api('PledgePayment','Get',array('version' =>3, 'pledge_id' => $result['id'], 'sequential' => 1));
+        $this->assertEquals($payments['is_error'], 0 , 'In line ' . __LINE__);
+        $this->assertEquals($payments['count'], 5 , 'In line ' . __LINE__);
+        require_once 'CRM/Utils/Date.php';
+        $shouldBeDate = CRM_Utils_Date::format(CRM_Utils_Date::intervalAdd('year',5*4,$this->scheduled_date),"-");
+        $this->assertEquals(substr($shouldBeDate,0,10) ,substr($payments['values'][4]['scheduled_date'],0,10), 'In line '. __LINE__);
+        
+        $pledgeID = array( 'pledge_id' => $result['id'], 'version' => 3 );
+        $pledge   =& civicrm_api3_pledge_delete($pledgeID);
         $pledgeID = array( 'pledge_id' => $result['id'], 'version' => 3 );
         $pledge   =& civicrm_api3_pledge_delete($pledgeID);
 
