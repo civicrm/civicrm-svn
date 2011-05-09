@@ -382,7 +382,7 @@ function _civicrm_api3_dao_to_array ($dao, $params = null,$uniqueFields = TRUE) 
     }
 
 
-    $fields = array_keys(_civicrm_api3_build_fields_array(&$dao, $uniqueFields));
+    $fields = array_keys(_civicrm_api3_build_fields_array($dao, $uniqueFields));
     if ($return) {
         $fields = array_intersect($fields,$return);
     }
