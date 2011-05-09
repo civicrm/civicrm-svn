@@ -324,11 +324,8 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
                         
             CRM_Core_Session::setStatus( ts("'%1' information has been saved.", 
                                             array( 1 => ( $subPage == 'friend' ) ? 'Friend' : $className ) ) );
-            
-            // we need to call the hook manually here since we redirect and never 
-            // go back to CRM/Core/Form.php
-            // A better way might have been to setUserContext so the framework does the rediret
-            CRM_Utils_Hook::postProcess( get_class( $this ), $this );
+
+            $this->postProcessHook( );
             
             if ( $this->controller->getButtonName('submit') == "_qf_{$className}_next" ) {
                 CRM_Utils_System::redirect( CRM_Utils_System::url( "civicrm/admin/contribute/{$subPage}",
