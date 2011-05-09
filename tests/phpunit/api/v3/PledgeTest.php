@@ -164,11 +164,32 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $this->assertEquals(substr($shouldBeDate,0,10) ,substr($payments['values'][4]['scheduled_date'],0,10), 'In line '. __LINE__);
         
         $pledgeID = array( 'pledge_id' => $result['id'], 'version' => 3 );
-        $pledge   =& civicrm_api3_pledge_delete($pledgeID);
-        $pledgeID = array( 'pledge_id' => $result['id'], 'version' => 3 );
-        $pledge   =& civicrm_api3_pledge_delete($pledgeID);
+        civicrm_api3_pledge_delete($pledgeID);
+
 
     }
+    /*
+     * Test that pledge with weekly schedule calculates dates correctly
+     */
+    function testCreatePledgeWeeklySchedule(){
+      $params =  array(  'scheduled_date'     => '20110510',
+      									 'frequency_unit'     => 'week',
+    										 'frequency_day'      =>  3,
+    										 'frequency_interval' => 2
+      );
+      $params = array_merge($this->params,$params);
+      $pledge = civicrm_api('Pledge','Create',$params);
+      //ensure that correct number of payments created & last payment has the right date
+      $payments = civicrm_api('PledgePayment','Get',array('version' =>3, 'pledge_id' => $result['id'], 'sequential' => 1));
+      $this->assertEquals($payments['is_error'], 0 , 'In line ' . __LINE__);
+      $this->assertEquals($payments['count'], 5 , 'In line ' . __LINE__);
+      require_once 'CRM/Utils/Date.php';
+      $this->assertEquals('2011-07-06 00:00:00' ,$payments['values'][4]['scheduled_date'], 'In line '. __LINE__);
+ 
+      $pledgeID = array( 'pledge_id' => $pledge['id'], 'version' => 3 );
+      $pledge   =& civicrm_api3_pledge_delete($pledgeID);
+    }
+    
 /*
  * test that using original_installment_amount rather than pledge_original_installment_amount works
  * Pledge field behaviour is a bit random & so pledge has come to try to handle both unique & non -unique fields
