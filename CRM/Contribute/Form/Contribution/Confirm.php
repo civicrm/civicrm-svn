@@ -524,12 +524,23 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
             // if we find more than one contact, use the first one
             $contact_id  = CRM_Utils_Array::value( 0, $ids );
-            $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, $contact_id, $addToGroups );
+            $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params,
+                                                                         $fields,
+                                                                         $contact_id,
+                                                                         $addToGroups,
+                                                                         null,
+                                                                         null,
+                                                                         true );
             $this->set( 'contactID', $contactID );
         } else {
             $ctype = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $contactID, 'contact_type');
-            $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, $contactID, $addToGroups,
-                                                                         null, $ctype);
+            $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params,
+                                                                         $fields,
+                                                                         $contactID,
+                                                                         $addToGroups,
+                                                                         null,
+                                                                         $ctype,
+                                                                         true );
         }
 
         //get email primary first if exist

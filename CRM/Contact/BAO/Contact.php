@@ -1484,6 +1484,8 @@ ORDER BY civicrm_email.is_primary DESC";
      * @params  int    $addToGroupID  specifies the default group to which contact is added.
      * @params  int    $ufGroupId     uf group id (profile id)
      * @param   string $ctype         contact type
+     * @param   boolean $visibility   basically lets us know where this request is coming from
+     *                                if via a profile from web, we restrict what groups are changed
      *
      * @return  int                   contact id created/edited
      * @static
