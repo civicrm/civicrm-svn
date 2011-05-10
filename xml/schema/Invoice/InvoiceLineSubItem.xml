@@ -109,7 +109,7 @@
       <add>4.1</add>
   </field>
   <field>  
-      <name>non_deductible_financial_account_id</name>  
+      <name>non_deductible_account_id</name>  
       <title>Non Deductible Financial Account</title>
       <type>int unsigned</type>
       <comment>FK to Account. NB: Financial Account for (line_total - non_deductible_line_total), NOT line_total</comment>
@@ -117,7 +117,7 @@
       <devNote>copied from civicrm_price_field_value at time of contribution</devNote>
   </field>    
   <foreignKey>  
-       <name>non_deductible_financial_account_id</name>  
+       <name>non_deductible_account_id</name>  
        <table>civicrm_financial_account</table>  
        <key>id</key>         
        <add>4.1</add>  

@@ -40,7 +40,6 @@
        <table>civicrm_contact</table> 
        <key>id</key> 
        <add>1.3</add> 
-       <onDelete>Set Null</onDelete>
   </foreignKey> 
   <field> 
     <name>contact_snapshot</name> 

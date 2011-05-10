@@ -610,7 +610,7 @@ function getPrimaryKey( &$primaryXML, &$fields, &$table ) {
     
     /** need to make sure there is a field of type name */
     if ( ! array_key_exists( $name, $fields ) ) {
-        echo "primary key $name does not have a  field definition, ignoring\n";
+        echo "primary key $name in $table->name does not have a field definition, ignoring\n";
         return;
     }
 
@@ -690,7 +690,7 @@ function getForeignKey( &$foreignXML, &$fields, &$foreignKeys, &$currentTableNam
     
     /** need to make sure there is a field of type name */
     if ( ! array_key_exists( $name, $fields ) ) {
-        echo "foreign $name does not have a field definition, ignoring\n";
+        echo "foreign $name in $currentTableName does not have a field definition, ignoring\n";
         return;
     }
 
