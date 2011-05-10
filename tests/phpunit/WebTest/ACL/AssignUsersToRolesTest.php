@@ -78,8 +78,8 @@ class WebTest_ACL_AssignUsersToRolesTest extends CiviSeleniumTestCase {
       $this->click("group_id");
       $this->select("group_id", "label={$groupTitle}");
       $this->select("operation", "label=View");
-      $this->select("entity_id", "label=tsetRole");
-      $this->type("name", "describe tsetRole");
+      $this->select("entity_id", "label={$label}");
+      $this->type("name", "describe {$label}");
       $this->click("_qf_ACL_next-bottom");
       $this->waitForPageToLoad("30000");     
   }  
