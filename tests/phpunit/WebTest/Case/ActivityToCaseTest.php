@@ -303,9 +303,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         
         //Is custom field created
         $this->assertTrue($this->isTextPresent("Your custom field '$radioFieldLabel' has been saved."));
-        $radioFieldId = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']//table/tbody//tr/td[text()='$radioFieldLabel']/../td[7]/span/a@href" ) );
-        $radioFieldId = $radioFieldId[1];
-
+        
         // create another custom field - text field
         $this->click("//a[@id='newCustomField']/span");
         $this->waitForPageToLoad("30000");
