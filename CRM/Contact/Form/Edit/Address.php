@@ -42,15 +42,16 @@ class CRM_Contact_Form_Edit_Address
     /**
      * build form for address input fields 
      *
-     * @param object $form - CRM_Core_Form (or subclass)
-     * @param array reference $location - location array
-     * @param int $locationId - location id whose block needs to be built.
+     * @param object  $form - CRM_Core_Form (or subclass)
+     * @param int     $addressBlockCount - the index of the address array (if multiple addresses on a page)
+     * @param boolean $sharing - false, if we want to skip the address sharing features
+     *
      * @return none
      *
      * @access public
      * @static
      */
-    static function buildQuickForm( &$form, $addressBlockCount = null ) 
+    static function buildQuickForm( &$form, $addressBlockCount = null, $sharing = true ) 
     {
 
         // passing this via the session is AWFUL. we need to fix this
@@ -223,19 +224,21 @@ class CRM_Contact_Form_Edit_Address
             $form->assign( "dnc_groupTree", null ); // unset the temp smarty var that got created
         }
         // address custom data processing ends ..
-        
-        // shared address
-        $form->addElement( 'checkbox', "address[$blockId][use_shared_address]", null, ts('Share Address With') );
-        
-        // get the reserved for address
-        $profileId  = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'shared_address', 'id', 'name' );
-        
-        if ( !$profileId ) {
-            CRM_Core_Error::fatal( ts('Your install is missing required "Shared Address" profile.') );
-        }
 
-        require_once 'CRM/Contact/Form/NewContact.php';
-        CRM_Contact_Form_NewContact::buildQuickForm( $form, $blockId, array( $profileId ) );        
+        if ( $sharing ) {
+            // shared address
+            $form->addElement( 'checkbox', "address[$blockId][use_shared_address]", null, ts('Share Address With') );
+        
+            // get the reserved for address
+            $profileId  = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'shared_address', 'id', 'name' );
+        
+            if ( !$profileId ) {
+                CRM_Core_Error::fatal( ts('Your install is missing required "Shared Address" profile.') );
+            }
+
+            require_once 'CRM/Contact/Form/NewContact.php';
+            CRM_Contact_Form_NewContact::buildQuickForm( $form, $blockId, array( $profileId ) );        
+        }
     }
     
     /**
