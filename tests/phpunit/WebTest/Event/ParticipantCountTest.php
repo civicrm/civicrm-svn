@@ -94,24 +94,16 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         // login to check participant count
         $this->open( $this->sboxPath );
         $this->webtestLogin( );
-        
-        // visit event dashboard page
-        $this->open( $this->sboxPath. 'civicrm/event?reset=1' );
-        $this->waitForPageToLoad('30000');
-        $this->waitForTextPresent("Recent Registrations");
-        
-        // check event present
-        $this->assertStringsPresent( array( $eventTitle )  );
 
-        // check number of counted participants
-        $this->verifyText("xpath=//form[@id='Search']//table[@class='display']/tbody/tr/td/a[text()='$eventTitle']/../../td[6]", preg_quote( "Counted: 2" ) );   
-
-        // check number of registered participants
-        $this->verifyText("xpath=//form[@id='Search']//table[@class='display']/tbody/tr/td/a[text()='$eventTitle']/../../td[6]", preg_quote( 'Registered: 2' ) );
-
-        // visit counted participant page
-        $this->click("xpath=//form[@id='Search']//table[@class='display']/tbody/tr/td/a[text()='$eventTitle']/../../td[6]/a[1]" );
-        $this->waitForPageToLoad('30000');
+        // Find Participant
+        $this->open( $this->sboxPath . 'civicrm/event/search&reset=1' );
+        $this->waitForElementPresent( 'participant_fee_amount_low' );
+        $this->click( "event_name" );
+        $this->typeKeys( "event_name",  $eventTitle );
+        $this->waitForElementPresent( "css=div.ac_results-inner li" );
+        $this->click( "css=div.ac_results-inner li" );
+        $this->click( '_qf_Search_refresh' );
+        $this->waitForPageToLoad( '30000' );
         
         // verify number of registered participants
         $this->assertStringsPresent( array( '2 Result' ) );
@@ -267,11 +259,11 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->open( $this->sboxPath );
         $this->webtestLogin( );
         
-        //Find Participant
+        // Find Participant
         $this->open( $this->sboxPath . 'civicrm/event/search&reset=1' );
         $this->waitForElementPresent( 'participant_fee_amount_low' );
         $this->click( "event_name" );
-        $this->typeKeys( "event_name",  $eventTitle  );
+        $this->typeKeys( "event_name",  $eventTitle );
         $this->waitForElementPresent( "css=div.ac_results-inner li" );
         $this->click( "css=div.ac_results-inner li" );
         $this->click( '_qf_Search_refresh' );
