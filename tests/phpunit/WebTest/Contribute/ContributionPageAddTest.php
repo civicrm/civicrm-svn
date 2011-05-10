@@ -80,7 +80,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
     /*
      * check CRM-7943
      */
-    function testContributionPageSeperatePayment() {
+    function testContributionPageSeparatePayment() {
         // open browser, login
         $this->open($this->sboxPath);
         $this->webtestLogin();
@@ -90,8 +90,10 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $rand = 2 * rand(2, 50);
         $pageTitle = 'Donate Online ' . $hash;
         
-        // create contribution page with randomized title, default params and seperate payment for Membership and Contribution
-        $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, 'Dummy', null, true, true, true , true, false, true, true,1, 7, true, true, true, false, false, true );
+        // create contribution page with randomized title, default params and separate payment for Membership and Contribution
+        $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, 'Dummy', 
+                                                     null, true, true, true, true, false, true, true,
+                                                     1, 7, true, true, true, false, false, true );
         
         $this->open($this->sboxPath . 'civicrm/admin/contribute&reset=1');
         $this->waitForPageToLoad();        

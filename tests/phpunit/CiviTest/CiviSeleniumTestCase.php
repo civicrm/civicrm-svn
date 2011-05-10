@@ -83,10 +83,10 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     function webtestLogin( $admin = false ) {
         $password = $admin ? $this->settings->adminPassword : $this->settings->password;
         $username = $admin ? $this->settings->adminUsername : $this->settings->username;
-        $this->type("edit-name", $username);
-        $this->type("edit-pass", $password);
-        $this->click("edit-submit");
-        $this->waitForPageToLoad("30000");      
+        $this->type('edit-name', $username);
+        $this->type('edit-pass', $password);
+        $this->click('edit-submit');
+        $this->waitForPageToLoad('30000');      
     }
 
     /**
@@ -101,52 +101,52 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
      */
 
     function webtestAddContact( $fname = 'Anthony', $lname = 'Anderson', $email = null ) {
-        $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
-        $this->type("qa_first_name", $fname);
-        $this->type("qa_last_name", $lname);
+        $this->open($this->sboxPath . 'civicrm/dashboard?reset=1');
+        $this->type('qa_first_name', $fname);
+        $this->type('qa_last_name', $lname);
         if ($email === true) $email = substr(sha1(rand()), 0, 7) . '@example.org';
-        if ($email) $this->type("qa_email", $email);
-        $this->click("_qf_Contact_next");
-        $this->waitForPageToLoad("30000");        
+        if ($email) $this->type('qa_email', $email);
+        $this->click('_qf_Contact_next');
+        $this->waitForPageToLoad('30000');        
         return $email;
     }
 
     function webtestAddHousehold( $householdName = "Smith's Home", $email = null ) {
         
-        $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Household");
-        $this->click("household_name");
-        $this->type("household_name", $householdName );
+        $this->open($this->sboxPath . 'civicrm/contact/add&reset=1&ct=Household');
+        $this->click('household_name');
+        $this->type('household_name', $householdName );
 
         if ($email === true) $email = substr(sha1(rand()), 0, 7) . '@example.org';
-        if ($email) $this->type("email_1_email", $email);
+        if ($email) $this->type('email_1_email', $email);
 
-        $this->click("_qf_Contact_upload_view");
-        $this->waitForPageToLoad("30000");        
+        $this->click('_qf_Contact_upload_view');
+        $this->waitForPageToLoad('30000');        
         return $email;
     }
 
 
     function webtestAddOrganization( $organizationName = "Smith's Home", $email = null ) {
         
-        $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Organization");
-        $this->click("organization_name");
-        $this->type("organization_name", $organizationName );
+        $this->open($this->sboxPath . 'civicrm/contact/add&reset=1&ct=Organization');
+        $this->click('organization_name');
+        $this->type('organization_name', $organizationName );
 
         if ($email === true) $email = substr(sha1(rand()), 0, 7) . '@example.org';
-        if ($email) $this->type("email_1_email", $email);
+        if ($email) $this->type('email_1_email', $email);
 
-        $this->click("_qf_Contact_upload_view");
-        $this->waitForPageToLoad("30000");        
+        $this->click('_qf_Contact_upload_view');
+        $this->waitForPageToLoad('30000');        
         return $email;
     }
 
     /**
      */
     function webtestFillAutocomplete( $sortName ) {
-        $this->typeKeys("contact_1", $sortName);
+        $this->typeKeys('contact_1', $sortName);
         $this->waitForElementPresent("css=div.ac_results-inner li");
         $this->click("css=div.ac_results-inner li");
-        $this->assertContains($sortName, $this->getValue("contact_1"), "autocomplete expected $sortName but didn’t find it in " . $this->getValue("contact_1"));
+        $this->assertContains($sortName, $this->getValue('contact_1'), "autocomplete expected $sortName but didn’t find it in " . $this->getValue('contact_1'));
     }
 
     /*
@@ -162,7 +162,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
      *        webtestFillDate('start_date',"last Monday")
      */
     function webtestFillDate( $dateElement, $strToTimeArgs = null ) {
-        $timeStamp = strtotime($strToTimeArgs ? $strToTimeArgs : "+1 month");
+        $timeStamp = strtotime($strToTimeArgs ? $strToTimeArgs : '+1 month');
 
         $year = date('Y', $timeStamp);
         $mon  = date('n', $timeStamp) - 1; // -1 ensures month number is inline with calender widget's month
@@ -178,7 +178,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     function webtestFillDateTime( $dateElement, $strToTimeArgs = null ) {
         $this->webtestFillDate( $dateElement, $strToTimeArgs );
 
-        $timeStamp = strtotime($strToTimeArgs ? $strToTimeArgs : "+1 month");
+        $timeStamp = strtotime($strToTimeArgs ? $strToTimeArgs : '+1 month');
         $hour = date('h', $timeStamp);
         $min  = date('i', $timeStamp);
         $meri = date('A', $timeStamp);
@@ -230,7 +230,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->fail( "Unknown editor value: $editor, failing (in CiviSeleniumTestCase::fillRichTextField ..." );
         }
         $this->type("//html/body", $text);
-        $this->selectFrame("relative=top");
+        $this->selectFrame('relative=top');
     }
 
     /**
@@ -250,7 +250,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $validateStrings[] = $oValue['amount'];
             $this->type("option_label_{$oIndex}", $oValue['label'] ); 
             $this->type("option_amount_{$oIndex}" , $oValue['amount']  ); 
-            $this->click("link=another choice");
+            $this->click('link=another choice');
         }         
     }
 
@@ -260,19 +260,19 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         // 4 - Individual profile
         // 5 - Organization profile
         // 6 - Household profile
-        $this->select("profiles_1", "value={$type}");
+        $this->select('profiles_1', "value={$type}");
 
         // create new contact using dialog
         $this->waitForElementPresent("css=div#contact-dialog-1");
-        $this->waitForElementPresent("_qf_Edit_next");
+        $this->waitForElementPresent('_qf_Edit_next');
 
-        $this->type("first_name", $fname);
-        $this->type("last_name",  $lname);
-        $this->type("email-Primary", $email);
-        $this->click("_qf_Edit_next");
+        $this->type('first_name', $fname);
+        $this->type('last_name',  $lname);
+        $this->type('email-Primary', $email);
+        $this->click('_qf_Edit_next');
 
         // Is new contact created?
-        $this->assertTrue($this->isTextPresent("New contact has been created."), "Status message didn't show up after saving!");
+        $this->assertTrue($this->isTextPresent('New contact has been created.'), "Status message didn't show up after saving!");
     }
 
     /** 
@@ -345,23 +345,23 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         } elseif ( empty( $processorSettings ) ) {
             $this->fail("webTestAddPaymentProcessor requires $processorSettings array if processorType is not Dummy.");
         }
-        $this->open($this->sboxPath . "civicrm/admin/paymentProcessor?action=add&reset=1&pp=" . $processorType);
+        $this->open($this->sboxPath . 'civicrm/admin/paymentProcessor?action=add&reset=1&pp=' . $processorType);
         $this->type('name', $processorName);          
         foreach ( $processorSettings AS $f => $v ){
             $this->type($f, $v);          
         }
-        $this->click("_qf_PaymentProcessor_next-bottom");
-        $this->waitForPageToLoad("30000");
+        $this->click('_qf_PaymentProcessor_next-bottom');
+        $this->waitForPageToLoad('30000');
         // Is new processor created?
-        $this->assertTrue($this->isTextPresent($processorName), "Processor name not found in selector after adding payment processor (webTestAddPaymentProcessor).");
+        $this->assertTrue($this->isTextPresent($processorName), 'Processor name not found in selector after adding payment processor (webTestAddPaymentProcessor).');
     }
 
     function webtestAddCreditCardDetails( ) {
-        $this->select("credit_card_type", "label=Visa");
-        $this->type("credit_card_number", "4807731747657838");
-        $this->type("cvv2", "123");
-        $this->select("credit_card_exp_date[M]", "label=Feb");
-        $this->select("credit_card_exp_date[Y]", "label=2019");
+        $this->select('credit_card_type', 'label=Visa');
+        $this->type('credit_card_number', '4807731747657838');
+        $this->type('cvv2', '123');
+        $this->select('credit_card_exp_date[M]', 'label=Feb');
+        $this->select('credit_card_exp_date[Y]', 'label=2019');
     }
 
     function webtestAddBillingDetails( $firstName = null, $middleName = null, $lastName = null ) {
@@ -377,23 +377,23 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $lastName = 'Smith_' . substr(sha1(rand()), 0, 7);
         }
 
-        $this->type("billing_first_name", $firstName );
-        $this->type("billing_middle_name", $middleName );
-        $this->type("billing_last_name", $lastName );
+        $this->type('billing_first_name', $firstName );
+        $this->type('billing_middle_name', $middleName );
+        $this->type('billing_last_name', $lastName );
 
-        $this->type("billing_street_address-5", "234 Lincoln Ave");
-        $this->type("billing_city-5", "San Bernadino");
-        $this->select("billing_state_province_id-5", "label=California");
-        $this->type("billing_postal_code-5", "93245");
+        $this->type('billing_street_address-5', '234 Lincoln Ave');
+        $this->type('billing_city-5', 'San Bernadino');
+        $this->select('billing_state_province_id-5', 'label=California');
+        $this->type('billing_postal_code-5', '93245');
 
         return array( $firstName, $middleName, $lastName );
     }
 
     function webtestAttachFile( $fieldLocator, $filePath = null ) {
         if ( !$filePath ) {
-            $filePath = '/tmp/testfile_'.substr(sha1(rand()), 0, 7).".txt";
+            $filePath = '/tmp/testfile_'.substr(sha1(rand()), 0, 7).'.txt';
             $fp       = @fopen($filePath, 'w');
-            fputs($fp, "Test file created by selenium test.");
+            fputs($fp, 'Test file created by selenium test.');
             @fclose($fp);
         }
 
@@ -406,7 +406,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
   
     function webtestCreateCSV( $headers, $rows , $filePath = null ) {
         if ( !$filePath ) {
-            $filePath = '/tmp/testcsv_'.substr(sha1(rand()), 0, 7).".csv";
+            $filePath = '/tmp/testcsv_'.substr(sha1(rand()), 0, 7).'.csv';
         }
       
         $data = '"' . implode('", "', $headers) . '"'. "\r\n";
@@ -506,7 +506,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                                          $pcp           = true ,
                                          $isAddPaymentProcessor = true,
                                          $isPcpApprovalNeeded = false,
-                                         $isSeperatePayment = false
+                                         $isSeparatePayment = false
                                          ) 
     {
         if ( !$pageTitle ) {
@@ -538,8 +538,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->click('CIVICRM_QFID_2_4');          
         }
 
-        $this->fillRichTextField( "intro_text", 'This is introductory message for ' . $pageTitle,'CKEditor' );
-        $this->fillRichTextField( "footer_text", 'This is footer message for ' . $pageTitle,'CKEditor' );
+        $this->fillRichTextField( 'intro_text', 'This is introductory message for ' . $pageTitle,'CKEditor' );
+        $this->fillRichTextField( 'footer_text', 'This is footer message for ' . $pageTitle,'CKEditor' );
       
         $this->type('goal_amount', 10 * $rand);
 
@@ -551,12 +551,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         // go to step 2
         $this->click('_qf_Settings_next');
-        $this->waitForElementPresent("_qf_Amount_next-bottom"); 
+        $this->waitForElementPresent('_qf_Amount_next-bottom'); 
 
         // fill in step 2 (Processor, Pay Later, Amounts)
         if ( $processorName ) {
             // select newly created processor if required
-            $this->select("payment_processor_id",  "label={$processorName}");
+            $this->select('payment_processor_id',  "label={$processorName}");
         }
 
         if ( $amountSection ) {
@@ -574,7 +574,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                 $this->type('max_reminders',           2);
                 $this->type('additional_reminder_day', 1);            
             } else if ( $recurring ) {
-                $this->click("is_recur");
+                $this->click('is_recur');
                 // only monthly frequency unit enabled
                 $this->click("recur_frequency_unit[day]");
                 $this->click("recur_frequency_unit[week]");
@@ -589,12 +589,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->type('value_1', "$rand");
       
         } else {
-            $this->click("amount_block_is_active");
+            $this->click('amount_block_is_active');
         }
 
         $this->click('_qf_Amount_next');
-        $this->waitForElementPresent("_qf_Amount_next-bottom"); 
-        $this->waitForPageToLoad("30000");
+        $this->waitForElementPresent('_qf_Amount_next-bottom'); 
+        $this->waitForPageToLoad('30000');
         $text = "'Amount' information has been saved.";
         $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
 
@@ -603,8 +603,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         }
         if ( is_array($membershipTypes) && !empty($membershipTypes) ) {
             // go to step 3 (memberships)
-            $this->click("link=Memberships");        
-            $this->waitForElementPresent("_qf_MembershipBlock_next-bottom");            
+            $this->click('link=Memberships');        
+            $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');            
             // fill in step 3 (Memberships)
             $this->click('is_active');
             $this->type('new_title',     "Title - New Membership $hash");
@@ -623,20 +623,20 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
             $this->click('is_required');
             
-            if( $isSeperatePayment ){
-                $this->click("is_separate_payment");
+            if( $isSeparatePayment ){
+                $this->click('is_separate_payment');
             }
             
             $this->click('_qf_MembershipBlock_next');
-            $this->waitForPageToLoad("30000");
-            $this->waitForElementPresent("_qf_MembershipBlock_next-bottom");
+            $this->waitForPageToLoad('30000');
+            $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
             $text = "'MembershipBlock' information has been saved.";
             $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
         }
         
         // go to step 4 (thank-you and receipting)
-        $this->click("link=Receipt");
-        $this->waitForElementPresent("_qf_ThankYou_next-bottom");
+        $this->click('link=Receipt');
+        $this->waitForElementPresent('_qf_ThankYou_next-bottom');
 
         // fill in step 4
         $this->type('thankyou_title',     "Thank-you Page Title $hash");
@@ -648,15 +648,15 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->type('bcc_receipt',        "$hash@example.com");
 
         $this->click('_qf_ThankYou_next');
-        $this->waitForElementPresent("_qf_ThankYou_next-bottom");
-        $this->waitForPageToLoad("30000");
+        $this->waitForElementPresent('_qf_ThankYou_next-bottom');
+        $this->waitForPageToLoad('30000');
         $text = "'ThankYou' information has been saved.";
         $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
 
         if ( $friend ) {
             // fill in step 5 (Tell a Friend)
-            $this->click("link=Tell a Friend");
-            $this->waitForElementPresent("_qf_Contribute_next-bottom"); 
+            $this->click('link=Tell a Friend');
+            $this->waitForElementPresent('_qf_Contribute_next-bottom'); 
             $this->click('tf_is_active');
             $this->type('tf_title',          "TaF Title $hash");
             $this->type('intro',             "TaF Introduction $hash");
@@ -666,16 +666,16 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->type('thankyou_text',     "TaF Thank-you Message $hash");
 
             $this->click('_qf_Contribute_next');
-            $this->waitForElementPresent("_qf_Contribute_next-bottom"); 
-            $this->waitForPageToLoad("30000");
+            $this->waitForElementPresent('_qf_Contribute_next-bottom'); 
+            $this->waitForPageToLoad('30000');
             $text = "'Friend' information has been saved.";
             $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
         }
 
         if ( $profilePreId || $profilePostId ) {
             // fill in step 6 (Include Profiles)
-            $this->click("link=Profiles");
-            $this->waitForElementPresent("_qf_Custom_next-bottom");
+            $this->click('link=Profiles');
+            $this->waitForElementPresent('_qf_Custom_next-bottom');
           
             if ( $profilePreId )
                 $this->select('custom_pre_id',  "value=$profilePreId");
@@ -684,17 +684,17 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                 $this->select('custom_post_id', "value=$profilePostId");
 
             $this->click('_qf_Custom_next');
-            $this->waitForElementPresent("_qf_Custom_next-bottom");
+            $this->waitForElementPresent('_qf_Custom_next-bottom');
 
-            $this->waitForPageToLoad("30000");
+            $this->waitForPageToLoad('30000');
             $text = "'Custom' information has been saved.";
             $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
         }
 
         if ( $premiums ) {
             // fill in step 7 (Premiums)
-            $this->click("link=Premiums");
-            $this->waitForElementPresent("_qf_Premium_next-bottom");
+            $this->click('link=Premiums');
+            $this->waitForElementPresent('_qf_Premium_next-bottom');
             $this->click('premiums_active');
             $this->type('premiums_intro_title',   "Prem Title $hash");
             $this->type('premiums_intro_text',    "Prem Introductory Message $hash");
@@ -703,9 +703,9 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->click('premiums_display_min_contribution');
 
             $this->click('_qf_Premium_next');
-            $this->waitForElementPresent("_qf_Premium_next-bottom");
+            $this->waitForElementPresent('_qf_Premium_next-bottom');
 
-            $this->waitForPageToLoad("30000");
+            $this->waitForPageToLoad('30000');
             $text = "'Premium' information has been saved.";
             $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
         }
@@ -713,27 +713,27 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         if ( $widget ) {
             // fill in step 8 (Widget Settings)
-            $this->click("link=Widgets");        
-            $this->waitForElementPresent("_qf_Widget_next-bottom");
+            $this->click('link=Widgets');        
+            $this->waitForElementPresent('_qf_Widget_next-bottom');
 
             $this->click('is_active');
             $this->type('url_logo',     "URL to Logo Image $hash");
             $this->type('button_title', "Button Title $hash");
             // Type About text in ckEditor (fieldname, text to type, editor)
-            $this->fillRichTextField( "about", 'This is for ' . $pageTitle,'CKEditor' );
+            $this->fillRichTextField( 'about', 'This is for ' . $pageTitle,'CKEditor' );
 
             $this->click('_qf_Widget_next');
-            $this->waitForElementPresent("_qf_Widget_next-bottom");
+            $this->waitForElementPresent('_qf_Widget_next-bottom');
 
-            $this->waitForPageToLoad("30000");            
+            $this->waitForPageToLoad('30000');            
             $text = "'Widget' information has been saved.";
             $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
         }
 
         if ( $pcp ) {
             // fill in step 9 (Enable Personal Campaign Pages)
-            $this->click("link=Personal Campaigns");
-            $this->waitForElementPresent("_qf_PCP_next-bottom");
+            $this->click('link=Personal Campaigns');
+            $this->waitForElementPresent('_qf_PCP_next-bottom');
 
             $this->click('pcp_active');
             if( !$isPcpApprovalNeeded ) $this->click('is_approval_needed');
@@ -743,8 +743,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->type('link_text', "'Create Personal Campaign Page' link text $hash");
 
             $this->click('_qf_PCP_next');
-            $this->waitForElementPresent("_qf_PCP_next-bottom");
-            $this->waitForPageToLoad("30000");
+            $this->waitForElementPresent('_qf_PCP_next-bottom');
+            $this->waitForPageToLoad('30000');
             $text = "'PCP' information has been saved.";
             $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
         }
@@ -786,8 +786,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         } 
         
         $this->open( $this->sboxPath . 'civicrm/contact/deduperules?action=update&id=' . $strictRuleId );
-        $this->waitForPageToLoad("30000");
-        $this->waitForElementPresent( "_qf_DedupeRules_next-bottom" );
+        $this->waitForPageToLoad('30000');
+        $this->waitForElementPresent( '_qf_DedupeRules_next-bottom' );
         
         $count = 0;
         foreach ( $fields as $field => $weight ) {
@@ -814,26 +814,26 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->type( 'threshold', $threshold );
         
         // click save 
-        $this->click( "_qf_DedupeRules_next-bottom" );
-        $this->waitForPageToLoad( "30000" );
+        $this->click( '_qf_DedupeRules_next-bottom' );
+        $this->waitForPageToLoad( '30000' );
     }
     
-    function webtestAddMembershipType( $period_type = "rolling", $duration_interval = 1, $duration_unit = 'year', $auto_renew = 'no' ) {
+    function webtestAddMembershipType( $period_type = 'rolling', $duration_interval = 1, $duration_unit = 'year', $auto_renew = 'no' ) {
         $membershipTitle = substr(sha1(rand()), 0, 7);
         $membershipOrg   = $membershipTitle . ' memorg';
         $this->webtestAddOrganization( $membershipOrg, true );
 
-        $title = "Membership Type " . substr(sha1(rand()), 0, 7);
+        $title = 'Membership Type ' . substr(sha1(rand()), 0, 7);
         $memTypeParams = array( 'membership_type'   => $title,
                                 'member_org'        => $membershipOrg,
                                 'contribution_type' => 2,
                                 'period_type'       => $period_type,
                                 );
       
-        $this->open( $this->sboxPath . "civicrm/admin/member/membershipType?reset=1&action=browse" );
-        $this->waitForPageToLoad("30000");
+        $this->open( $this->sboxPath . 'civicrm/admin/member/membershipType?reset=1&action=browse' );
+        $this->waitForPageToLoad('30000');
 
-        $this->click( "link=Add Membership Type" );
+        $this->click( 'link=Add Membership Type' );
         $this->waitForElementPresent( '_qf_MembershipType_cancel-bottom' );
       
         $this->type( 'name', $memTypeParams['membership_type'] );
@@ -842,10 +842,10 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         // select the radio first since the element id changes after membership org search results are loaded
         switch ($auto_renew) {
         case 'optional':
-            $this->click("CIVICRM_QFID_1_10");
+            $this->click('CIVICRM_QFID_1_10');
             break;
         case 'required':
-            $this->click("CIVICRM_QFID_2_12");
+            $this->click('CIVICRM_QFID_2_12');
             break;
         default:
             break;
@@ -872,34 +872,34 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     function WebtestAddGroup( ) 
     {
-        $this->open($this->sboxPath . "civicrm/group/add&reset=1");
+        $this->open($this->sboxPath . 'civicrm/group/add&reset=1');
       
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
-        $this->waitForElementPresent("_qf_Edit_upload");
+        $this->waitForElementPresent('_qf_Edit_upload');
       
         // Create new group
         $title = substr(sha1(rand()), 0, 7);
         $groupName = "group_$title";
       
         // fill group name
-        $this->type("title", $groupName);
+        $this->type('title', $groupName);
       
         // fill description
-        $this->type("description", "Adding new group.");
+        $this->type('description', 'Adding new group.');
       
         // check Access Control
-        $this->click("group_type[1]");
+        $this->click('group_type[1]');
       
         // check Mailing List
-        $this->click("group_type[2]");
+        $this->click('group_type[2]');
 
         // select Visibility as Public Pages
-        $this->select("visibility", "value=Public Pages");
+        $this->select('visibility', 'value=Public Pages');
       
         // Clicking save.
-        $this->click("_qf_Edit_upload");
-        $this->waitForPageToLoad("30000");
+        $this->click('_qf_Edit_upload');
+        $this->waitForPageToLoad('30000');
       
         // Is status message correct?
         $this->assertTrue($this->isTextPresent("The Group '$groupName' has been saved."));
