@@ -48,11 +48,11 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         // search for the new contrib page and go to its test version
         $this->type('title', $pageTitle);
         $this->click('_qf_SearchContribution_refresh');
-        $this->waitForPageToLoad("30000");
+        $this->waitForPageToLoad('30000');
         $this->waitForElementPresent("links_{$pageId}"); 
 
         $this->click("links_{$pageId}");
-        $this->click("link=Test-drive");
+        $this->click('link=Test-drive');
         $this->waitForPageToLoad();
 
         // verify whatever’s possible to verify
@@ -60,17 +60,65 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $texts = array(
             "Title - New Membership $hash",
             "This is introductory message for $pageTitle",
-            "Student  (contribute at least $ 50.00 to be eligible for this membership)",
+            'Student  (contribute at least $ 50.00 to be eligible for this membership)',
             "$ $rand.00 Label $hash",
             "Pay later label $hash",
-            "Organization Details",
-            "Other Amount",
-            "I pledge to contribute this amount every",
+            'Organization Details',
+            'Other Amount',
+            'I pledge to contribute this amount every',
             "Honoree Section Title $hash",
             "Honoree Introductory Message $hash",
-            "In Honor of",
-            "Name and Address",
-            "Summary Overlay"
+            'In Honor of',
+            'Name and Address',
+            'Summary Overlay'
+        );
+        foreach ($texts as $text) {
+            $this->assertTrue( $this->isTextPresent($text), 'Missing text: ' . $text );
+        }
+    }
+    
+    /*
+     * check CRM-7943
+     */
+    function testContributionPageSeperatePayment() {
+        // open browser, login
+        $this->open($this->sboxPath);
+        $this->webtestLogin();
+
+        // a random 7-char string and an even number to make this pass unique
+        $hash = substr(sha1(rand()), 0, 7);
+        $rand = 2 * rand(2, 50);
+        $pageTitle = 'Donate Online ' . $hash;
+        
+        // create contribution page with randomized title, default params and seperate payment for Membership and Contribution
+        $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, 'Dummy', null, true, true, true , true, false, true, true,1, 7, true, true, true, false, false, true );
+        
+        $this->open($this->sboxPath . 'civicrm/admin/contribute&reset=1');
+        $this->waitForPageToLoad();        
+        
+        // search for the new contrib page and go to its test version
+        $this->type('title', $pageTitle);
+        $this->click('_qf_SearchContribution_refresh');
+        $this->waitForPageToLoad('30000');
+        $this->waitForElementPresent("links_{$pageId}"); 
+        
+        // select testdrive mode
+        $this->click("links_{$pageId}");
+        $this->click('link=Test-drive');
+        $this->waitForPageToLoad();
+        $texts = array(
+            "Title - New Membership $hash",
+            "This is introductory message for $pageTitle",
+            "$ $rand.00 Label $hash",
+            "Pay later label $hash",
+            'Organization Details',
+            'Other Amount',
+            'I pledge to contribute this amount every',
+            "Honoree Section Title $hash",
+            "Honoree Introductory Message $hash",
+            'In Honor of',
+            'Name and Address',
+            'Summary Overlay'
         );
         foreach ($texts as $text) {
             $this->assertTrue( $this->isTextPresent($text), 'Missing text: ' . $text );

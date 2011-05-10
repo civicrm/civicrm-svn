@@ -505,7 +505,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                                          $widget        = true, 
                                          $pcp           = true ,
                                          $isAddPaymentProcessor = true,
-                                         $isPcpApprovalNeeded = false
+                                         $isPcpApprovalNeeded = false,
+                                         $isSeperatePayment = false
                                          ) 
     {
         if ( !$pageTitle ) {
@@ -621,14 +622,18 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             }
 
             $this->click('is_required');
-          
+            
+            if( $isSeperatePayment ){
+                $this->click("is_separate_payment");
+            }
+            
             $this->click('_qf_MembershipBlock_next');
             $this->waitForPageToLoad("30000");
             $this->waitForElementPresent("_qf_MembershipBlock_next-bottom");
             $text = "'MembershipBlock' information has been saved.";
             $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
         }
-
+        
         // go to step 4 (thank-you and receipting)
         $this->click("link=Receipt");
         $this->waitForElementPresent("_qf_ThankYou_next-bottom");
