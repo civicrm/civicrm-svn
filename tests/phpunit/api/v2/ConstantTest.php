@@ -75,6 +75,11 @@ class api_v2_ConstantTest extends CiviUnitTestCase
 
     }
 
+    function tearDown( )
+    {
+        $this->quickCleanup( array( 'civicrm_option_group' ) );
+    }
+
     /**
      *  Test civicrm_constant_get( ) for unknown constant
      */

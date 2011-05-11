@@ -131,7 +131,6 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase
                         );
         $result =& civicrm_api3_mailing_group_event_subscribe($params);
         $this->documentMe($params,$group,__FUNCTION__,__FILE__);    
-        print_r($result);     
         $this->assertEquals($result['is_error'], 0);
         $this->assertEquals($result['values']['contact_id'], $contactID);
 

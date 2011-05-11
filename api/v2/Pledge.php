@@ -157,6 +157,8 @@ function &civicrm_pledge_get( &$params ) {
         return civicrm_create_error(  'Input parameters is not an array'  );
     }
 
+
+
     $inputParams      = array( );
     $returnProperties = array( );
     $otherVars = array( 'sort', 'offset', 'rowCount' );
@@ -191,6 +193,7 @@ function &civicrm_pledge_get( &$params ) {
 
     $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null );
     list( $select, $from, $where ) = $query->query( );
+
     
     $sql = "$select $from $where";  
 
@@ -199,6 +202,8 @@ function &civicrm_pledge_get( &$params ) {
     }
     $sql .= " LIMIT $offset, $rowCount ";
     $dao =& CRM_Core_DAO::executeQuery( $sql );
+
+
     
     $pledge = array( );
     while ( $dao->fetch( ) ) {

@@ -51,6 +51,14 @@ class api_v2_ContactTest extends CiviUnitTestCase
         parent::__construct( );
     }
 
+    function tearDown( ) {
+        // truncate a few tables
+        $tablesToTruncate = array( 'civicrm_contact',
+                                   'civicrm_email' );
+        
+        $this->quickCleanup( $tablesToTruncate );
+    }
+
     /**
      *  Test civicrm_contact_add()
      *

@@ -83,6 +83,13 @@ class api_v2_GroupContactTest extends CiviUnitTestCase
     
     function tearDown() 
     {
+        // truncate a few tables
+        $tablesToTruncate = array( 'civicrm_contact',
+                                   'civicrm_group',
+                                   'civicrm_group_contact',
+                                   'civicrm_subscription_history' );
+        
+        $this->quickCleanup( $tablesToTruncate );
     }
 
 ///////////////// civicrm_group_contact_get methods

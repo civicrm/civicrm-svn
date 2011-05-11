@@ -46,11 +46,12 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
     {
         parent::setUp();
 
-        $this->_contactID           = $this->organizationCreate( ) ;
+        $this->_contactID = $this->organizationCreate( ) ;
     }
 
     function tearDown() 
     {
+        $this->contactDelete( $this->_contactID );   
     }
 
 ///////////////// civicrm_membership_type_get methods
@@ -235,6 +236,7 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
 
         $this->assertEquals( $membershiptype['is_error'], 0 );
         $this->assertNotNull( $membershiptype['id'] );   
+        $this->membershipTypeDelete( $membershiptype );
     }
 
 ///////////////// civicrm_membership_type_update methods
@@ -294,11 +296,14 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
                         );
         $membershiptype = & civicrm_membership_type_update($params);
         $this->assertEquals($membershiptype['name'],'Updated General');
-        $this->assertEquals($membershiptype['member_of_contact_id'],'2');
+        $this->assertEquals($membershiptype['member_of_contact_id'], $newMembOrgID);
         $this->assertEquals($membershiptype['contribution_type_id'],'1');
         $this->assertEquals($membershiptype['duration_unit'],'month');
         $this->assertEquals($membershiptype['duration_interval'],'10');
         $this->assertEquals($membershiptype['period_type'],'fixed');
+
+        $this->membershipTypeDelete( $params );
+        $this->contactDelete( $newMembOrgID );
     }
 
 ///////////////// civicrm_membership_type_delete methods
@@ -336,8 +341,8 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
         $params['id'] = $membershipTypeID;
         $membershiptype = civicrm_membership_type_delete( $params );
         $this->assertEquals( $membershiptype['is_error'], 0 );
+        $this->contactDelete( $orgID );
     }
-    
 
 }
  

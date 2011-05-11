@@ -33,6 +33,7 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v2_LocationTest extends CiviUnitTestCase 
 {
     protected $_contactID;
+    protected $_locationType;
 
     function get_info( )
     {
@@ -48,11 +49,16 @@ class api_v2_LocationTest extends CiviUnitTestCase
         parent::setUp();
     
         $this->_contactID    = $this->organizationCreate( );
-        $this->_locationType = $this->locationTypeCreate( );        
+
+        CRM_Core_Pseudoconstant::flush( 'locationType' );
+        $this->_locationType = $this->locationTypeCreate( );
+
     }
     
     function tearDown() 
-    {
+    {        
+        $this->locationTypeDelete( $this->_locationType->id );
+        $this->contactDelete( $this->_contactID );   
     }    
 
 ///////////////// civicrm_location_add methods
@@ -125,6 +131,11 @@ class api_v2_LocationTest extends CiviUnitTestCase
         
         $this->assertEquals( $location['is_error'], 0 );
         $this->assertTrue( !empty( $location['result']['address'] ) ); 
+        
+        $params = array( 'contact_id'    => $this->_contactID,
+                         'location_type' => $this->_locationType->id );
+        $this->locationDelete( $params );
+        
     }
 
     function testAddWithAddressEmailPhoneIM()
@@ -190,6 +201,15 @@ class api_v2_LocationTest extends CiviUnitTestCase
         $this->assertEquals( count($location['result']['email']), 3 );
         $this->assertEquals( count($location['result']['im']), 3 );
         $this->assertTrue( !empty( $location['result']['address'] ) ); 
+
+        $params = array( 'contact_id'    => $this->_contactID,
+                         'location_type' => $this->_locationType->id );
+        $this->locationDelete( $params );
+
+        $locationTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_LocationType', 'Home', 'id', 'name' );
+        $params = array( 'contact_id'    => $this->_contactID,
+                         'location_type' => $locationTypeId );
+        $this->locationDelete( $params );
    }
     
 ///////////////// civicrm_location_delete methods
@@ -312,6 +332,10 @@ class api_v2_LocationTest extends CiviUnitTestCase
                 }
             }
         }
+        
+        $params = array( 'contact_id'    => $this->_contactID,
+                         'location_type' => $this->_locationType->id );
+        $this->locationDelete( $params );
     }
 
     function testGetTwoSeriesCompliance()
@@ -332,6 +356,15 @@ class api_v2_LocationTest extends CiviUnitTestCase
                 $this->assertEquals($location['address']['contact_id'], $this->_contactID);
             } 
         }
+        
+        $params = array( 'contact_id'    => $this->_contactID,
+                         'location_type' => $this->_locationType->id );
+        $this->locationDelete( $params );
+        
+        $locationTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_LocationType', 'Home', 'id', 'name' );
+        $params = array( 'contact_id'    => $this->_contactID,
+                         'location_type' => $locationTypeId );
+        $this->locationDelete( $params );
     }
     
 ///////////////// civicrm_location_update methods
@@ -379,17 +412,17 @@ class api_v2_LocationTest extends CiviUnitTestCase
        
         $workPhone =array('phone' => '02327276048',
                           'phone_type' => 'Phone',
-                          'location_type'         => 'New Location Type'  
+                          'location_type' => 'New Location Type'  
                       );
         
         $phones = array ($workPhone);
         
         $workEmailFirst = array('email' => 'xyz@indiatimes.com',
-                                'location_type'         => 'New Location Type' 
+                                'location_type' => 'New Location Type' 
                                );
         
         $workEmailSecond = array('email' => 'abcdef@hotmail.com',
-                                 'location_type'         => 'New Location Type'
+                                 'location_type' => 'New Location Type'
                                 );
         
         $emails = array($workEmailFirst,$workEmailSecond);
@@ -403,6 +436,10 @@ class api_v2_LocationTest extends CiviUnitTestCase
         $locationUpdate =& civicrm_location_update( $params );
         
         $this->assertEquals( $locationUpdate['is_error'], 0, 'In line ' . __LINE__ );
+        
+        $params = array( 'contact_id'    => $this->_contactID,
+                         'location_type' => $this->_locationType->id );
+        $this->locationDelete( $params );
     }
 
 

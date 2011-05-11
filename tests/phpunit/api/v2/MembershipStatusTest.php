@@ -51,13 +51,15 @@ class api_v2_MembershipStatusTest extends CiviUnitTestCase {
         parent::setUp();
 
         $this->_contactID           = $this->individualCreate( ) ;
-        
         $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID  );
         $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );
     }
 
     function tearDown( ) 
     {
+        $this->membershipStatusDelete( $this->_membershipStatusID );
+        $this->membershipTypeDelete( array('id' => $this->_membershipTypeID) );
+        $this->contactDelete( $this->_contactID );   
     }
 
 ///////////////// civicrm_membership_status_get methods
@@ -193,7 +195,11 @@ class api_v2_MembershipStatusTest extends CiviUnitTestCase {
         $join_date->modify("-5 months");
         $start_date->modify("-5 months");
         $end_date->modify("+7 months");
-
+        
+        require_once 'CRM/Member/PseudoConstant.php';
+        CRM_Member_PseudoConstant::membershipType( null, true );
+        CRM_Member_PseudoConstant::membershipStatus( null, null, 'name', true );
+        
         $params = array( 'contact_id'         => $this->_contactID, 
                          'membership_type_id' => $this->_membershipTypeID,
                          'membership_status_id' => $this->_membershipStatusID,
@@ -208,6 +214,7 @@ class api_v2_MembershipStatusTest extends CiviUnitTestCase {
         $this->assertEquals( $result['is_error'], 0 );
         $this->assertEquals( $membershipStatusID,$result['id'] );
         $this->assertNotNull( $result['id'] );
+        $this->membershipDelete( $membershipID );
     }
 
 ///////////////// civicrm_membership_status_delete methods

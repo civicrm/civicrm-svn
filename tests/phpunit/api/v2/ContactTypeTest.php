@@ -32,7 +32,10 @@ require_once 'api/v2/Contact.php';
 
 class api_v2_ContactTypeTest extends CiviUnitTestCase
 {
-    
+    protected $_subTypeIndividualId;
+    protected $_subTypeOrganizationId;
+    protected $_subTypeHouseholdId;
+
     function setUp()
     {
         parent::setUp();
@@ -43,7 +46,8 @@ class api_v2_ContactTypeTest extends CiviUnitTestCase
                          'is_active' => 1
                          );
         $result = CRM_Contact_BAO_ContactType::add( $params );
-        $this->subTypeIndividual = $params['name'];  
+        $this->subTypeIndividual    = $params['name'];  
+        $this->_subTypeIndividualId = $result->id;
         
         $params = array( 'label'     => 'sub_organization',
                          'name'      => 'sub_organization',
@@ -51,7 +55,8 @@ class api_v2_ContactTypeTest extends CiviUnitTestCase
                          'is_active' => 1
                          );
         $result = CRM_Contact_BAO_ContactType::add( $params );
-        $this->subTypeOrganization = $params['name'];
+        $this->subTypeOrganization    = $params['name'];
+        $this->_subTypeOrganizationId = $result->id;
         
         $params = array( 'label'     => 'sub_household',
                          'name'      => 'sub_household',
@@ -59,7 +64,23 @@ class api_v2_ContactTypeTest extends CiviUnitTestCase
                          'is_active' => 1
                          );
         $result = CRM_Contact_BAO_ContactType::add( $params );
-        $this->subTypeHousehold = $params['name'];
+        $this->subTypeHousehold    = $params['name'];
+        $this->_subTypeHouseholdId = $result->id;
+    }
+
+    /**
+     * Tears down the fixture, for example, closes a network connection.
+     * This method is called after a test is executed.
+     *
+     */
+    function tearDown( )
+    {
+        $contactTypeIds = array( $this->_subTypeIndividualId, 
+                                 $this->_subTypeOrganizationId, 
+                                 $this->_subTypeHouseholdId );
+        foreach ( $contactTypeIds as $typeId ) {
+            $this->contactTypeDelete( $typeId );
+        }
     }
    
     /*
@@ -291,6 +312,7 @@ class api_v2_ContactTypeTest extends CiviUnitTestCase
         $this->assertEquals( $result['contact_sub_type'], $updateParams['contact_sub_type'], "In line " . __LINE__ );
         civicrm_contact_delete( $params ); 
 
+        $this->contactTypeDelete( $getSubtype->id );
 
         $params = array( 'label'     => 'sub2_organization',
                          'name'      => 'sub2_organization',
@@ -328,6 +350,8 @@ class api_v2_ContactTypeTest extends CiviUnitTestCase
         $this->assertEquals( $result['contact_type'], $updateParams['contact_type'], "In line " . __LINE__ );
         $this->assertEquals( $result['contact_sub_type'], $updateParams['contact_sub_type'], "In line " . __LINE__ );
         civicrm_contact_delete( $params ); 
+
+        $this->contactTypeDelete( $getSubtype->id );
     }
   
     /*
