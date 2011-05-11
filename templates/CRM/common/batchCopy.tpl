@@ -147,7 +147,7 @@ function copyValuesDate(fieldName)
     	firstTime = cj( "#field_" + cId[0] + '_' + fieldName + '_time' ).val( );
     }
  	cj(cId).each(function(i,id){
- 		cj( '#field_' + id + '_' + fieldName ).val( firstDate );
+ 		cj( '#field_' + id + '_' + fieldName + '_display' ).val( firstDate );
 		cj( '#field_' + id + '_' + fieldName + '_time').val( firstTime );
  	});    
 }
