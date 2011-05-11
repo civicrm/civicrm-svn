@@ -28,19 +28,19 @@
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 
 
- 
-class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
 
+class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
+ 
   protected function setUp()
   {
       parent::setUp();
   }
-
+  
   /*
    *  Test Signature in TinyMC.
    */
   function testTinyMCE( )  {
-
+      
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
       // class attributes.
@@ -52,19 +52,20 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin( );
-
+      
+      // Select Your Editor
       $this->_selectEditor('TinyMCE');
-
+      
       // Click on Edit of Current User
       $this->click("xpath=id('recently-viewed')/ul/li/ul/li/a[2]");
       $this->waitForPageToLoad('30000');
       
       $this->click("//tr[@id='Email_Block_1']/td[1]/div[2]/div[1]");
-
+      
       // HTML format message
       $signature = 'Contact Signature in html';
       $this->fillRichTextField('mceIframeContainer', $signature,'TinyMCE');
-
+      
       // TEXT Format Message
       $this->type('email_1_signature_text','Contact Signature in text');
       $this->click('_qf_Contact_upload_view');
@@ -72,33 +73,31 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       
       // Is status message correct?
       $this->assertTrue($this->isTextPresent('Your Individual contact record has been saved.'));
- 
+      
       // Go for Ckeck Your Editor, Click on Send Mail
       $this->click("//div[@id='crm-contact-actions-link']/span");
       $this->click('link=Send an Email');
       $this->waitForPageToLoad('30000');
       sleep(5);
       $this->click('subject');
-      $this->type('subject', 'This is TestMail With TinyMCE');
+      $subject = 'Subject_' . substr(sha1(rand()), 0, 7);
+      $this->type('subject', $subject);
+      
+      // Is signature correct? in Editor
+      $this->_checkSignature('mceIframeContainer',$signature,'TinyMCE');
+
       $this->click('_qf_Email_upload-top');
       $this->waitForPageToLoad('30000');
       
-     // Click To View Activity
-      $this->waitForElementPresent("xpath=id('contact-activity-selector-activity')/tbody/tr[1]/td[8]/span/a[1]");
-      $this->click("xpath=id('contact-activity-selector-activity')/tbody/tr[1]/td[8]/span/a[1]");
-      $this->waitForPageToLoad('30000');
-
-      // Is signature correct?
-      $this->assertTrue($this->isTextPresent($signature));
-         
+      // Go for Activity Search
+      $this->_checkActivity($subject, $signature);
+      
   }
-  
- /*
-  *  Test Signature in CKEditor.
-  */
-
+  /*
+   *  Test Signature in CKEditor.
+   */
   function testCKEditor( )  {
-
+      
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
       // class attributes.
@@ -110,19 +109,20 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin( );
-     
+      
+      // Select Your Editor
       $this->_selectEditor('CKEditor');
-
+      
       // Click on Edit of Current User
       $this->click("xpath=id('recently-viewed')/ul/li/ul/li/a[2]");
       $this->waitForPageToLoad('30000');
       
       $this->click("//tr[@id='Email_Block_1']/td[1]/div[2]/div[1]");
-
+      
       // HTML format message
       $signature = 'Contact Signature in html';
       $this->fillRichTextField('email_1_signature_html', $signature);
-
+      
       // TEXT Format Message
       $this->type('email_1_signature_text','Contact Signature in text');
       $this->click('_qf_Contact_upload_view');
@@ -130,27 +130,27 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       
       // Is status message correct?
       $this->assertTrue($this->isTextPresent('Your Individual contact record has been saved.'));
- 
+      
       // Go for Ckeck Your Editor, Click on Send Mail
       $this->click("//div[@id='crm-contact-actions-link']/span");
       $this->click('link=Send an Email');
       $this->waitForPageToLoad('30000');
       sleep(5);
+      
       $this->click('subject');
-      $this->type('subject', 'This is TestMail With CKEditor');
+      $subject = 'Subject_' . substr(sha1(rand()), 0, 7);
+      $this->type('subject', $subject);
+      
+      // Is signature correct? in Editor
+      $this->_checkSignature('html_message',$signature,'CKEditor');
+
       $this->click('_qf_Email_upload-top');
       $this->waitForPageToLoad('30000');
-
-      // Click To View Activity
-      $this->waitForElementPresent("xpath=id('contact-activity-selector-activity')/tbody/tr[1]/td[8]/span/a[1]");
-      $this->click("xpath=id('contact-activity-selector-activity')/tbody/tr[1]/td[8]/span/a[1]");
-      $this->waitForPageToLoad('30000');
-
-      // Is signature correct?
-      $this->assertTrue($this->isTextPresent($signature));
-             
+      
+      // Go for Activity Search
+      $this->_checkActivity($subject, $signature);
+      
   }
-
   /*
    * Helper function to select Editor.
    */  
@@ -165,5 +165,37 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       $this->click('_qf_Display_next-bottom');
       $this->waitForPageToLoad('30000');
   }
-
+  /*
+   * Helper function for Check Signature in Editor.
+   */  
+  function _checkSignature($fieldName, $signature, $editor){
+      if ( $editor == 'CKEditor') {
+          $this->waitForElementPresent("css=td#cke_contents_{$fieldName} iframe");
+          $this->selectFrame("css=td#cke_contents_{$fieldName} iframe");
+      } else{
+          $this->selectFrame("css=td.{$fieldName} iframe");
+      } 
+      
+      $this->verifyText('//html/body',preg_quote("{$signature}"));
+      $this->selectFrame('relative=top');
+      
+  }
+  /*
+   * Helper function for Check Signature in Activity.
+   */  
+  function _checkActivity($subject, $signature){
+      $this->open( $this->sboxPath . 'civicrm/activity/search?reset=1' );
+      $this->waitForElementPresent('_qf_Search_refresh');
+      $this->type( 'activity_subject', $subject);
+      $this->click( '_qf_Search_refresh' );
+      $this->waitForElementPresent('_qf_Search_next_print');
+      
+      // View your Activity
+      $this->click( "xpath=id('Search')/div[3]/div/div[2]/table/tbody/tr[2]/td[9]/span/a[text()='View']" );
+      $this->waitForElementPresent('_qf_ActivityView_next-bottom');
+      
+      // Is signature correct? in Activity
+      $this->assertTrue($this->isTextPresent($signature));  
+  }
+  
 }
