@@ -506,7 +506,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                                          $pcp           = true ,
                                          $isAddPaymentProcessor = true,
                                          $isPcpApprovalNeeded = false,
-                                         $isSeparatePayment = false
+                                         $isSeparatePayment = false,
+                                         $honoreeSection = true
                                          ) 
     {
         if ( !$pageTitle ) {
@@ -544,11 +545,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->type('goal_amount', 10 * $rand);
 
         // FIXME: handle Start/End Date/Time
-
-        $this->click('honor_block_is_active');
-        $this->type('honor_block_title', "Honoree Section Title $hash");
-        $this->type('honor_block_text',  "Honoree Introductory Message $hash");
-
+        if ( $honoreeSection ) {
+            $this->click('honor_block_is_active');
+            $this->type('honor_block_title', "Honoree Section Title $hash");
+            $this->type('honor_block_text',  "Honoree Introductory Message $hash");
+        }
         // go to step 2
         $this->click('_qf_Settings_next');
         $this->waitForElementPresent('_qf_Amount_next-bottom'); 
