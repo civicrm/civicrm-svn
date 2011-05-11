@@ -374,8 +374,6 @@ class CRM_Contribute_Form_AdditionalInfo
                            CRM_Utils_System::mungeCreditCard( $params['credit_card_number'] ) );
         } else {
             //offline contribution
-            //Retrieve the name and email from receipt is to be send
-            $params['from_email_id'] = $form->fromEmailId;
             // assigned various dates to the templates
             $form->assign('receipt_date',  CRM_Utils_Date::processDate( $params['receipt_date'] ) );
             $form->assign('cancel_date',   CRM_Utils_Date::processDate( $params['cancel_date']  ) );
@@ -432,7 +430,7 @@ class CRM_Contribute_Form_AdditionalInfo
                 'groupName' => 'msg_tpl_workflow_contribution',
                 'valueName' => 'contribution_offline_receipt',
                 'contactId' => $params['contact_id'],
-                'from'      => $params['from_email_id'],
+                'from'      => $params['from_email_address'],
                 'toName'    => $contributorDisplayName,
                 'toEmail'   => $contributorEmail,
                 'isTest'    => $form->_mode == 'test',
