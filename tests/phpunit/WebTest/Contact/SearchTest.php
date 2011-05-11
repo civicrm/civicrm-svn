@@ -58,7 +58,7 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
       $sortName    = "Anderson, $firstName";
       $displayName = "$firstName Anderson";
       
-      // Go directly to the URL of the screen that you will be testing (New Tag).
+      // Go directly to the URL of the screen that you will be testing (Home dashboard).
       $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
       $this->waitForPageToLoad("30000");
 
@@ -75,6 +75,38 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
       
       // Is contact present?
       $this->assertTrue($this->isTextPresent("$displayName"), "Contact did not find!");
+  }
+
+  function testQuickSearchPartial( )
+  {
+      $this->open( $this->sboxPath );
+      
+      $this->webtestLogin( );
+
+      // Adding contact
+      // We're using Quick Add block on the main page for this.
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName, "Adams", "{$firstName}.adams@example.org" );
+      
+      $sortName    = "Adams, {$firstName}";
+      // Go directly to the URL of the screen that you will be testing (Home dashboard).
+      $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
+      $this->waitForPageToLoad("30000");
+
+      // type partial sortname in autocomplete
+      $this->typeKeys("css=input#sort_name_navigation", 'ada');
+      $this->click("_qf_Basic_refresh");
+
+      // wait for result list
+      $this->waitForPageToLoad("30000");
+      // make sure we're on search results page
+      $this->waitForElementPresent("alpha-filter");
+      // wait for bottom of page to load (access is in footer)
+      $this->waitForElementPresent("access");
+
+      // Is contact present in search result?
+      $this->assertTrue($this->isTextPresent("$sortName"), "Contact not found in search result (QuickSearchPartial).");
+      
   }
 
   function testContactSearch( )
