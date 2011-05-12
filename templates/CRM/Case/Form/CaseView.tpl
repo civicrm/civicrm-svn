@@ -999,8 +999,8 @@ function setSelectorClass( ) {
 
 function printCaseReport( ){
  
- 	var dataUrl = {/literal}"{crmURL p='civicrm/case/report/print'}"{literal};
- 	dataUrl     = dataUrl+ '&all=1&cid={/literal}{$contactID}{literal}' 
+ 	var dataUrl = {/literal}"{crmURL p='civicrm/case/report/print' q='all=1'}"{literal};
+ 	dataUrl     = dataUrl+ '&cid={/literal}{$contactID}{literal}' 
                       +'&caseID={/literal}{$caseID}{literal}';
         window.location = dataUrl;
 }
