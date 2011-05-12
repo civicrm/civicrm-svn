@@ -148,7 +148,7 @@ class CRM_Mailing_Form_ForwardMailing extends CRM_Core_Form
                               'params'         => $params
                               );
             $result = civicrm_mailer_event_forward( $params );
-            if ( $result ) {
+            if ( !civicrm_error($result) ) {
                 $forwarded++;
             }
         }
