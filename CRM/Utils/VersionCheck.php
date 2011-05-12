@@ -196,16 +196,19 @@ class CRM_Utils_VersionCheck
      */
     function newerVersion()
     {
-        $local  = explode('.', $this->localVersion);
-        $latest = explode('.', $this->latestVersion);
-
+        $local  = explode( '.', $this->localVersion );
+        $latest = explode( '.', $this->latestVersion );
         // compare by version part; this allows us to use trunk.$rev
         // for trunk versions ('trunk' is greater than '1')
         // we only do major / minor version comparison, so stick to 2
-        for ($i = 0; $i < 2; $i++) {
-            if ( CRM_Utils_Array::value($i,$local) > CRM_Utils_Array::value($i,$latest) ) {
+        // ignore 3.4 /4.0 comparison
+        for ( $i = 0; $i < 2; $i++ ) {
+            if ( CRM_Utils_Array::value($i,$local) > CRM_Utils_Array::value($i,$latest) OR
+                 ( CRM_Utils_Array::value( $i, $local  ) == 3 && CRM_Utils_Array::value( $i+1, $local  ) == 4 &&
+                   CRM_Utils_Array::value( $i, $latest ) == 4 && CRM_Utils_Array::value( $i+1, $latest ) == 0 ) ) {
                 return null;
-            } elseif (CRM_Utils_Array::value($i,$local) < CRM_Utils_Array::value($i,$latest) and preg_match('/^\d+\.\d+\.\d+$/', $this->latestVersion)) {
+            } elseif (CRM_Utils_Array::value($i,$local) < CRM_Utils_Array::value($i,$latest) and 
+                      preg_match('/^\d+\.\d+\.\d+$/', $this->latestVersion)) {
                 return $this->latestVersion;
             }
         }
@@ -215,7 +218,7 @@ class CRM_Utils_VersionCheck
     /**
      * A dummy function required for suppressing download errors
      */
-    static function downloadError($errorNumber, $errorString)
+    static function downloadError( $errorNumber, $errorString )
     {
         return;
     }
