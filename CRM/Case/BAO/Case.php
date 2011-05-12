@@ -750,6 +750,7 @@ AND civicrm_case.status_id != $closedId";
                         = CRM_Core_Action::formLink( $actions['primaryActions'], $mask,
                                                      array( 'id'  => $result->case_id,
                                                             'cid' => $result->contact_id,
+                                                            'cxt' => 'dashboard'
                                                            ) );
                     $casesList[$result->case_id]['moreActions'] 
                         = CRM_Core_Action::formLink( $actions['moreActions'], 
