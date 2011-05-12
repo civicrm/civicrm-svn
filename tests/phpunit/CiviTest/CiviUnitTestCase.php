@@ -37,6 +37,7 @@ require_once 'tests/phpunit/CiviTest/civicrm.settings.php';
  *  Include class definitions
  */
 require_once 'PHPUnit/Extensions/Database/TestCase.php';
+require_once 'PHPUnit/Framework/TestResult.php';
 require_once 'PHPUnit/Extensions/Database/DataSet/FlatXmlDataSet.php';
 require_once 'PHPUnit/Extensions/Database/DataSet/XmlDataSet.php';
 require_once 'PHPUnit/Extensions/Database/DataSet/QueryDataSet.php';
@@ -156,9 +157,15 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     protected function getDataSet() { }
 
-    private function _populateDB() {
+    private function _populateDB( $perClass = false ) {
 
-        if ( self::$populateOnce || !$this->requireDBReset() ) {
+        if( $perClass ) {
+            $dbreset = true;
+        } else {
+            $dbreset = $this->requireDBReset();
+        }
+
+        if ( self::$populateOnce || !$dbreset ) {
             return;
         }
         self::$populateOnce = null;
@@ -228,6 +235,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         self::_populateDB( true );
     }
 
+
     /**
      *  Common setup functions for all unit tests
      */
@@ -243,7 +251,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $this->_dbconn = $this->getConnection();
 
         // reload database before each test
-
         //        $this->_populateDB();
 
         // "initialize" CiviCRM to avoid problems when running single tests
@@ -378,38 +385,47 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     // Request a record from the DB by seachColumn+searchValue. Success if returnColumn value is NULL. 
     function assertDBNull(  $daoName, $searchValue, $returnColumn, $searchColumn, $message  ) 
     {
-        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
-        return CiviDBAssert::assertDBNull( $this, $daoName, $searchValue, $returnColumn, $searchColumn, $message  );
+        $value = CRM_Core_DAO::getFieldValue( $daoName, $searchValue, $returnColumn, $searchColumn );
+        $this->assertNull(  $value, $message );
     }
 
     // Request a record from the DB by id. Success if row not found. 
     function assertDBRowNotExist(  $daoName, $id, $message  ) 
     {
-        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
-        return CiviDBAssert::assertDBRowNotExist( $this, $daoName, $id, $message );
+        $value = CRM_Core_DAO::getFieldValue( $daoName, $id, 'id', 'id' );
+        $this->assertNull(  $value, $message );
     }
 
     // Compare a single column value in a retrieved DB record to an expected value
     function assertDBCompareValue(  $daoName, $searchValue, $returnColumn, $searchColumn,
                                     $expectedValue, $message  ) 
     {
-        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
-        return CiviDBAssert::assertDBCompareValue( $this, $daoName, $searchValue, $returnColumn, $searchColumn,
-                                                   $expectedValue, $message );
+        $value = CRM_Core_DAO::getFieldValue( $daoName, $searchValue, $returnColumn, $searchColumn );
+        $this->assertEquals(  $value, $expectedValue, $message );
     }
 
     // Compare all values in a single retrieved DB record to an array of expected values
     function assertDBCompareValues( $daoName, $searchParams, $expectedValues )  
     {
-        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
-        return CiviDBAssert::assertDBCompareValues( $this, $daoName, $searchParams, $expectedValues );
+        //get the values from db 
+        $dbValues = array( );
+        CRM_Core_DAO::commonRetrieve( $daoName, $searchParams, $dbValues );
+        
+
+        // compare db values with expected values
+        self::assertAttributesEquals( $expectedValues, $dbValues);
     }
 
 
     function assertAttributesEquals( &$expectedValues, &$actualValues ) 
     {
-        require_once 'tests/phpunit/CiviTest/CiviDBAssert.php';
-        return CiviDBAssert::assertAttributesEquals( $this, $expectedValues, $actualValues );
+        foreach( $expectedValues as $paramName => $paramValue ) {
+            if ( isset( $actualValues[$paramName] ) ) {
+                $this->assertEquals( $paramValue, $actualValues[$paramName] );
+            } else {
+                $this->fail( "Attribute '$paramName' not present in actual array." );
+            }
+        }        
     }
     
     function assertArrayKeyExists( $key, &$list ) {
@@ -660,8 +676,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function relationshipTypeDelete( $relationshipTypeID )
     {
         $params['id'] = $relationshipTypeID;
+        $params['version'] = API_LATEST_VERSION;
         $result = civicrm_api( 'relationship_type', 'delete', $params );
-        
+
         if (civicrm_error( $params ) ) {
             throw new Exception( 'Could not delete relationship type' );
         }
@@ -722,7 +739,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * Function to delete contribution Types 
      *      * @param int $contributionTypeId
      */
-    function contributionTypeDelete($contributionTypeID) 
+    function contributionTypeDelete($contributionTypeID = null) 
     {
         require_once 'CRM/Contribute/BAO/ContributionType.php';
         if( $contributionTypeID === null ) {
