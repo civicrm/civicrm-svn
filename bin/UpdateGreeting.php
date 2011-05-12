@@ -46,6 +46,10 @@ class CRM_UpdateGreeting {
 
         $config = CRM_Core_Config::singleton();
 
+        require_once 'CRM/Utils/Request.php';
+        require_once 'CRM/Core/PseudoConstant.php';
+        require_once 'CRM/Contact/BAO/Contact.php';
+
         // this does not return on failure
         CRM_Utils_System::authenticateScript( true );
 
@@ -57,9 +61,6 @@ class CRM_UpdateGreeting {
     {
         require_once '../civicrm.config.php';
         require_once 'CRM/Core/Config.php';
-        require_once 'CRM/Utils/Request.php';
-        require_once 'CRM/Core/PseudoConstant.php';
-        require_once 'CRM/Contact/BAO/Contact.php';
     }
     
     public function updateGreeting( )
