@@ -4068,7 +4068,10 @@ SELECT contact_a.id
 INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id OR displayRelType.contact_id_b = contact_a.id )
 INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a OR transform_temp.contact_id = displayRelType.contact_id_b )
 ";
-                $_rTypeWhere = " WHERE displayRelType.relationship_type_id = {$this->_displayRelationshipType} ";
+                $_rTypeWhere = "
+WHERE displayRelType.relationship_type_id = {$this->_displayRelationshipType}
+AND   displayRelType.is_active = 1
+";
             } else {
                 list( $relType, $dirOne, $dirTwo ) = explode( '_', $this->_displayRelationshipType );
                 if ( $dirOne == 'a' ) {
@@ -4084,7 +4087,10 @@ INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_b 
 INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a )
 ";
                 }
-                $_rTypeWhere = " WHERE displayRelType.relationship_type_id = $relType ";
+                $_rTypeWhere = "
+WHERE displayRelType.relationship_type_id = $relType
+AND   displayRelType.is_active = 1
+";
             }
             
             $this->_qill[0][] = $qillMessage . "'" . $relationshipTypeLabel . "'";
