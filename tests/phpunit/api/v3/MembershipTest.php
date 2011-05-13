@@ -38,7 +38,9 @@ class api_v3_MembershipTest extends CiviUnitTestCase
     protected $_membershipTypeID;
     protected $_membershipStatusID ;
     protected $__membershipID;
-    
+    protected $_entity;
+    protected $_params;
+        
     public function setUp()
     {
         //  Connect to the database
@@ -48,8 +50,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
  
         $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID);        
         $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );                
- 
-        $params = array(
+        $this->_entity = 'membership';
+        $this->_params = array(
                         'contact_id'         => $this->_contactID,  
                         'membership_type_id' => $this->_membershipTypeID,
                         'join_date'          => '2009-01-21',
@@ -57,10 +59,11 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                         'end_date'           => '2009-12-21',
                         'source'             => 'Payment',
                         'is_override'        => 1,
-                        'status_id'          => $this->_membershipStatusID
+                        'status_id'          => $this->_membershipStatusID,
+                        'version'						 => 3,
                         );
         
-        $this->_membershipID = $this->contactMembershipCreate( $params );
+        $this->_membershipID = $this->contactMembershipCreate( $this->_params );
 
     }
 
@@ -111,9 +114,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
          $this->assertTrue( function_exists(civicrm_api3_membership_get) );
          $params = array('version' => $this->_apiversion);
          $result = civicrm_api3_membership_get( $params );
-         $this->assertEquals( 1, $result['is_error'],  "In line " . __LINE__ );
-         $this->assertEquals('Mandatory key(s) missing from params array: contact_id'  ,$result['error_message']   );
-     }
+         $this->assertEquals( 0, $result['is_error'],  "In line " . __LINE__ );
+    }
      
      function testContactMembershipCreate()
      {
@@ -350,7 +352,31 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $this->assertEquals( $result['is_error'], 0 );
         $this->assertNotNull( $result['id'] );
     }
+        /**
+     * check with complete array + custom field 
+     * Note that the test is written on purpose without any
+     * variables specific to participant so it can be replicated into other entities
+     * and / or moved to the automated test suite
+     */
+    function testCreateWithCustom()
+    {
+        $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+        
+        $params = $this->_params;
+        $params['custom_'.$ids['custom_field_id']]  =  "custom string";
+ 
+        $result = civicrm_api($this->_entity,'create', $params);
+        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__);
+        $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
 
+        $check = civicrm_api($this->_entity,'get',array('version' =>3, 'id' => $result['id']));
+           print_r($check);
+        $this->assertEquals("custom string", $check['values'][$check['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
+
+        $this->customFieldDelete($ids['custom_field_id']);
+        $this->customGroupDelete($ids['custom_group_id']);      
+
+    }
     /**
      * Test civicrm_contact_memberships_create with membership id (edit
      * membership).
