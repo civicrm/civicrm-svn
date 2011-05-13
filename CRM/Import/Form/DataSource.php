@@ -262,18 +262,20 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
         if ($this->_dataSourceIsValid) {
             // Setup the params array 
             $this->_params = $this->controller->exportValues( $this->_name );
-                       
-            $onDuplicate     = $this->exportValue('onDuplicate');
-            $contactType     = $this->exportValue('contactType');
-            $dateFormats     = $this->exportValue('dateFormats');
-            $savedMapping    = $this->exportValue('savedMapping');
-            $contactSubType  = $this->exportValue('subType');
-                              
-            $this->set('onDuplicate', $onDuplicate);
-            $this->set('contactType', $contactType);
-            $this->set('contactSubType', $contactSubType);
-            $this->set('dateFormats', $dateFormats);
-            $this->set('savedMapping', $savedMapping);
+
+            $storeParams = array( 'onDuplicate'     => 'onDuplicate',
+                                  'dedupe'          => 'dedupe',
+                                  'contactType'     => 'contactType',
+                                  'contactSubType'  => 'subType',
+                                  'dateFormats'     => 'dateFormats',
+                                  'savedMapping'    => 'savedMapping',
+                                  );
+
+            foreach ( $storeParams as $storeName => $storeValueName ) {
+                $$storeName = $this->exportValue( $storeValueName );
+                $this->set( $storeName, $$storeName );
+            }
+
             $this->set('dataSource', $this->_params['dataSource'] );
             $this->set('skipColumnHeader', CRM_Utils_Array::value( 'skipColumnHeader', $this->_params ) );
             
@@ -300,10 +302,18 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
 
             $parser = new CRM_Import_Parser_Contact( $mapper );
             $parser->setMaxLinesToProcess( 100 );
-            $parser->run( $importTableName, $mapper,
-                          CRM_Import_Parser::MODE_MAPFIELD, $contactType,
-                          $fieldNames['pk'], $fieldNames['status'], 
-                          DUPLICATE_SKIP, null, null, false, CRM_Import_Parser::DEFAULT_TIMEOUT, $contactSubType );
+            $parser->run( $importTableName,
+                          $mapper,
+                          CRM_Import_Parser::MODE_MAPFIELD,
+                          $contactType,
+                          $fieldNames['pk'],
+                          $fieldNames['status'], 
+                          DUPLICATE_SKIP,
+                          null, null, false,
+                          CRM_Import_Parser::DEFAULT_TIMEOUT,
+                          $contactSubType,
+                          $dedupe
+                          );
                           
             // add all the necessary variables to the form
             $parser->set( $this );
