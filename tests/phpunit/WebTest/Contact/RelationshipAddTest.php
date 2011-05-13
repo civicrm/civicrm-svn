@@ -131,7 +131,8 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
       $this->waitForPageToLoad("30000");
       
       //create a new contact of individual subtype
-      $this->open($this->sboxPath . "civicrm/contact/add?ct=Individual&cst=IndividualSubtype&reset=1");
+      $this->open($this->sboxPath . "civicrm/contact/add?ct=Individual&cst={$label}&reset=1");
+      $this->waitForElementPresent( '_qf_Contact_upload_view' );
       $firstName = substr(sha1(rand()), 0, 7);
       $lastName = 'And' . substr(sha1(rand()), 0, 7);
       $this->click( "first_name" );
@@ -149,7 +150,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
       $this->open($this->sboxPath . "civicrm/admin/options/subtype?action=add&reset=1");
       $this->waitForPageToLoad("30000");
       
-      $label = "householdSubtype" . substr(sha1(rand()), 0, 4); 
+      $label = "HouseholdSubtype" . substr(sha1(rand()), 0, 4); 
       $this->click("label");
       $this->type("label", $label);
       $this->select("parent_id", "label=Household");
@@ -158,7 +159,8 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
       $this->waitForPageToLoad("30000");
       
       //create a new contact of household subtype
-      $this->open($this->sboxPath . "civicrm/contact/add?ct=Household&cst=HouseholdSubtype&reset=1");
+      $this->open($this->sboxPath . "civicrm/contact/add?ct=Household&cst={$label}&reset=1");
+      $this->waitForElementPresent( '_qf_Contact_upload_view' );
       
       //fill in Household name
       $householdName = substr(sha1(rand()), 0, 4) . 'home';
@@ -168,8 +170,14 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
       
       // Clicking save.
       $this->click("_qf_Contact_upload_view");
+      $this->waitForPageToLoad("30000");
       
       //choose the created relationship type 
+      $this->click( 'css=li#tab_rel a' );
+      
+      // wait for add Relationship link
+      $this->waitForElementPresent( 'link=Add Relationship' );
+      $this->click( 'link=Add Relationship' );
       $this->waitForElementPresent("relationship_type_id");
       $this->select('relationship_type_id', "label={$params['label_b_a']}");
       
