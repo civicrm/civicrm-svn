@@ -1734,8 +1734,8 @@ function civicrm_api3_check_contact_dedupe( $params ) {
  */
 function civicrm_api3_api_check_permission($entity, $action, &$params, $throw = true)
 {
-    // return early if we’re told explicitly to skip the permission check
-    if (isset($params['check_permissions']) and $params['check_permissions'] == false) return true;
+    // return early unless we’re told explicitly to do the permission check
+    if (empty($params['check_permissions']) or $params['check_permissions'] == false) return true;
 
     require_once 'CRM/Core/Permission.php';
 
