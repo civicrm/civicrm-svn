@@ -115,7 +115,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
         $this->type( "last_name", $lastName );
         
         //fill in email
-        $this->type( "email_1_email", "$firstName.$lastName@example.com" );
+        $this->type( "email_1_email", "{$firstName}.{$lastName}@example.com" );
         
         // Clicking save.
         $this->click( "_qf_Contact_refresh_dedupe" );
@@ -126,6 +126,24 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad("30000");
         $this->assertTrue( $this->isTextPresent( "Your Individual contact record has been saved." ) );
         
+        // Add second pair of dupes so we can test Merge and Goto Next Pair
+        $fname2 = 'Janet';
+        $lname2 = 'Rogers' . substr(sha1(rand()), 0, 7);
+        $email2 = "{$fname2}.{$lname2}@example.org";
+        $this->webtestAddContact( $fname2, $lname2, $email2 );
+
+        // Can not use helper for 2nd contact since it is a dupe
+        $this->open( $this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual" );
+        $this->type( "first_name", $fname2 );
+        $this->type( "last_name", $lname2 );
+        $this->type( "email_1_email", $email2  );
+        $this->click( "_qf_Contact_refresh_dedupe" );
+        $this->waitForPageToLoad("30000");        
+        $this->assertTrue( $this->isTextPresent( "One matching contact was found. You can View or Edit the existing contact." ) );
+        $this->click( "_qf_Contact_upload_duplicate" );
+        $this->waitForPageToLoad("30000");
+        $this->assertTrue( $this->isTextPresent( "Your Individual contact record has been saved." ) );
+
         // Find and Merge Contacts
         $this->open( $this->sboxPath . 'civicrm/contact/deduperules?reset=1' );
         $this->waitForPageToLoad("30000");
@@ -145,16 +163,20 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad( "30000" );
         $this->waitForElementPresent( '_qf_Merge_cancel-bottom' );
         
-        // Move the activities, groups, etc to the main contact and merge
+        // Move the activities, groups, etc to the main contact and merge using Merge and Goto Next Pair
         $this->check( 'move_individual_prefix' );
         $this->check( 'move_location_email_2' );
         $this->check( 'move_rel_table_activities' );
         $this->check( 'move_rel_table_groups' );
         $this->check( 'move_rel_table_tags' );
-        $this->click( '_qf_Merge_submit-bottom' );
+        $this->click( '_qf_Merge_next-bottom' );
         $this->waitForPageToLoad( "30000" );
-        $this->assertTrue( $this->isTextPresent( 'The contacts have been merged.' ) );
+        $this->waitForElementPresent( '_qf_Merge_cancel-bottom');
+        $this->assertTrue( $this->isTextPresent( 'The contacts have been merged.' ), "Contacts have been merged text was not found after merge." );
 
+        // Check that we are viewing the next Merge Pair (our 2nd contact, since the merge list is ordered by contact_id)
+        $this->assertTrue( $this->isTextPresent( "{$fname2} {$lname2}" ), "Redirect for Goto Next Pair after merge did not work." );
+        
         // Ensure that the duplicate contact has been deleted
         $this->open( $this->sboxPath . 'civicrm/contact/search/advanced?reset=1' );
         $this->waitForElementPresent( '_qf_Advanced_refresh' );
