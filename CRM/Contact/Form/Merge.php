@@ -100,6 +100,8 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         
         // get user info of main contact.
         $config = CRM_Core_Config::singleton( );
+        $config->doNotResetCache = 1;
+
         require_once 'CRM/Core/Permission.php';
         $viewUser = CRM_Core_Permission::check( 'access user profiles' );
         $mainUfId = CRM_Core_BAO_UFMatch::getUFId( $cid );

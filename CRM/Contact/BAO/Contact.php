@@ -384,10 +384,14 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         $transaction->commit( );
         
         // CRM-6367: fetch the right label for contact type’s display
-        $contact->contact_type_display = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_ContactType', $contact->contact_type, 'label', 'name');
+        $contact->contact_type_display = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_ContactType',
+                                                                     $contact->contact_type,
+                                                                     'label',
+                                                                     'name' );
 
         if ( ! $config->doNotResetCache ) {
-            // Note: doNotResetCache flag is currently set by import contact process, since resetting and 
+            // Note: doNotResetCache flag is currently set by import contact process and merging,
+            // since resetting and 
             // rebuilding cache could be expensive (for many contacts). We might come out with better 
             // approach in future. 
             require_once 'CRM/Contact/BAO/Contact/Utils.php';
