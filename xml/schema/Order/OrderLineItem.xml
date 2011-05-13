@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="iso-8859-1" ?> 
  
 <table> 
-  <base>CRM/Invoice</base> 
-  <class>InvoiceLineItem</class> 
-  <name>civicrm_invoice_line_item</name> 
+  <base>CRM/Order</base> 
+  <class>OrderLineItem</class> 
+  <name>civicrm_order_line_item</name> 
   <add>1.3</add>
   <change>4.1</change> 
   <changedName>civicrm_contribution</changedName>
   <log>true</log>
   <field> 
       <name>id</name> 
-      <uniqueName>invoice_line_item_id</uniqueName>
+      <uniqueName>order_line_item_id</uniqueName>
       <type>int unsigned</type> 
       <required>true</required>
       <import>true</import> 
-      <title>Invoice Line Item ID</title>
-      <comment>Invoice Line Item ID</comment> 
+      <title>Order Line Item ID</title>
+      <comment>Order Line Item ID</comment> 
       <add>1.3</add> 
   </field> 
   <primaryKey> 
@@ -23,20 +23,20 @@
        <autoincrement>true</autoincrement> 
   </primaryKey> 
   <field> 
-      <name>invoice_id</name> 
-      <uniqueName>invoice_line_item_invoice_id</uniqueName>
-      <title>Invoice ID</title>
+      <name>order_id</name> 
+      <uniqueName>order_line_item_order_id</uniqueName>
+      <title>Order ID</title>
       <type>int unsigned</type> 
       <required>true</required> 
       <import>true</import>
-      <headerPattern>/invoice(.?id)?/i</headerPattern>
+      <headerPattern>/order(.?id)?/i</headerPattern>
       <dataPattern>/^\d+$/</dataPattern>
-      <comment>FK to Invoice ID</comment> 
+      <comment>FK to Order ID</comment> 
       <add>4.1</add> 
   </field> 
   <foreignKey> 
-       <name>invoice_id</name> 
-       <table>civicrm_invoice</table> 
+       <name>order_id</name> 
+       <table>civicrm_order</table> 
        <key>id</key> 
        <add>4.1</add> 
        <onDelete>CASCADE</onDelete>
@@ -48,7 +48,7 @@
       <import>true</import>
       <headerPattern>/^total|(.?^am(ou)?nt)/i</headerPattern>
       <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
-      <comment>Total amount of this invoice_line_item. Use market value for non-monetary amounts.</comment>  
+      <comment>Total amount of this order_line_item. Use market value for non-monetary amounts.</comment>  
       <add>1.3</add>  
   </field>
   <field>  
@@ -161,8 +161,8 @@
     <onDelete>SET NULL</onDelete>
   </foreignKey>
  <field>
-      <name>invoice_line_item_status_id</name>
-      <title>Invoice Line Item Status</title>
+      <name>order_line_item_status_id</name>
+      <title>Order Line Item Status</title>
       <type>int unsigned</type>
       <default>1</default>
       <import>true</import>
@@ -173,8 +173,8 @@
       <changedName>contribution_status_id</changedName>
   </field>
   <index>
-    <name>index_invoice_line_item_status</name>
-    <fieldName>invoice_line_item_status_id</fieldName>
+    <name>index_order_line_item_status</name>
+    <fieldName>order_line_item_status_id</fieldName>
     <add>4.1</add>
   </index>
   <field>  

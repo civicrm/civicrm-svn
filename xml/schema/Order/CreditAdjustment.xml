@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1" ?> 
  
 <table> 
-  <base>CRM/Invoice</base>
+  <base>CRM/Order</base>
   <class>CreditAdjustment</class>
   <name>civicrm_credit_adjustment</name>
   <add>1.3</add>
@@ -71,7 +71,7 @@
       <import>true</import>
       <headerPattern>/adjustment(.?date)?/i</headerPattern>
       <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
-      <comment>When invoice was created</comment> 
+      <comment>When adjustment to order was created</comment> 
       <add>1.3</add> 
       <change>4.1</change>
       <changedName>receive_date</changedName>

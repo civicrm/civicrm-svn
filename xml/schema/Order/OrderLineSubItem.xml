@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
 
 <table>
-  <base>CRM/Invoice</base>
-  <class>InvoiceLineSubItem</class>
-  <name>civicrm_invoice_line_sub_item</name>
+  <base>CRM/Order</base>
+  <class>OrderLineSubItem</class>
+  <name>civicrm_order_line_sub_item</name>
   <add>1.7</add> 
   <change>4.1</change>
   <changedName>civicrm_line_item</changedName>
   <log>true</log>
   <field>
       <name>id</name>
-      <uniqueName>invoice_line_sub_item_id</uniqueName>
+      <uniqueName>order_line_sub_item_id</uniqueName>
       <type>int unsigned</type>
       <required>true</required>
-      <comment>Invoice Line Sub Item</comment>
+      <comment>Order Line Sub Item</comment>
       <add>4.1</add>
   </field>
   <primaryKey>
@@ -21,15 +21,15 @@
       <autoincrement>true</autoincrement>
   </primaryKey>
   <field>
-      <name>invoice_line_item_id</name>
+      <name>order_line_item_id</name>
       <type>int unsigned</type>
       <required>true</required>
-      <comment>FK to invoice_line_item</comment>
+      <comment>FK to order_line_item</comment>
       <add>4.1</add>
   </field>
   <foreignKey>
-      <name>invoice_line_item_id</name>
-      <table>civicrm_invoice_line_item</table>
+      <name>order_line_item_id</name>
+      <table>civicrm_order_line_item</table>
       <key>id</key>
   </foreignKey>
   <field>
@@ -131,7 +131,7 @@
   </field>
   <index>
       <name>UI_line_sub_item_value</name>
-      <fieldName>invoice_line_item_id</fieldName>
+      <fieldName>order_line_item_id</fieldName>
       <fieldName>price_field_value_id</fieldName>
       <fieldName>price_field_id</fieldName>
       <unique>true</unique>
@@ -151,8 +151,8 @@
       <onDelete>SET NULL</onDelete>
   </foreignKey>
  <field>
-      <name>invoice_status_id</name>
-      <title>Invoice Status</title>
+      <name>order_status_id</name>
+      <title>Order Status</title>
       <type>int unsigned</type>
       <default>1</default>
       <import>true</import>
@@ -163,8 +163,8 @@
       <changedName>contribution_status_id</changedName>
   </field>
   <index>
-    <name>index_invoice_status</name>
-    <fieldName>invoice_status_id</fieldName>
+    <name>index_order_status</name>
+    <fieldName>order_status_id</fieldName>
     <add>1.6</add>
     <change>4.1</change>
     <changedName>index_contribution_status</changedName>
