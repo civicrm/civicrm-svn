@@ -168,9 +168,10 @@ function civicrm_api3_membership_create($params)
  */
 function civicrm_api3_membership_get($params)
 {
-  _civicrm_api3_initialize(true);
-  try{
-    civicrm_api3_verify_mandatory($params,null,array('contact_id'));
+    civicrm_api3_verify_mandatory($params);
+    if(empty($params['contact_id'])){
+        return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+    }
     $contactID = $activeOnly = $membershipTypeId = $membershipType = null;
    
       $contactID        = CRM_Utils_Array::value( 'contact_id', $params );
@@ -228,6 +229,7 @@ function civicrm_api3_membership_get($params)
       require_once 'CRM/Core/BAO/CustomGroup.php';
       $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Membership', CRM_Core_DAO::$_nullObject, $membershipId, false,
       $values['membership_type_id']);
+     
       $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, CRM_Core_DAO::$_nullObject );
 
       $defaults  = array( );
@@ -266,11 +268,7 @@ function civicrm_api3_membership_get($params)
     }
     $members['record_count'] = $recordCount;
     return civicrm_api3_create_success($members);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 
