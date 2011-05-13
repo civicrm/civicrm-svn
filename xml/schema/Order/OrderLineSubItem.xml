@@ -75,11 +75,13 @@
       <add>1.7</add>
   </field>
   <field>
-      <name>line_total</name>
+      <name>line_sub_total</name>
       <type>decimal</type>
       <required>true</required>
       <comment>qty * unit_price</comment>
       <add>1.7</add>
+      <change>4.1</change>
+      <changedName>line_total</changedName>
   </field>
   <field>  
       <name>financial_account_id</name>  
@@ -122,6 +124,25 @@
        <key>id</key>         
        <add>4.1</add>  
   </foreignKey>  
+  <field>
+      <name>tax_total</name>
+      <type>decimal</type>
+      <required>true</required>
+      <add>4.1</add>
+  </field>
+  <field>
+       <name>tax_account_id</name>
+      <title>Tax Account</title>
+      <type>int unsigned</type>
+      <comment>FK to Financial Account.</comment>
+      <add>4.1</add> 
+  </field>    
+  <foreignKey>  
+       <name>tax_account_id</name>  
+       <table>civicrm_financial_account</table>  
+       <key>id</key>         
+       <add>4.1</add>  
+  </foreignKey> 
   <field>
       <name>participant_count</name>
       <type>int unsigned</type>

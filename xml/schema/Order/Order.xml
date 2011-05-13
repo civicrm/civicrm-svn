@@ -140,6 +140,25 @@
       <change>4.1</change>
       <changedName>contribution_type_id</changedName>
   </foreignKey>  
+  <field>
+      <name>tax_total</name>
+      <type>decimal</type>
+      <required>true</required>
+      <add>4.1</add>
+  </field>
+  <field>
+       <name>tax_account_id</name>
+      <title>Tax Account</title>
+      <type>int unsigned</type>
+      <comment>FK to Financial Account.</comment>
+      <add>4.1</add> 
+  </field>    
+  <foreignKey>  
+       <name>tax_account_id</name>  
+       <table>civicrm_financial_account</table>  
+       <key>id</key>         
+       <add>4.1</add>  
+  </foreignKey> 
   <field>        
       <name>invoice_id</name>
       <title>Order ID</title>

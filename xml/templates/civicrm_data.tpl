@@ -125,9 +125,9 @@ VALUES
 
 
 
--- contribution types
+-- financial accounts
 INSERT INTO
-   civicrm_contribution_type(name, is_reserved, is_active, is_deductible)
+   `civicrm_financial_account` (`name`, `is_reserved`, `is_active`, `is_deductible`)
 VALUES
   ( '{ts escape="sql"}Donation{/ts}'             , 0, 1, 1 ),
   ( '{ts escape="sql"}Member Dues{/ts}'          , 0, 1, 1 ), 

@@ -28,7 +28,7 @@
       <import>true</import>
       <headerPattern>/(contrib(ution)?)?type/i</headerPattern>
       <dataPattern>/donation|member|campaign/i</dataPattern>
-      <comment>Contribution Type Name.</comment>
+      <comment>Financial Account Name.</comment>
       <add>3.2</add>
   </field>
   <field> 
@@ -64,7 +64,7 @@
        <type>varchar</type>
        <length>64</length>
        <export>true</export>
-       <comment>Optional value for mapping contributions to accounting system codes for each type/category of contribution.</comment>
+       <comment>Optional value for mapping monies owed and received to accounting system codes.</comment>
        <add>4.1</add>
   </field>
   <field>
@@ -89,9 +89,23 @@
        <name>is_deductible</name>
        <type>boolean</type>
        <default>1</default>
-       <comment>Is this contribution type tax-deductible? If true, contributions of this type may be fully OR partially deductible - non-deductible amount is stored in the Contribution record.</comment>
+       <comment>Is this account tax-deductible?</comment>
        <add>4.1</add>
   </field>
+  <filed>
+       <name>is_tax</name>
+       <type>boolean</type>
+       <default>1</default>
+       <comment>Is this account for taxes?</comment>
+       <add>4.1</add>
+  </filed>
+  <filed>
+       <name>tax_rate</name>
+       <type>decimal</type>
+       <default>0</default>
+       <comment>The percentage of the total_amount that is due for this tax.</comment>
+       <add>4.1</add>
+  </filed>
   <field>
        <name>is_reserved</name>
        <type>boolean</type>
@@ -107,7 +121,7 @@
   <field>
        <name>is_default</name>
        <type>boolean</type>
-       <comment>Is this account the default one for its financial_account_type?</comment>
+       <comment>Is this account the default one (or default tax one) for its financial_account_type?</comment>
        <add>4.1</add>
   </field>
   <index>
