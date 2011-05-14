@@ -70,8 +70,7 @@ require_once 'api/v3/utils.php';
 
 function civicrm_api3_custom_field_create( $params )
 {
-  _civicrm_api3_initialize(true );
-  try{
+
     civicrm_api3_verify_mandatory($params,null,array('custom_group_id','label'));
 
     if ( !( CRM_Utils_Array::value('option_type', $params ) ) ) {
@@ -99,12 +98,7 @@ function civicrm_api3_custom_field_create( $params )
     $customField = CRM_Core_BAO_CustomField::create($params);
     _civicrm_api3_object_to_array_unique_fields($customField , $values[$customField->id]);
     return civicrm_api3_create_success($values,$params, $customField);
-    
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -118,8 +112,7 @@ function civicrm_api3_custom_field_create( $params )
  **/
 function civicrm_api3_custom_field_delete( $params )
 {
-  _civicrm_api3_initialize( true);
-  try{
+
     civicrm_api3_verify_mandatory($params,null,array('id'));
 
     require_once 'CRM/Core/DAO/CustomField.php';
@@ -132,11 +125,6 @@ function civicrm_api3_custom_field_delete( $params )
     return $customFieldDelete ?
     civicrm_api3_create_error('Error while deleting custom field') :
     civicrm_api3_create_success( );
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
 }
 
 /**
@@ -150,23 +138,11 @@ function civicrm_api3_custom_field_delete( $params )
  **/
 function civicrm_api3_custom_field_get($params)
 {
-  try {
-    _civicrm_api3_initialize(true );
     civicrm_api3_verify_mandatory($params);
 
     require_once 'CRM/Core/BAO/CustomField.php';
     $customfieldBAO = new CRM_Core_BAO_CustomField();
-    $fields = ($customfieldBAO->getFields($params['entity']));
-
-    foreach ($fields as $key=>$value){
-      $result[$key] = $value['label'];
-
-    }
-    return civicrm_api3_create_success($result,$params,$customfieldBAO) ;
-
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+    $default = array();
+    $result = $customfieldBAO->retrieve($params, $default);
+    return civicrm_api3_create_success($result,$params,$customfieldBAO) ; 
 }
