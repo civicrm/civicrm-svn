@@ -400,7 +400,7 @@ class CRM_Core_Session {
      * @return void
      */
     static function setStatus( $status, $append = true ) {
-        // make sure session is initialized
+        // make sure session is initialized, CRM-8120
         $session = self::singleton( );
 
         if ( isset( self::$_singleton->_session[self::$_singleton->_key]['status'] ) ) {
