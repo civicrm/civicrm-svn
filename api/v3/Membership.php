@@ -195,6 +195,7 @@ function civicrm_api3_membership_get($params)
     $membershipValues = array();
     CRM_Member_BAO_Membership::getValues( $membershipParams, $membershipValues, $activeOnly );
     if(empty($params['contact_id'])){
+      //added this as contact_id was the only acceptable field so this was a quick way to improve
         $membershipValues = _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params, FALSE);
     }
     
@@ -223,22 +224,9 @@ function civicrm_api3_membership_get($params)
       if ( $relationshipType->find(true) ) {
         $membershipValues[$membershipId]['relationship_name'] = $relationshipType->name_a_b;
       }
-      require_once 'CRM/Core/BAO/CustomGroup.php';
-      $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Membership', CRM_Core_DAO::$_nullObject, $membershipId, false,
-      $values['membership_type_id']);
-     
-      $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, CRM_Core_DAO::$_nullObject );
+      
+      _civicrm_apiv3_custom_data_get($membershipValues[$membershipId],'Membership',$membershipId,null,$values['membership_type_id']);
 
-      $defaults  = array( );
-      CRM_Core_BAO_CustomGroup::setDefaults( $groupTree, $defaults );
-      if ( !empty( $defaults ) ) {
-        foreach ( $defaults as $key => $val ) {
-          // per standard - return custom_fieldID
-          $membershipValues[$membershipId]['custom_' . (CRM_Core_BAO_CustomField::getKeyID($key))] = $val;
-          //not standard - keep or remove? custom_fieldID_valueID
-          $membershipValues[$membershipId][$key] = $val;
-        }
-      }
     }
 
     $members = $membershipValues;

@@ -118,7 +118,7 @@ function civicrm_api3_event_get( $params )
     
 
     foreach ( $params as $n => $v ) {
-      if ( substr( $n, 0, 7 ) == 'return.' ) {
+      if ( substr( $n, 0, 6 ) == 'return' ) {
         if ( substr( $n, 0, 14 ) == 'return.custom_') {
           //take custom return properties separate
           $returnCustomProperties[] = substr( $n, 7 );
@@ -157,24 +157,8 @@ function civicrm_api3_event_get( $params )
     while ( $eventDAO->fetch( ) ) {
       $event[$eventDAO->id] = array( );
       CRM_Core_DAO::storeValues( $eventDAO, $event[$eventDAO->id] );
-      $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Event', CRM_Core_DAO::$_nullObject, $eventDAO->id, false, $eventDAO->event_type_id );
-      $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, CRM_Core_DAO::$_nullObject );
-      $defaults  = array( );
-      CRM_Core_BAO_CustomGroup::setDefaults( $groupTree, $defaults );
+      _civicrm_apiv3_custom_data_get($event[$eventDAO->id],'Event',$eventDAO->id,null,$eventDAO->event_type_id);
 
-      if ( !empty( $defaults ) ) {
-        foreach ( $defaults as $key => $val ) {
-          if (! empty($returnCustomProperties ) ) {
-            $customKey  = explode('_', $key );
-            //show only return properties
-            if ( in_array( 'custom_'.$customKey['1'], $returnCustomProperties ) ) {
-              $event[$eventDAO->id][$key] = $val;
-            }
-          } else {
-            $event[$eventDAO->id][$key] = $val;
-          }
-        }
-      }
     }//end of the loop
 
     return civicrm_api3_create_success($event,$params,$eventDAO);
@@ -200,11 +184,11 @@ function civicrm_api3_event_delete( $params )
 {
   _civicrm_api3_initialize( true );
   try {
-    civicrm_api3_verify_mandatory($params);
+    civicrm_api3_verify_one_mandatory($params,null,array('event_id','id'));
 
     $eventID = null;
 
-    $eventID = CRM_Utils_Array::value( 'event_id', $params );
+    $eventID = CRM_Utils_Array::value( 'event_id', $params )?CRM_Utils_Array::value( 'event_id', $params ):CRM_Utils_Array::value( 'id', $params );
 
     if ( ! isset( $eventID ) ) {
       return civicrm_api3_create_error(  'Invalid value for eventID'  );
