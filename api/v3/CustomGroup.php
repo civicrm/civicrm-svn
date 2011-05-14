@@ -69,8 +69,7 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_custom_group_create( $params )
 {
-    _civicrm_api3_initialize(true );
-    try{
+
     
     civicrm_api3_verify_mandatory($params,null,array('extends','title'));  
     if ( ! CRM_Utils_Array::value('style', $params)  ) {
@@ -102,11 +101,7 @@ function civicrm_api3_custom_group_create( $params )
         $values[$fieldValues['id']]      = array_merge( $values[$customGroup->id] , $fieldValues['values'][$fieldValues['id']] );
     }
     return civicrm_api3_create_success($values,$params);
-    } catch (PEAR_Exception $e) {
-      return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-      return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }   
 
 
@@ -120,8 +115,7 @@ function civicrm_api3_custom_group_create( $params )
  **/
 function civicrm_api3_custom_group_delete($params)
 {    
-    _civicrm_api3_initialize(true );
-    try{     
+ 
     civicrm_api3_verify_mandatory($params,null,array('id'));
     // convert params array into Object
     require_once 'CRM/Core/DAO/CustomGroup.php';
@@ -132,10 +126,20 @@ function civicrm_api3_custom_group_delete($params)
     require_once 'CRM/Core/BAO/CustomGroup.php';
     $result = CRM_Core_BAO_CustomGroup::deleteGroup($values,true);  
     return $result ? civicrm_api3_create_success( ): civicrm_api3_error('Error while deleting custom group');
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
  }
 
+ 
+ /**
+ * Use this API to get existing custom fields.
+ *
+ * @param array $params Array to search on
+ *
+* @access public
+ * 
+ **/
+function civicrm_api3_custom_group_get($params)
+{
+    civicrm_api3_verify_mandatory($params);
+    return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+ }

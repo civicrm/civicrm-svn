@@ -132,8 +132,7 @@ function civicrm_api3_custom_field_delete( $params )
  *
  * @param array $params Array to search on
  *
- * @todo copied from elsewhere but needs tidying up to use DAO->Find
- * @access public
+* @access public
  * 
  **/
 function civicrm_api3_custom_field_get($params)

@@ -96,6 +96,9 @@ function _civicrm_api3_get_DAO ($name) {
           // for now adding example & putting in test for when we fix it
           $name = 'CustomField';
         }
+        if($name =='custom_group'){
+         $name = 'CustomGroup';
+        }
         $name = ucfirst ($name);
     }  
     return $dao[$name];
