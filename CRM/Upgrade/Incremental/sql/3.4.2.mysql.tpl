@@ -17,8 +17,8 @@ SELECT @nav_formats_weight := MAX(ROUND(weight)) from civicrm_navigation WHERE p
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
-    ( {$domain_id}, 'civicrm/admin/pdfFormats&reset=1',   '{ts escape="sql"}PDF Page Formats{/ts}',     'PDF Page Formats',      'administer CiviCRM', NULL, @nav_formats, '1', NULL, @nav_formats_weight+1 ),
-    ( {$domain_id}, 'civicrm/admin/labelFormats&reset=1', '{ts escape="sql"}Mailing Label Formats{/ts}','Mailing Label Formats', 'administer CiviCRM', NULL, @nav_formats, '1', NULL, @nav_formats_weight+2 );
+    ( {$domainID}, 'civicrm/admin/pdfFormats&reset=1',   '{ts escape="sql"}PDF Page Formats{/ts}',     'PDF Page Formats',      'administer CiviCRM', NULL, @nav_formats, '1', NULL, @nav_formats_weight+1 ),
+    ( {$domainID}, 'civicrm/admin/labelFormats&reset=1', '{ts escape="sql"}Mailing Label Formats{/ts}','Mailing Label Formats', 'administer CiviCRM', NULL, @nav_formats, '1', NULL, @nav_formats_weight+2 );
 
 -- Insert Paper Sizes
 SELECT @option_group_id_paperSize := max(id) from civicrm_option_group where name = 'paper_size';
