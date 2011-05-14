@@ -88,10 +88,10 @@ function civicrm_api3_custom_field_create( $params )
     // Array created for passing options in params
     if ( isset( $params['option_values'] ) && is_array( $params['option_values'] ) ) {
       foreach ( $params['option_values'] as $key => $value ){
-        $params['option_label'][$value['weight']]  = $value['label'];
-        $params['option_value'][$value['weight']]  = $value['value'];
-        $params['option_status'][$value['weight']] = $value['is_active'];
-        $params['option_weight'][$value['weight']] = $value['weight'];
+        $params['option_label'][$key] = $value['label'];
+        $params['option_value'][$key] = $value['value'];
+        $params['option_status'][$key] = $value['is_active'];
+        $params['option_weight'][$key] = $value['weight']; 
       }
     }
     require_once 'CRM/Core/BAO/CustomField.php';

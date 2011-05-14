@@ -82,7 +82,7 @@ function _civicrm_api3_get_DAO ($name) {
       require ('CRM/Core/DAO/.listAll.php');
     }
 
-    
+ 
     
     if (strpos($name, 'civicrm_api3') !== false) {
         $last = strrpos ($name, '_') ;
@@ -91,8 +91,13 @@ function _civicrm_api3_get_DAO ($name) {
           //for some reason pledge_payment doesn't follow normal conventions of BAO being the same as table name
           $name = 'Payment';
         }
+        if($name =='custom_field'){
+          //not handling camel case - there is a function in api.php that we could use?
+          // for now adding example & putting in test for when we fix it
+          $name = 'CustomField';
+        }
         $name = ucfirst ($name);
-    }
+    }       echo $name;
     return $dao[$name];
 }
 
