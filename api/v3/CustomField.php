@@ -40,6 +40,7 @@
  * Files required for this package
  */
 require_once 'api/v3/utils.php';
+require_once 'CRM/Core/BAO/CustomField.php';
 
 /**
  * Most API functions take in associative arrays ( name => value pairs
@@ -94,7 +95,7 @@ function civicrm_api3_custom_field_create( $params )
         $params['option_weight'][$key] = $value['weight']; 
       }
     }
-    require_once 'CRM/Core/BAO/CustomField.php';
+
     $customField = CRM_Core_BAO_CustomField::create($params);
     _civicrm_api3_object_to_array_unique_fields($customField , $values[$customField->id]);
     return civicrm_api3_create_success($values,$params, $customField);
@@ -115,12 +116,11 @@ function civicrm_api3_custom_field_delete( $params )
 
     civicrm_api3_verify_mandatory($params,null,array('id'));
 
-    require_once 'CRM/Core/DAO/CustomField.php';
-    $field = new CRM_Core_DAO_CustomField( );
+    $field = new CRM_Core_BAO_CustomField( );
     $field->id = $params['id'];
     $field->find(true);
 
-    require_once 'CRM/Core/BAO/CustomField.php';
+
     $customFieldDelete = CRM_Core_BAO_CustomField::deleteField( $field );
     return $customFieldDelete ?
     civicrm_api3_create_error('Error while deleting custom field') :
@@ -139,10 +139,5 @@ function civicrm_api3_custom_field_delete( $params )
 function civicrm_api3_custom_field_get($params)
 {
     civicrm_api3_verify_mandatory($params);
-
-    require_once 'CRM/Core/BAO/CustomField.php';
-    $customfieldBAO = new CRM_Core_BAO_CustomField();
-    $default = array();
-    $result = $customfieldBAO->retrieve($params, $default);
-    return civicrm_api3_create_success($result,$params,$customfieldBAO) ; 
-}
+    return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+ }
