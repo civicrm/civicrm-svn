@@ -97,7 +97,7 @@ function _civicrm_api3_get_DAO ($name) {
           $name = 'CustomField';
         }
         $name = ucfirst ($name);
-    }       echo $name;
+    }  
     return $dao[$name];
 }
 
