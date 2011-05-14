@@ -109,8 +109,9 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             require_once 'CRM/Utils/String.php';
             $params['column_name'] = 
                 strtolower( CRM_Utils_String::munge( $params['label'], '_', 32 ) );
-            
-            $params['name'] = CRM_Utils_String::munge($params['label'], '_', 64 );
+
+            $name  = isset( $params['name'] ) ? $params['name'] : $params['label'];
+            $params['name'] = CRM_Utils_String::munge($name, '_', 64 );
         } else if ( isset($params['id']) ) {
             $params['column_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField',
                                                                   $params['id'],
