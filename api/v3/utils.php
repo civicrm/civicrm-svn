@@ -383,7 +383,7 @@ function _civicrm_api3_dao_to_array ($dao, $params = null,$uniqueFields = TRUE) 
 
 
     $fields = array_keys(_civicrm_api3_build_fields_array($dao, $uniqueFields));
-    if ($return) {
+    if (isset($return)) {
         $fields = array_intersect($fields,$return);
     }
 
@@ -1801,3 +1801,34 @@ function _civicrm_api3_basic_delete($bao_name, &$params){
     return civicrm_api3_create_success( true );
 }
 
+/*
+ * Get custom data for the given entity & Add it to the returnArray as 'custom_123' = 'custom string' AND 'custom_123_1' = 'custom string'
+ * Where 123 is field value & 1 is the id within the custom group data table (value ID)
+ * 
+ * @param array $returnArray - array to append custom data too - generally $result[4] where 4 is the entity id.
+ * @param string $entity  e.g membership, event 
+ * @param int $groupID - per CRM_Core_BAO_CustomGroup::getTree
+ * @param int $subType e.g. membership_type_id where custom data doesn't apply to all membership types
+ * @param string $subName - Subtype of entity 
+ * 
+ */
+function _civicrm_apiv3_custom_data_get(&$returnArray,$entity,$entity_id ,$groupID = null,$subType = null, $subName = null){
+     require_once 'CRM/Core/BAO/CustomGroup.php'; 
+     $groupTree =& CRM_Core_BAO_CustomGroup::getTree($entity, 
+                                                      CRM_Core_DAO::$_nullObject, 
+                                                      $entity_id , 
+                                                      $groupID,
+                                                      $subType,
+                                                      $subName);
+     $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, CRM_Core_DAO::$_nullObject );
+     $customValues = array( );
+     CRM_Core_BAO_CustomGroup::setDefaults( $groupTree, $customValues );
+     if ( !empty( $customValues ) ) {
+       foreach ( $customValues as $key => $val ) {
+          // per standard - return custom_fieldID
+          $returnArray['custom_' . (CRM_Core_BAO_CustomField::getKeyID($key))] = $val;
+          //not standard - but some api did this so guess we should keep - cheap as chips
+          $returnArray[$key] = $val;
+        }
+      }
+}
