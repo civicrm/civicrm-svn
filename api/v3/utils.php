@@ -943,7 +943,8 @@ function _civicrm_api3_check_required_fields( $params, $daoName, $return = FALSE
         }
 
         if ( isset( $v['required'] ) ) {
-            if ($v['required'] && (empty($params[$k]))) {
+            if ( $v['required'] && 
+                 ( empty($params[$k]) && $params[$k] != 0 ) ) { // 0 is a valid input for numbers, CRM-8122
                 $missing[] = $k;
             }
         }
