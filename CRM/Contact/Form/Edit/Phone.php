@@ -65,8 +65,10 @@ class CRM_Contact_Form_Edit_Phone
         //phone type select
         $form->addElement('select', "phone[$blockId][phone_type_id]", ts('Phone'), CRM_Core_PseudoConstant::phoneType( ) );
         
-		//phone box
+		//main phone number
 		$form->addElement('text', "phone[$blockId][phone]", ts('Phone'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Phone', 'phone'));
+        // phone extension
+		$form->addElement('text', "phone[$blockId][phone_ext]", ts('Extension'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Phone', 'phone_ext'));
 		
 		if( isset( $form->_contactType ) ) {
 			//Block type select

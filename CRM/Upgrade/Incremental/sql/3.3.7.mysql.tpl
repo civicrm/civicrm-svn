@@ -1,0 +1,1 @@
+-- CRM-8113 We need a 3.3.7.mysql.tpl file to exist in order for CRM_Upgrade_Incremental_php_ThreeThree::upgrade_3_3_7 to be run
