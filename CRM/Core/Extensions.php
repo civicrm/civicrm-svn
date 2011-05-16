@@ -604,6 +604,10 @@ class CRM_Core_Extensions
         require_once 'CRM/Utils/VersionCheck.php';
         ini_set('default_socket_timeout', CRM_Utils_VersionCheck::CHECK_TIMEOUT);
         set_error_handler(array('CRM_Utils_VersionCheck', 'downloadError'));
+        
+        if ( !ini_get('allow_url_fopen') ) {
+            ini_set( 'allow_url_fopen', 1 );
+        }
 
         $extdir = file_get_contents( self::PUBLIC_EXTENSIONS_REPOSITORY );
 
@@ -627,7 +631,9 @@ class CRM_Core_Extensions
             CRM_Core_Error::fatal('Malformed extensions list on public directory - please contact CiviCRM team on forums.');
         }
 
+        ini_restore('allow_url_fopen');
         ini_restore('default_socket_timeout');
+
         restore_error_handler();
         
         return $exts;
