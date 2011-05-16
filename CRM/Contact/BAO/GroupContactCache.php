@@ -65,7 +65,8 @@ class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCach
         $config  = CRM_Core_Config::singleton( );
         $smartGroupCacheTimeout = 
             isset( $config->smartGroupCacheTimeout ) && 
-            is_numeric(  $config->smartGroupCacheTimeout ) ? $config->smartGroupCacheTimeout : 0;
+            is_numeric(  $config->smartGroupCacheTimeout ) ?
+            $config->smartGroupCacheTimeout : 0;
         
         //make sure to give original timezone settings again.
         $originalTimezone = date_default_timezone_get( );
@@ -74,10 +75,14 @@ class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCach
         date_default_timezone_set( $originalTimezone );
         
         $query  = "
-SELECT     g.id
-FROM       civicrm_group g
-WHERE      g.id IN ( {$groupID} ) AND ( g.saved_search_id IS NOT NULL OR g.children IS NOT NULL ) AND 
-          (g.cache_date IS NULL OR (TIMESTAMPDIFF(MINUTE, g.cache_date, $now) >= $smartGroupCacheTimeout))
+SELECT  g.id
+FROM    civicrm_group g
+WHERE   g.id IN ( {$groupID} ) 
+AND     ( g.saved_search_id IS NOT NULL OR 
+          g.children IS NOT NULL )
+AND     ( g.cache_date IS NULL OR
+          ( TIMESTAMPDIFF(MINUTE, g.cache_date, $now) >= $smartGroupCacheTimeout )
+        )
 ";
 
         $dao      =& CRM_Core_DAO::executeQuery( $query );
@@ -171,27 +176,34 @@ WHERE  id IN ( $groupIDs )
         $now = date( 'YmdHis' );
         date_default_timezone_set( $originalTimezone );
         
-        $config = CRM_Core_Config::singleton( );
-        $smartGroupCacheTimeout = 
-            isset( $config->smartGroupCacheTimeout ) && is_numeric(  $config->smartGroupCacheTimeout ) ? $config->smartGroupCacheTimeout : 0;
-
         if ( ! isset( $groupID ) ) {
-            $query = "
-DELETE     g
-FROM       civicrm_group_contact_cache g
-INNER JOIN civicrm_contact c ON c.id = g.contact_id
-WHERE      g.group_id IN (
-    SELECT id
-    FROM   civicrm_group
-    WHERE  TIMESTAMPDIFF(MINUTE, cache_date, $now) >= $smartGroupCacheTimeout   
-)
-";
+            $config = CRM_Core_Config::singleton( );
+            $smartGroupCacheTimeout = 
+                isset( $config->smartGroupCacheTimeout ) && 
+                is_numeric(  $config->smartGroupCacheTimeout ) ?
+            $config->smartGroupCacheTimeout : 0;
 
-            $update = "
+            if ( $smartGroupCacheTimeout == 0 ) {
+                $query  = "
+TRUNCATE civicrm_group_contact_cache
+";
+                $update = "
+UPDATE civicrm_group g
+SET    cache_date = null
+";
+            } else {
+                $query = "
+DELETE     gc
+FROM       civicrm_group_contact_cache gc
+INNER JOIN civicrm_group g ON g.id = gc.group_id
+WHERE      TIMESTAMPDIFF(MINUTE, g.cache_date, $now) >= $smartGroupCacheTimeout   
+";
+                $update = "
 UPDATE civicrm_group g
 SET    cache_date = null
 WHERE  TIMESTAMPDIFF(MINUTE, cache_date, $now) >= $smartGroupCacheTimeout
 ";
+            }
             $params = array( );
         } else if ( is_array( $groupID ) ) {
             $query = "
