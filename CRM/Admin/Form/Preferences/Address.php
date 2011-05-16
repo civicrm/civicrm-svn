@@ -181,10 +181,10 @@ FROM   civicrm_county
                         $sqlFilePath = 
                             $civicrm_root . DIRECTORY_SEPARATOR .
                             'sql'         . DIRECTORY_SEPARATOR .
-                            'counties.US.sql';
+                            'counties.US.sql.gz';
                         
                         require_once 'CRM/Core/Session.php';
-                        CRM_Core_Session::setStatus( ts( 'You have enabled the County option. Please ensure you load a county DB in your CiviCRM Database. You can find a list of US Counties in your distribution at: <em>%1</em>',
+                        CRM_Core_Session::setStatus( ts( 'You have enabled the County option. Please ensure you populate the county table in your CiviCRM Database. You can find a list of US counties (in gzip format) in your distribution at: <em>%1</em>',
                                                          array( 1 => $sqlFilePath ) ) );
                     }
                 }
