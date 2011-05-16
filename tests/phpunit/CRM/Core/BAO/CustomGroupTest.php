@@ -581,7 +581,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         
         $groupTitles =  CRM_Core_BAO_CustomGroup::getGroupTitles( $params );
         
-        $this->assertEquals( $groupTitles[$customGroup->id]['groupTitle'] ,'Test Custom Group' ,  'Check Group Title.' );
+        $this->assertEquals( $groupTitles[$customFieldId]['groupTitle'] ,'Test Custom Group' ,  'Check Group Title.' );
         Custom::deleteGroup( $customGroup );
     }
 }
