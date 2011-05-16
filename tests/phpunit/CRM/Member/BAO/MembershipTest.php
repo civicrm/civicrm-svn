@@ -69,6 +69,18 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );
     }
 
+    /**
+     * Tears down the fixture, for example, closes a network connection.
+     * This method is called after a test is executed.
+     *
+     */
+    function tearDown( )
+    {
+        $this->membershipTypeDelete( array( 'id' => $this->_membershipTypeID ) );
+        $this->membershipStatusDelete( $this->_membershipStatusID );
+        Contact::delete( $this->_contactID );
+    }
+
     function testCreate( )
     {
 
@@ -113,8 +125,8 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
                                                     'Database check on updated membership record.' );
         $this->assertEquals( $membershipTypeId, $this->_membershipTypeID, 'Verify membership type id is fetched.');
         
+        $this->membershipDelete( $membershipId );
         Contact::delete( $contactId );
-
     }
 
     function testGetValues( )
@@ -143,7 +155,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         CRM_Member_BAO_Membership::create( $params, $ids );
 
         $membershipId1 = $this->assertDBNotNull( 'CRM_Member_BAO_Membership', $contactId, 'id', 
-                                                'contact_id', 'Database check for created membership.' );
+                                                 'contact_id', 'Database check for created membership.' );
 
         $params = array(
                         'contact_id'         => $contactId,  
@@ -159,7 +171,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         CRM_Member_BAO_Membership::create( $params, $ids );
 
         $membershipId2 = $this->assertDBNotNull( 'CRM_Member_BAO_Membership', 'source123', 'id', 
-                                                'source', 'Database check for created membership.' );
+                                                 'source', 'Database check for created membership.' );
 
         $membership = array('contact_id' => $contactId);
         $membershipValues = array(); 
@@ -168,6 +180,10 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         $this->assertEquals( $membershipValues[$membershipId1]['membership_id'], $membershipId1, 'Verify membership record 1 is fetched.');
         
         $this->assertEquals( $membershipValues[$membershipId2]['membership_id'], $membershipId2, 'Verify membership record 2 is fetched.');
+
+        $this->membershipDelete( $membershipId1 );
+        $this->membershipDelete( $membershipId2 );
+        Contact::delete( $contactId );
     }
 
     function testRetrieve ()
@@ -192,6 +208,9 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         $params = array( 'id' => $membershipId ); 
         CRM_Member_BAO_Membership::retrieve( $params, $values );
         $this->assertEquals( $values['id'], $membershipId, 'Verify membership record is retrieved.');
+
+        $this->membershipDelete( $membershipId );
+        $this->contactDelete( $contactId );
     }
 
     function testActiveMembers ()
@@ -200,7 +219,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         
         $params = array(
                         'contact_id'         => $contactId,  
-                        'membership_type_id' => '1',
+                        'membership_type_id' => $this->_membershipTypeID,
                         'join_date'          => '2006-01-21',
                         'start_date'         => '2006-01-21',
                         'end_date'           => '2006-12-21',
@@ -212,14 +231,15 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         CRM_Member_BAO_Membership::create( $params, $ids );
 
         $membershipId1 = $this->assertDBNotNull( 'CRM_Member_BAO_Membership', $contactId, 'id', 
-                                                'contact_id', 'Database check for created membership.' );
+                                                 'contact_id', 'Database check for created membership.' );
+        
         $params = array( 'id' => $membershipId1 ); 
         CRM_Member_BAO_Membership::retrieve( $params, $values1 );
         $membership = array($membershipId1 => $values1);
         
         $params = array(
                         'contact_id'         => $contactId,  
-                        'membership_type_id' => '1',
+                        'membership_type_id' => $this->_membershipTypeID,
                         'join_date'          => '2006-01-21',
                         'start_date'         => '2006-01-21',
                         'end_date'           => '2006-12-21',
@@ -244,6 +264,10 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         $this->assertEquals( $activeMembers[$membershipId2]['id'], $membership[$membershipId2]['id'], 'Verify active membership record is retrieved.');
         
         $this->assertEquals(0, count($inActiveMembers), 'Verify No inactive membership record is retrieved.');
+
+        $this->membershipDelete( $membershipId1 );
+        $this->membershipDelete( $membershipId2 );
+        Contact::delete( $contactId );
     }
     
     function testDeleteMembership ()
@@ -252,7 +276,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         
         $params = array(
                         'contact_id'         => $contactId,  
-                        'membership_type_id' => '1',
+                        'membership_type_id' => $this->_membershipTypeID,
                         'join_date'          => '2006-01-21',
                         'start_date'         => '2006-01-21',
                         'end_date'           => '2006-12-21',
@@ -269,6 +293,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         
         $membershipId = $this->assertDBNull( 'CRM_Member_BAO_Membership', $contactId, 'id', 
                                              'contact_id', 'Database check for deleted membership.' );
+        Contact::delete( $contactId );
     }
     
     function testGetContactMembership ()
@@ -277,7 +302,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         
         $params = array(
                         'contact_id'         => $contactId,  
-                        'membership_type_id' => '1',
+                        'membership_type_id' => $this->_membershipTypeID,
                         'join_date'          => '2006-01-21',
                         'start_date'         => '2006-01-21',
                         'end_date'           => '2006-12-21',
@@ -290,9 +315,13 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         
         $membershipId = $this->assertDBNotNull( 'CRM_Member_BAO_Membership', $contactId, 'id', 
                                                 'contact_id', 'Database check for created membership.' );
-        $membership = CRM_Member_BAO_Membership::getContactMembership($contactId, 1, 0 );
-        
+
+        $membership = CRM_Member_BAO_Membership::getContactMembership( $contactId, $this->_membershipTypeID, false );
+                
         $this->assertEquals( $membership['id'], $membershipId, 'Verify membership record is retrieved.' );
+
+        $this->membershipDelete( $membershipId );
+        Contact::delete( $contactId );
     }
 
 
@@ -307,7 +336,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
                
         $params = array(
                         'contact_id'         => $contactId,  
-                        'membership_type_id' => '1',
+                        'membership_type_id' => $this->_membershipTypeID,
                         'join_date'          => '2008-01-21',
                         'start_date'         => '2008-01-21',
                         'end_date'           => '2008-12-21',
@@ -322,7 +351,8 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         $membershipId = $this->assertDBNotNull( 'CRM_Member_BAO_Membership', $contactId, 'id', 
                                                 'contact_id', 'Database check for created membership.' );
         $membership[$membershipId]['renewPageId'] = CRM_Member_BAO_Membership::getContributionPageId( $membershipId );
-               
+        
+        $this->membershipDelete( $membershipId );
         Contact::delete( $contactId );
     }
     /*
@@ -334,11 +364,8 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
 
     function testgetMembershipStarts( ) 
     {
-        $membershipType     = Membership::createMembershipType( );
-     
         $contactId = Contact::createIndividual( );
-     
-               
+                    
         $params = array(
                         'contact_id'         => $contactId,  
                         'membership_type_id' => $this->_membershipTypeID,
@@ -356,8 +383,10 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
                                                 'contact_id', 'Database check for created membership.' );
         $yearStart        = date('Y').'0101';
         $currentDate      = date('Ymd');
-        CRM_Member_BAO_Membership::getMembershipStarts( $membershipType->id, $yearStart,$currentDate );
+        CRM_Member_BAO_Membership::getMembershipStarts( $this->_membershipTypeID, $yearStart,$currentDate );
         
+        $this->membershipDelete( $membershipId );
+        Contact::delete( $contactId );
     }
 
     /*
@@ -368,11 +397,8 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
 
     function testGetMembershipCount( ) 
     {
-        $membershipType = Membership::createMembershipType( );
-     
         $contactId      = Contact::createIndividual( );
-     
-               
+        
         $params = array(
                         'contact_id'         => $contactId,  
                         'membership_type_id' => $this->_membershipTypeID,
@@ -390,7 +416,10 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
                                                 'contact_id', 'Database check for created membership.' );
         $currentDate  = date('Ymd');
         $test         = 0;
-        CRM_Member_BAO_Membership::getMembershipCount( $membershipType->id, $currentDate,$test );        
+        CRM_Member_BAO_Membership::getMembershipCount( $this->_membershipTypeID, $currentDate,$test );        
+
+        $this->membershipDelete( $membershipId );
+        Contact::delete( $contactId );
     }
 
 
@@ -405,6 +434,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         $contactId  = Contact::createIndividual( );
 
         CRM_Member_BAO_Membership::statusAvilability( $contactId );
+        Contact::delete( $contactId );
     }
 
     /*
@@ -415,8 +445,6 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
 
     function testsortName( ) 
     {
-        $membershipType = Membership::createMembershipType( );
-        
         $contactId      = Contact::createIndividual( );
         
         $params = array(
@@ -441,6 +469,8 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         $this->assertDBCompareValue( 'CRM_Contact_DAO_Contact', $contactId , 'sort_name', 'id','Doe, John',
                                      'Database check for sort name record.' );
 
+        $this->membershipDelete( $membershipId );
+        Contact::delete( $contactId );
     }
 
     /*
@@ -451,8 +481,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
     function testdeleteRelatedMemberships( ) 
     {
         $contactId = Contact::createIndividual( );
-        $membershipType = Membership::createMembershipType( );
-        
+                
         $params = array(
                         'contact_id'         => $contactId,  
                         'membership_type_id' => $this->_membershipTypeID,
@@ -472,6 +501,8 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         
         CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId );
         
+        $this->membershipDelete( $membershipId );
+        Contact::delete( $contactId );
     }
     
     /*
@@ -483,7 +514,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         $contactId = Contact::createIndividual( );
         $params = array(
                         'contact_id'         => $contactId,  
-                        'membership_type_id' => '1',
+                        'membership_type_id' => $this->_membershipTypeID,
                         'join_date'          => '20110225000000',
                         'start_date'         => '20110225000000',
                         'end_date'           => '20120224000000',
@@ -495,26 +526,30 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         $membership = CRM_Member_BAO_Membership::create( $params, $ids );
         $membershipId = $this->assertDBNotNull( 'CRM_Member_BAO_Membership', $contactId, 'id', 
                                                 'contact_id', 'Database check for created membership.' );
+                
         $this->assertDBNotNull( 'CRM_Member_BAO_MembershipLog', 
-                                $membership->id , 
-                                'membership_id', 
+                                $membership->id, 
                                 'id', 
+                                'membership_id', 
                                 'Database checked on membershiplog record.' );
-        $membershipType = Membership::createMembershipType( );
+
         require_once 'CRM/Core/Controller.php';
         require_once 'CRM/Core/Form.php';
         $membershipRenewal = new CRM_Core_Form( );
         $membershipRenewal->controller = new CRM_Core_Controller( );
-        $MembershipRenew = CRM_Member_BAO_Membership::renewMembership( $contactId, $membershipType->id, $isTestMembership = 0, $membershipRenewal, null, null );
+        $MembershipRenew = CRM_Member_BAO_Membership::renewMembership( $contactId, $this->_membershipTypeID, $isTestMembership = 0, $membershipRenewal, null, null );
         $endDate = date( "Y-m-d", strtotime( $membership->end_date . " +1 year" ) );
         
         $this->assertDBNotNull( 'CRM_Member_BAO_MembershipLog', 
                                 $MembershipRenew->id , 
-                                'membership_id', 
                                 'id', 
+                                'membership_id', 
                                 'Database checked on membershiplog record.' );
-        $this->assertEquals( $MembershipRenew->membership_type_id, $membershipType->id, 'Verify membership type is changed during renewal.' );
+        $this->assertEquals( $MembershipRenew->membership_type_id, $this->_membershipTypeID, 'Verify membership type is changed during renewal.' );
         $this->assertEquals( $MembershipRenew->end_date, $endDate, 'Verify correct end date is calculated after membership renewal' );
+
+        $this->membershipDelete( $membershipId );
+        Contact::delete( $contactId );
     }
 
     /*
@@ -561,22 +596,24 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         
         $this->assertDBNotNull( 'CRM_Member_BAO_MembershipLog', 
                                 $membership->id , 
-                                'membership_id', 
                                 'id', 
+                                'membership_id', 
                                 'Database checked on membershiplog record.' );
 
         require_once 'CRM/Core/Controller.php';
         require_once 'CRM/Core/Form.php';
         $membershipRenewal = new CRM_Core_Form( );
         $membershipRenewal->controller = new CRM_Core_Controller( );
-        $membershipTypeId = 1;
-        $MembershipRenew = CRM_Member_BAO_Membership::renewMembership( $contactId, $membershipTypeId, $isTestMembership = 0, $membershipRenewal, null, null );
+        $MembershipRenew = CRM_Member_BAO_Membership::renewMembership( $contactId, $this->_membershipTypeID, $isTestMembership = 0, $membershipRenewal, null, null );
        
         $this->assertDBNotNull( 'CRM_Member_BAO_MembershipLog', 
                                 $MembershipRenew->id , 
-                                'membership_id', 
                                 'id', 
+                                'membership_id', 
                                 'Database checked on membershiplog record.' );
+
+        $this->membershipDelete( $membershipId );
+        Contact::delete( $contactId );
     }
 }
 ?>
