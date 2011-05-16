@@ -50,8 +50,6 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
         $op->execute( $this->_dbconn,
                       new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
                              dirname(__FILE__) . '/../../CiviTest/truncate-ufgroup.xml') );
-
-        
     }
 
     protected function setUp()
