@@ -1468,8 +1468,18 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         );
 
         $result = civicrm_api( 'Note','create',$params );
+        
+        if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
+            if ( CRM_Utils_Array::value( 'error_message', $result ) ) {
+                throw new Exception( 'Could not delete note, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
+            } else {
+                throw new Exception( 'Could not delete note - in line: ' . __LINE__ );
+            }
+        }        
+        
         return $result;
     }
+    
     function documentMe($params,$result,$function,$filename){
         $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
         //todo - this is a bit cludgey
@@ -1522,17 +1532,20 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function noteDelete( $params )
     {
-
         $params['version'] = API_LATEST_VERSION;
 
         $result = civicrm_api( 'Note','delete',$params );
 
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not delete note' );
+            if ( CRM_Utils_Array::value( 'error_message', $result ) ) {
+                throw new Exception( 'Could not delete note, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
+            } else {
+                throw new Exception( 'Could not delete note - in line: ' . __LINE__ );
+            }
         }
-    
-        return;
-    }    
+
+        return $result;
+    }
      
     /**
      * Function to create custom field with Option Values

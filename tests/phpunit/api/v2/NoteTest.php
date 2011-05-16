@@ -292,9 +292,9 @@ class api_v2_NoteTest extends CiviUnitTestCase
      */        
     function testDelete( )
     {
-        $result = $this->noteCreate( $this->_contactID );
+        $additionalNote = $this->noteCreate( $this->_contactID );
 
-        $params = array( 'id'        => $result['id'],
+        $params = array( 'id'        => $additionalNote['id'],
                          'entity_id' => $this->_contactID
                          ); 
        
