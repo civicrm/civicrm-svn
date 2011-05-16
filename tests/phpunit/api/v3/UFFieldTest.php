@@ -102,11 +102,14 @@ class api_v3_UFFieldTest extends CiviUnitTestCase
     }
 
 
+    function tearDown() {
 
-
-
-
- 
+        //  Truncate the tables
+        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+                             dirname(__FILE__) . '/../../CiviTest/truncate-ufgroup.xml') );
+    }
 
     /**
      * create / updating field
