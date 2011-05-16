@@ -78,6 +78,20 @@ class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase
     }
     
     /**
+     * Tears down the fixture, for example, closes a network connection.
+     * This method is called after a test is executed.
+     *
+     */
+    function tearDown( )
+    {
+        $this->relationshipTypeDelete( $this->_relationshipTypeId );
+        $this->membershipTypeDelete( array( 'id' => $this->_membershipTypeID ) );
+        $this->membershipStatusDelete( $this->_mebershipStatusID );
+        $this->contributionTypeDelete( null );
+        $this->contactDelete( $this->_orgContactID );
+    }
+
+    /**
      *  Test add()
      */
     function testadd()
@@ -97,8 +111,11 @@ class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase
         $ids = array();
         $membership = CRM_Member_BAO_Membership::create( $params, $ids );      
         $this->assertDBNotNull( 'CRM_Member_BAO_MembershipLog',$membership->id ,
-                                                 'membership_id', 'id',
-                                                 'Database checked on membershiplog record.' );
+                                'membership_id', 'id',
+                                'Database checked on membershiplog record.' );
+
+        $this->membershipDelete( $membership->id );
+        $this->contactDelete( $contactId );
     }
     
     /**
@@ -124,8 +141,10 @@ class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase
         $membership = CRM_Member_BAO_Membership::create( $params, $ids );
         $membershipDelete =  CRM_Member_BAO_MembershipLog::del( $membership->id );
         $this->assertDBNull( 'CRM_Member_BAO_MembershipLog',$membership->id, 'membership_id', 
-                                                 'id', 'Database check for deleted membership log.' );
-        
+                             'id', 'Database check for deleted membership log.' );
+
+        $this->membershipDelete( $membership->id );
+        $this->contactDelete( $contactId );
     }
     
     /**
@@ -151,6 +170,9 @@ class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase
         $membership = CRM_Member_BAO_Membership::create( $params, $ids );
         $resetModifiedId =  CRM_Member_BAO_MembershipLog::resetModifiedID( $contactId );
         $this->assertDBNull( 'CRM_Member_BAO_MembershipLog',$contactId, 'modified_id', 
-                             'modified_id', 'Database check for NULL modified id.' );      
+                             'modified_id', 'Database check for NULL modified id.' ); 
+
+        $this->membershipDelete( $membership->id );
+        $this->contactDelete( $contactId );
     }
 }
