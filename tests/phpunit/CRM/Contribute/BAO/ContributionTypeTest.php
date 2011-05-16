@@ -87,7 +87,7 @@ class CRM_Contribute_BAO_ContributionTypeTest extends CiviUnitTestCase
      */
     function testSetIsActive(  ) 
     {
-        $params = array( 'name'          => 'Donations',
+        $params = array( 'name'          => 'testDonations',
                          'is_deductible' => 0,
                          'is_active'     => 1
                          );
@@ -107,7 +107,7 @@ class CRM_Contribute_BAO_ContributionTypeTest extends CiviUnitTestCase
      */
     function testdel(  ) 
     {
-        $params = array( 'name'          => 'Donations',
+        $params = array( 'name'          => 'checkDonations',
                          'is_deductible' => 0,
                          'is_active'     => 1
                          );
