@@ -20,6 +20,13 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
         parent::setUp();
     }
 
+    function tearDown( ) 
+    {
+        // truncate a few tables
+        $tablesToTruncate = array( 'civicrm_contact', 'civicrm_activity' );
+        $this->quickCleanup( $tablesToTruncate );
+    }
+    
     /**
      * testcases for create() method
      * create() method Add/Edit activity. 
