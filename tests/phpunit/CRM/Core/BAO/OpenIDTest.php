@@ -14,6 +14,12 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase
                      );
     }
     
+    function tearDown( )
+    {
+        $tablesToTruncate = array( 'civicrm_contact' );
+        $this->quickCleanup( $tablesToTruncate );
+    }
+
     function setUp( ) 
     {
         parent::setUp();
