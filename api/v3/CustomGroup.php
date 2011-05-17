@@ -69,39 +69,40 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_custom_group_create( $params )
 {
-
-    
-    civicrm_api3_verify_mandatory($params,null,array('extends','title'));  
-    if ( ! CRM_Utils_Array::value('style', $params)  ) {
-        $params['style'] = 'Inline';
-    }    
-      
-    
-    if (is_string($params['extends'])){
-     $extends = explode(",",$params['extends']);
-     unset ($params['extends']);
-     $params['extends'] =  $extends;
-   }
-   if ( ! isset( $params['extends'][0] ) || ! trim( $params['extends'][0] ) ) {
+    try{ 
+        civicrm_api3_verify_mandatory($params,null,array('extends','title'));  
+        if ( ! CRM_Utils_Array::value('style', $params)  ) {
+            $params['style'] = 'Inline';
+        }    
+                
+        if (is_string($params['extends'])){
+            $extends = explode(",",$params['extends']);
+            unset ($params['extends']);
+            $params['extends'] =  $extends;
+        }
+        if ( ! isset( $params['extends'][0] ) || ! trim( $params['extends'][0] ) ) {
           return civicrm_api3_create_error( "First item in params['extends'] must be a class name (e.g. 'Contact')." );
-   }
-           
-    
-    require_once 'CRM/Core/BAO/CustomGroup.php';
-    $customGroup = CRM_Core_BAO_CustomGroup::create($params);                             
-
-    _civicrm_api3_object_to_array( $customGroup, $values[$customGroup->id] );
-    
-    if ( CRM_Utils_Array::value( 'html_type', $params ) ){
-        $fparams = array('custom_group_id' => $customGroup->id,
-                        'version'         => $params['version'],
-                        'label'           => 'api created field');// should put something cleverer here but this will do for now
-        require_once 'api/v3/CustomField.php';
-        $fieldValues = civicrm_api3_custom_field_create( $fparams );
-        $values[$fieldValues['id']]      = array_merge( $values[$customGroup->id] , $fieldValues['values'][$fieldValues['id']] );
+        }
+                
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        $customGroup = CRM_Core_BAO_CustomGroup::create($params);                             
+        
+        _civicrm_api3_object_to_array( $customGroup, $values[$customGroup->id] );
+        
+        if ( CRM_Utils_Array::value( 'html_type', $params ) ){
+            $fparams = array('custom_group_id' => $customGroup->id,
+                             'version'         => $params['version'],
+                             'label'           => 'api created field');// should put something cleverer here but this will do for now
+            require_once 'api/v3/CustomField.php';
+            $fieldValues = civicrm_api3_custom_field_create( $fparams );
+            $values[$fieldValues['id']]      = array_merge( $values[$customGroup->id] , $fieldValues['values'][$fieldValues['id']] );
+        }
+        return civicrm_api3_create_success($values,$params);
+    } catch (PEAR_Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
     }
-    return civicrm_api3_create_success($values,$params);
-
 }   
 
 
@@ -115,18 +116,22 @@ function civicrm_api3_custom_group_create( $params )
  **/
 function civicrm_api3_custom_group_delete($params)
 {    
- 
-    civicrm_api3_verify_mandatory($params,null,array('id'));
-    // convert params array into Object
-    require_once 'CRM/Core/DAO/CustomGroup.php';
-    $values = new CRM_Core_DAO_CustomGroup( );
-    $values->id = $params['id'];
-    $values->find(true);
-    
-    require_once 'CRM/Core/BAO/CustomGroup.php';
-    $result = CRM_Core_BAO_CustomGroup::deleteGroup($values,true);  
-    return $result ? civicrm_api3_create_success( ): civicrm_api3_error('Error while deleting custom group');
-
+    try{
+        civicrm_api3_verify_mandatory($params,null,array('id'));
+        // convert params array into Object
+        require_once 'CRM/Core/DAO/CustomGroup.php';
+        $values = new CRM_Core_DAO_CustomGroup( );
+        $values->id = $params['id'];
+        $values->find(true);
+        
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        $result = CRM_Core_BAO_CustomGroup::deleteGroup($values,true);  
+        return $result ? civicrm_api3_create_success( ): civicrm_api3_error('Error while deleting custom group');
+    } catch (PEAR_Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    }
  }
 
  

@@ -43,10 +43,11 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
      */    
     function testCustomGroupCreateNoParam()
     {
-        $params = array( 'version'					=> $this->_apiversion, );
+        $params = array( 'version' => $this->_apiversion, );
         $customGroup =& civicrm_api3_custom_group_create($params);
-        $this->assertEquals($customGroup['is_error'], 1); 
-        $this->assertEquals($customGroup['error_message'],'Mandatory key(s) missing from params array: extends, title');
+        $this->assertEquals($customGroup['is_error'], 1 ,'In line ' . __LINE__); 
+        $this->assertEquals($customGroup['error_message'],
+                            'Mandatory key(s) missing from params array: extends, title' ,'In line ' . __LINE__);
     }
 
     /**
@@ -63,7 +64,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                          'help_pre'         => 'This is Pre Help For Test Group 1',
                          'help_post'        => 'This is Post Help For Test Group 1',
                          'is_active'        => 1,
-                         'version'					=> $this->_apiversion,
+                         'version'          => $this->_apiversion,
         
                          );
         
@@ -87,7 +88,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                          'help_post'        => 'This is Post Help For Test Group 1',
                          'is_active'        => 1,
                          'extends'          => array(),
-                         'version'					=> $this->_apiversion,
+                         'version'          => $this->_apiversion,
                          );
         
         $customGroup =& civicrm_api3_custom_group_create($params);
@@ -110,14 +111,14 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                          'help_pre'         => 'This is Pre Help For Test Group 1',
                          'help_post'        => 'This is Post Help For Test Group 1',
                          'is_active'        => 1,
-                         'html_type'       => 'Select',
-                         'data_type'       => 'String',
+                         'html_type'        => 'Select',
+                         'data_type'        => 'String',
                          'option_label'     => array('Label1', 'Label2'),
                          'option_value'     => array( 'value1', 'value2'),
                          'option_name'      => array( 'name_1', 'name_2'),
                          'option_weight'    => array(1, 2),
                          'label'            => 'Country',
-                         'version'					=> $this->_apiversion,
+                         'version'          => $this->_apiversion,
                          );
         
         $customGroup =& civicrm_api3_custom_group_create($params);
@@ -142,7 +143,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                          'help_pre'         => 'This is Pre Help For Test Group 1',
                          'help_post'        => 'This is Post Help For Test Group 1',
                          'is_active'        => 1,
-                         'version'					=>$this->_apiversion,
+                         'version'          => $this->_apiversion,
                          );
         
         $result =& civicrm_api3_custom_group_create($params);
@@ -182,7 +183,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                         'style'            => 'Tab',
                         'help_pre'         => 'This is Pre Help For Test Group 2',
                         'help_post'        => 'This is Post Help For Test Group 2',
-                        'version'					 => $this->_apiversion,
+                        'version'          => $this->_apiversion,
                         );
         
         $customGroup =& civicrm_api3_custom_group_create($params);
@@ -203,7 +204,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                         'help_pre'         => 'This is Pre Help For Test Group 3',
                         'help_post'        => 'This is Post Help For Test Group 3',
                         'is_active'        => 1,
-                        'version'					 => $this->_apiversion,
+                        'version'          => $this->_apiversion,
                         );
         
         $customGroup =& civicrm_api3_custom_group_create($params);
@@ -211,7 +212,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         $this->assertNotNull($customGroup['id']);
         $this->assertEquals($customGroup['values'][$customGroup['id']]['extends'], 'Household');
         $this->assertEquals($customGroup['values'][$customGroup['id']]['style'], 'Tab');
-        $this->customGroupDelete(array('id' => $customGroup['id']));
+        $this->customGroupDelete( $customGroup['id'] );
     }
     
     /**
@@ -228,14 +229,14 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                         'help_pre'         => 'This is Pre Help For Test Group 6',
                         'help_post'        => 'This is Post Help For Test Group 6',
                         'is_active'        => 1,
-                        'version'					 => $this->_apiversion, 
+                        'version'          => $this->_apiversion, 
                         );
         
         $customGroup =& civicrm_api3_custom_group_create($params);
         $this->assertEquals($customGroup['is_error'], 0);
         $this->assertNotNull($customGroup['id']);
         $this->assertEquals($customGroup['values'][$customGroup['id']]['extends'], 'Contribution');
-        $this->customGroupDelete(array('id' => $customGroup['id']));
+        $this->customGroupDelete( $customGroup['id'] );
     }
 
     /**
@@ -253,7 +254,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                         'style'            => 'Inline',
                         'help_pre'         => 'This is Pre Help For Test Group 8',
                         'help_post'        => 'This is Post Help For Test Group 8',
-                        'version'					=> $this->_apiversion,
+                        'version'          => $this->_apiversion,
                         );
         
         $customGroup =& civicrm_api3_custom_group_create($params); 
@@ -277,7 +278,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                         'style'            => 'Inline',
                         'help_pre'         => 'This is Pre Help For Test Group 10',
                         'help_post'        => 'This is Post Help For Test Group 10',
-                        'version'					=> $this->_apiversion,
+                        'version'          => $this->_apiversion,
                         );
         
         $customGroup =& civicrm_api3_custom_group_create($params);
@@ -294,7 +295,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
      */
     function testCustomGroupDeleteWithoutGroupID( )
     {
-        $params = array( 'version'					=> $this->_apiversion, );
+        $params = array( 'version' => $this->_apiversion, );
         $customGroup =& civicrm_api3_custom_group_delete($params);
         $this->assertEquals($customGroup['is_error'], 1);
         $this->assertEquals($customGroup['error_message'],'Mandatory key(s) missing from params array: id');
@@ -316,8 +317,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
     function testCustomGroupDelete( )
     {
         $customGroup = $this->customGroupCreate('Individual', 'test_group'); 
-        $params = array('id' => $customGroup['id'],
-                         'version'  =>$this->_apiversion);                         
+        $params = array('id'      => $customGroup['id'],
+                        'version' =>$this->_apiversion);                         
         $result =& civicrm_api3_custom_group_delete($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals($result ['is_error'], 0);
