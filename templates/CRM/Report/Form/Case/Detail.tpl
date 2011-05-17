@@ -289,6 +289,7 @@
         {include file="CRM/Report/Form/ErrorMessage.tpl"}
     </div>
 {/if}
+
 <div id="casedetails"></div>
 {literal}
 <script type="text/javascript">
@@ -314,21 +315,10 @@ function viewCase( caseId ,contactId ) {
                              cj( "#casedetails").html( data );
                        },
                    });
-	    var dataUrl = {/literal}"{crmURL p='civicrm/case/details' h=0 q="snippet=4" }"{literal};
-            dataUrl     = dataUrl + '&caseId=' +caseId + '&contactId=' +contactId ;
-	        cj.ajax({
-                         url     : dataUrl,
-                         dataType: "html",
-                         timeout : 5000, //Time in milliseconds
-                         success : function( data ){
-                             cj( "#casedetails").append(data);
-
-                       },
-                   });  
-
 		},
 
-                     buttons: { "Done": function() { cj(this).dialog("destroy"); }}
+               buttons: { "Done": function() { cj(this).dialog("destroy"); }}
     });
 }
- </script>{/literal}
+</script>
+{/literal}
