@@ -104,3 +104,9 @@ VALUES
     (@option_group_id_label, '{localize}Avery L7161{/localize}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":9,"font-style":"","metric":"in","lMargin":0.28,"tMargin":0.35,"NX":3,"NY":6,"SpaceX":0.1,"SpaceY":0,"width":2.5,"height":1.83,"lPadding":0.20,"tPadding":0.20}{/literal}',        'L7161', 'Avery', NULL, 0, 9,  NULL, 0, 1, 1, NULL, NULL), 
     (@option_group_id_label, '{localize}Avery L7162{/localize}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":9,"font-style":"","metric":"in","lMargin":0.18,"tMargin":0.51,"NX":2,"NY":8,"SpaceX":0.1,"SpaceY":0,"width":3.9,"height":1.33,"lPadding":0.20,"tPadding":0.20}{/literal}',        'L7162', 'Avery', NULL, 0, 10, NULL, 0, 1, 1, NULL, NULL), 
     (@option_group_id_label, '{localize}Avery L7163{/localize}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":9,"font-style":"","metric":"in","lMargin":0.18,"tMargin":0.6,"NX":2,"NY":7,"SpaceX":0.1,"SpaceY":0,"width":3.9,"height":1.5,"lPadding":0.20,"tPadding":0.20}{/literal}',          'L7163', 'Avery', NULL, 0, 11, NULL, 0, 1, 1, NULL, NULL);
+
+
+-- CRM-8133, add entries for assignee contact for activities of type Membership Renewal Reminder
+SELECT @option_value_membership_reminder := value FROM civicrm_option_value v, civicrm_option_group g WHERE v.option_group_id = g.id AND g.name = 'activity_type' AND v.name = 'Membership Renewal Reminder';
+
+INSERT INTO civicrm_activity_assignment ( activity_id, assignee_contact_id ) SELECT ca.id, ca.source_contact_id FROM civicrm_activity ca LEFT JOIN civicrm_activity_assignment cas ON ( cas.activity_id = ca.id ) WHERE ca.activity_type_id = @option_value_membership_reminder AND cas.id IS NULL;
