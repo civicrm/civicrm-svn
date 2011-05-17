@@ -565,19 +565,17 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
     
     function alterDisplay( &$rows ) {
         $entryFound = false;
-        
-        foreach ( $rows as $rowNum => $row ) { 
+        $activityType = CRM_Core_PseudoConstant::activityType( true, true );
+        foreach ( $rows as $rowNum => $row ) {
             if ( array_key_exists('civicrm_case_status_id', $row ) ) { 
                 if ( $value = $row['civicrm_case_status_id'] ) {
                     $rows[$rowNum]['civicrm_case_status_id'] = $this->case_statuses[$value];
-                    
                     $entryFound = true;
                 }
             }
             if ( array_key_exists('civicrm_case_case_type_id', $row ) ) {
                 if ( $value = str_replace( CRM_Case_BAO_Case::VALUE_SEPERATOR, '', $row['civicrm_case_case_type_id'] )) {
                     $rows[$rowNum]['civicrm_case_case_type_id'] = $this->case_types[$value];
-                    
                     $entryFound = true;
                 }
             }
@@ -617,7 +615,13 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                 }
                 $entryFound = true;
             }
-            
+            if ( array_key_exists('civicrm_activity_last_completed_last_completed_activity_type', $row) ) {
+                if ( $value = $row['civicrm_activity_last_completed_last_completed_activity_type'] ) {
+                    $rows[$rowNum]['civicrm_activity_last_completed_last_completed_activity_type'] = $activityType[$value];
+                }
+                $entryFound = true;
+            }
+
             if ( !$entryFound ) {
                 break;
             }
