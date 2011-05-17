@@ -75,6 +75,10 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
 
     function tearDown() 
     {
+        $this->relationshipTypeDelete( $this->_relTypeID );
+        $tablesToTruncate = array( 'civicrm_contact',
+                                   'civicrm_relationship' );
+        $this->quickCleanup( $tablesToTruncate, true );
     }
     
 ///////////////// civicrm_relationship_create methods
@@ -271,7 +275,6 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         
         $params['id'] = $result['result']['id'] ; 
         $result = civicrm_relationship_delete( $params );
-        $this->relationshipTypeDelete( $this->_relTypeID ); 
     }
 
     function createCustomGroup( )
@@ -458,7 +461,6 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         $params['id']= $result['result']['id'];
         
         $result = civicrm_relationship_delete( $params );
-        $this->relationshipTypeDelete( $this->_relTypeID ); 
     }
     
 ///////////////// civicrm_relationship_update methods
@@ -540,9 +542,6 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         
         $result = civicrm_relationship_delete( $params );
         $this->assertEquals( $result['is_error'], 0 );
-        
-        //delete created relationship type        
-        $this->relationshipTypeDelete( $this->_relTypeID ); 
     }
 
 
@@ -654,7 +653,6 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
 
         $params['id'] = $relationship['result']['id'] ;
         $result = civicrm_relationship_delete( $params );
-        $this->relationshipTypeDelete( $relTypeID );
     }
 
     /**
@@ -682,7 +680,6 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
 
         $params['id'] = $relationship['result']['id'] ;
         $result = civicrm_relationship_delete( $params );
-        $this->relationshipTypeDelete( $relTypeID );
     } 
 
 }
