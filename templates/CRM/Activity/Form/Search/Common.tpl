@@ -37,9 +37,14 @@
   {else}
       <td>&nbsp;</td>
   {/if} 
- {if $form.activity_survey_id }
-    <td><label>{$form.activity_survey_id.label}</label> 
-    {$form.activity_survey_id.html}</td>
+  {if $form.activity_survey_id }
+    <td>
+        <label>{$form.activity_survey_id.label}</label> {$form.activity_survey_id.html}
+        {if $buildEngagementLevel}
+            <br/ ><br />
+            <label>{$form.activity_engagement_level.label}</label> {$form.activity_engagement_level.html}
+        {/if}
+    </td>
   {/if} 
 
   {if $form.activity_tags }
