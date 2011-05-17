@@ -32,6 +32,18 @@ class CRM_Contact_BAO_QueryTest extends CiviUnitTestCase
         parent::setUp();
     }
     
+    function tearDown()
+    {
+        $tablesToTruncate = array( 'civicrm_group_contact',
+                                   'civicrm_group',
+                                   'civicrm_saved_search',
+                                   'civicrm_entity_tag',
+                                   'civicrm_tag',
+                                   'civicrm_contact'
+                                   );
+        $this->quickCleanup( $tablesToTruncate );
+    }
+    
     /**
      *  Test CRM_Contact_BAO_Query::searchQuery()
      *  @dataProvider dataProvider
