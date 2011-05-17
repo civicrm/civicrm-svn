@@ -448,7 +448,7 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
     }
     
     function orderBy( ) {
-        $this->_orderBy = "ORDER BY {$this->_aliases['civicrm_case']}.start_date ";
+        $this->_orderBy = " ORDER BY {$this->_aliases['civicrm_case']}.start_date DESC ";
     }
     
     function caseDetailSpecialColumnProcess( ) {
