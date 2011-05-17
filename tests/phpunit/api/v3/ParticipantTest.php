@@ -53,7 +53,6 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
 
     function setUp()
     {
-
         $this->_apiversion = 3;
         parent::setUp();
         $this->_entity = 'participant';
@@ -82,7 +81,10 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
 
     function tearDown()
     {
-        // _participant, _contact and _event tables cleaned up in truncate.xml
+        $this->eventDelete( $this->_eventID );
+        $this->contactDelete( $this->_contactID );
+        $this->contactDelete( $this->_individualId );
+        $this->contactDelete( $this->_contactID2 );   
     }
 
         /**

@@ -60,7 +60,7 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase
     
     function tearDown( ) 
     {
-        $this-> groupDelete( $this->_groupID );
+        $this->groupDelete( $this->_groupID );
     }
     
     //---------- civicrm_mailing_event_subscribe methods ---------

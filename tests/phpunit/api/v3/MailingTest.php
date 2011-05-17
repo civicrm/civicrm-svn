@@ -52,7 +52,6 @@ class api_v3_MailingTest extends CiviUnitTestCase
     
     function setUp( ) 
     {
-
         parent::setUp();
         $this->_apiversion = 3; 
         $this->_groupID = $this->groupCreate(null);
@@ -61,7 +60,7 @@ class api_v3_MailingTest extends CiviUnitTestCase
     
     function tearDown( ) 
     {
-        $this-> groupDelete( $this->_groupID );
+        $this->groupDelete( $this->_groupID );
     }
     
     //------------ civicrm_mailing_event_bounce methods------------
