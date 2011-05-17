@@ -5,3 +5,4 @@
  *  To define phone validation for your site:
  *  jQuery.validator.addMethod("crm_phone", function(phone_number, element) { validation logic here }
  */
+
