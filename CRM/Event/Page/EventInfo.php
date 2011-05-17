@@ -96,6 +96,12 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         // show event fees.
         require_once 'CRM/Price/BAO/Set.php';
         if ( $this->_id && CRM_Utils_Array::value( 'is_monetary', $values['event'] ) ) {
+            //CRM-6907
+            $config = CRM_Core_Config::singleton( );
+            $config->defaultCurrency = CRM_Utils_Array::value( 'currency', 
+                                                               $values['event'], 
+                                                               $config->defaultCurrency );
+
             // get price set options, - CRM-5209
             if ( $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_event', $this->_id ) ) {
                 $setDetails     = CRM_Price_BAO_Set::getSetDetail( $priceSetId );
