@@ -60,6 +60,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
 
     function tearDown( ) 
     {
+        $this->membershipStatusDelete( $this->_membershipStatusID ); 
     }
 
 ///////////////// civicrm_membership_status_get methods
@@ -226,6 +227,8 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
         $this->assertEquals( $result['is_error'], 0 );
         $this->assertEquals( $membershipStatusID,$result['id'] );
         $this->assertNotNull( $result['id'] );
+        
+        $this->membershipDelete( $membershipID );
     }
 
 ///////////////// civicrm_membership_status_delete methods
