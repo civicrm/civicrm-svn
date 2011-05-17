@@ -54,6 +54,14 @@ class api_v3_UFMatchTest extends CiviUnitTestCase
 
     }
 
+    function tearDown( ) 
+    {
+        //  Truncate the tables
+        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+                             dirname(__FILE__) . '/../../CiviTest/truncate-ufgroup.xml') );
+    }
 
     /**
      * fetch contact id by uf id
