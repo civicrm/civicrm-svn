@@ -77,6 +77,9 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
 
     function tearDown() 
     {
+        $this->relationshipTypeDelete( $this->_relTypeID );
+        $this->contactDelete( $this->_cId_a );
+        $this->contactDelete( $this->_cId_b );
     }
     
 ///////////////// civicrm_relationship_create methods
@@ -229,7 +232,6 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         
         $result = & civicrm_api3_relationship_create( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-
         $this->assertEquals( 0, $result['is_error'], 'in line ' . __LINE__ );
         $this->assertNotNull( $result['id'],'in line ' . __LINE__ );   
         $relationParams = array(
