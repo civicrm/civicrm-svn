@@ -65,6 +65,14 @@
     <div class="content crm-content-mergeSameHousehold">
         &nbsp;{$form.merge_same_household.html}
     </div>
+    <div class="content crm-content-postalMailingExport">
+        &nbsp;{$form.postal_mailing_export.html}
+    </div>
+    <br/>
+    <div class="label crm-label-additionalGroup">{$form.additional_group.label}</div>
+    <div class="content crm-content-additionalGroup">
+        &nbsp;{$form.additional_group.html}
+    </div>
 	<div class="clear"></div> 
   </div>
   {/if}

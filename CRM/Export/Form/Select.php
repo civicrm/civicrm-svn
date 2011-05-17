@@ -191,7 +191,7 @@ FROM   {$this->_componentTable}
     public function buildQuickForm( ) 
     {
         //export option
-        $exportOptions = $mergeHousehold = $mergeAddress = array();        
+        $exportOptions = $mergeHousehold = $mergeAddress = $postalMailing = array();        
         $exportOptions[] = HTML_QuickForm::createElement('radio',
                                                          null, null,
                                                          ts('Export PRIMARY fields'),
@@ -211,12 +211,20 @@ FROM   {$this->_componentTable}
                                                            'merge_same_household', 
                                                            null, 
                                                            ts('Merge Household Members into their Households'));
+        $postalMailing[]  = HTML_QuickForm::createElement( 'advcheckbox',
+                                                           'postal_mailing_export', 
+                                                           null, 
+                                                           ts('Postal Mailing Export'));
         
         $this->addGroup( $exportOptions, 'exportOption', ts('Export Type'), '<br/>' );
 
         if ( $this->_exportMode == self::CONTACT_EXPORT ) {
             $this->addGroup( $mergeAddress, 'merge_same_address', ts('Merge Same Address'), '<br/>');
             $this->addGroup( $mergeHousehold, 'merge_same_household', ts('Merge Same Household'), '<br/>');
+            $this->addGroup( $postalMailing,  'postal_mailing_export', ts('Postal Mailing Export'), '<br/>');
+
+            $this->addElement( 'select', 'additional_group', ts( 'Additional Group for Export' ), 
+                               array( '' => ts( '- select group -' )) + CRM_Core_PseudoConstant::staticGroup( ) );
         }
         
         $this->buildMapping( );
