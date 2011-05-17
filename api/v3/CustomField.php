@@ -71,35 +71,40 @@ require_once 'CRM/Core/BAO/CustomField.php';
 
 function civicrm_api3_custom_field_create( $params )
 {
-
-    civicrm_api3_verify_mandatory($params,null,array('custom_group_id','label'));
-
-    if ( !( CRM_Utils_Array::value('option_type', $params ) ) ) {
-      if( CRM_Utils_Array::value('id', $params ) ){
-        $params['option_type'] = 2;
-      } else {
-        $params['option_type'] = 1;
-      }
-    }
-     
-    if (is_a($error, 'CRM_Core_Error')) {
-      return civicrm_api3_create_error( $error->_errors[0]['message'] );
-    }
-
-    // Array created for passing options in params
-    if ( isset( $params['option_values'] ) && is_array( $params['option_values'] ) ) {
-      foreach ( $params['option_values'] as $key => $value ){
-        $params['option_label'][$key] = $value['label'];
-        $params['option_value'][$key] = $value['value'];
-        $params['option_status'][$key] = $value['is_active'];
-        $params['option_weight'][$key] = $value['weight']; 
-      }
-    }
-
-    $customField = CRM_Core_BAO_CustomField::create($params);
-    _civicrm_api3_object_to_array_unique_fields($customField , $values[$customField->id]);
-    return civicrm_api3_create_success($values,$params, $customField);
-
+	_civicrm_api3_initialize ( true );
+	try {
+        civicrm_api3_verify_mandatory($params,null,array('custom_group_id','label'));
+        
+        if ( !( CRM_Utils_Array::value('option_type', $params ) ) ) {
+            if( CRM_Utils_Array::value('id', $params ) ){
+                $params['option_type'] = 2;
+            } else {
+                $params['option_type'] = 1;
+            }
+        }
+        
+        if (is_a($error, 'CRM_Core_Error')) {
+            return civicrm_api3_create_error( $error->_errors[0]['message'] );
+        }
+        
+        // Array created for passing options in params
+        if ( isset( $params['option_values'] ) && is_array( $params['option_values'] ) ) {
+            foreach ( $params['option_values'] as $key => $value ){
+                $params['option_label'][$key] = $value['label'];
+                $params['option_value'][$key] = $value['value'];
+                $params['option_status'][$key] = $value['is_active'];
+                $params['option_weight'][$key] = $value['weight']; 
+            }
+        }
+        
+        $customField = CRM_Core_BAO_CustomField::create($params);
+        _civicrm_api3_object_to_array_unique_fields($customField , $values[$customField->id]);
+        return civicrm_api3_create_success($values,$params, $customField);
+	} catch ( PEAR_Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	}
 }
 
 /**
@@ -113,18 +118,24 @@ function civicrm_api3_custom_field_create( $params )
  **/
 function civicrm_api3_custom_field_delete( $params )
 {
-
-    civicrm_api3_verify_mandatory($params,null,array('id'));
-
-    $field = new CRM_Core_BAO_CustomField( );
-    $field->id = $params['id'];
-    $field->find(true);
-
-
-    $customFieldDelete = CRM_Core_BAO_CustomField::deleteField( $field );
-    return $customFieldDelete ?
-    civicrm_api3_create_error('Error while deleting custom field') :
-    civicrm_api3_create_success( );
+	_civicrm_api3_initialize ( true );
+	try {
+        civicrm_api3_verify_mandatory($params,null,array('id'));
+        
+        $field = new CRM_Core_BAO_CustomField( );
+        $field->id = $params['id'];
+        $field->find(true);
+        
+        
+        $customFieldDelete = CRM_Core_BAO_CustomField::deleteField( $field );
+        return $customFieldDelete ?
+            civicrm_api3_create_error('Error while deleting custom field') :
+            civicrm_api3_create_success( );
+    } catch ( PEAR_Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	}
 }
 
 /**
@@ -137,6 +148,13 @@ function civicrm_api3_custom_field_delete( $params )
  **/
 function civicrm_api3_custom_field_get($params)
 {
-    civicrm_api3_verify_mandatory($params);
-    return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+    _civicrm_api3_initialize ( true );
+	try {
+        civicrm_api3_verify_mandatory($params);
+        return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+    } catch ( PEAR_Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	}
  }
