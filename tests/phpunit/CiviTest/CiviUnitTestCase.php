@@ -629,7 +629,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         
         $result = civicrm_membership_status_create( $params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not create membership status' );
+            throw new Exception( 'Could not create membership status' . $result['error_message']);
         }
         return $result['id'];
     }
@@ -639,7 +639,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $params['id'] = $membershipStatusID;
         $result = civicrm_membership_status_delete( $params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not delete membership status' );
+            throw new Exception( 'Could not delete membership status' . $result['error_message']);
         }
         return;
     }
@@ -1373,7 +1373,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $customGroup = $this->CustomGroupCreate($entity,$function);
       
         $customField = $this->customFieldCreate( $customGroup['id'], $function ) ;
-        return array('custom_group_id' =>$customGroup['id'], 'custom_field_id' =>$customField['id'] );   
+        CRM_Core_PseudoConstant::flush ( 'customGroup' );
+        CRM_Core_BAO_CustomField::getTableColumnGroup ( $customField['id'], True );
+       return array('custom_group_id' =>$customGroup['id'], 'custom_field_id' =>$customField['id'] );   
     }
     
   
