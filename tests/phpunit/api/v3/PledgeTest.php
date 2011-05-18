@@ -163,7 +163,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $shouldBeDate = CRM_Utils_Date::format(CRM_Utils_Date::intervalAdd('year',5*4,$this->scheduled_date),"-");
         $this->assertEquals(substr($shouldBeDate,0,10) ,substr($payments['values'][4]['scheduled_date'],0,10), 'In line '. __LINE__);
         
-        $pledgeID = array( 'pledge_id' => $result['id'], 'version' => 3 );
+        $pledgeID = array( 'id' => $result['id'], 'version' => 3 );
         $pledge =& civicrm_api3_pledge_delete($pledgeID);
     }
     /*
