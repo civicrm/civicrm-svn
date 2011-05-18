@@ -91,10 +91,9 @@ class api_v3_EventTest extends CiviUnitTestCase
     function testGetWrongParamsType()
     {
         $params = 'Annual CiviCRM meet';
-        $result = civicrm_api3_event_get( $params );
+        $result = civicrm_api('Event','Get', $params );
 
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array' );
     }
 
 
@@ -104,8 +103,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         $result = civicrm_api3_event_get( $params );
 
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: version' );
-    }
+   }
     
     function testGetEventById( )
     {
@@ -148,7 +146,8 @@ class api_v3_EventTest extends CiviUnitTestCase
         $this->assertEquals("custom string", $check['values'][$check['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
    
         $this->customFieldDelete($ids['custom_field_id']);
-        $this->customGroupDelete($ids['custom_group_id']);      
+        $this->customGroupDelete($ids['custom_group_id']); 
+        civicrm_api($this->_entity,'Delete',array('version' => 3 , 'id' => $result['id'])) ;    
 
     }  
     function testCreateEventParamsNotArray( )
@@ -156,7 +155,6 @@ class api_v3_EventTest extends CiviUnitTestCase
         $params = null;
         $result = civicrm_api3_event_create( $params );
         $this->assertEquals( 1, $result['is_error'] );
-        $this->assertEquals( 'Input variable `params` is not an array', $result['error_message'], 'In line ' . __LINE__ );
     }    
     
     function testCreateEventEmptyParams( )
@@ -193,6 +191,12 @@ class api_v3_EventTest extends CiviUnitTestCase
         $this->documentMe($this->_params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0 );
         $this->assertArrayHasKey( 'id', $result['values'][$result['id']], 'In line ' . __LINE__  );
+        $result = civicrm_api($this->_entity,'Get',array('version' => 3 , 'id' => $result['id'])) ; 
+        $this->assertEquals('2008-10-21 00:00:00',$result['values'][$result['id']]['start_date'],'start date is not set in line ' . __LINE__);
+        $this->assertEquals('2008-10-23 00:00:00',$result['values'][$result['id']]['end_date'],'end date is not set in line ' . __LINE__);
+ 
+        civicrm_api($this->_entity,'Delete',array('version' => 3 , 'id' => $result['id'])) ;    
+        
     }
 
     
@@ -202,10 +206,12 @@ class api_v3_EventTest extends CiviUnitTestCase
 
         $this->assertEquals( $result['is_error'], 0 );
         $params =array('id' => $result['id'], 'version'=>3, 'max_participants'        => 150,);
-        $updated = civicrm_api('Event','Update',$params);
+        $updated = civicrm_api('Event','Create',$params);
         $this->documentMe($this->_params,$updated,__FUNCTION__,__FILE__); 
         $this->assertEquals(  $updated['is_error'], 0 );
         $this->assertEquals( 150, $updated['values'][$updated['id']]['max_participants'] );
+        civicrm_api($this->_entity,'Delete',array('version' => 3 , 'id' => $result['id'])) ;    
+ 
  
     }
     
@@ -217,7 +223,6 @@ class api_v3_EventTest extends CiviUnitTestCase
         $result =& civicrm_api3_event_delete($params);
 
         $this->assertEquals($result['is_error'], 1);        
-        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array');
     }
 
     function testDeleteEmptyParams( )
@@ -266,8 +271,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         $result =& civicrm_api3_event_get($params);
 
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__ );
-    }
+   }
 
     /**
      *  Test civicrm_event_search with empty params
