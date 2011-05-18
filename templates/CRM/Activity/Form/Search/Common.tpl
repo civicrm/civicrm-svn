@@ -37,12 +37,14 @@
   {else}
       <td>&nbsp;</td>
   {/if} 
-  {if $form.activity_survey_id }
+  {if $form.activity_survey_id || $buildEngagementLevel}
     <td>
-        <label>{$form.activity_survey_id.label}</label> {$form.activity_survey_id.html}
+        {if $form.activity_survey_id}
+            <label>{$form.activity_survey_id.label}</label><br />{$form.activity_survey_id.html}
+        {/if}
         {if $buildEngagementLevel}
             <br/ ><br />
-            <label>{$form.activity_engagement_level.label}</label> {$form.activity_engagement_level.html}
+            <label>{$form.activity_engagement_level.label}</label><br />{$form.activity_engagement_level.html}
         {/if}
     </td>
   {/if} 
