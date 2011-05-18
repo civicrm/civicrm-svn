@@ -108,6 +108,12 @@ class CRM_Import_DataSource_CSV extends CRM_Import_DataSource
         if (!$fd) CRM_Core_Error::fatal("Could not read $file");
         
         $config = CRM_Core_Config::singleton();
+        // support tab separated
+        if ( strtolower($fieldSeparator) == 'tab' ||
+             strtolower($fieldSeparator) == '\t' ) {
+            $fieldSeparator = "\t";
+        }
+
         $firstrow = fgetcsv($fd, 0, $fieldSeparator);
         
         // create the column names from the CSV header or as col_0, col_1, etc.
