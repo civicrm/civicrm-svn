@@ -214,7 +214,7 @@ FROM   {$this->_componentTable}
         $postalMailing[]  = HTML_QuickForm::createElement( 'advcheckbox',
                                                            'postal_mailing_export', 
                                                            null, 
-                                                           ts('Postal Mailing Export'));
+                                                           null);
         
         $this->addGroup( $exportOptions, 'exportOption', ts('Export Type'), '<br/>' );
 

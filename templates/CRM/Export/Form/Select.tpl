@@ -65,8 +65,11 @@
     <div class="content crm-content-mergeSameHousehold">
         &nbsp;{$form.merge_same_household.html}
     </div>
+    <br/>
+    <div class="label crm-label-postalMailingExport">{$form.postal_mailing_export.label}</div>
     <div class="content crm-content-postalMailingExport">
         &nbsp;{$form.postal_mailing_export.html}
+        {ts}Exclude contacts with "do not mail" privacy, no street address, or who are deceased.{/ts}
     </div>
     <br/>
     <div class="label crm-label-additionalGroup">{$form.additional_group.label}</div>
