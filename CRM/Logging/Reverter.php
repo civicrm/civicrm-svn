@@ -168,7 +168,12 @@ class CRM_Logging_Reverter
             require_once 'CRM/Contact/DAO/Contact.php';
             $dao = new CRM_Contact_DAO_Contact;
             $dao->id = $cid;
-            if ($dao->find(true)) $dao->save();
+            if ($dao->find(true)) {
+                // CRM-8102: MySQL can’t parse its own dates
+                $dao->birth_date    = CRM_Utils_Date::isoToMysql($dao->birth_date);
+                $dao->deceased_date = CRM_Utils_Date::isoToMysql($dao->deceased_date);
+                $dao->save();
+            }
         }
     }
 }
