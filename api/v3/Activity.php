@@ -67,6 +67,7 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  */
 function civicrm_api3_activity_create( $params ) {
     _civicrm_api3_initialize( true );
+    try{
     if ( ! array_key_exists ('source_contact_id', $params )) {
         $session = CRM_Core_Session::singleton( );
         $params['source_contact_id']  =  $session->get( 'userID' );
@@ -111,6 +112,11 @@ function civicrm_api3_activity_create( $params ) {
       }
       _civicrm_api3_object_to_array( $activityBAO, $activityArray[$activityBAO->id]);
       return civicrm_api3_create_success($activityArray,$params,$activityBAO);
+    }
+        } catch (PEAR_Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
     }
 }
 
