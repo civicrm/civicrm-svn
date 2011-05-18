@@ -140,7 +140,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
         $this->_checkImportMapperData($headers, $rows, $existingMapping, isset($other['checkMapperHeaders']) ? $other['checkMapperHeaders'] : array( ));
       
         // Submit form.
-        $this->click('_qf_Preview_next');
+        $this->click('_qf_Preview_next-bottom');
         
         sleep(10);
         
