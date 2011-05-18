@@ -71,11 +71,11 @@
          </tr>
          <tr class="crm-import-datasource-form-block-dedupe">
              <td class="label">{$form.dedupe.label}</td>
-             <td><span id="contact-dedupe">{$form.dedupe.html}</span></td>
+             <td><span id="contact-dedupe">{$form.dedupe.html}</span> {help id='id-dedupe_rule'}</td>
          </tr>
          <tr class="crm-import-datasource-form-block-fieldSeparator">
              <td class="label">{$form.fieldSeparator.label}</td>
-             <td>{$form.fieldSeparator.html}</td>
+             <td>{$form.fieldSeparator.html} {help id='id-fieldSeparator'}</td>
          </tr>
          <tr>{include file="CRM/Core/Date.tpl"}</tr>
          <tr>
@@ -149,7 +149,7 @@
                                                        cj("#contact-subtype").show();   
                                                        cj("#subType").empty();                                   
 
-                                                       cj("#subType").append("<option value=''>-Select-</option>");  
+                                                       cj("#subType").append("<option value=''>- {/literal}{ts}select{/ts}{literal} -</option>");  
                                                        for ( var key in  subtype ) {
                                                            // stick these new options in the subtype select 
                                                            cj("#subType").append("<option value="+key+">"+subtype[key]+" </option>");  
@@ -177,7 +177,7 @@
                                                        cj("#contact-dedupe").show();   
                                                        cj("#dedupe").empty();                                   
 
-                                                       cj("#dedupe").append("<option value=''>-Select-</option>");  
+                                                       cj("#dedupe").append("<option value=''>- {/literal}{ts}select{/ts}{literal} -</option>");  
                                                        for ( var key in  dedupe ) {
                                                            // stick these new options in the dedupe select 
                                                            cj("#dedupe").append("<option value="+key+">"+dedupe[key]+" </option>");  
