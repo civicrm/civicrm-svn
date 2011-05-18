@@ -72,8 +72,8 @@ require_once 'CRM/Case/PseudoConstant.php';
 function civicrm_api3_case_create($params) {
 	_civicrm_api3_initialize ( true );
 	try {
-		
-    if (! array_key_exists ('status_id', $params )) 
+		civicrm_api3_verify_mandatory($params);
+    if (! CRM_Utils_Array::value('status_id', $params )) 
       $params['status_id'] = 1; // ongoing
     if ( ! array_key_exists ('creator_id', $params )) {
         $session = CRM_Core_Session::singleton( );

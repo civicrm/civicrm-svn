@@ -68,11 +68,11 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
 function civicrm_api3_activity_create( $params ) {
     _civicrm_api3_initialize( true );
     try{
-    if ( ! array_key_exists ('source_contact_id', $params )) {
-        $session = CRM_Core_Session::singleton( );
-        $params['source_contact_id']  =  $session->get( 'userID' );
+    if ( !CRM_Utils_Array::value('source_contact_id',$params )){
+           $session = CRM_Core_Session::singleton( );
+           $params['source_contact_id']  =  $session->get( 'userID' );
     }
-    if ( ! array_key_exists ('activity_date_time', $params )) {
+    if ( ! CRM_Utils_Array::value('activity_date_time', $params )) {
         $params['activity_date_time']  =  date("YmdHis");
     }
     civicrm_api3_verify_mandatory($params,
