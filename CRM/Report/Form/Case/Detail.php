@@ -371,7 +371,7 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                         
                         $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
                         
-                        if( $fieldName =='case_type_id' ) {
+                        if( $fieldName =='case_type_id' && CRM_Utils_Array::value('case_type_id_value', $this->_params) ) {
                             foreach( $this->_params['case_type_id_value'] as $key => $value ) {
                                 if ( strpos( $value, CRM_Core_DAO::VALUE_SEPARATOR ) === false ) {
                                     $value = 

@@ -86,7 +86,7 @@
 	<table class="criteria-group">
 	{foreach from=$caseDetailExtra key=field item=fieldDetail} 
 	    <tr class="crm-report crm-report-criteria-field crm-report-criteria-field-{$field}">
-	        <td width="35%">{$fieldDetail.title}</td><td> {$form.case_detail_extra.$field.html}</td>
+	        <td width="25%">{$fieldDetail.title}</td><td> {$form.case_detail_extra.$field.html}</td>
 	    </tr>	 
         {/foreach}
 	</table>
