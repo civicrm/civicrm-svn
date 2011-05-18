@@ -238,11 +238,11 @@ class CRM_Activity_BAO_Query
             }
             
             $value = CRM_Utils_Type::escape( $value, 'Integer' );
-            $query->_where[$grouping][] = " source_record_id = $value";
+            $query->_where[$grouping][] = " engagement_level = $value";
             $query->_qill[$grouping][] = 
                 ts( 'Engagement Index' ) . 
                 ' - ' . 
-                CRM_Core_OptionGroup::getLabel( 'engagement_level', $value );
+                CRM_Core_OptionGroup::getLabel( 'engagement_index', $value );
             break;
 
         case 'activity_role':
