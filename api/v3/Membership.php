@@ -168,6 +168,7 @@ function civicrm_api3_membership_create($params)
  */
 function civicrm_api3_membership_get($params)
 {
+  try{
     civicrm_api3_verify_mandatory($params);
 
     $contactID = $activeOnly = $membershipTypeId = $membershipType = null;
@@ -253,7 +254,11 @@ function civicrm_api3_membership_get($params)
     }
     
     return civicrm_api3_create_success($members,$params);
-
+    } catch (PEAR_Exception $e) {
+    return civicrm_api3_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_api3_create_error( $e->getMessage() );
+  }
 }
 
 
