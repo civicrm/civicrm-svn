@@ -666,6 +666,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             throw new Exception( 'Could not create relationship type' );
         }
 
+        require_once 'CRM/Core/PseudoConstant.php';
+        CRM_Core_PseudoConstant::flush('relationshipType');
+
         return $result['id'];
     }
     
