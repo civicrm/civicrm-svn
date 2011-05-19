@@ -173,8 +173,8 @@ class CRM_Contribute_BAO_Contribution_Utils
 				
             }
         } elseif ( $form->_values['is_monetary'] && $form->_amount > 0.0 ) {
-           
-            if ( $paymentParams['is_recur']  && $form->_contributeMode == 'direct' ) {
+            if ( CRM_Utils_Array::value( 'is_recur', $paymentParams ) &&
+                 $form->_contributeMode == 'direct' ) {
 
                 // For recurring contribution, create Contribution Record first.
                 // Contribution ID, Recurring ID and Contact ID needed 

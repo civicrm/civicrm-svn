@@ -100,7 +100,8 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
             $this->_setParam( $field, $value );
         }
 
-        if ( $params['is_recur'] && $params['contributionRecurID'] ) {
+        if ( CRM_Utils_Array::value( 'is_recur', $params ) &&
+             $params['contributionRecurID'] ) {
             return $this->doRecurPayment( $params );
         }
 
