@@ -1521,13 +1521,16 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                 list( $this->_contributorDisplayName, $this->_contributorEmail, $this->_toDoNotEmail ) = CRM_Contact_BAO_Contact::getContactDetails( $contactID );
 
                 $this->_contributorDisplayName = ($this->_contributorDisplayName == ' ') ? $this->_contributorEmail : $this->_contributorDisplayName;
-                $waitingStatusId = array_search( 'On waitlist', 
-                                                 CRM_Event_PseudoConstant::participantStatus(null, "class = 'Waiting'"));
+                
+                $waitStatus =  CRM_Event_PseudoConstant::participantStatus(null, "class = 'Waiting'");
+                if ( $waitingStatus = CRM_Utils_Array::value($params['status_id'], $waitStatus) ) {
+                    $this->assign( 'isOnWaitlist', true );
+                }
                 
                 $this->assign( 'customGroup', $customGroup );
                 $this->assign( 'contactID', $contactID);
                 $this->assign( 'participantID', $participants[$num]->id );
-                $this->assign( 'isOnWaitlist', $waitingStatusId );
+
                 $this->_id = $participants[$num]->id;
                 
                 if ( $this->_isPaidEvent ) {
