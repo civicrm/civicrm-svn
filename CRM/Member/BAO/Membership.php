@@ -682,7 +682,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
                 }
                 
                 $membershipTypeValues = self::buildMembershipTypeValues( $form, $membershipTypeIds );
-                
+                $endDate = null;
                 foreach ( $membershipTypeIds as $value ) {
                     $memType = $membershipTypeValues[$value];
                     if ($selectedMembershipTypeID  != null ) {
@@ -727,10 +727,17 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
 
                             //CRM-4297
                             $membership->orderBy( 'end_date DESC' );
-                                
+                            
                             if ( $membership->find(true) ) {
                                 $form->assign("renewal_mode", true );
-                                $memType['current_membership'] =  $membership->end_date;
+                                $memType['current_membership'] = $membership->end_date;
+                                if ( !$endDate ) {
+                                    $endDate = $memType['current_membership'];
+                                }
+                                if ( $memType['current_membership'] < $endDate ) {
+                                    $endDate = $memType['current_membership'];
+                                    $form->_defaultMemTypeId = $memType['id'];
+                                }
                             }
                         }
                         $membershipTypes[] = $memType;
@@ -1731,10 +1738,13 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
      * @static
      * @access public
      */
-    static function createRelatedMemberships( &$params, &$membership ) 
+    static function createRelatedMemberships( &$params, &$dao ) 
     {
         static $relatedContactIds = array( );
-            
+        
+        $membership = new CRM_Member_DAO_Membership( );
+        $membership->id = $dao->id;
+        
         // required since create method doesn't return all the
         // parameters in the returned membership object
         if ( ! $membership->find( true ) ) {
