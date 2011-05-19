@@ -70,7 +70,8 @@ class CRM_Export_BAO_Export
                                       $componentClause = null,
                                       $componentTable  = null,
                                       $mergeSameAddress = false,
-                                      $mergeSameHousehold = false )
+                                      $mergeSameHousehold = false,
+                                      $exportParams = array() )
     {
         $headerRows = $returnProperties = array();
         $primary    = $paymentFields    = false;
@@ -298,6 +299,15 @@ class CRM_Export_BAO_Export
             $returnProperties['street_address'] = 1;
         }
         
+        if ( $componentTable && 
+             CRM_Utils_Array::value( 'additional_group', $exportParams ) ) {
+            // If an Additional Group is selected, then all contacts in that group are 
+            // added to the export set (filtering out duplicates). 
+            $query = "
+INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_contact gc WHERE gc.group_id = {$exportParams['additional_group']} ON DUPLICATE KEY UPDATE {$componentTable}.contact_id = gc.contact_id";
+            CRM_Core_DAO::executeQuery( $query );
+        }
+
         if ( $moreReturnProperties ) {
             // fix for CRM-7066
             if ( CRM_Utils_Array::value( 'group', $moreReturnProperties ) ) {
@@ -821,6 +831,12 @@ class CRM_Export_BAO_Export
         // fix the headers for rows with relationship type
         if ( $relName ) {
             self::manipulateHeaderRows( $headerRows, $contactRelationshipTypes );
+        }
+
+        // if postalMailing option is checked, exclude contacts who are deceased, have 
+        // "Do not mail" privacy setting, or have no street address
+        if ( $exportParams['postal_mailing_export']['postal_mailing_export'] == 1 ) {
+            self::postalMailingFormat( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
         }
 
         // call export hook
@@ -1372,5 +1388,20 @@ LIMIT $offset, $limit
                 $header = implode( '-', $split );
             }
         }
+    }
+
+    /**
+     * Function to exclude contacts who are deceased, have "Do not mail" privacy setting, 
+     * or have no street address
+     * 
+     */
+    function postalMailingFormat( $exportTempTable, $headerRows, $sqlColumns, $exportMode )
+    {
+        $query = "
+DELETE
+FROM   $exportTempTable
+WHERE  (is_deceased = 1) OR (do_not_mail = 1) OR (street_address IS NULL) OR (street_address = '')";
+
+        CRM_Core_DAO::singleValueQuery( $query );
     }
 }

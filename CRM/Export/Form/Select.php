@@ -250,9 +250,14 @@ FROM   {$this->_componentTable}
      */
     public function postProcess( ) 
     {
-        $exportOption = $this->controller->exportValue( $this->_name, 'exportOption' ); 
+        $exportOption = $this->controller->exportValue( $this->_name, 'exportOption' );
         $merge_same_address = $this->controller->exportValue( $this->_name, 'merge_same_address' );
         $merge_same_household = $this->controller->exportValue( $this->_name, 'merge_same_household' );
+
+        // instead of increasing the number of arguments to exportComponents function, we 
+        // will send $exportParams as another argument, which is an array and suppose to contain 
+        // all submitted options or any other argument
+        $exportParams = $this->controller->exportValues( $this->_name );
 
         $mappingId = $this->controller->exportValue( $this->_name, 'mapping' ); 
         if ( $mappingId ) {
@@ -284,7 +289,8 @@ FROM   {$this->_componentTable}
                                                      $this->_componentClause,
                                                      $this->_componentTable,
                                                      $mergeSameAddress,
-                                                     $mergeSameHousehold
+                                                     $mergeSameHousehold,
+                                                     $exportParams
                                                      );
         }
         
