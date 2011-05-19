@@ -163,10 +163,10 @@ class CRM_Member_BAO_MembershipStatus extends CRM_Member_DAO_MembershipStatus
      * @param int $membershipStatusId
      * @static
      */
-    static function del($membershipStatusId) 
+    static function del($membershipStatusId, $skipRedirect = FALSE) 
     {
         //check dependencies
-        //checking if any membership status is present in some other table 
+        //checking if membership status is present in some other table 
         $check = false;
         
         $dependancy = array( 'Membership', 'MembershipLog' );
@@ -179,11 +179,20 @@ class CRM_Member_BAO_MembershipStatus extends CRM_Member_DAO_MembershipStatus
             }
         }
 
-        if ($check) {
+        if ($check ) {
+           if ( !$skipRedirect  ) {
+              echo "errthere";
             $session = CRM_Core_Session::singleton();
             CRM_Core_Session::setStatus( ts('This membership status cannot be deleted') );
             return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/member/membershipStatus', "reset=1" ));
-        }
+            }
+              // Return the error message to the api
+              $error = array( );
+              $error['is_error'] = 1;
+              //don't translate as api error message are not translated
+              $error['error_message'] = 'The membership status cannot be deleted as memberships of this status exist' ;
+              return $error;
+            }
         
 
         //delete from membership Type table
