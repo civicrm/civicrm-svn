@@ -1148,7 +1148,9 @@ INSERT INTO civicrm_uf_group
     (5,  'new_organization',   'Organization,Contact','{ts escape="sql"}New Organization{/ts}'  , 0,           1,           NULL),
     (6,  'new_household',      'Household,Contact',   '{ts escape="sql"}New Household{/ts}'     , 0,           1,           NULL),
     (7,  'summary_overlay',    'Contact',   		  '{ts escape="sql"}Summary Overlay{/ts}'   , 0,           1,           NULL),
-    (8,  'shared_address',     'Contact',   		  '{ts escape="sql"}Shared Address{/ts}'    , 0,           1,           NULL);
+    (8,  'shared_address',     'Contact',   		  '{ts escape="sql"}Shared Address{/ts}'    , 0,           1,           NULL),
+    (9,  'on_behalf_organization', 'Contact,Organization,Contribution,Membership', 
+    '{ts escape="sql"}On Behalf Of Organization{/ts}'    , 0,           1,           NULL);
 
 INSERT INTO civicrm_uf_join
    (is_active,module,entity_table,entity_id,weight,uf_group_id)
@@ -1161,7 +1163,8 @@ VALUES
    (1, 'Profile', NULL, NULL, 4, 5),
    (1, 'Profile', NULL, NULL, 5, 6),
    (1, 'Profile', NULL, NULL, 6, 7),
-   (1, 'Profile', NULL, NULL, 7, 8);
+   (1, 'Profile', NULL, NULL, 7, 8),
+   (1, 'Profile', NULL, NULL, 8, 9);
    
 INSERT INTO civicrm_uf_field
        (id, uf_group_id, field_name,              is_required, is_reserved, weight, visibility,                  in_selector, is_searchable, location_type_id, label,                                         		field_type,    help_post, phone_type_id ) VALUES
@@ -1198,7 +1201,15 @@ INSERT INTO civicrm_uf_field
        (31,  8,           'city',                  1,           1,           2,      'User and User Admin Only',  0,           0,             1,                '{ts escape="sql"}City (Home){/ts}',           		'Contact',     NULL,  NULL),
        (32,  8,           'postal_code',           0,           0,           3,      'User and User Admin Only',  0,           0,             1,                '{ts escape="sql"}Postal Code (Home){/ts}',    		'Contact',     NULL,  NULL),
        (33,  8,           'country',               0,           0,           4,      'Public Pages and Listings', 0,           1,             1,                '{ts escape="sql"}Country (Home){/ts}',        		'Contact',     NULL,  NULL),
-       (34,  8,           'state_province',        0,           0,           5,      'Public Pages and Listings', 1,           1,             1,                '{ts escape="sql"}State (Home){/ts}',          		'Contact',     NULL,  NULL);
+       (34,  8,           'state_province',        0,           0,           5,      'Public Pages and Listings', 1,           1,             1,                '{ts escape="sql"}State (Home){/ts}',          		'Contact',     NULL,  NULL),
+       (35,  9,           'organization_name',     1,           0,           1,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Organization Name{/ts}',              'Organization',NULL,  NULL),
+       (36,  9,           'phone',                 1,           0,           1,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Primary Phone{/ts}',                  'Contact',    NULL,   NULL),
+       (37,  9,           'email',                 1,           0,           1,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Primary Email{/ts}',                  'Contact',    NULL,   NULL),
+       (38,  9,           'street_address',        1,           0,           1,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Street Address{/ts}',                 'Contact',    NULL,   NULL),
+       (39,  9,           'city',                  1,           0,           1,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}City{/ts}',                           'Contact',    NULL,   NULL),
+       (40,  9,           'postal_code',           1,           0,           1,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Postal Code{/ts}',                    'Contact',    NULL,   NULL),
+       (41,  9,           'country',               1,           0,           1,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Country{/ts}',                        'Contact',    NULL,   NULL),
+       (42,  9,           'state_province',        1,           0,           1,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}State / Province{/ts}',               'Contact',    NULL,   NULL);
 
 INSERT INTO civicrm_participant_status_type
   (id, name,                                  label,                                                       class,      is_reserved, is_active, is_counted, weight, visibility_id) VALUES
