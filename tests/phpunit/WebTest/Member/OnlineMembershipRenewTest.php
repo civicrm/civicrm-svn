@@ -79,6 +79,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         //Go to online membership signup page
         $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id=2" );
         $this->waitForElementPresent( "_qf_Main_upload-bottom" );
+        $this->click( "CIVICRM_QFID_2_4");
         
         //Type first name and last name
         $this->type( "first_name", $firstName );
@@ -124,7 +125,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         //View Membership Record
         $verifyMembershipData =  array(
                                        'Member'         => $firstName.' '.$lastName,
-                                       'Membership Type'=> 'General',
+                                       'Membership Type'=> 'Student',
                                        'Status'         => 'New',
                                        'Source'         => 'Online Contribution: Member Signup and Renewal',
                                        );
@@ -134,6 +135,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         }
         $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id=2" );
         $this->waitForElementPresent( "_qf_Main_upload-bottom" );
+        $this->assertTrue($this->isChecked( "CIVICRM_QFID_2_4" ));
         
         //Credit Card Info
         $this->select( "credit_card_type", "value=Visa" );
@@ -164,7 +166,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         //View Membership Record
         $verifyMembershipData =  array(
                                        'Member'         => $firstName.' '.$lastName,
-                                       'Membership Type'=> 'General',
+                                       'Membership Type'=> 'Student',
                                        'Status'         => 'New',
                                        'Source'         => 'Online Contribution: Member Signup and Renewal',
                                        );
