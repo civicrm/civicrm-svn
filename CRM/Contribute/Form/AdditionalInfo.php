@@ -315,12 +315,17 @@ class CRM_Contribute_Form_AdditionalInfo
             $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument( );
             $params['paidBy']  = $paymentInstrument[$params['payment_instrument_id']];
         }
+
         // retrieve individual prefix value for honoree
         if ( CRM_Utils_Array::value( 'hidden_Honoree', $params ) ) {
             $individualPrefix       = CRM_Core_PseudoConstant::individualPrefix();
             $honor                  = CRM_Core_PseudoConstant::honor( ); 
-            $params['honor_prefix'] = CRM_Utils_Array::value( $params['honor_prefix_id'], $individualPrefix );
-            $params["honor_type"]   = CRM_Utils_Array::value( $params["honor_type_id"], $honor );
+            $params['honor_prefix'] = CRM_Utils_Array::value(  CRM_Utils_Array::value( 'honor_prefix_id',
+                                                                                       $params ),
+                                                               $individualPrefix );
+            $params["honor_type"]   = CRM_Utils_Array::value( CRM_Utils_Array::value( 'honor_type_id',
+                                                                                      $params ),
+                                                              $honor );
         }
         
         // retrieve premium product name and assigned fulfilled

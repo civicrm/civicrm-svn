@@ -99,6 +99,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
             unset( $wysiwyg_options[3] );
         }
 
+        $drupal_wysiwyg = false;
         if ( $config->userFramework != 'Drupal' || !module_exists("wysiwyg")) {
             unset( $wysiwyg_options[4] );
         } else {
