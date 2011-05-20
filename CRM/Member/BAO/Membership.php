@@ -733,6 +733,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
                                 $memType['current_membership'] = $membership->end_date;
                                 if ( !$endDate ) {
                                     $endDate = $memType['current_membership'];
+                                    $form->_defaultMemTypeId = $memType['id'];
                                 }
                                 if ( $memType['current_membership'] < $endDate ) {
                                     $endDate = $memType['current_membership'];
