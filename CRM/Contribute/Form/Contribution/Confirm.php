@@ -150,18 +150,26 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                     $this->_params['organization_id'] = $this->_params['onbehalfof_id'];
                 }
             }
-            if ( !empty( $this->_params['address'][1]['country_id'] ) ) {
-                $this->_params['address'][1]['country'] =
-                    CRM_Core_PseudoConstant::countryIsoCode( $this->_params['address'][1]['country_id'] ); 
-            }
-            if ( !empty( $this->_params['address'][1]['state_province_id'] ) ) {
-                $this->_params['address'][1]['state_province'] =
-                    CRM_Core_PseudoConstant::stateProvinceAbbreviation( $this->_params['address'][1]['state_province_id'] );
-            }
-            // hardcode blocks for now. We might shift to generalized model in 3.1 which uses profiles
-            foreach ( array('phone', 'email', 'address') as $loc ) {
-                $this->_params['onbehalf_location'][$loc] = $this->_params[$loc];
-                unset($this->_params[$loc]);
+            
+            $this->_params['organization_name'] = $this->_params['onbehalf']['organization_name'];
+            $addressBlocks = array( 'street_address', 'city', 
+                                    'state_province', 'postal_code', 'country' );
+
+            foreach ( $this->_params['onbehalf'] as $loc => $value ) {
+                list( $field, $locType ) = explode( '-', $loc );
+                
+                if ( in_array( $field, $addressBlocks ) ) {
+                    if ( $field == 'country' ) {
+                        $value = CRM_Core_PseudoConstant::countryIsoCode( $value );
+                    } else if ( $field == 'state_province' ) {
+                        $value = CRM_Core_PseudoConstant::stateProvinceAbbreviation( $value );
+                    }
+                    $this->_params['onbehalf_location']['address'][$locType][$field] = $value;
+                } else if ( in_array( $field, array( 'email', 'phone' ) ) ) {
+                    $this->_params['onbehalf_location'][$field][$locType][$field] = $value;
+                }
+
+                unset( $this->_params['onbehalf'][$loc] );
             }
         } else if ( CRM_Utils_Array::value( 'is_for_organization', $this->_values ) ) {
             // no on behalf of an organization, CRM-5519 

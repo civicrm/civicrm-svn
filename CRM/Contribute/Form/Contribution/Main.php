@@ -566,6 +566,10 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
         require_once 'CRM/Contact/BAO/Contact/Utils.php';
         if ( $this->_values['is_for_organization'] != 2 ) {
+            if ( $contactID ) {
+                require_once 'CRM/Contact/BAO/Relationship.php';
+                $employers = CRM_Contact_BAO_Relationship::getPermissionedEmployer( $contactID );
+            }
             $attributes = array('onclick' => 
                                 "return showHideByValue('is_for_organization','true','for_organization','block','radio',false);");
             $this->addElement( 'checkbox', 'is_for_organization', 
@@ -756,13 +760,14 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
         if ( CRM_Utils_Array::value( 'is_for_organization', $fields ) ) {
             if ( CRM_Utils_Array::value( 'org_option',$fields ) && ! $fields['onbehalfof_id'] ) {
-                $errors['organization_id'] = ts('Please select an organization or enter a new one.'); 
+                $errors['organization_id'] = ts('Please select an organization or enter a new one.');
             }
-            if ( !CRM_Utils_Array::value( 'org_option',$fields ) && ! $fields['organization_name'] ) {
-                $errors['organization_name'] = ts('Please enter the organization name.'); 
+            if ( !CRM_Utils_Array::value( 'org_option',$fields ) && 
+                 !CRM_Utils_Array::value( 'organization_name', $fields['onbehalf'] ) ) {
+                $errors['onbehalf']['organization_name'] = ts('Please enter the organization name.'); 
             }
-            if ( ! $fields['email'][1]['email'] ) {
-                $errors["email[1][email]"] = ts('Organization email is required.'); 
+            if ( !CRM_Utils_Array::value( 'email-Primary', $fields['onbehalf'] ) ) {
+                $errors['onbehalf']['email-Primary'] = ts('Organization email is required.'); 
             }
         }
 

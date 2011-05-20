@@ -639,9 +639,9 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         
         if ( CRM_Utils_Array::value( 'is_for_organization', $this->_params ) ) {
             $this->assign('onBehalfName',    $this->_params['organization_name']);
-            $this->assign('onBehalfEmail',   $this->_params['onbehalf_location']['email'][1]['email']);
+            $this->assign('onBehalfEmail',   $this->_params['onbehalf_location']['email']['Primary']['email']);
             $this->assign('onBehalfAddress', 
-                          CRM_Utils_Address::format($this->_params['onbehalf_location']['address'][1]));
+                          CRM_Utils_Address::format($this->_params['onbehalf_location']['address']['Primary']));
         }
         
         //fix for CRM-3767

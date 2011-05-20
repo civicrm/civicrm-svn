@@ -264,7 +264,8 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                                $showAll= false, $restrict = null,
                                $skipPermission = false,
                                $ctype = null,
-                               $permissionType = CRM_Core_Permission::CREATE ) 
+                               $permissionType = CRM_Core_Permission::CREATE,
+                               $orderBy = 'field_name' ) 
     {
         if ( !is_array( $id ) ) {
             $id = CRM_Utils_Type::escape( $id, 'Positive' );
@@ -329,8 +330,11 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                 }
             }
             
-            $query =  "SELECT * FROM civicrm_uf_field $where ORDER BY weight, field_name";
-            
+            $query =  "SELECT * FROM civicrm_uf_field $where ORDER BY weight";
+            if ( $orderBy ) {
+                $query .= ", " . $orderBy;
+            }
+                        
             $field =& CRM_Core_DAO::executeQuery( $query );
             require_once 'CRM/Contact/BAO/Contact.php';
             if ( !$showAll ) {
@@ -1417,7 +1421,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
      * @static
      * @access public
      */
-    static function buildProfile( &$form, &$field, $mode, $contactId = null, $online = false )  
+    static function buildProfile( &$form, &$field, $mode, $contactId = null, $online = false, $onBehalf = false )  
     {
         require_once 'CRM/Profile/Form.php';
         require_once 'CRM/Core/OptionGroup.php';
@@ -1440,7 +1444,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             return;
         }
         
-        if ( $contactId && !$online ) {
+        if ( $onBehalf ) {
+            $name = "onbehalf[$fieldName]";
+        } else if ( $contactId && !$online ) {
             $name = "field[$contactId][$fieldName]";
         } else {
             $name = $fieldName;

@@ -33,6 +33,7 @@
  * $Id$
  *
  */
+require_once "CRM/Core/BAO/UFGroup.php";
 
 class CRM_Contact_BAO_Contact_Utils 
 {
@@ -491,11 +492,14 @@ WHERE id={$contactId}; ";
                 $form->assign( 'relatedOrganizationFound', true );
             }
             
-            $isRequired = false;
-            if ( CRM_Utils_Array::value( 'is_for_organization',  $form->_values ) == 2 ) {
-                $isRequired =  true;
+            $profileId     = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 
+                                                          'on_behalf_organization', 'id', 'name' );
+            $profileFields = CRM_Core_BAO_UFGroup::getFields( $profileId, false, CRM_Core_Action::VIEW, null, null, false,
+                                                              null, false, null, CRM_Core_Permission::CREATE, null );
+            
+            foreach ( $profileFields as $name => $field ) {
+                CRM_Core_BAO_UFGroup::buildProfile( $form, $field, null, null, false, true );
             }
-            $form->add('text', 'organization_name', ts('Organization Name'), $attributes['organization_name'], $isRequired);
             break;
         case 'Household':
             $form->add('text', 'household_name', ts('Household Name'), 
@@ -516,32 +520,34 @@ WHERE id={$contactId}; ";
 
         }
 
-        $addressSequence = $config->addressSequence( );
-        $form->assign( 'addressSequence', array_fill_keys($addressSequence, 1) );
-
-        //Primary Phone 
-        $form->addElement('text',
-                          'phone[1][phone]', 
-                          ts('Primary Phone'),
-                          CRM_Core_DAO::getAttribute('CRM_Core_DAO_Phone',
-                                                     'phone'));
-        //Primary Email
-        $form->addElement('text', 
-                          'email[1][email]',
-                          ts('Primary Email'),
-                          CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email',
-                                                     'email'));
-        //build the address block
-        require_once 'CRM/Contact/Form/Edit/Address.php';
-        CRM_Contact_Form_Edit_Address::buildQuickForm( $form );
-        
-        // also fix the state country selector
-        CRM_Contact_Form_Edit_Address::fixStateSelect( $form,
-                                                       'address[1][country_id]',
-                                                       'address[1][state_province_id]',
-                                                       "address[1][county_id]",
-                                                       $countryID,
-                                                       $stateID );
+        if ( $contactType != 'Organization' ) {
+            $addressSequence = $config->addressSequence( );
+            $form->assign( 'addressSequence', array_fill_keys($addressSequence, 1) );
+            
+            //Primary Phone 
+            $form->addElement('text',
+                              'phone[1][phone]', 
+                              ts('Primary Phone'),
+                              CRM_Core_DAO::getAttribute('CRM_Core_DAO_Phone',
+                                                         'phone'));
+            //Primary Email
+            $form->addElement('text', 
+                              'email[1][email]',
+                              ts('Primary Email'),
+                              CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email',
+                                                         'email'));
+            //build the address block
+            require_once 'CRM/Contact/Form/Edit/Address.php';
+            CRM_Contact_Form_Edit_Address::buildQuickForm( $form );
+            
+            // also fix the state country selector
+            CRM_Contact_Form_Edit_Address::fixStateSelect( $form,
+                                                           'address[1][country_id]',
+                                                           'address[1][state_province_id]',
+                                                           "address[1][county_id]",
+                                                           $countryID,
+                                                           $stateID );
+        }
     }
 
     

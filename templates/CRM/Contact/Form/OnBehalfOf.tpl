@@ -79,9 +79,11 @@
       </div>
       {/if}  
       <div id="create_org" class="crm-section create_org-section">
-		<div class="label">{$form.organization_name.label}</div>
-        <div class="content">{$form.organization_name.html|crmReplace:class:big}</div>
-        <div class="clear"></div>
+	{foreach from=$form.onbehalf item=field key=fieldName}
+           <div class="crm-section label">{$field.label}</div>
+           <div class="crm-section content">{$field.html}</div>
+           <div class="clear"></div>
+        {/foreach}
       </div>
     </div>
  {if $contactEditMode}
