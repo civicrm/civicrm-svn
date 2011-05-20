@@ -343,12 +343,14 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             require_once 'CRM/Core/BAO/UFField.php';
             require_once 'CRM/Activity/BAO/Activity.php';
             $profileType = CRM_Core_BAO_UFField::getProfileType( $group->id  );
-            
-            if ( $profileType == 'Activity' ) {
-                $componentFields = CRM_Activity_BAO_Activity::exportableFields( 'Activity' );
+            $contactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileType( $group->id );
+
+            if ( $profileType == 'Activity' || $contactActivityProfile ) {
+                $componentFields = CRM_Activity_BAO_Activity::getProfileFields( );
             } else {
                 $componentFields = CRM_Core_Component::getQueryFields( ); 
             }
+
             $importableFields = array_merge( $importableFields, $componentFields );
             
             $importableFields['group']['title'] = ts('Group(s)');
@@ -1700,6 +1702,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 $campaign =& $form->add( 'select', $name, $title,
                                          array( '' => ts( '- select -' ) ) + $campaigns, $required, 'class="big"' );                
             }
+        } else if ($fieldName == 'activity_details') {
+            $form->addWysiwyg( $fieldName, $title, array('rows' => 4, 'cols' => 60), $required );
+        } else if ($fieldName == 'activity_duration') {
+            $form->add('text', $fieldName, $title, $attributes, $required );
+            $form->addRule($name, ts('Please enter the duration as number of minutes (integers only).'), 'positiveInteger');
         } else {
             $processed = false;
             if ( CRM_Core_Permission::access( 'Quest', false ) ) {
@@ -2390,7 +2397,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
      *
      * @return void.
      */
-    function setComponentDefaults( &$fields, $componentId, $component, &$defaults ) 
+    function setComponentDefaults( &$fields, $componentId, $component, &$defaults, $isStandalone = false ) 
     {
         if ( !$componentId || 
              !in_array( $component, array( 'Contribute', 'Membership', 'Event', 'Activity' ) ) ) {
@@ -2432,9 +2439,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         
         $formattedGroupTree = array( );
         foreach ( $fields as $name => $field ) { 
-            $fldName = "field[$componentId][$name]";
+            $fldName = $isStandalone ? $name : "field[$componentId][$name]";
             if ( $name == 'participant_register_date'  || $name == 'activity_date_time' ) { 
-            	$timefldName = "field[$componentId][{$name}_time]";	
+            	$timefldName = $isStandalone ? "{$name}_time" : "field[$componentId][{$name}_time]";	
             	list( $defaults[$fldName], $defaults[$timefldName] ) = CRM_Utils_Date::setDateDefaults( $values[$name] );
             } else if ( array_key_exists( $name, $values ) ) { 
                 $defaults[$fldName] = $values[$name];

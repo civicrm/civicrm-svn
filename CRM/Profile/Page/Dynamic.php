@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Core/Page.php';
+require_once 'CRM/Core/BAO/UFGroup.php';
 
 /**
  * Create a page for displaying CiviCRM Profile Fields.
@@ -84,7 +85,20 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
      */
     protected $_profileIds = array( );
 
-   
+    /**
+     * Contact profile having activity fields?
+     *
+     * @var string
+     */
+    protected $_isContactActivityProfile = false;
+
+    /**
+     * Activity Id connected to the profile
+     *
+     * @var string
+     */
+    protected $_activityId = null;
+    
     /**
      * class constructor
      *
@@ -104,6 +118,11 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
         } else {
             $this->_profileIds = array( $gid );
         }
+
+        $this->_activityId = CRM_Utils_Request::retrieve('aid', 'Positive', $this, false, 0, 'GET');
+        require_once 'CRM/Core/BAO/UFField.php';
+        $this->_isContactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileType( $this->_gid );
+        
         parent::__construct( );
     }
 
@@ -148,7 +167,6 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
                 }
             }
             
-            require_once 'CRM/Core/BAO/UFGroup.php';
             $values = array( );
             $fields = CRM_Core_BAO_UFGroup::getFields( $this->_profileIds, false, CRM_Core_Action::VIEW,
                                                        null, null, false, $this->_restrict,
@@ -177,7 +195,32 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
                     }
                 }
             }
-            CRM_Core_BAO_UFGroup::getValues( $this->_id, $fields, $values );
+            
+            if ( $this->_isContactActivityProfile ) {
+                $contactFields = $activityFields = array( );
+
+                foreach ( $fields as $fieldName => $field ) {
+                    if ( CRM_Utils_Array::value('field_type', $field) == 'Activity' ) {
+                        $activityFields[$fieldName] = $field;
+                    } else {
+                        $contactFields[$fieldName]  = $field;
+                    }
+                }
+                
+                CRM_Core_BAO_UFGroup::getValues( $this->_id, $contactFields, $values );
+                if ( $this->_activityId ) {
+                    $activityValues = array( );
+                    // FIX ME: need to use other method here.
+                    CRM_Core_BAO_UFGroup::setComponentDefaults( $activityFields, $this->_activityId, 'Activity', $activityValues, true );
+                    if ( !empty($activityValues) ) {
+                        foreach( $activityFields as $fieldName => $activityField ) {
+                            $values[$activityField['title']] =  isset($activityValues[$fieldName]) ? $activityValues[$fieldName] : '';
+                        }
+                    }
+                }
+            } else {
+                CRM_Core_BAO_UFGroup::getValues( $this->_id, $fields, $values );
+            }
             
             // $profileFields array can be used for customized display of field labels and values in Profile/View.tpl
             $profileFields = array( );

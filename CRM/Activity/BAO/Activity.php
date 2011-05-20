@@ -1936,7 +1936,29 @@ AND cl.modified_id  = c.id
         }
         return self::$_exportableFields[$name];
     }
-  
+ 
+    /**
+     * Get the allowed profile fields for Activities
+     *  
+     * @return array array of activity profile Fields
+     * @access public
+     */
+    function getProfileFields( ) {
+        $exportableFields = self::exportableFields( 'Activity' );
+        $skipFields = array( 'activity_id','activity_type', 'source_contact_id', 'activity_campaign', 'activity_is_test', 'is_current_revision', 'activity_is_deleted', 'activity_campaign', 'activity_engagement_level');
+        foreach ( $skipFields as $field ) {
+            if ( isset($exportableFields[$field]) ) {
+                unset($exportableFields[$field]);
+            }
+        }
+        
+        // hack to use 'activity_type_id' instead of 'activity_type'
+        $exportableFields['activity_status_id'] = $exportableFields['activity_status'];
+        unset($exportableFields['activity_status']);
+        
+        return $exportableFields;
+    }
+    
     /**
      * Get array of message/subject tokens
      *     

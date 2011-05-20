@@ -330,6 +330,37 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
         } 
     }
 
+    /*
+     * Function to find out whether given profile group using Activity
+     * Profile fields with contact fields
+     */
+    static function checkContactActivityProfileType( $ufGroupId ) {        
+        if ( !$ufGroupId ) return false;
+
+        static $_contactActivityProfile;
+        
+        if ( !is_null($_contactActivityProfile) && isset($_contactActivityProfile[$ufGroupId]) ) {
+            return $_contactActivityProfile[$ufGroupId];
+        }
+
+        $ufGroup = new CRM_Core_DAO_UFGroup();
+        $ufGroup->id = $ufGroupId;
+        $ufGroup->find( true );
+        
+        $profileTypes = array( );
+        if ( $ufGroup->group_type ) {
+            $profileTypes = explode( ',',  $ufGroup->group_type );
+        } 
+        
+        // FIX ME: check other profile type(s) is/are of contact/Individual/Organization/Household
+        if ( !empty($profileTypes) && in_array( 'Activity', $profileTypes) && (count($profileTypes) > 1) ) {
+            $_contactActivityProfile[$ufGroupId] = true;
+        } else {
+            $_contactActivityProfile[$ufGroupId] = false;
+        }
+        
+        return $_contactActivityProfile[$ufGroupId];
+    }
 
     /**
      * function to check for mix profile fields (eg: individual + other contact types)
@@ -371,7 +402,7 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
         CRM_Contact_BAO_ContactType::suppressSubTypes( $profileTypes );
 
         $contactTypes = array( 'Contact', 'Individual', 'Household', 'Organization' );
-        $components   = array( 'Contribution', 'Participant', 'Membership' );
+        $components   = array( 'Contribution', 'Participant', 'Membership', 'Activity' );
         $fields = array( );
 
         // check for mix profile condition

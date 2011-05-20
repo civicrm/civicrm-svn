@@ -380,21 +380,11 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             $fields['Membership'] =& $membershipFields;
         }
         
-        $activityFields = CRM_Activity_BAO_Activity::exportableFields( 'Activity' );
+        $activityFields = CRM_Activity_BAO_Activity::getProfileFields( );
         if ( ! empty( $activityFields ) ) {
-            unset( $activityFields['activity_id'] );
-            unset( $activityFields['source_contact_id'] ); 
-            unset( $activityFields['is_test'] );
-            unset( $activityFields['activity_type_id'] );
-            unset( $activityFields['is_current_revision'] );
-            unset( $activityFields['is_deleted'] );
-
             //unset campaign related fields.
             if ( isset( $activityFields['activity_campaign_id'] ) ) {
                 $activityFields['activity_campaign_id']['title'] = ts( 'Campaign' );
-                if ( isset( $activityFields['activity_campaign'] ) ) {
-                    unset( $activityFields['activity_campaign'] ); 
-                }
             }
             
             $fields['Activity'] = $activityFields;

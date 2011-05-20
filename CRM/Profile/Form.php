@@ -35,7 +35,7 @@
  */
 
 require_once 'CRM/Core/Form.php';
-
+require_once 'CRM/Core/BAO/CustomField.php';
 /**
  * This class generates form components for custom data
  * 
@@ -137,6 +137,20 @@ class CRM_Profile_Form extends CRM_Core_Form
      */
     protected $_profileIds = array( );
 
+    /**
+     * Contact profile having activity fields?
+     *
+     * @var string
+     */
+    protected $_isContactActivityProfile = false;
+
+    /**
+     * Activity Id connected to the profile
+     *
+     * @var string
+     */
+    protected $_activityId = null;
+    
     /** 
      * pre processing work done here. 
      * 
@@ -186,6 +200,12 @@ class CRM_Profile_Form extends CRM_Core_Form
            $this->_gid = CRM_Utils_Request::retrieve('gid', 'Positive', $this, false, 0, 'GET');
         } 
         
+        $this->_activityId = $this->get( 'aid' );
+        if ( !$this->_activityId ) {
+            $this->_activityId = CRM_Utils_Request::retrieve('aid', 'Positive', $this, false, 0, 'GET');
+        }
+        $this->_isContactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileType( $this->_gid );
+            
         //get values for captch and dupe update.
         if ( $this->_gid ) {
             $dao = new CRM_Core_DAO_UFGroup();
@@ -268,16 +288,32 @@ class CRM_Profile_Form extends CRM_Core_Form
     {
         $this->_defaults = array( );   
         if ( $this->_id ) {
-            CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_id, $this->_fields, $this->_defaults, true );
+            if ( $this->_isContactActivityProfile ) {
+                $contactFields = $activityFields = array( );
+                foreach ( $this->_fields as $fieldName => $field ) {
+                    if ( CRM_Utils_Array::value('field_type', $field) == 'Activity' ) {
+                        $activityFields[$fieldName] = $field;
+                    } else {
+                        $contactFields[$fieldName]  = $field;
+                    }
+                }
+
+                CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_id, $contactFields, $this->_defaults, true );
+                if ( $this->_activityId ) {
+                    CRM_Core_BAO_UFGroup::setComponentDefaults( $activityFields, $this->_activityId, 'Activity', $this->_defaults, true );
+                }
+            } else {
+                CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_id, $this->_fields, $this->_defaults, true );
+            }
         }
         
         //set custom field defaults
-        require_once "CRM/Core/BAO/CustomField.php";
         foreach ( $this->_fields as $name => $field ) {
             if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID($name) ) {
                 $htmlType = $field['html_type'];
                 
-                if ( !isset( $this->_defaults[$name] ) || $htmlType == 'File') {
+                if ( (!isset( $this->_defaults[$name] ) || $htmlType == 'File') && 
+                     (CRM_Utils_Array::value('field_type', $field) != 'Activity') ) {
                     CRM_Core_BAO_CustomField::setProfileDefaults( $customFieldID,
                                                                   $name,
                                                                   $this->_defaults,
@@ -337,11 +373,13 @@ class CRM_Profile_Form extends CRM_Core_Form
         if ( $this->_mode != self::MODE_REGISTER ) {
             //check for mix profile fields (eg:  individual + other contact type)
             if ( CRM_Core_BAO_UFField::checkProfileType( $this->_gid ) ) {
-                $statusMessage = ts( 'Profile search, view and edit are not supported for Profiles which include fields for more than one record type.' );
+                if ( !(($this->_mode & self::MODE_EDIT) && $this->_isContactActivityProfile && $this->_activityId) ) { 
+                    $statusMessage = ts( 'Profile search, view and edit are not supported for Profiles which include fields for more than one record type.' );
+                    $return = true;
+                }
             }
             
             $profileType = CRM_Core_BAO_UFField::getProfileType( $this->_gid );
-           
             
             if ( $this->_id ) {
                 list( $contactType, $contactSubType ) = 
@@ -353,7 +391,8 @@ class CRM_Profile_Form extends CRM_Core_Form
                     $profileType    = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
                 }
 
-                if ( ($profileType != 'Contact') && 
+                // FIX ME: need to recheck this conditions
+                if ( (($profileType != 'Contact') || $this->_isContactActivityProfile) && 
                      (($profileSubType && $contactSubType && ($profileSubType != $contactSubType)) ||
                       ($profileType    !=  $contactType)) ) {
                     $return = true;
@@ -873,10 +912,30 @@ class CRM_Profile_Form extends CRM_Core_Form
         // CRM-4343
         // $params['preserveDBName'] = true;
 
-        $this->_id = CRM_Contact_BAO_Contact::createProfileContact($params, $this->_fields,
+        $profileFields = $this->_fields;
+        if ( ($this->_mode & self::MODE_EDIT) && $this->_activityId && $this->_isContactActivityProfile ) {
+            $profileFields = $activityParams = array( );
+            foreach ( $this->_fields as $fieldName => $field ) {
+                if ( CRM_Utils_Array::value('field_type', $field) == 'Activity' ) {
+                    if ( isset($params[$fieldName]) ) { 
+                        $activityParams[$fieldName] = $params[$fieldName];
+                    }
+                } else {
+                    $profileFields[$fieldName]  = $field;
+                }
+            }
+            
+            if ( !empty($activityParams) ) {
+                $activityParams['version'] = 3;
+                $activityParams['id']      = $this->_activityId;
+                $activity = civicrm_api('Activity', 'create', $activityParams);
+            }
+        }
+
+        $this->_id = CRM_Contact_BAO_Contact::createProfileContact($params, $profileFields,
                                                                    $this->_id, $addToGroupId,
                                                                    $this->_gid, $this->_ctype,
-                                                                   true );
+                                                                   true );        
         //mailing type group
         if ( ! empty ( $mailingType ) ) {
             require_once 'CRM/Mailing/Event/BAO/Subscribe.php';
