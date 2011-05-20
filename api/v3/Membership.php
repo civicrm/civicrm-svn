@@ -377,16 +377,10 @@ function _civicrm_api3_membership_format_params( $params, &$values, $create=fals
  */
 function _civicrm_api3_membership_check_params( $params ) {
 
-  civicrm_api3_verify_mandatory($params);
+  civicrm_api3_verify_mandatory($params,null,array('contact_id'));
 
   $valid = true;
   $error = '';
-
-  // contact id is required for both add and update
-  if ( !CRM_Utils_Array::value( 'contact_id', $params ) ) {
-    $valid  = false;
-    $error .= ' contact_id';
-  }
 
   // check params for membership id during update
   if ( CRM_Utils_Array::value( 'id', $params ) ) {
