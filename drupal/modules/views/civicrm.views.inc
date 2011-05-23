@@ -5894,14 +5894,14 @@ function civicrm_views_add_fields( &$fields, &$data, &$skipFields, $tableName ) 
                                       'title' => $value['title'],
                                       'help'  => $value['title'],
                                       'field' => array( 
-                                                       'handler' => civicrm_get_field_handler  ( $type );
+                                                       'handler' => civicrm_get_field_handler  ( $type ),
                                                        'click sortable' => true,
                                                         ),
                                       'sort'  => array(
-                                                       'handler' => civicrm_get_sort_handler   ( $type );
+                                                       'handler' => civicrm_get_sort_handler   ( $type ),
                                                        ),
                                       'filter' => array(
-                                                        'handler' => civicrm_get_filter_handler( $type );
+                                                        'handler' => civicrm_get_filter_handler( $type ),
                                                         ),
                                       );
 
