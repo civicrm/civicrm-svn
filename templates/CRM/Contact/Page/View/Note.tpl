@@ -61,7 +61,7 @@
         {/if}
     </h3>
 	<div class="crm-block crm-form-block crm-note-form-block">
-    <div class="content crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+    <div class="content crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
         <table class="form-layout">
             <tr>
                 <td class="label">{$form.subject.label}</td>
