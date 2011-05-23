@@ -43,7 +43,7 @@
       </div>
   {else}
 
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div> 	
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div> 	
 
 		<table class="form-layout-compressed">  
 		    {if $context eq 'standalone'}
@@ -122,5 +122,5 @@
 		</div>
 
    {/if}
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
