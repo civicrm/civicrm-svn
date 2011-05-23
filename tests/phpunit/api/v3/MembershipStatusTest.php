@@ -282,21 +282,23 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
                         'end_date'           => '2009-12-21',
                         'source'             => 'Payment',
                         'is_override'        => 1,
-                        'status_id'          => $this->_membershipStatusID,
-                        'version'						 => 3,
+                        'status_id'          => $membershipStatusID,
+                        'version'		     => 3,
                         );
   
 
         $result = civicrm_api3_membership_create( $params );
         $membershipID = $result['id'];
         $params = array( 'id' => $membershipStatusID ,
-                          'version' =>$this->_apiversion,);
+                         'version' => $this->_apiversion,);
         $result = civicrm_api3_membership_status_delete( $params );
-        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
+
         civicrm_api('Membership','Delete',array('id'      =>  $membershipID  ,
-                                                'version' => $this->_apiversion,));           
+                                                'version' => $this->_apiversion,));
+
         $result = civicrm_api3_membership_status_delete( $params );
-        $this->assertEquals( $result['is_error'], 0 );
+        $this->assertEquals( $result['is_error'], 0, 'In line ' . __LINE__ );
  
     }       
 }
