@@ -318,7 +318,8 @@ VALUES
     ( @domainID, 'civicrm/admin/options/from_email_address&group=from_email_address&reset=1', '{ts escape="sql" skip="true"}FROM Email Addresses{/ts}', 'FROM Email Addresses',    'administer CiviCRM', '', @configurelastID, '1', NULL, 6 ), 
     ( @domainID, 'civicrm/admin/setting/updateConfigBackend&reset=1',  '{ts escape="sql" skip="true"}Update Directory Path and URL{/ts}', 'Update Directory Path and URL',         'administer CiviCRM', '', @configurelastID, '1', NULL, 7 ),
     ( @domainID, 'civicrm/admin/pdfFormats&reset=1',                   '{ts escape="sql" skip="true"}PDF Page Formats{/ts}',       'PDF Page Formats',         'administer CiviCRM', '', @configurelastID, '1', NULL, 8 ), 
-    ( @domainID, 'civicrm/admin/labelFormats&reset=1',                 '{ts escape="sql" skip="true"}Mailing Label Formats{/ts}',  'Mailing Label Formats',    'administer CiviCRM', '', @configurelastID, '1', NULL, 9 );
+    ( @domainID, 'civicrm/admin/labelFormats&reset=1',                 '{ts escape="sql" skip="true"}Mailing Label Formats{/ts}',  'Mailing Label Formats',    'administer CiviCRM', '', @configurelastID, '1', NULL, 9 ),
+   ( @domainID, 'civicrm/admin/scheduleReminders&reset=1',              '{ts escape="sql" skip="true"}Schedule Reminders{/ts}',    'Schedule Reminders',       'administer CiviCRM', '', @configurelastID, '1', NULL, 10 );
 
     
 INSERT INTO civicrm_navigation
