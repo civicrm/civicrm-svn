@@ -219,9 +219,8 @@ SELECT v.id
             $groupParams = array( 'contact_id' => $contactID,
                                   'group_id'   => $groupID  ,
                                   'status'     => $params['is_admin'] ? 'Added' : 'Removed' );
-            
+            require_once 'api/v2/GroupContact.php';            
             if ( $params['is_admin'] ) {
-                require_once 'api/v2/GroupContact.php';
                 civicrm_group_contact_add( $groupParams );
             } else {
                 civicrm_group_contact_remove( $groupParams );
