@@ -636,8 +636,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     
     function membershipStatusDelete( $membershipStatusID ) 
     {
-        $params['id'] = $membershipStatusID;
-        $result = civicrm_membership_status_delete( $params );
+        $result = civicrm_api('MembershipStatus', 'Delete', array('id' => $membershipStatusID, 'version' => 3 ) );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Could not delete membership status' . $result['error_message']);
         }
