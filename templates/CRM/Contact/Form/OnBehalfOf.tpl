@@ -98,7 +98,7 @@
 {literal}
 <script type="text/javascript">
 cj( "#mode" ).hide( );
-
+cj( "#mode" ).attr( 'checked', 'checked' );
 {/literal}
 {if $relatedOrganizationFound}
    {if $organizationName}{literal}
@@ -106,18 +106,22 @@ cj( "#mode" ).hide( );
    
    function createNew( ) 
    {
-       if ( !cj( "#mode" ).attr( 'checked' ) ) {
+       if ( cj( "#mode" ).attr( 'checked' ) ) {
            $text = "Select existing organization";
            cj( "#org_name" ).text( "Organization Name" );
            cj( "#onbehalf_organization_name" ).removeAttr( 'readonly' );
+
            cj( "#select_org tr td input" ).each( function( ) {
               cj(this).val( '' );
            });
-           cj( "#mode" ).attr( 'checked', 'checked' );
+           cj( "#select_org tr td select" ).each( function( ) {
+                 cj(this).val( '' );
+           });
+           cj( "#mode" ).removeAttr( 'checked' );
        } else {
            $text = "Create new organization";
            cj( "#org_name" ).text( "Renew Membership for:" );
-           cj( "#mode" ).removeAttr( 'checked' );
+           cj( "#mode" ).attr( 'checked', 'checked' );
            setOrgName( );
        }
        cj( "#createNewOrg" ).text( $text );
@@ -135,28 +139,38 @@ cj( "#mode" ).hide( );
    {/literal}{else}{literal}
 
        cj( "#orgOptions" ).show( );
+       selectCreateOrg( );
 
        cj( "input:radio[name='org_option']" ).click( function( ) {
-       if ( !cj( "#mode" ).attr( 'checked' ) ) {
-           var dataUrl = "{/literal}{$employerDataURL}{literal}";
-	   cj( '#onbehalf_organization_name' ).autocomplete( dataUrl, 
+          selectCreateOrg( ); 
+       });
+
+       function selectCreateOrg( )
+       {
+          if ( cj( "#mode" ).attr( 'checked' ) ) {
+              var dataUrl = "{/literal}{$employerDataURL}{literal}";
+	      cj( '#onbehalf_organization_name' ).autocomplete( dataUrl, 
                                                              { width         : 180, 
                                                              selectFirst   : false,
                                                              matchContains : true
-           }).result( function( event, data, formatted ) {
-               cj('#onbehalf_organization_name').val( data[0] );
-               cj('#onbehalfof_id').val( data[1] );
-               setLocationDetails( data[1] );
-           });
-           cj( "#mode" ).attr( 'checked', 'checked' );
-       } else {
-           cj( "input#onbehalf_organization_name" ).removeClass( 'ac_input' ).unautocomplete( );
-           cj( "#mode" ).removeAttr( 'checked' );
-           cj( "#select_org tr td input" ).each( function( ) {
-              cj(this).val( '' );
-           });
+              }).result( function( event, data, formatted ) {
+                   cj('#onbehalf_organization_name').val( data[0] );
+                   cj('#onbehalfof_id').val( data[1] );
+                   setLocationDetails( data[1] );
+              });
+              cj( "#mode" ).removeAttr( 'checked' );
+          } else {
+              cj( "input#onbehalf_organization_name" ).removeClass( 'ac_input' ).unautocomplete( );
+              cj( "#mode" ).attr( 'checked', 'checked' );
+
+              cj( "#select_org tr td input" ).each( function( ) {
+                 cj(this).val( '' );
+              });
+              cj( "#select_org tr td select" ).each( function( ) {
+                 cj(this).val( '' );
+              });
+          }
        }
-    });
 
    {/literal}{/if}
    

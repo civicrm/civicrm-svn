@@ -493,9 +493,9 @@ WHERE id={$contactId}; ";
                 
                 $form->add('text', 'organization_id', ts('Select an existing related Organization OR Enter a new one') );
                 $form->add('hidden', 'onbehalfof_id', '', array( 'id' => 'onbehalfof_id' ) );
-                $orgOptions     = array( '0' => ts('Create new organization'), 
-                                         '1' => ts('Select existing organization') );
-                $form->addRadio( 'org_option', ts('options'),  $orgOptions, $orgOptionExtra );
+                $orgOptions     = array( '1' => ts('Create new organization'), 
+                                         '0' => ts('Select existing organization') );
+                $form->addRadio( 'org_option', ts('options'),  $orgOptions );
                 $form->assign( 'relatedOrganizationFound', true );
                 $form->add( 'checkbox', 'mode', '' );
             }
