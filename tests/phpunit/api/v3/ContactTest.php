@@ -317,7 +317,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
    *  Verify that attempt to create individual contact with first
    *  and last names and email succeeds
    */
-  function testCreateIndividualWithContribution()
+  function testCreateIndividualWithContributionDottedSyntax()
   {
     $params = array(
                         'first_name'   => 'abc3',
@@ -325,8 +325,52 @@ class api_v3_ContactTest extends CiviUnitTestCase
                         'contact_type' => 'Individual',
                         'email'        => 'man3@yahoo.com',
                         'version'			=>  $this->_apiversion,
-                        'entities'    => array(
-                           'Contribution' => array(                         
+                        'api.contribution.create'    => array(
+                                                   
+                             'receive_date'           => '2010-01-01',
+                             'total_amount'           => 100.00,
+                             'contribution_type_id'   => 1,
+                             'payment_instrument_id'  => 1,
+                             'non_deductible_amount'  => 10.00,
+                             'fee_amount'             => 50.00,
+                             'net_amount'             => 90.00,
+                             'trxn_id'                => 15345,
+                             'invoice_id'             => 67990,
+                             'source'                 => 'SSF',
+                             'contribution_status_id' => 1,
+                             ),
+                        'api.website.create' => array(
+                             'url' => "http://civicrm.org"),
+                        'api.website.create.2' => array(
+                             'url' => "http://chained.org",
+                             ),
+    );
+
+    $result =civicrm_api('Contact','create',$params);
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+    $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
+    . " error message: " . CRM_Utils_Array::value('error_message', $result) );
+    $this->assertEquals( 1, $result['id'], "In line " . __LINE__ );
+    $this->assertEquals(0,$result['values'][$result['id']]['api.website.create']['is_error'], "In line " . __LINE__);
+    $this->assertEquals("http://chained.org",$result['values'][$result['id']]['api.website.create.2']['values'][0]['url'], "In line " . __LINE__);
+    // delete the contact
+    civicrm_api3_contact_delete( $result );
+  }
+  
+  /**
+   *  Verify that attempt to create individual contact with first
+   *  and last names and email succeeds
+   */
+  function testCreateIndividualWithContributionChainedArrays()
+  {
+    $params = array(
+                        'first_name'   => 'abc3',
+                        'last_name'    => 'xyz3',
+                        'contact_type' => 'Individual',
+                        'email'        => 'man3@yahoo.com',
+                        'version'			=>  $this->_apiversion,
+                        'api.contribution.create'    => array(
+                                                   
                              'receive_date'           => '2010-01-01',
                              'total_amount'           => 100.00,
                              'contribution_type_id'   => 1,
@@ -338,9 +382,14 @@ class api_v3_ContactTest extends CiviUnitTestCase
                              'invoice_id'             => 67890,
                              'source'                 => 'SSF',
                              'contribution_status_id' => 1,
-                             'version' =>$this->_apiversion,
-                        ),
-                          'website' => array('url' => "http://civicrm.org")),
+                             ),
+                        'api.website.create' => array(
+                             array(
+                                'url' => "http://civicrm.org"),
+                             array(
+                                'url' => "http://chained.org",
+                                'website_type_id' => 2),
+                             )
     );
 
     $result =civicrm_api('Contact','create',$params);
@@ -348,7 +397,8 @@ class api_v3_ContactTest extends CiviUnitTestCase
     $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
     . " error message: " . CRM_Utils_Array::value('error_message', $result) );
     $this->assertEquals( 1, $result['id'], "In line " . __LINE__ );
-    $this->assertEquals(0,$result['values'][$result['id']]['entities']['website']['is_error']);
+    $this->assertEquals(0,$result['values'][$result['id']]['api.website.create'][0]['is_error'], "In line " . __LINE__);
+    $this->assertEquals("http://chained.org",$result['values'][$result['id']]['api.website.create'][1]['values'][2]['url'], "In line " . __LINE__);
     // delete the contact
     civicrm_api3_contact_delete( $result );
   }

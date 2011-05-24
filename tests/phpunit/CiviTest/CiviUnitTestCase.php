@@ -1485,6 +1485,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     }
     
     function documentMe($params,$result,$function,$filename){
+        if(DONT_DOCUMENT_TEST_CONFIG ==1){
+          return;
+        } 
         $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
         //todo - this is a bit cludgey
         if (strstr($function, 'Create')){
@@ -1517,7 +1520,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $smarty->assign('entity',$entity);         
         $smarty->assign('result',$result); 
         $smarty->assign('action',$action); 
-        if(DOCUMENT_ME ==1){ 
+
 
         
             if ( file_exists('../tests/templates/documentFunction.tpl')) {
@@ -1525,7 +1528,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                 fwrite($f,$smarty->fetch('../tests/templates/documentFunction.tpl'));
                 fclose($f); 
             }
-        }
+       
     }
   
     /**
