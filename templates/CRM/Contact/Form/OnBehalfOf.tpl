@@ -131,7 +131,9 @@ cj( "#mode" ).hide( );
        cj( "#onbehalf_organization_name" ).attr( 'readonly', true );
        setLocationDetails( orgId );
    }
+
    {/literal}{else}{literal}
+
        cj( "#orgOptions" ).show( );
 
        cj( "input:radio[name='org_option']" ).click( function( ) {
@@ -148,8 +150,11 @@ cj( "#mode" ).hide( );
            });
            cj( "#mode" ).attr( 'checked', 'checked' );
        } else {
-           cj( '#onbehalf_organization_name' ).unautocomplete( ); 
+           cj( "input#onbehalf_organization_name" ).removeClass( 'ac_input' ).unautocomplete( );
            cj( "#mode" ).removeAttr( 'checked' );
+           cj( "#select_org tr td input" ).each( function( ) {
+              cj(this).val( '' );
+           });
        }
     });
 
