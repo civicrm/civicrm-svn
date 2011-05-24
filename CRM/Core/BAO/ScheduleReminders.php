@@ -63,8 +63,9 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         $mapping  = self::getMapping(  );
 
         foreach ( $mapping as $value ) {
-            $entityValue = $value['entity_value'];
-
+            $entityValue  = $value['entity_value'];
+            $entityStatus = $value['entity_status'];
+          
             if( $entityValue == 'activity_type' &&
                 $value['entity'] == 'civicrm_activity' ) {
                 $key = 'Activity';
@@ -93,9 +94,19 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
                 $sel2[$key] = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
                 break;
             }
-        }
-        return array(  $sel1 , $sel2 );
 
+            switch ($entityStatus) {
+            case 'activity_status':
+                $sel3[$key] = CRM_Core_PseudoConstant::activityStatus();
+                break;
+
+            case 'civicrm_participant_status_type':
+                $sel3[$key] = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
+                break;
+            }
+        }
+
+        return array(  $sel1 , $sel2, $sel3 );
     }
    
 }

@@ -63,7 +63,8 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->add( 'text', 'title', ts( 'Title' ) );
 
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
-        list( $sel1, $sel2 ) = CRM_Core_BAO_ScheduleReminders::getSelection(  ) ;
+        list( $sel1, $sel2, $sel3 ) = CRM_Core_BAO_ScheduleReminders::getSelection(  ) ;
+        
         $sel =& $this->add('hierselect',
                            'entity',
                            ts('Entity'),
