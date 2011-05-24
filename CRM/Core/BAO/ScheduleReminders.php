@@ -94,19 +94,64 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
                 $sel2[$key] = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
                 break;
             }
+            
+        }
+        $sel3 = $sel2;
 
-            switch ($entityStatus) {
-            case 'activity_status':
-                $sel3[$key] = CRM_Core_PseudoConstant::activityStatus();
+        foreach ( $mapping as $value ) {
+            $entityValue  = $value['entity_value'];
+            $entityStatus = $value['entity_status'];
+          
+            if( $entityValue == 'activity_type' &&
+                $value['entity'] == 'civicrm_activity' ) {
+                $key = 'Activity';
+            } elseif( $entityValue == 'event_type' &&
+                $value['entity'] == 'civicrm_participant') {
+                $key = 'EventType';
+            } elseif( $entityValue == 'civicrm_event' &&
+                $value['entity'] == 'civicrm_participant' ) {
+                $key = 'EventName';
+            }
+            $sel1[$key] = $key;
+
+            switch ($entityValue) {
+            case 'activity_type':
+                require_once 'CRM/Core/PseudoConstant.php';
+                $sel2[$key] = CRM_Core_PseudoConstant::activityType(false);
                 break;
 
-            case 'civicrm_participant_status_type':
-                $sel3[$key] = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
+            case 'event_type':
+                require_once 'CRM/Event/PseudoConstant.php';
+                $sel2[$key] = CRM_Event_PseudoConstant::eventType();
+                break;
+
+            case 'civicrm_event':
+                require_once 'CRM/Event/PseudoConstant.php';
+                $sel2[$key] = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
                 break;
             }
-        }
+            
+            switch ($entityStatus) {
+            case 'activity_status':
+                $activityStatus = CRM_Core_PseudoConstant::activityStatus();
+                foreach($sel3[$key] as $kkey => &$vval) {
+                    $vval = $activityStatus;
+                }
+                break;
 
+
+            case 'civicrm_participant_status_type':
+                $participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
+                foreach($sel3[$key] as $kkey => &$vval) {
+                    $vval = $participantStatus;
+                }
+                break;
+            }
+
+        }
+       
         return array(  $sel1 , $sel2, $sel3 );
+
     }
    
     // function to retrieve a list of contact-ids that belongs to current actionMapping/site.

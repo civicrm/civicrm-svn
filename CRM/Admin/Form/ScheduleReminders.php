@@ -72,12 +72,18 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
                                  'name'    => 'entity[0]',
                                  'style'   => 'vertical-align: top;'),
                            true);
-        $sel->setOptions( array( $sel1, $sel2 ) );
+        $sel->setOptions( array( $sel1, $sel2, $sel3 ) );
 
         if ( is_a($sel->_elements[1], 'HTML_QuickForm_select') ) {
             // make second selector a multi-select -
             $sel->_elements[1]->setMultiple(true);
             $sel->_elements[1]->setSize(5);
+        }
+
+        if ( is_a($sel->_elements[2], 'HTML_QuickForm_select') ) {
+            // make second selector a multi-select -
+            $sel->_elements[2]->setMultiple(true);
+            $sel->_elements[2]->setSize(5);
         }
 
         //get the frequency units.
