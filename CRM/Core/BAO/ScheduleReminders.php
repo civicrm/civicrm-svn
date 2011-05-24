@@ -35,13 +35,26 @@
  *
  */
 
-require_once 'CRM/Core/DAO/OptionGroup.php';
-require_once 'CRM/Core/DAO/OptionValue.php';
+require_once 'CRM/Core/DAO/ActionSchedule.php';
+require_once 'CRM/Core/DAO/ActionMapping.php';
 
 /**
  * This class contains functions for managing Scheduled Reminders
  */
-class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_OptionValue
+class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
 {
+
+    static function getMapping(  ) 
+    {
+        $dao  = new CRM_Core_DAO_ActionMapping( );
+        $dao->find(  );
+
+        $mapping = $defaults = array();
+        while ( $dao->fetch( ) ) { 
+            CRM_Core_DAO::storeValues( $dao, $defaults );
+            $mapping[] = $defaults;
+        }
+        return $mapping;
+    }
    
 }
