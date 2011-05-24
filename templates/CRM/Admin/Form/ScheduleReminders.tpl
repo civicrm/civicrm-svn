@@ -71,7 +71,28 @@
     </tr>
   </table>
   <fieldset id="compose_id"><legend>{ts}Email{/ts}</legend>
-     {include file="CRM/Contact/Form/Task/EmailCommon.tpl" upload=1 noAttach=1}
+   	<table id="email-field-table" class="form-layout-compressed">
+	    <tr class="crm-scheduleReminder-form-block-active">
+             	<td class="label"></td>
+	     	<td>{$form.is_active.html}&nbsp;{$form.is_active.label}</td>
+    	    </tr>
+            <tr class="crm-scheduleReminder-form-block-template">
+             	<td class="label">{$form.template.label}</td>
+	     	<td>{$form.template.html}</td>
+    	    </tr>
+	    <tr class="crm-scheduleReminder-form-block-subject">
+             	<td class="label">{$form.subject.label}</td>
+	     	<td>{$form.subject.html}</td>
+    	    </tr>
+	 
+	</table>
+        {include file="CRM/Contact/Form/Task/EmailCommon.tpl" upload=1 noAttach=1}
+	<table class="form-layout-compressed">
+   	    <tr class="crm-scheduleReminder-form-block-log">
+             	<td class="label">{$form.record_activity.label}</td>
+	     	<td>{$form.record_activity.html}&nbsp;<span class="description">{ts}Record activity for automated email.{/ts}</span></td>
+    	    </tr>
+	 </table>
   </fieldset>
 
 {/if} 

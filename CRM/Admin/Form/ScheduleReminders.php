@@ -113,6 +113,12 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         require_once 'CRM/Mailing/BAO/Mailing.php';
         CRM_Mailing_BAO_Mailing::commonCompose( $this );
 
+        $this->add('text', 'subject', ts('Subject'), 
+                   CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_ActionSchedule', 'subject' ), true);
+
+        $this->add('checkbox', 'is_active', ts('Send email'));
+        $this->add('checkbox', 'record_activity', ts('Logging'));
+
     }
 
     function setDefaultValues( )
