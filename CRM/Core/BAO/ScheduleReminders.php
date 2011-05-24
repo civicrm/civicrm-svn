@@ -62,6 +62,14 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
     {
         $mapping  = self::getMapping(  );
 
+        require_once 'CRM/Core/PseudoConstant.php';
+        require_once 'CRM/Event/PseudoConstant.php';
+        $participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
+        $activityStatus = CRM_Core_PseudoConstant::activityStatus();
+        $event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
+        $activityType = CRM_Core_PseudoConstant::activityType(false);
+        $eventType = CRM_Event_PseudoConstant::eventType();
+
         foreach ( $mapping as $value ) {
             $entityValue  = $value['entity_value'];
             $entityStatus = $value['entity_status'];
@@ -80,18 +88,16 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
 
             switch ($entityValue) {
             case 'activity_type':
-                require_once 'CRM/Core/PseudoConstant.php';
-                $sel2[$key] = CRM_Core_PseudoConstant::activityType(false);
+                $sel2[$key] = $activityType;
                 break;
 
             case 'event_type':
-                require_once 'CRM/Event/PseudoConstant.php';
-                $sel2[$key] = CRM_Event_PseudoConstant::eventType();
+                $sel2[$key] = $eventType;
                 break;
 
             case 'civicrm_event':
                 require_once 'CRM/Event/PseudoConstant.php';
-                $sel2[$key] = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
+                $sel2[$key] = $event;
                 break;
             }
             
@@ -112,42 +118,20 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
                 $value['entity'] == 'civicrm_participant' ) {
                 $key = 'EventName';
             }
-            $sel1[$key] = $key;
-
-            switch ($entityValue) {
-            case 'activity_type':
-                require_once 'CRM/Core/PseudoConstant.php';
-                $sel2[$key] = CRM_Core_PseudoConstant::activityType(false);
-                break;
-
-            case 'event_type':
-                require_once 'CRM/Event/PseudoConstant.php';
-                $sel2[$key] = CRM_Event_PseudoConstant::eventType();
-                break;
-
-            case 'civicrm_event':
-                require_once 'CRM/Event/PseudoConstant.php';
-                $sel2[$key] = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
-                break;
-            }
-            
+                      
             switch ($entityStatus) {
             case 'activity_status':
-                $activityStatus = CRM_Core_PseudoConstant::activityStatus();
                 foreach($sel3[$key] as $kkey => &$vval) {
                     $vval = $activityStatus;
                 }
                 break;
 
-
             case 'civicrm_participant_status_type':
-                $participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
                 foreach($sel3[$key] as $kkey => &$vval) {
                     $vval = $participantStatus;
                 }
                 break;
             }
-
         }
        
         return array(  $sel1 , $sel2, $sel3 );
