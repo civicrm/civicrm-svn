@@ -63,7 +63,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->add( 'text', 'title', ts( 'Title' ) );
 
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
-        list( $sel1, $sel2, $sel3 ) = CRM_Core_BAO_ScheduleReminders::getSelection(  ) ;
+        list( $sel1, $sel2, $sel3, $sel4 ) = CRM_Core_BAO_ScheduleReminders::getSelection(  ) ;
         
         $sel =& $this->add('hierselect',
                            'entity',
@@ -106,6 +106,8 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
                              'after'  => ts('after') );
         $this->add( 'select', 'action_condition', ts( 'Action Condition' ), $condition, true );
                 
+        $this->add( 'select', 'entity_date', ts( 'Date Field' ), $sel4, true );
+
         require_once 'CRM/Core/OptionGroup.php';
         $this->addElement( 'checkbox', 'is_repeat', ts('Repeat') , 
                            null, array('onclick' => "return showHideByValue('is_repeat',true,'repeatFields','table-row','radio',false);") );

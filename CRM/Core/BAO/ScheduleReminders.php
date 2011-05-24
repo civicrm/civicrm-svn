@@ -73,6 +73,7 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         foreach ( $mapping as $value ) {
             $entityValue  = $value['entity_value'];
             $entityStatus = $value['entity_status'];
+            $entityDate = $value['entity_date'];
           
             if( $entityValue == 'activity_type' &&
                 $value['entity'] == 'civicrm_activity' ) {
@@ -98,6 +99,16 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
             case 'civicrm_event':
                 require_once 'CRM/Event/PseudoConstant.php';
                 $sel2[$key] = $event;
+                break;
+            }
+
+            switch ($entityDate) {
+            case 'activity_date_time':
+                $sel4[$entityDate] = ts('Activity Date Time');
+                break;
+
+            case 'event_start_date':
+                $sel4[$entityDate] = ts('Event Start Date');
                 break;
             }
             
@@ -133,8 +144,9 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
                 break;
             }
         }
-       
-        return array(  $sel1 , $sel2, $sel3 );
+        
+        return array(  $sel1 , $sel2, $sel3, $sel4 );
+
 
     }
    
