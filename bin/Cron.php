@@ -76,15 +76,14 @@ class CRM_Cron {
         
         //use domain email address as a default From email.
         $fromEmailAddress = $domainFromEmail;
+        
+        require_once 'CRM/Core/BAO/ScheduleReminders.php';
+        $mappings = CRM_Core_BAO_ScheduleReminders::getMapping( );
 
-        require_once 'CRM/Core/BAO/ActionMapping.php';
-        $actionMapping = new CRM_Core_DAO_ActionMapping( );
-        $actionMapping->find();
+        while ( $mappings as $mappingID => $mapping ) {
+            $contacts  = CRM_Core_BAO_ActionMapping::getRecipientContacts( $mappingID );
 
-        while ( $actionMapping->fetch() ) {
-            $contacts  = CRM_Core_BAO_ActionMapping::getRecipientContacts( $actionMapping->id );
-
-            // $scheduled = CRM_Core_BAO_ActionSchedule::isScheduled( $actionMapping->id );
+            // $scheduled = CRM_Core_BAO_ActionSchedule::isScheduled( $mappingID );
             $scheduled = true;
 
             if ( $scheduled ) {
@@ -103,7 +102,7 @@ class CRM_Cron {
                 }
                 
                 if ( !empty($contacts) ) {
-                    $actionLogParams = array( 'entity_id'          => $actionMapping->id, // set it to mappingID
+                    $actionLogParams = array( 'entity_id'          => $mappingID, // set it to mappingID
                                               'entity_table'       => 'civicrm_action_mapping',
                                               'action_schedule_id' => $actionScheduleID, // action_schedule Id
                                               'action_date_time'   => date('YmdHis'),
