@@ -87,6 +87,7 @@ class CRM_Utils_PDF_Label extends TCPDF {
        $this->generatorMethod = null;
        $this->SetFont($this->fontName, $this->fontStyle);
        $this->SetFontSize($this->charSize);
+       $this->SetMargins(0,0);
        $this->SetAutoPageBreak(false);
        $this->setPrintHeader(false);
        $this->setPrintFooter(false);
