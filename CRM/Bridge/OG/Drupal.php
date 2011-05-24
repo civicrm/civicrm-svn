@@ -76,6 +76,7 @@ class CRM_Bridge_OG_Drupal {
             
             $params['version'] = 3;
             $group = civicrm_api('group', 'add', $params );
+            require_once 'api/v2/utils.php';
             if ( ! civicrm_error( $group ) ) {
                 $params['group_id'] = $group['result'];
             }
