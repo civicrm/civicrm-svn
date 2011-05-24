@@ -108,7 +108,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         $membership->free( );
         
         $session = & CRM_Core_Session::singleton();
-        if ( empty( $membership->contact_id ) ) {
+        if ( empty( $membership->contact_id)  || empty($membership->status_id) )
             // this means we are in renewal mode and are just updating the membership
             // record or this is an API update call and all fields are not present in the update record
             // however the hooks dont care and want all data CRM-7784
