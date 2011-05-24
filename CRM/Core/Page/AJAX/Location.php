@@ -61,38 +61,38 @@ class CRM_Core_Page_AJAX_Location
         $config = CRM_Core_Config::singleton();
         $addressSequence = array_flip($config->addressSequence());
         
-        $elements = array( "phone_1_phone" => 
+        $elements = array( "onbehalf_phone-Primary" => 
                            $location['phone'][1]['phone'],
-                           "email_1_email" => 
+                           "onbehalf_email-Primary" => 
                            $location['email'][1]['email']
                            );
         
         if ( array_key_exists( 'street_address', $addressSequence) ) {
-            $elements["address_1_street_address"] = $location['address'][1]['street_address'];
+            $elements["onbehalf_street_address-Primary"] = $location['address'][1]['street_address'];
         }
         if ( array_key_exists( 'supplemental_address_1', $addressSequence) ) {
-            $elements['address_1_supplemental_address_1'] = 
+            $elements['onbehalf_supplemental_address_1-Primary'] = 
                 $location['address'][1]['supplemental_address_1'];
         }
         if ( array_key_exists( 'supplemental_address_2', $addressSequence) ) {
-            $elements['address_1_supplemental_address_2'] = 
+            $elements['onbehalf_supplemental_address_2-Primary'] = 
                 $location['address'][1]['supplemental_address_2'];
         }
         if ( array_key_exists( 'city', $addressSequence) ) {
-            $elements['address_1_city'] = $location['address'][1]['city'];
+            $elements['onbehalf_city-Primary'] = $location['address'][1]['city'];
         }
         if ( array_key_exists( 'postal_code', $addressSequence) ) {
-            $elements['address_1_postal_code'] = 
+            $elements['onbehalf_postal_code-Primary'] = 
                 $location['address'][1]['postal_code'];
-            $elements['address_1_postal_code_suffix'] = 
+            $elements['onbehalf_postal_code_suffix-Primary'] = 
                 $location['address'][1]['postal_code_suffix'];
         }
         if ( array_key_exists( 'country', $addressSequence) ) {
-            $elements['address_1_country_id'] = 
+            $elements['onbehalf_country-Primary'] = 
                 $location['address'][1]['country_id'];
         }
         if ( array_key_exists( 'state_province', $addressSequence) ) {
-            $elements['address_1_state_province_id'] = 
+            $elements['onbehalf_state_province-Primary'] = 
                 $location['address'][1]['state_province_id'];
         }
 

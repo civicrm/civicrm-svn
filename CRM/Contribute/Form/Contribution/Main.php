@@ -758,7 +758,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $errors['_qf_default'] = ts('You cannot set up a recurring contribution if you are not paying online by credit card.'); 
         }
 
-        if ( CRM_Utils_Array::value( 'is_for_organization', $fields ) ) {
+        if ( CRM_Utils_Array::value( 'is_for_organization', $fields ) && !$self->_organizationName ) {
             if ( CRM_Utils_Array::value( 'org_option',$fields ) && ! $fields['onbehalfof_id'] ) {
                 $errors['organization_id'] = ts('Please select an organization or enter a new one.');
             }

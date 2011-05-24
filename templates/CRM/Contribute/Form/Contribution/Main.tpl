@@ -354,6 +354,11 @@ function enablePeriod ( ) {
     }
 }
 
+{/literal}{if $relatedOrganizationFound}{literal}
+  cj( "#is_for_organization" ).attr( 'checked', true );
+  cj( "#for_organization" ).show( );
+{/literal}{/if}{literal}
+
 {/literal}{if $honor_block_is_active AND $form.honor_type_id.html}{literal}
     enableHonorType();
 {/literal} {/if}{literal}

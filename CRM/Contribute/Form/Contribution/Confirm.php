@@ -164,9 +164,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                     } else if ( $field == 'state_province' ) {
                         $value = CRM_Core_PseudoConstant::stateProvinceAbbreviation( $value );
                     }
-                    $this->_params['onbehalf_location']['address'][$locType][$field] = $value;
+                    $this->_params['onbehalf_location']['address'][1][$field] = $value;
                 } else if ( in_array( $field, array( 'email', 'phone' ) ) ) {
-                    $this->_params['onbehalf_location'][$field][$locType][$field] = $value;
+                    $this->_params['onbehalf_location'][$field][1][$field] = $value;
                 }
 
                 unset( $this->_params['onbehalf'][$loc] );

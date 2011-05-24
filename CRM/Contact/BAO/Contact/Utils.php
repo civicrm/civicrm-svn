@@ -470,6 +470,14 @@ WHERE id={$contactId}; ";
             if ( $contactID ) {
                 require_once 'CRM/Contact/BAO/Relationship.php';
                 $employers = CRM_Contact_BAO_Relationship::getPermissionedEmployer( $contactID );
+                if ( count( $employers ) == 1 ) {
+                    foreach ( $employers as $id => $value ) {
+                        $form->_organizationName = $value['name'];
+                        $orgId = $id;
+                    }
+                    $form->assign( 'orgId', $orgId );
+                    $form->assign( 'organizationName', $form->_organizationName );
+                }
             }
 
             if ( !$contactEditMode && $contactID && ( count($employers) >= 1 ) ) {
@@ -487,9 +495,10 @@ WHERE id={$contactId}; ";
                 $form->add('hidden', 'onbehalfof_id', '', array( 'id' => 'onbehalfof_id' ) );
                 $orgOptions     = array( '0' => ts('Create new organization'), 
                                          '1' => ts('Select existing organization') );
-                $orgOptionExtra = array( 'onclick' => "showHideByValue('org_option','true','select_org','table-row','radio',true);showHideByValue('org_option','true','create_org','table-row','radio',false);");
+                //$orgOptionExtra = array( 'onclick' => "showHideByValue('org_option','true','select_org','table-row','radio',false);");
                 $form->addRadio( 'org_option', ts('options'),  $orgOptions, $orgOptionExtra );
                 $form->assign( 'relatedOrganizationFound', true );
+                $form->add( 'checkbox', 'mode', '' );
             }
             
             $profileId     = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 
