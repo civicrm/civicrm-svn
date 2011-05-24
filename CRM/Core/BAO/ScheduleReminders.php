@@ -109,4 +109,21 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         return array(  $sel1 , $sel2, $sel3 );
     }
    
+    // function to retrieve a list of contact-ids that belongs to current actionMapping/site.
+    static function getRecipientContacts( $mappingID ) {
+
+        require_once 'CRM/Core/BAO/ActionMapping.php';
+        $actionMapping = new CRM_Core_DAO_ActionMapping( );
+        $actionMapping->id = $mappingID;
+        
+        if ( $actionMapping->find( true ) ) {
+            switch ( $actionMapping->entity ) {
+            case 'civicrm_activity ' :
+                $query = "
+SELECT id 
+FROM civicrm_contact ";
+                break;
+            }
+        }
+    }
 }

@@ -80,10 +80,12 @@ class CRM_Cron {
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
         $mappings = CRM_Core_BAO_ScheduleReminders::getMapping( );
 
-        while ( $mappings as $mappingID => $mapping ) {
-            $contacts  = CRM_Core_BAO_ActionMapping::getRecipientContacts( $mappingID );
+        require_once 'CRM/Contact/BAO/Contact.php';
+        require_once 'CRM/Core/BAO/MessageTemplates.php';
+        foreach ( $mappings as $mappingID => $mapping ) {
+            $contacts  = CRM_Core_BAO_ScheduleReminders::getRecipientContacts( $mappingID );
 
-            // $scheduled = CRM_Core_BAO_ActionSchedule::isScheduled( $mappingID );
+            // $scheduled = CRM_Core_BAO_ScheduleReminders::isScheduled( $mappingID );
             $scheduled = true;
 
             if ( $scheduled ) {
