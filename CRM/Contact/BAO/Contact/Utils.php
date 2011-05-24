@@ -495,7 +495,6 @@ WHERE id={$contactId}; ";
                 $form->add('hidden', 'onbehalfof_id', '', array( 'id' => 'onbehalfof_id' ) );
                 $orgOptions     = array( '0' => ts('Create new organization'), 
                                          '1' => ts('Select existing organization') );
-                //$orgOptionExtra = array( 'onclick' => "showHideByValue('org_option','true','select_org','table-row','radio',false);");
                 $form->addRadio( 'org_option', ts('options'),  $orgOptions, $orgOptionExtra );
                 $form->assign( 'relatedOrganizationFound', true );
                 $form->add( 'checkbox', 'mode', '' );

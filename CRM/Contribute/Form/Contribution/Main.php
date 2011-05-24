@@ -566,10 +566,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
         require_once 'CRM/Contact/BAO/Contact/Utils.php';
         if ( $this->_values['is_for_organization'] != 2 ) {
-            if ( $contactID ) {
-                require_once 'CRM/Contact/BAO/Relationship.php';
-                $employers = CRM_Contact_BAO_Relationship::getPermissionedEmployer( $contactID );
-            }
             $attributes = array('onclick' => 
                                 "return showHideByValue('is_for_organization','true','for_organization','block','radio',false);");
             $this->addElement( 'checkbox', 'is_for_organization', 
