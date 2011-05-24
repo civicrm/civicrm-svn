@@ -349,6 +349,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                 $membership->contact_id = $ids['userId'];
             }
             
+            if ( empty( $membership->contact_id ) && ( !empty( $membership->owner_membership_id ) ) ) {
+                $membership->contact_id = $realMembershipContactId;
+            }
             require_once 'CRM/Activity/BAO/Activity.php';
             CRM_Activity_BAO_Activity::addActivity( $membership, $activityType, $targetContactID );
             
