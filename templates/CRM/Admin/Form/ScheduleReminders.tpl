@@ -43,6 +43,12 @@
     <tr class="crm-scheduleReminder-form-block-name">
         <td class="right">{$form.title.label}</td><td colspan="3">{$form.title.html}</td>
     </tr>
+
+     <tr>	
+        <td class="label">{$form.entity.label}</td>
+        <td>{$form.entity.html}</td>
+    </tr>
+
     <tr class="crm-scheduleReminder-form-block-description">
         <td class="right">{$form.reminder_interval.label}</td>
 	<td colspan="3">{$form.reminder_interval.html}&nbsp;&nbsp;&nbsp;{$form.reminder_frequency.html}&nbsp;&nbsp;&nbsp;

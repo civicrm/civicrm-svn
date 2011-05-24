@@ -52,9 +52,50 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         $mapping = $defaults = array();
         while ( $dao->fetch( ) ) { 
             CRM_Core_DAO::storeValues( $dao, $defaults );
-            $mapping[] = $defaults;
+            $mapping[$dao->id] = $defaults;
         }
         return $mapping;
+    }
+
+
+    static function getSelection(  ) 
+    {
+        $mapping  = self::getMapping(  );
+
+        foreach ( $mapping as $value ) {
+            $entityValue = $value['entity_value'];
+
+            if( $entityValue == 'activity_type' &&
+                $value['entity'] == 'civicrm_activity' ) {
+                $key = 'Activity';
+            } elseif( $entityValue == 'event_type' &&
+                $value['entity'] == 'civicrm_participant') {
+                $key = 'EventType';
+            } elseif( $entityValue == 'civicrm_event' &&
+                $value['entity'] == 'civicrm_participant' ) {
+                $key = 'EventName';
+            }
+            $sel1[$key] = $key;
+
+            switch ($entityValue) {
+            case 'activity_type':
+                require_once 'CRM/Core/PseudoConstant.php';
+                $sel2[$key] = CRM_Core_PseudoConstant::activityType(false);
+                break;
+
+            case 'event_type':
+                require_once 'CRM/Event/PseudoConstant.php';
+                $sel2[$key] = CRM_Event_PseudoConstant::eventType();
+                break;
+
+            case 'civicrm_event':
+                require_once 'CRM/Event/PseudoConstant.php';
+                $sel2[$key] = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
+                break;
+            }
+        }
+        return array(  $sel1 , $sel2 );
+
     }
    
 }
