@@ -109,6 +109,10 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->add( 'select', 'repetition_end_frequency_unit', ts( 'until' ), $freqUnitsDisplay );
         $this->add( 'select', 'repetition_end_frequency_interval', ts( 'until' ), $numericOptions );
         $this->add( 'select', 'repetition_end_action', ts( 'Repetition Condition' ), $condition, true );
+        
+        require_once 'CRM/Mailing/BAO/Mailing.php';
+        CRM_Mailing_BAO_Mailing::commonCompose( $this );
+
     }
 
     function setDefaultValues( )
