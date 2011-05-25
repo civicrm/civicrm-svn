@@ -122,7 +122,18 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
                     false, array( 'onChange' => "return showHideByValue('recipient','0','recipientManual','table-row','select',false);") 
                     );
         
-        $this->add( 'text', 'recipient_manual', ts('Manual Recipients') );
+        //autocomplete url
+        $dataUrl = CRM_Utils_System::url( "civicrm/ajax/rest",
+                                          "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=activity&reset=1",
+                                          false, null, false );
+
+        $this->assign( 'dataUrl',$dataUrl );
+        //tokeninput url
+        $tokenUrl = CRM_Utils_System::url( "civicrm/ajax/checkemail",
+                                           "noemail=1",
+                                           false, null, false );
+        $this->assign( 'tokenUrl', $tokenUrl );
+        $this->add( 'text', 'recipient_manual_id', ts('Manual Recipients') );
 
         require_once 'CRM/Mailing/BAO/Mailing.php';
         CRM_Mailing_BAO_Mailing::commonCompose( $this );
