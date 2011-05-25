@@ -89,6 +89,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
      */
     public function buildQuickForm( ) 
     {
+        $drupal_wysiwyg = false;
         $wysiwyg_options = array( '' => ts( 'Textarea' ) ) + CRM_Core_PseudoConstant::wysiwygEditor( );
 
         $config =& CRM_Core_Config::singleton();

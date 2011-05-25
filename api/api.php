@@ -91,32 +91,33 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     }
     $result = isset($extra) ? $function($params, $extra) : $function($params);
     
-    if ($result['is_error'] == 0){
-    foreach($params as $field => $params){
-      if (substr($field,0, 3) == 'api' && is_array($params)){
-        $separator = $field[3]; // can be api_ or api.
-        if (!($separator == '.' || $separator == '_'))
-          continue;
-       $subAPI = explode($separator,$field);
+    if (CRM_Utils_Array::value( 'is_error', $result, 0 ) == 0) {
+        foreach($params as $field => $params){
+            if (substr($field,0, 3) == 'api' && is_array($params)){
+                $separator = $field[3]; // can be api_ or api.
+                if (!($separator == '.' || $separator == '_')) {
+                    continue;
+                }
+                $subAPI = explode($separator,$field);
 
-       $action = empty($subAPI[2])?$action:$subAPI[2];
-       $subParams  = array();
-       $subParams[strtolower($entity) . "_id"] = $result['id'];
-       $subParams['version'] = $version;
-       $subParams['sequential'] = 1;
-        if(array_key_exists(0, $params)){
-          // it is a numerically indexed array - ie. multiple creates
-          foreach ($params as $entity => $entityparams){
-            $subParams = array_merge($subParams,$entityparams);
-            $result['values'][$result['id']][$field][] = civicrm_api($subAPI[1],$action,$subParams);
-          }
-        }else{
+                $action = empty($subAPI[2])?$action:$subAPI[2];
+                $subParams  = array();
+                $subParams[strtolower($entity) . "_id"] = $result['id'];
+                $subParams['version'] = $version;
+                $subParams['sequential'] = 1;
+                if(array_key_exists(0, $params)){
+                    // it is a numerically indexed array - ie. multiple creates
+                    foreach ($params as $entity => $entityparams){
+                        $subParams = array_merge($subParams,$entityparams);
+                        $result['values'][$result['id']][$field][] = civicrm_api($subAPI[1],$action,$subParams);
+                    }
+                }else{
 
-        $subParams = array_merge($subParams,$params);
-        $result['values'][$result['id']][$field] = civicrm_api($subAPI[1],$action,$subParams);
+                    $subParams = array_merge($subParams,$params);
+                    $result['values'][$result['id']][$field] = civicrm_api($subAPI[1],$action,$subParams);
+                }
+            }
         }
-      }
-    }
     }
     
     
