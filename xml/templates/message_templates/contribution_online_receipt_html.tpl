@@ -202,19 +202,22 @@
       {/if}
      {/if}
 
-     {if $onBehalfName}
+     {if $onBehalfProfile}
       <tr>
        <th {$headerStyle}>
-        {ts}On Behalf Of{/ts}
+        {$onBehalfProfile_grouptitle}
        </th>
       </tr>
-      <tr>
-       <td colspan="2" {$valueStyle}>
-        {$onBehalfName}<br />
-        {$onBehalfAddress|nl2br}<br />
-        {$onBehalfEmail}
-       </td>
-      </tr>
+      {foreach from=$onBehalfProfile item=onBehalfValue key=onBehalfName}
+        <tr>
+         <td {$labelStyle}>
+          {$onBehalfName}
+         </td>
+         <td {$valueStyle}>
+          {$onBehalfValue}
+         </td>
+        </tr>
+      {/foreach}
      {/if}
 
      {if ! ($contributeMode eq 'notify' OR $contributeMode eq 'directIPN') and $is_monetary}

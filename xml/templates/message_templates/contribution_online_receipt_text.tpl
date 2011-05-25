@@ -76,16 +76,14 @@
 {if $pcp_personal_note}{ts}Personal Note{/ts}: {$pcp_personal_note}{/if}
 
 {/if}
-{if $onBehalfName}
+{if $onBehalfProfile}
 ===========================================================
 {ts}On Behalf Of{/ts}
 
 ===========================================================
-{$onBehalfName}
-{$onBehalfAddress}
-
-{$onBehalfEmail}
-
+{foreach from=$onBehalfProfile item=onBehalfValue key=onBehalfName}
+{$onBehalfName}: {$onBehalfValue}
+{/foreach}
 {/if}
 
 {if !( $contributeMode eq 'notify' OR $contributeMode eq 'directIPN' ) and $is_monetary}
