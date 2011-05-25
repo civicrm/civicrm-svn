@@ -45,6 +45,24 @@ require_once 'api/v3/Activity.php';
 require_once 'api/v3/Contact.php';
 require_once 'api/v3/CustomField.php';
 
+/**
+ * Retrieve Contact and Activity.
+ *
+ * Return contact data provided with contact_id
+ * Return activity data provided with activity_id
+ *
+ * @param array  $params       Associative array of property name/value
+ *                             pairs to get contact and activity.
+ *
+ * {@schema Contact/Contact.xml}
+ * {@schema Activity/Activity.xml}
+ *
+ * @return CRM_Contact + CRM_Activity|CRM_Error Contact and Activity object
+ *
+ * @todo add example
+ * @todo add test cases
+ *
+ */
 function civicrm_api3_contact_activity_get( $params ) {
     _civicrm_api3_initialize( true );
     try{
@@ -93,6 +111,26 @@ function civicrm_api3_contact_activity_get( $params ) {
     }
 }
 
+/**
+ * Update Contact and Activity.
+ *
+ * Update a contact provided with contact_id and returns the modified
+ * contact object.
+ * Update a Activity provided with activity_id and returns the modified
+ * activity object. 
+ *
+ * @param array  $params       Associative array of property name/value
+ *                             pairs to update contact and activity.
+ *
+ * {@schema Contact/Contact.xml}
+ * {@schema Activity/Activity.xml}
+ *
+ * @return CRM_Contact + CRM_Activity|CRM_Error Modified Contact and Activity object
+ *
+ * @todo add example
+ * @todo add test cases
+ *
+ */
 function civicrm_api3_contact_activity_set( $params ) {
     _civicrm_api3_initialize( true );
     try{
@@ -126,7 +164,7 @@ function civicrm_api3_contact_activity_set( $params ) {
         $contactParams['contact_type'] = $contactType;
         $contactParams['version']      = 3;
 
-        $contactCustomFields = CRM_Core_BAO_CustomField::getFieldsForImport($contactType); 
+        $contactCustomFields = CRM_Core_BAO_CustomField::getFields($contactType); 
         $errors = _civicrm_api3_custom_field_validate_fields($contactParams, $contactCustomFields);
         if ( !empty($errors) ) {
             return civicrm_api3_create_error( implode(', ', $errors) );
@@ -167,6 +205,13 @@ function civicrm_api3_contact_activity_set( $params ) {
     }    
 }
 
+/*
+ * Helper function to differentiate contact and activity related parameters 
+ * 
+ * @param array $params fixed contact + activity parameters
+ *
+ * @return array seperate contact and activity parameters
+ */
 function _civicrm_api3_contact_activity_resolve_params( $params ) {    
     $contactParams  = $activityParams = array( );    
     

@@ -160,7 +160,15 @@ function civicrm_api3_custom_field_get($params)
 }
 
 /*
- * @TODO: add comment here
+ * Helper function to validate custom field values 
+ * 
+ * @params Array   $params             Custom fields with values
+ * @params Array   $errors             Reference fields to be check with 
+ * @params Boolean $checkForDisallowed Check for disallowed elements 
+ *                                     in params
+ * @params Boolean $checkForRequired   Check for non present required elements
+ *                                     in params
+ * @return Array  Validation errors
  */
 function _civicrm_api3_custom_field_validate_fields($params, $fields, $checkForDisallowed = false, $checkForRequired = false) {
     $checkFields = $errors = $disallowedFields = $requiredFields = array( );
@@ -200,8 +208,14 @@ function _civicrm_api3_custom_field_validate_fields($params, $fields, $checkForD
 }
 
 /*
- * @TODO: add comment here
- *        write api method to validate custom field,  using following helper function
+ * Helper function to validate custom field value
+ * 
+ * @params String $fieldName    Custom field name (eg: custom_8 )
+ * @params Mixed  $value        Field value to be validate
+ * @params Array  $fieldDetails Field Details
+ * @params Array  $errors       Collect validation  errors
+ *
+ * @return Array  Validation errors
  */
 function _civicrm_api3_custom_field_validate_field( $fieldName, $value, $fieldDetails, &$errors = array( ) ) {
     if ( !$value ) {
@@ -276,6 +290,20 @@ SELECT count(*)
         break;
     }
     
-    // @TODO: validate multiple options
+    $htmlType = $fieldDetails['html_type'];
+    if ( in_array($htmlType, array('Select', 'Multi-Select', 'CheckBox', 'Radio', 'AdvMulti-Select')) &&
+         !isset($errors[$fieldName]) ) {
+        require_once 'CRM/Core/OptionGroup.php';
+        $options = CRM_Core_OptionGroup::valuesByID( $fieldDetails['option_group_id'] );
+        if ( !is_array($value) ) {
+            $value = array( $value );
+        }
+        
+        $invalidOptions = array_diff( $value, array_keys($options) );
+        if (!empty($invalidOptions) ) {
+            $errors[$fieldName] = "Invalid option(s) for field '{$fieldName}': ". implode(',', $invalidOptions); 
+        }
+    }
+
     return $errors;
 }

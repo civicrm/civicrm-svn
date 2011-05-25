@@ -46,6 +46,18 @@ require_once 'CRM/Core/BAO/UFGroup.php';
 require_once 'CRM/Core/BAO/UFField.php';
 require_once 'CRM/Core/Permission.php';
 
+/**
+ * Retrieve Profile field values.
+ *
+ * @param array  $params       Associative array of property name/value
+ *                             pairs to get profile field values
+ *
+ * @return Profile field values|CRM_Error
+ *
+ * @todo add example
+ * @todo add test cases
+ *
+ */
 function civicrm_api3_profile_get( $params ) {
     _civicrm_api3_initialize( true );
     try{
@@ -58,7 +70,6 @@ function civicrm_api3_profile_get( $params ) {
             return civicrm_api3_create_error('Can not retrieve values for profiles include fields for more than one record type.' );
         }          
         
-        // FIX ME: check for permission
         $profileFields = CRM_Core_BAO_UFGroup::getFields( $params['profile_id'], false, null, null, null, false, null, true, null, CRM_Core_Permission::EDIT );
         
         $values = array( );   
@@ -93,6 +104,18 @@ function civicrm_api3_profile_get( $params ) {
     }
 }
 
+/**
+ * Update Profile field values.
+ *
+ * @param array  $params       Associative array of property name/value
+ *                             pairs to update profile field values
+ *
+ * @return Updated Contact/ Activity object|CRM_Error
+ *
+ * @todo add example
+ * @todo add test cases
+ *
+ */
 function civicrm_api3_profile_set( $params ) {
     _civicrm_api3_initialize( true );
     try{
@@ -107,7 +130,6 @@ function civicrm_api3_profile_set( $params ) {
 
         $profileParams = $missingParams = array( );
 
-        // FIX ME: check for permission?
         $profileFields = CRM_Core_BAO_UFGroup::getFields($params['profile_id'], false, null, null, null, false, null, true, null, CRM_Core_Permission::EDIT);
 
         $profileParams['contact_id'] = $params['contact_id'];
