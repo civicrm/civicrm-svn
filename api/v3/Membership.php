@@ -168,6 +168,7 @@ function civicrm_api3_membership_create($params)
  */
 function civicrm_api3_membership_get($params)
 {
+  try{
     civicrm_api3_verify_mandatory($params);
 
     $contactID = $activeOnly = $membershipTypeId = $membershipType = null;
@@ -253,7 +254,11 @@ function civicrm_api3_membership_get($params)
     }
     
     return civicrm_api3_create_success($members,$params);
-
+    } catch (PEAR_Exception $e) {
+    return civicrm_api3_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_api3_create_error( $e->getMessage() );
+  }
 }
 
 
@@ -372,16 +377,10 @@ function _civicrm_api3_membership_format_params( $params, &$values, $create=fals
  */
 function _civicrm_api3_membership_check_params( $params ) {
 
-  civicrm_api3_verify_mandatory($params);
+  civicrm_api3_verify_mandatory($params,null,array('contact_id'));
 
   $valid = true;
   $error = '';
-
-  // contact id is required for both add and update
-  if ( !CRM_Utils_Array::value( 'contact_id', $params ) ) {
-    $valid  = false;
-    $error .= ' contact_id';
-  }
 
   // check params for membership id during update
   if ( CRM_Utils_Array::value( 'id', $params ) ) {

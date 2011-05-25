@@ -253,6 +253,10 @@ function civicrm_api3_create_success( $values = 1,$params=array(),&$dao = null )
     $result['version'] =3;
     if (is_array( $values)) {
         $result['count'] = count( $values);
+
+        // Convert value-separated strings to array
+        _civicrm_api3_separate_values( $values );
+
         if ( $result['count'] == 1 ) {
             list($result['id']) = array_keys($values);
         } elseif ( ! empty($values['id'] ) ) {
@@ -270,6 +274,25 @@ function civicrm_api3_create_success( $values = 1,$params=array(),&$dao = null )
     }
 
     return $result;
+}
+
+/**
+ *  Recursive function to explode value-separated strings into arrays
+ * 
+ */
+function _civicrm_api3_separate_values( &$values )
+{
+  $sp = CRM_Core_DAO::VALUE_SEPARATOR;
+  foreach ($values as &$value) {
+    if (is_array($value)) {
+      _civicrm_api3_separate_values($value);
+    }
+    elseif (is_string($value)) {
+      if (strpos($value, $sp) !== FALSE) {
+        $value = explode($sp, trim($value, $sp));
+      }
+    }
+  }
 }
 
 /**

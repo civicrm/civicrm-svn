@@ -420,11 +420,14 @@ class CRM_Export_BAO_Export
                 INNER JOIN civicrm_relationship crel ON crel.{$contactB} = contact_a.id AND crel.relationship_type_id = {$id} 
                 {$relationshipJoin} ";
                 
-                $relationWhere       = " WHERE contact_a.is_deleted = 0 {$relationshipClause}";
+                //check for active relationship status only
+                $today = date( 'Ymd' );
+                $relationActive      = " AND (crel.is_active = 1 AND ( crel.end_date is NULL OR crel.end_date >= {$today} ) )";
+                $relationWhere       = " WHERE contact_a.is_deleted = 0 {$relationshipClause} {$relationActive}";
                 $relationGroupBy     = " GROUP BY crel.{$contactA}";
                 $relationSelect      = "{$relationSelect}, {$contactA} as refContact ";
-                $relationQueryString = "$relationSelect $relationFrom $relationWhere $relationHaving $relationGroupBy";                
-
+                $relationQueryString = "$relationSelect $relationFrom $relationWhere $relationHaving $relationGroupBy";
+              
                 $allRelContactDAO    = CRM_Core_DAO::executeQuery( $relationQueryString );
                 while ( $allRelContactDAO->fetch() ) {
                     //FIX Me: Migrate this to table rather than array

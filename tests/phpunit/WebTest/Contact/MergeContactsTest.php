@@ -155,6 +155,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad( "30000" );
         
         // Select the contacts to be merged
+        $this->select( "xpath=//div[@id='option51_length']/select", "value=25" );
         $this->waitForElementPresent( "xpath=//table[@class='pagerDisplay']/tbody//tr/td[1]/a[text()='$prefix $firstName $lastName']/../../td[2]/a[text()='$firstName $lastName']" );
         $this->click( "xpath=//table[@class='pagerDisplay']/tbody//tr/td[1]/a[text()='$prefix $firstName $lastName']/../../td[2]/a[text()='$firstName $lastName']/../../td[4]/a[text()='merge']" );
         $this->waitForElementPresent( '_qf_Merge_cancel-bottom' );

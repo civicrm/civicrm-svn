@@ -26,7 +26,7 @@
 (function($){ $.fn.crmtooltip = function(){
 	$('a.crm-summary-link')
 	.addClass('crm-processed')
-	.hover(
+	.live('mouseover',
 		function(e)  {
 		    $(this).addClass('crm-tooltip-active');
 		    topDistance = e.pageY - $(window).scrollTop();
@@ -39,13 +39,18 @@
 					.html('<div class="crm-loading-element"></div>')
 					.load(this.href);
 			}
-		},
+		})
+    .live('mouseout',
 		function(){
 		  $(this).removeClass('crm-tooltip-active');
 		  $(this).removeClass('crm-tooltip-down');
 		  }
 		)
-	.click(function() {return false});	
+	.live('click',
+		function(){
+		  return false;
+		  }
+		);	
 	
 	};
 	})(jQuery);

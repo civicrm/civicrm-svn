@@ -33,7 +33,7 @@
 {/if}
 <span style="float:right;"><a href="#expand" id="expand">{ts}Expand all tabs{/ts}</a></span>
 <div class="crm-submit-buttons">
-   {include file="CRM/common/formButtons.tpl"}
+   {include file="CRM/common/formButtons.tpl" location="top"}
 </div>
 <div class="crm-accordion-wrapper crm-contactDetails-accordion crm-accordion-open">
  <div class="crm-accordion-header">
@@ -95,7 +95,7 @@
         {include file="CRM/Contact/Form/Edit/$name.tpl"}
     {/foreach}
 <div class="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl"}
+    {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
 
 </div>

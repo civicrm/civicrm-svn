@@ -629,17 +629,16 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         
         $result = civicrm_membership_status_create( $params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not create membership status' );
+            throw new Exception( 'Could not create membership status' . $result['error_message']);
         }
         return $result['id'];
     }
     
     function membershipStatusDelete( $membershipStatusID ) 
     {
-        $params['id'] = $membershipStatusID;
-        $result = civicrm_membership_status_delete( $params );
+        $result = civicrm_api('MembershipStatus', 'Delete', array('id' => $membershipStatusID, 'version' => 3 ) );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not delete membership status' );
+            throw new Exception( 'Could not delete membership status' . $result['error_message']);
         }
         return;
     }
@@ -665,6 +664,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         if ( civicrm_error( $params ) || $result['is_error'] == 1) {
             throw new Exception( 'Could not create relationship type' );
         }
+
+        require_once 'CRM/Core/PseudoConstant.php';
+        CRM_Core_PseudoConstant::flush('relationshipType');
 
         return $result['id'];
     }
@@ -1370,7 +1372,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $customGroup = $this->CustomGroupCreate($entity,$function);
       
         $customField = $this->customFieldCreate( $customGroup['id'], $function ) ;
-        return array('custom_group_id' =>$customGroup['id'], 'custom_field_id' =>$customField['id'] );   
+        CRM_Core_PseudoConstant::flush ( 'customGroup' );
+        CRM_Core_BAO_CustomField::getTableColumnGroup ( $customField['id'], True );
+       return array('custom_group_id' =>$customGroup['id'], 'custom_field_id' =>$customField['id'] );   
     }
     
   
@@ -1481,6 +1485,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     }
     
     function documentMe($params,$result,$function,$filename){
+        if(DONT_DOCUMENT_TEST_CONFIG ==1){
+          return;
+        } 
         $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
         //todo - this is a bit cludgey
         if (strstr($function, 'Create')){
@@ -1513,7 +1520,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $smarty->assign('entity',$entity);         
         $smarty->assign('result',$result); 
         $smarty->assign('action',$action); 
-        if(DOCUMENT_ME ==1){ 
+
 
         
             if ( file_exists('../tests/templates/documentFunction.tpl')) {
@@ -1521,7 +1528,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                 fwrite($f,$smarty->fetch('../tests/templates/documentFunction.tpl'));
                 fclose($f); 
             }
-        }
+       
     }
   
     /**

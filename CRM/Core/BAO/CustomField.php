@@ -109,9 +109,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             require_once 'CRM/Utils/String.php';
             $params['column_name'] = 
                 strtolower( CRM_Utils_String::munge( $params['label'], '_', 32 ) );
-
-            $name  = isset( $params['name'] ) ? $params['name'] : $params['label'];
-            $params['name'] = CRM_Utils_String::munge($name, '_', 64 );
+            
+            $params['name'] = CRM_Utils_String::munge($params['label'], '_', 64 );
         } else if ( isset($params['id']) ) {
             $params['column_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField',
                                                                   $params['id'],
@@ -1880,7 +1879,7 @@ SELECT     f.id
 FROM       civicrm_custom_field f
 INNER JOIN civicrm_custom_group g ON f.custom_group_id = g.id
 WHERE      ( f.label = %1 OR f.name  = %1 )
-AND        ( g.title = %2 OR g.title = %2 )
+AND        ( g.title = %2 OR g.name = %2 )
 ";
         } else {
             $sql = "

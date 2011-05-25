@@ -54,24 +54,20 @@ require_once 'api/v3/utils.php';
  *
  * @return array of newly created event property values.
  * @access public
- * @todo v2 Event API didn't create custom fields - I can see this has been 'touched up' but should check event custom fields can now be created & then remove this comment
- */
+*/
 function civicrm_api3_event_create( $params )
 {
-  _civicrm_api3_initialize( true );
-  try {
+    try {
     civicrm_api3_verify_mandatory ($params,'CRM_Event_DAO_Event',array ('start_date','event_type_id','title'));
-
-    $ids['eventTypeId'] = (int) $params['event_type_id'];
-    $ids['startDate'  ] = $params['start_date'];
-    $ids['event_id']    = CRM_Utils_Array::value( 'event_id', $params );
-
+    $params['start_date'] = CRM_Utils_Date::processDate( $params['start_date'] );
+    $params['end_date'] = CRM_Utils_Date::processDate( $params['end_date'] );
+   
     //format custom fields so they can be added
     $value = array();
     _civicrm_api3_custom_format_params( $params, $values, 'Event' );
     $params = array_merge($values,$params);
     require_once 'CRM/Event/BAO/Event.php';
-    $eventBAO = CRM_Event_BAO_Event::create($params, $ids);
+    $eventBAO = CRM_Event_BAO_Event::create($params);
 
     if ( is_a( $eventBAO, 'CRM_Core_Error' ) ) {
       return civicrm_api3_create_error( "Event is not created" );
@@ -81,7 +77,7 @@ function civicrm_api3_event_create( $params )
     }
 
     return civicrm_api3_create_success($event,$params);
-  } catch (PEAR_Exception $e) {
+      } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );

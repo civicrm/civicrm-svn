@@ -82,6 +82,10 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         
     }
 
+    function tearDown ( )
+    {
+        $this->quickCleanup( array( 'civicrm_contact') );
+    }
     /**
      * methods create relationshipType with valid data
      * success expected
@@ -102,6 +106,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $this->assertEquals( $result->contact_type_a , 'Individual' );
         $this->assertEquals( $result->contact_type_b , 'Individual' );
         $this->assertEquals( $result->contact_sub_type_b , $this->parent );
+        $this->relationshipTypeDelete( $result->id );
     }
 
     function testRelationshipTypeAddSponcorIndivi( )
@@ -119,6 +124,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $this->assertEquals( $result->contact_type_a , 'Organization' );
         $this->assertEquals( $result->contact_sub_type_a ,  $this->sponsor );
         $this->assertEquals( $result->contact_type_b , 'Individual' );
+        $this->relationshipTypeDelete( $result->id );
     }
     
     function testRelationshipTypeAddStudentSponcor( )
@@ -138,6 +144,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $this->assertEquals( $result->contact_sub_type_a , $this->student );
         $this->assertEquals( $result->contact_type_b , 'Organization' );
         $this->assertEquals( $result->contact_sub_type_b , $this->sponsor );
+        $this->relationshipTypeDelete( $result->id );
     }
 
     /**
@@ -165,6 +172,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
  
         $this->assertEquals( $invalid, 1, 'In line '. __LINE__ );
         $this->assertEquals( empty($relationshipIds), true , 'In line '. __LINE__ );
+        $this->relationshipTypeDelete( $relType->id );
     }
     
     /**
@@ -192,6 +200,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
 
         $this->assertEquals( $invalid, 1, 'In line '. __LINE__ );
         $this->assertEquals( empty($relationshipIds), true , 'In line '. __LINE__ );
+        $this->relationshipTypeDelete( $relType->id );
     }
     
     function testRelCreateInvalidWithinDiffTypeStudentSponcor( ) 
@@ -216,6 +225,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
 
         $this->assertEquals( $invalid, 1, 'In line '. __LINE__ );
         $this->assertEquals( empty($relationshipIds), true , 'In line '. __LINE__ );
+        $this->relationshipTypeDelete( $relType->id );
     }
     
     /**
@@ -244,6 +254,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
 
         $this->assertEquals( $valid, 1 , 'In line '. __LINE__ );
         $this->assertEquals( empty($relationshipIds), false , 'In line '. __LINE__ );
+        $this->relationshipTypeDelete( $relType->id );
     }
 
     /**
@@ -272,6 +283,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
        
         $this->assertEquals( $valid, 1 , 'In line '. __LINE__ );
         $this->assertEquals( empty($relationshipIds), false , 'In line '. __LINE__ );
+        $this->relationshipTypeDelete( $relType->id );
     } 
 
     function testRelCreateWithinDiffTypeStudentSponsor( ) 
@@ -296,6 +308,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
 
         $this->assertEquals( $valid, 1 , 'In line '. __LINE__ );
         $this->assertEquals( empty($relationshipIds), false , 'In line '. __LINE__ );
+        $this->relationshipTypeDelete( $relType->id );
     }
     
 }

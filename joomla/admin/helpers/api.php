@@ -25,11 +25,13 @@ class CivicrmHelperApi {
 
 		define('CIVICRM_UF_BASEURL', JURI :: base());
 
-		$include_path = '.'.PATH_SEPARATOR.
-            CIVICRM_ROOT.PATH_SEPARATOR.
-            CIVICRM_ROOT.DS.'packages'.PATH_SEPARATOR.
-            CIVICRM_ROOT.DS.'api'.PATH_SEPARATOR.
-            CIVICRM_ROOT.DS.'api'.DS.'v2'.PATH_SEPARATOR.
+		$include_path = 
+            '.' . PATH_SEPARATOR .
+            CIVICRM_ROOT . PATH_SEPARATOR .
+            CIVICRM_ROOT . DS . 'packages' . PATH_SEPARATOR .
+            CIVICRM_ROOT . DS . 'api' . PATH_SEPARATOR .
+            CIVICRM_ROOT . DS . 'api' . DS . 'v2' . PATH_SEPARATOR .
+            CIVICRM_ROOT . DS . 'api' . DS . 'v3' . PATH_SEPARATOR .
             get_include_path();
 		set_include_path($include_path);
 	}

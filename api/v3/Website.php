@@ -64,7 +64,7 @@ function civicrm_api3_website_create( &$params )
 		 return civicrm_api3_create_error( "Website is not created or updated ");
 	 } else {
 		 $values = array( );
-		 _civicrm_api3_object_to_array($websiteBAO, $values);
+		 _civicrm_api3_object_to_array($websiteBAO, $values[$websiteBAO->id]);
 		 return civicrm_api3_create_success($values, $params);
 	 }
   } catch (PEAR_Exception $e) {

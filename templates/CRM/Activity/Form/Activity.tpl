@@ -92,7 +92,7 @@
     </script>
     {/literal}
     {if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
-        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     {/if}
       
         {if $action eq 8} {* Delete action. *}

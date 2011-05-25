@@ -545,6 +545,8 @@ class CRM_Core_SelectValues
                                  );
             $customFields = array();
             $customFields = CRM_Core_BAO_CustomField::getFields('Individual');
+            $customFieldsAddress = CRM_Core_BAO_CustomField::getFields('Address');
+            $customFields = $customFields + $customFieldsAddress;
             
             foreach($values as $key => $val) {
                 if ( in_array($val, $skipTokens) ) {

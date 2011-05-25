@@ -456,7 +456,8 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             // dont use absolute path if resources are stored on a different server
             // CRM-4642
             $this->resourceBase = $this->userFrameworkResourceURL;
-            if ( isset( $_SERVER['HTTP_HOST']) ) {
+            if ( isset( $_SERVER['HTTP_HOST']) &&
+                 isset( $rrb['host'] ) ) {
                 $this->resourceBase = ($rrb['host'] == $_SERVER['HTTP_HOST']) ? $rrb['path'] : $this->userFrameworkResourceURL;
             }
         } 

@@ -108,7 +108,16 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         $membership->free( );
         
         $session = & CRM_Core_Session::singleton();
-        
+        if ( empty( $membership->contact_id)  || empty($membership->status_id) ){
+            // this means we are in renewal mode and are just updating the membership
+            // record or this is an API update call and all fields are not present in the update record
+            // however the hooks dont care and want all data CRM-7784
+            $tempMembership = new CRM_Member_DAO_Membership();
+            $tempMembership->id = $membership->id;
+            $tempMembership->find( true );
+            $membership = $tempMembership;
+        }
+
         //get the log start date.
         //it is set during renewal of membership.
         $logStartDate = CRM_Utils_array::value( 'log_start_date', $params );
@@ -128,8 +137,10 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         // If we have an authenticated session, set modified_id to that user's contact_id, else set to membership.contact_id
 		if ( $session->get( 'userID' ) ){
 		    $membershipLog['modified_id'] = $session->get( 'userID' );
-		} else {
+		} else if ( ! empty( $ids['userId'] ) ) {
 			$membershipLog['modified_id'] = $ids['userId'];
+		} else {
+		  $membershipLog['modified_id'] = $membership->contact_id;
 		}
 
         require_once 'CRM/Member/BAO/MembershipLog.php';
@@ -138,17 +149,6 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         // reset the group contact cache since smart groups might be affected due to this
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::remove( );
-
-
-        if ( empty( $membership->contact_id ) ) {
-            // this means we are in renewal mode and are just updating the membership
-            // record and all fields are not present in the update record
-            // however the hooks dont care and want all data CRM-7784
-            $tempMembership = new CRM_Member_DAO_Membership();
-            $tempMembership->id = $membership->id;
-            $tempMembership->find( true );
-            $membership = $tempMembership;
-        }
 
         if ( CRM_Utils_Array::value( 'membership', $ids ) ) {
             CRM_Utils_Hook::post( 'edit', 'Membership', $membership->id, $membership );
@@ -349,6 +349,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                 $membership->contact_id = $ids['userId'];
             }
             
+            if ( empty( $membership->contact_id ) && ( !empty( $membership->owner_membership_id ) ) ) {
+                $membership->contact_id = $realMembershipContactId;
+            }
             require_once 'CRM/Activity/BAO/Activity.php';
             CRM_Activity_BAO_Activity::addActivity( $membership, $activityType, $targetContactID );
             
@@ -682,7 +685,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
                 }
                 
                 $membershipTypeValues = self::buildMembershipTypeValues( $form, $membershipTypeIds );
-                
+                $endDate = null;
                 foreach ( $membershipTypeIds as $value ) {
                     $memType = $membershipTypeValues[$value];
                     if ($selectedMembershipTypeID  != null ) {
@@ -727,10 +730,18 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
 
                             //CRM-4297
                             $membership->orderBy( 'end_date DESC' );
-                                
+                            
                             if ( $membership->find(true) ) {
                                 $form->assign("renewal_mode", true );
-                                $memType['current_membership'] =  $membership->end_date;
+                                $memType['current_membership'] = $membership->end_date;
+                                if ( !$endDate ) {
+                                    $endDate = $memType['current_membership'];
+                                    $form->_defaultMemTypeId = $memType['id'];
+                                }
+                                if ( $memType['current_membership'] < $endDate ) {
+                                    $endDate = $memType['current_membership'];
+                                    $form->_defaultMemTypeId = $memType['id'];
+                                }
                             }
                         }
                         $membershipTypes[] = $memType;
@@ -1731,10 +1742,13 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
      * @static
      * @access public
      */
-    static function createRelatedMemberships( &$params, &$membership ) 
+    static function createRelatedMemberships( &$params, &$dao ) 
     {
         static $relatedContactIds = array( );
-            
+        
+        $membership = new CRM_Member_DAO_Membership( );
+        $membership->id = $dao->id;
+        
         // required since create method doesn't return all the
         // parameters in the returned membership object
         if ( ! $membership->find( true ) ) {
