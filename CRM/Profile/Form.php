@@ -391,8 +391,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                     $profileType    = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
                 }
 
-                // FIX ME: need to recheck this conditions
-                if ( (($profileType != 'Contact') || $this->_isContactActivityProfile) && 
+                if ( ($profileType != 'Contact' && !$this->_isContactActivityProfile) && 
                      (($profileSubType && $contactSubType && ($profileSubType != $contactSubType)) ||
                       ($profileType    !=  $contactType)) ) {
                     $return = true;

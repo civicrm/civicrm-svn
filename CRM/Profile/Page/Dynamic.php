@@ -209,14 +209,7 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
                 
                 CRM_Core_BAO_UFGroup::getValues( $this->_id, $contactFields, $values );
                 if ( $this->_activityId ) {
-                    $activityValues = array( );
-                    // FIX ME: need to use other method here.
-                    CRM_Core_BAO_UFGroup::setComponentDefaults( $activityFields, $this->_activityId, 'Activity', $activityValues, true );
-                    if ( !empty($activityValues) ) {
-                        foreach( $activityFields as $fieldName => $activityField ) {
-                            $values[$activityField['title']] =  isset($activityValues[$fieldName]) ? $activityValues[$fieldName] : '';
-                        }
-                    }
+                    CRM_Core_BAO_UFGroup::getValues( null, $activityFields, $values, true, array( array( 'activity_id', '=', $this->_activityId, 0, 0 ) ) );
                 }
             } else {
                 CRM_Core_BAO_UFGroup::getValues( $this->_id, $fields, $values );

@@ -335,14 +335,6 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
      * Profile fields with contact fields
      */
     static function checkContactActivityProfileType( $ufGroupId ) {        
-        if ( !$ufGroupId ) return false;
-
-        static $_contactActivityProfile;
-        
-        if ( !is_null($_contactActivityProfile) && isset($_contactActivityProfile[$ufGroupId]) ) {
-            return $_contactActivityProfile[$ufGroupId];
-        }
-
         $ufGroup = new CRM_Core_DAO_UFGroup();
         $ufGroup->id = $ufGroupId;
         $ufGroup->find( true );
@@ -350,16 +342,34 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
         $profileTypes = array( );
         if ( $ufGroup->group_type ) {
             $profileTypes = explode( ',',  $ufGroup->group_type );
-        } 
-        
-        // FIX ME: check other profile type(s) is/are of contact/Individual/Organization/Household
-        if ( !empty($profileTypes) && in_array( 'Activity', $profileTypes) && (count($profileTypes) > 1) ) {
-            $_contactActivityProfile[$ufGroupId] = true;
-        } else {
-            $_contactActivityProfile[$ufGroupId] = false;
         }
         
-        return $_contactActivityProfile[$ufGroupId];
+        $components   = array( 'Contribution', 'Participant', 'Membership' );
+        if ( !in_array('Activity', $profileTypes) ) {
+            return false;
+        } else if ( count($profileTypes) == 1 ) {
+            return false;
+        }
+        
+        if ( $index = array_search('contact', $profileTypes) ) {
+            unset($profileTypes[$index]);
+            if (count($profileTypes) == 1) {
+                return true;
+            }
+        }
+
+        $contactTypes = array( 'Individual', 'Household', 'Organization' );
+        require_once 'CRM/Contact/BAO/ContactType.php';
+        $subTypes     = CRM_Contact_BAO_ContactType::subTypes( );
+        
+        $profileTypeComponent = array_intersect($components, $profileTypes);
+        if ( !empty($profileTypeComponent) ||
+             count(array_intersect($contactTypes, $profileTypes) ) > 1 ||
+             count(array_intersect($subTypes, $profileTypes) ) > 1 ) {
+            return false;
+        }
+  
+        return true;
     }
 
     /**
@@ -446,7 +456,7 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
         require_once 'CRM/Contact/BAO/ContactType.php';
         $subTypes     = CRM_Contact_BAO_ContactType::subTypes( );
 
-        $components   = array( 'Contribution', 'Participant', 'Membership' );
+        $components   = array( 'Contribution', 'Participant', 'Membership', 'Activity' );
 
         require_once 'CRM/Core/DAO/UFGroup.php';
         $ufGroup = new CRM_Core_DAO_UFGroup( );

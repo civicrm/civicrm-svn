@@ -699,7 +699,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                                       $searchable = true, $componentWhere = null,
                                       $absolute = false ) 
     {
-        if ( empty ( $cid ) ) {
+        if ( empty($cid) && empty($componentWhere)  ) {
             return null;
         }
 
@@ -712,8 +712,8 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
 
         // get the contact details (hier)
         $returnProperties =& CRM_Contact_BAO_Contact::makeHierReturnProperties( $fields );
-   
-        $params = array( array( 'contact_id', '=', $cid, 0, 0 ) );
+        
+        $params = $cid ? array( array( 'contact_id', '=', $cid, 0, 0 ) ) : array( );
         
         // add conditions specified by components. eg partcipant_id etc
         if ( !empty( $componentWhere ) ) {
