@@ -861,7 +861,36 @@ class api_v3_ContactTest extends CiviUnitTestCase
     
   }
 
+ public function testContactGetWithActivityies(){
+       $params = array(
+                        'email'            => 'man2@yahoo.com',
+                        'contact_type'     => 'Individual',
+                        'location_type_id' => 1,
+                        'version' 				=> $this->_apiversion,
+                        'api.contribution.create'    => array(
+                                                   
+                             'receive_date'           => '2010-01-01',
+                             'total_amount'           => 100.00,
+                             'contribution_type_id'   => 1,
+                             'payment_instrument_id'  => 1,
+                             'non_deductible_amount'  => 10.00,
+                             'fee_amount'             => 50.00,
+                             'net_amount'             => 90.00,
+                             'trxn_id'                => 15343455,
+                             'invoice_id'             => 6755990,
+                             'source'                 => 'SSF',
+                             'contribution_status_id' => 1,
+                             ),
+		      
+    );
 
+    $contact = & civicrm_api('Contact', 'Create',$params);
+    $params = array('version' => 3, 'id' => $contact['id'], 'api.activity' => array());
+    $result = civicrm_api('Contact', 'Get', $params);
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+    $this->assertGreaterThan(0, $result['values'][$result['id']]['api.activity']['count']);
+    $this->assertEquals('Contribution', $result['values'][$result['id']]['api.activity']['values'][0]['activity_name']);   
+ }
   /**
    *  Test civicrm_contact_search_count()
    */
