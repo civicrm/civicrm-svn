@@ -307,6 +307,6 @@ switch ($memLimitUnit) {
     case 'm': $memLimit *= 1024;
     case 'k': $memLimit *= 1024;
 }
-if ($memLimit >= 0 and $memLimit < 67108864) {
-    ini_set('memory_limit', '64M');
+if ($memLimit >= 0 and $memLimit < 134217728) {
+    ini_set('memory_limit', '128M');
 }
