@@ -438,7 +438,6 @@ class CRM_Utils_REST
           if (is_array($a_params)) {
             $_REQUEST = $a_params;
             $_REQUEST['json'] = 1;
-            print_r($_REQUEST);
             CRM_Utils_REST::ajax();
             return;
           }
