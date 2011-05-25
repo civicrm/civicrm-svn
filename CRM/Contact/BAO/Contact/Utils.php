@@ -502,6 +502,7 @@ WHERE id={$contactId}; ";
             
             $profileId     = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 
                                                           'on_behalf_organization', 'id', 'name' );
+            $form->assign( 'profileId', $profileId );
             $profileFields = CRM_Core_BAO_UFGroup::getFields( $profileId, false, CRM_Core_Action::VIEW, null, null, false,
                                                               null, false, null, CRM_Core_Permission::CREATE, null );
             

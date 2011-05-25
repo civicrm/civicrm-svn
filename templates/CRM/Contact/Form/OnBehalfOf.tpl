@@ -178,7 +178,7 @@ cj( "#mode" ).attr( 'checked', 'checked' );
    {literal}
    function setLocationDetails( contactID ) 
    {
-        var locationUrl = {/literal}"{$locDataURL}"{literal}+ contactID;
+        var locationUrl = {/literal}"{$locDataURL}"{literal} + contactID + "&ufId=" + {/literal}"{$profileId}"{literal};
         cj.ajax({
             url         : locationUrl,
             dataType    : "json",

@@ -35,6 +35,9 @@
  */
 
 require_once 'CRM/Core/Config.php';
+require_once 'CRM/Core/BAO/UFGroup.php';
+require_once 'CRM/Core/BAO/CustomField.php';
+require_once 'CRM/Profile/Form.php';
 
 /**
  * This class contains all the function that are called using AJAX
@@ -53,7 +56,8 @@ class CRM_Core_Page_AJAX_Location
     function getPermissionedLocation( ) 
     {
         $cid = CRM_Utils_Type::escape( $_GET['cid'], 'Integer' );
-        
+        $ufId = CRM_Utils_Type::escape( $_GET['ufId'], 'Integer' );
+                        
         require_once 'CRM/Core/BAO/Location.php';
         $entityBlock = array( 'contact_id' => $cid );
         $location    =& CRM_Core_BAO_Location::getValues( $entityBlock );
@@ -94,6 +98,25 @@ class CRM_Core_Page_AJAX_Location
         if ( array_key_exists( 'state_province', $addressSequence) ) {
             $elements['onbehalf_state_province-Primary'] = 
                 $location['address'][1]['state_province_id'];
+        }
+
+        //set custom field defaults
+        $defaults      = array( );
+        $profileFields = CRM_Core_BAO_UFGroup::getFields( $ufId, false, CRM_Core_Action::VIEW, null, null, false,
+                                                          null, false, null, CRM_Core_Permission::CREATE, null );
+        foreach ( $profileFields as $name => $field ) {
+            if ( !isset( $defaults[$name] ) ) {
+                if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID($name) ) {
+                    CRM_Core_BAO_CustomField::setProfileDefaults( $customFieldID, $name, $defaults,
+                                                                  $cid, CRM_Profile_Form::MODE_REGISTER );
+                }
+            }
+        }
+        
+        if ( !empty( $defaults ) ) {
+            foreach ( $defaults as $key => $value ) {
+                $elements["onbehalf_{$key}"] = $value;
+            }
         }
 
         echo json_encode( $elements );
