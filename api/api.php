@@ -93,9 +93,12 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     
     if ($result['is_error'] == 0){
     foreach($params as $field => $params){
-      
-      if (substr($field,0, 4) == 'api.' && is_array($params)){
-       $subAPI = explode('.',$field);
+      if (substr($field,0, 3) == 'api' && is_array($params)){
+        $separator = $field[3]; // can be api_ or api.
+        if (!($separator == '.' || $separator == '_'))
+          continue;
+       $subAPI = explode($separator,$field);
+
        $action = empty($subAPI[2])?$action:$subAPI[2];
        $subParams  = array();
        $subParams[strtolower($entity) . "_id"] = $result['id'];
