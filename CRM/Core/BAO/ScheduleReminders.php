@@ -69,12 +69,15 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         $event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
         $activityType = CRM_Core_PseudoConstant::activityType(false);
         $eventType = CRM_Event_PseudoConstant::eventType();
+        $activityContacts = CRM_Core_PseudoConstant::activityContacts();
 
         foreach ( $mapping as $value ) {
+
             $entityValue  = $value['entity_value'];
             $entityStatus = $value['entity_status'];
             $entityDate = $value['entity_date'];
-          
+            $entityRecipient = $value['entity_recipient'];
+
             if( $entityValue == 'activity_type' &&
                 $value['entity'] == 'civicrm_activity' ) {
                 $key = 'Activity';
@@ -97,7 +100,6 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
                 break;
 
             case 'civicrm_event':
-                require_once 'CRM/Event/PseudoConstant.php';
                 $sel2[$key] = $event;
                 break;
             }
@@ -109,6 +111,16 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
 
             case 'event_start_date':
                 $sel4[$entityDate] = ts('Event Start Date');
+                break;
+            }
+
+            switch ($entityRecipient) {
+            case 'activity_contacts':
+                $sel5[$entityRecipient] = $activityContacts;
+                break;
+                
+            case 'civicrm_participant_status_type':
+                $sel5[$entityRecipient] =  $participantStatus;
                 break;
             }
             
@@ -144,15 +156,13 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
                 break;
             }
         }
-        
-        return array(  $sel1 , $sel2, $sel3, $sel4 );
 
-
+        return array(  $sel1 , $sel2, $sel3, $sel4, $sel5 );
     }
    
     // function to retrieve a list of contact-ids that belongs to current actionMapping/site.
-    static function getRecipientContacts( $mappingID ) {
-
+    static function getRecipientContacts( $mappingID )
+    {
         require_once 'CRM/Core/BAO/ActionMapping.php';
         $actionMapping = new CRM_Core_DAO_ActionMapping( );
         $actionMapping->id = $mappingID;
