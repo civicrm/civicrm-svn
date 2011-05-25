@@ -1,5 +1,6 @@
 {literal}<?php{/literal}
 
+{* I agree - there must be a better way to do the nested arrays *}
 function {$function}_example(){literal}{{/literal}
  $params = 
 	array(
@@ -10,9 +11,11 @@ function {$function}_example(){literal}{{/literal}
            {foreach from=$subvalue key=subsubkey item=subsubvalue}
            '{$subsubkey}' => '{$subsubvalue}',
 
-           {/foreach}),{else}'{$subvalue}',
+			{/foreach}),
+		   {else}'{$subvalue}',
 {/if}
-           {/foreach}),{else}'{$v}',
+		{/foreach}),
+		   {else}'{$v}',
 {/if}
 {/foreach}
 
@@ -35,11 +38,22 @@ function {$function}_expectedresult(){literal}{{/literal}
            '{$subkey}' => {if is_array($subvalue)} array(
            {foreach from=$subvalue key=subsubkey item=subsubvalue}
            '{$subsubkey}' => {if is_array($subsubvalue)} array(
-           {foreach from=$subsubvalue key=subsubsubkey item=subsubsubvalue}
-           '{$subsubsubkey}' => '{$subsubsubvalue}',
-           {/foreach}),{else}'{$subsubvalue}',{/if}
-           {/foreach}),{else}'{$subvalue}',{/if}
-           {/foreach}),{else}'{$v}',{/if}
+{foreach from=$subsubvalue key=subsubsubkey item=subsubsubvalue}
+                            '{$subsubsubkey}' => {if is_array($subsubsubvalue)} array(
+{foreach from=$subsubsubvalue key=subsubsubsubkey item=subsubsubsubvalue}
+                                '{$subsubsubsubkey}' => {if is_array($subsubsubsubvalue)} array(
+{foreach from=$subsubsubsubvalue key=subsubsubsubsubkey item=subsubsubsubsubvalue}
+                                            '{$subsubsubsubsubkey}' => '{$subsubsubsubsubvalue}',
+{/foreach}									),
+{else}'{$subsubsubsubvalue}',{/if}
+                            {/foreach}),
+{else}'{$subsubsubvalue}',
+{/if}
+{/foreach}        ),
+{else}'{$subsubvalue}',
+{/if}
+{/foreach}           ),{else}'{$subvalue}',{/if}
+{/foreach}           ),{else}'{$v}',{/if}
 
 {/foreach}
       );
