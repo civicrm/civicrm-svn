@@ -63,7 +63,7 @@
               {$row.status}</td>
             {/if}
             <td>{$row.contact_type}</td>
-            <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}">{$row.sort_name}</a></td>
+            <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&key=`$qfKey`"}">{$row.sort_name}</a></td>
             {foreach from=$row item=value key=key} 
                {if ($key neq "checkbox") and ($key neq "action") and ($key neq "contact_type") and ($key neq "status") and ($key neq "sort_name") and ($key neq "contact_id") and ($key neq "contact_sub_type")}
                 <td>
@@ -93,7 +93,7 @@
                 {$row.status}</td>
             {/if}
             <td>{$row.contact_type}</td>	
-            <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}">{if $row.is_deleted}<del>{/if}{$row.sort_name}{if $row.is_deleted}</del>{/if}</a></td>
+            <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&key=`$qfKey`"}">{if $row.is_deleted}<del>{/if}{$row.sort_name}{if $row.is_deleted}</del>{/if}</a></td>
             {if $action eq 512 or $action eq 256}
               <td>{$row.street_address|mb_truncate:22:"...":true}</td>
               <td>{$row.city}</td>
