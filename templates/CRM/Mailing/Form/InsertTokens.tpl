@@ -89,6 +89,9 @@ function showSaveUpdateChkBox()
 }
 
 function selectValue( val ) {
+    document.getElementsByName("saveTemplate")[0].checked = false;
+    document.getElementsByName("updateTemplate")[0].checked = false;
+    showSaveUpdateChkBox();
     if ( !val ) {
         if ( !isPDF ) {
             document.getElementById(text_message).value ="";
