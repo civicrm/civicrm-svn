@@ -159,6 +159,149 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
 
         return array( $sel1 , $sel2, $sel3, $sel4, $sel5 );
     }
+
+    static function sendReminder( $contactId, $email, $mappingID, $from ) {
+        require_once "CRM/Core/BAO/Domain.php";
+        require_once "CRM/Utils/String.php";
+        require_once "CRM/Utils/Token.php";
+
+        $schedule = new CRM_Core_DAO_ActionSchedule( );
+        $schedule->mapping_id = $mappingID;
+
+        $domain = CRM_Core_BAO_Domain::getDomain( );
+        $result = null;
+        $hookTokens = array();
+        
+        if ( $schedule->find(true) ) {
+            $body_text = $schedule->body_text;
+            $body_html = $schedule->body_html;
+            $body_subject = $schedule->subject;
+            if (!$body_text) {
+                $body_text = CRM_Utils_String::htmlToText($body_html);
+            }
+            
+            $params = array(array('contact_id', '=', $contactId, 0, 0));
+            list($contact, $_) = CRM_Contact_BAO_Query::apiQuery($params);
+
+            //CRM-4524
+            $contact = reset( $contact );
+            
+            if ( !$contact || is_a( $contact, 'CRM_Core_Error' ) ) {
+                return null;
+            }
+
+            //CRM-5734
+            require_once 'CRM/Utils/Hook.php';
+            CRM_Utils_Hook::tokenValues( $contact, $contactId );
+            
+            CRM_Utils_Hook::tokens( $hookTokens );
+            $categories = array_keys( $hookTokens );
+            
+            $type = array('html', 'text');
+            
+            foreach( $type as $key => $value ) {
+                require_once 'CRM/Mailing/BAO/Mailing.php';
+                $dummy_mail = new CRM_Mailing_BAO_Mailing();
+                $bodyType = "body_{$value}";
+                $dummy_mail->$bodyType = $$bodyType;
+                $tokens = $dummy_mail->getTokens();
+                
+                if ( $$bodyType ) {
+                    $$bodyType = CRM_Utils_Token::replaceDomainTokens($$bodyType, $domain, true, $tokens[$value], true );
+                    $$bodyType = CRM_Utils_Token::replaceContactTokens($$bodyType, $contact, false, $tokens[$value], false, true );
+                    $$bodyType = CRM_Utils_Token::replaceComponentTokens($$bodyType, $contact, $tokens[$value], true );
+                    $$bodyType = CRM_Utils_Token::replaceHookTokens ( $$bodyType, $contact , $categories, true );
+                }
+            }
+            $html = $body_html;
+            $text = $body_text;
+            
+            require_once 'CRM/Core/Smarty/resources/String.php';
+            civicrm_smarty_register_string_resource( );
+            $smarty =& CRM_Core_Smarty::singleton( );
+            foreach( array( 'text', 'html') as $elem) {
+                $$elem = $smarty->fetch("string:{$$elem}");
+            }
+            
+            $message = new Mail_mime("\n");
+            
+            /* Do contact-specific token replacement in text mode, and add to the
+             * message if necessary */
+            if ( !$html || $contact['preferred_mail_format'] == 'Text' ||
+                 $contact['preferred_mail_format'] == 'Both') 
+                {
+                    // render the &amp; entities in text mode, so that the links work
+                    $text = str_replace('&amp;', '&', $text);
+                    $message->setTxtBody($text);
+                    
+                    unset( $text );
+                }
+            
+            if ($html && ( $contact['preferred_mail_format'] == 'HTML' ||
+                           $contact['preferred_mail_format'] == 'Both'))
+                {
+                    $message->setHTMLBody($html);
+                    
+                    unset( $html );
+                }
+            $recipient = "\"{$contact['display_name']}\" <$email>";
+            
+            $matches = array();
+            preg_match_all( '/(?<!\{|\\\\)\{(\w+\.\w+)\}(?!\})/',
+                            $body_subject,
+                            $matches,
+                            PREG_PATTERN_ORDER);
+            
+            $subjectToken = null;
+            if ( $matches[1] ) {
+                foreach ( $matches[1] as $token ) {
+                    list($type,$name) = preg_split( '/\./', $token, 2 );
+                    if ( $name ) {
+                        if ( ! isset( $subjectToken['contact'] ) ) {
+                            $subjectToken['contact'] = array( );
+                        }
+                        $subjectToken['contact'][] = $name;
+                    }
+                }
+            }
+            
+            $messageSubject = CRM_Utils_Token::replaceContactTokens($body_subject, $contact, false, $subjectToken);
+            $messageSubject = CRM_Utils_Token::replaceDomainTokens($messageSubject, $domain, true, $tokens[$value] );
+            $messageSubject = CRM_Utils_Token::replaceComponentTokens($messageSubject, $contact, $tokens[$value], true );
+            $messageSubject = CRM_Utils_Token::replaceHookTokens ( $messageSubject, $contact, $categories, true );
+          
+            $messageSubject = $smarty->fetch("string:{$messageSubject}");
+
+            $headers = array(
+                             'From'      => $from,
+                             'Subject'   => $messageSubject,
+                             );
+            $headers['To'] = $recipient;
+            
+            $mailMimeParams = array(
+                                    'text_encoding' => '8bit',
+                                    'html_encoding' => '8bit',
+                                    'head_charset'  => 'utf-8',
+                                    'text_charset'  => 'utf-8',
+                                    'html_charset'  => 'utf-8',
+                                    );
+            $message->get($mailMimeParams);
+            $message->headers($headers);
+
+            $config = CRM_Core_Config::singleton();
+            $mailer =& $config->getMailer();
+            
+            $body = $message->get();
+            $headers = $message->headers();
+            
+            CRM_Core_Error::ignoreException( );
+            $result = $mailer->send($recipient, $headers, $body);
+            CRM_Core_Error::setCallback();
+        }
+        $schedule->free( );
+        
+        return $result;
+    }
  
     /**
      * Function to add the schedules reminders in the db
@@ -179,21 +322,47 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         return $actionSchedule->save( );
     }
   
-    // function to retrieve a list of contact-ids that belongs to current actionMapping/site.
+    // function to retrieve a list of contact-ids that belongs to the given action mapping.
     static function getRecipientContacts( $mappingID )
     {
+        $contacts = array();
+
         require_once 'CRM/Core/BAO/ActionMapping.php';
-        $actionMapping = new CRM_Core_DAO_ActionMapping( );
-        $actionMapping->id = $mappingID;
+        $mapping = new CRM_Core_DAO_ActionMapping( );
+        $mapping->id = $mappingID;
+        $mapping->find( true );
+
+        $actionSchedule = new CRM_Core_DAO_ActionSchedule( );
+        $actionSchedule->id = $mappingID;
         
-        if ( $actionMapping->find( true ) ) {
-            switch ( $actionMapping->entity ) {
-            case 'civicrm_activity ' :
+        if ( $actionSchedule->find( true ) ) {
+            $value  = explode( CRM_Core_DAO::VALUE_SEPARATOR, $actionSchedule->entity_value  );
+            $value  = implode( ',', $value );
+
+            $status = explode( CRM_Core_DAO::VALUE_SEPARATOR, $actionSchedule->entity_status );
+            $status = implode( ',', $status );
+        
+            // FIXME: Need to generalize the query generation mechanism
+            switch ( $mapping->entity ) {
+            case 'civicrm_activity' :
                 $query = "
-SELECT id 
-FROM civicrm_contact ";
+SELECT assignee_contact_id as contact_id
+FROM   civicrm_activity ca
+INNER JOIN civicrm_activity_assignment aa ON  aa.activity_id = ca.id
+WHERE ca.activity_type_id IN ({$value}) AND ca.status_id IN ({$status})";
                 break;
+            default:
+                CRM_Core_Error::fatal( "Not sure how to find recipient contacts." );
             }
         }
+
+        // FIXME: store contacts in temp table and make cron handle mailings in batches
+        if ( $query ) {
+            $dao = CRM_Core_DAO::executeQuery( $query );
+            while ( $dao->fetch() ) {
+                $contacts[$dao->contact_id] = $dao->contact_id;
+            }
+        }
+        return $contacts;
     }
 }
