@@ -906,6 +906,89 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->assertTrue($this->isTextPresent("The Group '$groupName' has been saved."));
         return $groupName;
     }
+    
+    function WebtestAddActivity ( $activityType = "Meeting")
+    {
+        // Adding Adding contact with randomized first name for test testContactContextActivityAdd
+        // We're using Quick Add block on the main page for this.
+        $firstName1 = substr(sha1(rand()), 0, 7);
+        $this->webtestAddContact( $firstName1, "Summerson", $firstName1 . "@summerson.name" );
+        $firstName2 = substr(sha1(rand()), 0, 7);
+        $this->webtestAddContact( $firstName2, "Anderson", $firstName2 . "@anderson.name" ); 
+
+        // Go directly to the URL of the screen that you will be testing (Activity Tab).
+        $this->click("css=li#tab_activity a");
+
+        // waiting for the activity dropdown to show up
+        $this->waitForElementPresent("other_activity");
+
+        // Select the activity type from the activity dropdown
+        $this->select("other_activity", "label=Meeting");
+        $this->waitForElementPresent("_qf_Activity_upload");
+
+        $this->assertTrue($this->isTextPresent("Anderson, " . $firstName2), "Contact not found in line " . __LINE__ );
+
+        // Typing contact's name into the field (using typeKeys(), not type()!)...
+        $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", $firstName1);
+
+        // ...waiting for drop down with results to show up...
+        $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
+
+        // ...clicking first result (which is a li element), selenium picks first matching element so we don't need to specify that...
+        $this->click("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
+
+        // ...again, waiting for the box with contact name to show up...
+        $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
+
+        // ...and verifying if the page contains properly formatted display name for chosen contact.
+        $this->assertTrue($this->isTextPresent("Summerson, " . $firstName1), "Contact not found in line " . __LINE__ );
+
+        // Since we're here, let's check if screen help is being displayed properly
+        $this->assertTrue($this->isTextPresent("A copy of this activity will be emailed to each Assignee"));
+
+        // Putting the contents into subject field - assigning the text to variable, it'll come in handy later
+        $subject = "This is subject of test activity being added through activity tab of contact summary screen.";
+        // For simple input fields we can use field id as selector
+        $this->type("subject", $subject);
+        $this->type("location", "Some location needs to be put in this field.");
+
+        $this->webtestFillDateTime('activity_date_time','+1 month 11:10PM');
+
+        // Setting duration.
+        $this->type("duration", "30");
+
+        // Putting in details.
+        $this->type("details", "Really brief details information.");
+
+        // Making sure that status is set to Scheduled (using value, not label).
+        $this->select("status_id", "value=1");
+
+        // Setting priority.
+        $this->select("priority_id", "value=1");   
+
+        // Scheduling follow-up.
+        $this->click( "css=.crm-activity-form-block-schedule_followup div.crm-accordion-header" );
+        $this->select( "followup_activity_type_id", "value=1" );
+        $this->type( "interval", "1" );
+        $this->select( "interval_unit","value=day" ); 
+        $this->type( "followup_activity_subject","This is subject of schedule follow-up activity" );
+
+        // Clicking save.
+        $this->click("_qf_Activity_upload");
+        $this->waitForPageToLoad("30000");
+
+        // Is status message correct?
+        $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");
+
+        $this->waitForElementPresent("xpath=//div[@id='Activities']//table/tbody/tr[2]/td[8]/span/a[text()='View']");
+
+        // click through to the Activity view screen
+        $this->click("xpath=//div[@id='Activities']//table/tbody/tr[2]/td[8]/span/a[text()='View']");
+        $this->waitForElementPresent('_qf_Activity_cancel-bottom');
+        $elements = $this->parseURL( );
+        $activityID = $elements['queryString']['id'];
+        return $activityID;
+    }
 
     static function checkDoLocalDBTest( ) {
         if ( defined( 'CIVICRM_WEBTEST_LOCAL_DB' ) && 
