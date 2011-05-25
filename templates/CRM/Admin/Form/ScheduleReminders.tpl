@@ -81,7 +81,7 @@
     <tr class="crm-scheduleReminder-form-block-description">
         <td class="right">{$form.reminder_interval.label}</td>
 	<td colspan="3">{$form.reminder_interval.html}&nbsp;&nbsp;&nbsp;{$form.reminder_frequency.html}&nbsp;&nbsp;&nbsp;
-			{$form.action_condition.html}&nbsp;&nbsp;&nbsp;{$form.entity_date.html}
+			{$form.reminder_action.html}&nbsp;&nbsp;&nbsp;{$form.entity_date.html}
 	</td>
     </tr>
     <tr class="crm-scheduleReminder-form-block-is_repeat"><th scope="row" class="label" width="20%">{$form.is_repeat.label}</th>

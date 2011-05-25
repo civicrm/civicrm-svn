@@ -104,7 +104,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
 
         $condition =  array( 'before' => ts('before'), 
                              'after'  => ts('after') );
-        $this->add( 'select', 'action_condition', ts( 'Action Condition' ), $condition, true );
+        $this->add( 'select', 'reminder_action', ts( 'Action Condition' ), $condition, true );
                 
         $this->add( 'select', 'entity_date', ts( 'Date Field' ), $sel4, true );
 
@@ -160,6 +160,51 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
      */
     public function postProcess() 
     {
+        $values = $this->controller->exportValues( $this->getName() );
+
+        //name
+        //mapping_id
+
+        $keys = array('title', 'reminder_interval' ,'reminder_frequency',
+                      'reminder_action', 'is_repeat',
+                      'repetition_start_frequency_unit',
+                      'repetition_start_frequency_interval',
+                      'repetition_end_frequency_unit',
+                      'repetition_end_frequency_interval',
+                      'repetition_end_action',
+                      'subject',
+                      'is_active',
+                      'record_activity'
+                      );
+        
+        foreach ( $keys as $key ) {
+            $params[$key] = CRM_Utils_Array::value( $key, $values );
+        }
+        
+        $params['body_text'] = CRM_Utils_Array::value( 'text_message', $values );
+        $params['body_html'] = CRM_Utils_Array::value( 'html_message', $values );
+
+        if ( CRM_Utils_Array::value( 'recipient', $values ) == 0 ) {
+            $params['recipient_manual'] = CRM_Utils_Array::value( 'recipient_manual_id', $values );
+        } else {
+            $params['recipient'] = CRM_Utils_Array::value( 'recipient', $values );
+        }
+
+        $entity_value  = $values['entity'][1];
+        $entity_status = $values['entity'][2];
+
+        foreach ( array('entity_value', 'entity_status') as $key ) {
+            $params[$key] = implode( CRM_Core_DAO::VALUE_SEPARATOR, $$key );
+        }
+        
+        CRM_Core_BAO_ScheduleReminders::add($params, $ids);
+
+        $status = ts( "Your new Reminder titled <strong>{$values['title']}</strong> has been saved." );
+        if ( $this->_action & CRM_Core_Action::UPDATE ) { 
+            $status = ts( "Your Reminder titled <strong>{$values['title']}</strong> has been updated." );
+        }
+        CRM_Core_Session::setStatus( $status );
+
     }
 
 }

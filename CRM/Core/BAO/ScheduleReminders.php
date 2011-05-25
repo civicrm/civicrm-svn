@@ -157,9 +157,28 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
             }
         }
 
-        return array(  $sel1 , $sel2, $sel3, $sel4, $sel5 );
+        return array( $sel1 , $sel2, $sel3, $sel4, $sel5 );
     }
-   
+ 
+    /**
+     * Function to add the schedules reminders in the db
+     *
+     * @param array $params (reference ) an assoc array of name/value pairs
+     * @param array $ids    the array that holds all the db ids  
+     *
+     * @return object CRM_Core_DAO_ActionSchedule
+     * @access public
+     * @static
+     *
+     */
+    static function add( &$params, &$ids ) 
+    {
+        $actionSchedule = new CRM_Core_DAO_ActionSchedule( );
+        $actionSchedule->copyValues( $params );
+        
+        return $actionSchedule->save( );
+    }
+  
     // function to retrieve a list of contact-ids that belongs to current actionMapping/site.
     static function getRecipientContacts( $mappingID )
     {
