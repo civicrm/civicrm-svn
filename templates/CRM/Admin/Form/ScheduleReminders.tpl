@@ -40,7 +40,7 @@
   </div>
 {else}
   <table class="form-layout-compressed">
-    <tr class="crm-scheduleReminder-form-block-name">
+    <tr class="crm-scheduleReminder-form-block-title">
         <td class="right">{$form.title.label}</td><td colspan="3">{$form.title.html}</td>
     </tr>
 
@@ -68,6 +68,9 @@
             </tr>
         </table>
         </td>
+    </tr>
+    <tr class="crm-scheduleReminder-form-block-recipient">
+        <td class="right">{$form.recipient.label}</td><td colspan="3">{$form.recipient.html}</td>
     </tr>
   </table>
   <fieldset id="compose_id"><legend>{ts}Email{/ts}</legend>

@@ -63,7 +63,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->add( 'text', 'title', ts( 'Title' ) );
 
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
-        list( $sel1, $sel2, $sel3, $sel4 ) = CRM_Core_BAO_ScheduleReminders::getSelection(  ) ;
+        list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ScheduleReminders::getSelection(  ) ;
         
         $sel =& $this->add('hierselect',
                            'entity',
@@ -81,7 +81,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         }
 
         if ( is_a($sel->_elements[2], 'HTML_QuickForm_select') ) {
-            // make second selector a multi-select -
+            // make third selector a multi-select -
             $sel->_elements[2]->setMultiple(true);
             $sel->_elements[2]->setSize(5);
         }
@@ -117,7 +117,9 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->add( 'select', 'repetition_end_frequency_unit', ts( 'until' ), $freqUnitsDisplay );
         $this->add( 'select', 'repetition_end_frequency_interval', ts( 'until' ), $numericOptions );
         $this->add( 'select', 'repetition_end_action', ts( 'Repetition Condition' ), $condition, true );
-        
+       
+        $this->add( 'select', 'recipient', ts( 'Recipient' ), $sel5['activity_contacts'] ); 
+
         require_once 'CRM/Mailing/BAO/Mailing.php';
         CRM_Mailing_BAO_Mailing::commonCompose( $this );
 
