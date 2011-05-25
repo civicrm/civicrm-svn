@@ -33,13 +33,6 @@
        <add>3.4</add>
   </field>
   <field>
-       <name>entity</name>
-       <type>varchar</type>
-       <length>64</length>
-       <comment>Entity for which the reminder is created</comment>
-       <add>3.4</add>
-  </field>
- <field>
        <name>recipient</name>
        <type>varchar</type>
        <length>64</length>
@@ -96,8 +89,7 @@
   </field>
   <field>
        <name>repetition_start_frequency_interval</name>
-       <type>enum</type> 
-       <values>day,week,month,year</values>
+       <type>int unsigned</type>
        <comment>Time interval for repeating the reminder.</comment>
        <add>3.4</add>
   </field>
@@ -110,8 +102,7 @@
   </field>
   <field>
        <name>repetition_end_frequency_interval</name>
-       <type>enum</type> 
-       <values>day,week,month,year</values>
+       <type>int unsigned</type>
        <comment>Time interval till repeating the reminder.</comment>
        <add>3.4</add>
   </field>
