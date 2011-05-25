@@ -72,6 +72,8 @@
     <tr class="crm-scheduleReminder-form-block-recipient">
         <td class="right">{$form.recipient.label}</td><td colspan="3">{$form.recipient.html}</td>
     </tr>
+    <tr id="recipientManual" class="crm-scheduleReminder-form-block-recipient_manual"><td class="label">{$form.recipient_manual.label}</td><td>{$form.recipient_manual.html|crmReplace:class:six}</td></tr>
+
   </table>
   <fieldset id="compose_id"><legend>{ts}Email{/ts}</legend>
    	<table id="email-field-table" class="form-layout-compressed">
@@ -112,4 +114,11 @@
     invert              = "false"
 }
 
-
+{include file="CRM/common/showHideByFieldValue.tpl" 
+    trigger_field_id    ="recipient"
+    trigger_value       = '0'
+    target_element_id   ="recipientManual" 
+    target_element_type ="table-row"
+    field_type          ="select"
+    invert              = 0
+}

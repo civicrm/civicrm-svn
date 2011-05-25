@@ -118,7 +118,11 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->add( 'select', 'repetition_end_frequency_interval', ts( 'until' ), $numericOptions );
         $this->add( 'select', 'repetition_end_action', ts( 'Repetition Condition' ), $condition, true );
        
-        $this->add( 'select', 'recipient', ts( 'Recipient' ), $sel5['activity_contacts'] ); 
+        $this->add( 'select', 'recipient', ts( 'Recipient' ), $sel5['activity_contacts'],
+                    false, array( 'onChange' => "return showHideByValue('recipient','0','recipientManual','table-row','select',false);") 
+                    );
+        
+        $this->add( 'text', 'recipient_manual', ts('Manual Recipients') );
 
         require_once 'CRM/Mailing/BAO/Mailing.php';
         CRM_Mailing_BAO_Mailing::commonCompose( $this );

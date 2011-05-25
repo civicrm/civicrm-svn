@@ -116,13 +116,11 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
 
             switch ($entityRecipient) {
             case 'activity_contacts':
-                $sel5[$entityRecipient] = array_merge( $activityContacts, 
-                                                       array( '' => ts('Manual') ) );
+                $sel5[$entityRecipient] = $activityContacts + array(  ts('Manual') );
                 break;
                 
             case 'civicrm_participant_status_type':
-                $sel5[$entityRecipient] =  array_merge( $participantStatus, 
-                                                        array( '' => ts('Manual') ) );
+                $sel5[$entityRecipient] = $participantStatus + array( ts('Manual') );
                 break;
             }
             
