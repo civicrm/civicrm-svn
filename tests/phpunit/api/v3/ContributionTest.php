@@ -91,7 +91,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
                         'version'								=> $this->_apiversion,
                         );
         $this->_contribution =& civicrm_api3_contribution_create($p);
-        $this->assertEquals( $this->_contribution['is_error'], 1,'In line ' . __LINE__ );        
+        $this->assertEquals( $this->_contribution['is_error'], 0 ,'In line ' . __LINE__ );        
         
         $params = array('contribution_id'=>$this->_contribution['id'],
                          'version'								=> $this->_apiversion,                         );        
