@@ -214,24 +214,18 @@ function civicrm_api3_contact_activity_set( $params ) {
  */
 function _civicrm_api3_contact_activity_resolve_params( $params ) {    
     $contactParams  = $activityParams = array( );    
-    
-    $contactType    = CRM_Contact_BAO_Contact::getContactType( $params['contact_id'] );
-    $contactFields  = CRM_Contact_BAO_Contact::exportableFields( $contactType );
     $activityFields = CRM_Activity_BAO_Activity::getProfileFields( );
-        
-    // Differentiate conact and activity fields
-    foreach( $contactFields as $n => $f ) {
-        if ( isset($params["return.{$n}"]) ) {
-            $contactParams["return.{$n}"] = 1;
-        } else if ( isset($params[$n]) ) {
-            $contactParams[$n] = $params[$n];
+
+    foreach( $params as $n => $f ) {
+        $fld = $n;
+        if ( substr( $n, 0, 6 ) == 'return' ) {
+            $fld = substr($n, 7);
         }
-    }
-    foreach( $activityFields as $n => $f ) {
-        if ( isset($params["return.{$n}"]) ) {
-            $activityParams["return.{$n}"] = 1;
-        } else if ( isset($params[$n]) ) {
-            $activityParams[$n] = $params[$n];
+        
+        if ( isset($activityFields[$n]) ) {
+            $activityParams[$n] = $f;
+        } else {
+            $contactParams[$n]  = $f;
         }
     }
             

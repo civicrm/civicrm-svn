@@ -223,6 +223,8 @@ function _civicrm_api3_custom_field_validate_field( $fieldName, $value, $fieldDe
     }
 
     $dataType = $fieldDetails['data_type'];
+    $htmlType = $fieldDetails['html_type'];
+    
     switch ( $dataType ) {
         
     case 'Int':
@@ -262,26 +264,44 @@ function _civicrm_api3_custom_field_validate_field( $fieldName, $value, $fieldDe
         break;
             
     case 'Country':
-        if( !empty($value) ) {
-            $query = "SELECT count(*) FROM civicrm_country WHERE name = %1 OR iso_code = %1";
-            $params = array( 1 => array( $value, 'String' ) );
-                if ( CRM_Core_DAO::singleValueQuery( $query, $params ) <= 0 ) {
-                    $errors[$fieldName] = 'Invalid country for '. $fieldName;
-                }
+        if( empty($value) ) {
+            break;
+        }
+        if ( $htmlType != 'Multi-Select Country' && is_array($value) ) {
+            $errors[$fieldName] = 'Invalid country for '. $fieldName;
+            break;
+        }
+
+        if ( !is_array($value) ) {
+            $value = array($value);
+        }
+        
+        $query  = "SELECT count(*) FROM civicrm_country WHERE id IN (". implode(',', $value) .")";
+        if ( CRM_Core_DAO::singleValueQuery( $query ) < count($value) ) {
+            $errors[$fieldName] = 'Invalid country(s) for '. $fieldName;
         }
         break;
         
     case 'StateProvince':
-        if( !empty($value) ) {
-                $query = "
+        if( empty($value) ) {
+            break;
+        }
+
+        if ( $htmlType != 'Multi-Select State/Province' && is_array($value) ) {
+            $errors[$fieldName] = 'Invalid State/Province for '. $fieldName;
+            break;
+        }
+        
+        if ( !is_array($value) ) {
+            $value = array($value);
+        }
+
+        $query = "
 SELECT count(*) 
   FROM civicrm_state_province
- WHERE name = %1
-    OR abbreviation = %1";
-                $params = array( 1 => array( $value, 'String' ) );
-                if ( CRM_Core_DAO::singleValueQuery( $query, $params ) <= 0 ) {
-                    $errors[$fieldName] = 'Invalid State/Province for '. $fieldName;
-                }
+ WHERE id IN ('". implode("','", $value ) ."')";
+        if ( CRM_Core_DAO::singleValueQuery( $query ) < count($value) ) {
+            $errors[$fieldName] = 'Invalid State/Province for '. $fieldName;
         }
         break;
         
@@ -290,7 +310,6 @@ SELECT count(*)
         break;
     }
     
-    $htmlType = $fieldDetails['html_type'];
     if ( in_array($htmlType, array('Select', 'Multi-Select', 'CheckBox', 'Radio', 'AdvMulti-Select')) &&
          !isset($errors[$fieldName]) ) {
         require_once 'CRM/Core/OptionGroup.php';

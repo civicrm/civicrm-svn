@@ -2492,7 +2492,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
 								}
                             }
                             
-                            if ( !$skipValue ) {
+                            if ( !$skipValue || $isStandalone ) {
                                 $defaults[$fldName] = $customValue;
                             }
                             unset($defaults[$customKey]);
