@@ -100,13 +100,13 @@ class CRM_Utils_Hook {
      *
      * @access public
      */
-    static function links( $op, $objectName, &$objectId, &$links ) {
+    static function links( $op, $objectName, &$objectId, &$links, &$mask=null ) {
         $config = CRM_Core_Config::singleton( );  
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         return   
             eval( 'return ' .
                   $config->userHookClass .
-                  '::invoke( 4, $op, $objectName, $objectId, $links, $op, \'civicrm_links\' );' );  
+                  '::invoke( 5, $op, $objectName, $objectId, $links, $mask, \'civicrm_links\' );' );  
     }
 
     /** 

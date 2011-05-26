@@ -388,7 +388,12 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
                 $rows[$key]['action'] = 
                     CRM_Core_Action::formLink( $actionLinks,
                                                $actionMask,
-                                               array( 'mid' => $row['id'] ) );
+                                               array( 'mid' => $row['id']),
+                                               "more",
+                                               false,
+                                               "view.mailing.browse",
+                                               "Mailing",
+                                               $row['id'] );
 
                 //unset($rows[$key]['id']);
                 // if the scheduled date is 0, replace it with an empty string

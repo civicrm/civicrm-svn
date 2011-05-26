@@ -159,7 +159,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         // see if other modules want to add a link activtity bar
         require_once 'CRM/Utils/Hook.php';
         $hookLinks = CRM_Utils_Hook::links( 'view.contact.activity', 'Contact', 
-                                            $this->_contactId, CRM_Core_DAO::$_nullObject );
+                                            $this->_contactId, CRM_Core_DAO::$_nullObject, null );
         if ( is_array( $hookLinks ) ) {
             $this->assign( 'hookLinks', $hookLinks );
         }
