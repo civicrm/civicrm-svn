@@ -249,9 +249,20 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
     function mainProcess() {
         $this->postProcess( );
 
+        $this->postProcessHook( );
+    }
+
+    /**
+     * The postProcess hook is typically called by the framework
+     * However in a few cases, the form exits or redirects early in which 
+     * case it needs to call this function so other modules can do the needful
+     * Calling this function directly should be avoided if possible. In general a
+     * better way is to do setUserContext so the framework does the redirect
+     *
+     */
+    function postProcessHook( ) {
         CRM_Utils_Hook::postProcess( get_class( $this ),
                                      $this );
-
     }
 
     /**

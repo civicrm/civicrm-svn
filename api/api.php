@@ -90,14 +90,36 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
         return $errorFnName( "API ($entity,$action) does not exist (join the API team and implement $function" );
     }
     $result = isset($extra) ? $function($params, $extra) : $function($params);
+    
+    if (CRM_Utils_Array::value( 'is_error', $result, 0 ) == 0) {
+        foreach($params as $field => $params){
+            if (substr($field,0, 3) == 'api' && is_array($params)){
+                $separator = $field[3]; // can be api_ or api.
+                if (!($separator == '.' || $separator == '_')) {
+                    continue;
+                }
+                $subAPI = explode($separator,$field);
 
-    if ($result['is_error'] == 0 && isset($params['entities']) && is_array($params['entities']) && strtolower($action) == 'create'){
-      foreach ($params['entities'] as $subentity => $subParams) {      
-        $subParams[strtolower($entity) . "_id"] = $result['id'];
-        $subParams['version'] = $version;
-        $result['values'][$result['id']]['entities'][$subentity] = civicrm_api($subentity,$action,$subParams);
-      }
+                $action = empty($subAPI[2])?$action:$subAPI[2];
+                $subParams  = array();
+                $subParams[strtolower($entity) . "_id"] = $result['id'];
+                $subParams['version'] = $version;
+                $subParams['sequential'] = 1;
+                if(array_key_exists(0, $params)){
+                    // it is a numerically indexed array - ie. multiple creates
+                    foreach ($params as $entity => $entityparams){
+                        $subParams = array_merge($subParams,$entityparams);
+                        $result['values'][$result['id']][$field][] = civicrm_api($subAPI[1],$action,$subParams);
+                    }
+                }else{
+
+                    $subParams = array_merge($subParams,$params);
+                    $result['values'][$result['id']][$field] = civicrm_api($subAPI[1],$action,$subParams);
+                }
+            }
+        }
     }
+    
     
     return $result;
   } catch (PEAR_Exception $e) {

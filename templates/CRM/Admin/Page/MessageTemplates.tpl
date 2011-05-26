@@ -73,7 +73,14 @@
       </div>
     </div>
   </div>
-  
+
+  <div class="crm-section msg_html-section">
+  <h3 class="header-dark">{$form.pdf_format_id.label}</h3>
+    <div class='text'>
+      {$form.pdf_format_id.html}
+    </div>
+  </div>
+    
   <div id="crm-submit-buttons">{$form.buttons.html}</div>
   </fieldset>
 {/if}

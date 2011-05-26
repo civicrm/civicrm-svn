@@ -36,8 +36,6 @@
 
 require_once 'CRM/Activity/Import/Parser.php';
 
-civicrm_api_include('utils', false, 3);
-
 /**
  * class to parse activity csv files
  */
@@ -269,7 +267,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
             }
         }
         //date-Format part ends
-        civicrm_api_include('activity', false, 3);
+        require_once 'api/v2/utils.v2.php';
         $formatError = _civicrm_activity_formatted_param( $params, $params, true );
         
         if ( $formatError ) {

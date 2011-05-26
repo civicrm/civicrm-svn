@@ -3,7 +3,7 @@
 function event_delete_example(){
     $params = array(
     
-                  'event_id' 		=> '1',
+                  'id' 		=> '18',
                   'version' 		=> '3',
 
   );

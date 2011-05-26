@@ -135,6 +135,7 @@ function _civicrm_og_sync_create_group ( $nid, $uid ) {
     }
     
     require_once 'CRM/Bridge/OG/Drupal.php';
+    require_once 'CRM/Bridge/OG/Utils.php';
     $group_source = CRM_Bridge_OG_Utils::ogSyncName( $nid );
     $acl_source = CRM_Bridge_OG_Utils::ogSyncACLName( $nid ) ;
     $group_id = CRM_Bridge_OG_Utils::groupID( $group_source );

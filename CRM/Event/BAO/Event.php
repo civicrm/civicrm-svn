@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Event/DAO/Event.php';
+require_once 'CRM/Event/PseudoConstant.php';
 
 class CRM_Event_BAO_Event extends CRM_Event_DAO_Event 
 {
@@ -101,13 +102,11 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         CRM_Utils_System::flushCache( );
 
         require_once 'CRM/Utils/Hook.php';
-        
         if ( CRM_Utils_Array::value( 'id', $params ) ) {
             CRM_Utils_Hook::pre( 'edit', 'Event', $params['id'], $params );
         } else {
             CRM_Utils_Hook::pre( 'create', 'Event', null, $params ); 
         }
-
         
         $event = new CRM_Event_DAO_Event( );
         
@@ -210,7 +209,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
                               );
         require_once 'CRM/Core/BAO/OptionGroup.php';
         foreach ( $dependencies as $daoName => $values ) {
-            require_once (str_replace( '_', DIRECTORY_SEPARATOR, $daoName ) . ".php");
+            require_once (str_replace( '_', DIRECTORY_SEPARATOR, $daoName ) . '.php');
             eval('$dao = new ' . $daoName . '( );');
             if ( $daoName == 'CRM_Core_DAO_OptionGroup' ) {
                 $dao->name = $values['name'];
@@ -231,7 +230,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
             }
         }
         require_once 'CRM/Core/OptionGroup.php';
-        CRM_Core_OptionGroup::deleteAssoc ("civicrm_event.amount.{$id}.discount.%", "LIKE");
+        CRM_Core_OptionGroup::deleteAssoc ("civicrm_event.amount.{$id}.discount.%", 'LIKE');
         
         // price set cleanup, CRM-5527 
         require_once 'CRM/Price/BAO/Set.php';
@@ -523,9 +522,8 @@ LIMIT      0, 10
                     $eventSummary['events'][$dao->id]['statuses'][$class][] = $statusInfo;
                 }
             }
-        }
-        
-        require_once 'CRM/Event/PseudoConstant.php';
+        }        
+
         $countedRoles     = CRM_Event_PseudoConstant::participantRole( null, 'filter = 1' );
         $nonCountedRoles  = CRM_Event_PseudoConstant::participantRole( null, '( filter = 0 OR filter IS NULL )' );
         $countedStatus    = CRM_Event_PseudoConstant::participantStatus( null, 'is_counted = 1' );
@@ -562,7 +560,6 @@ LIMIT      0, 10
                                   $role           = true ) {
         
         // consider both role and status for counted participants, CRM-4924.
-        require_once 'CRM/Event/PseudoConstant.php';
         require_once 'CRM/Event/BAO/Participant.php';
         $operator = " AND ";
         // not counted participant.
@@ -879,7 +876,7 @@ WHERE civicrm_event.is_active = 1
                                                              'entity_table' => 'civicrm_event'),
                                                       array( 'entity_id'    => $copyEvent->id ) );
         
-        require_once "CRM/Core/BAO/OptionGroup.php";
+        require_once 'CRM/Core/BAO/OptionGroup.php';
         //copy option Group and values
         $copyEvent->default_fee_id = CRM_Core_BAO_OptionGroup::copyValue('event', 
                                                                          $id, 
@@ -1258,7 +1255,6 @@ WHERE civicrm_event.is_active = 1
         if ( $gid ) {
             require_once 'CRM/Core/BAO/UFGroup.php';
             require_once 'CRM/Profile/Form.php';
-            require_once 'CRM/Event/PseudoConstant.php';
             $session = CRM_Core_Session::singleton( );
             $contactID = $session->get( 'userID' );
             if ( $contactID ) {
@@ -1504,7 +1500,6 @@ WHERE  id = $cfID
         $where = "participant.registered_by_id={$participantId}";
         if ( $skipCancel ) {
             $cancelStatusId = 0;
-            require_once 'CRM/Event/PseudoConstant.php';
             $negativeStatuses = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Negative'"  ); 
             $cancelStatusId = array_search( 'Cancelled', $negativeStatuses );
             $where .= " AND participant.status_id != {$cancelStatusId}";
@@ -1676,9 +1671,8 @@ WHERE  ce.loc_block_id = $locBlockId";
             return $alreadyRegistered;
         }
 
-        require_once 'CRM/Event/PseudoConstant.php';
         require_once 'CRM/Event/DAO/Participant.php';
-        $statusTypes = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
+        $statusTypes = CRM_Event_PseudoConstant::participantStatus( null, 'is_counted = 1' );
 
         $participant = new CRM_Event_DAO_Participant( );
         $participant->copyValues( $params );
@@ -1709,7 +1703,6 @@ WHERE  ce.loc_block_id = $locBlockId";
 
         if ( empty($permissions) ) {
             require_once 'CRM/ACL/API.php';
-            require_once 'CRM/Event/PseudoConstant.php';
             $allEvents = CRM_Event_PseudoConstant::event( null, true );
             $createdEvents = array( );
 

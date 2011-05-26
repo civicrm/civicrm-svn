@@ -69,6 +69,11 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
      */
     protected function tearDown()
     {
+        //  Truncate the tables
+        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+                             dirname(__FILE__) . '/../../CiviTest/truncate-ufgroup.xml') );
     }
 
     ///////////////// civicrm_group_organization_get methods
@@ -155,7 +160,7 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
     {
         $params = array( 'organization_id' => $this->_orgID,
                          'group_id'        => $this->_groupID,
-                         'version'			 => $this->_apiversion,
+                         'version'         => $this->_apiversion,
                          );
         $result =& civicrm_api3_group_organization_create($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 

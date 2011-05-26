@@ -336,7 +336,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
                                         'entity_id'     => $contact->id,
                                         'entity_table'  => 'civicrm_contact',
                                         'note'          => $note['note'],
-                                        'subject'       => $note['subject'],
+                                        'subject'       => CRM_Utils_Array::value( 'subject', $note ),
                                         'contact_id'    => $contactId
                                         );
                     CRM_Core_BAO_Note::add($noteParams, CRM_Core_DAO::$_nullArray);
@@ -384,10 +384,14 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         $transaction->commit( );
         
         // CRM-6367: fetch the right label for contact type’s display
-        $contact->contact_type_display = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_ContactType', $contact->contact_type, 'label', 'name');
+        $contact->contact_type_display = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_ContactType',
+                                                                     $contact->contact_type,
+                                                                     'label',
+                                                                     'name' );
 
         if ( ! $config->doNotResetCache ) {
-            // Note: doNotResetCache flag is currently set by import contact process, since resetting and 
+            // Note: doNotResetCache flag is currently set by import contact process and merging,
+            // since resetting and 
             // rebuilding cache could be expensive (for many contacts). We might come out with better 
             // approach in future. 
             require_once 'CRM/Contact/BAO/Contact/Utils.php';
@@ -1484,6 +1488,8 @@ ORDER BY civicrm_email.is_primary DESC";
      * @params  int    $addToGroupID  specifies the default group to which contact is added.
      * @params  int    $ufGroupId     uf group id (profile id)
      * @param   string $ctype         contact type
+     * @param   boolean $visibility   basically lets us know where this request is coming from
+     *                                if via a profile from web, we restrict what groups are changed
      *
      * @return  int                   contact id created/edited
      * @static

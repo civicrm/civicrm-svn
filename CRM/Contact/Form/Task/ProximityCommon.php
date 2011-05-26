@@ -91,8 +91,8 @@ class CRM_Contact_Form_Task_ProximityCommon extends CRM_Contact_Form_Task {
 
         $form->add( 'text', 'prox_postal_code', ts( 'Postal Code' ), null, false );
 
-        self::setDefaultValues( $form );
-        if ( $defaults['prox_country_id'] ) {
+        $defaults = self::setDefaultValues( $form );
+        if ( CRM_Utils_Array::value( 'prox_country_id', $defaults ) ) {
             $stateProvince = array( '' => ts('- select -') ) + CRM_Core_PseudoConstant::stateProvinceForCountry( $defaults['prox_country_id'] );
         } else {
             $stateProvince = array( '' => ts('- select -') ) + CRM_Core_PseudoConstant::stateProvince( );
@@ -168,6 +168,7 @@ class CRM_Contact_Form_Task_ProximityCommon extends CRM_Contact_Form_Task {
     		}
     	}
         $form->setDefaults( $defaults );
+        return $defaults;
     }
 
 }

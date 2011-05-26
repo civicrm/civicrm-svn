@@ -80,6 +80,14 @@ class api_v2_GroupNestingTest extends CiviUnitTestCase
      */
     protected function tearDown()
     {
+        // truncate a few tables
+        $tablesToTruncate = array( 'civicrm_contact',
+                                   'civicrm_group',
+                                   'civicrm_group_nesting',
+                                   'civicrm_group_contact',
+                                   'civicrm_subscription_history' );
+        
+        $this->quickCleanup( $tablesToTruncate );
     }
 
 ///////////////// civicrm_group_nesting_get methods

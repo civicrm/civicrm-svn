@@ -102,50 +102,23 @@ WHERE     pledge_id = %1
         require_once 'CRM/Contribute/PseudoConstant.php';
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
-        $date = array();
-        $scheduled_date =  CRM_Utils_Date::processDate( $params['scheduled_date']);
-        
-        $date['year']   = (int) substr($scheduled_date,  0, 4);
-        $date['month']  = (int) substr($scheduled_date,  4, 2);
-        $date['day']    = (int) substr($scheduled_date,  6, 2);
-        
+     
+       
         $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
-        //calculation of schedule date according to frequency day of period
-        //frequency day is not applicable for daily installments
-        if ( $params['frequency_unit'] != 'day' && $params['frequency_unit'] != 'year') {
-            if ( $params['frequency_unit'] != 'week' ) {
-                
-                //for month use day of next month as next payment date 
-                $date['day'] = $params['frequency_day'];
-            } else if ( $params['frequency_unit'] == 'week' ) {
-                
-                //for week calculate day of week ie. Sunday,Monday etc. as next payment date
-                $dayOfWeek = date('w',mktime(0, 0, 0, $date['month'], $date['day'], $date['year'] ));
-                $frequencyDay =   $params['frequency_day'] - $dayOfWeek;
-                
-                $scheduleDate =  explode ( "-", date( 'n-j-Y', mktime ( 0, 0, 0, $date['month'], 
-                                                                        $date['day'] + $frequencyDay, $date['year'] )) );
-                $date['month'] = $scheduleDate[0];
-                $date['day']   = $scheduleDate[1];
-                $date['year']  = $scheduleDate[2];
-            }
-        }
+ 
         //calculate the scheduled date for every installment
         $now = date('Ymd') . '000000';
         $statues = $prevScheduledDate = array ( );         
-        $prevScheduledDate[1] = $scheduled_date;
+        $prevScheduledDate[1] =  CRM_Utils_Date::processDate( $params['scheduled_date']);
 
         if ( CRM_Utils_Date::overdue( $prevScheduledDate[1], $now ) ) {
             $statues[1] = array_search( 'Overdue', $contributionStatus); 
         } else {
             $statues[1] = array_search( 'Pending', $contributionStatus);            
         }
-        
-        $newDate = date( 'YmdHis', mktime ( 0, 0, 0, $date['month'], $date['day'], $date['year'] ));
-        
+              
         for ( $i = 1; $i < $params['installments']; $i++ ) {
-            $prevScheduledDate[$i+1] = CRM_Utils_Date::format(CRM_Utils_Date::intervalAdd( $params['frequency_unit'], 
-                                                                                           $i * ($params['frequency_interval']) , $newDate ));
+            $prevScheduledDate[$i+1] = self::calculateNextScheduledDate( $params,$i );
             if ( CRM_Utils_Date::overdue( $prevScheduledDate[$i+1], $now ) ) {
                 $statues[$i+1] = array_search( 'Overdue', $contributionStatus);
             } else {
@@ -499,6 +472,74 @@ WHERE  civicrm_pledge.id = %2
         return $pledgeStatusID;
     }
 
+     /**
+     * Calculate the base scheduled date. This function effectively 'rounds' the $params['scheduled_date'] value
+     * to the first payment date with respect to the frequency day  - ie. if payments are on the 15th of the month the date returned
+     * will be the 15th of the relevant month. Then to calculate the payments you can use intervalAdd ie.
+     * CRM_Utils_Date::intervalAdd( $params['frequency_unit'], $i * ($params['frequency_interval']) , calculateBaseScheduledDate( &$params )))
+     * 
+     *
+     * @param array $params
+     *
+     * @return array $newdate Next scheduled date as an array
+     * @static
+     */
+     static function calculateBaseScheduleDate( &$params)
+     {
+        $date = array();
+        $scheduled_date =  CRM_Utils_Date::processDate( $params['scheduled_date']);
+        $date['year']   = (int) substr($scheduled_date,  0, 4);
+        $date['month']  = (int) substr($scheduled_date,  4, 2);
+        $date['day']    = (int) substr($scheduled_date,  6, 2);   
+        //calculation of schedule date according to frequency day of period
+        //frequency day is not applicable for daily installments
+        if ( $params['frequency_unit'] != 'day' && $params['frequency_unit'] != 'year') {
+            if ( $params['frequency_unit'] != 'week' ) {
+                
+                //for month use day of next month as next payment date 
+                $date['day'] = $params['frequency_day'];
+            } else if ( $params['frequency_unit'] == 'week' ) {
+                
+                //for week calculate day of week ie. Sunday,Monday etc. as next payment date
+                $dayOfWeek = date('w',mktime(0, 0, 0, $date['month'], $date['day'], $date['year'] ));
+                $frequencyDay =   $params['frequency_day'] - $dayOfWeek;
+                
+                $scheduleDate =  explode ( "-", date( 'n-j-Y', mktime ( 0, 0, 0, $date['month'], 
+                                                                        $date['day'] + $frequencyDay, $date['year'] )) );
+                $date['month'] = $scheduleDate[0];
+                $date['day']  = $scheduleDate[1];
+                $date['year']  = $scheduleDate[2];
+            }
+        }
+        $newdate = date( 'YmdHis', mktime ( 0, 0, 0, $date['month'], $date['day'],  $date['year'] ));
+        return $newdate;
+     }
+     
+     
+     /**
+     * Calculate next scheduled pledge payment date. Function calculates next pledge payment date. 
+     * 
+     * @param array params - must include frequency unit & frequency interval
+     * @param int paymentNo number of payment in sequence (e.g. 1 for first calculated payment (treat initial payment as 0)
+     * @param datestring basePaymentDate - date to calculate payments from. This would normally be the
+     * first day of the pledge (default) & is calculated off the 'scheduled date' param. Returned date will 
+     * be equal to basePaymentDate normalised to fit the 'pledge pattern' + number of installments
+     * 
+     * @return formatted date
+     * 
+     */
+     
+     static function calculateNextScheduledDate( &$params, $paymentNo, $basePaymentDate = null){
+       if (!$basePaymentDate){
+         $basePaymentDate = self::calculateBaseScheduleDate( $params );
+       }
+       return CRM_Utils_Date::format(
+                                     CRM_Utils_Date::intervalAdd(
+                                                        $params['frequency_unit'], 
+                                                        $paymentNo * ($params['frequency_interval']) , 
+                                                        $basePaymentDate));
+     }  
+     
     /**
      * Calculate the pledge status
      *

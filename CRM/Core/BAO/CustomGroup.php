@@ -68,14 +68,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
         // create custom group dao, populate fields and then save.           
         $group = new CRM_Core_DAO_CustomGroup();
         $group->title = $params['title'];
-        require_once 'CRM/Utils/String.php';
-        if ( isset( $params['name'] ) ) {
-            $group->name  = $params['name'];
-        } else {
-            $maxLength   = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_CustomGroup', 'name' );
-            $group->name = CRM_Utils_String::titleToVar( $params['title'], 
-                                                         CRM_Utils_Array::value( 'maxlength', $maxLength ) );
-        }
+
         if ( in_array( $params['extends'][0],
                        array( 'ParticipantRole',
                               'ParticipantEventName',
@@ -153,6 +146,11 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
 
             // we do this only once, so name never changes
             $group->name  = CRM_Utils_String::munge($params['title'], '_', 64 );
+            if ( isset( $params['name'] ) ) {
+                $group->name  = CRM_Utils_String::munge($params['name'], '_', 64 );
+            } else {
+                $group->name  = CRM_Utils_String::munge($group->title, '_', 64 );
+            }
         }
 
         // enclose the below in a transaction

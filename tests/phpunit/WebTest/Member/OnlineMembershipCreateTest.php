@@ -49,6 +49,17 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         // We need a payment processor
         $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
         
+        //check for online contribution and profile listings permissions
+        $this->open($this ->sboxPath . "admin/user/permissions" );
+        if ( !$this->isChecked( "edit-1-make-online-contributions" ) ) {
+            $this->click( "edit-1-make-online-contributions" );
+        }
+        if ( !$this->isChecked( "edit-1-profile-listings-and-forms" ) ) {
+            $this->click( "edit-1-profile-listings-and-forms" ); 
+        }
+        $this->click( "edit-submit" );
+        $this->waitForPageToLoad( "30000" );
+
         // create contribution page with randomized title and default params
         $amountSection = false;
         $payLater      = false; 

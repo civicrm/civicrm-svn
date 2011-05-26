@@ -40,6 +40,7 @@
  * Files required for this package
  */
 require_once 'api/v3/utils.php';
+require_once 'CRM/Core/BAO/CustomField.php';
 
 /**
  * Most API functions take in associative arrays ( name => value pairs
@@ -70,41 +71,40 @@ require_once 'api/v3/utils.php';
 
 function civicrm_api3_custom_field_create( $params )
 {
-  _civicrm_api3_initialize(true );
-  try{
-    civicrm_api3_verify_mandatory($params,null,array('custom_group_id','label'));
-
-    if ( !( CRM_Utils_Array::value('option_type', $params ) ) ) {
-      if( CRM_Utils_Array::value('id', $params ) ){
-        $params['option_type'] = 2;
-      } else {
-        $params['option_type'] = 1;
-      }
-    }
-     
-    if (is_a($error, 'CRM_Core_Error')) {
-      return civicrm_api3_create_error( $error->_errors[0]['message'] );
-    }
-
-    // Array created for passing options in params
-    if ( isset( $params['option_values'] ) && is_array( $params['option_values'] ) ) {
-      foreach ( $params['option_values'] as $key => $value ){
-        $params['option_label'][$value['weight']]  = $value['label'];
-        $params['option_value'][$value['weight']]  = $value['value'];
-        $params['option_status'][$value['weight']] = $value['is_active'];
-        $params['option_weight'][$value['weight']] = $value['weight'];
-      }
-    }
-    require_once 'CRM/Core/BAO/CustomField.php';
-    $customField = CRM_Core_BAO_CustomField::create($params);
-    _civicrm_api3_object_to_array_unique_fields($customField , $values[$customField->id]);
-    return civicrm_api3_create_success($values,$params, $customField);
-    
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+	_civicrm_api3_initialize ( true );
+	try {
+        civicrm_api3_verify_mandatory($params,null,array('custom_group_id','label'));
+        
+        if ( !( CRM_Utils_Array::value('option_type', $params ) ) ) {
+            if( CRM_Utils_Array::value('id', $params ) ){
+                $params['option_type'] = 2;
+            } else {
+                $params['option_type'] = 1;
+            }
+        }
+        
+        if (is_a($error, 'CRM_Core_Error')) {
+            return civicrm_api3_create_error( $error->_errors[0]['message'] );
+        }
+        
+        // Array created for passing options in params
+        if ( isset( $params['option_values'] ) && is_array( $params['option_values'] ) ) {
+            foreach ( $params['option_values'] as $key => $value ){
+                $params['option_label'][$key] = $value['label'];
+                $params['option_value'][$key] = $value['value'];
+                $params['option_status'][$key] = $value['is_active'];
+                $params['option_weight'][$key] = $value['weight']; 
+            }
+        }
+        
+        $customField = CRM_Core_BAO_CustomField::create($params);
+        _civicrm_api3_object_to_array_unique_fields($customField , $values[$customField->id]);
+        return civicrm_api3_create_success($values,$params, $customField);
+	} catch ( PEAR_Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	}
 }
 
 /**
@@ -118,25 +118,24 @@ function civicrm_api3_custom_field_create( $params )
  **/
 function civicrm_api3_custom_field_delete( $params )
 {
-  _civicrm_api3_initialize( true);
-  try{
-    civicrm_api3_verify_mandatory($params,null,array('id'));
-
-    require_once 'CRM/Core/DAO/CustomField.php';
-    $field = new CRM_Core_DAO_CustomField( );
-    $field->id = $params['id'];
-    $field->find(true);
-
-    require_once 'CRM/Core/BAO/CustomField.php';
-    $customFieldDelete = CRM_Core_BAO_CustomField::deleteField( $field );
-    return $customFieldDelete ?
-    civicrm_api3_create_error('Error while deleting custom field') :
-    civicrm_api3_create_success( );
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+	_civicrm_api3_initialize ( true );
+	try {
+        civicrm_api3_verify_mandatory($params,null,array('id'));
+        
+        $field = new CRM_Core_BAO_CustomField( );
+        $field->id = $params['id'];
+        $field->find(true);
+        
+        
+        $customFieldDelete = CRM_Core_BAO_CustomField::deleteField( $field );
+        return $customFieldDelete ?
+            civicrm_api3_create_error('Error while deleting custom field') :
+            civicrm_api3_create_success( );
+    } catch ( PEAR_Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	}
 }
 
 /**
@@ -144,29 +143,18 @@ function civicrm_api3_custom_field_delete( $params )
  *
  * @param array $params Array to search on
  *
- * @todo copied from elsewhere but needs tidying up to use DAO->Find
- * @access public
+* @access public
  * 
  **/
 function civicrm_api3_custom_field_get($params)
 {
-  try {
-    _civicrm_api3_initialize(true );
-    civicrm_api3_verify_mandatory($params);
-
-    require_once 'CRM/Core/BAO/CustomField.php';
-    $customfieldBAO = new CRM_Core_BAO_CustomField();
-    $fields = ($customfieldBAO->getFields($params['entity']));
-
-    foreach ($fields as $key=>$value){
-      $result[$key] = $value['label'];
-
-    }
-    return civicrm_api3_create_success($result,$params,$customfieldBAO) ;
-
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
-}
+    _civicrm_api3_initialize ( true );
+	try {
+        civicrm_api3_verify_mandatory($params);
+        return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+    } catch ( PEAR_Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	}
+ }

@@ -320,7 +320,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $_showHide->addToTemplate();      
 
         // script / instructions
-        $this->add( 'textarea', 'instructions', ts('Instructions for interviewers'), array( 'rows' => 5, 'cols' => 40 ) );
+        $this->addWysiwyg( 'instructions', ts('Instructions for interviewers'), array( 'rows' => 5, 'cols' => 40 ) );
         
         // release frequency
         $this->add('text', 'release_frequency', ts('Release frequency'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'release_frequency') );

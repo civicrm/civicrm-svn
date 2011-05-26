@@ -55,20 +55,39 @@ class CRM_Logging_Schema
      */
     function __construct()
     {
+        require_once 'CRM/Contact/DAO/Contact.php';
+        $dao = new CRM_Contact_DAO_Contact( );
+        $civiDBName = $dao->_database;
+
+        $dao = CRM_Core_DAO::executeQuery("
+SELECT TABLE_NAME 
+FROM   INFORMATION_SCHEMA.TABLES 
+WHERE  TABLE_SCHEMA = '{$civiDBName}'
+AND    TABLE_TYPE = 'BASE TABLE' 
+AND    TABLE_NAME LIKE 'civicrm_%'
+");
+        while ($dao->fetch()) {
+            $this->tables[] = $dao->TABLE_NAME;
+        }
+
+        // do not log temp import and cache tables
+        $this->tables = preg_grep('/^civicrm_import_job_/',       $this->tables, PREG_GREP_INVERT);
+        $this->tables = preg_grep('/_cache$/',                    $this->tables, PREG_GREP_INVERT);
+        $this->tables = preg_grep('/^civicrm_task_action_temp_/', $this->tables, PREG_GREP_INVERT);
+        $this->tables = preg_grep('/^civicrm_export_temp_/',      $this->tables, PREG_GREP_INVERT);
+
         $dsn = defined('CIVICRM_LOGGING_DSN') ? DB::parseDSN(CIVICRM_LOGGING_DSN) : DB::parseDSN(CIVICRM_DSN);
         $this->db = $dsn['database'];
 
-        $dao = CRM_Core_DAO::executeQuery('SHOW TABLES LIKE "civicrm_%"');
+        $dao = CRM_Core_DAO::executeQuery("
+SELECT TABLE_NAME 
+FROM   INFORMATION_SCHEMA.TABLES 
+WHERE  TABLE_SCHEMA = '{$this->db}'
+AND    TABLE_TYPE = 'BASE TABLE' 
+AND    TABLE_NAME LIKE 'log_civicrm_%'
+");
         while ($dao->fetch()) {
-            $this->tables[] = $dao->toValue("Tables_in_{$dao->_database}_(civicrm_%)");
-        }
-        // do not log temp import and cache tables
-        $this->tables = preg_grep('/^civicrm_import_job_/', $this->tables, PREG_GREP_INVERT);
-        $this->tables = preg_grep('/_cache$/',              $this->tables, PREG_GREP_INVERT);
-        $this->tables = preg_grep('/^civicrm_task_action_temp_/', $this->tables, PREG_GREP_INVERT);
-        $this->tables = preg_grep('/^civicrm_export_temp_/', $this->tables, PREG_GREP_INVERT);        $dao = CRM_Core_DAO::executeQuery("SHOW TABLES FROM `{$this->db}` LIKE 'log_civicrm_%'");
-        while ($dao->fetch()) {
-            $log = $dao->toValue("Tables_in_{$this->db}_(log_civicrm_%)");
+            $log = $dao->TABLE_NAME;
             $this->logs[substr($log, 4)] = $log;
         }
     }

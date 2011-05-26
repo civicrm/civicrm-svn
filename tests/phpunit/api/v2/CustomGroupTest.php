@@ -30,6 +30,9 @@ class api_v2_CustomGroupTest extends CiviUnitTestCase
     
     function tearDown() 
     {
+        // truncate a few tables
+        $tablesToTruncate = array( );
+        $this->quickCleanup( $tablesToTruncate, true );
     }
 
 ///////////////// civicrm_custom_group_create methods   

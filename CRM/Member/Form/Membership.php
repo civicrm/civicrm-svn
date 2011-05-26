@@ -656,16 +656,20 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
 
 	    //  Default values for start and end dates if not supplied
 	    //  on the form
-	    $defaultDates = CRM_Member_BAO_MembershipType::getDatesForMembershipType(
-                $params['membership_type_id'][1], $joinDate,
-		$startDate, $endDate);
+	    $defaultDates = 
+            CRM_Member_BAO_MembershipType::getDatesForMembershipType(
+                                                                     $params['membership_type_id'][1],
+                                                                     $joinDate,
+                                                                     $startDate,
+                                                                     $endDate);
+
 	    if ( !$startDate ) {
-                $startDate = CRM_Utils_Array::value( 'start_date',
-						     $defaultDates );
+            $startDate = CRM_Utils_Array::value( 'start_date',
+                                                 $defaultDates );
 	    }
 	    if ( !$endDate ) {
-                $endDate = CRM_Utils_Array::value( 'end_date',
-						     $defaultDates );
+            $endDate = CRM_Utils_Array::value( 'end_date',
+                                               $defaultDates );
 	    }
 
             //CRM-3724, check for availability of valid membership status.
@@ -1004,8 +1008,9 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             
             if ( $result ) {
                 $this->_params = array_merge( $this->_params, $result );
+
                 //assign amount to template if payment was successful
-	              $this->assign( 'amount', $params['total_amount'] );			
+                $this->assign( 'amount', $params['total_amount'] );			
             }
             $params['contribution_status_id'] = CRM_Utils_Array::value( 'is_recur', $paymentParams ) ? 2 : 1;
             $params['receive_date']           = $now;
@@ -1029,7 +1034,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
        
             // required for creating membership for related contacts
             $params['action'] = $this->_action;
-            
+
             //create membership record.
             $membership =& CRM_Member_BAO_Membership::create( $params, $ids );
             

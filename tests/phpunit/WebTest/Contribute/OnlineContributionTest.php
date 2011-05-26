@@ -46,143 +46,62 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
       // class attributes.
       $this->open( $this->sboxPath );
-
+      
       // Logging in. Remember to wait for page to load. In most cases,
       // you can rely on 30000 as the value that allows your test to pass, however,
       // sometimes your test might fail because of this. In such cases, it's better to pick one element
       // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin();
-
+      
       // We need a payment processor
-      $processorName = "Webtest Dummy" . substr( sha1( rand( ) ), 0, 7 );
-      $this->webtestAddPaymentProcessor( $processorName );
-      
-      $this->open( $this->sboxPath . "civicrm/admin/contribute/add&reset=1&action=add" );
-      
-      $contributionTitle = substr( sha1( rand( ) ), 0, 7 );
+      $processorName = "Webtest Dummy" . substr( sha1( rand( ) ), 0, 7 );  
+      $processorType = 'Dummy';
+      $pageTitle = substr( sha1( rand( ) ), 0, 7 );
       $rand = 2 * rand( 2, 50 );
-        
-      // fill in step 1 (Title and Settings)
-      $contributionPageTitle = "Title $contributionTitle";
-      $this->type( 'title', $contributionPageTitle );
-      $this->select( 'contribution_type_id', 'value=1' );
-      $this->fillRichTextField( 'intro_text','This is Test Introductory Message','CKEditor' );
-      $this->fillRichTextField( 'footer_text','This is Test Footer Message','CKEditor' );
+      $hash = substr(sha1(rand()), 0, 7);
+      $amountSection = true;
+      $payLater =  false;
+      $onBehalf = false;
+      $pledges = false;
+      $recurring = false;
+      $memberships = false;
+      $friend = true;
+      $profilePreId  = 1;
+      $profilePostId = null;
+      $premiums = false;
+      $widget = false;
+      $pcp = false;
       
-      // go to step 2
-      $this->click( '_qf_Settings_next' );
-      $this->waitForElementPresent( "_qf_Amount_next-bottom" );
-
-      //this contribution page for online contribution 
-      $this->select( "payment_processor_id", "label=" . $processorName );
-      $this->isTextPresent( "Contribution Amounts section enabled" );
-      $this->type( "label_1", "amount 1" );
-      $this->type( "value_1", "100" );
-      $this->type( "label_2", "amount 2" );
-      $this->type( "value_2", "200" );
-      $this->click( "CIVICRM_QFID_1_2" );
       
-      $this->click( "_qf_Amount_next-bottom" );
-      $this->waitForPageToLoad( "30000" );
-
-      // go to step 4
-      $this->click("//div[@id='mainTabContainer']/ul//li/a[text()='Receipt']");
-      $this->waitForElementPresent( '_qf_ThankYou_next-bottom' );
-      $this->waitForElementPresent( "cke_thankyou_footer" );
-            
-      // fill in step 4 (Thanks and Receipt)
-      $this->type( 'thankyou_title',     "Thank-you Page Title $contributionTitle" );
-      $this->type( 'receipt_from_name',  "Receipt From Name $contributionTitle" );
-      $this->type( 'receipt_from_email', "$contributionTitle@example.org" );
-      $this->type( 'receipt_text',       "Receipt Message $contributionTitle" );
-      $this->type( 'cc_receipt',         "$contributionTitle@example.net" );
-      $this->type( 'bcc_receipt',        "$contributionTitle@example.com" );
-            
-      $this->click( '_qf_ThankYou_next-bottom' );
-      $this->waitForPageToLoad( '30000' );
-
-      // go to step 5
-      $this->click("//div[@id='mainTabContainer']/ul//li/a[text()='Tell a Friend']");
-      $this->waitForElementPresent( "_qf_Contribute_next-bottom" );
-       
-      // fill in step 5 (Tell a Friend)
-      $this->click( 'tf_is_active' );
-      $this->type( 'tf_title',          "TaF Title $contributionTitle" );
-      $this->type( 'intro',             "TaF Introduction $contributionTitle" );
-      $this->type( 'suggested_message', "TaF Suggested Message $contributionTitle" );
-      $this->type( 'general_link',      "TaF Info Page Link $contributionTitle" );
-      $this->type( 'thankyou_title',    "TaF Thank-you Title $contributionTitle" );
-      $this->type( 'thankyou_text',     "TaF Thank-you Message $contributionTitle" );
-      
-      $this->click( '_qf_Contribute_next-bottom' );
-      $this->waitForPageToLoad( '30000' );
-      
-      // go to step 6
-      $this->click("//div[@id='mainTabContainer']/ul//li/a[text()='Profiles']");
-      $this->waitForElementPresent( "_qf_Custom_next-bottom" );
-      
-      // fill in step 6 (Include Profiles)
-      $this->select( 'custom_pre_id',  'value=1' );
-      
-      $this->click( '_qf_Custom_next-bottom' );
-      $this->waitForPageToLoad( '30000' );
-
-      // go to step 7
-      $this->click("//div[@id='mainTabContainer']/ul//li/a[text()='Premiums']");
-      $this->waitForElementPresent( "_qf_Premium_next-bottom" );
-
-      // fill in step 7 (Premiums)
-      $this->click( 'premiums_active' );
-      $this->type( 'premiums_intro_title',   "Prem Title $contributionTitle" );
-      $this->type( 'premiums_intro_text',    "Prem Introductory Message $contributionTitle" );
-      $this->type( 'premiums_contact_email', "$contributionTitle@example.info" );
-      $this->type( 'premiums_contact_phone', rand( 100000000, 999999999 ) );
-      $this->click( 'premiums_display_min_contribution' );
-      
-      $this->click( '_qf_Premium_next-bottom' );
-      $this->waitForPageToLoad( '30000' );
-      
-      // go to step 8
-      $this->click("//div[@id='mainTabContainer']/ul//li/a[text()='Widgets']");
-      $this->waitForElementPresent( "_qf_Widget_next-bottom" );
-
-      // fill in step 8 (Widget Settings)
-      $this->click( 'is_active' );
-      $this->type( 'url_logo',     "URL to Logo Image $contributionTitle" );
-      $this->type( 'button_title', "Button Title $contributionTitle" );
-      $this->type( 'about',        "About $contributionTitle" );
-
-      $this->click( '_qf_Widget_next-bottom' );
-      $this->waitForPageToLoad( '30000' );
-
-      // go to step 9
-      $this->click("//div[@id='mainTabContainer']/ul//li/a[text()='Personal Campaigns']");
-      $this->waitForElementPresent( "_qf_PCP_next-bottom" );
-      
-      // fill in step 9 (Enable Personal Campaign Pages)
-      $this->click( 'pcp_active' );
-      $this->click( 'is_approval_needed' );
-      $this->type( 'notify_email', "$contributionTitle@example.name" );
-      $this->select( 'supporter_profile_id', 'value=2' );
-      $this->type( 'tellfriend_limit', 7 );
-      $this->type( 'link_text', "'Create Personal Campaign Page' link text $contributionTitle" );
-      
-      // submit new contribution page
-      $this->click( '_qf_PCP_next-bottom' );
-      $this->waitForPageToLoad( '30000' );
-      
-      //get Url for Live Contribution Page
-      $registerUrl = $this->_testVerifyRegisterPage( $contributionPageTitle );
+      // create a new online contribution page
+      // create contribution page with randomized title and default params
+      $pageId = $this->webtestAddContributionPage( $hash, 
+                                                   $rand, 
+                                                   $pageTitle, 
+                                                   $processorType, 
+                                                   $processorName, 
+                                                   $amountSection, 
+                                                   $payLater, 
+                                                   $onBehalf,
+                                                   $pledges, 
+                                                   $recurring, 
+                                                   $memberships, 
+                                                   $friend, 
+                                                   $profilePreId,
+                                                   $profilePostId,
+                                                   $premiums, 
+                                                   $widget, 
+                                                   $pcp );        
       
       //logout
       $this->open( $this->sboxPath . "civicrm/logout&reset=1" );
       $this->waitForPageToLoad( '30000' );
       
       //Open Live Contribution Page
-      $this->open( $this->sboxPath . $registerUrl );
+      $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id=". $pageId );
       $this->waitForElementPresent( "_qf_Main_upload-bottom" );
-
+      
       
       $firstName = 'Ma'.substr( sha1( rand( ) ), 0, 4 );
       $lastName  = 'An'.substr( sha1( rand( ) ), 0, 7 );
@@ -191,6 +110,9 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
       
       $this->type( "first_name", $firstName );
       $this->type( "last_name",$lastName );
+      
+      $this->click("amount_other");
+      $this->type("amount_other",100);
       
       $streetAddress = "100 Main Street";
       $this->type( "street_address-1", $streetAddress );
@@ -221,7 +143,7 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
       
       $this->click( "_qf_Confirm_next-bottom" );
       $this->waitForPageToLoad( '30000' );
-
+      
       //login to check contribution
       $this->open( $this->sboxPath );
       
@@ -235,7 +157,7 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
       
       $this->type( "sort_name", "$firstName $lastName" );
       $this->click( "_qf_Search_refresh" );
-        
+      
       $this->waitForPageToLoad( '30000' );
       
       $this->waitForElementPresent( "xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']" );
@@ -243,7 +165,6 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad( '30000' );
       $this->waitForElementPresent( "_qf_ContributionView_cancel-bottom" );
       
-      //View Contribution Record
       //View Contribution Record
       $expected = array( 3  => 'Donation',  
                          3  => '100.00', 
@@ -254,16 +175,5 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
           $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote($label)); 
       }
   }
-
-  function _testVerifyRegisterPage( $contributionPageTitle ) {
-      $this->open( $this->sboxPath . "civicrm/admin/contribute?reset=1" );
-      $this->waitForElementPresent( "_qf_SearchContribution_refresh" );
-      $this->type( 'title', $contributionPageTitle );
-      $this->click( "_qf_SearchContribution_refresh" );
-      $this->waitForPageToLoad( '50000' );
-      $id = $this->getAttribute("//div[@id='configure_contribution_page']//div[@class='dataTables_wrapper']/table/tbody/tr@id");
-      $id = explode( '_', $id );
-      $registerUrl = "civicrm/contribute/transact?reset=1&id=$id[1]";
-      return $registerUrl;
-  }
+  
 }

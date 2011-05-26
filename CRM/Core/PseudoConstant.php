@@ -1100,15 +1100,16 @@ WHERE  id = %1";
      * Note: any database errors will be trapped by the DAO.
      *
      * @param string $valueColumnName db column name/label.
+     * @param boolean $reset          reset relationship types if true
      *
      * @access public
      * @static
      *
      * @return array - array reference of all relationship types.
      */
-    public static function &relationshipType( $valueColumnName = 'label' )
+    public static function &relationshipType( $valueColumnName = 'label', $reset = false )
     {
-        if ( !CRM_Utils_Array::value($valueColumnName, self::$relationshipType) ) {
+        if ( !CRM_Utils_Array::value($valueColumnName, self::$relationshipType) || $reset ) {
             self::$relationshipType[$valueColumnName] = array( );
             
             //now we have name/label columns CRM-3336

@@ -27,13 +27,11 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'api/v2/Mailer.php';
 
-
 /**
  *  Test APIv2 civicrm_mailer_* functions
  *
  *  @package   CiviCRM
  */
-
 
 class api_v2_MailerTest extends CiviUnitTestCase 
 {
@@ -484,6 +482,8 @@ class api_v2_MailerTest extends CiviUnitTestCase
                         );
         $result =& civicrm_mailer_event_confirm($params);
         $this->assertEquals($result['is_error'], 0);
+
+        $this->contactDelete( $params['contact_id'] );   
     }
 
 

@@ -206,6 +206,8 @@ cj(function() {
        var thousandMarker = '{/literal}{$config->monetaryThousandSeparator}{literal}';
        var seperator      = '{/literal}{$config->monetaryDecimalPoint}{literal}';
        var amount = document.getElementById("amount").value;
+       // replace all thousandMarker and change the seperator to a dot
+       amount = amount.replace(thousandMarker,'').replace(seperator,'.');
        var installments = document.getElementById("installments").value;
        if ( installments != '' && installments != NaN) {
             amount =  amount/installments;

@@ -17,7 +17,8 @@ class api_v3_EmailTest extends CiviUnitTestCase
 
     function tearDown() 
     {  
-//TODO delete org & location type
+        $this->contactDelete( $this->_contactID );
+        $this->locationTypeDelete( $this->_locationType->id );
     }
    public function testCreateEmail () {
         $params = array('contact_id' => $this->_contactID,

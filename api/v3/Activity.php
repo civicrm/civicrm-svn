@@ -65,43 +65,55 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  * {@example ActivityCreate.php 0} 
  *
  */
-function civicrm_api3_activity_create( $params )
-{
+function civicrm_api3_activity_create( $params ) {
     _civicrm_api3_initialize( true );
-    try {
-        civicrm_api3_verify_mandatory($params,
-                                      null,
-                                      array('source_contact_id',
-                                            array('subject','activity_subject'),
-                                            array('activity_name','activity_type_id')));
-        $errors = array( );
+    try{
+    if ( !CRM_Utils_Array::value('source_contact_id',$params )){
+           $session = CRM_Core_Session::singleton( );
+           $params['source_contact_id']  =  $session->get( 'userID' );
+    }
+    if ( ! CRM_Utils_Array::value('activity_date_time', $params )) {
+        $params['activity_date_time']  =  date("YmdHis");
+    }
+    civicrm_api3_verify_mandatory($params,
+                                  null,
+                                  array('source_contact_id',
+                                        array('subject','activity_subject'),
+                                        array('activity_name','activity_type_id')));
+    $errors = array( );
 
-        // check for various error and required conditions
-        $errors = _civicrm_api3_activity_check_params( $params ) ;
+    // check for various error and required conditions
+    $errors = _civicrm_api3_activity_check_params( $params ) ;
 
-        if ( !empty( $errors ) ) {
-            return $errors;
-        }
-
-
-        // processing for custom data
-        $values = array();
-        _civicrm_api3_custom_format_params( $params, $values, 'Activity' );
-
-        if ( ! empty($values['custom']) ) {
-            $params['custom'] = $values['custom'];
-        }
-
-        // create activity
-        $activityBAO = CRM_Activity_BAO_Activity::create( $params );
-
-        if ( isset( $activityBAO->id ) ) {
-            _civicrm_api3_object_to_array( $activityBAO, $activityArray[$activityBAO->id]);
-            return civicrm_api3_create_success($activityArray,$params,$activityBAO);
-        }
+    if ( !empty( $errors ) ) {
+        return $errors;
+    }
 
 
-    } catch (PEAR_Exception $e) {
+    // processing for custom data
+    $values = array();
+    _civicrm_api3_custom_format_params( $params, $values, 'Activity' );
+
+    if ( ! empty($values['custom']) ) {
+        $params['custom'] = $values['custom'];
+    }
+
+    // create activity
+    $activityBAO = CRM_Activity_BAO_Activity::create( $params );
+
+    if ( isset( $activityBAO->id ) ) {
+      if (array_key_exists ('case_id',$params)) {
+        require_once 'CRM/Case/DAO/CaseActivity.php';
+        $caseActivityDAO = new CRM_Case_DAO_CaseActivity();
+        $caseActivityDAO->activity_id = $activityBAO->id ;
+        $caseActivityDAO->case_id = $params['case_id'];
+        $caseActivityDAO->find( true );
+        $caseActivityDAO->save();
+      }
+      _civicrm_api3_object_to_array( $activityBAO, $activityArray[$activityBAO->id]);
+      return civicrm_api3_create_success($activityArray,$params,$activityBAO);
+    }
+        } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
@@ -143,8 +155,12 @@ function civicrm_api3_activity_get( $params ) {
         }
             
         $activity = _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params, FALSE);
-        
-        if ( $returnCustom && !empty( $activity ) ) {
+        foreach ( $params as $n => $v ) {
+        if ( substr( $n, 0, 13 ) == 'return.custom' ) { // handle the format return.sort_name=1,return.display_name=1
+            $returnProperties[ substr( $n, 7 ) ] = $v;
+        } 
+    }
+        if ( !empty($returnProperties) && !empty( $activity ) ) {
             $customdata = array();
             $customdata = _civicrm_api3_activity_custom_get( array( 'activity_id'      => $activityId,
                                                                     'activity_type_id' => CRM_Utils_Array::value('activity_type_id',$activity[$dao->id]  ))  );

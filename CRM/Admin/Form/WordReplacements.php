@@ -173,10 +173,11 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
             if ( $v && !$newValues[$k] ) {
                 $errors['new['.$k.']'] = ts( 'Please Enter the value for Replacement Word' ); 
             } elseif ( !$v && $newValues[$k] ) {
-                $errors['old['.$k.']'] = ts( 'Please Enter the value for Original Word' );       
-            } elseif ( ( !$newValues[$k] && !$oldValues[$k] ) && ( $enabled[$k] || $exactMatch[$k] ) ) {
-                $errors['old['.$k.']'] = ts( 'Please Enter the value for Original Word' );       
-                $errors['new['.$k.']'] = ts( 'Please Enter the value for Replacement Word' );       
+                $errors['old['.$k.']'] = ts( 'Please Enter the value for Original Word' );
+            } elseif ( ( !CRM_Utils_Array::value( $k, $newValues ) && !CRM_Utils_Array::value( $k, $oldValues ) ) 
+                    && ( CRM_Utils_Array::value( $k,  $enabled ) || CRM_Utils_Array::value( $k, $exactMatch ) ) ) {
+                $errors['old['.$k.']'] = ts( 'Please Enter the value for Original Word' );      
+                $errors['new['.$k.']'] = ts( 'Please Enter the value for Replacement Word' );   
             } 
         }
         
@@ -199,7 +200,7 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
             if ( CRM_Utils_Array::value( $i, $params['new'] ) && 
                  CRM_Utils_Array::value( $i, $params['old'] ) ) {
                 if ( CRM_Utils_Array::value( $i, $params['enabled'] ) )  { 
-                    if ( is_array( $params['cb'] ) && array_key_exists( $i, $params['cb']) ) {
+                    if ( CRM_Utils_Array::value( 'cb', $params ) && is_array( $params['cb'] ) && array_key_exists( $i, $params['cb']) ) {
                         $enabled['exactMatch'] += array($params['old'][$i]=>$params['new'][$i]);
                     } else {
                         $enabled['wildcardMatch'] += array($params['old'][$i]=>$params['new'][$i]);

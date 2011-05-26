@@ -76,6 +76,8 @@ class api_v2_NoteTest extends CiviUnitTestCase
 
     function tearDown( ) 
     {
+        $this->noteDelete( $this->_note );
+        $this->contactDelete( $this->_contactID ); 
     }
 
 ///////////////// civicrm_note_get methods
@@ -290,8 +292,10 @@ class api_v2_NoteTest extends CiviUnitTestCase
      */        
     function testDelete( )
     {
-        $params = array( 'id'        => $this->_noteID,
-                         'entity_id' => $this->_note['entity_id']
+        $additionalNote = $this->noteCreate( $this->_contactID );
+
+        $params = array( 'id'        => $additionalNote['id'],
+                         'entity_id' => $this->_contactID
                          ); 
        
         $deleteNote  =& civicrm_note_delete( $params );  
@@ -299,7 +303,6 @@ class api_v2_NoteTest extends CiviUnitTestCase
         $this->assertEquals( $deleteNote['is_error'], 0 );
         $this->assertEquals( $deleteNote['result'], 1 );
     }
-    
 
 }
 

@@ -50,6 +50,10 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
     
     function tearDown() 
     {
+        $this->contributionTypeDelete( );
+        $params = array( 'id' => $this->_membershipTypeID );
+        $this->membershipTypeDelete( $params );
+        $this->membershipStatusDelete( $this->_membershipStatusID );
     }
     
     ///////////////// civicrm_membership_payment_create methods
@@ -125,6 +129,8 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['values'][$result['id']]['membership_id'],$membership->id ,'Check Membership Id in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['contribution_id'],$contribution->id ,'Check Contribution Id in line ' . __LINE__);
+        $this->contributionDelete( $contribution->id );
+        $this->membershipDelete( $membership->id );
         
     }    
     
@@ -195,6 +201,8 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
         $this->assertEquals( $result['values'][$result['id']]['membership_id'],$membership->id ,'Check Membership Id');
         $this->assertEquals( $result['values'][$result['id']]['contribution_id'],$contribution->id ,'Check Contribution Id');
         
+        $this->contributionDelete( $contribution->id );
+        $this->membershipDelete( $membership->id );
     }    
    
 }

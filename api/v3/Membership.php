@@ -168,9 +168,9 @@ function civicrm_api3_membership_create($params)
  */
 function civicrm_api3_membership_get($params)
 {
-  _civicrm_api3_initialize(true);
   try{
-    civicrm_api3_verify_mandatory($params,null,array('contact_id'));
+    civicrm_api3_verify_mandatory($params);
+
     $contactID = $activeOnly = $membershipTypeId = $membershipType = null;
    
       $contactID        = CRM_Utils_Array::value( 'contact_id', $params );
@@ -195,18 +195,18 @@ function civicrm_api3_membership_get($params)
     }
     $membershipValues = array();
     CRM_Member_BAO_Membership::getValues( $membershipParams, $membershipValues, $activeOnly );
-
-    $recordCount = 0;
+    if(empty($params['contact_id'])){
+      //added this as contact_id was the only acceptable field so this was a quick way to improve
+        $membershipValues = _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params, FALSE);
+    }
+    
 
     if ( empty( $membershipValues ) ) {
       # No results is NOT an error!
-      # return civicrm_create_error('No memberships for this contact.');
-      $membershipValues['record_count'] = $recordCount;
-      return $membershipValues;
+      return civicrm_api3_create_success($membershipValues,$params);
     }
 
-    $members[$contactID] = array( );
-    $relationships       = array();;
+    $relationships       = array();
     foreach ($membershipValues as $membershipId => $values) {
       // populate the membership type name for the membership type id
       require_once 'CRM/Member/BAO/MembershipType.php';
@@ -225,24 +225,12 @@ function civicrm_api3_membership_get($params)
       if ( $relationshipType->find(true) ) {
         $membershipValues[$membershipId]['relationship_name'] = $relationshipType->name_a_b;
       }
-      require_once 'CRM/Core/BAO/CustomGroup.php';
-      $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Membership', CRM_Core_DAO::$_nullObject, $membershipId, false,
-      $values['membership_type_id']);
-      $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, CRM_Core_DAO::$_nullObject );
+      
+      _civicrm_apiv3_custom_data_get($membershipValues[$membershipId],'Membership',$membershipId,null,$values['membership_type_id']);
 
-      $defaults  = array( );
-      CRM_Core_BAO_CustomGroup::setDefaults( $groupTree, $defaults );
-
-      if ( !empty( $defaults ) ) {
-        foreach ( $defaults as $key => $val ) {
-          $membershipValues[$membershipId][$key] = $val;
-        }
-      }
-
-      $recordCount++;
     }
 
-    $members[$contactID] = $membershipValues;
+    $members = $membershipValues;
 
     // populating contacts in members array based on their relationship with direct members.
     require_once 'CRM/Contact/BAO/Relationship.php';
@@ -258,15 +246,15 @@ function civicrm_api3_membership_get($params)
           while ($relationship->fetch()) {
             clone($relationship);
             $membershipValues[$membershipId]['contact_id']    = $relationship->contact_id_a;
-            $members[$contactID][$relationship->contact_id_a] = $membershipValues[$membershipId];
+            $members[$membershipId]['related_contact_id'] = $relationship->contact_id_a;
           }
         }
-        $recordCount++;
+
       }
     }
-    $members['record_count'] = $recordCount;
-    return civicrm_api3_create_success($members);
-  } catch (PEAR_Exception $e) {
+    
+    return civicrm_api3_create_success($members,$params);
+    } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
@@ -389,16 +377,10 @@ function _civicrm_api3_membership_format_params( $params, &$values, $create=fals
  */
 function _civicrm_api3_membership_check_params( $params ) {
 
-  civicrm_api3_verify_mandatory($params);
+  civicrm_api3_verify_mandatory($params,null,array('contact_id'));
 
   $valid = true;
   $error = '';
-
-  // contact id is required for both add and update
-  if ( !CRM_Utils_Array::value( 'contact_id', $params ) ) {
-    $valid  = false;
-    $error .= ' contact_id';
-  }
 
   // check params for membership id during update
   if ( CRM_Utils_Array::value( 'id', $params ) ) {

@@ -263,8 +263,12 @@ WHERE      civicrm_membership.is_test = 0";
                         $activityParams['subject']            = $allTypes[$dao->membership_type_id] . 
                             ": Status - " . $statusLabels[$newStatus['id']] . 
                             ", End Date - " . CRM_Utils_Date::customFormat(CRM_Utils_Date::isoToMysql($dao->end_date), $config->dateformatFull);
-                        $activityParams['source_record_id']   = $dao->membership_id; 
-                        $activityParams['source_contact_id']  = $dao->contact_id; 
+                        $activityParams['source_record_id']   = $dao->membership_id;
+
+                        $session = & CRM_Core_Session::singleton();
+                        $activityParams['source_contact_id']   = $session->get('userID') ? $session->get('userID') : $dao->contact_id;
+                        $activityParams['assignee_contact_id'] = $dao->contact_id;
+
                         $activityParams['activity_date_time'] = date('YmdHis');
 
                         static $actRelIds = array( );

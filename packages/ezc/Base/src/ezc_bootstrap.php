@@ -28,10 +28,13 @@ else
 }
 // Joomla, libraries/loader.php, already defined autoload
 
-if ( spl_autoload_functions() !== false ) {
-spl_autoload_register(array('ezcBase', 'autoload'));
-
-} elseif ( !function_exists("autoload") ) {
+if ( function_exists("spl_autoload_register") ) {
+    spl_autoload_register(array('ezcBase', 'autoload'));
+    if (function_exists('__autoload')) {
+        // Be polite and ensure that userland autoload gets retained
+        spl_autoload_register('__autoload');
+    }
+} elseif ( ! function_exists("__autoload") ) {
 // Joomla, libraries/loader.php, already defined __autoload
 
     /**

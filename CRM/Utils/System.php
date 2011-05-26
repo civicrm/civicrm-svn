@@ -1310,6 +1310,29 @@ class CRM_Utils_System {
         
         return $url;
     }
+
+    /**
+     * Append the contents of a javascript file if it is present in
+     * the custom template directory. This does not work if there are
+     * multiple custom template directories
+     *
+     * @param string $fileName - the name of the tpl file that we are processing
+     * @param string $content (by reference) - the current content string
+     *
+     * @return void - the content string is modified if needed
+     * @static
+     */
+    static function appendJSFile( $fileName, &$content ) {
+        $config =& CRM_Core_Config::singleton( );
+        if ( isset( $config->customTemplateDir ) &&
+             $config->customTemplateDir ) {
+            $additionalJSFile = str_replace( '.tpl', '.extra.js', $fileName );
+            // check if the file exists in the custom templates directory
+            $fileName = $config->customTemplateDir . DIRECTORY_SEPARATOR . $additionalJSFile;
+            if ( file_exists( $fileName ) ) {
+                $content .= "<script>\n" . file_get_contents( $fileName ) . "</script>";
+            }
+        }
+    }
     
-    
-  }
+}

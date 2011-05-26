@@ -1001,9 +1001,16 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                                                                          $contactID, 
                                                                          $addToGroups, 
                                                                          null,
-                                                                         $ctype );
+                                                                         $ctype,
+                                                                         true );
         } else {
-            $contactID = CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, null, $addToGroups );
+            $contactID = CRM_Contact_BAO_Contact::createProfileContact( $params,
+                                                                        $fields,
+                                                                        null,
+                                                                        $addToGroups,
+                                                                        null,
+                                                                        null,
+                                                                        true );
             $this->set( 'contactID', $contactID );
         }
 

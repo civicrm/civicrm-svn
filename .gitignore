@@ -88,6 +88,7 @@ CRM/Project/DAO
 CRM/Report/DAO
 CRM/Standalone/OpenID/DAO
 bin/setup.sh
+civicrm-version.php
 civicrm-version.txt
 civicrm.config.php
 install/langs.php

@@ -79,6 +79,8 @@ class api_v3_NoteTest extends CiviUnitTestCase
 
     function tearDown( ) 
     {
+        $this->noteDelete( $this->_note );
+        $this->contactDelete( $this->_contactID );    
     }
 
 ///////////////// civicrm_note_get methods
@@ -287,9 +289,10 @@ class api_v3_NoteTest extends CiviUnitTestCase
         //Update Note
         $note =& civicrm_api3_note_create( $params );
         $this->assertEquals( $note['id'],$this->_noteID,'in line ' . __LINE__ );
-        $this->assertEquals( $note['is_error'],0,'in line ' . __LINE__ );       
+        $this->assertEquals( $note['is_error'],0,'in line ' . __LINE__ );
         $this->assertEquals( $note['values'][$this->_contactID]['entity_id'],$this->_contactID,'in line ' . __LINE__ );
         $this->assertEquals( $note['values'][$this->_contactID]['entity_table'],'civicrm_contribution','in line ' . __LINE__ );
+        
     }
 
 ///////////////// civicrm_note_delete methods
@@ -336,11 +339,14 @@ class api_v3_NoteTest extends CiviUnitTestCase
      */        
     function testDelete( )
     {
-        $params = array( 'id'        => $this->_noteID,
+        $additionalNote = $this->noteCreate( $this->_contactID );
+
+        $params = array( 'id'        => $additionalNote['id'],
                          'version'   => $this->_apiversion,
                          ); 
        
         $result  =& civicrm_api3_note_delete( $params );  
+        
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
         $this->assertEquals( $result['is_error'], 0,'in line ' . __LINE__ );
     }
