@@ -31,12 +31,7 @@
 {if $action eq 8}
   <div class="messages status">  
       <div class="icon inform-icon"></div> 
-        {ts 1=$formatName}WARNING: You are about to delete the Reminder titled <strong>%1</strong>.{/ts} {ts}Do you want to continue?{/ts}
-  </div>
-{elseif $action eq 16384}
-  <div class="messages status">  
-      <div class="icon inform-icon"></div> 
-        {ts 1=$formatName}Are you sure you would like to make a copy of the Reminder titled <strong>%1</strong>?{/ts}
+        {ts 1=$reminderName}WARNING: You are about to delete the Reminder titled <strong>%1</strong>.{/ts} {ts}Do you want to continue?{/ts}
   </div>
 {else}
  {* added onload javascript for source contact*}

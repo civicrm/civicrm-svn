@@ -153,7 +153,7 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
      *
      * @param bool    $namesOnly    return simple list of names
      *
-     * @return array  (reference)   label format list
+     * @return array  (reference)   reminder list
      * @static
      * @access public
      */
@@ -192,6 +192,7 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
 ";
         $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch() ) {
+            $list[$dao->id]['id']  = $dao->id;
             $list[$dao->id]['title']  = $dao->title;
             $list[$dao->id]['first_action_offset']  = $dao->first_action_offset;
             $list[$dao->id]['first_action_unit']  = $dao->first_action_unit;
@@ -458,4 +459,30 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
 /*             trigger = true; */
 /*         } */
     }
+    
+    static function retrieve( &$params, &$values ) 
+    {
+    }
+    
+    /**
+     * Function to delete a Reminder
+     * 
+     * @param  int  $id     ID of the Reminder to be deleted.
+     * 
+     * @access public
+     * @static
+     */
+    static function del( $id )
+    {
+        if ( $id ) {
+            $dao = new CRM_Core_DAO_ActionSchedule( );
+            $dao->id =  $id;
+            if ( $dao->find( true ) ) {
+                $dao->delete( );
+                return;
+            }
+        }
+        CRM_Core_Error::fatal( ts( 'Invalid value passed to delete function.' ) );
+    }
+
 }

@@ -60,6 +60,12 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
     {
         parent::buildQuickForm( );
 
+        if ( $this->_action & (CRM_Core_Action::DELETE ) ) { 
+            $reminderName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_ActionSchedule', $this->_id, 'title' );
+            $this->assign('reminderName', $reminderName);
+            return;
+        }
+
         $this->add( 'text', 'title', ts( 'Title' ) );
 
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
@@ -163,6 +169,12 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
      */
     public function postProcess() 
     {
+        if ( $this->_action & CRM_Core_Action::DELETE ) {
+            // delete reminder
+            CRM_Core_BAO_ScheduleReminders::del( $this->_id );
+            CRM_Core_Session::setStatus( ts('Selected Reminder has been deleted.') );
+            return;
+        }
         $values = $this->controller->exportValues( $this->getName() );
 
         $keys = array('title', 'first_action_offset' ,'first_action_unit',
