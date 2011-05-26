@@ -965,7 +965,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
                                 "civicrm_activity.is_current_revision =  1",
                                 "civicrm_activity.is_test = 0" );
 
-        if ( $input['context'] == 'home' ) {
+        if ( $input['context'] != 'activity' ) {
             $commonClauses[] = "civicrm_activity.status_id = 1"; 
         }
         

@@ -100,7 +100,8 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
             $this->_setParam( $field, $value );
         }
 
-        if ( $params['is_recur'] && $params['contributionRecurID'] ) {
+        if ( CRM_Utils_Array::value( 'is_recur', $params ) &&
+             $params['contributionRecurID'] ) {
             return $this->doRecurPayment( $params );
         }
 
@@ -282,9 +283,6 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         if ( $responseFields['resultCode'] == 'Error' ) {
             return self::error( $responseFields['code'], $responseFields['text'] );
         }
-
-        // log request
-        CRM_Core_Error::debug_var( 'Create Subscription Request', $arbXML );
 
         // update recur processor_id with subscriptionId
         CRM_Core_DAO::setFieldValue( 'CRM_Contribute_DAO_ContributionRecur', $params['contributionRecurID'], 
@@ -600,9 +598,6 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         if ( $responseFields['resultCode'] == 'Error' ) {
             return self::error( $responseFields['code'], $responseFields['text'] );
         }
-
-        // log request
-        CRM_Core_Error::debug_var( 'Cancel Subscription Request', $arbXML );
 
         // carry on cancelation procedure
         return true;

@@ -197,7 +197,7 @@ class CRM_Case_Form_Activity_OpenCase
         }
         
         // rename activity_location param to the correct column name for activity DAO
-        $params['location'] = $params['activity_location'];
+        $params['location'] = CRM_Utils_Array::value( 'activity_location', $params );
     }
 
     /**
@@ -286,7 +286,7 @@ class CRM_Case_Form_Activity_OpenCase
                                      'subject'            => $params['activity_subject'],
                                      'location'           => $params['location'],
                                      'activity_date_time' => $params['start_date'],
-                                     'duration'           => $params['duration'],
+                                     'duration'           => CRM_Utils_Array::value( 'duration', $params ),
                                      'medium_id'          => $params['medium_id'],
                                      'details'            => $params['activity_details'],
                                      );

@@ -80,7 +80,7 @@ class CRM_Contribute_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBo
         $recurStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
 
         require_once 'CRM/Core/Payment.php';
-        civicrm_api_include('utils', false, 3);
+        require_once 'api/v2/utils.v2.php';
         $recurRow = array();
         $recurIDs = array();
         while( $recur->fetch() ) {
@@ -94,7 +94,9 @@ class CRM_Contribute_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBo
             // note that we are passing a CRM_Core_Page object ($this) as if it were a form here:
             $paymentObject =& CRM_Core_Payment::singleton( $mode, $paymentProcessor, $this );
             
+            require_once 'api/v2/utils.php';
             _civicrm_object_to_array($recur, $values);
+
             $values['cancelSubscriptionUrl'] = $paymentObject->cancelSubscriptionURL( );
             $values['recur_status']          = $recurStatus[$values['contribution_status_id']];
             $recurRow[$values['id']]         = $values;

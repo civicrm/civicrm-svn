@@ -52,19 +52,17 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
      */
     function setUp() 
     {
-      $this->_apiversion =3;     
+        $this->_apiversion =3;     
         parent::setUp();
 
         $this->_contactId = $this->individualCreate(null);
 
         $this->_groupId1  = $this->groupCreate( null);
         $params = array( 'contact_id' => $this->_contactId,
-                         'group_id'     => $this->_groupId1,
-                         'version'			=> $this->_apiversion, );
+                         'group_id'   => $this->_groupId1,
+                         'version'    => $this->_apiversion, );
 
-
-      $result = civicrm_api3_group_contact_create( $params );
-
+        $result = civicrm_api3_group_contact_create( $params );
         
         $group = array(
                        'name'        => 'Test Group 2',
@@ -73,14 +71,16 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
                        'description' => 'New Test Group2 Created',
                        'is_active'   => 1,
                        'visibility'  => 'User and User Admin Only',
-                       'version'			=> $this->_apiversion, 
+                       'version'     => $this->_apiversion, 
                        );
+
         $this->_groupId2  = $this->groupCreate( $group,3 );
         $params = array( 'contact_id.1' => $this->_contactId,
                          'group_id'     =>  $this->_groupId2,
-                         'version'			=> $this->_apiversion,   );
-      //@todo uncomment me when I work         
-      //  civicrm_group_contact_create( $params );
+                         'version'      => $this->_apiversion,
+                         );
+        //@todo uncomment me when I work         
+        //civicrm_group_contact_create( $params );
         
         $this->_group = array($this->_groupId1  => array( 'title'      => 'New Test Group Created',
                                                           'visibility' => 'Public Pages',
@@ -92,13 +92,15 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
     
     function tearDown() 
     {
+        $tablesToTruncate = array( 'civicrm_contact',
+                                   'civicrm_group' );
+        $this->quickCleanup( $tablesToTruncate );
     }
 
-///////////////// civicrm_group_contact_get methods
+    ///////////////// civicrm_group_contact_get methods
 
     function testGetWithWrongParamsType()
     {
-    
         $params = 1;
         $groups = civicrm_api3_group_contact_get( $params );
 
@@ -108,7 +110,7 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
 
     function testGetWithEmptyParams( ) 
     {
-        $params = array( 'version'=>$this->_apiversion );
+        $params = array( 'version' => $this->_apiversion );
         $groups = civicrm_api3_group_contact_get( $params );
         
         $this->assertEquals( $groups['is_error'], 1 );
@@ -118,7 +120,7 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
     function testGet( ) 
     {
         $params = array( 'contact_id' => $this->_contactId,
-                          'version'			=> $this->_apiversion, );
+                         'version'    => $this->_apiversion, );
         $result = civicrm_api3_group_contact_get( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);                  
         foreach( $result as $v  ){ 
@@ -128,7 +130,7 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
         }
     }
    
-///////////////// civicrm_group_contact_add methods
+    ///////////////// civicrm_group_contact_add methods
 
     function testCreateWithWrongParamsType()
     {
@@ -145,15 +147,15 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
         $groups = civicrm_api3_group_contact_create( $params );
         
         $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'Mandatory key(s) missing from params array: group_id, contact_id, version' );
+        $this->assertEquals( $groups['error_message'], 
+                             'Mandatory key(s) missing from params array: group_id, contact_id, version' );
     }
 
     function testCreateWithoutGroupIdParams( ) 
     {
-       $params = array(
-                        'contact_id' => $this->_contactId,
-                        'version'		=> $this->_apiversion,
-                        );
+        $params = array( 'contact_id' => $this->_contactId,
+                         'version'    => $this->_apiversion,
+                         );
         
         $groups = civicrm_api3_group_contact_create( $params );
         
@@ -163,10 +165,9 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
 
     function testCreateWithoutContactIdParams( )     
     {
-       $params = array(
-                        'group_id' => $this->_groupId1,
-                         'version' => $this->_apiversion,
-                        );
+        $params = array( 'group_id' => $this->_groupId1,
+                         'version'  => $this->_apiversion,
+                         );
         $groups = civicrm_api3_group_contact_create( $params );
         
         $this->assertEquals( $groups['is_error'], 1 );
@@ -175,21 +176,21 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
     
     function testCreate( ) 
     {
-      $cont = array( 'first_name'       => 'Amiteshwar',
+        $cont = array( 'first_name'       => 'Amiteshwar',
                        'middle_name'      => 'L.',
                        'last_name'        => 'Prasad',
                        'prefix_id'        => 3,
                        'suffix_id'        => 3,
                        'email'            => 'amiteshwar.prasad@civicrm.org',
                        'contact_type'     => 'Individual',
-                       'version'			=> $this->_apiversion, );
+                       'version'          => $this->_apiversion, );
         
         $this->_contactId1 = $this->individualCreate( $cont );
         $params = array(
-                        'contact_id' => $this->_contactId,
+                        'contact_id'   => $this->_contactId,
                         'contact_id.2' => $this->_contactId1,
                         'group_id'     => $this->_groupId1,
-                        'version'			=> $this->_apiversion, );
+                        'version'      => $this->_apiversion, );
         
         $result = civicrm_api3_group_contact_create( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
@@ -197,14 +198,13 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
         $this->assertEquals( $result ['values']['not_added'], 1,"in line " . __LINE__ );
         $this->assertEquals( $result ['values']['added'], 1,"in line " . __LINE__ );
         $this->assertEquals( $result ['values']['total_count'], 2,"in line " . __LINE__ );
-        
     }
 
-///////////////// civicrm_group_contact_remove methods
+    ///////////////// civicrm_group_contact_remove methods
 
     function testRemoveWithWrongParamsType()
     {
-        $params  = 1;
+        $params = 1;
         $groups = civicrm_api3_group_contact_delete( $params );
 
         $this->assertEquals( $groups['is_error'], 1 );
@@ -222,9 +222,9 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
 
     function testRemoveWithoutGroupIdParams( ) 
     {
-        $params = array('version'		=> $this->_apiversion,
-                        'contact_id' => $this->_contactId,
-                        );
+        $params = array( 'version'    => $this->_apiversion,
+                         'contact_id' => $this->_contactId,
+                         );
         
         $groups = civicrm_api3_group_contact_delete( $params );
               
@@ -234,9 +234,9 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
     
     function testDeleteWithoutContactIdParams( ) 
     {
-        $params = array('version'	=> $this->_apiversion,
-                        'group_id' => $this->_groupId1,
-                        );
+        $params = array( 'version'  => $this->_apiversion,
+                         'group_id' => $this->_groupId1,
+                         );
         
         $groups = civicrm_api3_group_contact_delete( $params );
               
@@ -244,23 +244,19 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
         $this->assertEquals( $groups['error_message'], 'Mandatory key(s) missing from params array: contact_id' );
     }    
     
-    
     function testDelete( ) 
     {
-        $params = array(
-                        'contact_id' => $this->_contactId,
-                        'group_id'     => 1 ,
-                        'version'      =>$this->_apiversion,);
-        
-        
-       $result = civicrm_api3_group_contact_delete( $params );
+        $params = array( 'contact_id' => $this->_contactId,
+                         'group_id'   => 1 ,
+                         'version'    =>$this->_apiversion,
+                         );
+                
+        $result = civicrm_api3_group_contact_delete( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);             
         $this->assertEquals( $result['is_error'], 0, "in line " . __LINE__ );
         $this->assertEquals( $result['values']['removed'], 1, "in line " . __LINE__  );
         $this->assertEquals( $result['values']['total_count'], 1, "in line " . __LINE__  );
-
     }
-  
 }
 
 

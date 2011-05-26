@@ -73,4 +73,17 @@
       <comment>is this the reserved message template which we ship for the workflow referenced by workflow_id?</comment>
       <add>3.1</add>
   </field>
+  <field>
+      <name>pdf_format_id</name>
+      <type>int unsigned</type>
+      <comment>FK to civicrm_option_value containing PDF Page Format.</comment>
+      <add>3.4</add>
+  </field>
+  <foreignKey>
+      <name>pdf_format_id</name>
+      <table>civicrm_option_value</table>
+      <key>id</key>
+      <onDelete>SET NULL</onDelete>
+      <add>3.4</add>
+  </foreignKey>
 </table>

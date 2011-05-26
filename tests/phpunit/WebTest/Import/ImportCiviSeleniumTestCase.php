@@ -46,7 +46,13 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
      *                             saveMappingName    : to override mapping name
      *
      */
-    function importCSVComponent( $component, $headers, $rows, $contactType = 'Individual', $mode = 'Skip', $fieldMapper = array( ), $other = array( ) ) {
+    function importCSVComponent( $component,
+                                 $headers,
+                                 $rows,
+                                 $contactType = 'Individual',
+                                 $mode = 'Skip',
+                                 $fieldMapper = array( ),
+                                 $other = array( ) ) {
         
         // Go to contact import page.
         $this->open( $this->sboxPath . $this->_getImportComponentUrl($component) );
@@ -109,11 +115,17 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
         }
         
         // Check mapping data.
-        $this->_checkImportMapperData($headers, $rows, $existingMapping, isset($other['checkMapperHeaders']) ? $other['checkMapperHeaders'] : array( ));
+        $this->_checkImportMapperData($headers,
+                                      $rows,
+                                      $existingMapping,
+                                      isset($other['checkMapperHeaders']) ? $other['checkMapperHeaders'] : array( ) );
         
         // Save mapping
         if ( isset($other['saveMapping']) ) {
-            $mappingName = isset($other['saveMappingName']) ? $other['saveMappingName'] : "{$component}Import_" . substr(sha1(rand()), 0, 7);
+            $mappingName = 
+                isset($other['saveMappingName']) ? 
+                $other['saveMappingName'] : 
+                "{$component}Import_" . substr(sha1(rand()), 0, 7);
 
             $this->click('saveMapping');
             $this->type('saveMappingName', $mappingName);
@@ -128,7 +140,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
         $this->_checkImportMapperData($headers, $rows, $existingMapping, isset($other['checkMapperHeaders']) ? $other['checkMapperHeaders'] : array( ));
       
         // Submit form.
-        $this->click('_qf_Preview_next');
+        $this->click('_qf_Preview_next-bottom');
         
         sleep(10);
         
@@ -145,8 +157,8 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
                                );
         
         foreach( $checkSummary as $label => $value ) {
-          $this->verifyText("xpath=//table[@id='summary-counts']/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote($value));
-        }        
+            $this->verifyText("xpath=//table[@id='summary-counts']/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote($value));
+        }     
     }
     
     /*

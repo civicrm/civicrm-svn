@@ -25,7 +25,6 @@
 *}
 <div class="crm-block crm-form-block crm-miscellaneous-form-block">
   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
-<fieldset>
     <table class="form-layout">
         <tr class="crm-miscellaneous-form-block-dashboardCacheTimeout">
             <td class="label">{$form.dashboardCacheTimeout.label}</td>
@@ -33,9 +32,7 @@
                 <span class="description">{ts}The number of minutes to cache dashlet content on dashboard.{/ts}</span></td>
         </tr>
     </table>
-</fieldset>
 
-<fieldset>
     <table class="form-layout">
         <tr class="crm-miscellaneous-form-block-contactUndelete">
           <td class="label">{$form.contactUndelete.label}</td>
@@ -73,8 +70,7 @@
                 <span class="description">{ts}Maximum Size of file (documents, images, etc.) which can attached to emails or activities.<br />Note: php.ini should support this file size.{/ts}</span></td>
         </tr>
     </table>
-</fieldset>
-<fieldset><legend>{ts}reCAPTCHA Keys{/ts}</legend>
+<h3>{ts}reCAPTCHA Keys{/ts}</h3>
     <div class="description">
         {ts}reCAPTCHA is a free service that helps prevent automated abuse of your site. To use reCAPTCHA on public-facing CiviCRM forms: sign up at <a href="http://recaptcha.net" "target=_blank">recaptcha.net</a>; enter the provided public and private reCAPTCHA keys here; then enable reCAPTCHA under Advanced Settings in any Profile.{/ts}
     </div>
@@ -94,5 +90,4 @@
         </tr>
         </table>
            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-    </fieldset>
 </div>

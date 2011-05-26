@@ -82,7 +82,7 @@ function _civicrm_api3_get_DAO ($name) {
       require ('CRM/Core/DAO/.listAll.php');
     }
 
-    
+ 
     
     if (strpos($name, 'civicrm_api3') !== false) {
         $last = strrpos ($name, '_') ;
@@ -91,8 +91,16 @@ function _civicrm_api3_get_DAO ($name) {
           //for some reason pledge_payment doesn't follow normal conventions of BAO being the same as table name
           $name = 'Payment';
         }
+        if($name =='custom_field'){
+          //not handling camel case - there is a function in api.php that we could use?
+          // for now adding example & putting in test for when we fix it
+          $name = 'CustomField';
+        }
+        if($name =='custom_group'){
+         $name = 'CustomGroup';
+        }
         $name = ucfirst ($name);
-    }
+    }  
     return $dao[$name];
 }
 
@@ -245,6 +253,10 @@ function civicrm_api3_create_success( $values = 1,$params=array(),&$dao = null )
     $result['version'] =3;
     if (is_array( $values)) {
         $result['count'] = count( $values);
+
+        // Convert value-separated strings to array
+        _civicrm_api3_separate_values( $values );
+
         if ( $result['count'] == 1 ) {
             list($result['id']) = array_keys($values);
         } elseif ( ! empty($values['id'] ) ) {
@@ -262,6 +274,25 @@ function civicrm_api3_create_success( $values = 1,$params=array(),&$dao = null )
     }
 
     return $result;
+}
+
+/**
+ *  Recursive function to explode value-separated strings into arrays
+ * 
+ */
+function _civicrm_api3_separate_values( &$values )
+{
+  $sp = CRM_Core_DAO::VALUE_SEPARATOR;
+  foreach ($values as &$value) {
+    if (is_array($value)) {
+      _civicrm_api3_separate_values($value);
+    }
+    elseif (is_string($value)) {
+      if (strpos($value, $sp) !== FALSE) {
+        $value = explode($sp, trim($value, $sp));
+      }
+    }
+  }
 }
 
 /**
@@ -382,8 +413,8 @@ function _civicrm_api3_dao_to_array ($dao, $params = null,$uniqueFields = TRUE) 
     }
 
 
-    $fields = array_keys(_civicrm_api3_build_fields_array(&$dao, $uniqueFields));
-    if ($return) {
+    $fields = array_keys(_civicrm_api3_build_fields_array($dao, $uniqueFields));
+    if (isset($return)) {
         $fields = array_intersect($fields,$return);
     }
 
@@ -933,9 +964,9 @@ function _civicrm_api3_check_required_fields( $params, $daoName, $return = FALSE
         if ($v['name'] == 'id') {
             continue;
         }
-
-        if ( isset( $v['required'] ) ) {
-            if ($v['required'] && (empty($params[$k]))) {
+        
+        if ( CRM_Utils_Array::value( 'required', $v ) ) {
+            if ( empty( $params[$k] ) && !( $params[$k] === 0 ) ) { // 0 is a valid input for numbers, CRM-8122
                 $missing[] = $k;
             }
         }
@@ -1734,8 +1765,8 @@ function civicrm_api3_check_contact_dedupe( $params ) {
  */
 function civicrm_api3_api_check_permission($entity, $action, &$params, $throw = true)
 {
-    // return early if we’re told explicitly to skip the permission check
-    if (isset($params['check_permissions']) and $params['check_permissions'] == false) return true;
+    // return early unless we’re told explicitly to do the permission check
+    if (empty($params['check_permissions']) or $params['check_permissions'] == false) return true;
 
     require_once 'CRM/Core/Permission.php';
 
@@ -1801,3 +1832,34 @@ function _civicrm_api3_basic_delete($bao_name, &$params){
     return civicrm_api3_create_success( true );
 }
 
+/*
+ * Get custom data for the given entity & Add it to the returnArray as 'custom_123' = 'custom string' AND 'custom_123_1' = 'custom string'
+ * Where 123 is field value & 1 is the id within the custom group data table (value ID)
+ * 
+ * @param array $returnArray - array to append custom data too - generally $result[4] where 4 is the entity id.
+ * @param string $entity  e.g membership, event 
+ * @param int $groupID - per CRM_Core_BAO_CustomGroup::getTree
+ * @param int $subType e.g. membership_type_id where custom data doesn't apply to all membership types
+ * @param string $subName - Subtype of entity 
+ * 
+ */
+function _civicrm_apiv3_custom_data_get(&$returnArray,$entity,$entity_id ,$groupID = null,$subType = null, $subName = null){
+     require_once 'CRM/Core/BAO/CustomGroup.php'; 
+     $groupTree =& CRM_Core_BAO_CustomGroup::getTree($entity, 
+                                                      CRM_Core_DAO::$_nullObject, 
+                                                      $entity_id , 
+                                                      $groupID,
+                                                      $subType,
+                                                      $subName);
+     $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, CRM_Core_DAO::$_nullObject );
+     $customValues = array( );
+     CRM_Core_BAO_CustomGroup::setDefaults( $groupTree, $customValues );
+     if ( !empty( $customValues ) ) {
+       foreach ( $customValues as $key => $val ) {
+          // per standard - return custom_fieldID
+          $returnArray['custom_' . (CRM_Core_BAO_CustomField::getKeyID($key))] = $val;
+          //not standard - but some api did this so guess we should keep - cheap as chips
+          $returnArray[$key] = $val;
+        }
+      }
+}

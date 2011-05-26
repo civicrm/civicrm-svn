@@ -52,20 +52,20 @@ class api_v3_PledgeTest extends CiviUnitTestCase
    
         $this->_individualId = $this->individualCreate(null);
         $this->params =  array(
-                        'contact_id'             => $this->_individualId,
-                        'pledge_create_date'    => date('Ymd'),
-                        'start_date'   					 => date('Ymd'),
-                        'scheduled_date'         => $this->scheduled_date,   
-                        'pledge_amount'         => 100.00,
-                        'pledge_status_id'         => '2',
-                        'pledge_contribution_type_id'  => '1',
+                        'contact_id'                         => $this->_individualId,
+                        'pledge_create_date'                 => date('Ymd'),
+                        'start_date'   					     => date('Ymd'),
+                        'scheduled_date'                     => $this->scheduled_date,   
+                        'pledge_amount'                      => 100.00,
+                        'pledge_status_id'                   => '2',
+                        'pledge_contribution_type_id'        => '1',
                         'pledge_original_installment_amount' => 20,
-                        'frequency_interval'             => 5,
-                        'frequency_unit'             => 'year',
-                        'frequency_day'            => 15,
-                        'installments'            =>5,
-                        'sequential'						  =>1,
-                        'version'									=>$this->_apiversion,
+                        'frequency_interval'                 => 5,
+                        'frequency_unit'                     => 'year',
+                        'frequency_day'                      => 15,
+                        'installments'                       =>5,
+                        'sequential'						 =>1,
+                        'version'							 =>$this->_apiversion,
           
                   ); 
     }
@@ -156,11 +156,38 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $this->assertEquals($result['values'][0]['create_date'],date('Ymd'), 'In line ' . __LINE__);
         $this->assertEquals($result['values'][0]['start_date'],date('Ymd'), 'In line ' . __LINE__);        
         $this->assertEquals($result['is_error'], 0 , 'In line ' . __LINE__);
-
-        $pledgeID = array( 'pledge_id' => $result['id'], 'version' => 3 );
-        $pledge   =& civicrm_api3_pledge_delete($pledgeID);
-
+        $payments = civicrm_api('PledgePayment','Get',array('version' =>3, 'pledge_id' => $result['id'], 'sequential' => 1));
+        $this->assertEquals($payments['is_error'], 0 , 'In line ' . __LINE__);
+        $this->assertEquals($payments['count'], 5 , 'In line ' . __LINE__);
+        require_once 'CRM/Utils/Date.php';
+        $shouldBeDate = CRM_Utils_Date::format(CRM_Utils_Date::intervalAdd('year',5*4,$this->scheduled_date),"-");
+        $this->assertEquals(substr($shouldBeDate,0,10) ,substr($payments['values'][4]['scheduled_date'],0,10), 'In line '. __LINE__);
+        
+        $pledgeID = array( 'id' => $result['id'], 'version' => 3 );
+        $pledge =& civicrm_api3_pledge_delete($pledgeID);
     }
+    /*
+     * Test that pledge with weekly schedule calculates dates correctly
+     */
+    function testCreatePledgeWeeklySchedule(){
+      $params =  array(  'scheduled_date'     => '20110510',
+      									 'frequency_unit'     => 'week',
+    										 'frequency_day'      =>  3,
+    										 'frequency_interval' => 2
+      );
+      $params = array_merge($this->params,$params);
+      $pledge = civicrm_api('Pledge','Create',$params);
+      //ensure that correct number of payments created & last payment has the right date
+      $payments = civicrm_api('PledgePayment','Get',array('version' =>3, 'pledge_id' => $result['id'], 'sequential' => 1));
+      $this->assertEquals($payments['is_error'], 0 , 'In line ' . __LINE__);
+      $this->assertEquals($payments['count'], 5 , 'In line ' . __LINE__);
+      require_once 'CRM/Utils/Date.php';
+      $this->assertEquals('2011-07-06 00:00:00' ,$payments['values'][4]['scheduled_date'], 'In line '. __LINE__);
+ 
+      $pledgeID = array( 'pledge_id' => $pledge['id'], 'version' => 3 );
+      $pledge   =& civicrm_api3_pledge_delete($pledgeID);
+    }
+    
 /*
  * test that using original_installment_amount rather than pledge_original_installment_amount works
  * Pledge field behaviour is a bit random & so pledge has come to try to handle both unique & non -unique fields
@@ -172,8 +199,8 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         
         unset ($params['pledge_original_installment_amount']);
         $result=& civicrm_api3_pledge_create($params);
-        $result = civicrm_api('Pledge', 'Get', array('version' => 3, 'id' => $result['id'], 'sequential' => 1));
-        $pledge = $result['values'][0];
+        $pledgeDetails = civicrm_api('Pledge', 'Get', array('version' => 3, 'id' => $result['id'], 'sequential' => 1));
+        $pledge = $pledgeDetails['values'][0];
  
         $this->assertEquals(0, $result['is_error'], "in line " . __LINE__);
         $this->assertEquals(100.00, $pledge['pledge_amount']     , 'In line ' . __LINE__); 

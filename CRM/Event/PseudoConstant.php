@@ -34,6 +34,7 @@
  *
  */
 
+require_once 'CRM/Core/OptionGroup.php';
 require_once 'CRM/Core/PseudoConstant.php';
 
 /**
@@ -177,14 +178,14 @@ class CRM_Event_PseudoConstant extends CRM_Core_PseudoConstant
         $index = $cond ? $cond : 'No Condition';
         if ( ! CRM_Utils_Array::value( $index, self::$participantRole ) ) {
             self::$participantRole[$index] = array( );
-            require_once "CRM/Core/OptionGroup.php";
+
             $condition = null;
             
             if ( $cond ) {
                 $condition = "AND $cond";
             }
             
-            self::$participantRole[$index] = CRM_Core_OptionGroup::values( "participant_role",  false, false, 
+            self::$participantRole[$index] = CRM_Core_OptionGroup::values( 'participant_role',  false, false, 
                                                                            false, $condition );
         }
         
@@ -205,8 +206,7 @@ class CRM_Event_PseudoConstant extends CRM_Core_PseudoConstant
     {
         if ( ! self::$participantListing ) {
             self::$participantListing = array( );
-            require_once "CRM/Core/OptionGroup.php";
-            self::$participantListing = CRM_Core_OptionGroup::values("participant_listing");
+            self::$participantListing = CRM_Core_OptionGroup::values('participant_listing');
         }
         
         if( $id ) {
@@ -227,8 +227,7 @@ class CRM_Event_PseudoConstant extends CRM_Core_PseudoConstant
     {
         if ( ! self::$eventType ) {
             self::$eventType = array( );
-            require_once "CRM/Core/OptionGroup.php";
-            self::$eventType = CRM_Core_OptionGroup::values("event_type");
+            self::$eventType = CRM_Core_OptionGroup::values('event_type');
         }
         
         if( $id ) {
@@ -251,7 +250,7 @@ class CRM_Event_PseudoConstant extends CRM_Core_PseudoConstant
                                               false, 
                                               'template_title', 
                                               'is_active', 
-                                              "is_template = 1"
+                                              'is_template = 1'
                                               );
         }
         if ($id) {

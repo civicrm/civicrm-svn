@@ -440,7 +440,8 @@ class CRM_Utils_String {
         $matches = array();
         preg_match('/-ALTERNATIVE ITEM 0-(.*?)-ALTERNATIVE ITEM 1-.*-ALTERNATIVE END-/s', $full, $matches);
 
-        if ( trim( strip_tags( $matches[1] ) ) != '' ) {
+        if ( isset( $matches[1] ) &&
+             trim( strip_tags( $matches[1] ) ) != '' ) {
             return $matches[1];
         } else {
             return $full;

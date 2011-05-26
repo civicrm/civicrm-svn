@@ -173,8 +173,8 @@ class CRM_Contribute_BAO_Contribution_Utils
 				
             }
         } elseif ( $form->_values['is_monetary'] && $form->_amount > 0.0 ) {
-           
-            if ( $paymentParams['is_recur']  && $form->_contributeMode == 'direct' ) {
+            if ( CRM_Utils_Array::value( 'is_recur', $paymentParams ) &&
+                 $form->_contributeMode == 'direct' ) {
 
                 // For recurring contribution, create Contribution Record first.
                 // Contribution ID, Recurring ID and Contact ID needed 
@@ -248,7 +248,7 @@ class CRM_Contribute_BAO_Contribution_Utils
                                          $form->_params ) ) {
                 $pending = true;
             }
-            if ( !($paymentParams['is_recur'] && $form->_contributeMode == 'direct') ) {
+            if ( !(!empty($paymentParams['is_recur']) && $form->_contributeMode == 'direct') ) {
                 $contribution =
                     CRM_Contribute_Form_Contribution_Confirm::processContribution( $form,
                                                                                    $form->_params, $result,
@@ -265,7 +265,7 @@ class CRM_Contribute_BAO_Contribution_Utils
         }
         //Do not send an email if Recurring contribution is done via Direct Mode
         //We will send email once the IPN is received.
-        if ( $paymentParams['is_recur'] && $form->_contributeMode == 'direct' ) {
+        if ( !empty($paymentParams['is_recur']) && $form->_contributeMode == 'direct' ) {
             return true;
         }
         

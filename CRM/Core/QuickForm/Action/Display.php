@@ -128,9 +128,13 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
         }
 
         $template->assign( 'action' , $page->getAction( ) );
-        $template->assign( 'tplFile', $page->getTemplateFileName() ); 
+
+        $pageTemplateFile = $page->getTemplateFileName( );
+        $template->assign( 'tplFile', $pageTemplateFile );
 
         $content = $template->fetch( $controller->getTemplateFile( ) );
+
+        CRM_Utils_System::appendJSFile( $pageTemplateFile, $content );
 
         $print = $controller->getPrint( );
         if ( $print ) {
@@ -146,7 +150,8 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
         if ( $print ) {
             if ( $print == CRM_Core_Smarty::PRINT_PDF ) {
                 require_once 'CRM/Utils/PDF/Utils.php';
-                CRM_Utils_PDF_Utils::domlib( $content, "{$page->_name}.pdf" );
+                CRM_Utils_PDF_Utils::html2pdf( $content, "{$page->_name}.pdf", false,
+                                               array( 'paper_size' => 'a3', 'orientation' => 'landscape' ) );
             } else {
                 echo $html;
             }

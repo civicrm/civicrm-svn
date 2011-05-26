@@ -30,7 +30,7 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
     $this->_apiversion = 3;
     //  Create Group For Individual  Contact Type
     $groupIndividual   = array( 'title'       => 'TestGroup For Indivi'. substr(sha1(rand()), 0, 5) ,
-                                'extends'     => array( 'individual' ),
+                                'extends'     => array( 'Individual' ),
                                 'style'       => 'Inline',
                                 'is_active'   => 1,
                                 'version'	 => $this->_apiversion,
@@ -92,6 +92,12 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
 		CRM_Core_BAO_CustomField::getTableColumnGroup ( $this->IndividualField ['id'], True );
 		CRM_Core_BAO_CustomField::getTableColumnGroup ( $this->IndiStudentField[id], True );
 		
+  }
+
+  function tearDown( )
+  {
+      $tablesToTruncate = array( 'civicrm_contact' );
+      $this->quickCleanup( $tablesToTruncate, true );     
   }
 
   /**

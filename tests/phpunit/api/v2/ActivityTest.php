@@ -86,6 +86,22 @@ class api_v2_ActivityTest extends CiviUnitTestCase
     }
 
     /**
+     * Tears down the fixture, for example, closes a network connection.
+     * This method is called after a test is executed.
+     *
+     * @access protected
+     */
+    function tearDown()
+    {
+        $tablesToTruncate = array( 'civicrm_contact', 
+                                   'civicrm_activity',
+                                   'civicrm_option_group',
+                                   'civicrm_option_value',
+                                   );
+        $this->quickCleanup( $tablesToTruncate, true );
+    }
+
+    /**
      *  Test civicrm_activities_get_contact()
      */
     function testActivitiesGetContact()

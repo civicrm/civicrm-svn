@@ -1708,7 +1708,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             }
             if ( ! $processed ) {
                 if ( substr($fieldName, 0, 3) === 'is_' or substr($fieldName, 0, 7) === 'do_not_' ) {
-                    $form->add('checkbox', $name, $title, $attributes, $required );
+                    $form->add('advcheckbox', $name, $title, $attributes, $required );
                 } else {
                     $form->add('text', $name, $title, $attributes, $required );
                 }

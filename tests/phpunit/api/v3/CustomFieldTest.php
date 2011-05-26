@@ -33,8 +33,6 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
     function tearDown() 
     {
     }
-
-
    
     /**
      * check with no array
@@ -69,7 +67,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $customField =& civicrm_api3_custom_field_create($params);
         $this->assertEquals($customField['is_error'],1);
         $this->assertEquals( $customField['error_message'],'Mandatory key(s) missing from params array: label' );
-
+        $this->customGroupDelete($customGroup['id']); 
     } 
 
     /**
@@ -99,7 +97,6 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $this->assertNotNull($customField['id'],'in line ' . __LINE__);
         $this->customFieldDelete($customField['id']); 
         $this->customGroupDelete($customGroup['id']); 
-
     } 
 
     /**
@@ -174,19 +171,30 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $this->assertNotNull($result['id']);
         $this->customFieldDelete($result['id']);
         $this->customGroupDelete($customGroup['id']); 
-
-    } 
-            /**
+    }
+    
+    /**
      *  Test  using example code
      */
     function testCustomFieldCreateExample( )
     {
-     $customGroup = $this->customGroupCreate('Individual','date_test_group',3);
-     require_once 'api/v3/examples/CustomFieldCreate.php';
-     $result = custom_field_create_example();
-     $expectedResult = custom_field_create_expectedresult();
-     $this->assertEquals($result,$expectedResult);
+        $tablesToTruncate = array( 'civicrm_custom_field',
+                                   'civicrm_custom_group' );
+
+        // custom_field_create_example() contains hardcoded values
+        $this->quickCleanup( $tablesToTruncate );
+        
+        $this->_individualId = $this->individualCreate( );
+
+        $customGroup = $this->customGroupCreate('Individual','date_test_group',3);
+        require_once 'api/v3/examples/CustomFieldCreate.php';
+        $result = custom_field_create_example();
+        $expectedResult = custom_field_create_expectedresult();
+        $this->assertEquals($result,$expectedResult);
+        $this->customFieldDelete($result['id']);
+        $this->customGroupDelete($customGroup['id']);
     }
+    
     /**
      * check with data type - Country array
      */
@@ -245,7 +253,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
     function testCustomFieldOptionValueCreate( )
     {
         $customGroup = $this->customGroupCreate('Contact', 'select_test_group',3);
-        $params = array ('custom_group_id' => 1,
+        $params = array ('custom_group_id' => $customGroup['id'],
                          'label'           => 'Country',
                          'html_type'       => 'Select',
                          'data_type'       => 'String',
@@ -287,7 +295,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                                        'is_active' => 1 ),
                                 );
 
-        $params = array ('custom_group_id' => 1,
+        $params = array ('custom_group_id' => $customGroup['id'],
                          'label'           => 'Country',
                          'html_type'       => 'Select',
                          'data_type'       => 'String',
@@ -306,13 +314,14 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $this->customFieldDelete($customField['id']);
         $this->customGroupDelete($customGroup['id']); 
     }
+
     /**
      * check with data type - Select Option array
      */
     function testCustomFieldSelectOptionValueCreate( )
     {
         $customGroup = $this->customGroupCreate('Contact', 'select_test_group',3);
-        $params = array ('custom_group_id' => 1,
+        $params = array ('custom_group_id' => $customGroup['id'],
                          'label'           => 'PriceSelect',
                          'html_type'       => 'Select',
                          'data_type'       => 'Int',
@@ -433,7 +442,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $customField =& civicrm_api3_custom_field_delete($params); 
         $this->assertEquals($customField['is_error'], 1);
         $this->assertEquals($customField['error_message'], 'Input variable `params` is not an array');
-    }    
+    }
+   
     /**
      * check without Field ID
      */
@@ -453,14 +463,14 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $customGroup = $this->customGroupCreate('Individual','test_group');
         $customField = $this->customFieldCreate($customGroup['id'],'test_name'); 
         $this->assertNotNull($customField['id'],'in line ' .__LINE__);
-        $params = array('version'					=> $this->_apiversion,
-                         'id'							=> $customField );
+        
+        $params = array( 'version' => $this->_apiversion,
+                         'id'	   => $customField['id'] );
         $result =& civicrm_api3_custom_field_delete( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);   
 
         $this->assertEquals($result['is_error'], 0,'in line ' .__LINE__);
         $this->customGroupDelete($customGroup['id']);
-
     } 
       
     /**

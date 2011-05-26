@@ -37,7 +37,7 @@ require_once 'api/v2/ActivityType.php';
 
 class api_v2_ActivityTypeTest extends CiviUnitTestCase 
 {
- 
+
     function get_info( ) 
     {
         return array(
@@ -50,6 +50,16 @@ class api_v2_ActivityTypeTest extends CiviUnitTestCase
     function setUp( ) 
     {
         parent::setUp();
+    }
+
+    /**
+     * Tears down the fixture, for example, closes a network connection.
+     * This method is called after a test is executed.
+     *
+     * @access protected
+     */
+    function tearDown()
+    {
     }
     
     /**
@@ -66,7 +76,7 @@ class api_v2_ActivityTypeTest extends CiviUnitTestCase
     /**
      *  Test civicrm_activity_type_create with no label()
      */
-    function testActivityTypecreate( ) {
+    function testActivityTypeCreate( ) {
         
         $params = array(
                         'weight'=> '2',
@@ -74,23 +84,24 @@ class api_v2_ActivityTypeTest extends CiviUnitTestCase
         $activitycreate = & civicrm_activity_type_create($params);
         $this->assertEquals( $activitycreate['is_error'], 1);
         $this->assertEquals( $activitycreate['error_message'],'Required parameter "label / weight" not found');
-        
     }
     
     /**
      *  Test civicrm_activity_type_create - check id
      */
-    function testActivityTypecreatecheckId( ) {
+    function testActivityTypeCreateCheckId( ) {
         
-        $params = array(
-                        'label' => 'type_create',
-                        'weight'=> '2',
-                        );
-        $activitycreate = & civicrm_activity_type_create($params);
-        $activityID = $activitycreate['id'];
-        $this->assertNotContains( 'is_error', $activitycreate );
-        $this->assertArrayHasKey( 'id', $activitycreate );
-        $this->assertArrayHasKey( 'option_group_id', $activitycreate );
+        $params  = array(
+                         'label' => 'type_create',
+                         'weight'=> '2',
+                         );
+        $activityTypeCreate = & civicrm_activity_type_create($params);
+        $activityTypeID     = $activityTypeCreate['id'];
+
+        $this->assertNotContains( 'is_error', $activityTypeCreate );
+        $this->assertArrayHasKey( 'id', $activityTypeCreate );
+        $this->assertArrayHasKey( 'option_group_id', $activityTypeCreate );
+        $this->activityTypeDelete( $activityTypeID );
     }
     
     /**
@@ -102,9 +113,9 @@ class api_v2_ActivityTypeTest extends CiviUnitTestCase
                         'label' => 'type_create_delete',
                         'weight'=> '2',
                         );
-        $activitycreate = & civicrm_activity_type_create($params);
-        $params = array( 'activity_type_id' => $activitycreate['id'] );
-        $activitydelete = & civicrm_activity_type_delete($params);
-        $this->assertEquals($activitydelete, 1 , 'In line ' . __LINE__);
+        $activityTypeCreate = $this->activityTypeCreate( $params );
+        $params             = array( 'activity_type_id' => $activityTypeCreate['id'] );
+        $activityTypeDelete = civicrm_activity_type_delete( $params );
+        $this->assertEquals( $activityTypeDelete, 1 , 'In line ' . __LINE__ );
     }
 }

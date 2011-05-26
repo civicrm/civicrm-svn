@@ -68,6 +68,13 @@ class api_v2_GroupOrganizationTest extends CiviUnitTestCase
      */
     protected function tearDown()
     {
+        // truncate a few tables
+        $tablesToTruncate = array( 'civicrm_contact',
+                                   'civicrm_group',
+                                   'civicrm_group_contact',
+                                   'civicrm_subscription_history' );
+        
+        $this->quickCleanup( $tablesToTruncate );
     }
 
     ///////////////// civicrm_group_organization_get methods

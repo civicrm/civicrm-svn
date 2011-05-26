@@ -1879,7 +1879,7 @@ SELECT     f.id
 FROM       civicrm_custom_field f
 INNER JOIN civicrm_custom_group g ON f.custom_group_id = g.id
 WHERE      ( f.label = %1 OR f.name  = %1 )
-AND        ( g.title = %2 OR g.title = %2 )
+AND        ( g.title = %2 OR g.name = %2 )
 ";
         } else {
             $sql = "
@@ -1897,6 +1897,35 @@ WHERE      ( f.label = %1 OR f.name = %1 )
             return null;
         }
     }
+
+    /**
+     * Given ID of a custom field, return its name as well as the name of the custom group it belongs to.
+     *
+     */
+    static function getNameFromID( $ids ) {
+        if ( is_array($ids) ) {
+          $ids = implode(',', $ids);
+        }
+        $sql = "
+SELECT     f.id, f.name AS field_name, f.label AS field_label, g.name AS group_name, g.title AS group_title
+FROM       civicrm_custom_field f
+INNER JOIN civicrm_custom_group g ON f.custom_group_id = g.id
+WHERE      f.id IN ($ids)";
+
+
+        $dao = CRM_Core_DAO::executeQuery( $sql );
+        $result = array();
+        while ( $dao->fetch( ) ) {
+            $result[$dao->id] = array(
+              'field_name' => $dao->field_name,
+              'field_label' => $dao->field_label,
+              'group_name' => $dao->group_name,
+              'group_title' => $dao->group_title,
+            );
+        }
+        return $result;
+    }
+    
     
     /**
      * Validate custom data.

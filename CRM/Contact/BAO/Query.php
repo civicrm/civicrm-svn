@@ -1372,6 +1372,7 @@ class CRM_Contact_BAO_Query
         case 'activity_test':   
         case 'activity_contact_name':
         case 'activity_campaign_id':
+        case 'activity_engagement_level':
             CRM_Activity_BAO_Query::whereClauseSingle( $values, $this );
             return;
 
@@ -2163,7 +2164,7 @@ class CRM_Contact_BAO_Query
 
             case 'civicrm_log':
                 $from .= " $side JOIN civicrm_log ON (civicrm_log.entity_id = contact_a.id AND civicrm_log.entity_table = 'civicrm_contact')";
-                $from .= " $side JOIN civicrm_contact contact_b ON (civicrm_log.modified_id = contact_b.id)";
+                $from .= " $side JOIN civicrm_contact contact_b_log ON (civicrm_log.modified_id = contact_b_log.id)";
                 continue;
                 
             case 'civicrm_tag':
@@ -2948,7 +2949,7 @@ WHERE  id IN ( $groupIDs )
         $name = trim( $targetName[2] );
         $name = strtolower( CRM_Core_DAO::escapeString( $name ) );
         $name = $targetName[4] ? "%$name%" : $name;
-        $this->_where[$grouping][] = "contact_b.sort_name LIKE '%$name%'";
+        $this->_where[$grouping][] = "contact_b_log.sort_name LIKE '%$name%'";
         $this->_tables['civicrm_log'] = $this->_whereTables['civicrm_log'] = 1; 
         $this->_qill[$grouping][] = ts('Changed by') . ": $name";
     }
@@ -4068,7 +4069,10 @@ SELECT contact_a.id
 INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id OR displayRelType.contact_id_b = contact_a.id )
 INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a OR transform_temp.contact_id = displayRelType.contact_id_b )
 ";
-                $_rTypeWhere = " WHERE displayRelType.relationship_type_id = {$this->_displayRelationshipType} ";
+                $_rTypeWhere = "
+WHERE displayRelType.relationship_type_id = {$this->_displayRelationshipType}
+AND   displayRelType.is_active = 1
+";
             } else {
                 list( $relType, $dirOne, $dirTwo ) = explode( '_', $this->_displayRelationshipType );
                 if ( $dirOne == 'a' ) {
@@ -4084,7 +4088,10 @@ INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_b 
 INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a )
 ";
                 }
-                $_rTypeWhere = " WHERE displayRelType.relationship_type_id = $relType ";
+                $_rTypeWhere = "
+WHERE displayRelType.relationship_type_id = $relType
+AND   displayRelType.is_active = 1
+";
             }
             
             $this->_qill[0][] = $qillMessage . "'" . $relationshipTypeLabel . "'";

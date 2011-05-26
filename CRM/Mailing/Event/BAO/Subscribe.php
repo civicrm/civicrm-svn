@@ -105,6 +105,7 @@ LEFT JOIN civicrm_email      ON contact_a.id = civicrm_email.contact_id
 
         if ( ! $contact_id ) {
             require_once 'CRM/Core/BAO/LocationType.php';
+            require_once 'api/v2/utils.v2.php';
             /* If the contact does not exist, create one. */
             $formatted = array('contact_type' => 'Individual');
             $locationType = CRM_Core_BAO_LocationType::getDefault( );
@@ -366,14 +367,14 @@ SELECT     civicrm_email.id as email_id
                 /* Ask the contact for confirmation */
                 $se->send_confirm_request($params['email']);
             } else {
-                $success       = true;
+                $success       = false;
                 $groupFailed[] = $title;
             }
         }
         if ( $success ) {
             $groupTitle = implode( ',', $groupAdded );
             CRM_Utils_System::setUFMessage(ts('Your subscription request has been submitted for group %1. Check your inbox shortly for the confirmation email(s). If you do not see a confirmation email, please check your spam/junk mail folder.', array(1 => $groupTitle)));
-        } else if ( $success === 'false' ) {
+        } else if ( $success === false ) {
             $groupTitle = implode( ',', $groupFailed );
             CRM_Utils_System::setUFMessage(ts('We had a problem processing your subscription request for group %1. You have tried to subscribe to a private group and/or we encountered a database error. Please contact the site administrator.', array(1 => $groupTitle)));
         }

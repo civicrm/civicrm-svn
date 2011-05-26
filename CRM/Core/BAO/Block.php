@@ -63,7 +63,7 @@ class CRM_Core_BAO_Block
     static function &getValues( $blockName, $params )  
     {
         if ( empty( $params ) ) {
-            return null; 
+            return null;
         }
         eval ('$block = new CRM_Core_BAO_' . $blockName .'( );');
         
@@ -283,11 +283,13 @@ class CRM_Core_BAO_Block
                             $valueId = false;
                             
                             if ( $blockName == 'phone' ) {
-                                if ( $blockValue['phoneTypeId'] == $value['phone_type_id'] ) {
+                                $phoneTypeBlockValue = CRM_Utils_Array::value( 'phoneTypeId', $blockValue );
+                                if ( $phoneTypeBlockValue == $value['phone_type_id'] ) {
                                     $valueId = true;
                                 }
                             } else if ( $blockName == 'im' ) {
-                                if ( $blockValue['providerId'] == $value['provider_id'] ) {
+                                $providerBlockValue = CRM_Utils_Array::value( 'providerId', $blockValue );
+                                if ( $providerBlockValue== $value['provider_id'] ) {
                                     $valueId = true;
                                 }
                             } else {

@@ -102,6 +102,7 @@ class civicrm_CLI {
         // so the configuration works with php-cli
         $_SERVER['PHP_SELF' ] ="/index.php";
         $_SERVER['HTTP_HOST']= $this->site;
+        $_SERVER['REMOTE_ADDR'] = "127.0.0.1";
 
         if (! function_exists( 'drush_get_context' ) ) {
             require_once ("./civicrm.config.php");

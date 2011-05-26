@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.0                                                |
@@ -25,31 +26,46 @@
  +--------------------------------------------------------------------+
 */
 
-
 require_once 'api/v2/MembershipContributionLink.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CiviTest/Contact.php';
 require_once 'api/v2/MembershipType.php';
 require_once 'api/v2/MembershipStatus.php';
+require_once 'api/v2/Membership.php';
 require_once 'CRM/Member/BAO/MembershipType.php';
 require_once 'CRM/Member/BAO/Membership.php';
 
-
 class api_v2_MembershipContributionLinkTest extends CiviUnitTestCase 
 {
-    
+    protected $_contactID;
+    protected $_contributionTypeID;
+    protected $_membershipTypeID;
+    protected $_membershipStatusID;
+
+    function get_info( )
+    {
+        return array(
+                     'name'        => 'Membership Contribution Link',
+                     'description' => 'Test all Membership API methods.',
+                     'group'       => 'CiviCRM API Tests',
+                     );
+    }
+
     function setUp() 
     {
         parent::setUp();
-        $this->_contactID           = $this->organizationCreate( ) ;
-        $this->_contributionTypeID  = $this->contributionTypeCreate();
+        $this->_contactID           = $this->organizationCreate( );
+        $this->_contributionTypeID  = $this->contributionTypeCreate( );
         $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID );
         $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );
-        
     }
     
     function tearDown() 
     {
+         $this->membershipStatusDelete( $this->_membershipStatusID );
+         $this->membershipTypeDelete( array('id' => $this->_membershipTypeID) );
+         $this->contributionTypeDelete( );
+         $this->contactDelete( $this->_contactID );  
     }
     
     ///////////////// civicrm_membershipcontributionlink_create methods
@@ -59,11 +75,9 @@ class api_v2_MembershipContributionLinkTest extends CiviUnitTestCase
      */
     public function testCreateWrongParamsType()
     {
-        
         $params = 'eeee';
         $CreateWrongParamsType = civicrm_membershipcontributionlink_create($params);
         $this->assertEquals( $CreateWrongParamsType['error_message'],'Input parameters is not an array');
-     
     }
     
     /**
@@ -81,7 +95,6 @@ class api_v2_MembershipContributionLinkTest extends CiviUnitTestCase
      */
     public function testCreate()
     {
-        
         $contactId = Contact::createIndividual( );
         $params = array (
                          'contact_id'             => $contactId,
@@ -122,9 +135,10 @@ class api_v2_MembershipContributionLinkTest extends CiviUnitTestCase
         $Create = civicrm_membershipcontributionlink_create($params);
         $this->assertEquals( $Create['membership_id'],$membership->id ,'Check Membership Id');
         $this->assertEquals( $Create['contribution_id'],$contribution->id ,'Check Contribution Id');
-        
+
+        $this->membershipDelete( $membership->id );
+        $this->contactDelete( $contactId );  
     }    
-    
 
     ///////////////// civicrm_membershipcontributionlink_get methods
     
@@ -146,7 +160,6 @@ class api_v2_MembershipContributionLinkTest extends CiviUnitTestCase
         $params = array();
         $GetEmptyParams = civicrm_membershipcontributionlink_get($params);
         $this->assertEquals( $GetEmptyParams['error_message'],'No input parameters present');
-        
     }
     
     /**
@@ -188,7 +201,9 @@ class api_v2_MembershipContributionLinkTest extends CiviUnitTestCase
         
         $this->assertEquals( $GetParams[$Create['id']]['membership_id'],$membership->id ,'Check Membership Id');
         $this->assertEquals( $GetParams[$Create['id']]['contribution_id'],$contribution->id ,'Check Contribution Id');
-        
+    
+        $this->membershipDelete( $membership->id );
+        $this->contactDelete( $contactId );   
     }    
    
 }

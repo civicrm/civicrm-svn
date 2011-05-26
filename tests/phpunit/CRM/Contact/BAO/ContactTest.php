@@ -467,6 +467,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                           'Database check for New created note ' );
         //cleanup DB by deleting the contact
         Contact::delete( $contactId );
+        $this->quickCleanup( array( 'civicrm_contact') );
     }
     
     /**
@@ -589,6 +590,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         
         //cleanup DB by deleting the contact
         Contact::delete( $contactId );
+        $this->quickCleanup( array( 'civicrm_contact') );
     }
     
     /**
@@ -666,6 +668,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         //Now check DB for contact.
         $this->assertDBNull( 'CRM_Contact_DAO_Contact',$contactId , 
                              'id', 'sort_name', 'Database check, contact deleted successfully.' );
+        $this->quickCleanup( array( 'civicrm_contact') );
     }
     
     /**
@@ -1055,6 +1058,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         
         //cleanup DB by deleting the contact
         Contact::delete( $contactId );
+        $this->quickCleanup( array( 'civicrm_contact') );
     }
     
     /**
@@ -1083,6 +1087,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $organizationExpFileds = CRM_Contact_BAO_Contact::importableFields( 'Organization' );
         //Now check Organization fields
         $this->assertAttributesEquals( $organizationImpFileds, $organizationExpFileds );
+        
     }
     
     /**
@@ -1108,6 +1113,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         
         //cleanup DB by deleting the contact
         Contact::delete( $contactId );
+        $this->quickCleanup( array( 'civicrm_contact') );
     }
     
     /**
@@ -1157,6 +1163,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         
         //cleanup DB by deleting the contact
         Contact::delete( $contactId );
+        $this->quickCleanup( array( 'civicrm_contact') );
     }
     
     /**
@@ -1178,6 +1185,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         
         //cleanup DB by deleting the contact
         Contact::delete( $contactId );
+        $this->quickCleanup( array( 'civicrm_contact') );
     }
     
     /**
@@ -1211,6 +1219,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         
         //cleanup DB by deleting the contact
         Contact::delete( $contactId );
+        $this->quickCleanup( array( 'civicrm_contact') );
     }
     
     /**

@@ -100,8 +100,14 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
         );
     }
 
-
-
+    function tearDown( ) 
+    {
+        //  Truncate the tables
+        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+                             dirname(__FILE__) . '/../../CiviTest/truncate-ufgroup.xml') );
+    }
 
     /**
      * find uf join group id
@@ -115,7 +121,7 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
             'weight'       => 1,
             'uf_group_id'  => $this->_ufGroupId,
             'is_active'    => 1,
-            'version'			 => $this->_apiversion,
+            'version'      => $this->_apiversion,
 
         );
         $ufJoin       = civicrm_api3_uf_join_create($params);
@@ -123,7 +129,7 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
         $searchParams = array(
             'entity_table' => 'civicrm_contribution_page',
             'entity_id'    => 1,
-            'version'			 => $this->_apiversion,       
+            'version'      => $this->_apiversion,       
      
         );
         $result = civicrm_api3_uf_join_get($searchParams);
@@ -155,20 +161,17 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
     public function testUFJoinEditWithoutUFGroupId()
     {
         $params = array(
-            'module'       => 'CiviContribute',
-            'entity_table' => 'civicrm_contribution_page',
-            'entity_id'    => 1,
-            'weight'       => 1,
-            'is_active'    => 1 ,
-            'version'			 => $this->_apiversion,);
+                        'module'       => 'CiviContribute',
+                        'entity_table' => 'civicrm_contribution_page',
+                        'entity_id'    => 1,
+                        'weight'       => 1,
+                        'is_active'    => 1 ,
+                        'version'      => $this->_apiversion,
+                        );
         $result = civicrm_api3_uf_join_create($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__  );
         $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: uf_group_id', 'In line ' . __LINE__  );
     }
-
-
-
- 
 
     /**
      * create/update uf join
@@ -182,8 +185,8 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
             'weight'       => 1,
             'uf_group_id'  => $this->_ufGroupId,
             'is_active'    => 1,
-            'version'			 => $this->_apiversion,
-            'sequential'	 => 1,
+            'version'	   => $this->_apiversion,
+            'sequential'   => 1,
         );
         $ufJoin = civicrm_api3_uf_join_create($params);
         $this->documentMe($params,$ufJoin,__FUNCTION__,__FILE__); 
@@ -199,8 +202,8 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
             'weight'       => 1,
             'uf_group_id'  => $this->_ufGroupId,
             'is_active'    => 0,
-            'version'			 => $this->_apiversion,
-            'sequential'	 => 1,
+            'version'	   => $this->_apiversion,
+            'sequential'   => 1,
         );
         $ufJoinUpdated = civicrm_api3_uf_join_create($params);
         $this->assertEquals($ufJoinUpdated['values'][0]['module'], $params['module'],'In line ' . __LINE__ );
@@ -235,7 +238,7 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
             'entity_id'    => 1,
             'weight'       => 1,
             'is_active'    => 1,
-            'version'			 => $this->_apiversion,
+            'version'      => $this->_apiversion,
         );
         $result = civicrm_api3_uf_join_create($params);
 
@@ -255,7 +258,7 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
             'weight'       => 1,
             'uf_group_id'  => $this->_ufGroupId,
             'is_active'    => 1,
-            'version'			 => $this->_apiversion,
+            'version'	   => $this->_apiversion,
            
         );
         
@@ -263,7 +266,7 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
         $searchParams = array(
             'entity_table' => 'civicrm_contribution_page',
             'entity_id'    => 1,
-            'version'			 => $this->_apiversion,
+            'version'      => $this->_apiversion,
             'sequential'   =>1,
 
         );

@@ -524,12 +524,23 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
             // if we find more than one contact, use the first one
             $contact_id  = CRM_Utils_Array::value( 0, $ids );
-            $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, $contact_id, $addToGroups );
+            $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params,
+                                                                         $fields,
+                                                                         $contact_id,
+                                                                         $addToGroups,
+                                                                         null,
+                                                                         null,
+                                                                         true );
             $this->set( 'contactID', $contactID );
         } else {
             $ctype = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $contactID, 'contact_type');
-            $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, $contactID, $addToGroups,
-                                                                         null, $ctype);
+            $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params,
+                                                                         $fields,
+                                                                         $contactID,
+                                                                         $addToGroups,
+                                                                         null,
+                                                                         $ctype,
+                                                                         true );
         }
 
         //get email primary first if exist
@@ -826,8 +837,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                     'trxn_id'      => $result['trxn_id'],
                                     'receipt_date' => $receiptDate,
                                     // also add financial_trxn details as part of fix for CRM-4724
-                                    'trxn_result_code' => $result['trxn_result_code'],
-                                    'payment_processor' => $result['payment_processor'],
+                                    'trxn_result_code' => CRM_Utils_Array::value( 'trxn_result_code', $result ),
+                                    'payment_processor' => CRM_Utils_Array::value( 'payment_processor', $result )
                                     );
         }
         
@@ -1031,7 +1042,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                 'currency'          => $params['currencyID'],
                                 'payment_processor' => $form->_paymentProcessor['payment_processor_type'],
                                 'trxn_id'           => $result['trxn_id'],
-                                'trxn_result_code'  => $result['trxn_result_code'],
+                                'trxn_result_code'  => (isset($result['trxn_result_code']) ? $result['trxn_result_code'] : false),
                                 );
             
             require_once 'CRM/Core/BAO/FinancialTrxn.php';

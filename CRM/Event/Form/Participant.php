@@ -35,6 +35,8 @@
  *
  */
 
+require_once 'CRM/Contact/BAO/Contact.php';
+require_once 'CRM/Event/BAO/Participant.php';
 require_once 'CRM/Contact/Form/Task.php';
 require_once 'CRM/Event/PseudoConstant.php';
 require_once 'CRM/Event/Form/EventFees.php';
@@ -204,7 +206,6 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         $this->assign('context', $this->_context );
         
         if ( $this->_contactId ) {
-            require_once 'CRM/Contact/BAO/Contact.php';
             $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
             $this->assign( 'displayName', $displayName );
         }
@@ -361,7 +362,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         if ( $this->_id ) {
             // assign participant id to the template
             $this->assign('participantId',  $this->_id );
-            $this->_roleId = CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Participant", $this->_id, 'role_id' );
+            $this->_roleId = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant', $this->_id, 'role_id' );
         } 
 
         // when fee amount is included in form
@@ -373,7 +374,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         }
 
         // when custom data is included in this page
-    	if ( CRM_Utils_Array::value( "hidden_custom", $_POST ) ) {
+    	if ( CRM_Utils_Array::value( 'hidden_custom', $_POST ) ) {
     		//custom data of type participant role
             if ( CRM_Utils_Array::value( 'role_id', $_POST ) ) {
                 foreach( $_POST['role_id'] as $k => $val ) {
@@ -392,7 +393,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
     		// custom data of type participant event type
             $eventTypeId = null;
             if ( $eventId = CRM_Utils_Array::value( 'event_id', $_POST ) ) {
-                $eventTypeId = CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Event", $eventId, 'event_type_id', 'id' );
+                $eventTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $eventId, 'event_type_id', 'id' );
             }
     		CRM_Custom_Form_Customdata::preProcess( $this, $this->_eventTypeCustomDataTypeID, $eventTypeId, 
                                                     1, 'Participant', $this->_id );
@@ -486,7 +487,6 @@ SELECT civicrm_custom_group.name as name,
             $ids    = array( );
             $params = array( 'id' => $this->_id );
 
-            require_once "CRM/Event/BAO/Participant.php";
             CRM_Event_BAO_Participant::getValues( $params, $defaults, $ids );
             $sep = CRM_Core_DAO::VALUE_SEPARATOR;
             if ( $defaults[$this->_id]['role_id'] ) {
@@ -509,12 +509,11 @@ SELECT civicrm_custom_group.name as name,
             
             // Get registered_by contact ID and display_name if participant was registered by someone else (CRM-4859)
             if ( CRM_Utils_Array::value( 'participant_registered_by_id', $defaults[$this->_id] ) ) {
-                $registered_by_contact_id = CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Participant", 
+                $registered_by_contact_id = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant', 
                                           $defaults[$this->_id]['participant_registered_by_id'],
                                           'contact_id', 'id' );
                 $this->assign( 'participant_registered_by_id', $defaults[$this->_id]['participant_registered_by_id']);
                 $this->assign( 'registered_by_contact_id', $registered_by_contact_id );
-                require_once 'CRM/Contact/BAO/Contact.php';
                 $this->assign( 'registered_by_display_name', CRM_Contact_BAO_Contact::displayName( $registered_by_contact_id ) );
             }
 
@@ -546,7 +545,7 @@ SELECT civicrm_custom_group.name as name,
                 $fields["email-Primary"                 ] = 1;
 
                 if ( $this->_contactId ) {
-                    require_once "CRM/Core/BAO/UFGroup.php";
+                    require_once 'CRM/Core/BAO/UFGroup.php';
                     CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_contactId, $fields, $defaults  );
                 }
                
@@ -575,7 +574,7 @@ SELECT civicrm_custom_group.name as name,
 			$roleID  = $defaults[$this->_id]['participant_role_id'];
 			$eventID = $defaults[$this->_id]['event_id'];
 			
-			$this->_eventTypeId = CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Event", $eventID, 'event_type_id', 'id' );
+			$this->_eventTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $eventID, 'event_type_id', 'id' );
 
             $this->_discountId = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant', $this->_id , 'discount_id' );
             if ( $this->_discountId ) {
@@ -599,7 +598,7 @@ SELECT civicrm_custom_group.name as name,
 		    $eventID = $_POST['event_id'];
 			if ( $eventID ) {
                 $this->_eventTypeId = 
-                    CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Event", $eventID, 'event_type_id', 'id' );
+                    CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $eventID, 'event_type_id', 'id' );
             }
         }
 
@@ -638,16 +637,20 @@ SELECT civicrm_custom_group.name as name,
 
         $this->applyFilter('__ALL__', 'trim');
        
+        require_once 'CRM/Event/BAO/Event.php';
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             if (  $this->_single ) {
-                require_once 'CRM/Event/BAO/Event.php';
-                $additionalParticipant = count (CRM_Event_BAO_Event::buildCustomProfile( $this->_id, null, $this->_contactId, false, true )) - 1;
+                $additionalParticipant = count (CRM_Event_BAO_Event::buildCustomProfile( $this->_id, 
+                                                                                         null, 
+                                                                                         $this->_contactId, 
+                                                                                         false, 
+                                                                                         true )) - 1;
                 if ( $additionalParticipant ) {
                     $deleteParticipants  = array( 1 => ts( 'Delete this participant record along with associated participant record(s).' ), 
                                                   2 => ts( 'Delete only this participant record.' ) );
                     $this->addRadio( 'delete_participant', null, $deleteParticipants, null, '<br />');
                     $this->setDefaults( array( 'delete_participant' => 1 ) );
-                    $this->assign( "additionalParticipant", $additionalParticipant );
+                    $this->assign( 'additionalParticipant', $additionalParticipant );
                 }   
             }
             $this->addButtons(array( 
@@ -669,7 +672,7 @@ SELECT civicrm_custom_group.name as name,
             if ( $this->_context == 'standalone' ) {
                 require_once 'CRM/Contact/Form/NewContact.php';
                 CRM_Contact_Form_NewContact::buildQuickForm( $this );
-                $urlParams = "reset=1&context=standalone";
+                $urlParams = 'reset=1&context=standalone';
                 $urlPath   = 'civicrm/participant/add';
             }        
 
@@ -692,18 +695,17 @@ SELECT civicrm_custom_group.name as name,
                                           false, null, false  );
         }
 
-        $this->assign("refreshURL",$url);
+        $this->assign( 'refreshURL', $url );
 
         $this->add( 'hidden', 'past_event' );
 
         $events = array( );
-        $this->assign("past", false);
-        require_once "CRM/Event/BAO/Event.php";
+        $this->assign( 'past', false);
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             $events = CRM_Event_BAO_Event::getEvents( true, false, false );
         } elseif ( $this->getElementValue( 'past_event' ) )  {
             $events = CRM_Event_BAO_Event::getEvents( true );
-            $this->assign("past", true);
+            $this->assign( 'past', true );
         } else {
             $events = CRM_Event_BAO_Event::getEvents( );
         }
@@ -712,7 +714,7 @@ SELECT civicrm_custom_group.name as name,
             //unset the event which are not monetary when credit card
             //event registration is used
             foreach( $events as $key => $val ) {
-                $isPaid = CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Event", $key, 'is_monetary' );
+                $isPaid = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $key, 'is_monetary' );
                 if ( ! $isPaid ) {
                     unset( $events[$key] );
                 }
@@ -902,18 +904,18 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             if ( CRM_Utils_Array::value( 'credit_card_type', $values ) ) {
                 if ( CRM_Utils_Array::value( 'credit_card_number', $values ) &&
                      ! CRM_Utils_Rule::creditCardNumber( $values['credit_card_number'], $values['credit_card_type'] ) ) {
-                    $errorMsg['credit_card_number'] = ts( "Please enter a valid Credit Card Number" );
+                    $errorMsg['credit_card_number'] = ts( 'Please enter a valid Credit Card Number' );
                 }
                 
                 if ( CRM_Utils_Array::value( 'cvv2', $values ) &&
                      ! CRM_Utils_Rule::cvv( $values['cvv2'], $values['credit_card_type'] ) ) {
-                    $errorMsg['cvv2'] =  ts( "Please enter a valid Credit Card Verification Number" );
+                    $errorMsg['cvv2'] =  ts( 'Please enter a valid Credit Card Verification Number' );
                 }
             }
         }
         
         if ( CRM_Utils_Array::value( 'record_contribution', $values ) && !  CRM_Utils_Array::value( 'contribution_type_id', $values ) ){
-            $errorMsg['contribution_type_id'] = ts( "Please enter the associated Contribution Type" );
+            $errorMsg['contribution_type_id'] = ts( 'Please enter the associated Contribution Type' );
         }
         
         // validate contribution status for 'Failed'.
@@ -921,7 +923,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
              CRM_Utils_Array::value( 'record_contribution', $values ) && 
              (CRM_Utils_Array::value( 'contribution_status_id', $values ) == 
               array_search( 'Failed', CRM_Contribute_PseudoConstant::contributionStatus(null, 'name'))) ) {
-            $errorMsg['contribution_status_id'] = ts( "Please select a valid payment status before updating." );
+            $errorMsg['contribution_status_id'] = ts( 'Please select a valid payment status before updating.' );
         }
         
         // do the amount validations.
@@ -949,7 +951,6 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         $params = $this->controller->exportValues( $this->_name );
         
         if ( $this->_action & CRM_Core_Action::DELETE ) {
-            require_once "CRM/Event/BAO/Participant.php";
             if(  CRM_Utils_Array::value( 'delete_participant', $params ) == 2 ) {
                 $additionalId = (CRM_Event_BAO_Participant::getAdditionalParticipantIds( $this->_id ));
                 $participantLinks = (CRM_Event_BAO_Participant::getAdditionalParticipantUrl( $additionalId ));
@@ -964,7 +965,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             if ( !empty( $participantLinks ) ) {
                 $status = ts( 'The following participants no longer have an event fee recorded. You can edit their registration and record a replacement contribution by clicking the links below:' ) . '<br>' .$participantLinks ;         
             } else {
-                $status =("Selected Participants was deleted sucessfully.");
+                $status = ts( 'Selected Participants was deleted sucessfully.' );
             }
             CRM_Core_Session::setStatus( $status );
             return;
@@ -1071,13 +1072,12 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             $contributionParams['total_amount'] = CRM_Utils_Array::value( 'total_amount', $params );
         }
         
-        require_once 'CRM/Contact/BAO/Contact.php';
+
         // Retrieve the name and email of the current user - this will be the FROM for the receipt email
         $session = CRM_Core_Session::singleton( );
         $userID  = $session->get( 'userID' );
         list( $userName, 
               $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $userID );
-        require_once "CRM/Event/BAO/Participant.php";
         
         if ( $this->_contactId ) { 
             list( $this->_contributorDisplayName, $this->_contributorEmail, $this->_toDoNotEmail ) = CRM_Contact_BAO_Contact::getContactDetails( $this->_contactId );
@@ -1097,8 +1097,6 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             require_once 'CRM/Core/BAO/PaymentProcessor.php';
             $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $this->_params['payment_processor_id'],
                                                                                   $this->_mode );
-            require_once "CRM/Contact/BAO/Contact.php";
-            
             $now = date( 'YmdHis' );
             $fields = array( );
             
@@ -1392,7 +1390,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
              $this->_statusId != CRM_Utils_Array::value( 'status_id', $params ) &&
              CRM_Utils_Array::value( 'is_notify', $params )
              ) {
-            require_once "CRM/Event/BAO/Participant.php";
+
             $updateStatusMsg = CRM_Event_BAO_Participant::updateStatusMessage( $this->_id, 
                                                                                $params['status_id'], 
                                                                                $this->_statusId );
@@ -1528,9 +1526,16 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                 list( $this->_contributorDisplayName, $this->_contributorEmail, $this->_toDoNotEmail ) = CRM_Contact_BAO_Contact::getContactDetails( $contactID );
 
                 $this->_contributorDisplayName = ($this->_contributorDisplayName == ' ') ? $this->_contributorEmail : $this->_contributorDisplayName;
+                
+                $waitStatus =  CRM_Event_PseudoConstant::participantStatus(null, "class = 'Waiting'");
+                if ( $waitingStatus = CRM_Utils_Array::value($params['status_id'], $waitStatus) ) {
+                    $this->assign( 'isOnWaitlist', true );
+                }
+                
                 $this->assign( 'customGroup', $customGroup );
                 $this->assign( 'contactID', $contactID);
                 $this->assign( 'participantID', $participants[$num]->id );
+
                 $this->_id = $participants[$num]->id;
                 
                 if ( $this->_isPaidEvent ) {
@@ -1604,7 +1609,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                 }
             }
         }
-        require_once "CRM/Core/Session.php";
+        require_once 'CRM/Core/Session.php';
         CRM_Core_Session::setStatus( "{$statusMsg}" );
         
         $buttonName = $this->controller->getButtonName( );

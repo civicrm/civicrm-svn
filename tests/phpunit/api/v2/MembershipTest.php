@@ -31,7 +31,20 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 
 class api_v2_MembershipTest extends CiviUnitTestCase
 {
+        
+    protected $_contactID;
+    protected $_membershipTypeID;
+    protected $_membershipStatusID;
 
+    function get_info( )
+    {
+        return array(
+                     'name'        => 'Membership',
+                     'description' => 'Test all Membership API methods.',
+                     'group'       => 'CiviCRM API Tests',
+                     );
+    }
+       
     public function setUp()
     {
         //  Connect to the database
@@ -39,8 +52,25 @@ class api_v2_MembershipTest extends CiviUnitTestCase
 
         $this->_contactID           = $this->individualCreate( ) ;
         $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID  );        
-        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );                
+        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );
+        
+        require_once 'CRM/Member/PseudoConstant.php';
+        CRM_Member_PseudoConstant::membershipType( null, true );
+        CRM_Member_PseudoConstant::membershipStatus( null, null, 'name', true );
+    }
 
+    function tearDown( ) 
+    {
+        $this->membershipStatusDelete( $this->_membershipStatusID );
+        $this->membershipTypeDelete( array('id' => $this->_membershipTypeID) );
+        $this->contactDelete( $this->_contactID );   
+    }
+
+    /**
+     *  Test civicrm_membership_delete()
+     */
+    function testMembershipDelete()
+    {
         $params = array(
                         'contact_id'         => $this->_contactID,  
                         'membership_type_id' => $this->_membershipTypeID,
@@ -51,17 +81,9 @@ class api_v2_MembershipTest extends CiviUnitTestCase
                         'is_override'        => 1,
                         'status_id'          => $this->_membershipStatusID
                         );
-        
-        $this->_membershipID = $this->contactMembershipCreate( $params );
+        $membershipID = $this->contactMembershipCreate( $params );
 
-    }
-
-    /**
-     *  Test civicrm_membership_delete()
-     */
-    function testMembershipDelete()
-    {
-        $result = civicrm_membership_delete($this->_membershipID);
+        $result = civicrm_membership_delete($membershipID);
 
         $this->assertEquals( $result['is_error'], 0,
                              "In line " . __LINE__ );      

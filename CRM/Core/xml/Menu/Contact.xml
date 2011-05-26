@@ -319,6 +319,16 @@
      <access_arguments>access CiviCRM</access_arguments>
 </item>
 <item>
+     <path>civicrm/ajax/pdfFormat</path>
+     <page_callback>CRM_Contact_Page_AJAX::pdfFormat</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+</item>
+<item>
+     <path>civicrm/ajax/paperSize</path>
+     <page_callback>CRM_Contact_Page_AJAX::paperSize</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+</item>
+<item>
    <path>civicrm/dashlet/myCases</path>
    <title>Case Dashlet</title>
    <page_callback>CRM_Dashlet_Page_MyCases</page_callback>

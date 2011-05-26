@@ -169,7 +169,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
                 $groupContact->save( );
                 $numContactsAdded++;
             } else {
-                if ($groupContact->status == 'Added') {
+                if ($groupContact->status == $status) {
                     $numContactsNotAdded++;
                 } else {
                     $historyParams = array(
@@ -640,11 +640,13 @@ AND civicrm_group_contact.group_id = %2";
     {
         $contactIds = array();
         $contactIds[] = $contactId;
+
         //if $visibility is true we are coming in via profile mean $method = 'Web'
         $ignorePermission = false; 
         if ( $visibility ) {
             $ignorePermission = true; 
         }
+
         if ($contactId) {
             $contactGroupList =& CRM_Contact_BAO_GroupContact::getContactGroup( $contactId, 'Added',
                                                                                 null, false, $ignorePermission );

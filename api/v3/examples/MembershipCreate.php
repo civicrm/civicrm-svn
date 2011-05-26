@@ -5,13 +5,14 @@ function membership_create_example(){
     
                   'contact_id' 		=> '1',
                   'membership_type_id' 		=> '1',
-                  'join_date' 		=> '2006-01-21',
-                  'start_date' 		=> '2006-01-21',
-                  'end_date' 		=> '2006-12-21',
+                  'join_date' 		=> '2009-01-21',
+                  'start_date' 		=> '2009-01-21',
+                  'end_date' 		=> '2009-12-21',
                   'source' 		=> 'Payment',
                   'is_override' 		=> '1',
                   'status_id' 		=> '8',
                   'version' 		=> '3',
+                  'custom_1' 		=> 'custom string',
 
   );
   require_once 'api/api.php';

@@ -46,6 +46,11 @@ class api_v2_PledgeTest extends CiviUnitTestCase
     
     function tearDown() 
     {
+        // truncate a few tables
+        $tablesToTruncate = array( 'civicrm_contact',
+                                   'civicrm_pledge', );
+        $this->quickCleanup( $tablesToTruncate, false );
+
     }
 
 ///////////////// civicrm_pledge_get methods
@@ -170,11 +175,13 @@ class api_v2_PledgeTest extends CiviUnitTestCase
     {
   // we test 'sequential' param here too     
         $pledgeID = $this->pledgeCreate($this->_individualId);
+        
         $old_params = array(
-                            'id' => $pledgeID,  
-                            'sequential' =>1,  
+                            'id' => $pledgeID,
+                            'sequential' => 1
                             );
-        $original =& civicrm_pledge_get($old_params);
+        $original = civicrm_pledge_get($old_params);
+        
         //Make sure it came back
         $this->assertEquals($original[0]['pledge_id'], $pledgeID, 'In line ' . __LINE__);
         //set up list of old params, verify
@@ -200,7 +207,7 @@ class api_v2_PledgeTest extends CiviUnitTestCase
                         );
         
         $pledge =& civicrm_pledge_add($params); 
-       $this->assertEquals( $pledge['is_error'], 0 );    
+        $this->assertEquals( $pledge['is_error'], 0 );    
         $new_params = array(
                             'id' => $pledge['id'],    
                             );
