@@ -148,6 +148,37 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         return array( $sel1 , $sel2, $sel3, $sel4, $sel5 );
     }
 
+    /**
+     * Retrieve list of Scheduled Reminders
+     *
+     * @param bool    $namesOnly    return simple list of names
+     *
+     * @return array  (reference)   label format list
+     * @static
+     * @access public
+     */
+    static function &getList( $namesOnly = false ) 
+    {
+        static $list = array();
+
+        // get saved label formats from Option Value table
+        $dao = new CRM_Core_DAO_ActionSchedule();
+        $dao->is_active = 1;
+        $dao->orderBy( 'id' );
+        $dao->find();
+
+        while ( $dao->fetch() ) {
+            if ( $namesOnly ) {
+                $list[$dao->name] = $dao->label;
+            } else {
+                CRM_Core_DAO::storeValues( $dao, $list[$dao->id] );
+            }
+        }
+        
+        return $list;
+
+    }
+
     static function sendReminder( $contactId, $email, $mappingID, $from ) {
         require_once "CRM/Core/BAO/Domain.php";
         require_once "CRM/Utils/String.php";

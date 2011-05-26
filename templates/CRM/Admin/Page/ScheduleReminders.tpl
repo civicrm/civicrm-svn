@@ -29,10 +29,40 @@
 {if $action eq 1 or $action eq 2 or $action eq 8 or $action eq 16384}
    {include file="CRM/Admin/Form/ScheduleReminders.tpl"}
 {else}
-
 {if $rows}
 <div id="ltype">
-      
+        {strip}
+        {include file="CRM/common/jsortable.tpl"}
+        <table id="scheduleReminderss" class="display">
+        <thead>
+        <tr class="columnheader">
+            <th class="sortable">{ts}Title{/ts}</th>
+            <th >{ts}When{/ts}</th>
+            <th >{ts}Repeat{/ts}</th>
+            <th >{ts}Active?{/ts}</th>
+            <th id="order" class="sortable">{ts}Order{/ts}</th>
+            <th class="hiddenElement"></th>
+            <th ></th>
+        </tr>
+        </thead>
+        {foreach from=$rows item=row}
+        <tr id="row_{$row.id}" class="crm-scheduleReminders {cycle values="odd-row,even-row"} {$row.class}">
+            <td class="crm-scheduleReminders-title">{$row.title}</td>
+            <td class="crm-scheduleReminders-description">{$row.first_action_offset}&nbsp;{$row.first_action_unit}&nbsp;{$row.first_action_condition}</td>
+            <td class="crm-scheduleReminders-is_repeat">{if $row.is_repeat eq 1}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}&nbsp;</td>
+            <td class="crm-scheduleReminders-is_active">{if $row.is_active eq 1}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}&nbsp;</td>
+	    <td class="crm-scheduleReminders-order nowrap">{$row.order}</td>
+	    <td class="order hiddenElement">{$row.weight}</td>
+	    <td>{$row.action|replace:'xx':$row.id}</td>
+        </tr>
+        {/foreach}
+        </table>
+        {/strip}
+
+	    <div class="action-link">
+    	<a href="{crmURL q="action=add&reset=1"}" id="newScheduleReminder" class="button"><span><div class="icon add-icon"></div>{ts}Schedule Reminder{/ts}</span></a>
+        </div>
+
 </div>
 {else}
     <div class="messages status">
