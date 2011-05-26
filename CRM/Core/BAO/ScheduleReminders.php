@@ -462,6 +462,23 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
     
     static function retrieve( &$params, &$values ) 
     {
+        if ( empty ( $params ) ) {
+            return null;
+
+        }
+        $actionSchedule = new CRM_Core_DAO_ActionSchedule( );
+
+        $actionSchedule->copyValues( $params );
+
+        if ( $actionSchedule->find(true) ) {
+            $ids['actionSchedule'] = $actionSchedule->id;
+
+            CRM_Core_DAO::storeValues( $actionSchedule, $values );
+            
+            return $actionSchedule;
+        }
+        return null;
+
     }
     
     /**

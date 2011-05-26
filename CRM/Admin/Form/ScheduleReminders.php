@@ -65,7 +65,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             $this->assign('reminderName', $reminderName);
             return;
         }
-
+        
         $this->add( 'text', 'title', ts( 'Title' ) );
 
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
@@ -157,7 +157,17 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
 
     function setDefaultValues( )
     {
-        
+        if ( $this->_action & CRM_Core_Action::ADD ) {
+            $defaults['is_active'] = 1;
+            $defaults['record_activity'] = 1;
+        } else {
+            $defaults = $this->_values;
+            $entityValue = explode( CRM_Core_DAO::VALUE_SEPARATOR, $defaults['entity_value'] );
+            $entityStatus = explode( CRM_Core_DAO::VALUE_SEPARATOR, $defaults['entity_status'] );
+            $defaults['entity'][1] = $entityValue;
+            $defaults['entity'][2] = $entityStatus;
+        }  
+
         return $defaults;
     }
 
