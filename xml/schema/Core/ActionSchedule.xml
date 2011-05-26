@@ -54,20 +54,20 @@
        <add>3.4</add>
   </field>
   <field>
-       <name>reminder_interval</name>
+       <name>first_action_offset</name>
        <type>int unsigned</type>
        <comment>Reminder Interval.</comment>
        <add>3.4</add>
   </field>
   <field>
-       <name>reminder_frequency</name>
+       <name>first_action_unit</name>
        <type>enum</type> 
        <values>day,week,month,year</values>
        <comment>Time units for reminder.</comment>
        <add>3.4</add>
   </field>
   <field>
-       <name>reminder_action</name>
+       <name>first_action_condition</name>
        <type>varchar</type>
        <length>32</length>
        <comment>Reminder Action</comment>
