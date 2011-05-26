@@ -33,10 +33,11 @@
 <div id="ltype">
         {strip}
         {include file="CRM/common/jsortable.tpl"}
-        <table id="scheduleReminderss" class="display">
+        <table id="scheduleReminders" class="display">
         <thead>
         <tr class="columnheader">
             <th class="sortable">{ts}Title{/ts}</th>
+            <th >{ts}Reminder For{/ts}</th>
             <th >{ts}When{/ts}</th>
             <th >{ts}While{/ts}</th>
             <th >{ts}Repeat{/ts}</th>
@@ -48,6 +49,7 @@
         {foreach from=$rows item=row}
         <tr id="row_{$row.id}" class="crm-scheduleReminders {cycle values="odd-row,even-row"} {$row.class}">
             <td class="crm-scheduleReminders-title">{$row.title}</td>
+            <td class="crm-scheduleReminders-value">{$row.entity} - {$row.value}</td>
             <td class="crm-scheduleReminders-description">{$row.first_action_offset}&nbsp;{$row.first_action_unit}&nbsp;{$row.first_action_condition}&nbsp;{$row.entityDate}</td>
             <td class="crm-scheduleReminders-title">{$row.status}</td>
             <td class="crm-scheduleReminders-is_repeat">{if $row.is_repeat eq 1}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}&nbsp;</td>

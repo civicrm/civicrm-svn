@@ -167,10 +167,13 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         $event_type = CRM_Event_PseudoConstant::eventType();
         $civicrm_event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
         $civicrm_participant_status_type = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
+        $entity = array ( 'civicrm_activity'    => 'Activity',
+                          'civicrm_participant' => 'Event');
 
         $query ="
 SELECT 
        title,
+       cam.entity,
        cas.id as id,
        cam.entity_value as entityValue, 
        cas.entity_value as entityValueIds,
@@ -189,26 +192,30 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
 ";
         $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch() ) {
-            //CRM_Core_Error::debug( '$dao', $dao );
             $list[$dao->id]['title']  = $dao->title;
             $list[$dao->id]['first_action_offset']  = $dao->first_action_offset;
             $list[$dao->id]['first_action_unit']  = $dao->first_action_unit;
             $list[$dao->id]['first_action_condition']  = $dao->first_action_condition;
             $list[$dao->id]['entityDate']  = ucwords(str_replace('_', ' ', $dao->entityDate));
             $status = $dao->entityStatus;
-            $statusIds = str_replace(CRM_Core_DAO::VALUE_SEPARATOR, ' ,', $dao->entityStatusIds);
+            $statusIds = str_replace(CRM_Core_DAO::VALUE_SEPARATOR, ', ', $dao->entityStatusIds);
             foreach ($$status as $key => $val) {
                 $statusIds = str_replace($key, $val, $statusIds);
             }
             
-            $list[$dao->id]['status']  = $statusIds;
+            $value = $dao->entityValue;
+            $valueIds = str_replace(CRM_Core_DAO::VALUE_SEPARATOR, ', ', $dao->entityValueIds);
+            foreach ($$value as $key => $val) {
+              $valueIds   = str_replace($key, $val, $valueIds);
+            }
+            $list[$dao->id]['entity']     = $entity[$dao->entity];
+            $list[$dao->id]['value']      = $valueIds;
+            $list[$dao->id]['status']     = $statusIds;
             $list[$dao->id]['is_repeat']  = $dao->is_repeat;
             $list[$dao->id]['is_active']  = $dao->is_active;
         }
 
-        // CRM_Core_Error::debug( '$list', $list );
         return $list;
-
     }
 
     static function sendReminder( $contactId, $email, $mappingID, $from ) {
