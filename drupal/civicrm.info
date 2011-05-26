@@ -53,6 +53,7 @@ files[] = modules/views/civicrm/civicrm_handler_field_option.inc
 files[] = modules/views/civicrm/civicrm_handler_field_participant_role.inc
 files[] = modules/views/civicrm/civicrm_handler_field_participant_status.inc
 files[] = modules/views/civicrm/civicrm_handler_field_payment_instrument.inc
+files[] = modules/views/civicrm/civicrm_handler_field_phone.inc
 files[] = modules/views/civicrm/civicrm_handler_field_phone_type.inc
 files[] = modules/views/civicrm/civicrm_handler_field_priority.inc
 files[] = modules/views/civicrm/civicrm_handler_field_relationship_type.inc
