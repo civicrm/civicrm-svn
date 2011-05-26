@@ -172,7 +172,14 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
                                                        null, null, false, $this->_restrict,
                                                        $this->_skipPermission, null,
                                                        CRM_Core_Permission::VIEW );
-
+            
+            if ( $this->_isContactActivityProfile && $this->_gid ) {
+                require_once 'CRM/Profile/Form.php';
+                $errors = CRM_Profile_Form::validateContactActivityProfile($this->_activityId, $this->_gid);
+                if ( !empty($errors) ) {
+                    CRM_Core_Error::fatal( implode('<br />', $errors) );
+                }
+            }
 
             require_once 'CRM/Contact/BAO/Contact/Permission.php';
             

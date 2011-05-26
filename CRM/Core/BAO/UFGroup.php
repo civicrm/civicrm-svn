@@ -2718,5 +2718,52 @@ SELECT  group_id
 
         return $showOverlay;
     }
+    
+    /*
+     * function to get all extending entity column values of custom fields which are included in the profile of specific component.
+     *
+     * @params Integer $profileId       Profile Id
+     * @params String  $groupType       Group Type (type of custom group extends )
+     * @params Array   $ignoreFieldIds  Ignore profile field Ids
+     *
+     * @return Array   extending entity column values of custom fields
+     * @static
+     * @access public
+     */
+    static function getCustomDataExtendsColumnValues( $profileId, $groupType, $ignoreFieldIds = array( ) ) {
+        $extendColumnValues = $customFieldIds = array( );
+
+        $query = 'SELECT field_name FROM civicrm_uf_field WHERE uf_group_id = %1';
+        if ( !empty($ignoreFieldIds) ) {
+            $query .= ' AND id NOT IN (' . implode(',', $ignoreFieldIds). ')';   
+        }
+        
+        $fields = CRM_Core_DAO::executeQuery($query, array( 1 => array($profileId, 'Integer') ));
+        while( $fields->fetch( )) {
+            if ( $customFieldId = CRM_Core_BAO_CustomField::getKeyID($fields->field_name) ) {
+                $customFieldIds[] = $customFieldId;
+            }
+        }
+        
+        if ( empty($customFieldIds) ) {
+            return $extendColumnValues;
+        }
+        
+        $query = 'SELECT extends_entity_column_value FROM civicrm_custom_group cg LEFT JOIN civicrm_custom_field cf ON cf.custom_group_id = cg.id WHERE cg.extends = %1 AND cg.extends_entity_column_value IS NOT NULL AND cf.id IN ('. implode(',', $customFieldIds) .')';
+        
+        $customGroups = CRM_Core_DAO::executeQuery($query, array( 1 => array($groupType, 'String') ));
+        while( $customGroups->fetch( )) {
+            if (!$customGroups->extends_entity_column_value) {
+                continue;
+            }
+            foreach( explode(CRM_Core_DAO::VALUE_SEPARATOR, $customGroups->extends_entity_column_value) as $val ) {
+                if ($val) {
+                    $extendColumnValues[$val] = $val; 
+                }
+            }
+        }
+        
+        return $extendColumnValues;
+    }
 
 }

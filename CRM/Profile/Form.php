@@ -200,10 +200,7 @@ class CRM_Profile_Form extends CRM_Core_Form
            $this->_gid = CRM_Utils_Request::retrieve('gid', 'Positive', $this, false, 0, 'GET');
         } 
         
-        $this->_activityId = $this->get( 'aid' );
-        if ( !$this->_activityId ) {
-            $this->_activityId = CRM_Utils_Request::retrieve('aid', 'Positive', $this, false, 0, 'GET');
-        }
+        $this->_activityId = CRM_Utils_Request::retrieve('aid', 'Positive', $this, false, 0, 'GET');
         $this->_isContactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileType( $this->_gid );
             
         //get values for captch and dupe update.
@@ -373,7 +370,14 @@ class CRM_Profile_Form extends CRM_Core_Form
         if ( $this->_mode != self::MODE_REGISTER ) {
             //check for mix profile fields (eg:  individual + other contact type)
             if ( CRM_Core_BAO_UFField::checkProfileType( $this->_gid ) ) {
-                if ( !(($this->_mode & self::MODE_EDIT) && $this->_isContactActivityProfile && $this->_activityId) ) { 
+                
+                if ( ($this->_mode & self::MODE_EDIT) && $this->_isContactActivityProfile ) {
+                    $errors = self::validateContactActivityProfile($this->_activityId, $this->_gid );
+                    if ( !empty($errors) ) {
+                        $statusMessage = implode('<br />', $errors);
+                        $return = true;
+                    }
+                } else { 
                     $statusMessage = ts( 'Profile search, view and edit are not supported for Profiles which include fields for more than one record type.' );
                     $return = true;
                 }
@@ -579,7 +583,38 @@ class CRM_Profile_Form extends CRM_Core_Form
                                ts( 'Save Matching Contact' ) );
         }
     }
-    
+   
+    /*
+     * Function to validate profile and provided activity Id
+     *                                          
+     * @params Integer $activityId Activity Id
+     * @params Integer $gid        Profile Id
+     *
+     * @return Array   $errors     Errors ( if any ).
+     */
+    static function validateContactActivityProfile($activityId, $gid) {
+        $errors = array( );
+        if ( !$activityId ) {
+            $errors[] = ts('Profile is using activty field, missing activity Id (aid) in url.');
+            return $errors;
+        } 
+        
+        $activityTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $activityId, 'activity_type_id' );
+        if ( !$activityTypeId ) {
+            $errors[] = ts('Invalid activity ID (aid).');
+            return $errors;
+        }
+        
+        require_once 'CRM/Core/BAO/UFGroup.php';
+        $profileExtendingActivityType = CRM_Core_BAO_UFGroup::getCustomDataExtendsColumnValues($gid, 'Activity');
+
+        if ( !empty($profileExtendingActivityType) && !in_array($activityTypeId, $profileExtendingActivityType) ) {
+            $errors[] = ts('Activity type of specified activity Id do not support configured profile fields for this profile.'); 
+        }
+        
+        return $errors;
+    }
+ 
     /**
      * global form rule
      *

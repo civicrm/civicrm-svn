@@ -1374,6 +1374,7 @@ class CRM_Contact_BAO_Query
         case 'activity_campaign_id':
         case 'activity_id':    
         case 'activity_engagement_level':
+            require_once 'CRM/Activity/BAO/Query.php';
             CRM_Activity_BAO_Query::whereClauseSingle( $values, $this );
             return;
 

@@ -763,6 +763,54 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             }
         }  
     }
+
+    /**
+     * validation rule for custom data extends entity column values. 
+     *
+     * @param Object  $customField Custom field
+     * @param Integer $gid         Group Id.
+     * @param String  $fieldType   Group type of the field
+     * @param Array   $errors      Collect errors
+     *
+     * @return Array  list of errors to be posted back to the form
+     * @static
+     * @access public
+     */
+    static function formRuleCustomDataExtentColumnValue( $customField, $gid, $fieldType, &$errors )
+    { 
+        // fix me : check object $customField
+        if ( in_array( $fieldType, array( 'Participant', 'Contribution', 'Membership', 'Activity' ) ) ) {
+            require_once 'CRM/Core/BAO/CustomGroup.php';
+            $params      = array( 'id' => $customField->custom_group_id );
+            $customGroup = array( );
+            CRM_Core_BAO_CustomGroup::retrieve( $params, $customGroup );
+            if ( ( $fieldType != CRM_Utils_Array::value('extends', $customGroup) ) ||
+                 !CRM_Utils_Array::value('extends_entity_column_value', $customGroup) ) {
+                return $errors;
+            }
+            
+            $extendsColumnValues = array( );
+            foreach( explode(CRM_Core_DAO::VALUE_SEPARATOR, $customGroup['extends_entity_column_value']) as $val ) {
+                if ( $val ) {
+                    $extendsColumnValues[] = $val;
+                }
+            }
+
+            if ( empty($extendsColumnValues) ) {
+                return $errors;
+            }
+  
+            $profileCustomFieldExtends = CRM_Core_BAO_UFGroup::getCustomDataExtendsColumnValues($gid, $fieldType );
+            if ( empty($profileCustomFieldExtends) ) {
+                return;
+            }
+            
+            $disallowedTypes = array_diff($extendsColumnValues, $profileCustomFieldExtends);
+            if ( !empty($disallowedTypes) ) {
+                $errors['field_name'] = ts('Profile is already having custom fields extending different subtype, you can not add or update this custom field.');
+            }
+        }
+    }
     
     /**
      * global validation rules for the form
@@ -800,19 +848,21 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             $errors['in_selector'] = ts( "'In Selector' cannot be checked for %1 fields.", array( 1 => $fieldName ) );
         }
         
-        if (! empty( $fields['field_id'] ) ) {
+        $isCustomField = false;
+        $profileFieldName  = CRM_Utils_Array::value(1, $fields['field_name']);
+        if ( $profileFieldName ) {
             //get custom field id 
-            $customFieldId = explode( '_', $fieldName );
+            $customFieldId = explode( '_', $profileFieldName);
             if ( $customFieldId[0] == 'custom' ) {
                 $customField = new CRM_Core_DAO_CustomField();
                 $customField->id = $customFieldId[1];
                 $customField->find(true);
-                
-                if ( !$customField->is_active && $is_active ) {
+                $isCustomField = true;
+                if ( !empty( $fields['field_id'] ) && !$customField->is_active && $is_active ) {
                     $errors['field_name'] = ts( 'Cannot set this field "Active" since the selected custom field is disabled.' );
                 }
             }
-         }
+        }
 
         //check profile is configured for double option process
         //adding group field, email field should be present in the group 
@@ -908,6 +958,10 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                 }
             } else {
                 self::formRuleSubType( $fieldType, $groupType, $errors );
+            }
+            
+            if ( $isCustomField && !isset($errors['field_name']) ) {
+                self::formRuleCustomDataExtentColumnValue($customField, $self->_gid, $fieldType, $errors );                
             }
             break;   
         case 'Participant' :
