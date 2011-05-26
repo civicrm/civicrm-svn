@@ -165,9 +165,6 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
     {
         $values = $this->controller->exportValues( $this->getName() );
 
-        //name
-        //mapping_id
-
         $keys = array('title', 'first_action_offset' ,'first_action_unit',
                       'first_action_condition', 'is_repeat',
                       'repetition_start_frequency_unit',
@@ -176,8 +173,6 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
                       'repetition_end_frequency_interval',
                       'repetition_end_action',
                       'subject',
-                      'is_active',
-                      'record_activity'
                       );
         
         foreach ( $keys as $key ) {
@@ -193,6 +188,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             $params['recipient'] = CRM_Utils_Array::value( 'recipient', $values );
         }
 
+        $params['mapping_id'] = $values['entity'][0];
         $entity_value  = $values['entity'][1];
         $entity_status = $values['entity'][2];
 
@@ -200,15 +196,10 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             $params[$key] = implode( CRM_Core_DAO::VALUE_SEPARATOR, $$key );
         }
 
-        if (! CRM_Utils_Array::value( 'is_active', $params ) ) {
-            $params['is_active'] = 0;
-        }
-        if (! CRM_Utils_Array::value( 'record_activity', $params ) ) {
-            $params['record_activity'] = 0;
-        }
-        
-        CRM_Core_BAO_ScheduleReminders::add($params, $ids);
+        $params['is_active' ] =  CRM_Utils_Array::value( 'is_active', $values, 0 );
+        $params['record_activity'] = CRM_Utils_Array::value( 'record_activity', $values, 0 );
 
+        CRM_Core_BAO_ScheduleReminders::add($params, $ids);
 
         $status = ts( "Your new Reminder titled <strong>{$values['title']}</strong> has been saved." );
         if ( $this->_action & CRM_Core_Action::UPDATE ) { 

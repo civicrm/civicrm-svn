@@ -72,23 +72,22 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         $activityContacts = CRM_Core_PseudoConstant::activityContacts();
 
         foreach ( $mapping as $value ) {
-
             $entityValue  = $value['entity_value'];
             $entityStatus = $value['entity_status'];
             $entityDate = $value['entity_date'];
             $entityRecipient = $value['entity_recipient'];
-
+            $key = $value['id'];
             if( $entityValue == 'activity_type' &&
                 $value['entity'] == 'civicrm_activity' ) {
-                $key = 'Activity';
+                $val = 'Activity';
             } elseif( $entityValue == 'event_type' &&
                 $value['entity'] == 'civicrm_participant') {
-                $key = 'EventType';
+                $val ='Event Type';
             } elseif( $entityValue == 'civicrm_event' &&
                 $value['entity'] == 'civicrm_participant' ) {
-                $key = 'EventName';
+                $val = 'Event Name';
             }
-            $sel1[$key] = $key;
+            $sel1[$key] = $val;
 
             switch ($entityValue) {
             case 'activity_type':
@@ -128,29 +127,18 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         $sel3 = $sel2;
 
         foreach ( $mapping as $value ) {
-            $entityValue  = $value['entity_value'];
             $entityStatus = $value['entity_status'];
-          
-            if( $entityValue == 'activity_type' &&
-                $value['entity'] == 'civicrm_activity' ) {
-                $key = 'Activity';
-            } elseif( $entityValue == 'event_type' &&
-                $value['entity'] == 'civicrm_participant') {
-                $key = 'EventType';
-            } elseif( $entityValue == 'civicrm_event' &&
-                $value['entity'] == 'civicrm_participant' ) {
-                $key = 'EventName';
-            }
+            $id = $value['id'];
                       
             switch ($entityStatus) {
             case 'activity_status':
-                foreach($sel3[$key] as $kkey => &$vval) {
+                foreach( $sel3[$id] as $kkey => &$vval ) {
                     $vval = $activityStatus;
                 }
                 break;
 
             case 'civicrm_participant_status_type':
-                foreach($sel3[$key] as $kkey => &$vval) {
+                foreach( $sel3[$id] as $kkey => &$vval ) {
                     $vval = $participantStatus;
                 }
                 break;
