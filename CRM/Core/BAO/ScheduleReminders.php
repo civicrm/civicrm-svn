@@ -385,7 +385,7 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
     {
         $contacts = array();
 
-        require_once 'CRM/Core/BAO/ActionMapping.php';
+        require_once 'CRM/Core/DAO/ActionMapping.php';
         $mapping = new CRM_Core_DAO_ActionMapping( );
         $mapping->id = $mappingID;
         $mapping->find( true );
@@ -394,33 +394,68 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
         $actionSchedule->id = $mappingID;
         
         if ( $actionSchedule->find( true ) ) {
+            $select = $join = $where = array( );
+
             $value  = explode( CRM_Core_DAO::VALUE_SEPARATOR, $actionSchedule->entity_value  );
             $value  = implode( ',', $value );
 
             $status = explode( CRM_Core_DAO::VALUE_SEPARATOR, $actionSchedule->entity_status );
             $status = implode( ',', $status );
         
-            // FIXME: Need to generalize the query generation mechanism
-            switch ( $mapping->entity ) {
-            case 'civicrm_activity' :
-                $query = "
-SELECT assignee_contact_id as contact_id
-FROM   civicrm_activity ca
-INNER JOIN civicrm_activity_assignment aa ON  aa.activity_id = ca.id
-WHERE ca.activity_type_id IN ({$value}) AND ca.status_id IN ({$status})";
-                break;
-            default:
-                CRM_Core_Error::fatal( "Not sure how to find recipient contacts." );
+            $recipientOptions = CRM_Core_OptionGroup::values( $mapping->entity_recipient );
+
+            $from     = "{$mapping->entity} e";
+            $select[] = "e.id as entity_id";
+            $select[] = "e.{$mapping->entity_date} as entity_date";
+
+            if ( $mapping->entity == 'civicrm_activity' ) {
+                if ( !empty($value) ) {
+                    $where[]  = "e.activity_type_id IN ({$value})";
+                }
+                if ( !empty($status) ) {
+                    $where[]  = "e.status_id IN ({$status})";
+                }
+
+                switch ( $recipientOptions[$actionSchedule->recipient] ) {
+                case 'Activity Assignees':
+                    $select[] = "r.assignee_contact_id as contact_id";
+                    $join[]   = "INNER JOIN civicrm_activity_assignment r ON  r.activity_id = e.id";
+                    break;
+                case 'Activity Source':
+                    $select[] = "e.source_contact_id as contact_id";
+                    break;
+                case 'Activity Targets':
+                    $select[] = "r.target_contact_id as contact_id";
+                    $join[]   = "INNER JOIN civicrm_activity_target r ON  r.activity_id = e.id";
+                    break;
+                default:
+                    break;
+                }
             }
+
+            $selectClause = "SELECT " . implode( ', ', $select );
+            $fromClause   = "FROM $from";
+            $joinClause   = !empty( $join ) ? implode( ' ', $join ) : '';
+            $whereClause  = "WHERE " . (!empty( $where ) ? implode( ' AND ', $where ) : '(1)');
+            
+            $query = "$selectClause $fromClause $joinClause $whereClause";
+            CRM_Core_Error::debug( '$query', $query );
         }
 
         // FIXME: store contacts in temp table and make cron handle mailings in batches
         if ( $query ) {
             $dao = CRM_Core_DAO::executeQuery( $query );
             while ( $dao->fetch() ) {
-                $contacts[$dao->contact_id] = $dao->contact_id;
+                $contacts[$dao->contact_id] = $dao->entity_date;
             }
         }
         return $contacts;
+
+        // action trigger algo
+/*         if ( no_action_log && (now >= date_build_from_start_time ) ) { */
+/*             trigger = true; */
+/*         } else if ( (now <= date_build_from_end_time ) && (diff(now && log_date_time) >= repeat_interval) ) { */
+/*             trigger = true; */
+/*         } */
     }
 }

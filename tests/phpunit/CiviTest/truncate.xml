@@ -213,6 +213,8 @@
 
   <civicrm_action_schedule />
 
+  <civicrm_action_log />
+
   <civicrm_mailing />
 
   <civicrm_mailing_group />

@@ -84,7 +84,7 @@ class CRM_Cron {
             $scheduled = true;
 
             if ( $scheduled ) {
-                foreach ( $contacts as $contactID ) {
+                foreach ( $contacts as $contactID => $entityDate ) {
                     $toEmail  = CRM_Contact_BAO_Contact::getPrimaryEmail( $contactID );
                     if ( $toEmail ) {
                         $result = CRM_Core_BAO_ScheduleReminders::sendReminder( $contactID,
