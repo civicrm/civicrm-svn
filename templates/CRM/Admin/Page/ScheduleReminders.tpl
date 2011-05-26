@@ -48,7 +48,7 @@
         {foreach from=$rows item=row}
         <tr id="row_{$row.id}" class="crm-scheduleReminders {cycle values="odd-row,even-row"} {$row.class}">
             <td class="crm-scheduleReminders-title">{$row.title}</td>
-            <td class="crm-scheduleReminders-description">{$row.first_action_offset}&nbsp;{$row.first_action_unit}&nbsp;{$row.first_action_condition}</td>
+            <td class="crm-scheduleReminders-description">{$row.first_action_offset}&nbsp;{$row.first_action_unit}&nbsp;{$row.first_action_condition}&nbsp;{$row.entityDate}</td>
             <td class="crm-scheduleReminders-is_repeat">{if $row.is_repeat eq 1}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}&nbsp;</td>
             <td class="crm-scheduleReminders-is_active">{if $row.is_active eq 1}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}&nbsp;</td>
 	    <td class="crm-scheduleReminders-order nowrap">{$row.order}</td>

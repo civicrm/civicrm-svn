@@ -159,24 +159,38 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
      */
     static function &getList( $namesOnly = false ) 
     {
-        static $list = array();
+        $query ="
+SELECT 
+       title,
+       cas.id as id,
+       cas.entity_value as entityValue, 
+       cam.entity_value as entityValueIds,
+       cas.entity_status as entityStatus,
+       cam.entity_status as entityStatusIds,
+       cam.entity_date as entityDate,
+       cas.first_action_offset,
+       cas.first_action_unit,
+       cas.first_action_condition,
+       is_repeat,
+       is_active
 
-        // get saved label formats from Option Value table
-        $dao = new CRM_Core_DAO_ActionSchedule();
-        $dao->is_active = 1;
-        $dao->orderBy( 'id' );
-        $dao->find();
+FROM civicrm_action_schedule cas
+LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
 
+";
+
+        $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch() ) {
-            if ( $namesOnly ) {
-                $list[$dao->name] = $dao->label;
-            } else {
-                CRM_Core_DAO::storeValues( $dao, $list[$dao->id] );
-            }
+            $list[$dao->id]['title']  = $dao->title;
+            $list[$dao->id]['first_action_offset']  = $dao->first_action_offset;
+            $list[$dao->id]['first_action_unit']  = $dao->first_action_unit;
+            $list[$dao->id]['first_action_condition']  = $dao->first_action_condition;
+            $list[$dao->id]['entityDate']  = ucwords(str_replace('_', ' ', $dao->entityDate));
+            $list[$dao->id]['is_repeat']  = $dao->is_repeat;
+            $list[$dao->id]['is_active']  = $dao->is_active;
         }
-        
-        return $list;
 
+        return $list;
     }
 
     static function sendReminder( $contactId, $email, $mappingID, $from ) {
