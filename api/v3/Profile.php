@@ -75,6 +75,12 @@ function civicrm_api3_profile_get( $params ) {
         $values = array( );   
         if ( $isContactActivityProfile ) {
             civicrm_api3_verify_mandatory($params, null, array('activity_id'));
+            
+            require_once 'CRM/Profile/Form.php';
+            $errors = CRM_Profile_Form::validateContactActivityProfile($params['activity_id'], $params['profile_id']);
+            if ( !empty($errors) ) {
+                return civicrm_api3_create_error(array_pop($errors));
+            }
             $contactFields = $activityFields = array( );
             foreach ( $profileFields as $fieldName => $field ) {
                 if ( CRM_Utils_Array::value('field_type', $field) == 'Activity' ) {

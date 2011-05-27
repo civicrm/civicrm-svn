@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Core/DAO/UFGroup.php';
+require_once 'CRM/Core/Permission.php';
 
 /**
  *
