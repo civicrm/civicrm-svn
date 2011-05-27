@@ -98,6 +98,7 @@ function civicrm_api3_activity_create( $params ) {
         $params['custom'] = $values['custom'];
     }
 
+    $params['skipRecentView'] = true;
     // create activity
     $activityBAO = CRM_Activity_BAO_Activity::create( $params );
 

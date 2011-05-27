@@ -81,7 +81,7 @@ class CRM_Activity_BAO_Query
         }
         
         if ( CRM_Utils_Array::value( 'activity_status_id', $query->_returnProperties ) ) {
-            $query->_select['activity_status_id']  = "activity_status.id as activity_status_id";
+            $query->_select['activity_status_id']  = "activity_status.value as activity_status_id";
             $query->_element['activity_status_id'] = 1;
             $query->_tables['civicrm_activity'] = 1;
             $query->_tables['activity_status'] = 1;

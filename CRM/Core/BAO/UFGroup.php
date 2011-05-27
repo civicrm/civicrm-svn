@@ -830,6 +830,13 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                     CRM_Core_OptionGroup::lookupValues( $paramsNew, $names, false );
                     $values[$index] = $paramsNew[$index];
                     $params[$index] = $paramsNew[$name];
+                } else if ( $name == 'activity_status_id' ) { 
+                    $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
+                    $values[$index] = $activityStatus[$details->$name];
+                    $params[$index] = $details->$name;
+                } else if ( $name == 'activity_date_time' ) {
+                    $values[$index] = CRM_Utils_Date::customFormat($details->$name);
+                    $params[$index] = $details->$name;
                 } else {
                     $processed = false;
                     if ( CRM_Core_Permission::access( 'Quest', false ) ) {

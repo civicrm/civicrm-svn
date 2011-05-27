@@ -965,6 +965,10 @@ class CRM_Profile_Form extends CRM_Core_Form
             if ( !empty($activityParams) ) {
                 $activityParams['version'] = 3;
                 $activityParams['id']      = $this->_activityId;
+                if ( isset($activityParams['activity_date_time']) ) {
+                    $activityParams['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'], $params['activity_date_time_time'] );
+                }
+                $activityParams['skipRecentView'] = true;
                 $activity = civicrm_api('Activity', 'create', $activityParams);
             }
         }
