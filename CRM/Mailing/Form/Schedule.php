@@ -305,7 +305,7 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
             if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
             
             $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, $urlParams );
-            CRM_Utils_System::redirect( $url );
+            $this->controller->setDestination($url);
         }
         
         $session = CRM_Core_Session::singleton( );
