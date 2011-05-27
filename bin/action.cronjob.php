@@ -45,7 +45,7 @@ class CRM_Cron {
             $config = CRM_Core_Config::singleton();
            
             // this does not return on failure
-            CRM_Utils_System::authenticateScript( true );
+            // CRM_Utils_System::authenticateScript( true );
             
             //log the execution time of script
             CRM_Core_Error::debug_log_message( 'Cron.php' );
@@ -65,13 +65,11 @@ class CRM_Cron {
 
     public function run( )
     {
-        // FIXME: Need to generalize all hard coded options
-        $actionScheduleID  = 1;
-
         require_once 'CRM/Core/BAO/Domain.php';
         $domainValues     = CRM_Core_BAO_Domain::getNameAndEmail( );
         $fromEmailAddress = "$domainValues[0] <$domainValues[1]>";
         
+        require_once 'CRM/Core/BAO/ActionLog.php';
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
         $mappings = CRM_Core_BAO_ScheduleReminders::getMapping( );
 
@@ -80,10 +78,11 @@ class CRM_Cron {
         foreach ( $mappings as $mappingID => $mapping ) {
             $contacts  = CRM_Core_BAO_ScheduleReminders::getRecipientContacts( $mappingID );
 
-            // $scheduled = CRM_Core_BAO_ScheduleReminders::isScheduled( $mappingID );
-            $scheduled = true;
+            $actionScheduleID = 
+                CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_ActionSchedule', $mappingID, 'id', 'mapping_id');
 
-            if ( $scheduled ) {
+            if ( $actionScheduleID ) {
+                $reminderSent = false;
                 foreach ( $contacts as $contactID => $entityDate ) {
                     $toEmail  = CRM_Contact_BAO_Contact::getPrimaryEmail( $contactID );
                     if ( $toEmail ) {
@@ -95,17 +94,19 @@ class CRM_Cron {
                              is_a( $result, 'PEAR_Error' ) ) {
                             // we could not send an email, for now we ignore, CRM-3406
                         }
+                        $reminderSent = true;
                     }
                 }
                 
-                if ( !empty($contacts) ) {
-                    $actionLogParams = array( 'entity_id'          => $mappingID, // set it to mappingID
-                                              'entity_table'       => 'civicrm_action_mapping',
-                                              'action_schedule_id' => $actionScheduleID, // action_schedule Id
-                                              'action_date_time'   => date('YmdHis'),
-                                              );
+                if ( $reminderSent ) {
+                    $actionScheduleID = 
+                        CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_ActionSchedule', $mappingID, 'id', 'mapping_id');
+                    $actionLogParams  = array( 'entity_id'          => $mappingID,
+                                               'entity_table'       => 'civicrm_action_mapping',
+                                               'action_schedule_id' => $actionScheduleID, // action_schedule Id
+                                               );
                     // FIXME: repetition_number should be updated by create function itself.
-                    $activity = CRM_Core_BAO_ActionLog::create( $actionLogParams );
+                    $log = CRM_Core_BAO_ActionLog::create( $actionLogParams );
                 }
             }
         }

@@ -393,8 +393,16 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
 
         $actionSchedule = new CRM_Core_DAO_ActionSchedule( );
         $actionSchedule->id = $mappingID;
+
         
         if ( $actionSchedule->find( true ) ) {
+            $query = "SELECT MAX(id) FROM civicrm_action_log WHERE action_schedule_id = {$actionSchedule->id}";
+            $actionLogID = CRM_Core_DAO::singleValueQuery( $query );
+
+            $actionLog = new CRM_Core_DAO_ActionLog( );
+            $actionLog->id = $actionLogID;
+            $actionLog->find( true );
+
             $select = $join = $where = array( );
 
             $value  = explode( CRM_Core_DAO::VALUE_SEPARATOR, $actionSchedule->entity_value  );
@@ -405,18 +413,11 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
         
             $recipientOptions = CRM_Core_OptionGroup::values( $mapping->entity_recipient );
 
-            $from     = "{$mapping->entity} e";
             $select[] = "e.id as entity_id";
             $select[] = "e.{$mapping->entity_date} as entity_date";
+            $from     = "{$mapping->entity} e";
 
             if ( $mapping->entity == 'civicrm_activity' ) {
-                if ( !empty($value) ) {
-                    $where[]  = "e.activity_type_id IN ({$value})";
-                }
-                if ( !empty($status) ) {
-                    $where[]  = "e.status_id IN ({$status})";
-                }
-
                 switch ( $recipientOptions[$actionSchedule->recipient] ) {
                 case 'Activity Assignees':
                     $select[] = "r.assignee_contact_id as contact_id";
@@ -432,15 +433,47 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
                 default:
                     break;
                 }
+
+                // build where clause
+                if ( !empty($value) ) {
+                    $where[]  = "e.activity_type_id IN ({$value})";
+                }
+                if ( !empty($status) ) {
+                    $where[]  = "e.status_id IN ({$status})";
+                }
+
+                // datetime where clause
+                $startEvent = ( $actionSchedule->first_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
+                    "(e.activity_date_time, INTERVAL {$actionSchedule->first_action_offset} {$actionSchedule->first_action_unit})";
+                $endEvent   = ( $actionSchedule->repetition_end_action == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
+                    "(e.activity_date_time, INTERVAL {$actionSchedule->repetition_end_frequency_interval} {$actionSchedule->repetition_end_frequency_unit})";
+
+                // repeat event clause
+                if ( $actionLogID && 
+                     $actionSchedule->is_repeat && 
+                     $actionSchedule->repetition_start_frequency_unit ) {
+                    if ( $actionSchedule->repetition_start_frequency_unit == 'day' ) {
+                        $hrs = 24 * $actionSchedule->repetition_start_frequency_interval;
+                    } else {
+                        $hrs = $actionSchedule->repetition_start_frequency_interval;
+                    }
+                    $intervalClause = "AND ( TIMEDIFF(NOW(), '{$actionLog->action_date_time}') >= TIME('{$hrs}:00:00') )";
+                }
+
+                // IF no logs:
+                // ( now >= date_build_from_start_time )
+                // Otherwise :
+                // ( (now <= date_build_from_end_time ) && ( diff(now && logged_date_time) >= repeat_interval ) )
+                $where[] = $actionLogID ? "( NOW() <= {$endEvent} ) {$intervalClause}" : "( NOW() >= {$startEvent} )";;
             }
 
+            // build final query
             $selectClause = "SELECT " . implode( ', ', $select );
             $fromClause   = "FROM $from";
             $joinClause   = !empty( $join ) ? implode( ' ', $join ) : '';
             $whereClause  = "WHERE " . (!empty( $where ) ? implode( ' AND ', $where ) : '(1)');
             
             $query = "$selectClause $fromClause $joinClause $whereClause";
-            CRM_Core_Error::debug( '$query', $query );
         }
 
         // FIXME: store contacts in temp table and make cron handle mailings in batches
@@ -450,14 +483,8 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
                 $contacts[$dao->contact_id] = $dao->entity_date;
             }
         }
-        return $contacts;
 
-        // action trigger algo
-/*         if ( no_action_log && (now >= date_build_from_start_time ) ) { */
-/*             trigger = true; */
-/*         } else if ( (now <= date_build_from_end_time ) && (diff(now && log_date_time) >= repeat_interval) ) { */
-/*             trigger = true; */
-/*         } */
+        return $contacts;
     }
     
     static function retrieve( &$params, &$values ) 

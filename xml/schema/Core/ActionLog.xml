@@ -46,7 +46,7 @@
   </foreignKey>
   <field>
       <name>action_date_time</name>
-      <type>date</type>
+      <type>datetime</type>
       <comment>date time that the action was performed on.</comment>
       <add>3.4</add>
   </field>
