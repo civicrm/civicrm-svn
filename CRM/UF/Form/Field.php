@@ -631,13 +631,8 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             //update group_type every time. CRM-3608 
             if ( $this->_gid && $deleted ) { 
                 //get the profile type.
-                $groupType = 'null';
-                $fieldsType = CRM_Core_BAO_UFGroup::calculateGroupType( $this->_gid );
-                if ( !empty( $fieldsType ) ) {
-                    $groupType = implode( ',', $fieldsType );
-                }
-                //set group type
-                CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'group_type', $groupType );
+                $fieldsType = CRM_Core_BAO_UFGroup::calculateGroupType( $this->_gid, true );
+                CRM_Core_BAO_UFGroup::updateGroupTypes($this->_gid, $fieldsType);
             }
             
             CRM_Core_Session::setStatus(ts('Selected Profile Field has been deleted.'));
@@ -697,14 +692,9 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             
             //update group_type every time. CRM-3608 
             if ( $this->_gid && is_a( $ufField, 'CRM_Core_DAO_UFField' ) ) {
-                //get the profile type.
-                $groupType = 'null';
-                $fieldsType = CRM_Core_BAO_UFGroup::calculateGroupType( $this->_gid );
-                if ( !empty( $fieldsType ) ) {
-                    $groupType = implode( ',', $fieldsType );
-                }
-                //set group type
-                CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'group_type', $groupType );
+                // get the profile type.
+                $fieldsType = CRM_Core_BAO_UFGroup::calculateGroupType( $this->_gid, true );
+                CRM_Core_BAO_UFGroup::updateGroupTypes($this->_gid, $fieldsType);
             }
             CRM_Core_Session::setStatus( ts( 'Your CiviCRM Profile Field \'%1\' has been saved to \'%2\'.', 
                                              array( 1 => $name, 2 => $this->_title ) ) );
@@ -800,14 +790,14 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                 return $errors;
             }
   
-            $profileCustomFieldExtends = CRM_Core_BAO_UFGroup::getCustomDataExtendsColumnValues($gid, $fieldType );
-            if ( empty($profileCustomFieldExtends) ) {
+            $fieldTypeValues = CRM_Core_BAO_UFGroup::groupTypeValues($gid, $fieldType );
+            if ( !CRM_Utils_Array::value($fieldType, $fieldTypeValues) ) {
                 return;
             }
             
-            $disallowedTypes = array_diff($extendsColumnValues, $profileCustomFieldExtends);
+            $disallowedTypes = array_diff($extendsColumnValues, $fieldTypeValues[$fieldType]);
             if ( !empty($disallowedTypes) ) {
-                $errors['field_name'] = ts('Profile is already having custom fields extending different subtype, you can not add or update this custom field.');
+                $errors['field_name'] = ts('Profile is already having custom fields extending different group types, you can not add or update this custom field.');
             }
         }
     }
@@ -892,7 +882,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $fieldType = $fields['field_name'][0];
         
         //get the group type. 
-        $groupType = CRM_Core_BAO_UFGroup::calculateGroupType( $self->_gid, CRM_Utils_Array::value( 'field_id', $fields ) );
+        $groupType = CRM_Core_BAO_UFGroup::calculateGroupType( $self->_gid, false, CRM_Utils_Array::value( 'field_id', $fields ) );
         
         switch ( $fieldType ) {
         

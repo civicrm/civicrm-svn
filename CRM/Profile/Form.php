@@ -374,7 +374,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                 if ( ($this->_mode & self::MODE_EDIT) && $this->_isContactActivityProfile ) {
                     $errors = self::validateContactActivityProfile($this->_activityId, $this->_gid );
                     if ( !empty($errors) ) {
-                        $statusMessage = implode('<br />', $errors);
+                        $statusMessage = ts( array_pop($errors) );
                         $return = true;
                     }
                 } else { 
@@ -595,21 +595,24 @@ class CRM_Profile_Form extends CRM_Core_Form
     static function validateContactActivityProfile($activityId, $gid) {
         $errors = array( );
         if ( !$activityId ) {
-            $errors[] = ts('Profile is using activty field, missing activity Id (aid) in url.');
+            $errors[] = 'Profile is using activty field, missing activity Id (aid) in url.';
             return $errors;
         } 
         
         $activityTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $activityId, 'activity_type_id' );
         if ( !$activityTypeId ) {
-            $errors[] = ts('Invalid activity ID (aid).');
+            $errors[] = 'Invalid activity ID (aid).';
             return $errors;
         }
         
         require_once 'CRM/Core/BAO/UFGroup.php';
-        $profileExtendingActivityType = CRM_Core_BAO_UFGroup::getCustomDataExtendsColumnValues($gid, 'Activity');
-
-        if ( !empty($profileExtendingActivityType) && !in_array($activityTypeId, $profileExtendingActivityType) ) {
-            $errors[] = ts('Activity type of specified activity Id do not support configured profile fields for this profile.'); 
+        $profileActivityTypes = CRM_Core_BAO_UFGroup::groupTypeValues($gid, 'Activity');
+        if ( !CRM_Utils_Array::value('Activity', $profileActivityTypes) ) {
+            return $errors;
+        }
+        
+        if ( !in_array($activityTypeId, $profileActivityTypes['Activity']) ) {
+            $errors[] = 'Activity type of specified activity Id do not support configured profile fields for this profile.'; 
         }
         
         return $errors;

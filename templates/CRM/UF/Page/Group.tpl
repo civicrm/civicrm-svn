@@ -79,7 +79,7 @@
         {foreach from=$rows item=row}
 	    <tr id="row_{$row.id}"class="{$row.class}{if NOT $row.is_active} disabled{/if}">
             <td>{$row.title}</td>
-            <td>{$row.group_type}</td>
+            <td>{$row.group_type|replace:'':'<br/>'}</td>
             <td>{$row.id}</td>
             <td>{$row.module}</td>
             <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>

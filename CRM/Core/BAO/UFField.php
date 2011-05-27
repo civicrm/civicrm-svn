@@ -341,9 +341,13 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
         
         $profileTypes = array( );
         if ( $ufGroup->group_type ) {
-            $profileTypes = explode( ',',  $ufGroup->group_type );
+            $typeParts    = explode(CRM_Core_DAO::VALUE_SEPARATOR, $ufGroup->group_type);
+            $profileTypes = explode( ',', $typeParts[0] );
         }
         
+        if ( empty($profileTypes) ) {
+            return false;
+        }
         $components   = array( 'Contribution', 'Participant', 'Membership' );
         if ( !in_array('Activity', $profileTypes) ) {
             return false;
@@ -391,7 +395,8 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
         
         $profileTypes = array( );
         if ( $ufGroup->group_type ) {
-            $profileTypes = explode( ',',  $ufGroup->group_type );
+            $typeParts    = explode(CRM_Core_DAO::VALUE_SEPARATOR, $ufGroup->group_type);
+            $profileTypes = explode( ',',  $typeParts[0] );
         }
         
         //early return if new profile. 
@@ -467,7 +472,8 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
         
         $profileTypes = array( );
         if ( $ufGroup->group_type ) {
-            $profileTypes = explode( ',',  $ufGroup->group_type );
+            $typeParts    = explode(CRM_Core_DAO::VALUE_SEPARATOR, $ufGroup->group_type);
+            $profileTypes = explode( ',', $typeParts[0] );
         }
         
         if ( $onlyPure ) {

@@ -2366,11 +2366,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
      *
      * @return array list of calculated group type
      */
-    function calculateGroupType( $gId, $ignoreFieldId = null ) 
+    function calculateGroupType( $gId, $includeTypeValues = false, $ignoreFieldId = null ) 
     {
         //get the profile fields.
         $ufFields  = self::getFields( $gId, false, null, null, null, true, null, true );
-        $groupType = array( );
+        $groupType = $groupTypeValues = $customFieldIds = array( );
         if ( !empty( $ufFields ) ) {
             foreach ( $ufFields as $fieldName => $fieldValue ) {
                 //ignore field from group type when provided.
@@ -2379,14 +2379,93 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                     continue;
                 }
                 if ( !in_array( $fieldValue['field_type'], $groupType ) ) {
-                    $groupType[] = $fieldValue['field_type'];
+                    $groupType[$fieldValue['field_type']] = $fieldValue['field_type'];
                 }
+
+                if ( $includeTypeValues && ($fldId = CRM_Core_BAO_CustomField::getKeyID($fieldName)) ) {
+                    $customFieldIds[$fldId] = $fldId;
+                }
+            }
+        }
+
+        if ( !empty($customFieldIds) ) {
+            $query = 'SELECT DISTINCT(cg.id), cg.extends, cg.extends_entity_column_value FROM civicrm_custom_group cg LEFT JOIN civicrm_custom_field cf ON cf.custom_group_id = cg.id WHERE cg.extends_entity_column_value IS NOT NULL AND cf.id IN ('. implode(',', $customFieldIds) .')';            
+            $customGroups = CRM_Core_DAO::executeQuery( $query );
+            while( $customGroups->fetch( )) {
+                if (!$customGroups->extends_entity_column_value) {
+                    continue;
+                }
+                foreach( explode(CRM_Core_DAO::VALUE_SEPARATOR, $customGroups->extends_entity_column_value) as $val ) {
+                    if ($val) {
+                        $groupTypeValues["{$customGroups->extends}Type"][$val] = $val; 
+                    }
+                }
+            }
+            
+            if ( !empty($groupTypeValues) ) {
+                $groupType = array_merge($groupType, $groupTypeValues);
             }
         }
         
         return $groupType;
     }
     
+    /**
+     * Update the profile type 'group_type' as per profile fields including group types and group subtype values.
+     * Build and store string like: group_type1,group_type2[VALUE_SEPERATOR]group_type1Type:1:2:3,group_type2Type:1:2
+     * @param  Integer $gid         profile id
+     * @param  Array   $groupTypes  With key having group type names  
+     *
+     * @return Boolean
+     */
+    function updateGroupTypes( $gId, $groupTypes = array() ) 
+    {
+        if ( !is_array($groupTypes) || !$gId ) {
+            return false;
+        }
+        
+        // If empty group types set group_type as 'null'
+        if ( empty($groupTypes) ) {
+            return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_UFGroup', $gId, 'group_type', 'null' );
+        }
+        
+        $componentGroupTypes = array('Contribution', 'Participant', 'Membership', 'Activity');
+        $validGroupTypes     = array_merge( array('Contact', 'Individual', 'Organization', 'Household'), $componentGroupTypes, CRM_Contact_BAO_ContactType::subTypes( ) );
+
+        $gTypes = $gTypeValues = array( );
+        
+        // Get valid group type and group subtypes
+        foreach( $groupTypes as $groupType => $value ) {
+            if ( in_array($groupType, $validGroupTypes) && !in_array($groupType, $gTypes) ) {
+                $gTypes[] = $groupType;
+            }
+            
+            $subTypesOf = null;
+            if ( strpos($groupType, 'Type') > 0 ) {
+                $subTypesOf  = substr( $groupType, 0, strpos($groupType, 'Type') );
+            } else {
+                continue;   
+            }
+
+            if ( !empty($value) && 
+                 in_array($subTypesOf, $componentGroupTypes) ) {
+                $gTypeValues[$subTypesOf] = $groupType .":". implode(':', $value);
+            }
+        }
+ 
+        if ( empty($gTypes) ) {
+            return false;
+        }
+        
+        // Build String to store group types and group subtypes
+        $groupTypeString = implode(',', $gTypes);
+        if ( !empty($gTypeValues) ) {
+            $groupTypeString .= CRM_Core_DAO::VALUE_SEPARATOR . implode(',', $gTypeValues);
+        }
+        
+        return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_UFGroup', $gId, 'group_type', $groupTypeString );
+    }
+
     /**
      * This function is used to setDefault componet specific profile fields.
      * 
@@ -2720,50 +2799,41 @@ SELECT  group_id
     }
     
     /*
-     * function to get all extending entity column values of custom fields which are included in the profile of specific component.
+     * function to get group type values of the profile
      *
      * @params Integer $profileId       Profile Id
-     * @params String  $groupType       Group Type (type of custom group extends )
-     * @params Array   $ignoreFieldIds  Ignore profile field Ids
+     * @params String  $groupType       Group Type
      *
-     * @return Array   extending entity column values of custom fields
+     * @return Array   group type values
      * @static
      * @access public
      */
-    static function getCustomDataExtendsColumnValues( $profileId, $groupType, $ignoreFieldIds = array( ) ) {
-        $extendColumnValues = $customFieldIds = array( );
-
-        $query = 'SELECT field_name FROM civicrm_uf_field WHERE uf_group_id = %1';
-        if ( !empty($ignoreFieldIds) ) {
-            $query .= ' AND id NOT IN (' . implode(',', $ignoreFieldIds). ')';   
+    static function groupTypeValues($profileId, $groupType = null) {
+        $groupTypeValue = array( );
+        $groupTypes     = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $profileId, 'group_type');
+        
+        $groupTypeParts = explode(CRM_Core_DAO::VALUE_SEPARATOR, $groupTypes);
+        if ( !CRM_Utils_Array::value(1, $groupTypeParts) ) {
+            return $groupTypeValue;
         }
         
-        $fields = CRM_Core_DAO::executeQuery($query, array( 1 => array($profileId, 'Integer') ));
-        while( $fields->fetch( )) {
-            if ( $customFieldId = CRM_Core_BAO_CustomField::getKeyID($fields->field_name) ) {
-                $customFieldIds[] = $customFieldId;
-            }
-        }
-        
-        if ( empty($customFieldIds) ) {
-            return $extendColumnValues;
-        }
-        
-        $query = 'SELECT extends_entity_column_value FROM civicrm_custom_group cg LEFT JOIN civicrm_custom_field cf ON cf.custom_group_id = cg.id WHERE cg.extends = %1 AND cg.extends_entity_column_value IS NOT NULL AND cf.id IN ('. implode(',', $customFieldIds) .')';
-        
-        $customGroups = CRM_Core_DAO::executeQuery($query, array( 1 => array($groupType, 'String') ));
-        while( $customGroups->fetch( )) {
-            if (!$customGroups->extends_entity_column_value) {
+        foreach( explode(',', $groupTypeParts[1]) as $groupTypeValues ) {
+            $values     = array( );
+            $valueParts = explode(':', $groupTypeValues);
+            if ( $groupType && ($valueParts[0] != "{$groupType}Type") ) {
                 continue;
             }
-            foreach( explode(CRM_Core_DAO::VALUE_SEPARATOR, $customGroups->extends_entity_column_value) as $val ) {
-                if ($val) {
-                    $extendColumnValues[$val] = $val; 
+            foreach( $valueParts as $val ) {
+                if ( CRM_Utils_Rule::integer($val) ) {
+                    $values[$val] = $val;
                 }
+            }
+            if ( !empty($values) ) {
+                $groupTypeValue[substr($valueParts[0], 0, -4)] = $values;
             }
         }
         
-        return $extendColumnValues;
+        return $groupTypeValue;
     }
 
 }
