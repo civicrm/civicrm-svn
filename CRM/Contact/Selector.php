@@ -76,8 +76,9 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
     static $_properties = array('contact_id', 'contact_type', 'contact_sub_type', 
                                 'sort_name', 'street_address',
                                 'city', 'state_province', 'postal_code', 'country',
-                                'geo_code_1', 'geo_code_2',
-                                'email', 'on_hold', 'phone', 'status' );
+                                'geo_code_1', 'geo_code_2', 'is_deceased',
+                                'email', 'on_hold', 'phone', 'status',
+                                'do_not_email', 'do_not_phone', 'do_not_mail' );
 
     /**
      * formValues is the array returned by exportValues called on
