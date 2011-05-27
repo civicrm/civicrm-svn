@@ -424,12 +424,12 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
                 
                 //replace user context to search.
                 $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, $urlParams );
-                $this->controller->setDestination($url);
+                return $this->controller->setDestination($url);
             } else { 
                 $status = ts("Your mailing has been saved. Click the 'Continue' action to resume working on it.");
                 CRM_Core_Session::setStatus( $status );
                 $url = CRM_Utils_System::url( 'civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1' );
-                $this->controller->setDestination($url);
+                return $this->controller->setDestination($url);
             }
         }
     }
