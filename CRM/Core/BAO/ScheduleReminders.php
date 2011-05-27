@@ -386,15 +386,9 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
     {
         $contacts = array();
 
-        require_once 'CRM/Core/DAO/ActionMapping.php';
-        $mapping = new CRM_Core_DAO_ActionMapping( );
-        $mapping->id = $mappingID;
-        $mapping->find( true );
-
         $actionSchedule = new CRM_Core_DAO_ActionSchedule( );
         $actionSchedule->id = $mappingID;
 
-        
         if ( $actionSchedule->find( true ) ) {
             $query = "SELECT MAX(id) FROM civicrm_action_log WHERE action_schedule_id = {$actionSchedule->id}";
             $actionLogID = CRM_Core_DAO::singleValueQuery( $query );
@@ -402,6 +396,17 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
             $actionLog = new CRM_Core_DAO_ActionLog( );
             $actionLog->id = $actionLogID;
             $actionLog->find( true );
+
+            if ( $actionLogID && !$actionSchedule->is_repeat ) {
+                // if logs is present and repeat is turned off, then the reminder probably has already 
+                // been sent & logged. And therefore no point in doing any work.
+                return array( );
+            }
+
+            require_once 'CRM/Core/DAO/ActionMapping.php';
+            $mapping = new CRM_Core_DAO_ActionMapping( );
+            $mapping->id = $mappingID;
+            $mapping->find( true );
 
             $select = $join = $where = array( );
 
@@ -443,28 +448,31 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
                 }
 
                 // datetime where clause
-                $startEvent = ( $actionSchedule->first_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
-                    "(e.activity_date_time, INTERVAL {$actionSchedule->first_action_offset} {$actionSchedule->first_action_unit})";
-                $endEvent   = ( $actionSchedule->repetition_end_action == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
-                    "(e.activity_date_time, INTERVAL {$actionSchedule->repetition_end_frequency_interval} {$actionSchedule->repetition_end_frequency_unit})";
+                if ( !$actionLogID ) {
+                    // if NO logs are present:
+                    $startEvent = ( $actionSchedule->first_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
+                        "(e.activity_date_time, INTERVAL {$actionSchedule->first_action_offset} {$actionSchedule->first_action_unit})";
+                } else if ( $actionSchedule->is_repeat ) {
+                    // if repeat is turned ON:
+                    $endEvent = ( $actionSchedule->repetition_end_action == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
+                        "(e.activity_date_time, INTERVAL {$actionSchedule->repetition_end_frequency_interval} {$actionSchedule->repetition_end_frequency_unit})";
 
-                // repeat event clause
-                if ( $actionLogID && 
-                     $actionSchedule->is_repeat && 
-                     $actionSchedule->repetition_start_frequency_unit ) {
                     if ( $actionSchedule->repetition_start_frequency_unit == 'day' ) {
                         $hrs = 24 * $actionSchedule->repetition_start_frequency_interval;
+                    } else if ( $actionSchedule->repetition_start_frequency_unit == 'week' ) {
+                        $hrs = 24 * $actionSchedule->repetition_start_frequency_interval * 7;
                     } else {
                         $hrs = $actionSchedule->repetition_start_frequency_interval;
                     }
-                    $intervalClause = "AND ( TIMEDIFF(NOW(), '{$actionLog->action_date_time}') >= TIME('{$hrs}:00:00') )";
+                    $intervalClause = "( TIMEDIFF(NOW(), '{$actionLog->action_date_time}') >= TIME('{$hrs}:00:00') )";
+
                 }
 
-                // IF no logs:
-                // ( now >= date_build_from_start_time )
-                // Otherwise :
-                // ( (now <= date_build_from_end_time ) && ( diff(now && logged_date_time) >= repeat_interval ) )
-                $where[] = $actionLogID ? "( NOW() <= {$endEvent} ) {$intervalClause}" : "( NOW() >= {$startEvent} )";;
+                // IF NO logs:
+                // ( now >= date_built_from_start_time )
+                // Otherwise IF repeat is turned ON:
+                // ( (now <= repeat_end_time ) && ( diff(now && logged_date_time) >= repeat_interval ) )
+                $where[] = $actionLogID ? "( NOW() <= {$endEvent} ) AND {$intervalClause}" : "( NOW() >= {$startEvent} )";;
             }
 
             // build final query
@@ -474,6 +482,7 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
             $whereClause  = "WHERE " . (!empty( $where ) ? implode( ' AND ', $where ) : '(1)');
             
             $query = "$selectClause $fromClause $joinClause $whereClause";
+            //CRM_Core_Error::debug( '$query', $query );
         }
 
         // FIXME: store contacts in temp table and make cron handle mailings in batches
