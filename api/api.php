@@ -103,6 +103,8 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
                 $action = empty($subAPI[2])?$action:$subAPI[2];
                 $subParams  = array();
                 $subParams[strtolower($entity) . "_id"] = $result['id'];
+                $subParams["entity_id"] = $result['id'];
+                $subParams['entity_table'] = $entity;
                 $subParams['version'] = $version;
                 $subParams['sequential'] = 1;
                 if(array_key_exists(0, $params)){
