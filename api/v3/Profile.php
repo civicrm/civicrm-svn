@@ -153,9 +153,12 @@ function civicrm_api3_profile_set( $params ) {
         }        
 
         foreach ( $profileFields as $fieldName => $field ) {
-            if ( CRM_Utils_Array::value('is_required', $field) && !CRM_Utils_Array::value($fieldName, $params) ) {
-                $missingParams[] = $fieldName;
+            if ( CRM_Utils_Array::value('is_required', $field) ) {
+                if ( !CRM_Utils_Array::value($fieldName, $params) || empty($params[$fieldName]) ) {
+                    $missingParams[] = $fieldName;
+                }
             }
+
             $profileParams[$fieldName] = isset($params[$fieldName]) ? $params[$fieldName] : '';
         }
  
@@ -169,7 +172,41 @@ function civicrm_api3_profile_set( $params ) {
             return $updatedParams;
         } 
         
-        return civicrm_api3_contact_activity_set( $updatedParams['values'] );
+        $groups = $tags = array( );
+        if ( isset($updatedParams['values']['group']) ) {
+            $groups = $updatedParams['values']['group'];
+            unset($updatedParams['values']['group']);
+        }
+
+        if ( isset($updatedParams['values']['tag']) ) {
+            $tags = $updatedParams['values']['tag'];
+            unset($updatedParams['values']['tag']);
+        }
+        
+        $result = civicrm_api3_contact_activity_set( $updatedParams['values'] );
+        if ( CRM_Utils_Array::value('is_error', $result) ) {
+            return $result; 
+        }
+        
+        $ufGroupDetails = array( );
+        $ufGroupParams  = array( 'id' => $params['profile_id'] );
+        CRM_Core_BAO_UFGroup::retrieve($ufGroupParams, $ufGroupDetails);
+              
+        if ( isset($profileFields['group']) ) {
+            CRM_Contact_BAO_GroupContact::create($groups, $params['contact_id'], false, 'Admin');
+        }
+        
+        if ( isset($profileFields['tag']) ) {
+            require_once 'CRM/Core/BAO/EntityTag.php';
+            CRM_Core_BAO_EntityTag::create( $tags, 'civicrm_contact', $params['contact_id'] );
+        }
+
+        if ( CRM_Utils_Array::value('add_to_group_id', $ufGroupDetails) ) {
+            $contactIds = array( $params['contact_id'] );
+            CRM_Contact_BAO_GroupContact::addContactsToGroup($contactIds, $ufGroupDetails['add_to_group_id']); 
+        }
+  
+        return $result;
     } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {
