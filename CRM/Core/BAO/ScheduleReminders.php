@@ -502,4 +502,7 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
         CRM_Core_Error::fatal( ts( 'Invalid value passed to delete function.' ) );
     }
 
+    static function setIsActive( $id, $is_active ) {
+        return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_ActionSchedule', $id, 'is_active', $is_active );
+    }
 }

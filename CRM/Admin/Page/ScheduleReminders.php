@@ -84,14 +84,14 @@ class CRM_Admin_Page_ScheduleReminders extends CRM_Core_Page_Basic
                                                                     ),
                                   CRM_Core_Action::ENABLE  => array(
                                                                     'name'  => ts('Enable'),
-                                                                    'url'   => 'civicrm/admin/scheduleReminder',
-                                                                    'qs'    => 'action=enable&id=%%id%%',
+                                                                    'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_ScheduleReminders' . '\',\'' . 'disable-enable' . '\' );"',
+                                                                    'ref'   => 'enable-action',
                                                                     'title' => ts('Enable Label Format') 
                                                                   ),
                                   CRM_Core_Action::DISABLE  => array(
                                                                     'name'  => ts('Disable'),
-                                                                    'url'   => 'civicrm/admin/scheduleReminder',
-                                                                    'qs'    => 'action=disable&id=%%id%%',
+                                                                    'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_ScheduleReminders' . '\',\'' . 'enable-disable' . '\' );"',
+                                                                    'ref'   => 'disable-action',
                                                                     'title' => ts('Disable Label Format') 
                                                                   ),
                                   );
