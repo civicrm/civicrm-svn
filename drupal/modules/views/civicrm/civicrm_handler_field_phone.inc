@@ -35,7 +35,7 @@ class civicrm_handler_field_phone extends views_handler_field {
     }
     
     function ensure_my_table() {
-        if (!isset($this->table_alias)) {
+       if (!isset($this->table_alias)) {
             if (!method_exists($this->query, 'ensure_table')) { vpr_trace(); exit; }
             if(isset($this->options['phone_type'])){
                 $join = $this->get_join();
@@ -43,13 +43,15 @@ class civicrm_handler_field_phone extends views_handler_field {
                                      array(
                                            'value' => $this->options['phone_type'],
                                            'numeric' => TRUE,
-                                           'field' => 'phone_type_id'
+                                           'field' => 'phone_type_id',
+                                           'operator' => '=',
                                            ));
+               $this->table_alias = $this->query->add_table($this->table, $this->relationship,  $join);
+            } 
+            else {
+               $this->table_alias = $this->query->ensure_table($this->table, $this->relationship); 
             }
-            //$this->table_alias = $this->query->ensure_table($this->table, $this->relationship, $join);
-            $this->table_alias = $this->query->add_table($this->table, $this->telationship, $join);
         }
         return $this->table_alias;
     }
-    
 }
