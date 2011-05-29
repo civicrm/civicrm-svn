@@ -325,7 +325,6 @@ class CRM_Core_BAO_CustomValueTable
                 $cvParams[$customValue['table_name']][$index][] = $cvParam;
             }
         }
-print_r($cvParams);
         if ( ! empty( $cvParams ) ) {
             self::create($cvParams);
         }
