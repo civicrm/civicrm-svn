@@ -14,6 +14,18 @@ jimport('joomla.application.component.helper');
 
 class CivicrmHelperApi { 
 
+    function civiInit( ) {
+        require_once 
+            JPATH_BASE .DS .
+            'administrator' .DS .
+            'components' . DS .
+            'com_civicrm' .DS .
+            'civicrm.setting.php';
+
+        require_once 'CRM/Core/Config.php';
+        $config =& CRM_Core_Config::singleton( );
+    }
+
     /*Sets the file paths and other constants for civicrm use.*/
 	function setPaths() {
 		define('CIVICRM_UF', 'Joomla');
@@ -41,7 +53,7 @@ class CivicrmHelperApi {
 		static $base;
 
 		if (!$base) {
-            $base =( CIVICRM_ROOT );
+            $base = ( CIVICRM_ROOT );
 		}
 		return JLoader::import($path, $base, '');
 	}
