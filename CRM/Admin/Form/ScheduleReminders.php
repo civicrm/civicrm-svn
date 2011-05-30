@@ -94,7 +94,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
 
         //get the frequency units.
         require_once 'CRM/Core/OptionGroup.php';
-        $this->_freqUnits = CRM_Core_OptionGroup::values('recur_frequency_units');
+        $this->_freqUnits = array( 'hour' => 'hour' ) + CRM_Core_OptionGroup::values('recur_frequency_units');
         
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
         $mappings = CRM_Core_BAO_ScheduleReminders::getMapping(  );

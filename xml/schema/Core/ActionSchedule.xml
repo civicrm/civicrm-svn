@@ -62,7 +62,7 @@
   <field>
        <name>first_action_unit</name>
        <type>enum</type> 
-       <values>day,week,month,year</values>
+       <values>hour,day,week,month,year</values>
        <comment>Time units for reminder.</comment>
        <add>3.4</add>
   </field>
@@ -83,7 +83,7 @@
   <field>
        <name>repetition_start_frequency_unit</name>
        <type>enum</type> 
-       <values>day,week,month,year</values>
+       <values>hour,day,week,month,year</values>
        <comment>Time units for repetition of reminder.</comment>
        <add>3.4</add>
   </field>
@@ -96,7 +96,7 @@
   <field>
        <name>repetition_end_frequency_unit</name>
        <type>enum</type> 
-       <values>day,week,month,year</values>
+       <values>hour,day,week,month,year</values>
        <comment>Time units till repetition of reminder.</comment>
        <add>3.4</add>
   </field>
