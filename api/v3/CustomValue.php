@@ -127,9 +127,9 @@ function civicrm_api3_custom_value_get($params) {
 
   $getParams = array(
     'entityID' => $params['entity_id'],
-    'entityType' => $params['entity_type'],
+    'entityType' => $params['entity_table'],
   );
-  unset($params['entity_id'], $params['entity_type']);
+  unset($params['entity_id'], $params['entity_table']);
   foreach ($params as $id => $param) {
     if ($param && substr($id, 0, 6) == 'return') {
       $id = substr($id, 7);
