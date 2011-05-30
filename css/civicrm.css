@@ -2668,7 +2668,9 @@ div#crm-toolTip #hide-tooltip {
 /* "don't do this" icons */
 #crm-container div.contact_panel span.email-hold, 
 #crm-container div.contact_panel span.do-not-email, 
-#crm-container div.contact_panel span.do-not-phone {
+#crm-container div.contact_panel span.do-not-phone,
+#crm-container div.crm-search-results span.do-not-phone,
+#crm-container div.crm-search-results span.do-not-email {
     background-position:3px; 
     background-repeat:no-repeat; 
     background-image:url("../i/stop-icon.png");

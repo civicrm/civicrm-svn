@@ -438,12 +438,12 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
                 
                 //replace user context to search.
                 $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, $urlParams );
-                CRM_Utils_System::redirect( $url );
+                return $this->controller->setDestination($url);
             } else { 
                 $status = ts("Your mailing has been saved. Click the 'Continue' action to resume working on it.");
                 CRM_Core_Session::setStatus( $status );
                 $url = CRM_Utils_System::url( 'civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1' );
-                CRM_Utils_System::redirect($url);
+                return $this->controller->setDestination($url);
             }
         }
     }

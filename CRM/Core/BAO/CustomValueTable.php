@@ -42,7 +42,7 @@ class CRM_Core_BAO_CustomValueTable
              ! is_array( $customParams ) ) {
             return;
         }
-dsm($customParams);
+
         foreach ( $customParams as $tableName => $tables ) {
             foreach ( $tables as $index => $fields ) {
                 $sqlOP      = null;
@@ -325,7 +325,6 @@ dsm($customParams);
                 $cvParams[$customValue['table_name']][$index][] = $cvParam;
             }
         }
-
         if ( ! empty( $cvParams ) ) {
             self::create($cvParams);
         }

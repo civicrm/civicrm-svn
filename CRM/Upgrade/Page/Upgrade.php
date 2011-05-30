@@ -169,6 +169,7 @@ SELECT  count( id ) as statusCount
             }
 
             // set pre-upgrade warnings if any -
+            $preUpgradeMessage = null;
             self::setPreUpgradeMessage( $preUpgradeMessage, $currentVer, $latestVer );
             
             //turning some tables to monolingual during 3.4.beta3, CRM-7869
