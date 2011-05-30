@@ -180,9 +180,9 @@ SELECT
        cam.entity_status as entityStatus,
        cas.entity_status as entityStatusIds,
        cam.entity_date as entityDate,
-       cas.first_action_offset,
-       cas.first_action_unit,
-       cas.first_action_condition,
+       cas.start_action_offset,
+       cas.start_action_unit,
+       cas.start_action_condition,
        is_repeat,
        is_active
 
@@ -194,9 +194,9 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
         while ( $dao->fetch() ) {
             $list[$dao->id]['id']  = $dao->id;
             $list[$dao->id]['title']  = $dao->title;
-            $list[$dao->id]['first_action_offset']  = $dao->first_action_offset;
-            $list[$dao->id]['first_action_unit']  = $dao->first_action_unit;
-            $list[$dao->id]['first_action_condition']  = $dao->first_action_condition;
+            $list[$dao->id]['start_action_offset']  = $dao->start_action_offset;
+            $list[$dao->id]['start_action_unit']  = $dao->start_action_unit;
+            $list[$dao->id]['start_action_condition']  = $dao->start_action_condition;
             $list[$dao->id]['entityDate']  = ucwords(str_replace('_', ' ', $dao->entityDate));
             $status = $dao->entityStatus;
             $statusIds = str_replace(CRM_Core_DAO::VALUE_SEPARATOR, ', ', $dao->entityStatusIds);
@@ -450,19 +450,19 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
                 // datetime where clause
                 if ( !$actionLogID ) {
                     // if NO logs are present:
-                    $startEvent = ( $actionSchedule->first_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
-                        "(e.activity_date_time, INTERVAL {$actionSchedule->first_action_offset} {$actionSchedule->first_action_unit})";
+                    $startEvent = ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
+                        "(e.activity_date_time, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
                 } else if ( $actionSchedule->is_repeat ) {
                     // if repeat is turned ON:
-                    $endEvent = ( $actionSchedule->repetition_end_action == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
-                        "(e.activity_date_time, INTERVAL {$actionSchedule->repetition_end_frequency_interval} {$actionSchedule->repetition_end_frequency_unit})";
+                    $endEvent = ( $actionSchedule->end_action == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
+                        "(e.activity_date_time, INTERVAL {$actionSchedule->end_frequency_interval} {$actionSchedule->end_frequency_unit})";
 
-                    if ( $actionSchedule->repetition_start_frequency_unit == 'day' ) {
-                        $hrs = 24 * $actionSchedule->repetition_start_frequency_interval;
-                    } else if ( $actionSchedule->repetition_start_frequency_unit == 'week' ) {
-                        $hrs = 24 * $actionSchedule->repetition_start_frequency_interval * 7;
+                    if ( $actionSchedule->repetition_frequency_unit == 'day' ) {
+                        $hrs = 24 * $actionSchedule->repetition_frequency_interval;
+                    } else if ( $actionSchedule->repetition_frequency_unit == 'week' ) {
+                        $hrs = 24 * $actionSchedule->repetition_frequency_interval * 7;
                     } else {
-                        $hrs = $actionSchedule->repetition_start_frequency_interval;
+                        $hrs = $actionSchedule->repetition_frequency_interval;
                     }
                     $intervalClause = "( TIMEDIFF(NOW(), '{$actionLog->action_date_time}') >= TIME('{$hrs}:00:00') )";
 

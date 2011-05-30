@@ -102,18 +102,18 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $numericOptions = array( 1 => ts('1'), 2 => ts('2'), 3 => ts('3'), 4 => ts('4'), 5 => ts('5' ),
                                  6 => ts('6'), 7 => ts('7'), 8 => ts('8'), 9 => ts('9'), 10 => ts('10') );
         //reminder_interval
-        $this->add( 'select', 'first_action_offset', ts('When'), $numericOptions );
+        $this->add( 'select', 'start_action_offset', ts('When'), $numericOptions );
         
         foreach ($this->_freqUnits as $val => $label) {
             $freqUnitsDisplay[$val] = ts('%1(s)', array(1 => $label));
         }
         //reminder_frequency
-        $this->add( 'select', 'first_action_unit', ts( 'Frequency' ), $freqUnitsDisplay, true );
+        $this->add( 'select', 'start_action_unit', ts( 'Frequency' ), $freqUnitsDisplay, true );
 
         $condition =  array( 'before' => ts('before'), 
                              'after'  => ts('after') );
         //reminder_action
-        $this->add( 'select', 'first_action_condition', ts( 'Action Condition' ), $condition );
+        $this->add( 'select', 'start_action_condition', ts( 'Action Condition' ), $condition );
                 
         $this->add( 'select', 'entity_date', ts( 'Date Field' ), $sel4, true );
 
@@ -121,11 +121,11 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->addElement( 'checkbox', 'is_repeat', ts('Repeat') , 
                            null, array('onclick' => "return showHideByValue('is_repeat',true,'repeatFields','table-row','radio',false);") );
 
-        $this->add( 'select', 'repetition_start_frequency_unit', ts( 'every' ), $freqUnitsDisplay );
-        $this->add( 'select', 'repetition_start_frequency_interval', ts( 'every' ), $numericOptions );
-        $this->add( 'select', 'repetition_end_frequency_unit', ts( 'until' ), $freqUnitsDisplay );
-        $this->add( 'select', 'repetition_end_frequency_interval', ts( 'until' ), $numericOptions );
-        $this->add( 'select', 'repetition_end_action', ts( 'Repetition Condition' ), $condition, true );
+        $this->add( 'select', 'repetition_frequency_unit', ts( 'every' ), $freqUnitsDisplay );
+        $this->add( 'select', 'repetition_frequency_interval', ts( 'every' ), $numericOptions );
+        $this->add( 'select', 'end_frequency_unit', ts( 'until' ), $freqUnitsDisplay );
+        $this->add( 'select', 'end_frequency_interval', ts( 'until' ), $numericOptions );
+        $this->add( 'select', 'end_action', ts( 'Repetition Condition' ), $condition, true );
        
         $this->add( 'select', 'recipient', ts( 'Recipient' ), $sel5['activity_contacts'],
                     false, array( 'onChange' => "return showHideByValue('recipient','0','recipientManual','table-row','select',false);") 
@@ -189,13 +189,13 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         }
         $values = $this->controller->exportValues( $this->getName() );
 
-        $keys = array('title', 'first_action_offset' ,'first_action_unit',
-                      'first_action_condition', 'is_repeat',
-                      'repetition_start_frequency_unit',
-                      'repetition_start_frequency_interval',
-                      'repetition_end_frequency_unit',
-                      'repetition_end_frequency_interval',
-                      'repetition_end_action',
+        $keys = array('title', 'start_action_offset' ,'start_action_unit',
+                      'start_action_condition', 'is_repeat',
+                      'repetition_frequency_unit',
+                      'repetition_frequency_interval',
+                      'end_frequency_unit',
+                      'end_frequency_interval',
+                      'end_action',
                       'subject',
                       );
         
