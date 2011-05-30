@@ -221,6 +221,9 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $params['is_active' ] =  CRM_Utils_Array::value( 'is_active', $values, 0 );
         $params['record_activity'] = CRM_Utils_Array::value( 'record_activity', $values, 0 );
 
+        if ( $this->_action & CRM_Core_Action::UPDATE ) {
+            $params['id' ] = $this->_id;
+        }
         CRM_Core_BAO_ScheduleReminders::add($params, $ids);
 
         $status = ts( "Your new Reminder titled <strong>{$values['title']}</strong> has been saved." );
