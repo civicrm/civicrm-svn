@@ -70,6 +70,7 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         $activityType = CRM_Core_PseudoConstant::activityType(false);
         $eventType = CRM_Event_PseudoConstant::eventType();
         $activityContacts = CRM_Core_PseudoConstant::activityContacts();
+        $sel1 = $sel2 = $sel3 = $sel4 = $sel5 = array();
 
         foreach ( $mapping as $value ) {
             $entityValue  = $value['entity_value'];
@@ -88,18 +89,18 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
                 $val = 'Event Name';
             }
             $sel1[$key] = $val;
-
+            
             switch ($entityValue) {
             case 'activity_type':
-                $sel2[$key] = $activityType;
+                $sel2[$key] = array($value['entity_value_label'] ) + $activityType; 
                 break;
 
             case 'event_type':
-                $sel2[$key] = $eventType;
+                $sel2[$key] = array($value['entity_value_label']) + $eventType;
                 break;
 
             case 'civicrm_event':
-                $sel2[$key] = $event;
+                $sel2[$key] = array($value['entity_value_label']) + $event;
                 break;
             }
 
@@ -133,13 +134,13 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
             switch ($entityStatus) {
             case 'activity_status':
                 foreach( $sel3[$id] as $kkey => &$vval ) {
-                    $vval = $activityStatus;
+                    $vval =  array($value['entity_status_label']) + $activityStatus;
                 }
                 break;
 
             case 'civicrm_participant_status_type':
                 foreach( $sel3[$id] as $kkey => &$vval ) {
-                    $vval = $participantStatus;
+                    $vval = array($value['entity_status_label']) + $participantStatus;
                 }
                 break;
             }
