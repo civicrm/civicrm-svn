@@ -1,65 +1,54 @@
-<?php 
+<?php
+/*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 4.0                                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
 
-class civicrm_handler_field_phone extends views_handler_field {
-    static $_phoneType;
+/**
+ * Field handler to provide acess control for the location field (which is a lookup)
+ *
+ * @ingroup civicrm_field_handlers
+ */
+class civicrm_handler_field_location extends civicrm_handler_field {
+    static $_locationTypes;
 
     function construct( ) {
-        if ( ! self::$_phoneType ) {
+        if ( ! self::$_locationTypes ) {
             if ( ! civicrm_initialize( ) ) {
                 return;
             }
             require_once 'CRM/Core/PseudoConstant.php';
-            self::$_phoneType = CRM_Core_PseudoConstant::phoneType( );
+            self::$_locationTypes = CRM_Core_PseudoConstant::locationType( );
         }
     }
-    
-    function option_definition() {
-        $options = parent::option_definition();
-        $options['phone_type'] = array('default' => '');
-        return $options;
-    }
-    
-    function options_form(&$form, &$form_state) {
-        parent::options_form($form, $form_state);
-        $phoneOptions = array();
-        foreach(self::$_phoneType as $id => $type){
-            $phoneOptions[$id] = $type;
-        }
-        $form['phone_type'] = array(
-                                    '#type' => 'radios',
-                                    '#title' => 'Phone type for this field',
-                                    '#options' => $phoneOptions,
-                                    '#description' => t('Phone type to be used for this field'),
-                                    '#default_value' => $this->options['phone_type']
-                                    );
-        $form['primary_phone'] = array (
-                                    '#type' => 'checkbox',
-                                    '#title' => 'Show only Primary Phone number?',
-                                    '#options' => array(1=>'Yes'),
-                                    '#description' => t('Check above box if you want only the Primary phone number displayed, nothing will be displayed if no phone is marked Primary'),
-                                    '#default_value' => 0,
-                                    );
 
-  }
-    
-    function ensure_my_table() {
-       if (!isset($this->table_alias)) {
-            if (!method_exists($this->query, 'ensure_table')) { vpr_trace(); exit; }
-            if(isset($this->options['phone_type'])){
-                $join = $this->get_join();
-                $join->extra = array(
-                                     array(
-                                           'value' => $this->options['phone_type'],
-                                           'numeric' => TRUE,
-                                           'field' => 'phone_type_id',
-                                           'operator' => '=',
-                                           ));
-               $this->table_alias = $this->query->add_table($this->table, $this->relationship,  $join);
-            }
-            else {
-               $this->table_alias = $this->query->ensure_table($this->table, $this->relationship); 
-            }
+    function render( $values ) {
+        $lid = $values->{$this->field_alias};
+        if ( empty( $lid ) ||
+             (int ) $lid <= 0 ) {
+            return null;
         }
-        return $this->table_alias;
+
+        return self::$_locationTypes[$values->{$this->field_alias}];
     }
 }
+?>

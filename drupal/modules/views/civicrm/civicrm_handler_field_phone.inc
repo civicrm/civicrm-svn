@@ -21,7 +21,6 @@ class civicrm_handler_field_phone extends views_handler_field {
     
     function options_form(&$form, &$form_state) {
         parent::options_form($form, $form_state);
-        $phoneOptions = array();
         $phoneOptions = array( 0=>'Any' );
         foreach(self::$_phoneType as $id => $type){
             $phoneOptions[$id] = $type;
