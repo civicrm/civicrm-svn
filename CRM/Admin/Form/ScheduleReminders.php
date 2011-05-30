@@ -171,9 +171,15 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             $defaults['entity'][2] = $entityStatus;
             $defaults['text_message'] = $defaults['body_text'] ;
             $defaults['html_message'] = $defaults['body_html'] ;
+            if ( $defaults['group_id'] ) {
+                $defaults['recipient'] = 'group';
+            } elseif  ( $defaults['recipient_manual'] ) {
+                $defaults['recipient'] = 'manual';
+            } 
         }  
 
         return $defaults;
+
     }
 
     /**
@@ -200,6 +206,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
                       'end_frequency_interval',
                       'end_action',
                       'subject',
+                     'group_id'
                       );
         
         foreach ( $keys as $key ) {
@@ -209,10 +216,15 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $params['body_text'] = CRM_Utils_Array::value( 'text_message', $values );
         $params['body_html'] = CRM_Utils_Array::value( 'html_message', $values );
 
-        if ( CRM_Utils_Array::value( 'recipient', $values ) == 0 ) {
+        if ( CRM_Utils_Array::value( 'recipient', $values ) == 'manual' ) {
             $params['recipient_manual'] = CRM_Utils_Array::value( 'recipient_manual_id', $values );
+            $params['group_id'] = $params['recipient'] = 'null';
+        } else if ( CRM_Utils_Array::value( 'recipient', $values ) == 'group' ) {
+            $params['group_id'] = $values['group_id'];
+            $params['recipient_manual'] = $params['recipient'] = 'null';
         } else {
             $params['recipient'] = CRM_Utils_Array::value( 'recipient', $values );
+            $params['group_id'] = $params['recipient_manual'] = 'null';
         }
 
         $params['mapping_id'] = $values['entity'][0];
@@ -228,7 +240,10 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
 
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             $params['id' ] = $this->_id;
-        }
+        } elseif ( $this->_action & CRM_Core_Action::ADD ) {
+            // we do this only once, so name never changes
+            $params['name']   = CRM_Utils_String::munge($params['title'], '_', 64 );
+        } 
         CRM_Core_BAO_ScheduleReminders::add($params, $ids);
 
         $status = ts( "Your new Reminder titled <strong>{$values['title']}</strong> has been saved." );
