@@ -128,7 +128,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->add( 'select', 'end_action', ts( 'Repetition Condition' ), $condition, true );
        
         $this->add( 'select', 'recipient', ts( 'Recipient' ), $sel5['activity_contacts'],
-                    false, array( 'onChange' => "return showHideByValue('recipient','0','recipientManual','table-row','select',false);") 
+                    false, array( 'onClick' => "showHideByValue('recipient','manual','recipientManual','table-row','select',false); showHideByValue('recipient','group','recipientGroup','table-row','select',false);") 
                     );
         
         //autocomplete url
@@ -143,6 +143,9 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
                                            false, null, false );
         $this->assign( 'tokenUrl', $tokenUrl );
         $this->add( 'text', 'recipient_manual_id', ts('Manual Recipients') );
+
+        $this->addElement( 'select', 'group_id', ts( 'Group' ), 
+                           CRM_Core_PseudoConstant::staticGroup( ) );
 
         require_once 'CRM/Mailing/BAO/Mailing.php';
         CRM_Mailing_BAO_Mailing::commonCompose( $this );

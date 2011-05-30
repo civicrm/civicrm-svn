@@ -96,10 +96,15 @@
     <tr class="crm-scheduleReminder-form-block-recipient">
         <td class="right">{$form.recipient.label}</td><td colspan="3">{$form.recipient.html}</td>
     </tr>
-    <tr id="recipientManual" class="crm-activity-form-block-recipient_manual_id">
-    	<td class="label">{$form.recipient_ manual_id.label}</td>
+    <tr id="recipientManual" class="crm-scheduleReminder-form-block-recipient_manual_id">
+    	<td class="label">{$form.recipient_manual_id.label}</td>
         <td>{$form.recipient_manual_id.html}
 	    {edit}<span class="description">{ts}You can manually sent out the reminders to these recipients.{/ts}</span>{/edit}
+        </td>
+    </tr>
+    <tr id="recipientGroup" class="crm-scheduleReminder-form-block-recipient_group_id">
+    	<td class="label">{$form.group_id.label}</td>
+        <td>{$form.group_id.html}
         </td>
     </tr>
 
@@ -145,8 +150,17 @@
 
 {include file="CRM/common/showHideByFieldValue.tpl" 
     trigger_field_id    ="recipient"
-    trigger_value       = '0'
+    trigger_value       = 'manual'
     target_element_id   ="recipientManual" 
+    target_element_type ="table-row"
+    field_type          ="select"
+    invert              = 0
+}
+
+{include file="CRM/common/showHideByFieldValue.tpl" 
+    trigger_field_id    ="recipient"
+    trigger_value       = 'group'
+    target_element_id   ="recipientGroup" 
     target_element_type ="table-row"
     field_type          ="select"
     invert              = 0
