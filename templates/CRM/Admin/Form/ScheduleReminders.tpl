@@ -76,7 +76,7 @@
     <tr class="crm-scheduleReminder-form-block-description">
         <td class="right">{$form.start_action_offset.label}</td>
 	<td colspan="3">{$form.start_action_offset.html}&nbsp;&nbsp;&nbsp;{$form.start_action_unit.html}&nbsp;&nbsp;&nbsp;
-			{$form.start_action_condition.html}&nbsp;&nbsp;&nbsp;{$form.entity_date_start.html}
+			{$form.start_action_condition.html}&nbsp;&nbsp;&nbsp;{$form.start_action_date.html}
 	</td>
     </tr>
     <tr class="crm-scheduleReminder-form-block-is_repeat"><th scope="row" class="label" width="20%">{$form.is_repeat.label}</th>
@@ -88,7 +88,7 @@
                 <td>{$form.repetition_frequency_interval.html}&nbsp;&nbsp;&nbsp;{$form.repetition_frequency_unit.html}</td>
             </tr>
 	    <tr class="crm-scheduleReminder-form-block-repetition_frequency_interval"><th scope="row" class="label">{$form.end_frequency_interval.label}</th>
-                <td>{$form.end_frequency_interval.html}&nbsp;&nbsp;&nbsp;{$form.end_frequency_unit.html}&nbsp;&nbsp;&nbsp;{$form.end_action.html}</td>
+                <td>{$form.end_frequency_interval.html}&nbsp;&nbsp;&nbsp;{$form.end_frequency_unit.html}&nbsp;&nbsp;&nbsp;{$form.end_action.html}&nbsp;&nbsp;&nbsp;{$form.end_date.html}</td>
             </tr>
         </table>
         </td>

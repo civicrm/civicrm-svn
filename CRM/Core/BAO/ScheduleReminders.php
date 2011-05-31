@@ -75,7 +75,8 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         foreach ( $mapping as $value ) {
             $entityValue  = $value['entity_value'];
             $entityStatus = $value['entity_status'];
-            $entityDate = $value['entity_date_start'];
+            $entityDateStart = $value['entity_date_start'];
+            $entityDateEnd = $value['entity_date_end'];
             $entityRecipient = $value['entity_recipient'];
             $key = $value['id'];
             if( $entityValue == 'activity_type' &&
@@ -92,25 +93,31 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
             
             switch ($entityValue) {
             case 'activity_type':
-                $sel2[$key] = array($value['entity_value_label'] ) + $activityType; 
+                $sel2[$key] = array( $value['entity_value_label'] ) + $activityType; 
                 break;
 
             case 'event_type':
-                $sel2[$key] = array($value['entity_value_label']) + $eventType;
+                $sel2[$key] = array( $value['entity_value_label'] ) + $eventType;
                 break;
 
             case 'civicrm_event':
-                $sel2[$key] = array($value['entity_value_label']) + $event;
+                $sel2[$key] = array( $value['entity_value_label'] ) + $event;
                 break;
             }
 
-            switch ($entityDate) {
+            switch ($entityDateStart) {
             case 'activity_date_time':
-                $sel4[$entityDate] = ts('Activity Date Time');
+                $sel4[$entityDateStart] = ts('Activity Date Time');
                 break;
 
             case 'event_start_date':
-                $sel4[$entityDate] = ts('Event Start Date');
+                $sel4[$entityDateStart] = ts('Event Start Date');
+                break;
+            }
+
+            switch ($entityDateEnd) {
+            case 'event_end_date':
+                $sel4[$entityDateEnd] = ts('Event End Date');
                 break;
             }
 
@@ -168,6 +175,12 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         $event_type = CRM_Event_PseudoConstant::eventType();
         $civicrm_event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
         $civicrm_participant_status_type = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
+        krsort($activity_type);
+        krsort($activity_status);
+        krsort($event_type);
+        krsort($civicrm_event);
+        krsort($civicrm_participant_status_type);
+
         $entity = array ( 'civicrm_activity'    => 'Activity',
                           'civicrm_participant' => 'Event');
 
@@ -180,7 +193,7 @@ SELECT
        cas.entity_value as entityValueIds,
        cam.entity_status as entityStatus,
        cas.entity_status as entityStatusIds,
-       cam.entity_date_start as entityDate,
+       cas.start_action_date as entityDate,
        cas.start_action_offset,
        cas.start_action_unit,
        cas.start_action_condition,

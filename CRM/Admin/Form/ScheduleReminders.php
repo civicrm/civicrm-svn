@@ -115,7 +115,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         //reminder_action
         $this->add( 'select', 'start_action_condition', ts( 'Action Condition' ), $condition );
                 
-        $this->add( 'select', 'entity_date_start', ts( 'Date Field' ), $sel4, true );
+        $this->add( 'select', 'start_action_date', ts( 'Date Field' ), $sel4, true );
 
         require_once 'CRM/Core/OptionGroup.php';
         $this->addElement( 'checkbox', 'is_repeat', ts('Repeat') , 
@@ -126,7 +126,8 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->add( 'select', 'end_frequency_unit', ts( 'until' ), $freqUnitsDisplay );
         $this->add( 'select', 'end_frequency_interval', ts( 'until' ), $numericOptions );
         $this->add( 'select', 'end_action', ts( 'Repetition Condition' ), $condition, true );
-       
+        $this->add( 'select', 'end_date', ts( 'Date Field' ), $sel4, true );
+
         $this->add( 'select', 'recipient', ts( 'Recipient' ), $sel5['activity_contacts'],
                     false, array( 'onClick' => "showHideByValue('recipient','manual','recipientManual','table-row','select',false); showHideByValue('recipient','group','recipientGroup','table-row','select',false);") 
                     );
@@ -173,13 +174,12 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             $defaults['html_message'] = $defaults['body_html'] ;
             if ( $defaults['group_id'] ) {
                 $defaults['recipient'] = 'group';
-            } elseif  ( $defaults['recipient_manual'] ) {
+            } elseif ( $defaults['recipient_manual'] ) {
                 $defaults['recipient'] = 'manual';
             } 
         }  
 
         return $defaults;
-
     }
 
     /**
@@ -199,12 +199,12 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $values = $this->controller->exportValues( $this->getName() );
 
         $keys = array('title', 'start_action_offset' ,'start_action_unit',
-                      'start_action_condition', 'is_repeat',
+                      'start_action_condition', 'start_action_date', 'is_repeat',
                       'repetition_frequency_unit',
                       'repetition_frequency_interval',
                       'end_frequency_unit',
                       'end_frequency_interval',
-                      'end_action',
+                      'end_action', 'end_date',
                       'subject',
                      'group_id'
                       );
