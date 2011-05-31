@@ -56,7 +56,7 @@ function civicrm_api3_group_organization_get( $params )
   _civicrm_api3_initialize( true);
   try{
 
-    civicrm_api3_verify_one_mandatory($params,null,array('organization_id','group_id'));
+    civicrm_api3_verify_one_mandatory($params,null,array('organization_id','group_id','id'));
 
     require_once 'CRM/Contact/DAO/GroupOrganization.php';
     $dao = new CRM_Contact_DAO_GroupOrganization();
@@ -69,7 +69,7 @@ function civicrm_api3_group_organization_get( $params )
     $dao->find();
     $values = array( );
     _civicrm_api3_object_to_array( $dao, $values );
-    return civicrm_api3_create_success( $values );
+    return civicrm_api3_create_success( $values,$params,$dao );
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
