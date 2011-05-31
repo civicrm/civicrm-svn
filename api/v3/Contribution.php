@@ -104,9 +104,8 @@ function civicrm_api3_contribution_create($params) {
 function civicrm_api3_contribution_delete($params) {
 	_civicrm_api3_initialize ( true );
 	try {
-		civicrm_api3_verify_mandatory ( $params, null, array ('contribution_id' ) );
-		$contributionID = CRM_Utils_Array::value ( 'contribution_id', $params );
-		
+		civicrm_api3_verify_one_mandatory ( $params, null, array ('contribution_id','id' ) );
+		$contributionID = CRM_Utils_Array::value ( 'contribution_id', $params )? $params['contribution_id']:$params['id'];
 		require_once 'CRM/Contribute/BAO/Contribution.php';
 		if (CRM_Contribute_BAO_Contribution::deleteContribution ( $contributionID )) {
 			return civicrm_api3_create_success ( array ($contributionID => 1 ) );
