@@ -37,6 +37,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
   protected $_participantID;
   protected $_eventID;
   protected $_participantPaymentID;
+  protected $_contributionTypeId;
 
   function get_info( )
   {
@@ -51,7 +52,10 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
   {
     $this->_apiversion = 3;
     parent::setUp();
-
+    $tablesToTruncate = array( 'civicrm_contribution','civicrm_contribution_type',
+                                   'civicrm_contact');
+    $this->quickCleanup( $tablesToTruncate );
+    $this->_contributionTypeId = $this->contributionTypeCreate();
     $event = $this->eventCreate(null);
     $this->_eventID = $event['id'];
 
@@ -71,7 +75,8 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
       $this->eventDelete( $this->_eventID );
       $this->contactDelete( $this->_contactID );
       $this->contactDelete( $this->_individualId );
-      $this->contactDelete( $this->_contactID2 );    
+      $this->contactDelete( $this->_contactID2 );  
+      $this->contributionTypeDelete();  
   }
 
   ///////////////// civicrm_participant_payment_create methods
@@ -97,30 +102,6 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
   }
 
   /**
-   * check without participant_id
-   */
-  function testPaymentCreateMissingParticipantId( )
-  {
-    $contributionTypeID = $this->contributionTypeCreate( );
-
-    //Create Contribution & get entity ID
-    $contributionID = $this->contributionCreate( $this->_contactID , $contributionTypeID  );
-
-    //WithoutParticipantId
-    $params = array( 'contribution_id' => $contributionID,
-                     'version'         => $this->_apiversion );
-
-    $participantPayment = & civicrm_api3_participant_payment_create( $params );
-    $this->assertEquals( $participantPayment['is_error'], 1 );
-
-    //delete created contribution
-    $this->contributionDelete( $contributionID );
-
-    // delete created contribution type
-    $this->contributionTypeDelete( );
-  }
-
-  /**
    * check without contribution_id
    */
   function testPaymentCreateMissingContributionId( )
@@ -138,10 +119,10 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
    */
   function testPaymentCreate( )
   {
-    $contributionTypeID = $this->contributionTypeCreate( );
+
 
     //Create Contribution & get contribution ID
-    $contributionID = $this->contributionCreate( $this->_contactID , $contributionTypeID  );
+    $contributionID = $this->contributionCreate( $this->_contactID , $this->_contributionTypeId  );
 
     //Create Participant Payment record With Values
     $params = array( 'participant_id'  => $this->_participantID,
@@ -156,8 +137,6 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
     //delete created contribution
     $this->contributionDelete( $contributionID );
 
-    // delete created contribution type
-    $this->contributionTypeDelete( );
   }
 
 
@@ -214,10 +193,9 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
    */
   function testPaymentUpdate()
   {
-    $contributionTypeID = $this->contributionTypeCreate( );
 
     // create contribution
-    $contributionID     = $this->contributionCreate( $this->_contactID , $contributionTypeID  );
+    $contributionID     = $this->contributionCreate( $this->_contactID ,$this->_contributionTypeId  );
 
     $this->_participantPaymentID = $this->participantPaymentCreate( $this->_participantID, $contributionID  );
     $params = array( 'id'              => $this->_participantPaymentID,
@@ -235,7 +213,6 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
     $deletePayment = & civicrm_api3_participant_payment_delete( $params );
     $this->assertEquals( $deletePayment['is_error'], 0 );
 
-    $this->contributionTypeDelete( );
   }
 
   ///////////////// civicrm_participant_payment_delete methods
@@ -278,10 +255,9 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
    */
   function testPaymentDelete()
   {
-    $contributionTypeID = $this->contributionTypeCreate( );
 
     // create contribution
-    $contributionID     = $this->contributionCreate( $this->_contactID , $contributionTypeID  );
+    $contributionID     = $this->contributionCreate( $this->_contactID , $this->_contributionTypeId  );
 
     $this->_participantPaymentID = $this->participantPaymentCreate( $this->_participantID, $contributionID  );
 
@@ -291,9 +267,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
     $result = & civicrm_api3_participant_payment_delete( $params );
     $this->documentMe($params,$result,__FUNCTION__,__FILE__);
     $this->assertEquals( $result['is_error'], 0 );
-    
-    // delete created contribution type
-    $this->contributionTypeDelete( );
+
   }
 
 }
