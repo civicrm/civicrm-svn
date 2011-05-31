@@ -193,7 +193,8 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
                         'version'      => $this->_apiversion, );
         
         $result = civicrm_api3_group_contact_create( $params );
-        $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);  
+    
         $this->assertEquals( $result ['is_error'], 0,"in line " . __LINE__ );
         $this->assertEquals( $result ['values']['not_added'], 1,"in line " . __LINE__ );
         $this->assertEquals( $result ['values']['added'], 1,"in line " . __LINE__ );
@@ -202,47 +203,11 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
 
     ///////////////// civicrm_group_contact_remove methods
 
-    function testRemoveWithWrongParamsType()
-    {
-        $params = 1;
-        $groups = civicrm_api3_group_contact_delete( $params );
-
-        $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'Input variable `params` is not an array' );
-    }
     
-    function testDeleteWithEmptyParams( ) 
-    {
-        $params = array('version' => $this->_apiversion );
-        $groups = civicrm_api3_group_contact_delete( $params );
-       
-        $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'Mandatory key(s) missing from params array: contact_id, group_id' );
-    }
 
-    function testRemoveWithoutGroupIdParams( ) 
-    {
-        $params = array( 'version'    => $this->_apiversion,
-                         'contact_id' => $this->_contactId,
-                         );
-        
-        $groups = civicrm_api3_group_contact_delete( $params );
-              
-        $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'Mandatory key(s) missing from params array: group_id' );
-    }
+
     
-    function testDeleteWithoutContactIdParams( ) 
-    {
-        $params = array( 'version'  => $this->_apiversion,
-                         'group_id' => $this->_groupId1,
-                         );
-        
-        $groups = civicrm_api3_group_contact_delete( $params );
-              
-        $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'Mandatory key(s) missing from params array: contact_id' );
-    }    
+
     
     function testDelete( ) 
     {
