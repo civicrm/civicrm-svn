@@ -73,7 +73,7 @@ function contact_create_expectedresult(){
           'preferred_communication_method' => '',
           'preferred_language' => 'en_US',
           'preferred_mail_format' => '',
-          'hash' => 'ceda4b24d6d6e77f504fd96363e50011',
+          'hash' => '8e0a22e070e268ff6819aa2b606a7031',
           'api_key' => '',
           'first_name' => 'abc3',
           'middle_name' => '',

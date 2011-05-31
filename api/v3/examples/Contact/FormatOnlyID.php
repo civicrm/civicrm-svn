@@ -3,14 +3,15 @@
 
 
 /*
- /*This demonstrates use of the 'format.single_entity_array' param. 
-    /*  This param causes the count of the only function to be returned as an integer
+ This demonstrates use of the 'format.id_only' param. 
+    /* This param causes the id of the only entity to be returned as an integer.
+    /* it will be ignored if there is not exactly 1 result
  */
 function contact_get_example(){
 $params = array( 
   'version' => 3,
   'id' => 17,
-  'format.count_only' => 1,
+  'format.only_id' => 1,
 );
 
   require_once 'api/api.php';
@@ -24,7 +25,7 @@ $params = array(
  */
 function contact_get_expectedresult(){
 
-  $expectedResult = 1;
+  $expectedResult = 17;
 
   return $expectedResult  ;
 }

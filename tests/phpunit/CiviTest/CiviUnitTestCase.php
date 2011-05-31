@@ -1355,7 +1355,89 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         return $result;    
     }
+    /*
+     * existing function doesn't allow params to be over-ridden so need a new one
+     * this one allows you to only pass in the params you want to change
+     */ 
+    function CustomGroupCreateByParams($params = array()){
+       $defaults = array(
+                            'title'      => "API Custom Group",
+                            'extends'    => 'Contact',
+                            'domain_id'  => 1,                       
+                            'style'      => 'Inline',
+                            'is_active'  => 1,
+                            'version'		 => API_LATEST_VERSION,
+                            );
+        $params = array_merge($defaults,$params);
+        $result = civicrm_api( 'custom_group','create',$params );
 
+        if ( CRM_Utils_Array::value( 'is_error', $result ) ||
+             ! CRM_Utils_Array::value( 'id', $result) ) {
+            throw new Exception( 'Could not create Custom Group ' . $result['error_message']);
+        }
+        return $result;     
+      
+    }
+    /*
+     * Create custom group with multi fields
+     */ 
+    function CustomGroupMultipleCreateByParams($params = array()){
+       $defaults = array(
+                      
+                            'style'      => 'Tab',
+                            'is_multiple'  => 1,
+
+                            );
+        $params = array_merge($defaults,$params);
+        $result = $this->CustomGroupCreateByParams( $params );
+
+        if ( CRM_Utils_Array::value( 'is_error', $result ) ||
+             ! CRM_Utils_Array::value( 'id', $result) ) {
+            throw new Exception( 'Could not create Custom Group ' . $result['error_message']);
+        }
+        return $result;     
+      
+    }
+    /*
+     * Create custom group with multi fields
+     */ 
+    function CustomGroupMultipleCreateWithFields($params = array()){
+      $customGroup = array();
+      if (!empty($params['custom_group'])){
+        $customGroup = $params['custom_group'];
+      }
+
+      // also need to pass on $params['custom_field'] if not set but not in place yet
+        $ids = array();
+        $customGroup = $this->CustomGroupMultipleCreateByParams( $params );
+        $ids['custom_group_id'] =$customGroup['id'];
+        if ( CRM_Utils_Array::value( 'is_error', $ids['custom_group_id']) ||
+             ! CRM_Utils_Array::value( 'id', $customGroup ) ) {
+            throw new Exception( 'Could not create Custom Group from CustomGroupMultipleCreateWithFields' . $customGroup['error_message']);
+        }  
+
+        $customField = $this->customFieldCreate( $ids['custom_group_id']);
+
+        $ids['custom_field_id'][] = $customField['id'];
+        if ( CRM_Utils_Array::value( 'is_error', $customField ) ||
+             ! CRM_Utils_Array::value( 'id', $customField) ) {
+            throw new Exception( 'Could not create Custom Field ' . $ids['custom_field']['error_message']);
+        }
+        $customField = $this->customFieldCreate( $ids['custom_group_id'],'field_2');
+            $ids['custom_field_id'][] = $customField['id'];
+        if ( CRM_Utils_Array::value( 'is_error', $customField ) ||
+             ! CRM_Utils_Array::value( 'id', $customField) ) {
+            throw new Exception( 'Could not create Custom Field ' . $ids['custom_field']['error_message']);
+        }
+        $customField = $this->customFieldCreate( $ids['custom_group_id'],'field_3');
+        $ids['custom_field_id'][] = $customField['id'];
+        if ( CRM_Utils_Array::value( 'is_error', $customField ) ||
+             ! CRM_Utils_Array::value( 'id', $customField) ) {
+            throw new Exception( 'Could not create Custom Field ' . $ids['custom_field']['error_message']);
+        }
+        return $ids;     
+      
+    }  
     /*
      * Create a custom group with a single text custom field.  See 
      * participant:testCreateWithCustom for how to use this
@@ -1385,12 +1467,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function customGroupDelete( $customGroupID ) 
     { 
-
+    
         $params['id'] = $customGroupID;
         $params['version'] = API_LATEST_VERSION;
         $result = civicrm_api('custom_group','delete',$params);
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not delete custom group' );
+          print_r($params);
+            throw new Exception( 'Could not delete custom group' . $result['error_message']);
         }
         return;
     }
@@ -1403,7 +1486,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * @param int $apiversion API  version to use
      */
     
-    function customFieldCreate( $customGroupID, $name ) 
+    function customFieldCreate( $customGroupID, $name  = "Cust Field") 
     {
 
         $params = array(
@@ -1484,7 +1567,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         return $result;
     }
     
-    function documentMe($params,$result,$function,$filename){
+    /*
+     * Create test generated example in api/v3/examples.
+     * To turn this off (e.g. on the server) set 
+     * define(DONT_DOCUMENT_TEST_CONFIG ,1);
+     * in your settings file
+     */
+    function documentMe($params,$result,$function,$filename,$description = "", $subfile = null ){
         if(DONT_DOCUMENT_TEST_CONFIG ==1){
           return;
         } 
@@ -1517,18 +1606,28 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $smarty->assign('function',$function);
         $smarty->assign('fnPrefix',$fnPrefix);
         $smarty->assign('params',$params);   
-        $smarty->assign('entity',$entity);         
+        $smarty->assign('entity',$entity);   
+        $smarty->assign('description',$description);         
         $smarty->assign('result',$result); 
-        $smarty->assign('action',$action); 
-
-
+       // $smarty->registerPlugin("modifier","print_array", "print_array");
         
+        $smarty->assign('action',$action); 
+        if(empty($subfile )){     
             if ( file_exists('../tests/templates/documentFunction.tpl')) {
                 $f = fopen("../api/v3/examples/$entity$entityAction.php", "w");
                 fwrite($f,$smarty->fetch('../tests/templates/documentFunction.tpl'));
                 fclose($f); 
             }
-       
+        }else{
+                if ( file_exists('../tests/templates/documentFunction.tpl')) {
+                  if( !is_dir("../api/v3/examples/$entity") ){
+                    mkdir("../api/v3/examples/$entity");
+                  }
+                $f = fopen("../api/v3/examples/$entity/$subfile.php", "w+b");
+                fwrite($f,$smarty->fetch('../tests/templates/documentFunction.tpl'));
+                fclose($f); 
+            }
+        }
     }
   
     /**

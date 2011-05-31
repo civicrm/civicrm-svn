@@ -3,15 +3,14 @@
 
 
 /*
- This demonstrates use of the 'format.id_only' param. 
-    /* This param causes the id of the only entity to be returned as an integer.
+ This demonstrates use of the 'format.single_entity_array' param. 
+    /* This param causes the only contact to be returned as an array without the other levels.
     /* it will be ignored if there is not exactly 1 result
  */
 function contact_get_example(){
 $params = array( 
   'version' => 3,
   'id' => 17,
-  'format.id_only' => 1,
 );
 
   require_once 'api/api.php';
@@ -25,7 +24,15 @@ $params = array(
  */
 function contact_get_expectedresult(){
 
-  $expectedResult = 17;
+  $expectedResult = array( 
+  'contact_id' => '17',
+  'contact_type' => 'Individual',
+  'display_name' => 'Test Contact',
+  'is_opt_out' => '',
+  'first_name' => 'Test',
+  'last_name' => 'Contact',
+  'contact_is_deleted' => '',
+);
 
   return $expectedResult  ;
 }
