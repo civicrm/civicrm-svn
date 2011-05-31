@@ -1224,7 +1224,7 @@ INSERT INTO civicrm_participant_status_type
 
 -- CRM-8150
 INSERT INTO civicrm_action_mapping
-(entity, entity_value, entity_value_label, entity_status, entity_status_label, entity_date, entity_recipient) 
+(entity, entity_value, entity_value_label, entity_status, entity_status_label, entity_date_start, entity_recipient) 
 VALUES
 ( 'civicrm_activity', 'activity_type', 'Type', 'activity_status', 'Status', 'activity_date_time', 'activity_contacts'),
 ( 'civicrm_participant', 'event_type', 'Type', 'civicrm_participant_status_type', 'Status', 'event_start_date', 'civicrm_participant_status_type'),

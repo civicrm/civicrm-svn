@@ -75,7 +75,7 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         foreach ( $mapping as $value ) {
             $entityValue  = $value['entity_value'];
             $entityStatus = $value['entity_status'];
-            $entityDate = $value['entity_date'];
+            $entityDate = $value['entity_date_start'];
             $entityRecipient = $value['entity_recipient'];
             $key = $value['id'];
             if( $entityValue == 'activity_type' &&
@@ -180,7 +180,7 @@ SELECT
        cas.entity_value as entityValueIds,
        cam.entity_status as entityStatus,
        cas.entity_status as entityStatusIds,
-       cam.entity_date as entityDate,
+       cam.entity_date_start as entityDate,
        cas.start_action_offset,
        cas.start_action_unit,
        cas.start_action_condition,
@@ -420,7 +420,7 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
             $recipientOptions = CRM_Core_OptionGroup::values( $mapping->entity_recipient );
 
             $select[] = "e.id as entity_id";
-            $select[] = "e.{$mapping->entity_date} as entity_date";
+            $select[] = "e.{$mapping->entity_date_start} as entity_date_start";
             $from     = "{$mapping->entity} e";
 
             if ( $mapping->entity == 'civicrm_activity' ) {
@@ -490,7 +490,7 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
         if ( $query ) {
             $dao = CRM_Core_DAO::executeQuery( $query );
             while ( $dao->fetch() ) {
-                $contacts[$dao->contact_id] = $dao->entity_date;
+                $contacts[$dao->contact_id] = $dao->entity_date_start;
             }
         }
 

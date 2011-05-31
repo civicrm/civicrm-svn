@@ -66,7 +66,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             return;
         }
         
-        $this->add( 'text', 'title', ts( 'Title' ) );
+        $this->add( 'text', 'title', ts( 'Title' ), array( 'size'=> 45,'maxlength' => 128 ) );
 
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
         list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ScheduleReminders::getSelection(  ) ;
@@ -115,7 +115,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         //reminder_action
         $this->add( 'select', 'start_action_condition', ts( 'Action Condition' ), $condition );
                 
-        $this->add( 'select', 'entity_date', ts( 'Date Field' ), $sel4, true );
+        $this->add( 'select', 'entity_date_start', ts( 'Date Field' ), $sel4, true );
 
         require_once 'CRM/Core/OptionGroup.php';
         $this->addElement( 'checkbox', 'is_repeat', ts('Repeat') , 
@@ -151,7 +151,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         CRM_Mailing_BAO_Mailing::commonCompose( $this );
 
         $this->add('text', 'subject', ts('Subject'), 
-                   CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_ActionSchedule', 'subject' ), true);
+                   CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_ActionSchedule', 'subject' ) );
 
         $this->add('checkbox', 'is_active', ts('Send email'));
         $this->add('checkbox', 'record_activity', ts('Logging'));

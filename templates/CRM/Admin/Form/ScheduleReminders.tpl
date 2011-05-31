@@ -76,7 +76,7 @@
     <tr class="crm-scheduleReminder-form-block-description">
         <td class="right">{$form.start_action_offset.label}</td>
 	<td colspan="3">{$form.start_action_offset.html}&nbsp;&nbsp;&nbsp;{$form.start_action_unit.html}&nbsp;&nbsp;&nbsp;
-			{$form.start_action_condition.html}&nbsp;&nbsp;&nbsp;{$form.entity_date.html}
+			{$form.start_action_condition.html}&nbsp;&nbsp;&nbsp;{$form.entity_date_start.html}
 	</td>
     </tr>
     <tr class="crm-scheduleReminder-form-block-is_repeat"><th scope="row" class="label" width="20%">{$form.is_repeat.label}</th>

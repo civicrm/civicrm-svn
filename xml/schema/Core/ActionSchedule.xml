@@ -74,6 +74,13 @@
        <add>3.4</add>
   </field>
   <field>
+       <name>start_action_date</name>
+       <type>varchar</type>
+       <length>64</length>
+       <comment>Entity date</comment>
+       <add>3.4</add>
+  </field>
+  <field>
        <name>is_repeat</name>
        <title>Repeat?</title>
        <type>boolean</type>
@@ -111,6 +118,13 @@
        <type>varchar</type>
        <length>32</length>
        <comment>Reminder Action till repeating the reminder.</comment>
+       <add>3.4</add>
+  </field>
+  <field>
+       <name>end_date</name>
+       <type>varchar</type>
+       <length>64</length>
+       <comment>Entity end date</comment>
        <add>3.4</add>
   </field>
   <field>
