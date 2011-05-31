@@ -71,8 +71,6 @@ class CRM_Cron_Action {
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
         $mappings = CRM_Core_BAO_ScheduleReminders::getMapping( );
 
-        require_once 'CRM/Contact/BAO/Contact.php';
-        require_once 'CRM/Core/BAO/MessageTemplates.php';
         foreach ( $mappings as $mappingID => $mapping ) {
             $this->buildRecipientContacts( $mappingID );
 
@@ -81,6 +79,7 @@ class CRM_Cron_Action {
     }
 
     public function sendMailings( $mappingID ) {
+        require_once 'CRM/Contact/BAO/Contact.php';
         require_once 'CRM/Core/BAO/Domain.php';
         $domainValues     = CRM_Core_BAO_Domain::getNameAndEmail( );
         $fromEmailAddress = "$domainValues[0] <$domainValues[1]>";
@@ -92,43 +91,46 @@ class CRM_Cron_Action {
 
         $actionSchedule = new CRM_Core_DAO_ActionSchedule( );
         $actionSchedule->id = $mappingID;
-        $actionSchedule->find( true );
 
-        $query = "select * from $this->_tempTable LIMIT 1";
-        $dao   = CRM_Core_DAO::executeQuery( $query );
-        
-        // QUESTION: in cases when same contact has multiple activites for example, should we 
-        // send multiple mails ? if not should the log be maintained for every activity ?
-        while ( $dao->fetch() ) {
-            $toEmail  = CRM_Contact_BAO_Contact::getPrimaryEmail( $dao->contact_id );
-            if ( $toEmail ) {
-                $result = CRM_Core_BAO_ScheduleReminders::sendReminder( $dao->contact_id,
-                                                                        $toEmail,
-                                                                        $mappingID,
-                                                                        $fromEmailAddress );
-                if ( ! $result || is_a( $result, 'PEAR_Error' ) ) {
-                    // we could not send an email, for now we ignore, CRM-3406
+        if ( $actionSchedule->find( true ) ) {
+            $query = "select * from $this->_tempTable LIMIT 1";
+            $dao   = CRM_Core_DAO::executeQuery( $query );
+            
+            // QUESTION: in cases when same contact has multiple activites for example, should we 
+            // send multiple mails ? if not should the log be maintained for every activity ?
+            while ( $dao->fetch() ) {
+                $toEmail  = CRM_Contact_BAO_Contact::getPrimaryEmail( $dao->contact_id );
+
+                if ( $toEmail ) {
+                    $result = CRM_Core_BAO_ScheduleReminders::sendReminder( $dao->contact_id,
+                                                                            $toEmail,
+                                                                            $mappingID,
+                                                                            $fromEmailAddress );
+                    if ( ! $result || is_a( $result, 'PEAR_Error' ) ) {
+                        // we could not send an email, for now we ignore, CRM-3406
+                    }
+                    
+                    // do action logging
+                    $actionLogParams  = array( 'entity_id'          => $dao->entity_id,
+                                               'entity_table'       => $mapping->entity,
+                                               'action_schedule_id' => $actionSchedule->id, // action_schedule Id
+                                               );
+                    // FIXME: repetition_number should be updated by create function itself.
+                    CRM_Core_BAO_ActionLog::create( $actionLogParams );
                 }
                 
-                // do action logging
-                $actionLogParams  = array( 'entity_id'          => $dao->entity_id,
-                                           'entity_table'       => $mapping->entity,
-                                           'action_schedule_id' => $actionSchedule->id, // action_schedule Id
-                                           );
-                // FIXME: repetition_number should be updated by create function itself.
-                CRM_Core_BAO_ActionLog::create( $actionLogParams );
+                // delete processed record from temp table
+                $query = "DELETE from {$this->_tempTable} WHERE contact_id = %1 AND entity_id = %2 AND entity_table = %3";
+                CRM_Core_DAO::executeQuery( $query, array( 1 => array( $dao->contact_id, 'Integer' ),
+                                                           2 => array( $dao->entity_id,  'Integer' ), 
+                                                           3 => array( $mapping->entity, 'String'  ) ) );
+                $dao->free();
+                
+                // get the next record for processing
+                $query = "select * from {$this->_tempTable} LIMIT 1";
+                $dao   = CRM_Core_DAO::executeQuery( $query );
             }
-            
-            // delete processed record
-            $query = "DELETE from {$this->_tempTable} WHERE contact_id = %1 AND entity_id = %2 AND entity_table = %3";
-            CRM_Core_DAO::executeQuery( $query, array( 1 => array( $dao->contact_id, 'Integer' ),
-                                                       2 => array( $dao->entity_id, 'Integer'  ), 
-                                                       3 => array( $mapping->entity, 'String'  ) ) );
-            $dao->free();
-            
-            // get the next record for processing
-            $query = "select * from {$this->_tempTable} LIMIT 1";
-            $dao   = CRM_Core_DAO::executeQuery( $query );
+            CRM_Core_DAO::executeQuery( "DROP TABLE IF EXISTS {$this->_tempTable}" );
         }
     }
     
@@ -137,12 +139,11 @@ class CRM_Cron_Action {
         $actionSchedule->id = $mappingID;
 
         if ( $actionSchedule->find( true ) ) {
-            CRM_Core_DAO::executeQuery( "DROP TABLE IF EXISTS {$this->_tempTable}" );
             $sql = "
 CREATE TEMPORARY TABLE {$this->_tempTable} ( contact_id   int, 
-                                    entity_id    int, 
-                                    entity_table varchar(128), 
-                                    UNIQUE UI_contact_entity_id_table (contact_id, entity_id, entity_table) ) 
+                                             entity_id    int, 
+                                             entity_table varchar(128), 
+                                             UNIQUE UI_contact_entity_id_table (contact_id, entity_id, entity_table) ) 
 ENGINE=HEAP";
             CRM_Core_DAO::executeQuery( $sql );
 
@@ -159,6 +160,7 @@ ENGINE=HEAP";
             $status = explode( CRM_Core_DAO::VALUE_SEPARATOR, $actionSchedule->entity_status );
             $status = implode( ',', $status );
         
+            require_once 'CRM/Core/OptionGroup.php';
             $recipientOptions = CRM_Core_OptionGroup::values( $mapping->entity_recipient );
 
             $from = "{$mapping->entity} e";
@@ -193,21 +195,21 @@ ENGINE=HEAP";
                 }
 
                 // datetime where clause
-                $startEvent = ( $actionSchedule->first_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
-                        "(e.activity_date_time, INTERVAL {$actionSchedule->first_action_offset} {$actionSchedule->first_action_unit})";
+                $startEvent = ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
+                        "(e.activity_date_time, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
                 $startEventClause = "reminder.id IS NULL AND NOW() >= {$startEvent}";
 
                 if ( $actionSchedule->is_repeat ) {
                     // if repeat is turned ON:
-                    $repeatEvent = ( $actionSchedule->repetition_end_action == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
-                        "(e.activity_date_time, INTERVAL {$actionSchedule->repetition_end_frequency_interval} {$actionSchedule->repetition_end_frequency_unit})";
+                    $repeatEvent = ( $actionSchedule->end_action == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
+                        "(e.activity_date_time, INTERVAL {$actionSchedule->end_frequency_interval} {$actionSchedule->end_frequency_unit})";
 
-                    if ( $actionSchedule->repetition_start_frequency_unit == 'day' ) {
-                        $hrs = 24 * $actionSchedule->repetition_start_frequency_interval;
-                    } else if ( $actionSchedule->repetition_start_frequency_unit == 'week' ) {
-                        $hrs = 24 * $actionSchedule->repetition_start_frequency_interval * 7;
+                    if ( $actionSchedule->repetition_frequency_unit == 'day' ) {
+                        $hrs = 24 * $actionSchedule->repetition_frequency_interval;
+                    } else if ( $actionSchedule->repetition_frequency_unit == 'week' ) {
+                        $hrs = 24 * $actionSchedule->repetition_frequency_interval * 7;
                     } else {
-                        $hrs = $actionSchedule->repetition_start_frequency_interval;
+                        $hrs = $actionSchedule->repetition_frequency_interval;
                     }
                     
                     $repeatEventClause = "reminder.id IS NOT NULL AND NOW() <= {$repeatEvent} AND TIMEDIFF(NOW(), reminder.action_date_time) >= TIME('{$hrs}:00:00')";
