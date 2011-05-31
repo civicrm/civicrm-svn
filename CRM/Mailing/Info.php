@@ -51,7 +51,7 @@ class CRM_Mailing_Info extends CRM_Core_Component_Info
         return array( 'name'                 => 'CiviMail',
                       'translatedName'       => ts('CiviMail'),
                       'title'                => 'CiviCRM Mailing Engine',
-                      'search'               => 0,
+                      'search'               => 1,
                       'showActivitiesInCore' => 1 
                       );
     }
@@ -110,8 +110,8 @@ class CRM_Mailing_Info extends CRM_Core_Component_Info
     // docs inherited from interface  
     public function registerAdvancedSearchPane()
     {
-        // this component doesn't use advanced search
-        return null;
+        return array( 'title'   => ts( 'Mailings' ),
+                      'weight'  => 20 );
     }    
     
     // docs inherited from interface    
