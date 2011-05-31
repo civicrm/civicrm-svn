@@ -1,16 +1,20 @@
-<?php 
+<?php
 
+
+
+/*
+ 
+ */
 function pledge_payment_update_example(){
-    $params = array(
-    
-                  'contact_id' 		=> '6',
-                  'pledge_id' 		=> '6',
-                  'contribution_id' 		=> '13',
-                  'version' 		=> '3',
-                  'status_id' 		=> '2',
-                  'actual_amount' 		=> '20',
+$params = array( 
+  'contact_id' => 7,
+  'pledge_id' => 8,
+  'contribution_id' => 15,
+  'version' => 3,
+  'status_id' => 2,
+  'actual_amount' => 20,
+);
 
-  );
   require_once 'api/api.php';
   $result = civicrm_api( 'pledge_payment','update',$params );
 
@@ -22,27 +26,40 @@ function pledge_payment_update_example(){
  */
 function pledge_payment_update_expectedresult(){
 
-  $expectedResult = 
-     array(
-           'is_error' 		=> '0',
-           'version' 		=> '3',
-           'count' 		=> '1',
-           'id' 		=> '27',
-           'values' 		=> array(           '27' =>  array(
-                      'id' => '27',
-                      'pledge_id' => '6',
-                      'contribution_id' => '13',
-                      'scheduled_amount' => '20.00',
-                      'actual_amount' => '20.00',
-                      'currency' => 'USD',
-                      'scheduled_date' => '2011-04-21 00:00:00',
-                      'reminder_date' => '',
-                      'reminder_count' => '0',
-                      'status_id' => '1',
-           ),           ),
-      );
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 33,
+  'values' => array( 
+      '33' => array( 
+          'id' => 33,
+          'pledge_id' => '8',
+          'contribution_id' => '15',
+          'scheduled_amount' => '20.00',
+          'actual_amount' => '20.00',
+          'currency' => 'USD',
+          'scheduled_date' => '2011-05-31 00:00:00',
+          'reminder_date' => '',
+          'reminder_count' => '',
+          'status_id' => 1,
+        ),
+    ),
+);
 
   return $expectedResult  ;
 }
 
-
+
+
+
+/*
+* This example has been generated from the API test suite. The test that created it is called
+* pledge_payment_update 
+* You can see the outcome of the API tests at 
+* http://tests.dev.civicrm.org/trunk/results-api_v3
+* and review the wiki at
+* http://wiki.civicrm.org/confluence/display/CRMDOC40/CiviCRM+Public+APIs
+* Read more about testing here
+* http://wiki.civicrm.org/confluence/display/CRM/Testing
+*/
