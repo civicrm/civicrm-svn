@@ -61,7 +61,7 @@ function &civicrm_api3_survey_respondant_get( $params ) {
     $surveyID = empty($params['survey_id'])?$params['id']:$params['survey_id'];
     $petition = new CRM_Campaign_BAO_Petition();
     $signatures = $petition->getPetitionSignature($surveyID,$status_id);
-    return ($signatures);
+    return (civicrm_api3_create_success($signatures,$params));
 
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
