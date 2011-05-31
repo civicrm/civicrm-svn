@@ -73,9 +73,41 @@ function civicrm_api3_group_contact_get($params) {
 }
 
 /**
+ * Add contact(s) to group(s)
  *
- * @param array $params
- * @return <type>
+ * @access public
+ * @param  array $params Input parameters
+ *
+ * Allowed @params array keys are:<br>
+ * "contact_id" (required) : first contact to add<br>
+ * "group_id" (required): first group to add contact(s) to<br>
+ * "contact_id.1" etc. (optional) : another contact to add<br>
+ * "group_id.1" etc. (optional) : additional group to add contact(s) to<br>
+ * "status" (optional) : one of "Added", "Pending" or "Removed" (default is "Added")
+ * {@schema Contact/GroupContact.xml}
+ * {@example GroupContactCreate.php 0}
+ * 
+ * @return array Information about operation results
+ *
+ * On success, the return array will be structured as follows:
+ * <code>array(
+ *   "is_error" => 0,
+ *   "version"  => 3,
+ *   "count"    => 3,
+ *   "values" => array(
+ *     "not_added"   => integer,
+ *     "added"       => integer,
+ *     "total_count" => integer
+ *   )
+ * )</code>
+ * 
+ * On failure, the return array will be structured as follows:
+ * <code>array(
+ *   'is_error' => 1,
+ *   'error_message' = string,
+ *   'error_data' = mixed or undefined
+ * )</code>
+ * 
  */
 function civicrm_api3_group_contact_create($params) {
 	_civicrm_api3_initialize ( true );
