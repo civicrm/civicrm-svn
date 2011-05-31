@@ -305,7 +305,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     {
      
         $contributionID = $this->contributionCreate( $this->_individualId , $this->_contributionTypeId );
-        $params         = array( 'contribution_id' => $contributionID ,
+        $params         = array( 'id' => $contributionID ,
                                   'version'        => $this->_apiversion,);
         $result   = civicrm_api3_contribution_delete( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
