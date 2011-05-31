@@ -56,8 +56,13 @@ function civicrm_api3_group_contact_get($params) {
 	try {
 		
 		civicrm_api3_verify_mandatory ( $params, null, array ('contact_id' ) );
-		$status = CRM_Utils_Array::value ( 'status', $params, 'Added' );
 		require_once 'CRM/Contact/BAO/GroupContact.php';
+		if(empty($params['contact_id'])){
+		  //ie. id passed in so we have to return something
+		  return _civicrm_api3_basic_get('CRM_Contact_BAO_GroupContact', $params);
+		}
+		$status = CRM_Utils_Array::value ( 'status', $params, 'Added' );
+
 		$values = & CRM_Contact_BAO_GroupContact::getContactGroup ( $params ['contact_id'], $status, null, false, true );
 		return civicrm_api3_create_success ( $values, $params );
 	} catch ( PEAR_Exception $e ) {
