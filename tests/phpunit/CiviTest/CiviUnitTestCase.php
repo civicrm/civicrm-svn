@@ -1505,7 +1505,14 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         } elseif(strstr($function, 'Subscribe')){
             $action = 'subscribe';
             $entityAction = 'Subscribe';
+        } elseif(strstr($function, 'Set')){
+            $action = 'set';
+            $entityAction = 'Set';
+        } elseif(strstr($function, 'Apply')){
+            $action = 'apply';
+            $entityAction = 'Apply';
         }
+
         if (strstr($entity,'UF')){// a cleverer person than me would do it in a single regex
             $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)(?<=UF)[A-Z]/','_$0', $entity));          
         }else{

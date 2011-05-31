@@ -83,6 +83,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
                             'version'    => 3);
 
         $result = civicrm_api3_profile_get( $params );
+        $this->documentMe($params, $result, __FUNCTION__, __FILE__); 
 
         $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
                              . " error message: " . CRM_Utils_Array::value('error_message', $result) );
@@ -95,6 +96,97 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_contact') );
     } 
 
+    /*
+     * check contact activity profile without activity id
+     */
+    function testContactActvityGetWithoutActivityId( )
+    {        
+        list($params, $expected) = $this->_createContactWithActivity( );
+        
+        unset( $params['activity_id']);
+        $result = civicrm_api3_profile_get( $params );
+
+        $this->assertEquals($result['is_error'], 1);
+        $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: activity_id' );
+        
+        $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact') );   
+        
+    }
+    
+    /*
+     * check contact activity profile wrong activity id
+     */
+    function testContactActvityGetWrongActivityId( )
+    {        
+        list($params, $expected) = $this->_createContactWithActivity( );
+        
+        $params['activity_id'] = 100001;
+        $result = civicrm_api3_profile_get( $params );
+
+        $this->assertEquals($result['is_error'], 1);
+        $this->assertEquals($result['error_message'], 'Invalid activity ID (aid).');
+        
+        $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact') );   
+        
+    }
+
+    /*
+     * check contact activity profile with wrong activity type
+     */
+    function testContactActvityGetWrongActivityType( )
+    {        
+        $sourceContactId = $this->householdCreate( );
+
+        $activityparams = array( 'source_contact_id'  => $sourceContactId,
+                                 'activity_type_id'   => '2',
+                                 'subject'            => 'Test activity',
+                                 'activity_date_time' => '20110316',
+                                 'duration'           => '120',
+                                 'location'           => 'Pensulvania',
+                                 'details'            => 'a test activity',
+                                 'status_id'          => '1',
+                                 'version'            => '3',
+                                 'priority_id'        => '1'
+                               );
+        
+        $activity = civicrm_api( 'activity', 'create', $activityparams );
+        $this->assertEquals( 0, $activity['is_error'], "In line " . __LINE__
+                             . " error message: " . CRM_Utils_Array::value('error_message', $activity) );
+
+        $activityValues = array_pop($activity['values']);
+        
+        list($params, $expected) = $this->_createContactWithActivity( );
+        
+        $params['activity_id'] = $activityValues['id'];
+        $result = civicrm_api3_profile_get( $params );
+        
+        $this->assertEquals($result['is_error'], 1);
+        $this->assertEquals($result['error_message'], 'Activity type of specified activity Id do not support configured profile fields for this profile.');
+        
+        $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact') );      
+    }
+    
+    /*
+     * check contact activity profile with success
+     */
+    function testContactActvityGetSuccess( )
+    {        
+        list($params, $expected) = $this->_createContactWithActivity( );
+        
+        $result = civicrm_api3_profile_get( $params );
+
+        $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
+                             . " error message: " . CRM_Utils_Array::value('error_message', $result) );
+        
+        foreach( $expected as $profileField => $value ) {
+            $this->assertEquals( $value, CRM_Utils_Array::value($profileField, $result['values']), "In line " . __LINE__
+                                 . " error message: " . "missing/mismatching value for {$profileField}" ); 
+        }
+        
+        $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact') );   
+        
+    }
+    
     /////////////// test civicrm_api3_profile_set //////////////////
     /**
      * check with no array
@@ -157,7 +249,6 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_contact') );
     }
 
-
     /**
      * check with success
      */  
@@ -178,6 +269,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
                                   $updateParams );
 
         $result = civicrm_api3_profile_set( $params );
+        $this->documentMe($params, $result, __FUNCTION__, __FILE__); 
 
         $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
                              . " error message: " . CRM_Utils_Array::value('error_message', $result) );
@@ -198,6 +290,109 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_contact') );
     }
 
+    /*
+     * check contact activity profile without activity id
+     */
+    function testContactActvitySetWithoutActivityId( )
+    {        
+        list($params, $expected) = $this->_createContactWithActivity( );
+        
+        $params = array_merge($params, $expected);
+        unset( $params['activity_id']);
+        $result = civicrm_api3_profile_set( $params );
+
+        $this->assertEquals($result['is_error'], 1);
+        $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: activity_id' );
+        
+        $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact') );   
+        
+    }
+    
+    /*
+     * check contact activity profile wrong activity id
+     */
+    function testContactActvitySetWrongActivityId( )
+    {        
+        list($params, $expected) = $this->_createContactWithActivity( );
+        
+        $params = array_merge($params, $expected);
+        $params['activity_id'] = 100001;
+        $result = civicrm_api3_profile_set( $params );
+
+        $this->assertEquals($result['is_error'], 1);
+        $this->assertEquals($result['error_message'], 'Invalid activity ID (aid).');
+        
+        $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact') );   
+        
+    }
+    
+    /*
+     * check contact activity profile with wrong activity type
+     */
+    function testContactActvitySetWrongActivityType( )
+    {        
+        $sourceContactId = $this->householdCreate( );
+
+        $activityparams = array( 'source_contact_id'  => $sourceContactId,
+                                 'activity_type_id'   => '2',
+                                 'subject'            => 'Test activity',
+                                 'activity_date_time' => '20110316',
+                                 'duration'           => '120',
+                                 'location'           => 'Pensulvania',
+                                 'details'            => 'a test activity',
+                                 'status_id'          => '1',
+                                 'version'            => '3',
+                                 'priority_id'        => '1'
+                               );
+        
+        $activity = civicrm_api( 'activity', 'create', $activityparams );
+        $this->assertEquals( 0, $activity['is_error'], "In line " . __LINE__
+                             . " error message: " . CRM_Utils_Array::value('error_message', $activity) );
+
+        $activityValues = array_pop($activity['values']);
+        
+        list($params, $expected) = $this->_createContactWithActivity( );
+        
+        $params = array_merge($params, $expected);
+        $params['activity_id'] = $activityValues['id'];
+        $result = civicrm_api3_profile_set( $params );
+        
+        $this->assertEquals($result['is_error'], 1);
+        $this->assertEquals($result['error_message'], 'Activity type of specified activity Id do not support configured profile fields for this profile.');
+        
+        $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact') );      
+    }
+
+    /*
+     * check contact activity profile with success
+     */
+    function testContactActvitySetSuccess( )
+    {        
+        list($params, $expected) = $this->_createContactWithActivity( );
+        
+        $updateParams  = array( 'first_name'              => 'abc2',
+                                'last_name'               => 'xyz2',
+                                'email-Primary'           => 'abc2.xyz2@yahoo.com',
+                                'activity_subject'        => 'Test Meeting',
+                                'activity_details'        => 'a test activity details',
+                                'activity_duration'       => '100',
+                                'activity_date_time'      => '03/08/2010',
+                                'activity_status_id'      => '2'
+                          );
+        $profileParams = array_merge($params, $updateParams);
+        $profile = civicrm_api3_profile_set( $profileParams );
+        $result  = civicrm_api3_profile_get( $params );
+        $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
+                             . " error message: " . CRM_Utils_Array::value('error_message', $result) );
+        
+        foreach( $updateParams as $profileField => $value ) {
+            $this->assertEquals( $value, CRM_Utils_Array::value($profileField, $result['values']), "In line " . __LINE__
+                                 . " error message: " . "missing/mismatching value for {$profileField}" ); 
+        }
+        
+        $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact') );   
+        
+    }
 
     /////////////// test civicrm_api3_profile_apply //////////////////
     /**
@@ -255,7 +450,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase
                          'state_province-1' => '1000' );
         
         $result = civicrm_api3_profile_apply( $params );
-
+        $this->documentMe($params, $result, __FUNCTION__, __FILE__); 
+ 
         $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
                              . " error message: " . CRM_Utils_Array::value('error_message', $result) );
         
@@ -353,4 +549,78 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         return $profileData;
     }
     
+    function _createContactWithActivity( ) {
+        // @TODO: Create profile with custom fields
+        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+                                                                             dirname(__FILE__)
+                                                                             . '/dataset/uf_group_contact_activity_26.xml') );
+        // hack: xml data set do not accept  (CRM_Core_DAO::VALUE_SEPARATOR)
+        CRM_Core_DAO::setFieldValue('CRM_Core_DAO_UFGroup', '26', 'group_type', 'Individual,Contact,Activity'. CRM_Core_DAO::VALUE_SEPARATOR .'ActivityType:1');
+
+        $sourceContactId = $this->individualCreate( );
+        $contactParams = array(
+                               'first_name'   => 'abc1',
+                               'last_name' 	  => 'xyz1',
+                               'contact_type' => 'Individual',
+                               'email' 		  => 'abc1.xyz1@yahoo.com',
+                               'version' 	  => '3',
+                               'api.address.create' => array( 'location_type_id'       => 1,
+                                                              'is_primary'             => 1,
+                                                              'name'                   => 'Saint Helier St',
+                                                              'county'                 => 'Marin',
+                                                              'country'                => 'United States', 
+                                                              'state_province'         => 'Michigan',
+                                                              'supplemental_address_1' => 'Hallmark Ct', 
+                                                              'supplemental_address_2' => 'Jersey Village' ),
+                               'api.activity.create' => array( 'source_contact_id'  => $sourceContactId,
+                                                               'activity_type_id'   => '1',
+                                                               'subject'            => 'Make-it-Happen Meeting',
+                                                               'activity_date_time' => '20110316',
+                                                               'duration'           => '120',
+                                                               'location'           => 'Pensulvania',
+                                                               'details'            => 'a test activity',
+                                                               'status_id'          => '1',
+                                                               'version'            => '3',
+                                                               'priority_id'        => '1'
+                                                               )
+                               );
+        
+        $contact = civicrm_api( 'contact', 'create', $contactParams );
+        
+        $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__
+                             . " error message: " . CRM_Utils_Array::value('error_message', $contact) );
+        
+        $contactId = array_pop( array_keys($contact['values']) );
+        
+        $this->assertEquals( 0, $contact['values'][$contactId]['api.address.create']['is_error'], "In line " . __LINE__
+                             . " error message: " . CRM_Utils_Array::value('error_message', $contact['values'][$contactId]['api.address.create']) );
+        $this->assertEquals( 0, $contact['values'][$contactId]['api.activity.create']['is_error'], "In line " . __LINE__
+                             . " error message: " . CRM_Utils_Array::value('error_message', $contact['values'][$contactId]['api.activity.create']) );
+        
+
+        $activity = array_pop($contact['values'][$contactId]['api.activity.create']['values']);
+        
+        // valid parameters for above profile
+        $profileParams = array( 'profile_id'  => 26,
+                                'contact_id'  => $contactId,
+                                'activity_id' => $activity['id'],
+                                'version'     => 3
+                                );
+        
+        // expected result of above created profile
+        $expected = array( 'first_name'              => 'abc1',
+                           'last_name'               => 'xyz1',
+                           'email-Primary'           => 'abc1.xyz1@yahoo.com',
+                           'activity_subject'        => 'Make-it-Happen Meeting',
+                           'activity_details'        => 'a test activity',
+                           'activity_duration'       => '120',
+                           'activity_date_time_time' => '12:00AM',
+                           'activity_date_time'      => '03/16/2011',
+                           'activity_status_id'      => '1'
+                           );
+        
+        return array($profileParams, $expected);
+    }
 }
