@@ -120,9 +120,10 @@ function civicrm_api3_membership_status_get($params) {
 				$membershipStatuses [$membershipStatusBAO->id] = $membershipStatus;
 			}
 		} else {
-			return civicrm_api3_create_error ( 'Exact match not found' );
+		  //api standard says empty is still a success
+			return civicrm_api3_create_success ( );
 		}
-		return $membershipStatuses;
+		return civicrm_api3_create_success($membershipStatuses,$params,$membershipStatusBAO);
 	} catch ( PEAR_Exception $e ) {
 		return civicrm_api3_create_error ( $e->getMessage () );
 	} catch ( Exception $e ) {

@@ -84,10 +84,9 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
      {
         $params = array('version' =>3);
         $result =& civicrm_api3_membership_status_get($params);
-
         // It should be 8 statuses, 7 default from mysql_data 
         // plus one test status added in setUp        
-        $this->assertEquals ( 8, count( $result ), 'In line ' . __LINE__ );
+        $this->assertEquals ( 8,  $result['count'] , 'In line ' . __LINE__ );
      }
 
     /**
@@ -99,7 +98,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
                           'version'			=>  $this->_apiversion,);
          $result =& civicrm_api3_membership_status_get($params);
          $this->documentMe($params,$result,__FUNCTION__,__FILE__);            
-         $this->assertEquals( $result[$this->_membershipStatusID]['name'], "test status", "In line " . __LINE__ );
+         $this->assertEquals( $result['values'][$this->_membershipStatusID]['name'], "test status", "In line " . __LINE__ );
      }
      function testMembershipStatusesGet()
      {
