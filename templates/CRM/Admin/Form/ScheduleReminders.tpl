@@ -79,16 +79,18 @@
 			{$form.start_action_condition.html}&nbsp;&nbsp;&nbsp;{$form.start_action_date.html}
 	</td>
     </tr>
-    <tr class="crm-scheduleReminder-form-block-is_repeat"><th scope="row" class="label" width="20%">{$form.is_repeat.label}</th>
+    <tr class="crm-scheduleReminder-form-block-is_repeat"><td class="label" width="20%">{$form.is_repeat.label}</td>
         <td>{$form.is_repeat.html}&nbsp;&nbsp;<span class="description">{ts}Enable repetition.{/ts}</span></td>
     </tr>
     <tr id="repeatFields" class="crm-scheduleReminder-form-block-repeatFields"><td></td><td>
         <table class="form-layout-compressed">
-            <tr class="crm-scheduleReminder-form-block-repetition_frequency_interval"><th scope="row" class="label">{$form.repetition_frequency_interval.label}</th>
-                <td>{$form.repetition_frequency_interval.html}&nbsp;&nbsp;&nbsp;{$form.repetition_frequency_unit.html}</td>
+            <tr class="crm-scheduleReminder-form-block-repetition_frequency_interval">
+	    	<td class="label">{$form.repetition_frequency_interval.label}&nbsp;&nbsp;&nbsp;{$form.repetition_frequency_interval.html}</td>
+		<td>{$form.repetition_frequency_unit.html}</td>
             </tr>
-	    <tr class="crm-scheduleReminder-form-block-repetition_frequency_interval"><th scope="row" class="label">{$form.end_frequency_interval.label}</th>
-                <td>{$form.end_frequency_interval.html}&nbsp;&nbsp;&nbsp;{$form.end_frequency_unit.html}&nbsp;&nbsp;&nbsp;{$form.end_action.html}&nbsp;&nbsp;&nbsp;{$form.end_date.html}</td>
+	    <tr class="crm-scheduleReminder-form-block-repetition_frequency_interval">
+	    	<td class="label">{$form.end_frequency_interval.label}&nbsp;&nbsp;&nbsp;{$form.end_frequency_interval.html}
+		<td>{$form.end_frequency_unit.html}&nbsp;&nbsp;&nbsp;{$form.end_action.html}&nbsp;&nbsp;&nbsp;{$form.end_date.html}</td>
             </tr>
         </table>
         </td>
