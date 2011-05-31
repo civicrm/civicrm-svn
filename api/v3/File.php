@@ -126,9 +126,9 @@ function civicrm_api3_file_get($params)
         $files[$fileDAO->id] = $file;
       }
     } else {
-      return civicrm_api3_create_error('Exact match not found');
+      return civicrm_api3_create_success();
     }
-    return $files;
+    return civicrm_api3_create_success($files,$params,$fileDAO);
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
