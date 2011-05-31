@@ -930,17 +930,25 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             }
             break;
         case 'Contribution' :
+            //special case where in we allow contribution + oganization fields, for on behalf feature
+            $profileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 
+                                                      'on_behalf_organization', 'id', 'name' );
+ 
             if ( in_array( 'Participant', $groupType ) || in_array( 'Membership', $groupType ) 
-                 || in_array( 'Organization', $groupType ) || in_array( 'Household', $groupType ) || in_array( 'Activity', $groupType ) ) {
-                $errors['field_name'] = 
+                 || ( $profileId != $self->_gid && in_array( 'Organization', $groupType ) ) || in_array( 'Household', $groupType ) || in_array( 'Activity', $groupType ) ) {
+                     $errors['field_name'] = 
                     ts( 'Cannot add or update profile field type Contribution with combination of Activity or Membership or Participant or Household or Organization' ); 
             }  else { 
                 self::formRuleSubType( $fieldType, $groupType, $errors );
             }
             break;
         case 'Membership' :
+            //special case where in we allow contribution + oganization fields, for on behalf feature
+            $profileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 
+                                                      'on_behalf_organization', 'id', 'name' );
+ 
             if ( in_array( 'Participant', $groupType ) || in_array( 'Contribution', $groupType )
-                 || in_array( 'Organization', $groupType ) || in_array( 'Household', $groupType ) || in_array( 'Activity', $groupType ) ) {
+                 || ( $profileId != $self->_gid && in_array( 'Organization', $groupType ) )  || in_array( 'Household', $groupType ) || in_array( 'Activity', $groupType ) ) {
                 $errors['field_name'] = 
                     ts( 'Cannot add or update profile field type Membership with combination of Activity or Participant or Contribution or Household or Organization' ); 
             } else {
