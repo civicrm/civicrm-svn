@@ -105,7 +105,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
         $expected = array( 1 => array( 'id' => 1, 
                                        'child_group_id' => 2, 
                                        'parent_group_id' => 1 ) );
-        $expected['is_error'] = 0;        
+       
         $this->assertEquals( $expected, $result['values'] );                         
     }
 
@@ -119,7 +119,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
                           'version'				=>$this->_apiversion );
 
         $result =& civicrm_api3_group_nesting_get($params);
-        
+     
         // expected data loaded in setUp
         $expected = array( 3 => array( 'id' => 3, 
                                        'child_group_id' => 4, 
@@ -127,7 +127,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
                            4 => array( 'id' => 4, 
                                        'child_group_id' => 4, 
                                        'parent_group_id' => 2) );
-        $expected['is_error'] = 0;        
+         
         $this->assertEquals( $expected, $result['values'] );
     }
     
@@ -152,7 +152,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
                            3 => array( 'id' => 3, 
                                        'child_group_id' => 4, 
                                        'parent_group_id' => 1) );
-        $expected['is_error'] = 0;
+        
         $this->assertEquals( $expected, $result['values']  );
     }    
     

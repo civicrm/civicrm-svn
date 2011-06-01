@@ -3,14 +3,14 @@
 
 
 /*
- This demonstrates use of the 'format.true_false' param. 
+ This demonstrates use of the 'format.is_success' param. 
     This param causes only the success or otherwise of the function to be returned as BOOLEAN
  */
 function contact_get_example(){
 $params = array( 
   'version' => 3,
   'id' => 17,
-  'format.true_false' => 1,
+  'format.is_success' => 1,
 );
 
   require_once 'api/api.php';

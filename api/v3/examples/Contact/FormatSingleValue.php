@@ -11,7 +11,7 @@ function contact_get_example(){
 $params = array( 
   'version' => 3,
   'id' => 17,
-  'format.single_value' => 'display_name',
+  'return' => 'display_name',
 );
 
   require_once 'api/api.php';

@@ -10,7 +10,7 @@ function contact_create_example(){
 $params = array( 
   'version' => 3,
   'id' => 500,
-  'format.true_false' => 1,
+  'format.is_success' => 1,
 );
 
   require_once 'api/api.php';

@@ -156,9 +156,14 @@ function civicrm_api3_case_get($params) {
 	_civicrm_api3_initialize ( true );
 	try {
 		
-		civicrm_api3_verify_mandatory ( $params );
+		civicrm_api3_verify_mandatory ( $params,null,array('case_id', 'client_id', 'activity_id', 'contact_id') );
 		//get mode
-		if ($caseId = $params ['case_id']) {
+		if(CRM_Utils_Array::value('id',$params)){
+		  $caseId = $params['id'];
+		}elseif(CRM_Utils_Array::value('case_id',$params)){
+		  $caseId = $params['case_id'];
+		}
+		if (!empty($caseId)) {
 			//validate param
 			if (! is_numeric ( $caseId )) {
 				return civicrm_api3_create_error ( 'Invalid parameter: case_id. Must provide a numeric value.' );

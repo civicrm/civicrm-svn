@@ -1,35 +1,12 @@
 {literal}<?php{/literal}
 
-{* I agree - there must be a better way to do the nested arrays *}
-function {$function}_example(){literal}{{/literal}
- $params = 
-     array(
-{foreach from=$params key=k item=v}
-           '{$k}' 		=> {if is_array($v)}array({foreach from=$v key=subkey item=subvalue}
-           '{$subkey}' => {if is_array($subvalue)} array(
-           {foreach from=$subvalue key=subsubkey item=subsubvalue}
-           '{$subsubkey}' => {if is_array($subsubvalue)} array(
-{foreach from=$subsubvalue key=subsubsubkey item=subsubsubvalue}
-                            '{$subsubsubkey}' => {if is_array($subsubsubvalue)} array(
-{foreach from=$subsubsubvalue key=subsubsubsubkey item=subsubsubsubvalue}
-                                '{$subsubsubsubkey}' => {if is_array($subsubsubsubvalue)} array(
-{foreach from=$subsubsubsubvalue key=subsubsubsubsubkey item=subsubsubsubsubvalue}
-                                            '{$subsubsubsubsubkey}' => '{$subsubsubsubsubvalue}',
-{/foreach}									),
-{else}'{$subsubsubsubvalue}',
-{/if}
-                            {/foreach}),
-{else}'{$subsubsubvalue}',
-{/if}
-{/foreach}        ),
-{else}'{$subsubvalue}',
-{/if}
-{/foreach}           ),{else}'{$subvalue}',
-{/if}
-{/foreach}           ),{else}'{$v}',{/if}
 
-{/foreach}
-      );
+
+/*
+ {$description}
+ */
+function {$function}_example(){literal}{{/literal}
+$params = {$params|@print_array};
 
   require_once 'api/api.php';
   $result = civicrm_api( '{$fnPrefix}','{$action}',$params );
@@ -42,34 +19,21 @@ function {$function}_example(){literal}{{/literal}
  */
 function {$function}_expectedresult(){literal}{{/literal}
 
-  $expectedResult =
-     array(
-{foreach from=$result key=k item=v}
-           '{$k}' 		=> {if is_array($v)}array({foreach from=$v key=subkey item=subvalue}
-           '{$subkey}' => {if is_array($subvalue)} array(
-           {foreach from=$subvalue key=subsubkey item=subsubvalue}
-           '{$subsubkey}' => {if is_array($subsubvalue)} array(
-{foreach from=$subsubvalue key=subsubsubkey item=subsubsubvalue}
-                            '{$subsubsubkey}' => {if is_array($subsubsubvalue)} array(
-{foreach from=$subsubsubvalue key=subsubsubsubkey item=subsubsubsubvalue}
-                                '{$subsubsubsubkey}' => {if is_array($subsubsubsubvalue)} array(
-{foreach from=$subsubsubsubvalue key=subsubsubsubsubkey item=subsubsubsubsubvalue}
-                                            '{$subsubsubsubsubkey}' => '{$subsubsubsubsubvalue}',
-{/foreach}									),
-{else}'{$subsubsubsubvalue}',{/if}
-                            {/foreach}),
-{else}'{$subsubsubvalue}',
-{/if}
-{/foreach}        ),
-{else}'{$subsubvalue}',
-{/if}
-{/foreach}           ),{else}'{$subvalue}',{/if}
-{/foreach}           ),{else}'{$v}',{/if}
-
-{/foreach}
-      );
+  $expectedResult = {$result|@print_array};
 
   return $expectedResult  ;
 {literal}}{/literal}
 
 
+
+
+/*
+* This example has been generated from the API test suite. The test that created it is called
+* {$function} 
+* You can see the outcome of the API tests at 
+* http://tests.dev.civicrm.org/trunk/results-api_v3
+* and review the wiki at
+* http://wiki.civicrm.org/confluence/display/CRMDOC40/CiviCRM+Public+APIs
+* Read more about testing here
+* http://wiki.civicrm.org/confluence/display/CRM/Testing
+*/

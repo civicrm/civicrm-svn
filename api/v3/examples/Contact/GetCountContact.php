@@ -3,15 +3,13 @@
 
 
 /*
- This demonstrates use of the 'format.single_entity_array' param. 
-    /* This param causes the only contact to be returned as an array without the other levels.
-    /* it will be ignored if there is not exactly 1 result
+ /*This demonstrates use of the 'getCount' action 
+    /*  This param causes the count of the only function to be returned as an integer
  */
 function contact_get_example(){
 $params = array( 
   'version' => 3,
   'id' => 17,
-  'format.single_entity' => 1,
 );
 
   require_once 'api/api.php';
@@ -25,15 +23,7 @@ $params = array(
  */
 function contact_get_expectedresult(){
 
-  $expectedResult = array( 
-  'contact_id' => '17',
-  'contact_type' => 'Individual',
-  'display_name' => 'Test Contact',
-  'is_opt_out' => '',
-  'first_name' => 'Test',
-  'last_name' => 'Contact',
-  'contact_is_deleted' => '',
-);
+  $expectedResult = 1;
 
   return $expectedResult  ;
 }
