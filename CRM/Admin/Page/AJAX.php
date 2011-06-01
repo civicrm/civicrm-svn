@@ -336,10 +336,10 @@ class CRM_Admin_Page_AJAX
         }
 
         require_once "CRM/Core/BAO/ScheduleReminders.php";
-        list( $sel1, $sel2, $sel3, $events, $sel5 ) =  CRM_Core_BAO_ScheduleReminders::getSelection1( $mappingID );
+        list( $sel1, $sel2 ) = CRM_Core_BAO_ScheduleReminders::getSelection1( $mappingID );
 
         $elements = array( );
-        foreach ( $events as $id => $name ) {
+        foreach ( $sel1 as $id => $name ) {
             $elements[] = array( 'name'  => $name,
                                  'value' => $id );
         }
@@ -361,11 +361,10 @@ class CRM_Admin_Page_AJAX
         }
 
         require_once "CRM/Core/BAO/ScheduleReminders.php";
-        list( $sel1, $sel2, $sel3, $sel4, $events ) =  CRM_Core_BAO_ScheduleReminders::getSelection1( $mappingID );
-        //list( $sel1, $sel2, $sel3, $events, $sel5 ) =  CRM_Core_BAO_ScheduleReminders::getSelection1( $mappingID );
+        list( $sel1, $sel2 ) =  CRM_Core_BAO_ScheduleReminders::getSelection1( $mappingID );
 
         $elements = array( );
-        foreach ( $events as $id => $name ) {
+        foreach ( $sel2 as $id => $name ) {
             $elements[] = array( 'name'  => $name,
                                  'value' => $id );
         }

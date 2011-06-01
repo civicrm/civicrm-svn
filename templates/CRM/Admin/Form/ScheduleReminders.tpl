@@ -173,6 +173,7 @@
      cj(function() {
          cj('#entity\\[0\\]').click( function( ) {
               buildSelect("start_action_date");
+	      buildSelect("end_date");
 	      buildSelect1("recipient");
          });    
      });

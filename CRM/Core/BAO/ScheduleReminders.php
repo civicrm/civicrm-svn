@@ -61,9 +61,9 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
     }
 
 
-    static function getSelection( $id = null ) 
+    static function getSelection(  ) 
     {
-        $mapping  = self::getMapping( $id );
+        $mapping  = self::getMapping( );
 
         require_once 'CRM/Core/PseudoConstant.php';
         require_once 'CRM/Event/PseudoConstant.php';
@@ -169,11 +169,10 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         require_once 'CRM/Event/PseudoConstant.php';
         $participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
         $activityContacts = CRM_Core_PseudoConstant::activityContacts();
-        $sel1 = $sel2 = $sel3 = $sel4 = $sel5 = array();
+        $sel4 = $sel5 = array();
 
         foreach ( $mapping as $value ) {
-            $entityValue  = $value['entity_value'];
-            $entityStatus = $value['entity_status'];
+
             $entityDateStart = $value['entity_date_start'];
             $entityDateEnd = $value['entity_date_end'];
             $entityRecipient = $value['entity_recipient'];
@@ -209,7 +208,7 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         }
        
        
-        return array( $sel1 , $sel2, $sel3, $sel4, $sel5[$id] );
+        return array( $sel4, $sel5[$id] );
     }
 
     /**
