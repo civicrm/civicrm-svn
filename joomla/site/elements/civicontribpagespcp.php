@@ -51,14 +51,19 @@ class JFormFieldCiviContribPagesPCP extends JFormField {
 		// Get list of all ContribPagesPCP  and assign to options array
 		$options = array();
 		
-        $query = "SELECT cp.id, cp.title FROM civicrm_contribution_page cp, civicrm_pcp_block pcp" 
-            ." WHERE cp.is_active =1 AND pcp.is_active =1 AND pcp.entity_id = cp.id AND pcp.entity_table = 'civicrm_contribution_page'"
-            ." ORDER BY cp.title";
+        $query = "SELECT cp.id, cp.title 
+		          FROM civicrm_contribution_page cp, civicrm_pcp_block pcp 
+		          WHERE cp.is_active = 1 
+				    AND pcp.is_active = 1 
+					AND pcp.entity_id = cp.id 
+				    AND pcp.entity_table = 'civicrm_contribution_page'
+				  ORDER BY cp.title;";
+       
         $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
             $options[] = JHTML::_( 'select.option', $dao->id, $dao->title ); 
         }
-      	return JHTML::_( 'select.genericlist', $name, 'params[id]', null, 'value', 'text', $value );
+        return JHTML::_( 'select.genericlist', $options, $name, null, 'value', 'text', $value );
 	}
 }
 ?>
