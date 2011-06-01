@@ -372,7 +372,7 @@ class CRM_Profile_Form extends CRM_Core_Form
             if ( CRM_Core_BAO_UFField::checkProfileType( $this->_gid ) ) {
                 
                 if ( ($this->_mode & self::MODE_EDIT) && $this->_isContactActivityProfile ) {
-                    $errors = self::validateContactActivityProfile($this->_activityId, $this->_gid );
+                    $errors = self::validateContactActivityProfile($this->_activityId, $this->_id, $this->_gid);
                     if ( !empty($errors) ) {
                         $statusMessage = ts( array_pop($errors) );
                         $return = true;
@@ -592,27 +592,31 @@ class CRM_Profile_Form extends CRM_Core_Form
      *
      * @return Array   $errors     Errors ( if any ).
      */
-    static function validateContactActivityProfile($activityId, $gid) {
+    static function validateContactActivityProfile($activityId, $contactId, $gid) {
         $errors = array( );
         if ( !$activityId ) {
             $errors[] = 'Profile is using activty field, missing activity Id (aid) in url.';
             return $errors;
         } 
         
-        $activityTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $activityId, 'activity_type_id' );
-        if ( !$activityTypeId ) {
-            $errors[] = 'Invalid activity ID (aid).';
+        require_once 'CRM/Activity/BAO/Activity.php';
+        $activityDetails = array( );
+        $activityParams  = array( 'id' => $activityId );     
+        CRM_Activity_BAO_Activity::retrieve($activityParams, $activityDetails);
+        
+        if ( empty($activityDetails) ) {
+            $errors[] = 'Invalid Activity Id (aid).';
             return $errors;
         }
         
         require_once 'CRM/Core/BAO/UFGroup.php';
         $profileActivityTypes = CRM_Core_BAO_UFGroup::groupTypeValues($gid, 'Activity');
-        if ( !CRM_Utils_Array::value('Activity', $profileActivityTypes) ) {
-            return $errors;
-        }
         
-        if ( !in_array($activityTypeId, $profileActivityTypes['Activity']) ) {
-            $errors[] = 'This activity cannot be edited or viewed via this profile.'; 
+        if ( ( CRM_Utils_Array::value('Activity', $profileActivityTypes) && 
+               !in_array($activityDetails['activity_type_id'], $profileActivityTypes['Activity']) ) ||
+             ( !in_array($contactId, $activityDetails['assignee_contact']) && 
+               !in_array($contactId, $activityDetails['target_contact']) ) ) {
+            $errors[] = 'This activity cannot be edited or viewed via this profile.';
         }
         
         return $errors;

@@ -124,7 +124,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         $result = civicrm_api3_profile_get( $params );
 
         $this->assertEquals($result['is_error'], 1);
-        $this->assertEquals($result['error_message'], 'Invalid activity ID (aid).');
+        $this->assertEquals($result['error_message'], 'Invalid Activity Id (aid).');
         
         $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact') );   
         
@@ -161,7 +161,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         $result = civicrm_api3_profile_get( $params );
         
         $this->assertEquals($result['is_error'], 1);
-        $this->assertEquals($result['error_message'], 'Activity type of specified activity Id do not support configured profile fields for this profile.');
+        $this->assertEquals($result['error_message'], 'This activity cannot be edited or viewed via this profile.');
         
         $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact') );      
     }
@@ -320,7 +320,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         $result = civicrm_api3_profile_set( $params );
 
         $this->assertEquals($result['is_error'], 1);
-        $this->assertEquals($result['error_message'], 'Invalid activity ID (aid).');
+        $this->assertEquals($result['error_message'], 'Invalid Activity Id (aid).');
         
         $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact') );   
         
@@ -358,7 +358,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         $result = civicrm_api3_profile_set( $params );
         
         $this->assertEquals($result['is_error'], 1);
-        $this->assertEquals($result['error_message'], 'Activity type of specified activity Id do not support configured profile fields for this profile.');
+        $this->assertEquals($result['error_message'], 'This activity cannot be edited or viewed via this profile.');
         
         $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact') );      
     }
@@ -574,17 +574,6 @@ class api_v3_ProfileTest extends CiviUnitTestCase
                                                               'state_province'         => 'Michigan',
                                                               'supplemental_address_1' => 'Hallmark Ct', 
                                                               'supplemental_address_2' => 'Jersey Village' ),
-                               'api.activity.create' => array( 'source_contact_id'  => $sourceContactId,
-                                                               'activity_type_id'   => '1',
-                                                               'subject'            => 'Make-it-Happen Meeting',
-                                                               'activity_date_time' => '20110316',
-                                                               'duration'           => '120',
-                                                               'location'           => 'Pensulvania',
-                                                               'details'            => 'a test activity',
-                                                               'status_id'          => '1',
-                                                               'version'            => '3',
-                                                               'priority_id'        => '1'
-                                                               )
                                );
         
         $contact = civicrm_api( 'contact', 'create', $contactParams );
@@ -596,16 +585,29 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         
         $this->assertEquals( 0, $contact['values'][$contactId]['api.address.create']['is_error'], "In line " . __LINE__
                              . " error message: " . CRM_Utils_Array::value('error_message', $contact['values'][$contactId]['api.address.create']) );
-        $this->assertEquals( 0, $contact['values'][$contactId]['api.activity.create']['is_error'], "In line " . __LINE__
-                             . " error message: " . CRM_Utils_Array::value('error_message', $contact['values'][$contactId]['api.activity.create']) );
-        
 
-        $activity = array_pop($contact['values'][$contactId]['api.activity.create']['values']);
+        $activityParams = array( 'source_contact_id'   => $sourceContactId,
+                                 'assignee_contact_id' => $contactId,
+                                 'activity_type_id'    => '1',
+                                 'subject'             => 'Make-it-Happen Meeting',
+                                 'activity_date_time'  => '20110316',
+                                 'duration'            => '120',
+                                 'location'            => 'Pensulvania',
+                                 'details'             => 'a test activity',
+                                 'status_id'           => '1',
+                                 'version'             => '3',
+                                 'priority_id'         => '1'
+                                 );
+        $activity = civicrm_api( 'activity', 'create', $activityParams );    
+        $this->assertEquals( 0, $activity['is_error'], "In line " . __LINE__
+                             . " error message: " . CRM_Utils_Array::value('error_message', $activity) );
+
+        $activityValues = array_pop($activity['values']);
         
         // valid parameters for above profile
         $profileParams = array( 'profile_id'  => 26,
                                 'contact_id'  => $contactId,
-                                'activity_id' => $activity['id'],
+                                'activity_id' => $activityValues['id'],
                                 'version'     => 3
                                 );
         

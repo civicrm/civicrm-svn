@@ -175,9 +175,9 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
             
             if ( $this->_isContactActivityProfile && $this->_gid ) {
                 require_once 'CRM/Profile/Form.php';
-                $errors = CRM_Profile_Form::validateContactActivityProfile($this->_activityId, $this->_gid);
+                $errors = CRM_Profile_Form::validateContactActivityProfile($this->_activityId, $this->_id, $this->_gid);
                 if ( !empty($errors) ) {
-                    CRM_Core_Error::fatal( implode('<br />', $errors) );
+                    CRM_Core_Error::fatal( ts(array_pop($errors)) );
                 }
             }
 

@@ -355,7 +355,7 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
             return false;
         }
         
-        if ( $index = array_search('contact', $profileTypes) ) {
+        if ( $index = array_search('Contact', $profileTypes) ) {
             unset($profileTypes[$index]);
             if (count($profileTypes) == 1) {
                 return true;
