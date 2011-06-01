@@ -66,7 +66,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             return;
         }
         
-        $this->add( 'text', 'title', ts( 'Title' ), array( 'size'=> 45,'maxlength' => 128 ) );
+        $this->add( 'text', 'title', ts( 'Title' ), array( 'size'=> 45,'maxlength' => 128 ), true );
 
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
         list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ScheduleReminders::getSelection(  ) ;
@@ -99,7 +99,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
         $mappings = CRM_Core_BAO_ScheduleReminders::getMapping(  );
 
-        $numericOptions = array( 1 => ts('1'), 2 => ts('2'), 3 => ts('3'), 4 => ts('4'), 5 => ts('5' ),
+        $numericOptions = array( 0 => ts('0'), 1 => ts('1'), 2 => ts('2'), 3 => ts('3'), 4 => ts('4'), 5 => ts('5' ),
                                  6 => ts('6'), 7 => ts('7'), 8 => ts('8'), 9 => ts('9'), 10 => ts('10') );
         //reminder_interval
         $this->add( 'select', 'start_action_offset', ts('When'), $numericOptions );
@@ -157,6 +157,23 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->add('checkbox', 'is_active', ts('Send email'));
         $this->add('checkbox', 'record_activity', ts('Logging'));
 
+        $this->addFormRule( array( 'CRM_Admin_Form_ScheduleReminders', 'formRule' ) );
+    }
+
+
+    static function formRule( $fields )
+    {
+        $errors = array( );
+        if ( $fields['entity'][1][0] == 0 ||
+             $fields['entity'][2][0] == 0) {
+            $errors['entity'] = ts('Please select appropriate value');
+        }
+
+        if ( ! empty( $errors ) ) {
+            return $errors;
+        }
+
+        return empty( $errors ) ? true : $errors;
     }
 
     function setDefaultValues( )
