@@ -182,8 +182,11 @@ function fileOnCase( action, activityID, currentCaseId ) {
 						          var activitySubject = cj("#case_activity_subject").val( );
 						          var statusMsg = '<a id="closeFileOnCaseStatusMsg" href="#"><div class="ui-icon ui-icon-close" style="float:left"></div></a> "' + activitySubject + '" has been filed to selected case: ' + cj("#unclosed_cases").val( ) + '. Click <a href="' + caseUrl + '">here</a> to view that case.';
 						          var context = {/literal}"{$context}"{literal};
-                                  cj('#fileOnCaseStatusMsg-' + context ).addClass('msgok').html( statusMsg ).show( );
-                                  cj("#closeFileOnCaseStatusMsg").click(function(){ cj('#fileOnCaseStatusMsg-' + context ).fadeOut("slow");return false;}).focus( );
+                                  if ( context ) {
+                                    context = '-' + context;
+                                  }
+                                  cj('#fileOnCaseStatusMsg' + context ).addClass('msgok').html( statusMsg ).show( );
+                                  cj("#closeFileOnCaseStatusMsg").click(function(){ cj('#fileOnCaseStatusMsg' + context ).fadeOut("slow");return false;}).focus( );
                              }
    					      }
                     }
