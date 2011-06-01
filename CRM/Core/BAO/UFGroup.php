@@ -853,9 +853,17 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                             if ( $cfID = CRM_Core_BAO_CustomField::getKeyID( $name ) ) {
                                 $htmlType  = $field['html_type'];
                                 $dataType  = $field['data_type'];
+                                $fieldType = $field['field_type'];
 
                                 if ( $htmlType == 'File') {
-                                    $fileURL = CRM_Core_BAO_CustomField::getFileURL( $cid,
+                                    $entityId = $cid;
+                                    if ( !$cid && 
+                                         $fieldType == 'Activity' && 
+                                         CRM_Utils_Array::value(2, $componentWhere[0]) ) {
+                                        $entityId = $componentWhere[0][2];
+                                    }
+
+                                    $fileURL = CRM_Core_BAO_CustomField::getFileURL( $entityId,
                                                                                      $cfID,
                                                                                      null, 
                                                                                      $absolute );

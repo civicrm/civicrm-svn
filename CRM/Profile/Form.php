@@ -319,7 +319,12 @@ class CRM_Profile_Form extends CRM_Core_Form
                 }
                 
                 if ( $htmlType == 'File') {
-                    $url = CRM_Core_BAO_CustomField::getFileURL( $this->_id, $customFieldID );
+                    $entityId = $this->_id;
+                    if ( CRM_Utils_Array::value('field_type', $field) == 'Activity' &&
+                         $this->_activityId ) {
+                        $entityId = $this->_activityId;
+                    }
+                    $url = CRM_Core_BAO_CustomField::getFileURL( $entityId, $customFieldID );
                     
                     if ( $url ) {
                         $customFiles[$field['name']]['displayURL'] = ts("Attached File") . ": {$url['file_url']}";
@@ -327,7 +332,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                         $deleteExtra = ts("Are you sure you want to delete attached file?");
                         $fileId      = $url['file_id'];
                         $deleteURL   = CRM_Utils_System::url( 'civicrm/file',
-                                                              "reset=1&id={$fileId}&eid=$this->_id&fid={$customFieldID}&action=delete" );
+                                                              "reset=1&id={$fileId}&eid=$entityId&fid={$customFieldID}&action=delete" );
                         $text = ts("Delete Attached File");
                         $customFiles[$field['name']]['deleteURL'] =
                             "<a href=\"{$deleteURL}\" onclick = \"if (confirm( ' $deleteExtra ' )) this.href+='&amp;confirmed=1'; else return false;\">$text</a>";
@@ -961,6 +966,12 @@ class CRM_Profile_Form extends CRM_Core_Form
                     if ( isset($params[$fieldName]) ) { 
                         $activityParams[$fieldName] = $params[$fieldName];
                     }
+                    if ( isset($params['activity_date_time']) ) {
+                        $activityParams['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'], $params['activity_date_time_time'] );  
+                    }
+                    if ( CRM_Utils_Array::value($fieldName, $params) && isset($params["{$fieldName}_id"]) ) {
+                        $activityParams[$fieldName] = $params["{$fieldName}_id"];
+                    }
                 } else {
                     $profileFields[$fieldName]  = $field;
                 }
@@ -969,9 +980,6 @@ class CRM_Profile_Form extends CRM_Core_Form
             if ( !empty($activityParams) ) {
                 $activityParams['version'] = 3;
                 $activityParams['id']      = $this->_activityId;
-                if ( isset($activityParams['activity_date_time']) ) {
-                    $activityParams['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'], $params['activity_date_time_time'] );
-                }
                 $activityParams['skipRecentView'] = true;
                 $activity = civicrm_api('Activity', 'create', $activityParams);
             }
