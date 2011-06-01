@@ -259,7 +259,8 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             require_once 'CRM/Contact/Form/Search.php';
             if ( CRM_Contact_Form_Search::isSearchContext( $this->_context ) ) {
                 $this->_context = 'search';
-            } else if ( $this->_currentlyViewedContactId  ) {
+            } else if ( !in_array( $this->_context, array( 'dashlet', 'dashletFullscreen' ) ) 
+                        && $this->_currentlyViewedContactId ) {
                 $this->_context = 'activity';
             }
             $this->_compContext = CRM_Utils_Request::retrieve( 'compContext', 'String', $this );
@@ -388,7 +389,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         //validate the qfKey
         require_once 'CRM/Utils/Rule.php';
         if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
-
+        
         if ( $this->_context == 'fulltext' ) {
             $keyName   = '&qfKey';
             $urlParams = 'force=1';
@@ -400,7 +401,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             }
             if ( $qfKey ) $urlParams .= "$keyName=$qfKey";
             $this->assign( 'searchKey',  $qfKey );
-        } else if ( in_array( $this->_context, array( 'standalone', 'home' ) ) ) {
+        } else if ( in_array( $this->_context, array( 'standalone', 'home', 'dashlet', 'dashletFullscreen' ) ) ) {
             $urlParams = 'reset=1';
             $urlString = 'civicrm/dashboard';
         } else if ( $this->_context == 'search' ) {

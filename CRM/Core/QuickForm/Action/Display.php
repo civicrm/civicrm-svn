@@ -127,9 +127,13 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
         }
 
         $template->assign( 'action' , $page->getAction( ) );
-        $template->assign( 'tplFile', $page->getTemplateFileName() ); 
+
+        $pageTemplateFile = $page->getTemplateFileName( );
+        $template->assign( 'tplFile', $pageTemplateFile );
 
         $content = $template->fetch( $controller->getTemplateFile( ) );
+
+        CRM_Utils_System::appendJSFile( $pageTemplateFile, $content );
 
         $print = $controller->getPrint( );
         if ( $print ) {

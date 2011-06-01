@@ -42,6 +42,10 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     function setUp() 
     {
         parent::setUp();
+        $tablesToTruncate = array( 'civicrm_contribution',
+                                   'civicrm_contact');
+
+        $this->quickCleanup( $tablesToTruncate );
         $this->_apiversion = 3;
         $this->_contributionTypeId = $this->contributionTypeCreate();
         $this->_individualId = $this->individualCreate( );
@@ -108,10 +112,9 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $this->assertEquals($contribution['values'][$contribution['id']]['contribution_source'],'SSF','In line ' . __LINE__ );
         $this->assertEquals($contribution['values'][$contribution['id']]['contribution_status'], 'Completed','In line ' . __LINE__  );
        
-        $params2 = array( 'contribution_id' => $this->_contribution['id'] ,
-                          'version'         => $this->_apiversion);
-        civicrm_api3_contribution_delete($params2);
-    }
+        civicrm_api('Contribution','Delete',array( 'id' => $this->_contribution['id'] ,
+                          'version'         => $this->_apiversion));
+     }
 
 ///////////////// civicrm_contribution_
      
@@ -176,7 +179,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $this->assertEquals($contribution['values'][$contribution['id']]['contribution_status_id'], 1, 'In line ' . __LINE__ );
         $this->_contribution = $contribution;
 
-        $contributionID = array( 'contribution_id' => $contribution['id'] ,
+        $contributionID = array( 'id' => $contribution['id'] ,
                                   'version'        =>$this->_apiversion);
         $contribution   =& civicrm_api3_contribution_delete($contributionID);
         
@@ -189,12 +192,6 @@ class api_v3_ContributionTest extends CiviUnitTestCase
      */
     function testContributionCreateExample( )
     {
-        $tablesToTruncate = array( 'civicrm_contribution',
-                                   'civicrm_contact');
-
-        // contribution_create_example() contains hardcoded values
-        $this->quickCleanup( $tablesToTruncate );
-        $this->_individualId = $this->individualCreate( );
 
         require_once 'api/v3/examples/ContributionCreate.php';
         $result = contribution_create_example();
@@ -283,8 +280,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $params = array('version' => $this->_apiversion );
         $contribution = civicrm_api3_contribution_delete($params);
         $this->assertEquals( $contribution['is_error'], 1 );
-        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contribution_id' );
-    }
+   }
     
     
     function testDeleteParamsNotArrayContribution()
@@ -302,15 +298,14 @@ class api_v3_ContributionTest extends CiviUnitTestCase
                          'version'             => $this->_apiversion );
         $contribution =& civicrm_api3_contribution_delete( $params );
         $this->assertEquals($contribution['is_error'], 1);
-        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contribution_id' );
-    }
+   }
     
     
     function testDeleteContribution()
     {
      
         $contributionID = $this->contributionCreate( $this->_individualId , $this->_contributionTypeId );
-        $params         = array( 'contribution_id' => $contributionID ,
+        $params         = array( 'id' => $contributionID ,
                                   'version'        => $this->_apiversion,);
         $result   = civicrm_api3_contribution_delete( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 

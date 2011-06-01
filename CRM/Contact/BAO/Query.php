@@ -1349,8 +1349,9 @@ class CRM_Contact_BAO_Query
             return;
 
         case 'country':
-            // handled by state_province above
+            $this->country( $values, false );
             return;
+
 
         case 'postal_code':
         case 'postal_code_low':
@@ -2861,7 +2862,54 @@ WHERE  id IN ( $groupIDs )
             }
         }
     }
-    
+
+    function country( &$values, $fromStateProvince = true ) {
+        list( $name, $op, $value, $grouping, $wildcard ) = $values;
+
+        if ( ! $fromStateProvince ) {
+            $stateValues = $this->getWhereValues( 'state_province', $grouping );
+            if ( ! empty( $stateValues ) ) {
+                // return back to caller if there are state province values
+                // since that handles this case
+                return;
+            }
+        }
+
+        $countryClause = $countryQill = null;
+        if ( $values &&
+             ! empty( $values[2] ) ) {
+            $this->_tables['civicrm_country'] = 1;
+            $this->_whereTables['civicrm_country'] = 1;
+
+            if ( is_numeric( $values[2] ) ) {
+                $countryClause = self::buildClause( 'civicrm_country.id',
+                                                    $values[1],
+                                                    $values[2],
+                                                    'Positive' );
+                $countries =& CRM_Core_PseudoConstant::country( );
+                $countryName = $countries[(int ) $values[2]];
+            } else {
+                $wc = ( $values[1] != 'LIKE' ) ? "LOWER('civicrm_country.name')" : 'civicrm_country.name';
+                $countryClause = self::buildClause( 'civicrm_country.name',
+                                                    $values[1],
+                                                    $values[2],
+                                                    'String' );
+                $countryName = $values[2];
+            }
+            $countryQill = ts('Country') . " {$values[1]} '$countryName'";
+            
+            if ( ! $fromStateProvince ) {
+                $this->_where[$grouping][] = $countryClause;
+                $this->_qill[$grouping][] = $countryQill;
+            } 
+        }
+
+        if ( $fromStateProvince ) {
+            return array( $countryClause,
+                          " ...AND... " . $countryQill );
+        }
+    }
+
     /**
      * where / qill clause for state/province AND country (if present)
      *
@@ -2893,29 +2941,7 @@ WHERE  id IN ( $groupIDs )
             
 
         $countryValues = $this->getWhereValues( 'country', $grouping );
-        $countryClause = $countruQill = null;
-        if ( $countryValues &&
-             ! empty( $countryValues[2] ) ) {
-            $this->_tables['civicrm_country'] = 1;
-            $this->_whereTables['civicrm_country'] = 1;
-
-            if ( is_numeric( $countryValues[2] ) ) {
-                $countryClause = self::buildClause( 'civicrm_country.id',
-                                                    $countryValues[1],
-                                                    $countryValues[2],
-                                                    'Positive' );
-                $countries =& CRM_Core_PseudoConstant::country( );
-                $countryName = $countries[(int ) $countryValues[2]];
-            } else {
-                $wc = ( $countryValues[1] != 'LIKE' ) ? "LOWER('civicrm_country.name')" : 'civicrm_country.name';
-                $countryClause = self::buildClause( 'civicrm_country.name',
-                                                    $countryValues[1],
-                                                    $countryValues[2],
-                                                    'String' );
-                $countryName = $countryValues[2];
-            }
-            $countryQill = " ...AND... " . ts('Country') . " {$countryValues[1]} '$countryName'";
-        }
+        list( $countryClause, $countryQill ) = $this->country( $countryValues, true );
 
         if ( $countryClause ) {
             $clause = $stateClause;

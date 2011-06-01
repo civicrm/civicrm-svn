@@ -79,7 +79,6 @@ class CRM_Contribute_BAO_Query
             $query->_select['contribution_id'] = "civicrm_contribution.id as contribution_id";
             $query->_element['contribution_id'] = 1;
             $query->_tables['civicrm_contribution'] = 1;
-            $query->_whereTables['civicrm_contribution'] = 1;
         }
 
         // get contribution_type
@@ -88,8 +87,6 @@ class CRM_Contribute_BAO_Query
             $query->_element['contribution_type'] = 1;
             $query->_tables['civicrm_contribution'] = 1;
             $query->_tables['civicrm_contribution_type'] = 1;
-            $query->_whereTables['civicrm_contribution'] = 1;
-            $query->_whereTables['civicrm_contribution_type'] = 1;
         }
         
         if ( CRM_Utils_Array::value( 'contribution_note', $query->_returnProperties ) ) {
@@ -104,8 +101,6 @@ class CRM_Contribute_BAO_Query
             $query->_element['contribution_status_id'] = 1;
             $query->_tables['civicrm_contribution'] = 1;
             $query->_tables['contribution_status'] = 1;
-            $query->_whereTables['civicrm_contribution'] = 1;
-            $query->_whereTables['contribution_status'] = 1;
         }
 
         // get contribution_status label
@@ -114,8 +109,6 @@ class CRM_Contribute_BAO_Query
             $query->_element['contribution_status'] = 1;
             $query->_tables['civicrm_contribution'] = 1;
             $query->_tables['contribution_status'] = 1;
-            $query->_whereTables['civicrm_contribution'] = 1;
-            $query->_whereTables['contribution_status'] = 1;
         }
         
         // get payment instruments
@@ -124,22 +117,18 @@ class CRM_Contribute_BAO_Query
             $query->_element['contribution_payment_instrument'] = 1;
             $query->_tables['civicrm_contribution'] = 1;
             $query->_tables['contribution_payment_instrument'] = 1;
-            $query->_whereTables['civicrm_contribution'] = 1;
-            $query->_whereTables['contribution_payment_instrument'] = 1;
         }
 
         if ( CRM_Utils_Array::value( 'check_number', $query->_returnProperties ) ) {
             $query->_select['contribution_check_number']  = "civicrm_contribution.check_number as contribution_check_number";
             $query->_element['contribution_check_number'] = 1;
             $query->_tables['civicrm_contribution'] = 1;
-            $query->_whereTables['civicrm_contribution'] = 1;
         }
         
         if ( CRM_Utils_Array::value( 'contribution_campaign_id', $query->_returnProperties ) ) {
             $query->_select['contribution_campaign_id']  = 'civicrm_contribution.campaign_id as contribution_campaign_id';
             $query->_element['contribution_campaign_id'] = 1;
             $query->_tables['civicrm_contribution'] = 1;
-            $query->_whereTables['civicrm_contribution'] = 1;
         }
     }
 

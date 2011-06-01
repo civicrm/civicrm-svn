@@ -127,6 +127,8 @@ function civicrm_api3_activity_getfields( $params ) {
     $fields =$bao->exportableFields('Activity');
     //activity_id doesn't appear to work so let's tell them to use 'id' (current focus is ensuring id works)
     $fields['id'] = $fields['activity_id'];
+    $fields['assignee_contact_id'] = 'assigned to';
+  
     unset ($fields['activity_id']);
     return civicrm_api3_create_success($fields ,$params,$bao);
 }
@@ -147,7 +149,7 @@ function civicrm_api3_activity_get( $params ) {
     _civicrm_api3_initialize( true );
     try{
  
-        civicrm_api3_verify_one_mandatory($params);
+        civicrm_api3_verify_mandatory($params);
         
         if (!empty($params['contact_id'])){
             $activities = _civicrm_api3_activities_get_by_contact($params['contact_id']);
@@ -155,8 +157,12 @@ function civicrm_api3_activity_get( $params ) {
         }
             
         $activity = _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params, FALSE);
-        
-        if ( $returnCustom && !empty( $activity ) ) {
+        foreach ( $params as $n => $v ) {
+        if ( substr( $n, 0, 13 ) == 'return.custom' ) { // handle the format return.sort_name=1,return.display_name=1
+            $returnProperties[ substr( $n, 7 ) ] = $v;
+        } 
+    }
+        if ( !empty($returnProperties) && !empty( $activity ) ) {
             $customdata = array();
             $customdata = _civicrm_api3_activity_custom_get( array( 'activity_id'      => $activityId,
                                                                     'activity_type_id' => CRM_Utils_Array::value('activity_type_id',$activity[$dao->id]  ))  );

@@ -39,7 +39,7 @@
        {ts}Do you want to delete this message template?{/ts}
    </div>
 {else}
-        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
         <table class="form-layout-compressed">
         <tr>
             <td class="label-left">{$form.msg_title.label}</td>
@@ -135,7 +135,7 @@
 	</table>
     {/if}
   {/if}
-  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
   <br clear="all" />
 </div>
 </div> <!-- end of crm-form-block -->

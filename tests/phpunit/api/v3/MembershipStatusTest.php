@@ -84,10 +84,9 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
      {
         $params = array('version' =>3);
         $result =& civicrm_api3_membership_status_get($params);
-
         // It should be 8 statuses, 7 default from mysql_data 
         // plus one test status added in setUp        
-        $this->assertEquals ( 8, count( $result ), 'In line ' . __LINE__ );
+        $this->assertEquals ( 8,  $result['count'] , 'In line ' . __LINE__ );
      }
 
     /**
@@ -99,7 +98,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
                           'version'			=>  $this->_apiversion,);
          $result =& civicrm_api3_membership_status_get($params);
          $this->documentMe($params,$result,__FUNCTION__,__FILE__);            
-         $this->assertEquals( $result[$this->_membershipStatusID]['name'], "test status", "In line " . __LINE__ );
+         $this->assertEquals( $result['values'][$this->_membershipStatusID]['name'], "test status", "In line " . __LINE__ );
      }
      function testMembershipStatusesGet()
      {
@@ -258,6 +257,48 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
                           'version' =>$this->_apiversion,);
         $result = civicrm_api3_membership_status_delete( $params );
         $this->assertEquals( $result['is_error'], 0 );
-    }        
+    } 
+    /*
+     * Test that trying to delete membership status while membership still exists creates error
+     */
+   function testDeleteWithMembershipError( ) {
+        $membershipStatusID = $this->membershipStatusCreate( );
+        
+        $this->_contactID           = $this->individualCreate( ) ;
+        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID  );        
+       
+        require_once 'CRM/Member/PseudoConstant.php';
+        CRM_Member_PseudoConstant::membershipType( $this->_membershipTypeID , true );
+        CRM_Member_PseudoConstant::membershipStatus( null, null, 'name', true );
+
+        
+        $this->_entity = 'membership';
+        $params = array(
+                        'contact_id'         => $this->_contactID,  
+                        'membership_type_id' => $this->_membershipTypeID,
+                        'join_date'          => '2009-01-21',
+                        'start_date'         => '2009-01-21',
+                        'end_date'           => '2009-12-21',
+                        'source'             => 'Payment',
+                        'is_override'        => 1,
+                        'status_id'          => $membershipStatusID,
+                        'version'		     => 3,
+                        );
+  
+
+        $result = civicrm_api3_membership_create( $params );
+        $membershipID = $result['id'];
+        $params = array( 'id' => $membershipStatusID ,
+                         'version' => $this->_apiversion,);
+        $result = civicrm_api3_membership_status_delete( $params );
+        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
+
+        civicrm_api('Membership','Delete',array('id'      =>  $membershipID  ,
+                                                'version' => $this->_apiversion,));
+
+        $result = civicrm_api3_membership_status_delete( $params );
+        $this->assertEquals( $result['is_error'], 0, 'In line ' . __LINE__ );
+ 
+    }       
 }
 

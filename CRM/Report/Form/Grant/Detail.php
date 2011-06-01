@@ -99,9 +99,9 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
                                      'name'      => 'status_id' ,
                                      'title'     => ts( 'Grant Status' ),
                                       ),
-                               'amount_requested'   =>
+                               'amount_total'   =>
                                array( 
-                                     'name'      => 'amount_requested' ,
+                                     'name'      => 'amount_total' ,
                                      'title'     => ts( 'Amount Requested' ),
                                      'type'      => CRM_Utils_Type::T_MONEY
                                       ),
@@ -113,7 +113,7 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
                                'application_received_date'=>
                                array( 
                                      'name'      => 'application_received_date' ,
-                                     'title'     => ts( 'Application Received Date' ),
+                                     'title'     => ts( 'Application Received' ),
                                      'default'=>true
                                       ),
                                'money_transfer_date'=>
@@ -125,7 +125,7 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
                                'grant_due_date'=>
                                array( 
                                      'name'      => 'grant_due_date' ,
-                                     'title'     => ts( 'Grant Due Date' ),
+                                     'title'     => ts( 'Grant Report Due' ),
                                      'type' => CRM_Utils_Type::T_DATE
                                       ),
                                'rationale'=>
@@ -155,13 +155,13 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
                                array(
                                      'title'        => ts('Amount Granted') ,
                                      'operatorType' => CRM_Report_Form::OP_INT,),
-                               'amount_requested'   =>
+                               'amount_total'   =>
                                array(
                                      'title'        => ts('Amount Requested') ,
                                      'operatorType' => CRM_Report_Form::OP_INT,),
                                'application_received_date'=>
                                array(
-                                     'title'        => ts('Application Received Date'),
+                                     'title'        => ts('Application Received'),
                                      'operatorType' => CRM_Report_Form::OP_DATE ),
                                'money_transfer_date'=>
                                array(
@@ -169,7 +169,7 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
                                      'operatorType' => CRM_Report_Form::OP_DATE ),
                                'grant_due_date'=>
                                array(
-                                     'title'        => ts('Grant Due Date'),
+                                     'title'        => ts('Grant Report Due'),
                                      'operatorType' => CRM_Report_Form::OP_DATE,
                                      'type' => CRM_Report_Form::OP_DATE),
                                
@@ -182,7 +182,7 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
                                'status_id'  => 
                                array( 
                                      'title'        => ts('Grant Status' )),
-                               'amount_requested'   =>
+                               'amount_total'   =>
                                array(
                                      'title'        => ts('Amount Requested')),
                                'amount_granted'   =>

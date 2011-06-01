@@ -40,7 +40,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
     protected $__membershipID;
     protected $_entity;
     protected $_params;
-            public $DBResetRequired = true;     
+    
     public function setUp()
     {
  
@@ -52,11 +52,11 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );
         
         require_once 'CRM/Member/PseudoConstant.php';
-        CRM_Member_PseudoConstant::membershipType( null, true );
+        CRM_Member_PseudoConstant::membershipType( $this->_membershipTypeID , true );
         CRM_Member_PseudoConstant::membershipStatus( null, null, 'name', true );
 
         
-        $this->_entity = 'membership';
+        $this->_entity = 'Membership';
         $this->_params = array(
                         'contact_id'         => $this->_contactID,  
                         'membership_type_id' => $this->_membershipTypeID,
@@ -174,13 +174,11 @@ class api_v3_MembershipTest extends CiviUnitTestCase
      */
     function testGetWithParamsMemberShipTypeId()
     {
-         $result = civicrm_api($this->_entity,'create',  $result );
+        $result = civicrm_api($this->_entity,'create',  $this->_params );
         $params = array('membership_type_id' =>   $this->_membershipTypeID ,
                          'version'   => $this->_apiversion );
         $membership = civicrm_api3_membership_get( $params );
         $result = $membership['values'][$membership['id']];
-print_r($result);
-print_r($membership);
         $this->assertEquals($result['contact_id'],         $this->_contactID, "In line " . __LINE__);
         $this->assertEquals($result['membership_type_id'], $this->_membershipTypeID, "In line " . __LINE__);
         $this->assertEquals($result['status_id'],          $this->_membershipStatusID, "In line " . __LINE__);
@@ -203,9 +201,13 @@ print_r($membership);
         $params = array('membership_type_id' => 465653 ,
                          'version'   => $this->_apiversion );
         $result = civicrm_api3_membership_get( $params );
+        civicrm_api('Membership','Delete',array('id'=> $this->_membershipID,
+         																						'version'  => $this->_apiversion,));
+  
+ 
         $this->assertEquals($result['is_error'],0, "In line " . __LINE__);
         $this->assertEquals($result['count'],0, "In line " . __LINE__);
-        $result = civicrm_api('Membership','Delete',array('id'=> $this->_membershipID,
+        civicrm_api('Membership','Delete',array('id'=> $this->_membershipID,
          																						'version'  => $this->_apiversion,));
   
          
@@ -237,6 +239,7 @@ print_r($membership);
         $result = civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
          																						'version'  => $this->_apiversion,));     
 
+
     }
     /**
      * Test civicrm_membership_get with proper params.
@@ -244,12 +247,13 @@ print_r($membership);
      */
     function testGet()
     {
+        $membershipID = $this->contactMembershipCreate( $this->_params );
         $params = array ( 'contact_id' => $this->_contactID,
                           'version'		=> $this->_apiversion, );
 
-        $membership =& civicrm_api3_membership_get( $params );
-        $this->documentMe($params,$membership,__FUNCTION__,__FILE__);
-        $result = $membership['values'][$this->_membershipID];
+        $membership = & civicrm_api3_membership_get( $params );
+        //$this->documentMe($params,$membership,__FUNCTION__,__FILE__);
+        $result = $membership['values'][$membershipID];
         $this->assertEquals($result['join_date'],          '2009-01-21', "In line " . __LINE__);
         $this->assertEquals($result['contact_id'],         $this->_contactID, "In line " . __LINE__);
         $this->assertEquals($result['membership_type_id'], $this->_membershipTypeID, "In line " . __LINE__);
@@ -259,8 +263,9 @@ print_r($membership);
         $this->assertEquals($result['end_date'],           '2009-12-21', "In line " . __LINE__);
         $this->assertEquals($result['source'],             'Payment', "In line " . __LINE__);
         $this->assertEquals($result['is_override'],         1, "In line " . __LINE__);
-        $result = civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
+        $result = civicrm_api('Membership','Delete',array('id'=>  $result['id']  ,
          																						'version'  => $this->_apiversion,));           
+
     }
 
     /**
@@ -278,7 +283,7 @@ print_r($membership);
         $result = $membership['values'][$this->_membershipID];
         $this->assertEquals($membership['values'][$this->_membershipID]['status_id'], $this->_membershipStatusID, "In line " . __LINE__);
         $this->assertEquals($membership['values'][$this->_membershipID]['contact_id'], $this->_contactID, "In line " . __LINE__);
-        $result = civicrm_api('Membership','Delete',array('id'=>   $membership['id'] ,
+        $result = civicrm_api('Membership','Delete',array('id'=>   $this->_membershipID ,
          																						'version'  => $this->_apiversion,));  
     }
 
@@ -438,9 +443,9 @@ print_r($membership);
         $this->documentMe($params,$result  ,__FUNCTION__,__FILE__);
         $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
 
-        $check = civicrm_api($this->_entity,'get',array('version' =>3, 'id' => $result['id'], 'contact_id' => $this->_contactID));
+        $check = civicrm_api($this->_entity,'get', array('api.CustomValue.Get' => array(),'version' =>3, 'id' => $result['id'], 'contact_id' => $this->_contactID));
         $this->assertEquals("custom string", $check['values'][$result['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
-
+          print_r($check); 
         $this->customFieldDelete($ids['custom_field_id']);
         $this->customGroupDelete($ids['custom_group_id']); 
         $result = civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
@@ -454,8 +459,9 @@ print_r($membership);
      */
     function testMembershipCreateWithId( ) 
     {
+        $membershipID = $this->contactMembershipCreate( $this->_params );
         $params = array(
-                        'id'                 => $this->_membershipID,
+                        'id'                 => $membershipID,
                         'contact_id'         => $this->_contactID,  
                         'membership_type_id' => $this->_membershipTypeID,
                         'join_date'          => '2006-01-21',
@@ -468,13 +474,136 @@ print_r($membership);
                         );
 
         $result = civicrm_api3_membership_create( $params );
-                civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
+        civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
          																						'version'  => $this->_apiversion,)); 
-        $this->assertEquals( $result['is_error'], 0 );
-        $this->assertEquals( $result['id'] , $this->_membershipID );
+        $this->assertEquals( $result['is_error'], 0  , "in line " . __LINE__);
+        $this->assertEquals( $result['id'] , $membershipID  , "in line " . __LINE__);
  
     }
+    /**
+     * Test civicrm_contact_memberships_create with membership id (edit
+     * membership).
+     * success expected.
+     */
+    function testMembershipCreateUpdateWithIdNoContact( ) 
+    {
+        $membershipID = $this->contactMembershipCreate( $this->_params );
+        $params = array(
+                        'id'                 => $membershipID,
+                        'membership_type_id' => $this->_membershipTypeID,
+                        'join_date'          => '2006-01-21',
+                        'start_date'         => '2006-01-21',
+                        'end_date'           => '2006-12-21',
+                        'source'             => 'Payment',
+                        'is_override'        => 1,
+                        'status_id'          => $this->_membershipStatusID,
+                       'version'				=> $this->_apiversion,                       
+                        );
 
+        $result = civicrm_api3_membership_create( $params );
+        civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
+         																						'version'  => $this->_apiversion,)); 
+        $this->assertEquals( $result['is_error'], 0  , "in line " . __LINE__);
+        $this->assertEquals( $result['id'] , $membershipID  , "in line " . __LINE__);
+    }
+    
+        /**
+     * Test civicrm_contact_memberships_create with membership id (edit
+     * membership).
+     * success expected.
+     */
+    function testMembershipCreateUpdateWithIdNoDates( ) 
+    {
+        $membershipID = $this->contactMembershipCreate( $this->_params );
+        $params = array(
+                        'id'                 => $membershipID,
+                        'membership_type_id' => $this->_membershipTypeID,
+                        'source'             => 'Payment',
+                        'is_override'        => 1,
+                        'status_id'          => $this->_membershipStatusID,
+                       'version'				=> $this->_apiversion,                       
+                        );
+
+        $result = civicrm_api3_membership_create( $params );
+        civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
+         																						'version'  => $this->_apiversion,)); 
+        $this->assertEquals( $result['is_error'], 0  , "in line " . __LINE__);
+        $this->assertEquals( $result['id'] , $membershipID  , "in line " . __LINE__);
+    }
+    
+        /**
+     * Test civicrm_contact_memberships_create with membership id (edit
+     * membership).
+     * success expected.
+     */
+    function testMembershipCreateUpdateWithIdNoDatesNoType( ) 
+    {
+        $membershipID = $this->contactMembershipCreate( $this->_params );
+        $params = array(
+                        'id'                 => $membershipID,
+                       'source'             => 'not much here',
+                        'is_override'        => 1,
+                        'status_id'          => $this->_membershipStatusID,
+                       'version'				=> $this->_apiversion,                       
+                        );
+
+        $result = civicrm_api3_membership_create( $params );
+        civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
+         																						'version'  => $this->_apiversion,)); 
+        $this->assertEquals( $result['is_error'], 0  , "in line " . __LINE__);
+        $this->assertEquals( $result['id'] , $membershipID  , "in line " . __LINE__);
+    }  
+    
+    
+            /**
+     * Test civicrm_contact_memberships_create with membership id (edit
+     * membership).
+     * success expected.
+     */
+    function testMembershipCreateUpdateWithIDAndSource( ) 
+    {
+        $membershipID = $this->contactMembershipCreate( $this->_params );
+        $params = array(
+                        'id'                 => $membershipID,
+                        'source'             => 'changed',
+                        'version'				=> $this->_apiversion, 
+                        'skipStatusCal'  => 1,                      
+                        );
+        $result = civicrm_api3_membership_create( $params );
+        $this->assertEquals( $result['is_error'], 0  , "in line " . __LINE__);
+        $this->assertEquals( $result['id'] , $membershipID  , "in line " . __LINE__);
+        civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
+         																						'version'  => $this->_apiversion,));
+    } 
+    
+    
+        /**
+     * change custom field using update
+     */
+    function testUpdateWithCustom()
+    {
+        $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+      
+        $params = $this->_params;
+        $params['custom_'.$ids['custom_field_id']]  =  "custom string";
+        $result = civicrm_api($this->_entity,'create', $params);
+        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__);
+        $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
+ 
+        $result = civicrm_api($this->_entity,'create', array('id' => $params['id'], 'version' => 3,'custom_'.$ids['custom_field_id'] => "new custom" ));
+        $check = civicrm_api($this->_entity,'get',array('version' =>3, 'id' => $result['id'], 'contact_id' => $this->_contactID));
+        $this->assertEquals("new custom", $check['values'][$result['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
+
+        $this->customFieldDelete($ids['custom_field_id']);
+        $this->customGroupDelete($ids['custom_group_id']); 
+        $result = civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
+         																						'version'  => $this->_apiversion,));       
+
+    }
+    
+    
+    
+    
     /**
      * Test civicrm_contact_memberships_create Invalid membership data
      * Error expected.
@@ -496,18 +625,18 @@ print_r($membership);
                         );
 
         $result = civicrm_api3_membership_create( $params );
-        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['is_error'], 1 , "in line " . __LINE__ );
         
         //membership_contact_id which is no in contact table
         $params['membership_contact_id'] = 999;
         $result = civicrm_api3_membership_create( $params );
-        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['is_error'], 1  , "in line " . __LINE__);
 
         //invalid join date
         unset( $params['membership_contact_id'] );
         $params['join_date'] = "invalid";
         $result = civicrm_api3_membership_create( $params );
-        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['is_error'], 1 , "in line " . __LINE__);
     }
     
     /**

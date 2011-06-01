@@ -202,15 +202,24 @@ class CRM_Core_Action {
      * @access public
      * @static
      */
-    static function formLink( &$links, 
+    static function formLink( $links, 
                               $mask, 
                               $values, 
                               $extraULName = 'more', 
-                              $enclosedAllInSingleUL = false ) 
+                              $enclosedAllInSingleUL = false,
+                              $op = null,
+                              $objectName = null,
+                              $objectId = null ) 
     {
         $config = CRM_Core_Config::singleton( );
         if ( empty( $links ) ) {
             return null;
+        }
+
+
+        if($op && $objectName && $objectId) {
+          require_once 'CRM/Utils/Hook.php';
+          CRM_Utils_Hook::links($op, $objectName, $objectId, $links, $mask );
         }
         
         $url = array( );
