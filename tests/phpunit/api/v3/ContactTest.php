@@ -1138,7 +1138,28 @@ class api_v3_ContactTest extends CiviUnitTestCase
     $this->assertEquals( 1, $result['id'], "In line " . __LINE__ );
     $this->assertEquals(0,$result['values'][$result['id']]['api.CustomValue.get']['is_error'], "In line " . __LINE__);
   }
-  
+  /*
+   * Test checks siusage of $values to pick & choose inputs
+   */
+   function testChainingValuesCreate ( )   {
+    $description = "/*this demonstrates the usage of chained api functions.  Specifically it has one 'parent function' &
+    2 child functions - one receives values from the parent (Contact) and the other child (Tag). ";
+    $subfile = "APIChainedArrayValuesFromSiblingFunction";
+    $params = array('version' => 3, 'display_name' => 'batman' , 'contact_type' => 'Individual', 
+                    'api.tag.create' => array('name' => '$value.id', 'description' => '$value.display_name','format.only_id' => 1),
+                    'api.entity_tag.create' => array('tag_id' =>'$value.api.tag.create'));
+              $result = civicrm_api('Contact','Create',$params);
+        
+        $this->assertEquals(0, $result['is_error']);
+        $this->assertEquals(0, $result['values'][$result['id']]['api.entity_tag.create']['is_error']);
+       $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile);     
+        $tablesToTruncate = array( 'civicrm_contact', 
+                                   'civicrm_activity',
+                                   'civicrm_entity_tag',
+                                   'civicrm_tag'
+                                   );
+        $this->quickCleanup( $tablesToTruncate, true );
+    }
   /*
    * test TrueFalse format - I couldn't come up with an easy way to get an error on Get
    */
