@@ -612,7 +612,7 @@ class CRM_Profile_Form extends CRM_Core_Form
         }
         
         if ( !in_array($activityTypeId, $profileActivityTypes['Activity']) ) {
-            $errors[] = 'Activity type of specified activity Id do not support configured profile fields for this profile.'; 
+            $errors[] = 'This activity cannot be edited or viewed via this profile.'; 
         }
         
         return $errors;

@@ -48,7 +48,7 @@ class CRM_Cron_Action {
             CRM_Utils_System::authenticateScript( true );
             
             //log the execution time of script
-            CRM_Core_Error::debug_log_message( 'Cron.php' );
+            CRM_Core_Error::debug_log_message( 'action.cronjob.php' );
             
             // load bootstrap to call hooks
             require_once 'CRM/Utils/System.php';
