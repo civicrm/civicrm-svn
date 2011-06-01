@@ -785,7 +785,7 @@ AND    v.weight > 0
 /**
  * Sample hook to add more actions for Create New
  */
-function civitest_civicrm_links( $op, $objectName, $objectId, &$links ) {
+function civitest_civicrm_links( $op, $objectName, $objectId, &$links, &$mask ) {
     if ( $op == 'create.new.shorcuts' ) {
       // add link to create new profile
       $links[] = array( 'url'   => '/civicrm/admin/uf/group?action=add&reset=1',

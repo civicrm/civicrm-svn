@@ -382,6 +382,7 @@ class CRM_Utils_REST
         $skipVars = array( 'q'   => 1,
                            'json' => 1,
                            'key' => 1 );
+        
         foreach ( $_REQUEST as $n => $v ) {
             if ( ! array_key_exists( $n, $skipVars ) ) {
                 $params[$n] = $v;
@@ -418,6 +419,33 @@ class CRM_Utils_REST
       return CRM_Utils_System::theme( 'page',
                                       $template->fetch( 'CRM/Core/AjaxDoc.tpl' ),
                                       true );
+    }
+
+    /** This is a wrapper so you can call an api via json (it returns json too)
+     * http://example.org/civicrm/api/json?{"entity":"Contact","action":"Get","debug":1}
+     * works both as GET or POST
+    **/
+    static function ajaxJson () {
+      if (!empty ($_POST)) 
+        $params = $_POST;
+      else 
+        $params = $_GET;
+
+      foreach ($params as $k => $v) {
+        if ($k[0] == '{')  {
+          $p=stripslashes($k);
+          $a_params = json_decode (stripslashes($p),true);
+          if (is_array($a_params)) {
+            $_REQUEST = $a_params;
+            $_REQUEST['json'] = 1;
+            CRM_Utils_REST::ajax();
+            return;
+          }
+        }
+      }
+      require_once 'api/v3/utils.php';
+      civicrm_api3_create_error( 'missing json param, eg: /civicrm/api/json?{"entity":"Contact","action":"Get"}');
+      CRM_Utils_System::civiExit( );
     }
 
     static function ajax( ) {

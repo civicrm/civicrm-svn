@@ -96,9 +96,6 @@
 	{/if}
 	{$form.html_message.html}<br />
     </div>
-  </div><!-- /.crm-accordion-body -->
-</div><!-- /.crm-accordion-wrapper -->
-
 
 <div id="editMessageDetails">
     <div id="updateDetails" >
@@ -114,6 +111,9 @@
     <div class="content">{$form.saveTemplateName.html|crmReplace:class:huge}</div>
 </div>
 
+  </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
+
 {include file="CRM/Mailing/Form/InsertTokens.tpl"}
 
 {literal}
@@ -127,7 +127,6 @@ var currentHeight;
 var currentMetric = document.getElementById('metric').value;
 showBindFormatChkBox();
 selectPaper( document.getElementById('paper_size').value );
-document.getElementById("editMessageDetails").style.display = "block";
 
 function tokenReplHtml ( )
 {
@@ -176,6 +175,12 @@ function showBindFormatChkBox()
     }
     if ( templateExists && formatExists ) {
         document.getElementById("bindFormat").style.display = "block";
+    } else if ( formatExists && document.getElementById("saveTemplate") != null && document.getElementById("saveTemplate").checked ) {
+        document.getElementById("bindFormat").style.display = "block";
+        var yes = confirm( '{/literal}{$useThisPageFormat}{literal}' );
+        if ( yes ) {
+            document.getElementById("bind_format").checked = true;
+        }
     } else {
         document.getElementById("bindFormat").style.display = "none";
         document.getElementById("bind_format").checked = false;
@@ -214,9 +219,7 @@ function selectFormat( val, bind )
         selectPaper( data.paper_size );
         hideUpdateFormatChkBox();
         document.getElementById('bind_format').checked = bind;
-        if ( val ) {
-            showBindFormatChkBox();
-        }
+        showBindFormatChkBox();
     }, 'json');
 }
 
@@ -281,6 +284,29 @@ function convertMetric( value, from, to ) {
         case 'ptmm': return value * 25.4 / 72;
     }
     return value;
+}
+
+function showSaveDetails(chkbox)  {
+    var formatSelected = ( document.getElementById('format_id').value > 0 );
+    var templateSelected = ( document.getElementById('template') != null && document.getElementById('template').value > 0 );
+    if (chkbox.checked) {
+        document.getElementById("saveDetails").style.display = "block";
+        document.getElementById("saveTemplateName").disabled = false;
+        if ( formatSelected && ! templateSelected ) {
+            document.getElementById("bindFormat").style.display = "block";
+            var yes = confirm( '{/literal}{$useSelectedPageFormat}{literal}' );
+            if ( yes ) {
+                document.getElementById("bind_format").checked = true;
+            }
+        }
+    } else {
+        document.getElementById("saveDetails").style.display = "none";
+        document.getElementById("saveTemplateName").disabled = true;
+        if ( ! templateSelected ) {
+            document.getElementById("bindFormat").style.display = "none";
+            document.getElementById("bind_format").checked = false;
+        }
+    }
 }
 
 </script>

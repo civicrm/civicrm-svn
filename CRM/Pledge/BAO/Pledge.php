@@ -184,7 +184,12 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
                     $params['status_id'] = array_search( 'In Progress', $paymentStatusTypes );
                 } 
             } else {
-                $params['status_id'] = array_search( 'Pending', $paymentStatusTypes );
+                if ( $params['id'] ) {
+                    require_once 'CRM/Pledge/BAO/Payment.php';
+                    $params['status_id'] = CRM_Pledge_BAO_Payment::calculatePledgeStatus( $params['id'] );
+                } else {
+                    $params['status_id'] = array_search( 'Pending', $paymentStatusTypes );
+                }
             }
         }
         

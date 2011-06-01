@@ -164,7 +164,7 @@ function civicrm_api3_phone_get($params)
 {   
   _civicrm_api3_initialize(true );
   try {
-    civicrm_api3_verify_one_mandatory($params, null);
+    civicrm_api3_verify_mandatory($params);
 	
     require_once 'CRM/Core/BAO/Phone.php';
     $bao = new CRM_Core_BAO_Phone();

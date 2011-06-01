@@ -16,7 +16,7 @@ if (jQuery) {ldelim}
    script.src= resourceBase + 'js/packages/jquery/jquery.js';
    head.appendChild(script);
 {rdelim} 
-restURL = '{crmURL p="civicrm/ajax/rest" h=0}';
+restURL = '{crmURL p="civicrm/ajax/rest"}';
 if (restURL.indexOf('?') == -1 )
   restURL = restURL + '?';
 else 
@@ -43,7 +43,7 @@ function buildForm (entity, action) {
   $().crmAPI (entity,'getFields',{version : 3}
              ,{ success:function (data){
                   h='<i>Available fields (click on it to add it to the query):</i>';
-                  $.each(data, function(key, value) { 
+                  $.each(data.values, function(key, value) { 
                     name =value.name;
                     if (name == 'id') 
                       name = entity+'_id';

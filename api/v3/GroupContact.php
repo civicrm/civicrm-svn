@@ -56,8 +56,13 @@ function civicrm_api3_group_contact_get($params) {
 	try {
 		
 		civicrm_api3_verify_mandatory ( $params, null, array ('contact_id' ) );
-		$status = CRM_Utils_Array::value ( 'status', $params, 'Added' );
 		require_once 'CRM/Contact/BAO/GroupContact.php';
+		if(empty($params['contact_id'])){
+		  //ie. id passed in so we have to return something
+		  return _civicrm_api3_basic_get('CRM_Contact_BAO_GroupContact', $params);
+		}
+		$status = CRM_Utils_Array::value ( 'status', $params, 'Added' );
+
 		$values = & CRM_Contact_BAO_GroupContact::getContactGroup ( $params ['contact_id'], $status, null, false, true );
 		return civicrm_api3_create_success ( $values, $params );
 	} catch ( PEAR_Exception $e ) {
@@ -68,16 +73,48 @@ function civicrm_api3_group_contact_get($params) {
 }
 
 /**
+ * Add contact(s) to group(s)
  *
- * @param array $params
- * @return <type>
+ * @access public
+ * @param  array $params Input parameters
+ *
+ * Allowed @params array keys are:<br>
+ * "contact_id" (required) : first contact to add<br>
+ * "group_id" (required): first group to add contact(s) to<br>
+ * "contact_id.1" etc. (optional) : another contact to add<br>
+ * "group_id.1" etc. (optional) : additional group to add contact(s) to<br>
+ * "status" (optional) : one of "Added", "Pending" or "Removed" (default is "Added")
+ * {@schema Contact/GroupContact.xml}
+ * {@example GroupContactCreate.php 0}
+ * 
+ * @return array Information about operation results
+ *
+ * On success, the return array will be structured as follows:
+ * <code>array(
+ *   "is_error" => 0,
+ *   "version"  => 3,
+ *   "count"    => 3,
+ *   "values" => array(
+ *     "not_added"   => integer,
+ *     "added"       => integer,
+ *     "total_count" => integer
+ *   )
+ * )</code>
+ * 
+ * On failure, the return array will be structured as follows:
+ * <code>array(
+ *   'is_error' => 1,
+ *   'error_message' = string,
+ *   'error_data' = mixed or undefined
+ * )</code>
+ * 
  */
 function civicrm_api3_group_contact_create($params) {
 	_civicrm_api3_initialize ( true );
 	try {
 		civicrm_api3_verify_mandatory ( $params, 'CRM_Contact_BAO_GroupContact' );
-		
-		return _civicrm_api3_group_contact_common ( $params, 'add' );
+		$action = CRM_Utils_Array::value('status',$params,'Added');
+		return _civicrm_api3_group_contact_common ( $params, $action );
 	} catch ( PEAR_Exception $e ) {
 		return civicrm_api3_create_error ( $e->getMessage () );
 	} catch ( Exception $e ) {
@@ -89,35 +126,25 @@ function civicrm_api3_group_contact_create($params) {
  *
  * @param <type> $params
  * @return <type>
+ * @deprecated
  */
+
 function civicrm_api3_group_contact_delete($params) {
-	_civicrm_api3_initialize ( true );
-	try {
-		civicrm_api3_verify_mandatory ( $params, null, array ('contact_id', 'group_id' ) );
-		return _civicrm_api3_group_contact_common ( $params, 'remove' );
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
+		$params['status'] = 'Removed';
+		return civicrm_api ( 'GroupContact','Create',$params);
 
 }
+
 
 /**
  *
  * @param <type> $params
  * @return <type>
+ * @deprecated
  */
 function civicrm_api3_group_contact_pending($params) {
-	_civicrm_api3_initialize ( true );
-	try {
-		civicrm_api3_verify_mandatory ( $params );
-		return _civicrm_api3_group_contact_common ( $params, 'pending' );
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
+		$params['status'] = 'Pending';
+		return civicrm_api ( 'GroupContact','Create',$params);
 }
 
 /**
@@ -126,7 +153,7 @@ function civicrm_api3_group_contact_pending($params) {
  * @param <type> $op
  * @return <type>
  */
-function _civicrm_api3_group_contact_common($params, $op = 'add') {
+function _civicrm_api3_group_contact_common($params, $op = 'Added') {
 	
 	$contactIDs = array ();
 	$groupIDs = array ();
@@ -147,9 +174,9 @@ function _civicrm_api3_group_contact_common($params, $op = 'add') {
 	}
 	
 	$method = CRM_Utils_Array::value ( 'method', $params, 'API' );
-	if ($op == 'add') {
+	if ($op == 'Added') {
 		$status = CRM_Utils_Array::value ( 'status', $params, 'Added' );
-	} elseif ($op == 'pending') {
+	} elseif ($op == 'Pending') {
 		$status = CRM_Utils_Array::value ( 'status', $params, 'Pending' );
 	} else {
 		$status = CRM_Utils_Array::value ( 'status', $params, 'Removed' );
@@ -158,7 +185,7 @@ function _civicrm_api3_group_contact_common($params, $op = 'add') {
 	
 	require_once 'CRM/Contact/BAO/GroupContact.php';
 	$values = array ();
-	if ($op == 'add' || $op == 'pending') {
+	if ($op == 'Added' || $op == 'Pending') {
 		$values ['total_count'] = $values ['added'] = $values ['not_added'] = 0;
 		foreach ( $groupIDs as $groupID ) {
 			list ( $tc, $a, $na ) = CRM_Contact_BAO_GroupContact::addContactsToGroup ( $contactIDs, $groupID, $method, $status, $tracking );
@@ -177,7 +204,9 @@ function _civicrm_api3_group_contact_common($params, $op = 'add') {
 	}
 	return civicrm_api3_create_success ( $values );
 }
-
+/*
+ * @deprecated - this should be part of create but need to know we aren't missing something
+ */
 function civicrm_api3_group_contact_update_status($params) {
 	_civicrm_api3_initialize ( true );
 	try {

@@ -107,36 +107,14 @@ class CRM_Contact_Form_Task_PDFLetterCommon
         $form->add( 'checkbox', 'bind_format', ts('Always use this Page Format with the selected Template') );
         $form->add( 'checkbox', 'update_format', ts('Update Page Format (this will affect all templates that use this format)') );
 
+        $form->assign('useThisPageFormat', ts('Always use this Page Format with the new template?') );
+        $form->assign('useSelectedPageFormat', ts('Should the new template always use the selected Page Format?') );
         $form->assign('totalSelectedContacts',count($form->_contactIds));
 
         require_once "CRM/Mailing/BAO/Mailing.php";
         CRM_Mailing_BAO_Mailing::commonLetterCompose( $form );
-        if ( $form->_single ){
-            $cancelURL   = CRM_Utils_System::url('civicrm/contact/view',
-                                                 "reset=1&cid={$form->_cid}&selectedChild=activity",
-                                                 false, null, false);
-            if( $form->get( 'action' ) == CRM_Core_Action::VIEW ) {
-                $form->addButtons( array(
-                                         array ( 'type'      => 'cancel',
-                                                 'name'      => ts('Done'),
-                                                 'js'        => array( 'onclick' => "location.href='{$cancelURL}'; return false;" ) ),
-                                         )
-                                   );
-            } else {
-                $form->addButtons( array(
-                                         array ( 'type'      => 'submit',
-                                                 'name'      => ts('Make PDF Letter'),
-                                                 'isDefault' => true   ),
-                                         array ( 'type'      => 'cancel',
-                                                 'name'      => ts('Done'),
-                                                 'js'        => array( 'onclick' => "location.href='{$cancelURL}'; return false;" ) ),
-                                         )
-                                   );
-            }
-            
-        } else {
-            $form->addDefaultButtons( ts('Make PDF Letters') );            
-        }
+
+        $form->addDefaultButtons( ts('Make PDF Letters') );            
         
         $form->addFormRule( array( 'CRM_Contact_Form_Task_PDFLetterCommon', 'formRule' ), $form );
     }
@@ -196,6 +174,10 @@ class CRM_Contact_Form_Task_PDFLetterCommon
                                       'msg_subject' => NULL,
                                       'is_active'   => true );
 
+            $messageTemplate['pdf_format_id'] = 'null';
+            if ( CRM_Utils_Array::value( 'bind_format', $formValues ) && $formValues['format_id'] > 0 ) {
+                $messageTemplate['pdf_format_id'] = $formValues['format_id'];
+            }
             if ( $formValues['saveTemplate'] ) {
                 $messageTemplate['msg_title'] = $formValues['saveTemplateName'];
                 CRM_Core_BAO_MessageTemplates::add( $messageTemplate );
@@ -207,8 +189,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon
                 CRM_Core_BAO_MessageTemplates::add( $messageTemplate );
             }
         }
-
-        if ( $formValues['template'] > 0 ) {
+        else if ( $formValues['template'] > 0 ) {
             if ( CRM_Utils_Array::value( 'bind_format', $formValues ) && $formValues['format_id'] > 0 ) {
                 $query = "UPDATE civicrm_msg_template SET pdf_format_id = {$formValues['format_id']} WHERE id = {$formValues['template']}";
             } else {

@@ -196,9 +196,9 @@ class CRM_Admin_Form_LabelFormats extends CRM_Admin_Form
         $bao = new CRM_Core_BAO_LabelFormat();
         $bao->saveLabelFormat( $values, $this->_id );
 
-        $status = ts( "Your new Label Format titled <strong>{$values['label']}</strong> has been saved." );
+        $status = ts('Your new Label Format titled <strong>%1</strong> has been saved.', array(1 => $values['label']));
         if ( $this->_action & CRM_Core_Action::UPDATE ) { 
-            $status = ts( "Your Label Format titled <strong>{$values['label']}</strong> has been updated." );
+            $status = ts('Your Label Format titled <strong>%1</strong> has been updated.', array(1 => $values['label']));
         }
         CRM_Core_Session::setStatus( $status );
     }
