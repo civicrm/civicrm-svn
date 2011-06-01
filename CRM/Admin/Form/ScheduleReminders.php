@@ -168,6 +168,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             $defaults = $this->_values;
             $entityValue = explode( CRM_Core_DAO::VALUE_SEPARATOR, $defaults['entity_value'] );
             $entityStatus = explode( CRM_Core_DAO::VALUE_SEPARATOR, $defaults['entity_status'] );
+            $defaults['entity'][0] = $defaults['mapping_id'];
             $defaults['entity'][1] = $entityValue;
             $defaults['entity'][2] = $entityStatus;
             $defaults['text_message'] = $defaults['body_text'] ;
