@@ -167,3 +167,47 @@
     field_type          ="select"
     invert              = 0
 }
+
+ {literal}
+ <script type='text/javascript'>
+     cj(function() {
+         cj('#entity\\[0\\]').click( function( ) {
+              buildSelect("start_action_date");
+	      buildSelect1("recipient");
+         });    
+     });
+     function buildSelect( selectID ) {
+         var elementID = '#' +  selectID;
+         cj( elementID ).html('');
+	 var mappingID = cj('#entity\\[0\\]').val();
+         var postUrl = "{/literal}{crmURL p='civicrm/ajax/mapping' h=0}{literal}";
+         cj.post( postUrl, { mappingID: mappingID},
+             function ( response ) {
+                 response = eval( response );
+                 for (i = 0; i < response.length; i++) {
+                     cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
+                 }
+             }
+         );
+
+     }
+
+ function buildSelect1( selectID ) {
+         var elementID = '#' +  selectID;
+         cj( elementID ).html('');
+	 var mappingID = cj('#entity\\[0\\]').val();
+         var postUrl1 = "{/literal}{crmURL p='civicrm/ajax/mapping1' h=0}{literal}";
+
+         cj.post( postUrl1, { mappingID: mappingID},
+             function ( response ) {
+                 response = eval( response );
+                 for (i = 0; i < response.length; i++) {
+                     cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
+                 }
+             }
+         );
+     }
+  
+ </script>
+ {/literal}
+ 

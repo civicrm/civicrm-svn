@@ -44,9 +44,12 @@ require_once 'CRM/Core/DAO/ActionMapping.php';
 class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
 {
 
-    static function getMapping(  ) 
+    static function getMapping( $id = null ) 
     {
-        $dao  = new CRM_Core_DAO_ActionMapping( );
+        $dao = new CRM_Core_DAO_ActionMapping( );
+        if ($id) {
+            $dao->id = $id;
+        }
         $dao->find(  );
 
         $mapping = $defaults = array();
@@ -58,9 +61,9 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
     }
 
 
-    static function getSelection(  ) 
+    static function getSelection( $id = null ) 
     {
-        $mapping  = self::getMapping(  );
+        $mapping  = self::getMapping( $id );
 
         require_once 'CRM/Core/PseudoConstant.php';
         require_once 'CRM/Event/PseudoConstant.php';
@@ -152,8 +155,61 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
                 break;
             }
         }
-
+       
         return array( $sel1 , $sel2, $sel3, $sel4, $sel5 );
+    }
+
+
+
+    static function getSelection1( $id = null ) 
+    {
+        $mapping  = self::getMapping( $id );
+
+        require_once 'CRM/Core/PseudoConstant.php';
+        require_once 'CRM/Event/PseudoConstant.php';
+        $participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
+        $activityContacts = CRM_Core_PseudoConstant::activityContacts();
+        $sel1 = $sel2 = $sel3 = $sel4 = $sel5 = array();
+
+        foreach ( $mapping as $value ) {
+            $entityValue  = $value['entity_value'];
+            $entityStatus = $value['entity_status'];
+            $entityDateStart = $value['entity_date_start'];
+            $entityDateEnd = $value['entity_date_end'];
+            $entityRecipient = $value['entity_recipient'];
+            $key = $value['id'];
+           
+
+            switch ($entityDateStart) {
+            case 'activity_date_time':
+                $sel4[$entityDateStart] = ts('Activity Date Time');
+                break;
+
+            case 'event_start_date':
+                $sel4[$entityDateStart] = ts('Event Start Date');
+                break;
+            }
+
+            switch ($entityDateEnd) {
+            case 'event_end_date':
+                $sel4[$entityDateEnd] = ts('Event End Date');
+                break;
+            }
+
+            switch ($entityRecipient) {
+            case 'activity_contacts':
+                $sel5[$id] = $activityContacts + array( 'manual' => ts('Manual'), 'group' => ts('CiviCRM Group')  );
+                break;
+                
+            case 'civicrm_participant_status_type':
+                $sel5[$id] = $participantStatus + array( 'manual' => ts('Manual'), 'group' => ts('CiviCRM Group') );
+                break;
+            }
+            
+        }
+       
+       
+        return array( $sel1 , $sel2, $sel3, $sel4, $sel5[$id] );
     }
 
     /**
