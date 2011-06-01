@@ -189,7 +189,7 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation
      */
     static function getNavigationList( ) 
     {
-        $cacheKeyString = "navigationList ";
+        $cacheKeyString = "navigationList";
         $whereClause    = '';
 
         $config = CRM_Core_Config::singleton( );
