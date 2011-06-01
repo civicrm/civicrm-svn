@@ -387,8 +387,8 @@
           return;
         }
 
-        $('<div id="crm-container"></div>')
-            .html('<div id="crm-dashlet-fullscreen-content">Loading...</div>')
+        $('<div id="crm-dashlet-container"></div>')
+            .html('<div id="crm-container"><div id="crm-dashlet-fullscreen-content">Loading...</div></div>')
             .dialog({
                 autoOpen: true,
                 title: widget.title,
@@ -398,6 +398,7 @@
                 position: [100,125],
                 close: function(event, ui) {
                     cj(this).dialog("destroy");
+                    $('#crm-dashlet-container').remove();
                     $('#crm-dashlet-fullscreen-content').remove();
                 }
             });
