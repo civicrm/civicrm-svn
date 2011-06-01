@@ -352,8 +352,10 @@ if ( php_sapi_name() == "cli" ) {
     require_once 'CRM/Core/Lock.php';
     $lock = new CRM_Core_Lock('EmailProcessor');
     
-    if (!$lock->isAcquired()) 
+    if (!$lock->isAcquired()) {
         throw new Exception('Could not acquire lock, another EmailProcessor process is running');
+    }
+
     // check if the script is being used for civimail processing or email to 
     // activity processing.
     if ( isset( $cli->args[0] ) && $cli->args[0] == "activities" ) {
@@ -362,37 +364,36 @@ if ( php_sapi_name() == "cli" ) {
         EmailProcessor::processBounces();
     }
     $lock->release();
-    exit;
 } else {
     session_start();
     require_once '../civicrm.config.php';
     require_once 'CRM/Core/Config.php';
     $config = CRM_Core_Config::singleton();
     CRM_Utils_System::authenticateScript(true);
-}
 
-//log the execution of script
-CRM_Core_Error::debug_log_message( 'EmailProcessor.php');
+    //log the execution of script
+    CRM_Core_Error::debug_log_message( 'EmailProcessor.php');
 
-require_once 'CRM/Core/Lock.php';
-$lock = new CRM_Core_Lock('EmailProcessor');
+    require_once 'CRM/Core/Lock.php';
+    $lock = new CRM_Core_Lock('EmailProcessor');
 
-if ($lock->isAcquired()) {
+    if (! $lock->isAcquired()) {
+        throw new Exception('Could not acquire lock, another EmailProcessor process is running');
+    }
+
     // try to unset any time limits
     if ( ! ini_get('safe_mode') ) {
         set_time_limit(0);
     }
-    
+        
     // cleanup directories with old mail files (if they exist): CRM-4452
     EmailProcessor::cleanupDir($config->customFileUploadDir . DIRECTORY_SEPARATOR . 'CiviMail.ignored');
     EmailProcessor::cleanupDir($config->customFileUploadDir . DIRECTORY_SEPARATOR . 'CiviMail.processed');
-
+    
     // check if the script is being used for civimail processing or email to 
     // activity processing.
     $isCiviMail = CRM_Utils_Array::value( 'emailtoactivity', $_REQUEST ) ? false : true;
     EmailProcessor::process($isCiviMail);
-} else {
-    throw new Exception('Could not acquire lock, another EmailProcessor process is running');
-}
 
-$lock->release();
+    $lock->release();
+}

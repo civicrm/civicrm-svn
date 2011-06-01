@@ -1,18 +1,26 @@
-<?php 
+<?php
 
+
+
+/*
+ 
+ */
 function activity_create_example(){
-    $params = array(
-                    'source_contact_id'  => '17',
-                    'subject'            => 'Make-it-Happen Meeting',
-                    'activity_date_time' => '20110316',
-                    'duration'           => '120',
-                    'location'           => 'Pensulvania',
-                    'details'            => 'a test activity',
-                    'status_id'          => '1',
-                    'activity_name'      => 'Test activity type',
-                    'version'            => '3',
-                    'priority_id'        => '1',
-                    );
+$params = array( 
+  'source_contact_id' => 17,
+  'subject' => 'Make-it-Happen Meeting',
+  'activity_date_time' => '20110316',
+  'duration' => 120,
+  'location' => 'Pensulvania',
+  'details' => 'a test activity',
+  'status_id' => 1,
+  'activity_type_id' => 29,
+  'version' => 3,
+  'priority_id' => 1,
+  'target_contact_id' => 17,
+  'assignee_contact_id' => 17,
+);
+
   require_once 'api/api.php';
   $result = civicrm_api( 'activity','create',$params );
 
@@ -24,42 +32,54 @@ function activity_create_example(){
  */
 function activity_create_expectedresult(){
 
-  $expectedResult = 
-     array(
-           'is_error' => '0',
-           'version'  => '3',
-           'count'    => '1',
-           'id'       => '1',
-           'values'   => array( '1' =>  array(
-                                              'id'                  => '1',
-                                              'source_contact_id'   => '17',
-                                              'source_record_id'    => '',
-                                              'activity_type_id'    => '',
-                                              'subject'             => 'Make-it-Happen Meeting',
-                                              'activity_date_time'  => '20110316',
-                                              'duration'            => '120',
-                                              'location'            => 'Pensulvania',
-                                              'phone_id'            => '',
-                                              'phone_number'        => '',
-                                              'details'             => 'a test activity',
-                                              'status_id'           => '1',
-                                              'priority_id'         => '1',
-                                              'parent_id'           => '',
-                                              'is_test'             => '',
-                                              'medium_id'           => '',
-                                              'is_auto'             => '',
-                                              'relationship_id'     => '',
-                                              'is_current_revision' => '',
-                                              'original_id'         => '',
-                                              'result'              => '',
-                                              'is_deleted'          => '',
-                                              'campaign_id'         => '',
-                                              'engagement_level'    => '',
-                                              ),
-                                ),
-           );
-  
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => 1,
+          'source_contact_id' => 17,
+          'source_record_id' => '',
+          'activity_type_id' => 29,
+          'subject' => 'Make-it-Happen Meeting',
+          'activity_date_time' => '20110316000000',
+          'duration' => 120,
+          'location' => 'Pensulvania',
+          'phone_id' => '',
+          'phone_number' => '',
+          'details' => 'a test activity',
+          'status_id' => 1,
+          'priority_id' => 1,
+          'parent_id' => '',
+          'is_test' => '',
+          'medium_id' => '',
+          'is_auto' => '',
+          'relationship_id' => '',
+          'is_current_revision' => '',
+          'original_id' => '',
+          'result' => '',
+          'is_deleted' => '',
+          'campaign_id' => '',
+          'engagement_level' => '',
+        ),
+    ),
+);
+
   return $expectedResult  ;
 }
 
-
+
+
+
+/*
+* This example has been generated from the API test suite. The test that created it is called
+* activity_create 
+* You can see the outcome of the API tests at 
+* http://tests.dev.civicrm.org/trunk/results-api_v3
+* and review the wiki at
+* http://wiki.civicrm.org/confluence/display/CRMDOC40/CiviCRM+Public+APIs
+* Read more about testing here
+* http://wiki.civicrm.org/confluence/display/CRM/Testing
+*/

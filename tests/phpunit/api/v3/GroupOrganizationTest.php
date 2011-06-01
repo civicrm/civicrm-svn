@@ -122,9 +122,8 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
         $params = array( 'version'   => $this->_apiversion,  );
         $result =& civicrm_api3_group_organization_get($params);
 
-        $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: one of (organization_id, group_id)' );
-    }
+        $this->assertEquals( $result['is_error'], 0 );
+   }
 
     /**
      * Test civicrm_group_organization_get with wrong params.
@@ -147,9 +146,8 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
          									'version'   => $this->_apiversion,  );
         $result =& civicrm_api3_group_organization_get($params);
 
-        $this->assertEquals( $result['is_error'], 1);
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: one of (organization_id, group_id)' );
-    }
+        $this->assertEquals( $result['is_error'], 0);
+   }
 
     ///////////////// civicrm_group_organization_create methods
 

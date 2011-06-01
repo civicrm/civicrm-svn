@@ -4,6 +4,6 @@ package = CiviCRM
 core = 7.x
 version = 4.0
 dependencies[] = civicrm
-
+configure = admin/config/civicrm/civicrm_group_roles
 files[] = civicrm_group_roles.module
 files[] = civicrm_group_roles.install

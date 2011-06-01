@@ -206,10 +206,12 @@ class api_v3_EventTest extends CiviUnitTestCase
 
         $this->assertEquals( $result['is_error'], 0 );
         $params =array('id' => $result['id'], 'version'=>3, 'max_participants'        => 150,);
-        $updated = civicrm_api('Event','Create',$params);
+        civicrm_api('Event','Create',$params);
+        $updated = civicrm_api('Event','Get',$params);
         $this->documentMe($this->_params,$updated,__FUNCTION__,__FILE__); 
         $this->assertEquals(  $updated['is_error'], 0 );
-        $this->assertEquals( 150, $updated['values'][$updated['id']]['max_participants'] );
+        $this->assertEquals( 150, $updated['values'][$result['id']]['max_participants'] );
+        $this->assertEquals( 'Annual CiviCRM meet', $updated['values'][$result['id']]['title'] );
         civicrm_api($this->_entity,'Delete',array('version' => 3 , 'id' => $result['id'])) ;    
  
  

@@ -1,4 +1,4 @@
-<span id='fileOnCaseStatusMsg' style="display:none;"></span>
+<span id="fileOnCaseStatusMsg-{$context}" style="display:none;"></span>
 <div class="crm-activity-selector-{$context}">
 <div class="crm-accordion-wrapper crm-search_filters-accordion crm-accordion-closed">
  <div class="crm-accordion-header">

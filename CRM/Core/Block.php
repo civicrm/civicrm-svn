@@ -394,7 +394,11 @@ class CRM_Core_Block {
         
         // call links hook to add user defined links
         require_once 'CRM/Utils/Hook.php';
-        CRM_Utils_Hook::links( 'create.new.shorcuts', null, CRM_Core_DAO::$_nullObject, $values );
+        CRM_Utils_Hook::links( 'create.new.shorcuts',
+                               null,
+                               CRM_Core_DAO::$_nullObject,
+                               $values,
+                               CRM_Core_DAO::$_nullObject );
                     
         self::setProperty( self::CREATE_NEW, 'templateValues', array( 'shortCuts' => $values ) );
     }

@@ -108,7 +108,7 @@ function civicrm_api3_group_get( $params )
 
     $groupObjects = CRM_Contact_BAO_Group::getGroups( $params, $returnProperties );
     if ( empty( $groupObjects ) ) {
-        return civicrm_api3_create_error( 'No such group exists' );
+        return civicrm_api3_create_success(FALSE );
     } 
     $groups       = array( );
     foreach( $groupObjects as $group ) {

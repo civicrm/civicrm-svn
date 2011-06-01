@@ -55,7 +55,8 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     $function = civicrm_api_get_function_name($entity, $action,$version);
     civicrm_api_include($entity,null,$version);
     if ( !function_exists ($function ) ) {
-        if ( strtolower($action) == "getfields") { 
+      switch (strtolower($action)){
+        case "getfields":
             $version = 3;
             $dao = _civicrm_api3_get_DAO ($entity);
             if (empty($dao)) {
@@ -65,8 +66,38 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
             require_once ($file); 
             $d = new $dao();
             return civicrm_api3_create_success($d->fields());
-        }
-        if ( strtolower($action) == "update") {
+            break;
+        case "getcount":
+          $result=civicrm_api ($entity,'get',$params);
+          $result = $result['count'];
+          break;
+        case "getsingle":
+          $result = civicrm_api ($entity,'get',$params);
+          
+          if($result['is_error'] == 0 && $result['count'] === 1){
+            foreach ($result['values'] as $key => $values) {
+              $result = $values;
+            }
+          }
+          break;
+        case "getvalue":
+          $result=civicrm_api ($entity,'get',$params);
+          if($result['is_error'] ==0 && $result['count'] ==1){
+            foreach ($result['values'] as $key => $values) {
+            //this is for when 'return' is a value 
+              if(CRM_Utils_Array::value('return',$params) && CRM_Utils_Array::value($params['return'],$values) ){
+                  $result = $values[$params['return']];      
+              }else{
+                foreach ($params as $field => $value){
+                  if (substr($field,0,6) == 'return')
+                    $result =  $values[substr($field,7)];
+                  }
+              }
+            }     
+          }
+          break;
+       
+        case "update":
             //$key_id = strtolower ($entity)."_id";
             $key_id = "id";
             if (!array_key_exists ($key_id,$params)) {
@@ -84,16 +115,31 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
             $existing= array_pop($existing['values'] ); 
             $p = array_merge ( $existing,$params );
             return civicrm_api ($entity, 'create',$p);
-
+            break;
+        
+        default:
+            return $errorFnName( "API ($entity,$action) does not exist (join the API team and implement $function" );
         }
-
-        return $errorFnName( "API ($entity,$action) does not exist (join the API team and implement $function" );
+     }else{
+       $result = isset($extra) ? $function($params, $extra) : $function($params);
+     }
+     if(CRM_Utils_Array::value('format.is_success', $params) == 1){
+       if($result['is_error'] === 0){
+         return 1;
+       }else {
+         return 0;
+       }
+     }
+     if(CRM_Utils_Array::value('format.only_id', $params) && isset($result['id'])){
+      return $result['id'];
     }
-    $result = isset($extra) ? $function($params, $extra) : $function($params);
-    
     if (CRM_Utils_Array::value( 'is_error', $result, 0 ) == 0) {
         foreach($params as $field => $params){
-            if (substr($field,0, 3) == 'api' && is_array($params)){
+            
+            if (substr($field,0, 3) == 'api' && (is_array($params) || $params === 1) ){
+                if ($params === 1){
+                  $params = array();
+                }
                 $separator = $field[3]; // can be api_ or api.
                 if (!($separator == '.' || $separator == '_')) {
                     continue;
@@ -103,6 +149,15 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
                 $action = empty($subAPI[2])?$action:$subAPI[2];
                 $subParams  = array();
                 $subParams[strtolower($entity) . "_id"] = $result['id'];
+                $subParams["entity_id"] = $result['id'];
+                if($result['values'][$result['id']]['entity_table'] == $subAPI[1] ) {
+                  $subParams['id'] = $result['values'][$result['id']]['entity_id'];
+              
+                }
+                if (strtolower(CRM_Utils_Array::value(2,$subAPI)) == 'delete'){
+                  $subParams["id"] = $result['id'];
+                }
+                $subParams['entity_table'] = $entity;
                 $subParams['version'] = $version;
                 $subParams['sequential'] = 1;
                 if(array_key_exists(0, $params)){
@@ -119,13 +174,12 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
             }
         }
     }
-    
-    
+
     return $result;
   } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage(),null,$params );
   } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage(),null,$params );
   }
 }
 
