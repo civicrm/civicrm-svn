@@ -109,6 +109,8 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
      * @access public
      */
     function __construct( $id, $gid, $restrict, $skipPermission = false, $profileIds = null ) {
+        parent::__construct( );
+
         $this->_id       = $id;
         $this->_gid      = $gid;
         $this->_restrict = $restrict;
@@ -122,8 +124,6 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
         $this->_activityId = CRM_Utils_Request::retrieve('aid', 'Positive', $this, false, 0, 'GET');
         require_once 'CRM/Core/BAO/UFField.php';
         $this->_isContactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileType( $this->_gid );
-        
-        parent::__construct( );
     }
 
     /**
