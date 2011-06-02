@@ -41,7 +41,6 @@
  */
 require_once 'api/v3/utils.php';
 
-require_once 'api/v3/ContactActivity.php';
 require_once 'CRM/Core/BAO/UFGroup.php';
 require_once 'CRM/Core/BAO/UFField.php';
 require_once 'CRM/Core/Permission.php';
@@ -146,7 +145,7 @@ function civicrm_api3_profile_set( $params ) {
             return civicrm_api3_create_error('Can not retrieve values for profiles include fields for more than one record type.' );
         }          
 
-        $profileParams = $missingParams = array( );
+        $contactParams = $activityParams = $missingParams = array( );
 
         $profileFields = CRM_Core_BAO_UFGroup::getFields( $params['profile_id'], 
                                                           false, 
@@ -157,14 +156,10 @@ function civicrm_api3_profile_set( $params ) {
                                                           null, 
                                                           true,
                                                           null, 
-                                                          CRM_Core_Permission::EDIT);
+                                                          CRM_Core_Permission::EDIT );
 
-        $profileParams['version']    = 3;
-        $profileParams['contact_id'] = $params['contact_id'];
-        $profileParams['profile_id'] = $params['profile_id'];
         if ( $isContactActivityProfile ) {
             civicrm_api3_verify_mandatory($params, null, array('activity_id'));
-            $profileParams['activity_id'] = $params['activity_id'];
 
             require_once 'CRM/Profile/Form.php';
             $errors = CRM_Profile_Form::validateContactActivityProfile( $params['activity_id'], 
@@ -182,31 +177,57 @@ function civicrm_api3_profile_set( $params ) {
                 }
             }
 
-            $profileParams[$fieldName] = isset($params[$fieldName]) ? $params[$fieldName] : '';
+            if ( !isset($params[$fieldName]) ) {
+                continue;
+            }
+            
+            $value = $params[$fieldName];
+            if ( $params[$fieldName] && isset($params[$fieldName.'_id']) ) {
+                $value = $params[$fieldName.'_id'];
+            }
+            
+            if ( $isContactActivityProfile && CRM_Utils_Array::value('field_type', $field) == 'Activity' ) { 
+                $activityParams[$fieldName] = $value;
+            } else {
+                $contactParams[$fieldName] = $value;
+            }
         }
  
         if ( !empty($missingParams) ) {
             return civicrm_api3_create_error("Missing required parameters for profile id {$params['profile_id']}: ". implode(', ', $missingParams) ); 
         }
 
-        $profileParams['skip_custom'] = 1;
-        $updatedParams = civicrm_api3_profile_apply( $profileParams );
-        if ( CRM_Utils_Array::value('is_error',$updatedParams ) ) {
-            return $updatedParams;
+        $contactParams['version']    = 3;
+        $contactParams['contact_id'] = $params['contact_id'];
+        $contactParams['profile_id'] = $params['profile_id'];
+        $contactParams['skip_custom'] = 1;
+
+        $contactProfileParams = civicrm_api3_profile_apply( $contactParams );
+        if ( CRM_Utils_Array::value('is_error', $contactProfileParams) ) {
+            return $contactProfileParams;
         } 
         
-        $groups = $tags = array( );
-        if ( isset($updatedParams['values']['group']) ) {
-            $groups = $updatedParams['values']['group'];
-            unset($updatedParams['values']['group']);
-        }
+        // Contact profile fields 
+        $profileParams = $contactProfileParams['values'];
 
-        if ( isset($updatedParams['values']['tag']) ) {
-            $tags = $updatedParams['values']['tag'];
-            unset($updatedParams['values']['tag']);
+        // If profile having activity fields
+        if ( $isContactActivityProfile && !empty($activityParams) ) {
+            $activityParams['id'] = $params['activity_id'];
+            $profileParams['api.activity.create'] = $activityParams;
         }
         
-        $result = civicrm_api3_contact_activity_set( $updatedParams['values'] );
+        $groups = $tags = array( );
+        if ( isset($profileParams['group']) ) {
+            $groups = $profileParams['group'];
+            unset($profileParams['group']);
+        }
+
+        if ( isset($profileParams['tag']) ) {
+            $tags = $profileParams['tag'];
+            unset($profileParams['tag']);
+        }
+               
+        $result = civicrm_api('contact', 'create', $profileParams);
         if ( CRM_Utils_Array::value('is_error', $result) ) {
             return $result; 
         }
