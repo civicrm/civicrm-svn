@@ -5,17 +5,22 @@
 /*
  
  */
-function survey_get_example(){
+function membership_update_example(){
 $params = array( 
+  'contact_id' => 26,
+  'membership_type_id' => 25,
+  'join_date' => '2009-01-21',
+  'start_date' => '2009-01-21',
+  'end_date' => '2009-12-21',
+  'source' => 'Payment',
+  'is_override' => 1,
+  'status_id' => 31,
   'version' => 3,
-  'title' => 'survey title',
-  'activity_type_id' => '',
-  'max_number_of_contacts' => 12,
-  'instructions' => 'Call people, ask for money',
+  'custom_3' => 'custom string',
 );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'survey','get',$params );
+  $result = civicrm_api( 'membership','update',$params );
 
   return $result;
 }
@@ -23,24 +28,11 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function survey_get_expectedresult(){
+function membership_update_expectedresult(){
 
   $expectedResult = array( 
+  'id' => 17,
   'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'id' => 1,
-  'values' => array( 
-      '1' => array( 
-          'id' => '1',
-          'title' => 'survey title',
-          'instructions' => 'Call people, ask for money',
-          'max_number_of_contacts' => '12',
-          'is_active' => '1',
-          'is_default' => '',
-          'created_date' => '2011-06-02 02:38:30',
-        ),
-    ),
 );
 
   return $expectedResult  ;
@@ -51,7 +43,7 @@ function survey_get_expectedresult(){
 
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* survey_get 
+* membership_update 
 * You can see the outcome of the API tests at 
 * http://tests.dev.civicrm.org/trunk/results-api_v3
 * and review the wiki at

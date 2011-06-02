@@ -39,7 +39,7 @@ function note_get_expectedresult(){
           'entity_id' => '4',
           'note' => 'hello I am testing Note',
           'contact_id' => '4',
-          'modified_date' => '2011-05-31',
+          'modified_date' => '2011-06-02',
           'subject' => 'Test Note',
           'privacy' => '',
         ),
