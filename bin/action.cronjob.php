@@ -61,8 +61,6 @@ class CRM_Cron_Action {
         require_once 'CRM/Core/Config.php';
 
         $config = CRM_Core_Config::singleton();
-
-        $this->_tempTable = "civicrm_cron_action_temp";
     }
 
     public function run( )
@@ -93,14 +91,16 @@ class CRM_Cron_Action {
         $actionSchedule->id = $mappingID;
 
         if ( $actionSchedule->find( true ) ) {
-            $query = "select * from $this->_tempTable LIMIT 1";
-            $dao   = CRM_Core_DAO::executeQuery( $query );
-            
+            $query = "
+SELECT * 
+FROM  civicrm_action_log 
+WHERE action_schedule_id = %1 AND action_date_time IS NULL";
+            $dao   = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
+
             // QUESTION: in cases when same contact has multiple activites for example, should we 
             // send multiple mails ? if not should the log be maintained for every activity ?
             while ( $dao->fetch() ) {
-                $toEmail  = CRM_Contact_BAO_Contact::getPrimaryEmail( $dao->contact_id );
-
+                $toEmail = CRM_Contact_BAO_Contact::getPrimaryEmail( $dao->contact_id );
                 if ( $toEmail ) {
                     $result = CRM_Core_BAO_ScheduleReminders::sendReminder( $dao->contact_id,
                                                                             $toEmail,
@@ -110,27 +110,12 @@ class CRM_Cron_Action {
                         // we could not send an email, for now we ignore, CRM-3406
                     }
                     
-                    // do action logging
-                    $actionLogParams  = array( 'entity_id'          => $dao->entity_id,
-                                               'entity_table'       => $mapping->entity,
-                                               'action_schedule_id' => $actionSchedule->id, // action_schedule Id
-                                               );
-                    // FIXME: repetition_number should be updated by create function itself.
-                    CRM_Core_BAO_ActionLog::create( $actionLogParams );
                 }
-                
-                // delete processed record from temp table
-                $query = "DELETE from {$this->_tempTable} WHERE contact_id = %1 AND entity_id = %2 AND entity_table = %3";
-                CRM_Core_DAO::executeQuery( $query, array( 1 => array( $dao->contact_id, 'Integer' ),
-                                                           2 => array( $dao->entity_id,  'Integer' ), 
-                                                           3 => array( $mapping->entity, 'String'  ) ) );
-                $dao->free();
-                
-                // get the next record for processing
-                $query = "select * from {$this->_tempTable} LIMIT 1";
-                $dao   = CRM_Core_DAO::executeQuery( $query );
+                //FIXME: set is_error and message for errors or no email.
+                $query = "UPDATE civicrm_action_log SET action_date_time = NOW() WHERE id = %1";
+                CRM_Core_DAO::executeQuery( $query, array( 1 => array( $dao->id, 'Integer' ) ) );
             }
-            CRM_Core_DAO::executeQuery( "DROP TABLE IF EXISTS {$this->_tempTable}" );
+            $dao->free();
         }
     }
     
@@ -139,14 +124,6 @@ class CRM_Cron_Action {
         $actionSchedule->id = $mappingID;
 
         if ( $actionSchedule->find( true ) ) {
-            $sql = "
-CREATE TEMPORARY TABLE {$this->_tempTable} ( contact_id   int, 
-                                             entity_id    int, 
-                                             entity_table varchar(128), 
-                                             UNIQUE UI_contact_entity_id_table (contact_id, entity_id, entity_table) ) 
-ENGINE=HEAP";
-            CRM_Core_DAO::executeQuery( $sql );
-
             require_once 'CRM/Core/DAO/ActionMapping.php';
             $mapping = new CRM_Core_DAO_ActionMapping( );
             $mapping->id = $mappingID;
@@ -168,23 +145,27 @@ ENGINE=HEAP";
             if ( $mapping->entity == 'civicrm_activity' ) {
                 switch ( $recipientOptions[$actionSchedule->recipient] ) {
                 case 'Activity Assignees':
-                    $select[] = "r.assignee_contact_id as contact_id";
-                    $join[]   = "INNER JOIN civicrm_activity_assignment r ON  r.activity_id = e.id";
+                    $contactField = "r.assignee_contact_id";
+                    $join[] = "INNER JOIN civicrm_activity_assignment r ON  r.activity_id = e.id";
                     break;
                 case 'Activity Source':
-                    $select[] = "e.source_contact_id as contact_id";
+                    $contactField = "e.source_contact_id";
                     break;
                 case 'Activity Targets':
-                    $select[] = "r.target_contact_id as contact_id";
-                    $join[]   = "INNER JOIN civicrm_activity_target r ON  r.activity_id = e.id";
+                    $contactField = "r.target_contact_id";
+                    $join[] = "INNER JOIN civicrm_activity_target r ON  r.activity_id = e.id";
                     break;
                 default:
                     break;
                 }
-
+                $select[] = "{$contactField} as contact_id";
                 $select[] = "e.id as entity_id";
                 $select[] = "'{$mapping->entity}' as entity_table";
-                $join[]   = "LEFT JOIN civicrm_action_log reminder ON reminder.id = (select al.id FROM civicrm_action_log al WHERE al.entity_id = e.id and al.entity_table = '{$mapping->entity}' ORDER BY al.action_date_time DESC LIMIT 1)";
+                $select[] = "{$actionSchedule->id} as action_schedule_id";
+                $reminderJoinClause   = "civicrm_action_log reminder ON reminder.contact_id = {$contactField} AND 
+reminder.entity_id    = e.id AND 
+reminder.entity_table = 'civicrm_activity' AND
+reminder.action_schedule_id = %1";
 
                 // build where clause
                 if ( !empty($value) ) {
@@ -197,45 +178,61 @@ ENGINE=HEAP";
                 // datetime where clause
                 $startEvent = ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
                         "(e.activity_date_time, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
-                $startEventClause = "reminder.id IS NULL AND NOW() >= {$startEvent}";
-
-                if ( $actionSchedule->is_repeat ) {
-                    // if repeat is turned ON:
-                    $repeatEvent = ( $actionSchedule->end_action == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
-                        "(e.activity_date_time, INTERVAL {$actionSchedule->end_frequency_interval} {$actionSchedule->end_frequency_unit})";
-
-                    if ( $actionSchedule->repetition_frequency_unit == 'day' ) {
-                        $hrs = 24 * $actionSchedule->repetition_frequency_interval;
-                    } else if ( $actionSchedule->repetition_frequency_unit == 'week' ) {
-                        $hrs = 24 * $actionSchedule->repetition_frequency_interval * 7;
-                    } else {
-                        $hrs = $actionSchedule->repetition_frequency_interval;
-                    }
-                    
-                    $repeatEventClause = "reminder.id IS NOT NULL AND NOW() <= {$repeatEvent} AND TIMEDIFF(NOW(), reminder.action_date_time) >= TIME('{$hrs}:00:00')";
-                }
-
                 // IF NO logs:
                 // ( now >= date_built_from_start_time )
                 // Otherwise IF repeat is turned ON:
                 // ( (now <= repeat_end_time ) && ( diff(now && logged_date_time) >= repeat_interval ) )
-                $where[] = $actionSchedule->is_repeat ? "( ({$startEventClause}) OR ($repeatEventClause) )" : $startEventClause;
             }
+
+            $startEventClause = "reminder.id IS NULL AND NOW() >= {$startEvent}";
 
             // build final query
             $selectClause = "SELECT " . implode( ', ', $select );
             $fromClause   = "FROM $from";
             $joinClause   = !empty( $join ) ? implode( ' ', $join ) : '';
-            $whereClause  = "WHERE " . (!empty( $where ) ? implode( ' AND ', $where ) : '(1)');
+            $whereClause  = "WHERE " . implode( ' AND ', $where );
             
             $query = "
-INSERT INTO {$this->_tempTable} (contact_id, entity_id, entity_table)
+INSERT INTO civicrm_action_log (contact_id, entity_id, entity_table, action_schedule_id)
 {$selectClause} 
 {$fromClause} 
-{$joinClause} 
-{$whereClause}";
+{$joinClause}
+LEFT JOIN {$reminderJoinClause}
+{$whereClause} AND {$startEventClause}";
 
-            CRM_Core_DAO::executeQuery( $query );
+            CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
+
+            // if repeat is turned ON:
+            if ( $actionSchedule->is_repeat ) {
+                if ( $mapping->entity == 'civicrm_activity' ) {
+                    $repeatEvent = ( $actionSchedule->end_action == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
+                        "(e.activity_date_time, INTERVAL {$actionSchedule->end_frequency_interval} {$actionSchedule->end_frequency_unit})";
+                }
+
+                if ( $actionSchedule->repetition_frequency_unit == 'day' ) {
+                    $hrs = 24 * $actionSchedule->repetition_frequency_interval;
+                } else if ( $actionSchedule->repetition_frequency_unit == 'week' ) {
+                    $hrs = 24 * $actionSchedule->repetition_frequency_interval * 7;
+                } else {
+                    $hrs = $actionSchedule->repetition_frequency_interval;
+                }
+                
+                $repeatEventClause = "NOW() <= {$repeatEvent}"; 
+                $havingClause      = "HAVING TIMEDIFF(NOW(), latest_log_time) >= TIME('{$hrs}:00:00')";
+                $groupByClause     = "GROUP BY reminder.contact_id, reminder.entity_id, reminder.entity_table"; 
+                $selectClause     .= ", MAX(reminder.action_date_time) as latest_log_time";
+
+                $query = "
+INSERT INTO civicrm_action_log (contact_id, entity_id, entity_table, action_schedule_id, is_error)
+{$selectClause} 
+{$fromClause} 
+{$joinClause}
+INNER JOIN {$reminderJoinClause}
+{$whereClause} AND {$repeatEventClause}
+{$groupByClause}
+{$havingClause}";
+                CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
+            }
         }
     }
 }
