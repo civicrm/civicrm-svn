@@ -134,52 +134,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
       return $result['id'];
     }
     if (CRM_Utils_Array::value( 'is_error', $result, 0 ) == 0) {
-        foreach($params as $field => $newparams){
-            
-            if (substr($field,0, 3) == 'api' && (is_array($newparams) || $newparams === 1) ){
-              
-                $idIndex = _civicrm_api_get_results_id_index($params,$result);
-              
-                if ($newparams === 1){
-                  $newparams = array('version' => $version);
-                }
-                $separator = $field[3]; // can be api_ or api.
-                if (!($separator == '.' || $separator == '_')) {
-                    continue;
-                }
-                $subAPI = explode($separator,$field);
-
-                $action = empty($subAPI[2])?$action:$subAPI[2];
-                $subParams  = array();
-                $subParams[strtolower($entity) . "_id"] = $result['id'];
-                $subParams["entity_id"] = $result['id'];
-                if(CRM_Utils_Array::value('entity_table',$result['values'][$idIndex ]) == $subAPI[1] ) {
-                  $subParams['id'] = $result['values'][$idIndex ]['entity_id'];
-              
-                }
-                if (strtolower(CRM_Utils_Array::value(2,$subAPI)) == 'delete'){
-                  $subParams["id"] = $result['id'];
-                }
-                $subParams['entity_table'] = $entity;
-                $subParams['version'] = $version;
-                $subParams['sequential'] = 1;
-                if(array_key_exists(0, $newparams)){
-                    // it is a numerically indexed array - ie. multiple creates
-                    foreach ($newparams as $entity => $entityparams){
-                        $subParams = array_merge($subParams,$entityparams);
-                        _civicrm_api_replace_variables($subAPI[1],$action,$subParams,$result['values'][$idIndex],$separator);
-                         $result['values'][$result['id']][$field][] = civicrm_api($subAPI[1],$action,$subParams);
-                        
-                    }
-                }else{
-
-                    $subParams = array_merge($subParams,$newparams);
-                    _civicrm_api_replace_variables($subAPI[1],$action,$subParams,$result['values'][$idIndex],$separator);
-                    $result['values'][$idIndex ][$field] = civicrm_api($subAPI[1],$action,$subParams);
-                        
-                }
-            }
-        }
+        _civicrm_api_call_nested_api($params, $result, $action,$entity,$version);
     }
 
     return $result;
@@ -310,6 +265,84 @@ function civicrm_api_get_camel_name($entity,$version = NULL) {
         $fragments[0] = 'UF';
     }
     return implode('', $fragments);
+}
+
+/*
+ * Call any nested api calls
+ */
+function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$version){
+        foreach($params as $field => $newparams){          
+            if (substr($field,0, 3) == 'api' && (is_array($newparams) || $newparams === 1) ){
+              
+                $idIndex = _civicrm_api_get_results_id_index($params,$result);
+                              
+                if ($newparams === 1){
+                  $newparams = array('version' => $version);
+                }
+                $separator = $field[3]; // can be api_ or api.
+                if (!($separator == '.' || $separator == '_')) {
+                    continue;
+                }
+                $subAPI = explode($separator,$field);
+
+                $action = empty($subAPI[2])?$action:$subAPI[2];
+                $subParams  = array();
+                
+                            
+                if(!strtolower($subAPI[1]) == 'contact'){
+                  //contact spits the dummy at activity_id so what else won't it like?
+                  $subParams["entity_id"] = $result['id'];
+                  $subParams[strtolower($entity) . "_id"] = $result['id'];
+                  $subParams['entity_table'] = $entity;
+                }
+               
+                if(CRM_Utils_Array::value('entity_table',$result['values'][$idIndex ]) == $subAPI[1] ) {
+                  $subParams['id'] = $result['values'][$idIndex ]['entity_id'];
+              
+                }
+                if (strtolower(CRM_Utils_Array::value(2,$subAPI)) == 'delete'){
+                  $subParams["id"] = $result['id'];
+                }
+                
+                $subParams['version'] = $version;
+                $subParams['sequential'] = 1;
+                if(array_key_exists(0, $newparams)){
+                    // it is a numerically indexed array - ie. multiple creates
+                    foreach ($newparams as $entity => $entityparams){
+                        $subParams = array_merge($subParams,$entityparams);
+                        _civicrm_api_replace_variables($subAPI[1],$action,$subParams,$result['values'][$idIndex],$separator);
+                         $result['values'][$result['id']][$field][] = civicrm_api($subAPI[1],$action,$subParams);
+                        
+                    }
+                }else{
+
+                    $subParams = array_merge($subParams,$newparams);
+                    _civicrm_api_replace_variables($subAPI[1],$action,$subParams,$result['values'][$idIndex],$separator);
+                    $result['values'][$idIndex ][$field] = civicrm_api($subAPI[1],$action,$subParams);
+                        
+                }
+            }
+        }
+}
+/*
+ * Figure out the entity ID in the result array 
+ * $result['id'] or 
+ * $result['values'][1] or 
+ * $result['values'][0]['id']
+ * or
+ * $result['values']['0']['entity_id']
+ */
+
+function getEntityIDFromResults(&$result,$entity){
+  if(CRM_Utils_Array::value('id',$result)){
+    return CRM_Utils_Array::value('id',$result);
+  }
+  if (CRM_Utils_Array::value('values',$result)){
+    
+  }else{
+    //hasn't been through create_success yet
+  }
+  
 }
 /*
  * Swap out any $values vars - ie. the value after $value is swapped for the parent $result
