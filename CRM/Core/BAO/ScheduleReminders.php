@@ -76,11 +76,11 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         $sel1 = $sel2 = $sel3 = $sel4 = $sel5 = array();
 
         foreach ( $mapping as $value ) {
-            $entityValue  = $value['entity_value'];
-            $entityStatus = $value['entity_status'];
-            $entityDateStart = $value['entity_date_start'];
-            $entityDateEnd = $value['entity_date_end'];
-            $entityRecipient = $value['entity_recipient'];
+            $entityValue  = CRM_Utils_Array::value('entity_value', $value );
+            $entityStatus = CRM_Utils_Array::value('entity_status', $value );
+            $entityDateStart = CRM_Utils_Array::value('entity_date_start', $value );
+            $entityDateEnd = CRM_Utils_Array::value('entity_date_end', $value );
+            $entityRecipient = CRM_Utils_Array::value('entity_recipient', $value );
             $key = $value['id'];
             if( $entityValue == 'activity_type' &&
                 $value['entity'] == 'civicrm_activity' ) {
@@ -289,9 +289,9 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
     }
 
     static function sendReminder( $contactId, $email, $mappingID, $from ) {
-        require_once "CRM/Core/BAO/Domain.php";
-        require_once "CRM/Utils/String.php";
-        require_once "CRM/Utils/Token.php";
+        require_once 'CRM/Core/BAO/Domain.php';
+        require_once 'CRM/Utils/String.php';
+        require_once 'CRM/Utils/Token.php';
 
         $schedule = new CRM_Core_DAO_ActionSchedule( );
         $schedule->mapping_id = $mappingID;
