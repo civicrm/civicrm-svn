@@ -157,6 +157,16 @@ function civicrm_api3_activity_get( $params ) {
         }
             
         $activity = _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params, FALSE);
+
+        if(CRM_Utils_Array::value('return.assignee_contact_id',$params)){
+          
+          foreach ($activity as $key => $activityArray){
+             
+              $activity[$key]['assignee_contact_id'] = CRM_Activity_BAO_ActivityAssignment::retrieveAssigneeIdsByActivityId($activityArray['id'] ) ;
+              
+          }
+          
+        }
         foreach ( $params as $n => $v ) {
         if ( substr( $n, 0, 13 ) == 'return.custom' ) { // handle the format return.sort_name=1,return.display_name=1
             $returnProperties[ substr( $n, 7 ) ] = $v;
