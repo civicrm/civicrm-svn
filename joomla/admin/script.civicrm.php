@@ -35,8 +35,8 @@ class Com_CiviCRMInstallerScript {
     
         $script          = 'index.php';
         $liveSite        = substr_replace(JURI::root(), '', -1, 1);
-        $configTaskUrl   = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/admin/configtask&reset=1";
-        $upgradeUrl      = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/upgrade&reset=1";
+        $configTaskUrl   = $liveSite . "/administrator/?option=com_civicrm&task=civicrm/admin/configtask&reset=1";
+        $upgradeUrl      = $liveSite . "/administrator/?option=com_civicrm&task=civicrm/upgrade&reset=1";
         $registerSiteURL = "http://civicrm.org/civicrm/profile/create?reset=1&gid=15";
 
         require_once 'CRM/Utils/System.php';
@@ -58,7 +58,6 @@ class Com_CiviCRMInstallerScript {
 
         } else {
             $docLink = CRM_Utils_System::docURL2( 'Installation and Upgrades', false, 'Installation Guide' );
-        
             $frontEnd = CRM_Utils_System::docURL2( 'Configuring Front-end Profile Listings and Forms in Joomla! Sites', false, 'Create front-end forms and searchable directories using Profiles' );
             $contri   = CRM_Utils_System::docURL2( 'Displaying Online Contribution Pages in Joomla! Frontend Sites', false, 'Create online contribution pages' );
             $event    = CRM_Utils_System::docURL2( 'Configuring Front-end Event Info and Registration in Joomla! Sites', false, 'Create events with online event registration' );
