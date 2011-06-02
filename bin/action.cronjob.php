@@ -175,15 +175,11 @@ reminder.action_schedule_id = %1";
                     $where[]  = "e.status_id IN ({$status})";
                 }
 
-                // datetime where clause
                 $startEvent = ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
-                        "(e.activity_date_time, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
-                // IF NO logs:
-                // ( now >= date_built_from_start_time )
-                // Otherwise IF repeat is turned ON:
-                // ( (now <= repeat_end_time ) && ( diff(now && logged_date_time) >= repeat_interval ) )
+                    "(e.activity_date_time, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
             }
 
+            // ( now >= date_built_from_start_time )
             $startEventClause = "reminder.id IS NULL AND NOW() >= {$startEvent}";
 
             // build final query
@@ -199,7 +195,6 @@ INSERT INTO civicrm_action_log (contact_id, entity_id, entity_table, action_sche
 {$joinClause}
 LEFT JOIN {$reminderJoinClause}
 {$whereClause} AND {$startEventClause}";
-
             CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
 
             // if repeat is turned ON:
@@ -217,11 +212,14 @@ LEFT JOIN {$reminderJoinClause}
                     $hrs = $actionSchedule->repetition_frequency_interval;
                 }
                 
+                // (now <= repeat_end_time )
                 $repeatEventClause = "NOW() <= {$repeatEvent}"; 
+                // diff(now && logged_date_time) >= repeat_interval
                 $havingClause      = "HAVING TIMEDIFF(NOW(), latest_log_time) >= TIME('{$hrs}:00:00')";
                 $groupByClause     = "GROUP BY reminder.contact_id, reminder.entity_id, reminder.entity_table"; 
                 $selectClause     .= ", MAX(reminder.action_date_time) as latest_log_time";
 
+                // Note this query tries to insert MAX(reminder.action_date_time) in place of is_error
                 $query = "
 INSERT INTO civicrm_action_log (contact_id, entity_id, entity_table, action_schedule_id, is_error)
 {$selectClause} 
@@ -231,6 +229,13 @@ INNER JOIN {$reminderJoinClause}
 {$whereClause} AND {$repeatEventClause}
 {$groupByClause}
 {$havingClause}";
+                CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
+
+                // just to clean is_error values
+                $query = "
+UPDATE civicrm_action_log 
+SET    is_error = 0 
+WHERE  action_date_time IS NULL AND action_schedule_id = %1";
                 CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
             }
         }
