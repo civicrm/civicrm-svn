@@ -289,7 +289,7 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$versi
                 $subParams  = array();
                 
                             
-                if(!strtolower($subAPI[1]) == 'contact'){
+                if(strtolower($subAPI[1]) != 'contact'){
                   //contact spits the dummy at activity_id so what else won't it like?
                   $subParams["entity_id"] = $result['id'];
                   $subParams[strtolower($entity) . "_id"] = $result['id'];
@@ -333,7 +333,7 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$versi
  * $result['values']['0']['entity_id']
  */
 
-function getEntityIDFromResults(&$result,$entity){
+function _civicrm_api_get_entity_ID_from_results(&$result,$entity){
   if(CRM_Utils_Array::value('id',$result)){
     return CRM_Utils_Array::value('id',$result);
   }
