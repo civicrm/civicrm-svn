@@ -51,6 +51,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->webtestLogin( );
       
       // Go directly to the URL of the screen that you will be testing (New Individual).
+      $this->WebtestAddGroup( );
       $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual");
 
       //contact details section
@@ -161,7 +162,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       //Tags and Groups section
       $this->click("tagGroup");
       
-      $this->click("group[2]");
+      $this->click("group[1]");
       $this->click("tag[4]");
       
       // Clicking save.
@@ -263,7 +264,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //Tags and Groups section
       $this->click("tagGroup");
-      $this->click("group[3]");
+      $this->click("group[1]");
       $this->click("tag[1]");
       
       // Clicking save.
@@ -367,7 +368,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //Tags and Groups section
       $this->click("tagGroup");
-      $this->click("group[3]");
+      $this->click("group[1]");
       $this->click("tag[1]");
       
       // Clicking save.

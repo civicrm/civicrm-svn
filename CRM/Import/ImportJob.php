@@ -366,7 +366,7 @@ class CRM_Import_ImportJob {
             foreach ($this->_tag as $tagId =>$val) {
                 $addTagCount = CRM_Core_BAO_EntityTag::addEntitiesToTag( $contactIds, $tagId );
                 $totalTagCount = $addTagCount[1];
-                if ( isset( $addedTag) && $tagId == $addedTag->id ) {
+                if ( isset( $addedTag ) && $tagId == $addedTag->id ) {
                     $tagName = $newTagName;
                     $new = true;
                 } else {
