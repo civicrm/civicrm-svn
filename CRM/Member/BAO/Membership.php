@@ -223,10 +223,12 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             if ( isset( $params['start_date'] ) ) {
                 $startDate  = CRM_Utils_Date::customFormat($params['start_date'],'%Y%m%d');
             }
-            if ( isset( $params['end_date'] ) && $params['end_date'] =! 'null' ) {
-                $endDate    = CRM_Utils_Date::customFormat($params['end_date'],'%Y%m%d');                    
-            } else {
-                $endDate    = '';
+            if ( isset( $params['end_date'] ) ) {
+                if ( $params['end_date'] == 'null') {
+                    $endDate = null;
+                } else {
+                    $endDate    = CRM_Utils_Date::customFormat($params['end_date'],'%Y%m%d');
+                }
             }            
             if ( isset( $params['join_date'] ) ) {
                 $joinDate   = CRM_Utils_Date::customFormat($params['join_date'],'%Y%m%d');
