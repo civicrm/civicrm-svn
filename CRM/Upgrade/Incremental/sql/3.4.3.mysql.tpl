@@ -80,4 +80,4 @@ INSERT INTO civicrm_option_value
 VALUES
    (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Assignees{/ts}'{/localize}, 1, 'Activity Assignees', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Source{/ts}'{/localize}, 2, 'Activity Source', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
-   (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Targets{/ts}'{/localize}, 3, 'Activity Targets', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Targets{/ts}'{/localize}, 3, 'Activity Targets', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL);
