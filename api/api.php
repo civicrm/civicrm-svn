@@ -72,29 +72,41 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
           $result = $result['count'];
           break;
         case "getsingle":
+          $params['sequential'] =1;//so the first entity is always result['values'][0]
           $result = civicrm_api ($entity,'get',$params);
-          
-          if($result['is_error'] == 0 && $result['count'] === 1){
-            foreach ($result['values'] as $key => $values) {
-              $result = $values;
-            }
+          if ($result['is_error'] !== 0) 
+            break;
+          if ($result['count'] === 1) {
+            $result=$result['values'][0];
+            break;
+          }
+          if ($result['count'] !== 1) {
+            $result = civicrm_api3_create_error("Expected one $entity but found " .$result['count'], array ('count'=>$result['count']));
+            break;
           }
           break;
         case "getvalue":
+          $params['sequential'] =1;
           $result=civicrm_api ($entity,'get',$params);
-          if($result['is_error'] ==0 && $result['count'] ==1){
-            foreach ($result['values'] as $key => $values) {
-            //this is for when 'return' is a value 
-              if(CRM_Utils_Array::value('return',$params) && CRM_Utils_Array::value($params['return'],$values) ){
-                  $result = $values[$params['return']];      
-              }else{
-                foreach ($params as $field => $value){
-                  if (substr($field,0,6) == 'return')
-                    $result =  $values[substr($field,7)];
-                  }
-              }
-            }     
+          if ($result['is_error'] !== 0) 
+            break;
+          if ($result['count'] !== 1) {
+            $result = civicrm_api3_create_error("Expected one $entity but found " .$result['count'], array ('count'=>$result['count']));
+            break;
           }
+
+          // we only take "return=" as valid options
+          if (CRM_Utils_Array::value('return',$params) ){
+            if (!isset ($result['values'][0][$params['return']])) {
+              $result = civicrm_api3_create_error("field ".$params['return']. " unset or not existing", array ('invalid_field'=>$params['return']));
+              break;
+            }
+
+            $result = $result['values'][0][$params['return']];
+            break;
+          }
+
+          $result = civicrm_api3_create_error("missing param return=field you want to read the value of",array('error_type'=>'mandatory_missing','missing_param'=>'return'));
           break;
        
         case "update":
