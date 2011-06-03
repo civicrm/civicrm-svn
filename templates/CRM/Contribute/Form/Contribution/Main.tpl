@@ -23,6 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{if $onbehalf} 
+   {include file=CRM/Contribute/Form/Contribution/OnBehalfOf.tpl} 
+{else}
 {literal}
 <script type="text/javascript">
 <!--
@@ -148,7 +151,7 @@ function clearAmountOther() {
 
 
     {if $is_for_organization} 
-        {include file=CRM/Contact/Form/OnBehalfOf.tpl} 
+        {include file=CRM/Contribute/Form/Contribution/OnBehalfOf.tpl} 
     {/if} 
     {* User account registration option. Displays if enabled for one of the profiles on this page. *}
 
@@ -356,7 +359,7 @@ function enablePeriod ( ) {
 
 {/literal}{if $relatedOrganizationFound}{literal}
   cj( "#is_for_organization" ).attr( 'checked', true );
-  cj( "#for_organization" ).show( );
+  showOnBehalf( );
 {/literal}{/if}{literal}
 
 {/literal}{if $honor_block_is_active AND $form.honor_type_id.html}{literal}
@@ -421,3 +424,4 @@ function showHidePayPalExpressOption()
 }
 {/literal}
 </script>
+{/if}

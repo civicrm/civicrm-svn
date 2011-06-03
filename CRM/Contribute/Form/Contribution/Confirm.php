@@ -282,8 +282,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
         $this->buildCustom( $this->_values['custom_pre_id'] , 'customPre' , true );
         $this->buildCustom( $this->_values['custom_post_id'], 'customPost', true );
-        $profileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'on_behalf_organization', 'id', 'name' );
-        $this->buildCustom( $profileId, 'onbehalfProfile' , true, true );
+        if ( CRM_Utils_Array::value( 'is_for_organization', $params ) ) {
+            $profileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'on_behalf_organization', 'id', 'name' );
+            $this->buildCustom( $profileId, 'onbehalfProfile' ,true, true );
+        }
 
         $this->_separateMembershipPayment = $this->get( 'separateMembershipPayment' );
         $this->assign( 'is_separate_payment', $this->_separateMembershipPayment );
@@ -541,7 +543,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
         if ( ! isset( $contactID ) ) {
             require_once 'CRM/Dedupe/Finder.php';
-            $dedupeParams = CRM_Dedupe_Finder::formatParams($params, 'Individual');
+            $dupeParams = $params;
+            if ( CRM_Utils_Array::value( 'onbehalf', $dupeParams ) ) {
+                unset( $dupeParams['onbehalf'] );
+            }
+
+            $dedupeParams = CRM_Dedupe_Finder::formatParams($dupeParams, 'Individual');
             $dedupeParams['check_permission'] = false;
             $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual');
 

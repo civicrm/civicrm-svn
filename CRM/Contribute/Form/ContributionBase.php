@@ -720,7 +720,8 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
 
             $fields = null;
             if ( $contactID && CRM_Core_BAO_UFGroup::filterUFGroups($id, $contactID) ) {
-                $fields = CRM_Core_BAO_UFGroup::getFields( $id, false,CRM_Core_Action::ADD );
+                $fields = CRM_Core_BAO_UFGroup::getFields( $id, false,CRM_Core_Action::ADD, null, null, false,
+                                                           null, false, null, CRM_Core_Permission::CREATE, null );
             } else {
                 $fields = CRM_Core_BAO_UFGroup::getFields( $id, false,CRM_Core_Action::ADD, null, null, false,
                                                            null, false, null, CRM_Core_Permission::CREATE, null );
