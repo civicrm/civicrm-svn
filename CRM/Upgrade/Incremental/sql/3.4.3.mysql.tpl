@@ -65,3 +65,19 @@ CREATE TABLE IF NOT EXISTS `civicrm_action_schedule` (
   KEY `FK_civicrm_action_schedule_mapping_id` (`mapping_id`),
   KEY `FK_civicrm_action_schedule_group_id` (`group_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+
+INSERT INTO civicrm_option_group
+      (name, {localize field='description'}description{/localize}, is_reserved, is_active)
+VALUES
+      ('activity_contacts', {localize}'{ts escape="sql"}Activity Contacts{/ts}'{/localize}, 0, 1);
+
+SELECT @option_group_id_aco := max(id) from civicrm_option_group where name = 'activity_contacts';
+
+INSERT INTO civicrm_option_value 
+   (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight, description, is_optgroup, is_reserved, is_active, component_id, visibility_id) 
+VALUES
+   (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Assignees{/ts}'{/localize}, 1, 'Activity Assignees', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Source{/ts}'{/localize}, 2, 'Activity Source', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Targets{/ts}'{/localize}, 3, 'Activity Targets', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
