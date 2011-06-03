@@ -100,6 +100,7 @@ WHERE action_schedule_id = %1 AND action_date_time IS NULL";
             // QUESTION: in cases when same contact has multiple activites for example, should we 
             // send multiple mails ? if not should the log be maintained for every activity ?
             while ( $dao->fetch() ) {
+                $isError = 0; $errorMsg = '';
                 $toEmail = CRM_Contact_BAO_Contact::getPrimaryEmail( $dao->contact_id );
                 if ( $toEmail ) {
                     $result = CRM_Core_BAO_ScheduleReminders::sendReminder( $dao->contact_id,
@@ -108,11 +109,17 @@ WHERE action_schedule_id = %1 AND action_date_time IS NULL";
                                                                             $fromEmailAddress );
                     if ( ! $result || is_a( $result, 'PEAR_Error' ) ) {
                         // we could not send an email, for now we ignore, CRM-3406
+                        $isError = 1;
                     }
-                    
+                } else {
+                    $isError  = 1;
+                    $errorMsg = "Couldn\'t find recipient\'s email address.";
                 }
+
                 //FIXME: set is_error and message for errors or no email.
-                $query = "UPDATE civicrm_action_log SET action_date_time = NOW() WHERE id = %1";
+                $setClause = "SET action_date_time = NOW(), is_error = {$isError}" . 
+                    ($errorMsg ? ", message = '{$errorMsg}'" : '');
+                $query     = "UPDATE civicrm_action_log {$setClause} WHERE id = %1";
                 CRM_Core_DAO::executeQuery( $query, array( 1 => array( $dao->id, 'Integer' ) ) );
             }
             $dao->free();
