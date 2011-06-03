@@ -79,19 +79,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             CRM_Utils_Hook::pre( 'create', 'Membership', null, $params ); 
         }
         
-        // converting dates to mysql format
-        if ( isset( $params['join_date'] ) ) {
-            $params['join_date']  = CRM_Utils_Date::isoToMysql($params['join_date']);
-        }
-        if ( isset( $params['start_date'] ) ) {
-            $params['start_date'] = CRM_Utils_Date::isoToMysql($params['start_date']);
-        }
-        if ( CRM_Utils_Array::value( 'end_date', $params ) ) {
-            $params['end_date']   = CRM_Utils_Date::isoToMysql($params['end_date']);
-        }
-        if ( CRM_Utils_Array::value( 'reminder_date', $params ) ) { 
-            $params['reminder_date']  = CRM_Utils_Date::isoToMysql($params['reminder_date']);
-        } else {
+        if ( !CRM_Utils_Array::value( 'reminder_date', $params ) ) { 
             $params['reminder_date'] = 'null';        
         }
         
@@ -221,17 +209,16 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             require_once 'CRM/Utils/Date.php';
             $startDate = $endDate = $joinDate = null;
             if ( isset( $params['start_date'] ) ) {
-                $startDate  = CRM_Utils_Date::customFormat($params['start_date'],'%Y%m%d');
+                $startDate = $params['start_date'];
             }
-            if ( isset( $params['end_date'] ) ) {
-                if ( $params['end_date'] == 'null') {
-                    $endDate = null;
-                } else {
-                    $endDate    = CRM_Utils_Date::customFormat($params['end_date'],'%Y%m%d');
-                }
-            }            
+
+            if ( array_key_exists( 'end_date', $params ) ) {
+                $endDate            = $params['end_date'];
+                $params['end_date'] = CRM_Utils_Date::processDate( $endDate, null, true );
+            }
+           
             if ( isset( $params['join_date'] ) ) {
-                $joinDate   = CRM_Utils_Date::customFormat($params['join_date'],'%Y%m%d');
+                $joinDate = $params['join_date'];
             }
 
             require_once 'CRM/Member/BAO/MembershipStatus.php';
