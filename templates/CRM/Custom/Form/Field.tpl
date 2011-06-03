@@ -140,6 +140,11 @@ function custom_option_html_type( ) {
                 {if $action neq 4 and $action neq 2}
                     <br /><span class="description">{ts}Select the type of data you want to collect and store for this contact. Then select from the available HTML input field types (choices are based on the type of data being collected).{/ts}</span>
                 {/if}
+		{if $action eq 2 and $changeFieldType}
+		<br />
+		( <a href='{crmURL p="civicrm/admin/custom/group/field/changetype" q="reset=1&id=`$id`"}'>{ts}Change Input Field Type{/ts}</a> )
+		<div class='clear'></div>
+		{/if}
             </td>
         </tr>
         <tr class="crm-custom-field-form-block-text_length"  id="textLength" {if !( $action eq 1 || $action eq 2 ) && ($form.data_type.value.0.0 != 0)}class="hide-block"{/if}>
