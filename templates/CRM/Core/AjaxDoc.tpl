@@ -182,6 +182,9 @@ cj(function ($) {
   <option value="create">create</option>
   <option value="delete">delete</option>
   <option value="getfields">getfields</option>
+  <option value="getcount">getcount</option>
+  <option value="getsingle">getsingle</option>
+  <option value="getvalue">getvalue</option>
   <option value="update">update</option>
 </select>
 <label>debug</label>
