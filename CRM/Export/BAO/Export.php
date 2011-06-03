@@ -1402,11 +1402,24 @@ LIMIT $offset, $limit
         if ( array_key_exists('is_deceased', $sqlColumns) ) {
             $whereClause[] = 'is_deceased = 1';
         }
+
         if ( array_key_exists('do_not_mail', $sqlColumns) ) {
             $whereClause[] = 'do_not_mail = 1';
         }
+
         if ( array_key_exists('street_address', $sqlColumns) ) {
-            $whereClause[] = "(street_address IS NULL) OR (street_address = '')";
+            $addressWhereClause = " ( (street_address IS NULL) OR (street_address = '') ) ";
+
+            // check for supplemental_address_1
+            if ( array_key_exists('supplemental_address_1', $sqlColumns) ) {
+                require_once 'CRM/Core/BAO/Preferences.php';
+                $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+                if ( CRM_Utils_Array::value( 'supplemental_address_1', $addressOptions ) ) {
+                    $addressWhereClause .= " AND ( (supplemental_address_1 IS NULL) OR (supplemental_address_1 = '') ) ";
+                }
+            }
+            
+            $whereClause[] = $addressWhereClause;
         }
 
         if ( !empty($whereClause) ) {
