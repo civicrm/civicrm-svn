@@ -1416,6 +1416,8 @@ LIMIT $offset, $limit
                 $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
                 if ( CRM_Utils_Array::value( 'supplemental_address_1', $addressOptions ) ) {
                     $addressWhereClause .= " AND ( (supplemental_address_1 IS NULL) OR (supplemental_address_1 = '') ) ";
+                    // enclose it again, since we are doing an AND in between a set of ORs
+                    $addressWhereClause = "( $addressWhereClause )";
                 }
             }
             
