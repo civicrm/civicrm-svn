@@ -288,7 +288,7 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
         return $list;
     }
 
-    static function sendReminder( $contactId, $email, $mappingID, $from ) {
+    static function sendReminder( $contactId, $email, $mappingID, $from, $tokenParams ) {
         require_once 'CRM/Core/BAO/Domain.php';
         require_once 'CRM/Utils/String.php';
         require_once 'CRM/Utils/Token.php';
@@ -318,10 +318,13 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
                 return null;
             }
 
+            // merge activity tokens with contact array
+            $contact = array_merge( $contact, $tokenParams );
+
             //CRM-5734
             require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::tokenValues( $contact, $contactId );
-            
+
             CRM_Utils_Hook::tokens( $hookTokens );
             $categories = array_keys( $hookTokens );
             

@@ -90,23 +90,41 @@ class CRM_Cron_Action {
         $actionSchedule = new CRM_Core_DAO_ActionSchedule( );
         $actionSchedule->id = $mappingID;
 
+        $tokenFields = array( );
         if ( $actionSchedule->find( true ) ) {
+            $extraSelect = $extraJoin = '';
+
+            if ( $mapping->entity == 'civicrm_activity' ) {
+                $tokenFields = array( 'activity_type', 'subject', 'activity_date_time' );
+                $extraSelect = ", ov.label as activity_type";
+                $extraJoin   = "INNER JOIN civicrm_option_group og ON og.name = 'activity_type'
+INNER JOIN civicrm_option_value ov ON e.activity_type_id = ov.value AND ov.option_group_id = og.id";
+            }
+
             $query = "
-SELECT * 
-FROM  civicrm_action_log 
-WHERE action_schedule_id = %1 AND action_date_time IS NULL";
+SELECT reminder.*, e.* {$extraSelect} 
+FROM  civicrm_action_log reminder
+INNER JOIN {$mapping->entity} e ON e.id = reminder.entity_id
+{$extraJoin}
+WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL";
             $dao   = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
 
             // QUESTION: in cases when same contact has multiple activites for example, should we 
             // send multiple mails ? if not should the log be maintained for every activity ?
             while ( $dao->fetch() ) {
+                $entityTokenParams = array();
+                foreach ( $tokenFields as $field ) {
+                    $entityTokenParams['activity.' . $field] = $dao->$field;
+                }
+
                 $isError = 0; $errorMsg = '';
                 $toEmail = CRM_Contact_BAO_Contact::getPrimaryEmail( $dao->contact_id );
                 if ( $toEmail ) {
                     $result = CRM_Core_BAO_ScheduleReminders::sendReminder( $dao->contact_id,
                                                                             $toEmail,
                                                                             $mappingID,
-                                                                            $fromEmailAddress );
+                                                                            $fromEmailAddress,
+                                                                            $entityTokenParams );
                     if ( ! $result || is_a( $result, 'PEAR_Error' ) ) {
                         // we could not send an email, for now we ignore, CRM-3406
                         $isError = 1;
