@@ -733,7 +733,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                       new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
                                                                          dirname(__FILE__)
                                                                          . '/../api/v' . $apiversion . '/dataset/contribution_types.xml') );
-                             
+        CRM_Contribute_PseudoConstant::flush ('contributionType');                   
         // FIXME: CHEATING LIKE HELL HERE, TO BE FIXED
         return 11;
     }
