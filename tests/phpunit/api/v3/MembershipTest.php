@@ -590,16 +590,20 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $params = $this->_params;
         $params['custom_'.$ids['custom_field_id']]  =  "custom string";
         $result = civicrm_api($this->_entity,'create', $params);
+        
         $this->documentMe($params,$result  ,__FUNCTION__,__FILE__);
         $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
  
-        $result = civicrm_api($this->_entity,'create', array('id' => $params['id'], 'version' => 3,'custom_'.$ids['custom_field_id'] => "new custom" ));
+        $result = civicrm_api($this->_entity,'create', array('id' => $result ['id'], 'version' => 3,'custom_'.$ids['custom_field_id'] => "new custom" ));
         $check = civicrm_api($this->_entity,'get',array('version' =>3, 'id' => $result['id'], 'contact_id' => $this->_contactID));
-        $this->customFieldDelete($ids['custom_field_id']);
-        $this->customGroupDelete($ids['custom_group_id']); 
-        civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
+        $delete =   civicrm_api('Membership','Delete',array('id'=>   $check['id'] ,
          																						'version'  => $this->_apiversion,));  
-        $this->assertEquals("new custom", $check['values'][$result['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);     
+
+ 
+       $this->customFieldDelete($ids['custom_field_id']);
+       $this->customGroupDelete($ids['custom_group_id']); 
+
+       $this->assertEquals("new custom", $check['values'][$result['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);     
 
     }
     
