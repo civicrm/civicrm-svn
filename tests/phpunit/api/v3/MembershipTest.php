@@ -156,7 +156,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $membership = civicrm_api3_membership_get( $params );
 
         $result = $membership['values'][$this->_membershipID];
-
+        civicrm_api('Membership','Delete',array('id'=> $this->_membershipID,
+         																						'version'  => $this->_apiversion,));
         $this->assertEquals($result['contact_id'],         $this->_contactID, "In line " . __LINE__);
         $this->assertEquals($result['membership_type_id'], $this->_membershipTypeID, "In line " . __LINE__);
         $this->assertEquals($result['status_id'],          $this->_membershipStatusID, "In line " . __LINE__);
@@ -165,8 +166,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $this->assertEquals($result['end_date'],           '2009-12-21', "In line " . __LINE__);
         $this->assertEquals($result['source'],             'Payment', "In line " . __LINE__);
         $this->assertEquals($result['is_override'],         1, "In line " . __LINE__);        
-        $result = civicrm_api('Membership','Delete',array('id'=> $this->_membershipID,
-         																						'version'  => $this->_apiversion,));
+
     }
    /**
      * Test civicrm_membership_get with params not array.
@@ -178,6 +178,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $params = array('membership_type_id' =>   $this->_membershipTypeID ,
                          'version'   => $this->_apiversion );
         $membership = civicrm_api3_membership_get( $params );
+        $result = civicrm_api('Membership','Delete',array('id'=>   $membership['id'] ,
+         																						'version'  => $this->_apiversion,)); 
         $result = $membership['values'][$membership['id']];
         $this->assertEquals($result['contact_id'],         $this->_contactID, "In line " . __LINE__);
         $this->assertEquals($result['membership_type_id'], $this->_membershipTypeID, "In line " . __LINE__);
@@ -187,8 +189,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $this->assertEquals($result['end_date'],           '2009-12-21', "In line " . __LINE__);
         $this->assertEquals($result['source'],             'Payment', "In line " . __LINE__);
         $this->assertEquals($result['is_override'],         1, "In line " . __LINE__);
-        $result = civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
-         																						'version'  => $this->_apiversion,));     
+    
     }      
 
        /**
@@ -254,6 +255,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $membership = & civicrm_api3_membership_get( $params );
         //$this->documentMe($params,$membership,__FUNCTION__,__FILE__);
         $result = $membership['values'][$membershipID];
+        civicrm_api('Membership','Delete',array('id'=>  $membership['id']  ,
+         																						'version'  => $this->_apiversion,)); 
         $this->assertEquals($result['join_date'],          '2009-01-21', "In line " . __LINE__);
         $this->assertEquals($result['contact_id'],         $this->_contactID, "In line " . __LINE__);
         $this->assertEquals($result['membership_type_id'], $this->_membershipTypeID, "In line " . __LINE__);
@@ -263,8 +266,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $this->assertEquals($result['end_date'],           '2009-12-21', "In line " . __LINE__);
         $this->assertEquals($result['source'],             'Payment', "In line " . __LINE__);
         $this->assertEquals($result['is_override'],         1, "In line " . __LINE__);
-        $result = civicrm_api('Membership','Delete',array('id'=>  $result['id']  ,
-         																						'version'  => $this->_apiversion,));           
+          
 
     }
 
@@ -421,10 +423,12 @@ class api_v3_MembershipTest extends CiviUnitTestCase
 
         $result = civicrm_api3_membership_create( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
+         																						'version'  => $this->_apiversion,)); 
         $this->assertEquals( $result['is_error'], 0 );
         $this->assertNotNull( $result['id'] );
-        $result = civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
-         																						'version'  => $this->_apiversion,));  
+        $this->assertEquals($this->_contactID,$result['values'][$result['id']]['contact_id']," in line " . __LINE__ );
+ 
     }
         /**
      * check with complete array + custom field 
@@ -443,12 +447,11 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $this->documentMe($params,$result  ,__FUNCTION__,__FILE__);
         $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
 
-        $check = civicrm_api($this->_entity,'get', array('api.CustomValue.Get' => array(),'version' =>3, 'id' => $result['id'], 'contact_id' => $this->_contactID));
+        $check = civicrm_api($this->_entity,'get', array('version' =>3, 'id' => $result['id'], 'contact_id' => $this->_contactID));
         $this->assertEquals("custom string", $check['values'][$result['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
-          print_r($check); 
         $this->customFieldDelete($ids['custom_field_id']);
         $this->customGroupDelete($ids['custom_group_id']); 
-        $result = civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
+        civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
          																						'version'  => $this->_apiversion,));       
 
     }
@@ -592,12 +595,11 @@ class api_v3_MembershipTest extends CiviUnitTestCase
  
         $result = civicrm_api($this->_entity,'create', array('id' => $params['id'], 'version' => 3,'custom_'.$ids['custom_field_id'] => "new custom" ));
         $check = civicrm_api($this->_entity,'get',array('version' =>3, 'id' => $result['id'], 'contact_id' => $this->_contactID));
-        $this->assertEquals("new custom", $check['values'][$result['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
-
         $this->customFieldDelete($ids['custom_field_id']);
         $this->customGroupDelete($ids['custom_group_id']); 
-        $result = civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
-         																						'version'  => $this->_apiversion,));       
+        civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
+         																						'version'  => $this->_apiversion,));  
+        $this->assertEquals("new custom", $check['values'][$result['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);     
 
     }
     
