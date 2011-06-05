@@ -8,7 +8,6 @@
 function contact_get_example(){
 $params = array( 
   'version' => 3,
-  'api.relationship.get' => 1,
 );
 
   require_once 'api/api.php';
@@ -26,14 +25,7 @@ function contact_get_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 0,
-  'values' => array( 
-      '' => array( 
-          'api.relationship.get' => array( 
-              'is_error' => 1,
-              'error_message' => 'Mandatory key(s) missing from params array: contact_id',
-            ),
-        ),
-    ),
+  'values' => array(),
 );
 
   return $expectedResult  ;
