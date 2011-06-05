@@ -341,19 +341,14 @@ SELECT  count(*)
         return civicrm_api3_create_error('Invalid Activity Duration (in minutes)' );
     }
 
-    // check for source contact id
-    if ( $addMode && empty( $params['source_contact_id'] ) ) {
-        return  civicrm_api3_create_error( 'Missing Source Contact' );
-    }
-
-    if ( $addMode &&
-         !CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
-        $params['activity_date_time'] = CRM_Utils_Date::processDate( date( 'Y-m-d H:i:s' ) );
-    } else {
-        if ( CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
+    if ( CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
             $params['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'] );
         }
-    }
+     //if adding a new activity & date_time not set make it now
+    if (!CRM_Utils_Array::value( 'id', $params ) &&
+         !CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
+        $params['activity_date_time'] = CRM_Utils_Date::processDate( date( 'Y-m-d H:i:s' ) );
+    } 
 
     return null;
 }
