@@ -694,7 +694,7 @@ function addRole() {
 
   {if !$tagExits }
     <div class="status">
-        {ts}There are no tags currently assigend to this case.{/ts}
+        {ts}There are no tags currently assigned to this case.{/ts}
     </div>
   {/if}
 
