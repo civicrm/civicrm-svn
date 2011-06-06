@@ -673,6 +673,6 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         _civicrm_api3_membership_format_params( $params , $values, true);
         
         $this->assertEquals( $values['start_date'], '20060121' );
-        $this->assertEquals( $values['end_date'], $params['membership_end_date'] );
+        $this->assertEquals( $values['end_date'], '20061221' );
     }
 }
