@@ -553,8 +553,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                          'visibility'             =>1, );
         
 
-        $result = civicrm_membership_type_create( $params );
-  
+        $result = civicrm_api('MembershipType','Create', $params );
+        require_once 'CRM/Member/PseudoConstant.php';
+        CRM_Member_PseudoConstant::flush('membershipType');
         if ( CRM_Utils_Array::value( 'is_error', $result ) || 
              (! CRM_Utils_Array::value( 'id', $result)&&  ! CRM_Utils_Array::value( 'id', $result['values'][0]))) {
             throw new Exception( 'Could not create membership type, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
@@ -628,6 +629,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $params['version'] = API_LATEST_VERSION;
         
         $result = civicrm_membership_status_create( $params );
+        require_once 'CRM/Member/PseudoConstant.php';
+        CRM_Member_PseudoConstant::flush('membershipStatus');
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Could not create membership status' . $result['error_message']);
         }
