@@ -8,7 +8,7 @@
 function custom_field_delete_example(){
 $params = array( 
   'version' => 3,
-  'id' => 10,
+  'id' => 1,
 );
 
   require_once 'api/api.php';
