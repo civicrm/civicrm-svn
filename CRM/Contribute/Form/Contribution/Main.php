@@ -767,7 +767,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     $emailLocType = explode( '-', $key );
                 }
             }
-            if ( CRM_Utils_Array::value( "email-{$emailLocType[1]}", $fields['onbehalf'] ) ) {
+            if ( !CRM_Utils_Array::value( "email-{$emailLocType[1]}", $fields['onbehalf'] ) ) {
                 $errors['onbehalf']["email-{$emailLocType[1]}"] = ts('Organization email is required.');
             }
         }
