@@ -114,7 +114,32 @@ class CRM_Contact_Form_Task_PDFLetterCommon
         require_once "CRM/Mailing/BAO/Mailing.php";
         CRM_Mailing_BAO_Mailing::commonLetterCompose( $form );
 
-        $form->addDefaultButtons( ts('Make PDF Letters') );            
+        if ( $form->_single ){
+            $cancelURL   = CRM_Utils_System::url('civicrm/contact/view',
+                                                 "reset=1&cid={$form->_cid}&selectedChild=activity",
+                                                 false, null, false);
+            if( $form->get( 'action' ) == CRM_Core_Action::VIEW ) {
+                $form->addButtons( array(
+                                         array ( 'type'      => 'cancel',
+                                                 'name'      => ts('Done'),
+                                                 'js'        => array( 'onclick' => "location.href='{$cancelURL}'; return false;" ) ),
+                                         )
+                                   );
+            } else {
+                $form->addButtons( array(
+                                         array ( 'type'      => 'submit',
+                                                 'name'      => ts('Make PDF Letter'),
+                                                 'isDefault' => true   ),
+                                         array ( 'type'      => 'cancel',
+                                                 'name'      => ts('Done'),
+                                                 'js'        => array( 'onclick' => "location.href='{$cancelURL}'; return false;" ) ),
+                                         )
+                                   );
+            }
+            
+        } else {
+            $form->addDefaultButtons( ts('Make PDF Letters') );            
+        }
         
         $form->addFormRule( array( 'CRM_Contact_Form_Task_PDFLetterCommon', 'formRule' ), $form );
     }
