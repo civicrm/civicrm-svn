@@ -641,7 +641,8 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         
         if ( CRM_Utils_Array::value( 'is_for_organization', $this->_params ) ) {
             $this->assign('onBehalfName',    $this->_params['organization_name']);
-            $this->assign('onBehalfEmail',   $this->_params['onbehalf_location']['email'][1]['email']);
+            $locTypeId = array_keys( $this->_params['onbehalf_location']['email'] );
+            $this->assign('onBehalfEmail',   $this->_params['onbehalf_location']['email'][$locTypeId[0]]['email']);
         }
         
         //fix for CRM-3767

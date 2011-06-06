@@ -165,7 +165,7 @@
          </div>
          <fieldset class="label-left">
             {include file="CRM/UF/Form/Block.tpl" fields=$onbehalfProfile}
-            <div class="label">Primary Email &nbsp;&nbsp;{$onBehalfEmail}</div>
+            <div class="label">Email &nbsp;&nbsp;{$onBehalfEmail}</div>
          </fieldset>
       </div>
     {/if}

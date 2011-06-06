@@ -762,8 +762,13 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                  !CRM_Utils_Array::value( 'organization_name', $fields['onbehalf'] ) ) {
                 $errors['onbehalf']['organization_name'] = ts('Please enter the organization name.'); 
             }
-            if ( !CRM_Utils_Array::value( 'email-Primary', $fields['onbehalf'] ) ) {
-                $errors['onbehalf']['email-Primary'] = ts('Organization email is required.'); 
+            foreach ( $fields['onbehalf'] as $key => $value ) {
+                if ( strstr( $key, 'email' ) ) {
+                    $emailLocType = explode( '-', $key );
+                }
+            }
+            if ( CRM_Utils_Array::value( "email-{$emailLocType[1]}", $fields['onbehalf'] ) ) {
+                $errors['onbehalf']["email-{$emailLocType[1]}"] = ts('Organization email is required.');
             }
         }
 

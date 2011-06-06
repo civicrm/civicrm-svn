@@ -39,7 +39,7 @@
     {foreach from=$form.onbehalf item=field key=fieldName}
       <tr>
        {if ( $fieldName eq 'organization_name' ) and $organizationName}
-         <td id='org_name' class="label">Renew Membership for:</td>
+         <td id='org_name' class="label">{$field.label}</td>
          <td class="value">{$field.html|crmReplace:class:big}
          <span>
          <a href='#' id='createNewOrg' onclick='createNew( ); return false;'>Create new organization</a>
@@ -94,7 +94,6 @@ cj( "#mode" ).attr( 'checked', 'checked' );
     {
        if ( cj( "#mode" ).attr( 'checked' ) ) {
            $text = "Select existing organization";
-           cj( "#org_name" ).text( "Organization Name" );
            cj( "#onbehalf_organization_name" ).removeAttr( 'readonly' );
 
            cj( "#select_org tr td input" ).each( function( ) {
@@ -106,7 +105,6 @@ cj( "#mode" ).attr( 'checked', 'checked' );
            cj( "#mode" ).removeAttr( 'checked' );
        } else {
            $text = "Create new organization";
-           cj( "#org_name" ).text( "Renew Membership for:" );
            cj( "#mode" ).attr( 'checked', 'checked' );
            setOrgName( );
        }

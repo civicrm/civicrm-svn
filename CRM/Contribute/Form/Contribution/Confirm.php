@@ -164,9 +164,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                     } else if ( $field == 'state_province' ) {
                         $value = CRM_Core_PseudoConstant::stateProvinceAbbreviation( $value );
                     }
-                    $this->_params['onbehalf_location']['address'][1][$field] = $value;
+                    $this->_params['onbehalf_location']['address'][$locType][$field] = $value;
                 } else if ( in_array( $field, array( 'email', 'phone' ) ) ) {
-                    $this->_params['onbehalf_location'][$field][1][$field] = $value;
+                    $this->_params['onbehalf_location'][$field][$locType][$field] = $value;
                 }
 
                 if ( strstr( $loc, 'custom' ) ) {
@@ -508,17 +508,28 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         // process on-behalf-of functionality.
         if ( CRM_Utils_Array::value( 'is_for_organization', $this->_values ) ) {
             $behalfOrganization = array();
-            foreach ( array('organization_name', 'organization_id', 'org_option') as $fld ) {
+            $orgFields = array('organization_name', 'organization_id', 'org_option');
+            foreach ( $orgFields as $fld ) {
                 if ( array_key_exists( $fld, $params ) ) {
                     $behalfOrganization[$fld] = $params[$fld];
-                    unset($params[$fld]);
+                    unset( $params[$fld] );
                 }
             }
+
+            foreach ( $params['onbehalf'] as $fld => $values ) {
+                if ( !( strstr( $fld, '-' ) || strstr( $fld, 'custom_' ) ) ) {
+                    if ( in_array( $fld, array( 'contribution_campaign_id', 'member_campaign_id' ) ) ) {
+                        $fld = 'campaign_id';
+                    }
+                    $this->_params[$fld] = $values;
+                }
+            }
+                        
             if ( array_key_exists( 'onbehalf_location', $params ) && is_array( $params['onbehalf_location'] ) ) {
                 foreach ( $params['onbehalf_location'] as $block => $vals ) {
                     $behalfOrganization[$block] = $vals;
                 }
-                unset($params['onbehalf_location']);
+                unset( $params['onbehalf_location'] );
             }
         }
         
@@ -587,7 +598,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         // If onbehalf-of-organization contribution / signup, add organization
         // and it's location.
         if ( isset( $params['is_for_organization'] ) && isset( $behalfOrganization['organization_name'] ) ) {
-            $ufFields     = array( );
+            $ufFields = array( );
             foreach ( $this->_fields['onbehalf'] as $name => $value ) {
                 $ufFields[$name] = 1;
             }
@@ -634,6 +645,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             //inherit campaign from contirb page.
             if ( !array_key_exists( 'campaign_id', $membershipParams ) ) {
                 $membershipParams['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values );
+            }
+            
+            if ( CRM_Utils_Array::value( 'member_campaign_id', $membershipParams['onbehalf'] ) ) {
+                $this->_params['campaign_id'] = $membershipParams['onbehalf']['member_campaign_id'];
             }
             
             require_once 'CRM/Member/BAO/Membership.php';
@@ -1215,12 +1230,13 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
 
         // formalities for creating / editing organization.
-        require_once 'CRM/Core/BAO/LocationType.php';
-        $locType = CRM_Core_BAO_LocationType::getDefault();
         $behalfOrganization['contact_type'] = 'Organization';
-        foreach ( array('phone', 'email', 'address') as $locFld ) {
-            $behalfOrganization[$locFld][1]['is_primary'] = 1;
-            $behalfOrganization[$locFld][1]['location_type_id'] = $locType->id;
+        foreach ( $behalfOrganization as $locFld => $value ) {
+            if ( in_array( $locFld, array( 'phone', 'email', 'address' ) ) ) {
+                $locTypeId = array_keys( $value );
+                $behalfOrganization[$locFld][$locTypeId[0]]['is_primary'] = 1;
+                $behalfOrganization[$locFld][$locTypeId[0]]['location_type_id'] = $locTypeId[0];
+            }
         }
         
         // get the relationship type id

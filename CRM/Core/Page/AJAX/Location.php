@@ -57,53 +57,48 @@ class CRM_Core_Page_AJAX_Location
     {
         $cid = CRM_Utils_Type::escape( $_GET['cid'], 'Integer' );
         $ufId = CRM_Utils_Type::escape( $_GET['ufId'], 'Integer' );
-                        
+        $profileFields = CRM_Core_BAO_UFGroup::getFields( $ufId, false, CRM_Core_Action::VIEW, null, null, false,
+                                                          null, false, null, CRM_Core_Permission::CREATE, null );
+
         require_once 'CRM/Core/BAO/Location.php';
         $entityBlock = array( 'contact_id' => $cid );
         $location    =& CRM_Core_BAO_Location::getValues( $entityBlock );
-
+        CRM_Core_Error::debug_var( '$location', $location );
+ 
         $config = CRM_Core_Config::singleton();
         $addressSequence = array_flip($config->addressSequence());
-        
-        $elements = array( "onbehalf_phone-Primary" => 
-                           $location['phone'][1]['phone'],
-                           "onbehalf_email-Primary" => 
-                           $location['email'][1]['email']
-                           );
-        
-        if ( array_key_exists( 'street_address', $addressSequence) ) {
-            $elements["onbehalf_street_address-Primary"] = $location['address'][1]['street_address'];
-        }
-        if ( array_key_exists( 'supplemental_address_1', $addressSequence) ) {
-            $elements['onbehalf_supplemental_address_1-Primary'] = 
-                $location['address'][1]['supplemental_address_1'];
-        }
-        if ( array_key_exists( 'supplemental_address_2', $addressSequence) ) {
-            $elements['onbehalf_supplemental_address_2-Primary'] = 
-                $location['address'][1]['supplemental_address_2'];
-        }
-        if ( array_key_exists( 'city', $addressSequence) ) {
-            $elements['onbehalf_city-Primary'] = $location['address'][1]['city'];
-        }
-        if ( array_key_exists( 'postal_code', $addressSequence) ) {
-            $elements['onbehalf_postal_code-Primary'] = 
-                $location['address'][1]['postal_code'];
-            $elements['onbehalf_postal_code_suffix-Primary'] = 
-                $location['address'][1]['postal_code_suffix'];
-        }
-        if ( array_key_exists( 'country', $addressSequence) ) {
-            $elements['onbehalf_country-Primary'] = 
-                $location['address'][1]['country_id'];
-        }
-        if ( array_key_exists( 'state_province', $addressSequence) ) {
-            $elements['onbehalf_state_province-Primary'] = 
-                $location['address'][1]['state_province_id'];
-        }
 
+        foreach ( $location as $fld => $values ) {
+            if ( in_array( $fld, array( 'phone', 'email' ) ) ) {
+                $locType = $values[1]['location_type_id'];
+                $elements["onbehalf_{$fld}-{$locType}"] = $location[$fld][1][$fld];
+                unset( $profileFields["{$fld}-{$locType}"] );
+            }
+        }
+        
+        $locTypeId = $location['address'][1]['location_type_id'];
+        $addressFields = array( 'street_address', 
+                                'supplemental_address_1',
+                                'supplemental_address_2',
+                                'city',
+                                'postal_code',  
+                                'country',
+                                'state_province' );
+
+        foreach ( $addressFields as $field ) {
+            if ( array_key_exists( $field, $addressSequence ) ) {
+                $addField = $field;
+                if ( in_array( $field, array( 'state_province', 'country' ) ) ) {
+                    $addField = "{$field}_id";
+                }
+                $elements["onbehalf_{$field}-{$locTypeId}"] = $location['address'][1][$addField];
+                unset( $profileFields["{$field}-{$locTypeId}"] );
+            }
+        }
+        
         //set custom field defaults
-        $defaults      = array( );
-        $profileFields = CRM_Core_BAO_UFGroup::getFields( $ufId, false, CRM_Core_Action::VIEW, null, null, false,
-                                                          null, false, null, CRM_Core_Permission::CREATE, null );
+        $defaults = $values = array( );
+                
         foreach ( $profileFields as $name => $field ) {
             if ( !isset( $defaults[$name] ) ) {
                 if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID($name) ) {
@@ -119,6 +114,14 @@ class CRM_Core_Page_AJAX_Location
             }
         }
 
+        CRM_Core_BAO_UFGroup::setProfileDefaults( $cid, $profileFields, $values );
+
+        if ( !empty( $values ) ) {
+            foreach ( $values as $key => $value ) {
+                $elements["onbehalf_{$key}"] = $value;
+            }
+        }
+        
         echo json_encode( $elements );
         CRM_Utils_System::civiExit( );
     }

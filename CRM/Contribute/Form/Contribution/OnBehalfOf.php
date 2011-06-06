@@ -50,6 +50,10 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
         $session   = CRM_Core_Session::singleton( );
         $contactID = $session->get( 'userID' );
         $form->_relatedOrganizationFound = false;
+
+        $form->_profileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'on_behalf_organization',
+                                                         'id', 'name' );
+        $form->assign( 'profileId', $form->_profileId );
                
         if ( $contactID ) {
             $form->_employers = CRM_Contact_BAO_Relationship::getPermissionedEmployer( $contactID );
@@ -105,12 +109,9 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
             $form->add( 'checkbox', 'mode', '' );
         }
         
-        $profileId     = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 
-                                                      'on_behalf_organization', 'id', 'name' );
-        $profileFields = CRM_Core_BAO_UFGroup::getFields( $profileId, false, CRM_Core_Action::VIEW, null, null, false,
-                                                          null, false, null, CRM_Core_Permission::CREATE, null );
-        $form->assign( 'profileId', $profileId );
-                
+        $profileFields = CRM_Core_BAO_UFGroup::getFields( $form->_profileId, false, CRM_Core_Action::VIEW, null,
+                                                          null, false, null, false, null, 
+                                                          CRM_Core_Permission::CREATE, null );
         foreach ( $profileFields as $name => $field ) {
             CRM_Core_BAO_UFGroup::buildProfile( $form, $field, null, null, false, true );
         }

@@ -894,7 +894,18 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                                 $values[$index] = CRM_Utils_Date::customFormat( $details->$name );
                                 $params[$index] = CRM_Utils_Date::isoToMysql( $details->$name );
                             } else {
-                                $values[$index] = $details->$name;
+                                $dao = '';
+                                if ( $index == 'Campaign' ) {
+                                    $dao = 'CRM_Campaign_DAO_Campaign';
+                                } else if ( $index == 'Contribution Page' ) {
+                                    $dao = 'CRM_Contribute_DAO_ContributionPage';
+                                }
+                                if ( $dao ) {
+                                    $value = CRM_Core_DAO::getFieldValue( $dao, $details->$name, 'title' );
+                                } else {
+                                    $value = $details->$name;
+                                }
+                                $values[$index] = $value;
                             }
                         }
                     } 
