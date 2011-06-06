@@ -277,6 +277,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         // clear permissions stub to not check permissions
         require_once 'CRM/Core/Permission/UnitTests.php';
         CRM_Core_Permission_UnitTests::$permissions = null;
+        
+        //flush component settings
+        CRM_Core_Component::getEnabledComponents(true);
+        $tablesToTruncate = array('civicrm_contact');
+
+        $this->quickCleanup( $tablesToTruncate );
+        
     }
 
     public function cleanDB() {
