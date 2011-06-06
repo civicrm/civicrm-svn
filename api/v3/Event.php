@@ -178,17 +178,13 @@ function civicrm_api3_event_get( $params )
  */
 function civicrm_api3_event_delete( $params )
 {
-  _civicrm_api3_initialize( true );
+
   try {
     civicrm_api3_verify_one_mandatory($params,null,array('event_id','id'));
 
-    $eventID = null;
 
     $eventID = CRM_Utils_Array::value( 'event_id', $params )?CRM_Utils_Array::value( 'event_id', $params ):CRM_Utils_Array::value( 'id', $params );
 
-    if ( ! isset( $eventID ) ) {
-      return civicrm_api3_create_error(  'Invalid value for eventID'  );
-    }
 
     require_once 'CRM/Event/BAO/Event.php';
 
