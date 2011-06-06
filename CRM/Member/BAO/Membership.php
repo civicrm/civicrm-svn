@@ -115,12 +115,12 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         $membershipLog = array('membership_id' => $membership->id,
                                'status_id'     => $membership->status_id,
                                'start_date'    => $logStartDate,
-                               'end_date'      => $membership->end_date,
+                               'end_date'      => CRM_Utils_Date::isoToMysql( $membership->end_date ),
                                'renewal_reminder_date' => $membership->reminder_date, 
                                'modified_date' => date('Ymd'),
         					   'membership_type_id' => $values[$membership->id]['membership_type_id']
                                );
-                
+        
         $session = CRM_Core_Session::singleton();
         // If we have an authenticated session, set modified_id to that user's contact_id, else set to membership.contact_id
 		if ( $session->get( 'userID' ) ){
@@ -214,9 +214,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
 
             if ( array_key_exists( 'end_date', $params ) ) {
                 $endDate            = $params['end_date'];
-                $params['end_date'] = CRM_Utils_Date::processDate( $endDate, null, true );
+                $params['end_date'] = CRM_Utils_Date::processDate( $endDate, null, true, 'Ymd' );
             }
-           
+            
             if ( isset( $params['join_date'] ) ) {
                 $joinDate = $params['join_date'];
             }
@@ -1191,7 +1191,6 @@ AND civicrm_membership.is_test = %2";
         $index = $memBlockDetails['is_separate_payment'] ? 2 : 1;
 
         if ( ! CRM_Utils_Array::value( $index, $errors ) ) {
-            
             $membership = self::renewMembership( $contactID, $membershipTypeID, 
                                                  $isTest, $form, null,
                                                  CRM_Utils_Array::value( 'cms_contactID', $membershipParams ) );
@@ -1395,7 +1394,6 @@ AND civicrm_membership.is_test = %2";
                 
                 //set the log start date.
                 $memParams['log_start_date'] = CRM_Utils_Date::customFormat( $dates['log_start_date'], $format );
-
                 if ( empty( $membership->source ) ) {
                     if ( CRM_Utils_Array::value( 'membership_source', $form->_params ) ) {
                         $memParams['source'] = $form->_params['membership_source'];
