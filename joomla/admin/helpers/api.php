@@ -28,7 +28,7 @@ class CivicrmHelperApi {
 
 	function civiimport($path)
 	{
-        $this->civiInit( );
+        self::civiInit( );
 
         global $civicrm_root;
 		return JLoader::import($path, $civicrm_root, '');

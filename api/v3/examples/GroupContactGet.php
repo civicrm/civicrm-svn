@@ -33,7 +33,7 @@ function group_contact_get_expectedresult(){
           'group_id' => '1',
           'title' => 'New Test Group Created',
           'visibility' => 'Public Pages',
-          'in_date' => '2011-05-31 22:57:45',
+          'in_date' => '2011-06-02 02:27:48',
           'in_method' => 'API',
         ),
     ),

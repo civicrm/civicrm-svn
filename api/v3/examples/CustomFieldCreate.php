@@ -7,7 +7,7 @@
  */
 function custom_field_create_example(){
 $params = array( 
-  'custom_group_id' => 4,
+  'custom_group_id' => 1,
   'name' => 'test_date',
   'label' => 'test_date',
   'html_type' => 'Select Date',
@@ -35,19 +35,19 @@ function custom_field_create_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => 3,
+  'id' => 1,
   'values' => array( 
-      '3' => array( 
-          'id' => '3',
-          'custom_group_id' => '4',
+      '1' => array( 
+          'id' => '1',
+          'custom_group_id' => '1',
           'name' => 'test_date',
           'label' => 'test_date',
           'data_type' => 'Date',
           'html_type' => 'Select Date',
           'default_value' => '20071212',
           'is_required' => '1',
-          'is_searchable' => '',
-          'is_search_range' => '',
+          'is_searchable' => 0,
+          'is_search_range' => 0,
           'weight' => '4',
           'help_pre' => '',
           'help_post' => '',
@@ -55,7 +55,7 @@ function custom_field_create_expectedresult(){
           'attributes' => '',
           'javascript' => '',
           'is_active' => '1',
-          'is_view' => '',
+          'is_view' => 0,
           'options_per_line' => '',
           'text_length' => '',
           'start_date_years' => '',
@@ -64,7 +64,7 @@ function custom_field_create_expectedresult(){
           'time_format' => '',
           'note_columns' => '',
           'note_rows' => '',
-          'column_name' => 'test_date_3',
+          'column_name' => 'test_date_1',
           'option_group_id' => '',
         ),
     ),

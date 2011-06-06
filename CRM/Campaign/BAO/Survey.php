@@ -885,24 +885,28 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         
         require_once 'CRM/Contact/BAO/ContactType.php';
         $supportableFieldTypes = self::surveyProfileTypes( );
-        
+
+        // get custom fields of type survey
+        $customFields = CRM_Core_BAO_CustomField::getFields('Activity', false, false, $surveyTypeId );
+
         foreach ( $profileFields as $name => $field ) {
             //get only contact and activity fields.
             //later stage we might going to consider contact type also.
             if ( !in_array( $field['field_type'], $supportableFieldTypes ) ) {
                 continue;
             }
+            
+            // we should allow all supported custom data for survey
+            // In case of activity, allow normal activity and with subtype survey,
+            // suppress custom data of other activity types
             if ( CRM_Core_BAO_CustomField::getKeyID( $name ) &&
                  !in_array( $field['html_type'], $removeFields ) ) {
-                
-                $customValue = CRM_Utils_Array::value( $customFieldID, $customFields );
-                // allow custom fields from profile which are having
-                // the activty type same of that selected survey.
-                $valueType = CRM_Utils_Array::value( 'extends_entity_column_value', $customValue );
-                if ( empty( $valueType ) || ( $valueType == $surveyTypeId ) ) {
+                if ( $field['field_type'] != 'Activity' ) {
+                    $responseFields[$cacheKey][$name] = $field;
+                } elseif ( array_key_exists( CRM_Core_BAO_CustomField::getKeyID( $name ), $customFields ) ) {
                     $responseFields[$cacheKey][$name] = $field;
                 }
-            } else if ( in_array( 'Primary', explode( '-', $name ) ) ||
+           } else if ( in_array( 'Primary', explode( '-', $name ) ) ||
                         CRM_Utils_Array::value( 'location_type_id', $field ) ) {
                 //get location related contact fields.
                 $responseFields[$cacheKey][$name] = $field;

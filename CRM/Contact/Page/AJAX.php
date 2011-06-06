@@ -608,6 +608,7 @@ WHERE sort_name LIKE '%$name%'";
         // reset the group contact cache for this group
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::remove( );
+        CRM_Utils_System::civiExit( );
     }
 
     /**

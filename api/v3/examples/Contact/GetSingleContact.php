@@ -28,10 +28,10 @@ function contact_get_expectedresult(){
   'contact_id' => '17',
   'contact_type' => 'Individual',
   'display_name' => 'Test Contact',
-  'is_opt_out' => '',
+  'is_opt_out' => 0,
   'first_name' => 'Test',
   'last_name' => 'Contact',
-  'contact_is_deleted' => '',
+  'contact_is_deleted' => 0,
 );
 
   return $expectedResult  ;

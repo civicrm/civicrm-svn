@@ -2214,7 +2214,7 @@ UNION
             $input = array( 'contact_id' => $contactId,
                             'admin'      => false,
                             'caseId'     => null,
-                            'context'    => null );
+                            'context'    => 'activity' );
             return CRM_Activity_BAO_Activity::getActivitiesCount( $input );
         
 		default :

@@ -31,8 +31,29 @@ $params = array(
 function membership_create_expectedresult(){
 
   $expectedResult = array( 
-  'id' => 11,
   'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 11,
+  'values' => array( 
+      '11' => array( 
+          'id' => 11,
+          'contact_id' => 20,
+          'membership_type_id' => 19,
+          'join_date' => '20090121',
+          'start_date' => '20090121',
+          'end_date' => '20091221',
+          'source' => 'Payment',
+          'status_id' => 25,
+          'is_override' => 1,
+          'reminder_date' => 'null',
+          'owner_membership_id' => '',
+          'is_test' => '',
+          'is_pay_later' => '',
+          'contribution_recur_id' => '',
+          'campaign_id' => '',
+        ),
+    ),
 );
 
   return $expectedResult  ;

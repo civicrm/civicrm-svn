@@ -812,7 +812,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             if ( !$date ) {
                 $date = CRM_Utils_Array::value( $d, $calcDates );
             }
-            $params[$d] = CRM_Utils_Date::processDate( $date, null, true );
+            $params[$d] = CRM_Utils_Date::processDate( $date );
         }
         
         if ( $this->_id ) {

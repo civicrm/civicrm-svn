@@ -38,7 +38,7 @@ function survey_get_expectedresult(){
           'max_number_of_contacts' => '12',
           'is_active' => '1',
           'is_default' => '',
-          'created_date' => '2011-05-31 23:00:02',
+          'created_date' => '2011-06-02 02:38:30',
         ),
     ),
 );

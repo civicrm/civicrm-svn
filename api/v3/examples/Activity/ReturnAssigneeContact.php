@@ -7,11 +7,13 @@
  */
 function activity_get_example(){
 $params = array( 
-  'contact_id' => 17,
-  'activity_type_id' => 1,
+  'activity_id' => 13,
   'version' => 3,
   'sequential' => 1,
-  'return.custom_1' => 1,
+  'return.assignee_contact_id' => 1,
+  'api.contact.get' => array( 
+      'id' => '$value.source_contact_id',
+    ),
 );
 
   require_once 'api/api.php';
@@ -29,21 +31,35 @@ function activity_get_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => 1,
+  'id' => 13,
   'values' => array( 
       '0' => array( 
+          'id' => '13',
           'source_contact_id' => '17',
-          'id' => '1',
           'activity_type_id' => '1',
           'subject' => 'test activity type id',
-          'location' => '',
-          'activity_date_time' => '2011-06-02 14:36:13',
-          'details' => '',
-          'status_id' => '2',
-          'activity_name' => 'Test activity type',
-          'status' => 'Completed',
-          'custom_1' => 'custom string',
-          'custom_1_1' => 'custom string',
+          'status_id' => '1',
+          'priority_id' => 0,
+          'assignee_contact_id' => array( 
+              '0' => '18',
+            ),
+          'api.contact.get' => array( 
+              'is_error' => 0,
+              'version' => 3,
+              'count' => 1,
+              'id' => 17,
+              'values' => array( 
+                  '0' => array( 
+                      'contact_id' => '17',
+                      'contact_type' => 'Individual',
+                      'display_name' => 'Test Contact',
+                      'is_opt_out' => 0,
+                      'first_name' => 'Test',
+                      'last_name' => 'Contact',
+                      'contact_is_deleted' => 0,
+                    ),
+                ),
+            ),
         ),
     ),
 );

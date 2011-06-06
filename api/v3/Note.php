@@ -69,7 +69,7 @@ function civicrm_api3_note_create($params) {
 			$params ['entity_table'] = "civicrm_contact";
 		}
 		
-		civicrm_api3_verify_mandatory ( $params, 'CRM_Core_BAO_Note', array ('note' ) );
+		civicrm_api3_verify_mandatory ( $params, null, array ('note','entity_id', ) );
 		
 		$contactID = CRM_Utils_Array::value ( 'contact_id', $params );
 		
@@ -138,31 +138,12 @@ function civicrm_api3_note_get($params) {
 	_civicrm_api3_initialize ( true );
 	try {
 		
-		if (! isset ( $params ['entity_table'] )) {
+		if (empty ( $params ['entity_table'] )) {
 			$params ['entity_table'] = "civicrm_contact";
 		}
 		
-		civicrm_api3_verify_mandatory ( $params, 'CRM_Core_BAO_Note' );
-		
-		$entity_id = ( int ) $params ['entity_id'];
-		$noteBAO = new CRM_Core_BAO_Note ();
-		$fields = array_keys ( $noteBAO->fields () );
-		
-		foreach ( $fields as $name ) {
-			if (array_key_exists ( $name, $params )) {
-				$noteBAO->$name = $params [$name];
-			}
-		}
-		
-		if (! $noteBAO->find ( true )) {
-			return civicrm_api3_create_success ( array () );
-		}
-		$note = array ();
-		_civicrm_api3_object_to_array ( $noteBAO, $note [$noteBAO->id] );
-		while ( $noteBAO->fetch () ) {
-			_civicrm_api3_object_to_array ( $noteBAO, $note [$noteBAO->id] );
-		}
-		return civicrm_api3_create_success ( $note, $params, $noteBAO );
+		civicrm_api3_verify_mandatory ( $params );
+    return _civicrm_api3_basic_get('CRM_Core_BAO_Note', $params);		
 	
 	} catch ( PEAR_Exception $e ) {
 		return civicrm_api3_create_error ( $e->getMessage () );

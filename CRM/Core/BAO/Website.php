@@ -53,7 +53,7 @@ class CRM_Core_BAO_Website extends CRM_Core_DAO_Website
      */
     static function add( &$params ) 
     {
-        $website =& new CRM_Core_DAO_Website();
+        $website = new CRM_Core_DAO_Website();
         $website->copyValues($params);
         return $website->save( );
     }
