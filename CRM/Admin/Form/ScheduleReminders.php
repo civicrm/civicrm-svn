@@ -168,6 +168,12 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
              $fields['entity'][2][0] == 0) {
             $errors['entity'] = ts('Please select appropriate value');
         }
+        
+        if ( CRM_Utils_Array::value( 'is_active', $fields ) &&  
+             CRM_Utils_System::isNull( $fields['subject'] ) ) {
+            $errors['subject'] = ts('Subject is a required field.');
+        }
+
 
         if ( ! empty( $errors ) ) {
             return $errors;
@@ -196,7 +202,6 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
                 $defaults['recipient'] = 'manual';
             } 
         }  
-
         return $defaults;
     }
 
@@ -264,9 +269,9 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         } 
         CRM_Core_BAO_ScheduleReminders::add($params, $ids);
 
-        $status = ts( "Your new Reminder titled <strong>{$values['title']}</strong> has been saved." );
+        $status = ts( "Your new Reminder titled %1 has been saved." , array( 1 => "<strong>{$values['title']}</strong>") );
         if ( $this->_action & CRM_Core_Action::UPDATE ) { 
-            $status = ts( "Your Reminder titled <strong>{$values['title']}</strong> has been updated." );
+            $status = ts( "Your Reminder titled %1 has been updated." , array( 1 => "<strong>{$values['title']}</strong>") );
         }
         CRM_Core_Session::setStatus( $status );
 
