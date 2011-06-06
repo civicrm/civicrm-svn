@@ -8,9 +8,9 @@
 function note_get_example(){
 $params = array( 
   'entity_table' => 'civicrm_contact',
-  'entity_id' => 4,
+  'entity_id' => 1,
   'note' => 'Hello!!! m testing Note',
-  'contact_id' => 4,
+  'contact_id' => 1,
   'modified_date' => '2011-01-31',
   'subject' => 'Test Note',
   'version' => 3,
@@ -31,17 +31,17 @@ function note_get_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => 4,
+  'id' => 1,
   'values' => array( 
-      '4' => array( 
-          'id' => '4',
+      '1' => array( 
+          'id' => '1',
           'entity_table' => 'civicrm_contact',
-          'entity_id' => '4',
+          'entity_id' => '1',
           'note' => 'hello I am testing Note',
-          'contact_id' => '4',
-          'modified_date' => '2011-06-02',
+          'contact_id' => '1',
+          'modified_date' => '2011-06-06',
           'subject' => 'Test Note',
-          'privacy' => '',
+          'privacy' => 0,
         ),
     ),
 );

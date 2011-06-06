@@ -75,12 +75,14 @@ class api_v3_NoteTest extends CiviUnitTestCase
                                );
         $this->_note      = $this->noteCreate( $this->_contactID );
         $this->_noteID    = $this->_note['id'];
+
     }
 
     function tearDown( ) 
     {
-        $this->noteDelete( $this->_note );
-        $this->contactDelete( $this->_contactID );    
+       $tablesToTruncate = array( 'civicrm_note', 'civicrm_contact',
+                                   );
+       $this->quickCleanup( $tablesToTruncate );   
     }
 
 ///////////////// civicrm_note_get methods
@@ -106,7 +108,6 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $params = array( );
         $note   =& civicrm_api3_note_get( $params );
         $this->assertEquals( $note['is_error'], 1 );
-        $this->assertEquals( $note['error_message'], 'Mandatory key(s) missing from params array: entity_id, version' );
     } 
 
     /**
@@ -118,9 +119,8 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $params = array( 'entity_table' => 'civicrm_contact',
                          'version'			=>3 );
         $note   =& civicrm_api3_note_get( $params );
-        $this->assertEquals( $note['is_error'], 1 ); 
-        $this->assertEquals( $note['error_message'], 'Mandatory key(s) missing from params array: entity_id' );
-    }
+        $this->assertEquals( $note['is_error'], 0 ); 
+   }
 
     /**
      * check civicrm_note_get
@@ -252,8 +252,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $params = array();        
         $note   =& civicrm_api3_note_create( $params );
         $this->assertEquals( $note['is_error'], 1 );
-        $this->assertEquals( $note['error_message'], 'Mandatory key(s) missing from params array: entity_id, note, version' );
-    }
+   }
 
     /**
      * Check update with missing parameter (contact id)
@@ -279,19 +278,21 @@ class api_v3_NoteTest extends CiviUnitTestCase
        $params = array(
                         'id'           => $this->_noteID,
                         'contact_id'   => $this->_contactID,
-                        'entity_id'    => $this->_contactID,
-                        'entity_table' => 'civicrm_contribution',
+
                         'note'         => 'Note1',
                         'subject'      => 'Hello World',
                         'version'			=> $this->_apiversion,
                         );
         
         //Update Note
-        $note =& civicrm_api3_note_create( $params );
+        civicrm_api3_note_create( $params );
+        $note = civicrm_api('Note', 'Get',array('version' => 3));
         $this->assertEquals( $note['id'],$this->_noteID,'in line ' . __LINE__ );
         $this->assertEquals( $note['is_error'],0,'in line ' . __LINE__ );
-        $this->assertEquals( $note['values'][$this->_contactID]['entity_id'],$this->_contactID,'in line ' . __LINE__ );
-        $this->assertEquals( $note['values'][$this->_contactID]['entity_table'],'civicrm_contribution','in line ' . __LINE__ );
+        $this->assertEquals( $note['values'][$this->_noteID]['entity_id'],$this->_contactID,'in line ' . __LINE__ );
+        $this->assertEquals( $note['values'][$this->_noteID]['entity_table'],'civicrm_contact','in line ' . __LINE__ );
+        $this->assertEquals( 'Hello World',$note['values'][$this->_noteID]['subject'],'in line ' . __LINE__ );
+        $this->assertEquals( 'Note1',$note['values'][$this->_noteID]['note'],'in line ' . __LINE__ );
         
     }
 
