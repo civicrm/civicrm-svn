@@ -111,7 +111,7 @@ function civicrm_api3_membership_create($params)
       return $error;
     }
 
-    $params = array_merge($values,$params);
+    $params = array_merge( $params, $values );
 
     require_once 'CRM/Core/Action.php';
     $action = CRM_Core_Action::ADD;
@@ -130,7 +130,7 @@ function civicrm_api3_membership_create($params)
 
     require_once 'CRM/Member/BAO/Membership.php';
     $membershipBAO = CRM_Member_BAO_Membership::create($params, $ids, true);
-
+    
     if ( array_key_exists( 'is_error', $membershipBAO ) ) {
       // In case of no valid status for given dates, $membershipBAO
       // is going to contain 'is_error' => "Error Message"
@@ -301,11 +301,16 @@ function _civicrm_api3_membership_format_params( $params, &$values, $create=fals
         unset($values['membership_contact_id']);
         break;
       case 'join_date':
+      case 'start_date':
+      case 'end_date':    
       case 'membership_start_date':
       case 'membership_end_date':
         if (!CRM_Utils_Rule::date($value)) {
           return civicrm_api3_create_error("$key not a valid date: $value");
         }
+
+        // make sure we format dates to mysql friendly format 
+        $values[$key] = CRM_Utils_Date::processDate( $value, null, false, 'Ymd' );
         break;
       case 'membership_type_id':
         if ( !CRM_Utils_Array::value( $value, CRM_Member_PseudoConstant::membershipType( ) ) ) {
