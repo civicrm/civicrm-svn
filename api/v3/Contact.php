@@ -394,7 +394,7 @@ function _civicrm_api3_contact_check_params( &$params, $dupeCheck = true, $dupeE
                 return civicrm_api3_create_error( $error->pop( ) );
             }
             
-            return civicrm_api3_create_error( "Found matching contacts: $ids", $ids );
+            return civicrm_api3_create_error( "Found matching contacts: $ids" );
         }
     }
 
