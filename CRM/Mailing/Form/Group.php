@@ -104,7 +104,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             $defaults['campaign_id'] = $mailing->campaign_id;
         
             require_once 'CRM/Mailing/DAO/Group.php';
-            $dao =& new CRM_Mailing_DAO_Group();
+            $dao = new CRM_Mailing_DAO_Group();
             
             $mailingGroups = array();
             $dao->mailing_id = $mailingID;
