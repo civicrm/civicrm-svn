@@ -229,12 +229,15 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
      */
     static function setIsActive( $id, $is_active ) 
     {
+        // reset the cache
+        require_once 'CRM/Core/BAO/Cache.php';
+        CRM_Core_BAO_Cache::deleteGroup( 'contact fields' );
+
         require_once 'CRM/Core/BAO/UFField.php';
-        if( $is_active ) {
-            //CRM_Core_BAO_UFField::setUFFieldStatus($id, $is_active);
-        } else {
+        if ( ! $is_active ) {
             CRM_Core_BAO_UFField::setUFFieldStatus($id, $is_active);
         }
+
         return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_CustomGroup', $id, 'is_active', $is_active );
     }
 
