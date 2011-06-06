@@ -138,7 +138,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
         $params          = array('version' => $this->_apiversion  );
         $params['title'] = 'No such group Exist'; 
         $group =&civicrm_api3_group_get( $params );
-        $this->assertEquals( $group['error_message'] , 'No such group exists' );        
+        $this->assertEquals( 0 , $group['is_error'] );        
     }
     
     function testgroupdeleteNonArrayParams( )
