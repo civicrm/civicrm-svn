@@ -86,7 +86,8 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
         $validTypes    = array_filter(array_keys(CRM_Core_SelectValues::contactType()));
         $validSubTypes = CRM_Contact_BAO_ContactType::subTypeInfo();
         
-        $types = explode(',', CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $id, 'group_type'));
+        $typesParts = explode(CRM_Core_DAO::VALUE_SEPARATOR, CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $id, 'group_type'));
+        $types = explode(',', $typesParts[0]);
         
         $cType = null;
         foreach ( $types as $type ) {
@@ -2657,8 +2658,13 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
 
     static function profileGroups( $profileID )
     {
+        $groupTypes   = array( );
         $profileTypes = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $profileID, 'group_type' );
-        return explode( ',', $profileTypes );
+        if ( $profileTypes ) {
+            $groupTypeParts = explode(CRM_Core_DAO::VALUE_SEPARATOR, $profileTypes);
+            $groupTypes = explode( ',', $groupTypeParts[0] );
+        }
+        return $groupTypes;
     }
 
     /**
