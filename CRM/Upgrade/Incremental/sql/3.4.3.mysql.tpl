@@ -62,10 +62,9 @@ CREATE TABLE IF NOT EXISTS `civicrm_action_schedule` (
   `mapping_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to mapping which is being used by this reminder',
   `group_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to Group',
   PRIMARY KEY (`id`),
-  KEY `FK_civicrm_action_schedule_mapping_id` (`mapping_id`),
-  KEY `FK_civicrm_action_schedule_group_id` (`group_id`)
+  CONSTRAINT `FK_civicrm_action_schedule_mapping_id` FOREIGN KEY (`mapping_id`) REFERENCES civicrm_action_mapping(id) ON DELETE SET NULL,
+  CONSTRAINT `FK_civicrm_action_schedule_group_id` FOREIGN KEY (`group_id`) REFERENCES civicrm_group(id) ON DELETE SET NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
 
 
 INSERT INTO civicrm_option_group
@@ -81,3 +80,12 @@ VALUES
    (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Assignees{/ts}'{/localize}, 1, 'Activity Assignees', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Source{/ts}'{/localize}, 2, 'Activity Source', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Targets{/ts}'{/localize}, 3, 'Activity Targets', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL);
+
+SELECT @domainID := min(id) FROM civicrm_domain;
+SELECT @configureID := max(id) FROM civicrm_navigation WHERE name = 'Configure';
+SELECT @nav_c_wt := max(weight) from civicrm_navigation WHERE parent_id = @configureID;
+
+INSERT INTO civicrm_navigation
+    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+VALUES
+    ( @domainID, 'civicrm/admin/scheduleReminders&reset=1', '{ts escape="sql" skip="true"}Schedule Reminders{/ts}', 'Schedule Reminders', 'administer CiviCRM', '',  @configureID, '1', NULL, @nav_c_wt );
