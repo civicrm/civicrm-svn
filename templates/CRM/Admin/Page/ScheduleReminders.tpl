@@ -63,7 +63,7 @@
         {/strip}
 
 	    <div class="action-link">
-    	<a href="{crmURL q="action=add&reset=1"}" id="newScheduleReminder" class="button"><span><div class="icon add-icon"></div>{ts}Schedule Reminder{/ts}</span></a>
+    	<a href="{crmURL q="action=add&reset=1"}" id="newScheduleReminder" class="button"><span><div class="icon add-icon"></div>{ts}Add Reminder{/ts}</span></a>
         </div>
 
 </div>

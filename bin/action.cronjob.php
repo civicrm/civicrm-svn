@@ -65,7 +65,6 @@ class CRM_Cron_Action {
 
     public function run( )
     {
-        require_once 'CRM/Core/BAO/ActionLog.php';
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
         $mappings = CRM_Core_BAO_ScheduleReminders::getMapping( );
 
@@ -95,8 +94,8 @@ class CRM_Cron_Action {
             $extraSelect = $extraJoin = '';
 
             if ( $mapping->entity == 'civicrm_activity' ) {
-                $tokenFields = array( 'activity_type', 'subject', 'activity_date_time' );
-                $extraSelect = ", ov.label as activity_type";
+                $tokenFields = array( 'activity_id', 'activity_type', 'subject', 'activity_date_time' );
+                $extraSelect = ", ov.label as activity_type, e.id as activity_id";
                 $extraJoin   = "INNER JOIN civicrm_option_group og ON og.name = 'activity_type'
 INNER JOIN civicrm_option_value ov ON e.activity_type_id = ov.value AND ov.option_group_id = og.id";
             }
@@ -107,7 +106,8 @@ FROM  civicrm_action_log reminder
 INNER JOIN {$mapping->entity} e ON e.id = reminder.entity_id
 {$extraJoin}
 WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL";
-            $dao   = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
+            $dao   = CRM_Core_DAO::executeQuery( $query,
+                                                 array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
 
             // QUESTION: in cases when same contact has multiple activites for example, should we 
             // send multiple mails ? if not should the log be maintained for every activity ?
