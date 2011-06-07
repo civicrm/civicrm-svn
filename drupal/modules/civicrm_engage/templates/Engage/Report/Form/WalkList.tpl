@@ -37,9 +37,9 @@
 	{if $pdfRows.$group}
 	    <table class="body">
 	    <tr>
-	    {foreach from=$pdfHeaders item=title}
-	        <th>{$title}</th> 	          
-	    {/foreach}
+        {foreach from=$pdfHeaders item=header}
+            <th {$header.class}  class='reports-header-right' >{$header.title}</th>               
+        {/foreach}
             </tr>
 	    {foreach from=$pdfRows.$group item=row}
 	        <tr>
