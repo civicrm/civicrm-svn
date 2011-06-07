@@ -200,6 +200,13 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
                 $defaults['recipient'] = 'group';
             } elseif ( $defaults['recipient_manual'] ) {
                 $defaults['recipient'] = 'manual';
+                $recipients = array( );
+                foreach ( explode(',', $defaults['recipient_manual']) as $cid ) {
+                    $recipients[$cid] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                                                                     $cid,
+                                                                     'sort_name' );
+                }
+                $this->assign('recipients', $recipients);
             } 
         }  
         return $defaults;

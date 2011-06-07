@@ -41,10 +41,19 @@
     var recipient_manual_id = null;
     var toDataUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }{literal}"; {/literal}
     
+    {/literal}
+    {if $recipients}
+    {foreach from=$recipients key=id item=name}
+         {literal} recipient_manual += '{"name":"'+{/literal}"{$name}"{literal}+'","id":"'+{/literal}"{$id}"{literal}+'"},';{/literal}
+    {/foreach}
+    {literal} eval( 'recipient_manual = [' + recipient_manual + ']'); {/literal}
+    {/if}
+
     {literal}
     if ( recipient_manual_id ) {
       eval( 'recipient_manual = ' + recipient_manual_id );
     }
+
     cj(document).ready( function( ) {
     {/literal}
     {literal}
@@ -62,7 +71,6 @@
     });
     </script>
     {/literal}
-
   <table class="form-layout-compressed">
     <tr class="crm-scheduleReminder-form-block-title">
         <td class="right">{$form.title.label}</td><td colspan="3">{$form.title.html}</td>

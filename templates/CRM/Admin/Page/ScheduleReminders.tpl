@@ -36,7 +36,7 @@
         {include file="CRM/common/jsortable.tpl"}
         <table id="scheduleReminders" class="display">
         <thead>
-        <tr class="columnheader">
+        <tr id="options" class="columnheader">
             <th class="sortable">{ts}Title{/ts}</th>
             <th >{ts}Reminder For{/ts}</th>
             <th >{ts}When{/ts}</th>
@@ -56,6 +56,7 @@
             <td class="crm-scheduleReminders-is_repeat">{if $row.is_repeat eq 1}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}&nbsp;</td>
 	    <td id="row_{$row.id}_status" class="crm-scheduleReminders-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	    <td>{$row.action|replace:'xx':$row.id}</td>
+	    <td class="hiddenElement"></td>
         </tr>
         {/foreach}
         </table>
