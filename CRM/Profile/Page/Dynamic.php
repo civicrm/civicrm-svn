@@ -195,7 +195,6 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
                 } else {
                     $this->_isPermissionedChecksum = CRM_Contact_BAO_Contact_Permission::validateChecksumContact( $this->_id, $this, true );
                 }
-                $this->_isPermissionedChecksum = true;
             }
             
             // make sure we dont expose all fields based on permission

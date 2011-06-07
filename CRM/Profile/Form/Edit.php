@@ -172,6 +172,10 @@ SELECT module
                     if ( $this->_isContactActivityProfile && $this->_activityId ) {
                         $urlParams .= "&aid={$this->_activityId}";  
                     }
+                    // get checksum if present
+                    if ( $this->get( 'cs' ) ) {
+                        $urlParams .= "&cs=" . $this->get( 'cs' );
+                    }
                     $this->_postURL = CRM_Utils_System::url('civicrm/profile/view', $urlParams);
                 }
             }
@@ -268,6 +272,10 @@ SELECT module
             $urlParams = "reset=1&id={$this->_id}&gid={$gidString}";
             if ( $this->_isContactActivityProfile && $this->_activityId ) {
                 $urlParams .= "&aid={$this->_activityId}";  
+            }
+            // get checksum if present
+            if ( $this->get( 'cs' ) ) {
+                $urlParams .= "&cs=" . $this->get( 'cs' );
             }
             $url = CRM_Utils_System::url( 'civicrm/profile/view', $urlParams );
         }
