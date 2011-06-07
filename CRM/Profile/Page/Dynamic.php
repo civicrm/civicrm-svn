@@ -181,7 +181,21 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
                 }
             }
 
+            $userID = $session->get( 'userID' );
+            
+            $this->_isPermissionedChecksum = false;
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
             require_once 'CRM/Contact/BAO/Contact/Permission.php';
+            if ( $this->_id != $userID ) {
+                // do not allow edit for anon users in joomla frontend, CRM-4668, unless u have checksum CRM-5228
+                require_once 'CRM/Contact/BAO/Contact/Permission.php';
+                if ( $config->userFrameworkFrontend ) {
+                    CRM_Contact_BAO_Contact_Permission::validateOnlyChecksum( $this->_id, $this );
+                } else {
+                    CRM_Contact_BAO_Contact_Permission::validateChecksumContact( $this->_id, $this );
+                }
+                $this->_isPermissionedChecksum = true;
+            }
             
             // make sure we dont expose all fields based on permission
             $admin = false; 
@@ -190,7 +204,8 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
                    ( CRM_Core_Permission::check( 'administer users' )  ||
                      CRM_Core_Permission::check( 'view all contacts' ) ||
                      CRM_Contact_BAO_Contact_Permission::allow( $this->_id, CRM_Core_Permission::VIEW ) ) ) ||
-                 $this->_id == $session->get( 'userID' ) ) {
+                 $this->_id == $userID ||
+                 $this->_isPermissionedChecksum ) {
                 $admin = true; 
             }
 
