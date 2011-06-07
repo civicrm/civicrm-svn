@@ -95,6 +95,14 @@ function civicrm_api3_activity_create( $params ) {
         $params['custom'] = $values['custom'];
     }
 
+    $params['skipRecentView'] = true;
+
+    if ( CRM_Utils_Array::value('activity_id', $params) ) {
+        $params['id'] = $params['activity_id'];
+    }
+    $params['deleteActivityAssignment'] = CRM_Utils_Array::value( 'deleteActivityTarget', $params, false );
+    $params['deleteActivityTarget'] = CRM_Utils_Array::value( 'deleteActivityTarget', $params, false );
+    
     // create activity
     $activityBAO = CRM_Activity_BAO_Activity::create( $params );
 
