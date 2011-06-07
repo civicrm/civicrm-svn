@@ -211,6 +211,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             $defaults['entity'][2] = $entityStatus;
             $defaults['text_message'] = $defaults['body_text'] ;
             $defaults['html_message'] = $defaults['body_html'] ;
+            $defaults['template'] = $defaults['msg_template_id'];
             if ( $defaults['group_id'] ) {
                 $defaults['recipient'] = 'group';
             } elseif ( $defaults['recipient_manual'] ) {
@@ -299,6 +300,48 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             // we do this only once, so name never changes
             $params['name']   = CRM_Utils_String::munge($params['title'], '_', 64 );
         } 
+
+        $composeFields = array ( 'template', 'saveTemplate',
+                                 'updateTemplate', 'saveTemplateName' );
+        $msgTemplate = null;
+        //mail template is composed 
+        
+        foreach ( $composeFields as $key ) {
+            if ( CRM_Utils_Array::value( $key, $values ) ) {
+                $composeParams[$key] = $values[$key];
+            }
+        }          
+        
+        if ( CRM_Utils_Array::value( 'updateTemplate', $composeParams ) ) {
+            $templateParams = array( 'msg_text'    => $params['body_text'],
+                                     'msg_html'    => $params['body_html'],
+                                     'msg_subject' => $params['subject'],
+                                     'is_active'   => true
+                                     );
+            
+            $templateParams['id'] = $values['template'];
+            
+            $msgTemplate = CRM_Core_BAO_MessageTemplates::add( $templateParams );  
+        } 
+        
+        if ( CRM_Utils_Array::value( 'saveTemplate', $composeParams ) ) {
+            $templateParams = array( 'msg_text'    => $params['body_text'],
+                                     'msg_html'    => $params['body_html'],
+                                     'msg_subject' => $params['subject'],
+                                     'is_active'   => true
+                                     );
+            
+            $templateParams['msg_title'] = $composeParams['saveTemplateName'];
+            
+            $msgTemplate = CRM_Core_BAO_MessageTemplates::add( $templateParams );  
+        } 
+        
+        if ( isset($msgTemplate->id ) ) {
+            $params['msg_template_id'] = $msgTemplate->id;
+        } else {
+            $params['msg_template_id'] = CRM_Utils_Array::value( 'template', $values );
+        }
+        
         CRM_Core_BAO_ScheduleReminders::add($params, $ids);
 
         $status = ts( "Your new Reminder titled %1 has been saved." , array( 1 => "<strong>{$values['title']}</strong>") );

@@ -192,4 +192,15 @@
         <key>id</key>
         <onDelete>SET NULL</onDelete>
     </foreignKey>
+    <field>
+          <name>msg_template_id</name>
+	  <type>int unsigned</type>
+	  <comment>FK to the message template.</comment>
+    </field>
+    <foreignKey>
+          <name>msg_template_id</name>
+	  <table>civicrm_msg_template</table>
+	  <key>id</key>
+	  <onDelete>SET NULL</onDelete>
+    </foreignKey>
 </table>
