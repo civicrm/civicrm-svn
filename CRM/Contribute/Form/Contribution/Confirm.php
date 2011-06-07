@@ -516,12 +516,14 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 }
             }
 
-            foreach ( $params['onbehalf'] as $fld => $values ) {
-                if ( !( strstr( $fld, '-' ) || strstr( $fld, 'custom_' ) ) ) {
-                    if ( in_array( $fld, array( 'contribution_campaign_id', 'member_campaign_id' ) ) ) {
-                        $fld = 'campaign_id';
+            if ( is_array( $params['onbehalf'] ) && !empty( $params['onbehalf'] ) ) {
+                foreach ( $params['onbehalf'] as $fld => $values ) {
+                    if ( !( strstr( $fld, '-' ) || strstr( $fld, 'custom_' ) ) ) {
+                        if ( in_array( $fld, array( 'contribution_campaign_id', 'member_campaign_id' ) ) ) {
+                            $fld = 'campaign_id';
+                        }
+                        $this->_params[$fld] = $values;
                     }
-                    $this->_params[$fld] = $values;
                 }
             }
                         
