@@ -222,14 +222,14 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $values = $this->controller->exportValues( $this->getName() );
 
         $keys = array('title', 'start_action_offset' ,'start_action_unit',
-                      'start_action_condition', 'start_action_date', 'is_repeat',
+                      'start_action_condition', 'start_action_date', 
                       'repetition_frequency_unit',
                       'repetition_frequency_interval',
                       'end_frequency_unit',
                       'end_frequency_interval',
                       'end_action', 'end_date',
                       'subject',
-                     'group_id'
+                      'group_id'
                       );
         
         foreach ( $keys as $key ) {
@@ -260,7 +260,17 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
 
         $params['is_active' ] =  CRM_Utils_Array::value( 'is_active', $values, 0 );
         $params['record_activity'] = CRM_Utils_Array::value( 'record_activity', $values, 0 );
+        $params['is_repeat'] = CRM_Utils_Array::value( 'is_repeat', $values, 0 );
 
+        if ( CRM_Utils_Array::value( 'is_repeat', $values ) == 0 ) {
+            $params['repetition_frequency_unit'] = 'null';
+            $params['repetition_frequency_interval'] = 'null';
+            $params['end_frequency_unit'] = 'null';
+            $params['end_frequency_interval'] = 'null';
+            $params['end_action'] = 'null';
+            $params['end_date'] = 'null';
+        }
+        
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             $params['id' ] = $this->_id;
         } elseif ( $this->_action & CRM_Core_Action::ADD ) {

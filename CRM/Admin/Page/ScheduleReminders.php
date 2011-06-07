@@ -76,12 +76,6 @@ class CRM_Admin_Page_ScheduleReminders extends CRM_Core_Page_Basic
                                                                     'qs'    => 'action=update&id=%%id%%&reset=1',
                                                                     'title' => ts('Edit Schedule Reminders') 
                                                                     ),
-                                  CRM_Core_Action::DELETE  => array(
-                                                                    'name'  => ts('Delete'),
-                                                                    'url'   => 'civicrm/admin/scheduleReminders',
-                                                                    'qs'    => 'action=delete&id=%%id%%',
-                                                                    'title' => ts('Delete Schedule Reminders') 
-                                                                    ),
                                   CRM_Core_Action::ENABLE  => array(
                                                                     'name'  => ts('Enable'),
                                                                     'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_ScheduleReminders' . '\',\'' . 'disable-enable' . '\' );"',
@@ -94,6 +88,12 @@ class CRM_Admin_Page_ScheduleReminders extends CRM_Core_Page_Basic
                                                                     'ref'   => 'disable-action',
                                                                     'title' => ts('Disable Label Format') 
                                                                   ),
+                                  CRM_Core_Action::DELETE  => array(
+                                                                    'name'  => ts('Delete'),
+                                                                    'url'   => 'civicrm/admin/scheduleReminders',
+                                                                    'qs'    => 'action=delete&id=%%id%%',
+                                                                    'title' => ts('Delete Schedule Reminders') 
+                                                                    ),
                                   );
         }
         
