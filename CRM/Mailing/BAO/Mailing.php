@@ -242,7 +242,7 @@ WHERE  c.group_id = {$groupDAO->id}
                     LEFT JOIN           X_$job_id
                             ON          $contact.id = X_$job_id.contact_id
                     WHERE           
-                                       ($mg.group_type = 'Include' OR $mg.group_type = 'Base')
+                                       ($mg.group_type = 'Include')
                         AND             $mg.search_id IS NULL
                         AND             $g2contact.status = 'Added'
                         AND             $g2contact.email_id IS null
@@ -274,7 +274,7 @@ WHERE  c.group_id = {$groupDAO->id}
                     LEFT JOIN           X_$job_id
                             ON          $contact.id = X_$job_id.contact_id
                     WHERE
-                                       ($mg.group_type = 'Include' OR $mg.group_type = 'Base')
+                                       ($mg.group_type = 'Include')
                         AND             $contact.do_not_email = 0
                         AND             $contact.is_opt_out = 0
                         AND             $contact.is_deceased = 0
@@ -1496,6 +1496,7 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             SELECT          {$t['mailing_group']}.group_type as group_type,
                             {$t['group']}.id as group_id,
                             {$t['group']}.title as group_title,
+                            {$t['group']}.is_hidden as group_hidden,
                             {$t['mailing']}.id as mailing_id,
                             {$t['mailing']}.name as mailing_name
             FROM            {$t['mailing_group']}
@@ -1512,7 +1513,7 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             WHERE           {$t['mailing_group']}.mailing_id = $mailing_id
             ");
         
-        $report['group'] = array('include' => array(), 'exclude' => array());
+        $report['group'] = array('include' => array(), 'exclude' => array(), 'base' => array());
         while ($mailing->fetch()) {
             $row = array();
             if (isset($mailing->group_id)) {
@@ -1527,9 +1528,16 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                 $row['link'] = CRM_Utils_System::url('civicrm/mailing/report',
                                                     "mid={$row['id']}");
             }
+
+            /* Rename hidden groups */
+            if($mailing->group_hidden == 1) {
+                $row['name'] = "Search Results";
+            }
             
             if ($mailing->group_type == 'Include') {
                 $report['group']['include'][] = $row;
+            } else if($mailing->group_type == 'Base') {
+                $report['group']['base'][] = $row;
             } else {
                 $report['group']['exclude'][] = $row;
             }
