@@ -55,23 +55,23 @@ class CRM_Core_Page_AJAX_Location
      */
     function getPermissionedLocation( ) 
     {
-        $cid = CRM_Utils_Type::escape( $_GET['cid'], 'Integer' );
-        $ufId = CRM_Utils_Type::escape( $_GET['ufId'], 'Integer' );
+        $cid           = CRM_Utils_Type::escape( $_GET['cid'], 'Integer' );
+        $ufId          = CRM_Utils_Type::escape( $_GET['ufId'], 'Integer' );
         $profileFields = CRM_Core_BAO_UFGroup::getFields( $ufId, false, CRM_Core_Action::VIEW, null, null, false,
                                                           null, false, null, CRM_Core_Permission::CREATE, null );
 
         require_once 'CRM/Core/BAO/Location.php';
         $entityBlock = array( 'contact_id' => $cid );
         $location    =& CRM_Core_BAO_Location::getValues( $entityBlock );
-        CRM_Core_Error::debug_var( '$location', $location );
- 
+         
         $config = CRM_Core_Config::singleton();
         $addressSequence = array_flip($config->addressSequence());
 
         foreach ( $location as $fld => $values ) {
             if ( in_array( $fld, array( 'phone', 'email' ) ) ) {
                 $locType = $values[1]['location_type_id'];
-                $elements["onbehalf_{$fld}-{$locType}"] = $location[$fld][1][$fld];
+                $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
+                                                                 'value' => $location[$fld][1][$fld] );
                 unset( $profileFields["{$fld}-{$locType}"] );
             }
         }
@@ -91,34 +91,35 @@ class CRM_Core_Page_AJAX_Location
                 if ( in_array( $field, array( 'state_province', 'country' ) ) ) {
                     $addField = "{$field}_id";
                 }
-                $elements["onbehalf_{$field}-{$locTypeId}"] = $location['address'][1][$addField];
+                $elements["onbehalf_{$field}-{$locTypeId}"] = array( 'type'  => 'Text',
+                                                                     'value' => $location['address'][1][$addField] );
                 unset( $profileFields["{$field}-{$locTypeId}"] );
             }
         }
         
         //set custom field defaults
-        $defaults = $values = array( );
-                
-        foreach ( $profileFields as $name => $field ) {
-            if ( !isset( $defaults[$name] ) ) {
-                if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID($name) ) {
-                    CRM_Core_BAO_CustomField::setProfileDefaults( $customFieldID, $name, $defaults,
-                                                                  $cid, CRM_Profile_Form::MODE_REGISTER );
-                }
-            }
-        }
+        $defaults = array( );
+        CRM_Core_BAO_UFGroup::setProfileDefaults( $cid, $profileFields, $defaults );
         
         if ( !empty( $defaults ) ) {
-            foreach ( $defaults as $key => $value ) {
-                $elements["onbehalf_{$key}"] = $value;
-            }
-        }
-
-        CRM_Core_BAO_UFGroup::setProfileDefaults( $cid, $profileFields, $values );
-
-        if ( !empty( $values ) ) {
-            foreach ( $values as $key => $value ) {
-                $elements["onbehalf_{$key}"] = $value;
+            foreach ( $profileFields as $key => $val ) {
+                
+                if ( array_key_exists( $key, $defaults ) ) {
+                    if ( $val['html_type'] == 'Radio' ) {
+                        $elements["onbehalf[{$key}]"]['type'] = $val['html_type'];
+                        $elements["onbehalf[{$key}]"]['value'] = $defaults[$key];
+                    } else if ( $val['html_type'] == 'CheckBox' ) {
+                        foreach ( $defaults[$key] as $k => $v ) {
+                            $elements["onbehalf[{$key}][{$k}]"]['type'] = $val['html_type'];
+                            $elements["onbehalf[{$key}][{$k}]"]['value'] = $v;
+                        }
+                    } else {
+                        $elements["onbehalf_{$key}"]['type'] = $val['html_type'];
+                        $elements["onbehalf_{$key}"]['value'] = $defaults[$key];
+                    }
+                } else {
+                    $elements["onbehalf_{$key}"]['value'] = '';
+                }
             }
         }
         

@@ -1063,7 +1063,8 @@ AND civicrm_membership.is_test = %2";
      * @return void
      * @access public
      */                                   
-    public function postProcessMembership( $membershipParams, $contactID ,&$form, &$premiumParams)
+    public function postProcessMembership( $membershipParams, $contactID ,&$form, &$premiumParams, 
+                                           $customFieldsFormatted = null )
     {
     	$tempParams  = $membershipParams;
         $paymentDone = false;
@@ -1196,7 +1197,8 @@ AND civicrm_membership.is_test = %2";
             }
             $membership = self::renewMembership( $contactID, $membershipTypeID, 
                                                  $isTest, $form, null,
-                                                 CRM_Utils_Array::value( 'cms_contactID', $membershipParams ) );
+                                                 CRM_Utils_Array::value( 'cms_contactID', $membershipParams ),
+                                                 $customFieldsFormatted );
             if ( isset( $contribution[$index] ) ) {
                 //insert payment record
                 require_once 'CRM/Member/DAO/MembershipPayment.php';

@@ -27,6 +27,7 @@
 <div id='onBehalfOfOrg' class="crm-section"></div>
 
 {if $buildOnBehalfForm}
+<div id='onBehalfOfOrg' class="crm-section">
   <fieldset id="for_organization" class="for_organization-group">
   <legend>{$fieldSetTitle}</legend>
   {if $relatedOrganizationFound and !$organizationName}
@@ -53,6 +54,7 @@
   </table>
  
   <div>{$form.mode.html}</div>
+</div>
 {/if}
 
 {literal}
@@ -60,7 +62,8 @@
 
 function showOnBehalf( )
 {
-   if ( cj( "#is_for_organization" ).attr( 'checked' ) ) {
+   if ( cj( "#for_organization" ).size( ) == 0 ) {
+     if ( cj( "#is_for_organization" ).attr( 'checked' ) ) {
        var urlPath = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&onbehalf=1'}"{literal};
        urlPath     = urlPath  + '&id=' + {/literal}{$pageId}{literal};
        
@@ -72,10 +75,11 @@ function showOnBehalf( )
     	                       cj( "#onBehalfOfOrg" ).html( content );
                            }
        });
-   } else {
-       cj( "#onBehalfOfOrg" ).html('');	
+     } else {
+       //cj( "#onBehalfOfOrg" ).html('');	
        cj( "#for_organization" ).html( '' );
        return;
+     }
    }
 }
 
@@ -148,6 +152,7 @@ cj( "#mode" ).attr( 'checked', 'checked' );
               cj( "input#onbehalf_organization_name" ).removeClass( 'ac_input' ).unautocomplete( );
               cj( "#select_org tr td input" ).each( function( ) {
                  cj(this).val( '' );
+                 cj(this).attr('checked', false)
               });
               cj( "#select_org tr td select" ).each( function( ) {
                  cj(this).val( '' );
@@ -168,7 +173,13 @@ cj( "#mode" ).attr( 'checked', 'checked' );
             timeout     : 5000, //Time in milliseconds
             success     : function( data, status ) {
                 for (var ele in data) {
-                    cj( "#"+ele ).val( data[ele] );
+                   if ( data[ele].type == 'Radio' || data[ele].type == 'CheckBox' ) {
+                       if ( data[ele].value ) {
+                           cj( "input[name='"+ ele +"']" ).filter( "[value=" + data[ele].value + "]" ).attr("checked","checked");
+                       }
+		   } else {
+                     cj( "#" + ele ).val( data[ele].value );
+                   }
                 }
             },
             error       : function( XMLHttpRequest, textStatus, errorThrown ) {

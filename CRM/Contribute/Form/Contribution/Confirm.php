@@ -652,16 +652,33 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             if ( CRM_Utils_Array::value( 'member_campaign_id', $membershipParams['onbehalf'] ) ) {
                 $this->_params['campaign_id'] = $membershipParams['onbehalf']['member_campaign_id'];
             }
+
+            $customFieldsFormatted = array( );
+            require_once 'CRM/Core/BAO/CustomField.php';
+            foreach ( $membershipParams['onbehalf'] as $key => $value ) {
+                if ( strstr( $key, 'custom_' ) ) {
+                    $customFieldId = explode( '_', $key );
+                    CRM_Core_BAO_CustomField::formatCustomField( $customFieldId[1], $customFieldsFormatted, $value, 
+                                                                 'Membership', null, $contactID );
+                }
+            }
             
             require_once 'CRM/Member/BAO/Membership.php';
             CRM_Member_BAO_Membership::postProcessMembership( $membershipParams, $contactID,
-                                                              $this, $premiumParams );                       
+                                                              $this, $premiumParams, $customFieldsFormatted );  
         } else {
             // at this point we've created a contact and stored its address etc
             // all the payment processors expect the name and address to be in the 
             // so we copy stuff over to first_name etc. 
             $paymentParams      = $this->_params;
             $contributionTypeId = $this->_values['contribution_type_id'];
+
+            require_once 'CRM/Core/BAO/CustomField.php';
+            foreach ( $paymentParams['onbehalf'] as $key => $value ) {
+                if ( strstr( $key, 'custom_' ) ) {
+                    $this->_params[$key] = $value;
+                }
+            }
             
             require_once 'CRM/Contribute/BAO/Contribution/Utils.php';
             CRM_Contribute_BAO_Contribution_Utils::processConfirm( $this, $paymentParams, 
