@@ -61,9 +61,11 @@ CREATE TABLE IF NOT EXISTS `civicrm_action_schedule` (
   `record_activity` tinyint(4) DEFAULT '1' COMMENT 'Record Activity for this reminder?',
   `mapping_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to mapping which is being used by this reminder',
   `group_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to Group',
+  `msg_template_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to the message template.',
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_civicrm_action_schedule_mapping_id` FOREIGN KEY (`mapping_id`) REFERENCES civicrm_action_mapping(id) ON DELETE SET NULL,
-  CONSTRAINT `FK_civicrm_action_schedule_group_id` FOREIGN KEY (`group_id`) REFERENCES civicrm_group(id) ON DELETE SET NULL
+  CONSTRAINT `FK_civicrm_action_schedule_group_id` FOREIGN KEY (`group_id`) REFERENCES civicrm_group(id) ON DELETE SET NULL,
+  CONSTRAINT `FK_civicrm_action_schedule_msg_template_id` FOREIGN KEY (`msg_template_id`) REFERENCES `civicrm_msg_template` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
