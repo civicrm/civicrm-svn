@@ -41,7 +41,6 @@
     var recipient_manual_id = null;
     var toDataUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }{literal}"; {/literal}
     
-    {/literal}
     {if $recipients}
     {foreach from=$recipients key=id item=name}
          {literal} recipient_manual += '{"name":"'+{/literal}"{$name}"{literal}+'","id":"'+{/literal}"{$id}"{literal}+'"},';{/literal}

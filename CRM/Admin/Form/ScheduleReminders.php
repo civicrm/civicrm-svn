@@ -46,7 +46,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
     /**
      * Scheduled Reminder ID
      */
-    protected $_id     = null;
+    protected $_id = null;
 
     public $_freqUnits;
 
@@ -128,7 +128,14 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->add( 'select', 'end_action', ts( 'Repetition Condition' ), $condition, true );
         $this->add( 'select', 'end_date', ts( 'Date Field' ), $sel4, true );
 
-        $this->add( 'select', 'recipient', ts( 'Recipient' ), $sel5['activity_contacts'],
+        $recipient = 'activity_contacts';
+        if ( $this->_action & CRM_Core_Action::UPDATE ) {
+            $recipient = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_ActionMapping',
+                                                      $this->_values['mapping_id'],
+                                                      'entity_recipient' );
+        }
+
+        $this->add( 'select', 'recipient', ts( 'Recipient' ), $sel5[$recipient],
                     false, array( 'onClick' => "showHideByValue('recipient','manual','recipientManual','table-row','select',false); showHideByValue('recipient','group','recipientGroup','table-row','select',false);") 
                     );
         
@@ -160,7 +167,15 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->addFormRule( array( 'CRM_Admin_Form_ScheduleReminders', 'formRule' ) );
     }
 
-
+    /**  
+     * global form rule  
+     *  
+     * @param array $fields  the input form values  
+     *  
+     * @return true if no errors, else array of errors  
+     * @access public  
+     * @static  
+     */  
     static function formRule( $fields )
     {
         $errors = array( );
