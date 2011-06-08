@@ -3748,11 +3748,15 @@ function civicrm_views_data() {
 
     $data['civicrm_relationship']['contact_id_a'] = array(
                                                           'title' => t('Contact ID A'),
+                                                          'real field' => 'contact_id_a',
                                                           'help' => t('The contact A'),
                                                           'relationship' => array(
                                                                                   'base' => 'civicrm_contact',
                                                                                   'field' => 'id',
-                                                                                  'handler' => 'views_handler_relationship',
+                                                                                  'relationship table' => 'civicrm_relationship',
+                                                                                  'relationship field' => 'contact_id_a',
+                                                                                  'other_field' => 'contact_id_b',
+                                                                                  'handler' => 'civicrm_handler_relationship',
                                                                                   'label' => t('CiviCRM Contact A'),
                                                                                   ),
                                                           );
@@ -3768,12 +3772,15 @@ function civicrm_views_data() {
                                                           'argument' => array(
                                                                               'handler' => 'views_handler_argument',
                                                                               ),
-                                                          'relationship' => array(
-                                                                                  'base' => 'civicrm_contact',
-                                                                                  'field' => 'id',
-                                                                                  'handler' => 'views_handler_relationship',
-                                                                                  'label' => t('CiviCRM Contact B'),
-                                                                                  ),
+                                                            'relationship' => array(
+                                                                                    'base' => 'civicrm_contact',
+                                                                                    'field' => 'id',
+                                                                                    'relationship table' => 'civicrm_relationship',
+                                                                                    'relationship field' => 'contact_id_b',
+                                                                                    'other_field' => 'contact_id_a',
+                                                                                    'handler' => 'civicrm_handler_relationship',
+                                                                                    'label' => t('CiviCRM Contact B'),
+                                                                                    ),
                                                           );
 
 
@@ -6519,7 +6526,12 @@ function civicrm_views_handlers() {
                        'civicrm_handler_sort_date' => array(
                                                             'parent' => 'views_handler_sort_date',
                                                             ),
-                       ),
+                       //Relationship Handlers
+                       'civicrm_handler_relationship' => array(
+                                                           'parent'=> 'views_handler_relationship',
+                                                            ),
+                        ),
+
 
                  );
                  
