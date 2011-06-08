@@ -664,7 +664,7 @@ class CRM_Core_SelectValues
                                    "d M yy"        => 'j M Y',
                                    "MM d, yy"      => 'F j, Y',
                                    "d MM yy"       => 'j F Y',
-                                   "DD, d MM yy"   => 'l, j F Y',                                   
+                                   "DD, d MM yy"   => 'l, j F Y',                               
                                    "mm/dd"         => 'm/d',
                                    "dd-mm"         => 'd-m',
                                    "yy-mm"         => 'Y-m',
