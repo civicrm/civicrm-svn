@@ -533,6 +533,9 @@ class CRM_Core_SelectValues
         if (! $tokens ) {
             $tokens = array( 
                             '{activity.activity_id}' => ts('Activity ID'),
+                            '{activity.subject}' => ts('Activity Subject'),
+                            '{activity.details}' => ts('Activity Details'),
+                            
                           );
         }
         return $tokens;
