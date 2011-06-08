@@ -2406,15 +2406,23 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         }
 
         if ( !empty($customFieldIds) ) {
-            $query = 'SELECT DISTINCT(cg.id), cg.extends, cg.extends_entity_column_value FROM civicrm_custom_group cg LEFT JOIN civicrm_custom_field cf ON cf.custom_group_id = cg.id WHERE cg.extends_entity_column_value IS NOT NULL AND cf.id IN ('. implode(',', $customFieldIds) .')';            
+            $query = 'SELECT DISTINCT(cg.id), cg.extends, cg.extends_entity_column_id, cg.extends_entity_column_value FROM civicrm_custom_group cg LEFT JOIN civicrm_custom_field cf ON cf.custom_group_id = cg.id WHERE cg.extends_entity_column_value IS NOT NULL AND cf.id IN ('. implode(',', $customFieldIds) .')';
+
             $customGroups = CRM_Core_DAO::executeQuery( $query );
             while( $customGroups->fetch( )) {
                 if (!$customGroups->extends_entity_column_value) {
                     continue;
                 }
+                
+                $groupTypeName = "{$customGroups->extends}Type";
+                if ( $customGroups->extends == 'Participant' && $customGroups->extends_entity_column_id ) {
+                    require_once 'CRM/Core/OptionGroup.php';
+                    $groupTypeName = CRM_Core_OptionGroup::getValue( 'custom_data_type', $customGroups->extends_entity_column_id, 'value', 'String', 'name' );
+                }
+
                 foreach( explode(CRM_Core_DAO::VALUE_SEPARATOR, $customGroups->extends_entity_column_value) as $val ) {
                     if ($val) {
-                        $groupTypeValues["{$customGroups->extends}Type"][$val] = $val; 
+                        $groupTypeValues[$groupTypeName][$val] = $val; 
                     }
                 }
             }
@@ -2451,6 +2459,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
 
         $gTypes = $gTypeValues = array( );
         
+        $participantExtends = array( 'ParticipantRole', 'ParticipantEventName', 'ParticipantEventType' );
         // Get valid group type and group subtypes
         foreach( $groupTypes as $groupType => $value ) {
             if ( in_array($groupType, $validGroupTypes) && !in_array($groupType, $gTypes) ) {
@@ -2458,14 +2467,18 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             }
             
             $subTypesOf = null;
-            if ( strpos($groupType, 'Type') > 0 ) {
+            
+            if ( in_array($groupType, $participantExtends) ) {
+                $subTypesOf = $groupType;
+            } else if ( strpos($groupType, 'Type') > 0 ) {
                 $subTypesOf  = substr( $groupType, 0, strpos($groupType, 'Type') );
             } else {
                 continue;   
             }
 
             if ( !empty($value) && 
-                 in_array($subTypesOf, $componentGroupTypes) ) {
+                 ( in_array($subTypesOf, $componentGroupTypes) ||
+                   in_array($subTypesOf, $participantExtends) ) ) {
                 $gTypeValues[$subTypesOf] = $groupType .":". implode(':', $value);
             }
         }
@@ -2838,11 +2851,15 @@ SELECT  group_id
         if ( !CRM_Utils_Array::value(1, $groupTypeParts) ) {
             return $groupTypeValue;
         }
-        
+        $participantExtends = array( 'ParticipantRole', 'ParticipantEventName', 'ParticipantEventType' );
+
         foreach( explode(',', $groupTypeParts[1]) as $groupTypeValues ) {
             $values     = array( );
             $valueParts = explode(':', $groupTypeValues);
-            if ( $groupType && ($valueParts[0] != "{$groupType}Type") ) {
+            if ( $groupType && 
+                 ( $valueParts[0] != "{$groupType}Type" || 
+                   ( $groupType == 'Participant' && 
+                     !in_array($valueParts[0], $participantExtends) ) ) ) {
                 continue;
             }
             foreach( $valueParts as $val ) {
@@ -2851,7 +2868,11 @@ SELECT  group_id
                 }
             }
             if ( !empty($values) ) {
-                $groupTypeValue[substr($valueParts[0], 0, -4)] = $values;
+                $typeName = substr($valueParts[0], 0, -4);
+                if ( in_array($valueParts[0], $participantExtends) ) {
+                    $typeName = $valueParts[0];
+                }
+                $groupTypeValue[$typeName] = $values;
             }
         }
         

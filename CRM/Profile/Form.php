@@ -600,7 +600,7 @@ class CRM_Profile_Form extends CRM_Core_Form
     static function validateContactActivityProfile($activityId, $contactId, $gid) {
         $errors = array( );
         if ( !$activityId ) {
-            $errors[] = 'Profile is using activty field, missing activity Id (aid) in url.';
+            $errors[] = 'Profile is using one or more activity fields, and is missing the activity Id (aid) in the URL.';
             return $errors;
         } 
         
