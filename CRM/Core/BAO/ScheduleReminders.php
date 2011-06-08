@@ -74,13 +74,16 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         $eventType = CRM_Event_PseudoConstant::eventType();
         $activityContacts = CRM_Core_PseudoConstant::activityContacts();
         $sel1 = $sel2 = $sel3 = $sel4 = $sel5 = array();
-
+        $options = array( 'manual' => ts('Choose Recipient(s)'), 
+                          'group'  => ts('CiviCRM Group')  );
         foreach ( $mapping as $value ) {
             $entityValue  = CRM_Utils_Array::value('entity_value', $value );
             $entityStatus = CRM_Utils_Array::value('entity_status', $value );
             $entityDateStart = CRM_Utils_Array::value('entity_date_start', $value );
             $entityDateEnd = CRM_Utils_Array::value('entity_date_end', $value );
             $entityRecipient = CRM_Utils_Array::value('entity_recipient', $value );
+            $valueLabel = array('- '. strtolower( CRM_Utils_Array::value('entity_value_label', $value) ) .' -');            
+
             $key = $value['id'];
             if( $entityValue == 'activity_type' &&
                 $value['entity'] == 'civicrm_activity' ) {
@@ -96,15 +99,15 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
             
             switch ($entityValue) {
             case 'activity_type':
-                $sel2[$key] = array( $value['entity_value_label'] ) + $activityType; 
+                $sel2[$key] = $valueLabel + $activityType; 
                 break;
 
             case 'event_type':
-                $sel2[$key] = array( $value['entity_value_label'] ) + $eventType;
+                $sel2[$key] = $valueLabel + $eventType;
                 break;
 
             case 'civicrm_event':
-                $sel2[$key] = array( $value['entity_value_label'] ) + $event;
+                $sel2[$key] = $valueLabel + $event;
                 break;
             }
 
@@ -126,11 +129,11 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
 
             switch ($entityRecipient) {
             case 'activity_contacts':
-                $sel5[$entityRecipient] = $activityContacts + array( 'manual' => ts('Manual'), 'group' => ts('CiviCRM Group')  );
+                $sel5[$entityRecipient] = $activityContacts + $options;
                 break;
                 
             case 'civicrm_participant_status_type':
-                $sel5[$entityRecipient] = $participantStatus + array( 'manual' => ts('Manual'), 'group' => ts('CiviCRM Group') );
+                $sel5[$entityRecipient] = $participantStatus + $options;
                 break;
             }
             
@@ -139,18 +142,19 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
 
         foreach ( $mapping as $value ) {
             $entityStatus = $value['entity_status'];
+            $statusLabel = array('- '. strtolower( CRM_Utils_Array::value('entity_status_label', $value) ) .' -');            
             $id = $value['id'];
                       
             switch ($entityStatus) {
             case 'activity_status':
                 foreach( $sel3[$id] as $kkey => &$vval ) {
-                    $vval =  array($value['entity_status_label']) + $activityStatus;
+                    $vval = $statusLabel + $activityStatus;
                 }
                 break;
 
             case 'civicrm_participant_status_type':
                 foreach( $sel3[$id] as $kkey => &$vval ) {
-                    $vval = array($value['entity_status_label']) + $participantStatus;
+                    $vval = $statusLabel + $participantStatus;
                 }
                 break;
             }
