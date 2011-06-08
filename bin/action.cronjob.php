@@ -101,7 +101,7 @@ INNER JOIN civicrm_option_value ov ON e.activity_type_id = ov.value AND ov.optio
             }
 
             $query = "
-SELECT reminder.*, e.* {$extraSelect} 
+SELECT reminder.id as reminderID, reminder.*, e.* {$extraSelect} 
 FROM  civicrm_action_log reminder
 INNER JOIN {$mapping->entity} e ON e.id = reminder.entity_id
 {$extraJoin}
@@ -138,7 +138,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL";
                 $setClause = "SET action_date_time = NOW(), is_error = {$isError}" . 
                     ($errorMsg ? ", message = '{$errorMsg}'" : '');
                 $query     = "UPDATE civicrm_action_log {$setClause} WHERE id = %1";
-                CRM_Core_DAO::executeQuery( $query, array( 1 => array( $dao->id, 'Integer' ) ) );
+                CRM_Core_DAO::executeQuery( $query, array( 1 => array( $dao->reminderID, 'Integer' ) ) );
             }
             $dao->free();
         }
