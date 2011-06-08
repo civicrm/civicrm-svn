@@ -107,6 +107,8 @@ class CRM_Custom_Form_ChangeFieldType extends CRM_Core_Form {
         $srcHtmlType->setValue($this->_values['html_type']);
         $srcHtmlType->freeze();
         
+        $this->assign('srcHtmlType', $this->_values['html_type']);
+
         $dstHtmlType = $this->add( 'select',
                                    'dst_html_type',
                                    ts( 'Destination HTML Type' ),
@@ -116,7 +118,8 @@ class CRM_Custom_Form_ChangeFieldType extends CRM_Core_Form {
         $this->addButtons( array(
                                  array ( 'type'      => 'next',
                                          'name'      => ts('Change Field Type'),
-                                         'isDefault' => true   ),
+                                         'isDefault' => true,
+                                         'js'        => array( 'onclick' => 'return checkCustomDataField();') ),
                                  array ( 'type'       => 'cancel',
                                          'name'      => ts('Cancel') ),
                                  )
@@ -136,6 +139,15 @@ class CRM_Custom_Form_ChangeFieldType extends CRM_Core_Form {
                                                   $this->_values['custom_group_id'],
                                                   'table_name' );
 
+        $singleValueOps = array( 'Text',  
+                                 'Select',
+                                 'Radio',
+                                 'Autocomplete-Select' );
+
+        $mutliValueOps  = array( 'CheckBox',
+                                 'Multi-Select',
+                                 'AdvMulti-Select' );
+
         $srcHtmlType = $this->_values['html_type'];
         $dstHtmlType = $params['dst_html_type'];
         
@@ -148,9 +160,21 @@ class CRM_Custom_Form_ChangeFieldType extends CRM_Core_Form {
             CRM_Core_BAO_CustomField::checkOptionGroup( $this->_values['option_group_id'] );
         }
 
+        if ( in_array($srcHtmlType, $mutliValueOps) &&
+             in_array($dstHtmlType, $singleValueOps) ) {
+            $this->flattenToFirstValue($tableName, $this->_values['column_name'] );
+        } else if ( in_array($srcHtmlType, $singleValueOps) &&
+                    in_array($dstHtmlType, $mutliValueOps) ) {
+            $this->firstValueToFlatten($tableName, $this->_values['column_name'] );
+        }
+        
         $customField->html_type = $dstHtmlType;
         $customField->save();
-        
+
+        // Reset cache for custom fields
+        require_once 'CRM/Core/BAO/Cache.php';
+        CRM_Core_BAO_Cache::deleteGroup('contact fields');
+            
         CRM_Core_Session::setStatus( ts('Input type of custom field \'%1\' has been successfully changed to \'%2\'.',
                                         array( 1 => $this->_values['label'], 2 => $dstHtmlType ) ) );
     }
@@ -175,10 +199,14 @@ class CRM_Custom_Form_ChangeFieldType extends CRM_Core_Form {
         case 'String':
             if ( in_array($htmlType, array_keys($singleValueOps)) ) {
                 unset($singleValueOps[$htmlType]);
-                return $singleValueOps;
+                return array_merge($singleValueOps, $mutliValueOps);
             } else if ( in_array($htmlType, array_keys($mutliValueOps)) ) {
+                unset($singleValueOps['Text']);
+                foreach( $singleValueOps as $type => $label ) {
+                    $singleValueOps[$type] = "{$label} ( " . ts('Not Safe'). " )";
+                }
                 unset($mutliValueOps[$htmlType]);
-                return $mutliValueOps;
+                return array_merge($mutliValueOps, $singleValueOps);
             }
             break;
             
@@ -204,5 +232,48 @@ class CRM_Custom_Form_ChangeFieldType extends CRM_Core_Form {
 
         return null;
     }
+    
+    /**
+     * Take a single-value column (eg: a Radio or Select etc ) and convert
+     * value to the multi listed value (eg:"^Foo^")
+     */
+    public function firstValueToFlatten($table, $column) {
+        $selectSql = "SELECT id, $column FROM $table WHERE $column IS NOT NULL";
+        $updateSql = "UPDATE $table SET $column = %1 WHERE id = %2";
+        $dao = CRM_Core_DAO::executeQuery($selectSql);
+        while ($dao->fetch()) {
+            if ( !$dao->{$column} ) {
+                continue;
+            }
+            $value  = CRM_Core_DAO::VALUE_SEPARATOR . $dao->{$column} . CRM_Core_DAO::VALUE_SEPARATOR;
+            $params = array( 1 => array((string)$value, 'String'),
+                             2 => array($dao->id, 'Integer') );
+            CRM_Core_DAO::executeQuery($updateSql, $params);
+        }
+    }
+
+    /**
+     * Take a multi-value column (e.g. a Multi-Select or CheckBox column), and convert
+     * all values (of the form "^^" or "^Foo^" or "^Foo^Bar^") to the first listed value ("Foo")
+     */
+    public function flattenToFirstValue($table, $column) {
+        $selectSql = "SELECT id, $column FROM $table WHERE $column IS NOT NULL";
+        $updateSql = "UPDATE $table SET $column = %1 WHERE id = %2";
+        $dao = CRM_Core_DAO::executeQuery($selectSql);
+        while ($dao->fetch()) {
+            $values = self::explode($dao->{$column});
+            $params = array( 1 => array((string)array_shift($values), 'String'),
+                             2 => array($dao->id, 'Integer') );
+            CRM_Core_DAO::executeQuery($updateSql, $params);
+        }
+    }
+    
+    static function explode($str) {
+        if (empty($str) || $str == CRM_Core_DAO::VALUE_SEPARATOR . CRM_Core_DAO::VALUE_SEPARATOR) {
+            return array();
+        } else {
+            return explode(CRM_Core_DAO::VALUE_SEPARATOR, trim($str, CRM_Core_DAO::VALUE_SEPARATOR));
+        }  
+    }    
     
 }
