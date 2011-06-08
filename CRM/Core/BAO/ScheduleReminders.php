@@ -93,19 +93,18 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
                 $val = 'Event Name';
             }
             $sel1[$key] = $val;
-
-            $selectDefault = array( '' => '- ' . strtolower( $value['entity_value_label'] ) . ' -' );
+            
             switch ($entityValue) {
             case 'activity_type':
-                $sel2[$key] = $selectDefault + $activityType; 
+                $sel2[$key] = array( $value['entity_value_label'] ) + $activityType; 
                 break;
 
             case 'event_type':
-                $sel2[$key] = $selectDefault + $eventType;
+                $sel2[$key] = array( $value['entity_value_label'] ) + $eventType;
                 break;
 
             case 'civicrm_event':
-                $sel2[$key] = $selectDefault + $event;
+                $sel2[$key] = array( $value['entity_value_label'] ) + $event;
                 break;
             }
 
@@ -127,13 +126,11 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
 
             switch ($entityRecipient) {
             case 'activity_contacts':
-                $sel5[$entityRecipient] = $activityContacts + array( 'manual' => ts('Select Recipients'),
-                                                                     'group'  => ts('Select Group')  );
+                $sel5[$entityRecipient] = $activityContacts + array( 'manual' => ts('Manual'), 'group' => ts('CiviCRM Group')  );
                 break;
                 
             case 'civicrm_participant_status_type':
-                $sel5[$entityRecipient] = $participantStatus + array( 'manual' => ts('Select Recipients'),
-                                                                      'group' => ts('Select Group') );
+                $sel5[$entityRecipient] = $participantStatus + array( 'manual' => ts('Manual'), 'group' => ts('CiviCRM Group') );
                 break;
             }
             
@@ -144,17 +141,16 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
             $entityStatus = $value['entity_status'];
             $id = $value['id'];
                       
-            $selectDefault = array( '' => '- ' . strtolower( $value['entity_status_label'] ) . ' -' );
             switch ($entityStatus) {
             case 'activity_status':
                 foreach( $sel3[$id] as $kkey => &$vval ) {
-                    $vval =  $selectDefault + $activityStatus;
+                    $vval =  array($value['entity_status_label']) + $activityStatus;
                 }
                 break;
 
             case 'civicrm_participant_status_type':
                 foreach( $sel3[$id] as $kkey => &$vval ) {
-                    $vval = $selectDefault + $participantStatus;
+                    $vval = array($value['entity_status_label']) + $participantStatus;
                 }
                 break;
             }
