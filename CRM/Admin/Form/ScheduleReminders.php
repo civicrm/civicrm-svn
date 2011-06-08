@@ -189,7 +189,6 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             $errors['subject'] = ts('Subject is a required field.');
         }
 
-
         if ( ! empty( $errors ) ) {
             return $errors;
         }
