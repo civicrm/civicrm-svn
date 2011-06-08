@@ -152,11 +152,11 @@ class CRM_Core_BAO_PdfFormat extends CRM_Core_DAO_OptionValue
      * @param array (reference)   $list         List of PDF Page Formats
      * @param string              $returnURL    URL of page calling this function
      *
-     * @return array  (reference)   List of PDF Page Formats
+     * @return void
      * @static
      * @access public
      */
-    static function &addOrder( &$list, $returnURL )
+    static function addOrder( &$list, $returnURL )
     {
         require_once 'CRM/Utils/Weight.php';
         $filter = "option_group_id = " . self::_getGid();

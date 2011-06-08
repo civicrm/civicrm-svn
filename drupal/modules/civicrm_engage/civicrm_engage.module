@@ -141,3 +141,26 @@ function civicrm_engage_civicrm_config( &$config ) {
     }
 
 }
+/**
+ * Implementation of hook_perm().
+ */
+function civicrm_engage_perm() 
+{
+    return array('access civiengage settings');
+}
+
+function civicrm_engage_menu() {
+
+  $items['admin/settings/civicrm_engage'] = array(
+    'title' => t('Civicrm engage settings'),
+    'description' => t('CiviCRM Engage Configuration'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('civicrm_engage_admin_settings'),
+    'access arguments' => array('access civiengage settings'),
+    'file' => 'civicrm_engage.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+

@@ -170,9 +170,9 @@ class CRM_Core_Payment_BaseIPN {
                 //get payment processor id from recur object.
                 $paymentProcessorID = $recur->payment_processor_id;
             }
-            
+
             //for normal contribution get the payment processor id.
-            if ( !$paymentProcessorID ) {
+            if ( ! $paymentProcessorID ) {
                 if ( $contribution->contribution_page_id ) {
                     // get the payment processor id from contribution page
                     $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage',
@@ -572,6 +572,14 @@ class CRM_Core_Payment_BaseIPN {
                 require_once 'CRM/Contribute/BAO/ContributionPage.php';
                 if ( isset( $contribution->contribution_page_id ) ) {
                     CRM_Contribute_BAO_ContributionPage::setValues( $contribution->contribution_page_id, $values );
+
+                    if ( $contribution->contribution_page_id ) {
+                        // CRM-8254
+                        $config = CRM_Core_Config::singleton( );
+                        $config->defaultCurrency = CRM_Utils_Array::value( 'currency', 
+                                                                           $values, 
+                                                                           $config->defaultCurrency );
+                    }
                 } else {
                     // Handle re-print receipt for offline contributions (call from PDF.php - no contribution_page_id)
                     $values['is_email_receipt'] = 1;

@@ -2905,8 +2905,12 @@ WHERE  id IN ( $groupIDs )
         }
 
         if ( $fromStateProvince ) {
-            return array( $countryClause,
-                          " ...AND... " . $countryQill );
+            if ( ! empty( $countryClause ) ) {
+                return array( $countryClause,
+                              " ...AND... " . $countryQill );
+            } else {
+                return array( null, null );
+            }
         }
     }
 
@@ -2944,9 +2948,9 @@ WHERE  id IN ( $groupIDs )
         list( $countryClause, $countryQill ) = $this->country( $countryValues, true );
 
         if ( $countryClause ) {
-            $clause = $stateClause;
-        } else {
             $clause = ( $stateClause AND $countryClause );
+        } else {
+            $clause = $stateClause;
         }
 
         $this->_where[$grouping][] = $clause;
@@ -3585,6 +3589,7 @@ WHERE  id IN ( $groupIDs )
         $query = "$select $from $where $having $groupBy $order $limit";
         // CRM_Core_Error::debug('query', $query);
         // CRM_Core_Error::debug('query', $where);
+        // CRM_Core_Error::debug('this', $this );
 
         if ( $returnQuery ) {
             return $query;

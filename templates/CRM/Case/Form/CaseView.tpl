@@ -694,7 +694,7 @@ function addRole() {
 
   {if !$tagExits }
     <div class="status">
-        {ts}There are no tags currently assigend to this case.{/ts}
+        {ts}There are no tags currently assigned to this case.{/ts}
     </div>
   {/if}
 
@@ -727,7 +727,8 @@ function addTags() {
     cj("#manageTags").dialog({
         title: "{/literal}{ts}Change Case Tags{/ts}{literal}",
         modal: true,
-        width: '550',
+        height: '200',
+        width: 'auto',
         buttons: { 
             "Save": function() { 
                 var tagsChecked = '';	    

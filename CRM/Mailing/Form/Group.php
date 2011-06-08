@@ -104,7 +104,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             $defaults['campaign_id'] = $mailing->campaign_id;
         
             require_once 'CRM/Mailing/DAO/Group.php';
-            $dao =& new CRM_Mailing_DAO_Group();
+            $dao = new CRM_Mailing_DAO_Group();
             
             $mailingGroups = array();
             $dao->mailing_id = $mailingID;
@@ -193,7 +193,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             //get the static groups
             $staticGroups = CRM_Core_PseudoConstant::staticGroup( false, 'Mailing' );
             $this->add( 'select', 'baseGroup',
-                        ts( 'Base Group' ), 
+                        ts( 'Unsubscription Group' ), 
                         array(''=>ts( '- select -' )) + $staticGroups,
                         true );
         }
@@ -319,6 +319,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
                 $params[$n] = $values[$n];
             }
         }
+       
         
         $qf_Group_submit = $this->controller->exportValue($this->_name, '_qf_Group_submit');
         $this->set('name', $params['name']);

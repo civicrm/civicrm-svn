@@ -255,6 +255,15 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
         // complete transaction
         $transaction->commit( );
 
+        self::resetCache( );
+
+        return $customField;
+    }
+
+    /**
+     * reset the cache due to changes in custom field DB
+     */
+    static function resetCache( ) {
         // reset the cache
         require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::deleteGroup( 'contact fields' );
@@ -262,8 +271,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
         // reset various static arrays used here
         require_once 'CRM/Contact/BAO/Contact.php';
         CRM_Contact_BAO_Contact::$_importableFields = CRM_Contact_BAO_Contact::$_exportableFields = self::$_importFields = null;
-
-        return $customField;
     }
 
     /**
@@ -299,7 +306,10 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
     static function setIsActive( $id, $is_active )
     {
         require_once 'CRM/Core/BAO/UFField.php';
-        //enable-disable UFField 
+
+        self::resetCache( );
+
+        //enable-disable CustomField 
         CRM_Core_BAO_UFField::setUFField($id, $is_active);
         return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_CustomField', $id, 'is_active', $is_active );
     }
@@ -918,13 +928,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
      */
     public static function deleteField( $field )
     { 
-        // reset the cache
-        require_once 'CRM/Core/BAO/Cache.php';
-        CRM_Core_BAO_Cache::deleteGroup( 'contact fields' );
-
-        // reset various static arrays used here
-        require_once 'CRM/Contact/BAO/Contact.php';
-        CRM_Contact_BAO_Contact::$_importableFields = CRM_Contact_BAO_Contact::$_exportableFields = self::$_importFields = null;
+        self::resetCache( );
 
         // first delete the custom option group and values associated with this field
         if ( $field->option_group_id ) {

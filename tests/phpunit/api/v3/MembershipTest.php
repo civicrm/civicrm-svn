@@ -345,6 +345,10 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                              "In line " . __LINE__);
         $result = civicrm_api('Membership','Delete',array( 'id'      =>   $membership['id'] ,
                                                            'version' => $this->_apiversion,));  
+        $this->membershipTypeDelete( array( 'id' => $memType['id'] ) );
+        $this->relationshipTypeDelete( $relTypeID );
+        $this->contactDelete( $membershipOrgId );
+        $this->contactDelete( $memberContactId );
     }
 
     ///////////////// civicrm_membership_create methods

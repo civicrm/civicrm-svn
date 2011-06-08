@@ -88,6 +88,7 @@
 
       var lcMessage = {/literal}"{$config->lcMessages}"{literal};
       var localisation = lcMessage.split('_');
+      var dateValue = cj(alt_field).val( );
       cj(element_date).datepicker({
                                     closeAtTop        : true, 
                                     dateFormat        : date_format,
@@ -99,8 +100,14 @@
                                     regional          : localisation[0]
                                 });
 
-      //set default value to display field
-      cj( element_date).val( cj(alt_field).val( ) );
+      // set default value to display field, setDefault param for datepicker
+      // is not working hence using below logic
+      // parse the date
+      var displayDateValue = cj.datepicker.parseDate( altDateFormat, dateValue );
+      
+      // format date according to display field
+      displayDateValue = cj.datepicker.formatDate( date_format, displayDateValue );
+      cj( element_date).val( displayDateValue );
 
       cj(element_date).click( function( ) {
           hideYear( this );
