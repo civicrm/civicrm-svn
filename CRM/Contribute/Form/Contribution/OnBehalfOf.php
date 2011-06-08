@@ -112,8 +112,17 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
         $profileFields = CRM_Core_BAO_UFGroup::getFields( $form->_profileId, false, CRM_Core_Action::VIEW, null,
                                                           null, false, null, false, null, 
                                                           CRM_Core_Permission::CREATE, null );
+        $fieldTypes = array( 'Contact', 'Organization' );
+        if ( is_array( $form->_membershipBlock ) && !empty( $form->_membershipBlock ) ) {
+            $fieldTypes = array_merge( $fieldTypes, array( 'Membership' ) );
+        } else {
+            $fieldTypes = array_merge( $fieldTypes, array( 'Contribution' ) );
+        }
+        
         foreach ( $profileFields as $name => $field ) {
-            CRM_Core_BAO_UFGroup::buildProfile( $form, $field, null, null, false, true );
+            if ( in_array( $field['field_type'], $fieldTypes ) ) {
+                CRM_Core_BAO_UFGroup::buildProfile( $form, $field, null, null, false, true );
+            }
         }
 
         $form->addElement( 'hidden', 'hidden_onbehalf_profile', 1 );

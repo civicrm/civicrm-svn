@@ -755,13 +755,15 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
 
         if ( CRM_Utils_Array::value( 'is_for_organization', $fields ) && !$self->_organizationName ) {
-            if ( CRM_Utils_Array::value( 'org_option',$fields ) && ! $fields['onbehalfof_id'] ) {
-                $errors['organization_id'] = ts('Please select an organization or enter a new one.');
+
+            if ( !CRM_Utils_Array::value( 'organization_name', $fields['onbehalf'] ) ) {
+                if ( CRM_Utils_Array::value( 'org_option',$fields ) && !$fields['onbehalfof_id'] ) {
+                    $errors['organization_id'] = ts('Please select an organization or enter a new one.');
+                } else if ( !CRM_Utils_Array::value( 'org_option',$fields ) ) {
+                    $errors['onbehalf']['organization_name'] = ts('Please enter the organization name.'); 
+                }
             }
-            if ( !CRM_Utils_Array::value( 'org_option',$fields ) && 
-                 !CRM_Utils_Array::value( 'organization_name', $fields['onbehalf'] ) ) {
-                $errors['onbehalf']['organization_name'] = ts('Please enter the organization name.'); 
-            }
+            
             foreach ( $fields['onbehalf'] as $key => $value ) {
                 if ( strstr( $key, 'email' ) ) {
                     $emailLocType = explode( '-', $key );

@@ -62,25 +62,43 @@
 
 function showOnBehalf( )
 {
-   if ( cj( "#for_organization" ).size( ) == 0 ) {
-     if ( cj( "#is_for_organization" ).attr( 'checked' ) ) {
-       var urlPath = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&onbehalf=1'}"{literal};
-       urlPath     = urlPath  + '&id=' + {/literal}{$pageId}{literal};
+    if ( cj( "#is_for_organization" ).attr( 'checked' ) ) {
+        if ( cj( "#for_organization" ).size( ) == 0 ) {
+            var urlPath = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&onbehalf=1'}"{literal};
+            urlPath     = urlPath  + '&id=' + {/literal}{$pageId}{literal};
        
-       cj.ajax({
+            cj.ajax({
                  url     : urlPath,
                  async   : false,
 		 global  : false,
 	         success : function ( content ) { 		
     	                       cj( "#onBehalfOfOrg" ).html( content );
                            }
-       });
+            });
+        }
      } else {
-       //cj( "#onBehalfOfOrg" ).html('');	
+       cj( "#onBehalfOfOrg" ).html('');	
        cj( "#for_organization" ).html( '' );
        return;
      }
+}
+
+function resetValues( filter )
+{
+   if ( filter ) {
+       cj( "#select_org tr td" ).find( 'input[type=text], select, textarea' ).each(function( ) {
+          if ( cj(this).attr('name') != 'onbehalf[organization_name]' ) {
+              cj(this).val( '' );
+          }
+       });
+   } else {
+       cj( "#select_org tr td" ).find( 'input[type=text], select, textarea' ).each(function( ) {
+          cj(this).val( '' );
+       });
    }
+   cj( "#select_org tr td" ).find( 'input[type=radio], input[type=checkbox]' ).each(function( ) {
+      cj(this).attr('checked', false);
+   });
 }
 
 cj( "#mode" ).hide( );
@@ -99,14 +117,9 @@ cj( "#mode" ).attr( 'checked', 'checked' );
        if ( cj( "#mode" ).attr( 'checked' ) ) {
            $text = "Select existing organization";
            cj( "#onbehalf_organization_name" ).removeAttr( 'readonly' );
-
-           cj( "#select_org tr td input" ).each( function( ) {
-              cj(this).val( '' );
-           });
-           cj( "#select_org tr td select" ).each( function( ) {
-                 cj(this).val( '' );
-           });
            cj( "#mode" ).removeAttr( 'checked' );
+
+           resetValues( false );
        } else {
            $text = "Create new organization";
            cj( "#mode" ).attr( 'checked', 'checked' );
@@ -127,15 +140,15 @@ cj( "#mode" ).attr( 'checked', 'checked' );
   {/literal}{else}{literal}
 
        cj( "#orgOptions" ).show( );
-       var orgOption = 0;
-       selectCreateOrg( orgOption );
+       var orgOption = cj( "input:radio[name=org_option]:checked" ).val( );
+       selectCreateOrg( orgOption, false );
 
        cj( "input:radio[name='org_option']" ).click( function( ) {
           orgOption = cj( "input:radio[name='org_option']:checked" ).val( );
-          selectCreateOrg( orgOption ); 
+          selectCreateOrg( orgOption, true ); 
        });
 
-       function selectCreateOrg( orgOption )
+       function selectCreateOrg( orgOption, reset )
        {
           if ( orgOption == 0 ) {
               var dataUrl = {/literal}"{$employerDataURL}"{literal};
@@ -150,13 +163,9 @@ cj( "#mode" ).attr( 'checked', 'checked' );
               });
           } else if ( orgOption == 1 ) {
               cj( "input#onbehalf_organization_name" ).removeClass( 'ac_input' ).unautocomplete( );
-              cj( "#select_org tr td input" ).each( function( ) {
-                 cj(this).val( '' );
-                 cj(this).attr('checked', false)
-              });
-              cj( "#select_org tr td select" ).each( function( ) {
-                 cj(this).val( '' );
-              });
+              if ( reset ) {
+	          resetValues( false );
+              }
           }
        }
 
@@ -166,19 +175,24 @@ cj( "#mode" ).attr( 'checked', 'checked' );
   {literal}
   function setLocationDetails( contactID ) 
   {
+      resetValues( true );
       var locationUrl = {/literal}"{$locDataURL}"{literal} + contactID + "&ufId=" + {/literal}"{$profileId}"{literal};
       cj.ajax({
             url         : locationUrl,
             dataType    : "json",
             timeout     : 5000, //Time in milliseconds
             success     : function( data, status ) {
-                for (var ele in data) {
-                   if ( data[ele].type == 'Radio' || data[ele].type == 'CheckBox' ) {
+                for (var ele in data) { 
+                   if ( data[ele].type == 'Radio' ) {
                        if ( data[ele].value ) {
-                           cj( "input[name='"+ ele +"']" ).filter( "[value=" + data[ele].value + "]" ).attr("checked","checked");
+                           cj( "input[name='"+ ele +"']" ).filter( "[value=" + data[ele].value + "]" ).attr( 'checked', 'checked' );
                        }
-		   } else {
-                     cj( "#" + ele ).val( data[ele].value );
+		   } else if ( data[ele].type == 'CheckBox' ) {
+		       if ( data[ele].value ) {
+                           cj( "input[name='"+ ele +"']" ).attr( 'checked','checked' );
+                       }
+                   } else {
+                       cj( "#" + ele ).val( data[ele].value );
                    }
                 }
             },
