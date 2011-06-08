@@ -727,7 +727,8 @@ function addTags() {
     cj("#manageTags").dialog({
         title: "{/literal}{ts}Change Case Tags{/ts}{literal}",
         modal: true,
-        width: '550',
+        height: '200',
+        width: 'auto',
         buttons: { 
             "Save": function() { 
                 var tagsChecked = '';	    
