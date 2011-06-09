@@ -164,7 +164,7 @@
  <field>
        <name>record_activity</name>
        <type>boolean</type>
-       <default>1</default>
+       <default>NULL</default>
        <comment>Record Activity for this reminder?</comment>
        <add>3.4</add>
   </field>
