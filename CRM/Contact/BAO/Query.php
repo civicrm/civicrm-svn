@@ -1080,11 +1080,10 @@ class CRM_Contact_BAO_Query
             $select = ( $this->_useDistinct ) ?
                 'SELECT DISTINCT(contact_a.id) as id' :
                 'SELECT contact_a.id as id'; 
-            // $select = 'SELECT contact_a.id as id';
-            // if ( $this->_useDistinct ) {
-            //     $this->_useGroupBy = true;
-            // }
 
+            if ( $this->_useDistinct ) {
+                $this->_useGroupBy = true;
+            }
             $from = $this->_simpleFromClause;
         } else {
             if ( CRM_Utils_Array::value( 'group', $this->_paramLookup ) ) {
@@ -1116,8 +1115,7 @@ class CRM_Contact_BAO_Query
                 if ( !( $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) ) {
                     // CRM-5954
                     $this->_select['contact_id'] = 'DISTINCT(contact_a.id) as contact_id';
-                    // $this->_useGroupBy = true;
-                    // $this->_select['contact_id'] ='contact_a.id as contact_id';
+                    $this->_useGroupBy = true;
                 }
             } 
 

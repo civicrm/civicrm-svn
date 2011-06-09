@@ -786,6 +786,29 @@ LIMIT {$offset}, {$rowCount}
        CRM_Utils_System::civiExit( );
     }
     
+    static function buildDedupeRules( ) 
+    {
+       $parent = CRM_Utils_Array::value( 'parentId', $_POST );
+
+       switch ( $parent ) {
+            case 1:
+                $contactType = 'Individual';
+                break;
+            case 2:
+                $contactType = 'Household';
+                break;
+            case 4:
+                $contactType = 'Organization';
+                break;
+       }
+ 
+       require_once 'CRM/Dedupe/BAO/RuleGroup.php';
+       $dedupeRules = CRM_Dedupe_BAO_RuleGroup::getByType( $contactType );
+
+       echo json_encode( $dedupeRules );
+       CRM_Utils_System::civiExit( );
+    }
+    
     /**
      * Function used for CiviCRM dashboard operations
      */

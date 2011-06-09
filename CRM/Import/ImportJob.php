@@ -50,6 +50,7 @@ class CRM_Import_ImportJob {
     protected $_invalidRowCount;
     protected $_conflictRowCount;
     protected $_onDuplicate;
+    protected $_dedupe;
     protected $_newGroupName;
     protected $_newGroupDesc;
     protected $_groups;
@@ -257,16 +258,18 @@ class CRM_Import_ImportJob {
             $this->_mapperRelatedContactWebsiteType );
         
         $this->_parser->run( $this->_tableName, $mapperFields,
-                      CRM_Import_Parser::MODE_IMPORT,
-                      $this->_contactType,
-                      $this->_primaryKeyName,
-                      $this->_statusFieldName,
-                      $this->_onDuplicate,
-                      $this->_statusID,
-                      $this->_totalRowCount,
-                      $this->_doGeocodeAddress,
-                      CRM_Import_Parser::DEFAULT_TIMEOUT, 
-                      $this->_contactSubType );
+                             CRM_Import_Parser::MODE_IMPORT,
+                             $this->_contactType,
+                             $this->_primaryKeyName,
+                             $this->_statusFieldName,
+                             $this->_onDuplicate,
+                             $this->_statusID,
+                             $this->_totalRowCount,
+                             $this->_doGeocodeAddress,
+                             CRM_Import_Parser::DEFAULT_TIMEOUT, 
+                             $this->_contactSubType,
+                             $this->_dedupe
+                             );
                       
         $contactIds = $this->_parser->getImportedContacts( );
         

@@ -151,6 +151,7 @@ class CRM_Export_Form_Map extends CRM_Core_Form
     public function postProcess( )
     {
         $params = $this->controller->exportValues( $this->_name );
+        $exportParams = $this->controller->exportValues( 'Select' );
         
         $currentPath = CRM_Utils_System::currentPath( );
         
@@ -218,7 +219,8 @@ class CRM_Export_Form_Map extends CRM_Core_Form
                                                  $this->get( 'componentClause' ),
                                                  $this->get( 'componentTable' ),
                                                  $this->get( 'mergeSameAddress' ),
-                                                 $this->get( 'mergeSameHousehold' )
+                                                 $this->get( 'mergeSameHousehold' ),
+                                                 $exportParams
                                                  );
     }
     

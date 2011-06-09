@@ -132,20 +132,21 @@ class CRM_Case_Page_AJAX
         $sql = "SELECT * FROM civicrm_case where id = %1";
         $dao = CRM_Core_DAO::executeQuery( $sql , array( 1 => array( $caseId,  'Integer' ) ) );
         
-        while ( $dao->fetch( ) ) {
+        if ( $dao->fetch( ) ) {
             $caseType = CRM_Case_BAO_Case::getCaseType( ( str_replace( CRM_Core_DAO::VALUE_SEPARATOR,
                                                                         "", 
                                                                         $dao->case_type_id) ) );
              $caseStatuses = CRM_Case_PseudoConstant::caseStatus();
              $cs = $caseStatuses[$dao->status_id];
-             $caseDetails = "<html><table><tr><td>Case Subject</td><td>$dao->subject</td></tr>
-                                          <tr><td>Case Type</td><td>$caseType</td></tr> 
-                                          <tr><td>Case Status</td><td>$cs</td></tr>
-                                          <tr><td>Case Start Date</td><td>$dao->start_date</td></tr>
-                                          <tr><td>Case End Date</td><td></td></tr>$dao->end_date</table></html>";        
+             $caseDetails = "<table><tr><td>". ts('Case Subject') ."</td><td>{$dao->subject}</td></tr>
+                                    <tr><td>". ts('Case Type') ."</td><td>{$caseType}</td></tr> 
+                                    <tr><td>". ts('Case Status') ."</td><td>{$cs}</td></tr>
+                                    <tr><td>". ts('Case Start Date') ."</td><td>" . CRM_Utils_Date::customFormat($dao->start_date) ."</td></tr>
+                                    <tr><td>". ts('Case End Date') ."</td><td></td></tr>". CRM_Utils_Date::customFormat($dao->end_date) ."</table>";        
              echo $caseDetails;
-         }
-         
+        } else {
+            echo ts('Could not find valid Case!');
+        }
     }
 
 

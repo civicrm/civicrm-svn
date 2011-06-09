@@ -301,8 +301,6 @@ class CRM_Core_OptionValue
                                                                  'headerPattern' => '/^addressee$/i'
                                                                  ),
                                         );
-                }
-                if ( $contactType == 'Individual' || $contactType == 'Household' || $contactType == 'All' ) {
                     $title = array( 'email_greeting'    => array('name' => 'email_greeting',
                                                                  'title'=> 'Email Greeting',
                                                                  'headerPattern' => '/^email_greeting$/i'

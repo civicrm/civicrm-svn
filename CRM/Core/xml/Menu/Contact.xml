@@ -367,4 +367,9 @@
    <page_callback>CRM_Contact_Page_DedupeException</page_callback>
    <weight>110</weight>
 </item>
+<item>
+     <path>civicrm/ajax/dedupeRules</path>
+     <page_callback>CRM_Contact_Page_AJAX::buildDedupeRules</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+</item>
 </menu>

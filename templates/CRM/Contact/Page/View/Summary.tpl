@@ -214,7 +214,7 @@
                                         {if $item.phone}
                                         <tr>
                                             <td class="label">{$item.location_type}&nbsp;{$item.phone_type}</td>
-                                            <td class="crm-contact_phone{if $item.is_primary eq 1} primary{/if}"><span {if $privacy.do_not_phone} class="do-not-phone" title={ts}"Privacy flag: Do Not Phone"{/ts} {/if}>{$item.phone}</span></td>
+                                            <td {if $item.is_primary eq 1}class="primary"{/if}><span {if $privacy.do_not_phone} class="do-not-phone" title={ts}"Privacy flag: Do Not Phone"{/ts} {/if}>{$item.phone}{if $item.phone_ext}&nbsp;&nbsp;{ts}ext.{/ts} {$item.phone_ext}{/if}</span></td>
                                         </tr>
                                         {/if}
                                     {/foreach}
@@ -324,7 +324,6 @@
                         <div class="separator"></div>
 						
 						<div class="contactCardLeft">
-						{if $contact_type neq 'Organization'}
 						 <table>
 							<tr>
 								<td class="label">{ts}Email Greeting{/ts}{if !empty($email_greeting_custom)}<br/><span style="font-size:8px;">({ts}Customized{/ts})</span>{/if}</td>
@@ -335,7 +334,6 @@
 								<td class="crm-contact-postal_greeting_display">{$postal_greeting_display}</td>
 							</tr>
 						 </table>
-						 {/if}
 						</div>
 						<div class="contactCardRight">
 						 <table>
