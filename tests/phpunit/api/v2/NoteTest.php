@@ -126,7 +126,7 @@ class api_v2_NoteTest extends CiviUnitTestCase
 
         $params   = array(
                           'entity_table'  => 'civicrm_contact',
-                          'entity_id'     => $this->_noteID,
+                          'entity_id'     => $this->_contactID,
                           ); 
         $result = civicrm_note_get( $params );
         $this->assertEquals( $result['is_error'], 0 );

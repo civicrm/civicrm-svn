@@ -558,8 +558,6 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
      */
     function testStaleMembership( ) 
     {
-        //$this->markTestSkipped('fatal');
-        
         $statusId = 3;
         $contactId = Contact::createIndividual( );
         $joinDate = $startDate = date( "Ymd", strtotime( date("Ymd") . " -1 year -15 days" ) );
@@ -590,7 +588,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
                         'endDate'   => 'end_date' );
         
         foreach ( $dates as $date => $dbDate ) {
-            $this->assertEquals( $membership->$dbDate, date( 'Y-m-d', strtotime( $$date ) ), 
+            $this->assertEquals( $membership->$dbDate, $$date, 
                                  "Verify correct {$date} is present." );
         }
         

@@ -197,7 +197,7 @@ class CRM_Core_BAO_Setting
             $urlVar = 'task';
         }
 
-        if ( CRM_Utils_Array::value( $urlVar, $_GET ) == 'civicrm/upgrade' ) {
+        if ( CRM_Utils_Array::value( $urlVar, $_GET ) == 'civicrm/upgrade' || defined('CIVICRM_UPGRADE_ACTIVE') ) {
             $domain->selectAdd( 'config_backend' );
         } else if ( CRM_Utils_Array::value( $urlVar, $_GET ) == 'admin/modules/list/confirm' ) {
             $domain->selectAdd( 'config_backend', 'locales' );

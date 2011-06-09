@@ -56,16 +56,10 @@ require_once 'CRM/Core/BAO/UFMatch.php';
 */
 function civicrm_api3_uf_match_get($params)
 {
-    _civicrm_api3_initialize( true );
+
     try{
-        civicrm_api3_verify_one_mandatory($params,null,array('uf_id','contact_id'));
-        require_once 'CRM/Core/BAO/UFMatch.php';
-        $bao = new CRM_Core_BAO_UFMatch( );
-        _civicrm_api3_dao_set_filter ( $bao, $params );
-        return civicrm_api3_create_success(_civicrm_api3_dao_to_array ($bao,$params),$params,$bao);
-  
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
+        civicrm_api3_verify_mandatory($params);
+        return _civicrm_api3_basic_get('CRM_Core_BAO_UFMatch', $params);
     } catch (Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     }

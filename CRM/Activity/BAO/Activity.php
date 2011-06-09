@@ -586,7 +586,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         
         // if the subject contains a ‘[case #…]’ string, file that activity on the related case (CRM-5916)
         $matches = array();
-        if ( CRM_Utils_Array::value( 'subject', $params ) && preg_match( '/\[case #([0-9a-h]{7})\]/', $params['subject'], $matches ) ) {
+        if (preg_match('/\[case #([0-9a-h]{7})\]/', CRM_Utils_Array::value('subject',$params), $matches)) {
             $key   = CRM_Core_DAO::escapeString(CIVICRM_SITE_KEY);
             $hash  = $matches[1];
             $query = "SELECT id FROM civicrm_case WHERE SUBSTR(SHA1(CONCAT('$key', id)), 1, 7) = '$hash'";
@@ -1518,6 +1518,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
         
         while ( $dao->fetch( ) ) {
             $activities[$dao->activity_id]['source_contact_id'] = $dao->source_contact_id;
+            $activities[$dao->activity_id]['id'] = $dao->activity_id;
             if ( $dao->target_contact_id ) {
                 $activities[$dao->activity_id]['targets'][$dao->target_contact_id]    = $dao->target_contact_id;
             }
@@ -1939,7 +1940,29 @@ AND cl.modified_id  = c.id
         }
         return self::$_exportableFields[$name];
     }
-  
+ 
+    /**
+     * Get the allowed profile fields for Activities
+     *  
+     * @return array array of activity profile Fields
+     * @access public
+     */
+    function getProfileFields( ) {
+        $exportableFields = self::exportableFields( 'Activity' );
+        $skipFields = array( 'activity_id','activity_type', 'source_contact_id', 'activity_campaign', 'activity_is_test', 'is_current_revision', 'activity_is_deleted', 'activity_campaign', 'activity_engagement_level');
+        foreach ( $skipFields as $field ) {
+            if ( isset($exportableFields[$field]) ) {
+                unset($exportableFields[$field]);
+            }
+        }
+        
+        // hack to use 'activity_type_id' instead of 'activity_type'
+        $exportableFields['activity_status_id'] = $exportableFields['activity_status'];
+        unset($exportableFields['activity_status']);
+        
+        return $exportableFields;
+    }
+    
     /**
      * Get array of message/subject tokens
      *     

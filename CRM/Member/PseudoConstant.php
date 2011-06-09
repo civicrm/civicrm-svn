@@ -111,6 +111,20 @@ class CRM_Member_PseudoConstant extends CRM_Core_PseudoConstant {
         return $value;
     }
     
+      /**
+     * Flush given pseudoconstant so it can be reread from db
+     * next time it's requested.
+     *
+     * @access public
+     * @static
+     *
+     * @param boolean $name pseudoconstant to be flushed
+     *
+     */
+    public static function flush( $name )
+    {
+        self::$$name = null;
+    }  
 }
 
 

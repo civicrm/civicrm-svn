@@ -1,14 +1,19 @@
-<?php 
+<?php
 
+
+
+/*
+ 
+ */
 function activity_get_example(){
-    $params = array(
-    
-                  'activity_id' 		=> '4',
-                  'activity_type_id' 		=> '5',
-                  'version' 		=> '3',
-                  'sequential' 		=> '1',
+$params = array( 
+  'contact_id' => 17,
+  'activity_type_id' => 1,
+  'version' => 3,
+  'sequential' => 1,
+  'return.custom_1' => 1,
+);
 
-  );
   require_once 'api/api.php';
   $result = civicrm_api( 'activity','get',$params );
 
@@ -20,40 +25,42 @@ function activity_get_example(){
  */
 function activity_get_expectedresult(){
 
-  $expectedResult = 
-     array(
-           'is_error' 		=> '0',
-           'version' 		=> '3',
-           'count' 		=> '1',
-           'id' 		=> '4',
-           'values' 		=> array(           '0' =>  array(
-                      'id' => '4',
-                      'source_contact_id' => '17',
-                      'source_record_id' => '',
-                      'activity_type_id' => '1',
-                      'subject' => 'test activity type id',
-                      'activity_date_time' => '2009-01-23 12:34:56',
-                      'duration' => '',
-                      'location' => '',
-                      'phone_id' => '',
-                      'phone_number' => '',
-                      'details' => '',
-                      'status_id' => '1',
-                      'priority_id' => '1',
-                      'parent_id' => '',
-                      'is_test' => '',
-                      'medium_id' => '',
-                      'is_auto' => '',
-                      'relationship_id' => '',
-                      'is_current_revision' => '',
-                      'original_id' => '',
-                      'result' => '',
-                      'is_deleted' => '',
-                      'campaign_id' => '',
-           ),           ),
-      );
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '0' => array( 
+          'source_contact_id' => '17',
+          'id' => '1',
+          'activity_type_id' => '1',
+          'subject' => 'test activity type id',
+          'location' => '',
+          'activity_date_time' => '2011-06-02 14:36:13',
+          'details' => '',
+          'status_id' => '2',
+          'activity_name' => 'Test activity type',
+          'status' => 'Completed',
+          'custom_1' => 'custom string',
+          'custom_1_1' => 'custom string',
+        ),
+    ),
+);
 
   return $expectedResult  ;
 }
 
-
+
+
+
+/*
+* This example has been generated from the API test suite. The test that created it is called
+* activity_get 
+* You can see the outcome of the API tests at 
+* http://tests.dev.civicrm.org/trunk/results-api_v3
+* and review the wiki at
+* http://wiki.civicrm.org/confluence/display/CRMDOC40/CiviCRM+Public+APIs
+* Read more about testing here
+* http://wiki.civicrm.org/confluence/display/CRM/Testing
+*/

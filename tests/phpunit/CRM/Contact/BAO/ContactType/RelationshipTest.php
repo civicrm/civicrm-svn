@@ -84,7 +84,14 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
 
     function tearDown ( )
     {
-        $this->quickCleanup( array( 'civicrm_contact') );
+        $this->quickCleanup( array( 'civicrm_contact' ) );
+                   
+        $query = "
+DELETE FROM civicrm_contact_type 
+      WHERE name IN ('{$this->student}','{$this->parent}','{$this->sponsor}');
+    ";
+        require_once 'CRM/Core/DAO.php';
+        CRM_Core_DAO::executeQuery( $query );
     }
     /**
      * methods create relationshipType with valid data

@@ -66,6 +66,13 @@ class CRM_Mailing_Config extends CRM_Core_Component_Config {
     */
     public $mailerBatchLimit = 0;
 
+    /**
+     * How large should each mail thread be
+     *
+     * @var int
+     */
+    public $mailerJobSize = 0;
+
 }
 
 

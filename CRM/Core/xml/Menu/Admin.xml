@@ -38,6 +38,11 @@
      <page_callback>CRM_Custom_Form_MoveField</page_callback>
   </item>
   <item>
+     <path>civicrm/admin/custom/group/field/changetype</path>
+     <title>Custom Field - Change Type</title>
+     <page_callback>CRM_Custom_Form_ChangeFieldType</page_callback>
+  </item>
+  <item>
      <path>civicrm/admin/uf/group</path>
      <title>CiviCRM Profile</title>
      <desc>Profiles allow you to aggregate groups of fields and include them in your site as input forms, contact display pages, and search and listings features.</desc>
@@ -262,6 +267,15 @@
      <adminGroup>Configure</adminGroup>
      <icon>admin/small/template.png</icon>
      <weight>290</weight>
+  </item>
+  <item>
+     <path>civicrm/admin/scheduleReminders</path>
+     <title>Schedule Reminders</title>
+     <desc>Schedule Reminders.</desc>
+     <page_callback>CRM_Admin_Page_ScheduleReminders</page_callback>
+     <adminGroup>Configure</adminGroup>
+     <icon>admin/small/template.png</icon>
+     <weight>300</weight>
   </item>
   <item>
      <path>civicrm/admin/weight</path>
@@ -616,6 +630,16 @@
   <item>
      <path>civicrm/admin/tplstrings</path>
      <page_callback>CRM_Admin_Page_Persistent</page_callback>
+     <access_arguments>administer CiviCRM,access CiviCRM</access_arguments>
+  </item>
+  <item>
+     <path>civicrm/ajax/mapping</path>
+     <page_callback>CRM_Admin_Page_AJAX::mappingList</page_callback>
+     <access_arguments>administer CiviCRM,access CiviCRM</access_arguments>
+  </item>
+  <item>
+     <path>civicrm/ajax/mapping1</path>
+     <page_callback>CRM_Admin_Page_AJAX::mappingList1</page_callback>
      <access_arguments>administer CiviCRM,access CiviCRM</access_arguments>
   </item>
 </menu>

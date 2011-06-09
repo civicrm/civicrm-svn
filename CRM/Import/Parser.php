@@ -247,13 +247,21 @@ abstract class CRM_Import_Parser {
      */
 
     public $_contactType;
+
     /**
      * on duplicate
      *
      * @var int
      */
     public $_onDuplicate;
-    
+
+    /**
+     * dedupe rule group id to use if set
+     *
+     * @var int
+     */
+    public $_dedupeRuleGroupID = null;
+
     function __construct() {
         $this->_maxLinesToProcess = 0;
         $this->_maxErrorCount = self::MAX_ERRORS;
@@ -272,11 +280,13 @@ abstract class CRM_Import_Parser {
                   $totalRowCount = null,
                   $doGeocodeAddress = false,
                   $timeout = CRM_Import_Parser::DEFAULT_TIMEOUT,
-                  $contactSubType = null ) {
-        
+                  $contactSubType = null,
+                  $dedupeRuleGroupID = null ) {
+
         // TODO: Make the timeout actually work
         $this->_onDuplicate = $onDuplicate;
-        
+        $this->_dedupeRuleGroupID = $dedupeRuleGroupID;
+
         switch ($contactType) {
         case CRM_Import_Parser::CONTACT_INDIVIDUAL :
             $this->_contactType = 'Individual';

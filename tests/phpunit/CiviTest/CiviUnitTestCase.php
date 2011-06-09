@@ -277,6 +277,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         // clear permissions stub to not check permissions
         require_once 'CRM/Core/Permission/UnitTests.php';
         CRM_Core_Permission_UnitTests::$permissions = null;
+        
+        //flush component settings
+        CRM_Core_Component::getEnabledComponents(true);
+        $tablesToTruncate = array('civicrm_contact');
+
+        $this->quickCleanup( $tablesToTruncate );
+        
     }
 
     public function cleanDB() {
@@ -553,8 +560,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                          'visibility'             =>1, );
         
 
-        $result = civicrm_membership_type_create( $params );
-  
+        $result = civicrm_api('MembershipType','Create', $params );
+        require_once 'CRM/Member/PseudoConstant.php';
+        CRM_Member_PseudoConstant::flush('membershipType');
         if ( CRM_Utils_Array::value( 'is_error', $result ) || 
              (! CRM_Utils_Array::value( 'id', $result)&&  ! CRM_Utils_Array::value( 'id', $result['values'][0]))) {
             throw new Exception( 'Could not create membership type, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
@@ -628,6 +636,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $params['version'] = API_LATEST_VERSION;
         
         $result = civicrm_membership_status_create( $params );
+        require_once 'CRM/Member/PseudoConstant.php';
+        CRM_Member_PseudoConstant::flush('membershipStatus');
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Could not create membership status' . $result['error_message']);
         }
@@ -733,7 +743,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                       new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
                                                                          dirname(__FILE__)
                                                                          . '/../api/v' . $apiversion . '/dataset/contribution_types.xml') );
-                             
+        
+        require_once 'CRM/Contribute/PseudoConstant.php';
+        CRM_Contribute_PseudoConstant::flush ('contributionType');                   
         // FIXME: CHEATING LIKE HELL HERE, TO BE FIXED
         return 11;
     }
@@ -1594,7 +1606,14 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         } elseif(strstr($function, 'Subscribe')){
             $action = 'subscribe';
             $entityAction = 'Subscribe';
+        } elseif(strstr($function, 'Set')){
+            $action = 'set';
+            $entityAction = 'Set';
+        } elseif(strstr($function, 'Apply')){
+            $action = 'apply';
+            $entityAction = 'Apply';
         }
+
         if (strstr($entity,'UF')){// a cleverer person than me would do it in a single regex
             $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)(?<=UF)[A-Z]/','_$0', $entity));          
         }else{

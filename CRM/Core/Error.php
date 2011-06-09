@@ -271,6 +271,11 @@ class CRM_Core_Error extends PEAR_ErrorStack {
             $message = ts('We experienced an unexpected error. Please post a detailed description and the backtrace on the CiviCRM forums: %1', array(1 => 'http://forum.civicrm.org/')); 
         }
 
+        if ( php_sapi_name() == "cli" ) {
+          print ("Sorry. A non-recoverable error has occurred.\n$message \n$code\n$email\n\n");
+          debug_print_backtrace();
+          die ("\n");
+        }
         $vars = array( 'message' => $message,
                        'code'    => $code );
 
@@ -566,9 +571,8 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         
         $values['is_error']      = 1;
         $values['error_message'] = $msg;
-        if ( $data ) {
-            $values['error_data']    = $data;
-        }
+        if (isset ($data))
+          $values = array_merge ($values,$data);
         return $values;
     }
 

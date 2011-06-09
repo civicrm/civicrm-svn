@@ -207,6 +207,9 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
             }
             
             $defaults['option_type'] = 2;
+
+            require_once 'CRM/Custom/Form/ChangeFieldType.php';
+            $this->assign( 'changeFieldType', CRM_Custom_Form_ChangeFieldType::fieldTypeTransitions($this->_values['data_type'], $this->_values['html_type']) );
         } else {
             $defaults['is_active']   = 1;
             $defaults['option_type'] = 1;

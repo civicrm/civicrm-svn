@@ -35,10 +35,10 @@ function membership_status_get_expectedresult(){
           'start_event' => 'start_date',
           'end_event' => 'end_date',
           'is_current_member' => '1',
-          'is_admin' => '',
-          'is_default' => '',
+          'is_admin' => 0,
+          'is_default' => 0,
           'is_active' => '1',
-          'is_reserved' => '',
+          'is_reserved' => 0,
         ),
     ),
 );

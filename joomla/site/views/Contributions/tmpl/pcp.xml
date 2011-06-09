@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-       <layout title="Create Personal Campaign Page" >
-       </layout>
+	<layout title="Create Personal Campaign Pages" >
+	</layout>
     <state>
         <name>CiviCRM PCP</name>
         <creationDate>07/26/2010</creationDate>

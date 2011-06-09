@@ -3762,16 +3762,16 @@ function civicrm_views_data() {
                                                           );
 
     $data['civicrm_relationship']['contact_id_b'] = array(
-                                                            'title' => t('Contact ID B'),
-                                                            'real field' => 'contact_id_b',
-                                                            'help' => t('The contact B'),
-                                                            'field' => array(
-                                                                                   'handler' => 'views_handler_field',
-                                                                                   'click sortable' => FALSE,
-                                                                                   ),
-                                                            'argument' => array(
-                                                                                  'handler' => 'views_handler_argument',
-                                                                                  ),
+                                                          'title' => t('Contact ID B'),
+                                                          'real field' => 'contact_id_b',
+                                                          'help' => t('The contact B'),
+                                                          'field' => array(
+                                                                           'handler' => 'views_handler_field',
+                                                                           'click sortable' => FALSE,
+                                                                           ),
+                                                          'argument' => array(
+                                                                              'handler' => 'views_handler_argument',
+                                                                              ),
                                                             'relationship' => array(
                                                                                     'base' => 'civicrm_contact',
                                                                                     'field' => 'id',
@@ -5910,9 +5910,9 @@ function civicrm_views_add_fields( &$fields, &$data, &$skipFields, $tableName ) 
                                                         'handler' => civicrm_get_filter_handler( $type ),
                                                         ),
                                       'argument' => array(
-                                                        'handler' => civicrm_get_argument_handler( $type ),
-                                                        ),
-
+                                                          'handler' => civicrm_get_argument_handler ( $type ),
+                                                          ),                                      
+                                      );
         );
 
         // For date fields add in 6 arguments
@@ -6043,7 +6043,7 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
         $customHTMLTypes = array( 'Select', 'Multi-Select', 'AdvMulti-Select', 'Radio', 'CheckBox', 
                                   'Select State/Province', 'Select Country', 'Multi-Select Country',
                                   'Multi-Select State/Province', 'Autocomplete-Select' );
-        $customMultiValueHTMLTypes = array( 'Multi-Select', 'AdvMulti-Select', 'CheckBox','Multi-Select Country',
+        $customMultiValueHTMLTypes = array( 'Multi-Select', 'AdvMulti-Select', 'CheckBox', 'Multi-Select Country',
                                             'Multi-Select State/Province');
 
         foreach ($currentgroupfields as $key => $currentfield) {
@@ -6535,6 +6535,7 @@ function civicrm_views_handlers() {
                                                            'parent'=> 'views_handler_relationship',
                                                             ),
                         ),
+
                  );
                  
 

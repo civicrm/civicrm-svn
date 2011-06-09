@@ -192,7 +192,7 @@ FROM   {$this->_componentTable}
     public function buildQuickForm( ) 
     {
         //export option
-        $exportOptions = $mergeHousehold = $mergeAddress = array();        
+        $exportOptions = $mergeHousehold = $mergeAddress = $postalMailing = array();        
         $exportOptions[] = HTML_QuickForm::createElement('radio',
                                                          null, null,
                                                          ts('Export PRIMARY fields'),
@@ -212,12 +212,20 @@ FROM   {$this->_componentTable}
                                                            'merge_same_household', 
                                                            null, 
                                                            ts('Merge Household Members into their Households'));
+        $postalMailing[]  = HTML_QuickForm::createElement( 'advcheckbox',
+                                                           'postal_mailing_export', 
+                                                           null, 
+                                                           null);
         
         $this->addGroup( $exportOptions, 'exportOption', ts('Export Type'), '<br/>' );
 
         if ( $this->_exportMode == self::CONTACT_EXPORT ) {
             $this->addGroup( $mergeAddress, 'merge_same_address', ts('Merge Same Address'), '<br/>');
             $this->addGroup( $mergeHousehold, 'merge_same_household', ts('Merge Same Household'), '<br/>');
+            $this->addGroup( $postalMailing,  'postal_mailing_export', ts('Postal Mailing Export'), '<br/>');
+
+            $this->addElement( 'select', 'additional_group', ts( 'Additional Group for Export' ), 
+                               array( '' => ts( '- select group -' )) + CRM_Core_PseudoConstant::staticGroup( ) );
         }
         
         $this->buildMapping( );
@@ -243,9 +251,14 @@ FROM   {$this->_componentTable}
      */
     public function postProcess( ) 
     {
-        $exportOption = $this->controller->exportValue( $this->_name, 'exportOption' ); 
+        $exportOption = $this->controller->exportValue( $this->_name, 'exportOption' );
         $merge_same_address   = $this->controller->exportValue( $this->_name, 'merge_same_address' );
         $merge_same_household = $this->controller->exportValue( $this->_name, 'merge_same_household' );
+
+        // instead of increasing the number of arguments to exportComponents function, we 
+        // will send $exportParams as another argument, which is an array and suppose to contain 
+        // all submitted options or any other argument
+        $exportParams = $this->controller->exportValues( $this->_name );
 
         $mappingId = $this->controller->exportValue( $this->_name, 'mapping' ); 
         if ( $mappingId ) {
@@ -277,7 +290,8 @@ FROM   {$this->_componentTable}
                                                      $this->_componentClause,
                                                      $this->_componentTable,
                                                      $mergeSameAddress,
-                                                     $mergeSameHousehold
+                                                     $mergeSameHousehold,
+                                                     $exportParams
                                                      );
         }
         

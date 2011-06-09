@@ -357,4 +357,22 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
         $upgrade->processSQL( $rev );
     }
     
+    function upgrade_3_3_7( $rev ) 
+    {        
+        require_once 'CRM/Contact/DAO/Contact.php';
+        $dao = new CRM_Contact_DAO_Contact( );
+        $dbName = $dao->_database;
+
+        $chkExtQuery = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %1
+                        AND TABLE_NAME = 'civicrm_phone' AND COLUMN_NAME = 'phone_ext'";
+        $extensionExists = CRM_Core_DAO::singleValueQuery( $chkExtQuery,
+                                                          array( 1 => array( $dbName,    'String' ) ),
+                                                          true, false );
+        
+        if ( !$extensionExists ) {
+            $colQuery = 'ALTER TABLE `civicrm_phone` ADD `phone_ext` VARCHAR( 16 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `phone` ';
+            CRM_Core_DAO::executeQuery( $colQuery );
+        }
+        
+    }
   }

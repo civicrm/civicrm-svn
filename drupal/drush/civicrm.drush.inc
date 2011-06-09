@@ -373,6 +373,9 @@ function civicrm_drush_help($section) {
  *
  */
 function civicrm_upgrade_db() {
+    if ( !defined('CIVICRM_UPGRADE_ACTIVE') ) { 
+        define('CIVICRM_UPGRADE_ACTIVE', 1); 
+    }
     _civicrm_init();
 
     $_POST['upgrade'] = 1;
@@ -473,7 +476,10 @@ function civicrm_upgrade() {
         drush_die(dt('Tarfile not specified.'));
     }
     //FIXME: throw error if tarfile is not in a valid format.
-
+   
+    if ( !defined('CIVICRM_UPGRADE_ACTIVE') ) { 
+        define('CIVICRM_UPGRADE_ACTIVE', 1); 
+    }
     _civicrm_init();
 
     global $civicrm_root;

@@ -39,6 +39,8 @@
 
   <civicrm_prevnext_cache />
 
+  <civicrm_action_mapping />
+
   <civicrm_acl />
 
   <civicrm_acl_entity_role />
@@ -208,6 +210,10 @@
   <civicrm_uf_field />
 
   <civicrm_uf_join />
+
+  <civicrm_action_schedule />
+
+  <civicrm_action_log />
 
   <civicrm_mailing />
 

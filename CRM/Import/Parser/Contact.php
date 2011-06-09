@@ -476,7 +476,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                                              'id',
                                                              'external_identifier' ) ) {
                 if ( $internalCid != CRM_Utils_Array::value('id', $params) ) {
-                    
                     $errorMessage = ts('External Identifier already exists in database.');
                     array_unshift($values, $errorMessage);
                     $importRecordParams = array($statusFieldName => 'ERROR', "${statusFieldName}Msg" => $errorMessage);
@@ -521,7 +520,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         // Support Match and Update Via Contact ID
         if ( $this->_updateWithId ) {
             $createNewContact = false;
-            if ( !CRM_Utils_Array::value('id', $params) && CRM_Utils_Array::value('external_identifier', $params) ) {                
+            if ( ! CRM_Utils_Array::value('id', $params) && 
+                 CRM_Utils_Array::value('external_identifier', $params) ) {                
                 if ( $cid ) {
                     $params['id'] =  $cid; 
                 } else {
@@ -532,7 +532,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     //if we send external id dedupe will stop.
                     unset( $dedupeParams['external_identifier'] );
                     
-                    $checkDedupe = _civicrm_duplicate_formatted_contact( $dedupeParams );
+                    $checkDedupe = _civicrm_duplicate_formatted_contact( $dedupeParams, $this->_dedupeRuleGroupID );
                     if ( civicrm_duplicate( $checkDedupe ) ) {
                         $matchingContactIds = explode( ',', $checkDedupe['error_message']['params'][0] );
                         if ( count( $matchingContactIds ) == 1 ) {
@@ -548,7 +548,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 }
             }
             
-            $error = _civicrm_duplicate_formatted_contact($formatted);
+            $error = _civicrm_duplicate_formatted_contact( $formatted,
+                                                           $this->_dedupeRuleGroupID );
             if ( civicrm_duplicate($error) ) { 
                 $matchedIDs = explode( ',', $error['error_message']['params'][0] );
                 if ( count( $matchedIDs) >= 1 ) {
@@ -560,7 +561,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                                                         'contact_type' );
                             
                             if ($formatted['contact_type'] == $contactType ) {
-                                
                                 //validation of subtype for update mode
                                 //CRM-5125
                                 $contactSubType = null;
@@ -579,9 +579,9 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                     $updateflag = false;
                                     $this->_retCode = CRM_Import_Parser::NO_MATCH;
                                 } else {
-                                    
                                     $newContact = $this->createContact( $formatted, $contactFields, 
-                                                                        $onDuplicate, $contactId, false );
+                                                                        $onDuplicate, $contactId, false,
+                                                                        $this->_dedupeRuleGroupID );
                                     $updateflag = false; 
                                     $this->_retCode = CRM_Import_Parser::VALID;
                                 }
@@ -625,7 +625,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                 $this->_retCode = CRM_Import_Parser::NO_MATCH;
                             } else {
                                 $newContact = $this->createContact( $formatted, $contactFields, 
-                                                                    $onDuplicate, $params['id'], false );
+                                                                    $onDuplicate, $params['id'], false,
+                                                                    $this->_dedupeRuleGroupID );
                                 
                                 $this->_retCode = CRM_Import_Parser::VALID;
                             }
@@ -673,7 +674,11 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     }
                 }
             }
-            $newContact = $this->createContact( $formatted, $contactFields, $onDuplicate );
+            $newContact = $this->createContact( $formatted,
+                                                $contactFields,
+                                                $onDuplicate,
+                                                null, true,
+                                                $this->_dedupeRuleGroupID );
         }
 
         $contactID = null;
@@ -1570,7 +1575,12 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
      * 
      * 
      */
-    function createContact( &$formatted, &$contactFields, $onDuplicate, $contactId = null, $requiredCheck = true )
+    function createContact( &$formatted,
+                            &$contactFields,
+                            $onDuplicate,
+                            $contactId = null,
+                            $requiredCheck = true,
+                            $dedupeRuleGroupID = null )
     {
         $dupeCheck = false;
         
@@ -1586,7 +1596,11 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         civicrm_api_include('contact', false, 2);
         // setting required check to false, CRM-2839
         // plus we do our own required check in import
-        $error = civicrm_contact_check_params( $formatted, $dupeCheck, true, false );
+        $error = civicrm_contact_check_params( $formatted,
+                                               $dupeCheck,
+                                               true,
+                                               false,
+                                               $dedupeRuleGroupID );
         
         if ( ( is_null( $error )                                                ) && 
              ( civicrm_error( _civicrm_validate_formatted_contact($formatted) ) ) ) {

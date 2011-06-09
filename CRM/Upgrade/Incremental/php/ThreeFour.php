@@ -135,4 +135,22 @@ class CRM_Upgrade_Incremental_php_ThreeFour {
             }
         }
     }
+
+    function upgrade_3_4_3( $rev ) {
+        // CRM-8147, update group_type for uf groups, check and add component field types
+        require_once 'CRM/Core/BAO/UFGroup.php';
+        $ufGroups = new CRM_Core_DAO_UFGroup( );
+        $ufGroups->find( );
+        $skipGroupTypes = array( 'Individual,Contact', 'Organization,Contact', 'Household,Contact', 'Contact', 'Individual', 'Organization', 'Household' );
+        while( $ufGroups->fetch( ) ) {
+            if ( !in_array($ufGroups->group_type, $skipGroupTypes) ) {
+                $groupTypes = CRM_Core_BAO_UFGroup::calculateGroupType($ufGroups->id, true);
+                CRM_Core_BAO_UFGroup::updateGroupTypes($ufGroups->id, $groupTypes);
+            }
+        }
+        $ufGroups->free( );
+
+        $upgrade = new CRM_Upgrade_Form;
+        $upgrade->processSQL($rev); 
+    }
   }

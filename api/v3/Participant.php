@@ -154,6 +154,7 @@ function civicrm_api3_participant_get( $params ) {
     $participant = array( );
     while ( $dao->fetch( ) ) {
         $participant[$dao->participant_id] = $query->store( $dao );
+          _civicrm_api3_custom_data_get($participant[$dao->participant_id],'Participant',$dao->participant_id,null);          
     }
 
         return civicrm_api3_create_success($participant,$params,$dao);

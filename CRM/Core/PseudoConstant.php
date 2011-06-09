@@ -315,6 +315,13 @@ class CRM_Core_PseudoConstant
     private static $extensions = array( );
     
     /**
+     * activity contacts
+     * @var array
+     * @static
+     */
+    private static $activityContacts;
+    
+    /**
      * populate the object from the database. generic populate
      * method
      *
@@ -1604,6 +1611,28 @@ ORDER BY name";
         }
 
         return self::$extensions;
+    }
+
+    /**
+     * Get all Activity Contacts
+     *
+     * The static array activityContacts is returned
+     *
+     * @access public
+     * @static
+     *
+     * @param boolean $all - get All activity Contacts - default is to get only active ones.
+     *
+     * @return array - array reference of all  activity Contacts
+     *
+     */
+    public static function &activityContacts( )
+    {
+        if ( ! self::$activityContacts ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            self::$activityContacts = CRM_Core_OptionGroup::values('activity_contacts');
+        }
+        return self::$activityContacts;
     }
 }
 

@@ -59,9 +59,10 @@ class CRM_Contact_BAO_Query
         MODE_PLEDGEBANK =  256,
         MODE_PLEDGE     =  512,
         MODE_CASE       = 2048,
-        MODE_ALL        = 1023,
+        MODE_ALL        = 17407,
         MODE_ACTIVITY   = 4096,
-        MODE_CAMPAIGN   = 8192;
+        MODE_CAMPAIGN   = 8192,
+        MODE_MAILING	= 16384;
     
     /**
      * the default set of return properties
@@ -1080,11 +1081,10 @@ class CRM_Contact_BAO_Query
             $select = ( $this->_useDistinct ) ?
                 'SELECT DISTINCT(contact_a.id) as id' :
                 'SELECT contact_a.id as id'; 
-            // $select = 'SELECT contact_a.id as id';
-            // if ( $this->_useDistinct ) {
-            //     $this->_useGroupBy = true;
-            // }
 
+            if ( $this->_useDistinct ) {
+                $this->_useGroupBy = true;
+            }
             $from = $this->_simpleFromClause;
         } else {
             if ( CRM_Utils_Array::value( 'group', $this->_paramLookup ) ) {
@@ -1116,8 +1116,7 @@ class CRM_Contact_BAO_Query
                 if ( !( $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) ) {
                     // CRM-5954
                     $this->_select['contact_id'] = 'DISTINCT(contact_a.id) as contact_id';
-                    // $this->_useGroupBy = true;
-                    // $this->_select['contact_id'] ='contact_a.id as contact_id';
+                    $this->_useGroupBy = true;
                 }
             } 
 
@@ -1374,6 +1373,8 @@ class CRM_Contact_BAO_Query
         case 'activity_contact_name':
         case 'activity_campaign_id':
         case 'activity_engagement_level':
+        case 'activity_id':    
+            require_once 'CRM/Activity/BAO/Query.php';
             CRM_Activity_BAO_Query::whereClauseSingle( $values, $this );
             return;
 
@@ -2905,8 +2906,12 @@ WHERE  id IN ( $groupIDs )
         }
 
         if ( $fromStateProvince ) {
-            return array( $countryClause,
-                          " ...AND... " . $countryQill );
+            if ( ! empty( $countryClause ) ) {
+                return array( $countryClause,
+                              " ...AND... " . $countryQill );
+            } else {
+                return array( null, null );
+            }
         }
     }
 
@@ -2944,9 +2949,9 @@ WHERE  id IN ( $groupIDs )
         list( $countryClause, $countryQill ) = $this->country( $countryValues, true );
 
         if ( $countryClause ) {
-            $clause = $stateClause;
-        } else {
             $clause = ( $stateClause AND $countryClause );
+        } else {
+            $clause = $stateClause;
         }
 
         $this->_where[$grouping][] = $clause;
@@ -3155,7 +3160,6 @@ WHERE  id IN ( $groupIDs )
             $params = array( 'id' => $rel[0] );
             $rTypeValues = array( );
 
-            require_once "CRM/Contact/BAO/RelationshipType.php";
             $rType =& CRM_Contact_BAO_RelationshipType::retrieve( $params, $rTypeValues );
             if ( ! $rType ) {
                 return;
@@ -3585,6 +3589,7 @@ WHERE  id IN ( $groupIDs )
         $query = "$select $from $where $having $groupBy $order $limit";
         // CRM_Core_Error::debug('query', $query);
         // CRM_Core_Error::debug('query', $where);
+        // CRM_Core_Error::debug('this', $this );
 
         if ( $returnQuery ) {
             return $query;
@@ -4039,6 +4044,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
                               'Address Fields'  => 'civicrm_address',
                               'Notes'           => 'civicrm_note',
                               'Change Log'      => 'civicrm_log',
+                              'Mailings'        => 'civicrm_mailing_event_queue'
                               );
         
         foreach( array_keys($this->_whereTables) as $table ) {

@@ -32,6 +32,9 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
     
     function tearDown() 
     {
+       $tablesToTruncate = array( 'civicrm_custom_group', 'civicrm_custom_field',
+                                   );
+       $this->quickCleanup( $tablesToTruncate );
     }
    
     /**
@@ -68,6 +71,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $this->assertEquals($customField['is_error'],1);
         $this->assertEquals( $customField['error_message'],'Mandatory key(s) missing from params array: label' );
         $this->customGroupDelete($customGroup['id']); 
+        
     } 
 
     /**
@@ -178,14 +182,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
      */
     function testCustomFieldCreateExample( )
     {
-        $tablesToTruncate = array( 'civicrm_custom_field',
-                                   'civicrm_custom_group' );
 
-        // custom_field_create_example() contains hardcoded values
-        $this->quickCleanup( $tablesToTruncate );
         
-        $this->_individualId = $this->individualCreate( );
-
         $customGroup = $this->customGroupCreate('Individual','date_test_group',3);
         require_once 'api/v3/examples/CustomFieldCreate.php';
         $result = custom_field_create_example();

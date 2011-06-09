@@ -42,15 +42,16 @@ class CRM_Contact_Form_Edit_Address
     /**
      * build form for address input fields 
      *
-     * @param object $form - CRM_Core_Form (or subclass)
-     * @param array reference $location - location array
-     * @param int $locationId - location id whose block needs to be built.
+     * @param object  $form - CRM_Core_Form (or subclass)
+     * @param int     $addressBlockCount - the index of the address array (if multiple addresses on a page)
+     * @param boolean $sharing - false, if we want to skip the address sharing features
+     *
      * @return none
      *
      * @access public
      * @static
      */
-    static function buildQuickForm( &$form, $addressBlockCount = null ) 
+    static function buildQuickForm( &$form, $addressBlockCount = null, $sharing = true ) 
     {
 
         // passing this via the session is AWFUL. we need to fix this
@@ -101,8 +102,8 @@ class CRM_Contact_Form_Edit_Address
                           'supplemental_address_1' => array( ts('Addt\'l Address 1') ,  $attributes['supplemental_address_1'], null ),
                           'supplemental_address_2' => array( ts('Addt\'l Address 2') ,  $attributes['supplemental_address_2'], null ),
                           'city'                   => array( ts('City')              ,  $attributes['city'] , null ),
-                          'postal_code'            => array( ts('Zip / Postal Code') ,  $attributes['postal_code'], null ),
-                          'postal_code_suffix'     => array( ts('Postal Code Suffix'),  array( 'size' => 4, 'maxlength' => 12 ), null ),
+                          'postal_code'            => array( ts('Zip / Postal Code') ,  array_merge($attributes['postal_code'], array( 'class' => 'crm_postal_code' ) ), null ),
+                          'postal_code_suffix'     => array( ts('Postal Code Suffix'),  array( 'size' => 4, 'maxlength' => 12, 'class' => 'crm_postal_code_suffix' ), null ),
                           'county_id'              => array( ts('County')            ,  $attributes['county_id'], null ),
                           'state_province_id'      => array( ts('State / Province')  ,  $attributes['state_province_id'],null ),
                           'country_id'             => array( ts('Country')           ,  $attributes['country_id'], null ), 
@@ -234,19 +235,21 @@ class CRM_Contact_Form_Edit_Address
             $form->assign( 'dnc_groupTree', null ); // unset the temp smarty var that got created
         }
         // address custom data processing ends ..
-        
-        // shared address
-        $form->addElement( 'checkbox', "address[$blockId][use_shared_address]", null, ts('Share Address With') );
-        
-        // get the reserved for address
-        $profileId  = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'shared_address', 'id', 'name' );
-        
-        if ( !$profileId ) {
-            CRM_Core_Error::fatal( ts('Your install is missing required "Shared Address" profile.') );
-        }
 
-        require_once 'CRM/Contact/Form/NewContact.php';
-        CRM_Contact_Form_NewContact::buildQuickForm( $form, $blockId, array( $profileId ) );        
+        if ( $sharing ) {
+            // shared address
+            $form->addElement( 'checkbox', "address[$blockId][use_shared_address]", null, ts('Share Address With') );
+        
+            // get the reserved for address
+            $profileId  = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'shared_address', 'id', 'name' );
+        
+            if ( !$profileId ) {
+                CRM_Core_Error::fatal( ts('Your install is missing required "Shared Address" profile.') );
+            }
+
+            require_once 'CRM/Contact/Form/NewContact.php';
+            CRM_Contact_Form_NewContact::buildQuickForm( $form, $blockId, array( $profileId ) );        
+        }
     }
     
     /**
