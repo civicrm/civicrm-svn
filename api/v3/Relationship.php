@@ -95,7 +95,6 @@ function civicrm_api3_relationship_create( $params ) {
         $ids   ['contact'      ]        = $params['contact_id_a'];
 
         $relationshipBAO = CRM_Contact_BAO_Relationship::create( $values, $ids );
-
         if ( is_a( $relationshipBAO, 'CRM_Core_Error' ) ) {
             return civicrm_api3_create_error( 'Relationship can not be created' );
         } else if ( $relationshipBAO[1] ) {
@@ -185,8 +184,7 @@ function civicrm_api3_relationship_update( $params ) {
         }
         $params = array_merge($current_values, $params);
 
-        $params['start_date'] = date("Ymd", strtotime($params['start_date']));
-        $params['end_date'] = date("Ymd", strtotime($params['end_date']));
+        _civicrm_api3_relationship_check_params($params);
        
         return civicrm_api3_relationship_create( $params );
 
@@ -302,6 +300,7 @@ function _civicrm_api3_relationship_format_params( $params, &$values ) {
             if (!CRM_Utils_Rule::qfDate($value)) {
                 return civicrm_api3_create_error("$key not a valid date: $value");
             }
+            
             break;
             
         case 'relationship_type':
@@ -352,13 +351,10 @@ function _civicrm_api3_relationship_format_params( $params, &$values ) {
     
     return array();
 }
-function _civicrm_api3_relationship_check_params( $params ) {
-    if(is_array($params['end_date'])){
-        $params['end_date'] = date("Ymd", strtotime($params['end_date']));
-    }  
-    if(is_array($params['start_date'])){ 
-        $params['start_date'] = date("Ymd", strtotime($params['start_date']));
-    }
+function _civicrm_api3_relationship_check_params( &$params ) {
+
+    $params['start_date'] = date("Ymd", strtotime($params['start_date']));
+    $params['end_date'] = date("Ymd", strtotime($params['end_date']));
     // check params for validity of Relationship id
     if ( CRM_Utils_Array::value( 'id', $params ) ) {
         require_once 'CRM/Contact/BAO/Relationship.php';
