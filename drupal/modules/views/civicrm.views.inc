@@ -5910,6 +5910,9 @@ function civicrm_views_add_fields( &$fields, &$data, &$skipFields, $tableName ) 
                                       'filter' => array(
                                                         'handler' => civicrm_get_filter_handler( $type ),
                                                         ),
+                                      'argument' => array(
+                                                          'handler' => civicrm_get_argument_handler ( $type ),
+                                                          ),                                      
                                       );
 
         // For date fields add in 6 arguments
