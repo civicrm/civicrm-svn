@@ -54,15 +54,15 @@ function civicrm_rules_civicrm_post( $op, $objectName, $objectId, &$objectRef ) 
 		return;
 	}
 
-  $eventObject = strtolower( $objectName );
-  if($eventObject != 'contact'){
-    // without the civicrm prefix too much chance of another drupal module being enabled
-    $eventObject = 'civicrm_' . $eventObject;
-  }
+    $eventObject = strtolower( $objectName );
+    if($eventObject != 'contact'){
+        // without the civicrm prefix too much chance of another drupal module being enabled
+        $eventObject = 'civicrm_' . $eventObject;
+    }
 
 	$eventName = null;
 	switch ( $op ) {
-  case 'create':
+    case 'create':
 	case 'edit':
 	case 'delete':
         $eventName = "{$eventObject}_{$op}";
@@ -179,15 +179,15 @@ function civicrm_rules_perm()
 
 function civicrm_rules_menu() {
 
-  $items['admin/settings/civicrm_rules'] = array(
-    'title' => t('CiviCRM Rules settings'),
-    'description' => t('CiviCRM Rules Configuration'),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('civicrm_rules_admin_settings'),
-    'access arguments' => array('access civicrm rules settings'),
-    'file'	=> 'civicrm_rules_admin_form.inc',
-    'type' => MENU_NORMAL_ITEM,
-  );
-  return $items;
+    $items['admin/settings/civicrm_rules'] = array(
+                                                   'title' => t('CiviCRM Rules settings'),
+                                                   'description' => t('CiviCRM Rules Configuration'),
+                                                   'page callback' => 'drupal_get_form',
+                                                   'page arguments' => array('civicrm_rules_admin_settings'),
+                                                   'access arguments' => array('access civicrm rules settings'),
+                                                   'file'	=> 'civicrm_rules_admin_form.inc',
+                                                   'type' => MENU_NORMAL_ITEM,
+                                                   );
+    return $items;
 
 }

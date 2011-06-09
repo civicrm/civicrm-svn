@@ -83,7 +83,7 @@ function civicrm_rules_event_info( ) {
                                              'module'    => 'CiviCRM Mailing',
                                              'arguments' => rules_events_hook_civicrm_arguments( t( 'Mailing content uploaded' ),
                                                                                                  'mailing' ),
-                                              ),
+                                             ),
                  'mailing_scheduled' => array(
                                               'label'     => t( 'Mailing has been scheduled' ),
                                               'module'    => 'CiviCRM Mailing',
@@ -91,17 +91,17 @@ function civicrm_rules_event_info( ) {
                                                                                                   'mailing' ),
                                               ),
                  'mailing_approved' => array(
-                                              'label'     => t( 'Mailing has been approved/rejected' ),
-                                              'module'    => 'CiviCRM Mailing',
-                                              'arguments' => rules_events_hook_civicrm_arguments( t( 'Approved mailing' ),
-                                                                                                  'mailing' ),
-                                              ),
+                                             'label'     => t( 'Mailing has been approved/rejected' ),
+                                             'module'    => 'CiviCRM Mailing',
+                                             'arguments' => rules_events_hook_civicrm_arguments( t( 'Approved mailing' ),
+                                                                                                 'mailing' ),
+                                             ),
                  'mailing_inform'     => array(
                                                'label'     => t( 'Inform scheduler about the mailing' ),
                                                'module'    => 'CiviCRM Mailing',
                                                'arguments' => rules_events_hook_civicrm_arguments( t( 'Inform Mailing' ),
                                                                                                    'mailing' ),
-                                             ),
+                                               ),
                  'mailing_queued' => array(
                                            'label'     => t( 'Mailing has been queued' ),
                                            'module'    => 'CiviCRM Mailing',
@@ -120,33 +120,34 @@ function civicrm_rules_event_info( ) {
 
 
 function civicrm_rules_condition_info() {
-  return civicrm_rules_entities_condition_info();
+    return civicrm_rules_entities_condition_info();
 }
+
 /*
  * Implementation of hook_token_list().
  */
 function civicrm_rules_token_list($type = 'all') {
- // if ($type == 'civicrm_event' || $type == 'all') {
     $tokens['civicrm_event']['creator_drupal_id'] = t('The user ID of the creator');
     $tokens['civicrm_event']['creator_drupal_id'] = t('The user ID of the creator');
-  //}
-  return $tokens;
+    return $tokens;
 }
+
 /**
  * Implementation of hook_token_values().
  */
 function civicrm_rules_token_values($type, $object = NULL) {
-  switch ($type) {
+    switch ($type) {
     case 'civicrm_event':
      
-      if (!empty($object)) {
-        $values['creator drupal id'] = 1;
-      }
-      break;
-  }
+        if (!empty($object)) {
+            $values['creator drupal id'] = 1;
+        }
+        break;
+    }
 
-  return $values;
+    return $values;
 }
+
 /**
  * Returns some arguments suitable for hook_civicrm
  */
@@ -167,7 +168,7 @@ function civicrm_rules_action_info() {
               'rules_action_civicrm_add_to_group' => 
               array(
                     'label' => t('Add Contact to CiviCRM Group'),
-		    'description' => t('Add Contact to CiviCRM Group.'),
+                    'description' => t('Add Contact to CiviCRM Group.'),
                     'arguments' => array(
                                          'contact' => array('type' => 'contact',
                                                             'label' => t('Contact who should be added to the group')),
