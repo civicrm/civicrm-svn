@@ -122,3 +122,6 @@ INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
     ( @domainID, 'civicrm/admin/scheduleReminders&reset=1', '{ts escape="sql" skip="true"}Schedule Reminders{/ts}', 'Schedule Reminders', 'administer CiviCRM', '',  @configureID, '1', NULL, @nav_c_wt );
+
+-- CRM-8148, rename uf field 'activity_status' to 'activity_status_id'
+UPDATE civicrm_uf_field SET field_name = 'activity_type_id' WHERE field_name= 'activity_type';
