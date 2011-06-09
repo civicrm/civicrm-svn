@@ -148,55 +148,6 @@ function civicrm_api3_relationship_delete( $params ) {
     }
 }
 
-/**
- * Function to update relationship
- *
- * @param  array $params   Associative array of property name/value pairs to update the relationship
- *
- * @return array Array with relationship information
- * @todo update is not in our crud scheme
- * @access public
- *
- */
-function civicrm_api3_relationship_update( $params ) {
-    try {
-        _civicrm_api3_initialize(true);
-
-        /*
-         * Erik Hommel, 5 Oct 2010 : fix for CRM-6895
-         * check if required field relationship_id is in the parms. As the
-         * CRM_Contact_BAO_Relationship::getRelatonship throws up some issues
-         * (CRM-6905) the relationship is retrieved with a direct query
-         */
-        civicrm_api3_verify_mandatory($params, 'CRM_Contact_DAO_Relationship', array('relationship_id'));
-
-        $names = array('id', 'contact_id_a', 'contact_id_b',
-                       'relationship_type_id', 'start_date', 'end_date', 'is_active',
-                       'description', 'is_permission_a_b', 'is_permission_b_a', 'case_id');
-       
-        $relationship_id = (int) $params['relationship_id'];
-        $query = "SELECT * FROM civicrm_relationship WHERE id = $relationship_id";
-        $daoRelations = & CRM_Core_DAO::executeQuery( $query );
-        while ($daoRelations->fetch()) {
-            foreach ($names as $name) {
-                $current_values[$name] = $daoRelations->$name;
-            }
-        }
-        $params = array_merge($current_values, $params);
-
-        _civicrm_api3_relationship_check_params($params);
-       
-        return civicrm_api3_relationship_create( $params );
-
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
-
-
-}
-
 
 /**
  * Function to get the relationship
