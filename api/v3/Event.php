@@ -153,7 +153,7 @@ function civicrm_api3_event_get( $params )
     while ( $eventDAO->fetch( ) ) {
       $event[$eventDAO->id] = array( );
       CRM_Core_DAO::storeValues( $eventDAO, $event[$eventDAO->id] );
-      _civicrm_apiv3_custom_data_get($event[$eventDAO->id],'Event',$eventDAO->id,null,$eventDAO->event_type_id);
+      _civicrm_api3_custom_data_get($event[$eventDAO->id],'Event',$eventDAO->id,null,$eventDAO->event_type_id);
 
     }//end of the loop
 

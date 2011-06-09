@@ -1641,7 +1641,7 @@ function _civicrm_api3_basic_delete($bao_name, &$params){
  * @param string $subName - Subtype of entity 
  * 
  */
-function _civicrm_apiv3_custom_data_get(&$returnArray,$entity,$entity_id ,$groupID = null,$subType = null, $subName = null){
+function _civicrm_api3_custom_data_get(&$returnArray,$entity,$entity_id ,$groupID = null,$subType = null, $subName = null){
      require_once 'CRM/Core/BAO/CustomGroup.php'; 
      $groupTree =& CRM_Core_BAO_CustomGroup::getTree($entity, 
                                                       CRM_Core_DAO::$_nullObject, 

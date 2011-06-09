@@ -175,7 +175,7 @@ function civicrm_api3_activity_get( $params ) {
         if ( !empty( $activities ) && (!empty($returnProperties) || !empty($params['contact_id']))) {
           foreach ($activities as $activityId => $values){  
                    
-             _civicrm_apiv3_custom_data_get($activities[$activityId],'Activity',$activityId,null,$values['activity_type_id']);          
+             _civicrm_api3_custom_data_get($activities[$activityId],'Activity',$activityId,null,$values['activity_type_id']);          
           }
         }
         //legacy custom data get - so previous formatted response is still returned too

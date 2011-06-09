@@ -222,7 +222,7 @@ function civicrm_api3_membership_get($params)
         $membershipValues[$membershipId]['relationship_name'] = $relationshipType->name_a_b;
       }
       
-      _civicrm_apiv3_custom_data_get($membershipValues[$membershipId],'Membership',$membershipId,null,$values['membership_type_id']);
+      _civicrm_api3_custom_data_get($membershipValues[$membershipId],'Membership',$membershipId,null,$values['membership_type_id']);
 
     }
 
