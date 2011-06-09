@@ -655,11 +655,13 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
             $customFieldsFormatted = array( );
             require_once 'CRM/Core/BAO/CustomField.php';
-            foreach ( $membershipParams['onbehalf'] as $key => $value ) {
-                if ( strstr( $key, 'custom_' ) ) {
-                    $customFieldId = explode( '_', $key );
-                    CRM_Core_BAO_CustomField::formatCustomField( $customFieldId[1], $customFieldsFormatted, $value, 
-                                                                 'Membership', null, $contactID );
+            if ( is_array( $membershipParams['onbehalf'] ) && !empty( $membershipParams['onbehalf'] ) ) {
+                foreach ( $membershipParams['onbehalf'] as $key => $value ) {
+                    if ( strstr( $key, 'custom_' ) ) {
+                        $customFieldId = explode( '_', $key );
+                        CRM_Core_BAO_CustomField::formatCustomField( $customFieldId[1], $customFieldsFormatted, $value, 
+                                                                     'Membership', null, $contactID );
+                    }
                 }
             }
             
