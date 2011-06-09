@@ -322,4 +322,56 @@ class CRM_Admin_Page_AJAX
         echo json_encode( $tagInfo );
         CRM_Utils_System::civiExit( );
     } 
+
+
+    function mappingList(  ) {
+        $params = array( 'mappingID' );
+        foreach ( $params as $param ) {
+            $$param = CRM_Utils_Array::value( $param, $_POST );
+        }
+
+        if ( !$mappingID ) {
+            echo json_encode( array('error_msg' => 'required params missing.' ) );
+            CRM_Utils_System::civiExit( );
+        }
+
+        require_once "CRM/Core/BAO/ScheduleReminders.php";
+        list( $sel1, $sel2 ) = CRM_Core_BAO_ScheduleReminders::getSelection1( $mappingID );
+
+        $elements = array( );
+        foreach ( $sel1 as $id => $name ) {
+            $elements[] = array( 'name'  => $name,
+                                 'value' => $id );
+        }
+
+        require_once "CRM/Utils/JSON.php";
+        echo json_encode( $elements );
+        CRM_Utils_System::civiExit( );
+    } 
+
+    function mappingList1(  ) {
+        $params = array( 'mappingID' );
+        foreach ( $params as $param ) {
+            $$param = CRM_Utils_Array::value( $param, $_POST );
+        }
+
+        if ( !$mappingID ) {
+            echo json_encode( array('error_msg' => 'required params missing.' ) );
+            CRM_Utils_System::civiExit( );
+        }
+
+        require_once "CRM/Core/BAO/ScheduleReminders.php";
+        list( $sel1, $sel2 ) =  CRM_Core_BAO_ScheduleReminders::getSelection1( $mappingID );
+
+        $elements = array( );
+        foreach ( $sel2 as $id => $name ) {
+            $elements[] = array( 'name'  => $name,
+                                 'value' => $id );
+        }
+
+        require_once "CRM/Utils/JSON.php";
+        echo json_encode( $elements );
+        CRM_Utils_System::civiExit( );
+    } 
+   
 }

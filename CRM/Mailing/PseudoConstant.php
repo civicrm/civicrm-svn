@@ -196,6 +196,33 @@ class CRM_Mailing_PseudoConstant extends CRM_Core_PseudoConstant
         return self::$approvalStatus;
     }
 
+    /**
+     * Labels for advanced search against mailing summary.
+     * 
+     * @param $field
+     * @return unknown_type
+     */
+    public static function &yesNoOptions($field) {
+        static $options;
+        if (! $options) {
+            $options = array(
+                'bounce'  => array( 
+                    'N' => ts('Successful '), 'Y' => ts('Bounced '), 
+                ),
+                'open' => array( 
+                    'Y' => ts('Opened '), 'N' => ts('Unopened/Hidden '),
+                ),
+                'click'  => array( 
+                    'Y' => ts('Clicked '), 'N' => ts('Not Clicked '),
+                ),
+                'reply' => array(
+                     'Y' => ts('Replied '), 'N' => ts('No Reply '),
+                ),
+            );
+        }
+        return $options[$field];
+    }
+
 }
 
 

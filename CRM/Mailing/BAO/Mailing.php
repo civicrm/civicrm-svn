@@ -2138,7 +2138,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
     {
         //get the tokens.
         $tokens = CRM_Core_SelectValues::contactTokens( );
-
+     
         //token selector for subject
         //CRM-5058
         $form->add( 'select', 'token3',  ts( 'Insert Token' ), 
@@ -2150,8 +2150,10 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                           )
                     );
         
-        if ( CRM_Utils_System::getClassName( $form )  == 'CRM_Mailing_Form_Upload' ) {
+        if ( CRM_Utils_System::getClassName( $form ) == 'CRM_Mailing_Form_Upload' ) {
             $tokens = array_merge( CRM_Core_SelectValues::mailingTokens( ), $tokens );
+        } elseif ( CRM_Utils_System::getClassName( $form ) == 'CRM_Admin_Form_ScheduleReminders' ) {
+            $tokens = array_merge( CRM_Core_SelectValues::activityTokens( ), $tokens );
         }
 
         //sorted in ascending order tokens by ignoring word case

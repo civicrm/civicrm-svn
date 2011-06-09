@@ -139,7 +139,7 @@
                  	        {/if}
             	       {else}
                            {if ( $field.data_type eq 'Date' or
-                                      ( ( ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) ) ) ) and $field.is_view neq 1 }
+                                      ( ( ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) or ( $n eq 'activity_date_time' ) ) ) ) and $field.is_view neq 1 }
                               {include file="CRM/common/jcalendar.tpl" elementName=$n}  
                		       {else}       
                               {$form.$n.html}

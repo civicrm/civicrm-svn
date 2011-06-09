@@ -59,9 +59,10 @@ class CRM_Contact_BAO_Query
         MODE_PLEDGEBANK =  256,
         MODE_PLEDGE     =  512,
         MODE_CASE       = 2048,
-        MODE_ALL        = 1023,
+        MODE_ALL        = 17407,
         MODE_ACTIVITY   = 4096,
-        MODE_CAMPAIGN   = 8192;
+        MODE_CAMPAIGN   = 8192,
+        MODE_MAILING	= 16384;
     
     /**
      * the default set of return properties
@@ -1372,6 +1373,8 @@ class CRM_Contact_BAO_Query
         case 'activity_contact_name':
         case 'activity_campaign_id':
         case 'activity_engagement_level':
+        case 'activity_id':    
+            require_once 'CRM/Activity/BAO/Query.php';
             CRM_Activity_BAO_Query::whereClauseSingle( $values, $this );
             return;
 
@@ -3157,7 +3160,6 @@ WHERE  id IN ( $groupIDs )
             $params = array( 'id' => $rel[0] );
             $rTypeValues = array( );
 
-            require_once "CRM/Contact/BAO/RelationshipType.php";
             $rType =& CRM_Contact_BAO_RelationshipType::retrieve( $params, $rTypeValues );
             if ( ! $rType ) {
                 return;
@@ -4042,6 +4044,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
                               'Address Fields'  => 'civicrm_address',
                               'Notes'           => 'civicrm_note',
                               'Change Log'      => 'civicrm_log',
+                              'Mailings'        => 'civicrm_mailing_event_queue'
                               );
         
         foreach( array_keys($this->_whereTables) as $table ) {

@@ -81,7 +81,7 @@ class CRM_Activity_BAO_Query
         }
         
         if ( CRM_Utils_Array::value( 'activity_status_id', $query->_returnProperties ) ) {
-            $query->_select['activity_status_id']  = "activity_status.id as activity_status_id";
+            $query->_select['activity_status_id']  = "activity_status.value as activity_status_id";
             $query->_element['activity_status_id'] = 1;
             $query->_tables['civicrm_activity'] = 1;
             $query->_tables['activity_status'] = 1;
@@ -338,6 +338,24 @@ class CRM_Activity_BAO_Query
                     }
                 }
             } 
+
+        case 'activity_id':
+            if ( empty($value) ) {
+                break;
+            }
+            
+            if ( is_array($value) ) {
+                foreach( $value as $k => $v ) {
+                    $value[$k] = CRM_Utils_Type::escape( $v, 'Integer' );
+                    
+                }
+            } else {
+                $value = array( CRM_Utils_Type::escape( $value, 'Integer' ) );
+            }
+            $query->_where[$grouping][] = "civicrm_activity.id IN (". implode( ",", $value) .")";
+            $query->_qill[$grouping ][] = ts( 'Activity Id(s)  %1', array(1 => implode($value) ) );             
+            break;
+            
         case 'activity_tags':
             require_once'CRM/Core/BAO/Tag.php';
             $value = array_keys( $value );
@@ -355,7 +373,6 @@ class CRM_Activity_BAO_Query
             $query->_tables['civicrm_activity_tag'] = $query->_whereTables['civicrm_activity_tag'] = 1;
             
             break;
-            
         case 'activity_campaign_id':
             require_once 'CRM/Campaign/BAO/Query.php';
             $campParams = array( 'op'          => $op,

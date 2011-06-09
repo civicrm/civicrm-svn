@@ -168,8 +168,15 @@ SELECT module
                 if ( $this->_context == 'Search' ) {
                     $this->_postURL = CRM_Utils_System::url( 'civicrm/contact/search' );
                 } elseif ( $this->_id && $this->_gid ) {
-                   $this->_postURL = CRM_Utils_System::url('civicrm/profile/view',
-                                                            "reset=1&id={$this->_id}&gid={$gidString}" );
+                    $urlParams = "reset=1&id={$this->_id}&gid={$gidString}";
+                    if ( $this->_isContactActivityProfile && $this->_activityId ) {
+                        $urlParams .= "&aid={$this->_activityId}";  
+                    }
+                    // get checksum if present
+                    if ( $this->get( 'cs' ) ) {
+                        $urlParams .= "&cs=" . $this->get( 'cs' );
+                    }
+                    $this->_postURL = CRM_Utils_System::url('civicrm/profile/view', $urlParams);
                 }
             }
             
@@ -262,8 +269,15 @@ SELECT module
                 $gidString = implode( ',', $this->_profileIds );
             }
 
-            $url = CRM_Utils_System::url( 'civicrm/profile/view',
-                                          "reset=1&id={$this->_id}&gid={$gidString}" );
+            $urlParams = "reset=1&id={$this->_id}&gid={$gidString}";
+            if ( $this->_isContactActivityProfile && $this->_activityId ) {
+                $urlParams .= "&aid={$this->_activityId}";  
+            }
+            // get checksum if present
+            if ( $this->get( 'cs' ) ) {
+                $urlParams .= "&cs=" . $this->get( 'cs' );
+            }
+            $url = CRM_Utils_System::url( 'civicrm/profile/view', $urlParams );
         }
 
         $session->replaceUserContext( $url );

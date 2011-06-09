@@ -521,6 +521,27 @@ class CRM_Core_SelectValues
     }
     
     /**
+     * different type of Activity Tokens
+     *
+     * @static
+     * return array
+     */
+    static function &activityTokens( ) 
+    {
+        static $tokens = null;
+
+        if (! $tokens ) {
+            $tokens = array( 
+                            '{activity.activity_id}' => ts('Activity ID'),
+                            '{activity.subject}' => ts('Activity Subject'),
+                            '{activity.details}' => ts('Activity Details'),
+                            
+                          );
+        }
+        return $tokens;
+    }
+    
+    /**
      * different type of Contact Tokens
      *
      * @static
