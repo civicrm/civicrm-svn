@@ -35,6 +35,7 @@
  */
 
 require_once 'utils.inc';
+require_once 'civicrm_rules_entities.rules.inc';
 
 /**
  * Implementation of hook_rules_event_info().
@@ -113,9 +114,39 @@ function civicrm_rules_event_info( ) {
                                              'arguments' => rules_events_hook_civicrm_arguments( t( 'Completed mailing' ),
                                                                                                  'mailing' ),
                                              )
-                 );
+                 )+ civicrm_rules_entities_event_info();
+               
 }
 
+
+function civicrm_rules_condition_info() {
+  return civicrm_rules_entities_condition_info();
+}
+/*
+ * Implementation of hook_token_list().
+ */
+function civicrm_rules_token_list($type = 'all') {
+ // if ($type == 'civicrm_event' || $type == 'all') {
+    $tokens['civicrm_event']['creator_drupal_id'] = t('The user ID of the creator');
+    $tokens['civicrm_event']['creator_drupal_id'] = t('The user ID of the creator');
+  //}
+  return $tokens;
+}
+/**
+ * Implementation of hook_token_values().
+ */
+function civicrm_rules_token_values($type, $object = NULL) {
+  switch ($type) {
+    case 'civicrm_event':
+     
+      if (!empty($object)) {
+        $values['creator drupal id'] = 1;
+      }
+      break;
+  }
+
+  return $values;
+}
 /**
  * Returns some arguments suitable for hook_civicrm
  */
@@ -179,6 +210,8 @@ function civicrm_rules_action_info() {
               
               );
 }
+
+
 
 function rules_action_civicrm_mailing_send_email( $mailing, $settings ) {
     if( $mailing->id ) {
@@ -358,6 +391,8 @@ function civicrm_rules_data_type_info() {
                                     'identifiable' => TRUE,
                                     ),
                  );
+                 
+
 }
 
 /**

@@ -43,6 +43,7 @@
  */
 function _civicrm_get_groups( ) {
 	civicrm_initialize( );
+	require_once 'api/api.php';
 	$params = array( 'return.id' => 1, 'return.title' => 1 );
 	$groupInformation = civicrm_api('group', 'get', $params);
 
@@ -81,6 +82,8 @@ function _civicrm_rules_load_contact( $contactID ) {
     
     return $contact;
 }
+
+
 
 function _civicrm_rules_in_group( $contact, $group ) {
     // check if contact is in the group gid
