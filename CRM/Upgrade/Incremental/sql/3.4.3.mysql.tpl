@@ -103,6 +103,10 @@ VALUES
 
 SELECT @option_group_id_aco := max(id) from civicrm_option_group where name = 'activity_contacts';
 
+SELECT @option_group_id_act := max(id) from civicrm_option_group where name = 'activity_type';
+SELECT @act_value           := MAX(ROUND(value)) FROM civicrm_option_value WHERE option_group_id = @option_group_id_act;
+SELECT @act_weight          := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_act;
+
 -- CRM-8209
 SELECT @option_group_id_adv_search_opts := max(id) from civicrm_option_group where name = 'advanced_search_options';
 
@@ -112,7 +116,8 @@ VALUES
    (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Assignees{/ts}'{/localize}, 1, 'Activity Assignees', NULL, 0, NULL, 1, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
    (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Source{/ts}'{/localize}, 2, 'Activity Source', NULL, 0, NULL, 2, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
    (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Targets{/ts}'{/localize}, 3, 'Activity Targets', NULL, 0, NULL, 3, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
-   (@option_group_id_adv_search_opts, {localize}'{ts escape="sql"}Mailing{/ts}'{/localize}, '19',   'CiviMail', NULL, 0, NULL, 21, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL);
+   (@option_group_id_adv_search_opts, {localize}'{ts escape="sql"}Mailing{/ts}'{/localize}, '19',   'CiviMail', NULL, 0, NULL, 21, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
+   (@option_group_id_act, {localize}'{ts escape="sql"}Reminder Sent{/ts}'{/localize}, @act_value+1, 'Reminder Sent', NULL, 0, NULL, @act_weight+1, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL);
 
 SELECT @domainID := min(id) FROM civicrm_domain;
 SELECT @configureID := max(id) FROM civicrm_navigation WHERE name = 'Configure';

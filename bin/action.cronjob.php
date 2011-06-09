@@ -92,8 +92,16 @@ class CRM_Cron_Action {
 
         $tokenFields = array( );
         $session = & CRM_Core_Session::singleton();
+
         if ( $actionSchedule->find( true ) ) {
             $extraSelect = $extraJoin = '';
+
+            if ( $actionSchedule->record_activity ) {
+                $activityTypeID   = CRM_Core_OptionGroup::getValue( 'activity_type', 
+                                                                    'Reminder Sent', 'name' );
+                $activityStatusID = CRM_Core_OptionGroup::getValue( 'activity_status', 
+                                                                    'Completed', 'name' );
+            }
 
             if ( $mapping->entity == 'civicrm_activity' ) {
                 $tokenFields = array( 'activity_id', 'activity_type', 'subject', 'activity_date_time' );
@@ -148,8 +156,8 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL";
                                              $session->get('userID') : $dao->contact_id,
                                              'target_contact_id'  => $dao->contact_id,
                                              'activity_date_time' => date('YmdHis'),
-                                             'status_id'          => CRM_Core_OptionGroup::getValue( 'activity_status', 
-                                                                                                     'Completed', 'name' ),
+                                             'status_id'          => $activityStatusID,
+                                             'activity_type_id'   => $activityTypeID,
                                              'source_record_id'   => $dao->entityID
                                              );
                     $activity = CRM_Activity_BAO_Activity::create( $activityParams );
