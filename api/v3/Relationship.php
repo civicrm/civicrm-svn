@@ -212,11 +212,12 @@ function civicrm_api3_relationship_update( $params ) {
  */
 function civicrm_api3_relationship_get($params) 
 {
-    _civicrm_api3_initialize(true );
+
     try{
         civicrm_api3_verify_mandatory($params, null,array('contact_id'));
  
         require_once 'CRM/Contact/BAO/Relationship.php';
+        $relationships= array();
         $contactID     = $params['contact_id'];
         $relationships = CRM_Contact_BAO_Relationship::getRelationship($contactID,
                                         CRM_Utils_Array::value('status_id',$params),
@@ -244,11 +245,9 @@ function civicrm_api3_relationship_get($params)
             }
         }
     
-        if ( $relationships ) {
-            return civicrm_api3_create_success( $relationships ,$params);
-        } else {
-            return civicrm_api3_create_error(  'Invalid Data'  );
-        }
+        
+        return civicrm_api3_create_success( $relationships ,$params);
+       
     } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {
