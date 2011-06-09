@@ -217,21 +217,23 @@
     </div>
     {/if}
     
-    {if $onBehalfName}
-    <div class="crm-group onBehalf_display-group">
-        <div class="header-dark">
-            {ts}On Behalf Of{/ts}
-        </div>
-        <div class="display-block">
-            <strong>{$onBehalfName}</strong><br />
-            {$onBehalfAddress|nl2br}
-        </div>
-        <div class="display-block">
-            {$onBehalfEmail}
-        </div>
-    </div>
+    {if $onbehalfProfile}
+      {foreach from=$onbehalfProfile item=field key=cname}
+         {if $field.groupTitle}
+            {assign var=groupTitle  value=$field.groupTitle} 
+         {/if}
+      {/foreach}
+      <div class="crm-group onBehalf_display-group">
+         <div class="header-dark">
+            {$groupTitle}
+         </div>
+         <fieldset class="label-left">
+            {include file="CRM/UF/Form/Block.tpl" fields=$onbehalfProfile}
+            <div class="label">Email &nbsp;&nbsp;{$onBehalfEmail}</div>
+         </fieldset>
+      </div>
     {/if}
-
+    
     {if $contributeMode ne 'notify' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 )}    
     <div class="crm-group billing_name_address-group">
         <div class="header-dark">

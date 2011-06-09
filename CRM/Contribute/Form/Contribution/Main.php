@@ -36,6 +36,7 @@
 
 require_once 'CRM/Contribute/Form/ContributionBase.php';
 require_once 'CRM/Core/Payment.php';
+require_once 'CRM/Contribute/Form/Contribution/OnBehalfOf.php';
 
 /**
  * This class generates form components for processing a ontribution 
@@ -74,6 +75,15 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             }
         }
 
+        $this->assign( 'pageId', $this->_id );
+        $this->_onbehalf = CRM_Utils_Array::value( 'onbehalf', $_GET );
+        $this->assign( 'onbehalf', false );
+        
+        CRM_Contribute_Form_Contribution_OnBehalfOf::preProcess( $this );
+        if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $_POST ) ) {
+            CRM_Contribute_Form_Contribution_OnBehalfOf::buildQuickForm( $this );
+        }
+                
         if (  CRM_Utils_Array::value( 'id', $this->_pcpInfo )  && 
               CRM_Utils_Array::value( 'intro_text', $this->_pcpInfo ) ) {
             $this->assign( 'intro_text' , $this->_pcpInfo['intro_text'] );
@@ -120,7 +130,11 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         if ( ! empty( $this->_defaults ) ) {
             // return $this->_defaults;
         }
-
+        
+        if ( $this->_onbehalf ) {
+            return;
+        }
+        
         // check if the user is registered and we have a contact ID
         $session = CRM_Core_Session::singleton( );
         $contactID = $this->_userID;
@@ -199,20 +213,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $this->_defaults['selectMembership'] = $defaultMemType =
                 $this->_defaultMemTypeId ? $this->_defaultMemTypeId : 
                 CRM_Utils_Array::value( 'membership_type_default', $this->_membershipBlock );
-        }
-
-        if ( $this->_membershipContactID ) {
-            $this->_defaults['is_for_organization'] = 1;
-            $this->_defaults['org_option'] = 1;
-        } elseif ( $this->_values['is_for_organization'] ) {
-            $this->_defaults['org_option'] = 0;
-        }
-
-        if ( $this->_values['is_for_organization'] && 
-             ! isset($this->_defaults['location'][1]['email'][1]['email']) ) {
-            $this->_defaults['location'][1]['email'][1]['email'] = 
-                CRM_Utils_Array::value( "email-{$this->_bltID}",
-                                        $this->_defaults );
         }
 
         //if contribution pay later is enabled and payment
@@ -304,6 +304,11 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     {
         $config = CRM_Core_Config::singleton( );
 
+        if ( $this->_onbehalf ) {
+            $this->assign( 'onbehalf', true );
+            return CRM_Contribute_Form_Contribution_OnBehalfOf::buildQuickForm( $this );
+        }
+                
         $this->applyFilter('__ALL__', 'trim');
         $this->add( 'text', "email-{$this->_bltID}",
                     ts( 'Email Address' ), array( 'size' => 30, 'maxlength' => 60 ), true );
@@ -563,20 +568,15 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $entityBlock = array( 'contact_id' => $this->_membershipContactID );
             CRM_Core_BAO_Location::getValues( $entityBlock, $this->_defaults );
         }
-
-        require_once 'CRM/Contact/BAO/Contact/Utils.php';
+        
         if ( $this->_values['is_for_organization'] != 2 ) {
-            $attributes = array('onclick' => 
-                                "return showHideByValue('is_for_organization','true','for_organization','block','radio',false);");
             $this->addElement( 'checkbox', 'is_for_organization', 
                                $this->_values['for_organization'], 
-                               null, $attributes );
-        } else {
-            $this->addElement( 'hidden', 'is_for_organization', true );
+                               null, array( 'onclick' => "showOnBehalf( );" ) );
         }
-        $this->assign( 'is_for_organization', true);
-        CRM_Contact_BAO_Contact_Utils::buildOnBehalfForm( $this, 'Organization', null, 
-                                                          null, ts('Organization Details') );
+
+        $this->assign( 'is_for_organization', true );
+        $this->assign( 'urlPath', 'civicrm/contribute/transact' );
     }
 
     /**
@@ -754,15 +754,23 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $errors['_qf_default'] = ts('You cannot set up a recurring contribution if you are not paying online by credit card.'); 
         }
 
-        if ( CRM_Utils_Array::value( 'is_for_organization', $fields ) ) {
-            if ( CRM_Utils_Array::value( 'org_option',$fields ) && ! $fields['onbehalfof_id'] ) {
-                $errors['organization_id'] = ts('Please select an organization or enter a new one.'); 
+        if ( CRM_Utils_Array::value( 'is_for_organization', $fields ) && !$self->_organizationName ) {
+
+            if ( !CRM_Utils_Array::value( 'organization_name', $fields['onbehalf'] ) ) {
+                if ( CRM_Utils_Array::value( 'org_option',$fields ) && !$fields['onbehalfof_id'] ) {
+                    $errors['organization_id'] = ts('Please select an organization or enter a new one.');
+                } else if ( !CRM_Utils_Array::value( 'org_option',$fields ) ) {
+                    $errors['onbehalf']['organization_name'] = ts('Please enter the organization name.'); 
+                }
             }
-            if ( !CRM_Utils_Array::value( 'org_option',$fields ) && ! $fields['organization_name'] ) {
-                $errors['organization_name'] = ts('Please enter the organization name.'); 
+            
+            foreach ( $fields['onbehalf'] as $key => $value ) {
+                if ( strstr( $key, 'email' ) ) {
+                    $emailLocType = explode( '-', $key );
+                }
             }
-            if ( ! $fields['email'][1]['email'] ) {
-                $errors["email[1][email]"] = ts('Organization email is required.'); 
+            if ( !CRM_Utils_Array::value( "email-{$emailLocType[1]}", $fields['onbehalf'] ) ) {
+                $errors['onbehalf']["email-{$emailLocType[1]}"] = ts('Organization email is required.');
             }
         }
 

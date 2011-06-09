@@ -1063,7 +1063,8 @@ AND civicrm_membership.is_test = %2";
      * @return void
      * @access public
      */                                   
-    public function postProcessMembership( $membershipParams, $contactID ,&$form, &$premiumParams)
+    public function postProcessMembership( $membershipParams, $contactID ,&$form, &$premiumParams, 
+                                           $customFieldsFormatted = null )
     {
     	$tempParams  = $membershipParams;
         $paymentDone = false;
@@ -1191,9 +1192,13 @@ AND civicrm_membership.is_test = %2";
         $index = $memBlockDetails['is_separate_payment'] ? 2 : 1;
 
         if ( ! CRM_Utils_Array::value( $index, $errors ) ) {
+            if ( CRM_Utils_Array::value( 'member_campaign_id', $membershipParams['onbehalf'] ) ) {
+                $form->_params['campaign_id'] = $membershipParams['onbehalf']['member_campaign_id'];
+            }
             $membership = self::renewMembership( $contactID, $membershipTypeID, 
                                                  $isTest, $form, null,
-                                                 CRM_Utils_Array::value( 'cms_contactID', $membershipParams ) );
+                                                 CRM_Utils_Array::value( 'cms_contactID', $membershipParams ),
+                                                 $customFieldsFormatted );
             if ( isset( $contribution[$index] ) ) {
                 //insert payment record
                 require_once 'CRM/Member/DAO/MembershipPayment.php';
