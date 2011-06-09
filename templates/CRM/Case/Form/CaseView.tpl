@@ -706,9 +706,12 @@ function addRole() {
     <div id="manageTags">
         <div class="label">{$form.case_tag.label}</div>
         <div class="view-value"><div class="crm-select-container">{$form.case_tag.html}</div>
+        <br/>
         <div style="text-align:left;">{include file="CRM/common/Tag.tpl" tagsetType='case'}</div>
+        <br/>
+        <div class="clear"></div>
     </div>
-    </div>
+</div>
 
 {literal}
 <script type="text/javascript">
@@ -727,7 +730,7 @@ function addTags() {
     cj("#manageTags").dialog({
         title: "{/literal}{ts}Change Case Tags{/ts}{literal}",
         modal: true,
-        height: '200',
+        height: 'auto',
         width: 'auto',
         buttons: { 
             "Save": function() { 

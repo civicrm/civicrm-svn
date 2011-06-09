@@ -3122,4 +3122,9 @@ div#crm-toolTip
 #crm-container .civicrm-drupal-wysiwyg .collapsed {
     background: transparent;
     padding-left: 0px;
-} 
+}
+
+#manageTags {
+    position: static;
+    z-index: -100;
+}
