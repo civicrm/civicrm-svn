@@ -1006,8 +1006,6 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
             $attributes['endOffset']   = 10; 
         }
         
-        $attributes['readonly'] = true;
-        
         $this->add('text', $name, $label, $attributes );
 
         if ( CRM_Utils_Array::value( 'addTime', $attributes ) || 
