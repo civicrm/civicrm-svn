@@ -64,8 +64,12 @@ function showOnBehalf( )
 {
     if ( cj( "#is_for_organization" ).attr( 'checked' ) ) {
         if ( cj( "#for_organization" ).size( ) == 0 ) {
+            var reset   = {/literal}"{$reset}"{literal};
             var urlPath = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&onbehalf=1'}"{literal};
-            urlPath     = urlPath  + '&id=' + {/literal}{$pageId}{literal};
+            urlPath     = urlPath  + {/literal}"{$urlParams}"{literal};
+            if ( reset ) {
+                urlPath = urlPath + '&reset=' + reset;
+            }
        
             cj.ajax({
                  url     : urlPath,
@@ -106,7 +110,7 @@ cj( "#mode" ).attr( 'checked', 'checked' );
 
 {/literal}
 
-{if $relatedOrganizationFound}
+{if $relatedOrganizationFound and $reset}
   {if $organizationName}
 
     {literal}
