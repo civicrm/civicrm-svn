@@ -1514,7 +1514,7 @@ ORDER BY civicrm_email.is_primary DESC";
             CRM_Utils_Hook::pre( 'create', 'Profile', null, $params ); 
         }
 
-        list($data, $contactDetails) = self::formatProfileContactParams(  &$params, &$fields, $contactID, $ufGroupId, $ctype );
+        list($data, $contactDetails) = self::formatProfileContactParams(  $params, $fields, $contactID, $ufGroupId, $ctype );
         
         // manage is_opt_out
         if (array_key_exists('is_opt_out', $fields) &&
