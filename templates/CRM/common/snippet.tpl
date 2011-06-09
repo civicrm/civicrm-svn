@@ -33,8 +33,6 @@
     {else}
         {include file=$tplFile}
     {/if}
-
-    {include file="CRM/common/action.tpl" isSnippet = true}
 {else}
     {if $smarty.get.snippet eq 2}
     {include file="CRM/common/print.tpl"}

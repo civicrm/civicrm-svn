@@ -25,8 +25,8 @@
 *}
 {literal}
 <script type="text/javascript">
-cj({/literal}{if $isSnippet }document{else}'#crm-container'{/if}{literal})
-    .bind('click', function(event) {
+cj('#crm-container')
+    .live('click', function(event) {
         if (cj(event.target).is('.btn-slide')) {
             cj(event.target).children().show();
             cj(event.target).addClass('btn-slide-active');
