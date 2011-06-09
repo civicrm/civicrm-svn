@@ -107,12 +107,12 @@ SELECT @option_group_id_aco := max(id) from civicrm_option_group where name = 'a
 SELECT @option_group_id_adv_search_opts := max(id) from civicrm_option_group where name = 'advanced_search_options';
 
 INSERT INTO civicrm_option_value 
-   (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight, description, is_optgroup, is_reserved, is_active, component_id, visibility_id) 
+   (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight, {localize field='description'}description{/localize}, is_optgroup, is_reserved, is_active, component_id, visibility_id) 
 VALUES
-   (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Assignees{/ts}'{/localize}, 1, 'Activity Assignees', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-   (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Source{/ts}'{/localize}, 2, 'Activity Source', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
-   (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Targets{/ts}'{/localize}, 3, 'Activity Targets', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
-   (@option_group_id_adv_search_opts, {localize}'{ts escape="sql"}Mailing{/ts}'{/localize}, '19',   'CiviMail', NULL, 0, NULL, 21, NULL, 0, 0, 1, NULL, NULL);
+   (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Assignees{/ts}'{/localize}, 1, 'Activity Assignees', NULL, 0, NULL, 1, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
+   (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Source{/ts}'{/localize}, 2, 'Activity Source', NULL, 0, NULL, 2, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
+   (@option_group_id_aco, {localize}'{ts escape="sql"}Activity Targets{/ts}'{/localize}, 3, 'Activity Targets', NULL, 0, NULL, 3, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
+   (@option_group_id_adv_search_opts, {localize}'{ts escape="sql"}Mailing{/ts}'{/localize}, '19',   'CiviMail', NULL, 0, NULL, 21, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL);
 
 SELECT @domainID := min(id) FROM civicrm_domain;
 SELECT @configureID := max(id) FROM civicrm_navigation WHERE name = 'Configure';
