@@ -76,6 +76,7 @@ class CRM_Cron_Action {
     }
 
     public function sendMailings( $mappingID ) {
+        require_once 'CRM/Activity/BAO/Activity.php';
         require_once 'CRM/Contact/BAO/Contact.php';
         require_once 'CRM/Core/BAO/Domain.php';
         $domainValues     = CRM_Core_BAO_Domain::getNameAndEmail( );
@@ -90,6 +91,7 @@ class CRM_Cron_Action {
         $actionSchedule->id = $mappingID;
 
         $tokenFields = array( );
+        $session = & CRM_Core_Session::singleton();
         if ( $actionSchedule->find( true ) ) {
             $extraSelect = $extraJoin = '';
 
@@ -101,16 +103,14 @@ INNER JOIN civicrm_option_value ov ON e.activity_type_id = ov.value AND ov.optio
             }
 
             $query = "
-SELECT reminder.id as reminderID, reminder.*, e.* {$extraSelect} 
+SELECT reminder.id as reminderID, reminder.*, e.id as entityID, e.* {$extraSelect} 
 FROM  civicrm_action_log reminder
 INNER JOIN {$mapping->entity} e ON e.id = reminder.entity_id
 {$extraJoin}
 WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL";
             $dao   = CRM_Core_DAO::executeQuery( $query,
                                                  array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
-
-            // QUESTION: in cases when same contact has multiple activites for example, should we 
-            // send multiple mails ? if not should the log be maintained for every activity ?
+            
             while ( $dao->fetch() ) {
                 $entityTokenParams = array();
                 foreach ( $tokenFields as $field ) {
@@ -139,6 +139,21 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL";
                     ($errorMsg ? ", message = '{$errorMsg}'" : '');
                 $query     = "UPDATE civicrm_action_log {$setClause} WHERE id = %1";
                 CRM_Core_DAO::executeQuery( $query, array( 1 => array( $dao->reminderID, 'Integer' ) ) );
+                
+                // insert activity log record if needed
+                if ( $actionSchedule->record_activity ) {
+                    $activityParams = array( 'subject'            => $actionSchedule->title,
+                                             'details'            => $actionSchedule->body_html,
+                                             'source_contact_id'  => $session->get('userID') ? 
+                                             $session->get('userID') : $dao->contact_id,
+                                             'target_contact_id'  => $dao->contact_id,
+                                             'activity_date_time' => date('YmdHis'),
+                                             'status_id'          => CRM_Core_OptionGroup::getValue( 'activity_status', 
+                                                                                                     'Completed', 'name' ),
+                                             'source_record_id'   => $dao->entityID
+                                             );
+                    $activity = CRM_Activity_BAO_Activity::create( $activityParams );
+                }
             }
             $dao->free();
         }
