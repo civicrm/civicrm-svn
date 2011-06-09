@@ -88,11 +88,16 @@ class CRM_Contact_BAO_Contact_Utils
         }
         
         if ( $addProfileOverlay ) {
-            $summaryOverlayProfileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'summary_overlay', 'id', 'name' );
+            static $summaryOverlayProfileId = null;
+            if ( ! $summaryOverlayProfileId ) {
+                $summaryOverlayProfileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'summary_overlay', 'id', 'name' );
+            }
         
-            $profileURL = CRM_Utils_System::url('civicrm/profile/view', "reset=1&gid={$summaryOverlayProfileId}&id={$contactId}&snippet=4");
+            $profileURL = CRM_Utils_System::url('civicrm/profile/view',
+                                                "reset=1&gid={$summaryOverlayProfileId}&id={$contactId}&snippet=4");
         
-            $imageInfo[$contactType]['summary-link'] = '<a href="'.$profileURL.'" class="crm-summary-link">'.$imageInfo[$contactType]['image'].'</a>';
+            $imageInfo[$contactType]['summary-link'] = 
+                '<a href="'.$profileURL.'" class="crm-summary-link">'.$imageInfo[$contactType]['image'].'</a>';
         } else {
             $imageInfo[$contactType]['summary-link'] = $imageInfo[$contactType]['image'];
         }
