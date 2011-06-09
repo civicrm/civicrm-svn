@@ -369,24 +369,60 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'activity_type_id'    => 29,
                         'version'             => $this->_apiversion,
                         'priority_id'         => 1,
+
+                        );
+      
+        $result = & civicrm_api3_activity_create( $params );
+        //todo test target & assignee are set
+        $this->assertEquals( $result['is_error'], 0,
+                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) .' in line ' . __LINE__ );
+ 
+        $this->assertEquals( $result['values'][$result['id']]['source_contact_id'], 17,'in line ' . __LINE__);
+ 
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $result = & civicrm_api3_activity_get(array('id' => $result['id'], 'version' => $this->_apiversion) );
+        $this->assertEquals( $result['values'][$result['id']]['source_contact_id'], 17,'in line ' . __LINE__);
+ 
+        $this->assertEquals( $result['values'][$result['id']]['duration'], 120 ,'in line ' . __LINE__);
+        $this->assertEquals( $result['values'][$result['id']]['subject'], 'Make-it-Happen Meeting','in line ' . __LINE__ );
+        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], '2011-03-16 00:00:00'  ,'in line ' . __LINE__);
+        $this->assertEquals( $result['values'][$result['id']]['location'], 'Pensulvania','in line ' . __LINE__ );
+        $this->assertEquals( $result['values'][$result['id']]['details'], 'a test activity' ,'in line ' . __LINE__);
+        $this->assertEquals( $result['values'][$result['id']]['status_id'], 1,'in line ' . __LINE__ );
+
+    }
+    function testActivityReturnTargetAssignee( )
+    {
+
+        $description = "Example demonstrates setting & retrieving the target & source";
+        $params = array(
+                        'source_contact_id'   => 17,
+                        'subject'             => 'Make-it-Happen Meeting',
+                        'activity_date_time'  => '20110316',
+                        'duration'            => 120,
+                        'location'            => 'Pensulvania',
+                        'details'             => 'a test activity',
+                        'status_id'           => 1,
+                        'activity_type_id'    => 1,
+                        'version'             => $this->_apiversion,
+                        'priority_id'         => 1,
                         'target_contact_id'   => 17,
                         'assignee_contact_id'  => 17
                         );
       
         $result = & civicrm_api3_activity_create( $params );
         //todo test target & assignee are set
-        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) .' in line ' . __LINE__ );
-        $this->assertEquals( $result['values'][$result['id']]['source_contact_id'], 17,'in line ' . __LINE__);
-        $this->assertEquals( $result['values'][$result['id']]['duration'], 120 ,'in line ' . __LINE__);
-        $this->assertEquals( $result['values'][$result['id']]['subject'], 'Make-it-Happen Meeting','in line ' . __LINE__ );
-        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], '20110316000000'  ,'in line ' . __LINE__);
-        $this->assertEquals( $result['values'][$result['id']]['location'], 'Pensulvania','in line ' . __LINE__ );
-        $this->assertEquals( $result['values'][$result['id']]['details'], 'a test activity' ,'in line ' . __LINE__);
-        $this->assertEquals( $result['values'][$result['id']]['status_id'], 1,'in line ' . __LINE__ );
-    }
+ 
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $result = & civicrm_api3_activity_get(array('id' => $result['id'], 'version' => $this->_apiversion, 'return.assignee_contact_id' => 1, 'return.target_contact_id' => 1 ) );
 
+        $this->assertEquals( 17,$result['values'][$result['id']]['assignee_contact_id'][0], 'in line ' . __LINE__ );
+        $this->assertEquals( 17,$result['values'][$result['id']]['target_contact_id'][0], 'in line ' . __LINE__ );
+ 
+    }
+    
     function testActivityCreateExample( )
     {
         /**
