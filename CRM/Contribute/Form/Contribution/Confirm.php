@@ -156,8 +156,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                     'state_province', 'postal_code', 'country' );
 
             foreach ( $this->_params['onbehalf'] as $loc => $value ) {
-                list( $field, $locType ) = explode( '-', $loc );
-                
+                list( $field, $locType, $phoneTypeId ) = explode( '-', $loc );
+                                
                 if ( in_array( $field, $addressBlocks ) ) {
                     if ( $field == 'country' ) {
                         $value = CRM_Core_PseudoConstant::countryIsoCode( $value );
@@ -167,6 +167,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                     $this->_params['onbehalf_location']['address'][$locType][$field] = $value;
                 } else if ( in_array( $field, array( 'email', 'phone' ) ) ) {
                     $this->_params['onbehalf_location'][$field][$locType][$field] = $value;
+                    if ( $phoneTypeId ) {
+                        $this->_params['onbehalf_location'][$field][$locType]['phone_type_id'] = $phoneTypeId;
+                    }
                 }
 
                 if ( strstr( $loc, 'custom' ) ) {

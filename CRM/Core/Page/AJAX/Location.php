@@ -63,15 +63,20 @@ class CRM_Core_Page_AJAX_Location
         require_once 'CRM/Core/BAO/Location.php';
         $entityBlock = array( 'contact_id' => $cid );
         $location    =& CRM_Core_BAO_Location::getValues( $entityBlock );
-         
+
         $config = CRM_Core_Config::singleton();
         $addressSequence = array_flip($config->addressSequence());
 
         foreach ( $location as $fld => $values ) {
-            if ( in_array( $fld, array( 'phone', 'email' ) ) ) {
-                $locType = $values[1]['location_type_id'];
+            $locType = $values[1]['location_type_id'];
+            if ( $fld == 'email' ) {
                 $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
                                                                  'value' => $location[$fld][1][$fld] );
+                unset( $profileFields["{$fld}-{$locType}"] );
+            } else if ( $fld == 'phone' ) {
+                $phoneTypeId = $values[1]['phone_type_id'];
+                $elements["onbehalf_{$fld}-{$locType}-{$phoneTypeId}"] = array( 'type'  => 'Text',
+                                                                                'value' => $location[$fld][1][$fld] );
                 unset( $profileFields["{$fld}-{$locType}"] );
             }
         }

@@ -25,7 +25,7 @@ VALUES
    ( @uf_group_id_onBehalfOrganization,   'organization_name',  1, 0, 1, 'User and User Admin Only',  0, 0, NULL, 
             {localize}'Organization Name'{/localize}, 'Organization', {localize}NULL{/localize},  NULL ),
    ( @uf_group_id_onBehalfOrganization,   'phone',              1, 0, 2, 'User and User Admin Only',  0, 0, 3, 
-            {localize}'Phone (Main) '{/localize},     'Contact',      {localize}NULL{/localize},  NULL ),
+            {localize}'Phone (Main) '{/localize},     'Contact',      {localize}NULL{/localize},  1 ),
    ( @uf_group_id_onBehalfOrganization,   'email',              1, 0, 3, 'User and User Admin Only',  0, 0, 3,  
             {localize}'Email (Main) '{/localize},     'Contact',      {localize}NULL{/localize},  NULL ),
    ( @uf_group_id_onBehalfOrganization,   'street_address',     1, 0, 4, 'User and User Admin Only',  0, 0, 3,  
