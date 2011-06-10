@@ -78,6 +78,7 @@ class CRM_Cron_Action {
     public function sendMailings( $mappingID ) {
         require_once 'CRM/Activity/BAO/Activity.php';
         require_once 'CRM/Contact/BAO/Contact.php';
+        require_once 'CRM/Core/BAO/ActionLog.php';
         require_once 'CRM/Core/BAO/Domain.php';
         $domainValues     = CRM_Core_BAO_Domain::getNameAndEmail( );
         $fromEmailAddress = "$domainValues[0] <$domainValues[1]>";
@@ -142,11 +143,12 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL";
                     $errorMsg = "Couldn\'t find recipient\'s email address.";
                 }
 
-                //FIXME: set is_error and message for errors or no email.
-                $setClause = "SET action_date_time = NOW(), is_error = {$isError}" . 
-                    ($errorMsg ? ", message = '{$errorMsg}'" : '');
-                $query     = "UPDATE civicrm_action_log {$setClause} WHERE id = %1";
-                CRM_Core_DAO::executeQuery( $query, array( 1 => array( $dao->reminderID, 'Integer' ) ) );
+                // update action log record
+                $logParams = array( 'id'       => $dao->reminderID,
+                                    'is_error' => $isError,
+                                    'message'  => $errorMsg ? $errorMsg : "null",
+                                    );
+                CRM_Core_BAO_ActionLog::create( $logParams );
                 
                 // insert activity log record if needed
                 if ( $actionSchedule->record_activity ) {
