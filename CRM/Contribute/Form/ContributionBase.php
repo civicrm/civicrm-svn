@@ -639,7 +639,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         require_once 'CRM/Utils/Address.php';
         $this->assign('address', CRM_Utils_Address::format($addressFields));
         
-        if ( CRM_Utils_Array::value( 'is_for_organization', $this->_params ) ) {
+        if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $this->_params ) ) {
             $this->assign('onBehalfName',    $this->_params['organization_name']);
             $locTypeId = array_keys( $this->_params['onbehalf_location']['email'] );
             $this->assign('onBehalfEmail',   $this->_params['onbehalf_location']['email'][$locTypeId[0]]['email']);

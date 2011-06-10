@@ -143,7 +143,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
 
         // if onbehalf-of-organization
-        if ( CRM_Utils_Array::value( 'is_for_organization', $this->_params ) ) {
+        if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $this->_params ) ) {
             if ( CRM_Utils_Array::value( 'org_option', $this->_params ) && 
                  CRM_Utils_Array::value( 'organization_id', $this->_params ) ) {
                 if ( CRM_Utils_Array::value( 'onbehalfof_id', $this->_params ) ) {
@@ -283,9 +283,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $this->buildCustom( $this->_values['custom_pre_id'] , 'customPre' , true );
         $this->buildCustom( $this->_values['custom_post_id'], 'customPost', true );
 
-        if ( CRM_Utils_Array::value( 'is_for_organization', $params ) ) {
+        if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $params ) ) {
             $profileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'on_behalf_organization', 'id', 'name' );
-                       
+
             $fieldTypes = array( 'Contact', 'Organization' );
             if ( is_array( $this->_membershipBlock ) && !empty( $this->_membershipBlock ) ) {
                 $fieldTypes = array_merge( $fieldTypes, array( 'Membership' ) );
@@ -515,7 +515,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         // organization params in a separate variable, to make sure
         // normal behavior is continued. And use that variable to
         // process on-behalf-of functionality.
-        if ( CRM_Utils_Array::value( 'is_for_organization', $this->_values ) ) {
+        if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $this->_params ) ) {
             $behalfOrganization = array();
             $orgFields = array('organization_name', 'organization_id', 'org_option');
             foreach ( $orgFields as $fld ) {
@@ -535,7 +535,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                     }
                 }
             }
-                        
+            
             if ( array_key_exists( 'onbehalf_location', $params ) && is_array( $params['onbehalf_location'] ) ) {
                 foreach ( $params['onbehalf_location'] as $block => $vals ) {
                     $behalfOrganization[$block] = $vals;
@@ -608,7 +608,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         
         // If onbehalf-of-organization contribution / signup, add organization
         // and it's location.
-        if ( isset( $params['is_for_organization'] ) && isset( $behalfOrganization['organization_name'] ) ) {
+        if ( isset( $params['hidden_onbehalf_profile'] ) && isset( $behalfOrganization['organization_name'] ) ) {
             $ufFields = array( );
             foreach ( $this->_fields['onbehalf'] as $name => $value ) {
                 $ufFields[$name] = 1;
@@ -1139,7 +1139,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         //create contribution activity w/ individual and target
         //activity w/ organisation contact id when onbelf, CRM-4027 
         $targetContactID = null; 
-        if ( CRM_Utils_Array::value( 'is_for_organization', $params ) ) {
+        if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $params ) ) {
             $targetContactID = $contribution->contact_id;  
             $contribution->contact_id = $contactID;
         }

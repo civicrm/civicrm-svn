@@ -26,11 +26,11 @@
 {* This file provides the HTML for the on-behalf-of form. Can also be used for related contact edit form. *}
 <div id='onBehalfOfOrg' class="crm-section"></div>
 
-{if $buildOnBehalfForm}
+{if $buildOnBehalfForm or $onBehalfRequired}
 <div id='onBehalfOfOrg' class="crm-section">
   <fieldset id="for_organization" class="for_organization-group">
   <legend>{$fieldSetTitle}</legend>
-  {if $relatedOrganizationFound and !$organizationName}
+  {if ( $relatedOrganizationFound or $onBehalfRequired ) and !$organizationName}
     <div id='orgOptions' class="section crm-section">
        <div class="content">{$form.org_option.html}</div>
     </div>
@@ -59,11 +59,12 @@
 
 {literal}
 <script type="text/javascript">
+var onBehalfRequired = {/literal}"{$onBehalfRequired}"{literal};
 
-function showOnBehalf( )
+function showOnBehalf( onBehalfRequired )
 {
-    if ( cj( "#is_for_organization" ).attr( 'checked' ) ) {
-        if ( cj( "#for_organization" ).size( ) == 0 ) {
+    if ( cj( "#is_for_organization" ).attr( 'checked' ) || onBehalfRequired ) {
+            cj( "#for_organization" ).html( '' );
             var reset   = {/literal}"{$reset}"{literal};
             var urlPath = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&onbehalf=1'}"{literal};
             urlPath     = urlPath  + {/literal}"{$urlParams}"{literal};
@@ -79,7 +80,7 @@ function showOnBehalf( )
     	                       cj( "#onBehalfOfOrg" ).html( content );
                            }
             });
-        }
+       
      } else {
        cj( "#onBehalfOfOrg" ).html('');	
        cj( "#for_organization" ).html( '' );
@@ -110,7 +111,7 @@ cj( "#mode" ).attr( 'checked', 'checked' );
 
 {/literal}
 
-{if $relatedOrganizationFound and $reset}
+{if ( $relatedOrganizationFound or $onBehalfRequired ) and $reset}
   {if $organizationName}
 
     {literal}

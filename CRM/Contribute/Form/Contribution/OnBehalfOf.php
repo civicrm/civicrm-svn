@@ -49,8 +49,7 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
     {
         $session   = CRM_Core_Session::singleton( );
         $contactID = $session->get( 'userID' );
-        $form->_relatedOrganizationFound = false;
-
+                        
         $form->_profileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'on_behalf_organization',
                                                          'id', 'name' );
         $form->assign( 'profileId', $form->_profileId );
@@ -67,8 +66,12 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
                 $form->assign( 'employerDataURL', $dataURL );
             }
             
-            $form->assign( 'relatedOrganizationFound', $form->_relatedOrganizationFound );
-            
+            if ( $form->_values['is_for_organization'] != 2 ) {
+                $form->assign( 'relatedOrganizationFound', $form->_relatedOrganizationFound );
+            } else {
+                $form->assign( 'onBehalfRequired', $form->_onBehalfRequired );
+            }
+                                   
             if ( count( $form->_employers ) == 1 ) {
                 foreach ( $form->_employers as $id => $value ) {
                     $form->_organizationName = $value['name'];

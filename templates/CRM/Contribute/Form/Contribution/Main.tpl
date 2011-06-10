@@ -358,8 +358,10 @@ function enablePeriod ( ) {
 }
 
 {/literal}{if $relatedOrganizationFound}{literal}
-  cj( "#is_for_organization" ).attr( 'checked', true );
-  showOnBehalf( );
+   cj( "#is_for_organization" ).attr( 'checked', true );
+   showOnBehalf( false );
+{/literal}{elseif $onBehalfRequired}{literal}
+   showOnBehalf( true );
 {/literal}{/if}{literal}
 
 {/literal}{if $honor_block_is_active AND $form.honor_type_id.html}{literal}
