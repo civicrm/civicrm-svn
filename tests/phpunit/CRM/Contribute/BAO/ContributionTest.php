@@ -47,6 +47,10 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
         $this->contributionTypeCreate();
     }
     
+    function teardown( ) 
+    {
+        $this->contributionTypeDelete();
+    }
  
     /**
      * create() method (create and update modes)
@@ -70,8 +74,8 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                          'total_amount'           => 200.00,
                          'fee_amount'             => 5,
                          'net_amount'             => 195,
-                         'trxn_id'                => '22ereerwww322323',
-                         'invoice_id'             => '22ed39c9e9ee6ef6031621ce0eafe6da70',
+                         'trxn_id'                => '22ereerwww444444',
+                         'invoice_id'             => '86ed39c9e9ee6ef6031621ce0eafe7eb81',
                          'thankyou_date'          => '20080522'
                          );
 
@@ -114,7 +118,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
         $customField = CRM_Core_BAO_CustomField::create( $fields );
         
         $params = array (
-                         'contact_id'             => '1',
+                         'contact_id'             => $contactId,
                          'currency'               => 'USD',
                          'contribution_type_id'   => 1,
                          'contribution_status_id' => 1,
@@ -369,8 +373,8 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                        'total_amount'           => 300.00,
                        'fee_amount'             => 5,
                        'net_amount'             => 295,
-                       'trxn_id'                => '22ereerwww323',
-                       'invoice_id'             => '22ed39c9e9ee621ce0eafe6da70',
+                       'trxn_id'                => '33erdfrwvw434',
+                       'invoice_id'             => '98ed34f7u9hh672ce0eafe8fb92',
                        'thankyou_date'          => '20080522'
                        );
 
@@ -423,8 +427,8 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                         'total_amount'           => 300.00,
                         'fee_amount'             => 5,
                         'net_amount'             => 295,
-                        'trxn_id'                => '22ereerwww323',
-                        'invoice_id'             => '22ed39c9e9ee621ce0eafe6da70',
+                        'trxn_id'                => '76ereeswww835',
+                        'invoice_id'             => '93ed39a9e9hd621bs0eafe3da82',
                         'thankyou_date'          => '20080522'
                        );
 

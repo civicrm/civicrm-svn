@@ -41,7 +41,7 @@ fi
 if [ ! -d $TRG/sql ] ; then
 	mkdir $TRG/sql
 fi
-for F in $SRC/sql/civicrm*.mysql; do
+for F in $SRC/sql/civicrm*.mysql $SRC/sql/counties.US.sql.gz; do
 	cp $F $TRG/sql
 done
 
@@ -82,6 +82,7 @@ cd $DM_TMPDIR;
 mkdir com_civicrm
 mkdir com_civicrm/admin
 mkdir com_civicrm/site
+mkdir com_civicrm/site/elements
 mkdir com_civicrm/admin/civicrm
 mkdir com_civicrm/admin/language
 mkdir com_civicrm/admin/language/en-GB
@@ -103,6 +104,7 @@ cp civicrm/joomla/admin/language/en-GB/*         com_civicrm/admin/language/en-G
 cp civicrm/joomla/site/civicrm.html.php      com_civicrm/site
 cp civicrm/joomla/site/civicrm.php           com_civicrm/site
 cp -r civicrm/joomla/site/views              com_civicrm/site
+cp -r -p civicrm/joomla/site/elements/*      com_civicrm/site/elements
 
 # copy civicrm code
 cp -r -p civicrm/* com_civicrm/admin/civicrm

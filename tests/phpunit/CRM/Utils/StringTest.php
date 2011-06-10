@@ -38,4 +38,53 @@ class CRM_Utils_StringTest extends CiviUnitTestCase
         }
     }
 
+    function testExtractName() {
+        $cases = array(
+                       Array(
+                             'full_name' => 'Alan',
+                             'first_name' => 'Alan',
+                             ),
+                       array(
+                             'full_name' => 'Alan Arkin',
+                             'first_name' => 'Alan',
+                             'last_name' => 'Arkin',
+                             ),
+                       array(
+                             'full_name' => '"Alan Arkin"',
+                             'first_name' => 'Alan',
+                             'last_name' => 'Arkin',
+                             ),
+                       array(
+                             'full_name' => 'Alan A Arkin',
+                             'first_name' => 'Alan',
+                             'middle_name' => 'A',
+                             'last_name' => 'Arkin',
+                             ),
+                       array(
+                             'full_name' => 'Adams, Amy',
+                             'first_name' => 'Amy',
+                             'last_name' => 'Adams',
+                             ),
+                       array(
+                             'full_name' => 'Adams, Amy A',
+                             'first_name' => 'Amy',
+                             'middle_name' => 'A',
+                             'last_name' => 'Adams',
+                             ),
+                       array(
+                             'full_name' => '"Adams, Amy A"',
+                             'first_name' => 'Amy',
+                             'middle_name' => 'A',
+                             'last_name' => 'Adams',
+                             ),
+                       );
+        foreach ($cases as $case) {
+            $actual = array();
+            CRM_Utils_String::extractName($case['full_name'], $actual);
+            $this->assertEquals($actual['first_name'], $case['first_name']);
+            $this->assertEquals($actual['last_name'], $case['last_name']);
+            $this->assertEquals($actual['middle_name'], $case['middle_name']);
+        }
+    }
+    
 }

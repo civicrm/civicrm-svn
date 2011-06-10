@@ -50,9 +50,9 @@ require_once 'api/v3/utils.php';
  * @return array of newly created website property values.
  * @access public
  */
-function civicrm_api3_website_create( &$params ) 
+function civicrm_api3_website_create( $params ) 
 {
-  _civicrm_api3_initialize( true );
+
   try {
     civicrm_api3_verify_one_mandatory ($params, null, array ('contact_id', 'id'));
     
@@ -64,7 +64,7 @@ function civicrm_api3_website_create( &$params )
 		 return civicrm_api3_create_error( "Website is not created or updated ");
 	 } else {
 		 $values = array( );
-		 _civicrm_api3_object_to_array($websiteBAO, $values);
+		 _civicrm_api3_object_to_array($websiteBAO, $values[$websiteBAO->id]);
 		 return civicrm_api3_create_success($values, $params);
 	 }
   } catch (PEAR_Exception $e) {
@@ -83,9 +83,9 @@ function civicrm_api3_website_create( &$params )
  * @return boolean | error  true if successfull, error otherwise
  * @access public
  */
-function civicrm_api3_website_delete( &$params ) 
+function civicrm_api3_website_delete( $params ) 
 {
-  _civicrm_api3_initialize( true );
+
   try {
     civicrm_api3_verify_mandatory ($params,null,array ('id'));
     $websiteID = CRM_Utils_Array::value( 'id', $params );
@@ -121,12 +121,11 @@ function civicrm_api3_website_delete( &$params )
  * @access public
  */
 
-function civicrm_api3_website_get( &$params ) 
+function civicrm_api3_website_get( $params ) 
 {   
-  _civicrm_api3_initialize(true );
+
   try {
-    civicrm_api3_verify_one_mandatory($params, null, 
-		array('id', 'contact_id', 'website_type_id'));
+    civicrm_api3_verify_mandatory($params );
 	
     require_once 'CRM/Core/BAO/Website.php';
     $websiteBAO = new CRM_Core_BAO_Website();

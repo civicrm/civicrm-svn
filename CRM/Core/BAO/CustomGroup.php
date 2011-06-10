@@ -68,14 +68,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
         // create custom group dao, populate fields and then save.           
         $group = new CRM_Core_DAO_CustomGroup();
         $group->title = $params['title'];
-        require_once 'CRM/Utils/String.php';
-        if ( isset( $params['name'] ) ) {
-            $group->name  = $params['name'];
-        } else {
-            $maxLength   = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_CustomGroup', 'name' );
-            $group->name = CRM_Utils_String::titleToVar( $params['title'], 
-                                                         CRM_Utils_Array::value( 'maxlength', $maxLength ) );
-        }
+
         if ( in_array( $params['extends'][0],
                        array( 'ParticipantRole',
                               'ParticipantEventName',
@@ -153,6 +146,11 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
 
             // we do this only once, so name never changes
             $group->name  = CRM_Utils_String::munge($params['title'], '_', 64 );
+            if ( isset( $params['name'] ) ) {
+                $group->name  = CRM_Utils_String::munge($params['name'], '_', 64 );
+            } else {
+                $group->name  = CRM_Utils_String::munge($group->title, '_', 64 );
+            }
         }
 
         // enclose the below in a transaction
@@ -231,12 +229,15 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
      */
     static function setIsActive( $id, $is_active ) 
     {
+        // reset the cache
+        require_once 'CRM/Core/BAO/Cache.php';
+        CRM_Core_BAO_Cache::deleteGroup( 'contact fields' );
+
         require_once 'CRM/Core/BAO/UFField.php';
-        if( $is_active ) {
-            //CRM_Core_BAO_UFField::setUFFieldStatus($id, $is_active);
-        } else {
+        if ( ! $is_active ) {
             CRM_Core_BAO_UFField::setUFFieldStatus($id, $is_active);
         }
+
         return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_CustomGroup', $id, 'is_active', $is_active );
     }
 

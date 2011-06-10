@@ -542,8 +542,8 @@ LIKE %1
         while ( $dao->fetch( ) ) {
             if ( isset( $values[$dao->$fieldName] ) ||
                  // ignore import and other temp tables
-                 strpos( $dao->$fieldName, 'civicrm_import_job_' ) !== false ||
-                 strpos( $dao->$fieldName, '_temp_' ) !== false ) {
+                 strpos( $dao->Name, 'civicrm_import_job_' ) !== false ||
+                 strpos( $dao->Name, '_temp' ) !== false ) {
                 continue;
             }
             $values[$dao->$fieldName] = 1;
@@ -554,7 +554,6 @@ LIKE %1
             }
         }
         $dao->free( );
-        
         return $values;
     }
 

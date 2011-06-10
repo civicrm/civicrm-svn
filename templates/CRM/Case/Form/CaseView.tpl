@@ -694,7 +694,7 @@ function addRole() {
 
   {if !$tagExits }
     <div class="status">
-        {ts}There are no tags currently assigend to this case.{/ts}
+        {ts}There are no tags currently assigned to this case.{/ts}
     </div>
   {/if}
 
@@ -706,9 +706,12 @@ function addRole() {
     <div id="manageTags">
         <div class="label">{$form.case_tag.label}</div>
         <div class="view-value"><div class="crm-select-container">{$form.case_tag.html}</div>
+        <br/>
         <div style="text-align:left;">{include file="CRM/common/Tag.tpl" tagsetType='case'}</div>
+        <br/>
+        <div class="clear"></div>
     </div>
-    </div>
+</div>
 
 {literal}
 <script type="text/javascript">
@@ -727,7 +730,8 @@ function addTags() {
     cj("#manageTags").dialog({
         title: "{/literal}{ts}Change Case Tags{/ts}{literal}",
         modal: true,
-        width: '550',
+        height: 'auto',
+        width: 'auto',
         buttons: { 
             "Save": function() { 
                 var tagsChecked = '';	    
@@ -999,8 +1003,8 @@ function setSelectorClass( ) {
 
 function printCaseReport( ){
  
- 	var dataUrl = {/literal}"{crmURL p='civicrm/case/report/print'}"{literal};
- 	dataUrl     = dataUrl+ '&all=1&cid={/literal}{$contactID}{literal}' 
+ 	var dataUrl = {/literal}"{crmURL p='civicrm/case/report/print' q='all=1'}"{literal};
+ 	dataUrl     = dataUrl+ '&cid={/literal}{$contactID}{literal}' 
                       +'&caseID={/literal}{$caseID}{literal}';
         window.location = dataUrl;
 }

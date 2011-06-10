@@ -55,6 +55,20 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase
         parent::setUp();
     }
     
+    /**
+     * Tears down the fixture, for example, closes a network connection.
+     * This method is called after a test is executed.
+     *
+     * @access protected
+     */
+    function tearDown()
+    {
+        $tablesToTruncate = array( 'civicrm_contact',
+                                   'civicrm_openid',
+                                   'civicrm_loc_block' );
+        $this->quickCleanup( $tablesToTruncate );
+    }
+
     function testCreateWithMissingParams( )
     {
         $contactId = Contact::createIndividual( );
@@ -476,39 +490,37 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase
                           );
         
         $params['contact_id'] = $contactId;
-        
+                
         //create location elements.
         require_once 'CRM/Core/BAO/Location.php';
         CRM_Core_BAO_Location::create( $params );
-        
+                
         //get the values from DB
-        $values      = array( );
-        $entityBlock = array( 'contact_id' => $contactId );
-        $values = CRM_Core_BAO_Location::getValues( $entityBlock );
-
+        $values = CRM_Core_BAO_Location::getValues( $params );
+                        
         //Now check values of address
         $this->assertAttributesEquals( CRM_Utils_Array::value( '1', $params['address'] ),
-                                      CRM_Utils_Array::value( '1', $values['address'] ) );
+                                       CRM_Utils_Array::value( '1', $values['address'] ) );
         
         //Now check values of email
         $this->assertAttributesEquals( CRM_Utils_Array::value( '1', $params['email'] ),
-                                      CRM_Utils_Array::value( '1', $values['email'] ) );
+                                       CRM_Utils_Array::value( '1', $values['email'] ) );
         
         //Now check values of phone
         $this->assertAttributesEquals( CRM_Utils_Array::value( '1', $params['phone'] ),
-                                      CRM_Utils_Array::value( '1', $values['phone'] ) );
+                                       CRM_Utils_Array::value( '1', $values['phone'] ) );
         
         //Now check values of mobile
         $this->assertAttributesEquals( CRM_Utils_Array::value( '2', $params['phone'] ),
-                                      CRM_Utils_Array::value( '2', $values['phone'] ) ); 
+                                       CRM_Utils_Array::value( '2', $values['phone'] ) ); 
         
         //Now check values of openid
         $this->assertAttributesEquals( CRM_Utils_Array::value( '1', $params['openid'] ),
-                                      CRM_Utils_Array::value( '1', $values['openid'] ) );
+                                       CRM_Utils_Array::value( '1', $values['openid'] ) );
         
         //Now check values of im
         $this->assertAttributesEquals( CRM_Utils_Array::value( '1', $params['im'] ),
-                                      CRM_Utils_Array::value( '1', $values['im'] ) );
+                                       CRM_Utils_Array::value( '1', $values['im'] ) );
         
         //cleanup DB by deleting the contact
         Contact::delete( $contactId );

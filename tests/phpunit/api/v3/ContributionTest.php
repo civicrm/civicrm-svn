@@ -42,20 +42,25 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     function setUp() 
     {
         parent::setUp();
+        $tablesToTruncate = array( 'civicrm_contribution',
+                                   'civicrm_contact');
+
+        $this->quickCleanup( $tablesToTruncate );
         $this->_apiversion = 3;
-        $this->_contributionTypeId = 1;
-        $this->_individualId = $this->individualCreate(null);
+        $this->_contributionTypeId = $this->contributionTypeCreate();
+        $this->_individualId = $this->individualCreate( );
     }
     
     function tearDown() 
     {
+        $this->contributionTypeDelete();
+        $this->contactDelete($this->_individualId); 
     }
 
 ///////////////// civicrm_contribution_get methods
 
     function testGetEmptyParamsContribution()
     {
-
         $params = array();
         $contribution =& civicrm_api3_contribution_get($params);
 
@@ -75,7 +80,6 @@ class api_v3_ContributionTest extends CiviUnitTestCase
 
     function testGetContribution()
     {        
-
         $p = array(
                         'contact_id'             => $this->_individualId,
                         'receive_date'           => date('Ymd'),
@@ -108,10 +112,9 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $this->assertEquals($contribution['values'][$contribution['id']]['contribution_source'],'SSF','In line ' . __LINE__ );
         $this->assertEquals($contribution['values'][$contribution['id']]['contribution_status'], 'Completed','In line ' . __LINE__  );
        
-        $params2 = array( 'contribution_id' => $this->_contribution['id'] ,
-                          'version'         => $this->_apiversion);
-        civicrm_api3_contribution_delete($params2);
-    }
+        civicrm_api('Contribution','Delete',array( 'id' => $this->_contribution['id'] ,
+                          'version'         => $this->_apiversion));
+     }
 
 ///////////////// civicrm_contribution_
      
@@ -176,7 +179,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $this->assertEquals($contribution['values'][$contribution['id']]['contribution_status_id'], 1, 'In line ' . __LINE__ );
         $this->_contribution = $contribution;
 
-        $contributionID = array( 'contribution_id' => $contribution['id'] ,
+        $contributionID = array( 'id' => $contribution['id'] ,
                                   'version'        =>$this->_apiversion);
         $contribution   =& civicrm_api3_contribution_delete($contributionID);
         
@@ -184,16 +187,17 @@ class api_v3_ContributionTest extends CiviUnitTestCase
 
     }
     
-            /**
+    /**
      *  Test  using example code
      */
     function testContributionCreateExample( )
     {
-    
-      require_once 'api/v3/examples/ContributionCreate.php';
-      $result = contribution_create_example();
-      $expectedResult = contribution_create_expectedresult();
-      $this->assertEquals($result,$expectedResult);
+
+        require_once 'api/v3/examples/ContributionCreate.php';
+        $result = contribution_create_example();
+        $expectedResult = contribution_create_expectedresult();
+        $this->assertEquals($result,$expectedResult);
+        $this->contributionDelete( $result['id'] );
     }
     
     //To Update Contribution
@@ -201,7 +205,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     function testCreateUpdateContribution()
     {
   
-        $contributionID = $this->contributionCreate($this->_individualId,$this->_contributionTypeId);
+        $contributionID = $this->contributionCreate($this->_individualId, $this->_contributionTypeId);
         $old_params = array(
                             'contribution_id' => $contributionID,   
                             'version'					=> $this->_apiversion, 
@@ -276,8 +280,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $params = array('version' => $this->_apiversion );
         $contribution = civicrm_api3_contribution_delete($params);
         $this->assertEquals( $contribution['is_error'], 1 );
-        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contribution_id' );
-    }
+   }
     
     
     function testDeleteParamsNotArrayContribution()
@@ -292,18 +295,17 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     function testDeleteWrongParamContribution()
     {
         $params = array( 'contribution_source' => 'SSF',
-                          'version'            =>$this->_apiversion );
+                         'version'             => $this->_apiversion );
         $contribution =& civicrm_api3_contribution_delete( $params );
         $this->assertEquals($contribution['is_error'], 1);
-        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contribution_id' );
-    }
+   }
     
     
     function testDeleteContribution()
     {
      
         $contributionID = $this->contributionCreate( $this->_individualId , $this->_contributionTypeId );
-        $params         = array( 'contribution_id' => $contributionID ,
+        $params         = array( 'id' => $contributionID ,
                                   'version'        => $this->_apiversion,);
         $result   = civicrm_api3_contribution_delete( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
@@ -350,7 +352,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
 
         $result =& civicrm_api3_contribution_get($params);
         // We're taking the first element.
-        $res = $result['values'][1];
+        $res = $result['values'][$contribution['id']];
 
         $this->assertEquals( $p['contact_id'],            $res['contact_id'], 'In line ' . __LINE__ );
         $this->assertEquals( $p['total_amount'],          $res['total_amount'], 'In line ' . __LINE__ );
@@ -362,16 +364,16 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $this->assertEquals( $p['invoice_id'],            $res['invoice_id'], 'In line ' . __LINE__ );                        
         $this->assertEquals( $p['source'],                $res['contribution_source'], 'In line ' . __LINE__ );                        
         // contribution_status_id = 1 => Completed
-        $this->assertEquals( 'Completed',                 $res['contribution_status'], 'In line ' . __LINE__ );                        
+        $this->assertEquals( 'Completed',                 $res['contribution_status'], 'In line ' . __LINE__ );
+        
+        $this->contributionDelete( $contribution['id'] );
      }
 
     /**
      *  Test civicrm_contribution_search. Success expected.
      */
      function testSearch()
-     {
-
-        
+     {        
          $p1 = array(
                      'contact_id'             => $this->_individualId,
                      'receive_date'           => date('Ymd'),
@@ -399,7 +401,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
          $contribution2 =& civicrm_api3_contribution_create($p2);
          
          $params = array( 'contribution_id'=> $contribution2['id'] ,
-         									'version' => $this->_apiversion);
+                          'version' => $this->_apiversion );
          $result =& civicrm_api3_contribution_get($params);
          $res    = $result['values'][$contribution2['id']];
          
@@ -413,8 +415,11 @@ class api_v3_ContributionTest extends CiviUnitTestCase
          $this->assertEquals( $p2['invoice_id'],            $res['invoice_id'], 'In line ' . __LINE__ );    
          // contribution_status_id = 2 => Pending
          $this->assertEquals( 'Pending',                    $res['contribution_status'], 'In line ' . __LINE__ ); 
-         
+
+         $this->contributionDelete( $contribution1['id'] ); 
+         $this->contributionDelete( $contribution2['id'] );
      }
+
 ///////////////  _civicrm_contribute_format_params for $create
     
     function testFormatParams() {

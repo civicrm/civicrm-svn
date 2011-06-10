@@ -25,7 +25,7 @@
 *}
 <div class="crm-block crm-mailing-forward-form-block">
 <br />
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div><br />
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div><br />
 <table class="form-layout">
 <tr class="crm-mailing-forward-form-block-fromEmail"><td class="label">From</td><td>{$fromEmail}</td></tr>
 <tr><td colspan="2">{ts}Please enter up to 5 email addresses to receive the mailing.{/ts}</td></tr>
@@ -49,7 +49,7 @@
             </table>
 </div> 
 <br />
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
 
 {literal}

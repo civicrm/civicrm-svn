@@ -59,9 +59,10 @@ class CRM_Contact_BAO_Query
         MODE_PLEDGEBANK =  256,
         MODE_PLEDGE     =  512,
         MODE_CASE       = 2048,
-        MODE_ALL        = 1023,
+        MODE_ALL        = 17407,
         MODE_ACTIVITY   = 4096,
-        MODE_CAMPAIGN   = 8192;
+        MODE_CAMPAIGN   = 8192,
+        MODE_MAILING	= 16384;
     
     /**
      * the default set of return properties
@@ -1080,11 +1081,10 @@ class CRM_Contact_BAO_Query
             $select = ( $this->_useDistinct ) ?
                 'SELECT DISTINCT(contact_a.id) as id' :
                 'SELECT contact_a.id as id'; 
-            // $select = 'SELECT contact_a.id as id';
-            // if ( $this->_useDistinct ) {
-            //     $this->_useGroupBy = true;
-            // }
 
+            if ( $this->_useDistinct ) {
+                $this->_useGroupBy = true;
+            }
             $from = $this->_simpleFromClause;
         } else {
             if ( CRM_Utils_Array::value( 'group', $this->_paramLookup ) ) {
@@ -1116,8 +1116,7 @@ class CRM_Contact_BAO_Query
                 if ( !( $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) ) {
                     // CRM-5954
                     $this->_select['contact_id'] = 'DISTINCT(contact_a.id) as contact_id';
-                    // $this->_useGroupBy = true;
-                    // $this->_select['contact_id'] ='contact_a.id as contact_id';
+                    $this->_useGroupBy = true;
                 }
             } 
 
@@ -1349,8 +1348,9 @@ class CRM_Contact_BAO_Query
             return;
 
         case 'country':
-            // handled by state_province above
+            $this->country( $values, false );
             return;
+
 
         case 'postal_code':
         case 'postal_code_low':
@@ -1372,6 +1372,9 @@ class CRM_Contact_BAO_Query
         case 'activity_test':   
         case 'activity_contact_name':
         case 'activity_campaign_id':
+        case 'activity_engagement_level':
+        case 'activity_id':    
+            require_once 'CRM/Activity/BAO/Query.php';
             CRM_Activity_BAO_Query::whereClauseSingle( $values, $this );
             return;
 
@@ -2163,7 +2166,7 @@ class CRM_Contact_BAO_Query
 
             case 'civicrm_log':
                 $from .= " $side JOIN civicrm_log ON (civicrm_log.entity_id = contact_a.id AND civicrm_log.entity_table = 'civicrm_contact')";
-                $from .= " $side JOIN civicrm_contact contact_b ON (civicrm_log.modified_id = contact_b.id)";
+                $from .= " $side JOIN civicrm_contact contact_b_log ON (civicrm_log.modified_id = contact_b_log.id)";
                 continue;
                 
             case 'civicrm_tag':
@@ -2860,7 +2863,58 @@ WHERE  id IN ( $groupIDs )
             }
         }
     }
-    
+
+    function country( &$values, $fromStateProvince = true ) {
+        list( $name, $op, $value, $grouping, $wildcard ) = $values;
+
+        if ( ! $fromStateProvince ) {
+            $stateValues = $this->getWhereValues( 'state_province', $grouping );
+            if ( ! empty( $stateValues ) ) {
+                // return back to caller if there are state province values
+                // since that handles this case
+                return;
+            }
+        }
+
+        $countryClause = $countryQill = null;
+        if ( $values &&
+             ! empty( $values[2] ) ) {
+            $this->_tables['civicrm_country'] = 1;
+            $this->_whereTables['civicrm_country'] = 1;
+
+            if ( is_numeric( $values[2] ) ) {
+                $countryClause = self::buildClause( 'civicrm_country.id',
+                                                    $values[1],
+                                                    $values[2],
+                                                    'Positive' );
+                $countries =& CRM_Core_PseudoConstant::country( );
+                $countryName = $countries[(int ) $values[2]];
+            } else {
+                $wc = ( $values[1] != 'LIKE' ) ? "LOWER('civicrm_country.name')" : 'civicrm_country.name';
+                $countryClause = self::buildClause( 'civicrm_country.name',
+                                                    $values[1],
+                                                    $values[2],
+                                                    'String' );
+                $countryName = $values[2];
+            }
+            $countryQill = ts('Country') . " {$values[1]} '$countryName'";
+            
+            if ( ! $fromStateProvince ) {
+                $this->_where[$grouping][] = $countryClause;
+                $this->_qill[$grouping][] = $countryQill;
+            } 
+        }
+
+        if ( $fromStateProvince ) {
+            if ( ! empty( $countryClause ) ) {
+                return array( $countryClause,
+                              " ...AND... " . $countryQill );
+            } else {
+                return array( null, null );
+            }
+        }
+    }
+
     /**
      * where / qill clause for state/province AND country (if present)
      *
@@ -2892,34 +2946,12 @@ WHERE  id IN ( $groupIDs )
             
 
         $countryValues = $this->getWhereValues( 'country', $grouping );
-        $countryClause = $countruQill = null;
-        if ( $countryValues &&
-             ! empty( $countryValues[2] ) ) {
-            $this->_tables['civicrm_country'] = 1;
-            $this->_whereTables['civicrm_country'] = 1;
-
-            if ( is_numeric( $countryValues[2] ) ) {
-                $countryClause = self::buildClause( 'civicrm_country.id',
-                                                    $countryValues[1],
-                                                    $countryValues[2],
-                                                    'Positive' );
-                $countries =& CRM_Core_PseudoConstant::country( );
-                $countryName = $countries[(int ) $countryValues[2]];
-            } else {
-                $wc = ( $countryValues[1] != 'LIKE' ) ? "LOWER('civicrm_country.name')" : 'civicrm_country.name';
-                $countryClause = self::buildClause( 'civicrm_country.name',
-                                                    $countryValues[1],
-                                                    $countryValues[2],
-                                                    'String' );
-                $countryName = $countryValues[2];
-            }
-            $countryQill = " ...AND... " . ts('Country') . " {$countryValues[1]} '$countryName'";
-        }
+        list( $countryClause, $countryQill ) = $this->country( $countryValues, true );
 
         if ( $countryClause ) {
-            $clause = $stateClause;
-        } else {
             $clause = ( $stateClause AND $countryClause );
+        } else {
+            $clause = $stateClause;
         }
 
         $this->_where[$grouping][] = $clause;
@@ -2948,7 +2980,7 @@ WHERE  id IN ( $groupIDs )
         $name = trim( $targetName[2] );
         $name = strtolower( CRM_Core_DAO::escapeString( $name ) );
         $name = $targetName[4] ? "%$name%" : $name;
-        $this->_where[$grouping][] = "contact_b.sort_name LIKE '%$name%'";
+        $this->_where[$grouping][] = "contact_b_log.sort_name LIKE '%$name%'";
         $this->_tables['civicrm_log'] = $this->_whereTables['civicrm_log'] = 1; 
         $this->_qill[$grouping][] = ts('Changed by') . ": $name";
     }
@@ -3128,7 +3160,6 @@ WHERE  id IN ( $groupIDs )
             $params = array( 'id' => $rel[0] );
             $rTypeValues = array( );
 
-            require_once "CRM/Contact/BAO/RelationshipType.php";
             $rType =& CRM_Contact_BAO_RelationshipType::retrieve( $params, $rTypeValues );
             if ( ! $rType ) {
                 return;
@@ -3558,6 +3589,7 @@ WHERE  id IN ( $groupIDs )
         $query = "$select $from $where $having $groupBy $order $limit";
         // CRM_Core_Error::debug('query', $query);
         // CRM_Core_Error::debug('query', $where);
+        // CRM_Core_Error::debug('this', $this );
 
         if ( $returnQuery ) {
             return $query;
@@ -4012,6 +4044,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
                               'Address Fields'  => 'civicrm_address',
                               'Notes'           => 'civicrm_note',
                               'Change Log'      => 'civicrm_log',
+                              'Mailings'        => 'civicrm_mailing_event_queue'
                               );
         
         foreach( array_keys($this->_whereTables) as $table ) {
@@ -4068,7 +4101,10 @@ SELECT contact_a.id
 INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id OR displayRelType.contact_id_b = contact_a.id )
 INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a OR transform_temp.contact_id = displayRelType.contact_id_b )
 ";
-                $_rTypeWhere = " WHERE displayRelType.relationship_type_id = {$this->_displayRelationshipType} ";
+                $_rTypeWhere = "
+WHERE displayRelType.relationship_type_id = {$this->_displayRelationshipType}
+AND   displayRelType.is_active = 1
+";
             } else {
                 list( $relType, $dirOne, $dirTwo ) = explode( '_', $this->_displayRelationshipType );
                 if ( $dirOne == 'a' ) {
@@ -4084,7 +4120,10 @@ INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_b 
 INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a )
 ";
                 }
-                $_rTypeWhere = " WHERE displayRelType.relationship_type_id = $relType ";
+                $_rTypeWhere = "
+WHERE displayRelType.relationship_type_id = $relType
+AND   displayRelType.is_active = 1
+";
             }
             
             $this->_qill[0][] = $qillMessage . "'" . $relationshipTypeLabel . "'";

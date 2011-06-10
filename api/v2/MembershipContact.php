@@ -70,7 +70,7 @@ function civicrm_membership_contact_create(&$params)
         return $error;
     }
 
-    $params = array_merge($values,$params);
+    $params = array_merge( $params, $values );
     
     require_once 'CRM/Core/Action.php';
     $action = CRM_Core_Action::ADD;
@@ -272,11 +272,17 @@ function _civicrm_membership_format_params( &$params, &$values, $create=false)
             unset($values['membership_contact_id']);
             break;
         case 'join_date':
+        case 'start_date':
+        case 'end_date':    
         case 'membership_start_date':
         case 'membership_end_date':
             if (!CRM_Utils_Rule::date($value)) {
                 return civicrm_create_error("$key not a valid date: $value");
             }
+            
+            // make sure we format dates to mysql friendly format 
+            $values[$key] = CRM_Utils_Date::processDate( $value, null, false, 'Ymd' );
+
             break;
         case 'membership_type_id':
             if ( !CRM_Utils_Array::value( $value, CRM_Member_PseudoConstant::membershipType( ) ) ) {

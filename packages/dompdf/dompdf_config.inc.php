@@ -351,9 +351,11 @@ function DOMPDF_autoload($class) {
 }
 
 if ( function_exists("spl_autoload_register") ) {
-
    spl_autoload_register("DOMPDF_autoload");
-
+   if (function_exists('__autoload')) {
+       // Be polite and ensure that userland autoload gets retained
+       spl_autoload_register('__autoload');
+   }
 } else if ( !function_exists("__autoload") ) {
   /**
    * Default __autoload() function

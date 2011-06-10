@@ -36,6 +36,7 @@
  *
  */
 
+require_once 'CRM/Event/PseudoConstant.php';
 require_once 'CRM/Event/DAO/Participant.php';
 
 class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
@@ -238,9 +239,9 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         }
         
         //process note, CRM-7634
+        require_once 'CRM/Core/BAO/Note.php';
         $noteId = null;
         if ( CRM_Utils_Array::value( 'id', $params ) ) {
-            require_once 'CRM/Core/BAO/Note.php';
             $note = CRM_Core_BAO_Note::getNote( $params['id'], 'civicrm_participant' );
             $noteId = key( $note );
         }
@@ -260,11 +261,12 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
                                      'entity_id'     => $participant->id,
                                      'contact_id'    => $id,
                                      'modified_date' => date('Ymd') );
-                
-                require_once 'CRM/Core/BAO/Note.php';
+                $noteIDs = array( );
+                if ( $noteId ) {
+                    $noteIDs['id'] = $noteId;
+                }
                 CRM_Core_BAO_Note::add( $noteParams, $noteIDs );
             } else if ( $noteId && $hasNoteField ) {
-                require_once 'CRM/Core/BAO/Note.php';
                 CRM_Core_BAO_Note::del( $noteId, false );
             }
         }
@@ -288,7 +290,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         // do not add to recent items for import, CRM-4399
         if ( !CRM_Utils_Array::value( 'skipRecentView', $params ) ) {
             require_once 'CRM/Utils/Recent.php';
-            require_once 'CRM/Event/PseudoConstant.php';
+
             require_once 'CRM/Contact/BAO/Contact.php';
             $url = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
                                           "action=view&reset=1&id={$participant->id}&cid={$participant->contact_id}&context=home" );
@@ -304,11 +306,12 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             }
     
             $participantRoles = CRM_Event_PseudoConstant::participantRole();
+            $roles = '';
             if ( $participant->role_id ) {
                 $role = explode( CRM_Core_DAO::VALUE_SEPARATOR, $participant->role_id );
                 foreach ( $role as $roleKey => $roleValue ) {
                     if ( isset( $roles ) ) {
-                        $roles .= ", " . $participantRoles[$roleValue];
+                        $roles .= ', ' . $participantRoles[$roleValue];
                     } else {
                         $roles = $participantRoles[$roleValue];
                     }
@@ -316,7 +319,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             }
             $eventTitle = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $participant->event_id, 'title' );
             $title = CRM_Contact_BAO_Contact::displayName( $participant->contact_id ) . ' (' . $roles . ' - ' . $eventTitle . ')' ;
-            
+                        
             // add the recently created Participant
             CRM_Utils_Recent::add( $title,
                                    $url,
@@ -363,9 +366,8 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         // is full, as waitlist might represent group require spaces > empty.
         
         require_once 'CRM/Event/BAO/Event.php';
-        require_once 'CRM/Event/PseudoConstant.php';
         $participantRoles   = CRM_Event_PseudoConstant::participantRole(   null, 'filter = 1' ); 
-        $countedStatuses    = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
+        $countedStatuses    = CRM_Event_PseudoConstant::participantStatus( null, 'is_counted = 1' );
         $waitingStatuses    = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Waiting'" );
         $onWaitlistStatusId = array_search( 'On waitlist', $waitingStatuses );
         
@@ -490,10 +492,9 @@ SELECT  event.event_full_text,
         $optionsCount = array( );
         if ( !$eventId ) return $optionsCount;
         
-        require_once 'CRM/Event/PseudoConstant.php';
         $allStatusIds = array( );
         if ( $considerCounted ) {
-            $countedStatuses = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
+            $countedStatuses = CRM_Event_PseudoConstant::participantStatus( null, 'is_counted = 1' );
             $allStatusIds    = array_merge( $allStatusIds, array_keys( $countedStatuses ) );
         }
         if ( $considerWaiting ) {
@@ -561,7 +562,7 @@ INNER JOIN  civicrm_price_field field       ON ( value.price_field_id = field.id
         }
         
         $positiveStatuses = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Positive'"  ); 
-        $statusIds = "(" . implode( ',', array_keys( $positiveStatuses ) ) . ")";
+        $statusIds = '(' . implode( ',', array_keys( $positiveStatuses ) ) . ')';
         
         $query ="
   SELECT  count(participant.id) as registered,
@@ -656,7 +657,7 @@ GROUP BY  participant.event_id
                         $value =  $customFieldId ? 'custom_'.$customFieldId : $value;
                         $tmpContactField[trim($value)] = CRM_Utils_Array::value(trim($value),$contactFields);
                         if (!$status) {
-                            $title = $tmpContactField[trim($value)]['title']." (match to contact)" ;
+                            $title = $tmpContactField[trim($value)]['title'].' (match to contact)' ;
                         } else {
                             $title = $tmpContactField[trim($value)]['title'];
                         }
@@ -666,8 +667,8 @@ GROUP BY  participant.event_id
                 }
             }
             $tmpContactField['external_identifier'] = CRM_Utils_Array::value('external_identifier',$contactFields);
-            $tmpContactField['external_identifier']['title'] = $contactFields['external_identifier']['title'] . " (match to contact)";
-            $tmpFields['participant_contact_id']['title']    = $tmpFields['participant_contact_id']['title'] . " (match to contact)";
+            $tmpContactField['external_identifier']['title'] = $contactFields['external_identifier']['title'] . ' (match to contact)';
+            $tmpFields['participant_contact_id']['title']    = $tmpFields['participant_contact_id']['title'] . ' (match to contact)';
             
             //campaign fields.
             if ( isset( $tmpFields['participant_campaign_id'] ) ) {
@@ -773,8 +774,6 @@ WHERE  civicrm_participant.id = {$participantId}
      */
     static function resolveDefaults(&$defaults, $reverse = false)
     {
-        require_once 'CRM/Event/PseudoConstant.php';
-
         self::lookupValue($defaults, 'event', CRM_Event_PseudoConstant::event(), $reverse);
         self::lookupValue($defaults, 'status', CRM_Event_PseudoConstant::participantStatus( null ,null, 'label' ), $reverse);
         self::lookupValue($defaults, 'role', CRM_Event_PseudoConstant::participantRole(), $reverse);
@@ -828,7 +827,7 @@ WHERE  civicrm_participant.id = {$participantId}
         $transaction = new CRM_Core_Transaction( );
 
         //delete activity record
-        require_once "CRM/Activity/BAO/Activity.php";
+        require_once 'CRM/Activity/BAO/Activity.php';
         $params = array( 'source_record_id' => $id,
                          'activity_type_id' => 5 );// activity type id for event registration
 
@@ -939,7 +938,7 @@ WHERE  civicrm_participant.id = {$participantId}
              ( substr( $eventLevel, -1, 1) == CRM_Core_DAO::VALUE_SEPARATOR ) ) {
             $eventLevel = implode( ', ', explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                                                   substr( $eventLevel, 1, -1) ) );
-            if ($pos = strrpos($eventLevel, "(multiple participants)", 0) ) {
+            if ($pos = strrpos($eventLevel, '(multiple participants)', 0) ) {
                 $eventLevel = substr_replace($eventLevel, "", $pos-3, 1) ;
             }
         } elseif ( ( substr( $eventLevel, 0, 1) == CRM_Core_DAO::VALUE_SEPARATOR ) ) {
@@ -970,7 +969,6 @@ WHERE  civicrm_participant.id = {$participantId}
         $where = "participant.registered_by_id={$primaryParticipantId}";
         if ( $excludeCancel ) {
             $cancelStatusId = 0;
-            require_once 'CRM/Event/PseudoConstant.php';
             $negativeStatuses = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Negative'"  ); 
             $cancelStatusId = array_search( 'Cancelled', $negativeStatuses );
             $where .= " AND participant.status_id != {$cancelStatusId}";
@@ -1072,9 +1070,9 @@ INNER JOIN civicrm_price_field_value value ON ( value.id = lineItem.price_field_
             require_once 'CRM/Contact/BAO/Contact.php';
             require_once 'CRM/Utils/System.php';
             foreach ( $additionalParticipantIDs as $additionalParticipantID ) {
-                $additionalContactID = CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Participant", 
-                                                            $additionalParticipantID,
-                                                            'contact_id', 'id' );
+                $additionalContactID = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant', 
+                                                                    $additionalParticipantID,
+                                                                    'contact_id', 'id' );
                 $additionalContactName = CRM_Contact_BAO_Contact::displayName( $additionalContactID );
                 $pViewURL = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
                                               "action=view&reset=1&id={$additionalParticipantID}&cid={$additionalContactID}" );
@@ -1143,7 +1141,7 @@ INNER JOIN civicrm_price_field_value value ON ( value.id = lineItem.price_field_
             $setClause .= ", register_date = NOW()";
         }
         
-        $participantIdClause = "( " . implode( ',', $participantIds ) . " )";
+        $participantIdClause = '( ' . implode( ',', $participantIds ) . ' )';
         
         $query = "
 UPDATE  civicrm_participant 
@@ -1201,14 +1199,13 @@ UPDATE  civicrm_participant
         
         $contactIds = $eventIds = $participantDetails = array( );
         
-        require_once 'CRM/Event/PseudoConstant.php';
         $statusTypes = CRM_Event_PseudoConstant::participantStatus( );
         $participantRoles = CRM_Event_PseudoConstant::participantRole( );
         $pendingStatuses  = CRM_Event_PseudoConstant::participantStatus( null, 
                                                                          "class = 'Pending'"  );
         
         //first thing is pull all necessory data from db.
-        $participantIdClause = "(" . implode( ',', $allParticipantIds ) . ")";  
+        $participantIdClause = '(' . implode( ',', $allParticipantIds ) . ')';  
         
         //get all participants data.
         $query = "SELECT * FROM civicrm_participant WHERE id IN {$participantIdClause}";
@@ -1477,7 +1474,7 @@ UPDATE  civicrm_participant
                 
                 require_once 'CRM/Activity/BAO/Activity.php';
                 if (is_a(CRM_Activity_BAO_Activity::create($activityParams), 'CRM_Core_Error')) {
-                    CRM_Core_Error::fatal("Failed creating Activity for expiration mail");
+                    CRM_Core_Error::fatal('Failed creating Activity for expiration mail');
                 }
             }
         }
@@ -1526,9 +1523,8 @@ UPDATE  civicrm_participant
         $eventfullMsg = $dbStatusId =  null;
         $checkEventFull = true;
         if ( $participantId ) {
-            require_once 'CRM/Event/PseudoConstant.php';
-            $dbStatusId = CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Participant", $participantId, 'status_id' );
-            if ( array_key_exists( $dbStatusId, CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" ) ) ) {
+            $dbStatusId = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant', $participantId, 'status_id' );
+            if ( array_key_exists( $dbStatusId, CRM_Event_PseudoConstant::participantStatus( null, 'is_counted = 1' ) ) ) {
                 //participant already in counted status no need to check for event full messages.
                 $checkEventFull = false;
             }
@@ -1560,7 +1556,7 @@ UPDATE  civicrm_participant
             $waitingStatusId = array_search( 'On waitlist', 
                                              CRM_Event_PseudoConstant::participantStatus(null, "class = 'Waiting'"));
             $viewWaitListUrl = CRM_Utils_System::url( 'civicrm/event/search',
-						      "reset=1&force=1&event={$eventId}&status={$waitingStatusId}" );
+                                                      "reset=1&force=1&event={$eventId}&status={$waitingStatusId}" );
                                                      
             $eventfullMsg .= ts( "There are %2 people currently on the waiting list for this event. You can <a href='%1'>view waitlisted registrations here</a>, or you can continue and register additional participants using this form.", 
                                  array( 1 => $viewWaitListUrl,
@@ -1601,7 +1597,6 @@ UPDATE  civicrm_participant
 
         $additionalParticipantIds = array( );
 
-        require_once 'CRM/Event/PseudoConstant.php' ;
         static $participantStatuses = array( );
         
         if ( empty($participantStatuses) ) {
@@ -1626,7 +1621,10 @@ UPDATE  civicrm_participant
      * @static
      */
      static function getContactParticipantCount( $contactID ) {
-         $query = "SELECT count(*) FROM civicrm_participant WHERE civicrm_participant.contact_id = {$contactID} AND civicrm_participant.is_test = 0";
+         $query = "SELECT count(*) 
+FROM     civicrm_participant 
+WHERE    civicrm_participant.contact_id = {$contactID} AND 
+         civicrm_participant.is_test = 0";
          return CRM_Core_DAO::singleValueQuery( $query );
      }    
 

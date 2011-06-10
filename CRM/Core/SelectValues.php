@@ -521,6 +521,27 @@ class CRM_Core_SelectValues
     }
     
     /**
+     * different type of Activity Tokens
+     *
+     * @static
+     * return array
+     */
+    static function &activityTokens( ) 
+    {
+        static $tokens = null;
+
+        if (! $tokens ) {
+            $tokens = array( 
+                            '{activity.activity_id}' => ts('Activity ID'),
+                            '{activity.subject}' => ts('Activity Subject'),
+                            '{activity.details}' => ts('Activity Details'),
+                            
+                          );
+        }
+        return $tokens;
+    }
+    
+    /**
      * different type of Contact Tokens
      *
      * @static
@@ -545,6 +566,8 @@ class CRM_Core_SelectValues
                                  );
             $customFields = array();
             $customFields = CRM_Core_BAO_CustomField::getFields('Individual');
+            $customFieldsAddress = CRM_Core_BAO_CustomField::getFields('Address');
+            $customFields = $customFields + $customFieldsAddress;
             
             foreach($values as $key => $val) {
                 if ( in_array($val, $skipTokens) ) {
@@ -662,7 +685,7 @@ class CRM_Core_SelectValues
                                    "d M yy"        => 'j M Y',
                                    "MM d, yy"      => 'F j, Y',
                                    "d MM yy"       => 'j F Y',
-                                   "DD, d MM yy"   => 'l, j F Y',                                   
+                                   "DD, d MM yy"   => 'l, j F Y',                               
                                    "mm/dd"         => 'm/d',
                                    "dd-mm"         => 'd-m',
                                    "yy-mm"         => 'Y-m',

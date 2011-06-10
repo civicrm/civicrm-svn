@@ -105,6 +105,12 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
     $this->waitForElementPresent("_qf_Case_upload-bottom");
 
+    // Try submitting the form without creating or selecting a contact (test for CRM-7971)
+    $this->click("_qf_Case_upload-bottom");
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent("css=span.crm-error");
+    $this->assertTextPresent("Please select a contact or create new contact", "Expected form rule error for submit without selecting contact did not show up after clicking Save.");
+    
     // Adding contact with randomized first name (so we can then select that contact when creating case)
     // We're using pop-up New Contact dialog
     $firstName = substr(sha1(rand()), 0, 7);

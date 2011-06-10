@@ -37,6 +37,7 @@ require_once 'tests/phpunit/CiviTest/civicrm.settings.php';
  *  Include class definitions
  */
 require_once 'PHPUnit/Extensions/Database/TestCase.php';
+require_once 'PHPUnit/Framework/TestResult.php';
 require_once 'PHPUnit/Extensions/Database/DataSet/FlatXmlDataSet.php';
 require_once 'PHPUnit/Extensions/Database/DataSet/XmlDataSet.php';
 require_once 'PHPUnit/Extensions/Database/DataSet/QueryDataSet.php';
@@ -44,6 +45,7 @@ require_once 'tests/phpunit/Utils.php';
 require_once 'api/api.php';
 require_once 'api/v2/MembershipType.php';
 require_once 'api/v2/MembershipStatus.php';
+require_once 'api/v2/Membership.php';
 define ('API_LATEST_VERSION',3);
 /**
  *  Base class for CiviCRM unit tests
@@ -118,13 +120,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
         //  create test database
         self::$utils = new Utils( $GLOBALS['mysql_host'],
-                                $GLOBALS['mysql_user'],
-                                $GLOBALS['mysql_pass'] );        
-        
+                                  $GLOBALS['mysql_user'],
+                                  $GLOBALS['mysql_pass'] );        
     }
 
     function requireDBReset () {
-      return $this->DBResetRequired; 
+        return $this->DBResetRequired; 
     }
 
 
@@ -149,7 +150,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             self::$dbInit = true;
         }
         return $this->createDefaultDBConnection(self::$utils->pdo,
-                                             'civicrm_tests_dev');
+                                                'civicrm_tests_dev');
     }
 
     /**
@@ -157,9 +158,15 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     protected function getDataSet() { }
 
-    private function _populateDB() {
+    private function _populateDB( $perClass = false ) {
 
-        if ( self::$populateOnce || !$this->requireDBReset() ) {
+        if( $perClass ) {
+            $dbreset = true;
+        } else {
+            $dbreset = $this->requireDBReset();
+        }
+
+        if ( self::$populateOnce || !$dbreset ) {
             return;
         }
         self::$populateOnce = null;
@@ -182,48 +189,53 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                           // SQL mode needs to be strict, that's our standard
                           "SET SQL_MODE='STRICT_ALL_TABLES';" ,
                           "SET global innodb_flush_log_at_trx_commit = 2;"
-                             );
+                          );
         $queries = array_merge( $queries, $truncates );
         $queries = array_merge( $queries, $drops );        
-            foreach( $queries as $query ) {
-                if ( self::$utils->do_query($query) === false ) {
+        foreach( $queries as $query ) {
+            if ( self::$utils->do_query($query) === false ) {
 
-                    //  failed to create test database
-                    exit;
-                }
+                //  failed to create test database
+                exit;
             }
+        }
 
 
             
-            //  initialize test database
-            $sql_file2 = dirname( dirname( dirname( dirname( __FILE__ ) ) ) )
-                . "/sql/civicrm_data.mysql";
-            $sql_file3 = dirname( dirname( dirname( dirname( __FILE__ ) ) ) )
-                . "/sql/test_data.mysql";
-            $query2 = file_get_contents( $sql_file2 );
-            $query3 = file_get_contents( $sql_file3 );
-            if ( self::$utils->do_query($query2) === false ) {
-                echo "Cannot load civicrm_data.mysql. Aborting.";
-                exit;
-            }
-            if ( self::$utils->do_query($query3) === false ) {
-                echo "Cannot load test_data.mysql. Aborting.";
-                exit;
-            }
+        //  initialize test database
+        $sql_file2 = dirname( dirname( dirname( dirname( __FILE__ ) ) ) )
+            . "/sql/civicrm_data.mysql";
+        $sql_file3 = dirname( dirname( dirname( dirname( __FILE__ ) ) ) )
+            . "/sql/test_data.mysql";
+        $query2 = file_get_contents( $sql_file2 );
+        $query3 = file_get_contents( $sql_file3 );
+        if ( self::$utils->do_query($query2) === false ) {
+            echo "Cannot load civicrm_data.mysql. Aborting.";
+            exit;
+        }
+        if ( self::$utils->do_query($query3) === false ) {
+            echo "Cannot load test_data.mysql. Aborting.";
+            exit;
+        }
 
-            // done with all the loading, get transactions back
-            if ( self::$utils->do_query("set global innodb_flush_log_at_trx_commit = 1;") === false ) {
-                echo "Cannot set global? Huh?";
-                exit;
-            }
+        // done with all the loading, get transactions back
+        if ( self::$utils->do_query("set global innodb_flush_log_at_trx_commit = 1;") === false ) {
+            echo "Cannot set global? Huh?";
+            exit;
+        }
 
-            if ( self::$utils->do_query("SET foreign_key_checks = 1") === false ) {
-                echo "Cannot get foreign keys back? Huh?";
-                exit;
-            }
+        if ( self::$utils->do_query("SET foreign_key_checks = 1") === false ) {
+            echo "Cannot get foreign keys back? Huh?";
+            exit;
+        }
 
-            unset( $query, $query1, $query2);
+        unset( $query, $query1, $query2);
     }
+
+    public static function setUpBeforeClass() {
+        self::_populateDB( true );
+    }
+
 
     /**
      *  Common setup functions for all unit tests
@@ -240,7 +252,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $this->_dbconn = $this->getConnection();
 
         // reload database before each test
-        $this->_populateDB();
+        //        $this->_populateDB();
 
         // "initialize" CiviCRM to avoid problems when running single tests
         // FIXME: look at it closer in second stage
@@ -265,6 +277,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         // clear permissions stub to not check permissions
         require_once 'CRM/Core/Permission/UnitTests.php';
         CRM_Core_Permission_UnitTests::$permissions = null;
+        
+        //flush component settings
+        CRM_Core_Component::getEnabledComponents(true);
+        $tablesToTruncate = array('civicrm_contact');
+
+        $this->quickCleanup( $tablesToTruncate );
+        
     }
 
     public function cleanDB() {
@@ -291,7 +310,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                                   $GLOBALS['mysql_pass'] );        
     
         $query = "USE civicrm_tests_dev;"
-               . "SET foreign_key_checks = 1";
+            . "SET foreign_key_checks = 1";
         if ( self::$utils->do_query($query) === false ) {
             // fail happens
             echo 'Cannot set foreign_key_checks = 0';
@@ -301,20 +320,20 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     }
     
     function foreignKeyChecksOn() {
-      // FIXME: might not be needed if previous fixme implemented
+        // FIXME: might not be needed if previous fixme implemented
     }
 
                                             
     /** 
-    * Generic function to compare expected values after an api call to retrieved
-    * DB values.
-    * 
-    * @daoName  string   DAO Name of object we're evaluating.
-    * @id       int      Id of object
-    * @match    array    Associative array of field name => expected value. Empty if asserting 
-    *                      that a DELETE occurred
-    * @delete   boolean  True if we're checking that a DELETE action occurred.
-    */
+     * Generic function to compare expected values after an api call to retrieved
+     * DB values.
+     * 
+     * @daoName  string   DAO Name of object we're evaluating.
+     * @id       int      Id of object
+     * @match    array    Associative array of field name => expected value. Empty if asserting 
+     *                      that a DELETE occurred
+     * @delete   boolean  True if we're checking that a DELETE action occurred.
+     */
     function assertDBState( $daoName, $id, $match, $delete=false ) {
         if ( empty( $id ) ) {
             // adding this here since developers forget to check for an id
@@ -339,15 +358,15 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         if ( $object->find( true ) ) {
             $fields =& $object->fields( );
             foreach ( $fields as $name => $value ) {
-                  $dbName = $value['name'];
-                  if ( isset( $match[$name] ) ) {
+                $dbName = $value['name'];
+                if ( isset( $match[$name] ) ) {
                     $verifiedCount++;
                     $this->assertEquals( $object->$dbName, $match[$name] );
-                  } 
-                  else if ( isset( $match[$dbName] ) ) {
+                } 
+                else if ( isset( $match[$dbName] ) ) {
                     $verifiedCount++;
                     $this->assertEquals( $object->$dbName, $match[$dbName] );
-                  }
+                }
             }
         } else {
             $this->fail("Could not retrieve object: $daoName, $id");
@@ -363,7 +382,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function assertDBNotNull(  $daoName, $searchValue, $returnColumn, $searchColumn, $message  ) 
     {
         if(empty($searchValue)){
-           $this->fail("empty value passed to assertDBNotNull");
+            $this->fail("empty value passed to assertDBNotNull");
         }
         $value = CRM_Core_DAO::getFieldValue( $daoName, $searchValue, $returnColumn, $searchColumn );
         $this->assertNotNull( $value, $message );
@@ -480,7 +499,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         if ( $params === null ) {    
             $params = array( 'household_name' => 'Unit Test household',
                              'contact_type'      => 'Household',
-                              );
+                             );
           
         }
         $params['version'] = API_LATEST_VERSION;
@@ -496,8 +515,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     private function _contactCreate( $params ) {
         $result = civicrm_api( 'Contact','create',$params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ||(
-             ! CRM_Utils_Array::value( 'contact_id', $result ) && ! CRM_Utils_Array::value( 'id', $result )) ) {
-            throw new Exception( 'Could not create test contact.' );
+                                                              ! CRM_Utils_Array::value( 'contact_id', $result ) && ! CRM_Utils_Array::value( 'id', $result )) ) {
+            throw new Exception( 'Could not create test contact, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
         }
         return isset($result['contact_id'])?$result['contact_id']:CRM_Utils_Array::value( 'id', $result );
     }
@@ -509,9 +528,18 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $params['version'] = API_LATEST_VERSION;
         $result = civicrm_api('Contact','delete',$params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not delete contact: ' . $result['error_message'] );
+            throw new Exception( 'Could not delete contact, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
         }
         return;
+    }
+
+    function contactTypeDelete( $contactTypeId )
+    {
+        require_once 'CRM/Contact/BAO/ContactType.php';
+        $result = CRM_Contact_BAO_ContactType::del( $contactTypeId );
+        if ( !$result ) {
+            throw new Exception( 'Could not delete contact type' );
+        }
     }
     
     function membershipTypeCreate( $contactID, $contributionTypeID = 1,$version =2 ) 
@@ -528,18 +556,19 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                          'contribution_type_id' =>$contributionTypeID,
                          'is_active'            => 1 ,
                          'version'							=> $version, 
-                        'sequential'						=> 1 ,
-                        'visibility'             =>1, );
+                         'sequential'						=> 1 ,
+                         'visibility'             =>1, );
         
 
-        $result = civicrm_membership_type_create( $params );
-  
+        $result = civicrm_api('MembershipType','Create', $params );
+        require_once 'CRM/Member/PseudoConstant.php';
+        CRM_Member_PseudoConstant::flush('membershipType');
         if ( CRM_Utils_Array::value( 'is_error', $result ) || 
              (! CRM_Utils_Array::value( 'id', $result)&&  ! CRM_Utils_Array::value( 'id', $result['values'][0]))) {
-             throw new Exception( 'Could not create membership type' . print_r(  $result,true) );
+            throw new Exception( 'Could not create membership type, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
         }
 
-          return $result['id'];        
+        return $result['id'];        
 
 
     }
@@ -562,7 +591,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         if ( CRM_Utils_Array::value( 'is_error', $result ) ||
              ! CRM_Utils_Array::value( 'id', $result) ) {
             if ( CRM_Utils_Array::value( 'error_message', $result ) ) {
-                throw new Exception( $result['error_message'] );
+                throw new Exception( 'Could not created membership, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
             } else {
                 throw new Exception( 'Could not create membership' . ' - in line: ' . __LINE__ );
             }
@@ -607,18 +636,19 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $params['version'] = API_LATEST_VERSION;
         
         $result = civicrm_membership_status_create( $params );
+        require_once 'CRM/Member/PseudoConstant.php';
+        CRM_Member_PseudoConstant::flush('membershipStatus');
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not create membership status' );
+            throw new Exception( 'Could not create membership status' . $result['error_message']);
         }
         return $result['id'];
     }
     
     function membershipStatusDelete( $membershipStatusID ) 
     {
-        $params['id'] = $membershipStatusID;
-        $result = civicrm_membership_status_delete( $params );
+        $result = civicrm_api('MembershipStatus', 'Delete', array('id' => $membershipStatusID, 'version' => 3 ) );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not delete membership status' );
+            throw new Exception( 'Could not delete membership status' . $result['error_message']);
         }
         return;
     }
@@ -626,28 +656,32 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     function relationshipTypeCreate( $params = null  )
     {
+
         if(is_null($params)){
-           $params = array(
-                               'name_a_b'       => 'Relation 1 for relationship type create',
-                               'name_b_a'       => 'Relation 2 for relationship type create',
-                               'contact_type_a' => 'Individual',
-                               'contact_type_b' => 'Organization',
-                               'is_reserved'    => 1,
-                               'is_active'      => 1,
-           );
+            $params = array(
+                            'name_a_b'       => 'Relation 1 for relationship type create',
+                            'name_b_a'       => 'Relation 2 for relationship type create',
+                            'contact_type_a' => 'Individual',
+                            'contact_type_b' => 'Organization',
+                            'is_reserved'    => 1,
+                            'is_active'      => 1,
+                            );
         }
         $params['version'] = API_LATEST_VERSION;
    
         $result = civicrm_api( 'relationship_type','create',$params );
 
-        if ( civicrm_error( $params ) || $result['is_error'] ==1) {
+        if ( civicrm_error( $params ) || $result['is_error'] == 1) {
             throw new Exception( 'Could not create relationship type' );
         }
+
+        require_once 'CRM/Core/PseudoConstant.php';
+        CRM_Core_PseudoConstant::flush('relationshipType');
 
         return $result['id'];
     }
     
-   /**
+    /**
      * Function to delete Relatinship Type
      * 
      * @param int $relationshipTypeID
@@ -655,11 +689,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function relationshipTypeDelete( $relationshipTypeID )
     {
         $params['id'] = $relationshipTypeID;
+        $params['version'] = API_LATEST_VERSION;
         $result = civicrm_api( 'relationship_type', 'delete', $params );
-        
+
         if (civicrm_error( $params ) ) {
             throw new Exception( 'Could not delete relationship type' );
         }
+        
         return;
     }
 
@@ -688,7 +724,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         
         $result = civicrm_api( 'Participant','create',$params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) && $result['is_error'] ==1) {
-          throw new Exception( 'Could not create participant ' . $result['error_message'] );          
+            throw new Exception( 'Could not create participant ' . $result['error_message'] );          
         }
         return $result['id'];
         
@@ -705,21 +741,29 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
                       new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/../api/v' . $apiversion . '/dataset/contribution_types.xml') );
-                             
+                                                                         dirname(__FILE__)
+                                                                         . '/../api/v' . $apiversion . '/dataset/contribution_types.xml') );
+        
+        require_once 'CRM/Contribute/PseudoConstant.php';
+        CRM_Contribute_PseudoConstant::flush ('contributionType');                   
         // FIXME: CHEATING LIKE HELL HERE, TO BE FIXED
-        return 1;
+        return 11;
     }
     
     /**
      * Function to delete contribution Types 
      *      * @param int $contributionTypeId
      */
-    function contributionTypeDelete($contributionTypeID) 
+    function contributionTypeDelete($contributionTypeID = null) 
     {
         require_once 'CRM/Contribute/BAO/ContributionType.php';
-        $del= CRM_Contribute_BAO_ContributionType::del($contributionTypeID);
+        if( $contributionTypeID === null ) {
+            // we know those were loaded from /dataset/contribution_types.xml
+            $del= CRM_Contribute_BAO_ContributionType::del(10);
+            $del= CRM_Contribute_BAO_ContributionType::del(11);
+        } else {
+            $del= CRM_Contribute_BAO_ContributionType::del($contributionTypeID);
+        }
     }
     
     /** 
@@ -780,7 +824,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         return $result['id'];
     }
-      /**
+    /**
      * Function to create contribution  
      * 
      * @param int $cID      contact_id
@@ -806,7 +850,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'version'                 =>API_LATEST_VERSION,
                         );
         $result = civicrm_api( 'Pledge','create',$params );
-                        
+
         return $result['id'];
         
     }
@@ -819,7 +863,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function pledgeDelete($pledgeId )
     {  
         $params = array( 'pledge_id' => $pledgeId,
-                          'version'	=> API_LATEST_VERSION );
+                         'version'	=> API_LATEST_VERSION );
         $result = civicrm_api( 'Pledge','delete',$params );
  
 
@@ -853,14 +897,23 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'source'                 => 'SSF',
                         'version'								 => API_LATEST_VERSION,
                         'contribution_status_id' => 1,
-                     // 'note'                   => 'Donating for Nobel Cause', *Fixme
+                        // 'note'                   => 'Donating for Nobel Cause', *Fixme
                         );
 
-        $result = civicrm_api( 'Contribution','create',$params );
+        $result = civicrm_api( 'contribution','create',$params );
+        if ( CRM_Utils_Array::value( 'is_error', $result ) ||
+             ! CRM_Utils_Array::value( 'id', $result) ) {
+            if ( CRM_Utils_Array::value( 'error_message', $result ) ) {
+                throw new Exception( 'Could not create contribution, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
+            } else {
+                throw new Exception( 'Could not create contribution in line: ' . __LINE__ );
+            }
+        }        
+
         return $result['id'];
         
     }
-    
+
     /**
      * Function to delete contribution  
      * 
@@ -870,8 +923,20 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     {
 
         $params = array( 'contribution_id' => $contributionId ,
-                          'version'        => API_LATEST_VERSION,);
-        $result = civicrm_api( 'Contribution','delete',$params );
+                         'version'        => API_LATEST_VERSION,);
+        $result = civicrm_api( 'contribution','delete',$params );
+
+
+        if ( CRM_Utils_Array::value( 'is_error', $result ) ||
+             ! CRM_Utils_Array::value( 'id', $result) ) {
+            if ( CRM_Utils_Array::value( 'error_message', $result ) ) {
+                throw new Exception( 'Could not delete contribution, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
+            } else {
+                throw new Exception( 'Could not delete contribution - in line: ' . __LINE__ );
+            }
+        }
+
+        return $result;
     }
     
     /**
@@ -890,26 +955,26 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         // set defaults for missing params
         $params = array_merge(array(
-            'title'                   => 'Annual CiviCRM meet',
-            'summary'                 => 'If you have any CiviCRM related issues or want to track where CiviCRM is heading, Sign up now',
-            'description'             => 'This event is intended to give brief idea about progess of CiviCRM and giving solutions to common user issues',
-            'event_type_id'           => 1,
-            'is_public'               => 1,
-            'start_date'              => 20081021,
-            'end_date'                => 20081023,
-            'is_online_registration'  => 1,
-            'registration_start_date' => 20080601,
-            'registration_end_date'   => 20081015,
-            'max_participants'        => 100,
-            'event_full_text'         => 'Sorry! We are already full',
-            'is_monetory'             => 0,
-            'is_active'               => 1,
-            'version'                 => API_LATEST_VERSION,
-            'is_show_location'        => 0,
-        ), $params);
+                                    'title'                   => 'Annual CiviCRM meet',
+                                    'summary'                 => 'If you have any CiviCRM related issues or want to track where CiviCRM is heading, Sign up now',
+                                    'description'             => 'This event is intended to give brief idea about progess of CiviCRM and giving solutions to common user issues',
+                                    'event_type_id'           => 1,
+                                    'is_public'               => 1,
+                                    'start_date'              => 20081021,
+                                    'end_date'                => 20081023,
+                                    'is_online_registration'  => 1,
+                                    'registration_start_date' => 20080601,
+                                    'registration_end_date'   => 20081015,
+                                    'max_participants'        => 100,
+                                    'event_full_text'         => 'Sorry! We are already full',
+                                    'is_monetory'             => 0,
+                                    'is_active'               => 1,
+                                    'version'                 => API_LATEST_VERSION,
+                                    'is_show_location'        => 0,
+                                    ), $params);
         $result = civicrm_api( 'Event','create',$params );
         if ($result['is_error'] ==1){
-          throw new Exception($result['error_message']);
+            throw new Exception($result['error_message']);
         }
         return $result;
     }
@@ -922,7 +987,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function eventDelete( $id )
     {
         $params = array( 'event_id' => $id ,
-                          'version' => API_LATEST_VERSION);
+                         'version' => API_LATEST_VERSION);
         civicrm_api('event','delete', $params );
     }
     
@@ -936,7 +1001,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     {
 
         $params = array( 'id' => $participantID,
-                          'version' => API_LATEST_VERSION );
+                         'version' => API_LATEST_VERSION );
         $result = civicrm_api( 'Participant','delete',$params );
  
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
@@ -961,14 +1026,21 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'contribution_id'      => $contributionID,
                         'version'							 =>  API_LATEST_VERSION,
                         );
-      $participantPayment = civicrm_api( 'participant_payment','create',$params );        
 
-        if ( CRM_Utils_Array::value( 'is_error', $participantPayment ) ||
-             ! CRM_Utils_Array::value( 'id', $participantPayment ) ) {
-            throw new Exception( 'Could not create participant payment' );
+
+        $result = civicrm_api( 'participant_payment','create',$params );        
+
+
+        if ( CRM_Utils_Array::value( 'is_error', $result ) ||
+             ! CRM_Utils_Array::value( 'id', $result) ) {
+            if ( CRM_Utils_Array::value( 'error_message', $result ) ) {
+                throw new Exception( 'Could not delete contribution, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
+            } else {
+                throw new Exception( 'Could not delete contribution - in line: ' . __LINE__ );
+            }
         }
-        
-        return $participantPayment['id'];
+
+        return $result['id'];
     }
     
     /**
@@ -981,15 +1053,18 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     {
      
         $params = array( 'id' => $paymentID,
-                          'version' => API_LATEST_VERSION, ); 
+                         'version' => API_LATEST_VERSION, ); 
       
-
         $result = civicrm_api( 'participant_payment','delete',$params );
 
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not delete participant payment' );
+            if ( CRM_Utils_Array::value( 'error_message', $result ) ) {
+                throw new Exception( 'Could not delete contribution, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
+            } else {
+                throw new Exception( 'Could not delete contribution - in line: ' . __LINE__ );
+            }
         }
-        
+
         return;
     }
     
@@ -1015,7 +1090,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                          'version'                => 2,
                          'location_format'        => '2.0',
                          'location_type'          => 'New Location Type',
-                       );
+                         );
     
         $result = civicrm_api_legacy( 'civicrm_location_create','Location',$params );       
 
@@ -1026,6 +1101,22 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         return $result;
     }
     
+    /** 
+     * Function to delete Locations of contact
+     * 
+     * @params array $pamars parameters
+     */    
+    function locationDelete( $params ) {
+        $params['version'] = 2;
+        $result = civicrm_api_legacy( 'civicrm_location_delete', 'Location', $params ); 
+        
+        if ( civicrm_error( $result ) ) {
+            throw new Exception( "Could not delete location: {$result['error_message']}" );
+        }
+        
+        return;
+    }
+
     /** 
      * Function to add a Location Type
      * 
@@ -1044,6 +1135,19 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $locationType->copyValues( $params );
         $locationType->save();
         return $locationType;
+    }
+
+    /** 
+     * Function to delete a Location Type
+     * 
+     * @param int location type id
+     */    
+    function locationTypeDelete( $locationTypeId ) 
+    {
+        require_once 'CRM/Core/DAO/LocationType.php';
+        $locationType = new CRM_Core_DAO_LocationType( );
+        $locationType->id = $locationTypeId;
+        $locationType->delete( );
     }
 
     /** 
@@ -1201,7 +1305,39 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $result['assignee_contact_id']   = $individualTargetID;
         return $result;
     }
+
+    /** 
+     * Function to create an activity type
+     * 
+     * @params array $params parameters
+     */
+    function activityTypeCreate( $params )
+    {
+        $params['version'] = API_LATEST_VERSION;
+        $result = civicrm_api( 'ActivityType', 'create', $params );
+        if ( CRM_Utils_Array::value( 'is_error', $result ) ||
+             ! CRM_Utils_Array::value( 'id', $result) ) {
+            throw new Exception( 'Could not create Activity type ' . $result['error_message']);
+        }
+        return $result; 
+    }
     
+    /** 
+     * Function to delete activity type
+     * 
+     * @params Integer $activityTypeId id of the activity type
+     */
+    function activityTypeDelete( $activityTypeId )
+    {
+        $params['activity_type_id'] = $activityTypeId;
+        $params['version']          = API_LATEST_VERSION;
+        $result = civicrm_api( 'ActivityType', 'delete', $params );
+        if ( !$result ) {
+            throw new Exception( 'Could not delete activity type' );
+        }
+        return $result;
+    }
+
     /**
      * Function to create custom group
      * 
@@ -1211,18 +1347,18 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function customGroupCreate( $extends, $title = 'title' ) {
 
         if (CRM_Utils_Array::value('title',$extends)){
-          $params = $extends;
+            $params = $extends;
         }else{
-         $params = array(
-                        'title'      => $title,
-                        'extends'    => $extends,
-                        'domain_id'  => 1,                       
-                        'style'      => 'Inline',
-                        'is_active'  => 1,
-                        'version'		 => API_LATEST_VERSION,
-                        );
+            $params = array(
+                            'title'      => $title,
+                            'extends'    => $extends,
+                            'domain_id'  => 1,                       
+                            'style'      => 'Inline',
+                            'is_active'  => 1,
+                            'version'		 => API_LATEST_VERSION,
+                            );
  
-    }
+        }
         $result = civicrm_api( 'custom_group','create',$params );
 
         if ( CRM_Utils_Array::value( 'is_error', $result ) ||
@@ -1231,7 +1367,89 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         return $result;    
     }
+    /*
+     * existing function doesn't allow params to be over-ridden so need a new one
+     * this one allows you to only pass in the params you want to change
+     */ 
+    function CustomGroupCreateByParams($params = array()){
+       $defaults = array(
+                            'title'      => "API Custom Group",
+                            'extends'    => 'Contact',
+                            'domain_id'  => 1,                       
+                            'style'      => 'Inline',
+                            'is_active'  => 1,
+                            'version'		 => API_LATEST_VERSION,
+                            );
+        $params = array_merge($defaults,$params);
+        $result = civicrm_api( 'custom_group','create',$params );
 
+        if ( CRM_Utils_Array::value( 'is_error', $result ) ||
+             ! CRM_Utils_Array::value( 'id', $result) ) {
+            throw new Exception( 'Could not create Custom Group ' . $result['error_message']);
+        }
+        return $result;     
+      
+    }
+    /*
+     * Create custom group with multi fields
+     */ 
+    function CustomGroupMultipleCreateByParams($params = array()){
+       $defaults = array(
+                      
+                            'style'      => 'Tab',
+                            'is_multiple'  => 1,
+
+                            );
+        $params = array_merge($defaults,$params);
+        $result = $this->CustomGroupCreateByParams( $params );
+
+        if ( CRM_Utils_Array::value( 'is_error', $result ) ||
+             ! CRM_Utils_Array::value( 'id', $result) ) {
+            throw new Exception( 'Could not create Custom Group ' . $result['error_message']);
+        }
+        return $result;     
+      
+    }
+    /*
+     * Create custom group with multi fields
+     */ 
+    function CustomGroupMultipleCreateWithFields($params = array()){
+      $customGroup = array();
+      if (!empty($params['custom_group'])){
+        $customGroup = $params['custom_group'];
+      }
+
+      // also need to pass on $params['custom_field'] if not set but not in place yet
+        $ids = array();
+        $customGroup = $this->CustomGroupMultipleCreateByParams( $params );
+        $ids['custom_group_id'] =$customGroup['id'];
+        if ( CRM_Utils_Array::value( 'is_error', $ids['custom_group_id']) ||
+             ! CRM_Utils_Array::value( 'id', $customGroup ) ) {
+            throw new Exception( 'Could not create Custom Group from CustomGroupMultipleCreateWithFields' . $customGroup['error_message']);
+        }  
+
+        $customField = $this->customFieldCreate( $ids['custom_group_id']);
+
+        $ids['custom_field_id'][] = $customField['id'];
+        if ( CRM_Utils_Array::value( 'is_error', $customField ) ||
+             ! CRM_Utils_Array::value( 'id', $customField) ) {
+            throw new Exception( 'Could not create Custom Field ' . $ids['custom_field']['error_message']);
+        }
+        $customField = $this->customFieldCreate( $ids['custom_group_id'],'field_2');
+            $ids['custom_field_id'][] = $customField['id'];
+        if ( CRM_Utils_Array::value( 'is_error', $customField ) ||
+             ! CRM_Utils_Array::value( 'id', $customField) ) {
+            throw new Exception( 'Could not create Custom Field ' . $ids['custom_field']['error_message']);
+        }
+        $customField = $this->customFieldCreate( $ids['custom_group_id'],'field_3');
+        $ids['custom_field_id'][] = $customField['id'];
+        if ( CRM_Utils_Array::value( 'is_error', $customField ) ||
+             ! CRM_Utils_Array::value( 'id', $customField) ) {
+            throw new Exception( 'Could not create Custom Field ' . $ids['custom_field']['error_message']);
+        }
+        return $ids;     
+      
+    }  
     /*
      * Create a custom group with a single text custom field.  See 
      * participant:testCreateWithCustom for how to use this
@@ -1243,12 +1461,14 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * 
      */
     
-   function entityCustomGroupWithSingleFieldCreate( $function,$filename){
-      $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
-      $customGroup = $this->CustomGroupCreate($entity,$function);
+    function entityCustomGroupWithSingleFieldCreate( $function,$filename){
+        $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
+        $customGroup = $this->CustomGroupCreate($entity,$function);
       
-      $customField = $this->customFieldCreate( $customGroup['id'], $function ) ;
-      return array('custom_group_id' =>$customGroup['id'], 'custom_field_id' =>$customField['id'] );   
+        $customField = $this->customFieldCreate( $customGroup['id'], $function ) ;
+        CRM_Core_PseudoConstant::flush ( 'customGroup' );
+        CRM_Core_BAO_CustomField::getTableColumnGroup ( $customField['id'], True );
+       return array('custom_group_id' =>$customGroup['id'], 'custom_field_id' =>$customField['id'] );   
     }
     
   
@@ -1259,12 +1479,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function customGroupDelete( $customGroupID ) 
     { 
-
+    
         $params['id'] = $customGroupID;
         $params['version'] = API_LATEST_VERSION;
         $result = civicrm_api('custom_group','delete',$params);
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not delete custom group' );
+          print_r($params);
+            throw new Exception( 'Could not delete custom group' . $result['error_message']);
         }
         return;
     }
@@ -1277,19 +1498,19 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * @param int $apiversion API  version to use
      */
     
-    function customFieldCreate( $customGroupID, $name ) 
+    function customFieldCreate( $customGroupID, $name  = "Cust Field") 
     {
 
         $params = array(
-                             'label'           => $name,
-                             'name'            => $name,
-                             'custom_group_id' => $customGroupID,
-                             'data_type'       => 'String',
-                             'html_type'       => 'Text',
-                             'is_searchable'   =>  1, 
-                             'is_active'        => 1,
-                             'version'					=> API_LATEST_VERSION,
-                             );
+                        'label'           => $name,
+                        'name'            => $name,
+                        'custom_group_id' => $customGroupID,
+                        'data_type'       => 'String',
+                        'html_type'       => 'Text',
+                        'is_searchable'   =>  1, 
+                        'is_active'        => 1,
+                        'version'					=> API_LATEST_VERSION,
+                        );
                           
 
 
@@ -1297,7 +1518,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $result = civicrm_api( 'custom_field','create',$params );
 
         if ($result['is_error'] ==0 && isset($result['id'])){
-          return $result;          
+            return $result;          
         }
 
         if ( civicrm_error( $result ) 
@@ -1343,34 +1564,60 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'modified_date' => date('Ymd'),
                         'subject'       =>'Test Note', 
                         'version'				=> API_LATEST_VERSION,
-        );
+                        );
 
-       $result = civicrm_api( 'Note','create',$params );
-       return $result;
+        $result = civicrm_api( 'Note','create',$params );
+        
+        if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
+            if ( CRM_Utils_Array::value( 'error_message', $result ) ) {
+                throw new Exception( 'Could not delete note, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
+            } else {
+                throw new Exception( 'Could not delete note - in line: ' . __LINE__ );
+            }
+        }        
+        
+        return $result;
     }
-function documentMe($params,$result,$function,$filename){
+    
+    /*
+     * Create test generated example in api/v3/examples.
+     * To turn this off (e.g. on the server) set 
+     * define(DONT_DOCUMENT_TEST_CONFIG ,1);
+     * in your settings file
+     */
+    function documentMe($params,$result,$function,$filename,$description = "", $subfile = null ){
+        if(DONT_DOCUMENT_TEST_CONFIG ==1){
+          return;
+        } 
         $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
-//todo - this is a bit cludgey
+        //todo - this is a bit cludgey
         if (strstr($function, 'Create')){
-          $action = 'create';
-          $entityAction = 'Create';
+            $action = 'create';
+            $entityAction = 'Create';
         }elseif(strstr($function, 'Get')){
-          $action = 'get';
-          $entityAction = 'Get';
+            $action = 'get';
+            $entityAction = 'Get';
         }elseif(strstr($function, 'Delete')){
-          $action = 'delete';
-          $entityAction = 'Delete';
+            $action = 'delete';
+            $entityAction = 'Delete';
         } elseif(strstr($function, 'Update')){
-          $action = 'update';
-          $entityAction = 'Update';
+            $action = 'update';
+            $entityAction = 'Update';
         } elseif(strstr($function, 'Subscribe')){
-          $action = 'subscribe';
-          $entityAction = 'Subscribe';
+            $action = 'subscribe';
+            $entityAction = 'Subscribe';
+        } elseif(strstr($function, 'Set')){
+            $action = 'set';
+            $entityAction = 'Set';
+        } elseif(strstr($function, 'Apply')){
+            $action = 'apply';
+            $entityAction = 'Apply';
         }
+
         if (strstr($entity,'UF')){// a cleverer person than me would do it in a single regex
-         $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)(?<=UF)[A-Z]/','_$0', $entity));          
+            $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)(?<=UF)[A-Z]/','_$0', $entity));          
         }else{
-        $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)[A-Z]/','_$0', $entity)); 
+            $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)[A-Z]/','_$0', $entity)); 
         }   
         $function = $fnPrefix . "_" .strtolower($action);
         require_once 'CRM/Core/Smarty.php';
@@ -1378,17 +1625,27 @@ function documentMe($params,$result,$function,$filename){
         $smarty->assign('function',$function);
         $smarty->assign('fnPrefix',$fnPrefix);
         $smarty->assign('params',$params);   
-        $smarty->assign('entity',$entity);         
+        $smarty->assign('entity',$entity);   
+        $smarty->assign('description',$description);         
         $smarty->assign('result',$result); 
-        $smarty->assign('action',$action); 
-        if(DOCUMENT_ME ==1){ 
-
+       // $smarty->registerPlugin("modifier","print_array", "print_array");
         
-       if ( file_exists('../tests/templates/documentFunction.tpl')) {
-          $f = fopen("../api/v3/examples/$entity$entityAction.php", "w");
-          fwrite($f,$smarty->fetch('../tests/templates/documentFunction.tpl'));
-          fclose($f); 
-        }
+        $smarty->assign('action',$action); 
+        if(empty($subfile )){     
+            if ( file_exists('../tests/templates/documentFunction.tpl')) {
+                $f = fopen("../api/v3/examples/$entity$entityAction.php", "w");
+                fwrite($f,$smarty->fetch('../tests/templates/documentFunction.tpl'));
+                fclose($f); 
+            }
+        }else{
+                if ( file_exists('../tests/templates/documentFunction.tpl')) {
+                  if( !is_dir("../api/v3/examples/$entity") ){
+                    mkdir("../api/v3/examples/$entity");
+                  }
+                $f = fopen("../api/v3/examples/$entity/$subfile.php", "w+b");
+                fwrite($f,$smarty->fetch('../tests/templates/documentFunction.tpl'));
+                fclose($f); 
+            }
         }
     }
   
@@ -1400,17 +1657,20 @@ function documentMe($params,$result,$function,$filename){
      */
     function noteDelete( $params )
     {
-
         $params['version'] = API_LATEST_VERSION;
 
         $result = civicrm_api( 'Note','delete',$params );
 
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not delete note' );
+            if ( CRM_Utils_Array::value( 'error_message', $result ) ) {
+                throw new Exception( 'Could not delete note, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
+            } else {
+                throw new Exception( 'Could not delete note - in line: ' . __LINE__ );
+            }
         }
-    
-        return;
-    }    
+
+        return $result;
+    }
      
     /**
      * Function to create custom field with Option Values
@@ -1450,7 +1710,7 @@ function documentMe($params,$result,$function,$filename){
         $result = civicrm_api( 'custom_field','create',$params ); 
    
         if ($result['is_error'] ==0 && isset($result['id'])){
-          return $result;
+            return $result;
         }
         if ( civicrm_error( $result ) 
              || !( CRM_Utils_Array::value( 'customFieldId', $result['result'] ) ) ) {
@@ -1460,16 +1720,44 @@ function documentMe($params,$result,$function,$filename){
     }      
 
     function confirmEntitiesDeleted($entities){
-      foreach ($entities as $entity ){
+        foreach ($entities as $entity ){
         
-        $result = civicrm_api($entity,'Get', array('version' => 3, ));
-        if ($result['error'] ==1 || $result['count'] > 0){// > than $entity[0] to allow a value to be passed in? e.g. domain?
-          return TRUE;
+            $result = civicrm_api($entity,'Get', array('version' => 3, ));
+            if ($result['error'] ==1 || $result['count'] > 0){// > than $entity[0] to allow a value to be passed in? e.g. domain?
+                return TRUE;
+            }
+        
         }
-        
-      }
       
     }
+
+    function quickCleanup( $tablesToTruncate, $dropCustomValueTables = false ) {
+        if ( $dropCustomValueTables ) {
+            $tablesToTruncate[] = 'civicrm_custom_group';
+            $tablesToTruncate[] = 'civicrm_custom_field';
+        }
+
+        foreach ( $tablesToTruncate as $table ) {
+            $sql = "TRUNCATE TABLE $table";
+            CRM_Core_DAO::executeQuery( $sql );
+        }
+
+        if ( $dropCustomValueTables ) {
+            $query = "
+SELECT TABLE_NAME as tableName
+FROM   INFORMATION_SCHEMA.TABLES
+WHERE  TABLE_SCHEMA = 'civicrm_tests_dev'
+AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
+";
+
+            $tableDAO = CRM_Core_DAO::executeQuery( $query );
+            while ( $tableDAO->fetch() ) {
+                $sql = "DROP TABLE {$tableDAO->tableName}";
+                CRM_Core_DAO::executeQuery( $sql );
+            }
+        }
+    }
+
 }
 
 function CiviUnitTestCase_fatalErrorHandler( $message ) {

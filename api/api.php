@@ -55,7 +55,8 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     $function = civicrm_api_get_function_name($entity, $action,$version);
     civicrm_api_include($entity,null,$version);
     if ( !function_exists ($function ) ) {
-        if ( strtolower($action) == "getfields") { 
+      switch (strtolower($action)){
+        case "getfields":
             $version = 3;
             $dao = _civicrm_api3_get_DAO ($entity);
             if (empty($dao)) {
@@ -65,8 +66,50 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
             require_once ($file); 
             $d = new $dao();
             return civicrm_api3_create_success($d->fields());
-        }
-        if ( strtolower($action) == "update") {
+            break;
+        case "getcount":
+          $result=civicrm_api ($entity,'get',$params);
+          $result = $result['count'];
+          break;
+        case "getsingle":
+          $params['sequential'] =1;//so the first entity is always result['values'][0]
+          $result = civicrm_api ($entity,'get',$params);
+          if ($result['is_error'] !== 0) 
+            break;
+          if ($result['count'] === 1) {
+            $result=$result['values'][0];
+            break;
+          }
+          if ($result['count'] !== 1) {
+            $result = civicrm_api3_create_error("Expected one $entity but found " .$result['count'], array ('count'=>$result['count']));
+            break;
+          }
+          break;
+        case "getvalue":
+          $params['sequential'] =1;
+          $result=civicrm_api ($entity,'get',$params);
+          if ($result['is_error'] !== 0) 
+            break;
+          if ($result['count'] !== 1) {
+            $result = civicrm_api3_create_error("Expected one $entity but found " .$result['count'], array ('count'=>$result['count']));
+            break;
+          }
+
+          // we only take "return=" as valid options
+          if (CRM_Utils_Array::value('return',$params) ){
+            if (!isset ($result['values'][0][$params['return']])) {
+              $result = civicrm_api3_create_error("field ".$params['return']. " unset or not existing", array ('invalid_field'=>$params['return']));
+              break;
+            }
+
+            $result = $result['values'][0][$params['return']];
+            break;
+          }
+
+          $result = civicrm_api3_create_error("missing param return=field you want to read the value of",array('error_type'=>'mandatory_missing','missing_param'=>'return'));
+          break;
+       
+        case "update":
             //$key_id = strtolower ($entity)."_id";
             $key_id = "id";
             if (!array_key_exists ($key_id,$params)) {
@@ -84,26 +127,33 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
             $existing= array_pop($existing['values'] ); 
             $p = array_merge ( $existing,$params );
             return civicrm_api ($entity, 'create',$p);
-
+            break;
+        
+        default:
+            return $errorFnName( "API ($entity,$action) does not exist (join the API team and implement $function" );
         }
-
-        return $errorFnName( "API ($entity,$action) does not exist (join the API team and implement $function" );
+     }else{
+       $result = isset($extra) ? $function($params, $extra) : $function($params);
+     }
+     if(CRM_Utils_Array::value('format.is_success', $params) == 1){
+       if($result['is_error'] === 0){
+         return 1;
+       }else {
+         return 0;
+       }
+     }
+     if(CRM_Utils_Array::value('format.only_id', $params) && isset($result['id'])){
+      return $result['id'];
     }
-    $result = isset($extra) ? $function($params, $extra) : $function($params);
-
-    if ($result['is_error'] == 0 && isset($params['entities']) && is_array($params['entities']) && strtolower($action) == 'create'){
-      foreach ($params['entities'] as $subentity => $subParams) {      
-        $subParams[strtolower($entity) . "_id"] = $result['id'];
-        $subParams['version'] = $version;
-        $result['values'][$result['id']]['entities'][$subentity] = civicrm_api($subentity,$action,$subParams);
-      }
+    if (CRM_Utils_Array::value( 'is_error', $result, 0 ) == 0) {
+        _civicrm_api_call_nested_api($params, $result, $action,$entity,$version);
     }
-    
+
     return $result;
   } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage(),null,$params );
   } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage(),null,$params );
   }
 }
 
@@ -227,4 +277,138 @@ function civicrm_api_get_camel_name($entity,$version = NULL) {
         $fragments[0] = 'UF';
     }
     return implode('', $fragments);
+}
+
+/*
+ * Call any nested api calls
+ */
+function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$version){
+        foreach($params as $field => $newparams){          
+            if (substr($field,0, 3) == 'api' && (is_array($newparams) || $newparams === 1) ){
+              
+                $idIndex = _civicrm_api_get_results_id_index($params,$result);
+                              
+                if ($newparams === 1){
+                  $newparams = array('version' => $version);
+                }
+                $separator = $field[3]; // can be api_ or api.
+                if (!($separator == '.' || $separator == '_')) {
+                    continue;
+                }
+                $subAPI = explode($separator,$field);
+
+                $action = empty($subAPI[2])?$action:$subAPI[2];
+                $subParams  = array();
+                
+                            
+                if(strtolower($subAPI[1]) != 'contact'){
+                  //contact spits the dummy at activity_id so what else won't it like?
+                  $subParams["entity_id"] = $result['id'];
+                  $subParams[strtolower($entity) . "_id"] = $result['id'];
+                  $subParams['entity_table'] = $entity;
+                }
+               
+                if(CRM_Utils_Array::value('entity_table',$result['values'][$idIndex ]) == $subAPI[1] ) {
+                  $subParams['id'] = $result['values'][$idIndex ]['entity_id'];
+              
+                }
+                if (strtolower(CRM_Utils_Array::value(2,$subAPI)) == 'delete'){
+                  $subParams["id"] = $result['id'];
+                }
+                
+                $subParams['version'] = $version;
+                $subParams['sequential'] = 1;
+                if(array_key_exists(0, $newparams)){
+                    // it is a numerically indexed array - ie. multiple creates
+                    foreach ($newparams as $entity => $entityparams){
+                        $subParams = array_merge($subParams,$entityparams);
+                        _civicrm_api_replace_variables($subAPI[1],$action,$subParams,$result['values'][$idIndex],$separator);
+                         $result['values'][$result['id']][$field][] = civicrm_api($subAPI[1],$action,$subParams);
+                        
+                    }
+                }else{
+
+                    $subParams = array_merge($subParams,$newparams);
+                    _civicrm_api_replace_variables($subAPI[1],$action,$subParams,$result['values'][$idIndex],$separator);
+                    $result['values'][$idIndex ][$field] = civicrm_api($subAPI[1],$action,$subParams);
+                        
+                }
+            }
+        }
+}
+/*
+ * Figure out the entity ID in the result array 
+ * $result['id'] or 
+ * $result['values'][1] or 
+ * $result['values'][0]['id']
+ * or
+ * $result['values']['0']['entity_id']
+ */
+
+function _civicrm_api_get_entity_ID_from_results(&$result,$entity){
+  if(CRM_Utils_Array::value('id',$result)){
+    return CRM_Utils_Array::value('id',$result);
+  }
+  if (CRM_Utils_Array::value('values',$result)){
+    
+  }else{
+    //hasn't been through create_success yet
+  }
+  
+}
+/*
+ * Swap out any $values vars - ie. the value after $value is swapped for the parent $result
+ * 'activity_type_id' => '$value.testfield',
+   'tag_id'  => '$value.api.tag.create.id',  
+    'tag1_id' => '$value.api.entity.create.0.id'
+ */
+function _civicrm_api_replace_variables($entity,$action,&$params, &$parentResult,$separator = '.' ){
+ 
+
+  foreach ($params as $field => $value) {
+
+    if(substr($value, 0,6) == '$value') {
+      $valuesubstitute =  substr($value, 7); 
+     
+      if (!empty($parentResult[$valuesubstitute])){ 
+        $params[$field] = $parentResult[$valuesubstitute];
+      }else{
+        
+        $stringParts = explode($separator,$value);
+        unset($stringParts[0]);
+        
+        $fieldname = array_shift($stringParts);
+
+        //when our string is an array we will treat it as an array from that . onwards
+        $count = count($stringParts);
+        while($count > 0){
+          $fieldname .= "." . array_shift($stringParts);
+          if(is_array($parentResult[$fieldname])){
+            $arrayLocation = $parentResult[$fieldname];
+            foreach($stringParts as $key => $value){
+             $arrayLocation = $arrayLocation[$value] ;              
+             }
+             $params[$field] = $arrayLocation ;
+          }
+          $count = count($stringParts);
+          
+        }
+
+   
+        }
+        
+      }
+
+    }   
+  }
+
+/*
+ * Get the field the results are indexed by (0 for sequential, $reuslt['id'] otherwise
+ */
+function _civicrm_api_get_results_id_index(&$params,&$result){
+      if(CRM_Utils_Array::value('sequential',$params) == 1){
+        return  0;
+      }else{
+        return $result['id'];
+       }
 }

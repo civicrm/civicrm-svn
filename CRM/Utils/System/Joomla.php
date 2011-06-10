@@ -215,7 +215,11 @@ class CRM_Utils_System_Joomla {
             // handle both joomla v1.5 and v1.6, CRM-7939
             $url = str_replace( '/administrator/index2.php', '/index.php', $url );
             $url = str_replace( '/administrator/index.php' , '/index.php', $url );
+
+            // CRM-8215
+            $url = str_replace( '/administrator/', '/index.php', $url );
         }
+
         return $url;
     }
 

@@ -42,7 +42,7 @@ require_once 'api/v3/Contact.php';
  */
 class api_v3_ContactTest extends CiviUnitTestCase
 {
-
+  public $DBResetRequired = false;  
   protected $_apiversion;
   /**
    *  Constructor
@@ -64,6 +64,14 @@ class api_v3_ContactTest extends CiviUnitTestCase
     //  Connect to the database
     parent::setUp();
     $this->_apiversion = 3;
+  }
+
+  function tearDown( ) {
+    // truncate a few tables
+    $tablesToTruncate = array( 'civicrm_contact',
+                               'civicrm_email' );
+        
+    $this->quickCleanup( $tablesToTruncate );
   }
 
   /**
@@ -309,7 +317,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
    *  Verify that attempt to create individual contact with first
    *  and last names and email succeeds
    */
-  function testCreateIndividualWithContribution()
+  function testCreateIndividualWithContributionDottedSyntax()
   {
     $params = array(
                         'first_name'   => 'abc3',
@@ -317,8 +325,52 @@ class api_v3_ContactTest extends CiviUnitTestCase
                         'contact_type' => 'Individual',
                         'email'        => 'man3@yahoo.com',
                         'version'			=>  $this->_apiversion,
-                        'entities'    => array(
-                           'Contribution' => array(                         
+                        'api.contribution.create'    => array(
+                                                   
+                             'receive_date'           => '2010-01-01',
+                             'total_amount'           => 100.00,
+                             'contribution_type_id'   => 1,
+                             'payment_instrument_id'  => 1,
+                             'non_deductible_amount'  => 10.00,
+                             'fee_amount'             => 50.00,
+                             'net_amount'             => 90.00,
+                             'trxn_id'                => 15345,
+                             'invoice_id'             => 67990,
+                             'source'                 => 'SSF',
+                             'contribution_status_id' => 1,
+                             ),
+                        'api.website.create' => array(
+                             'url' => "http://civicrm.org"),
+                        'api.website.create.2' => array(
+                             'url' => "http://chained.org",
+                             ),
+    );
+
+    $result =civicrm_api('Contact','create',$params);
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+    $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
+    . " error message: " . CRM_Utils_Array::value('error_message', $result) );
+    $this->assertEquals( 1, $result['id'], "In line " . __LINE__ );
+    $this->assertEquals(0,$result['values'][$result['id']]['api.website.create']['is_error'], "In line " . __LINE__);
+    $this->assertEquals("http://chained.org",$result['values'][$result['id']]['api.website.create.2']['values'][0]['url'], "In line " . __LINE__);
+    // delete the contact
+    civicrm_api3_contact_delete( $result );
+  }
+  
+  /**
+   *  Verify that attempt to create individual contact with first
+   *  and last names and email succeeds
+   */
+  function testCreateIndividualWithContributionChainedArrays()
+  {
+    $params = array(
+                        'first_name'   => 'abc3',
+                        'last_name'    => 'xyz3',
+                        'contact_type' => 'Individual',
+                        'email'        => 'man3@yahoo.com',
+                        'version'			=>  $this->_apiversion,
+                        'api.contribution.create'    => array(
+                                                   
                              'receive_date'           => '2010-01-01',
                              'total_amount'           => 100.00,
                              'contribution_type_id'   => 1,
@@ -330,9 +382,14 @@ class api_v3_ContactTest extends CiviUnitTestCase
                              'invoice_id'             => 67890,
                              'source'                 => 'SSF',
                              'contribution_status_id' => 1,
-                             'version' =>$this->_apiversion,
-                        ),
-                          'website' => array('url' => "http://civicrm.org")),
+                             ),
+                        'api.website.create' => array(
+                             array(
+                                'url' => "http://civicrm.org"),
+                             array(
+                                'url' => "http://chained.org",
+                                'website_type_id' => 2),
+                             )
     );
 
     $result =civicrm_api('Contact','create',$params);
@@ -340,7 +397,8 @@ class api_v3_ContactTest extends CiviUnitTestCase
     $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
     . " error message: " . CRM_Utils_Array::value('error_message', $result) );
     $this->assertEquals( 1, $result['id'], "In line " . __LINE__ );
-    $this->assertEquals(0,$result['values'][$result['id']]['entities']['website']['is_error']);
+    $this->assertEquals(0,$result['values'][$result['id']]['api.website.create'][0]['is_error'], "In line " . __LINE__);
+    $this->assertEquals("http://chained.org",$result['values'][$result['id']]['api.website.create'][1]['values'][0]['url'], "In line " . __LINE__);
     // delete the contact
     civicrm_api3_contact_delete( $result );
   }
@@ -802,8 +860,40 @@ class api_v3_ContactTest extends CiviUnitTestCase
     $this->assertEquals( 17, $result['id'], 'in line ' . __LINE__  );
     
   }
+/*
+ * seems contribution is no longer creating activity - test is in the too hard basket for now
+ public function testContactGetWithActivityies(){
+       $params = array(
+                        'email'            => 'man2@yahoo.com',
+                        'contact_type'     => 'Individual',
+                        'location_type_id' => 1,
+                        'version' 				=> $this->_apiversion,
+                        'api.contribution.create'    => array(
+                                                   
+                             'receive_date'           => '2010-01-01',
+                             'total_amount'           => 100.00,
+                             'contribution_type_id'   => 1,
+                             'payment_instrument_id'  => 1,
+                             'non_deductible_amount'  => 10.00,
+                             'fee_amount'             => 50.00,
+                             'net_amount'             => 90.00,
+                             'trxn_id'                => 15343455,
+                             'invoice_id'             => 6755990,
+                             'source'                 => 'SSF',
+                             'contribution_status_id' => 1,
+                             ),
+		      
+    );
 
-
+    $contact = & civicrm_api('Contact', 'Create',$params);
+    $params = array('version' => 3, 'id' => $contact['id'], 'api.activity' => array());
+    $result = civicrm_api('Contact', 'Get', $params);
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+    $this->assertGreaterThan(0, $result['values'][$result['id']]['api.activity']['count']);
+    $this->assertEquals('Contribution', $result['values'][$result['id']]['api.activity']['values'][0]['activity_name']);   
+ }
+ */
+  
   /**
    *  Test civicrm_contact_search_count()
    */
@@ -833,8 +923,340 @@ class api_v3_ContactTest extends CiviUnitTestCase
     civicrm_api3_contact_delete( $contact );
   }
 
+  /**
+   *  Verify that attempt to create individual contact with first
+   *  and last names and email succeeds
+   */
+  function testGetIndividualWithChainedArrays()
+  {
+    $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+    $params['custom_'.$ids['custom_field_id']]  =  "custom string";
+ 
+    $moreids = $this->CustomGroupMultipleCreateWithFields();	
+    $description = "/*this demonstrates the usage of chained api functions. In this case no notes or custom fields have been created ";
+    $subfile = "APIChainedArray";
+    $params = array(
+                        'first_name'   => 'abc3',
+                        'last_name'    => 'xyz3',
+                        'contact_type' => 'Individual',
+                        'email'        => 'man3@yahoo.com',
+                        'version'			=>  $this->_apiversion,
+                        'api.contribution.create'    => array(
+                                                   
+                             'receive_date'           => '2010-01-01',
+                             'total_amount'           => 100.00,
+                             'contribution_type_id'   => 1,
+                             'payment_instrument_id'  => 1,
+                             'non_deductible_amount'  => 10.00,
+                             'fee_amount'             => 50.00,
+                             'net_amount'             => 90.00,
+                             'trxn_id'                => 12345,
+                             'invoice_id'             => 67890,
+                             'source'                 => 'SSF',
+                             'contribution_status_id' => 1,
+                            ),
+                           'api.contribution.create.1'    => array(
+                                                   
+                             'receive_date'           => '2011-01-01',
+                             'total_amount'           => 120.00,
+                             'contribution_type_id'   => 1,
+                             'payment_instrument_id'  => 1,
+                             'non_deductible_amount'  => 10.00,
+                             'fee_amount'             => 50.00,
+                             'net_amount'             => 90.00,
+                             'trxn_id'                => 12335,
+                             'invoice_id'             => 67830,
+                             'source'                 => 'SSF',
+                             'contribution_status_id' => 1,
+                             ),
+                        'api.website.create' => array(
+                             array(
+                                'url' => "http://civicrm.org"),
 
+                             )
+                                );
+ 
 
+    $result = civicrm_api('Contact','create',$params);
+    $params = array('id' => $result['id'], 'version' => 3, 
+    								'api.website.get' => array(), 
+    								'api.Contribution.get' => array( 'total_amount' => '120.00', 
+                      ),'api.CustomValue.get' => 1,
+                      'api.Note.get' => 1);
+    $result = civicrm_api('Contact','Get',$params);
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile); 
+    // delete the contact
+    civicrm_api3_contact_delete( $result );
+    $this->customGroupDelete($ids['custom_group_id']);
+    $this->customGroupDelete($moreids['custom_group_id']);
+    $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
+    . " error message: " . CRM_Utils_Array::value('error_message', $result) );
+    $this->assertEquals( 1, $result['id'], "In line " . __LINE__ );
+    $this->assertEquals(0,$result['values'][$result['id']]['api.website.get']['is_error'], "In line " . __LINE__);
+    $this->assertEquals("http://civicrm.org",$result['values'][$result['id']]['api.website.get']['values'][0]['url'], "In line " . __LINE__);
+
+  }
+ function testGetIndividualWithChainedArraysFormats()
+  {
+    $description = "/*this demonstrates the usage of chained api functions. A variety of return formats are used. Note that no notes
+    *custom fields or memberships exist";
+    $subfile = "APIChainedArrayFormats";
+    $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+    $params['custom_'.$ids['custom_field_id']]  =  "custom string";
+ 
+    $moreids = $this->CustomGroupMultipleCreateWithFields();	
+    $params = array(
+                        'first_name'   => 'abc3',
+                        'last_name'    => 'xyz3',
+                        'contact_type' => 'Individual',
+                        'email'        => 'man3@yahoo.com',
+                        'version'			=>  $this->_apiversion,
+                        'api.contribution.create'    => array(
+                                                   
+                             'receive_date'           => '2010-01-01',
+                             'total_amount'           => 100.00,
+                             'contribution_type_id'   => 1,
+                             'payment_instrument_id'  => 1,
+                             'non_deductible_amount'  => 10.00,
+                             'fee_amount'             => 50.00,
+                             'net_amount'             => 90.00,
+                             'trxn_id'                => 12345,
+                             'invoice_id'             => 67890,
+                             'source'                 => 'SSF',
+                             'contribution_status_id' => 1,
+                            ),
+                           'api.contribution.create.1'    => array(
+                                                   
+                             'receive_date'           => '2011-01-01',
+                             'total_amount'           => 120.00,
+                             'contribution_type_id'   => 1,
+                             'payment_instrument_id'  => 1,
+                             'non_deductible_amount'  => 10.00,
+                             'fee_amount'             => 50.00,
+                             'net_amount'             => 90.00,
+                             'trxn_id'                => 12335,
+                             'invoice_id'             => 67830,
+                             'source'                 => 'SSF',
+                             'contribution_status_id' => 1,
+                             ),
+                        'api.website.create' => array(
+                             array(
+                                'url' => "http://civicrm.org"),
+
+                             )
+                                );
+ 
+
+    $result = civicrm_api('Contact','create',$params);
+    $params = array('id' => $result['id'], 'version' => 3, 
+    								'api.website.getValue' => array('return' => 'url'), 
+    								'api.Contribution.getCount' => array(  
+                      ),'api.CustomValue.get' => 1,
+                      'api.Note.get' => 1,
+                      'api.Membership.getCount' => array());
+    $result = civicrm_api('Contact','Get',$params);
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile); 
+    $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
+    . " error message: " . CRM_Utils_Array::value('error_message', $result) );
+    $this->assertEquals( 1, $result['id'], "In line " . __LINE__ );
+    $this->assertEquals(0,$result['values'][$result['id']]['api.Note.get']['is_error'], "In line " . __LINE__);
+    $this->assertEquals("http://civicrm.org",$result['values'][$result['id']]['api.website.getValue'], "In line " . __LINE__);
+    // delete the contact
+    civicrm_api3_contact_delete( $result );
+    $this->customGroupDelete($ids['custom_group_id']);
+    $this->customGroupDelete($moreids['custom_group_id']);
+  }
+  
+  function testGetIndividualWithChainedArraysAndMultipleCustom()
+  {
+    $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+    $params['custom_'.$ids['custom_field_id']]  =  "custom string";
+    $moreids = $this->CustomGroupMultipleCreateWithFields();	
+    $andmoreids = $this->CustomGroupMultipleCreateWithFields(array('title'      => "another group"));	
+    $description = "/*this demonstrates the usage of chained api functions. A variety of techniques are used";
+    $subfile = "APIChainedArrayMultipleCustom";
+    $params = array(
+                        'first_name'   => 'abc3',
+                        'last_name'    => 'xyz3',
+                        'contact_type' => 'Individual',
+                        'email'        => 'man3@yahoo.com',
+                        'version'			=>  $this->_apiversion,
+                        'api.contribution.create'    => array(
+                                                   
+                             'receive_date'           => '2010-01-01',
+                             'total_amount'           => 100.00,
+                             'contribution_type_id'   => 1,
+                             'payment_instrument_id'  => 1,
+                             'non_deductible_amount'  => 10.00,
+                             'fee_amount'             => 50.00,
+                             'net_amount'             => 90.00,
+                             'trxn_id'                => 12345,
+                             'invoice_id'             => 67890,
+                             'source'                 => 'SSF',
+                             'contribution_status_id' => 1,
+                            ),
+                           'api.contribution.create.1'    => array(
+                                                   
+                             'receive_date'           => '2011-01-01',
+                             'total_amount'           => 120.00,
+                             'contribution_type_id'   => 1,
+                             'payment_instrument_id'  => 1,
+                             'non_deductible_amount'  => 10.00,
+                             'fee_amount'             => 50.00,
+                             'net_amount'             => 90.00,
+                             'trxn_id'                => 12335,
+                             'invoice_id'             => 67830,
+                             'source'                 => 'SSF',
+                             'contribution_status_id' => 1,
+                             ),
+                        'api.website.create' => array(
+                             array(
+                                'url' => "http://civicrm.org"),
+
+                             ),
+                         'custom_' . $ids['custom_field_id'] => "value 1",
+                         'custom_' . $moreids['custom_field_id'][0] => "value 2",    
+                         'custom_' . $moreids['custom_field_id'][1] => "warm beer",
+												 'custom_' . $andmoreids['custom_field_id'][1] => "vegemite",
+                             );
+ 
+
+    $result = civicrm_api('Contact','create',$params);
+    $result = civicrm_api('Contact','create',array('contact_type' => 'Individual', 'id' => $result['id'], 'version' => 3, 'custom_' . $moreids['custom_field_id'][0] => "value 3", 'custom_' . $ids['custom_field_id'] => "value 4",));
+
+    $params = array('id' => $result['id'], 'version' => 3, 
+    								'api.website.getValue' => array('return' => 'url'), 
+    								'api.Contribution.getCount' => array( 
+                      ),'api.CustomValue.get' => 1,
+                      );
+    $result = civicrm_api('Contact','Get',$params);
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile); 
+    // delete the contact
+    civicrm_api3_contact_delete( $result );
+    $this->customGroupDelete($ids['custom_group_id']);
+    $this->customGroupDelete($moreids['custom_group_id']);
+    $this->customGroupDelete($andmoreids['custom_group_id']);
+    $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
+    . " error message: " . CRM_Utils_Array::value('error_message', $result) );
+    $this->assertEquals( 1, $result['id'], "In line " . __LINE__ );
+    $this->assertEquals(0,$result['values'][$result['id']]['api.CustomValue.get']['is_error'], "In line " . __LINE__);
+    $this->assertEquals('http://civicrm.org',$result['values'][$result['id']]['api.website.getValue'], "In line " . __LINE__);
+    
+   
+  }
+  /*
+   * Test checks siusage of $values to pick & choose inputs
+   */
+   function testChainingValuesCreate ( )   {
+    $description = "/*this demonstrates the usage of chained api functions.  Specifically it has one 'parent function' &
+    2 child functions - one receives values from the parent (Contact) and the other child (Tag). ";
+    $subfile = "APIChainedArrayValuesFromSiblingFunction";
+    $params = array('version' => 3, 'display_name' => 'batman' , 'contact_type' => 'Individual', 
+                    'api.tag.create' => array('name' => '$value.id', 'description' => '$value.display_name','format.only_id' => 1),
+                    'api.entity_tag.create' => array('tag_id' =>'$value.api.tag.create'));
+              $result = civicrm_api('Contact','Create',$params);
+        
+        $this->assertEquals(0, $result['is_error']);
+        $this->assertEquals(0, $result['values'][$result['id']]['api.entity_tag.create']['is_error']);
+       $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile);     
+        $tablesToTruncate = array( 'civicrm_contact', 
+                                   'civicrm_activity',
+                                   'civicrm_entity_tag',
+                                   'civicrm_tag'
+                                   );
+        $this->quickCleanup( $tablesToTruncate, true );
+    }
+    
+  /*
+   * test TrueFalse format - I couldn't come up with an easy way to get an error on Get
+   */
+  function testContactGetFormatIsSuccessTrue(){
+    $this->createContactFromXML();
+    $description = "This demonstrates use of the 'format.is_success' param. 
+    This param causes only the success or otherwise of the function to be returned as BOOLEAN";
+    $subfile = "FormatIsSuccess_True";
+    $params = array('version' => 3, 'id' => 17, 'format.is_success' => 1);
+    $result = civicrm_api('Contact', 'Get', $params);
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__, $description,$subfile);
+    $this->assertEquals(1, $result);
+    civicrm_api('Contact', 'Delete', $params) ; 
+  }
+  /*
+   * test TrueFalse format
+   */
+  function testContactCreateFormatIsSuccessFalse(){
+
+    $description = "This demonstrates use of the 'format.true_false' param. 
+    This param causes only the success or otherwise of the function to be returned as BOOLEAN";
+    $subfile = "FormatIsSuccess_Fail";
+    $params = array('version' => 3, 'id' => 500, 'format.is_success' => 1);
+    $result = civicrm_api('Contact', 'Create', $params);
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__, $description,$subfile);
+    $this->assertEquals(0, $result);
+ 
+  }
+  /*
+   * test Single Entity format
+   */
+  function testContactGetFormatsingle_entity_array(){
+    $this->createContactFromXML();
+    $description = "This demonstrates use of the 'format.single_entity_array' param. 
+    /* This param causes the only contact to be returned as an array without the other levels.
+    /* it will be ignored if there is not exactly 1 result";
+    $subfile = "GetSingleContact";
+    $params = array('version' => 3, 'id' => 17);
+    $result = civicrm_api('Contact', 'GetSingle', $params);
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__, $description,$subfile);
+    $this->assertEquals('Test Contact' , $result['display_name'] , "in line " . __LINE__ );
+    civicrm_api('Contact', 'Delete', $params) ; 
+   }
+   
+  /*
+   * test Single Entity format
+   */
+  function testContactGetFormatcount_only(){
+    $this->createContactFromXML();
+    $description = "/*This demonstrates use of the 'getCount' action 
+    /*  This param causes the count of the only function to be returned as an integer";
+    $subfile = "GetCountContact";
+    $params = array('version' => 3, 'id' => 17);
+    $result = civicrm_api('Contact', 'GetCount', $params);
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__, $description,$subfile);
+    $this->assertEquals('1' , $result , "in line " . __LINE__ );
+    civicrm_api('Contact', 'Delete', $params) ; 
+   }
+   /*
+    * Test id only format
+    */
+  function testContactGetFormatID_only(){
+    $this->createContactFromXML();
+    $description = "This demonstrates use of the 'format.id_only' param. 
+    /* This param causes the id of the only entity to be returned as an integer.
+    /* it will be ignored if there is not exactly 1 result";
+    $subfile = "FormatOnlyID";
+    $params = array('version' => 3, 'id' => 17, 'format.only_id' => 1);
+    $result = civicrm_api('Contact', 'Get', $params);
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__, $description,$subfile);
+    $this->assertEquals('17' , $result , "in line " . __LINE__ );
+    civicrm_api('Contact', 'Delete', $params) ; 
+   }  
+   
+      /*
+    * Test id only format
+    */
+  function testContactGetFormatSingleValue(){
+    $this->createContactFromXML();
+    $description = "This demonstrates use of the 'format.single_value' param. 
+    /* This param causes only a single value of the only entity to be returned as an string.
+    /* it will be ignored if there is not exactly 1 result";
+    $subfile = "FormatSingleValue";
+    $params = array('version' => 3, 'id' => 17, 'return' => 'display_name');
+    $result = civicrm_api('Contact', 'GetValue', $params);
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__, $description,$subfile);
+    $this->assertEquals('Test Contact' , $result , "in line " . __LINE__ );
+    civicrm_api('Contact', 'Delete', $params) ; 
+   } 
+   
   function testContactCreationPermissions()
   {
     $params = array('contact_type' => 'Individual', 'first_name' => 'Foo', 
@@ -869,7 +1291,14 @@ class api_v3_ContactTest extends CiviUnitTestCase
     $result = civicrm_api('contact', 'update', $params);
     $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to update a contact');
   }
-
+  function createContactFromXML(){
+        //  Insert a row in civicrm_contact creating contact 17
+    $op = new PHPUnit_Extensions_Database_Operation_Insert( );
+    $op->execute( $this->_dbconn,
+    new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
+    dirname(__FILE__)
+    . '/dataset/contact_17.xml') );
+  }
 } // class api_v3_ContactTest
 
 // -- set Emacs parameters --

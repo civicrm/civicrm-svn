@@ -41,7 +41,7 @@
  * Files required for this package
  */
 require_once 'api/v3/utils.php';
-
+require_once 'CRM/Member/BAO/MembershipStatus.php';
 /**
  * Create a Membership Status
  *
@@ -98,31 +98,12 @@ function civicrm_api3_membership_status_create($params) {
  * @access public
  */
 function civicrm_api3_membership_status_get($params) {
-	_civicrm_api3_initialize ( true );
+
 	try {
 		civicrm_api3_verify_mandatory ( $params );
-		
-		require_once 'CRM/Member/BAO/MembershipStatus.php';
-		$membershipStatusBAO = new CRM_Member_BAO_MembershipStatus ();
-		
-		$properties = array_keys ( $membershipStatusBAO->fields () );
-		
-		foreach ( $properties as $name ) {
-			if (array_key_exists ( $name, $params )) {
-				$membershipStatusBAO->$name = $params [$name];
-			}
-		}
-		
-		if ($membershipStatusBAO->find ()) {
-			$membershipStatus = array ();
-			while ( $membershipStatusBAO->fetch () ) {
-				_civicrm_api3_object_to_array ( clone ($membershipStatusBAO), $membershipStatus );
-				$membershipStatuses [$membershipStatusBAO->id] = $membershipStatus;
-			}
-		} else {
-			return civicrm_api3_create_error ( 'Exact match not found' );
-		}
-		return $membershipStatuses;
+
+    return _civicrm_api3_basic_get('CRM_Member_BAO_MembershipStatus', $params);		
+
 	} catch ( PEAR_Exception $e ) {
 		return civicrm_api3_create_error ( $e->getMessage () );
 	} catch ( Exception $e ) {
@@ -195,7 +176,7 @@ function civicrm_api3_membership_status_delete($params) {
 	try {
 		civicrm_api3_verify_mandatory ( $params, null, array ('id' ) );
 		require_once 'CRM/Member/BAO/MembershipStatus.php';
-		$memberStatusDelete = CRM_Member_BAO_MembershipStatus::del ( $params ['id'] );
+		$memberStatusDelete = CRM_Member_BAO_MembershipStatus::del ( $params ['id'], true );
 		return $memberStatusDelete ? civicrm_api3_create_error ( 'Error while deleting membership type Status' ) : civicrm_api3_create_success ();
 	} catch ( PEAR_Exception $e ) {
 		return civicrm_api3_create_error ( $e->getMessage () );

@@ -77,6 +77,21 @@ class api_v2_ActivityContactTest extends CiviUnitTestCase
     }
 
     /**
+     * Tears down the fixture, for example, closes a network connection.
+     * This method is called after a test is executed.
+     *
+     * @access protected
+     */
+    function tearDown()
+    {
+        $tablesToTruncate = array( 'civicrm_contact', 
+                                   'civicrm_activity',
+                                   'civicrm_option_group',
+                                   );
+        $this->quickCleanup( $tablesToTruncate );
+    }
+    
+    /**
      *  Test civicrm_activities_contact_get()
      */
     function testActivitiesContactGet()
@@ -159,7 +174,8 @@ class api_v2_ActivityContactTest extends CiviUnitTestCase
         $result  = civicrm_activity_contact_get( $params );
         $this->assertEquals( $result['is_error'], 0 );
         $this->assertEquals( $result['result'],
-                             '0 activity record matching input params');        
+                             '0 activity record matching input params'); 
+        $this->contactDelete( $contact['contact_id'] ); 
     }
 
 } 

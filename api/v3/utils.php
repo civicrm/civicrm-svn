@@ -82,7 +82,7 @@ function _civicrm_api3_get_DAO ($name) {
       require ('CRM/Core/DAO/.listAll.php');
     }
 
-    
+ 
     
     if (strpos($name, 'civicrm_api3') !== false) {
         $last = strrpos ($name, '_') ;
@@ -91,8 +91,16 @@ function _civicrm_api3_get_DAO ($name) {
           //for some reason pledge_payment doesn't follow normal conventions of BAO being the same as table name
           $name = 'Payment';
         }
+        if($name =='custom_field'){
+          //not handling camel case - there is a function in api.php that we could use?
+          // for now adding example & putting in test for when we fix it
+          $name = 'CustomField';
+        }
+        if($name =='custom_group'){
+         $name = 'CustomGroup';
+        }
         $name = ucfirst ($name);
-    }
+    }  
     return $dao[$name];
 }
 
@@ -245,6 +253,10 @@ function civicrm_api3_create_success( $values = 1,$params=array(),&$dao = null )
     $result['version'] =3;
     if (is_array( $values)) {
         $result['count'] = count( $values);
+
+        // Convert value-separated strings to array
+        _civicrm_api3_separate_values( $values );
+
         if ( $result['count'] == 1 ) {
             list($result['id']) = array_keys($values);
         } elseif ( ! empty($values['id'] ) ) {
@@ -262,6 +274,25 @@ function civicrm_api3_create_success( $values = 1,$params=array(),&$dao = null )
     }
 
     return $result;
+}
+
+/**
+ *  Recursive function to explode value-separated strings into arrays
+ * 
+ */
+function _civicrm_api3_separate_values( &$values )
+{
+  $sp = CRM_Core_DAO::VALUE_SEPARATOR;
+  foreach ($values as &$value) {
+    if (is_array($value)) {
+      _civicrm_api3_separate_values($value);
+    }
+    elseif (is_string($value)) {
+      if (strpos($value, $sp) !== FALSE) {
+        $value = explode($sp, trim($value, $sp));
+      }
+    }
+  }
 }
 
 /**
@@ -382,10 +413,7 @@ function _civicrm_api3_dao_to_array ($dao, $params = null,$uniqueFields = TRUE) 
     }
 
 
-    $fields = array_keys(_civicrm_api3_build_fields_array(&$dao, $uniqueFields));
-    if ($return) {
-        $fields = array_intersect($fields,$return);
-    }
+    $fields = array_keys(_civicrm_api3_build_fields_array($dao, $uniqueFields));
 
     while ( $dao->fetch() ) {
         $tmp = array();
@@ -933,9 +961,9 @@ function _civicrm_api3_check_required_fields( $params, $daoName, $return = FALSE
         if ($v['name'] == 'id') {
             continue;
         }
-
-        if ( isset( $v['required'] ) ) {
-            if ($v['required'] && (empty($params[$k]))) {
+        
+        if ( CRM_Utils_Array::value( 'required', $v ) ) {
+            if ( empty( $params[$k] ) && !( $params[$k] === 0 ) ) { // 0 is a valid input for numbers, CRM-8122
                 $missing[] = $k;
             }
         }
@@ -1031,7 +1059,7 @@ function _civicrm_api3_participant_formatted_param( $params, &$values, $create=f
             unset ($values['participant_contact_id']);
             break;
         case 'participant_register_date':
-            if (!CRM_Utils_Rule::date($value)) {
+            if (!CRM_Utils_Rule::dateTime($value)) {
                 return civicrm_api3_create_error("$key not a valid date: $value");
             }
             break;
@@ -1230,7 +1258,7 @@ function _civicrm_api3_contribute_formatted_param( $params, &$values, $create=fa
         case 'cancel_date':
         case 'receipt_date':
         case 'thankyou_date':
-            if (!CRM_Utils_Rule::date($value)) {
+            if (!CRM_Utils_Rule::dateTime($value)) {
                 return civicrm_api3_create_error("$key not a valid date: $value");
             }
             break;
@@ -1454,207 +1482,8 @@ function _civicrm_api3_contribute_formatted_param( $params, &$values, $create=fa
     return null;
 }
 
-/**
- * take the input parameter list as specified in the data model and 
- * convert it into the same format that we use in QF and BAO object
- *
- * @todo shouldn't it be moved to Membership.php?
- *
- * @param array  $params       Associative array of property name/value
- *                             pairs to insert in new contact.
- * @param array  $values       The reformatted properties that we can use internally
- *
- * @param array  $create       Is the formatted Values array going to
- *                             be used for CRM_Member_BAO_Membership:create()
- *
- * @return array|CRM_Error
- * @access public
- */
-function _civicrm_api3_membership_formatted_param( $params, &$values, $create=false) 
-{
-    require_once "CRM/Member/DAO/Membership.php";
-    $fields =& CRM_Member_DAO_Membership::fields( );
 
-    _civicrm_api3_store_values( $fields, $params, $values );
-    
-    require_once 'CRM/Core/OptionGroup.php';
-    $customFields = CRM_Core_BAO_CustomField::getFields( 'Membership', false, false, null, null, false, false, false );
 
-    foreach ($params as $key => $value) {
-        // ignore empty values or empty arrays etc
-        if ( CRM_Utils_System::isNull( $value ) ) {
-            continue;
-        }
-        
-        //Handling Custom Data
-        if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
-            $values[$key] = $value;
-            $type = $customFields[$customFieldID]['html_type'];
-            if( $type == 'CheckBox' || $type == 'Multi-Select' ) {
-                $mulValues = explode( ',' , $value );
-                $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                $values[$key] = array();
-                foreach( $mulValues as $v1 ) {
-                    foreach($customOption as $customValueID => $customLabel) {
-                        $customValue = $customLabel['value'];
-                        if (( strtolower($customLabel['label']) == strtolower(trim($v1)) ) ||
-                            ( strtolower($customValue) == strtolower(trim($v1)) )) { 
-                            if ( $type == 'CheckBox' ) {
-                                $values[$key][$customValue] = 1;
-                            } else {
-                                $values[$key][] = $customValue;
-                            }
-                        }
-                    }
-                }
-            } else if ( $type == 'Select' || $type == 'Radio' ) {
-                $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                foreach( $customOption as $customFldID => $customValue ) {
-                    $val   = CRM_Utils_Array::value( 'value', $customValue );
-                    $label = CRM_Utils_Array::value( 'label', $customValue );
-                    $label = strtolower( $label );
-                    $value = strtolower( trim( $value ) );
-                    if ( ( $value == $label ) || ( $value == strtolower( $val ) ) ) {
-                        $values[$key] = $val;
-                    }
-                }
-            }
-        }
-
-        switch ($key) {
-        case 'membership_contact_id':
-            if (!CRM_Utils_Rule::integer($value)) {
-                return civicrm_api3_create_error("contact_id not valid: $value");
-            }
-            $dao = new CRM_Core_DAO();
-            $qParams = array();
-            $svq = $dao->singleValueQuery("SELECT id FROM civicrm_contact WHERE id = $value",
-                                          $qParams);
-            if (!$svq) {
-                return civicrm_api3_create_error("Invalid Contact ID: There is no contact record with contact_id = $value.");
-            }
-            $values['contact_id'] = $values['membership_contact_id'];
-            unset($values['membership_contact_id']);
-            break;
-        case 'join_date':
-        case 'membership_start_date':
-        case 'membership_end_date':
-            if (!CRM_Utils_Rule::date($value)) {
-                return civicrm_api3_create_error("$key not a valid date: $value");
-            }
-            break;
-        case 'membership_type_id':
-            $id = CRM_Core_DAO::getFieldValue( "CRM_Member_DAO_MembershipType", $value, 'id', 'name' );
-            $values[$key] = $id;
-            break;
-        case 'status_id':
-            $id = CRM_Core_DAO::getFieldValue( "CRM_Member_DAO_MembershipStatus", $value, 'id', 'name' );
-            $values[$key] = $id;
-            break;
-        case 'member_is_test':
-            $values['is_test'] = CRM_Utils_Array::value( $key, $params, false );
-            unset($values['member_is_test']);
-            break;
-        default:
-            break;
-        }
-    }
-    
-    if ( $create ) {
-        // CRM_Member_BAO_Membership::create() handles membership_start_date,
-        // membership_end_date and membership_source. So, if $values contains
-        // membership_start_date, membership_end_date  or membership_source,
-        // convert it to start_date, end_date or source
-        $changes = array('membership_start_date' => 'start_date',
-                         'membership_end_date'   => 'end_date',
-                         'membership_source'     => 'source',
-                         );
-        
-        foreach ($changes as $orgVal => $changeVal) {
-            if ( isset($values[$orgVal]) ) {
-                $values[$changeVal] = $values[$orgVal];
-                unset($values[$orgVal]);
-            }
-        }
-    }
-    
-    return null;
-}
-
-/**
- * take the input parameter list as specified in the data model and 
- * convert it into the same format that we use in QF and BAO object
- *
- * @param array  $params       Associative array of property name/value
- *                             pairs to insert in new contact.
- * @param array  $values       The reformatted properties that we can use internally
- *
- * @param array  $create       Is the formatted Values array going to
- *                             be used for CRM_Activity_BAO_Activity::create()
- *
- * @return array|CRM_Error
- * @access public
- */
-function _civicrm_api3_activity_formatted_param( $params, &$values, $create=false) 
-{
-    $fields =& CRM_Activity_DAO_Activity::fields( );
-    _civicrm_api3_store_values( $fields, $params, $values );
-    
-    require_once 'CRM/Core/OptionGroup.php';
-    $customFields = CRM_Core_BAO_CustomField::getFields( 'Activity', false, false, null, null, false, false, false );
-
-    foreach ($params as $key => $value) {
-        // ignore empty values or empty arrays etc
-        if ( CRM_Utils_System::isNull( $value ) ) {
-            continue;
-        }
-
-        //Handling Custom Data
-        if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
-            $values[$key] = $value;
-            $type = $customFields[$customFieldID]['html_type'];
-            if( $type == 'CheckBox' || $type == 'Multi-Select' ) {
-                $mulValues = explode( ',' , $value );
-                $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                $values[$key] = array();
-                foreach( $mulValues as $v1 ) {
-                    foreach($customOption as $customValueID => $customLabel) {
-                        $customValue = $customLabel['value'];
-                        if (( strtolower($customLabel['label']) == strtolower(trim($v1)) ) ||
-                            ( strtolower($customValue) == strtolower(trim($v1)) )) { 
-                            if ( $type == 'CheckBox' ) {
-                                $values[$key][$customValue] = 1;
-                            } else {
-                                $values[$key][] = $customValue;
-                            }
-                        }
-                    }
-                }
-            } else if ( $type == 'Select' || $type == 'Radio' ) {
-                $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                foreach( $customOption as $customFldID => $customValue ) {
-                    $val   = CRM_Utils_Array::value( 'value', $customValue );
-                    $label = CRM_Utils_Array::value( 'label', $customValue );
-                    $label = strtolower( $label );
-                    $value = strtolower( trim( $value ) );
-                    if ( ( $value == $label ) || ( $value == strtolower( $val ) ) ) {
-                        $values[$key] = $val;
-                    }
-                }
-            }
-        } else if ( $key == 'target_contact_id' ) {
-            if ( !CRM_Utils_Rule::integer( $value ) ) {
-                return civicrm_api3_create_error("contact_id not valid: $value");
-            }
-            $contactID = CRM_Core_DAO::singleValueQuery( "SELECT id FROM civicrm_contact WHERE id = $value" );
-            if ( !$contactID ) {
-                return civicrm_api3_create_error("Invalid Contact ID: There is no contact record with contact_id = $value.");
-            }
-        }
-        
-    }
-    return null;
-}
 
 /**
  *  Function to check duplicate contacts based on de-deupe parameters
@@ -1734,8 +1563,8 @@ function civicrm_api3_check_contact_dedupe( $params ) {
  */
 function civicrm_api3_api_check_permission($entity, $action, &$params, $throw = true)
 {
-    // return early if we’re told explicitly to skip the permission check
-    if (isset($params['check_permissions']) and $params['check_permissions'] == false) return true;
+    // return early unless we’re told explicitly to do the permission check
+    if (empty($params['check_permissions']) or $params['check_permissions'] == false) return true;
 
     require_once 'CRM/Core/Permission.php';
 
@@ -1801,3 +1630,34 @@ function _civicrm_api3_basic_delete($bao_name, &$params){
     return civicrm_api3_create_success( true );
 }
 
+/*
+ * Get custom data for the given entity & Add it to the returnArray as 'custom_123' = 'custom string' AND 'custom_123_1' = 'custom string'
+ * Where 123 is field value & 1 is the id within the custom group data table (value ID)
+ * 
+ * @param array $returnArray - array to append custom data too - generally $result[4] where 4 is the entity id.
+ * @param string $entity  e.g membership, event 
+ * @param int $groupID - per CRM_Core_BAO_CustomGroup::getTree
+ * @param int $subType e.g. membership_type_id where custom data doesn't apply to all membership types
+ * @param string $subName - Subtype of entity 
+ * 
+ */
+function _civicrm_api3_custom_data_get(&$returnArray,$entity,$entity_id ,$groupID = null,$subType = null, $subName = null){
+     require_once 'CRM/Core/BAO/CustomGroup.php'; 
+     $groupTree =& CRM_Core_BAO_CustomGroup::getTree($entity, 
+                                                      CRM_Core_DAO::$_nullObject, 
+                                                      $entity_id , 
+                                                      $groupID,
+                                                      $subType,
+                                                      $subName);
+     $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, CRM_Core_DAO::$_nullObject );
+     $customValues = array( );
+     CRM_Core_BAO_CustomGroup::setDefaults( $groupTree, $customValues );
+     if ( !empty( $customValues ) ) {
+       foreach ( $customValues as $key => $val ) {
+          // per standard - return custom_fieldID
+          $returnArray['custom_' . (CRM_Core_BAO_CustomField::getKeyID($key))] = $val;
+          //not standard - but some api did this so guess we should keep - cheap as chips
+          $returnArray[$key] = $val;
+        }
+      }
+}

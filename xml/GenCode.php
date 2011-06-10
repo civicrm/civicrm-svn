@@ -282,7 +282,7 @@ file_put_contents("$tplCodePath/CRM/common/version.tpl", $svnversion);
 echo "Generating civicrm-version file\n";
 $smarty->assign('db_version',$db_version);
 $smarty->assign('cms',ucwords($cms));
-file_put_contents( $phpCodePath . "civicrm-version.txt", $smarty->fetch( 'civicrm_version.tpl' ));
+file_put_contents( $phpCodePath . "civicrm-version.php", $smarty->fetch( 'civicrm_version.tpl' ));
 
 // unlink the templates_c directory
 foreach(glob($tempDir . '/templates_c/*') as $tempFile) {

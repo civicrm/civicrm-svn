@@ -67,7 +67,7 @@ class civicrm_handler_field_state extends views_handler_field {
         parent::options_form($form, $form_state);
         $form['prov_display'] = array(
                                       '#type' => 'radios',
-                                      '#title' => 'Phone type for this field',
+                                      '#title' => 'Display complete name or abbreviation',
                                       '#options' => array(1 => 'Display state/province abbreviations', 2 => 'Display full state/province name'),
                                       '#description' => t('Display full or abbreviated province name'),
                                       '#default_value' => $this->options['prov_display']

@@ -189,7 +189,7 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation
      */
     static function getNavigationList( ) 
     {
-        $cacheKeyString = "navigationList ";
+        $cacheKeyString = "navigationList";
         $whereClause    = '';
 
         $config = CRM_Core_Config::singleton( );
@@ -429,7 +429,7 @@ ORDER BY parent_id, weight";
         $i18n =& CRM_Core_I18n::singleton();
 
         $name       = $i18n->crm_translate($value['attributes']['label'], array('context' => 'menu'));
-        $url        = str_replace('&', '&amp;', $value['attributes']['url']);
+        $url        = $value['attributes']['url'];
         $permission = $value['attributes']['permission'];
         $operator   = $value['attributes']['operator'];
         $parentID   = $value['attributes']['parentID'];
@@ -460,9 +460,8 @@ ORDER BY parent_id, weight";
             } else {
                 //CRM-7656 --make sure to separate out url path from url params,
                 //as we'r going to validate url path across cross-site scripting.
-                $urlVars = explode( '&amp;', $url, 2 );
-                $url = CRM_Utils_System::url( $urlVars[0],
-                                              CRM_Utils_Array::value( 1, $urlVars ) );
+                $urlParam = CRM_Utils_System::explode( '&', str_replace( '?', '&', $url ), 2 );
+                $url      = CRM_Utils_System::url( $urlParam[0], $urlParam[1], false, null, false );
             }
             $makeLink = true;
         }

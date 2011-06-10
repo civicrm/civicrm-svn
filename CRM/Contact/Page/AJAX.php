@@ -608,6 +608,7 @@ WHERE sort_name LIKE '%$name%'";
         // reset the group contact cache for this group
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::remove( );
+        CRM_Utils_System::civiExit( );
     }
 
     /**
@@ -782,6 +783,29 @@ LIMIT {$offset}, {$rowCount}
        $subTypes = CRM_Contact_BAO_ContactType::subTypePairs( $contactType, false, null );
        asort($subTypes);
        echo json_encode( $subTypes );
+       CRM_Utils_System::civiExit( );
+    }
+    
+    static function buildDedupeRules( ) 
+    {
+       $parent = CRM_Utils_Array::value( 'parentId', $_POST );
+
+       switch ( $parent ) {
+            case 1:
+                $contactType = 'Individual';
+                break;
+            case 2:
+                $contactType = 'Household';
+                break;
+            case 4:
+                $contactType = 'Organization';
+                break;
+       }
+ 
+       require_once 'CRM/Dedupe/BAO/RuleGroup.php';
+       $dedupeRules = CRM_Dedupe_BAO_RuleGroup::getByType( $contactType );
+
+       echo json_encode( $dedupeRules );
        CRM_Utils_System::civiExit( );
     }
     
@@ -1039,6 +1063,36 @@ LIMIT {$offset}, {$rowCount}
 
        CRM_Utils_System::civiExit( );
   
+    }
+
+    /**
+     * Function to retrieve a PDF Page Format for the PDF Letter form
+     */
+    function pdfFormat(  ) 
+    {
+        require_once 'CRM/Utils/Type.php';
+        $formatId = CRM_Utils_Type::escape( $_POST['formatId'], 'Integer' );
+
+        require_once "CRM/Core/BAO/PdfFormat.php";
+        $pdfFormat = CRM_Core_BAO_PdfFormat::getById( $formatId );
+
+        echo json_encode( $pdfFormat );
+        CRM_Utils_System::civiExit( );
+    }
+
+    /**
+     * Function to retrieve Paper Size dimensions
+     */
+    function paperSize(  ) 
+    {
+        require_once 'CRM/Utils/Type.php';
+        $paperSizeName = CRM_Utils_Type::escape( $_POST['paperSizeName'], 'String' );
+
+        require_once "CRM/Core/BAO/PaperSize.php";
+        $paperSize = CRM_Core_BAO_PaperSize::getByName( $paperSizeName );
+
+        echo json_encode( $paperSize );
+        CRM_Utils_System::civiExit( );
     }
 
 }

@@ -118,10 +118,18 @@ class CRM_Core_Extensions
             $cache = $this->_extDir . DIRECTORY_SEPARATOR . 'cache';
             require_once 'CRM/Utils/File.php';
             if( is_writable( $this->_extDir ) ) {
-                if( !file_exists( $tmp ) ) { CRM_Utils_File::createDir( $tmp ); }
-                if( !file_exists( $cache ) ) { CRM_Utils_File::createDir( $cache ); }
+                if ( !file_exists( $tmp ) ) { 
+                    CRM_Utils_File::createDir( $tmp );
+                }
+                if ( !file_exists( $cache ) ) {
+                    CRM_Utils_File::createDir( $cache );
+                }
             } else {
-                CRM_Core_Error::fatal( 'Your extensions directory is not web server writable.' );
+                $url = CRM_Utils_System::url( 'civicrm/admin/setting/path', 'reset=1' );
+                CRM_Core_Session::setStatus( 'Your extensions directory: %1 is not web server writable. Please go to the <a href="%2">path setting page</a> and correct it.',
+                                             array( 1 => $this->_extDir,
+                                                    2 => $url ) );
+                $this->_extDir = null;
             }
         }
     }
@@ -604,6 +612,10 @@ class CRM_Core_Extensions
         require_once 'CRM/Utils/VersionCheck.php';
         ini_set('default_socket_timeout', CRM_Utils_VersionCheck::CHECK_TIMEOUT);
         set_error_handler(array('CRM_Utils_VersionCheck', 'downloadError'));
+        
+        if ( !ini_get('allow_url_fopen') ) {
+            ini_set( 'allow_url_fopen', 1 );
+        }
 
         $extdir = file_get_contents( self::PUBLIC_EXTENSIONS_REPOSITORY );
 
@@ -627,7 +639,9 @@ class CRM_Core_Extensions
             CRM_Core_Error::fatal('Malformed extensions list on public directory - please contact CiviCRM team on forums.');
         }
 
+        ini_restore('allow_url_fopen');
         ini_restore('default_socket_timeout');
+
         restore_error_handler();
         
         return $exts;

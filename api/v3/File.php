@@ -44,7 +44,7 @@
  * Files required for this package
  */
 require_once 'api/v3/utils.php';
-
+require_once 'CRM/Core/DAO/File.php';
 /**
  * Create a file
  *
@@ -106,29 +106,9 @@ function civicrm_api3_file_get($params)
   try{
      
 
-    civicrm_api3_verify_one_mandatory($params, null,array('file_type_id','id'));
+    civicrm_api3_verify_one_mandatory($params);
+    return _civicrm_api3_basic_get('CRM_Contact_DAO_GroupOrganization', $params);
 
-    require_once 'CRM/Core/DAO/File.php';
-    $fileDAO = new CRM_Core_DAO_File();
-
-    $properties = array('id', 'file_type_id', 'mime_type', 'uri', 'document', 'description', 'upload_date');
-
-    foreach ( $properties as $name) {
-      if (array_key_exists($name, $params)) {
-        $fileDAO->$name = $params[$name];
-      }
-    }
-
-    if ( $fileDAO->find() ) {
-      $file = array();
-      while ( $fileDAO->fetch() ) {
-        _civicrm_api3_object_to_array( clone($fileDAO), $file );
-        $files[$fileDAO->id] = $file;
-      }
-    } else {
-      return civicrm_api3_create_error('Exact match not found');
-    }
-    return $files;
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {

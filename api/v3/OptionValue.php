@@ -65,10 +65,11 @@ function civicrm_api3_option_value_create( $params )
     civicrm_api3_verify_mandatory ($params,'CRM_Core_BAO_OptionValue');
     
     require_once 'CRM/Core/BAO/OptionValue.php';
-    $option_valueBAO = CRM_Core_BAO_OptionValue::add($params);
+    $ids             = array( 'optionValue' => $params['id'] );
+    $optionValueBAO = CRM_Core_BAO_OptionValue::add( $params, $ids );
 
     $values = array( );
-    _civicrm_api3_object_to_array($option_valueBAO, $values[$option_valueBAO->id]);
+    _civicrm_api3_object_to_array($optionValueBAO, $values[$optionValueBAO->id]);
     return civicrm_api3_create_success($values,$params);
   } catch (Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );

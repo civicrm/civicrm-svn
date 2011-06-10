@@ -399,7 +399,7 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
         if ( $this->_context == 'user' ) {
             $query->setSkipPermission( true );
         }
-        $summary =& $query->summaryContribution( );
+        $summary =& $query->summaryContribution( $this->_context );
         $this->set( 'summary', $summary );
         $this->assign( 'contributionSummary', $summary );
         $controller->run(); 

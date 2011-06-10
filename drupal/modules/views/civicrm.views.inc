@@ -3748,11 +3748,15 @@ function civicrm_views_data() {
 
     $data['civicrm_relationship']['contact_id_a'] = array(
                                                           'title' => t('Contact ID A'),
+                                                          'real field' => 'contact_id_a',
                                                           'help' => t('The contact A'),
                                                           'relationship' => array(
                                                                                   'base' => 'civicrm_contact',
                                                                                   'field' => 'id',
-                                                                                  'handler' => 'views_handler_relationship',
+                                                                                  'relationship table' => 'civicrm_relationship',
+                                                                                  'relationship field' => 'contact_id_a',
+                                                                                  'other_field' => 'contact_id_b',
+                                                                                  'handler' => 'civicrm_handler_relationship',
                                                                                   'label' => t('CiviCRM Contact A'),
                                                                                   ),
                                                           );
@@ -3768,14 +3772,16 @@ function civicrm_views_data() {
                                                           'argument' => array(
                                                                               'handler' => 'views_handler_argument',
                                                                               ),
-                                                          'relationship' => array(
-                                                                                  'base' => 'civicrm_contact',
-                                                                                  'field' => 'id',
-                                                                                  'handler' => 'views_handler_relationship',
-                                                                                  'label' => t('CiviCRM Contact B'),
-                                                                                  ),
+                                                            'relationship' => array(
+                                                                                    'base' => 'civicrm_contact',
+                                                                                    'field' => 'id',
+                                                                                    'relationship table' => 'civicrm_relationship',
+                                                                                    'relationship field' => 'contact_id_b',
+                                                                                    'other_field' => 'contact_id_a',
+                                                                                    'handler' => 'civicrm_handler_relationship',
+                                                                                    'label' => t('CiviCRM Contact B'),
+                                                                                    ),
                                                           );
-
 
     $data['civicrm_relationship']['description'] = array(
                                                          'title' => t('Description'),
@@ -5888,24 +5894,30 @@ function civicrm_views_add_fields( &$fields, &$data, &$skipFields, $tableName ) 
             continue;
         }
 
-        $type = CRM_Utils_Array::value( 'type', $value );
+        $type = CRM_Utils_Array::value( 'type', $value, 'String' );
 
-        $data[CRM_Utils_Array::value('name', $value)] = array(
+        $data[$value['name']] = array(
                                       'title' => $value['title'],
                                       'help'  => $value['title'],
                                       'field' => array( 
-                                                       'handler' => civicrm_get_field_handler  ( $value['type'] ),
+                                                       'handler' => civicrm_get_field_handler  ( $type ),
                                                        'click sortable' => true,
                                                         ),
                                       'sort'  => array(
-                                                       'handler' => civicrm_get_sort_handler   ( $value['type'] ),
+                                                       'handler' => civicrm_get_sort_handler   ( $type ),
                                                        ),
                                       'filter' => array(
-                                                        'handler' => civicrm_get_filter_handler( $value['type'] ),
+                                                        'handler' => civicrm_get_filter_handler( $type ),
                                                         ),
+                                      'argument' => array(
+                                                          'handler' => civicrm_get_argument_handler ( $type ),
+                                                          ),                                      
                                       );
-        //For date fields add in 6 arguments
-        if ( isset($value['type']) && $value['type'] == 4 ){
+        );
+
+        // For date fields add in 6 arguments
+        // not sure how its numeric here, but leaving it as is for now
+        if ( $type == 4 ){
             civicrm_views_add_date_arguments($data,$value);
         }
     }
@@ -6031,7 +6043,7 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
         $customHTMLTypes = array( 'Select', 'Multi-Select', 'AdvMulti-Select', 'Radio', 'CheckBox', 
                                   'Select State/Province', 'Select Country', 'Multi-Select Country',
                                   'Multi-Select State/Province', 'Autocomplete-Select' );
-        $customMultiValueHTMLTypes = array( 'Multi-Select', 'AdvMulti-Select','Multi-Select Country',
+        $customMultiValueHTMLTypes = array( 'Multi-Select', 'AdvMulti-Select', 'CheckBox', 'Multi-Select Country',
                                             'Multi-Select State/Province');
 
         foreach ($currentgroupfields as $key => $currentfield) {
@@ -6518,7 +6530,11 @@ function civicrm_views_handlers() {
                        'civicrm_handler_sort_date' => array(
                                                             'parent' => 'views_handler_sort_date',
                                                             ),
-                       ),
+                       //Relationship Handlers
+                       'civicrm_handler_relationship' => array(
+                                                           'parent'=> 'views_handler_relationship',
+                                                            ),
+                        ),
 
                  );
                  

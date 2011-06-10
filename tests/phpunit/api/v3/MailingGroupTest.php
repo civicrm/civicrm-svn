@@ -60,7 +60,7 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase
     
     function tearDown( ) 
     {
-        $this-> groupDelete( $this->_groupID );
+        $this->groupDelete( $this->_groupID );
     }
     
     //---------- civicrm_mailing_event_subscribe methods ---------
@@ -129,10 +129,9 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase
                         'hash'         => 'b15de8b64e2cec34',
                         'time_stamp'   => '20101212121212'
                         );
-        $result =& civicrm_api3_mailing_group_event_subscribe($params);
-        $this->documentMe($params,$group,__FUNCTION__,__FILE__);    
-        print_r($result);     
-        $this->assertEquals($result['is_error'], 0);
+        $result = civicrm_api3_mailing_group_event_subscribe($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);    
+        $this->assertEquals($result['is_error'], 0, 'in line ' . __LINE__);
         $this->assertEquals($result['values']['contact_id'], $contactID);
 
         $this->contactDelete( $contactID );

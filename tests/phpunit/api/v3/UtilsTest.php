@@ -170,19 +170,27 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
 	 * Test GET DAO function returns DAO
 	 */
 	function testGetDAO(){
+	 $DAO =  _civicrm_api3_get_DAO ('civicrm_api3_custom_field_get');
+	 $this->assertEquals('CRM_Core_DAO_CustomField', $DAO );
 	 $DAO =  _civicrm_api3_get_DAO ('civicrm_api3_survey_get');
 	 $this->assertEquals('CRM_Campaign_DAO_Survey', $DAO );
 	 $DAO =  _civicrm_api3_get_DAO ('civicrm_api3_pledge_payment_get');
 	 $this->assertEquals('CRM_Pledge_DAO_Payment', $DAO );
+	 $DAO =  _civicrm_api3_get_DAO ('civicrm_api3_website_get');
+	 $this->assertEquals('CRM_Core_DAO_Website', $DAO );
+	  
 	}
 	/*
 	 * Test GET DAO function returns DAO
 	 */
 	function testGetBAO(){
+	 $BAO =  _civicrm_api3_get_BAO ('civicrm_api3_website_get');
+	 $this->assertEquals('CRM_Core_BAO_Website', $BAO );
 	 $BAO =  _civicrm_api3_get_BAO ('civicrm_api3_survey_get');
 	 $this->assertEquals('CRM_Campaign_BAO_Survey', $BAO );
 	 $BAO =  _civicrm_api3_get_BAO ('civicrm_api3_pledge_payment_get');
 	 $this->assertEquals('CRM_Pledge_BAO_Payment', $BAO );
+
 	}
 	
 }

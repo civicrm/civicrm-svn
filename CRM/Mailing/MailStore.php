@@ -39,7 +39,7 @@ require_once 'CRM/Core/DAO/MailSettings.php';
 class CRM_Mailing_MailStore
 {
     // flag to decide whether to print debug messages
-    var $_debug = true;
+    var $_debug = false;
 
     /**
      * Return the proper mail store implementation, based on config settings

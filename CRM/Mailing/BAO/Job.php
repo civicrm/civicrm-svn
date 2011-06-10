@@ -61,8 +61,6 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
     public static function runJobs($testParams = null) {
         $job = new CRM_Mailing_BAO_Job();
         
-        // $mailing = new CRM_Mailing_DAO_Mailing();
-        
         $config = CRM_Core_Config::singleton();
         $jobTable     = CRM_Mailing_DAO_Job::getTableName();
         $mailingTable = CRM_Mailing_DAO_Mailing::getTableName();
@@ -366,10 +364,10 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
        } else {
            // Creating 'child jobs'
            for($i = 0; $i< $recipient_count; $i=$i+$offset) {
-	       $params[6][0] = $i;
-	       $params[7][0] = $offset;
-	       CRM_Core_DAO::executeQuery( $sql, $params );
-	   }
+               $params[6][0] = $i;
+               $params[7][0] = $offset;
+               CRM_Core_DAO::executeQuery( $sql, $params );
+           }
        }
    }
 
@@ -386,9 +384,6 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
             require_once 'CRM/Mailing/BAO/Recipients.php';
             $recipients = CRM_Mailing_BAO_Recipients::mailingQuery($this->mailing_id, $this->job_offset, $this->job_limit);
 
-            // Here we will use the parent jobid to fetch the recipients, except 
-            // we will introduce the limit and offset from the child job DAO object
-            // to only pick up a segment of the recipients instead of the whole.
             while ($recipients->fetch()) {
                 $params = array(
                                 // job_id should be the child job id
@@ -538,7 +533,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
 
             // disable error reporting on real mailings (but leave error reporting for tests), CRM-5744
             if ($job_date) {
-	        CRM_Core_Error::ignoreException();
+                CRM_Core_Error::ignoreException();
             }
 
             // hack to stop mailing job at run time, CRM-4246.

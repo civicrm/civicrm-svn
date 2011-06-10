@@ -65,31 +65,31 @@ class CRM_Admin_Page_Admin extends CRM_Core_Page
                          'Option Lists' => ts( 'Option Lists' ) );
 
         $config = CRM_Core_Config::singleton( );
-        if ( in_array("CiviContribute", $config->enableComponents) ) {
+        if ( in_array('CiviContribute', $config->enableComponents) ) {
             $groups['CiviContribute'] = ts( 'CiviContribute' );
         }
         
-        if ( in_array("CiviMember", $config->enableComponents) ) {
+        if ( in_array('CiviMember', $config->enableComponents) ) {
             $groups['CiviMember'] = ts( 'CiviMember' );
         }
 
-        if ( in_array("CiviEvent", $config->enableComponents) ) {
+        if ( in_array('CiviEvent', $config->enableComponents) ) {
             $groups['CiviEvent'] = ts( 'CiviEvent' );
         }
 
-        if ( in_array("CiviMail", $config->enableComponents) ) {
+        if ( in_array('CiviMail', $config->enableComponents) ) {
             $groups['CiviMail'] = ts( 'CiviMail' );
         }
 
-        if ( in_array("CiviCase", $config->enableComponents) ) {
+        if ( in_array('CiviCase', $config->enableComponents) ) {
             $groups['CiviCase'] = ts( 'CiviCase' );
         }
         
-        if ( in_array("CiviReport", $config->enableComponents) ) {
+        if ( in_array('CiviReport', $config->enableComponents) ) {
             $groups['CiviReport'] = ts( 'CiviReport' );
         }
 
-        if ( in_array("CiviCampaign", $config->enableComponents) ) {
+        if ( in_array('CiviCampaign', $config->enableComponents) ) {
             $groups['CiviCampaign'] = ts( 'CiviCampaign' );
         }
 

@@ -44,6 +44,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                          );
         $result = CRM_Contact_BAO_ContactType::add( $params );
         $this->subTypeIndividual = $params['name'];  
+        $this->_subTypeIndividualId = $result->id;        
         
         $params = array( 'label'     => 'sub_organization',
                          'name'      => 'sub_organization',
@@ -52,6 +53,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                          );
         $result = CRM_Contact_BAO_ContactType::add( $params );
         $this->subTypeOrganization = $params['name'];
+        $this->_subTypeOrganizationId = $result->id;        
         
         $params = array( 'label'     => 'sub_household',
                          'name'      => 'sub_household',
@@ -60,6 +62,22 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                          );
         $result = CRM_Contact_BAO_ContactType::add( $params );
         $this->subTypeHousehold = $params['name'];
+        $this->_subTypeHouseholdId = $result->id;        
+    }
+
+    /**
+     * Tears down the fixture, for example, closes a network connection.
+     * This method is called after a test is executed.
+     *
+     */
+    function tearDown( )
+    {
+        $contactTypeIds = array( $this->_subTypeIndividualId, 
+                                 $this->_subTypeOrganizationId, 
+                                 $this->_subTypeHouseholdId );
+        foreach ( $contactTypeIds as $typeId ) {
+            $this->contactTypeDelete( $typeId );
+        }
     }
    
     /*

@@ -176,12 +176,12 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
     function createRelationships( $relationshipTypeName,
                                   &$params ) {
         $relationshipTypes =& $this->allRelationshipTypes( );
-
         // get the relationship id
         $relationshipTypeID = array_search( $relationshipTypeName,
                                             $relationshipTypes );
         if ( $relationshipTypeID === false ) {
-            CRM_Core_Error::fatal( );
+            CRM_Core_Error::fatal(ts('Relationship type %1, found in case configuration file, is not present in the database %2',
+                                  array(1 => $relationshipTypeName, 2 => $docLink)));
             return false;
         }
         

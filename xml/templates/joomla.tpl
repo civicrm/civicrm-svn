@@ -12,6 +12,9 @@
 	  <filename>civicrm.php</filename>
 	  <filename>civicrm.html.php</filename>
 	  <folder>views</folder>
+	  <folder>elements</folder>
+  </files>
+  <files folder="elements">
   </files>
   <install>
     <queries>
@@ -36,6 +39,7 @@
 {else}
       <filename>civicrm.zip</filename>
 {/if}
+      <folder>helpers</folder>
     </files> 
     <languages folder="admin">
       <language tag="en-GB">language/en-GB/en-GB.com_civicrm.ini</language>

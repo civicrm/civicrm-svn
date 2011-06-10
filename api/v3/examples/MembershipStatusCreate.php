@@ -1,12 +1,16 @@
-<?php 
+<?php
 
+
+
+/*
+ 
+ */
 function membership_status_create_example(){
-    $params = array(
-    
-                  'name' 		=> 'test membership status',
-                  'version' 		=> '3',
+$params = array( 
+  'name' => 'test membership status',
+  'version' => 3,
+);
 
-  );
   require_once 'api/api.php';
   $result = civicrm_api( 'membership_status','create',$params );
 
@@ -18,16 +22,30 @@ function membership_status_create_example(){
  */
 function membership_status_create_expectedresult(){
 
-  $expectedResult = 
-     array(
-           'is_error' 		=> '0',
-           'version' 		=> '3',
-           'count' 		=> '2',
-           'id' 		=> '9',
-           'values' 		=> array(           'id' => '9',                      'is_error' => '0',           ),
-      );
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 2,
+  'id' => 16,
+  'values' => array( 
+      'id' => 16,
+      'is_error' => 0,
+    ),
+);
 
   return $expectedResult  ;
 }
 
-
+
+
+
+/*
+* This example has been generated from the API test suite. The test that created it is called
+* membership_status_create 
+* You can see the outcome of the API tests at 
+* http://tests.dev.civicrm.org/trunk/results-api_v3
+* and review the wiki at
+* http://wiki.civicrm.org/confluence/display/CRMDOC40/CiviCRM+Public+APIs
+* Read more about testing here
+* http://wiki.civicrm.org/confluence/display/CRM/Testing
+*/

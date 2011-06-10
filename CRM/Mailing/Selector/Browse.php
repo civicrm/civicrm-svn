@@ -333,6 +333,20 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
         $allowToDelete = CRM_Core_Permission::check( 'delete in CiviMail' );
         
         if ( $output != CRM_Core_Selector_Controller::EXPORT ) {
+
+            //create the appropriate $op to use for hook_civicrm_links
+            $pageTypes = array('view', 'mailing', 'browse');
+            if($this->_parent->_unscheduled) {
+              $pageTypes[] = 'unscheduled';
+            }
+            if($this->_parent->_scheduled) {
+              $pageTypes[] = 'scheduled';
+            }
+            if($this->_parent->_archived) {
+              $pageTypes[] = 'archived';
+            }
+            $opString = implode('.', $pageTypes);
+
             foreach ( $rows as $key => $row ) {
                 $actionMask = null;
                 if ( !( $row['status'] == 'Not scheduled' ) ) {
@@ -388,7 +402,12 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
                 $rows[$key]['action'] = 
                     CRM_Core_Action::formLink( $actionLinks,
                                                $actionMask,
-                                               array( 'mid' => $row['id'] ) );
+                                               array( 'mid' => $row['id']),
+                                               "more",
+                                               false,
+                                               $opString,
+                                               "Mailing",
+                                               $row['id'] );
 
                 //unset($rows[$key]['id']);
                 // if the scheduled date is 0, replace it with an empty string

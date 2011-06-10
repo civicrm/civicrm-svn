@@ -114,7 +114,8 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
                 $to   = '"' . $toDisplayName . '"' . "<$toEmail>";
                 $from = '"' . $domainEmailName . '" <' . $domainEmailAddress . '>';
                 $testMailStatusMsg = ts( 'Sending test email. FROM: %1 TO: %2.<br />', array( 1 => $domainEmailAddress, 2 => $toEmail ));
-                    
+
+                $params = array( );
                 if ($formValues['outBound_option'] == 0) {
                     $subject = "Test for SMTP settings";
                     $message = "SMTP settings are correct.";
@@ -149,7 +150,7 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
                                  'Subject'                   => $subject,
                                  );
                 
-                $mailer =& Mail::factory( $mailerName );
+                $mailer =& Mail::factory( $mailerName, $params );
                 
                 CRM_Core_Error::ignoreException( );
                 $result = $mailer->send( $toEmail, $headers, $message );
