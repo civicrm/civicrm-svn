@@ -79,19 +79,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             CRM_Utils_Hook::pre( 'create', 'Membership', null, $params ); 
         }
         
-        // converting dates to mysql format
-        if ( isset( $params['join_date'] ) ) {
-            $params['join_date']  = CRM_Utils_Date::isoToMysql($params['join_date']);
-        }
-        if ( isset( $params['start_date'] ) ) {
-            $params['start_date'] = CRM_Utils_Date::isoToMysql($params['start_date']);
-        }
-        if ( CRM_Utils_Array::value( 'end_date', $params ) ) {
-            $params['end_date']   = CRM_Utils_Date::isoToMysql($params['end_date']);
-        }
-        if ( CRM_Utils_Array::value( 'reminder_date', $params ) ) { 
-            $params['reminder_date']  = CRM_Utils_Date::isoToMysql($params['reminder_date']);
-        } else {
+        if ( !CRM_Utils_Array::value( 'reminder_date', $params ) ) { 
             $params['reminder_date'] = 'null';        
         }
         
@@ -127,12 +115,12 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         $membershipLog = array('membership_id' => $membership->id,
                                'status_id'     => $membership->status_id,
                                'start_date'    => $logStartDate,
-                               'end_date'      => $membership->end_date,
+                               'end_date'      => CRM_Utils_Date::isoToMysql( $membership->end_date ),
                                'renewal_reminder_date' => $membership->reminder_date, 
                                'modified_date' => date('Ymd'),
         					   'membership_type_id' => $values[$membership->id]['membership_type_id']
                                );
-                
+        
         $session = CRM_Core_Session::singleton();
         // If we have an authenticated session, set modified_id to that user's contact_id, else set to membership.contact_id
 		if ( $session->get( 'userID' ) ){
@@ -221,13 +209,16 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             require_once 'CRM/Utils/Date.php';
             $startDate = $endDate = $joinDate = null;
             if ( isset( $params['start_date'] ) ) {
-                $startDate  = CRM_Utils_Date::customFormat($params['start_date'],'%Y%m%d');
+                $startDate = $params['start_date'];
             }
-            if ( isset( $params['end_date'] ) ) {
-                $endDate    = CRM_Utils_Date::customFormat($params['end_date'],'%Y%m%d');
+
+            if ( array_key_exists( 'end_date', $params ) ) {
+                $endDate            = $params['end_date'];
+                $params['end_date'] = CRM_Utils_Date::processDate( $endDate, null, true, 'Ymd' );
             }
+            
             if ( isset( $params['join_date'] ) ) {
-                $joinDate   = CRM_Utils_Date::customFormat($params['join_date'],'%Y%m%d');
+                $joinDate = $params['join_date'];
             }
 
             require_once 'CRM/Member/BAO/MembershipStatus.php';
@@ -1072,7 +1063,8 @@ AND civicrm_membership.is_test = %2";
      * @return void
      * @access public
      */                                   
-    public function postProcessMembership( $membershipParams, $contactID ,&$form, &$premiumParams)
+    public function postProcessMembership( $membershipParams, $contactID ,&$form, &$premiumParams, 
+                                           $customFieldsFormatted = null )
     {
     	$tempParams  = $membershipParams;
         $paymentDone = false;
@@ -1200,10 +1192,13 @@ AND civicrm_membership.is_test = %2";
         $index = $memBlockDetails['is_separate_payment'] ? 2 : 1;
 
         if ( ! CRM_Utils_Array::value( $index, $errors ) ) {
-            
+            if ( CRM_Utils_Array::value( 'member_campaign_id', $membershipParams['onbehalf'] ) ) {
+                $form->_params['campaign_id'] = $membershipParams['onbehalf']['member_campaign_id'];
+            }
             $membership = self::renewMembership( $contactID, $membershipTypeID, 
                                                  $isTest, $form, null,
-                                                 CRM_Utils_Array::value( 'cms_contactID', $membershipParams ) );
+                                                 CRM_Utils_Array::value( 'cms_contactID', $membershipParams ),
+                                                 $customFieldsFormatted );
             if ( isset( $contribution[$index] ) ) {
                 //insert payment record
                 require_once 'CRM/Member/DAO/MembershipPayment.php';
@@ -1404,7 +1399,6 @@ AND civicrm_membership.is_test = %2";
                 
                 //set the log start date.
                 $memParams['log_start_date'] = CRM_Utils_Date::customFormat( $dates['log_start_date'], $format );
-
                 if ( empty( $membership->source ) ) {
                     if ( CRM_Utils_Array::value( 'membership_source', $form->_params ) ) {
                         $memParams['source'] = $form->_params['membership_source'];

@@ -7,7 +7,7 @@
  */
 function note_delete_example(){
 $params = array( 
-  'id' => 21,
+  'id' => 2,
   'version' => 3,
 );
 

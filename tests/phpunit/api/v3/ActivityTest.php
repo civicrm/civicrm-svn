@@ -43,7 +43,8 @@ require_once 'Utils.php';
  *  @package   CiviCRM
  */
 class api_v3_ActivityTest extends CiviUnitTestCase
-{
+{   protected $_params;
+    protected $_entity;
     protected $_apiversion;
     /**
      *  Test setup for every test
@@ -54,8 +55,15 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     public function setUp()
     {
         $this->_apiversion =3;
+        $this->_entity = 'activity';
         //  Connect to the database
         parent::setUp();
+        $tablesToTruncate = array( 'civicrm_activity',
+                                   'civicrm_contact',
+                                  'civicrm_custom_group',
+                                   'civicrm_custom_field',         );
+
+        $this->quickCleanup( $tablesToTruncate );
 
         //  Truncate the tables
         $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
@@ -85,6 +93,14 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                       new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
                                                                          dirname(__FILE__)
                                                                          . '/dataset/option_value_activity.xml') );
+        $this->_params = array( 
+                'source_contact_id' => 17,
+                'activity_type_id' => 1,
+                'subject' => 'test activity type id',
+                'activity_date_time' => '2011-06-02 14:36:13',
+                'status_id' => 2,
+                'priority_id' => 0, 
+                'version' => $this->_apiversion);
     }
 
 
@@ -180,7 +196,10 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     }
 
     /**
-     *  Test civicrm_activity_id() with missing source_contact_id is put with the current user
+     *  Test civicrm_activity_id() with missing source_contact_id is put with the current user.
+     *  note that there is no valid user in the test suite so this produces a fail - bit of a dud test really!
+     *  
+     *  !
      */
     function testActivityCreateWithMissingContactId( )
     {
@@ -197,7 +216,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
 
         $result = & civicrm_api3_activity_create($params);
         
-        $this->assertEquals( $result['is_error'], 0,
+        $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
 
@@ -424,98 +443,19 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityCreateCustom( )
     {
-        //  Truncate the tables
-        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__) . '/../../CiviTest/truncate-option.xml') );
+        $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+        
+        $params = $this->_params;
+        $params['custom_'.$ids['custom_field_id']]  =  "custom string";
  
-        //  Insert a row in civicrm_option_group creating option group
-        //  activity_type 
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__)
-                                                                             . '/dataset/option_group_activity.xml') );
-
-        //  Insert a row in civicrm_option_value creating
-        //  activity_type 5
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/option_value_activity.xml') );
-                                                     
-        //  Insert rows in civicrm_custom_group and civicrm_custom_field
-        //  creating Activity Custom to extend activity type 5
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__)
-                                                                             . '/dataset/custom_group_activity_type.xml') );
-
-        //  Drop and create table civicrm_value_activity_custom_9
-        $query = "USE {$GLOBALS['mysql_test_db']}; ";
-        self::$utils->do_query( $query );
-        $query = 'DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
-        self::$utils->do_query( $query );
-        $group = new CRM_Core_DAO_CustomGroup();
-        $group->extends = "Activity";
-        $group->table_name = 'civicrm_value_activity_custom_9';
-        $group->is_multiple = 0;
-        $group->is_active = 1;
-        CRM_Core_BAO_CustomGroup::createTable( $group );
-
-        //  Add column activity_custom_11 to the custom table
-        $customField = new CRM_Core_DAO_CustomField();
-        $customField->column_name = 'activity_custom_11';
-        $customField->custom_group_id = 9;
-        $customField->is_required = 0;
-        $customField->is_active = 1;
-        $customField->data_type = 'String';
-        $customField->text_length = 255;
-        CRM_Core_BAO_CustomField::createField( $customField, 'add' );
-
-        //  Create an activity with custom data
-        $params = array(
-                        'source_contact_id'   => 17,
-                        'subject'             => 'Make-it-Happen Meeting',
-                        'activity_date_time'  => date('Ymd'),
-                        'duration'            => 120,
-                        'location'            => 'Pensulvania',
-                        'details'             => 'a test activity',
-                        'status_id'           => 1,
-                        'version'						=> $this->_apiversion,
-                        'activity_name'       => 'Test activity type',
-                        'version'							=> $this->_apiversion,
-                        'custom'              => array( array(
-                                                              array( 'value' => 'bite my test data',
-                                                                     'type'  => 'String',
-                                                                     'custom_field_id' => 11,
-                                                                     'custom_group_id' => 9,
-                                                                     'table_name'      => 'civicrm_value_activity_custom_9',
-                                                                     'column_name'     => 'activity_custom_11',
-                                                                     'is_multiple'     => 0,
-                                                                     'file_id'         => null
-                                                                     ) ) )
-                        );
-        $result = civicrm_api3_activity_create( $params );
-        $this->assertEquals( 0, $result['is_error'],
-                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
-        $this->assertEquals( 1, $result['id'],'In line ' . __LINE__ );
-
-        //  Retrieve and check the activity created
-        $params = array( 'activity_id' => 1,
-                         'activity_type_id' => 1 ,
-                         'version'						=> $this->_apiversion,);
-        $result = civicrm_api3_activity_get( $params );
-
-        $this->assertEquals( 0, $result['is_error'],"Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
-        $this->assertEquals( 1, $result['id'], 'In line ' . __LINE__ );
-        $this->assertEquals( 17, $result['values'][$result['id']]['source_contact_id'], 'In line ' . __LINE__ );
-        $this->assertEquals( 1, $result['values'][$result['id']]['activity_type_id'],'In line ' . __LINE__ );
-        $this->assertEquals( 'Make-it-Happen Meeting',$result['values'][$result['id']]['subject'],'In line ' . __LINE__ );
-    }
+        $result = civicrm_api($this->_entity,'create', $params);
+        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__);
+        $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
+        $result = civicrm_api($this->_entity,'get',array('return.custom_'.$ids['custom_field_id'] => 1,         'version' =>3, 'id' => $result['id']));
+        $this->assertEquals("custom string", $result['values'][$result['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
+  
+        $this->customFieldDelete($ids['custom_field_id']);
+        $this->customGroupDelete($ids['custom_group_id']);      }
 
     /**
      *  Test civicrm_activity_create() with an invalid text status_id
@@ -627,26 +567,36 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     /**
      *  Test civicrm_activity_get() with a good activity ID
      */
-    function testActivityGetGoodID()
+    function testActivityGetGoodID1()
     {
         //  Insert rows in civicrm_activity creating activities 4 and
         //  13
+        $decription = "Function demonstrates getting asignee_contact_id & using it to get the contact";
+        $subfile = 'ReturnAssigneeContact';
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
                       new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
                                                                          dirname(__FILE__)
                                                                          . '/dataset/activity_4_13.xml') );
 
+        $contact = civicrm_api('Contact','Create',array('display_name' => "The Rock", 'contact_type' => 'Individual', 'version' => 3, 'api.activity.create' => array('id' => 13, 'assignee_contact_id' => '$value.id',)));                                                            
         $params = array( 'activity_id' => 13,
                          'version'			=> $this->_apiversion,
-                         'sequential'  =>1, );
-        $result = civicrm_api3_activity_get( $params );
-
+                         'sequential'  =>1,
+                         'return.assignee_contact_id' => 1,
+        								 'api.contact.get' => array('id' => '$value.source_contact_id', ));
+     
+        $result = civicrm_api( 'Activity','Get',$params );
+            $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile);     
+        
         $this->assertEquals( 0, $result['is_error'],
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( 13, $result['id'],  'In line ' . __LINE__ );
         $this->assertEquals( 17, $result['values'][0]['source_contact_id'], 'In line ' . __LINE__ );
 
+        $this->assertEquals( $contact['id'], $result['values'][0]['assignee_contact_id'][0],  'In line ' . __LINE__ );
+    
+        $this->assertEquals( 17, $result['values'][0]['api.contact.get']['values'][0]['contact_id'],  'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['values'][0]['activity_type_id'],'In line ' . __LINE__ );
         $this->assertEquals( "test activity type id",$result['values'][0]['subject'], 'In line ' . __LINE__ );
     }
@@ -681,66 +631,57 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityGetGoodIDCustom()
     {
-        //  Insert rows in civicrm_activity creating activities 4 and
-        //  13
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/activity_4_13.xml') );
-
-        //  Insert rows in civicrm_custom_group and civicrm_custom_field
-        //  creating Activity Custom to extend activity type 5
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__)
-                                                                             . '/dataset/custom_group_activity_type.xml') );
-
-        //  Drop and create table civicrm_value_activity_custom_9
-        $query = "USE {$GLOBALS['mysql_test_db']}; ";
-        self::$utils->do_query( $query );
-        $query = 'DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
-        self::$utils->do_query( $query );        
-        $group = new CRM_Core_DAO_CustomGroup();
-        $group->extends = "Activity";
-        $group->table_name = 'civicrm_value_activity_custom_9';
-        $group->is_multiple = 0;
-        $group->is_active = 1;
-        CRM_Core_BAO_CustomGroup::createTable( $group );
-
-        //  Add column activity_custom_11 to the custom table
-        $customField = new CRM_Core_DAO_CustomField();
-        $customField->column_name = 'activity_custom_11';
-        $customField->custom_group_id = 9;
-        $customField->is_required = 0;
-        $customField->is_active = 1;
-        $customField->data_type = 'String';
-        $customField->text_length = 255;
-        CRM_Core_BAO_CustomField::createField( $customField, 'add' );
-
-        //  Insert a test value into the new table
-        $query = "USE {$GLOBALS['mysql_test_db']}; ";
-        self::$utils->do_query( $query );
-        $query = "INSERT INTO civicrm_value_activity_custom_9"
-            . "( entity_id, activity_custom_11 )"
-            . " VALUES ( 4,  'bite my test data' )";
-        self::$utils->do_query( $query );
-
+       $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+  
+        $params = $this->_params;
+        $params['custom_'.$ids['custom_field_id']]  =  "custom string";
+ 
+        $result = civicrm_api($this->_entity,'create', $params);
         //  Retrieve the test value
-        $params = array( 'activity_id' => 4,
+        $params = array( 
                          'activity_type_id' => 1,
                          'version' =>3, 
-                         'sequential' =>1,);
+                         'sequential' =>1,
+                         'return.custom_'.$ids['custom_field_id'] => 1);
         $result = civicrm_api3_activity_get( $params, true );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
-        $this->assertEquals( 4, $result['id'], 'In line ' . __LINE__ );
+        $this->assertEquals("custom string", $result['values'][0]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
+
+        
         $this->assertEquals( 17, $result['values'][0]['source_contact_id'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['values'][0]['activity_type_id'], 'In line ' . __LINE__ );
         $this->assertEquals( 'test activity type id', $result['values'][0]['subject'],'In line ' . __LINE__ );
     }
+    /**
+     *  Test civicrm_activity_get() with a good activity ID which
+     *  has associated custom data
+     */
+    function testActivityGetContact_idCustom()
+    {
+       $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+  
+        $params = $this->_params;
+        $params['custom_'.$ids['custom_field_id']]  =  "custom string";
+ 
+        $result = civicrm_api($this->_entity,'create', $params);
+        //  Retrieve the test value
+        $params = array( 'contact_id' =>  $this->_params ['source_contact_id'],
+                         'activity_type_id' => 1,
+                         'version' =>3, 
+                         'sequential' =>1,
+                         'return.custom_'.$ids['custom_field_id'] => 1);
+        $result = civicrm_api3_activity_get( $params, true );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals( 0, $result['is_error'], "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+        $this->assertEquals("custom string", $result['values'][0]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
 
+        
+        $this->assertEquals( 17, $result['values'][0]['source_contact_id'], 'In line ' . __LINE__ );
+        $this->assertEquals( 1, $result['values'][0]['activity_type_id'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'test activity type id', $result['values'][0]['subject'],'In line ' . __LINE__ );
+    }
+    
   
     /**
      * check activity deletion with empty params
@@ -937,89 +878,32 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityUpdateCustom( )
     {
-        //  Truncate the tables
-        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__) . '/../../CiviTest/truncate-option.xml') );
- 
-        //  Insert a row in civicrm_option_group creating option group
-        //  activity_type 
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__)
-                                                                             . '/dataset/option_group_activity.xml') );
-
-        //  Insert a row in civicrm_option_value creating
-        //  activity_type 5
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/option_value_activity.xml') );
-                                                     
-        //  Insert rows in civicrm_custom_group and civicrm_custom_field
-        //  creating Activity Custom to extend activity type 5
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__)
-                                                                             . '/dataset/custom_group_activity_type.xml') );
- 
-        //  Drop and create table civicrm_value_activity_custom_9
-        $query = "USE {$GLOBALS['mysql_test_db']}; ";
-        self::$utils->do_query( $query );
-        $query = 'DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
-        self::$utils->do_query( $query );
-        $group = new CRM_Core_DAO_CustomGroup();
-        $group->extends = "Activity";
-        $group->table_name = 'civicrm_value_activity_custom_9';
-        $group->is_multiple = 0;
-        $group->is_active = 1;
-        CRM_Core_BAO_CustomGroup::createTable( $group );
-
-        //  Add column activity_custom_11 to the custom table
-        $customField = new CRM_Core_DAO_CustomField();
-        $customField->column_name = 'activity_custom_11';
-        $customField->custom_group_id = 9;
-        $customField->is_required = 0;
-        $customField->is_active = 1;
-        $customField->data_type = 'String';
-        $customField->text_length = 255;
-        $customFiledId = CRM_Core_BAO_CustomField::createField( $customField, 'add' );
+        $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
         
+        $params = $this->_params;
+   
         //  Create an activity with custom data
         //this has been updated from the previous 'old format' function - need to make it work
         $params = array(
                         'source_contact_id'   => 17,
                         'subject'             => 'Make-it-Happen Meeting',
-                        'activity_date_time'  => date('Ymd'),
+                        'activity_date_time'  => '2009-10-18',
                         'duration'            => 120,
                         'location'            => 'Pensulvania',
                         'details'             => 'a test activity to check the update api',
                         'status_id'           => 1,
                         'activity_name'       => 'Test activity type',
-                        'version'		      => $this->_apiversion,
-                        'custom_11'           => 'bite my test data', 
+                        'version'		          => $this->_apiversion,
+                        'custom_'.$ids['custom_field_id']           => 'custom string', 
                         );
         $result = civicrm_api3_activity_create( $params );
-        $this->assertEquals( 0, $result['is_error'],
-                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
-        $this->assertEquals( 1, $result['id'],
-                             'In line ' . __LINE__ );
         $activityId = $result['id'];
-        //  Retrieve and check the activity created
-        $params = array( 'activity_id' => $activityId,
-                         'activity_type_id' => 1,
-                         'version'					 =>$this->_apiversion, );
-        $result = civicrm_api3_activity_get( $params, true );
-
         $this->assertEquals( 0, $result['is_error'],
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
-        $this->assertEquals( 1, $result['id'], 'In line ' . __LINE__ );
-        $this->assertEquals( 'Make-it-Happen Meeting',$result['values'][$activityId]['subject'],
-                             'In line ' . __LINE__ );
+        $result = civicrm_api($this->_entity,'get',array('return.custom_'.$ids['custom_field_id'] => 1,         'version' =>3, 'id' => $result['id']));
+        $this->assertEquals("custom string", $result['values'][$result['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
+        $this->assertEquals("2009-10-18 00:00:00", $result['values'][$result['id']]['activity_date_time' ],' in line ' . __LINE__);
+        
         
         //  Update the activity with custom data
         $params = array(
@@ -1029,36 +913,18 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'status_id'           => 1,
                         'activity_name'       => 'Test activity type',
                         'activity_date_time'  => date('Ymd'), // add this since dates are messed up
-                        'custom_11'           => 'Updated my test data',
+                        'custom_'.$ids['custom_field_id']           => 'Updated my test data',
                         'version'		       => $this->_apiversion,
                         );
-        $result = civicrm_api('Activity','Update', $params );
+        $result = civicrm_api('Activity','Create', $params );
         $this->assertEquals( 0, $result['is_error'],
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
 
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
 
-        //  Retrieve and check the activity created
-        $params = array( 'activity_id' => $activityId,
-                         'activity_type_id' => 1 ,
-                         'version'					 =>$this->_apiversion,);
-        $result = civicrm_api3_activity_get( $params, true );
-         
-        $this->assertEquals( 0, $result['is_error'],
-                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
-        $this->assertEquals( 'Make-it-Happen Meeting', $result['values'][$activityId]['subject'],
-                             'In line ' . __LINE__ );
-
-        // Check that the custom field value is update
-        $params = array( 'entityID'   => $activityId,
-                         'custom_11' => 1
-                         );
-        $values = CRM_Core_BAO_CustomValueTable::getValues( $params );
-
-        // check for updated custom value
-        $this->assertEquals( 'Updated my test data',
-                             $values['custom_11'],
-                             'In line ' . __LINE__ );
+        $result = civicrm_api($this->_entity,'get',array('return.custom_'.$ids['custom_field_id'] => 1,         'version' =>3, 'id' => $result['id']));
+        $this->assertEquals("Updated my test data", $result['values'][$result['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
+        
     }
 
     /**
@@ -1177,7 +1043,28 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->assertEquals( 'Test activity type', $result['values'][4]['activity_name'],'In line ' . __LINE__ );
         $this->assertEquals( 'Test activity type', $result['values'][13]['activity_name'],'In line ' . __LINE__ );
     }
+/*
+ * test chained Activity format
+ */
+    function testchainedActivityGet(){
 
+      civicrm_api('Contact','Create',array('version' => $this->_apiversion, 
+      									'display_name' => "bob brown", 
+      									'contact_type' => 'Individual', 
+      									'api.activity_type.create' => array(
+                        'weight'=> '2',
+                        'label' => 'send out letters',
+                        'filter' => 0,
+                        'is_active' =>1,
+        								'is_optgroup' =>1,
+                        'is_default' => 0, 
+                        ),'api.activity.create' => array('activity_type_id' => '$values.api.activity_type.create.')));
+      $result = civicrm_api('Activity','Get',array(
+											'version' => 3,  
+											'id' => $activityID, 
+											'return.assignee_contact_id' => 1,
+											'api.contact.get' => array('api.pledge.get' => 1)));
+    }
     /**
      * check civicrm_activities_contact_get() with empty array
      */

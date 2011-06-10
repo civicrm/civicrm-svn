@@ -84,7 +84,6 @@ function civicrm_api3_group_contact_get($params) {
  * "contact_id.1" etc. (optional) : another contact to add<br>
  * "group_id.1" etc. (optional) : additional group to add contact(s) to<br>
  * "status" (optional) : one of "Added", "Pending" or "Removed" (default is "Added")
- * {@schema Contact/GroupContact.xml}
  * {@example GroupContactCreate.php 0}
  * 
  * @return array Information about operation results

@@ -280,7 +280,7 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
   if ( array_key_exists( 'status_id', $params ) ){
     $values['pledge_status_id'] = $params['status_id'];
   }
-  if ( empty( $values['status_id'] ) ){
+  if ( empty( $values['status_id'] ) && !empty($values['pledge_status_id']) ){
     $values['status_id'] = $values['pledge_status_id'];
   }
   if (empty($values['id'])){

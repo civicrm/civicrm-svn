@@ -266,6 +266,9 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
 
                 $tplParams['onBehalfName']  = $displayName;
                 $tplParams['onBehalfEmail'] = $email;
+
+                $profileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'on_behalf_organization', 'id', 'name' );
+                self::buildCustomDisplay( $profileId, 'onBehalfProfile' , $userID, $template, $params['onbehalf_profile'] );
             }
             
             // use either the contribution or membership receipt, based on whether it’s a membership-related contrib or not
@@ -407,8 +410,8 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
             if ( CRM_Core_BAO_UFGroup::filterUFGroups($gid, $cid) ){
                 $values = array( );
                 $groupTitle = null;
-                $fields = CRM_Core_BAO_UFGroup::getFields( $gid, false, CRM_Core_Action::VIEW );
-
+                $fields = CRM_Core_BAO_UFGroup::getFields( $gid, false, CRM_Core_Action::VIEW, null, null, false,
+                                                           null, false, null, CRM_Core_Permission::CREATE, null );
                 foreach ( $fields as $k => $v  ) {
                     if ( ! $groupTitle ) { 
                         $groupTitle = $v["groupTitle"];

@@ -1539,7 +1539,7 @@ WHERE  id = $cfID
                                                                                    $participantParams );
                     if ( $profilePre ) {
                         $customProfile[$i]['additionalCustomPre'] =  $profilePre;
-                        $customProfile[$i] = $groupTitles;
+                        $customProfile[$i] = array_merge( $groupTitles, $customProfile[$i] );
                     }
                     
                     list( $profilePost, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_post_id'], 

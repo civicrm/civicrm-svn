@@ -153,7 +153,7 @@ function civicrm_api3_event_get( $params )
     while ( $eventDAO->fetch( ) ) {
       $event[$eventDAO->id] = array( );
       CRM_Core_DAO::storeValues( $eventDAO, $event[$eventDAO->id] );
-      _civicrm_apiv3_custom_data_get($event[$eventDAO->id],'Event',$eventDAO->id,null,$eventDAO->event_type_id);
+      _civicrm_api3_custom_data_get($event[$eventDAO->id],'Event',$eventDAO->id,null,$eventDAO->event_type_id);
 
     }//end of the loop
 
@@ -178,17 +178,13 @@ function civicrm_api3_event_get( $params )
  */
 function civicrm_api3_event_delete( $params )
 {
-  _civicrm_api3_initialize( true );
+
   try {
     civicrm_api3_verify_one_mandatory($params,null,array('event_id','id'));
 
-    $eventID = null;
 
     $eventID = CRM_Utils_Array::value( 'event_id', $params )?CRM_Utils_Array::value( 'event_id', $params ):CRM_Utils_Array::value( 'id', $params );
 
-    if ( ! isset( $eventID ) ) {
-      return civicrm_api3_create_error(  'Invalid value for eventID'  );
-    }
 
     require_once 'CRM/Event/BAO/Event.php';
 

@@ -469,8 +469,8 @@ class api_v2_MembershipContactTest extends CiviUnitTestCase {
         $values = array( );
         _civicrm_membership_format_params( $params , $values, true);
         
-        $this->assertEquals( $values['start_date'], $params['membership_start_date'] );
-        $this->assertEquals( $values['end_date'], $params['membership_end_date'] );
+        $this->assertEquals( $values['start_date'], '20060121' );
+        $this->assertEquals( $values['end_date'], '20061221' );
     }
 
 }

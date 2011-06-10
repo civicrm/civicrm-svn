@@ -128,65 +128,96 @@ class CRM_Mailing_Event_BAO_Unsubscribe extends CRM_Mailing_Event_DAO_Unsubscrib
         
         $do->query("
             SELECT      $mg.entity_table as entity_table,
-                        $mg.entity_id as entity_id
+                        $mg.entity_id as entity_id,
+                        $mg.group_type as group_type
             FROM        $mg
             INNER JOIN  $job
                 ON      $job.mailing_id = $mg.mailing_id
             WHERE       $job.id = " 
                 . CRM_Utils_Type::escape($job_id, 'Integer') . "
-                AND     $mg.group_type = 'Include'");
+                AND     $mg.group_type IN ('Include', 'Base') ");
         
         /* Make a list of groups and a list of prior mailings that received 
          * this mailing */
          
         $groups = array();
+        $base_groups = array();
         $mailings = array();
         
         while ($do->fetch()) {
             if ($do->entity_table == $group) {
+                if($do->group_type == 'Base') {
+                    $base_groups[$do->entity_id] = true;
+                }
                 //$groups[$do->entity_id] = true;
                 $groups[$do->entity_id] = null;
             } else if ($do->entity_table == $mailing) {
                 $mailings[] = $do->entity_id;
             }
         }
-        
-        /* As long as we have prior mailings, find their groups and add to the
-         * list */
-        while (! empty($mailings)) {
+
+        /* Get a list of groups that the user should be unsubscribed from. This is done differently
+         * Depending on whether or not the mailing has a base group */ 
+        if(count($base_groups) > 0) {
+           /* If there are any base groups, we should only unsubscribe the user from that base
+            * group, regardless any other groups they are a part of.  If the user is not currently
+            * in one of the base groups, then they should be added with status 'Removed' */
+            /* Get the names/descriptions of each base group */
+          
+            /* reset the groups array, as all non-base groups should be ignored */
+            $groups = array();     
+
             $do->query("
-                SELECT      $mg.entity_table as entity_table,
-                            $mg.entity_id as entity_id
-                FROM        $mg
-                WHERE       $mg.mailing_id IN (".implode(', ', $mailings).")
-                    AND     $mg.group_type = 'Include'");
-            
-            $mailings = array();
-            
-            while ($do->fetch()) {
-                if ($do->entity_table == $group) {
-                    $groups[$do->entity_id] = true;
-                } else if ($do->entity_table == $mailing) {
-                    $mailings[] = $do->entity_id;
+                SELECT      $group.id as group_id,
+                            $group.title as title,
+                            $group.description as description
+                FROM        $group
+                WHERE       $group.id IN (".implode(', ', array_keys($base_groups)).")
+                      ");      
+
+        } else  {
+            /* If there are no base groups, then the contact should be unsubscribed from all
+             * groups that go to make up this mailing. */
+        
+            /* As long as we have prior mailings, find their groups and add to the
+             * list */
+            while (! empty($mailings)) {
+                $do->query("
+                    SELECT      $mg.entity_table as entity_table,
+                                $mg.entity_id as entity_id
+                    FROM        $mg
+                    WHERE       $mg.mailing_id IN (".implode(', ', $mailings).")
+                        AND     $mg.group_type = 'Include'");
+                
+                $mailings = array();
+                
+                while ($do->fetch()) {
+                    if ($do->entity_table == $group) {
+                        $groups[$do->entity_id] = true;
+                    } else if ($do->entity_table == $mailing) {
+                        $mailings[] = $do->entity_id;
+                    }
                 }
             }
-        }
 
-        /* Now we have a complete list of recipient groups.  Filter out all
-         * those except smart groups and those that the contact belongs to */
-        $do->query("
-            SELECT      $group.id as group_id,
-                        $group.title as title,
-                        $group.description as description
-            FROM        $group
-            LEFT JOIN   $gc
-                ON      $gc.group_id = $group.id
-            WHERE       $group.id IN (".implode(', ', array_keys($groups)).")
-                AND     ($group.saved_search_id is not null
-                            OR  ($gc.contact_id = $contact_id
-                                AND $gc.status = 'Added')
-                        )");
-                        
+            /* Now we have a complete list of recipient groups.  Filter out all
+             * those except smart groups and those that the contact belongs to
+             * Not sure why we filter out smart groups, does not seem right - lobo */
+            $do->query("
+                SELECT      $group.id as group_id,
+                            $group.title as title,
+                            $group.description as description
+                FROM        $group
+                LEFT JOIN   $gc
+                    ON      $gc.group_id = $group.id
+                WHERE       $group.id IN (".implode(', ', array_keys($groups)).")
+                    AND     ($group.saved_search_id is not null
+                                OR  ($gc.contact_id = $contact_id
+                                    AND $gc.status = 'Added')
+                            )");
+        }
+                   
+
         if ($return) {
             while ($do->fetch()) {
                 $groups[$do->group_id] = array( 'title'       => $do->title,
@@ -198,17 +229,23 @@ class CRM_Mailing_Event_BAO_Unsubscribe extends CRM_Mailing_Event_DAO_Unsubscrib
                 $groups[$do->group_id] = $do->title;
             }
         }
+        
+
         $contacts = array($contact_id);
         foreach ($groups as $group_id => $group_name) {
             $notremoved = false;
             if ($group_name) {
-                list($total, $removed, $notremoved) = CRM_Contact_BAO_GroupContact::removeContactsFromGroup( $contacts, $group_id, 'Email');
+                if($base_groups[$group_id]) {
+                    list($total, $removed, $notremoved) = CRM_Contact_BAO_GroupContact::addContactsToGroup( $contacts, $group_id, 'Email', 'Removed');
+                } else {
+                    list($total, $removed, $notremoved) = CRM_Contact_BAO_GroupContact::removeContactsFromGroup( $contacts, $group_id, 'Email');
+                }
             }
             if ($notremoved) {
                 unset($groups[$group_id]);
             }
         }
-        
+                
         $ue = new CRM_Mailing_Event_BAO_Unsubscribe();
         $ue->event_queue_id = $queue_id;
         $ue->org_unsubscribe = 0;

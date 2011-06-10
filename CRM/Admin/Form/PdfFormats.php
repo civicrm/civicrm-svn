@@ -125,7 +125,7 @@ class CRM_Admin_Form_PdfFormats extends CRM_Admin_Form
 
         $status = ts('Your new PDF Page Format titled <strong>%1</strong> has been saved.', array(1 => $values['name']));
         if ( $this->_action & CRM_Core_Action::UPDATE ) { 
-            $status = ts('Your PDF Page Format titled <strong>{}</strong> has been updated.', array(1 => $values['name']));
+            $status = ts('Your PDF Page Format titled <strong>%1</strong> has been updated.', array(1 => $values['name']));
         }
         CRM_Core_Session::setStatus( $status );
     }

@@ -812,7 +812,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             if ( !$date ) {
                 $date = CRM_Utils_Array::value( $d, $calcDates );
             }
-            $params[$d] = CRM_Utils_Date::processDate( $date, null, true );
+            $params[$d] = CRM_Utils_Date::processDate( $date );
         }
         
         if ( $this->_id ) {
@@ -1202,7 +1202,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         
         if ( ( $this->_action & CRM_Core_Action::UPDATE ) ) {
             $statusMsg = ts('Membership for %1 has been updated.', array(1 => $this->_memberDisplayName));
-            if ( $endDate ) {
+            if ( $endDate && $endDate !== 'null' ) {
                 $endDate=CRM_Utils_Date::customFormat($endDate);
                 $statusMsg .= ' '.ts('The membership End Date is %1.', array(1 => $endDate));
             }
@@ -1220,8 +1220,8 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $endDate = CRM_Utils_Array::value( 'end_date', $calcDates ); 
             }
             
-            if ( $endDate ) {
-                $endDate=CRM_Utils_Date::customFormat($endDate);
+            if ( $endDate && $endDate !== 'null' ) {
+                $endDate = CRM_Utils_Date::customFormat($endDate);
                 $statusMsg .= ' '.ts('The new membership End Date is %1.', array(1 => $endDate));
             }
             if ( $receiptSend && $mailSend ) {

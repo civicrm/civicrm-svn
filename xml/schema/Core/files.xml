@@ -52,4 +52,7 @@
 <xi:include href="Website.xml"              parse="xml" />
 <xi:include href="Persistent.xml"           parse="xml" />
 <xi:include href="PrevNextCache.xml"        parse="xml" />
+<xi:include href="ActionMapping.xml"        parse="xml" />
+<xi:include href="ActionSchedule.xml"       parse="xml" />
+<xi:include href="ActionLog.xml"            parse="xml" />
 </tables>

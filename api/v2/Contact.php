@@ -530,13 +530,19 @@ function &civicrm_contact_search( &$params )
  * @param boolean $dupeCheck       Should we check for duplicate contacts
  * @param boolean $dupeErrorArray  Should we return values of error
  *                                 object in array foramt
- * @param boolean $requiredCHeck   Should we check if required params
+ * @param boolean $requiredCheck   Should we check if required params
  *                                 are present in params array
+ * @param int   $dedupeRuleGroupID - the dedupe rule ID to use if present
  *
  * @return null on success, error message otherwise
  * @access public
  */
-function civicrm_contact_check_params( &$params, $dupeCheck = true, $dupeErrorArray = false, $requiredCheck = true )
+function civicrm_contact_check_params( &$params,
+                                       $dupeCheck = true,
+                                       $dupeErrorArray = false,
+                                       $requiredCheck = true,
+                                       $dedupeRuleGroupID = null
+                                       )
 {
     if ( $requiredCheck ) {
         $required = array(
@@ -615,7 +621,12 @@ function civicrm_contact_check_params( &$params, $dupeCheck = true, $dupeErrorAr
             $dedupeParams['check_permission'] = $fields['check_permission'];
         }
 
-        $ids = implode(',', CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']));
+        $ids = implode(',',
+                       CRM_Dedupe_Finder::dupesByParams($dedupeParams,
+                                                        $params['contact_type'],
+                                                        'Strict',
+                                                        array( ),
+                                                        $dedupeRuleGroupID ) );
         
         if ( $ids != null ) {
             if ( $dupeErrorArray ) {

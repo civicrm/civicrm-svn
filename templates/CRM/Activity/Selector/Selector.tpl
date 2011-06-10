@@ -26,7 +26,7 @@
             <th class='crm-contact-activity_subject'>{ts}Subject{/ts}</th>
             <th class='crm-contact-activity-source_contact'>{ts}Added By{/ts}</th>
             <th class='crm-contact-activity-target_contact nosort'>{ts}With{/ts}</th>
-            <th class='crm-contact-activity-assignee_contact nosort'>{ts}Assigneed{/ts}</th>
+            <th class='crm-contact-activity-assignee_contact nosort'>{ts}Assigned{/ts}</th>
             <th class='crm-contact-activity-activity_date'>{ts}Date{/ts}</th>
             <th class='crm-contact-activity-activity_status'>{ts}Status{/ts}</th>
             <th class='crm-contact-activity-links nosort'>&nbsp;</th>

@@ -92,6 +92,25 @@
 </table>
 {/strip}
 {/if}
+
+{if $report.group.base|@count}
+<span class="label">{ts}Unsubscription Groups{/ts}</span>
+{strip}
+<table class="crm-info-panel">
+{foreach from=$report.group.base item=group}
+<tr class="{cycle values="odd-row,even-row"}">
+<td>
+{if $group.mailing}
+{ts 1=$group.link 2=$group.name}Recipients of <a href="%1">%2</a>{/ts}
+{else}
+{ts 1=$group.link 2=$group.name}Members of <a href="%1">%2</a>{/ts}
+{/if}
+</td>
+</tr>
+{/foreach}
+</table>
+{/strip}
+{/if}
 </fieldset>
 
 {if $report.mailing.url_tracking && $report.click_through|@count > 0}

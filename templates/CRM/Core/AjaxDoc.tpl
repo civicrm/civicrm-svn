@@ -9,11 +9,11 @@
 </style>
 <script>
 resourceBase = '{$config->resourceBase}';
-if (jQuery) {ldelim}  
+if (!jQuery) {ldelim}  
    var head= document.getElementsByTagName('head')[0];
    var script= document.createElement('script');
    script.type= 'text/javascript';
-   script.src= resourceBase + 'js/packages/jquery/jquery.js';
+   script.src= resourceBase + '/packages/jquery/jquery.js';
    head.appendChild(script);
 {rdelim} 
 restURL = '{crmURL p="civicrm/ajax/rest"}';
@@ -22,6 +22,9 @@ if (restURL.indexOf('?') == -1 )
 else 
   restURL = restURL + '&';
 {literal}
+if (!$) {
+  $ = jQuery;
+} 
 
 function toggleField (name,label,type) {
   h = '<div><label>'+label+'</label><input name='+name+ ' id="'+name+ ' /></div>';
@@ -182,6 +185,9 @@ cj(function ($) {
   <option value="create">create</option>
   <option value="delete">delete</option>
   <option value="getfields">getfields</option>
+  <option value="getcount">getcount</option>
+  <option value="getsingle">getsingle</option>
+  <option value="getvalue">getvalue</option>
   <option value="update">update</option>
 </select>
 <label>debug</label>

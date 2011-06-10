@@ -46,8 +46,11 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
     {
         $this->_apiversion = 3;    
         parent::setUp();
+        $tablesToTruncate = array( 'civicrm_contribution',
+                                   'civicrm_contact', 'civicrm_pledge');
 
-        $this->_contributionTypeId = 1;   
+        $this->quickCleanup( $tablesToTruncate );
+        $this->_contributionTypeId = $this->contributionTypeCreate();
         $this->_individualId = $this->individualCreate(null);
         $this->_pledgeID = $this->pledgeCreate($this->_individualId);
         $this->_contributionID = $this->contributionCreate($this->_individualId, $this->_contributionTypeId);
@@ -55,12 +58,14 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
     
     function tearDown() 
     {
-      $this->contributionDelete($this->_contributionID);
-      civicrm_api3_pledge_delete(array('id'			 => $this->_pledgeID,
-                                       'version' => 3,));
-      $this->contactDelete($this->_individualId);
+      $tablesToTruncate = array( 'civicrm_contribution',
+                                   'civicrm_contact', 'civicrm_pledge');
+
+      $this->quickCleanup( $tablesToTruncate );
+
       $error = $this->confirmEntitiesDeleted(array('pledge', 'pledge_payment', 'contribution', 'contact'));
       $this->assertNotEquals(1, $error);
+      $this->contributionTypeDelete();
     }
 
 

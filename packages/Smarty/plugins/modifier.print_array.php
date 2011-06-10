@@ -84,10 +84,10 @@ function smarty_modifier_print_array($var, $depth = 0, $length = 40)
       if(is_array($var)){
         $results = "array()";
         
-      }elseif ($var === 0){
+      }elseif ($var === '0' || $var === 0){
         $results = 0;
       }else{
-      $results = "''";
+        $results = "''";
       }
     }
     return $results;
