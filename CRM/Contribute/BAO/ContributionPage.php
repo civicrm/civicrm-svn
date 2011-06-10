@@ -138,6 +138,14 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
             $gIds['custom_post_id'] = $values['custom_post_id'];
         }
         
+        if ( CRM_Utils_Array::value( 'is_for_organization', $values ) ) {
+            if ( CRM_Utils_Array::value( 'membership_id', $values ) ) {
+                $params['onbehalf_profile'] = array( array( 'membership_id', '=', $values['membership_id'], 0, 0 ) );
+            } else if ( CRM_Utils_Array::value( 'contribution_id', $values ) ) {
+                $params['onbehalf_profile'] = array( array( 'contribution_id', '=', $values['contribution_id'], 0, 0 ) ); 
+            }
+        }
+        
         //check whether it is a test drive
         if ( $isTest && !empty( $params['custom_pre_id'] ) ) {
             $params['custom_pre_id'][] = array( 'contribution_test', '=', 1, 0, 0 );
