@@ -739,6 +739,8 @@ $.extend($.validator, {
 	},
 
 	classRuleSettings: {
+        /*
+        // commenting all default validation rules
 		required: {required: true},
 		email: {email: true},
 		url: {url: true},
@@ -749,6 +751,7 @@ $.extend($.validator, {
 		numberDE: {numberDE: true},
 		digits: {digits: true},
 		creditcard: {creditcard: true}
+        */
 	},
 
 	addClassRules: function(className, rules) {
