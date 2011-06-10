@@ -32,7 +32,9 @@
   <legend>{$fieldSetTitle}</legend>
   {if ( $relatedOrganizationFound or $onBehalfRequired ) and !$organizationName}
     <div id='orgOptions' class="section crm-section">
-       <div class="content">{$form.org_option.html}</div>
+       <div class="content">
+        {$form.org_option.html}
+       </div>
     </div>
   {/if}  
 
@@ -41,13 +43,23 @@
       <tr>
        {if ( $fieldName eq 'organization_name' ) and $organizationName}
          <td id='org_name' class="label">{$field.label}</td>
-         <td class="value">{$field.html|crmReplace:class:big}
-         <span>
-         <a href='#' id='createNewOrg' onclick='createNew( ); return false;'>{ts}Enter a new organization{/ts}</a>
-         </span></td>
+         <td class="value">
+            {$field.html|crmReplace:class:big}
+            <span>
+                ( <a href='#' id='createNewOrg' onclick='createNew( ); return false;'>{ts}Enter a new organization{/ts}</a> )
+            </span>
+            <div id="id-onbehalf-orgname-enter-help" class="description">
+                {ts}Organization details have been prefilled for you. If this is not the organization you want to use, click "Enter a new organization" above.{/ts}
+            </div>
+         </td>
        {else}
          <td class="label">{$field.label}</td>
-         <td class="value">{$field.html}</td>
+         <td class="value">
+            {$field.html}
+            {if $fieldName eq 'organization_name'}
+                <div id="id-onbehalf-orgname-help" class="description">{ts}Start typing the name of an organization that you have saved previously to use it again. Otherwise click "Enter a new organization" above.{/ts}</div>
+            {/if}
+            </td>
        {/if}
       </tr>
     {/foreach}
@@ -60,6 +72,7 @@
 {literal}
 <script type="text/javascript">
 var onBehalfRequired = {/literal}"{$onBehalfRequired}"{literal};
+cj( "div#id-onbehalf-orgname-help").hide( );
 
 function showOnBehalf( onBehalfRequired )
 {
@@ -75,10 +88,10 @@ function showOnBehalf( onBehalfRequired )
             cj.ajax({
                  url     : urlPath,
                  async   : false,
-		 global  : false,
-	         success : function ( content ) { 		
-    	                       cj( "#onBehalfOfOrg" ).html( content );
-                           }
+		         global  : false,
+	             success : function ( content ) { 		
+    	            cj( "#onBehalfOfOrg" ).html( content );
+                 }
             });
        
      } else {
@@ -120,13 +133,13 @@ cj( "#mode" ).attr( 'checked', 'checked' );
     function createNew( ) 
     {
        if ( cj( "#mode" ).attr( 'checked' ) ) {
-           $text = '{/literal}{ts escape="js"}Select existing organization{/ts}{literal}';
+           $text = ' {/literal}{ts escape="js"}Use existing organization{/ts}{literal} ';
            cj( "#onbehalf_organization_name" ).removeAttr( 'readonly' );
            cj( "#mode" ).removeAttr( 'checked' );
 
            resetValues( false );
        } else {
-           $text = '{/literal}{ts escape="js"}Enter a new organization{/ts}{literal}';
+           $text = ' {/literal}{ts escape="js"}Enter a new organization{/ts}{literal} ';
            cj( "#mode" ).attr( 'checked', 'checked' );
            setOrgName( );
        }
@@ -156,6 +169,7 @@ cj( "#mode" ).attr( 'checked', 'checked' );
        function selectCreateOrg( orgOption, reset )
        {
           if ( orgOption == 0 ) {
+              cj( "div#id-onbehalf-orgname-help").show( );
               var dataUrl = {/literal}"{$employerDataURL}"{literal};
 	      cj( '#onbehalf_organization_name' ).autocomplete( dataUrl, 
                                                                 { width         : 180, 
@@ -168,6 +182,7 @@ cj( "#mode" ).attr( 'checked', 'checked' );
               });
           } else if ( orgOption == 1 ) {
               cj( "input#onbehalf_organization_name" ).removeClass( 'ac_input' ).unautocomplete( );
+              cj( "div#id-onbehalf-orgname-help").hide( );
               if ( reset ) {
 	          resetValues( false );
               }

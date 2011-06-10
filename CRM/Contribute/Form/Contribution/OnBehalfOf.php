@@ -101,11 +101,11 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
         $contactID = $session->get( 'userID' );
 
         if ( $contactID && count( $form->_employers ) >= 1 ) {
-            $form->add('text', 'organization_id', ts('Select an existing related Organization OR Enter a new one') );
+            $form->add('text', 'organization_id', ts('Select an existing related Organization OR enter a new one') );
             $form->add('hidden', 'onbehalfof_id', '', array( 'id' => 'onbehalfof_id' ) );
             
-            $orgOptions = array( 0 => ts('Select existing organization'),
-                                 1 => ts('Create new organization') );
+            $orgOptions = array( 0 => ts('Select an existing organization'),
+                                 1 => ts('Enter a new organization') );
             
             $form->addRadio( 'org_option', ts('options'), $orgOptions );
             $form->setDefaults( array( 'org_option' => 0 ) );
