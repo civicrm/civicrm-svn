@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `civicrm_action_schedule` (
   `body_text` longtext COLLATE utf8_unicode_ci COMMENT 'Body of the mailing in text format.',
   `body_html` longtext COLLATE utf8_unicode_ci COMMENT 'Body of the mailing in html format.',
   `subject` varchar(128) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Subject of mailing',
-  `record_activity` tinyint(4) DEFAULT '1' COMMENT 'Record Activity for this reminder?',
+  `record_activity` tinyint(4) DEFAULT NULL COMMENT 'Record Activity for this reminder?',
   `mapping_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to mapping which is being used by this reminder',
   `group_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to Group',
   `msg_template_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to the message template.',
@@ -102,7 +102,6 @@ VALUES
       ('activity_contacts', {localize}'{ts escape="sql"}Activity Contacts{/ts}'{/localize}, 0, 1);
 
 SELECT @option_group_id_aco := max(id) from civicrm_option_group where name = 'activity_contacts';
-
 SELECT @option_group_id_act := max(id) from civicrm_option_group where name = 'activity_type';
 SELECT @act_value           := MAX(ROUND(value)) FROM civicrm_option_value WHERE option_group_id = @option_group_id_act;
 SELECT @act_weight          := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_act;
