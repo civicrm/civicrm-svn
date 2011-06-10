@@ -282,9 +282,18 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
         $this->buildCustom( $this->_values['custom_pre_id'] , 'customPre' , true );
         $this->buildCustom( $this->_values['custom_post_id'], 'customPost', true );
+
         if ( CRM_Utils_Array::value( 'is_for_organization', $params ) ) {
             $profileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'on_behalf_organization', 'id', 'name' );
-            $this->buildCustom( $profileId, 'onbehalfProfile' ,true, true );
+                       
+            $fieldTypes = array( 'Contact', 'Organization' );
+            if ( is_array( $this->_membershipBlock ) && !empty( $this->_membershipBlock ) ) {
+                $fieldTypes = array_merge( $fieldTypes, array( 'Membership' ) );
+            } else {
+                $fieldTypes = array_merge( $fieldTypes, array( 'Contribution' ) );
+            }
+
+            $this->buildCustom( $profileId, 'onbehalfProfile', true, true, $fieldTypes );
         }
 
         $this->_separateMembershipPayment = $this->get( 'separateMembershipPayment' );
@@ -653,7 +662,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 $this->_params['campaign_id'] = $membershipParams['onbehalf']['member_campaign_id'];
             }
 
-            $customFieldsFormatted = array( );
+            $customFieldsFormatted = $fieldTypes = array( );
             require_once 'CRM/Core/BAO/CustomField.php';
             if ( is_array( $membershipParams['onbehalf'] ) && !empty( $membershipParams['onbehalf'] ) ) {
                 foreach ( $membershipParams['onbehalf'] as $key => $value ) {
@@ -663,11 +672,13 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                                                      'Membership', null, $contactID );
                     }
                 }
+                $fieldTypes = array( 'Contact', 'Organization', 'Membership' );
             }
             
             require_once 'CRM/Member/BAO/Membership.php';
             CRM_Member_BAO_Membership::postProcessMembership( $membershipParams, $contactID,
-                                                              $this, $premiumParams, $customFieldsFormatted );  
+                                                              $this, $premiumParams, $customFieldsFormatted, 
+                                                              $fieldTypes );  
         } else {
             // at this point we've created a contact and stored its address etc
             // all the payment processors expect the name and address to be in the 
@@ -675,18 +686,23 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             $paymentParams      = $this->_params;
             $contributionTypeId = $this->_values['contribution_type_id'];
 
+            $fieldTypes = array( );
             require_once 'CRM/Core/BAO/CustomField.php';
-            foreach ( $paymentParams['onbehalf'] as $key => $value ) {
-                if ( strstr( $key, 'custom_' ) ) {
-                    $this->_params[$key] = $value;
+            if ( is_array( $paymentParams['onbehalf'] ) && !empty( $paymentParams['onbehalf'] ) ) {
+                foreach ( $paymentParams['onbehalf'] as $key => $value ) {
+                    if ( strstr( $key, 'custom_' ) ) {
+                        $this->_params[$key] = $value;
+                    }
                 }
+                $fieldTypes = array( 'Contact', 'Organization', 'Contribution' );
             }
             
             require_once 'CRM/Contribute/BAO/Contribution/Utils.php';
             CRM_Contribute_BAO_Contribution_Utils::processConfirm( $this, $paymentParams, 
                                                                    $premiumParams, $contactID, 
                                                                    $contributionTypeId, 
-                                                                   'contribution' );
+                                                                   'contribution',
+                                                                   $fieldTypes );
         }
     }
     

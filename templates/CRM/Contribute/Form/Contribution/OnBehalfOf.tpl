@@ -43,7 +43,7 @@
          <td id='org_name' class="label">{$field.label}</td>
          <td class="value">{$field.html|crmReplace:class:big}
          <span>
-         <a href='#' id='createNewOrg' onclick='createNew( ); return false;'>Create new organization</a>
+         <a href='#' id='createNewOrg' onclick='createNew( ); return false;'>{ts}Create new organization{/ts}</a>
          </span></td>
        {else}
          <td class="label">{$field.label}</td>
@@ -119,13 +119,13 @@ cj( "#mode" ).attr( 'checked', 'checked' );
     function createNew( ) 
     {
        if ( cj( "#mode" ).attr( 'checked' ) ) {
-           $text = "Select existing organization";
+           $text = '{/literal}{ts escape="js"}Select existing organization{/ts}{literal}';
            cj( "#onbehalf_organization_name" ).removeAttr( 'readonly' );
            cj( "#mode" ).removeAttr( 'checked' );
 
            resetValues( false );
        } else {
-           $text = "Create new organization";
+           $text = '{/literal}{ts escape="js"}Create new organization{/ts}{literal}';
            cj( "#mode" ).attr( 'checked', 'checked' );
            setOrgName( );
        }

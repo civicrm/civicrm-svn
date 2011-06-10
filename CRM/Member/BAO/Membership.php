@@ -1064,7 +1064,7 @@ AND civicrm_membership.is_test = %2";
      * @access public
      */                                   
     public function postProcessMembership( $membershipParams, $contactID ,&$form, &$premiumParams, 
-                                           $customFieldsFormatted = null )
+                                           $customFieldsFormatted = null, $includeFieldTypes = null )
     {
     	$tempParams  = $membershipParams;
         $paymentDone = false;
@@ -1261,7 +1261,8 @@ AND civicrm_membership.is_test = %2";
         require_once "CRM/Contribute/BAO/ContributionPage.php";
         CRM_Contribute_BAO_ContributionPage::sendMail( $contactID,
                                                        $form->_values,
-                                                       $isTest );
+                                                       $isTest, false,
+                                                       $includeFieldTypes );
     }
     
     /**
