@@ -63,8 +63,10 @@ class CRM_Cron_Action {
         $config = CRM_Core_Config::singleton();
     }
 
-    public function run( )
+    public function run( $now = null )
     {
+        $this->_now = $now ? date('YmdHis', $now) : date('YmdHis');
+
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
         $mappings = CRM_Core_BAO_ScheduleReminders::getMapping( );
 
@@ -147,6 +149,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL";
                 $logParams = array( 'id'       => $dao->reminderID,
                                     'is_error' => $isError,
                                     'message'  => $errorMsg ? $errorMsg : "null",
+                                    'action_date_time' => $this->_now,
                                     );
                 CRM_Core_BAO_ActionLog::create( $logParams );
                 
@@ -230,7 +233,7 @@ reminder.action_schedule_id = %1";
             }
 
             // ( now >= date_built_from_start_time )
-            $startEventClause = "reminder.id IS NULL AND NOW() >= {$startEvent}";
+            $startEventClause = "reminder.id IS NULL AND {$this->_now} >= {$startEvent}";
 
             // build final query
             $selectClause = "SELECT " . implode( ', ', $select );
@@ -263,9 +266,9 @@ LEFT JOIN {$reminderJoinClause}
                 }
                 
                 // (now <= repeat_end_time )
-                $repeatEventClause = "NOW() <= {$repeatEvent}"; 
+                $repeatEventClause = "{$this->_now} <= {$repeatEvent}"; 
                 // diff(now && logged_date_time) >= repeat_interval
-                $havingClause      = "HAVING TIMEDIFF(NOW(), latest_log_time) >= TIME('{$hrs}:00:00')";
+                $havingClause      = "HAVING TIMEDIFF({$this->_now}, latest_log_time) >= TIME('{$hrs}:00:00')";
                 $groupByClause     = "GROUP BY reminder.contact_id, reminder.entity_id, reminder.entity_table"; 
                 $selectClause     .= ", MAX(reminder.action_date_time) as latest_log_time";
 
