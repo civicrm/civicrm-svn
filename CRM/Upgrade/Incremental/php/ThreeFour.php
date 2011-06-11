@@ -150,7 +150,25 @@ class CRM_Upgrade_Incremental_php_ThreeFour {
         }
         $ufGroups->free( );
 
+        // CRM-8134 add phone_ext column if it wasn't already added for this site in 3.3.7 upgrade (3.3.7 was released after 3.4.0)
+        require_once 'CRM/Contact/DAO/Contact.php';
+        $dao = new CRM_Contact_DAO_Contact( );
+        $dbName = $dao->_database;
+
+        $chkExtQuery = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %1
+                        AND TABLE_NAME = 'civicrm_phone' AND COLUMN_NAME = 'phone_ext'";
+        $extensionExists = CRM_Core_DAO::singleValueQuery( $chkExtQuery,
+                                                          array( 1 => array( $dbName,    'String' ) ),
+                                                          true, false );
+
+        if ( !$extensionExists ) {
+            $colQuery = 'ALTER TABLE `civicrm_phone` ADD `phone_ext` VARCHAR( 16 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `phone` ';
+            CRM_Core_DAO::executeQuery( $colQuery );
+        }
+
+
         $upgrade = new CRM_Upgrade_Form;
-        $upgrade->processSQL($rev); 
+        $upgrade->processSQL($rev);
+         
     }
   }
