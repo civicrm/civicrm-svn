@@ -494,11 +494,13 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
                 $params['html'] = null;
             }
 
+            $config = CRM_Core_Config::singleton();
             $pdf_filename = '';
-            if ( $params['PDFFilename'] && $params['html'] ) {
+            if ( $config->doNotAttachPDFReceipt && 
+                 $params['PDFFilename'] && 
+                 $params['html'] ) {
                 require_once 'CRM/Utils/PDF/Utils.php';
                 require_once 'CRM/Utils/File.php';
-                $config = CRM_Core_Config::singleton();
                 $pdf_filename = $config->templateCompileDir . CRM_Utils_File::makeFileName( $params['PDFFilename'] );
                 
                 //FIXME : CRM-7894

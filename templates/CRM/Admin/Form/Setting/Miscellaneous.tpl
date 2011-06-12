@@ -53,6 +53,12 @@
            {/if}
           </td>
         </tr>
+        <tr class="crm-miscellaneous-form-block-doNotAttachPDFReceipt">
+            <td class="label">{$form.doNotAttachPDFReceipt.label}</td>
+            <td>{$form.doNotAttachPDFReceipt.html}<br />
+                <p class="description">{ts}If enabled, CiviCRM sends PDF receipt as an attachment during event signup or online contribution.{/ts}</p>
+            </td>
+        </tr>
         <tr class="crm-miscellaneous-form-block-versionCheck">
             <td class="label">{$form.versionCheck.label}</td>
             <td>{$form.versionCheck.html}<br />
