@@ -70,6 +70,8 @@ class CRM_Case_Form_EditClient extends CRM_Core_Form
             $url = CRM_Utils_System::url( 'civicrm/case/search', $urlParams );
         } else if ( $context == 'dashboard' ) {
             $url = CRM_Utils_System::url( 'civicrm/case', 'reset=1' );
+        } else if ( in_array( $context, array( 'dashlet', 'dashletFullscreen') ) ) {
+            $url = CRM_Utils_System::url( 'civicrm/dashboard', 'reset=1' );
         }
         $session = CRM_Core_Session::singleton( );
         $session->pushUserContext( $url );

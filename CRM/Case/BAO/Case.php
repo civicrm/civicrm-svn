@@ -652,7 +652,7 @@ WHERE cc.contact_id = %1
      * @access public
      * 
      */
-    function getCases( $allCases = true, $userID = null, $type = 'upcoming' )
+    function getCases( $allCases = true, $userID = null, $type = 'upcoming', $context = 'dashboard' )
     {
         $condition = null;
         $casesList = array( );
@@ -750,13 +750,15 @@ AND civicrm_case.status_id != $closedId";
                         = CRM_Core_Action::formLink( $actions['primaryActions'], $mask,
                                                      array( 'id'  => $result->case_id,
                                                             'cid' => $result->contact_id,
-                                                            'cxt' => 'dashboard'
+                                                            'cxt' => $context
                                                            ) );
                     $casesList[$result->case_id]['moreActions'] 
                         = CRM_Core_Action::formLink( $actions['moreActions'], 
-                                                     $mask, array( 'id'  => $result->case_id,
-                                                                   'cid' => $result->contact_id,
-                                                             ),
+                                                     $mask, 
+                                                     array( 'id'  => $result->case_id,
+                                                            'cid' => $result->contact_id,
+                                                            'cxt' => $context   
+                                                          ),
                                                      ts( 'more' ),
                                                      true 
                                                      );

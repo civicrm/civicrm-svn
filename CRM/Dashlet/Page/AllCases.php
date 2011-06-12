@@ -62,7 +62,7 @@ class CRM_Dashlet_Page_AllCases extends CRM_Core_Page
         require_once 'CRM/Core/OptionGroup.php';
         $session  = CRM_Core_Session::singleton();
         $userID   = $session->get('userID');        
-        $upcoming = CRM_Case_BAO_Case::getCases( true, $userID, 'upcoming');
+        $upcoming = CRM_Case_BAO_Case::getCases( true, $userID, 'upcoming', $context );
 
         if ( !empty( $upcoming ) ) {
             $this->assign('AllCases', $upcoming);

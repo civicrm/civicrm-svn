@@ -279,10 +279,9 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
             $url = CRM_Utils_System::url( 'civicrm/case/search', $urlParams );
             break;
             
+        case 'dashlet':
+        case 'dashletFullscreen':    
         case 'home':
-            $url = CRM_Utils_System::url( 'civicrm/dashboard', 'reset=1' );
-            break;
-          
         case 'standalone':
             $url = CRM_Utils_System::url( 'civicrm/dashboard', 'reset=1' );
             break;
