@@ -110,7 +110,7 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
         
         $this->add('text', 'name', ts('Rule Name'), array( 'maxlength' => 64, 'class' => 'huge'), true );
         $this->addRule( 'name', ts('A duplicate matching rule with this name already exists. Please select another name.'), 
-                        'objectExists', array( 'CRM_Dedupe_DAO_RuleGroup', $this->_id, 'name' ) );
+                        'objectExists', array( 'CRM_Dedupe_DAO_RuleGroup', $this->_rgid, 'name' ) );
         $levelType = array(
                            'Fuzzy'  => ts('Fuzzy'),
                            'Strict' => ts('Strict')

@@ -133,3 +133,8 @@ UPDATE civicrm_uf_field SET field_name = 'activity_type_id' WHERE field_name= 'a
 -- CRM-7988 allow negative start and end date offsets for custom fields
 ALTER TABLE civicrm_custom_field MODIFY start_date_years INT(10);
 ALTER TABLE civicrm_custom_field MODIFY end_date_years INT(10);
+
+-- CRM-8146 Supply names for existing dupe matching rules (now that name is required)
+UPDATE civicrm_dedupe_rule_group
+SET name = CONCAT(contact_type, '-', level, '-', id)
+WHERE name IS NULL;

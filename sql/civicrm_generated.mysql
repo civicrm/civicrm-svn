@@ -382,7 +382,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `civicrm_dedupe_rule_group` WRITE;
 /*!40000 ALTER TABLE `civicrm_dedupe_rule_group` DISABLE KEYS */;
-INSERT INTO `civicrm_dedupe_rule_group` (`id`, `contact_type`, `threshold`, `level`, `is_default`, `name`) VALUES (1,'Individual',20,'Fuzzy',1,NULL),(2,'Organization',10,'Fuzzy',1,NULL),(3,'Household',10,'Fuzzy',1,NULL),(4,'Individual',10,'Strict',1,NULL),(5,'Organization',10,'Strict',1,NULL),(6,'Household',10,'Strict',1,NULL);
+INSERT INTO `civicrm_dedupe_rule_group` (`id`, `contact_type`, `threshold`, `level`, `is_default`, `name`) VALUES (1,'Individual',20,'Fuzzy',1,'Individual-Fuzzy'),(2,'Organization',10,'Fuzzy',1,'Organization-Fuzzy'),(3,'Household',10,'Fuzzy',1,'Household-Fuzzy'),(4,'Individual',10,'Strict',1,'Individual-Strict'),(5,'Organization',10,'Strict',1,'Organization-Strict'),(6,'Household',10,'Strict',1,'Household-Strict');
 /*!40000 ALTER TABLE `civicrm_dedupe_rule_group` ENABLE KEYS */;
 UNLOCK TABLES;
 

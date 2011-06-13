@@ -36,7 +36,7 @@
         <td>
             {$form.name.html}
             <div class="description">
-                {ts}Enter a descriptive name for the matching rule that will make it easy for users understand how it should be used.{/ts}
+                {ts}Enter a unique descriptive name for this matching rule.{/ts}
             </div>
         </td>
      </tr>
