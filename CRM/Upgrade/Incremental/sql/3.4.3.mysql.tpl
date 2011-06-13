@@ -129,3 +129,7 @@ VALUES
 
 -- CRM-8148, rename uf field 'activity_status' to 'activity_status_id'
 UPDATE civicrm_uf_field SET field_name = 'activity_type_id' WHERE field_name= 'activity_type';
+
+-- CRM-7988 allow negative start and end date offsets for custom fields
+ALTER TABLE civicrm_custom_field MODIFY start_date_years INT(10);
+ALTER TABLE civicrm_custom_field MODIFY end_date_years INT(10);
