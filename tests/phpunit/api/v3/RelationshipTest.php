@@ -486,7 +486,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $params = array( );
         $result =& civicrm_api3_relationship_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( 'Mandatory key(s) missing from params array: contact_id_a, contact_id_b, relationship_type_id, relationship_id, version', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: contact_id_a, contact_id_b, relationship_type_id, contact_id_a, contact_id_b, one of (relationship_type_id, relationship_type), version', $result['error_message'], 'In line ' . __LINE__ );
     }
     
     /**
@@ -511,12 +511,12 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                         'start_date' => array('d'=>'10','M'=>'1','Y'=>'2008'),
                         'end_date'   => array('d'=>'10','M'=>'1','Y'=>'2009'),
                         'is_active'  => 1,
-                        'version'							=> $this->_apiversion,
+                        'version'	 => $this->_apiversion,
                         );
         
         $result =& civicrm_api3_relationship_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( 'Mandatory key(s) missing from params array: contact_id_a, relationship_id', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: contact_id_a, contact_id_a', $result['error_message'], 'In line ' . __LINE__ );
     }  
    
     /**
