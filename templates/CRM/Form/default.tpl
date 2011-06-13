@@ -36,7 +36,7 @@
 {literal}
 <script type="text/javascript" >
 cj( function( ) {
-    cj("#{/literal}{$form.formName}{literal}").validate( );
+    cj("#{/literal}{$form.formName}{literal}").validate({ 'errorClass': 'crm-error'});
 });
 </script>
 {/literal}
