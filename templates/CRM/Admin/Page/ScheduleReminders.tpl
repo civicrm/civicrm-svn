@@ -30,7 +30,7 @@
    {include file="CRM/Admin/Form/ScheduleReminders.tpl"}
 {else}
 {if $rows}
-<div id="ltype">
+<div id="reminder">
         {strip}
 	{include file="CRM/common/enableDisable.tpl"} 
         {include file="CRM/common/jsortable.tpl"}
