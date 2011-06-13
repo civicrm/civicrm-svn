@@ -50,8 +50,15 @@
         <td>&nbsp;</td>
         <td>
             <table class="form-layout-compressed">
+            <tr class="crm-contribution-for_organization_help">
+                <td class="description" colspan="2">
+                    {capture assign="profileURL"}{crmURL p='civicrm/admin/uf/group' q='reset=1'}{/capture}
+                    {ts 1=$profileURL}To change the organization data collected use the "On Behalf Of Organization" profile (<a href="%1">Administer > Customize > CiviCRM Profile</a>).{/ts}
+                </td>
+            </tr>
             <tr id="for_org_text" class="crm-contribution-contributionpage-settings-form-block-for_organization">
-                <td class="label">{$form.for_organization.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='for_organization' id=$contributionPageID}{/if}</td><td>{$form.for_organization.html}<br />
+                <td class="label">{$form.for_organization.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='for_organization' id=$contributionPageID}{/if}</td>
+                <td>{$form.for_organization.html}<br />
                     <span class="description">{ts}Text displayed next to the checkbox on the contribution form.{/ts}</span>
                 </td>
             </tr>
