@@ -61,8 +61,11 @@ function civicrm_api3_profile_get( $params ) {
     _civicrm_api3_initialize( true );
     try{
         civicrm_api3_verify_mandatory($params, null, array('profile_id', 'contact_id'));
-        
-        // FIX ME: check profile exists
+
+        if ( !CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $params['profile_id'], 'is_active' ) ) {
+            return civicrm_api3_create_error('Invalid value for profile_id');
+        }
+
         $isContactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileType( $params['profile_id'] );
                 
         if ( CRM_Core_BAO_UFField::checkProfileType($params['profile_id']) && !$isContactActivityProfile ) {
@@ -138,7 +141,10 @@ function civicrm_api3_profile_set( $params ) {
     try{
         civicrm_api3_verify_mandatory($params, null, array('profile_id', 'contact_id'));
         
-        // FIX ME: check profile exists
+        if ( !CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $params['profile_id'], 'is_active' ) ) {
+            return civicrm_api3_create_error('Invalid value for profile_id');
+        }
+
         $isContactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileType( $params['profile_id'] );
                 
         if ( CRM_Core_BAO_UFField::checkProfileType($params['profile_id']) && !$isContactActivityProfile ) {
@@ -282,6 +288,10 @@ function civicrm_api3_profile_apply( $params ) {
       civicrm_api3_verify_mandatory($params, null, array('profile_id', 'contact_id'));
       require_once 'CRM/Contact/BAO/Contact.php';
       
+      if ( !CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $params['profile_id'], 'is_active' ) ) {
+          return civicrm_api3_create_error('Invalid value for profile_id');
+      }
+
       $profileFields = CRM_Core_BAO_UFGroup::getFields( $params['profile_id'], 
                                                         false, 
                                                         null, 
