@@ -484,7 +484,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
     function testRelationshipUpdateEmpty( )
     {
         $params = array( );
-        $result =& civicrm_api3_relationship_update( $params );
+        $result =& civicrm_api3_relationship_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( 'Mandatory key(s) missing from params array: contact_id_a, contact_id_b, relationship_type_id, relationship_id, version', $result['error_message'], 'In line ' . __LINE__ );
     }
@@ -495,7 +495,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
     function testRelationshipUpdateParamsNotArray( )
     {
         $params = 'relationship_type_id = 5';                            
-        $result =& civicrm_api3_relationship_update( $params );
+        $result =& civicrm_api3_relationship_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( 'Input variable `params` is not an array', $result['error_message'], 'In line ' . __LINE__ );
     }
@@ -514,7 +514,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                         'version'							=> $this->_apiversion,
                         );
         
-        $result =& civicrm_api3_relationship_update( $params );
+        $result =& civicrm_api3_relationship_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( 'Mandatory key(s) missing from params array: contact_id_a, relationship_id', $result['error_message'], 'In line ' . __LINE__ );
     }  
