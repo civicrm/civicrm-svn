@@ -40,7 +40,8 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $rand = 2 * rand(2, 50);
         $pageTitle = 'Donate Online ' . $hash;
         // create contribution page with randomized title and default params
-        $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle );
+        $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, 'Dummy', 
+                                                     null, true, true, 'required' );
 
         $this->open($this->sboxPath . 'civicrm/admin/contribute&reset=1');
         $this->waitForPageToLoad();        
@@ -92,7 +93,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         
         // create contribution page with randomized title, default params and separate payment for Membership and Contribution
         $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, 'Dummy', 
-                                                     null, true, true, true, true, false, true, true,
+                                                     null, true, true, 'required', true, false, true, true,
                                                      1, 7, true, true, true, false, false, true );
         
         $this->open($this->sboxPath . 'civicrm/admin/contribute&reset=1');
