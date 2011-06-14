@@ -157,14 +157,14 @@
   </field>
   <field>
        <name>start_date_years</name>
-       <type>int unsigned</type>
-       <comment>Date may be up to start_date_years years prior to tcurrent date  </comment>
+       <type>int</type>
+       <comment>Date may be up to start_date_years years prior to the current date.</comment>
        <add>1.4</add>
   </field>
   <field>
        <name>end_date_years</name>
-       <type>int unsigned</type>
-       <comment>Date may be up to end_date_years years after to tcurrent date </comment>
+       <type>int</type>
+       <comment>Date may be up to end_date_years years after the current date.</comment>
        <add>1.4</add>
   </field>
   <field>

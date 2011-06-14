@@ -1576,7 +1576,10 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                     $sent[] = $contactID;
                     require_once 'CRM/Activity/BAO/Activity.php';
                     foreach ( $participants as $ids => $values ) { 
-                        CRM_Activity_BAO_Activity::addActivity( $values, 'Email' );
+                        if ( $values->contact_id == $contactID ) {
+                            CRM_Activity_BAO_Activity::addActivity( $values, 'Email' );
+                            break;
+                        }
                     } 
                 } else {
                     $notSent[] = $contactID;

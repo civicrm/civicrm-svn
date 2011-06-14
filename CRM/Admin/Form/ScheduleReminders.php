@@ -135,7 +135,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
                                                       'entity_recipient' );
         }
 
-        $this->add( 'select', 'recipient', ts( 'Recipient' ), $sel5[$recipient],
+        $this->add( 'select', 'recipient', ts( 'Recipient(s)' ), $sel5[$recipient],
                     false, array( 'onClick' => "showHideByValue('recipient','manual','recipientManual','table-row','select',false); showHideByValue('recipient','group','recipientGroup','table-row','select',false);") 
                     );
         

@@ -35,6 +35,8 @@
  */
 
 require_once 'utils.inc';
+require_once 'civicrm_rules_entities.rules.inc';
+
 /**
  * Implements hook_rules_file_info() on behalf of the user module.
  */
@@ -50,79 +52,115 @@ function civicrm_rules_rules_event_info( ) {
                        'module'          => 'civicrm', 
                        );
     return array(
-                 'contact_create'    => $defaults + array(
-                                                          'label'     => t( 'Contact has been created' ),
-                                                          'group'     => 'CiviCRM Contact',
-                                                          'variables' => civicrm_rules_rules_events_variables( t( 'created contact' ) ),
-                                                          ),
-                 'contact_edit'      => $defaults + array(
-                                                          'label'     => t( 'Contact has been updated' ),
-                                                          'group'     => 'CiviCRM Contact',
-                                                          'variables' => civicrm_rules_rules_events_variables( t( 'update contact' ) ),
-                                                          ),
-                 'contact_view'      => $defaults + array(
-                                                          'label'     => t( 'Contact has been viewed' ),
-                                                          'group'     => 'CiviCRM Contact',
-                                                          'variables' => civicrm_rules_rules_events_variables( t( 'viewed contact' ) ),
-                                                          ),
-                 'contact_delete'    => $defaults + array(
-                                                          'label'     => t( 'Contact has been deleted' ),
-                                                          'group'     => 'CiviCRM Contact',
-                                                          'variables' => civicrm_rules_rules_events_variables( t( 'deleted contact' ) ),
-                                                          ),
-                 'mailing_create'    => $defaults + array(
-                                                          'label'     => t( 'Mailing has been created' ),
-                                                          'group'     => 'CiviCRM Mailing',
-                                                          'variables' => civicrm_rules_rules_events_variables( t( 'created mailing' ), 
-                                                                                                               'mailing' ),
-                                                          ),
-                 'mailing_edit'      => $defaults + array (
-                                                           'label'     => t( 'Mailing has been updated' ),
-                                                           'group'     => 'CiviCRM Mailing',
-                                                           'variables' => civicrm_rules_rules_events_variables( t( 'updated mailing' ), 
-                                                                                                                'mailing' ),
-                                                           ),
-                 'mailing_uploaded'  => $defaults + array(
-                                                          'label'     => t( 'Mailing content has been uploaded' ),
-                                                          'group'     => 'CiviCRM Mailing',
-                                                          'variables' => civicrm_rules_rules_events_variables( t( 'mailing content uploaded' ),
-                                                                                                               'mailing' ),
-                                                          ),
-                 'mailing_scheduled' => $defaults + array(
-                                                          'label'     => t( 'Mailing has been scheduled' ),
-                                                          'group'     => 'CiviCRM Mailing',
-                                                          'variables' => civicrm_rules_rules_events_variables( t( 'scheduled mailing' ),
-                                                                                                               'mailing' ),
-                                                          ),
-                 'mailing_approved'  => $defaults + array(
-                                                          'label'     => t( 'Mailing has been approved/rejected' ),
-                                                          'group'     => 'CiviCRM Mailing',
-                                                          'variables' => civicrm_rules_rules_events_variables( t( 'approved mailing' ), 
-                                                                                                               'mailing' ),
-                                                          ),
-                 'mailing_inform'    => $defaults + array(
-                                                          'label'     => t( 'Inform scheduler about the mailing' ),
-                                                          'group'     => 'CiviCRM Mailing',
-                                                          'variables' => civicrm_rules_rules_events_variables( t( 'inform mailing' ),
-                                                                                                               'mailing' ),
-                                                          ),
-                 'mailing_queued'    => $defaults + array(
-                                                          'label'     => t( 'Mailing has been queued' ),
-                                                          'group'     => 'CiviCRM Mailing',
-                                                          'variables' => civicrm_rules_rules_events_variables( t( 'queued mailing' ), 
-                                                                                                               'mailing' ),
-                                                          ),
-                 'mailing_complete'  => $defaults + array(
-                                                          'label'     => t( 'Mailing has been completed' ),
-                                                          'group'     => 'CiviCRM Mailing',
-                                                          'variables' => civicrm_rules_rules_events_variables( t( 'completed mailing' ), 
-                                                                                                               'mailing' ),
-                                                          ),
-                 );
+                 'contact_create' => array(
+                                           'label'     => t( 'Contact has been created' ),
+                                           'module'    => 'CiviCRM Contact',
+                                           'arguments' => rules_events_hook_civicrm_arguments( t( 'Created contact' ),
+                                                                                               'contact' ),
+                                           ),
+                 'contact_edit' => array(
+                                         'label'     => t( 'Contact has been updated' ),
+                                         'module'    => 'CiviCRM Contact',
+                                         'arguments' => rules_events_hook_civicrm_arguments( t( 'Updated contact' ),
+                                                                                             'contact' ),
+                                         ),
+                 'contact_view'   => array(
+                                           'label'     => t( 'Contact has been viewed' ),
+                                           'module'    => 'CiviCRM Contact',
+                                           'arguments' => rules_events_hook_civicrm_arguments( t( 'Viewed contact' ),
+                                                                                               'contact' ),
+                                           ),
+                 'contact_delete' => array(
+                                           'label'     => t( 'Contact has been deleted' ),
+                                           'module'    => 'CiviCRM Contact',
+                                           'arguments' => rules_events_hook_civicrm_arguments( t( 'Deleted contact' ),
+                                                                                               'contact' ),
+                                           ),
+                 'mailing_create' => array(
+                                           'label'     => t( 'Mailing has been created' ),
+                                           'module'    => 'CiviCRM Mailing',
+                                           'arguments' => rules_events_hook_civicrm_arguments( t( 'Created mailing' ),
+                                                                                               'mailing' ),
+                                           ),
+                 'mailing_edit' => array(
+                                         'label'     => t( 'Mailing has been updated' ),
+                                         'module'    => 'CiviCRM Mailing',
+                                         'arguments' => rules_events_hook_civicrm_arguments( t( 'Updated Mailing' ),
+                                                                                             'mailing' ),
+                                         ),
+                 'mailing_uploaded' => array(
+                                             'label'     => t( 'Mailing content has been uploaded' ),
+                                             'module'    => 'CiviCRM Mailing',
+                                             'arguments' => rules_events_hook_civicrm_arguments( t( 'Mailing content uploaded' ),
+                                                                                                 'mailing' ),
+                                             ),
+                 'mailing_scheduled' => array(
+                                              'label'     => t( 'Mailing has been scheduled' ),
+                                              'module'    => 'CiviCRM Mailing',
+                                              'arguments' => rules_events_hook_civicrm_arguments( t( 'Scheduled mailing' ),
+                                                                                                  'mailing' ),
+                                              ),
+                 'mailing_approved' => array(
+                                             'label'     => t( 'Mailing has been approved/rejected' ),
+                                             'module'    => 'CiviCRM Mailing',
+                                             'arguments' => rules_events_hook_civicrm_arguments( t( 'Approved mailing' ),
+                                                                                                 'mailing' ),
+                                             ),
+                 'mailing_inform'     => array(
+                                               'label'     => t( 'Inform scheduler about the mailing' ),
+                                               'module'    => 'CiviCRM Mailing',
+                                               'arguments' => rules_events_hook_civicrm_arguments( t( 'Inform Mailing' ),
+                                                                                                   'mailing' ),
+                                               ),
+                 'mailing_queued' => array(
+                                           'label'     => t( 'Mailing has been queued' ),
+                                           'module'    => 'CiviCRM Mailing',
+                                           'arguments' => rules_events_hook_civicrm_arguments( t( 'Queued mailing' ),
+                                                                                               'mailing' ),
+                                           ),
+                 'mailing_complete' => array(
+                                             'label'     => t( 'Mailing has been completed' ),
+                                             'module'    => 'CiviCRM Mailing',
+                                             'arguments' => rules_events_hook_civicrm_arguments( t( 'Completed mailing' ),
+                                                                                                 'mailing' ),
+                                             )
+                 )+ civicrm_rules_entities_event_info();
+               
+}
+
+
+function civicrm_rules_condition_info() {
+    return civicrm_rules_entities_condition_info();
+}
+
+/*
+ * Implementation of hook_token_list().
+ */
+function civicrm_rules_token_list($type = 'all') {
+    $tokens['civicrm_event']['creator_drupal_id'] = t('The user ID of the creator');
+    $tokens['civicrm_event']['creator_drupal_id'] = t('The user ID of the creator');
+    return $tokens;
+}
+
+/**
+ * Implementation of hook_token_values().
+ */
+function civicrm_rules_token_values($type, $object = NULL) {
+    switch ($type) {
+    case 'civicrm_event':
+     
+        if (!empty($object)) {
+            $values['creator drupal id'] = 1;
+        }
+        break;
+    }
+
+    return $values;
 }
 
 /**
  * CiviCRM integration access callback.
+ * Returns some arguments suitable for hook_civicrm
  */
 function civicrm_rules_rules_integration_access( $type, $name ) {
     if ($type == 'event' || $type == 'condition') {
@@ -279,5 +317,7 @@ function civicrm_rules_rules_data_info() {
                                     'identifiable' => TRUE,
                                     ),
                  );
+                 
+
 }
 

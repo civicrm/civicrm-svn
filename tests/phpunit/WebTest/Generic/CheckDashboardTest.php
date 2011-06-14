@@ -74,7 +74,7 @@ class WebTest_Generic_CheckDashboardTest extends CiviSeleniumTestCase
       
       // click Full Screen icon and test full screen container
       $this->click("css=li#widget-1 a.fullscreen-icon");
-      $this->waitForElementPresent("ui-dialog-title-crm-container");
+      $this->waitForElementPresent("ui-dialog-title-crm-dashlet-container");
       $this->assertTrue($this->isTextPresent($widgetTitle)); 
       $this->click("link=close");
   }

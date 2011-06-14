@@ -25,7 +25,7 @@ VALUES
    ( @uf_group_id_onBehalfOrganization,   'organization_name',  1, 0, 1, 'User and User Admin Only',  0, 0, NULL, 
             {localize}'Organization Name'{/localize}, 'Organization', {localize}NULL{/localize},  NULL ),
    ( @uf_group_id_onBehalfOrganization,   'phone',              1, 0, 2, 'User and User Admin Only',  0, 0, 3, 
-            {localize}'Phone (Main) '{/localize},     'Contact',      {localize}NULL{/localize},  NULL ),
+            {localize}'Phone (Main) '{/localize},     'Contact',      {localize}NULL{/localize},  1 ),
    ( @uf_group_id_onBehalfOrganization,   'email',              1, 0, 3, 'User and User Admin Only',  0, 0, 3,  
             {localize}'Email (Main) '{/localize},     'Contact',      {localize}NULL{/localize},  NULL ),
    ( @uf_group_id_onBehalfOrganization,   'street_address',     1, 0, 4, 'User and User Admin Only',  0, 0, 3,  
@@ -57,10 +57,7 @@ CREATE TABLE IF NOT EXISTS `civicrm_action_mapping` (
 INSERT INTO civicrm_action_mapping 
         (entity, entity_value, entity_value_label, entity_status, entity_status_label, entity_date_start, entity_date_end, entity_recipient) 
 VALUES
-	('civicrm_activity', 'activity_type', 'Type', 'activity_status', 'Status', 'activity_date_time', NULL, 'activity_contacts'),
-	('civicrm_participant', 'event_type', 'Type', 'civicrm_participant_status_type', 'Status', 'event_start_date', 'event_end_date', 'civicrm_participant_status_type'),
-	('civicrm_participant', 'civicrm_event', 'Type', 'civicrm_participant_status_type', 'Status', 'event_start_date', 'event_end_date', 'civicrm_participant_status_type');
-
+	('civicrm_activity', 'activity_type', 'Type', 'activity_status', 'Status', 'activity_date_time', NULL, 'activity_contacts');
 
 CREATE TABLE IF NOT EXISTS `civicrm_action_schedule` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -85,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `civicrm_action_schedule` (
   `body_text` longtext COLLATE utf8_unicode_ci COMMENT 'Body of the mailing in text format.',
   `body_html` longtext COLLATE utf8_unicode_ci COMMENT 'Body of the mailing in html format.',
   `subject` varchar(128) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Subject of mailing',
-  `record_activity` tinyint(4) DEFAULT '1' COMMENT 'Record Activity for this reminder?',
+  `record_activity` tinyint(4) DEFAULT NULL COMMENT 'Record Activity for this reminder?',
   `mapping_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to mapping which is being used by this reminder',
   `group_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to Group',
   `msg_template_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to the message template.',
@@ -102,7 +99,6 @@ VALUES
       ('activity_contacts', {localize}'{ts escape="sql"}Activity Contacts{/ts}'{/localize}, 0, 1);
 
 SELECT @option_group_id_aco := max(id) from civicrm_option_group where name = 'activity_contacts';
-
 SELECT @option_group_id_act := max(id) from civicrm_option_group where name = 'activity_type';
 SELECT @act_value           := MAX(ROUND(value)) FROM civicrm_option_value WHERE option_group_id = @option_group_id_act;
 SELECT @act_weight          := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_act;
@@ -130,3 +126,12 @@ VALUES
 
 -- CRM-8148, rename uf field 'activity_status' to 'activity_status_id'
 UPDATE civicrm_uf_field SET field_name = 'activity_type_id' WHERE field_name= 'activity_type';
+
+-- CRM-7988 allow negative start and end date offsets for custom fields
+ALTER TABLE civicrm_custom_field MODIFY start_date_years INT(10);
+ALTER TABLE civicrm_custom_field MODIFY end_date_years INT(10);
+
+-- CRM-8146 Supply names for existing dupe matching rules (now that name is required)
+UPDATE civicrm_dedupe_rule_group
+SET name = CONCAT(contact_type, '-', level, '-', id)
+WHERE name IS NULL;

@@ -48,14 +48,18 @@ function civicrm_rules_civicrm_post( $op, $objectName, $objectId, &$objectRef ) 
     }
 
 	// process only contacts for now
-	$validObjects = array( 'Contact',
-                           );
+	$validObjects = variable_get('civicrm_rules_post_entities','Contact');
 
 	if ( ! in_array( $objectName, $validObjects ) ) {
 		return;
 	}
 
     $eventObject = strtolower( $objectName );
+    if($eventObject != 'contact'){
+        // without the civicrm prefix too much chance of another drupal module being enabled
+        $eventObject = 'civicrm_' . $eventObject;
+    }
+
 	$eventName = null;
 	switch ( $op ) {
     case 'create':
@@ -165,4 +169,25 @@ FROM   civicrm_mailing
         }
     }
 }
+/*
+* Implementation of hook_perm().
+*/
+function civicrm_rules_perm() 
+{
+    return array('access civicrm rules settings');
+}
 
+function civicrm_rules_menu() {
+
+    $items['admin/settings/civicrm_rules'] = array(
+                                                   'title' => t('CiviCRM Rules settings'),
+                                                   'description' => t('CiviCRM Rules Configuration'),
+                                                   'page callback' => 'drupal_get_form',
+                                                   'page arguments' => array('civicrm_rules_admin_settings'),
+                                                   'access arguments' => array('access civicrm rules settings'),
+                                                   'file'	=> 'civicrm_rules_admin_form.inc',
+                                                   'type' => MENU_NORMAL_ITEM,
+                                                   );
+    return $items;
+
+}

@@ -52,12 +52,9 @@ require_once 'CRM/Campaign/BAO/Survey.php';
  */
 function civicrm_api3_survey_create( $params )
 {
-  try{    
     civicrm_api3_verify_mandatory($params,null,array('title'));
     return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params);
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -72,14 +69,9 @@ function civicrm_api3_survey_create( $params )
  */
 function civicrm_api3_survey_get( $params )
 {
-  try{
-
     civicrm_api3_verify_mandatory($params);
     return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
-    
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -98,12 +90,5 @@ function civicrm_api3_survey_get( $params )
  */
 function civicrm_api3_survey_delete( $params )
 {
-  _civicrm_api3_initialize( true);
-  try{
-
     return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
-
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
 }

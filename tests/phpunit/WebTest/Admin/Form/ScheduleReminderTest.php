@@ -52,8 +52,8 @@ class WebTest_Admin_Form_ScheduleReminderTest extends CiviSeleniumTestCase {
       $this->webtestLogin();
 
       // Add new Schedule Reminder
-      $this->open( $this->sboxPath . "civicrm/admin/scheduleReminders?reset=1");
-      $this->open( $this->sboxPath . "civicrm/admin/scheduleReminders?action=add&reset=1");
+      $this->open( $this->sboxPath . 'civicrm/admin/scheduleReminders?reset=1');
+      $this->open( $this->sboxPath . 'civicrm/admin/scheduleReminders?action=add&reset=1');
       $this->waitForElementPresent('_qf_ScheduleReminders_cancel-bottom');
       
       // Fill Title
@@ -79,11 +79,11 @@ class WebTest_Admin_Form_ScheduleReminderTest extends CiviSeleniumTestCase {
       //click on save
       $this->click( '_qf_ScheduleReminders_next-bottom' );
       $this->waitForPageToLoad( '30000' );
+
+      $this->click( "//div[@id='reminder']//div[@class='dataTables_wrapper']/table/tbody//tr/td[1][text()='{$title}']/../td[7]/span/a[text()='Edit']" );
+      $this->waitForElementPresent( '_qf_ScheduleReminders_cancel-bottom' );
       
-      $this->click( "xpath=//div[@id='ltype']/table/tbody//tr/td[1][text()='{$title}']/../td[7]/span/a[text()='Edit']" );
-      $this->waitForElementPresent( "_qf_ScheduleReminders_cancel-bottom" );
-      
-      $this->assertEquals( $title, $this->getValue( "id=title" ) ); 
+      $this->assertEquals( $title, $this->getValue( 'id=title' ) ); 
       $this->removeSelection( 'entity[1]', 'value=1');
       $this->addSelection( 'entity[1]', 'value=2' );
       $this->addSelection( 'entity[1]', 'value=33' );
@@ -91,17 +91,15 @@ class WebTest_Admin_Form_ScheduleReminderTest extends CiviSeleniumTestCase {
       $this->addSelection( 'entity[2]', 'value=1' );
       $this->addSelection( 'entity[2]', 'value=2' );
 
-      $this->assertEquals( "1", $this->getSelectedValue( "id=start_action_offset" ) ); 
-      $this->assertEquals( "hour", $this->getSelectedValue( "id=start_action_unit" ) ); 
-      $this->assertEquals( "after", $this->getSelectedValue( "id=start_action_condition" ) ); 
-      $this->assertEquals( "activity_date_time", $this->getSelectedValue( "id=start_action_date" ) ); 
+      $this->assertEquals( '1', $this->getSelectedValue( 'id=start_action_offset' ) ); 
+      $this->assertEquals( 'hour', $this->getSelectedValue( 'id=start_action_unit' ) ); 
+      $this->assertEquals( 'after', $this->getSelectedValue( 'id=start_action_condition' ) ); 
+      $this->assertEquals( 'activity_date_time', $this->getSelectedValue( 'id=start_action_date' ) ); 
       
       $this->assertChecked( 'is_repeat' );
       
-      $this->assertEquals( "1", $this->getSelectedValue( "id=recipient" ) ); 
+      $this->assertEquals( '1', $this->getSelectedValue( 'id=recipient' ) ); 
       $this->assertChecked( 'is_active' );
-      $this->assertChecked( 'record_activity' );
-
      
   }
 }

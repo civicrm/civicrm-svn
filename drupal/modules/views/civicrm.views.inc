@@ -2130,7 +2130,6 @@ function civicrm_views_data() {
                                                                   ),
                                                         
                                                         );
-
     //Contribution Type
     $data['civicrm_contribution']['contribution_type'] = array(
                                                                'title' => t('Contribution Type'),

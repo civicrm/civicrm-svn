@@ -44,11 +44,6 @@ require_once 'CRM/Contact/BAO/Relationship.php';
 require_once 'CRM/Contact/BAO/RelationshipType.php';
 
 
-function civicrm_api3_relationship_getfields( $params ) {
-    $bao = new CRM_Contact_BAO_Relationship();
-    return ($bao->fields());
-}
-
 /**
  * Add or update a relationship
  *
@@ -246,13 +241,7 @@ function _civicrm_api3_relationship_format_params( $params, &$values ) {
             }
             break;
             
-        case 'start_date':
-        case 'end_date':
-            if (!CRM_Utils_Rule::qfDate($value)) {
-                return civicrm_api3_create_error("$key not a valid date: $value");
-            }
-            
-            break;
+
             
         case 'relationship_type':
             foreach ( $relationTypes as $relTypId => $relValue ) {
@@ -304,8 +293,7 @@ function _civicrm_api3_relationship_format_params( $params, &$values ) {
 }
 function _civicrm_api3_relationship_check_params( &$params ) {
 
-    $params['start_date'] = date("Ymd", strtotime($params['start_date']));
-    $params['end_date'] = date("Ymd", strtotime($params['end_date']));
+
     // check params for validity of Relationship id
     if ( CRM_Utils_Array::value( 'id', $params ) ) {
         require_once 'CRM/Contact/BAO/Relationship.php';

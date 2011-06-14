@@ -1312,7 +1312,7 @@ class CRM_Utils_System {
     }
 
     /**
-     * Append the contents of a javascript file if it is present in
+     * Append the contents of an 'extra' smarty template file if it is present in
      * the custom template directory. This does not work if there are
      * multiple custom template directories
      *
@@ -1322,15 +1322,16 @@ class CRM_Utils_System {
      * @return void - the content string is modified if needed
      * @static
      */
-    static function appendJSFile( $fileName, &$content ) {
+    static function appendTPLFile( $fileName, &$content ) {
         $config =& CRM_Core_Config::singleton( );
         if ( isset( $config->customTemplateDir ) &&
              $config->customTemplateDir ) {
-            $additionalJSFile = str_replace( '.tpl', '.extra.js', $fileName );
+            $additionalTPLFile = str_replace( '.tpl', '.extra.tpl', $fileName );
             // check if the file exists in the custom templates directory
-            $fileName = $config->customTemplateDir . DIRECTORY_SEPARATOR . $additionalJSFile;
+            $fileName = $config->customTemplateDir . DIRECTORY_SEPARATOR . $additionalTPLFile;
             if ( file_exists( $fileName ) ) {
-                $content .= "<script>\n" . file_get_contents( $fileName ) . "</script>";
+                $template = CRM_Core_Smarty::singleton( );
+                $content .= $template->fetch( $fileName );
             }
         }
     }

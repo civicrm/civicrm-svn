@@ -123,7 +123,7 @@ class civicrm_handler_relationship extends views_handler_relationship {
     }
 
     $def = $this->definition;
-
+    
     $leftField = $this->definition['base'] == 'civicrm_relationship' ? $this->field : $this->definition['other_field'];
     $def['table'] = $this->definition['base'];
     $def['field'] = $this->definition['field'];

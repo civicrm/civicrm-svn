@@ -451,6 +451,10 @@ div.spacer,
     border: 1px none;
 }
 
+#crm-container table.crm-profile-tagsandgroups {
+    margin-top: -1.25em;
+}
+
 #crm-container table.advmultiselect {
     margin: 0em;
     width: auto;
@@ -1575,7 +1579,7 @@ table.campaign td,
 
 #crm-container .panel {
     display  : none;
-    z-index  : 1;
+    z-index  : 9999;
     position : absolute;
     border-bottom:0px;
     background:transparent url(../i/dropdown-pointer.gif) no-repeat scroll 150px 1px;

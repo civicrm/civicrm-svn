@@ -100,7 +100,7 @@ class CRM_Custom_Form_ChangeFieldType extends CRM_Core_Form {
         
         $srcHtmlType = $this->add( 'select',
                                    'src_html_type',
-                                   ts( 'Source HTML Type' ),
+                                   ts( 'Current HTML Type' ),
                                    array( $this->_values['html_type'] => $this->_values['html_type'] ),
                                    true );
 
@@ -111,7 +111,7 @@ class CRM_Custom_Form_ChangeFieldType extends CRM_Core_Form {
 
         $dstHtmlType = $this->add( 'select',
                                    'dst_html_type',
-                                   ts( 'Destination HTML Type' ),
+                                   ts( 'New HTML Type' ),
                                    array ('' => ts('- select -') ) + $this->_htmlTypeTransitions,
                                    true );
                     

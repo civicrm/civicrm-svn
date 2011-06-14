@@ -300,9 +300,9 @@ class CRM_Member_BAO_MembershipTypeTest extends CiviUnitTestCase
         $params = array(
                         'contact_id'         => $this->_indiviContactID,  
                         'membership_type_id' => $membershipType->id,
-                        'join_date'          => '2006-01-21',
-                        'start_date'         => '2006-01-21',
-                        'end_date'           => '2006-12-21',
+                        'join_date'          => '20060121000000',
+                        'start_date'         => '20060121000000',
+                        'end_date'           => '20061221000000',
                         'source'             => 'Payment',
                         'is_override'        => 1,
                         'status_id'          => $this->_membershipStatusID

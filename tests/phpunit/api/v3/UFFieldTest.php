@@ -42,7 +42,8 @@ class api_v3_UFFieldTest extends CiviUnitTestCase
     protected $_ufFieldId;
     protected $_contactId = 69;
     protected $_apiversion; 
-
+    protected $_params;
+    protected $_entity;
     protected function setUp()
     {
         parent::setUp();
@@ -99,6 +100,19 @@ class api_v3_UFFieldTest extends CiviUnitTestCase
             'xbutton'       =>array('HTML/QuickForm/xbutton.php','HTML_QuickForm_xbutton'),
             'advmultiselect'=>array('HTML/QuickForm/advmultiselect.php','HTML_QuickForm_advmultiselect'),
         );
+        
+        $this->_params =  array(
+            'field_name'       => 'country',
+            'field_type'       => 'Contact',
+            'visibility'       => 'Public Pages and Listings',
+            'weight'           => 1,
+            'label'            => 'Test Country',
+            'is_searchable'    => 1,
+            'is_active'        => 1,
+            'version'					 => $this->_apiversion,
+            'uf_group_id'				 =>$this->_ufGroupId, 
+        );
+       $this->_entity = 'uf_field';
     }
 
 
@@ -183,5 +197,21 @@ class api_v3_UFFieldTest extends CiviUnitTestCase
         $result = civicrm_api3_uf_field_delete($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
         $this->assertEquals($result['is_error'], 0,'in line' . __LINE__);
+    }
+    
+    public function testGetUFFieldSuccess(){
+
+        civicrm_api($this->_entity,'create', $this->_params);
+        $params = array('version' => 3);
+        $result = civicrm_api($this->_entity,'get',$params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);  
+        $this->assertEquals($result['is_error'], 0,'in line' . __LINE__);
+        $values = $result['values'][$result['id']];
+        foreach($this->_params as $key => $value){
+          if($key == 'version')continue;
+          $this->assertEquals($value, $values[$key],'in line' . __LINE__);        
+          
+        }  
+        civicrm_api($this->_entity,'delete',$values);
     }
 }

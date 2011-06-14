@@ -40,7 +40,8 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $rand = 2 * rand(2, 50);
         $pageTitle = 'Donate Online ' . $hash;
         // create contribution page with randomized title and default params
-        $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle );
+        $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, 'Dummy', 
+                                                     null, true, true, 'required' );
 
         $this->open($this->sboxPath . 'civicrm/admin/contribute&reset=1');
         $this->waitForPageToLoad();        
@@ -49,10 +50,10 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $this->type('title', $pageTitle);
         $this->click('_qf_SearchContribution_refresh');
         $this->waitForPageToLoad('30000');
-        $this->waitForElementPresent("links_{$pageId}"); 
-
-        $this->click("links_{$pageId}");
-        $this->click('link=Test-drive');
+        
+        // select testdrive mode
+        $this->isTextPresent($pageTitle);
+        $this->open($this->sboxPath . 'civicrm/contribute/transact?reset=1&action=preview&id=' . $pageId );
         $this->waitForPageToLoad();
 
         // verify whatever’s possible to verify
@@ -92,7 +93,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         
         // create contribution page with randomized title, default params and separate payment for Membership and Contribution
         $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, 'Dummy', 
-                                                     null, true, true, true, true, false, true, true,
+                                                     null, true, true, 'required', true, false, true, true,
                                                      1, 7, true, true, true, false, false, true );
         
         $this->open($this->sboxPath . 'civicrm/admin/contribute&reset=1');
@@ -102,11 +103,11 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $this->type('title', $pageTitle);
         $this->click('_qf_SearchContribution_refresh');
         $this->waitForPageToLoad('30000');
-        $this->waitForElementPresent("links_{$pageId}"); 
         
         // select testdrive mode
-        $this->click("links_{$pageId}");
-        $this->click('link=Test-drive');
+        $this->isTextPresent($pageTitle);
+        $this->open($this->sboxPath . 'civicrm/contribute/transact?reset=1&action=preview&id=' . $pageId );
+        
         $this->waitForPageToLoad();
         $texts = array(
             "Title - New Membership $hash",
@@ -152,7 +153,6 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $this->type('title', $pageTitle);
         $this->click('_qf_SearchContribution_refresh');
         $this->waitForPageToLoad('30000');
-        $this->waitForElementPresent("links_{$pageId}"); 
                 
         //get Url for Live Contribution Page
         $registerUrl = "civicrm/contribute/transact?reset=1&id=$pageId";
@@ -229,7 +229,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
                           1  => "{$firstName} {$lastName}" 
                           ); 
         foreach ( $expected as  $value => $label ) { 
-            $this->verifyText("xpath=id('MembershipView')/x:div[2]/x:div/x:table/x:tbody/x:tr[$value]/x:td[2]", preg_quote($label)); 
+            $this->verifyText("xpath=id('MembershipView')/div[2]/div/table/tbody/tr[$value]/td[2]", preg_quote($label)); 
         }
         $this->click( '_qf_MembershipView_cancel-bottom' );
         
