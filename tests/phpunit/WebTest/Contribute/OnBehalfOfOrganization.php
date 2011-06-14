@@ -44,7 +44,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         // The rest of URL is defined in CiviSeleniumTestCase base class, in
         // class attributes.
         $this->open( $this->sboxPath );
-        
+                
         // Logging in. Remember to wait for page to load. In most cases,
         // you can rely on 30000 as the value that allows your test to pass, however,
         // sometimes your test might fail because of this. In such cases, it's better to pick one element
@@ -56,7 +56,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $processorName = "Webtest Dummy" . substr( sha1( rand( ) ), 0, 7 );  
         $processorType = 'Dummy';
         $pageTitle = substr( sha1( rand( ) ), 0, 7 );
-        $rand = 2 * rand( 2, 50 );
+        $rand = 100;
         $hash = substr(sha1(rand()), 0, 7);
         $amountSection = true;
         $payLater =  true;
@@ -100,7 +100,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
                                                      $honoreeSection );
         
         //logout
-        $this->open( $this->sboxPath . "logout" );
+        $this->open( $this->sboxPath . "civicrm/logout?reset=1" );
         $this->waitForPageToLoad( '30000' );
         
         //Open Live Contribution Page
@@ -109,7 +109,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->waitForElementPresent( "_qf_Main_upload-bottom" );
         
         $this->click( 'CIVICRM_QFID_amount_other_radio_4' );
-        $this->type( 'amount_other', 100 );
+        $this->type( 'amount_other', 60 );
         
         $firstName = 'Ma' . substr( sha1( rand( ) ), 0, 4 );
         $lastName  = 'An' . substr( sha1( rand( ) ), 0, 7 );
@@ -505,7 +505,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->assertTrue( $this->isTextPresent( 'Selected Profile Field has been deleted.' ), 
                            "Status message didn't show up after saving!" );
 
-        $this->click( "xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='{#}']/../td[10]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']" );
+        $this->click( "xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='{$fieldTitle}']/../td[10]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']" );
         $this->waitForElementPresent( '_qf_Field_next-bottom' );
         
         $this->click( '_qf_Field_next-bottom' );
@@ -891,7 +891,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->waitForElementPresent( "css=div.ac_results-inner li" );
         $this->click( "css=div.ac_results-inner li" );
         $this->assertContains( $orgName1, $this->getValue( 'onbehalf_organization_name' ), "autocomplete expected $orgName1 but didn’t find it in " . $this->getValue('onbehalf_organization_name' ) );
-        
+        sleep(5);
         $this->select( 'onbehalf_member_campaign_id', "label={$title}" );
         $this->type( "onbehalf_custom_{$fieldId}", 'Test Subject' );
         
