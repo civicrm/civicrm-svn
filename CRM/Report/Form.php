@@ -1793,7 +1793,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                     imagedestroy($chart);
                 }
                 require_once 'CRM/Utils/PDF/Utils.php';                     
-                CRM_Utils_PDF_Utils::html2pdf( $content, "CiviReport.pdf" );
+                CRM_Utils_PDF_Utils::html2pdf( $content, "CiviReport.pdf", false, array('orientation' => 'landscape') );
             }
             CRM_Utils_System::civiExit( );
         } else if ( $this->_outputMode == 'csv' ) {
