@@ -579,25 +579,24 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
             // if we find more than one contact, use the first one
             $contact_id  = CRM_Utils_Array::value( 0, $ids );
-            if ( CRM_Utils_Array::value( 'first_name', $params ) && 
-                 CRM_Utils_Array::value( 'last_name', $params ) ) {
-                $greetingTypes = array( 'addressee'       => 'addressee_id', 
-                                        'email_greeting'  => 'email_greeting_id', 
-                                        'postal_greeting' => 'postal_greeting_id'
-                                        );
-                
-                foreach( $greetingTypes  as $key => $value ) {
-                    if( !array_key_exists( $key, $params ) ) {
-                        $defaultGreetingTypeId = CRM_Core_OptionGroup::values( $key, null, null, null, 
-                                                                               'AND is_default =1
+            
+            $greetingTypes = array( 'addressee'       => 'addressee_id', 
+                                    'email_greeting'  => 'email_greeting_id', 
+                                    'postal_greeting' => 'postal_greeting_id'
+                                    );
+            
+            foreach( $greetingTypes  as $key => $value ) {
+                if( !array_key_exists( $key, $params ) ) {
+                    $defaultGreetingTypeId = CRM_Core_OptionGroup::values( $key, null, null, null, 
+                                                                           'AND is_default =1
                                                                             AND (filter = 1 OR filter = 0 )',
-                                                                               'value' 
-                                                                               );
-                        
-                        $params[$key] = key( $defaultGreetingTypeId );
-                    }
+                                                                           'value' 
+                                                                           );
+                    
+                    $params[$key] = key( $defaultGreetingTypeId );
                 }
             }
+            
             $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params,
                                                                          $fields,
                                                                          $contact_id,

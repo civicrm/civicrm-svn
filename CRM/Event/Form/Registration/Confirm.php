@@ -998,23 +998,20 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                                                                          $ctype,
                                                                          true );
         } else {
-            if ( CRM_Utils_Array::value( 'first_name', $params ) && 
-                 CRM_Utils_Array::value( 'last_name', $params ) ) {
-                $greetingTypes = array( 'addressee'       => 'addressee_id', 
-                                        'email_greeting'  => 'email_greeting_id', 
-                                        'postal_greeting' => 'postal_greeting_id'
-                                        );
-                
-                foreach( $greetingTypes  as $key => $value ) {
-                    if( !array_key_exists( $key, $params ) ) {
-                        $defaultGreetingTypeId = CRM_Core_OptionGroup::values( $key, null, null, null, 
-                                                                               'AND is_default = 1
-                                                                                AND (filter = 1 OR filter = 0 )',
-                                                                               'value' 
-                                                                               );
-                        
+            $greetingTypes = array( 'addressee'       => 'addressee_id', 
+                                    'email_greeting'  => 'email_greeting_id', 
+                                    'postal_greeting' => 'postal_greeting_id'
+                                    );
+            
+            foreach( $greetingTypes  as $key => $value ) {
+                if( !array_key_exists( $key, $params ) ) {
+                    $defaultGreetingTypeId = CRM_Core_OptionGroup::values( $key, null, null, null, 
+                                                                           'AND is_default = 1
+                                                                            AND (filter = 1 OR filter = 0 )',
+                                                                           'value' 
+                                                                           );
+                    
                         $params[$key] = key( $defaultGreetingTypeId );
-                    }
                 }
             }
            
