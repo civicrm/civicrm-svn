@@ -122,7 +122,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         
         // onbehalforganization info
         $this->type( "onbehalf_organization_name", $orgName  );
-        $this->type( "onbehalf_phone-3", substr( sha1( rand( ) ), 0, 10 ) );
+        $this->type( "onbehalf_phone-3", 9999999999 );
         $this->type( "onbehalf_email-3", "{$orgName}@example.com");
         $this->type( "onbehalf_street_address-3", "Test Street Address");
         $this->type( "onbehalf_city-3", "Test City");
@@ -200,8 +200,47 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->webtestLogin( );
         $this->waitForPageToLoad( '30000' );
 
-        $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
+        // get cid for login user
+        $this->open( $this->sboxPath . "civicrm/dashboard?reset=1" );
+        $userId = explode( '&cid=', $this->getAttribute( "xpath=//div[@id='recently-viewed']/ul/li/a@href" ) );
+        $userId = $userId[1];
 
+        // Create new group
+        $groupName = $this->WebtestAddGroup( );
+        $this->open( $this->sboxPath . "civicrm/group?reset=1" );
+        $this->waitForPageToLoad( '30000' );
+
+        $groupId = $this->getText( "xpath=//div[@id='group']/div[3]/table/tbody//tr/td[text()='{$groupName}']/../td[2]" );
+        
+        $this->open( $this->sboxPath . "civicrm/contact/view?reset=1&cid={$userId}" );
+        $this->waitForPageToLoad("30000");
+
+        $this->click( 'link=Edit' );
+        $this->waitForElementPresent( '_qf_Contact_cancel-bottom' );
+        $this->click( 'addressBlock' );
+        $this->waitForElementPresent( 'link=Another Address' );
+        
+        //Billing Info
+        $this->select( 'address_1_location_type_id', 'label=Billing' );
+        $this->type( 'address_1_street_address', '0121 Mount Highschool.' );
+        $this->type( 'address_1_city', "Shangai" );
+        $this->type( 'address_1_postal_code', "94129" );
+        $this->select( 'address_1_country_id', "value=1228" );
+        $this->select( 'address_1_state_province_id', "value=1004" );
+        $this->click( '_qf_Contact_upload_view-bottom' );
+        $this->waitForPageToLoad("30000");
+        
+        // add contact to group
+        // visit group tab
+        $this->click("css=li#tab_group a");
+        $this->waitForElementPresent("group_id");
+        
+        // add to group
+        $this->select("group_id", "label=$groupName");
+        $this->click("_qf_GroupContact_next");
+        $this->waitForPageToLoad("30000");
+
+        $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
         $this->waitForElementPresent("_qf_Group_next-bottom");
         // fill in a unique title for the custom group
         $groupTitle = "Custom Group" . substr(sha1(rand()), 0, 7);
@@ -229,23 +268,18 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $url = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']/div[2]/table/tbody//tr/td[1][text()='$fieldTitle']/../td[7]/span/a@href" ) );
         $fieldId = $url[1];
         
-        // get cid for login user
-        $this->open( $this->sboxPath . "civicrm/dashboard?reset=1" );
-        $userId = explode( '&cid=', $this->getAttribute( "xpath=//div[@id='recently-viewed']/ul/li/a@href" ) );
-        $userId = $userId[1];
-
         // Enable CiviCampaign module if necessary
         $this->open( $this->sboxPath . "civicrm/admin/setting/component?reset=1" );
         $this->waitForPageToLoad( '30000' );
         $this->waitForElementPresent( '_qf_Component_next-bottom' );
         $enabledComponents = $this->getSelectOptions( 'enableComponents-t' );
         if ( !in_array( "CiviCampaign", $enabledComponents ) ) {
-          $this->addSelection( 'enableComponents-f', "label=CiviCampaign");
-          $this->click( "//option[@value='CiviCampaign']" );
-          $this->click( 'add' );
-          $this->click( '_qf_Component_next-bottom' );
-          $this->waitForPageToLoad( "30000" );          
-          $this->assertTrue( $this->isTextPresent( 'Your changes have been saved.' ) );    
+            $this->addSelection( 'enableComponents-f', "label=CiviCampaign");
+            $this->click( "//option[@value='CiviCampaign']" );
+            $this->click( 'add' );
+            $this->click( '_qf_Component_next-bottom' );
+            $this->waitForPageToLoad( "30000" );          
+            $this->assertTrue( $this->isTextPresent( 'Your changes have been saved.' ) );    
         }
 
         // add the required Drupal permission
@@ -274,8 +308,8 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->type("description", "This is a test campaign");
         
         // include groups for the campaign
-        $this->addSelection("includeGroups-f", "label=Advisory Board");
-        $this->click("//option[@value=4]");
+        $this->addSelection("includeGroups-f", "label={$groupName}");
+        $this->click("//option[@value={$groupId}]");
         $this->click("add");
         
         // fill the end date for campaign
@@ -286,9 +320,12 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         
         // click save
         $this->click("_qf_Campaign_next-bottom");
-        $this->waitForPageToLoad("30000");
-        
+        //$this->waitForPageToLoad("30000");
+        $this->waitForElementPresent( "xpath=//div[@id='campaigns_wrapper']//table[@id='campaigns']/tbody//tr/td[3][text()='{$title}']" );
         $this->assertTrue($this->isTextPresent("Campaign {$title} has been saved."), "Status message didn't show up after saving!");
+        
+        $campaignId = explode( '&id=', $this->getAttribute( "xpath=//table[@id='campaigns']/tbody//tr/td[3][text()='{$title}']/../td[13]/span/a@href" ) );
+        $campaignId = $campaignId[1];
                 
         $this->open( $this->sboxPath . "civicrm/admin/uf/group?reset=1" );
         $this->waitForPageToLoad("30000");
@@ -303,15 +340,14 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->click( 'field_name[1]' );
         $this->click( '_qf_Field_next_new-bottom' );
         $this->waitForPageToLoad("30000");
-        $this->waitForElementPresent( '_qf_Field_cancel-bottom' );
         
         $this->select( 'field_name[0]', 'value=Contribution' );
         $this->select( 'field_name[1]', "label=$fieldTitle :: $groupTitle" );
         $this->click( 'field_name[1]' );
         $this->click( '_qf_Field_next-bottom' );
         $this->waitForPageToLoad("30000");
-        $this->assertTrue($this->isTextPresent( "Your CiviCRM Profile Field '{$fieldTitle}' has been saved to 'On Behalf Of Organization'." ),
-                          "Status message didn't show up after saving!");
+        $this->assertTrue( $this->isTextPresent( "Your CiviCRM Profile Field '{$fieldTitle}' has been saved to 'On Behalf Of Organization'." ),
+                          "Status message didn't show up after saving!" );
         
         // Open Page to create Organization
         $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Organization" );
@@ -326,7 +362,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->select("email_1_location_type_id", "value=3");
         
         // type phone no for main
-        $this->type( "phone_1_phone", substr( sha1( rand( ) ), 0, 4 ) );
+        $this->type( "phone_1_phone", 9999999999 );
         $this->select("phone_1_location_type_id", "value=3");
         
         //address section    
@@ -418,7 +454,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         
         //Open Live Contribution Page
         $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id=" . $pageId );
-        $this->waitForElementPresent( "_qf_Main_upload-bottom" );
+        $this->waitForElementPresent( "onbehalf_state_province-3" );
         $this->click( 'CIVICRM_QFID_amount_other_radio_4' );
         $this->type( 'amount_other', 60 );
 
@@ -432,15 +468,6 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->select( "credit_card_exp_date[M]", "value=1" );
         $this->select( "credit_card_exp_date[Y]", "value=2020" );
 
-        //Billing Info
-        $this->type( "billing_first_name", 'Admin First Name', 'billing' );
-        $this->type( "billing_last_name", 'Admin Last Name' . 'billing'  );
-        $this->type( "billing_street_address-5", "0121 Mount Highschool." );
-        $this->type( " billing_city-5", "Shangai" );
-        $this->select( "billing_country_id-5", "value=1228" );
-        $this->select( "billing_state_province_id-5", "value=1004" );
-        $this->type( "billing_postal_code-5", "94129" );  
-                
         $this->click( "_qf_Main_upload-bottom" );
         $this->waitForPageToLoad( '30000' );
         $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
@@ -466,5 +493,27 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         foreach ( $expected as  $value => $label ) { 
             $this->verifyText( "xpath=id( 'ContributionView' )/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote( $label ) ); 
         }
+        
+        $this->open( $this->sboxPath . "civicrm/admin/uf/group?reset=1" );
+        $this->waitForPageToLoad("30000");
+
+        $this->click( "xpath=//div[@id='uf_profile']/div[2]/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[7]/span/a[text()='Fields']" );
+        $this->waitForPageToLoad("30000");
+
+        $this->click( "xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='Campaign']/../td[10]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']" );
+        $this->waitForElementPresent( '_qf_Field_next-bottom' );
+
+        $this->click( '_qf_Field_next-bottom' );
+        $this->waitForPageToLoad("30000");
+        $this->assertTrue( $this->isTextPresent( 'Selected Profile Field has been deleted.' ), 
+                           "Status message didn't show up after saving!" );
+
+        $this->click( "xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='{$fieldTitle}']/../td[10]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']" );
+        $this->waitForElementPresent( '_qf_Field_next-bottom' );
+        
+        $this->click( '_qf_Field_next-bottom' );
+        $this->waitForPageToLoad("30000");
+        $this->assertTrue( $this->isTextPresent( 'Selected Profile Field has been deleted.' ), 
+                           "Status message didn't show up after saving!" );
     }
 }
