@@ -379,7 +379,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                 if ( ($this->_mode & self::MODE_EDIT) && $this->_isContactActivityProfile ) {
                     $errors = self::validateContactActivityProfile($this->_activityId, $this->_id, $this->_gid);
                     if ( !empty($errors) ) {
-                        $statusMessage = ts( array_pop($errors) );
+                        $statusMessage = array_pop($errors);
                         $return = true;
                     }
                 } else { 
