@@ -211,8 +211,7 @@ class api_v3_UFFieldTest extends CiviUnitTestCase
           if($key == 'version')continue;
           $this->assertEquals($value, $values[$key],'in line' . __LINE__);        
           
-        }
-
-   
+        }  
+        civicrm_api($this->_entity,'delete',$values);
     }
 }

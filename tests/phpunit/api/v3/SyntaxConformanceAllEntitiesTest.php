@@ -20,7 +20,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
     function setUp()    {
        parent::setUp();
        
-       $this->toBeImplemented['get'] = array ('CustomGroup','ParticipantPayment', 'Profile','CustomValue','Website','Constant');
+       $this->toBeImplemented['get'] = array ('ParticipantPayment', 'Profile','CustomValue','Website','Constant');
        $this->toBeImplemented['create'] = array ('SurveyRespondant','OptionGroup','UFMatch','LocationType');
        $this->toBeImplemented['delete'] = array ('MembershipPayment','OptionGroup','SurveyRespondant','UFJoin','UFMatch','LocationType');
        $this->onlyIDNonZeroCount['get'] = array( 'ActivityType', 'Entity', 'Domain' );
