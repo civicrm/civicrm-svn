@@ -100,8 +100,19 @@ function civicrm_api3_activity_create( $params ) {
     if ( CRM_Utils_Array::value('activity_id', $params) ) {
         $params['id'] = $params['activity_id'];
     }
-    $params['deleteActivityAssignment'] = CRM_Utils_Array::value( 'deleteActivityTarget', $params, false );
-    $params['deleteActivityTarget'] = CRM_Utils_Array::value( 'deleteActivityTarget', $params, false );
+    
+    $deleteActivityTarget = false;
+    if ( isset($params['assignee_contact_id']) && is_array($params['assignee_contact_id']) ) {
+        $deleteActivityTarget = true;
+    }
+
+    $deleteActivityAssignment = false;
+    if ( isset($params['target_contact_id']) && is_array($params['target_contact_id']) ) {
+        $deleteActivityAssignment = true;
+    }
+
+    $params['deleteActivityAssignment'] = CRM_Utils_Array::value( 'deleteActivityAssignment', $params, $deleteActivityAssignment );
+    $params['deleteActivityTarget'] = CRM_Utils_Array::value( 'deleteActivityTarget', $params, $deleteActivityTarget );
 
     // create activity
     $activityBAO = CRM_Activity_BAO_Activity::create( $params );
