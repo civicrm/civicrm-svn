@@ -53,19 +53,24 @@ class WebTest_Contact_DupeContactTest extends CiviSeleniumTestCase {
       // Go directly to the URL of New Individual.
       $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual");
 
+      $firstName = substr(sha1(rand()), 0, 7);
+      $lastName1 = substr(sha1(rand()), 0, 7);
+      $email     = "{$firstName}@example.com";
+      $lastName2 = substr(sha1(rand()), 0, 7);
+
       //contact details section
       //select prefix
       $this->click( "prefix_id" );
       $this->select( "prefix_id", "value=3" );
       
       //fill in first name
-      $this->type( "first_name", "Robin" );
+      $this->type( "first_name", "$firstName" );
       
       //fill in last name
-      $this->type( "last_name", "Hood" );
+      $this->type( "last_name", "$lastName1" );
       
       //fill in email
-      $this->type( "email_1_email", "robin@example.com" );
+      $this->type( "email_1_email", "$email" );
       
       //check for matching contact
       //$this->click("_qf_Contact_refresh_dedupe");
@@ -84,13 +89,13 @@ class WebTest_Contact_DupeContactTest extends CiviSeleniumTestCase {
       
       
       //fill in first name
-      $this->type( "first_name", "Robin" );
+      $this->type( "first_name", "$firstName" );
       
       //fill in last name
-      $this->type( "last_name", "Hood" );
+      $this->type( "last_name", "$lastName1" );
       
       //fill in email
-      $this->type( "email_1_email", "robin@example.com" );
+      $this->type( "email_1_email", "$email" );
     
       // Clicking save.
       $this->click( "_qf_Contact_upload_view" );
@@ -100,6 +105,8 @@ class WebTest_Contact_DupeContactTest extends CiviSeleniumTestCase {
 
       // edit the default Fuzzy rule
       $this->open( $this->sboxPath . "civicrm/contact/deduperules?action=update&id=1" );
+      $this->click( "name" );
+      $this->type( "name", "ind fuzzy rule" );
       $this->click( "threshold" );
       $this->type( "threshold", "10" );
       $this->click( "_qf_DedupeRules_next-bottom" );
@@ -109,13 +116,13 @@ class WebTest_Contact_DupeContactTest extends CiviSeleniumTestCase {
       $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual");
       
       //fill in first name
-      $this->type( "first_name", "Robin" );
+      $this->type( "first_name", "$firstName" );
       
       //fill in last name
-      $this->type( "last_name", "Dale" );
+      $this->type( "last_name", "$lastName2" );
       
       //fill in email
-      $this->type( "email_1_email", "robin@example.com" );
+      $this->type( "email_1_email", "$email" );
     
       // Clicking save.
       $this->click( "_qf_Contact_upload_view" );
