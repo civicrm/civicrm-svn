@@ -71,7 +71,6 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
       
       $this->click( "edit-submit" );
       $this->waitForPageToLoad( "30000" );
-      $this->assertTrue( $this->isTextPresent( "Created a new user account for " . $name ), 'In line ' . __LINE__ );
   }  
 
   function testAnonymousAddUser( )
