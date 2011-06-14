@@ -579,6 +579,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
             // if we find more than one contact, use the first one
             $contact_id  = CRM_Utils_Array::value( 0, $ids );
+            
             $greetingTypes = array( 'addressee'       => 'addressee_id', 
                                     'email_greeting'  => 'email_greeting_id', 
                                     'postal_greeting' => 'postal_greeting_id'
@@ -595,6 +596,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                     $params[$key] = key( $defaultGreetingTypeId );
                 }
             }
+            
             $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params,
                                                                          $fields,
                                                                          $contact_id,

@@ -1008,14 +1008,15 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             foreach( $greetingTypes  as $key => $value ) {
                 if( !array_key_exists( $key, $params ) ) {
                     $defaultGreetingTypeId = CRM_Core_OptionGroup::values( $key, null, null, null, 
-                                                                           'AND is_default =1
+                                                                           'AND is_default = 1
                                                                             AND (filter = 1 OR filter = 0 )',
                                                                            'value' 
                                                                            );
                     
-                    $params[$key] = key( $defaultGreetingTypeId );
+                        $params[$key] = key( $defaultGreetingTypeId );
                 }
             }
+           
             $contactID = CRM_Contact_BAO_Contact::createProfileContact( $params,
                                                                         $fields,
                                                                         null,
