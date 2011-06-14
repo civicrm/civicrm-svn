@@ -1076,6 +1076,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->assertEquals( 0, $result['is_error'], "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( 2, $result['count'],'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['values'][4]['activity_type_id'] , 'In line ' . __LINE__ );
+        $this->assertEquals( 4, $result['values'][4]['id'] , 'In line ' . __LINE__ );
         $this->assertEquals( 'Test activity type', $result['values'][4]['activity_name'],'In line ' . __LINE__ );
         $this->assertEquals( 'Test activity type', $result['values'][13]['activity_name'],'In line ' . __LINE__ );
     }
