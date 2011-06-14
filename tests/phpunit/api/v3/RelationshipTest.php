@@ -230,7 +230,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                          'version'				=> $this->_apiversion,
                          );
         
-        $result = & civicrm_api3_relationship_create( $params );
+        $result = & civicrm_api('relationship','create', $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'in line ' . __LINE__ );
         $this->assertNotNull( $result['id'],'in line ' . __LINE__ );   
@@ -240,10 +240,52 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
 
         // assertDBState compares expected values in $result to actual values in the DB          
         $this->assertDBState( 'CRM_Contact_DAO_Relationship', $result['id'], $relationParams ); 
-        
+        $result = &  civicrm_api('relationship','get', array('version' => 3, 'id' => $result['id']));
+        $values = $result['values'][$result['id']];
+        foreach($params as $key => $value){
+          if($key == 'version' || $key == 'note')continue;
+          $this->assertEquals($value, $values[$key],$key . " doesn't match " . print_r($values,true) . 'in line' . __LINE__);        
+          
+        }
         $params['id'] = $result['values']['id'] ; 
-        $result = & civicrm_api3_relationship_delete( $params );
+        civicrm_api3_relationship_delete( $params );
     }
+    /**
+     * check relationship creation
+     */
+    function testRelationshipCreateEmptyEndDate( )
+    {
+        $params = array( 'contact_id_a'         => $this->_cId_a,
+                         'contact_id_b'         => $this->_cId_b,
+                         'relationship_type_id' => $this->_relTypeID,
+                         'start_date'           => '2010-10-30',
+                         'end_date'             => '',
+                         'is_active'            => 1,
+                         'note'                 => 'note',
+                         'version'				=> $this->_apiversion,
+                         );
+        
+        $result = & civicrm_api('relationship','create', $params );
+
+        $this->assertEquals( 0, $result['is_error'], 'in line ' . __LINE__ );
+        $this->assertNotNull( $result['id'],'in line ' . __LINE__ );   
+        $relationParams = array(
+                                'id' => $result['id'],
+                                );
+
+        // assertDBState compares expected values in $result to actual values in the DB          
+        $this->assertDBState( 'CRM_Contact_DAO_Relationship', $result['id'], $relationParams ); 
+        $result = &  civicrm_api('relationship','get', array('version' => 3, 'id' => $result['id']));
+        $values = $result['values'][$result['id']];
+        foreach($params as $key => $value){
+          if($key == 'version' || $key == 'note')continue;
+          $this->assertEquals($value, $values[$key],$key . " doesn't match " . print_r($values,true) . 'in line' . __LINE__);        
+          
+        }
+        $params['id'] = $result['values']['id'] ; 
+        civicrm_api3_relationship_delete( $params );
+    } 
+
     
     /**
      * check relationship creation with custom data

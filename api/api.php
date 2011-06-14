@@ -133,6 +133,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
             return $errorFnName( "API ($entity,$action) does not exist (join the API team and implement $function" );
         }
      }else{
+       _civicrm_api3_validate_fields($entity,$action,$params);
        $result = isset($extra) ? $function($params, $extra) : $function($params);
      }
      if(CRM_Utils_Array::value('format.is_success', $params) == 1){
