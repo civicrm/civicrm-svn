@@ -493,14 +493,14 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->verifyText("xpath=id('contactTopBar')/table/tbody/tr/td[4]/a[text()]", $currentEmployer );
 
       //make sure both shared address are set.
-      $this->verifyText("xpath=id('contact-summary')/x:div[2]/x:div[2]/x:div[1]/x:table/x:tbody/x:tr/x:td[2]/x:strong", 'Shared with:' );
-      $this->verifyText("xpath=id('contact-summary')/x:div[2]/x:div[2]/x:div[1]/x:table/x:tbody/x:tr/x:td[2]/x:a[text()]", $currentEmployer );
+      $this->verifyText("xpath=id('contact-summary')/div[2]/div[2]/div[1]/table/tbody/tr/td[2]/strong", 'Shared with:' );
+      $this->verifyText("xpath=id('contact-summary')/div[2]/div[2]/div[1]/table/tbody/tr/td[2]/a[text()]", $currentEmployer );
 
-      $this->verifyText("xpath=id('contact-summary')/x:div[2]/x:div[2]/x:div[2]/x:table/x:tbody/x:tr/x:td[2]/x:strong", 'Shared with:' );
-      $this->verifyText("xpath=id('contact-summary')/x:div[2]/x:div[2]/x:div[2]/x:table/x:tbody/x:tr/x:td[2]/x:a[text()]", $sharedHousehold );
+      $this->verifyText("xpath=id('contact-summary')/div[2]/div[2]/div[2]/table/tbody/tr/td[2]/strong", 'Shared with:' );
+      $this->verifyText("xpath=id('contact-summary')/div[2]/div[2]/div[2]/table/tbody/tr/td[2]/a[text()]", $sharedHousehold );
 
       // make sure relationships are created
-      $this->click("xpath=id('tab_rel')/x:a");
+      $this->click("xpath=id('tab_rel')/a");
       $this->isTextPresent( 'Employee of' );
       $this->isTextPresent( 'Household Member of' );
   }
