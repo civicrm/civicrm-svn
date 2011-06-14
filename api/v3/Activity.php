@@ -102,12 +102,12 @@ function civicrm_api3_activity_create( $params ) {
     }
     
     $deleteActivityTarget = false;
-    if ( isset($params['assignee_contact_id']) && is_array($params['assignee_contact_id']) ) {
+    if ( isset($params['assignee_contact_id']) ) {
         $deleteActivityTarget = true;
     }
 
     $deleteActivityAssignment = false;
-    if ( isset($params['target_contact_id']) && is_array($params['target_contact_id']) ) {
+    if ( isset($params['target_contact_id']) ) {
         $deleteActivityAssignment = true;
     }
 
