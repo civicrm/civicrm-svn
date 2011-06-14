@@ -101,14 +101,14 @@ function civicrm_api3_activity_create( $params ) {
         $params['id'] = $params['activity_id'];
     }
     
-    $deleteActivityTarget = false;
+    $deleteActivityAssignment = false;
     if ( isset($params['assignee_contact_id']) ) {
-        $deleteActivityTarget = true;
+        $deleteActivityAssignment = true;
     }
 
-    $deleteActivityAssignment = false;
+    $deleteActivityTarget = false;
     if ( isset($params['target_contact_id']) ) {
-        $deleteActivityAssignment = true;
+        $deleteActivityTarget = true;
     }
 
     $params['deleteActivityAssignment'] = CRM_Utils_Array::value( 'deleteActivityAssignment', $params, $deleteActivityAssignment );
