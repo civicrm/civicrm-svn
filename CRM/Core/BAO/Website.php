@@ -128,7 +128,7 @@ class CRM_Core_BAO_Website extends CRM_Core_DAO_Website
      */
     static function &getValues( &$params, &$values ) {
         $websites = array( );
-        $website =& new CRM_Core_DAO_Website();
+        $website = new CRM_Core_DAO_Website();
         $website->contact_id = $params['contact_id'];
         $website->find( );
         
