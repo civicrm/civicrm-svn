@@ -399,10 +399,13 @@ class CRM_Activity_BAO_Query
             if ( CRM_Contact_BAO_Query::$_considerCompActivities ) {
                 $from .= " $side JOIN civicrm_activity_target 
                                       ON ( civicrm_activity_target.target_contact_id = contact_a.id ) ";
+                /*
+                // commented this for CRM-8195
                 $from .= " $side JOIN civicrm_activity_assignment 
                                       ON ( civicrm_activity_assignment.assignee_contact_id = contact_a.id )";
+                 */ 
                 $from .= " $side JOIN civicrm_activity 
-                                      ON ( civicrm_activity.id = civicrm_activity_assignment.activity_id 
+                                      ON ( civicrm_activity.id = civicrm_activity_target.activity_id 
                                       AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1 )";
             } else if ( CRM_Contact_BAO_Query::$_withContactActivitiesOnly ) {
                 //force the civicrm_activity_target table.
