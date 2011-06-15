@@ -236,7 +236,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->waitForElementPresent("group_id");
         
         // add to group
-        $this->select("group_id", "label=$groupName");
+        $this->select("group_id", "label={$groupName}");
         $this->click("_qf_GroupContact_next");
         $this->waitForPageToLoad("30000");
 
@@ -455,6 +455,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->click( 'CIVICRM_QFID_amount_other_radio_4' );
         $this->type( 'amount_other', 60 );
 
+        $this->click( 'onbehalf_contribution_campaign_id' );
         $this->select( 'onbehalf_contribution_campaign_id', "label={$title}" );
         $this->type( "onbehalf_custom_{$fieldId}", 'Test Subject' );
         
@@ -512,6 +513,22 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->waitForPageToLoad("30000");
         $this->assertTrue( $this->isTextPresent( 'Selected Profile Field has been deleted.' ), 
                            "Status message didn't show up after saving!" );
+
+        $this->open( $this->sboxPath . "civicrm/contact/view?reset=1&cid={$userId}" );
+        $this->waitForPageToLoad("30000");
+        $this->click( "css=li#tab_rel a" );
+        
+        $this->waitForElementPresent( "xpath=//div[@id='current-relationships']/div/table/tbody//tr/td[2]/a[text()='{$orgName1}']" );
+        $this->click( "xpath=//div[@id='current-relationships']/div/table/tbody//tr/td[2]/a[text()='{$orgName1}']/../../td[9]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']" );
+        
+        // Check confirmation alert.
+        $this->assertTrue( (bool)preg_match("/^Are you sure you want to delete this relationship?/", 
+                                            $this->getConfirmation()) );
+        $this->chooseOkOnNextConfirmation( );
+        $this->waitForPageToLoad("30000");
+        $this->assertTrue( $this->isTextPresent( 'Selected relationship has been deleted successfully.' ), 
+                           "Status message didn't show up after saving!" );
+        
     }
 
     
@@ -886,12 +903,15 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         //Open Live Membership Page
         $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id=" . $pageId );
         $this->waitForElementPresent( "_qf_Main_upload-bottom" );
-        $this->typeKeys( 'onbehalf_organization_name', $orgName1 );
+        $this->type( 'onbehalf_organization_name', $orgName1 );
         $this->click( "onbehalf_organization_name" );
         $this->waitForElementPresent( "css=div.ac_results-inner li" );
         $this->click( "css=div.ac_results-inner li" );
-        $this->assertContains( $orgName1, $this->getValue( 'onbehalf_organization_name' ), "autocomplete expected $orgName1 but didn’t find it in " . $this->getValue('onbehalf_organization_name' ) );
+        $this->assertContains( $orgName1, $this->getValue( 'onbehalf_organization_name' ), 
+                               "autocomplete expected $orgName1 but didn’t find it in " . 
+                               $this->getValue('onbehalf_organization_name' ) );
         sleep(5);
+        $this->click( 'onbehalf_member_campaign_id' );
         $this->select( 'onbehalf_member_campaign_id', "label={$title}" );
         $this->type( "onbehalf_custom_{$fieldId}", 'Test Subject' );
         
