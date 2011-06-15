@@ -721,23 +721,19 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         
         // get street number and suffix.
         $matches = array( );
-        if ( preg_match( '/^[A-Za-z0-9]+([\W]+)/', $streetAddress, $matches ) ) {
-            $steetNumAndSuffix = $matches[0];
-            
+		//alter street number/suffix handling so that we accept -digit
+        if ( preg_match( '/^[A-Za-z0-9]+([\S]+)/', $streetAddress, $matches ) ) {
+            $streetNumAndSuffix = $matches[0];
             // get street number.
             $matches = array( );
-            if ( preg_match( '/^(\d+)/', $steetNumAndSuffix, $matches ) ) {
+            if ( preg_match( '/^(\d+)/', $streetNumAndSuffix, $matches ) ) {
                 $parseFields['street_number'] = $matches[0];
-                $suffix = preg_replace( '/^(\d+)/', '', $steetNumAndSuffix );
-                $suffix = trim( $suffix );
-                $matches = array( );
-                if ( preg_match( '/^[A-Za-z0-9]+/', $suffix, $matches ) ) {
-                    $parseFields['street_number_suffix'] = $matches[0];
-                }
+                $suffix = preg_replace( '/^(\d+)/', '', $streetNumAndSuffix );
+                $parseFields['street_number_suffix'] = trim( $suffix );
             }
             
             // unset from main street address.
-            $streetAddress = preg_replace( '/^[A-Za-z0-9]+([\W]+)/', '', $streetAddress );
+            $streetAddress = preg_replace( '/^[A-Za-z0-9]+([\S]+)/', '', $streetAddress );
             $streetAddress = trim( $streetAddress );
         } else if ( preg_match( '/^(\d+)/', $streetAddress, $matches ) ) {
             $parseFields['street_number'] = $matches[0];
@@ -745,7 +741,7 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
             $streetAddress = preg_replace( '/^(\d+)/', '', $streetAddress );
             $streetAddress = trim( $streetAddress );
         }
-        
+
         // suffix might be like 1/2
         $matches = array( );
         if ( preg_match( '/^\d\/\d/', $streetAddress, $matches ) ) {
@@ -782,6 +778,12 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         // consider remaining string as street name.
         $parseFields['street_name'] = $streetAddress;
         
+        //run parsed fields through stripSpaces to clean
+        require_once 'CRM/Utils/String.php';
+        foreach ( $parseFields as $parseField=>$value ) {
+    		$parseFields[$parseField] = CRM_Utils_String::stripSpaces($value);
+		}
+		
         return $parseFields;
     }
     
