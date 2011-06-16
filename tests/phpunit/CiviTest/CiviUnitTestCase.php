@@ -342,7 +342,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-        eval( '$object   =& new ' . $daoName . '( );' );
+        eval( '$object   = new ' . $daoName . '( );' );
         $object->id =  $id;
         $verifiedCount = 0;
         
