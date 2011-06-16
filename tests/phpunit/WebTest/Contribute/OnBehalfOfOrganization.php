@@ -492,6 +492,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
             $this->verifyText( "xpath=id( 'ContributionView' )/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote( $label ) ); 
         }
         
+        
         $this->open( $this->sboxPath . "civicrm/admin/uf/group?reset=1" );
         $this->waitForPageToLoad("30000");
 
