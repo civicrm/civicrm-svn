@@ -2141,6 +2141,10 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                         return true;
                     } 
                 }
+                if ( CRM_Utils_Array::value($fieldAlias.'_op', $this->_params) &&
+                     in_array($this->_params[$fieldAlias.'_op'], array('nll', 'nnll')) ) {
+                    return true;
+                }
             }
         }
         
