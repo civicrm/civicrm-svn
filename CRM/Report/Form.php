@@ -781,7 +781,8 @@ class CRM_Report_Form extends CRM_Core_Form {
             return array( 'eq'  => ts('Is equal to') );
             break;
         case CRM_Report_FORM::OP_MULTISELECT :
-            return array( 'in'  => ts('Is one of') );
+            return array( 'in'  => ts('Is one of'),
+                          'notin' => ts('Is not one of') );
             break; 
         case CRM_Report_FORM::OP_DATE :
             return array( 'nll'  => ts('Is empty (Null)'),
@@ -844,6 +845,8 @@ class CRM_Report_Form extends CRM_Core_Form {
             return 'NOT LIKE';
         case 'in':
             return 'IN';
+        case 'notin':
+            return 'NOT IN';
         case 'nll' :
             return 'IS NULL';
         case 'nnll' :
@@ -908,14 +911,20 @@ class CRM_Report_Form extends CRM_Core_Form {
             break;
                 
         case 'in':
+        case 'notin':
             if ( $value !== null && is_array( $value ) && count( $value ) > 0 ) {
                 $sqlOP  = self::getSQLOperator( $op );
                 if ( CRM_Utils_Array::value( 'type', $field ) == CRM_Utils_Type::T_STRING ) {
-                    $clause = "( {$field['dbAlias']} $sqlOP ( '" . implode( "' , '", $value ) . "') )" ;
+                    $clause = "{$field['dbAlias']} $sqlOP ( '" . implode( "' , '", $value ) . "')";
                 } else {
                     // for numerical values
-                    $clause = "( {$field['dbAlias']} $sqlOP (" . implode( ', ', $value ) . ") )";
-                }                
+                    $clause = "{$field['dbAlias']} $sqlOP (" . implode( ', ', $value ) . ")";
+                }
+                if ( $op == 'notin' ) {
+                    $clause = "( ". $clause ." OR {$field['dbAlias']} IS NULL )";
+                } else {
+                    $clause = "( ". $clause ." )";
+                }
             }
             break;
             
