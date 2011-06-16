@@ -286,7 +286,7 @@ SELECT  count(*)
   FROM  civicrm_contact
  WHERE  id IN (' . implode( ', ', $valueIds ) . ' )';
         if ( count( $valueIds ) !=  CRM_Core_DAO::singleValueQuery( $sql ) ) {
-            return civicrm_api3_create_error(  'Invalid %1 Contact Id', array( 1 => ucfirst( $key ) )  );
+            return civicrm_api3_create_error( 'Invalid '. ucfirst($key) .' Contact Id' );
         }
     }
 
@@ -346,10 +346,14 @@ SELECT  count(*)
         }
     }
 
-    if ( !empty( $params['priority_id'] ) && is_numeric( $params['priority_id'] ) ) {
-        require_once "CRM/Core/PseudoConstant.php";
-        $activityPriority = CRM_Core_PseudoConstant::priority( );
-        if ( !array_key_exists( $params['priority_id'], $activityPriority ) ) {
+    if ( isset( $params['priority_id'] ) )  {
+        if ( is_numeric( $params['priority_id'] ) ) {
+            require_once "CRM/Core/PseudoConstant.php";
+            $activityPriority = CRM_Core_PseudoConstant::priority( );
+            if ( !array_key_exists( $params['priority_id'], $activityPriority ) ) {
+                return civicrm_api3_create_error( 'Invalid Priority' );
+            }
+        } else {
             return civicrm_api3_create_error( 'Invalid Priority' );
         }
     }
@@ -360,8 +364,9 @@ SELECT  count(*)
     }
 
     if ( CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
-            $params['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'] );
-        }
+        $params['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'] );
+    }
+
      //if adding a new activity & date_time not set make it now
     if (!CRM_Utils_Array::value( 'id', $params ) &&
          !CRM_Utils_Array::value( 'activity_date_time', $params ) ) {

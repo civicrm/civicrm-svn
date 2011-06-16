@@ -39,7 +39,7 @@ function activity_get_expectedresult(){
           'activity_type_id' => '1',
           'subject' => 'test activity type id',
           'status_id' => '1',
-          'priority_id' => 0,
+          'priority_id' => '1',
           'assignee_contact_id' => array( 
               '0' => '18',
             ),

@@ -99,7 +99,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                 'subject' => 'test activity type id',
                 'activity_date_time' => '2011-06-02 14:36:13',
                 'status_id' => 2,
-                'priority_id' => 0, 
+                'priority_id' => 1, 
                 'version' => $this->_apiversion);
     }
 
