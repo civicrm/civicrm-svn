@@ -103,7 +103,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
 
       // Contacts → Manage Groups
       $this->click("//ul[@id='civicrm-menu']/li[4]");
-      $this->click("//div[@id='root-menu-div']/div[4]/ul/li[11]/div/a");
+      $this->click("xpath=//div[@id='root-menu-div']//div/ul//li/div/a[text()='Manage Groups']");
       $this->waitForPageToLoad();
 
       $this->assertTextPresent("Find Groups");
