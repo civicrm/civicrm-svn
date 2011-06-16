@@ -665,4 +665,33 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
         $participant = & _civicrm_api3_participant_check_params( $params );
         $this->assertEquals( $participant, true , 'Check the returned True');
     }
+    
+    /**
+     * check get with role id - create 2 registrations with different roles.
+     * Test that get without role var returns 2 & with returns one
+TEST COMMENteD OUT AS HAVE GIVIEN UP ON using filters on get 
+    function testGetParamsRole()
+    {  
+       require_once 'CRM/Event/PseudoConstant.php';
+       CRM_Event_PseudoConstant::flush('participantRole');
+       $participantRole2 = civicrm_api('Participant', 'Create', array('version' => 3, 'id' => $this->_participantID2, 'participant_role_id' => 2));
+       
+        $params = array(
+                       
+                        'version' => $this->_apiversion,
+                     
+                        );
+        $result = & civicrm_api3_participant_get($params);
+        $this->assertEquals($result['is_error'], 0);
+        $this->assertEquals($result['count'], 3);
+     
+        $params['participant_role_id'] =2;
+        $result =  civicrm_api3_participant_get($params);
+        print_r($result);
+        
+        $this->assertEquals($result['is_error'], 0,  "in line " . __LINE__);
+        $this->assertEquals(2,$result['count'], "in line " . __LINE__);
+        $this->documentMe($params,$result ,__FUNCTION__,__FILE__); 
+    }
+         */
 }
