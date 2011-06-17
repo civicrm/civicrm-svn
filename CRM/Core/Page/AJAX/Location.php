@@ -61,9 +61,12 @@ class CRM_Core_Page_AJAX_Location
                                                           null, false, null, CRM_Core_Permission::CREATE, null );
 
         require_once 'CRM/Core/BAO/Location.php';
+        require_once 'CRM/Core/BAO/Website.php';
+        $values      = array( );
         $entityBlock = array( 'contact_id' => $cid );
-        $location    =& CRM_Core_BAO_Location::getValues( $entityBlock );
-
+        $location    = CRM_Core_BAO_Location::getValues( $entityBlock );
+        $website     = CRM_Core_BAO_Website::getValues( $entityBlock, $values );
+                
         $config = CRM_Core_Config::singleton();
         $addressSequence = array_flip($config->addressSequence());
 
@@ -78,6 +81,23 @@ class CRM_Core_Page_AJAX_Location
                 $elements["onbehalf_{$fld}-{$locType}-{$phoneTypeId}"] = array( 'type'  => 'Text',
                                                                                 'value' => $location[$fld][1][$fld] );
                 unset( $profileFields["{$fld}-{$locType}"] );
+            } else if ( $fld == 'im' ) {
+                $providerId = $values[1]['provider_id'];
+                $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
+                                                                 'value' => $location[$fld][1][$fld] );
+                $elements["onbehalf_{$fld}-{$locType}-provider_id"] = array( 'type'  => 'Select',
+                                                                             'value' => $location[$fld][1]['provider_id'] );
+            }
+        }
+
+        if ( !empty( $website ) ) {
+            foreach ( $website as $key => $val ) {
+                $websiteTypeId = $values[1]['website_type_id'];
+                $elements["onbehalf_url-1"] = array( 'type'  => 'Text',
+                                                     'value' => $website[1]['url'] );
+                $elements["onbehalf_url-1-website_type_id"] = 
+                    array( 'type'  => 'Select',
+                           'value' => $website[1]['website_type_id'] );
             }
         }
         

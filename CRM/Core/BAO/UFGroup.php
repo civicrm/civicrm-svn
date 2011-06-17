@@ -1527,15 +1527,23 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->add('file', $name, $title, $attributes, $required );
             $form->addUploadElement( $name );
         } else if ( substr($fieldName, 0, 2) === 'im' ) {
+            $form->add('text', $name, $title, $attributes, $required );
             if ( !$contactId ) {
-                $form->add('select', $name . '-provider_id', $title, 
-                           array('' => ts('- select -')) + CRM_Core_PseudoConstant::IMProvider(), $required);
+                if ( $onBehalf ) {
+                    if ( substr( $name, -1 ) == ']' ) { 
+                        $providerName = substr( $name, 0, $name.length - 1).'-provider_id]';
+                    }
+                    $form->add('select', $providerName, null, 
+                               array('' => ts('- select -')) + CRM_Core_PseudoConstant::IMProvider(), $required);
+                } else {
+                    $form->add('select', $name . '-provider_id', $title, 
+                               array('' => ts('- select -')) + CRM_Core_PseudoConstant::IMProvider(), $required);
+                }
             
                 if ($view && $mode != CRM_Profile_Form::MODE_SEARCH) {
                     $form->freeze($name.'-provider_id');
                 }
             }
-            $form->add('text', $name, $title, $attributes, $required );
         } else if ( ( $fieldName === 'birth_date' ) || ( $fieldName === 'deceased_date' ) ) { 
             $form->addDate( $name, $title, $required, array( 'formatType' => 'birth') );
         } else if ( in_array($fieldName, array( 'membership_start_date','membership_end_date','join_date')) ) {  
@@ -1661,7 +1669,14 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->addRule($name, ts('Enter a valid Website.'), 'url');
             
             //Website type select
-            $form->addElement('select', $name .'-website_type_id', null, CRM_Core_PseudoConstant::websiteType( ) );
+            if ( $onBehalf ) {
+                if ( substr( $name, -1 ) == ']' ) { 
+                    $websiteTypeName = substr( $name, 0, $name.length - 1).'-website_type_id]';
+                }
+                $form->addElement('select', $websiteTypeName, null, CRM_Core_PseudoConstant::websiteType( ) );
+            } else {
+                $form->addElement('select', $name .'-website_type_id', null, CRM_Core_PseudoConstant::websiteType( ) );
+            }
         } else if ($fieldName == 'note' ) {  //added because note appeared as a standard text input
             $form->add('textarea', $name, $title, $attributes, $required );
         } else if (substr($fieldName, 0, 6) === 'custom') {
