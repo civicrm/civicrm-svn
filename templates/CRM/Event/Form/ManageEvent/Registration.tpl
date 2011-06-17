@@ -23,6 +23,14 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{if $addProfileBottom}
+  <table class="form-layout-compressed">
+    <tr class="crm-event-manage-registration-form-block-custom_post_{$profileBottomNum}">
+      <td scope="row" class="label" width="20%">{$form.custom_post_id_multiple[$profileBottomNum].label}</td>
+      <td>{$form.custom_post_id_multiple[$profileBottomNum].html}</td>
+    </tr>
+ </table>
+{else}
 {assign var=eventID value=$id}
 <div id="help">
 {ts}If you want to provide an Online Registration page for this event, check the first box below and then complete the fields on this form.{/ts} 
@@ -115,7 +123,15 @@
          <tr class="crm-event-manage-registration-form-block-custom_post_id">
             <td scope="row" class="label" width="20%">{$form.custom_post_id.label}</td>
             <td>{$form.custom_post_id.html}<br />
-            <span class="description">{ts}Include additional fields on this registration form by configuring and selecting a CiviCRM Profile to be included at the bottom of the page.{/ts}</span></td>
+            <span class="description">{ts}Include additional fields on this registration form by configuring and selecting a CiviCRM Profile to be included at the bottom of the page.{/ts}</span>
+            </td>
+        </tr>
+	<tr class='crm-event-manage-registration-form-block-custom_post_multiple'>
+	    <td id="profile_bottom_multiple" colspan="2"></td>
+        </tr>
+        <tr class='crm-event-manage-registration-form-block-custom_post_add'>
+            <td scope="row" class="label" width="20%"></td>
+	    <td><a href="javascript:addProfileBottom()">{ts}Add More Bottom Profile{/ts}</a></td>
         </tr>
         <tr id="additional_profile_pre" class="crm-event-manage-registration-form-block-additional_custom_pre_id">
             <td scope="row" class="label" width="20%">{$form.additional_custom_pre_id.label}</td>
@@ -308,6 +324,22 @@ invert              = 0
             cj( '#restmsg' ).html( imageIcon + errorMsg  ).hide( );
         }
     }
+    
+    var profileBottomCount = 0;
+    function addProfileBottom( ) {
+      profileBottomCount++;
+      var urlPath = {/literal}"{crmURL p='civicrm/event/manage/registration' h=0 q=$addProfileParams}"{literal};
+      urlPath = urlPath + '&snippet=4&addProfileNum=' + profileBottomCount;
+      cj.ajax({ url     : urlPath,
+                async   : false,
+                global  : false,
+	        success : function ( content ) { 		
+                 cj( "#profile_bottom_multiple" ).append( content );
+                }
+      });   
+    }
+
     {/literal}
 </script>
 {include file="CRM/common/formNavigate.tpl"}
+{/if}
