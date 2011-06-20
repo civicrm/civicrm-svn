@@ -978,12 +978,12 @@ class CRM_Report_Form extends CRM_Core_Form {
         }
         
         if ( CRM_Utils_Array::value( 'group', $field ) && $clause ) {
-            $clause = $this->whereGroupClause( $clause );
+            $clause = $this->whereGroupClause($field, $value, $op);
         } elseif ( CRM_Utils_Array::value( 'tag', $field ) && $clause ) {
             // not using left join in query because if any contact
             // belongs to more than one tag, results duplicate
             // entries.
-            $clause = $this->whereTagClause( $clause );
+            $clause = $this->whereTagClause($field, $value, $op);
         }
         
         return $clause;
@@ -1711,7 +1711,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                                         $val[$key] = $options[$valIds];
                                     }
                                 }
-                                $pair[$op] = (count($val) == 1) ? ts('Is') : $pair[$op];
+                                $pair[$op] = (count($val) == 1) ? ( ($op == 'notin')? ts('Is Not'): ts('Is') ) : $pair[$op];
                                 $val       = implode( ', ', $val );
                                 $value     = "{$pair[$op]} " . $val;
                             } else if ( !is_array( $val ) && !empty( $val ) && isset($field['options']) &&
@@ -1880,7 +1880,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
         }
     }
     
-    function whereGroupClause( $clause ) {
+    function whereGroupClause($field, $value, $op) {
          
         $smartGroupQuery = ""; 
         require_once 'CRM/Contact/DAO/Group.php';
@@ -1898,6 +1898,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::check( $smartGroups );
 
+        $smartGroupQuery = '';
         if( !empty($smartGroups) ) {   
             $smartGroups = implode( ',', $smartGroups );
             $smartGroupQuery =                                                                             
@@ -1905,20 +1906,32 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                   SELECT DISTINCT smartgroup_contact.contact_id                                    
                   FROM civicrm_group_contact_cache smartgroup_contact        
                   WHERE smartgroup_contact.group_id IN ({$smartGroups}) ";
-         }
-             
-        return  " {$this->_aliases['civicrm_contact']}.id IN ( 
+        }
+        
+        $sqlOp  = self::getSQLOperator( $op );
+        if ( !is_array($value) ) {
+            $value = array( $value );
+        }
+        $clause = "{$field['dbAlias']} IN (" . implode(', ', $value) . ")";
+        
+        return  " {$this->_aliases['civicrm_contact']}.id {$sqlOp} ( 
                           SELECT DISTINCT {$this->_aliases['civicrm_group']}.contact_id 
                           FROM civicrm_group_contact {$this->_aliases['civicrm_group']}
                           WHERE {$clause} AND {$this->_aliases['civicrm_group']}.status = 'Added' 
                           {$smartGroupQuery} ) ";
     }
 
-    function whereTagClause( $clause ) {
+    function whereTagClause($field, $value, $op) {
         // not using left join in query because if any contact
         // belongs to more than one tag, results duplicate
         // entries.
-        return  " {$this->_aliases['civicrm_contact']}.id IN ( 
+        $sqlOp  = self::getSQLOperator( $op );
+        if ( !is_array($value) ) {
+            $value = array( $value );
+        }
+        $clause = "{$field['dbAlias']} IN (" . implode(', ', $value) . ")";
+
+        return  " {$this->_aliases['civicrm_contact']}.id {$sqlOp} ( 
                           SELECT DISTINCT {$this->_aliases['civicrm_tag']}.entity_id 
                           FROM civicrm_entity_tag {$this->_aliases['civicrm_tag']}
                           WHERE entity_table = 'civicrm_contact' AND {$clause} ) ";
