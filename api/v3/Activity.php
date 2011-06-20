@@ -144,7 +144,7 @@ function civicrm_api3_activity_getfields( $params ) {
     //activity_id doesn't appear to work so let's tell them to use 'id' (current focus is ensuring id works)
     $fields['id'] = $fields['activity_id'];
     $fields['assignee_contact_id'] = 'assigned to';
-
+    $fields['activity_status_id'] = 'Status id';
     unset ($fields['activity_id']);
     return civicrm_api3_create_success($fields ,$params,$bao);
 }
