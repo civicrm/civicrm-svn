@@ -400,9 +400,9 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                                    'module'       => 'CiviEvent',       // CRM-4377: CiviEvent for the main participant, CiviEvent_Additional for additional participants
                                    'entity_id'    => $this->_eventId );
             list( $this->_values['custom_pre_id'],
-                  $this->_values['custom_post_id'] ) =
-                CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams ); 
-    
+                  $this->_values['custom_post_id'] ) = 
+                CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
+            
             // set profiles for additional participants
             if ( $this->_values['event']['is_multiple_registrations'] ) {
                 require_once 'CRM/Core/BAO/UFJoin.php'; 
