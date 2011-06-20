@@ -293,7 +293,7 @@ SELECT label, value
                     $this->_whereTables[$joinTable] = $this->_tables[$joinTable] = 1;
                 } else if ( $this->_contactSearch ) {
                     require_once 'CRM/Contact/BAO/Query.php';
-                    CRM_Contact_BAO_Query::$_openedPanes['Custom Fields'] = true;
+                    CRM_Contact_BAO_Query::$_openedPanes[ts('Custom Fields')] = true;
                 }
             }
         }
