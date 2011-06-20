@@ -68,6 +68,12 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
 
         $urlParams = "id={$this->_id}&addProfileBottom=1&qfKey={$this->controller->_key}";
         $this->assign( 'addProfileParams', $urlParams );
+
+        if ($addProfileBottom = CRM_Utils_Array::value('custom_post_id_multiple', $_POST) ) {
+            foreach( array_keys($addProfileBottom) as $profileNum ) {
+                self::buildMultipleProfileBottom($this, $profileNum);
+            }
+        }
     }
 
     /**
