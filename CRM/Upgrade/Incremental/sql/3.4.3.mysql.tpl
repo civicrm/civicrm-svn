@@ -18,7 +18,7 @@ INSERT INTO civicrm_uf_join
 VALUES
    ( 1, 'Profile', NULL, NULL, 7, @uf_group_id_onBehalfOrganization );
 
-SELECT @maxId := MAX(id) FROM civicrm_location_type WHERE name = 'Main';
+SELECT @maxId := id FROM civicrm_location_type WHERE name = 'Main';
    
 INSERT INTO civicrm_uf_field
    ( uf_group_id, field_name, is_required, is_reserved, weight, visibility, in_selector, is_searchable, location_type_id, {localize field='label'}label{/localize}, field_type, {localize field='help_post'}help_post{/localize}, phone_type_id )
