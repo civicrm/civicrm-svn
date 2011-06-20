@@ -122,12 +122,27 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
             $fieldTypes = array_merge( $fieldTypes, array( 'Contribution' ) );
         }
         
+        $stateCountryMap = array( );
         foreach ( $profileFields as $name => $field ) {
             if ( in_array( $field['field_type'], $fieldTypes ) ) {
+                list( $prefixName, $index ) = CRM_Utils_System::explode( '-', $name, 2 );
+                if ( $prefixName == 'state_province' || $prefixName == 'country' || $prefixName == 'county' ) {
+                    if ( ! array_key_exists( $index, $stateCountryMap ) ) {
+                        $stateCountryMap[$index] = array( );
+                    }
+                    $stateCountryMap[$index][$prefixName] = 'onbehalf_' . $name;
+                }
+                
                 CRM_Core_BAO_UFGroup::buildProfile( $form, $field, null, null, false, true );
             }
         }
+        
+        if ( !empty($stateCountryMap) ) {
+            require_once 'CRM/Core/BAO/Address.php';
+            CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap );
+        }
 
+        $form->assign('onBehalfOfFields', $profileFields);
         $form->addElement( 'hidden', 'hidden_onbehalf_profile', 1 );
     }
 }
