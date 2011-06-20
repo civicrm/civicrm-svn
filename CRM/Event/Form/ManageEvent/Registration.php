@@ -103,12 +103,21 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                                    'entity_id'    => $eventId );
 
             list( $defaults['custom_pre_id'],
-                  $defaults['custom_post_id'] ) = 
-                CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams ); 
+                  $defaults['custom_post'] ) = 
+                CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
+            
+            $defaults['custom_post_id'] =  $defaults['custom_post'][0];
+            unset($defaults['custom_post'][0]);
+            if (!empty($defaults['custom_post'])) {
+                foreach ( $defaults['custom_post'] as $key => $value){
+                    $defaults["custom_post_id_multiple[$key]"] = $value;
+                }
+            }  
 
             if ($defaults['is_multiple_registrations']) {
                 // CRM-4377: set additional participants’ profiles – set to ‘none’ if explicitly unset (non-active)
                 $ufJoin = new CRM_Core_DAO_UFJoin;
+
                 $ufJoin->module       = 'CiviEvent_Additional';
                 $ufJoin->entity_table = 'civicrm_event';
                 $ufJoin->entity_id    = $eventId;
@@ -138,7 +147,8 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         if ( CRM_Utils_Array::value( 'registration_end_date' , $defaults ) ) {                                                                                          
             list( $defaults['registration_end_date'], 
                   $defaults['registration_end_date_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['registration_end_date'], 'activityDateTime' );
-        }                                                                                            
+        }                
+
         return $defaults;
     }   
     
