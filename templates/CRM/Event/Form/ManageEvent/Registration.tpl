@@ -131,7 +131,7 @@
         </tr>
         <tr class='crm-event-manage-registration-form-block-custom_post_add'>
             <td scope="row" class="label" width="20%"></td>
-	    <td><a href="javascript:addProfileBottom()">{ts}Add More Bottom Profile{/ts}</a></td>
+	    <td><a href="javascript:addProfileBottom()">{ts}add another bottom profile{/ts}</a></td>
         </tr>
         <tr id="additional_profile_pre" class="crm-event-manage-registration-form-block-additional_custom_pre_id">
             <td scope="row" class="label" width="20%">{$form.additional_custom_pre_id.label}</td>
