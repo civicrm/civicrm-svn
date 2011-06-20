@@ -166,6 +166,13 @@ class CRM_Upgrade_Incremental_php_ThreeFour {
             CRM_Core_DAO::executeQuery( $colQuery );
         }
 
+        $sql = "SELECT max(id) FROM civicrm_location_type WHERE name = 'Main'";
+        if ( !CRM_Core_DAO::singleValueQuery( $sql ) ) {
+            $query = "
+INSERT INTO civicrm_location_type ( name, description, is_reserved, is_active )
+     VALUES ( 'Main', 'Main office location', 0, 1 );";
+            CRM_Core_DAO::executeQuery( $query );
+        }
 
         $upgrade = new CRM_Upgrade_Form;
         $upgrade->processSQL($rev);
