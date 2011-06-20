@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+
 {* Edit or display Profile fields, when embedded in an online contribution or event registration form. *}
 {if ! empty( $fields )}
    {strip} 
@@ -105,14 +106,17 @@
                {assign var="websiteType" value=$n|cat:"-website_type_id"}
                {$form.$websiteType.html}&nbsp;
              {/if}
+	     
              {if $n eq 'email_greeting' or  $n eq 'postal_greeting' or $n eq 'addressee'}
                 {include file="CRM/Profile/Form/GreetingType.tpl"}  
              {elseif $n eq 'group'} 
 				<table id="selector" class="selector crm-profile-tagsandgroups" style="width:auto;">
 					<tr><td>{$form.$n.html}{* quickform add closing </td> </tr>*}
 				</table>
-             {elseif ( $field.data_type eq 'Date' or 
-	     	     ( $n|substr:-5:5 eq '_date' ) ) }
+             {elseif ( ( $field.data_type eq 'Date' ) or 
+	     	     ( $n|substr:-5:5 eq '_date' ) ) AND
+		     ( $form.formName neq 'Confirm' )  AND
+		     ( $form.formName neq 'ThankYou' ) }
                       {include file="CRM/common/jcalendar.tpl" elementName=$n}
    	    	 {else}
                {$form.$n.html}
@@ -120,6 +124,7 @@
                   <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}');return false;">{ts}clear{/ts}</a>)</span>
                {/if}
              {/if}
+
              {*CRM-4564*}
              {if $field.html_type eq 'Radio' && $form.$fieldName.frozen neq true && $field.is_required neq 1}
                  <span style="line-height: .75em; margin-top: 1px;">
@@ -128,6 +133,7 @@
              {elseif $field.html_type eq 'Autocomplete-Select'}
                  {include file="CRM/Custom/Form/AutoComplete.tpl" element_name = $n }
              {/if}  
+	 
              {* Show explanatory text for field if not in 'view' or 'preview' modes *} 
              {if $field.help_post && $action neq 4 && $action neq 1028}
                 <br /><span class="description">{$field.help_post}</span> 
