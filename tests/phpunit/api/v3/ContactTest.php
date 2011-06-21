@@ -44,6 +44,8 @@ class api_v3_ContactTest extends CiviUnitTestCase
 {
   public $DBResetRequired = false;  
   protected $_apiversion;
+  protected $_entity;
+  protected $_params;
   /**
    *  Constructor
    *
@@ -64,6 +66,14 @@ class api_v3_ContactTest extends CiviUnitTestCase
     //  Connect to the database
     parent::setUp();
     $this->_apiversion = 3;
+    $this->_entity = 'contact';
+    $this->_params =  array(
+                        'first_name'   => 'abc1',
+                        'contact_type' => 'Individual',
+                        'last_name'    => 'xyz1',
+                        'version'			=>  $this->_apiversion,
+    );
+    
   }
 
   function tearDown( ) {
@@ -312,7 +322,85 @@ class api_v3_ContactTest extends CiviUnitTestCase
     // delete the contact
     civicrm_api3_contact_delete( $contact );
   }
+  
+  
+        /**
+     * check with complete array + custom field 
+     * Note that the test is written on purpose without any
+     * variables specific to participant so it can be replicated into other entities
+     * and / or moved to the automated test suite
+     */
+    function testCreateWithCustom()
+    {
+        $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+        
+        $params = $this->_params;
+        $params['custom_'.$ids['custom_field_id']]  =  "custom string";
+        $description = "/*this demonstrates setting a custom field through the API ";
+        $subfile = "CustomFieldCreate";
+        $result = civicrm_api($this->_entity,'create', $params);
+        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__,$description,$subfile);
+        $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
 
+        $check = civicrm_api($this->_entity,'get',array('return.custom_'.$ids['custom_field_id']=> 1,'version' =>3, 'id' => $result['id']));
+        $this->assertEquals("custom string", $check['values'][$check['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
+   
+        $this->customFieldDelete($ids['custom_field_id']);
+        $this->customGroupDelete($ids['custom_group_id']);      
+
+    }
+        /**
+     * check with complete array + custom field 
+     * Note that the test is written on purpose without any
+     * variables specific to participant so it can be replicated into other entities
+     * and / or moved to the automated test suite
+     */
+    function testGetWithCustom()
+    {
+        $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+        
+        $params = $this->_params;
+        $params['custom_'.$ids['custom_field_id']]  =  "custom string";
+        $description = "/*this demonstrates setting a custom field through the API ";
+        $subfile = "CustomFieldGet";
+        $result = civicrm_api($this->_entity,'create', $params);
+        $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
+
+        $check = civicrm_api($this->_entity,'get',array('return.custom_'.$ids['custom_field_id']=> 1,'version' =>3, 'id' => $result['id']));
+        $this->documentMe($params,$check  ,__FUNCTION__,__FILE__,$description,$subfile);
+    
+        $this->assertEquals("custom string", $check['values'][$check['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
+   
+        $this->customFieldDelete($ids['custom_field_id']);
+        $this->customGroupDelete($ids['custom_group_id']);      
+
+    }
+    /*
+     * check with complete array + custom field 
+     * Note that the test is written on purpose without any
+     * variables specific to participant so it can be replicated into other entities
+     * and / or moved to the automated test suite
+     */
+    function testGetWithCustomReturnSyntax()
+    {
+        $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+        
+        $params = $this->_params;
+        $params['custom_'.$ids['custom_field_id']]  =  "custom string";
+        $description = "/*this demonstrates setting a custom field through the API ";
+        $subfile = "CustomFieldGetReturnSyntaxVariation";
+        $result = civicrm_api($this->_entity,'create', $params);
+        $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
+        $params= array('return' => 'custom_'.$ids['custom_field_id'],'version' =>3, 'id' => $result['id']);
+        $check = civicrm_api($this->_entity,'get',$params);
+        $this->documentMe($params,$check  ,__FUNCTION__,__FILE__,$description,$subfile);
+    
+        $this->assertEquals("custom string", $check['values'][$check['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
+        civicrm_api('Contact','Delete',array('version' => 3, 'id' => $check['id']));
+        $this->customFieldDelete($ids['custom_field_id']);
+        $this->customGroupDelete($ids['custom_group_id']);      
+
+    }
   /**
    *  Verify that attempt to create individual contact with first
    *  and last names and email succeeds
