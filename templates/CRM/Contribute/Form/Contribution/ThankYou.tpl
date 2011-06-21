@@ -176,19 +176,9 @@
     {include file="CRM/Contribute/Form/Contribution/Honor.tpl"}
 
     {if $customPre}
-        {foreach from=$customPre item=field key=cname}
-            {if $field.groupTitle}
-                {assign var=groupTitlePre  value=$field.groupTitle} 
-            {/if}
-        {/foreach}
-    	<div class="crm-group custom_pre-group">
-            <div class="header-dark">
-                {$groupTitlePre}
-            </div>  
             <fieldset class="label-left">
                 {include file="CRM/UF/Form/Block.tpl" fields=$customPre}
             </fieldset>
-        </div>
     {/if}
     
     {if $pcpBlock}
@@ -284,19 +274,9 @@
     {include file="CRM/Contribute/Form/Contribution/PremiumBlock.tpl" context="thankContribution"}
 
     {if $customPost}
-        {foreach from=$customPost item=field key=cname}
-            {if $field.groupTitle}
-                {assign var=groupTitlePost  value=$field.groupTitle} 
-            {/if}
-        {/foreach}
-    	<div class="crm-group custom_post-group">
-            <div class="header-dark">
-                {$groupTitlePost}
-            </div>  
             <fieldset class="label-left">
                 {include file="CRM/UF/Form/Block.tpl" fields=$customPost}
             </fieldset>
-        </div>
     {/if}
 
     <div id="thankyou_footer" class="contribution_thankyou_footer-section">
