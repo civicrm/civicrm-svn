@@ -196,6 +196,10 @@ class CRM_Mailing_Event_BAO_Unsubscribe extends CRM_Mailing_Event_DAO_Unsubscrib
         /* Now we have a complete list of recipient groups.  Filter out all
          * those except smart groups, those that the contact belongs to and
          * base groups from search based mailings */
+        $baseGroupClause = '';
+        if ( !empty($base_group_ids) ) {
+            $baseGroupClause = "OR  $group.id IN(".implode(', ', $base_group_ids).")";
+        }
         $do->query("
             SELECT      $group.id as group_id,
                         $group.title as title,
@@ -208,7 +212,7 @@ class CRM_Mailing_Event_BAO_Unsubscribe extends CRM_Mailing_Event_DAO_Unsubscrib
                 AND     ($group.saved_search_id is not null
                             OR  ($gc.contact_id = $contact_id
                                 AND $gc.status = 'Added')
-                            OR  $group.id IN(".implode(', ', $base_group_ids).")
+                            $baseGroupClause
                         )");
                         
         if ($return) {

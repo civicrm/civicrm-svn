@@ -77,6 +77,11 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
       $firstName = substr(sha1(rand()), 0, 7);
       $this->webtestAddContact( $firstName, "Mailson", "mailino$firstName@mailson.co.in" );
       
+      // Get contact id from url.
+      $matches = array();
+      preg_match('/cid=([0-9]+)/', $this->getLocation(), $matches);
+      $contactId = $matches[1];
+
       // go to group tab and add to mailing group
       $this->click("css=li#tab_group a");
       $this->waitForElementPresent("_qf_GroupContact_next");
@@ -253,7 +258,38 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("mailino$firstName@mailson.co.in"));
 
       //------end delivery verification---------
+    
+      // //------ check with unsubscribe -------
+      // // FIX ME: there is an issue with DSN setting for Webtest, need to handle by seperate DSN setting for Webtests
+      // // build unsubscribe link
+      // require_once 'CRM/Mailing/Event/DAO/Queue.php';
+      // $eventQueue = new CRM_Mailing_Event_DAO_Queue( );
+      // $eventQueue->contact_id = $contactId;
+      // $eventQueue->find(true);
       
+      // // unsubscribe link
+      // $unsubscribeUrl = "civicrm/mailing/optout?reset=1&jid={$eventQueue->job_id}&qid={$eventQueue->id}&h={$eventQueue->hash}&confirm=1";
+      
+      // // logout to unsubscribe
+      // $this->open($this->sboxPath . 'civicrm/logout?reset=1');
+      // $this->waitForPageToLoad('30000'); 
+
+      // // click(visit) unsubscribe path
+      // $this->open($this->sboxPath . $unsubscribeUrl);
+      // $this->waitForPageToLoad('30000');
+      
+      // $this->assertTrue($this->isTextPresent('Optout'));
+      // $this->assertTrue($this->isTextPresent("mailino$firstName@mailson.co.in"));
+      
+      // // unsubscribe
+      // $this->click('_qf_optout_next');
+      // $this->waitForPageToLoad('30000');
+      
+      // $this->assertTrue($this->isTextPresent('Optout'));
+      // $this->assertTrue($this->isTextPresent("mailino$firstName@mailson.co.in"));
+      // $this->assertTrue($this->isTextPresent('has been successfully opted out.'));
+
+      // //------ end unsubscribe -------
   }
   
   
