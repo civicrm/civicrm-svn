@@ -354,9 +354,6 @@ function _civicrm_api3_store_values( &$fields, $params, &$values )
 
 function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
     $entity = substr ($dao->__table , 8);
-    if ( !$dao->find() ) {
-        return array();
-    }
 
     $fields = _civicrm_api3_build_fields_array($dao,$unique);
     $fields = array_intersect(array_keys($fields),array_keys($params));
