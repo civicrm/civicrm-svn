@@ -123,6 +123,9 @@ class CRM_UF_Page_Field extends CRM_Core_Page
         $ufFieldBAO->uf_group_id = $this->_gid;
         $ufFieldBAO->orderBy( 'weight', 'field_name' );
         $ufFieldBAO->find();
+
+        $isGroupReserved = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'is_reserved' );
+        $this->assign( 'isGroupReserved', $isGroupReserved );
         
         require_once "CRM/Core/BAO/UFField.php";
         $profileType = CRM_Core_BAO_UFField::getProfileType( $this->_gid );
