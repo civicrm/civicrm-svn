@@ -23,7 +23,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-
 {* Edit or display Profile fields, when embedded in an online contribution or event registration form. *}
 {if ! empty( $fields )}
    {strip} 
@@ -44,6 +43,10 @@
         {if $mode ne 8 && $action ne 1028 && $action ne 4} 
             <fieldset><legend>{$field.groupTitle}</legend> 
         {/if} 
+
+	{if $form.formName eq 'Confirm' OR $form.formName eq 'ThankYou'}
+	   <div class="header-dark">{$field.groupTitle} </div>
+        {/if}
         {assign var=fieldset  value=`$field.groupTitle`} 
         {assign var=groupHelpPost  value=`$field.groupHelpPost`} 
         {if $field.groupHelpPre && $action neq 4 && $action neq 1028} 

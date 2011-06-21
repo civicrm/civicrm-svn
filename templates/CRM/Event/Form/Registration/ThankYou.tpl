@@ -171,35 +171,15 @@
     {/if}
 
     {if $customPre}
-        {foreach from=$customPre item=field key=customName}
-            {if $field.groupTitle}
-                {assign var=groupTitlePre  value=$field.groupTitle} 
-            {/if}
-        {/foreach}
-    	<div class="crm-group {$groupTitlePre}-group">
-            <div class="header-dark">
-    	        {$groupTitlePre}
-            </div>
             <fieldset class="label-left">
                 {include file="CRM/UF/Form/Block.tpl" fields=$customPre}
             </fieldset>
-        </div>
     {/if}
 
     {if $customPost}
-        {foreach from=$customPost item=field key=customName}
-            {if $field.groupTitle}
-                {assign var=groupTitlePost  value=$field.groupTitle} 
-            {/if}
-        {/foreach}
-    	<div class="crm-group {$groupTitlePost}-group">
-            <div class="header-dark">
-                {$groupTitlePost}
-            </div>
             <fieldset class="label-left">  
                 {include file="CRM/UF/Form/Block.tpl" fields=$customPost}
             </fieldset>
-        </div>
     {/if}
 
     {*display Additional Participant Info*}
