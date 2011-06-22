@@ -7,7 +7,7 @@ function civicrm_rules_admin_settings($form_state = NULL){
                                                 '#type' => 'checkboxes',
                                                 '#options' => _civicrm_rules_admin_getEntities(),
                                                 '#description' => t('Which Entities Do you want POST rules activated for'),
-                                                '#default_value' => variable_get('civicrm_rules_post_entities','Contact'),
+                                                '#default_value' => variable_get('civicrm_rules_post_entities', array()),
                                                 );
 
     return system_settings_form($form);
