@@ -112,9 +112,11 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
             if (!empty($defaults['custom_post'])) {
                 $this->_profilePostMultiple = $defaults['custom_post'];
                 foreach ( $defaults['custom_post'] as $key => $value){
+                    self::buildMultipleProfileBottom($this, $key);
                     $defaults["custom_post_id_multiple[$key]"] = $value;
                 }
             }  
+            $this->assign('profilePostMultiple', $defaults['custom_post']);
 
             if ($defaults['is_multiple_registrations']) {
                 // CRM-4377: set additional participants’ profiles – set to ‘none’ if explicitly unset (non-active)
@@ -273,13 +275,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         self::buildConfirmationBlock( $this );
         self::buildMailBlock( $this );
         self::buildThankYouBlock( $this );
-        
-        if ( !empty($this->_profilePostMultiple) ) {
-            foreach( array_keys($this->_profilePostMultiple) as $count ) {
-                self::buildMultipleProfileBottom($this, $count);
-            }
-        }
-        $this->assign('profilePostMultiple', count($this->_profilePostMultiple));
+
         parent::buildQuickForm();
     }
     

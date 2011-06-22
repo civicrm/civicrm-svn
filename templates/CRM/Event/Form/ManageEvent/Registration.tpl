@@ -128,12 +128,12 @@
         </tr>
 
          {if $profilePostMultiple}
-         {section name=profilePostNum start=1 max=$profilePostMultiple step=1}
+         {foreach from=$profilePostMultiple item=profilePostId key=profilePostNum}
  	    <tr class='crm-event-manage-registration-form-block-custom_post_multiple'>
-               <td scope="row" class="label" width="20%">{$form.custom_post_id_multiple[$profilePostNum].label}</td>
-               <td>{$form.custom_post_id_multiple[$profilePostNum].html}</td>
+               <td scope="row" class="label" width="20%">{$form.custom_post_id_multiple.$profilePostNum.label}</td>
+               <td>{$form.custom_post_id_multiple.$profilePostNum.html}</td>
              </tr>
-         {/section}
+         {/foreach}
  	{/if}
 	<tr class='crm-event-manage-registration-form-block-custom_post_multiple'>
 	    <td id="profile_bottom_multiple" colspan="2"></td>
@@ -334,7 +334,7 @@ invert              = 0
         }
     }
 
-    var profileBottomCount = (int){/literal}{$profilePostMultiple}{literal};
+    var profileBottomCount = Number({/literal}{$profilePostMultiple|@count}{literal});
     function addProfileBottom( ) {
       profileBottomCount++;
       var urlPath = {/literal}"{crmURL p='civicrm/event/manage/registration' h=0 q=$addProfileParams}"{literal};
