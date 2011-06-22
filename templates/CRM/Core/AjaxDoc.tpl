@@ -151,8 +151,7 @@ cj(function ($) {
   query=window.location.hash;
   t="#/civicrm/ajax/rest";
   if (query.substring(0, t.length) === t) {
-    $('#query').val (query.substring(1)).focus().after("<div class='helpmsg'>Press enter to run the API query</div>");
-     
+    $('#query').val (query.substring(1)).focus();
   } else {
     window.location.hash="explorer"; //to be sure to display the result under the generated code in the viewport
   }
@@ -203,7 +202,8 @@ cj(function ($) {
 <br>
 <div id="selector"></div>
 <div id="extra"></div>
-<input size="90" id="query" value="{crmURL p="civicrm/ajax/rest" q="json=1&debug=on&entity=Contact&action=get&sequential=1&return=display_name,email,phone"}"/>
+<input size="90" maxsize=300 id="query" value="{crmURL p="civicrm/ajax/rest" q="json=1&debug=on&entity=Contact&action=get&sequential=1&return=display_name,email,phone"}"/>
+<input type="submit" value="GO" title="press to run the API query"/>
 <table id="generated" border=1 style="display:none;">
 <caption>Generated codes for this api call</caption>
 <tr><td>URL<td><div id="link"></div></td></tr>
