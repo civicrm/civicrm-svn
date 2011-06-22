@@ -191,9 +191,9 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
                 // do not allow edit for anon users in joomla frontend, CRM-4668, unless u have checksum CRM-5228
                 require_once 'CRM/Contact/BAO/Contact/Permission.php';
                 if ( $config->userFrameworkFrontend ) {
-                    $this->_isPermissionedChecksum = CRM_Contact_BAO_Contact_Permission::validateOnlyChecksum( $this->_id, $this, true );
+                    $this->_isPermissionedChecksum = CRM_Contact_BAO_Contact_Permission::validateOnlyChecksum( $this->_id, $this, false );
                 } else {
-                    $this->_isPermissionedChecksum = CRM_Contact_BAO_Contact_Permission::validateChecksumContact( $this->_id, $this, true );
+                    $this->_isPermissionedChecksum = CRM_Contact_BAO_Contact_Permission::validateChecksumContact( $this->_id, $this, false );
                 }
             }
             
