@@ -37,8 +37,8 @@
 
 require_once 'CRM/Event/Form/ManageEvent.php';
 require_once 'CRM/Event/BAO/Event.php';
-require_once "CRM/Core/BAO/UFGroup.php";
-require_once "CRM/Contact/BAO/ContactType.php";
+require_once 'CRM/Core/BAO/UFGroup.php';
+require_once 'CRM/Contact/BAO/ContactType.php';
 
 /**
  * This class generates form components for processing Event  
@@ -52,7 +52,8 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
      * @var CRM_Core_ShowHideBlocks
      */
     protected $_showHide;
-    
+
+    protected $_profilePostMultiple = array( );
     /** 
      * Function to set variables up before form is built 
      *                                                           
@@ -109,6 +110,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
             $defaults['custom_post_id'] =  $defaults['custom_post'][0];
             unset($defaults['custom_post'][0]);
             if (!empty($defaults['custom_post'])) {
+                $this->_profilePostMultiple = $defaults['custom_post'];
                 foreach ( $defaults['custom_post'] as $key => $value){
                     $defaults["custom_post_id_multiple[$key]"] = $value;
                 }
@@ -272,6 +274,12 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         self::buildMailBlock( $this );
         self::buildThankYouBlock( $this );
         
+        if ( !empty($this->_profilePostMultiple) ) {
+            foreach( array_keys($this->_profilePostMultiple) as $count ) {
+                self::buildMultipleProfileBottom($this, $count);
+            }
+        }
+        $this->assign('profilePostMultiple', count($this->_profilePostMultiple));
         parent::buildQuickForm();
     }
     
@@ -344,12 +352,12 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         $form->addYesNo( 'is_email_confirm', ts( 'Send Confirmation Email?' ) , null, null, array('onclick' =>"return showHideByValue('is_email_confirm','','confirmEmail','block','radio',false);"));
         $form->add('textarea','confirm_email_text',ts('Text'), $attributes['confirm_email_text']);
         $form->add('text','cc_confirm',ts('CC Confirmation To'), CRM_Core_DAO::getAttribute('CRM_Event_DAO_Event', 'cc_confirm'));
-        $form->addRule( "cc_confirm", ts('Please enter a valid list of comma delimited email addresses'), 'emailList' );  
+        $form->addRule( 'cc_confirm', ts('Please enter a valid list of comma delimited email addresses'), 'emailList' );  
         $form->add('text','bcc_confirm',ts('BCC Confirmation To'), CRM_Core_DAO::getAttribute('CRM_Event_DAO_Event', 'bcc_confirm') );  
-        $form->addRule( "bcc_confirm", ts('Please enter a valid list of comma delimited email addresses'), 'emailList' );          
+        $form->addRule( 'bcc_confirm', ts('Please enter a valid list of comma delimited email addresses'), 'emailList' );          
         $form->add('text', 'confirm_from_name', ts('Confirm From Name') );
         $form->add('text', 'confirm_from_email', ts('Confirm From Email') );  
-        $form->addRule( "confirm_from_email", ts('Email is not valid.'), 'email' );
+        $form->addRule( 'confirm_from_email', ts('Email is not valid.'), 'email' );
     }
 
     function buildThankYouBlock(&$form) 

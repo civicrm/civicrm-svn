@@ -126,6 +126,15 @@
             <span class="description">{ts}Include additional fields on this registration form by configuring and selecting a CiviCRM Profile to be included at the bottom of the page.{/ts}</span>
             </td>
         </tr>
+
+         {if $profilePostMultiple}
+         {section name=profilePostNum start=1 max=$profilePostMultiple step=1}
+ 	    <tr class='crm-event-manage-registration-form-block-custom_post_multiple'>
+               <td scope="row" class="label" width="20%">{$form.custom_post_id_multiple[$profilePostNum].label}</td>
+               <td>{$form.custom_post_id_multiple[$profilePostNum].html}</td>
+             </tr>
+         {/section}
+ 	{/if}
 	<tr class='crm-event-manage-registration-form-block-custom_post_multiple'>
 	    <td id="profile_bottom_multiple" colspan="2"></td>
         </tr>
@@ -324,8 +333,8 @@ invert              = 0
             cj( '#restmsg' ).html( imageIcon + errorMsg  ).hide( );
         }
     }
-    
-    var profileBottomCount = 0;
+
+    var profileBottomCount = (int){/literal}{$profilePostMultiple}{literal};
     function addProfileBottom( ) {
       profileBottomCount++;
       var urlPath = {/literal}"{crmURL p='civicrm/event/manage/registration' h=0 q=$addProfileParams}"{literal};
