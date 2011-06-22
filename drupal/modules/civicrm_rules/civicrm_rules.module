@@ -179,7 +179,7 @@ function civicrm_rules_perm()
 
 function civicrm_rules_menu() {
 
-    $items['admin/settings/civicrm_rules'] = array(
+    $items['admin/config/civicrm/rules'] = array(
                                                    'title' => t('CiviCRM Rules settings'),
                                                    'description' => t('CiviCRM Rules Configuration'),
                                                    'page callback' => 'drupal_get_form',

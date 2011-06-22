@@ -44,7 +44,7 @@
 function _civicrm_get_groups( ) {
 	civicrm_initialize( );
 	require_once 'api/api.php';
-	$params = array( 'return.id' => 1, 'return.title' => 1 );
+	$params = array( 'return.id' => 1, 'return.title' => 1, 'version' => 2 );
 	$groupInformation = civicrm_api('group', 'get', $params);
 
 	$groups = array( );	
@@ -61,8 +61,9 @@ function _civicrm_get_groups( ) {
 function _civicrm_rules_group_contact( $contactId, $groupId, $action = 'add' ) {	
 	civicrm_initialize( );
 	$params = array( 'contact_id' => $contactId,
-									 'group_id' => $groupId
-								 );
+                     'group_id' => $groupId,
+                     'version' => 2
+                     );
   // This used to be civicrm_group_contact_common($params, $action);
 	civicrm_api('group_contact', 'common', $params, $action );
 }
