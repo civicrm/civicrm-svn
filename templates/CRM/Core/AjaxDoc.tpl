@@ -5,11 +5,12 @@
 #result {background:lightgrey;}
 #selector a {margin-right:10px;}
 .required {font-weight:bold;}
+.helpmsg {background:yellow;}
 {/literal}
 </style>
 <script>
 resourceBase = '{$config->resourceBase}';
-if (jQuery) {ldelim}  
+if (!jQuery) {ldelim}  
    var head= document.getElementsByTagName('head')[0];
    var script= document.createElement('script');
    script.type= 'text/javascript';
@@ -103,13 +104,14 @@ function generateQuery () {
 
 function runQuery(query) {
     var vars = [], hash,smarty = '',php = " array (",json = "{", link ="";
+    window.location.hash = query;
     $('#result').html('<i>Loading...</i>');
     $.get(query,function(data) {
       $('#result').text(data);
     },'text');
     link="<a href='"+query+"' title='open in a new tab' target='_blank'>ajax query</a>&nbsp;";
     var RESTquery = resourceBase +"/extern/rest.php?"+ query.substring(restURL.length,query.length) + "&user={youruser}&pwd={password}&key={yourkey}";
-    $("#link").html(link+"<a href='"+RESTquery+"' title='open in a new tab' target='_blank'>REST query</a>");
+    $("#link").html(link+"|<a href='"+RESTquery+"' title='open in a new tab' target='_blank'>REST query</a>.");
 
     var hashes = query.slice(query.indexOf('?') + 1).split('&');
     for(var i = 0; i < hashes.length; i++) {
@@ -146,7 +148,14 @@ function runQuery(query) {
 }
 
 cj(function ($) {
-  window.location.hash="explorer"; //to be sure to display the result under the generated code in the viewport
+  query=window.location.hash;
+  t="#/civicrm/ajax/rest";
+  if (query.substring(0, t.length) === t) {
+    $('#query').val (query.substring(1)).focus().after("<div class='helpmsg'>Press enter to run the API query</div>");
+     
+  } else {
+    window.location.hash="explorer"; //to be sure to display the result under the generated code in the viewport
+  }
   $('#entity').change (function() { $("#selector").empty();generateQuery();  });
   $('#action').change (function() { $("#selector").empty();generateQuery();  });
   $('#version').change (function() { generateQuery();  });
