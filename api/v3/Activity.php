@@ -168,7 +168,7 @@ function civicrm_api3_activity_get( $params ) {
         civicrm_api3_verify_mandatory($params);
 
         if (!empty($params['contact_id'])){
-           $activities = CRM_Activity_BAO_Activity::getContactActivity( $params['contact_id'] );
+           $activities = CRM_Activity_BAO_Activity::getContactActivity( $params );
            //BAO function doesn't actually return a contact ID - hack api for now & add to test so when api re-write happens it won't get missed
            foreach ($activities as $key => $activityArray){
               $activities[$key]['id'] = $key ;
