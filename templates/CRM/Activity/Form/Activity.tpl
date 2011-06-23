@@ -40,11 +40,13 @@
     <script type="text/javascript">
     var target_contact = assignee_contact = '';
 
-    var target_contact = {/literal}{$target_contact}{literal};
-
     {/literal}
+    {if $target_contact}
+        var target_contact = {$target_contact};
+    {/if}
+    
     {if $assignee_contact}
-        {literal} var assignee_contact = {/literal}{$assignee_contact};
+        var assignee_contact = {$assignee_contact};
     {/if}
     
     {literal}
