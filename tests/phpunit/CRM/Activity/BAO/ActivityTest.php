@@ -34,7 +34,7 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
     function testCreate( )
     {
         $contactId = Contact::createIndividual( );
-        
+      
         $params = array( 
                         'source_contact_id'  => $contactId,
                         'subject'            => 'Scheduling Meeting',
@@ -353,7 +353,7 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         'contact_id'       => 9,
                         'admin'            => false,
                         'caseId'           => null,
-                        'context'          => null,
+                        'context'          => 'activity',
                         'activity_type_id' => null,
                         'offset'           => 0,
                         'rowCount'         => 0,
@@ -361,7 +361,7 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         );
         require_once 'CRM/Activity/BAO/Activity.php';
         $activityCount = CRM_Activity_BAO_Activity::getActivitiesCount( $params );
-
+        
         //since we are loading activities from dataset, we know total number of activities for this contact
         // 5 activities, Contact Summary should show all activities
         $count = 5;
@@ -390,7 +390,7 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         );
         require_once 'CRM/Activity/BAO/Activity.php';
         $activityCount = CRM_Activity_BAO_Activity::getActivitiesCount( $params );
-
+       
         //since we are loading activities from dataset, we know total number of activities for this contact
         // this contact does not have any activity
         $this->assertEquals( 0, $activityCount, 'In line ' . __LINE__  );
@@ -488,7 +488,7 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         'contact_id'       => $contactID,
                         'admin'            => false,
                         'caseId'           => null,
-                        'context'          => null,
+                        'context'          => 'activity',
                         'activity_type_id' => null,
                         'offset'           => 0,
                         'rowCount'         => 0,
@@ -496,7 +496,7 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         );
         require_once 'CRM/Activity/BAO/Activity.php';
         $activities = CRM_Activity_BAO_Activity::getActivities( $params );
-
+        
         //since we are loading activities from dataset, we know total number of activities for this contact
         // 5 activities, Contact Summary should show all activities
         $count = 5;
