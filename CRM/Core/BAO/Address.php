@@ -150,6 +150,16 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
             CRM_Core_BAO_Address::fixAddress( $params );
         }
 
+        require_once 'CRM/Utils/Hook.php';
+        if ( CRM_Utils_Array::value( 'id', $params ) ) {
+            CRM_Utils_Hook::pre( 'edit', 'Address', $params['id'], $params );
+            $isEdit = true;
+        } else {
+            CRM_Utils_Hook::pre( 'create', 'Address', null, $params ); 
+            $isEdit = false;
+        }
+
+        $config =& CRM_Core_Config::singleton();
         $address->copyValues($params);
 
         $address->save( );
@@ -179,6 +189,14 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
             // we only create create relationship if address is shared by Individual
             if ( $address->master_id != 'null' ) {
                 self::processSharedAddressRelationship( $address->master_id, $params );
+            }
+
+
+            // lets call the post hook only after we've done all the follow on processing
+            if ( $isEdit ) {
+                CRM_Utils_Hook::post( 'edit'  , 'Address', $params['id'], $params );
+            } else {
+                CRM_Utils_Hook::post( 'create', 'Address', null, $params ); 
             }
         }
 
