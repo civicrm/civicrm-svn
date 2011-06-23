@@ -43,7 +43,7 @@
     var target_contact = {/literal}{$target_contact}{literal};
 
     {/literal}
-    {if $assigneeContactCount}
+    {if $assignee_contact}
         {literal} var assignee_contact = {/literal}{$assignee_contact};
     {/if}
     
