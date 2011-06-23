@@ -91,6 +91,8 @@ class CRM_Export_Form_Select extends CRM_Core_Form
 
         $this->_selectAll  = false;
         $this->_exportMode = self::CONTACT_EXPORT;
+        $this->_componentIds = array( );
+        $this->_componentClause = null;
 
         // get the submitted values based on search
         if ( $this->_action == CRM_Core_Action::ADVANCED ) { 
