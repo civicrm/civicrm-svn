@@ -546,8 +546,8 @@ SELECT username, email
 
         // get the default usertype
         $userType = $userParams->get('new_usertype');
-        if ( !$usertype ) {
-            $usertype = 'Registered';
+        if ( ! $userType ) {
+            $userType = 'Registered';
         }
 
         $acl = &JFactory::getACL();
