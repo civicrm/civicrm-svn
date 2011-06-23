@@ -510,8 +510,9 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
             $this->_relField = true;
         }
 
-        if ( $this->_params['activity_date_time_relative'] || $this->_params['activity_date_time_from'] 
-             || $this->_params['activity_date_time_to'] ) {     
+        if ( CRM_Utils_Array::value('activity_date_time_relative', $this->_params) || 
+             CRM_Utils_Array::value('activity_date_time_from', $this->_params) || 
+             CRM_Utils_Array::value('activity_date_time_to', $this->_params) ) {     
             $this->_activityLast = true;
         }
         

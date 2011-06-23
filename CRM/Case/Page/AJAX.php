@@ -147,6 +147,7 @@ class CRM_Case_Page_AJAX
         } else {
             echo ts('Could not find valid Case!');
         }
+        CRM_Utils_System::civiExit( ); 
     }
 
 
