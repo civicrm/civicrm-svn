@@ -145,7 +145,8 @@ $.extend($.fn, {
 			{},
 			$.validator.metadataRules(element),
 			$.validator.classRules(element),
-			$.validator.attributeRules(element),
+			// commenting out default validations, CRM-8334
+            // $.validator.attributeRules(element),
 			$.validator.staticRules(element)
 		), element);
 

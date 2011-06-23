@@ -179,11 +179,10 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $this->assertEquals($contribution['values'][$contribution['id']]['contribution_status_id'], 1, 'In line ' . __LINE__ );
         $this->_contribution = $contribution;
 
-        $contributionID = array( 'id' => $contribution['id'] ,
-                                  'version'        =>$this->_apiversion);
-        $contribution   =& civicrm_api3_contribution_delete($contributionID);
+        $this->contributionGetnCheck($params,$contribution['id']);
+
         
-        $this->assertEquals( $contribution['is_error'], 0 ,'In line ' . __LINE__ );
+
 
     }
     
@@ -438,6 +437,30 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $result = _civicrm_api3_contribute_format_params( $params, $values, true );
         $this->assertEquals( $values['total_amount'],100.00, 'In line ' . __LINE__ );
         $this->assertEquals( $values['contribution_status_id'],1, 'In line ' . __LINE__ );
+    }
+    /*
+     * This function does a GET & compares the result against the $params
+     * Use as a double check on Creates
+     */
+    function contributionGetnCheck($params,$id,$delete = 1){
+
+        $contribution = civicrm_api('Contribution','Get', array( 'id' => $id ,
+                                  'version'        =>$this->_apiversion));
+        $this->assertEquals( $contribution['is_error'], 0 ,'In line ' . __LINE__ );
+        if($delete){
+        civicrm_api3_contribution_delete(array( 'id' => $id ,
+                                  'version'        =>$this->_apiversion));
+        }
+        $values = $contribution['values'][$contribution['id']];
+        $params['receive_date'] = date('Y-m-d H:i:s' ,strtotime($params['receive_date']));
+        unset($params['payment_instrument_id']);//this is not returned in id format
+        $params['contribution_source'] = $params['source'];
+        unset($params['source']);        
+        foreach($params as $key => $value){
+          if($key == 'version' )continue;
+          $this->assertEquals($value, $values[$key],$key . " value: $value doesn't match " . print_r($values,true) . 'in line' . __LINE__);        
+          
+        } 
     }
 }
 

@@ -12,7 +12,7 @@ $params = array(
   'subject' => 'test activity type id',
   'activity_date_time' => '2011-06-02 14:36:13',
   'status_id' => 2,
-  'priority_id' => 0,
+  'priority_id' => 1,
   'version' => 3,
   'custom_1' => 'custom string',
 );
@@ -47,7 +47,7 @@ function activity_create_expectedresult(){
           'phone_number' => '',
           'details' => '',
           'status_id' => 2,
-          'priority_id' => 0,
+          'priority_id' => 1,
           'parent_id' => '',
           'is_test' => '',
           'medium_id' => '',

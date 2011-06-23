@@ -460,7 +460,7 @@ ORDER BY ov.label
             //there doesn't appear to be any efficient way to do this without using the temp table
             //as we want to use the latest receive date & the latest value (not the max value)
             //and we want to join this against contact_id     
-            $query = "create temporary table civicrm_maxconts SELECT * FROM ( SELECT  `receive_date` ,`total_amount`, contact_id  FROM `civicrm_contribution` ORDER BY receive_date) as maxies group by contact_id;";
+            $query = "create temporary table civicrm_maxconts SELECT * FROM ( SELECT  `receive_date` ,`total_amount`, contact_id  FROM `civicrm_contribution` ORDER BY receive_date DESC) as maxies group by contact_id;";
             $dao = CRM_Core_DAO::executeQuery( $query );
             //apparently it is faster to create & then index http://mysqldump.azundris.com/archives/80-CREATE-TEMPORARY-TABLE.html
             $query = "alter table civicrm_maxconts add index (contact_id);";

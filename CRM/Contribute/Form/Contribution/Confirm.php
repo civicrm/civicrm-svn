@@ -155,20 +155,44 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             $addressBlocks = array( 'street_address', 'city', 
                                     'state_province', 'postal_code', 'country' );
 
+            $blocks = array( 'email', 'phone', 'im', 'url', 'openid' );
+            
             foreach ( $this->_params['onbehalf'] as $loc => $value ) {
-                list( $field, $locType, $phoneTypeId ) = explode( '-', $loc );
-                                
+                list( $field, $locType, $typeId ) = explode( '-', $loc );
+
                 if ( in_array( $field, $addressBlocks ) ) {
                     if ( $field == 'country' ) {
                         $value = CRM_Core_PseudoConstant::countryIsoCode( $value );
                     } else if ( $field == 'state_province' ) {
                         $value = CRM_Core_PseudoConstant::stateProvinceAbbreviation( $value );
                     }
-                    $this->_params['onbehalf_location']['address'][$locType][$field] = $value;
-                } else if ( in_array( $field, array( 'email', 'phone' ) ) ) {
-                    $this->_params['onbehalf_location'][$field][$locType][$field] = $value;
-                    if ( $phoneTypeId ) {
-                        $this->_params['onbehalf_location'][$field][$locType]['phone_type_id'] = $phoneTypeId;
+                    $this->_params['onbehalf_location']['address'][$locType][$field]       = $value;
+                    $this->_params['onbehalf_location']['address'][$locType]['is_primary'] = 1;
+                } else if ( in_array( $field, $blocks ) ) {
+                    if ( !$typeId || is_numeric( $typeId ) ) {
+                        $blockName     = $fieldName = $field;
+                        $locationType  = 'location_type_id';
+                        $locationValue = $locType;
+                        $locTypeId     = '';
+                        
+                        if ( $field == 'url' ) {
+                            $blockName     = 'website';
+                            $locationType  = 'website_type_id';
+                            $locationValue = $this->_params['onbehalf']["{$loc}-website_type_id"];
+                        } else if ( $field == 'im' ) {
+                            $fieldName     = 'name';
+                            $locTypeId     = 'provider_id';
+                            $typeId        = $this->_params['onbehalf']["{$loc}-provider_id"];
+                        } else if ( $field == 'phone' ) {
+                            $locTypeId     = 'phone_type_id';
+                        }
+                        
+                        $this->_params['onbehalf_location'][$blockName][$locType][$fieldName]    = $value;
+                        $this->_params['onbehalf_location'][$blockName][$locType][$locationType] = $locationValue;
+                        $this->_params['onbehalf_location'][$blockName][$locType]['is_primary']  = 1;
+                        if ( $locTypeId ) {
+                            $this->_params['onbehalf_location'][$blockName][$locType][$locTypeId] = $typeId;
+                        }
                     }
                 }
 

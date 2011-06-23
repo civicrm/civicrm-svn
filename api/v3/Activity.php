@@ -144,7 +144,7 @@ function civicrm_api3_activity_getfields( $params ) {
     //activity_id doesn't appear to work so let's tell them to use 'id' (current focus is ensuring id works)
     $fields['id'] = $fields['activity_id'];
     $fields['assignee_contact_id'] = 'assigned to';
-
+    $fields['activity_status_id'] = 'Status id';
     unset ($fields['activity_id']);
     return civicrm_api3_create_success($fields ,$params,$bao);
 }
@@ -168,7 +168,7 @@ function civicrm_api3_activity_get( $params ) {
         civicrm_api3_verify_mandatory($params);
 
         if (!empty($params['contact_id'])){
-           $activities = CRM_Activity_BAO_Activity::getContactActivity( $params['contact_id'] );
+           $activities = CRM_Activity_BAO_Activity::getContactActivity( $params );
            //BAO function doesn't actually return a contact ID - hack api for now & add to test so when api re-write happens it won't get missed
            foreach ($activities as $key => $activityArray){
               $activities[$key]['id'] = $key ;
@@ -286,7 +286,7 @@ SELECT  count(*)
   FROM  civicrm_contact
  WHERE  id IN (' . implode( ', ', $valueIds ) . ' )';
         if ( count( $valueIds ) !=  CRM_Core_DAO::singleValueQuery( $sql ) ) {
-            return civicrm_api3_create_error(  'Invalid %1 Contact Id', array( 1 => ucfirst( $key ) )  );
+            return civicrm_api3_create_error( 'Invalid '. ucfirst($key) .' Contact Id' );
         }
     }
 
@@ -346,10 +346,14 @@ SELECT  count(*)
         }
     }
 
-    if ( !empty( $params['priority_id'] ) && is_numeric( $params['priority_id'] ) ) {
-        require_once "CRM/Core/PseudoConstant.php";
-        $activityPriority = CRM_Core_PseudoConstant::priority( );
-        if ( !array_key_exists( $params['priority_id'], $activityPriority ) ) {
+    if ( isset( $params['priority_id'] ) )  {
+        if ( is_numeric( $params['priority_id'] ) ) {
+            require_once "CRM/Core/PseudoConstant.php";
+            $activityPriority = CRM_Core_PseudoConstant::priority( );
+            if ( !array_key_exists( $params['priority_id'], $activityPriority ) ) {
+                return civicrm_api3_create_error( 'Invalid Priority' );
+            }
+        } else {
             return civicrm_api3_create_error( 'Invalid Priority' );
         }
     }
@@ -360,8 +364,9 @@ SELECT  count(*)
     }
 
     if ( CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
-            $params['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'] );
-        }
+        $params['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'] );
+    }
+
      //if adding a new activity & date_time not set make it now
     if (!CRM_Utils_Array::value( 'id', $params ) &&
          !CRM_Utils_Array::value( 'activity_date_time', $params ) ) {

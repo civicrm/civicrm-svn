@@ -536,6 +536,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
                                        'Member'          => $organisationName,
                                        'Membership Type' => $membershipTypeTitle,
                                        'Status'          => 'New',
+                                       'End date'        => $endDate
                                        );
         
         foreach ( $verifyMembershipData as $label => $value ) {
@@ -560,6 +561,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
                                        'Member'          => $name,
                                        'Membership Type' => $membershipTypeTitle,
                                        'Status'          => 'New',
+                                       'End date'        => $endDate
                                        );
         
         foreach ( $verifyMembershipData as $label => $value ) {
@@ -618,6 +620,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->webtestLogin();
         
         //Find member
+        $endDate = date( 'F jS, Y', strtotime( " +2 year -1 day" ) );
         $this->open( $this->sboxPath . "civicrm/member/search&reset=1" );
         $this->waitForPageToLoad( '30000' );
         $this->waitForElementPresent( "member_end_date_high" );
@@ -634,6 +637,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $verifyMembershipData =  array(
                                        'Member'          => $organisationName,
                                        'Membership Type' => $membershipTypeTitle,
+                                       'End date'        => $endDate
                                        );
         
         foreach ( $verifyMembershipData as $label => $value ) {
@@ -657,6 +661,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $verifyMembershipData =  array(
                                        'Member'          => $name,
                                        'Membership Type' => $membershipTypeTitle,
+                                       'End date'        => $endDate
                                        );
         
         foreach ( $verifyMembershipData as $label => $value ) {

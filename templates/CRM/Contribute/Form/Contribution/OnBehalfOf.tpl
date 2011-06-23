@@ -40,6 +40,9 @@
 
   <table id="select_org" class="form-layout-compressed">
     {foreach from=$form.onbehalf item=field key=fieldName}
+      {if $onBehalfOfFields.$fieldName.help_pre}
+        <tr><td>&nbsp;</td><td class='description'>{$onBehalfOfFields.$fieldName.help_pre}</td></tr>
+      {/if}
       <tr>
        {if ( $fieldName eq 'organization_name' ) and $organizationName}
          <td id='org_name' class="label">{$field.label}</td>
@@ -62,6 +65,9 @@
             </td>
        {/if}
       </tr>
+      {if $onBehalfOfFields.$fieldName.help_post}
+        <tr><td>&nbsp;</td><td class='description'>{$onBehalfOfFields.$fieldName.help_post}</td></tr>
+      {/if}
     {/foreach}
   </table>
  

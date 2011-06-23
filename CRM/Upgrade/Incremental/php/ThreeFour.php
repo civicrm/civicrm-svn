@@ -166,9 +166,50 @@ class CRM_Upgrade_Incremental_php_ThreeFour {
             CRM_Core_DAO::executeQuery( $colQuery );
         }
 
+        $sql = "SELECT id FROM civicrm_location_type WHERE name = 'Main'";
+        if ( !CRM_Core_DAO::singleValueQuery( $sql ) ) {
+            $query = "
+INSERT INTO civicrm_location_type ( name, description, is_reserved, is_active )
+     VALUES ( 'Main', 'Main office location', 0, 1 );";
+            CRM_Core_DAO::executeQuery( $query );
+        }
 
         $upgrade = new CRM_Upgrade_Form;
         $upgrade->processSQL($rev);
          
     }
+
+    function upgrade_3_4_4( $rev ) 
+    {
+        // CRM-8315, update report instance criteria.
+        require_once 'CRM/Report/DAO/Instance.php';
+        $modifiedReportIds = array( 'member/summary', 'member/detail' );
+        
+        $instances = CRM_Core_DAO::executeQuery("SELECT id, form_values, report_id FROM civicrm_report_instance WHERE report_id IN ('". implode("','", $modifiedReportIds )."')");
+        
+        while( $instances->fetch( ) ) {
+            $formValues = unserialize( $instances->form_values );
+            
+            // replace display_name fields by sort_name
+            if ( !isset($formValues['membership_start_date_relative']) &&
+                 !iseet($formValues['membership_end_date_relative']) ) {
+                $formValues['membership_start_date_relative'] = '0';
+                $formValues['membership_start_date_from']     = '';
+                $formValues['membership_start_date_to']       = '';
+                $formValues['membership_end_date_relative']   = '0';
+                $formValues['membership_end_date_from']       = '';
+                $formValues['membership_end_date_to']         = '';
+            }
+
+            // save updated instance criteria
+            $dao = new CRM_Report_DAO_Instance( );
+            $dao->id = $instances->id;
+            $dao->form_values = serialize( $formValues );
+            $dao->save( );
+            $dao->free( );
+        }
+        
+        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade->processSQL( $rev );
+    }   
   }

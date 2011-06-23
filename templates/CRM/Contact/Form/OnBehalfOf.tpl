@@ -68,135 +68,22 @@
  {if $contactEditMode}
  	<fieldset><legend></legend>
  {/if}
-<div class="crm-section organizationName-section">
-  {if $relatedOrganizationFound and !$organizationName}
-    <div id='orgOptions' class="section crm-section">
-       <div class="content">{$form.org_option.html}</div>
+	<div class="crm-section organizationName-section">
+      {if $relatedOrganizationFound}
+      <div class="section crm-section">
+		<div class="content">{$form.org_option.html}</div>
+      </div>
+      <div id="select_org" class="crm-section select_org-section">
+        <div class="label">{$form.organization_name.label}</div>	   
+        <div class="content">{$form.organization_id.html|crmReplace:class:big}</div>
+      </div>
+      {/if}  
+      <div id="create_org" class="crm-section create_org-section">
+		<div class="label">{$form.organization_name.label}</div>
+        <div class="content">{$form.organization_name.html|crmReplace:class:big}</div>
+        <div class="clear"></div>
+      </div>
     </div>
-  {/if}  
-
-<table id="select_org" class="form-layout-compressed">
- {foreach from=$form.onbehalf item=field key=fieldName}
-   <tr>
-    {if ( $fieldName eq 'organization_name' ) and $organizationName}
-       <td id='org_name' class="label">Renew Membership for:</td>
-       <td class="value">{$field.html|crmReplace:class:big}
-       <span>
-       <a href='#' id='createNewOrg' onclick='createNew( ); return false;'>Create new organization</a>
-       </span></td>
-    {else}
-     <td class="label">{$field.label}</td>
-     <td class="value">{$field.html}</td>
-    {/if}
-   </tr>
-  {/foreach}
-</table>
-{$form.mode.html}
-</div>
-
-
-{literal}
-<script type="text/javascript">
-cj( "#mode" ).hide( );
-cj( "#mode" ).attr( 'checked', 'checked' );
-{/literal}
-{if $relatedOrganizationFound}
-   {if $organizationName}{literal}
-   setOrgName( );
-   
-   function createNew( ) 
-   {
-       if ( cj( "#mode" ).attr( 'checked' ) ) {
-           $text = "Select existing organization";
-           cj( "#org_name" ).text( "Organization Name" );
-           cj( "#onbehalf_organization_name" ).removeAttr( 'readonly' );
-
-           cj( "#select_org tr td input" ).each( function( ) {
-              cj(this).val( '' );
-           });
-           cj( "#select_org tr td select" ).each( function( ) {
-                 cj(this).val( '' );
-           });
-           cj( "#mode" ).removeAttr( 'checked' );
-       } else {
-           $text = "Create new organization";
-           cj( "#org_name" ).text( "Renew Membership for:" );
-           cj( "#mode" ).attr( 'checked', 'checked' );
-           setOrgName( );
-       }
-       cj( "#createNewOrg" ).text( $text );
-   }
- 
-   function setOrgName( )
-   {
-       var orgName = "{/literal}{$organizationName}{literal}";
-       var orgId   = "{/literal}{$orgId}{literal}";
-       cj( "#onbehalf_organization_name" ).val( orgName );
-       cj( "#onbehalf_organization_name" ).attr( 'readonly', true );
-       setLocationDetails( orgId );
-   }
-
-   {/literal}{else}{literal}
-
-       cj( "#orgOptions" ).show( );
-       selectCreateOrg( );
-
-       cj( "input:radio[name='org_option']" ).click( function( ) {
-          selectCreateOrg( ); 
-       });
-
-       function selectCreateOrg( )
-       {
-          if ( cj( "#mode" ).attr( 'checked' ) ) {
-              var dataUrl = "{/literal}{$employerDataURL}{literal}";
-	      cj( '#onbehalf_organization_name' ).autocomplete( dataUrl, 
-                                                             { width         : 180, 
-                                                             selectFirst   : false,
-                                                             matchContains : true
-              }).result( function( event, data, formatted ) {
-                   cj('#onbehalf_organization_name').val( data[0] );
-                   cj('#onbehalfof_id').val( data[1] );
-                   setLocationDetails( data[1] );
-              });
-              cj( "#mode" ).removeAttr( 'checked' );
-          } else {
-              cj( "input#onbehalf_organization_name" ).removeClass( 'ac_input' ).unautocomplete( );
-              cj( "#mode" ).attr( 'checked', 'checked' );
-
-              cj( "#select_org tr td input" ).each( function( ) {
-                 cj(this).val( '' );
-              });
-              cj( "#select_org tr td select" ).each( function( ) {
-                 cj(this).val( '' );
-              });
-          }
-       }
-
-   {/literal}{/if}
-   
-   {* Javascript method to populate the location fields when a different existing related contact is selected *}
-   {literal}
-   function setLocationDetails( contactID ) 
-   {
-        var locationUrl = {/literal}"{$locDataURL}"{literal} + contactID + "&ufId=" + {/literal}"{$profileId}"{literal};
-        cj.ajax({
-            url         : locationUrl,
-            dataType    : "json",
-            timeout     : 5000, //Time in milliseconds
-            success     : function( data, status ) {
-                for (var ele in data) {
-                    cj( "#"+ele ).val( data[ele] );
-                }
-            },
-            error       : function( XMLHttpRequest, textStatus, errorThrown ) {
-                console.error("HTTP error status: ", textStatus);
-            }
-        });
-    }
-
-{/literal}{/if}{literal}
-</script>
-{/literal}
  {if $contactEditMode}
  	</fieldset>
  {/if}
@@ -210,12 +97,12 @@ cj( "#mode" ).attr( 'checked', 'checked' );
   <fieldset><legend>{ts}Phone and Email{/ts}</legend>
     <table class="form-layout-compressed">
 		<tr>
-            <td width="25%">{$form.phone.$index.phone.label}</td>
-            <td>{$form.phone.$index.phone.html}</td>
+            <td class='label' width="25%">{$form.phone.$index.phone.label}</td>
+            <td class='value'>{$form.phone.$index.phone.html}</td>
         </tr>
 		<tr>
-            <td>{$form.email.$index.email.label}</td>
-            <td>{$form.email.$index.email.html}</td>
+            <td class='label'>{$form.email.$index.email.label}</td>
+            <td class='value'>{$form.email.$index.email.html}</td>
         </tr>
     </table>
   </fieldset>
@@ -324,6 +211,25 @@ cj( "#mode" ).attr( 'checked', 'checked' );
     }
 {/if}
 
+{if $relatedOrganizationFound}
+    {include file="CRM/common/showHideByFieldValue.tpl" 
+         trigger_field_id    ="org_option"
+         trigger_value       ="true"
+         target_element_id   ="select_org" 
+         target_element_type ="table-row"
+         field_type          ="radio"
+         invert              = "true"
+    }
+    {include file="CRM/common/showHideByFieldValue.tpl" 
+         trigger_field_id    ="org_option"
+         trigger_value       ="true"
+         target_element_id   ="create_org" 
+         target_element_type ="table-row"
+         field_type          ="radio"
+         invert              = "false"
+    }
+{/if}
+
 {literal}
 <script type="text/javascript">
 {/literal}
@@ -338,6 +244,37 @@ cj( "#mode" ).attr( 'checked', 'checked' );
     });
     {/literal}
 {/if}
+{* Javascript method to populate the location fields when a different existing related contact is selected *}
 {literal}
+    var dataUrl   = "{/literal}{$employerDataURL}{literal}";
+    cj('#organization_id').autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true
+    }).result( function(event, data, formatted) {
+        cj('#organization_name').val( data[0] );
+        cj('#onbehalfof_id').val( data[1] );
+        setLocationDetails( data[1] );
+    });
+ 
+    var orgId = {/literal}"{$orgId}"{literal};
+    if ( orgId ) {
+        setLocationDetails( orgId );
+    }
+
+    function setLocationDetails( contactID ) {
+        var locationUrl = {/literal}"{$locDataURL}"{literal}+ contactID + "&relContact=1"; 
+        
+        cj.ajax({
+            url         : locationUrl,
+            dataType    : "json",
+            timeout     : 5000, //Time in milliseconds
+            success     : function( data, status ) {
+                for (var ele in data) {
+                    cj( "#"+ele ).val( data[ele] );
+                }
+            },
+            error       : function( XMLHttpRequest, textStatus, errorThrown ) {
+                console.error("HTTP error status: ", textStatus);
+            }
+        });
+    }
 </script>
 {/literal}

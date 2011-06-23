@@ -304,7 +304,7 @@ WHERE  (( contact_id_a = %1 AND contact_id_b = %2 AND is_permission_a_b = 1 ) OR
         require_once 'CRM/Core/Permission.php';
         if ( ! self::allow( $contactID, CRM_Core_Permission::EDIT ) ) {
             // check if this is of the format cs=XXX
-            return self::validateOnlyChecksum( $contactID, $form, $return );
+            return self::validateOnlyChecksum( $contactID, $form, $redirect );
         }
         return true;
     }

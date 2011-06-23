@@ -6,10 +6,14 @@ require_once 'civicrm_rules_entities_utils.inc';
  * Enabled objects are defined through the 'civicrm_rules_post_entities' drupal variable 
  */
 function civicrm_rules_entities_event_info(){
-    $validObjects = variable_get('civicrm_rules_post_entities',null);
+    $validObjects = variable_get('civicrm_rules_post_entities', array( ) );
     $events = array();
-
-    unset ($validObjects['contact']);//Contact is dealt with elsewhere
+    
+    if ( isset($validObjects['contact']) ) {
+        unset ($validObjects['contact']); //Contact is dealt with elsewhere
+    }
+    if (is_array($validObjects)){
+  
     foreach ($validObjects as $entity => $enabled){
         if(!$enabled == 0){
             //todo consider building the entity name into the argument rather than calling the same argument for each
@@ -35,8 +39,9 @@ function civicrm_rules_entities_event_info(){
                                                                                                                "civicrm_$entity" ),);
         }
     }
-
+        }
     return $events;
+
 }
 
 

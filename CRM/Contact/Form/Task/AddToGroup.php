@@ -104,7 +104,15 @@ class CRM_Contact_Form_Task_AddToGroup extends CRM_Contact_Form_Task {
             require_once 'CRM/Core/OptionGroup.php';
             $groupTypes = CRM_Core_OptionGroup::values( 'group_type', true );
             if ( ! CRM_Core_Permission::access( 'CiviMail' ) ) {
-                unset( $groupTypes['Mailing List'] );
+                require_once 'CRM/Mailing/Info.php';
+                $isWorkFlowEnabled = CRM_Mailing_Info::workflowEnabled( );
+                if ( $isWorkFlowEnabled && 
+                     !CRM_Core_Permission::check( 'create mailings' ) &&
+                     !CRM_Core_Permission::check( 'schedule mailings' ) &&
+                     !CRM_Core_Permission::check( 'approve mailings' )
+                     ) {
+                    unset( $groupTypes['Mailing List'] );
+                }
             }
             
             if ( ! empty( $groupTypes ) ) {

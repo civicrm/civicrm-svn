@@ -61,7 +61,8 @@ class CRM_Cron_Action {
 
     public function run( $now = null )
     {
-        $this->_now = $now ? date('YmdHis', $now) : date('YmdHis');
+        require_once 'CRM/Utils/Time.php';
+        $this->_now = $now ? CRM_Utils_Time::setTime( $now ) : CRM_Utils_Time::getTime( );
 
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
         $mappings = CRM_Core_BAO_ScheduleReminders::getMapping( );

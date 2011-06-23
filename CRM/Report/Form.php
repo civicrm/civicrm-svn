@@ -781,7 +781,8 @@ class CRM_Report_Form extends CRM_Core_Form {
             return array( 'eq'  => ts('Is equal to') );
             break;
         case CRM_Report_FORM::OP_MULTISELECT :
-            return array( 'in'  => ts('Is one of') );
+            return array( 'in'  => ts('Is one of'),
+                          'notin' => ts('Is not one of') );
             break; 
         case CRM_Report_FORM::OP_DATE :
             return array( 'nll'  => ts('Is empty (Null)'),
@@ -844,6 +845,8 @@ class CRM_Report_Form extends CRM_Core_Form {
             return 'NOT LIKE';
         case 'in':
             return 'IN';
+        case 'notin':
+            return 'NOT IN';
         case 'nll' :
             return 'IS NULL';
         case 'nnll' :
@@ -908,14 +911,20 @@ class CRM_Report_Form extends CRM_Core_Form {
             break;
                 
         case 'in':
+        case 'notin':
             if ( $value !== null && is_array( $value ) && count( $value ) > 0 ) {
                 $sqlOP  = self::getSQLOperator( $op );
                 if ( CRM_Utils_Array::value( 'type', $field ) == CRM_Utils_Type::T_STRING ) {
-                    $clause = "( {$field['dbAlias']} $sqlOP ( '" . implode( "' , '", $value ) . "') )" ;
+                    $clause = "{$field['dbAlias']} $sqlOP ( '" . implode( "' , '", $value ) . "')";
                 } else {
                     // for numerical values
-                    $clause = "( {$field['dbAlias']} $sqlOP (" . implode( ', ', $value ) . ") )";
-                }                
+                    $clause = "{$field['dbAlias']} $sqlOP (" . implode( ', ', $value ) . ")";
+                }
+                if ( $op == 'notin' ) {
+                    $clause = "( ". $clause ." OR {$field['dbAlias']} IS NULL )";
+                } else {
+                    $clause = "( ". $clause ." )";
+                }
             }
             break;
             
@@ -969,12 +978,12 @@ class CRM_Report_Form extends CRM_Core_Form {
         }
         
         if ( CRM_Utils_Array::value( 'group', $field ) && $clause ) {
-            $clause = $this->whereGroupClause( $clause );
+            $clause = $this->whereGroupClause($field, $value, $op);
         } elseif ( CRM_Utils_Array::value( 'tag', $field ) && $clause ) {
             // not using left join in query because if any contact
             // belongs to more than one tag, results duplicate
             // entries.
-            $clause = $this->whereTagClause( $clause );
+            $clause = $this->whereTagClause($field, $value, $op);
         }
         
         return $clause;
@@ -1702,7 +1711,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                                         $val[$key] = $options[$valIds];
                                     }
                                 }
-                                $pair[$op] = (count($val) == 1) ? ts('Is') : $pair[$op];
+                                $pair[$op] = (count($val) == 1) ? ( ($op == 'notin')? ts('Is Not'): ts('Is') ) : $pair[$op];
                                 $val       = implode( ', ', $val );
                                 $value     = "{$pair[$op]} " . $val;
                             } else if ( !is_array( $val ) && !empty( $val ) && isset($field['options']) &&
@@ -1793,7 +1802,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                     imagedestroy($chart);
                 }
                 require_once 'CRM/Utils/PDF/Utils.php';                     
-                CRM_Utils_PDF_Utils::html2pdf( $content, "CiviReport.pdf" );
+                CRM_Utils_PDF_Utils::html2pdf( $content, "CiviReport.pdf", false, array('orientation' => 'landscape') );
             }
             CRM_Utils_System::civiExit( );
         } else if ( $this->_outputMode == 'csv' ) {
@@ -1871,7 +1880,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
         }
     }
     
-    function whereGroupClause( $clause ) {
+    function whereGroupClause($field, $value, $op) {
          
         $smartGroupQuery = ""; 
         require_once 'CRM/Contact/DAO/Group.php';
@@ -1890,6 +1899,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::check( $smartGroups );
 
+        $smartGroupQuery = '';
         if( !empty($smartGroups) ) {   
             $smartGroups = implode( ',', $smartGroups );
             $smartGroupQuery =                                                                             
@@ -1897,20 +1907,32 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                   SELECT DISTINCT smartgroup_contact.contact_id                                    
                   FROM civicrm_group_contact_cache smartgroup_contact        
                   WHERE smartgroup_contact.group_id IN ({$smartGroups}) ";
-         }
-             
-        return  " {$this->_aliases['civicrm_contact']}.id IN ( 
+        }
+        
+        $sqlOp  = self::getSQLOperator( $op );
+        if ( !is_array($value) ) {
+            $value = array( $value );
+        }
+        $clause = "{$field['dbAlias']} IN (" . implode(', ', $value) . ")";
+        
+        return  " {$this->_aliases['civicrm_contact']}.id {$sqlOp} ( 
                           SELECT DISTINCT {$this->_aliases['civicrm_group']}.contact_id 
                           FROM civicrm_group_contact {$this->_aliases['civicrm_group']}
                           WHERE {$clause} AND {$this->_aliases['civicrm_group']}.status = 'Added' 
                           {$smartGroupQuery} ) ";
     }
 
-    function whereTagClause( $clause ) {
+    function whereTagClause($field, $value, $op) {
         // not using left join in query because if any contact
         // belongs to more than one tag, results duplicate
         // entries.
-        return  " {$this->_aliases['civicrm_contact']}.id IN ( 
+        $sqlOp  = self::getSQLOperator( $op );
+        if ( !is_array($value) ) {
+            $value = array( $value );
+        }
+        $clause = "{$field['dbAlias']} IN (" . implode(', ', $value) . ")";
+
+        return  " {$this->_aliases['civicrm_contact']}.id {$sqlOp} ( 
                           SELECT DISTINCT {$this->_aliases['civicrm_tag']}.entity_id 
                           FROM civicrm_entity_tag {$this->_aliases['civicrm_tag']}
                           WHERE entity_table = 'civicrm_contact' AND {$clause} ) ";
@@ -2141,6 +2163,10 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                          !empty( $this->_params[$fieldAlias.'_'.$attach ] ) ) {
                         return true;
                     } 
+                }
+                if ( CRM_Utils_Array::value($fieldAlias.'_op', $this->_params) &&
+                     in_array($this->_params[$fieldAlias.'_op'], array('nll', 'nnll')) ) {
+                    return true;
                 }
             }
         }

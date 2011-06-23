@@ -131,7 +131,7 @@ function civicrm_api3_email_get($params)
   _civicrm_api3_initialize(true );
   try {
     civicrm_api3_verify_one_mandatory($params, null, 
-		array('id', 'contact_id', 'location_type_id'));
+		array('id', 'contact_id', 'location_type_id','email'));
 	
     require_once 'CRM/Core/BAO/Email.php';
     $emailBAO = new CRM_Core_BAO_Email();

@@ -66,11 +66,7 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
         
         require_once "CRM/Core/Extensions.php";
         $ext = new CRM_Core_Extensions( );
-        if ( $this->_action & CRM_Core_Action::ADD || $this->_action & CRM_Core_Action::UPDATE ) {
-            $extension = $ext->getRemoteByKey( );
-        } else {
             $extension = $ext->getExtensions( );
-        }
 
         $this->assign( 'extension', get_object_vars($extension[$this->_key]) );
     }

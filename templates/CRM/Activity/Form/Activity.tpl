@@ -40,20 +40,14 @@
     <script type="text/javascript">
     var target_contact = assignee_contact = '';
 
+    var target_contact = {/literal}{$target_contact}{literal};
+
     {/literal}
-    {foreach from=$target_contact key=id item=name}
-         {literal} target_contact += '{"name":"'+{/literal}"{$name}"{literal}+'","id":"'+{/literal}"{$id}"{literal}+'"},';{/literal}
-    {/foreach}
-    {literal} eval( 'target_contact = [' + target_contact + ']'); {/literal}
-
     {if $assigneeContactCount}
-    {foreach from=$assignee_contact key=id item=name}
-         {literal} assignee_contact += '{"name":"'+{/literal}"{$name}"{literal}+'","id":"'+{/literal}"{$id}"{literal}+'"},';{/literal}
-    {/foreach}
-    {literal} eval( 'assignee_contact = [' + assignee_contact + ']'); {/literal}
+        {literal} var assignee_contact = {/literal}{$assignee_contact};
     {/if}
+    
     {literal}
-
     var target_contact_id = assignee_contact_id = null;
     //loop to set the value of cc and bcc if form rule.
     var toDataUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }{literal}"; {/literal}

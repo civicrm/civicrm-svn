@@ -99,7 +99,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                 'subject' => 'test activity type id',
                 'activity_date_time' => '2011-06-02 14:36:13',
                 'status_id' => 2,
-                'priority_id' => 0, 
+                'priority_id' => 1, 
                 'version' => $this->_apiversion);
     }
 
@@ -491,7 +491,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->assertEquals("custom string", $result['values'][$result['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
   
         $this->customFieldDelete($ids['custom_field_id']);
-        $this->customGroupDelete($ids['custom_group_id']);      }
+        $this->customGroupDelete($ids['custom_group_id']);      
+    }
 
     /**
      *  Test civicrm_activity_create() with an invalid text status_id
@@ -962,6 +963,102 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->assertEquals("Updated my test data", $result['values'][$result['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
         
     }
+
+    /**
+     *  Test civicrm_activity_update() for core activity fields
+     *  and some custom data
+     */
+    function testActivityUpdateCheckCoreFields( )
+    {        
+        $params = $this->_params;
+   
+        $contact1Params = array('first_name'       => 'John',
+                                'middle_name'      => 'J.',
+                                'last_name'        => 'Anderson',
+                                'prefix_id'        => 3,
+                                'suffix_id'        => 3,
+                                'email'            => 'john_anderson@civicrm.org',
+                                'contact_type'     => 'Individual' );
+        
+        $contact1 = $this->individualCreate( $contact1Params );
+
+        $contact2Params = array('first_name'       => 'Michal',
+                                'middle_name'      => 'J.',
+                                'last_name'        => 'Anderson',
+                                'prefix_id'        => 3,
+                                'suffix_id'        => 3,
+                                'email'            => 'michal_anderson@civicrm.org',
+                                'contact_type'     => 'Individual' );
+        
+        $contact2 = $this->individualCreate( $contact2Params );
+
+        $params['assignee_contact_id'] = array( $contact1 => $contact1 );
+        $params['target_contact_id']   = array( $contact2 => $contact2 );
+        $result = civicrm_api('Activity','Create', $params );
+
+        $result = civicrm_api3_activity_create( $params );
+        $activityId = $result['id'];
+        $this->assertEquals( 0, $result['is_error'],
+                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+        $result = civicrm_api($this->_entity,'get',array('return.assignee_contact_id' => 1, 'return.target_contact_id' => 1, 'version' =>3, 'id' => $result['id']));
+        
+        $assignee = $result['values'][$result['id']]['assignee_contact_id'];
+        $target   = $result['values'][$result['id']]['target_contact_id'];
+
+        $this->assertEquals( 1, count($assignee), ' in line ' . __LINE__);
+        $this->assertEquals( 1, count($target), ' in line ' . __LINE__);
+        $this->assertEquals( true, in_array($contact1, $assignee), ' in line ' . __LINE__);
+        $this->assertEquals( true, in_array($contact2, $target), ' in line ' . __LINE__);
+        
+        $contact3Params = array('first_name'       => 'Jijo',
+                                'middle_name'      => 'J.',
+                                'last_name'        => 'Anderson',
+                                'prefix_id'        => 3,
+                                'suffix_id'        => 3,
+                                'email'            => 'jijo_anderson@civicrm.org',
+                                'contact_type'     => 'Individual' );
+
+        $contact4Params = array('first_name'       => 'Grant',
+                                'middle_name'      => 'J.',
+                                'last_name'        => 'Anderson',
+                                'prefix_id'        => 3,
+                                'suffix_id'        => 3,
+                                'email'            => 'grant_anderson@civicrm.org',
+                                'contact_type'     => 'Individual' );
+        
+        $contact3 = $this->individualCreate( $contact3Params );
+        $contact4 = $this->individualCreate( $contact4Params );
+
+        $params = array( );
+        $params['id']                  = $activityId;
+        $params['version']             = $this->_apiversion;
+        $params['assignee_contact_id'] = array( $contact3 => $contact3 );
+        $params['target_contact_id']   = array( $contact4 => $contact4 );
+
+        $result = civicrm_api3_activity_create( $params );
+        $this->assertEquals( 0, $result['is_error'],
+                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+        
+        $this->assertEquals( $activityId, $result['id'], ' in line ' . __LINE__);
+
+        $result = civicrm_api($this->_entity,'get',array('return.assignee_contact_id' => 1, 'return.target_contact_id' => 1, 'version' =>3, 'id' => $result['id']));
+
+        $assignee = $result['values'][$result['id']]['assignee_contact_id'];
+        $target   = $result['values'][$result['id']]['target_contact_id'];
+        
+        $this->assertEquals( 1, count($assignee), ' in line ' . __LINE__);
+        $this->assertEquals( 1, count($target), ' in line ' . __LINE__);
+        $this->assertEquals( true, in_array($contact3, $assignee), ' in line ' . __LINE__);
+        $this->assertEquals( true, in_array($contact4, $target), ' in line ' . __LINE__);
+        
+        foreach ( $this->_params as $fld => $val ) {
+            if ( $fld == 'version' ) {
+                continue;
+            }
+            $this->assertEquals($val, $result['values'][$result['id']][$fld],' in line ' . __LINE__);
+        }
+    }
+
 
     /**
      *  Test civicrm_activity_update() where the DB has a date_time

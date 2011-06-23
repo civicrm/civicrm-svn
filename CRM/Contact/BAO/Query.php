@@ -1081,7 +1081,7 @@ class CRM_Contact_BAO_Query
             $select = ( $this->_useDistinct ) ?
                 'SELECT DISTINCT(contact_a.id) as id' :
                 'SELECT contact_a.id as id'; 
-
+            
             if ( $this->_useDistinct ) {
                 $this->_useGroupBy = true;
             }
@@ -4033,18 +4033,18 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
         }
         
         // pane name to table mapper
-        $panesMapper = array( 'Contributions'   => 'civicrm_contribution',
-                              'Memberships'     => 'civicrm_membership',
-                              'Events'          => 'civicrm_participant',
-                              'Relationships'   => 'civicrm_relationship',
-                              'Activities'      => 'civicrm_activity',
-                              'Pledges'         => 'civicrm_pledge',
-                              'Cases'           => 'civicrm_case',
-                              'Grants'          => 'civicrm_grant',
-                              'Address Fields'  => 'civicrm_address',
-                              'Notes'           => 'civicrm_note',
-                              'Change Log'      => 'civicrm_log',
-                              'Mailings'        => 'civicrm_mailing_event_queue'
+        $panesMapper = array( ts('Contributions')   => 'civicrm_contribution',
+                              ts('Memberships')     => 'civicrm_membership',
+                              ts('Events')          => 'civicrm_participant',
+                              ts('Relationships')   => 'civicrm_relationship',
+                              ts('Activities')      => 'civicrm_activity',
+                              ts('Pledges')         => 'civicrm_pledge',
+                              ts('Cases')           => 'civicrm_case',
+                              ts('Grants')          => 'civicrm_grant',
+                              ts('Address Fields')  => 'civicrm_address',
+                              ts('Notes')           => 'civicrm_note',
+                              ts('Change Log')      => 'civicrm_log',
+                              ts('Mailings')        => 'civicrm_mailing_event_queue'
                               );
         
         foreach( array_keys($this->_whereTables) as $table ) {
@@ -4052,7 +4052,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
                 self::$_openedPanes[$panName] = true;
             }
         }
-
+        
         return self::$_openedPanes;
     }
 
