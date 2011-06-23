@@ -337,7 +337,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             $targetContactID = null;
             if ( CRM_Utils_Array::value( 'is_for_organization', $params ) ) {
                 $targetContactID = $membership->contact_id;
-                $membership->contact_id = $ids['userId'];
+                $membership->contact_id = CRM_Utils_Array::value( 'userId', $ids );
             }
             
             if ( empty( $membership->contact_id ) && ( !empty( $membership->owner_membership_id ) ) ) {
@@ -1253,7 +1253,7 @@ AND civicrm_membership.is_test = %2";
 
         // Do not send an email if Recurring transaction is done via Direct Mode
         // Email will we sent when the IPN is received.
-        if ( $form->_params['is_recur'] && $form->_contributeMode == 'direct' ) {
+        if ( CRM_Utils_Array::value( 'is_recur', $form->_params ) && $form->_contributeMode == 'direct' ) {
             return true;
         }
 
@@ -1302,7 +1302,8 @@ AND civicrm_membership.is_test = %2";
         if ( CRM_Utils_Array::value( 'minimum_fee', $membershipTypeDetails ) > 0.0 ) {
             if ( ( $form->_contributeMode == 'notify' || 
                    $form->_params['is_pay_later']     || 
-                   ( $form->_params['is_recur']  && $form->_contributeMode == 'direct' ) ) &&
+                   ( CRM_Utils_Array::value( 'is_recur', $form->_params ) 
+                     && $form->_contributeMode == 'direct' ) ) &&
                  ( ( $form->_values['is_monetary'] && $form->_amount > 0.0 ) ||
                    CRM_Utils_Array::value( 'separate_membership_payment', $form->_params ) ) ) {
                 $pending = true;
