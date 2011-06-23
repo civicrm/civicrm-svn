@@ -1082,11 +1082,9 @@ class CRM_Contact_BAO_Query
                 'SELECT DISTINCT(contact_a.id) as id' :
                 'SELECT contact_a.id as id'; 
             
-            // CRM-8307, we are externally doing $query->_useGroupBy = false;
-            // in CRM_Contact_BAO_GroupContactCache::load( )
-            // if ( $this->_useDistinct ) {
-            //     $this->_useGroupBy = true;
-            // }
+            if ( $this->_useDistinct ) {
+                $this->_useGroupBy = true;
+            }
             $from = $this->_simpleFromClause;
         } else {
             if ( CRM_Utils_Array::value( 'group', $this->_paramLookup ) ) {
