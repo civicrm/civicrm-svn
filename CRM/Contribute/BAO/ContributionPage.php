@@ -114,8 +114,8 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
     static function sendMail( $contactID, &$values, $isTest = false, $returnMessageText = false, $fieldTypes = null ) 
     {
         require_once "CRM/Core/BAO/UFField.php";
-        $gIds = array( );
-        $params = array( );
+        $gIds = $params = array( );
+        $email = null;
         if ( isset( $values['custom_pre_id'] ) ) {
             $preProfileType = CRM_Core_BAO_UFField::getProfileType( $values['custom_pre_id'] );
             if ( $preProfileType == 'Membership' && CRM_Utils_Array::value( 'membership_id', $values )  ) {

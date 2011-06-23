@@ -158,7 +158,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             $blocks = array( 'email', 'phone', 'im', 'url', 'openid' );
             
             foreach ( $this->_params['onbehalf'] as $loc => $value ) {
-                list( $field, $locType, $typeId ) = explode( '-', $loc );
+                $field = $typeId = null;
+                if ( strstr( $loc, '-' ) ) {
+                    list( $field, $locType ) = explode( '-', $loc );
+                }
 
                 if ( in_array( $field, $addressBlocks ) ) {
                     if ( $field == 'country' ) {
@@ -184,6 +187,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                             $locTypeId     = 'provider_id';
                             $typeId        = $this->_params['onbehalf']["{$loc}-provider_id"];
                         } else if ( $field == 'phone' ) {
+                            list( $field, $locType, $typeId ) = explode( '-', $loc );
                             $locTypeId     = 'phone_type_id';
                         }
                         
@@ -1305,7 +1309,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
      */
     static function processOnBehalfOrganization( &$behalfOrganization, &$contactID, &$values, &$params, $fields = null ) {
         $isCurrentEmployer = false;
-        if ( $behalfOrganization['organization_id'] && $behalfOrganization['org_option'] ) {
+        $orgID = null;
+        if ( CRM_Utils_Array::value( 'organization_id', $behalfOrganization ) && 
+             CRM_Utils_Array::value( 'org_option', $behalfOrganization ) ) {
             $orgID = $behalfOrganization['organization_id'];
             unset($behalfOrganization['organization_id']);
             $isCurrentEmployer = true;

@@ -875,10 +875,12 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                                     $params[$index] = $values[$index] = $fileURL['file_url'];
                                 } else {
                                     $customVal = null;
-                                    if ( isset($dao) && ($dao->data_type == 'Int' ||
-                                                         $dao->data_type == 'Boolean' ) ) {
+                                    if ( isset($dao) && property_exists( $dao, 'data_type' ) &&
+                                         ($dao->data_type == 'Int' ||
+                                          $dao->data_type == 'Boolean' ) ) {
                                         $customVal = (int ) ($details->{$name});
-                                    } else if ( isset($dao) && $dao->data_type == 'Float' ) {
+                                    } else if ( isset($dao) && property_exists( $dao, 'data_type' )
+                                                && $dao->data_type == 'Float' ) {
                                         $customVal = (float ) ($details->{$name});
                                     } else if ( !CRM_Utils_System::isNull( explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                                                                                     $details->{$name} ) ) ) {
