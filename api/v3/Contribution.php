@@ -286,15 +286,7 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = fal
 				unset ( $values ['contribution_contact_id'] );
 				break;
 			
-			case 'receive_date' :
-			case 'cancel_date' :
-			case 'receipt_date' :
-			case 'thankyou_date' :
-				if (! CRM_Utils_Rule::dateTime ( $value )) {
-					return civicrm_api3_create_error ( "$key not a valid date: $value" );
-				}
-				break;
-			
+		
 			case 'non_deductible_amount' :
 			case 'total_amount' :
 			case 'fee_amount' :

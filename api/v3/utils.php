@@ -1661,7 +1661,7 @@ function _civicrm_api3_custom_data_get(&$returnArray,$entity,$entity_id ,$groupI
  * all variables are the same as per civicrm_api
  */
 function _civicrm_api3_validate_fields($entity, $action, &$params) {
-  if(strtolower($entity) != 'relationship' && strtolower($entity) != 'membership'){
+  if(strtolower($entity) != 'relationship' && strtolower($entity) != 'membership' &&  strtolower($entity) != 'contribution'){
     return;
   }
 	if (strtolower ( $action ) == 'getfields') {
