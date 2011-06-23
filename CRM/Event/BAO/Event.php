@@ -687,7 +687,7 @@ WHERE civicrm_address.geo_code_1 IS NOT NULL
      */      
     static function &getCompleteInfo( $start = null, $type = null, $eventId = null, $end = null ) 
     {
-       // if start and end date are NOT passed, return all events with start_date OR end_date >= today CRM-5133
+        // if start and end date are NOT passed, return all events with start_date OR end_date >= today CRM-5133
         if ( $start ) {
             // get events with start_date >= requested start
             $startDate =  CRM_Utils_Type::escape( $start, 'Date' );
@@ -695,14 +695,20 @@ WHERE civicrm_address.geo_code_1 IS NOT NULL
             // get events with start date >= today
             $startDate =  date("Ymd");
         }
+
+
         if ( $end ){
-            // also get events with end_date >= requested end
+            // also get events with end_date <= requested end
             $endDate =  CRM_Utils_Type::escape( $end, 'Date' );
+            $endCondition = " AND ( civicrm_event.end_date <= {$endDate} OR civicrm_event.end_date IS NULL ) ";
         } else {
-            // OR also get events with end date >= today
-            $endDate =  date("Ymd");            
+            // get events with end date >= today, not sure of this logic
+            // but keeping this for backward compatibility as per issue CRM-5133
+            $endDate =  date("Ymd");
+            $endCondition = " OR civicrm_event.end_date <= {$endDate}";
         }
-        $dateCondition = "AND (civicrm_event.start_date >= {$startDate} OR civicrm_event.end_date >= {$endDate})";
+
+        $dateCondition = "AND ( civicrm_event.start_date >= {$startDate} $endCondition )";
         
         
         if ( $type ) {
