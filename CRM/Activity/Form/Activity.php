@@ -498,14 +498,22 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                 $target_contact_value = explode(';', trim($defaults['target_contact_value'] ) );
                 $target_contact = array_combine( array_unique( $defaults['target_contact'] ), $target_contact_value );
 
-                $this->assign( 'target_contact', $this->formatContactValues( $target_contact ) ); 
+                if ( $this->_action & CRM_Core_Action::VIEW ) {
+                    $this->assign( 'target_contact', $target_contact );
+                } else {    
+                    $this->assign( 'target_contact', $this->formatContactValues( $target_contact ) );
+                } 
             }
             
             if ( !CRM_Utils_Array::crmIsEmptyArray( $defaults['assignee_contact'] ) ) {
                 $assignee_contact_value = explode(';', trim($defaults['assignee_contact_value'] ) );
                 $assignee_contact = array_combine( $defaults['assignee_contact'], $assignee_contact_value );            
             
-                $this->assign( 'assignee_contact', $this->formatContactValues( $assignee_contact ) ); 
+                if ( $this->_action & CRM_Core_Action::VIEW ) {
+                    $this->assign( 'assignee_contact', $assignee_contact ); 
+                } else {
+                    $this->assign( 'assignee_contact', $this->formatContactValues( $assignee_contact ) ); 
+                }
             }
             
             if ( !CRM_Utils_Array::value('activity_date_time', $defaults) ) {
