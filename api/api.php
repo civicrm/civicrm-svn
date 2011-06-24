@@ -158,42 +158,45 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
   }
 }
 
-function civicrm_api_get_function_name($entity, $action,$version = NULL) {
-    static $_map;
-    if (!isset($_map)) {
-        $_map = array();
-        if(empty($version)){
-            $version = civicrm_get_api_version();
-        }
+function civicrm_api_get_function_name( $entity, $action, $version = NULL ) 
+{
+    static $_map = null;
 
-        if ($version === 2) {
-            $_map['event']['get'] = 'civicrm_event_search';
-            $_map['group_roles']['create'] = 'civicrm_group_roles_add_role';
-            $_map['group_contact']['create'] = 'civicrm_group_contact_add';
-            $_map['group_contact']['delete'] = 'civicrm_group_contact_remove';
-            $_map['entity_tag']['create'] = 'civicrm_entity_tag_add';
-            $_map['entity_tag']['delete'] = 'civicrm_entity_tag_remove';
-            $_map['group']['create'] = 'civicrm_group_add';
-            $_map['contact']['create'] = 'civicrm_contact_add';
-            $_map['relationship_type']['get'] = 'civicrm_relationship_types_get';
-            $_map['uf_join']['create'] = 'civicrm_uf_join_add';
-            if (isset($_map[$entity][$action])) {
-                return $_map[$entity][$action];
+    if( empty( $version ) ){
+            $version = civicrm_get_api_version();
+    }
+
+    if ( !isset( $_map[$version] ) ) {
+        
+        if ( $version === 2 ) {
+            $_map[$version]['event']['get'] = 'civicrm_event_search';
+            $_map[$version]['group_roles']['create'] = 'civicrm_group_roles_add_role';
+            $_map[$version]['group_contact']['create'] = 'civicrm_group_contact_add';
+            $_map[$version]['group_contact']['delete'] = 'civicrm_group_contact_remove';
+            $_map[$version]['entity_tag']['create'] = 'civicrm_entity_tag_add';
+            $_map[$version]['entity_tag']['delete'] = 'civicrm_entity_tag_remove';
+            $_map[$version]['group']['create'] = 'civicrm_group_add';
+            $_map[$version]['contact']['create'] = 'civicrm_contact_add';
+            $_map[$version]['relationship_type']['get'] = 'civicrm_relationship_types_get';
+            $_map[$version] ['uf_join']['create'] = 'civicrm_uf_join_add';
+
+            if ( isset( $_map[$version][$entity][$action] ) ) {
+                return $_map[$version][$entity][$action];
             }
         }
     }
-    if ($entity == strtolower ($entity) ) {
-      $function = '_'.$entity;
+    if ( $entity == strtolower( $entity ) ) {
+      $function = '_' . $entity;
     } else {
-      $function = strtolower(str_replace('U_F',
-                                       'uf', 
-                                       // That's CamelCase, beside an odd UFCamel that is expected as uf_camel
-                                       preg_replace('/(?=[A-Z])/','_$0', $entity)));
+      $function = strtolower( str_replace( 'U_F',
+                                           'uf', 
+                                           // That's CamelCase, beside an odd UFCamel that is expected as uf_camel
+                                           preg_replace( '/(?=[A-Z])/', '_$0', $entity ) ) );
     }
     if ( $version === 2 ) {
-        return 'civicrm'. $function .'_'. $action;
+        return 'civicrm' . $function . '_' . $action;
     } else {
-        return 'civicrm_api3'. $function .'_'. $action;
+        return 'civicrm_api3' . $function . '_' . $action;
     }
 }
 
@@ -249,35 +252,37 @@ function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
 }
 
 
-function civicrm_api_get_camel_name($entity,$version = NULL) {
-    static $_map = NULL;
-    if (!isset($_map)) {
-        $_map = array();
-        $_map['utils'] = 'utils';
-        if(empty($version)){
-            $version = civicrm_get_api_version();
-        }
-        if ($version === 2) {
+function civicrm_api_get_camel_name( $entity, $version = NULL ) 
+{
+    static $_map = null;
+
+    if ( empty( $version ) ) {
+        $version = civicrm_get_api_version( );
+    }
+
+    if ( !isset( $_map[$version] ) ) {
+        $_map[$version]['utils'] = 'utils';
+        if ( $version === 2 ) {
             // TODO: Check if $_map needs to contain anything.
-            $_map['contribution'] = 'Contribute';
-            $_map['custom_field'] = 'CustomGroup';
-        }
-        else {
+            $_map[$version]['contribution'] = 'Contribute';
+            $_map[$version]['custom_field'] = 'CustomGroup';
+        } else {
             // assume $version == 3.
         }
     }
-    if (isset($_map[strtolower($entity)])) {
-        return $_map[strtolower($entity)];
+    if ( isset( $_map[$version][strtolower( $entity )] ) ) {
+        return $_map[$version][strtolower( $entity )];
     }
-    $fragments = explode('_', $entity);
-    foreach ($fragments as &$fragment) {
-        $fragment = ucfirst($fragment);
+
+    $fragments = explode( '_', $entity );
+    foreach ( $fragments as &$fragment ) {
+        $fragment = ucfirst( $fragment );
     }
     // Special case: UFGroup, UFJoin, UFMatch, UFField
-    if ($fragments[0] === 'Uf') {
+    if ( $fragments[0] === 'Uf' ) {
         $fragments[0] = 'UF';
     }
-    return implode('', $fragments);
+    return implode( '', $fragments );
 }
 
 /*
