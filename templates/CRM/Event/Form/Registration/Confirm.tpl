@@ -159,14 +159,17 @@
                 {/if}
 
                 {if $participant.additionalCustomPost}
-                    <fieldset class="label-left"><legend>{$participant.additionalCustomPostGroupTitle}</legend>
-                        {foreach from=$participant.additionalCustomPost item=value key=field}
+		{foreach from=$participant.additionalCustomPost item=value key=field}
+		 <fieldset class="label-left"><legend>{$participant.additionalCustomPostGroupTitle.$field.groupTitle}</legend>
+                        {foreach from=$participant.additionalCustomPost.$field item=value key=field}
                             <div class="crm-section {$field}-section">
                                 <div class="label">{$field}</div>
                                 <div class="content">{$value}</div>
                                 <div class="clear"></div>
                             </div>
-                        {/foreach}
+                        {/foreach}		 
+		{/foreach}		
+
                     </fieldset>
                 {/if}
             </div>
