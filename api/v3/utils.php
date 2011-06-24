@@ -1509,7 +1509,12 @@ function _civicrm_api3_custom_data_get(&$returnArray,$entity,$entity_id ,$groupI
  * all variables are the same as per civicrm_api
  */
 function _civicrm_api3_validate_fields($entity, $action, &$params) {
-  if(strtolower($entity) != 'relationship' && strtolower($entity) != 'membership' &&  strtolower($entity) != 'contribution'){
+  //entities without a functional getFields will spit the dummy :-)
+  $testedEntities = array('relationship' => 1, 
+  												'membership' => 1, 
+  											  'event' => 1, 
+  											  'contribution');
+  if(!array_key_exists(strtolower($entity), $testedEntities)){
     return;
   }
 	if (strtolower ( $action ) == 'getfields') {
@@ -1521,7 +1526,8 @@ function _civicrm_api3_validate_fields($entity, $action, &$params) {
 	foreach ( $fields as $fieldname => $fieldInfo ) {
     switch (CRM_Utils_Array::value ( 'type', $fieldInfo )){
       case 4:
-       //field is of type date 
+      case 12: 
+       //field is of type date or datetime
        _civicrm_api3_validate_date($params,$fieldname,$fieldInfo);
        break;
     }
@@ -1541,19 +1547,17 @@ function _civicrm_api3_validate_fields($entity, $action, &$params) {
  * @param array $fieldinfo array of fields from getfields function
  */
 function _civicrm_api3_validate_date(&$params,&$fieldname,&$fieldInfo){
-
   	//should we check first to prevent it from being copied if they have passed in sql friendly format?
 			if (CRM_Utils_Array::value ( $fieldInfo ['name'], $params )) {	
-			  //insufficient code level documentation to evaluate whether to keep this here but is in 'existing' functions
-			  // it doesn't cope with already valid dates - see below
-			  if (!CRM_Utils_Rule::date($params [$fieldInfo ['name']])) {
-          throw new exception ($fieldInfo ['name']. " is not a valid date: " . $params [$fieldInfo ['name']]);
+        //accept 'whatever strtotime accepts
+			  if (strtotime($params [$fieldInfo ['name']]) ==0) {
+           throw new exception ($fieldInfo ['name']. " is not a valid date: " . $params [$fieldInfo ['name']]);
         }
 					$params [$fieldInfo ['name']] = CRM_Utils_Date::processDate ( $params [$fieldInfo ['name']] );
 			} 
 			if ((CRM_Utils_Array::value ('name', $fieldInfo) != $fieldname ) && CRM_Utils_Array::value ( $fieldname , $params )) {
 			  //If the unique field name differs from the db name & is set handle it here
-				if ( !CRM_Utils_Rule::date($params [$fieldname])) {
+			  if (strtotime($params [$fieldInfo ['name']]) ==0) {
 	         throw new exception ($fieldname. " is not a valid date: " . $params [$fieldname]);
         }
 				$params [$fieldname] = CRM_Utils_Date::processDate ( $params [$fieldname] );
