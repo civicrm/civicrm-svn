@@ -310,7 +310,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         }
 
         if ( ! empty( $formattedValues ) && $count > 1 ) {
-            $this->assign( 'addParticipantProfile' , $formattedValues );
+            $this->assign( 'addParticipantProfile', $formattedValues );
+            $this->set( 'addParticipantProfile', $formattedValues );
         }
         
         //cosider total amount.
@@ -696,7 +697,6 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             
             //build an array of custom profile and assigning it to template
             $customProfile = CRM_Event_BAO_Event::buildCustomProfile( $registerByID, $this->_values, null, $isTest );
-            
             if ( count($customProfile) ) {
                 $this->assign( 'customProfile', $customProfile );
                 $this->set   ( 'customProfile', $customProfile );

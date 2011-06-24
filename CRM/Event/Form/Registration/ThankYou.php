@@ -64,6 +64,8 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
         $this->assign( 'participantInfo', $participantInfo ); 
         $customGroup = $this->get('customProfile');
         $this->assign( 'customProfile',$customGroup );
+        
+        $this->assign( 'addParticipantProfile', $this->get('addParticipantProfile'));
         CRM_Utils_System::setTitle(CRM_Utils_Array::value('thankyou_title',$this->_values['event']));
     }
 

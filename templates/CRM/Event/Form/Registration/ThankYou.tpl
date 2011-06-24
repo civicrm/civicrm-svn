@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+
 {if $action & 1024}
     {include file="CRM/Event/Form/Registration/PreviewHeader.tpl"}
 {/if}
@@ -182,32 +183,41 @@
             </fieldset>
     {/if}
 
-    {*display Additional Participant Info*}
-    {if $customProfile}
-        {foreach from=$customProfile item=value key=customName}
+    {*display Additional Participant Profile Information*}
+    {if $addParticipantProfile}
+        {foreach from=$addParticipantProfile item=participant key=participantNo}
             <div class="crm-group participant_info-group">
                 <div class="header-dark">
-                    {ts 1=$customName+1}Participant Information - Participant %1{/ts}	
+                    {ts 1=$participantNo+1}Participant Information - Participant %1{/ts}	
                 </div>
-                {foreach from=$value item=val key=field}
-                    {if $field eq additionalCustomPre or $field eq additionalCustomPost }
-                        {if $field eq 'additionalCustomPre' }
-                            <fieldset class="label-left"><legend>{$value.additionalCustomPre_grouptitle}</legend>
-                        {else}
-                            <fieldset class="label-left"><legend>{$value.additionalCustomPost_grouptitle}</legend>
-                        {/if}
-                        <table class="form-layout-compressed">	
-                        {foreach from=$val item=v key=f}
-                            <tr>
-                                <td class="label twenty">{$f}</td><td class="view-value">{$v}</td>
-                            </tr>
+                {if $participant.additionalCustomPre}
+                    <fieldset class="label-left"><legend>{$participant.additionalCustomPreGroupTitle}</legend>
+                        {foreach from=$participant.additionalCustomPre item=value key=field}
+                            <div class="crm-section {$field}-section">
+                                <div class="label">{$field}</div>
+                                <div class="content">{$value}</div>
+                                <div class="clear"></div>
+                            </div>
                         {/foreach}
-                        </table>
-                        </fieldset>
-                    {/if}
-                <div>
-            {/foreach}
-            <div class="spacer"></div>  
+                    </fieldset>
+                {/if}
+
+                {if $participant.additionalCustomPost}
+		{foreach from=$participant.additionalCustomPost item=value key=field}
+		 <fieldset class="label-left"><legend>{$participant.additionalCustomPostGroupTitle.$field.groupTitle}</legend>
+                        {foreach from=$participant.additionalCustomPost.$field item=value key=field}
+                            <div class="crm-section {$field}-section">
+                                <div class="label">{$field}</div>
+                                <div class="content">{$value}</div>
+                                <div class="clear"></div>
+                            </div>
+                        {/foreach}		 
+		{/foreach}		
+
+                    </fieldset>
+                {/if}
+            </div>
+        <div class="spacer"></div>
         {/foreach}
     {/if}
 
