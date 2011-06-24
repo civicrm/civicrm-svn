@@ -787,10 +787,18 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                     $params[$index] = $details->$name;
                     $values[$index] = $languages[$details->$name];
                 } else if ( $name == 'group' ) {
+                    require_once 'CRM/Contact/BAO/Group.php';
+                    require_once 'CRM/Core/Permission.php';
+                    require_once 'CRM/Utils/Array.php';
                     $groups = CRM_Contact_BAO_GroupContact::getContactGroup( $cid, 'Added', null, false, true );
                     $title  = $ids = array( );
+                    
                     foreach ( $groups as $g ) {
-                        if ( $g['visibility'] != 'User and User Admin Only' ) {
+                        // CRM-8362: User and User Admin visibility groups should be included in display if user has VIEW permission on that group
+                        $groupPerm = CRM_Contact_BAO_Group::checkPermission( $g['group_id'], $g['title'] );
+
+                        if ( $g['visibility'] != 'User and User Admin Only' ||
+                             CRM_Utils_Array::key(CRM_Core_Permission::VIEW, $groupPerm ) ) {
                             $title[] = $g['title'];
                             if ( $g['visibility'] == 'Public Pages' ) {
                                 $ids[] = $g['group_id'];
