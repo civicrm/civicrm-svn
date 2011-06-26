@@ -1753,11 +1753,44 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
             $tableDAO = CRM_Core_DAO::executeQuery( $query );
             while ( $tableDAO->fetch() ) {
                 $sql = "DROP TABLE {$tableDAO->tableName}";
-                CRM_Core_DAO::executeQuery( $sql );
-            }
-        }
-    }
+				CRM_Core_DAO::executeQuery ( $sql );
+			}
+		}
+	}
+    
+  /*
+   * Function does a 'Get' on the entity & compares the fields in the Params with those returned
+   * Default behaviour is to also delete the entity
+   * @param array $params params array to check agains
+   * @param int  $id id of the entity concerned
+   * @param string $entity name of entity concerned (e.g. membership)
+   * @param bool $delete should the entity be deleted as part of this check
+   * 
+   */
+  function getAndCheck($params,$id,$entity,$delete = 1){
 
+        $result = civicrm_api($entity,'GetSingle', array( 'id' => $id ,
+                                   
+                                  'version'        =>$this->_apiversion));
+
+        if($delete){
+        civicrm_api($entity,'Delete',array( 'id' => $id ,
+                                  'version'        =>$this->_apiversion));
+        }
+
+        
+        if (strtolower($entity) =='contribution'){
+          $params['receive_date'] = date('Y-m-d H:i:s' ,strtotime($params['receive_date']));
+          unset($params['payment_instrument_id']);//this is not returned in id format
+          $params['contribution_source'] = $params['source'];
+          unset($params['source']);        
+        }
+        foreach($params as $key => $value){
+          if($key == 'version' )continue;
+          $this->assertEquals($value, $result[$key],$key . " value: $value doesn't match " . print_r($result,true) . 'in line' . __LINE__);        
+          
+        } 
+    }
 }
 
 function CiviUnitTestCase_fatalErrorHandler( $message ) {
