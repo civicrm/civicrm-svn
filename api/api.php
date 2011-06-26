@@ -185,18 +185,11 @@ function civicrm_api_get_function_name( $entity, $action, $version = NULL )
             }
         }
     }
-    if ( $entity == strtolower( $entity ) ) {
-      $function = '_' . $entity;
-    } else {
-      $function = strtolower( str_replace( 'U_F',
-                                           'uf', 
-                                           // That's CamelCase, beside an odd UFCamel that is expected as uf_camel
-                                           preg_replace( '/(?=[A-Z])/', '_$0', $entity ) ) );
-    }
+    $entity = _civicrm_api_get_entity_name_from_camel($entity);
     if ( $version === 2 ) {
-        return 'civicrm' . $function . '_' . $action;
+        return 'civicrm' . '_' .$entity  . '_' . $action;
     } else {
-        return 'civicrm_api3' . $function . '_' . $action;
+        return 'civicrm_api3' . '_' .$entity . '_' . $action;
     }
 }
 
@@ -289,6 +282,7 @@ function civicrm_api_get_camel_name( $entity, $version = NULL )
  * Call any nested api calls
  */
 function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$version){
+  $entity = _civicrm_api_get_entity_name_from_camel($entity);
         foreach($params as $field => $newparams){          
             if (substr($field,0, 3) == 'api' && (is_array($newparams) || $newparams === 1) ){
               
@@ -311,7 +305,7 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$versi
                   //contact spits the dummy at activity_id so what else won't it like?
                   $subParams["entity_id"] = $result['id'];
                   $subParams[strtolower($entity) . "_id"] = $result['id'];
-                  $subParams['entity_table'] = $entity;
+                  $subParams['entity_table'] = civicrm_api_get_camel_name($entity);
                 }
                
                 if(CRM_Utils_Array::value('entity_table',$result['values'][$idIndex ]) == $subAPI[1] ) {
@@ -417,4 +411,21 @@ function _civicrm_api_get_results_id_index(&$params,&$result){
       }else{
         return $result['id'];
        }
+}
+
+/*
+ * Convert possibly camel name to underscore separated entity name
+ * @param string $entity entity name in various formats e.g. Contribution, contribution, OptionValue, option_value, UFJoin, uf_join
+ * @return string $entity entity name in underscore separated format
+ */
+function _civicrm_api_get_entity_name_from_camel($entity){
+    if ( $entity == strtolower( $entity ) ) {
+      $entity =  $entity;
+    } else {
+      $entity = substr(strtolower( str_replace( 'U_F',
+                                           'uf', 
+                                           // That's CamelCase, beside an odd UFCamel that is expected as uf_camel
+                                           preg_replace( '/(?=[A-Z])/', '_$0', $entity ) ) ),1);
+    }
+    return $entity;
 }
