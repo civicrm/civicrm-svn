@@ -1,5 +1,6 @@
 <?php
 require_once 'api/v3/utils.php';
+require_once 'CRM/Core/BAO/OptionGroup.php';
 
 function civicrm_api3_option_group_get( $params ) {
     _civicrm_api3_initialize(true);
@@ -7,7 +8,7 @@ function civicrm_api3_option_group_get( $params ) {
     civicrm_api3_verify_mandatory($params);
 
 
-      require_once 'CRM/Core/BAO/OptionGroup.php';
+
       $bao = new CRM_Core_BAO_OptionGroup( );
       _civicrm_api3_dao_set_filter ( $bao, $params );
 
