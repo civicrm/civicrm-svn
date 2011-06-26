@@ -134,8 +134,37 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
                                 array('type' => 'cancel', 'name' => ts('Cancel')),
                                 ));
         $this->assign('contact_type', $this->_contactType);
+
+        $this->addFormRule( array( 'CRM_Contact_Form_DedupeRules', 'formRule' ), $this );
     }
 
+    /**
+     * global validation rules for the form
+     *
+     * @param array $fields posted values of the form
+     *
+     * @return array list of errors to be posted back to the form
+     * @static
+     * @access public
+     */
+    static function formRule( $fields, $files, $self ) 
+    {
+        $errors = array( );
+        $fieldSelected = false;
+        for ($count = 0; $count < self::RULES_COUNT; $count++) {
+            if ( CRM_Utils_Array::value( "where_$count", $fields ) ) {
+                $fieldSelected = true;
+                break;
+            }
+        }
+        
+        if ( !$fieldSelected ) {
+            $errors['_qf_default'] = ts('Please select atleast one field.');
+        }
+
+        return empty($errors) ? true : $errors;
+    }
+    
     function setDefaultValues()
     {
         return $this->_defaults;
