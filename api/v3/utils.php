@@ -1213,3 +1213,80 @@ function _civicrm_api3_validate_date(&$params,&$fieldname,&$fieldInfo){
 			}
   
 }
+
+/**
+ * Generic implementation of the "replace" action.
+ *
+ * Replace the old set of entities (matching some given keys) with a new set of
+ * entities (matching the same keys).
+ *
+ * Note: This will verify that 'values' is present, but it does not directly verify
+ * any other parameters.
+ *
+ * @param string $entity entity name
+ * @param array $params params from civicrm_api, including:
+ *   - 'values': an array of records to save
+ *   - all other items: keys which identify new/pre-existing records
+ */
+function _civicrm_api3_generic_replace($entity, $params) {
+    _civicrm_api3_initialize(true);
+    require_once 'CRM/Core/Transaction.php';
+    $tx = new CRM_Core_Transaction();
+    try {
+        civicrm_api3_verify_mandatory($params, null,array('values') );
+        // TODO: civicrm_api3_verify_type($params, .... 'values' is an array...)
+        
+        // Extract the keys -- somewhat scary, don't think too hard about it
+        $baseParams = $params;
+        unset($baseParams['values']);
+        unset($baseParams['sequential']);
+        
+        // Lookup pre-existing records
+        $preexisting = civicrm_api($entity, 'get', $baseParams, $params);
+        if (civicrm_api3_error($preexisting)) {
+            $tx->rollback();
+            return $preexisting;
+        }
+        
+        // Save the new/updated records
+        $creates = array();
+        foreach ($params['values'] as $replacement) {
+            // Sugar: Don't force clients to duplicate the 'key' data
+            $replacement = array_merge($baseParams, $replacement);
+            // INSERT or UPDATE -- don't know or care
+            $create = civicrm_api($entity, 'create', $replacement);
+            if (civicrm_api3_error($create)) {
+                $tx->rollback();
+                return $create;
+            }
+            foreach ($create['values'] as $entity_id => $entity_value) {
+                $creates[$entity_id] = $entity_value;
+            }
+        }
+        
+        // Remove stale records
+        $staleIDs = array_diff(
+            array_keys($preexisting['values']),
+            array_keys($creates)
+        );
+        foreach ($staleIDs as $staleID) {
+            $delete = civicrm_api($entity, 'delete', array(
+              'version' => $params['version'],
+              'id' => $staleID
+            ));
+            if (civicrm_api3_error($delete)) {
+                $tx->rollback();
+                return $delete;
+            }
+        }
+        
+        return civicrm_api3_create_success($creates, $params);
+        
+    } catch (PEAR_Exception $e) {
+        $tx->rollback();
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        $tx->rollback();
+        return civicrm_api3_create_error( $e->getMessage() );
+    }
+}

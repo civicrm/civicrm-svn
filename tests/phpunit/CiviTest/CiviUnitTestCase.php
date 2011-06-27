@@ -1122,13 +1122,15 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * 
      * @return int location id of created location
      */    
-    function locationTypeCreate( ) 
+    function locationTypeCreate( $params = null ) 
     {
-        $params = array('name'             => 'New Location Type',
-                        'vcard_name'       => 'New Location Type',
-                        'description'      => 'Location Type for Delete',
-                        'is_active'        => 1,
-                        );
+        if ( $params === null ) {
+            $params = array('name'             => 'New Location Type',
+                            'vcard_name'       => 'New Location Type',
+                            'description'      => 'Location Type for Delete',
+                            'is_active'        => 1,
+                            );
+        }
 
         require_once 'CRM/Core/DAO/LocationType.php';
         $locationType = new CRM_Core_DAO_LocationType( );
@@ -1612,6 +1614,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         } elseif(strstr($function, 'Apply')){
             $action = 'apply';
             $entityAction = 'Apply';
+        } elseif(strstr($function, 'Replace')){
+            $action = 'replace';
+            $entityAction = 'Replace';
         }
 
         if (strstr($entity,'UF')){// a cleverer person than me would do it in a single regex
