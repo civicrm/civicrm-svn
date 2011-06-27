@@ -23,13 +23,14 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $addProfileBottom}
+{if $addProfileBottomAdd}
   <table class="form-layout-compressed">
-    <tr class="crm-event-manage-registration-form-block-custom_post_{$profileBottomNum}">
-      <td scope="row" class="label" width="20%">{$form.custom_post_id_multiple[$profileBottomNum].label}</td>
-      <td>{$form.custom_post_id_multiple[$profileBottomNum].html}</td>
+    <tr class="crm-event-manage-registration-form-block-additional_custom_post_{$profileBottomNumAdd}">
+      <td scope="row" class="label" width="20%">{$form.additional_custom_post_id_multiple[$profileBottomNumAdd].label}</td>
+      <td>{$form.additional_custom_post_id_multiple[$profileBottomNumAdd].html}</td>
     </tr>
- </table>
+ </table
+
 {else}
 {assign var=eventID value=$id}
 <div id="help">
@@ -153,6 +154,22 @@
              <td>{$form.additional_custom_post_id.html}<br />
                 <span class="description">{ts}Change this if you want to use a different profile for additional participants.{/ts}</span>
              </td>
+        </tr>
+	{if $profilePostMultipleAdd}
+         {foreach from=$profilePostMultipleAdd item=profilePostIdA key=profilePostNumA}
+ 	    <tr class='crm-event-manage-registration-form-block-additional_custom_post_multiple'>
+               <td scope="row" class="label" width="20%">{$form.additional_custom_post_id_multiple.$profilePostNumA.label}</td>
+               <td>{$form.additional_custom_post_id_multiple.$profilePostNumA.html}</td>
+             </tr>
+         {/foreach}
+ 	{/if}
+
+	<tr class='crm-event-manage-registration-form-block-additional_custom_post_multiple'>
+	    <td id="additional_profile_bottom_multiple" colspan="2"></td>
+        </tr>
+        <tr class='crm-event-manage-registration-form-block-additional_custom_post_add'>
+            <td scope="row" class="label" width="20%"></td>
+	    <td><a href="javascript:addProfileBottomAdd()">{ts}add another additional bottom profile{/ts}</a></td>
         </tr>
         </table>
         </fieldset>
@@ -347,6 +364,22 @@ invert              = 0
                 }
       });   
     }
+
+
+    var profileBottomCountAdd = Number({/literal}{$profilePostMultipleAdd|@count}{literal});
+    function addProfileBottomAdd( ) {
+      profileBottomCountAdd++;
+      var urlPathAdd = {/literal}"{crmURL p='civicrm/event/manage/registration' h=0 q=$addProfileParamsAdd}"{literal};
+      urlPathAdd = urlPathAdd + '&snippet=4&addProfileNum=' + profileBottomCountAdd;
+      cj.ajax({ url     : urlPathAdd,
+                async   : false,
+                global  : false,
+	        success : function ( contentAdd ) { 		
+                 cj( "#additional_profile_bottom_multiple" ).append( contentAdd );
+                }
+      });   
+    }
+
 
     {/literal}
 </script>
