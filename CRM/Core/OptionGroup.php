@@ -271,8 +271,10 @@ WHERE  v.option_group_id = g.id
                     2 => array( $label     , $labelType ) );
         $dao =& CRM_Core_DAO::executeQuery( $query, $p );
         if ( $dao->fetch( ) ) {
+            $dao->free( );
             return $dao->value;
         }
+        $dao->free( );
         return null;
     }
 

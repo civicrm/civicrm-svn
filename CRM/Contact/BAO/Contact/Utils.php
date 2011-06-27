@@ -137,15 +137,18 @@ WHERE  id IN ( $idString )
      * @param int    $contactID
      * @param int    $ts         timestamp that checksum was generated
      * @param int    $live       life of this checksum in hours/ 'inf' for infinite
-     *
+     * @param string $hash       contact hash, if sent, prevents a query in inner loop
      * @return array ( $cs, $ts, $live )
      * @static
      * @access public
      */
-    static function generateChecksum( $contactID, $ts = null, $live = null ) 
+    static function generateChecksum( $contactID, $ts = null, $live = null, $hash = null ) 
     {
-        $hash = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
-                                             $contactID, 'hash' );
+        if ( ! $hash ) {
+            $hash = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                                                 $contactID, 'hash' );
+        }
+
         if ( ! $hash ) {
             $hash = md5( uniqid( rand( ), true ) );
             CRM_Core_DAO::setFieldValue( 'CRM_Contact_DAO_Contact',

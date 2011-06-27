@@ -264,6 +264,7 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
             $result['href'     ] = "<a href=\"{$result['url']}\">{$result['cleanName']}</a>";
             $results[$dao->cfID] = $result;
         }
+        $dao->free( );
         return $results;
     }
 
