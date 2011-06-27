@@ -800,6 +800,10 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     width: auto;
 }
 
+#crm-container .crm-flashchart {
+    overflow: scroll;
+}
+
 #crm-container td.enclosingNested {
     padding: 0px;
 }
