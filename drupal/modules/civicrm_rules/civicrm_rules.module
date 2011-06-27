@@ -48,13 +48,14 @@ function civicrm_rules_civicrm_post( $op, $objectName, $objectId, &$objectRef ) 
     }
 
 	// process only contacts for now
-	$validObjects = variable_get('civicrm_rules_post_entities',array('Contact'));
+	$validObjects = variable_get('civicrm_rules_post_entities', array( ));
 
-	if ( ! in_array( $objectName, $validObjects ) ) {
+    $eventObject = strtolower( $objectName );
+	if ( !in_array($eventObject, $validObjects ) && 
+         !in_array($eventObject, array('contact')) ) {
 		return;
 	}
 
-    $eventObject = strtolower( $objectName );
     if($eventObject != 'contact'){
         // without the civicrm prefix too much chance of another drupal module being enabled
         $eventObject = 'civicrm_' . $eventObject;
