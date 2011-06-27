@@ -324,16 +324,6 @@ class CRM_Admin_Page_AJAX
     } 
 
 
-    static function mergeTags( ) {
-        $fromId = CRM_Utils_Type::escape( $_POST['fromId'], 'Integer' );
-        $toId   = CRM_Utils_Type::escape( $_POST['toId'], 'Integer' );
-        
-        require_once 'CRM/Core/BAO/EntityTag.php';
-        CRM_Core_BAO_EntityTag::mergeTags( $fromId, $toId );
-
-        CRM_Utils_System::civiExit( );
-    } 
-
     function mappingList(  ) {
         $params = array( 'mappingID' );
         foreach ( $params as $param ) {

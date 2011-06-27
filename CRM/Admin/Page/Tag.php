@@ -82,11 +82,6 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
                                                                     'qs'    => 'action=delete&id=%%id%%',
                                                                     'title' => ts('Delete Tag'), 
                                                                     ),
-                                  CRM_Core_Action::FOLLOWUP => array(
-                                                                    'name'  => ts('Merge'),
-                                                                    'extra' => 'onclick = "mergeTag( %%id%% );"',
-                                                                    'title' => ts('Merge Tag')
-                                                                    ),
                                   );
         }
         return self::$_links;
@@ -163,7 +158,7 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
        $tag = CRM_Core_DAO::executeQuery( $query );
        $values = array( );
        
-       $action     = CRM_Core_Action::UPDATE + CRM_Core_Action::DELETE + CRM_Core_Action::FOLLOWUP;
+       $action     = CRM_Core_Action::UPDATE + CRM_Core_Action::DELETE;
        $permission = CRM_Core_Permission::EDIT;
 
        while( $tag->fetch( ) ) {           
