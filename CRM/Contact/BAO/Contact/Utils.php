@@ -144,6 +144,13 @@ WHERE  id IN ( $idString )
      */
     static function generateChecksum( $contactID, $ts = null, $live = null, $hash = null ) 
     {
+        // return an empty string if we dont get a contactID
+        // this typically happens when we do a message preview
+        // or an anon mailing view - CRM-8298
+        if ( ! $contactID ) {
+            return 'invalidChecksum';
+        }
+
         if ( ! $hash ) {
             $hash = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
                                                  $contactID, 'hash' );
@@ -183,7 +190,9 @@ WHERE  id IN ( $idString )
      */
     static function validChecksum( $contactID, $inputCheck ) 
     {
-        $input =  explode( '_', $inputCheck );
+        require_once 'CRM/Utils/System.php';
+
+        $input =  CRM_Utils_System::explode( '_', $inputCheck, 3 );
         
         $inputCS = CRM_Utils_Array::value( 0,$input);
         $inputTS = CRM_Utils_Array::value( 1,$input);
