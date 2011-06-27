@@ -54,6 +54,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
     protected $_showHide;
 
     protected $_profilePostMultiple = array( );
+    protected $_profileAddPostMultiple = array( );
     /** 
      * Function to set variables up before form is built 
      *                                                           
@@ -120,18 +121,17 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
 
             if ($defaults['is_multiple_registrations']) {
                 // CRM-4377: set additional participants’ profiles – set to ‘none’ if explicitly unset (non-active)
-                $ufJoin = new CRM_Core_DAO_UFJoin;
-
-                $ufJoin->module       = 'CiviEvent_Additional';
-                $ufJoin->entity_table = 'civicrm_event';
-                $ufJoin->entity_id    = $eventId;
-                $ufJoin->orderBy('weight');
-                $ufJoin->find();
-                $custom = array( 1 => 'additional_custom_pre_id',
-                                 2 => 'additional_custom_post_id' );
-                while ($ufJoin->fetch()) {
-                    $defaults[$custom[$ufJoin->weight]] = $ufJoin->is_active ? $ufJoin->uf_group_id : 'none';
-                }
+                
+                $ufJoinAddParams = array( 'entity_table' => 'civicrm_event',
+                                          'module'       => 'CiviEvent_Additional',
+                                          'entity_id'    => $eventId );
+                
+                list( $defaults['additional_custom_pre_id'],
+                      $defaults['additional_custom_post'] ) = 
+                    CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinAddParams );
+                $defaults['additional_custom_post_id'] =  $defaults['additional_custom_post'][0];
+                unset($defaults['additional_custom_post'][0]);
+               
             }
         } else {
             $defaults['is_email_confirm'] = 0;
@@ -154,6 +154,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         }                
 
         return $defaults;
+
     }   
     
     /**
