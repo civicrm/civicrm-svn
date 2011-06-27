@@ -350,5 +350,14 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
          
          return $entityTags;
     }  
+
+    /** 
+     * Function to merge tags
+     */
+    function mergeTags( $fromId, $toId ) {
+        $query = "UPDATE civicrm_entity_tag SET tag_id = %1 WHERE tag_id = %2";
+        CRM_Core_DAO::executeQuery( $query, array( 1 => array($toId,   'Integer'),
+                                                   2 => array($fromId, 'Integer') ) );
+    }
 }
 
