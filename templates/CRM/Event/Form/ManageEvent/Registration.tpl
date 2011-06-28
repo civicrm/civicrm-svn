@@ -23,14 +23,23 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $addProfileBottomAdd}
+{if $addProfileBottomAdd OR $addProfileBottom}
+  {if $addProfileBottomAdd}
   <table class="form-layout-compressed">
     <tr class="crm-event-manage-registration-form-block-additional_custom_post_{$profileBottomNumAdd}">
       <td scope="row" class="label" width="20%">{$form.additional_custom_post_id_multiple[$profileBottomNumAdd].label}</td>
       <td>{$form.additional_custom_post_id_multiple[$profileBottomNumAdd].html}</td>
     </tr>
- </table
-
+  </table
+  {/if}
+  {if $addProfileBottom}
+   <table class="form-layout-compressed">
+     <tr class="crm-event-manage-registration-form-block-custom_post_{$profileBottomNum}">
+       <td scope="row" class="label" width="20%">{$form.custom_post_id_multiple[$profileBottomNum].label}</td>
+       <td>{$form.custom_post_id_multiple[$profileBottomNum].html}</td>
+     </tr>
+   </table
+  {/if}
 {else}
 {assign var=eventID value=$id}
 <div id="help">
