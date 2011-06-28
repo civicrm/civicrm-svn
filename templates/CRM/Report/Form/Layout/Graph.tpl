@@ -23,7 +23,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{assign var=chartId value=$chartType|cat:"_$instanceId"}
 {assign var=uploadURL value=$config->imageUploadURL|replace:'persist/contribute':'templates_c/en_US/openFlashChart'}
 {* Display weekly,Quarterly,monthly and yearly contributions using pChart (Bar and Pie) *}
 {if $chartEnabled and $chartSupported}
