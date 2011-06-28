@@ -1253,8 +1253,8 @@ function _civicrm_api3_generic_replace($entity, $params) {
         foreach ($params['values'] as $replacement) {
             // Sugar: Don't force clients to duplicate the 'key' data
             $replacement = array_merge($baseParams, $replacement);
-            // INSERT or UPDATE -- don't know or care
-            $create = civicrm_api($entity, 'create', $replacement);
+            $action = (isset($replacement['id']) || isset($replacement[$entity.'_id'])) ? 'update' : 'create';
+            $create = civicrm_api($entity, $action, $replacement);
             if (civicrm_api3_error($create)) {
                 $tx->rollback();
                 return $create;
