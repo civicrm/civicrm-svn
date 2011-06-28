@@ -89,7 +89,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         
         if ($addProfileBottomAdd = CRM_Utils_Array::value('additional_custom_post_id_multiple', $_POST) ) {
             foreach( array_keys($addProfileBottomAdd) as $profileNum ) {
-                self::buildMultipleProfileBottom($this, $profileNum, 'additional_');
+                self::buildMultipleProfileBottom($this, $profileNum, 'additional_', ts('Profile for Additional Participants'));
             }
         }
     }
@@ -150,7 +150,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 if (!empty($defaults['additional_custom_post'])) {
                     $this->_profilePostMultipleAdd = $defaults['additional_custom_post'];
                     foreach ( $defaults['additional_custom_post'] as $key => $value){
-                        self::buildMultipleProfileBottom($this, $key, 'additional_');
+                        self::buildMultipleProfileBottom($this, $key, 'additional_', ts('Profile for Additional Participants'));
                         $defaults["additional_custom_post_id_multiple[$key]"] = $value;
                     }
                 }  
@@ -240,7 +240,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         }
 
         if ( $this->_addProfileBottomAdd ) {
-            return self::buildMultipleProfileBottom($this, $this->_profileBottomNumAdd, 'additional_');
+            return self::buildMultipleProfileBottom($this, $this->_profileBottomNumAdd, 'additional_', ts('Profile for Additional Participants'));
         }
 
         $this->applyFilter('__ALL__', 'trim');
@@ -338,16 +338,16 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         $form->add('select', 'additional_custom_post_id', ts('Profile for Additional Participants') . '<br />' . ts('(bottom of page)'), $addtProfiles);
     }
 
-    function buildMultipleProfileBottom( &$form, $count, $prefix = '' )
+    function buildMultipleProfileBottom( &$form, $count, $prefix = '', $name = 'Include Profile' )
     {
         $types    = array_merge( array( 'Contact', 'Individual', 'Participant' ),
                                  CRM_Contact_BAO_ContactType::subTypes( 'Individual' ) );
-        
+
         $profiles = CRM_Core_BAO_UFGroup::getProfiles( $types );
         
         $mainProfiles = array('' => ts('- select -')) + $profiles;
         $element = $prefix ."custom_post_id_multiple[$count]";
-        $form->add('select', $element,  ts('Include Profile') . '<br />' . ts('(bottom of page)'), $mainProfiles);
+        $form->add('select', $element, $name. '<br />' . ts('(bottom of page)'), $mainProfiles);
     }
 
     /**
