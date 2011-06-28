@@ -108,13 +108,13 @@ function civicrm_user_update( &$edit, &$user, $category )
 /**
  * Implementation of hook_user_delete
  */
-function civicrm_user_delete( &$edit, &$user, $category ) 
+function civicrm_user_delete( $account ) 
 {
     if ( ! civicrm_initialize( ) ) {
         return;
     }
     require_once 'CRM/Core/BAO/UFMatch.php';
-    CRM_Core_BAO_UFMatch::deleteUser( $user->uid );
+    CRM_Core_BAO_UFMatch::deleteUser( $account->uid );
 }
 
 
