@@ -356,7 +356,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
                     civicrm_group.visibility as visibility,
                     civicrm_group_contact.status as status, 
                     civicrm_group.id as group_id,
-                    civicrm_group.is_hidden as is_hidden
+                    civicrm_group.is_hidden as is_hidden,
                     civicrm_subscription_history.date as date,
                     civicrm_subscription_history.method as method';
         }
