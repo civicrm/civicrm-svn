@@ -229,9 +229,33 @@ function civicrm_rules_condition_event_type_form($settings, &$form) {
  
                                                     );
 }
-/**
+
+
+function civicrm_rules_entities_data_type_info(){
+return array(
+  
+                   
+                 'civicrm_event' => array(
+                                    'label' => t('CiviCRM Event'),
+                                    'class' => 'rules_data_type_civicrm_event',
+                                    'savable' => FALSE,
+                                    'identifiable' => TRUE,
+                                    ),
+                'civicrm_participant' => array(
+                                    'label' => t('CiviCRM Participant'),
+                                    'class' => 'rules_data_type_civicrm_participant',
+                                    'savable' => FALSE,
+                                    'identifiable' => TRUE,
+                                    ),
+                                    );
+                                    
+}
+/*
+ * *
  * Condition civicrm_event type
  */
-function civicrm_rules_condition_event_type(&$entityobj,&$eventTypes) {
-    return empty($eventTypes[$entityobj->event_type_id])  ? false : true;
+function civicrm_rules_condition_event_type(&$entityobj,&$settings) {
+    return empty($settings['civicrm_event_type'][$entityobj->event_type_id])  ? false : true;
 }
+
+

@@ -391,7 +391,7 @@ function civicrm_rules_data_type_info() {
                                     'savable' => FALSE,
                                     'identifiable' => TRUE,
                                     ),
-                 );
+                 )+ civicrm_rules_entities_data_type_info();
                  
 
 }
