@@ -371,7 +371,6 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
    }
 
     public function queue($testParams = null) {
-       
         require_once 'CRM/Mailing/BAO/Mailing.php';
         $mailing = new CRM_Mailing_BAO_Mailing();
         $mailing->id = $this->mailing_id;
@@ -383,14 +382,26 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
             require_once 'CRM/Mailing/BAO/Recipients.php';
             $recipients = CRM_Mailing_BAO_Recipients::mailingQuery($this->mailing_id, $this->job_offset, $this->job_limit);
 
+            // FIXME: this is not very smart, we should move this to one DB call
+            // INSERT INTO ... SELECT FROM ..
+            // the thing we need to figure out is how to generate the hash automatically
+            $now    = time( );
+            $params = array( );
+            $count  = 0;
             while ($recipients->fetch()) {
-                $params = array(
-                                // job_id should be the child job id
-                                'job_id'        => $this->id,
-                                'email_id'      => $recipients->email_id,
-                                'contact_id'    => $recipients->contact_id
-                                );
-                CRM_Mailing_Event_BAO_Queue::create($params);
+                $params[] = array( $this->id,
+                                   $recipients->email_id,
+                                   $recipients->contact_id );
+                $count++;
+                if ( $count % CRM_Core_DAO::BULK_INSERT_COUNT == 0 ) {
+                    CRM_Mailing_Event_BAO_Queue::bulkCreate( $params, $now );
+                    $count = 0;
+                    $params = array( );
+                }
+            }
+
+            if ( ! empty( $params ) ) {
+                CRM_Mailing_Event_BAO_Queue::bulkCreate( $params, $now );
             }
         }
     }
