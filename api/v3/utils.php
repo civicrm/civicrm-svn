@@ -1233,8 +1233,9 @@ function _civicrm_api3_generic_replace($entity, $params) {
     require_once 'CRM/Core/Transaction.php';
     $tx = new CRM_Core_Transaction();
     try {
-        civicrm_api3_verify_mandatory($params, null,array('values') );
-        // TODO: civicrm_api3_verify_type($params, .... 'values' is an array...)
+        if (!is_array($params['values'])) {
+          throw new Exception("Mandatory key(s) missing from params array: values");                     
+        }
         
         // Extract the keys -- somewhat scary, don't think too hard about it
         $baseParams = $params;

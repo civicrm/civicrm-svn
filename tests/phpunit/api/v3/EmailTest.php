@@ -177,6 +177,25 @@ class api_v3_EmailTest extends CiviUnitTestCase
         ));
         $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
         $this->assertEquals( 2, $get['count'], 'Incorrect email count at ' . __LINE__ );
+
+        // replace the set of emails with an empty set
+        $replace3Params = array(
+            'version' => $this->_apiversion,
+            'contact_id' => $this->_contactID,
+            'values' => array(),
+        );
+        $replace3 = civicrm_api('email', 'replace', $replace3Params);
+        // $this->documentMe($replace3Params, $replace3, __FUNCTION__, __FILE__);
+        $this->assertEquals( 0, $replace3['is_error'], 'In line ' . __LINE__ );
+        $this->assertEquals( 0, $replace3['count'], 'In line ' . __LINE__ );
+
+        // check emails
+        $get = civicrm_api('email', 'get', array(
+            'version' => $this->_apiversion,
+            'contact_id' => $this->_contactID,
+        ));
+        $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
+        $this->assertEquals( 0, $get['count'], 'Incorrect email count at ' . __LINE__ );
     }
     
     public function testReplaceEmailsInChain () {
