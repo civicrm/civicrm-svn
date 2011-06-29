@@ -1359,7 +1359,8 @@ WHERE civicrm_event.is_active = 1
                 } else if ( 'participant_role_id' == $name ) {
                     $roles = CRM_Event_PseudoConstant::participantRole( );
                     $values[$index] = $roles[$params[$name]];
-                } else if ( 'participant_status_id' == $name ) {
+                } else if ( 'participant_status_id' == $name  OR 
+                            'participant_status' == $name ) {
                     $status = CRM_Event_PseudoConstant::participantStatus( );
                     $values[$index] = $status[$params[$name]];
                 } else if ( substr( $name, -11 ) == 'campaign_id' ) {
