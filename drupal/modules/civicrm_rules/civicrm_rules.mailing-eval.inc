@@ -33,64 +33,30 @@
  * $Id$
  *
  */
+
 require_once 'civicrm_rules_utils.inc';
-require_once 'civicrm_rules.contact-eval.inc';
-require_once 'civicrm_rules.mailing-eval.inc';
-require_once 'civicrm_rules.event-eval.inc';
-require_once 'civicrm_rules.participant-eval.inc';
 
-/**
- * Implements hook_rules_file_info() on behalf of the user module.
- */
-function civicrm_rules_rules_file_info( ) {
-    return array( 'civicrm_rules.contact-eval', 
-                  'civicrm_rules.mailing-eval', 
-                  'civicrm_rules.event-eval', 
-                  'civicrm_rules.participant-eval' );
-}
+function civicrm_rules_rules_action_mailing_send_email( $to, $subject, $message, $from = NULL, $settings, RulesState $state, RulesPlugin $element ) {
+    if( isset($state->variables['mailing']) && $state->variables['mailing']->id ) {
+        $to       = str_replace( array( "\r", "\n" ), ',', $to );
+        $toEmails = explode( ',', $to );
+        if ( empty( $toEmails ) ) { 
+            return;
+        }
+        require_once 'CRM/Utils/Token.php';
+        $tokens['mailing'] = array( 'mailing.editUrl',
+                                    'mailing.scheduleUrl', 
+                                    'mailing.html', 
+                                    'mailing.creatorEmail', 
+                                    'mailing.creator' );
 
-/**
- * Implementation of hook_rules_event_info().
- */
-function civicrm_rules_rules_event_info( ) {
-    require_once 'civicrm_rules_event.inc';
-    return civicrm_rules_get_event( );
-}
-
-function civicrm_rules_rules_condition_info() {
-    require_once 'civicrm_rules_condition.inc';
-    return civicrm_rules_get_condition( );
-}
-
-/**
- * CiviCRM integration access callback.
- */
-function civicrm_rules_rules_integration_access( $type, $name ) {
-    if ($type == 'event' || $type == 'condition') {
-        return entity_access( 'access', 'civicrm' );
+        $params = array( );
+        $params['from']    = !empty( $from ) ? str_replace( array( "\r", "\n" ), '', $from ) : 'Admin';
+        $params['subject'] = CRM_Utils_Token::replaceMailingTokens( $subject, $state->variables['mailing'], null, $tokens );
+        $params['html']  = CRM_Utils_Token::replaceMailingTokens( $message, $state->variables['mailing'], null, $tokens );
+        foreach ( $toEmails as $toEmail ) {
+            $params['toEmail']    = CRM_Utils_Token::replaceMailingTokens( $toEmail, $state->variables['mailing'], null, $tokens );
+            CRM_Utils_Mail::send( $params );
+        }
     }
 }
-
-/**
- * CiviCRM integration admin access callback.
- */
-function civicrm_rules_rules_admin_access( ) {
-    return user_access( 'administer civicrm' );
-}
-
-/**
- * Implementation of hook_rules_action_info().
- */
-function civicrm_rules_rules_action_info( ) {
-    require_once 'civicrm_rules_action.inc';
-    return civicrm_rules_get_action( );
-}
-
-/**
- * Implementation of hook_rules_data_type_info().
- */
-function civicrm_rules_rules_data_info() {
-    require_once 'civicrm_rules_entity.inc';
-    return civicrm_rules_get_entity( );
-}
-
