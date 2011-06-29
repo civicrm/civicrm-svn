@@ -244,7 +244,11 @@ function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
         }
         $file = $apiPath . $file;
     }
-    require_once $file;
+
+    if(file_exists(dirname(__FILE__). DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR .  $file) ){
+       require_once $file;
+    }
+    
 }
 
 
