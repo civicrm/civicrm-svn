@@ -405,10 +405,9 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                         'status_id'          => $this->_membershipStatusID ,                      
                         'version'				    => $this->_apiversion,                        );
 
-        $result = civicrm_api3_membership_create( $params );
+        $result = civicrm_api('membership','create', $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
-         																						'version'  => $this->_apiversion,)); 
+        $this->getAndCheck($params,$result ['id'],$this->_entity);
         $this->assertEquals( $result['is_error'], 0 );
         $this->assertNotNull( $result['id'] );
         $this->assertEquals($this->_contactID,$result['values'][$result['id']]['contact_id']," in line " . __LINE__ );

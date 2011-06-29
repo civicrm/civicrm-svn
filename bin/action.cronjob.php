@@ -230,7 +230,7 @@ reminder.action_schedule_id = %1";
             }
 
             // ( now >= date_built_from_start_time )
-            $startEventClause = "reminder.id IS NULL AND {$this->_now} >= {$startEvent}";
+            $startEventClause = "reminder.id IS NULL AND '{$this->_now}' >= {$startEvent}";
 
             // build final query
             $selectClause = "SELECT " . implode( ', ', $select );
@@ -263,7 +263,7 @@ LEFT JOIN {$reminderJoinClause}
                 }
                 
                 // (now <= repeat_end_time )
-                $repeatEventClause = "{$this->_now} <= {$repeatEvent}"; 
+                $repeatEventClause = "'{$this->_now}' <= {$repeatEvent}"; 
                 // diff(now && logged_date_time) >= repeat_interval
                 $havingClause      = "HAVING TIMEDIFF({$this->_now}, latest_log_time) >= TIME('{$hrs}:00:00')";
                 $groupByClause     = "GROUP BY reminder.contact_id, reminder.entity_id, reminder.entity_table"; 

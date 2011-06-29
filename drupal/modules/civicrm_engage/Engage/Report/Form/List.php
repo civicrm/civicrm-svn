@@ -179,7 +179,7 @@ class Engage_Report_Form_List extends CRM_Report_Form {
         $dao = CRM_Core_DAO::executeQuery( $query );
         $dao->fetch( );        
         $this->_partyCol = $dao->column_name;
-        $partyOptGrp = $dao->option_group_ID;
+        $partyOptGrp = $dao->option_group_id;
         $query = "SELECT label, value"
             . " FROM civicrm_option_value"
             . " WHERE option_group_id={$partyOptGrp}";

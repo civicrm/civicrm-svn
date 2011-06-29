@@ -131,9 +131,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad( '30000' );
         $this->click ( "xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']" );
         $this->waitForPageToLoad( '30000' );
-        $cid1= explode( '&cid=', $this->getAttribute( "xpath=//div[@class='crm-actions-ribbon']/ul/li/a@href" ) );
-        $cid1= $cid1[1];
-        
+                
         $this->open($this->sboxPath . "civicrm/contact/search?reset=1" );
         $this->waitForElementPresent( '_qf_Basic_refresh ' );
         $this->type( 'sort_name', $firstName2 );
@@ -141,9 +139,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad( '30000' );
         $this->click ( "xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']" );
         $this->waitForPageToLoad( '30000' );
-        $cid2= explode( '&cid=', $this->getAttribute( "xpath=//div[@class='crm-actions-ribbon']/ul/li/a@href" ) );
-        $cid2= $cid2[1];
-        
+                
         $this->open($this->sboxPath . "civicrm/contact/search?reset=1" );
         $this->waitForElementPresent( '_qf_Basic_refresh ' );
         $this->type( 'sort_name', $firstName3 );
@@ -151,9 +147,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad( '30000' );
         $this->click ( "xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']" );
         $this->waitForPageToLoad( '30000' );
-        $cid3= explode( '&cid=', $this->getAttribute( "xpath=//div[@class='crm-actions-ribbon']/ul/li/a@href" ) );
-        $cid3= $cid3[1];
-        
+                
         $this->open($this->sboxPath . "civicrm/contact/search?reset=1" );
         $this->waitForElementPresent( '_qf_Basic_refresh ' );
         $this->type( 'sort_name', $firstName );
@@ -170,29 +164,16 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         $this->click ( "xpath=//div[@class='crm-search-results']//table[@class='selector']/tbody/tr[2]/td[9]/span/a[text()='View']" );
         $this->waitForElementPresent( '_qf_Activity_cancel-bottom' );
        
-        $contactDetails1 = array( 'id'  => (int)$cid1,
-                                  'name'=> "$lastName1, $firstName1"
-                                  );
-        
-        $contactDetails2 = array( 'id'  => (int)$cid2,
-                                  'name'=> " $lastName2, $firstName2"
-                                  );
-        
-        $contactDetails3 = array( 'id'  => (int)$cid3,
-                                  'name'=> " $lastName3, $firstName3"
-                                  );
-        
-        $str[] = json_encode($contactDetails1);
-        $str[] = json_encode($contactDetails2);
-        $str[] = json_encode($contactDetails3);
-        $str = "[" . implode( ',', $str ) . "]";
-     
         $this->verifyText( "xpath=//table[@class='crm-info-panel']/tbody/tr[1]/td[2]", 
                            preg_quote( "$firstName@Anderson.com" ) );
         
-        $this->verifyText( "xpath=//table[@class='crm-info-panel']/tbody/tr[2]/td[2]/a", 
-                           preg_quote( $str ) );
-     
+        $this->verifyText( "xpath=//table[@class='crm-info-panel']/tbody/tr[2]/td[2]/a[1]", 
+                           preg_quote( "$lastName1, $firstName1" ) );
+        $this->verifyText( "xpath=//table[@class='crm-info-panel']/tbody/tr[2]/td[2]/a[2]", 
+                           preg_quote( "$lastName2, $firstName2" ) );
+        $this->verifyText( "xpath=//table[@class='crm-info-panel']/tbody/tr[2]/td[2]/a[3]", 
+                           preg_quote( "$lastName3, $firstName3" ) );
+             
         $this->verifyText( "xpath=//table[@class='crm-info-panel']/tbody/tr[4]/td[2]", 
                            preg_quote( "Tell a Friend:" ) );
     }

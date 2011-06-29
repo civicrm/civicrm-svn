@@ -216,6 +216,18 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
 	  $this->assertEquals('20101220000000', $params['membership_start_date'], 'membership_start_date not set in line '. __LINE__);
 	  $this->assertEquals('20101220000000', $params['join_date'], 'join_date not set in line '. __LINE__);
 	}
+	
+	
+	function test_civicrm_api3_validate_fields_event(){
+	           
+	  $params = array(  'registration_start_date' => 20080601,
+            'registration_end_date'   => '2008-10-15','start_date' => '2010-12-20', 'end_date' => '');
+	  _civicrm_api3_validate_fields('event','create',$params);
+	  $this->assertEquals('20101220000000', $params['start_date'], 'in line ' . __LINE__);
+	  $this->assertEquals('20081015000000', $params['registration_end_date'], 'in line ' . __LINE__);
+	  $this->assertEquals('', $params['end_date'], 'in line ' . __LINE__);
+	  $this->assertEquals('20080601000000', $params['registration_start_date']);	  
+	}
 	function test_civicrm_api3_validate_fields_exception(){
 	  $params = array('join_date' => 'abc', );
 	  try{
@@ -229,6 +241,8 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
 	  $result = civicrm_api('membership', 'getfields', array('version' => 3));
 	  $this->assertArrayHasKey('values', $result);
 	  $result = civicrm_api('relationship', 'getfields', array('version' => 3));
+	  $this->assertArrayHasKey('values', $result);
+	  $result = civicrm_api('event', 'getfields', array('version' => 3));
 	  $this->assertArrayHasKey('values', $result);
 	}
 }

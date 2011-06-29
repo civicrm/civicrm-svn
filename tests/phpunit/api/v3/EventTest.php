@@ -58,7 +58,7 @@ class api_v3_EventTest extends CiviUnitTestCase
             'end_date'                => 20081023,
             'is_online_registration'  => 1,
             'registration_start_date' => 20080601,
-            'registration_end_date'   => 20081015,
+            'registration_end_date'   => '2008-10-15',
             'max_participants'        => 100,
             'event_full_text'         => 'Sorry! We are already full',
             'is_monetory'             => 0, 
@@ -74,7 +74,7 @@ class api_v3_EventTest extends CiviUnitTestCase
                         'version'				=>$this->_apiversion,
                         );
 
-        $this->_event   = civicrm_api3_event_create($params);
+        $this->_event   = civicrm_api('Event','Create',$params);
         $this->_eventId = $this->_event['id'];
     }
 
@@ -185,16 +185,19 @@ class api_v3_EventTest extends CiviUnitTestCase
         $this->assertEquals( $result['is_error'], 1 );
    }
     
-    function testCreateEvent( )
+    function testCreateEventSuccess( )
     {
-        $result = civicrm_api3_event_create( $this->_params );
+        $result = civicrm_api('Event','Create', $this->_params );
         $this->documentMe($this->_params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0 );
         $this->assertArrayHasKey( 'id', $result['values'][$result['id']], 'In line ' . __LINE__  );
         $result = civicrm_api($this->_entity,'Get',array('version' => 3 , 'id' => $result['id'])) ; 
+        civicrm_api($this->_entity,'Delete',array('version' => 3 , 'id' => $result['id'])) ;    
+        
         $this->assertEquals('2008-10-21 00:00:00',$result['values'][$result['id']]['start_date'],'start date is not set in line ' . __LINE__);
         $this->assertEquals('2008-10-23 00:00:00',$result['values'][$result['id']]['end_date'],'end date is not set in line ' . __LINE__);
- 
+        $this->assertEquals('2008-06-01 00:00:00',$result['values'][$result['id']]['registration_start_date'],'start date is not set in line ' . __LINE__);
+        $this->assertEquals('2008-10-15 00:00:00',$result['values'][$result['id']]['registration_end_date'],'end date is not set in line ' . __LINE__); 
         civicrm_api($this->_entity,'Delete',array('version' => 3 , 'id' => $result['id'])) ;    
         
     }

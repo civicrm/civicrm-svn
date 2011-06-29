@@ -36,9 +36,6 @@
 
 class CRM_Contact_BAO_Contact_Permission {
 
-    const
-        NUM_CONTACTS_TO_INSERT = 200;
-
     /**
      * check if the logged in user has permissions for the operation type
      *
@@ -148,7 +145,7 @@ ORDER BY contact_a.id
         // now store this in the table
         while ( ! empty( $values ) ) {
             $processed = true;
-            $input = array_splice( $values, 0, self::NUM_CONTACTS_TO_INSERT );
+            $input = array_splice( $values, 0, CRM_Core_DAO::BULK_INSERT_COUNT );
             $str   = implode( ',', $input );
             $sql = "REPLACE INTO civicrm_acl_contact_cache ( user_id, contact_id, operation ) VALUES $str;";
             CRM_Core_DAO::executeQuery( $sql );

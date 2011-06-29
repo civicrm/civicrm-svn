@@ -819,11 +819,11 @@ SELECT @option_group_id_medium        := max(id) from civicrm_option_group where
 INSERT INTO
    `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`)
 VALUES
-    (@option_group_id_medium, 'In Person',  1, 'in_person', NULL, 0,  0, 1, NULL, 0, 1, 1),
-    (@option_group_id_medium, 'Phone',  2, 'phone', NULL, 0,  1, 2, NULL, 0, 1, 1),
-    (@option_group_id_medium, 'Email',  3, 'email', NULL, 0,  0, 3, NULL, 0, 1, 1),
-    (@option_group_id_medium, 'Fax',  4, 'fax', NULL, 0,  0, 4, NULL, 0, 1, 1),
-    (@option_group_id_medium, 'Letter Mail',  5, 'letter_mail', NULL, 0,  0, 5, NULL, 0, 1, 1);
+    (@option_group_id_medium, '{ts escape="sql"}In Person{/ts}',  1, 'in_person', NULL, 0,  0, 1, NULL, 0, 1, 1),
+    (@option_group_id_medium, '{ts escape="sql"}Phone{/ts}',  2, 'phone', NULL, 0,  1, 2, NULL, 0, 1, 1),
+    (@option_group_id_medium, '{ts escape="sql"}Email{/ts}',  3, 'email', NULL, 0,  0, 3, NULL, 0, 1, 1),
+    (@option_group_id_medium, '{ts escape="sql"}Fax{/ts}',  4, 'fax', NULL, 0,  0, 4, NULL, 0, 1, 1),
+    (@option_group_id_medium, '{ts escape="sql"}Letter Mail{/ts}',  5, 'letter_mail', NULL, 0,  0, 5, NULL, 0, 1, 1);
 
 -- sample membership status entries
 INSERT INTO

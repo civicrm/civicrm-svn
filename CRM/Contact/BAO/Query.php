@@ -2949,7 +2949,7 @@ WHERE  id IN ( $groupIDs )
         list( $countryClause, $countryQill ) = $this->country( $countryValues, true );
 
         if ( $countryClause ) {
-            $clause = ( $stateClause AND $countryClause );
+            $clause = "( $stateClause AND $countryClause )";
         } else {
             $clause = $stateClause;
         }

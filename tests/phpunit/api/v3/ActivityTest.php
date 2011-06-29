@@ -395,6 +395,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     {
 
         $description = "Example demonstrates setting & retrieving the target & source";
+        $subfile = "GetTargetandAssignee";
         $params = array(
                         'source_contact_id'   => 17,
                         'subject'             => 'Make-it-Happen Meeting',
@@ -415,7 +416,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) .' in line ' . __LINE__ );
  
-        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile); 
         $result = & civicrm_api3_activity_get(array('id' => $result['id'], 'version' => $this->_apiversion, 'return.assignee_contact_id' => 1, 'return.target_contact_id' => 1 ) );
 
         $this->assertEquals( 17,$result['values'][$result['id']]['assignee_contact_id'][0], 'in line ' . __LINE__ );
