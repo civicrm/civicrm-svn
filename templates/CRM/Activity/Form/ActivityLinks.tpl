@@ -41,19 +41,24 @@
 <ul>
 {foreach from=$activityTypes key=k item=link}
 <li class="crm-activity-type_{$k}"><a href="{$urls.$k}">{$link}</a></li>
-{/foreach}</ul>
-
-{/if}
-
+{/foreach}
 
 {* add hook links if any *}
 {if $hookLinks}
    {foreach from=$hookLinks item=link}
-{if $link.img}
-      <a href="{$link.url}"><img src="{$link.img}" alt="{$link.title}" /></a>&nbsp;
-{/if}
-      <a href="{$link.url}">{$link.title}</a>&nbsp;&nbsp;
+    <li>
+        <a href="{$link.url}">
+          {if $link.img}
+                <img src="{$link.img}" alt="{$link.title}" />&nbsp;
+          {/if}
+          {$link.title}
+        </a>
+    </li>
    {/foreach}
+{/if}
+
+</ul>
+
 {/if}
 
 {/if}
