@@ -1297,6 +1297,8 @@ WHERE civicrm_event.is_active = 1
                     } else {
                         $values[$index] = '';
                     }
+                } else if ( 'date' == substr( $name, -4 ) ) {
+                    $values[$index] = $params[$name];
                 } else if ( 'country' == substr( $name, 0, 7 ) ) {
                     if ( $params[$name] ) {
                         $values[$index] = CRM_Core_PseudoConstant::country( $params[$name] );
