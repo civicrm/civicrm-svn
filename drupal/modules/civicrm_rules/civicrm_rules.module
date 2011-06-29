@@ -54,18 +54,20 @@ function civicrm_rules_civicrm_post( $op, $objectName, $objectId, &$objectRef ) 
 		return;
 	}
 
-    $eventObject = strtolower( $objectName );
-    if($eventObject != 'contact'){
+    $objectName = strtolower( $objectName );
+    $objectEvent = 'civicrm_event';
+    if($objectName != 'contact'){
         // without the civicrm prefix too much chance of another drupal module being enabled
-        $eventObject = 'civicrm_' . $eventObject;
+       $objectEvent  =  $objectName = 'civicrm_' . $objectName;
     }
 
 	$eventName = null;
 	switch ( $op ) {
-    case 'create':
+  case 'create':
 	case 'edit':
 	case 'delete':
-        $eventName = "{$eventObject}_{$op}";
+        $eventName = "{$objectName}_{$op}";
+       
         break;
 
     default:
@@ -73,7 +75,7 @@ function civicrm_rules_civicrm_post( $op, $objectName, $objectId, &$objectRef ) 
     }
 
 	if ( $eventName ) {
-		rules_invoke_event( $eventName, $objectRef );
+		rules_invoke_event( $eventName, array($objectEvent => $objectRef) );
 	}
 }
 

@@ -5,18 +5,31 @@ function getEntities(){
 }
 
 /*
- * function to return labels for checkboxes & stuff
+ * function to return labels for checkboxes & stuff. Will work for either valid API entites or option valude
  */
 function civicrm_rules_get_options( $type){
     if(! civicrm_initialize()){
         return;
     }
     require_once 'api/api.php';
-    $result = civicrm_api('OptionValue', 'Get' , array('version' => 3, 'option_group_name' => $type  ));
-    foreach($result['values'] as $options){
-        $values[$options['value']] = $options['label'];
-    }
-    return $values;
+    //Check if it's an entity - e.g. participant status Type, payment processor, campaign    
+    $result = civicrm_api($type, 'Get', array('version' => 3));
+ 
+    if($result['is_error'] ==1){
+      // it's not an entity - try an option group value
+       $result = civicrm_api('OptionValue', 'Get' , array('version' => 3, 'option_group_name' => $type  ));
+       foreach($result['values'] as $options){
+         $values[$options['value']] = $options['label'];
+       }
+       return $values;
+     }else{
+       //we're using an entity
+       foreach($result['values'] as $key => $fields){
+         $values[$key] = $fields['label'];
+       }
+       return $values;            
+     }
+
 }
   
 /**
