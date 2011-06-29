@@ -341,7 +341,10 @@ invert              = 0
         if ( !cj(this).attr( 'checked') ) {
             cj("#additional_custom_pre_id").val('');
             cj("#additional_custom_post_id").val('');
-        }
+	    cj(".crm-event-manage-registration-form-block-additional_custom_post_multiple").hide();
+        } else {
+	    cj(".crm-event-manage-registration-form-block-additional_custom_post_multiple").show();
+	}
     });
     
     showRuleFields( {/literal}{$ruleFields}{literal} );
@@ -361,6 +364,7 @@ invert              = 0
     }
 
     var profileBottomCount = Number({/literal}{$profilePostMultiple|@count}{literal});
+
     function addProfileBottom( ) {
       profileBottomCount++;
       var urlPath = {/literal}"{crmURL p='civicrm/event/manage/registration' h=0 q=$addProfileParams}"{literal};
