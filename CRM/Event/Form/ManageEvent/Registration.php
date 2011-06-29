@@ -207,6 +207,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
             $this->_showHide->addHide( 'thankyou' );
             $this->_showHide->addHide( 'additional_profile_pre' );
             $this->_showHide->addHide( 'additional_profile_post' );
+            $this->_showHide->addHide( 'additional_profile_post_multiple' );
             $this->_showHide->addHide( 'id-approval-text' );
         } else {
             $this->_showHide->addShow( 'confirm' );
@@ -219,6 +220,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
             if ( ! $defaults['is_multiple_registrations']) {
                 $this->_showHide->addHide( 'additional_profile_pre' );
                 $this->_showHide->addHide( 'additional_profile_post' );
+                $this->_showHide->addHide( 'additional_profile_post_multiple' );
             }
             if ( ! CRM_Utils_Array::value( 'requires_approval', $defaults ) ) {
                 $this->_showHide->addHide( 'id-approval-text' );
@@ -270,7 +272,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                           'is_multiple_registrations',
                           ts('Register multiple participants?'),
                           null,
-                          array('onclick' => "return showHideByValue('is_multiple_registrations', '', 'additional_profile_pre|additional_profile_post', 'table-row', 'radio', false);"));
+                          array('onclick' => "return showHideByValue('is_multiple_registrations', '', 'additional_profile_pre|additional_profile_post|additional_profile_post_multiple', 'table-row', 'radio', false);"));
 
         require_once 'CRM/Dedupe/BAO/Rule.php';
         $params           = array( 'level'        => 'Fuzzy',

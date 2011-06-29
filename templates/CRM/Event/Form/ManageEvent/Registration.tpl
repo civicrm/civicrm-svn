@@ -176,7 +176,7 @@
 	<tr class='crm-event-manage-registration-form-block-additional_custom_post_multiple'>
 	    <td id="additional_profile_bottom_multiple" colspan="2"></td>
         </tr>
-        <tr class='crm-event-manage-registration-form-block-additional_custom_post_add'>
+        <tr id="additional_profile_post_multiple" class='crm-event-manage-registration-form-block-additional_custom_post_add'>
             <td scope="row" class="label" width="20%"></td>
 	    <td><a href="javascript:addProfileBottomAdd()">{ts}add another additional bottom profile{/ts}</a></td>
         </tr>
@@ -320,7 +320,7 @@ invert              = 0
 {include file="CRM/common/showHideByFieldValue.tpl" 
 trigger_field_id    ="is_multiple_registrations"
 trigger_value       =""
-target_element_id   ="additional_profile_pre|additional_profile_post" 
+target_element_id   ="additional_profile_pre|additional_profile_post|additional_profile_post_multiple" 
 target_element_type ="table-row"
 field_type          ="radio"
 invert              = 0
