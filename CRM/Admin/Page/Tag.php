@@ -190,6 +190,11 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
                $newAction = 0;
            }
 
+           if ( $values[$tag->id]['is_reserved'] && 
+                CRM_Core_Permission::check('administer reserved tags') ) {
+               $newAction += CRM_Core_Action::FOLLOWUP;
+           }
+
            // populate action links
            if ( $newAction ) {           
                $this->action( $tag, $newAction, $values[$tag->id], self::links( ), $permission, true );

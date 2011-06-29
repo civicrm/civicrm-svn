@@ -123,7 +123,8 @@ function mergeTag( fromId ) {
 			cj("#tag_name").val( "" );
 			cj("#tag_name_id").val( null );
 
-			var tagUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getTags&json=1' h=0 }"{literal};
+			var tagUrl = {/literal}"{crmURL p='civicrm/ajax/mergeTagList' h=0}"{literal};
+                        tagUrl = tagUrl + "&fromId=" + fromId;
 
 			cj("#tag_name").autocomplete( tagUrl, {
 				width: 260,
@@ -157,14 +158,9 @@ function mergeTag( fromId ) {
 					  data     : data, 
 					  async    : false,
 					  dataType : "json",
-					  success  : function( values ) {
-					  	    	if ( values.status == 'process-relationship-success' ) {
-               						     window.location.reload();
-							}
-					  	    }
 				       });
-				       cj(this).dialog("close"); 
-				       cj(this).dialog("destroy");
+				cj(this).dialog("close"); 
+				cj(this).dialog("destroy");
  			},
 
 			"Cancel": function() { 

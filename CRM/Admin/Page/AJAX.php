@@ -236,6 +236,21 @@ class CRM_Admin_Page_AJAX
         CRM_Utils_System::civiExit( );
     }
     
+    static function mergeTagList( ) {
+        $name   = CRM_Utils_Type::escape( $_GET['s'], 'String' );
+        $fromId = CRM_Utils_Type::escape( $_GET['fromId'], 'Integer' );
+        
+        $tags   = array( );
+        $query  = "SELECT id, name FROM civicrm_tag WHERE id <> {$fromId} AND name LIKE '%{$name}%'";
+        $dao    = CRM_Core_DAO::executeQuery( $query );
+        
+        while( $dao->fetch( ) ) {
+            echo $element = addcslashes($dao->name, '"') . "|{$dao->id}\n";
+        }
+        
+        CRM_Utils_System::civiExit( );
+    }
+
     static function processTags( ) {
         $skipTagCreate = $skipEntityAction = $entityId = null;
         $action           = CRM_Utils_Type::escape( $_POST['action'], 'String' );
