@@ -379,7 +379,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                 if ( ($this->_mode & self::MODE_EDIT) && $this->_isContactActivityProfile ) {
                     $errors = self::validateContactActivityProfile($this->_activityId, $this->_id, $this->_gid);
                     if ( !empty($errors) ) {
-                        $statusMessage = ts( array_pop($errors) );
+                        $statusMessage = array_pop($errors);
                         $return = true;
                     }
                 } else { 
@@ -896,12 +896,12 @@ class CRM_Profile_Form extends CRM_Core_Form
             }
         }
 
+        //array of group id, subscribed by contact
+        $contactGroup = array( );
         if ( $config->profileDoubleOptIn && CRM_Utils_Array::value( 'group', $params ) ) {
            $groupSubscribed = array( );
             if ( CRM_Utils_Array::value( 'email' , $result ) ) {
                 require_once 'CRM/Contact/DAO/Group.php';
-                //array of group id, subscribed by contact
-                $contactGroup = array( );
                 if( $this->_id ) {
                     $contactGroups = new CRM_Contact_DAO_GroupContact();
                     $contactGroups->contact_id = $this->_id;
@@ -939,14 +939,40 @@ class CRM_Profile_Form extends CRM_Core_Form
         if ( CRM_Utils_Array::value( 'add_to_group', $params ) ) {
             $addToGroupId = $params['add_to_group'];
 
-            if ( !$config->profileAddToGroupDoubleOptIn ) {   
+            //run same check whether group is a mailing list
+            $groupTypes = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group',
+                                                       $addToGroupId, 'group_type', 'id' );
+            $groupType = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                  substr( $groupTypes, 1, -1 ) );
+            //filter group of mailing type and unset it from params
+            if ( in_array( 2, $groupType ) && $config->profileAddToGroupDoubleOptIn && CRM_Utils_Array::value( 'email' , $result ) ) {
+                if ( !count($contactGroup) ) {
+                    require_once 'CRM/Contact/DAO/Group.php';
+                    //array of group id, subscribed by contact
+                    $contactGroup = array( );
+                    if( $this->_id ) {
+                        $contactGroups = new CRM_Contact_DAO_GroupContact();
+                        $contactGroups->contact_id = $this->_id;
+                        $contactGroups->status     = 'Added';
+                        $contactGroups->find();
+                        $contactGroup = array();
+                        while( $contactGroups->fetch() ) { 
+                            $contactGroup[] = $contactGroups->group_id;
+                            $groupSubscribed[$contactGroups->group_id] = 1;
+                        }
+                    }
+                }
+                //if group is already subscribed , ignore it 
+                $groupExist = CRM_Utils_Array::key( $addToGroupId, $contactGroup );
+                if ( ! isset( $groupExist ) ) {
+                    $mailingType[] = $addToGroupId;
+                    $addToGroupId = null;
+                }
+            } else {   
                 // since we are directly adding contact to group lets unset it from mailing
                 if ( $key = array_search( $addToGroupId, $mailingType ) ) {
                     unset( $mailingType[$key] );
                 }
-            } else {
-                $mailingType[] = $addToGroupId;
-                $addToGroupId = null;
             }            
         }
         

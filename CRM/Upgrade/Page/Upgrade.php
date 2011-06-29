@@ -527,8 +527,10 @@ SELECT  count( id ) as statusCount
 
     function setPreUpgradeMessage ( &$preUpgradeMessage, $currentVer, $latestVer ) 
     {
-        if ( version_compare($currentVer, '3.3.alpha1') <  0  &&
-             version_compare($latestVer,  '3.3.alpha1') >= 0  ) {
+        if ( ( version_compare($currentVer, '3.3.alpha1') <  0  &&
+               version_compare($latestVer,  '3.3.alpha1') >= 0 ) ||
+             ( version_compare($currentVer, '3.4.alpha1') <  0  &&
+               version_compare($latestVer,  '3.4.alpha1') >= 0 ) ) {
             $query = "
 SELECT  id 
   FROM  civicrm_mailing_job 

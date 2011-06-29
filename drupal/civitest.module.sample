@@ -606,9 +606,7 @@ function civitest_civicrm_eventDiscount( &$form, &$params ) {
 function civitest_civicrm_buildForm( $formName, &$form ) {
 
     if ( $formName == 'CRM_Contact_Form_Contact' ) {
-        $defaultDate = array( );
-        CRM_Utils_Date::getAllDefaultValues( $defaultDate );
-        $defaults['custom_3_-1'] = $defaultDate;
+        $defaults['custom_3_-1'] = date('m/d/Y');
         $form->setDefaults( $defaults );
     }
 

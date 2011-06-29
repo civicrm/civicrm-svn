@@ -59,14 +59,13 @@ function civicrm_api3_event_create( $params )
 {
     try {
     civicrm_api3_verify_mandatory ($params,'CRM_Event_DAO_Event',array ('start_date','event_type_id','title'));
-    $params['start_date'] = CRM_Utils_Date::processDate( $params['start_date'] );
-    $params['end_date'] = CRM_Utils_Date::processDate( $params['end_date'] );
    
     //format custom fields so they can be added
     $value = array();
     _civicrm_api3_custom_format_params( $params, $values, 'Event' );
     $params = array_merge($values,$params);
     require_once 'CRM/Event/BAO/Event.php';
+
     $eventBAO = CRM_Event_BAO_Event::create($params);
 
     if ( is_a( $eventBAO, 'CRM_Core_Error' ) ) {

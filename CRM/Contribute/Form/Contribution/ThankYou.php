@@ -149,9 +149,17 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
 
         $this->buildCustom( $this->_values['custom_pre_id'] , 'customPre' , true );
         $this->buildCustom( $this->_values['custom_post_id'], 'customPost', true );
-        if ( CRM_Utils_Array::value( 'is_for_organization', $params ) ) {
+        if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $params ) ) {
             $profileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'on_behalf_organization', 'id', 'name' );
-            $this->buildCustom( $profileId, 'onbehalfProfile', true, true );
+
+            $fieldTypes = array( 'Contact', 'Organization' );
+            if ( is_array( $this->_membershipBlock ) && !empty( $this->_membershipBlock ) ) {
+                $fieldTypes = array_merge( $fieldTypes, array( 'Membership' ) );
+            } else {
+                $fieldTypes = array_merge( $fieldTypes, array( 'Contribution' ) );
+            }
+
+            $this->buildCustom( $profileId, 'onbehalfProfile', true, true, $fieldTypes );
         }
 
         $this->assign( 'trxn_id', 

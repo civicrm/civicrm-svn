@@ -230,7 +230,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                          'version'				=> $this->_apiversion,
                          );
         
-        $result = & civicrm_api3_relationship_create( $params );
+        $result = & civicrm_api('relationship','create', $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'in line ' . __LINE__ );
         $this->assertNotNull( $result['id'],'in line ' . __LINE__ );   
@@ -240,10 +240,52 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
 
         // assertDBState compares expected values in $result to actual values in the DB          
         $this->assertDBState( 'CRM_Contact_DAO_Relationship', $result['id'], $relationParams ); 
-        
+        $result = &  civicrm_api('relationship','get', array('version' => 3, 'id' => $result['id']));
+        $values = $result['values'][$result['id']];
+        foreach($params as $key => $value){
+          if($key == 'version' || $key == 'note')continue;
+          $this->assertEquals($value, $values[$key],$key . " doesn't match " . print_r($values,true) . 'in line' . __LINE__);        
+          
+        }
         $params['id'] = $result['values']['id'] ; 
-        $result = & civicrm_api3_relationship_delete( $params );
+        civicrm_api3_relationship_delete( $params );
     }
+    /**
+     * check relationship creation
+     */
+    function testRelationshipCreateEmptyEndDate( )
+    {
+        $params = array( 'contact_id_a'         => $this->_cId_a,
+                         'contact_id_b'         => $this->_cId_b,
+                         'relationship_type_id' => $this->_relTypeID,
+                         'start_date'           => '2010-10-30',
+                         'end_date'             => '',
+                         'is_active'            => 1,
+                         'note'                 => 'note',
+                         'version'				=> $this->_apiversion,
+                         );
+        
+        $result = & civicrm_api('relationship','create', $params );
+
+        $this->assertEquals( 0, $result['is_error'], 'in line ' . __LINE__ );
+        $this->assertNotNull( $result['id'],'in line ' . __LINE__ );   
+        $relationParams = array(
+                                'id' => $result['id'],
+                                );
+
+        // assertDBState compares expected values in $result to actual values in the DB          
+        $this->assertDBState( 'CRM_Contact_DAO_Relationship', $result['id'], $relationParams ); 
+        $result = &  civicrm_api('relationship','get', array('version' => 3, 'id' => $result['id']));
+        $values = $result['values'][$result['id']];
+        foreach($params as $key => $value){
+          if($key == 'version' || $key == 'note')continue;
+          $this->assertEquals($value, $values[$key],$key . " doesn't match " . print_r($values,true) . 'in line' . __LINE__);        
+          
+        }
+        $params['id'] = $result['values']['id'] ; 
+        civicrm_api3_relationship_delete( $params );
+    } 
+
     
     /**
      * check relationship creation with custom data
@@ -484,9 +526,9 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
     function testRelationshipUpdateEmpty( )
     {
         $params = array( );
-        $result =& civicrm_api3_relationship_update( $params );
+        $result =& civicrm_api3_relationship_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( 'Mandatory key(s) missing from params array: contact_id_a, contact_id_b, relationship_type_id, relationship_id, version', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: contact_id_a, contact_id_b, relationship_type_id, contact_id_a, contact_id_b, one of (relationship_type_id, relationship_type), version', $result['error_message'], 'In line ' . __LINE__ );
     }
     
     /**
@@ -495,7 +537,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
     function testRelationshipUpdateParamsNotArray( )
     {
         $params = 'relationship_type_id = 5';                            
-        $result =& civicrm_api3_relationship_update( $params );
+        $result =& civicrm_api3_relationship_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( 'Input variable `params` is not an array', $result['error_message'], 'In line ' . __LINE__ );
     }
@@ -511,12 +553,12 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                         'start_date' => array('d'=>'10','M'=>'1','Y'=>'2008'),
                         'end_date'   => array('d'=>'10','M'=>'1','Y'=>'2009'),
                         'is_active'  => 1,
-                        'version'							=> $this->_apiversion,
+                        'version'	 => $this->_apiversion,
                         );
         
-        $result =& civicrm_api3_relationship_update( $params );
+        $result =& civicrm_api3_relationship_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( 'Mandatory key(s) missing from params array: contact_id_a, relationship_id', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: contact_id_a, contact_id_a', $result['error_message'], 'In line ' . __LINE__ );
     }  
    
     /**

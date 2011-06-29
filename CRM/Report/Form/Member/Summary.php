@@ -69,9 +69,19 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                          
                          'filters'     =>             
                          array( 'join_date' =>
-                                array('title'         => 'Member Since',
+                                array('title'         => ts('Member Since'),
                                       'type'          => CRM_Utils_Type::T_DATE,
                                       'operatorType'  => CRM_Report_Form::OP_DATE ),
+                                'membership_start_date' =>
+                                array('name'         => 'start_date',
+                                      'title'        => ts('Membership Start Date'),
+                                      'type'         => CRM_Utils_Type::T_DATE,
+                                      'operatorType' => CRM_Report_Form::OP_DATE ),
+                                'membership_end_date' =>
+                                array('name'         => 'end_date',
+                                      'title'        => ts('Membership End Date'),
+                                      'type'         => CRM_Utils_Type::T_DATE,
+                                      'operatorType' => CRM_Report_Form::OP_DATE ),
                                 'membership_type_id'  =>
                                 array('title'         => ts('Membership Type'),
                                       'operatorType'  => CRM_Report_Form::OP_MULTISELECT,
@@ -119,7 +129,8 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                                 ),
                          'filters'       => 
                          array( 'contribution_status_id' => 
-                                array( 'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                array( 'title'        => ts('Contribution Status'),
+                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                        'options'      => CRM_Contribute_PseudoConstant::contributionStatus( ),
                                        ),
                                 ),

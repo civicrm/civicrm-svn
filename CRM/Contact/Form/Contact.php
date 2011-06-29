@@ -895,7 +895,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 $contactGroupList =& CRM_Contact_BAO_GroupContact::getContactGroup( $params['contact_id'], 'Added' );
                 if ( is_array($contactGroupList) ) {
                     foreach ( $contactGroupList as $key ) {
-                        if ( $params['group'][$key['group_id']] != 1 ) {
+                        if ( $params['group'][$key['group_id']] != 1 &&
+                             !CRM_Utils_Array::value( 'is_hidden', $key ) ) {
                             $params['group'][$key['group_id']] = -1;
                         }
                     }

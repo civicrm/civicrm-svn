@@ -1,36 +1,36 @@
 <?php
 
-/*
- +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
- +--------------------------------------------------------------------+
- | This file is a part of CiviCRM.                                    |
- |                                                                    |
- | CiviCRM is free software; you can copy, modify, and distribute it  |
- | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
- |                                                                    |
- | CiviCRM is distributed in the hope that it will be useful, but     |
- | WITHOUT ANY WARRANTY; without even the implied warranty of         |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
- | See the GNU Affero General Public License for more details.        |
- |                                                                    |
- | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
- | at info[AT]civicrm[DOT]org. If you have questions about the        |
- | GNU Affero General Public License or the licensing of CiviCRM,     |
- | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +--------------------------------------------------------------------+
-*/
+  /*
+   +--------------------------------------------------------------------+
+   | CiviCRM version 3.4                                                |
+   +--------------------------------------------------------------------+
+   | Copyright CiviCRM LLC (c) 2004-2011                                |
+   +--------------------------------------------------------------------+
+   | This file is a part of CiviCRM.                                    |
+   |                                                                    |
+   | CiviCRM is free software; you can copy, modify, and distribute it  |
+   | under the terms of the GNU Affero General Public License           |
+   | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+   |                                                                    |
+   | CiviCRM is distributed in the hope that it will be useful, but     |
+   | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+   | See the GNU Affero General Public License for more details.        |
+   |                                                                    |
+   | You should have received a copy of the GNU Affero General Public   |
+   | License along with this program; if not, contact CiviCRM LLC       |
+   | at info[AT]civicrm[DOT]org. If you have questions about the        |
+   | GNU Affero General Public License or the licensing of CiviCRM,     |
+   | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+   +--------------------------------------------------------------------+
+  */
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 
 
- 
-class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
 
+class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
+    
     protected function setUp()
     {
         parent::setUp();
@@ -45,7 +45,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         
         // Log in using webtestLogin() method
         $this->webtestLogin();
-      
+        
         // Go directly to the URL of the screen that you will be testing (New Event).
         $this->open($this->sboxPath . "civicrm/event/add&reset=1&action=add");
         
@@ -65,14 +65,21 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         $subject     = "$eventTitle Tell A Friend";
         $thankYouMsg = "$eventTitle Tell A Friend Test Thankyou Message";
         $this->_testAddTellAFriend( $subject, $thankYouMsg, $eventTitle );
-        
+                
         // get the url for registration
         $this->waitForElementPresent( "xpath=//div[@id='event_status_id']//div[@class='dataTables_wrapper']/table/tbody//tr/td[1]/a[text()='$eventTitle']" );
-        $this->click("link=$eventTitle");
-        $this->waitForElementPresent("link=Register Now");
-        $this->click("link=Register Now");
-        $this->waitForElementPresent("_qf_Register_upload-bottom");
+        $this->click( "link=$eventTitle" );
+        $this->waitForElementPresent( "link=Register Now" );
+        $this->click( "link=Register Now" );
+        $this->waitForElementPresent( "_qf_Register_upload-bottom" );
         $registerUrl = $this->getLocation( );
+        
+        // give permissions for event registration
+        $this->open( $this->sboxPath . "admin/user/permissions" );
+        $this->waitForElementPresent( 'edit-submit' ); 
+        $this->check( "edit-1-register-for-events" );
+        $this->click( "edit-submit" );
+        $this->waitForPageToLoad( '30000' );
         
         // register as an anonymous user
         $this->open( $this->sboxPath . "civicrm/logout&reset=1" );
@@ -82,7 +89,6 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         
         $firstName = substr(sha1(rand()), 0, 7);
         $this->type( 'email-5', "$firstName@Anderson.com" );
-        
         $this->click( '_qf_Register_upload-bottom' );
         $this->waitForPageToLoad('30000');
         $this->click( "css=div.crm-event-thankyou-form-block div#tell-a-friend a" );
@@ -112,18 +118,43 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         $this->click( '_qf_Form_submit' );
         $this->waitForPageToLoad('30000');
         $this->assertTrue( $this->isTextPresent( $thankYouMsg ) );
-
+        
         // Log in using webtestLogin() method
         $this->open( $this->sboxPath );
         $this->webtestLogin();
-
+        
+        // get all friends contact id
+        $this->open($this->sboxPath . "civicrm/contact/search?reset=1" );
+        $this->waitForElementPresent( '_qf_Basic_refresh ' );
+        $this->type( 'sort_name', $firstName1 );
+        $this->click( '_qf_Basic_refresh ' );
+        $this->waitForPageToLoad( '30000' );
+        $this->click ( "xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']" );
+        $this->waitForPageToLoad( '30000' );
+                
+        $this->open($this->sboxPath . "civicrm/contact/search?reset=1" );
+        $this->waitForElementPresent( '_qf_Basic_refresh ' );
+        $this->type( 'sort_name', $firstName2 );
+        $this->click( '_qf_Basic_refresh ' );
+        $this->waitForPageToLoad( '30000' );
+        $this->click ( "xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']" );
+        $this->waitForPageToLoad( '30000' );
+                
+        $this->open($this->sboxPath . "civicrm/contact/search?reset=1" );
+        $this->waitForElementPresent( '_qf_Basic_refresh ' );
+        $this->type( 'sort_name', $firstName3 );
+        $this->click( '_qf_Basic_refresh ' );
+        $this->waitForPageToLoad( '30000' );
+        $this->click ( "xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']" );
+        $this->waitForPageToLoad( '30000' );
+                
         $this->open($this->sboxPath . "civicrm/contact/search?reset=1" );
         $this->waitForElementPresent( '_qf_Basic_refresh ' );
         $this->type( 'sort_name', $firstName );
         $this->click( '_qf_Basic_refresh ' );
         $this->waitForElementPresent( 'Print' );
         $this->assertTrue( $this->isTextPresent( '1 Contact' ) );
-
+        
         // Verify Activity created
         $this->open( $this->sboxPath . "civicrm/activity/search?reset=1" );
         $this->waitForElementPresent( '_qf_Search_refresh' );
@@ -132,15 +163,17 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent( "_qf_Search_next_print" );
         $this->click ( "xpath=//div[@class='crm-search-results']//table[@class='selector']/tbody/tr[2]/td[9]/span/a[text()='View']" );
         $this->waitForElementPresent( '_qf_Activity_cancel-bottom' );
-
+       
         $this->verifyText( "xpath=//table[@class='crm-info-panel']/tbody/tr[1]/td[2]", 
                            preg_quote( "$firstName@Anderson.com" ) );
+        
         $this->verifyText( "xpath=//table[@class='crm-info-panel']/tbody/tr[2]/td[2]/a[1]", 
                            preg_quote( "$lastName1, $firstName1" ) );
         $this->verifyText( "xpath=//table[@class='crm-info-panel']/tbody/tr[2]/td[2]/a[2]", 
                            preg_quote( "$lastName2, $firstName2" ) );
         $this->verifyText( "xpath=//table[@class='crm-info-panel']/tbody/tr[2]/td[2]/a[3]", 
                            preg_quote( "$lastName3, $firstName3" ) );
+             
         $this->verifyText( "xpath=//table[@class='crm-info-panel']/tbody/tr[4]/td[2]", 
                            preg_quote( "Tell a Friend:" ) );
     }
@@ -194,7 +227,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad('30000');
         $this->waitForTextPresent("'Location' information has been saved.");
     }
-  
+    
     function _testAddOnlineRegistration($registerIntro, $multipleRegistrations=false)
     {
         // Go to Online Registration tab

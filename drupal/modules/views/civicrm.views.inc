@@ -2118,6 +2118,18 @@ function civicrm_views_data() {
                                                                 'handler' => 'views_handler_sort',
                                                                 ),
                                                 );
+    //Contact ID for relationship to contact record (brings in Contact custom fields)
+    $data['civicrm_contribution']['contact_id'] = array(
+                                                        'title'  => t('Contact Record ID'),
+                                                        'help' => 'Bring Contact Record the complete contact record to the party',
+                                                        'relationship' => array(
+                                                                  'base' => 'civicrm_contact',
+                                                                  'field' => 'id',
+                                                                  'handler' => 'views_handler_relationship',
+                                                                  'label' => t('CiviCRM Contact, with custom fields'),
+                                                                  ),
+                                                        
+                                                        );
     //Contribution Type
     $data['civicrm_contribution']['contribution_type'] = array(
                                                                'title' => t('Contribution Type'),
@@ -5912,8 +5924,7 @@ function civicrm_views_add_fields( &$fields, &$data, &$skipFields, $tableName ) 
                                       'argument' => array(
                                                           'handler' => civicrm_get_argument_handler ( $type ),
                                                           ),                                      
-                                      );
-        );
+                                     );
 
         // For date fields add in 6 arguments
         // not sure how its numeric here, but leaving it as is for now

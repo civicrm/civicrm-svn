@@ -322,8 +322,13 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         
         $activity = new CRM_Activity_DAO_Activity( );
 
+        if ( isset($params['id']) && empty($params['id']) ) {
+            unset( $params['id'] );
+        }
+
         if ( ! CRM_Utils_Array::value( 'status_id', $params ) && 
-             ! CRM_Utils_Array::value( 'activity_status_id', $params ) ) {
+             ! CRM_Utils_Array::value( 'activity_status_id', $params ) &&
+             ! CRM_Utils_Array::value( 'id', $params ) ) {
             if ( isset( $params['activity_date_time'] ) &&
                  strcmp( $params['activity_date_time'], CRM_Utils_Date::processDate( date('Ymd') ) == -1 ) ) {
                 $params['status_id'] = 2;
@@ -333,15 +338,13 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         }
         
         //set priority to Normal for Auto-populated activities (for Cases)
-        if ( CRM_Utils_Array::value( 'priority_id', $params ) === null ) { // if not set and not 0
+        if ( CRM_Utils_Array::value( 'priority_id', $params ) === null &&
+             ! CRM_Utils_Array::value( 'id', $params ) ) { // if not set and not 0
             require_once 'CRM/Core/PseudoConstant.php';
             $priority = CRM_Core_PseudoConstant::priority( );
             $params['priority_id'] = array_search( 'Normal', $priority );
         }
 
-        if ( empty( $params['id'] ) ) {
-            unset( $params['id'] );
-        }
         if ( !empty( $params['target_contact_id'] ) && is_array( $params['target_contact_id'] ) ) {
             $params['target_contact_id']   =  array_unique( $params['target_contact_id'] );
         }
@@ -384,15 +387,17 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                     self::deleteActivityAssignment( $activityId );
                 }
 
+                $values = array( );
                 foreach ( $params['assignee_contact_id'] as $acID ) {
                     if ( $acID ) {
-                        $assignmentParams['assignee_contact_id'] = $acID;
-                        $resultAssignment = CRM_Activity_BAO_ActivityAssignment::create( $assignmentParams );
-                        if( is_a( $resultAssignment, 'CRM_Core_Error' ) ) {
-                            $transaction->rollback( );
-                            return $resultAssignment;
-                        }
+                        $values[] = "( $activityId, $acID )";
                     }
+                }
+                while ( ! empty( $values ) ) {
+                    $input = array_splice( $values, 0, CRM_Core_DAO::BULK_INSERT_COUNT );
+                    $str   = implode( ',', $input );
+                    $sql = "INSERT INTO civicrm_activity_assignment ( activity_id, assignee_contact_id ) VALUES $str;";
+                    CRM_Core_DAO::executeQuery( $sql );
                 }
             } else {
                 $assignmentParams['assignee_contact_id'] = $params['assignee_contact_id'];
@@ -433,15 +438,18 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                     self::deleteActivityTarget( $activityId );
                 }
 
+                $values = array( );
                 foreach ( $params['target_contact_id'] as $tid ) {
                     if ( $tid ) {
-                        $targetParams['target_contact_id'] = $tid;
-                        $resultTarget = CRM_Activity_BAO_ActivityTarget::create( $targetParams );
-                        if ( is_a( $resultTarget, 'CRM_Core_Error' ) ) {
-                            $transaction->rollback( );
-                            return $resultTarget;
-                        }
+                        $values[] = "( $activityId, $tid )";
                     }
+                }
+
+                while ( ! empty( $values ) ) {
+                    $input = array_splice( $values, 0, CRM_Core_DAO::BULK_INSERT_COUNT );
+                    $str   = implode( ',', $input );
+                    $sql = "INSERT INTO civicrm_activity_target ( activity_id, target_contact_id ) VALUES $str;";
+                    CRM_Core_DAO::executeQuery( $sql );
                 }
             } else {
                 $targetParams['target_contact_id'] = $params['target_contact_id'];

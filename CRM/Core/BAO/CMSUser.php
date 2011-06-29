@@ -69,7 +69,7 @@ class CRM_Core_BAO_CMSUser
             $mail = 'email'; 
             $name = 'name';
         } else { 
-            CRM_Core_Error::fatal( "CMS user creation not supported for this framework" ); 
+            CRM_Core_Error::fatal( 'CMS user creation not supported for this framework' ); 
         } 
 
         set_time_limit(300);
@@ -87,7 +87,7 @@ class CRM_Core_BAO_CMSUser
             $user->$mail = $row[$mail];
             $user->$name = $row[$name];
             $contactCount++;
-            if ($match = CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user, $row[$id], $row[$mail], $uf, 1, null, true ) ) {
+            if ($match = CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user, $row[$id], $row[$mail], $uf, 1, 'Individual', true ) ) {
                 $contactCreated++;
             } else {
                 $contactMatching++;
@@ -261,7 +261,7 @@ class CRM_Core_BAO_CMSUser
     
             if ( $args ) {
                 // append destination so user is returned to form they came from after login
-                $destination = CRM_Utils_System::currentPath( ) . "?reset=1" . $args;
+                $destination = CRM_Utils_System::currentPath( ) . '?reset=1' . $args;
                 $loginUrl .= '?destination=' . urlencode( $destination );
              }
         }
@@ -385,7 +385,7 @@ class CRM_Core_BAO_CMSUser
             //regex \\ to match a single backslash would become '/\\\\/' 
             $isNotValid = (bool) preg_match('/[\<|\>|\"|\'|\%|\;|\(|\)|\&|\\\\|\/]/im', $name );
             if ( $isNotValid || strlen( $name ) < 2 ) {
-                $errors['cms_name'] = ts("Your username contains invalid characters or is too short");
+                $errors['cms_name'] = ts('Your username contains invalid characters or is too short');
             }
             $sql = "
 SELECT username, email
@@ -441,7 +441,7 @@ SELECT username, email
         } 
         
         if ( !$isDrupal && !$isJoomla ) { 
-            die( "Unknown user framework" ); 
+            die( 'Unknown user framework' ); 
         }
         
         if ( $isDrupal ) { 

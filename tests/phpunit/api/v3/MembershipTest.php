@@ -405,10 +405,9 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                         'status_id'          => $this->_membershipStatusID ,                      
                         'version'				    => $this->_apiversion,                        );
 
-        $result = civicrm_api3_membership_create( $params );
+        $result = civicrm_api('membership','create', $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        civicrm_api('Membership','Delete',array('id'=>   $result['id'] ,
-         																						'version'  => $this->_apiversion,)); 
+        $this->getAndCheck($params,$result ['id'],$this->_entity);
         $this->assertEquals( $result['is_error'], 0 );
         $this->assertNotNull( $result['id'] );
         $this->assertEquals($this->_contactID,$result['values'][$result['id']]['contact_id']," in line " . __LINE__ );
@@ -624,7 +623,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         //invalid join date
         unset( $params['membership_contact_id'] );
         $params['join_date'] = "invalid";
-        $result = civicrm_api3_membership_create( $params );
+        $result = civicrm_api('Membership','Create', $params );
         $this->assertEquals( $result['is_error'], 1 , "in line " . __LINE__);
     }
     
@@ -657,26 +656,4 @@ class api_v3_MembershipTest extends CiviUnitTestCase
     ///////////////// civicrm_membership_delete methods
 
 
-    ///////////////// _civicrm_membership_format_params with $create 
- 
-    function testMemebershipFormatParamsWithCreate( ) 
-    {
-        $params = array(
-                        'contact_id'            => $this->_contactID,  
-                        'membership_type_id'    => $this->_membershipTypeID,
-                        'join_date'             => '2006-01-21',
-                        'membership_start_date' => '2006-01-21',
-                        'membership_end_date'   => '2006-12-21',
-                        'source'                => 'Payment',
-                        'is_override'           => 1,
-                        'status_id'             => $this->_membershipStatusID ,
-                        'version'				=> $this->_apiversion,                      
-                        );
-
-        $values = array( );
-        _civicrm_api3_membership_format_params( $params , $values, true);
-        
-        $this->assertEquals( $values['start_date'], '20060121' );
-        $this->assertEquals( $values['end_date'], '20061221' );
-    }
 }

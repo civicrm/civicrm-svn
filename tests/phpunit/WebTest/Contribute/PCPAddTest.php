@@ -39,6 +39,27 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
     
     function testPCPAdd()
     {
+        // open browser, login
+        $this->open($this->sboxPath);
+        $this->webtestLogin();
+
+        // set domain values
+        $firstName  = 'Ma'.substr( sha1( rand( ) ), 0, 4 );
+        $lastName   = 'An'.substr( sha1( rand( ) ), 0, 7 );
+        $middleName = 'Mid'.substr( sha1( rand( ) ), 0, 7 );
+        $email = substr(sha1(rand()), 0, 7) . '@example.org';
+
+        $this->open( $this->sboxPath . 'civicrm/admin/domain?action=update&reset=1' );
+        $this->waitForElementPresent( '_qf_Domain_cancel-bottom' );
+
+        $this->type( 'email_name', $firstName );
+        $this->type( 'email_address', $email );
+
+        $this->click( '_qf_Domain_next_view-bottom' );
+        $this->waitForPageToLoad( '30000' );
+        $this->assertTrue( $this->isTextPresent( "Domain information for 'Default Domain Name' has been saved." ),
+                           "Status message didn't show up after saving!" );
+        
         require_once 'ContributionPageAddTest.php';
         
         // a random 7-char string and an even number to make this pass unique
@@ -60,10 +81,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
         $widget = false;
         $pcp = true;
         $isAprovalNeeded = true;
-        // open browser, login
-        $this->open($this->sboxPath);
-        $this->webtestLogin();
-        
+                
         // create a new online contribution page with pcp enabled
         // create contribution page with randomized title and default params
         $pageId = $this->webtestAddContributionPage( $hash, 
@@ -93,11 +111,6 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
         
         $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=" . $pageId);
         $this->waitForElementPresent( "_qf_Main_upload-bottom" );
-        
-        $firstName  = 'Ma'.substr( sha1( rand( ) ), 0, 4 );
-        $lastName   = 'An'.substr( sha1( rand( ) ), 0, 7 );
-        $middleName = 'Mid'.substr( sha1( rand( ) ), 0, 7 );
-        $email = substr(sha1(rand()), 0, 7) . '@example.org';
         
         $this->click("amount_other");
         $this->type("amount_other", $contributionAmount);
@@ -187,13 +200,14 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent( "_qf_ContributionView_cancel-bottom" );
         
         //View Contribution Record
-        $expected = array( 3  => 'Donation',  
+        $expected = array( 2  => 'Donation',  
                            3  => $contributionAmount, 
                            7  => 'Completed', 
                            1  => "{$firstName} {$lastName}" 
                            ); 
         foreach ( $expected as  $value => $label ) { 
-            $this->verifyText( "xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote( $label ) ); 
+            $this->verifyText( "xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$value]/td[2]", 
+                               preg_quote( $label ) ); 
         }
         
         //Check for SoftCredit

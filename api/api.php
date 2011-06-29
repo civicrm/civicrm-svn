@@ -128,11 +128,15 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
             $p = array_merge ( $existing,$params );
             return civicrm_api ($entity, 'create',$p);
             break;
+            
+        // case "replace":
+        //    return _civicrm_api3_generic_replace($entity, $params);
         
         default:
             return $errorFnName( "API ($entity,$action) does not exist (join the API team and implement $function" );
         }
      }else{
+       _civicrm_api3_validate_fields($entity,$action,$params);
        $result = isset($extra) ? $function($params, $extra) : $function($params);
      }
      if(CRM_Utils_Array::value('format.is_success', $params) == 1){
@@ -157,42 +161,38 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
   }
 }
 
-function civicrm_api_get_function_name($entity, $action,$version = NULL) {
-    static $_map;
-    if (!isset($_map)) {
-        $_map = array();
-        if(empty($version)){
-            $version = civicrm_get_api_version();
-        }
+function civicrm_api_get_function_name( $entity, $action, $version = NULL ) 
+{
+    static $_map = null;
 
-        if ($version === 2) {
-            $_map['event']['get'] = 'civicrm_event_search';
-            $_map['group_roles']['create'] = 'civicrm_group_roles_add_role';
-            $_map['group_contact']['create'] = 'civicrm_group_contact_add';
-            $_map['group_contact']['delete'] = 'civicrm_group_contact_remove';
-            $_map['entity_tag']['create'] = 'civicrm_entity_tag_add';
-            $_map['entity_tag']['delete'] = 'civicrm_entity_tag_remove';
-            $_map['group']['create'] = 'civicrm_group_add';
-            $_map['contact']['create'] = 'civicrm_contact_add';
-            $_map['relationship_type']['get'] = 'civicrm_relationship_types_get';
-            $_map['uf_join']['create'] = 'civicrm_uf_join_add';
-            if (isset($_map[$entity][$action])) {
-                return $_map[$entity][$action];
+    if( empty( $version ) ){
+            $version = civicrm_get_api_version();
+    }
+
+    if ( !isset( $_map[$version] ) ) {
+        
+        if ( $version === 2 ) {
+            $_map[$version]['event']['get'] = 'civicrm_event_search';
+            $_map[$version]['group_roles']['create'] = 'civicrm_group_roles_add_role';
+            $_map[$version]['group_contact']['create'] = 'civicrm_group_contact_add';
+            $_map[$version]['group_contact']['delete'] = 'civicrm_group_contact_remove';
+            $_map[$version]['entity_tag']['create'] = 'civicrm_entity_tag_add';
+            $_map[$version]['entity_tag']['delete'] = 'civicrm_entity_tag_remove';
+            $_map[$version]['group']['create'] = 'civicrm_group_add';
+            $_map[$version]['contact']['create'] = 'civicrm_contact_add';
+            $_map[$version]['relationship_type']['get'] = 'civicrm_relationship_types_get';
+            $_map[$version] ['uf_join']['create'] = 'civicrm_uf_join_add';
+
+            if ( isset( $_map[$version][$entity][$action] ) ) {
+                return $_map[$version][$entity][$action];
             }
         }
     }
-    if ($entity == strtolower ($entity) ) {
-      $function = '_'.$entity;
-    } else {
-      $function = strtolower(str_replace('U_F',
-                                       'uf', 
-                                       // That's CamelCase, beside an odd UFCamel that is expected as uf_camel
-                                       preg_replace('/(?=[A-Z])/','_$0', $entity)));
-    }
+    $entity = _civicrm_api_get_entity_name_from_camel($entity);
     if ( $version === 2 ) {
-        return 'civicrm'. $function .'_'. $action;
+        return 'civicrm' . '_' .$entity  . '_' . $action;
     } else {
-        return 'civicrm_api3'. $function .'_'. $action;
+        return 'civicrm_api3' . '_' .$entity . '_' . $action;
     }
 }
 
@@ -244,45 +244,52 @@ function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
         }
         $file = $apiPath . $file;
     }
-    require_once $file;
+
+    if(file_exists(dirname(__FILE__). DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR .  $file) ){
+       require_once $file;
+    }
+    
 }
 
 
-function civicrm_api_get_camel_name($entity,$version = NULL) {
-    static $_map = NULL;
-    if (!isset($_map)) {
-        $_map = array();
-        $_map['utils'] = 'utils';
-        if(empty($version)){
-            $version = civicrm_get_api_version();
-        }
-        if ($version === 2) {
+function civicrm_api_get_camel_name( $entity, $version = NULL ) 
+{
+    static $_map = null;
+
+    if ( empty( $version ) ) {
+        $version = civicrm_get_api_version( );
+    }
+
+    if ( !isset( $_map[$version] ) ) {
+        $_map[$version]['utils'] = 'utils';
+        if ( $version === 2 ) {
             // TODO: Check if $_map needs to contain anything.
-            $_map['contribution'] = 'Contribute';
-            $_map['custom_field'] = 'CustomGroup';
-        }
-        else {
+            $_map[$version]['contribution'] = 'Contribute';
+            $_map[$version]['custom_field'] = 'CustomGroup';
+        } else {
             // assume $version == 3.
         }
     }
-    if (isset($_map[strtolower($entity)])) {
-        return $_map[strtolower($entity)];
+    if ( isset( $_map[$version][strtolower( $entity )] ) ) {
+        return $_map[$version][strtolower( $entity )];
     }
-    $fragments = explode('_', $entity);
-    foreach ($fragments as &$fragment) {
-        $fragment = ucfirst($fragment);
+
+    $fragments = explode( '_', $entity );
+    foreach ( $fragments as &$fragment ) {
+        $fragment = ucfirst( $fragment );
     }
     // Special case: UFGroup, UFJoin, UFMatch, UFField
-    if ($fragments[0] === 'Uf') {
+    if ( $fragments[0] === 'Uf' ) {
         $fragments[0] = 'UF';
     }
-    return implode('', $fragments);
+    return implode( '', $fragments );
 }
 
 /*
  * Call any nested api calls
  */
 function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$version){
+  $entity = _civicrm_api_get_entity_name_from_camel($entity);
         foreach($params as $field => $newparams){          
             if (substr($field,0, 3) == 'api' && (is_array($newparams) || $newparams === 1) ){
               
@@ -305,7 +312,7 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$versi
                   //contact spits the dummy at activity_id so what else won't it like?
                   $subParams["entity_id"] = $result['id'];
                   $subParams[strtolower($entity) . "_id"] = $result['id'];
-                  $subParams['entity_table'] = $entity;
+                  $subParams['entity_table'] = civicrm_api_get_camel_name($entity);
                 }
                
                 if(CRM_Utils_Array::value('entity_table',$result['values'][$idIndex ]) == $subAPI[1] ) {
@@ -411,4 +418,21 @@ function _civicrm_api_get_results_id_index(&$params,&$result){
       }else{
         return $result['id'];
        }
+}
+
+/*
+ * Convert possibly camel name to underscore separated entity name
+ * @param string $entity entity name in various formats e.g. Contribution, contribution, OptionValue, option_value, UFJoin, uf_join
+ * @return string $entity entity name in underscore separated format
+ */
+function _civicrm_api_get_entity_name_from_camel($entity){
+    if ( $entity == strtolower( $entity ) ) {
+      $entity =  $entity;
+    } else {
+      $entity = substr(strtolower( str_replace( 'U_F',
+                                           'uf', 
+                                           // That's CamelCase, beside an odd UFCamel that is expected as uf_camel
+                                           preg_replace( '/(?=[A-Z])/', '_$0', $entity ) ) ),1);
+    }
+    return $entity;
 }

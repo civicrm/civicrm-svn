@@ -300,18 +300,7 @@ function _civicrm_api3_membership_format_params( $params, &$values, $create=fals
         $values['contact_id'] = $values['membership_contact_id'];
         unset($values['membership_contact_id']);
         break;
-      case 'join_date':
-      case 'start_date':
-      case 'end_date':    
-      case 'membership_start_date':
-      case 'membership_end_date':
-        if (!CRM_Utils_Rule::date($value)) {
-          return civicrm_api3_create_error("$key not a valid date: $value");
-        }
 
-        // make sure we format dates to mysql friendly format 
-        $values[$key] = CRM_Utils_Date::processDate( $value, null, false, 'Ymd' );
-        break;
       case 'membership_type_id':
         if ( !CRM_Utils_Array::value( $value, CRM_Member_PseudoConstant::membershipType( ) ) ) {
           return civicrm_api3_create_error( 'Invalid Membership Type Id' );

@@ -16,8 +16,7 @@ if (isset($_GET['qid'])) {
 }
 $url_id = CRM_Utils_Array::value( 'u', $_GET );
 
-if ( ! $queue_id ||
-     ! $url_id ) {
+if ( ! $url_id ) {
     echo "Missing input parameters\n";
     exit( );
 }

@@ -356,6 +356,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
                     civicrm_group.visibility as visibility,
                     civicrm_group_contact.status as status, 
                     civicrm_group.id as group_id,
+                    civicrm_group.is_hidden as is_hidden,
                     civicrm_subscription_history.date as date,
                     civicrm_subscription_history.method as method';
         }
@@ -409,6 +410,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
                 $values[$id]['group_id']       = $dao->group_id;
                 $values[$id]['title']          = $dao->group_title;
                 $values[$id]['visibility']     = $dao->visibility;
+                $values[$id]['is_hidden']      = $dao->is_hidden;
                 switch($dao->status) { 
                 case 'Added': 
                     $prefix = 'in_'; 

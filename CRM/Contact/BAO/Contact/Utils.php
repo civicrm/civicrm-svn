@@ -33,7 +33,6 @@
  * $Id$
  *
  */
-require_once "CRM/Core/BAO/UFGroup.php";
 
 class CRM_Contact_BAO_Contact_Utils 
 {
@@ -88,11 +87,16 @@ class CRM_Contact_BAO_Contact_Utils
         }
         
         if ( $addProfileOverlay ) {
-            $summaryOverlayProfileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'summary_overlay', 'id', 'name' );
+            static $summaryOverlayProfileId = null;
+            if ( ! $summaryOverlayProfileId ) {
+                $summaryOverlayProfileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'summary_overlay', 'id', 'name' );
+            }
         
-            $profileURL = CRM_Utils_System::url('civicrm/profile/view', "reset=1&gid={$summaryOverlayProfileId}&id={$contactId}&snippet=4");
+            $profileURL = CRM_Utils_System::url('civicrm/profile/view',
+                                                "reset=1&gid={$summaryOverlayProfileId}&id={$contactId}&snippet=4");
         
-            $imageInfo[$contactType]['summary-link'] = '<a href="'.$profileURL.'" class="crm-summary-link">'.$imageInfo[$contactType]['image'].'</a>';
+            $imageInfo[$contactType]['summary-link'] = 
+                '<a href="'.$profileURL.'" class="crm-summary-link">'.$imageInfo[$contactType]['image'].'</a>';
         } else {
             $imageInfo[$contactType]['summary-link'] = $imageInfo[$contactType]['image'];
         }
@@ -133,15 +137,25 @@ WHERE  id IN ( $idString )
      * @param int    $contactID
      * @param int    $ts         timestamp that checksum was generated
      * @param int    $live       life of this checksum in hours/ 'inf' for infinite
-     *
+     * @param string $hash       contact hash, if sent, prevents a query in inner loop
      * @return array ( $cs, $ts, $live )
      * @static
      * @access public
      */
-    static function generateChecksum( $contactID, $ts = null, $live = null ) 
+    static function generateChecksum( $contactID, $ts = null, $live = null, $hash = null ) 
     {
-        $hash = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
-                                             $contactID, 'hash' );
+        // return an empty string if we dont get a contactID
+        // this typically happens when we do a message preview
+        // or an anon mailing view - CRM-8298
+        if ( ! $contactID ) {
+            return 'invalidChecksum';
+        }
+
+        if ( ! $hash ) {
+            $hash = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                                                 $contactID, 'hash' );
+        }
+
         if ( ! $hash ) {
             $hash = md5( uniqid( rand( ), true ) );
             CRM_Core_DAO::setFieldValue( 'CRM_Contact_DAO_Contact',
@@ -176,7 +190,9 @@ WHERE  id IN ( $idString )
      */
     static function validChecksum( $contactID, $inputCheck ) 
     {
-        $input =  explode( '_', $inputCheck );
+        require_once 'CRM/Utils/System.php';
+
+        $input =  CRM_Utils_System::explode( '_', $inputCheck, 3 );
         
         $inputCS = CRM_Utils_Array::value( 0,$input);
         $inputTS = CRM_Utils_Array::value( 1,$input);
@@ -461,6 +477,9 @@ WHERE id={$contactId}; ";
         $form->assign( 'contactEditMode' , $contactEditMode );
 
         $attributes = CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact');
+        if ( $form->_contactId ) {
+            $form->assign( 'orgId', $form->_contactId );
+        }
 
         switch ( $contactType ) {
         case 'Organization':
@@ -470,21 +489,12 @@ WHERE id={$contactId}; ";
             if ( $contactID ) {
                 require_once 'CRM/Contact/BAO/Relationship.php';
                 $employers = CRM_Contact_BAO_Relationship::getPermissionedEmployer( $contactID );
-                if ( count( $employers ) == 1 ) {
-                    foreach ( $employers as $id => $value ) {
-                        $form->_organizationName = $value['name'];
-                        $orgId = $id;
-                    }
-                    $form->assign( 'orgId', $orgId );
-                    $form->assign( 'organizationName', $form->_organizationName );
-                }
             }
 
+            $locDataURL = CRM_Utils_System::url( 'civicrm/ajax/permlocation', 'cid=', false, null, false );
+            $form->assign( 'locDataURL', $locDataURL );
+
             if ( !$contactEditMode && $contactID && ( count($employers) >= 1 ) ) {
-                
-                $locDataURL = CRM_Utils_System::url( 'civicrm/ajax/permlocation', 'cid=', 
-                                                     false, null, false );
-                $form->assign( 'locDataURL', $locDataURL );
                 
                 $dataURL = CRM_Utils_System::url( 'civicrm/ajax/employer', 
                                                   'cid=' . $contactID, 
@@ -493,22 +503,18 @@ WHERE id={$contactId}; ";
                 
                 $form->add('text', 'organization_id', ts('Select an existing related Organization OR Enter a new one') );
                 $form->add('hidden', 'onbehalfof_id', '', array( 'id' => 'onbehalfof_id' ) );
-                $orgOptions     = array( '1' => ts('Create new organization'), 
-                                         '0' => ts('Select existing organization') );
-                $form->addRadio( 'org_option', ts('options'),  $orgOptions );
+                $orgOptions     = array( '0' => ts('Create new organization'), 
+                                         '1' => ts('Select existing organization') );
+                $orgOptionExtra = array( 'onclick' => "showHideByValue('org_option','true','select_org','table-row','radio',true);showHideByValue('org_option','true','create_org','table-row','radio',false);");
+                $form->addRadio( 'org_option', ts('options'),  $orgOptions, $orgOptionExtra );
                 $form->assign( 'relatedOrganizationFound', true );
-                $form->add( 'checkbox', 'mode', '' );
             }
             
-            $profileId     = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 
-                                                          'on_behalf_organization', 'id', 'name' );
-            $form->assign( 'profileId', $profileId );
-            $profileFields = CRM_Core_BAO_UFGroup::getFields( $profileId, false, CRM_Core_Action::VIEW, null, null, false,
-                                                              null, false, null, CRM_Core_Permission::CREATE, null );
-            
-            foreach ( $profileFields as $name => $field ) {
-                CRM_Core_BAO_UFGroup::buildProfile( $form, $field, null, null, false, true );
+            $isRequired = false;
+            if ( CRM_Utils_Array::value( 'is_for_organization',  $form->_values ) == 2 ) {
+                $isRequired =  true;
             }
+            $form->add('text', 'organization_name', ts('Organization Name'), $attributes['organization_name'], $isRequired);
             break;
         case 'Household':
             $form->add('text', 'household_name', ts('Household Name'), 
@@ -529,34 +535,32 @@ WHERE id={$contactId}; ";
 
         }
 
-        if ( $contactType != 'Organization' ) {
-            $addressSequence = $config->addressSequence( );
-            $form->assign( 'addressSequence', array_fill_keys($addressSequence, 1) );
-            
-            //Primary Phone 
-            $form->addElement('text',
-                              'phone[1][phone]', 
-                              ts('Primary Phone'),
-                              CRM_Core_DAO::getAttribute('CRM_Core_DAO_Phone',
-                                                         'phone'));
-            //Primary Email
-            $form->addElement('text', 
-                              'email[1][email]',
-                              ts('Primary Email'),
-                              CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email',
-                                                         'email'));
-            //build the address block
-            require_once 'CRM/Contact/Form/Edit/Address.php';
-            CRM_Contact_Form_Edit_Address::buildQuickForm( $form );
-            
-            // also fix the state country selector
-            CRM_Contact_Form_Edit_Address::fixStateSelect( $form,
-                                                           'address[1][country_id]',
-                                                           'address[1][state_province_id]',
-                                                           "address[1][county_id]",
-                                                           $countryID,
-                                                           $stateID );
-        }
+        $addressSequence = $config->addressSequence( );
+        $form->assign( 'addressSequence', array_fill_keys($addressSequence, 1) );
+
+        //Primary Phone 
+        $form->addElement('text',
+                          'phone[1][phone]', 
+                          ts('Primary Phone'),
+                          CRM_Core_DAO::getAttribute('CRM_Core_DAO_Phone',
+                                                     'phone'));
+        //Primary Email
+        $form->addElement('text', 
+                          'email[1][email]',
+                          ts('Primary Email'),
+                          CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email',
+                                                     'email'));
+        //build the address block
+        require_once 'CRM/Contact/Form/Edit/Address.php';
+        CRM_Contact_Form_Edit_Address::buildQuickForm( $form );
+        
+        // also fix the state country selector
+        CRM_Contact_Form_Edit_Address::fixStateSelect( $form,
+                                                       'address[1][country_id]',
+                                                       'address[1][state_province_id]',
+                                                       "address[1][county_id]",
+                                                       $countryID,
+                                                       $stateID );
     }
 
     

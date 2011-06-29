@@ -20,7 +20,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
     function setUp()    {
        parent::setUp();
        
-       $this->toBeImplemented['get'] = array ('UFGroup','UFField','CustomGroup','ParticipantPayment');
+       $this->toBeImplemented['get'] = array ('ParticipantPayment', 'Profile','CustomValue','Website','Constant');
        $this->toBeImplemented['create'] = array ('SurveyRespondant','OptionGroup','UFMatch','LocationType');
        $this->toBeImplemented['delete'] = array ('MembershipPayment','OptionGroup','SurveyRespondant','UFJoin','UFMatch','LocationType');
        $this->onlyIDNonZeroCount['get'] = array( 'ActivityType', 'Entity', 'Domain' );
@@ -72,7 +72,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
 
 
     public static function toBeSkipped_create ($sequential = false) {
-      $entitiesWithoutCreate = array ('Mailing','MailingGroup','Constant','Entity','Location');
+        $entitiesWithoutCreate = array ('Mailing','MailingGroup','Constant','Entity','Location', 'Profile');
       if ($sequential === true) {
         return $entitiesWithoutCreate;
       }
@@ -84,7 +84,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
     }
 
     public static function toBeSkipped_delete ($sequential = false) {
-      $entitiesWithout = array ('Mailing','MailingGroup','Constant','Entity','Location','Domain');
+        $entitiesWithout = array ('Mailing','MailingGroup','Constant','Entity','Location','Domain', 'Profile', 'CustomValue');
       if ($sequential === true) {
         return $entitiesWithout;
       }

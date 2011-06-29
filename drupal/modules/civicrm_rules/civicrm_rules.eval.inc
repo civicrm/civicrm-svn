@@ -36,7 +36,7 @@ function civicrm_rules_rules_action_mailing_send_email( $to, $subject, $message,
 }
 
 function civicrm_rules_rules_action_contact_send_email( $to, $subject, $message, $from = NULL, $settings, RulesState $state, RulesPlugin $element ) {
-
+   
     require_once 'CRM/Contact/BAO/Contact.php';
     $to       = str_replace( array( "\r", "\n" ), ',', $to );
     $toEmails = explode( ',', $to );

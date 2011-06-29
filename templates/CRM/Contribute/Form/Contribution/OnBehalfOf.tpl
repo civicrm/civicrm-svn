@@ -26,32 +26,79 @@
 {* This file provides the HTML for the on-behalf-of form. Can also be used for related contact edit form. *}
 <div id='onBehalfOfOrg' class="crm-section"></div>
 
-{if $buildOnBehalfForm}
+{if $buildOnBehalfForm or $onBehalfRequired}
 <div id='onBehalfOfOrg' class="crm-section">
   <fieldset id="for_organization" class="for_organization-group">
   <legend>{$fieldSetTitle}</legend>
-  {if $relatedOrganizationFound and !$organizationName}
+  {if ( $relatedOrganizationFound or $onBehalfRequired ) and !$organizationName}
     <div id='orgOptions' class="section crm-section">
-       <div class="content">{$form.org_option.html}</div>
+       <div class="content">
+        {$form.org_option.html}
+       </div>
     </div>
   {/if}  
 
-  <table id="select_org" class="form-layout-compressed">
+  <div id="select_org" class="form-layout-compressed">
     {foreach from=$form.onbehalf item=field key=fieldName}
-      <tr>
+      {if $onBehalfOfFields.$fieldName.help_pre}
+        <div class='description'>{$onBehalfOfFields.$fieldName.help_pre}</div>
+      {/if}
+      
        {if ( $fieldName eq 'organization_name' ) and $organizationName}
-         <td id='org_name' class="label">{$field.label}</td>
-         <td class="value">{$field.html|crmReplace:class:big}
-         <span>
-         <a href='#' id='createNewOrg' onclick='createNew( ); return false;'>Create new organization</a>
-         </span></td>
+         <div id='org_name' class="label">{$field.label}</div>
+         <div class="content">
+            {$field.html|crmReplace:class:big}
+            <span>
+                ( <a href='#' id='createNewOrg' onclick='createNew( ); return false;'>{ts}Enter a new organization{/ts}</a> )
+            </span>
+            <div id="id-onbehalf-orgname-enter-help" class="description">
+                {ts}Organization details have been prefilled for you. If this is not the organization you want to use, click "Enter a new organization" above.{/ts}
+            </div>
+         </div>
        {else}
-         <td class="label">{$field.label}</td>
-         <td class="value">{$field.html}</td>
+          {if $onBehalfOfFields.$fieldName.options_per_line != 0}
+            <div class="label option-label">{$field.label}</div> 
+            <div class="content 3"> 
+              {assign var="count" value="1"} 
+              {strip} 
+              <table class="form-layout-compressed"> 
+              <tr> 
+                {* sort by fails for option per line. Added a variable to iterate through the element array*} 
+                {assign var="index" value="1"} 
+                {foreach name=outer key=key item=item from=$field} 
+                {if $index < 10} 
+                  {assign var="index" value=`$index+1`} 
+                {else} 
+                  <td class="labels font-light">{$field.$key.html}</td> 
+                  {if $count == $onBehalfOfFields.$fieldName.options_per_line} 
+                    </tr> 
+                    <tr> 
+                    {assign var="count" value="1"} 
+                  {else} 
+                       {assign var="count" value=`$count+1`} 
+                  {/if} 
+                {/if} 
+                {/foreach} 
+              </tr> 
+              </table>
+              {/strip}
+            </div>
+          {else}
+              <div class="label">{$field.label}</div>
+              <div class="content">
+               {$field.html}
+               {if $fieldName eq 'organization_name'}
+                 <div id="id-onbehalf-orgname-help" class="description">{ts}Start typing the name of an organization that you have saved previously to use it again. Otherwise click "Enter a new organization" above.{/ts}</div>
+               {/if}
+              </div>
+          {/if}
        {/if}
-      </tr>
+      <div class="clear">&nbsp;</div>
+      {if $onBehalfOfFields.$fieldName.help_post}
+        <div class='description'>{$onBehalfOfFields.$fieldName.help_post}</div>
+      {/if}
     {/foreach}
-  </table>
+  </div>
  
   <div>{$form.mode.html}</div>
 </div>
@@ -59,23 +106,29 @@
 
 {literal}
 <script type="text/javascript">
+var onBehalfRequired = {/literal}"{$onBehalfRequired}"{literal};
+cj( "div#id-onbehalf-orgname-help").hide( );
 
-function showOnBehalf( )
+function showOnBehalf( onBehalfRequired )
 {
-    if ( cj( "#is_for_organization" ).attr( 'checked' ) ) {
-        if ( cj( "#for_organization" ).size( ) == 0 ) {
+    if ( cj( "#is_for_organization" ).attr( 'checked' ) || onBehalfRequired ) {
+            cj( "#for_organization" ).html( '' );
+            var reset   = {/literal}"{$reset}"{literal};
             var urlPath = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&onbehalf=1'}"{literal};
-            urlPath     = urlPath  + '&id=' + {/literal}{$pageId}{literal};
+            urlPath     = urlPath  + {/literal}"{$urlParams}"{literal};
+            if ( reset ) {
+                urlPath = urlPath + '&reset=' + reset;
+            }
        
             cj.ajax({
                  url     : urlPath,
                  async   : false,
-		 global  : false,
-	         success : function ( content ) { 		
-    	                       cj( "#onBehalfOfOrg" ).html( content );
-                           }
+		         global  : false,
+	             success : function ( content ) { 		
+    	            cj( "#onBehalfOfOrg" ).html( content );
+                 }
             });
-        }
+       
      } else {
        cj( "#onBehalfOfOrg" ).html('');	
        cj( "#for_organization" ).html( '' );
@@ -86,13 +139,13 @@ function showOnBehalf( )
 function resetValues( filter )
 {
    if ( filter ) {
-       cj( "#select_org tr td" ).find( 'input[type=text], select, textarea' ).each(function( ) {
+       cj( "#select_org div" ).find( 'input[type=text], select, textarea' ).each(function( ) {
           if ( cj(this).attr('name') != 'onbehalf[organization_name]' ) {
               cj(this).val( '' );
           }
        });
    } else {
-       cj( "#select_org tr td" ).find( 'input[type=text], select, textarea' ).each(function( ) {
+       cj( "#select_org div" ).find( 'input[type=text], select, textarea' ).each(function( ) {
           cj(this).val( '' );
        });
    }
@@ -106,7 +159,7 @@ cj( "#mode" ).attr( 'checked', 'checked' );
 
 {/literal}
 
-{if $relatedOrganizationFound}
+{if ( $relatedOrganizationFound or $onBehalfRequired ) and $reset}
   {if $organizationName}
 
     {literal}
@@ -115,13 +168,13 @@ cj( "#mode" ).attr( 'checked', 'checked' );
     function createNew( ) 
     {
        if ( cj( "#mode" ).attr( 'checked' ) ) {
-           $text = "Select existing organization";
+           $text = ' {/literal}{ts escape="js"}Use existing organization{/ts}{literal} ';
            cj( "#onbehalf_organization_name" ).removeAttr( 'readonly' );
            cj( "#mode" ).removeAttr( 'checked' );
 
            resetValues( false );
        } else {
-           $text = "Create new organization";
+           $text = ' {/literal}{ts escape="js"}Enter a new organization{/ts}{literal} ';
            cj( "#mode" ).attr( 'checked', 'checked' );
            setOrgName( );
        }
@@ -151,6 +204,7 @@ cj( "#mode" ).attr( 'checked', 'checked' );
        function selectCreateOrg( orgOption, reset )
        {
           if ( orgOption == 0 ) {
+              cj( "div#id-onbehalf-orgname-help").show( );
               var dataUrl = {/literal}"{$employerDataURL}"{literal};
 	      cj( '#onbehalf_organization_name' ).autocomplete( dataUrl, 
                                                                 { width         : 180, 
@@ -163,6 +217,7 @@ cj( "#mode" ).attr( 'checked', 'checked' );
               });
           } else if ( orgOption == 1 ) {
               cj( "input#onbehalf_organization_name" ).removeClass( 'ac_input' ).unautocomplete( );
+              cj( "div#id-onbehalf-orgname-help").hide( );
               if ( reset ) {
 	          resetValues( false );
               }

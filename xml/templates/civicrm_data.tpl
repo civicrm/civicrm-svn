@@ -819,11 +819,11 @@ SELECT @option_group_id_medium        := max(id) from civicrm_option_group where
 INSERT INTO
    `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`)
 VALUES
-    (@option_group_id_medium, 'In Person',  1, 'in_person', NULL, 0,  0, 1, NULL, 0, 1, 1),
-    (@option_group_id_medium, 'Phone',  2, 'phone', NULL, 0,  1, 2, NULL, 0, 1, 1),
-    (@option_group_id_medium, 'Email',  3, 'email', NULL, 0,  0, 3, NULL, 0, 1, 1),
-    (@option_group_id_medium, 'Fax',  4, 'fax', NULL, 0,  0, 4, NULL, 0, 1, 1),
-    (@option_group_id_medium, 'Letter Mail',  5, 'letter_mail', NULL, 0,  0, 5, NULL, 0, 1, 1);
+    (@option_group_id_medium, '{ts escape="sql"}In Person{/ts}',  1, 'in_person', NULL, 0,  0, 1, NULL, 0, 1, 1),
+    (@option_group_id_medium, '{ts escape="sql"}Phone{/ts}',  2, 'phone', NULL, 0,  1, 2, NULL, 0, 1, 1),
+    (@option_group_id_medium, '{ts escape="sql"}Email{/ts}',  3, 'email', NULL, 0,  0, 3, NULL, 0, 1, 1),
+    (@option_group_id_medium, '{ts escape="sql"}Fax{/ts}',  4, 'fax', NULL, 0,  0, 4, NULL, 0, 1, 1),
+    (@option_group_id_medium, '{ts escape="sql"}Letter Mail{/ts}',  5, 'letter_mail', NULL, 0,  0, 5, NULL, 0, 1, 1);
 
 -- sample membership status entries
 INSERT INTO
@@ -876,38 +876,38 @@ VALUES
 
 
 -- the fuzzy default dedupe rules
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default) VALUES ('Individual', 20, 'Fuzzy', true);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Individual', 20, 'Fuzzy', true, '{ts escape="sql"}Individual-Fuzzy{/ts}');
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'first_name', 5),
        (@drgid, 'civicrm_contact', 'last_name',  7),
        (@drgid, 'civicrm_email'  , 'email',     10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default) VALUES ('Organization', 10, 'Fuzzy', true);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Organization', 10, 'Fuzzy', true, '{ts escape="sql"}Organization-Fuzzy{/ts}');
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'organization_name', 10),
        (@drgid, 'civicrm_email'  , 'email',             10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default) VALUES ('Household', 10, 'Fuzzy', true);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Household', 10, 'Fuzzy', true, '{ts escape="sql"}Household-Fuzzy{/ts}');
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'household_name', 10),
        (@drgid, 'civicrm_email'  , 'email',          10);
 
 -- the strict dedupe rules
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default) VALUES ('Individual', 10, 'Strict', true);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Individual', 10, 'Strict', true, '{ts escape="sql"}Individual-Strict{/ts}');
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_email', 'email', 10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default) VALUES ('Organization', 10, 'Strict', true);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Organization', 10, 'Strict', true, '{ts escape="sql"}Organization-Strict{/ts}');
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'organization_name', 10),
        (@drgid, 'civicrm_email'  , 'email',             10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default) VALUES ('Household', 10, 'Strict', true);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Household', 10, 'Strict', true, '{ts escape="sql"}Household-Strict{/ts}');
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'household_name', 10),
@@ -1211,7 +1211,7 @@ INSERT INTO civicrm_uf_field
        (33,  8,           'country',               0,           0,           4,      'Public Pages and Listings', 0,           1,             1,                '{ts escape="sql"}Country (Home){/ts}',        		'Contact',     NULL,  NULL),
        (34,  8,           'state_province',        0,           0,           5,      'Public Pages and Listings', 1,           1,             1,                '{ts escape="sql"}State (Home){/ts}',          		'Contact',     NULL,  NULL),
        (35,  9,           'organization_name',     1,           0,           1,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Organization Name{/ts}',              'Organization',NULL,  NULL),
-       (36,  9,           'phone',                 1,           0,           2,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}Phone (Main) {/ts}',                  'Contact',    NULL,   NULL),
+       (36,  9,           'phone',                 1,           0,           2,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}Phone (Main) {/ts}',                  'Contact',    NULL,   1),
        (37,  9,           'email',                 1,           0,           3,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}Email (Main) {/ts}',                  'Contact',    NULL,   NULL),
        (38,  9,           'street_address',        1,           0,           4,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}Street Address{/ts}',                 'Contact',    NULL,   NULL),
        (39,  9,           'city',                  1,           0,           5,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}City{/ts}',                           'Contact',    NULL,   NULL),
@@ -1238,9 +1238,7 @@ INSERT INTO civicrm_participant_status_type
 INSERT INTO civicrm_action_mapping
 (entity, entity_value, entity_value_label, entity_status, entity_status_label, entity_date_start, entity_date_end, entity_recipient) 
 VALUES
-( 'civicrm_activity', 'activity_type', 'Activity Type', 'activity_status', 'Activity Status', 'activity_date_time', NULL, 'activity_contacts'),
-( 'civicrm_participant', 'event_type', 'Event Type', 'civicrm_participant_status_type', 'Participant Status', 'event_start_date', 'event_end_date', 'civicrm_participant_status_type'),
-( 'civicrm_participant', 'civicrm_event', 'Event Name', 'civicrm_participant_status_type', 'Participant Status', 'event_start_date', 'event_end_date', 'civicrm_participant_status_type');
+( 'civicrm_activity', 'activity_type', 'Activity Type', 'activity_status', 'Activity Status', 'activity_date_time', NULL, 'activity_contacts');
 
 
 INSERT INTO `civicrm_contact_type`

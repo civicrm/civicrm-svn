@@ -897,6 +897,12 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                 self::manipulateHeaderRows( $headerRows, $contactRelationshipTypes );
             }
             
+            // if postalMailing option is checked, exclude contacts who are deceased, have 
+            // "Do not mail" privacy setting, or have no street address
+            if ( $exportParams['postal_mailing_export']['postal_mailing_export'] == 1 ) {
+                self::postalMailingFormat( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
+            }
+
             // call export hook
             require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::export( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
@@ -907,29 +913,11 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
             // delete the export temp table and component table
             $sql = "DROP TABLE IF EXISTS {$exportTempTable}";
             CRM_Core_DAO::executeQuery( $sql );
+            
+            CRM_Utils_System::civiExit( );
         } else {
             CRM_Core_Error::fatal( ts( 'No records to export' ) );
-        }
-
-        // fix the headers for rows with relationship type
-        if ( $relName ) {
-            self::manipulateHeaderRows( $headerRows, $contactRelationshipTypes );
-        }
-
-        // if postalMailing option is checked, exclude contacts who are deceased, have 
-        // "Do not mail" privacy setting, or have no street address
-        if ( $exportParams['postal_mailing_export']['postal_mailing_export'] == 1 ) {
-            self::postalMailingFormat( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
-        }
-
-        // call export hook
-        require_once 'CRM/Utils/Hook.php';
-        CRM_Utils_Hook::export( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
-        
-        // now write the CSV file
-        self::writeCSVFromTable( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
-
-        CRM_Utils_System::civiExit( );
+        }        
     }
 
     /**

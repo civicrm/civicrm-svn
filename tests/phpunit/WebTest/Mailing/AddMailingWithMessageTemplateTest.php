@@ -70,6 +70,15 @@ class WebTest_Mailing_AddMailingWithMessageTemplateTest extends CiviSeleniumTest
       $this->waitForElementPresent("_qf_GroupContact_next");
       $this->select("group_id", "$groupName");
       $this->click("_qf_GroupContact_next");
+
+      // configure default mail-box
+      $this->open( $this->sboxPath . "civicrm/admin/mailSettings?action=update&id=1&reset=1" );
+      $this->waitForElementPresent( '_qf_MailSettings_cancel-bottom' );
+      $this->type( 'name', 'Test Domain' );
+      $this->type( 'domain', 'example.com' );
+      $this->select( 'protocol', 'value=1' );
+      $this->click( '_qf_MailSettings_next-bottom' );
+      $this->waitForPageToLoad("30000");
       
       // Go directly to Schedule and Send Mailing form
       $this->open($this->sboxPath . "civicrm/mailing/send&reset=1");

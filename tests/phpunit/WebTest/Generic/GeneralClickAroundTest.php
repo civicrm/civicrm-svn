@@ -103,7 +103,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
 
       // Contacts → Manage Groups
       $this->click("//ul[@id='civicrm-menu']/li[4]");
-      $this->click("//div[@id='root-menu-div']/div[5]/ul/li[11]/div/a");
+      $this->click("xpath=//div[@id='root-menu-div']//div/ul//li/div/a[text()='Manage Groups']");
       $this->waitForPageToLoad();
 
       $this->assertTextPresent("Find Groups");
@@ -251,12 +251,21 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_Component_next-bottom");
       $enabledComponents = $this->getSelectOptions("enableComponents-t");
       if (! in_array( "CiviMail", $enabledComponents ) ) {
-        $this->addSelection("enableComponents-f", "label=CiviMail");
-        $this->click("//option[@value='CiviMail']");
-        $this->click("add");
-        $this->click("_qf_Component_next-bottom");
-        $this->waitForPageToLoad("30000");          
+          $this->addSelection("enableComponents-f", "label=CiviMail");
+          $this->click("//option[@value='CiviMail']");
+          $this->click("add");
+          $this->click("_qf_Component_next-bottom");
+          $this->waitForPageToLoad("30000");          
       }
+
+      // configure default mail-box
+      $this->open( $this->sboxPath . "civicrm/admin/mailSettings?action=update&id=1&reset=1" );
+      $this->waitForElementPresent( '_qf_MailSettings_cancel-bottom' );
+      $this->type( 'name', 'Test Domain' );
+      $this->type( 'domain', 'example.com' );
+      $this->select( 'protocol', 'value=1' );
+      $this->click( '_qf_MailSettings_next-bottom' );
+      $this->waitForPageToLoad("30000");
       
       // New Mailing Form
       // Use class names for menu items since li array can change based on which components are enabled

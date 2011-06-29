@@ -636,7 +636,7 @@ function civicrm_contact_check_params( &$params,
                 return civicrm_create_error( $error->pop( ) );
             }
             
-            return civicrm_create_error( "Found matching contacts: $ids", $ids );
+            return civicrm_create_error( "Found matching contacts: $ids", array( $ids ) );
         }
     }
 

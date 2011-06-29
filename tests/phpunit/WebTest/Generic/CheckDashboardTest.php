@@ -74,7 +74,7 @@ class WebTest_Generic_CheckDashboardTest extends CiviSeleniumTestCase
       
       // click Full Screen icon and test full screen container
       $this->click("css=li#widget-1 a.fullscreen-icon");
-      $this->waitForElementPresent("ui-dialog-title-crm-container");
+      $this->waitForElementPresent("ui-dialog-title-crm-dashlet-container");
       $this->assertTrue($this->isTextPresent($widgetTitle)); 
       $this->click("link=close");
   }
@@ -111,10 +111,9 @@ class WebTest_Generic_CheckDashboardTest extends CiviSeleniumTestCase
       $this->_testAddDashboardElement($widgetConfigureID, $widgetEnabledSelector, $widgetTitle);
 
       // If CiviCase enabled, click 'more' link for context menu pop-up in the widget selector
-      if ( $this->isElementPresent("//table[@id='contact-activity-selector-dashlet']/tbody/tr[1]/td[8]/span[@id='more_xx']") ) {
-          $this->click("//table[@id='contact-activity-selector-dashlet']/tbody/tr[1]/td[8]/span[@id='more_xx']");
+      if ( $this->isElementPresent( "//table[@id='contact-activity-selector-dashlet']/tbody/tr[1]/td[8]/span[2][text()='more ']") ) {
           // click 'Delete Activity' link
-          $this->click("//ul[@id='panel_more_xx']/li[2]/a");
+          $this->click("//table[@id='contact-activity-selector-dashlet']/tbody/tr[1]/td[8]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']");
       } else {
           // click 'Delete Activity' link
           $this->click("//table[@id='contact-activity-selector-dashlet']/tbody/tr[1]/td[8]/span/a[3]");

@@ -35,11 +35,13 @@
  */
 
 require_once 'utils.inc';
+require_once 'civicrm_rules_entities.rules.inc';
+
 /**
  * Implements hook_rules_file_info() on behalf of the user module.
  */
 function civicrm_rules_rules_file_info( ) {
-  return array( 'civicrm_rules.eval' );
+    return array( 'civicrm_rules.eval', 'civicrm_rules_entities.eval' );
 }
 
 /**
@@ -118,7 +120,11 @@ function civicrm_rules_rules_event_info( ) {
                                                           'variables' => civicrm_rules_rules_events_variables( t( 'completed mailing' ), 
                                                                                                                'mailing' ),
                                                           ),
-                 );
+                 ) + civicrm_rules_entities_event_info();
+}
+
+function civicrm_rules_rules_condition_info() {
+    return civicrm_rules_entities_condition_info();
 }
 
 /**
@@ -278,6 +284,19 @@ function civicrm_rules_rules_data_info() {
                                     'savable' => FALSE,
                                     'identifiable' => TRUE,
                                     ),
+                 'event' => array(
+                                    'label' => t( 'Event' ),
+                                    'class' => 'rules_data_type_event',
+                                    'savable' => FALSE,
+                                    'identifiable' => TRUE,
+                                    ),
+                 'participant' => array(
+                                        'label' => t( 'Participant' ),
+                                        'class' => 'rules_data_type_participant',
+                                        'savable' => FALSE,
+                                        'identifiable' => TRUE,
+                                        ),
+                 
                  );
 }
 

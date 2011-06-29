@@ -49,10 +49,6 @@ class CRM_Cron_Action {
             
             //log the execution time of script
             CRM_Core_Error::debug_log_message( 'action.cronjob.php' );
-            
-            // load bootstrap to call hooks
-            require_once 'CRM/Utils/System.php';
-            CRM_Utils_System::loadBootStrap(  );
         }
     }
 
@@ -63,8 +59,11 @@ class CRM_Cron_Action {
         $config = CRM_Core_Config::singleton();
     }
 
-    public function run( )
+    public function run( $now = null )
     {
+        require_once 'CRM/Utils/Time.php';
+        $this->_now = $now ? CRM_Utils_Time::setTime( $now ) : CRM_Utils_Time::getTime( );
+
         require_once 'CRM/Core/BAO/ScheduleReminders.php';
         $mappings = CRM_Core_BAO_ScheduleReminders::getMapping( );
 
@@ -78,6 +77,7 @@ class CRM_Cron_Action {
     public function sendMailings( $mappingID ) {
         require_once 'CRM/Activity/BAO/Activity.php';
         require_once 'CRM/Contact/BAO/Contact.php';
+        require_once 'CRM/Core/BAO/ActionLog.php';
         require_once 'CRM/Core/BAO/Domain.php';
         $domainValues     = CRM_Core_BAO_Domain::getNameAndEmail( );
         $fromEmailAddress = "$domainValues[0] <$domainValues[1]>";
@@ -142,11 +142,13 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL";
                     $errorMsg = "Couldn\'t find recipient\'s email address.";
                 }
 
-                //FIXME: set is_error and message for errors or no email.
-                $setClause = "SET action_date_time = NOW(), is_error = {$isError}" . 
-                    ($errorMsg ? ", message = '{$errorMsg}'" : '');
-                $query     = "UPDATE civicrm_action_log {$setClause} WHERE id = %1";
-                CRM_Core_DAO::executeQuery( $query, array( 1 => array( $dao->reminderID, 'Integer' ) ) );
+                // update action log record
+                $logParams = array( 'id'       => $dao->reminderID,
+                                    'is_error' => $isError,
+                                    'message'  => $errorMsg ? $errorMsg : "null",
+                                    'action_date_time' => $this->_now,
+                                    );
+                CRM_Core_BAO_ActionLog::create( $logParams );
                 
                 // insert activity log record if needed
                 if ( $actionSchedule->record_activity ) {
@@ -228,7 +230,7 @@ reminder.action_schedule_id = %1";
             }
 
             // ( now >= date_built_from_start_time )
-            $startEventClause = "reminder.id IS NULL AND NOW() >= {$startEvent}";
+            $startEventClause = "reminder.id IS NULL AND '{$this->_now}' >= {$startEvent}";
 
             // build final query
             $selectClause = "SELECT " . implode( ', ', $select );
@@ -261,9 +263,9 @@ LEFT JOIN {$reminderJoinClause}
                 }
                 
                 // (now <= repeat_end_time )
-                $repeatEventClause = "NOW() <= {$repeatEvent}"; 
+                $repeatEventClause = "'{$this->_now}' <= {$repeatEvent}"; 
                 // diff(now && logged_date_time) >= repeat_interval
-                $havingClause      = "HAVING TIMEDIFF(NOW(), latest_log_time) >= TIME('{$hrs}:00:00')";
+                $havingClause      = "HAVING TIMEDIFF({$this->_now}, latest_log_time) >= TIME('{$hrs}:00:00')";
                 $groupByClause     = "GROUP BY reminder.contact_id, reminder.entity_id, reminder.entity_table"; 
                 $selectClause     .= ", MAX(reminder.action_date_time) as latest_log_time";
 

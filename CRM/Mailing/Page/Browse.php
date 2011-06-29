@@ -134,6 +134,8 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
         if ( isset( $_GET['runJobs'] ) || CRM_Utils_Array::value( '2', $newArgs ) == 'queue' ) {
             require_once 'CRM/Mailing/BAO/Job.php';
             $config =& CRM_Core_Config::singleton();
+
+
             CRM_Mailing_BAO_Job::runJobs_pre( $config->mailerJobSize );
             CRM_Mailing_BAO_Job::runJobs();
             CRM_Mailing_BAO_Job::runJobs_post();

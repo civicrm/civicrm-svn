@@ -151,7 +151,7 @@
                                   cj( 'input[name="address[' + elemId[1] + '][master_id]"]' ).val( cj(this).val( ) );
                               });
                           } else {
-                              var helpText = {/literal}"{ts}Selected contact does not have an address. Please select a contact with address else add an address to the existing selected contact."{/ts}{literal};        
+                              var helpText = {/literal}"{ts}Selected contact does not have an address. Please edit that contact to add an address, or select a different contact.{/ts}"{literal};
                               cj( '#shared-address-' + blockNo + ' .shared-address-list' ).remove( );
                               cj( '#shared-address-' + blockNo ).append( '<tr class="shared-address-list"><td></td><td>' + helpText + '</td></tr>');
                           }
