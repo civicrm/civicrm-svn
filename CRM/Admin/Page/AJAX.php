@@ -237,17 +237,25 @@ class CRM_Admin_Page_AJAX
     }
     
     static function mergeTagList( ) {
-        $name   = CRM_Utils_Type::escape( $_GET['s'], 'String' );
+        $name   = CRM_Utils_Type::escape( $_GET['s'],      'String' );
         $fromId = CRM_Utils_Type::escape( $_GET['fromId'], 'Integer' );
+        $limit  = CRM_Utils_Type::escape( $_GET['limit'],  'Integer' );
         
         $tags   = array( );
-        $query  = "SELECT id, name FROM civicrm_tag WHERE id <> {$fromId} AND name LIKE '%{$name}%'";
+        $query  = "
+SELECT t1.name, t1.id
+FROM   civicrm_tag t1 
+LEFT JOIN civicrm_tag t2 ON t1.id = t2.parent_id
+WHERE  t2.id IS NULL      AND 
+       t1.is_reserved = 1 AND 
+       t1.id <> {$fromId} AND 
+       t1.name LIKE '%{$name}%'
+LIMIT $limit";
         $dao    = CRM_Core_DAO::executeQuery( $query );
         
         while( $dao->fetch( ) ) {
             echo $element = addcslashes($dao->name, '"') . "|{$dao->id}\n";
         }
-        
         CRM_Utils_System::civiExit( );
     }
 

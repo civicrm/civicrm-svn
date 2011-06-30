@@ -152,6 +152,17 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
        }
        $this->assign( 'adminTagSet', $adminTagSet );
        
+       $mergeableTags = array();
+       if ( CRM_Core_Permission::check('administer reserved tags') ) {
+           $query = "SELECT t1.name, t1.id
+FROM civicrm_tag t1 LEFT JOIN civicrm_tag t2 ON t1.id = t2.parent_id
+WHERE t2.id IS NULL AND t1.is_reserved = 1";
+           $tag = CRM_Core_DAO::executeQuery( $query );
+           while( $tag->fetch( ) ) {           
+               $mergeableTags[$tag->id] = 1;
+           }
+       }
+
        require_once 'CRM/Core/OptionGroup.php';
        $usedFor = CRM_Core_OptionGroup::values('tag_used_for');
        
@@ -163,7 +174,7 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
        $tag = CRM_Core_DAO::executeQuery( $query );
        $values = array( );
        
-       $action     = CRM_Core_Action::UPDATE + CRM_Core_Action::DELETE + CRM_Core_Action::FOLLOWUP;
+       $action     = CRM_Core_Action::UPDATE + CRM_Core_Action::DELETE;
        $permission = CRM_Core_Permission::EDIT;
 
        while( $tag->fetch( ) ) {           
@@ -190,8 +201,7 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
                $newAction = 0;
            }
 
-           if ( $values[$tag->id]['is_reserved'] && 
-                CRM_Core_Permission::check('administer reserved tags') ) {
+           if ( array_key_exists($tag->id, $mergeableTags) ) {
                $newAction += CRM_Core_Action::FOLLOWUP;
            }
 
