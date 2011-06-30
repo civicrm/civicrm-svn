@@ -561,16 +561,17 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
             $uf[2] = $params['custom_post_id'];  
         }
         
-        $uf = array_merge ($uf, $params['custom_post_id_multiple']);
-
-        foreach ( $uf as $weight => $ufGroupId) {
-            $ufJoinParams['weight'] = $weight+1;
-            $ufJoinParams['uf_group_id'] = $ufGroupId;
-            CRM_Core_BAO_UFJoin::create( $ufJoinParams );
-            unset( $ufJoinParams['id'] );
+        if (CRM_Utils_Array::value('custom_post_id_multiple', $params)){
+            $uf = array_merge ($uf, $params['custom_post_id_multiple']);
+            
+            foreach ( $uf as $weight => $ufGroupId) {
+                $ufJoinParams['weight'] = $weight+1;
+                $ufJoinParams['uf_group_id'] = $ufGroupId;
+                CRM_Core_BAO_UFJoin::create( $ufJoinParams );
+                unset( $ufJoinParams['id'] );
+            }
+            
         }
-
-
         // also update the ProfileModule tables 
         $ufJoinParamsAdd = array( 'is_active'    => 1, 
                                'module'       => 'CiviEvent_Additional',
@@ -588,16 +589,17 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         if ( ! empty( $params['additional_custom_post_id'] ) ) {
             $ufAdd[2] = $params['additional_custom_post_id'];  
         }
-        
-        $ufAdd = array_merge ($ufAdd, $params['additional_custom_post_id_multiple']);
 
-        foreach ( $ufAdd as $weightAdd => $ufGroupIdAdd) {
-            $ufJoinParamsAdd['weight'] = $weightAdd+1;
-            $ufJoinParamsAdd['uf_group_id'] = $ufGroupIdAdd;
-            CRM_Core_BAO_UFJoin::create( $ufJoinParamsAdd );
-            unset( $ufJoinParamsAdd['id'] );
+        if (CRM_Utils_Array::value('additional_custom_post_id_multiple', $params)){
+            $ufAdd = array_merge ($ufAdd, $params['additional_custom_post_id_multiple']);
+            
+            foreach ( $ufAdd as $weightAdd => $ufGroupIdAdd) {
+                $ufJoinParamsAdd['weight'] = $weightAdd+1;
+                $ufJoinParamsAdd['uf_group_id'] = $ufGroupIdAdd;
+                CRM_Core_BAO_UFJoin::create( $ufJoinParamsAdd );
+                unset( $ufJoinParamsAdd['id'] );
+            }
         }
-
       
         parent::endPostProcess( );
     } //end of function
