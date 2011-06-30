@@ -42,8 +42,13 @@ function civicrm_rules_get_participant_role_options( ) {
     return civicrm_rules_get_options( 'participant_role' );
 }
 
-function civicrm_rules_condition_participant_role($rr, $gg ) {
-    return true;
+function civicrm_rules_condition_participant_role($entityobj, $roleIDs) {
+    if ( !isset($roleIDs[$entityobj->role_id]) ||
+         empty($roleIDs[$entityobj->role_id]) ) {
+       return false;
+   }
+
+   return true;
 }
 
 /*
