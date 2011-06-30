@@ -892,14 +892,9 @@ AND civicrm_contact.is_opt_out =0";
         
         //handle should override VERP address.    
         $skipEncode = false;
-        $query = "
-SELECT override_verp 
-FROM   civicrm_mailing, civicrm_mailing_job 
-WHERE  civicrm_mailing_job.id = {$job_id} 
-AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         
         if ( $job_id && 
-            CRM_Core_DAO::singleValueQuery( $query ) ) {
+             self::overrideVerp( $job_id  ) ) {
             $verp['reply'] = "\"{$this->from_name}\" <{$this->from_email}>"; 
         }
         
@@ -955,7 +950,6 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                              $contactDetails, &$attachments, $isForward = false, $fromEmail = null ) 
     {
         
-        require_once 'api/v2/Contact.php';
         require_once 'CRM/Utils/Token.php';
         require_once 'CRM/Activity/BAO/Activity.php';
         $config = CRM_Core_Config::singleton( );
@@ -973,7 +967,8 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             $headers['From'] = "<{$fromEmail}>";
         } 
 
-        if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+        if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
+             CIVICRM_MAIL_SMARTY ) {
             require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
         }
@@ -981,8 +976,8 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         if ( $contactDetails ) {
             $contact = $contactDetails;
         } else {
-            $params  = array( 'contact_id' => $contactId );
-            $contact =& civicrm_contact_get( $params );
+            $params = array(array('contact_id', '=', $contactId, 0, 0));
+            list($contact, $_) = CRM_Contact_BAO_Query::apiQuery($params);
             
             //CRM-4524
             $contact = reset( $contact );
@@ -1039,7 +1034,8 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         
         $message = new Mail_mime("\n");
         
-        if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+        if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
+             CIVICRM_MAIL_SMARTY ) {
             $smarty = CRM_Core_Smarty::singleton( );
             // also add the contact tokens to the template
             $smarty->assign_by_ref( 'contact', $contact );
@@ -1050,7 +1046,8 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                        $contact['preferred_mail_format'] == 'Both' ||
                        ( $contact['preferred_mail_format'] == 'HTML' && !array_key_exists('html',$pEmails) ) ) ) {
             $textBody = join( '', $text );
-            if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+            if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
+                 CIVICRM_MAIL_SMARTY ) {
                 $smarty->security = true;
                 $textBody = $smarty->fetch( "string:$textBody" );
                 $smarty->security = false;
@@ -1061,7 +1058,8 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         if ( $html && ( $test ||  ( $contact['preferred_mail_format'] == 'HTML' ||
                                     $contact['preferred_mail_format'] == 'Both') ) ) {
             $htmlBody = join( '', $html );
-            if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+            if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
+                 CIVICRM_MAIL_SMARTY ) {
                 $smarty->security = true;
                 $htmlBody = $smarty->fetch( "string:$htmlBody" );
                 $smarty->security = false;
@@ -1098,8 +1096,17 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                                          $attach['cleanName'] );
             }
         }
-
-        $headers['To'] = "{$mailParams['toName']} <{$mailParams['toEmail']}>";
+        
+        //pickup both params from mail params.
+        $toName  = trim( $mailParams['toName']  );
+        $toEmail = trim( $mailParams['toEmail'] );
+        if ( $toName == $toEmail || 
+             strpos( $toName, '@' ) !== false ) {
+            $toName = null;
+        } 
+        
+        $headers['To'] = "$toName <$toEmail>";
+        
         $headers['Precedence'] = 'bulk';
         // Will test in the mail processor if the X-VERP is set in the bounced email.
         // (As an option to replace real VERP for those that can't set it up)
@@ -1940,7 +1947,7 @@ SELECT $selectClause
         
         $returnProperties = array( );
         $returnProperties['display_name'] = 
-            $returnProperties['contact_id'] = $returnProperties['preferred_mail_format'] = 1;
+            $returnProperties['contact_id'] = $returnProperties['preferred_mail_format'] = $returnProperties['hash'] = 1;
 
         foreach ( $properties as $p ) {
             $returnProperties[$p] = 1;
@@ -2275,6 +2282,22 @@ SELECT  $mailing.id as mailing_id
         $report['mailing']['attachment'] = CRM_Core_BAO_File::attachmentInfo( 'civicrm_mailing',
                                                                               $form->_mailing_id );
         return $report;
+    }
+
+    static function overrideVerp( $jobID ) {
+        static $_cache = array( );
+
+        if ( ! isset( $_cache[$jobID] ) ) {
+            $query = "
+SELECT     override_verp 
+FROM       civicrm_mailing
+INNER JOIN civicrm_mailing_job ON civicrm_mailing.id = civicrm_mailing_job.mailing_id
+WHERE  civicrm_mailing_job.id = %1
+";
+            $params = array( 1 => array( $jobID, 'Integer' ) );
+            $_cache[$jobID] = CRM_Core_DAO::singleValueQuery( $query, $params );
+        }
+        return $_cache[$jobID];
     }
 
 }

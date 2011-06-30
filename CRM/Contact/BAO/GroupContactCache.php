@@ -38,9 +38,6 @@ require_once 'CRM/Contact/DAO/GroupContactCache.php';
 
 class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCache {
 
-    const
-        NUM_CONTACTS_TO_INSERT = 200;
-
     /**
      * Check to see if we have cache entries for this group
      * if not, regenerate, else return
@@ -122,10 +119,10 @@ WHERE      g.id IN ( {$groupID} ) AND ( g.saved_search_id IS NOT NULL OR g.child
     static function store( &$groupID, &$values ) {
         $processed = false;
 
-        // to avoid long strings, lets do NUM_CONTACTS_TO_INSERT values at a time
+        // to avoid long strings, lets do BULK_INSERT_COUNT values at a time
         while ( ! empty( $values ) ) {
             $processed = true;
-            $input = array_splice( $values, 0, self::NUM_CONTACTS_TO_INSERT );
+            $input = array_splice( $values, 0, CRM_Core_DAO::BULK_INSERT_COUNT );
             $str   = implode( ',', $input );
             $sql = "REPLACE INTO civicrm_group_contact_cache (group_id,contact_id) VALUES $str;";
             CRM_Core_DAO::executeQuery( $sql );
