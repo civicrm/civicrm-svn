@@ -49,7 +49,7 @@
 <span id="restmsg" class="msgok" style="display:none"></span>
 <div class="crm-block crm-form-block crm-event-manage-registration-form-block">
 <div class="crm-submit-buttons">
-
+{include file="CRM/common/formButtons.tpl" location="top"}
 </div>
 
     <div id="register">
