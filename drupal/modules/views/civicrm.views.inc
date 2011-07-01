@@ -918,7 +918,7 @@ function civicrm_views_data() {
     //Address name
     $data['civicrm_address']['name'] = array(
                                              'title' => t('Address Name'),
-                                             'help' => t('Be sure addres name is enabled %link', array('%link' => l(t('In Global Settings'), 'civicrm/admin/setting/preferences/address', array('query' => array('reset=1'))))),
+                                             'help' => t('Be sure addres name is enabled in CiviCRM' ),
                                              'field' => array(
                                                               'handler' => 'views_handler_field',
                                                               'click sortable' => TRUE,
