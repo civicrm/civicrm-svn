@@ -129,8 +129,9 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
             return civicrm_api ($entity, 'create',$p);
             break;
             
-        // case "replace":
-        //    return _civicrm_api3_generic_replace($entity, $params);
+        case "replace":
+            $result = _civicrm_api3_generic_replace($entity, $params);
+            break;
         
         default:
             return $errorFnName( "API ($entity,$action) does not exist (join the API team and implement $function" );
