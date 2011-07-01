@@ -72,7 +72,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
         $get = civicrm_api3_email_get(array('version' => 3,
                                       'location_type_id' => $this->_locationType->id,));
         $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
-        $this->assertEquals( 0, $get['count'], 'emailt already exists ' . __LINE__ );        
+        $this->assertEquals( 0, $get['count'], 'email already exists ' . __LINE__ );        
          
         //create one
         $create = civicrm_api3_email_create($params);
@@ -95,8 +95,8 @@ class api_v3_EmailTest extends CiviUnitTestCase
             'version' => $this->_apiversion,
             'contact_id' => $this->_contactID,
         ));
-        $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
-        $this->assertEquals( 0, $get['count'], 'emailt already exists ' . __LINE__ );
+        $this->assertAPISuccess($get, 'In line ' . __LINE__);
+        $this->assertEquals( 0, $get['count'], 'email already exists ' . __LINE__ );
 
         // initialize email list with three emails at loc #1 and two emails at loc #2
         $replace1Params = array(
@@ -132,7 +132,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
         );
         $replace1 = civicrm_api('email', 'replace', $replace1Params);
         $this->documentMe($replace1Params, $replace1, __FUNCTION__, __FILE__); 
-        $this->assertEquals( 0, $replace1['is_error'], 'In line ' . __LINE__ );
+        $this->assertAPISuccess($replace1, 'In line ' . __LINE__);
         $this->assertEquals( 5, $replace1['count'], 'In line ' . __LINE__ );
         
         // check emails at location #1 or #2
@@ -140,7 +140,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
             'version' => $this->_apiversion,
             'contact_id' => $this->_contactID,
         ));
-        $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
+        $this->assertAPISuccess($get, 'In line ' . __LINE__);
         $this->assertEquals( 5, $get['count'], 'Incorrect email count at ' . __LINE__ );
         
         // replace the subset of emails in location #1, but preserve location #2
@@ -157,7 +157,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
         );
         $replace2 = civicrm_api('email', 'replace', $replace2Params);
         // $this->documentMe($replace2Params, $replace2, __FUNCTION__, __FILE__);
-        $this->assertEquals( 0, $replace2['is_error'], 'In line ' . __LINE__ );
+        $this->assertAPISuccess($replace2, 'In line ' . __LINE__);
         $this->assertEquals( 1, $replace2['count'], 'In line ' . __LINE__ );
                 
         // check emails at location #1 -- all three replaced by one
@@ -166,7 +166,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
             'contact_id' => $this->_contactID,
             'location_type_id' => $this->_locationType->id,
         ));
-        $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
+        $this->assertAPISuccess($get, 'In line ' . __LINE__);
         $this->assertEquals( 1, $get['count'], 'Incorrect email count at ' . __LINE__ );
         
         // check emails at location #2 -- preserve the original two
@@ -175,7 +175,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
             'contact_id' => $this->_contactID,
             'location_type_id' => $this->_locationType2->id,
         ));
-        $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
+        $this->assertAPISuccess($get, 'In line ' . __LINE__);
         $this->assertEquals( 2, $get['count'], 'Incorrect email count at ' . __LINE__ );
 
         // replace the set of emails with an empty set
@@ -194,7 +194,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
             'version' => $this->_apiversion,
             'contact_id' => $this->_contactID,
         ));
-        $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
+        $this->assertAPISuccess($get, 'In line ' . __LINE__);
         $this->assertEquals( 0, $get['count'], 'Incorrect email count at ' . __LINE__ );
     }
     
@@ -204,8 +204,8 @@ class api_v3_EmailTest extends CiviUnitTestCase
             'version' => $this->_apiversion,
             'contact_id' => $this->_contactID,
         ));
-        $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
-        $this->assertEquals( 0, $get['count'], 'emailt already exists ' . __LINE__ );
+        $this->assertAPISuccess($get, 'In line ' . __LINE__);
+        $this->assertEquals( 0, $get['count'], 'email already exists ' . __LINE__ );
 
         // initialize email list with three emails at loc #1 and two emails at loc #2
         $getReplace1Params = array(
@@ -243,7 +243,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
         );
         $getReplace1 = civicrm_api('contact', 'get', $getReplace1Params);
         // $this->documentMe($getReplace1Params, $getReplace1, __FUNCTION__, __FILE__);
-        $this->assertEquals( 0, $getReplace1['values'][$this->_contactID]['api.email.replace']['is_error'], 'In line ' . __LINE__ );
+        $this->assertAPISuccess($getReplace1['values'][$this->_contactID]['api.email.replace'], 'In line ' . __LINE__);
         $this->assertEquals( 5, $getReplace1['values'][$this->_contactID]['api.email.replace']['count'], 'In line ' . __LINE__ );
         
         // check emails at location #1 or #2
@@ -251,7 +251,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
             'version' => $this->_apiversion,
             'contact_id' => $this->_contactID,
         ));
-        $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
+        $this->assertAPISuccess($get, 'In line ' . __LINE__);
         $this->assertEquals( 5, $get['count'], 'Incorrect email count at ' . __LINE__ );
         
         // replace the subset of emails in location #1, but preserve location #2
@@ -279,7 +279,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
             'contact_id' => $this->_contactID,
             'location_type_id' => $this->_locationType->id,
         ));
-        $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
+        $this->assertAPISuccess($get, 'In line ' . __LINE__);
         $this->assertEquals( 1, $get['count'], 'Incorrect email count at ' . __LINE__ );
         
         // check emails at location #2 -- preserve the original two
@@ -288,7 +288,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
             'contact_id' => $this->_contactID,
             'location_type_id' => $this->_locationType2->id,
         ));
-        $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
+        $this->assertAPISuccess($get, 'In line ' . __LINE__);
         $this->assertEquals( 2, $get['count'], 'Incorrect email count at ' . __LINE__ );
     }
     
@@ -298,8 +298,8 @@ class api_v3_EmailTest extends CiviUnitTestCase
             'version' => $this->_apiversion,
             'contact_id' => $this->_contactID,
         ));
-        $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
-        $this->assertEquals( 0, $get['count'], 'emailt already exists ' . __LINE__ );
+        $this->assertAPISuccess($get, 'In line ' . __LINE__);
+        $this->assertEquals( 0, $get['count'], 'email already exists ' . __LINE__ );
 
         // initialize email address
         $replace1Params = array(
@@ -316,7 +316,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
         );
         $replace1 = civicrm_api('email', 'replace', $replace1Params);
         // $this->documentMe($replace1Params, $replace1, __FUNCTION__, __FILE__); 
-        $this->assertEquals( 0, $replace1['is_error'], 'In line ' . __LINE__ );
+        $this->assertAPISuccess($replace1, 'In line ' . __LINE__);
         $this->assertEquals( 1, $replace1['count'], 'In line ' . __LINE__ );
         
         $emailID = array_shift(array_keys($replace1['values']));
@@ -334,7 +334,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
         );
         $replace2 = civicrm_api('email', 'replace', $replace2Params);
         // $this->documentMe($replace2Params, $replace2, __FUNCTION__, __FILE__);
-        $this->assertEquals( 0, $replace2['is_error'], 'In line ' . __LINE__ );
+        $this->assertAPISuccess($replace2, 'In line ' . __LINE__);
         $this->assertEquals( 1, $replace2['count'], 'In line ' . __LINE__ );
         
         // ensure the 'email' was updated while other fields were preserved
@@ -343,7 +343,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
             'contact_id' => $this->_contactID,
             'location_type_id' => $this->_locationType->id,
         ));
-        $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );
+        $this->assertAPISuccess($get, 'In line ' . __LINE__);
         $this->assertEquals( 1, $get['count'], 'Incorrect email count at ' . __LINE__ );
         $this->assertEquals( 1, $get['values'][$emailID]['is_primary'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $get['values'][$emailID]['on_hold'], 'In line ' . __LINE__ );
