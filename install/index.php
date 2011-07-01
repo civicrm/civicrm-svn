@@ -828,7 +828,7 @@ class Installer extends InstallRequirements {
 
 
                 // now enable civicrm module.
-                module_enable( array('civicrm') );
+                module_enable( array('civicrm', 'civicrmtheme') );
 
                 // clear block and page cache, to make sure civicrm link is present in navigation block
                 cache_clear_all();

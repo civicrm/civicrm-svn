@@ -36,7 +36,7 @@
 /**
  * Implementation of hook_install().
  */
-function civicrm_theme_install() {
+function civicrmtheme_install() {
     // update module weight to 11, to make it run after system.
     db_query("UPDATE {system} SET weight = 11 WHERE name = 'civicrm_theme'");
     
@@ -47,8 +47,8 @@ function civicrm_theme_install() {
 /**
  * Implementation of hook_uninstall().
  */
-function civicrm_theme_uninstall() {
+function civicrmtheme_uninstall() {
     // cleaning variables
-    variable_del('civicrm_theme_admin');
-    variable_del('civicrm_theme_public');
+    variable_del('civicrmtheme_theme_admin');
+    variable_del('civicrmtheme_theme_public');
 }
