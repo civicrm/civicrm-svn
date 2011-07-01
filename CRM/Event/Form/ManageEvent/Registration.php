@@ -150,7 +150,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 $defaults['additional_custom_post_id'] =  $defaults['additional_custom_post'][0];
               
                 if (!empty($defaults['additional_custom_post'])) {
-                    //      unset($defaults['additional_custom_post'][0]);
+                    unset($defaults['additional_custom_post'][0]);
                     $this->_profilePostMultipleAdd = $defaults['additional_custom_post'];
                     foreach ( $defaults['additional_custom_post'] as $key => $value){
                         self::buildMultipleProfileBottom($this, $key, 'additional_', ts('Profile for Additional Participants'));
