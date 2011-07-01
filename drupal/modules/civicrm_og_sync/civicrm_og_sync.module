@@ -60,8 +60,8 @@
  *
  */
 function civicrm_og_sync_nodeapi( &$node, $op, $a3 = null, $a4 = null ) {
-   // early exit if op is prepare to avoid E-Notices
-    if($op == 'prepare') {
+   // early exit if op is prepare to avoid E-Notices. not sure if we ever want to catch presave but exit if no nid
+    if($op == 'prepare' || ($op == 'presave') && empty($node->nid) ){
       return;
     }
     //hook_nodeapi handles events with groups, so we never want
