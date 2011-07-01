@@ -125,16 +125,19 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
             
             $defaults['custom_post_id'] =  $defaults['custom_post'][0];
- 
-            if (is_array($defaults['custom_post']))
+            
+            if (is_numeric($defaults['custom_post'])) {
+                $defaults['custom_post_id'] =  $defaults['custom_post']; 
+            } else if (!empty($defaults['custom_post'])) {
                 unset($defaults['custom_post'][0]);
-            if (!empty($defaults['custom_post'])) {
                 $this->_profilePostMultiple = $defaults['custom_post'];
                 foreach ( $defaults['custom_post'] as $key => $value){
                     self::buildMultipleProfileBottom($this, $key);
                     $defaults["custom_post_id_multiple[$key]"] = $value;
+
                 }
             }  
+            
             $this->assign('profilePostMultiple', $defaults['custom_post']);
 
             if ($defaults['is_multiple_registrations']) {
@@ -147,10 +150,11 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 list( $defaults['additional_custom_pre_id'],
                       $defaults['additional_custom_post'] ) = 
                     CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinAddParams );
-                $defaults['additional_custom_post_id'] =  $defaults['additional_custom_post'][0];
-              
-                if (!empty($defaults['additional_custom_post'])) {
-                    unset($defaults['additional_custom_post'][0]);
+
+                if (is_numeric($defaults['additional_custom_post'])) {
+                    $defaults['additional_custom_post_id'] = $defaults['additional_custom_post']; 
+                } else  if (!empty($defaults['additional_custom_post'])) {
+                    unset($defaults['custom_post'][0]);
                     $this->_profilePostMultipleAdd = $defaults['additional_custom_post'];
                     foreach ( $defaults['additional_custom_post'] as $key => $value){
                         self::buildMultipleProfileBottom($this, $key, 'additional_', ts('Profile for Additional Participants'));
@@ -597,16 +601,21 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
             if ( array_key_exists('additional_custom_pre_id', $params)) {
                 if ( !CRM_Utils_Array::value('additional_custom_pre_id', $params) ) {
                     $ufAdd[1] = $params['custom_pre_id'];  
+                } else if ( CRM_Utils_Array::value('additional_custom_pre_id', $params) == 'none') {
+                    
                 } else {            
-                $ufAdd[1] = $params['additional_custom_pre_id'];  
+                    $ufAdd[1] = $params['additional_custom_pre_id'];  
                 } 
             }
             
             if ( array_key_exists('additional_custom_post_id', $params)) {
                 if ( !CRM_Utils_Array::value('additional_custom_post_id', $params) ) {
                     $ufAdd[2] = $params['custom_post_id'];  
-            } else {            
-                    $ufAdd[2] = $params['additional_custom_post_id'];  
+                } else if ( CRM_Utils_Array::value('additional_custom_post_id', $params) == 'none') {
+                    
+                } else {            
+                    $ufAdd[2] = $params['additional_custom_post_id'];
+
                 }
             }
             $skipWeightAdd = 0;
@@ -619,10 +628,12 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 foreach ( $ufAdd as $weightAdd => $ufGroupIdAdd) {
                     if ($skipWeightAdd) {
                         $ufJoinParamsAdd['weight'] = $weightAdd+1;
+
                     } else {
                         $ufJoinParamsAdd['weight'] = $weightAdd;
                     }
                     $ufJoinParamsAdd['uf_group_id'] = $ufGroupIdAdd;
+                    
                     CRM_Core_BAO_UFJoin::create( $ufJoinParamsAdd );
                     unset( $ufJoinParamsAdd['id'] );
                 }
