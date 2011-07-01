@@ -26,7 +26,7 @@
 {if $addProfileBottomAdd OR $addProfileBottom}
   {if $addProfileBottomAdd}
   <table class="form-layout-compressed">
-    <tr class="crm-event-manage-registration-form-block-additional_custom_post_{$profileBottomNumAdd}">
+    <tr class='crm-event-manage-registration-form-block-custom_post_multiple'>
       <td scope="row" class="label" width="20%">{$form.additional_custom_post_id_multiple[$profileBottomNumAdd].label}</td>
       <td>{$form.additional_custom_post_id_multiple[$profileBottomNumAdd].html}</td>
     </tr>
@@ -49,7 +49,7 @@
 <span id="restmsg" class="msgok" style="display:none"></span>
 <div class="crm-block crm-form-block crm-event-manage-registration-form-block">
 <div class="crm-submit-buttons">
-   {include file="CRM/common/formButtons.tpl" location="top"}
+
 </div>
 
     <div id="register">
@@ -383,7 +383,7 @@ invert              = 0
     function addProfileBottomAdd( ) {
       profileBottomCountAdd++;
       var urlPathAdd = {/literal}"{crmURL p='civicrm/event/manage/registration' h=0 q=$addProfileParamsAdd}"{literal};
-      urlPathAdd = urlPathAdd + '&snippet=4&addProfileNum=' + profileBottomCountAdd;
+      urlPathAdd = urlPathAdd + '&snippet=4&addProfileNumAdd=' + profileBottomCountAdd;
       cj.ajax({ url     : urlPathAdd,
                 async   : false,
                 global  : false,
