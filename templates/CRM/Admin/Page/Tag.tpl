@@ -110,7 +110,7 @@ cj("#mergeTagDialog").hide( );
 function mergeTag( fromId ) {
         cj("#mergeTagDialog").show( );
 	cj("#mergeTagDialog").dialog({
-		title: "Merge Tag",
+		title: "Select Tag",
 		modal: true,
 		bgiframe: true, 
 		close: function(event, ui) { cj("#tag_name").unautocomplete( ); },

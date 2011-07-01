@@ -241,20 +241,34 @@ class CRM_Admin_Page_AJAX
         $fromId = CRM_Utils_Type::escape( $_GET['fromId'], 'Integer' );
         $limit  = CRM_Utils_Type::escape( $_GET['limit'],  'Integer' );
         
-        $tags   = array( );
+        // build used-for clause to be used in main query
+        $usedFor = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $fromId, 'used_for' );
+        $usedForClause = array();
+        if ( $usedFor ) {
+            $usedArray = explode( ",", $usedFor );
+            foreach( $usedArray as $key => $value ) {
+                $usedForClause[] = "t1.used_for LIKE '%{$value}%'";
+            }
+        }
+        $usedForClause = !empty( $usedForClause ) ? implode( " OR " , $usedForClause ) : '1';
+
+        // query to list mergable tags
         $query  = "
-SELECT t1.name, t1.id
+SELECT t1.name, t1.id, t1.used_for, t3.name as parent
 FROM   civicrm_tag t1 
 LEFT JOIN civicrm_tag t2 ON t1.id = t2.parent_id
+LEFT JOIN civicrm_tag t3 ON t1.parent_id = t3.id
 WHERE  t2.id IS NULL      AND 
        t1.is_reserved = 1 AND 
        t1.id <> {$fromId} AND 
-       t1.name LIKE '%{$name}%'
+       t1.name LIKE '%{$name}%' AND
+       ({$usedForClause})
 LIMIT $limit";
         $dao    = CRM_Core_DAO::executeQuery( $query );
         
         while( $dao->fetch( ) ) {
-            echo $element = addcslashes($dao->name, '"') . "|{$dao->id}\n";
+            $tag = addcslashes($dao->name, '"') . "|{$dao->id}\n";
+            echo $tag = $dao->parent ? ( addcslashes($dao->parent, '"') . ' :: ' . $tag ) : $tag;
         }
         CRM_Utils_System::civiExit( );
     }
