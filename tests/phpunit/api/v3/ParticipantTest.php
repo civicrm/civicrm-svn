@@ -203,6 +203,8 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                             "In line " . __LINE__);
         $this->assertEquals('Wimbeldon',          $participant['values'][$participant['id']]['participant_source'],
                             "In line " . __LINE__);
+       $this->assertEquals($participant['id'],          $participant['values'][$participant['id']]['id'],
+                            "In line " . __LINE__);
     }
 
     /**
