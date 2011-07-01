@@ -125,7 +125,9 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
             
             $defaults['custom_post_id'] =  $defaults['custom_post'][0];
-            unset($defaults['custom_post'][0]);
+ 
+            if (is_array($defaults['custom_post']))
+                unset($defaults['custom_post'][0]);
             if (!empty($defaults['custom_post'])) {
                 $this->_profilePostMultiple = $defaults['custom_post'];
                 foreach ( $defaults['custom_post'] as $key => $value){
@@ -146,8 +148,9 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                       $defaults['additional_custom_post'] ) = 
                     CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinAddParams );
                 $defaults['additional_custom_post_id'] =  $defaults['additional_custom_post'][0];
-                unset($defaults['additional_custom_post'][0]);
+              
                 if (!empty($defaults['additional_custom_post'])) {
+                    //      unset($defaults['additional_custom_post'][0]);
                     $this->_profilePostMultipleAdd = $defaults['additional_custom_post'];
                     foreach ( $defaults['additional_custom_post'] as $key => $value){
                         self::buildMultipleProfileBottom($this, $key, 'additional_', ts('Profile for Additional Participants'));
@@ -559,16 +562,22 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         }
         
         if ( ! empty( $params['custom_post_id'] ) ) {
-            $uf[2] = $params['custom_post_id'];  
+            $uf[2] = $params['custom_post_id'];
         }
         
+        $skipWeight = 0;
         if (CRM_Utils_Array::value('custom_post_id_multiple', $params)){
+            $skipWeight = 1;
             $uf = array_merge ($uf, $params['custom_post_id_multiple']);
         }
 
         if ( ! empty( $uf ) ) {
             foreach ( $uf as $weight => $ufGroupId) {
-                $ufJoinParams['weight'] = $weight+1;
+                if ($skipWeight) {
+                    $ufJoinParams['weight'] = $weight+1;
+                } else {
+                    $ufJoinParams['weight'] = $weight;
+                }
                 $ufJoinParams['uf_group_id'] = $ufGroupId;
                 CRM_Core_BAO_UFJoin::create( $ufJoinParams );
                 unset( $ufJoinParams['id'] );
@@ -582,38 +591,44 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         
         // first delete all past entries
         CRM_Core_BAO_UFJoin::deleteAll( $ufJoinParamsAdd );
-        
-        $ufAdd = array();
-
-        if ( array_key_exists('additional_custom_pre_id', $params)) {
-            if ( !CRM_Utils_Array::value('additional_custom_pre_id', $params) ) {
-                $ufAdd[1] = $params['custom_pre_id'];  
-            } else {            
+        if (CRM_Utils_Array::value('is_multiple_registrations', $params ) ) {
+            $ufAdd = array();
+            
+            if ( array_key_exists('additional_custom_pre_id', $params)) {
+                if ( !CRM_Utils_Array::value('additional_custom_pre_id', $params) ) {
+                    $ufAdd[1] = $params['custom_pre_id'];  
+                } else {            
                 $ufAdd[1] = $params['additional_custom_pre_id'];  
-            } 
-        }
-
-        if ( array_key_exists('additional_custom_post_id', $params)) {
-            if ( !CRM_Utils_Array::value('additional_custom_post_id', $params) ) {
-                $ufAdd[2] = $params['custom_post_id'];  
+                } 
+            }
+            
+            if ( array_key_exists('additional_custom_post_id', $params)) {
+                if ( !CRM_Utils_Array::value('additional_custom_post_id', $params) ) {
+                    $ufAdd[2] = $params['custom_post_id'];  
             } else {            
-                $ufAdd[2] = $params['additional_custom_post_id'];  
+                    $ufAdd[2] = $params['additional_custom_post_id'];  
+                }
+            }
+            $skipWeightAdd = 0;
+            if (CRM_Utils_Array::value('additional_custom_post_id_multiple', $params)){
+                $skipWeightAdd = 1;
+                $ufAdd = array_merge ($ufAdd, $params['additional_custom_post_id_multiple']);
+            }
+            
+            if ( ! empty( $ufAdd ) ) {
+                foreach ( $ufAdd as $weightAdd => $ufGroupIdAdd) {
+                    if ($skipWeightAdd) {
+                        $ufJoinParamsAdd['weight'] = $weightAdd+1;
+                    } else {
+                        $ufJoinParamsAdd['weight'] = $weightAdd;
+                    }
+                    $ufJoinParamsAdd['uf_group_id'] = $ufGroupIdAdd;
+                    CRM_Core_BAO_UFJoin::create( $ufJoinParamsAdd );
+                    unset( $ufJoinParamsAdd['id'] );
+                }
             }
         }
 
-        if (CRM_Utils_Array::value('additional_custom_post_id_multiple', $params)){
-            $ufAdd = array_merge ($ufAdd, $params['additional_custom_post_id_multiple']);
-        }
-        
-        if ( ! empty( $ufAdd ) ) {
-            foreach ( $ufAdd as $weightAdd => $ufGroupIdAdd) {
-                $ufJoinParamsAdd['weight'] = $weightAdd+1;
-                $ufJoinParamsAdd['uf_group_id'] = $ufGroupIdAdd;
-                CRM_Core_BAO_UFJoin::create( $ufJoinParamsAdd );
-                unset( $ufJoinParamsAdd['id'] );
-            }
-        }
-        
         parent::endPostProcess( );
     } //end of function
     
