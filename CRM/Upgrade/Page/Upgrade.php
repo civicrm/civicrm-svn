@@ -490,7 +490,7 @@ SELECT  count( id ) as statusCount
         }
         $template->assign( 'addDeceasedStatus', $addDeceasedStatus ); 
 
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
 
@@ -500,7 +500,7 @@ SELECT  count( id ) as statusCount
         $threeOne = new CRM_Upgrade_ThreeOne_ThreeOne( );
         $threeOne->upgrade_3_1_3( );
         
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
 

@@ -100,7 +100,7 @@ class CRM_Upgrade_Incremental_php_ThreeFour {
         // visibility in table civicrm_mailing
         $renameColumnVisibility = CRM_Core_DAO::checkFieldExists( 'civicrm_mailing', 'visibilty' ); 
         
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->assign( 'renameColumnVisibility', $renameColumnVisibility);
         $upgrade->processSQL( $rev );
     }   
@@ -109,7 +109,7 @@ class CRM_Upgrade_Incremental_php_ThreeFour {
     {
         require_once 'CRM/Core/DAO.php';
         $addPetitionOptionGroup = !(boolean) CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 'msg_tpl_workflow_petition', 'id', 'name' );
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->assign( 'addPetitionOptionGroup', $addPetitionOptionGroup );
         $upgrade->processSQL( $rev );
     }
@@ -209,7 +209,7 @@ INSERT INTO civicrm_location_type ( name, description, is_reserved, is_active )
             $dao->free( );
         }
         
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }   
   }
