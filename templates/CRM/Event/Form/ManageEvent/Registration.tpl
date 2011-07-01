@@ -26,7 +26,7 @@
 {if $addProfileBottomAdd OR $addProfileBottom}
   {if $addProfileBottomAdd}
   <table class="form-layout-compressed">
-    <tr class='crm-event-manage-registration-form-block-custom_post_multiple'>
+    <tr class="crm-event-manage-registration-form-block-additional_custom_post_{$profileBottomNumAdd}">
       <td scope="row" class="label" width="20%">{$form.additional_custom_post_id_multiple[$profileBottomNumAdd].label}</td>
       <td>{$form.additional_custom_post_id_multiple[$profileBottomNumAdd].html}</td>
     </tr>

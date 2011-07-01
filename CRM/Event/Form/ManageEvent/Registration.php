@@ -516,6 +516,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
     {   
         $params = array();
         $params = $this->exportValues();
+
         $params['id'] = $this->_id;
 
         //format params
@@ -575,20 +576,29 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         }
         // also update the ProfileModule tables 
         $ufJoinParamsAdd = array( 'is_active'    => 1, 
-                               'module'       => 'CiviEvent_Additional',
-                               'entity_table' => 'civicrm_event', 
-                               'entity_id'    => $this->_id );
+                                  'module'       => 'CiviEvent_Additional',
+                                  'entity_table' => 'civicrm_event', 
+                                  'entity_id'    => $this->_id );
         
         // first delete all past entries
         CRM_Core_BAO_UFJoin::deleteAll( $ufJoinParamsAdd );
         
         $ufAdd = array();
-        if ( ! empty( $params['additional_custom_pre_id'] ) ) {
-            $ufAdd[1] = $params['additional_custom_pre_id'];  
+
+        if ( array_key_exists('additional_custom_pre_id', $params)) {
+            if ( !CRM_Utils_Array::value('additional_custom_pre_id', $params) ) {
+                $ufAdd[1] = $params['custom_pre_id'];  
+            } else {            
+                $ufAdd[1] = $params['additional_custom_pre_id'];  
+            } 
         }
-        
-        if ( ! empty( $params['additional_custom_post_id'] ) ) {
-            $ufAdd[2] = $params['additional_custom_post_id'];  
+
+        if ( array_key_exists('additional_custom_post_id', $params)) {
+            if ( !CRM_Utils_Array::value('additional_custom_post_id', $params) ) {
+                $ufAdd[2] = $params['custom_post_id'];  
+            } else {            
+                $ufAdd[2] = $params['additional_custom_post_id'];  
+            }
         }
 
         if (CRM_Utils_Array::value('additional_custom_post_id_multiple', $params)){
