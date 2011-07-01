@@ -610,7 +610,19 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
         $this->assertEquals( $participant['is_error'],1 );
         $this->assertNotNull($participant['error_message']);
     }
-
+   /*
+    * delete with a get - a 'criteria delete'
+    */
+    function testNestedDelete(){
+      $description = "Criteria delete by nesting a GET & a DELETE";
+      $subfile = "NestedDelete";
+      $participants = civicrm_api('Participant', 'Get', array('version'=> 3));
+      $this->assertEquals($participants['count'], 3);
+      $this->documentMe($params,$result ,__FUNCTION__,__FILE__,$description,$subfile);
+      $participants = civicrm_api('Participant', 'Get', array('version'=> 3, 'contact_id' => $this->_contactID2, 'api.participant.delete' => 1));
+      $participants = civicrm_api('Participant', 'Get', array('version'=> 3));
+      $this->assertEquals( 1,$participants['count'],"only one participant should be left. line " . __LINE__);    
+    }
     ///////////////// civicrm_create_participant_formatted methods
     /**
      * Test civicrm_participant_formatted Empty  params type

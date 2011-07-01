@@ -404,7 +404,7 @@ function civicrm_upgrade_db() {
     }
 
     require_once( 'CRM/Upgrade/Page/Upgrade.php' );
-    $upgrade =& new CRM_Upgrade_Page_Upgrade( );
+    $upgrade = new CRM_Upgrade_Page_Upgrade( );
     ob_start(); // to suppress html output /w source code.
     $upgrade->run( );
     $result = $template->get_template_vars('message'); // capture the required message.
@@ -685,7 +685,7 @@ function civicrm_rest() {
     }
 
     require_once 'CRM/Utils/REST.php';
-    $rest =& new CRM_Utils_REST();
+    $rest = new CRM_Utils_REST();
 
     require_once 'CRM/Core/Config.php';
     $config =& CRM_Core_Config::singleton();

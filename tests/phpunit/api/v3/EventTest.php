@@ -84,6 +84,10 @@ class api_v3_EventTest extends CiviUnitTestCase
             $this->eventDelete( $this->_eventId );
         }        
         $this->eventDelete( $this->_event['id'] );	
+        $tablesToTruncate = array( 'civicrm_participant', 
+                                   'civicrm_event',
+                                   );
+        $this->quickCleanup( $tablesToTruncate, true );
     }
 
 ///////////////// civicrm_event_get methods
@@ -123,7 +127,33 @@ class api_v3_EventTest extends CiviUnitTestCase
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['id'], $this->_eventId );
     }
-
+    /*
+     * Test 'is.Current' option. Existing event is 'old' so only current should be returned
+     */
+    function testGetIsCurrent( )
+    {  
+        $result = civicrm_api( 'Event','Get',$params );  
+        $params = array( 
+                         'version'=>$this->_apiversion,
+                         'isCurrent' => 1,
+        );
+        $currentEventParams = array('start_date' => date('Y-m-d',strtotime('+ 1 day')),
+                                    'end_date' =>   date('Y-m-d',strtotime('+ 1 week')),);
+        $currentEventParams = array_merge($this->_params, $currentEventParams);
+        $currentEvent = civicrm_api('Event', 'Create', $currentEventParams);
+        $description = "demonstrates use of is.Current option";
+        $subfile = "IsCurrentOption";
+        $result = civicrm_api( 'Event','Get',$params );  
+ 
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile); 
+        $allEvents  = civicrm_api( 'Event','Get',array('version' => 3) ); 
+        civicrm_api('Event','Delete',array('version' => 3, 'id' =>$currentEventParams['id'] ))  ;
+        $this->assertEquals( 1,$result['count'], 'confirm only one event found in line ' . __LINE__ );   
+        $this->assertEquals( 2,$allEvents ['count'], 'confirm two events exist (ie. one not found) ' . __LINE__ ); 
+        $this->assertEquals($currentEvent['id'], $result['id'],'' );
+  
+    }
+    
 ///////////////// civicrm_event_create methods
         /**
      * check with complete array + custom field 
@@ -225,7 +255,7 @@ class api_v3_EventTest extends CiviUnitTestCase
     function testDeleteWrongParamsType()
     {
         $params = 'Annual CiviCRM meet';
-        $result =& civicrm_api3_event_delete($params);
+        $result =& civicrm_api('Event','Delete',$params);
 
         $this->assertEquals($result['is_error'], 1);        
     }
@@ -233,7 +263,7 @@ class api_v3_EventTest extends CiviUnitTestCase
     function testDeleteEmptyParams( )
     {
         $params = array( );
-        $result =& civicrm_api3_event_delete($params);
+        $result =& civicrm_api('Event','Delete',$params);
         $this->assertEquals($result['is_error'], 1);        
     }
     
@@ -241,7 +271,7 @@ class api_v3_EventTest extends CiviUnitTestCase
     {
         $params = array('id' => $this->_eventId,
                         'version'				=>$this->_apiversion,);
-        $result =& civicrm_api3_event_delete($params);
+        $result =& civicrm_api('Event','Delete',$params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertNotEquals($result['is_error'], 1);
     }
@@ -252,16 +282,30 @@ class api_v3_EventTest extends CiviUnitTestCase
     {
         $params = array('event_id' => $this->_eventId,
                         'version'				=>$this->_apiversion,);
-        $result =& civicrm_api3_event_delete($params);
+        $result =& civicrm_api('Event','Delete',$params);
         $this->assertNotEquals($result['is_error'], 1);
     }   
+    /*
+     * Trying to delete an event with participants should return error
+     */
+    function testDeleteWithExistingParticipant(){
+        $contactID = $this->individualCreate(null ) ;
+        $participantID = $this->participantCreate(
+                         array(
+        								       'contactID' => $contactID,
+        								       'eventID' => $this->_eventId  ));
+        $result = civicrm_api('Event','Delete', array('version' => $this->_apiversion, 'id' => $this->_eventId));
+print_r($result );
+        $this->assertEquals(1, $result['is_error'], "Deleting exist with participants");
+       
+    }
     function testDeleteWithWrongEventId( )
     {
-        $params = array('event_id' => $this->_eventId);
-        $result =& civicrm_api3_event_delete($params);
+        $params = array('event_id' => $this->_eventId, 'version' => $this->_apiversion);
+        $result =& civicrm_api('Event','Delete',$params);
         // try to delete again - there's no such event anymore
         $params = array('event_id' => $this->_eventId);
-        $result =& civicrm_api3_event_delete($params);
+        $result =& civicrm_api('Event','Delete',$params);
         $this->assertEquals($result['is_error'], 1);
     }
 

@@ -451,6 +451,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                                array( 1 => $key ) ) );
     }
     
+    function assertAPISuccess( $apiResult, $prefix = '' ) {
+        if (!empty($prefix)) {
+          $prefix .= ': ';
+        }
+        $this->assertEquals( 0, $apiResult['is_error'], $prefix . $apiResult['error_message'] );
+    }
+    
     /** 
      * Generic function to create Organisation, to be used in test cases
      * 

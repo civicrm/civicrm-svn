@@ -213,11 +213,18 @@ function &civicrm_api3_create_error( $msg, $data = null,&$dao = null )
  * @dao object DAO object to be freed here
  * @return array $result
  */
-function civicrm_api3_create_success( $values = 1,$params=array(),&$dao = null )
+function civicrm_api3_create_success( $values = 1,$params=array(),&$dao = null , $entity = null)
 {
     $result = array();
     $result['is_error'] = 0;
-
+    //lets set the ['id'] field if it's not set & we know what the entity is
+    if(is_array($values) && !empty($entity)){
+      foreach ($values as $key => $item){
+        if(empty($item['id']) &&  !empty($item[$entity . "_id"])){
+          $values[$key]['id'] = $item[$entity . "_id"];
+        }
+      } 
+    }
     //if ( array_key_exists ('debug',$params) && is_object ($dao)) {
     if ( is_array($params) && array_key_exists ('debug',$params)) {
         if(!is_object ($dao)){
