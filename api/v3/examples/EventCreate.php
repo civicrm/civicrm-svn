@@ -40,10 +40,10 @@ function event_create_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => 13,
+  'id' => 2,
   'values' => array( 
-      '13' => array( 
-          'id' => 13,
+      '2' => array( 
+          'id' => 2,
           'title' => 'Annual CiviCRM meet',
           'summary' => 'If you have any CiviCRM realted issues or want to track where CiviCRM is heading, Sign up now',
           'description' => 'This event is intended to give brief idea about progess of CiviCRM and giving solutions to common user issues',
@@ -96,7 +96,7 @@ function event_create_expectedresult(){
           'is_template' => '',
           'template_title' => '',
           'created_id' => '',
-          'created_date' => '',
+          'created_date' => '20110702112941',
           'currency' => '',
           'campaign_id' => '',
         ),

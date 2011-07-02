@@ -295,8 +295,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         								       'contactID' => $contactID,
         								       'eventID' => $this->_eventId  ));
         $result = civicrm_api('Event','Delete', array('version' => $this->_apiversion, 'id' => $this->_eventId));
-print_r($result );
-        $this->assertEquals(1, $result['is_error'], "Deleting exist with participants");
+        $this->assertEquals(0, $result['is_error'], "Deleting exist with participants");
        
     }
     function testDeleteWithWrongEventId( )

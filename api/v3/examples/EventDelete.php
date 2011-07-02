@@ -7,7 +7,7 @@
  */
 function event_delete_example(){
 $params = array( 
-  'id' => 18,
+  'id' => 1,
   'version' => 3,
 );
 
