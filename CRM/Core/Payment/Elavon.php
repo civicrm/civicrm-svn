@@ -105,6 +105,7 @@ class CRM_Core_Payment_Elavon extends CRM_Core_Payment
         $requestFields['ssl_invoice_number']	     = $params['invoiceID'];//32 character string
         $requestFields['ssl_transaction_type']	     = "CCSALE";
         $requestFields['ssl_description']	     = $params['description'];
+        $requestFields['ssl_customer_number']     = substr($params['credit_card_number'], -4);
 
         /************************************************************************************
          *  Fields available from civiCRM not implemented for Elavon
