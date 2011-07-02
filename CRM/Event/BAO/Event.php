@@ -135,7 +135,14 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
     {
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
-        
+                //new event, so lets set the created_id
+        if ( empty($params['created_id']) ) { 
+            $session = CRM_Core_Session::singleton( );
+            $params['created_id']   = $session->get( 'userID' );
+        }   
+        if ( empty($params['created_date']) && empty($params['id'])) { 
+            $params['created_date'] = date('YmdHis');
+        }   
         $event = self::add( $params );
         
         if ( is_a( $event, 'CRM_Core_Error') ) {
