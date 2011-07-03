@@ -302,7 +302,8 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
                  
          //CRM-4418 check for view, edit, delete
          $permissions = array( CRM_Core_Permission::VIEW );
-         if ( CRM_Core_Permission::check( 'edit cases' ) ) {
+         if ( CRM_Core_Permission::check( 'access all cases and activities' )
+              || CRM_Core_Permission::check( 'access my cases and activities' ) ) {
              $permissions[] = CRM_Core_Permission::EDIT;
          }
          if ( CRM_Core_Permission::check( 'delete in CiviCase' ) ) {

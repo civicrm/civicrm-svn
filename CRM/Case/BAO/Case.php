@@ -731,7 +731,8 @@ AND civicrm_case.status_id != $closedId";
         
         // check is the user has view/edit signer permission
         $permissions = array( CRM_Core_Permission::VIEW );
-        if ( CRM_Core_Permission::check( 'edit cases' ) ) {
+        if ( CRM_Core_Permission::check( 'access all cases and activities' ) ||
+             (!$allCases && CRM_Core_Permission::check( 'access my cases and activities' )) ) {
             $permissions[] = CRM_Core_Permission::EDIT;
         }
         if ( CRM_Core_Permission::check( 'delete in CiviCase' ) ) {
