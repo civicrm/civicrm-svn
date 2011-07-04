@@ -336,12 +336,24 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
      * Function to merge tags
      */
     function mergeTags( $fromId, $toId ) {
-        $query = "UPDATE civicrm_entity_tag SET tag_id = %1 WHERE tag_id = %2";
-        CRM_Core_DAO::executeQuery( $query, array( 1 => array($toId,   'Integer'),
-                                                   2 => array($fromId, 'Integer') ) );
+        $sqls   = array( "UPDATE civicrm_entity_tag SET tag_id = %1 WHERE tag_id = %2",
+                         "DELETE FROM civicrm_tag WHERE id = %2" );
+        $tables = array( 'civicrm_entity_tag', 'civicrm_tag' );
 
-        require_once 'CRM/Core/BAO/Tag.php';
-        CRM_Core_BAO_Tag::del( $fromId );
+        // Allow hook_civicrm_merge() to add SQL statements for the merge operation AND / OR 
+        // perform any other actions like logging
+        CRM_Utils_Hook::merge( 'sqls', $sqls, $fromId, $toId, $tables );
+        
+        // call the SQL queries in one transaction
+        require_once 'CRM/Core/Transaction.php';
+        $transaction = new CRM_Core_Transaction( );
+        foreach ( $sqls as $sql ) {
+            CRM_Core_DAO::executeQuery( $sql,
+                                        array( 1 => array($toId,   'Integer'),
+                                               2 => array($fromId, 'Integer') ),
+                                        true, null, true );
+        }
+        $transaction->commit( );
 
         return true;
     }

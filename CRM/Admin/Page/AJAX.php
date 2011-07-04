@@ -346,9 +346,6 @@ LIMIT $limit";
         $fromId = CRM_Utils_Type::escape( $_POST['fromId'], 'Integer' );
         $toId   = CRM_Utils_Type::escape( $_POST['toId'], 'Integer' );
         
-        require_once 'CRM/Core/BAO/EntityTag.php';
-        $status = CRM_Core_BAO_EntityTag::mergeTags( $fromId, $toId );
-
         $query = "SELECT id, name FROM civicrm_tag WHERE id IN (%1, %2)";
         $dao   = CRM_Core_DAO::executeQuery( $query, array( 1 => array($fromId, 'Integer'),
                                                             2 => array($toId,   'Integer') ) );
@@ -356,6 +353,9 @@ LIMIT $limit";
         while( $dao->fetch( ) ) {
             $result[($dao->id == $fromId ? 'tagA' : 'tagB')] = $dao->name;
         }
+
+        require_once 'CRM/Core/BAO/EntityTag.php';
+        $status = CRM_Core_BAO_EntityTag::mergeTags( $fromId, $toId );
         $result['status'] = $status;
 
         echo json_encode( $result );
