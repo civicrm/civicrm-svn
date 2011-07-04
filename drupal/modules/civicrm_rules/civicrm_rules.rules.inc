@@ -144,8 +144,9 @@ function civicrm_rules_token_values($type, $object = NULL) {
         }
         break;
     }
-
-    return $values;
+    if (!empty($values) && is_array($values)){
+      return $values;
+    }
 }
 
 /**
