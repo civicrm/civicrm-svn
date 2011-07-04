@@ -294,9 +294,6 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$versi
         foreach($params as $field => $newparams){          
             if ((is_array($newparams) || $newparams === 1) && substr($field,0, 3) == 'api'  ){
                 
-                //note this is only handling 1 result at the moment
-                $idIndex = _civicrm_api_get_results_id_index($params,$result);
-
                 // e.g. //'api.participant.delete' => 1 is a valid options 
                 if ($newparams === 1){
                   $newparams = array('version' => $version);
@@ -414,17 +411,6 @@ function _civicrm_api_replace_variables($entity,$action,&$params, &$parentResult
 
     }   
   }
-
-/*
- * Get the field the results are indexed by (0 for sequential, $reuslt['id'] otherwise
- */
-function _civicrm_api_get_results_id_index(&$params,&$result){
-      if(CRM_Utils_Array::value('sequential',$params) == 1){
-        return  0;
-      }else{
-        return $result['id'];
-       }
-}
 
 /*
  * Convert possibly camel name to underscore separated entity name
