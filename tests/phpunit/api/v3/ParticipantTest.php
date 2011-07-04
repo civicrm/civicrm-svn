@@ -620,8 +620,9 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
       $subfile = "NestedDelete";
       $participants = civicrm_api('Participant', 'Get', array('version'=> 3));
       $this->assertEquals($participants['count'], 3);
-      $this->documentMe($params,$result ,__FUNCTION__,__FILE__,$description,$subfile);
+
       $participants = civicrm_api('Participant', 'Get', array('version'=> 3, 'contact_id' => $this->_contactID2, 'api.participant.delete' => 1));
+      $this->documentMe($params,$participants ,__FUNCTION__,__FILE__,$description,$subfile);
       $participants = civicrm_api('Participant', 'Get', array('version'=> 3));
       $this->assertEquals( 1,$participants['count'],"only one participant should be left. line " . __LINE__);    
     }
