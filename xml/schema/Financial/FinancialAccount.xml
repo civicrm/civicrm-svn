@@ -65,7 +65,14 @@
        <length>64</length>
        <export>true</export>
        <comment>Optional value for mapping monies owed and received to accounting system codes.</comment>
-       <add>4.1</add>
+       <add>1.3</add>
+  </field>
+  <field>
+       <name>description</name>
+       <type>varchar</type>
+       <length>255</length>
+       <comment>Contribution Type Description.</comment>
+       <add>1.3</add>
   </field>
   <field>
        <name>parent_id</name>
@@ -90,7 +97,7 @@
        <type>boolean</type>
        <default>1</default>
        <comment>Is this account tax-deductible?</comment>
-       <add>4.1</add>
+       <add>1.3</add>
   </field>
   <filed>
        <name>is_tax</name>
@@ -110,13 +117,13 @@
        <name>is_reserved</name>
        <type>boolean</type>
        <comment>Is this a predefined system object?</comment>
-       <add>4.1</add>
+       <add>1.3</add>
   </field>
   <field>
        <name>is_active</name>
        <type>boolean</type>
        <comment>Is this property active?</comment>
-       <add>4.1</add>
+       <add>1.3</add>
   </field>
   <field>
        <name>is_default</name>
@@ -128,7 +135,7 @@
     <name>UI_name</name>
     <fieldName>name</fieldName>
     <unique>true</unique>
-    <add>4.1</add>
+    <add>1.3</add>
   </index>
 
 
