@@ -127,7 +127,7 @@ function civicrm_api3_activity_create( $params ) {
         $caseActivityDAO->save();
       }
       _civicrm_api3_object_to_array( $activityBAO, $activityArray[$activityBAO->id]);
-      return civicrm_api3_create_success($activityArray,$params,$activityBAO);
+      return civicrm_api3_create_success($activityArray,$params,'activity','get',$activityBAO);
     }
         } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
@@ -146,7 +146,7 @@ function civicrm_api3_activity_getfields( $params ) {
     $fields['assignee_contact_id'] = 'assigned to';
     $fields['activity_status_id'] = 'Status id';
     unset ($fields['activity_id']);
-    return civicrm_api3_create_success($fields ,$params,$bao);
+    return civicrm_api3_create_success($fields ,$params,'activity','create',$bao);
 }
 
 
@@ -198,7 +198,7 @@ function civicrm_api3_activity_get( $params ) {
           }
         }
         //legacy custom data get - so previous formatted response is still returned too
-        return civicrm_api3_create_success( $activities ,$params);
+        return civicrm_api3_create_success( $activities ,$params,'activity','get');
 
     } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
@@ -216,9 +216,6 @@ function civicrm_api3_activity_get( $params ) {
  *
  * @access public
  *
- * @todo what are required mandatory fields? id?
- * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
- * @todo Erik Hommel 16 dec 2010 check if civicrm_create_success is handled correctly with REST (should be fixed in utils function civicrm_create_success)
  * {@example ActivityDelete.php 0}
  */
 function civicrm_api3_activity_delete( $params )
@@ -237,7 +234,7 @@ function civicrm_api3_activity_delete( $params )
         }
 
         if ( CRM_Activity_BAO_Activity::deleteActivity( $params ) ) {
-            return civicrm_api3_create_success( );
+            return civicrm_api3_create_success(1,$params,'activity','delete' );
         } else {
             return civicrm_api3_create_error(  'Could not delete activity'  );
         }

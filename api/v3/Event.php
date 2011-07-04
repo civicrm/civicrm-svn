@@ -156,7 +156,7 @@ function civicrm_api3_event_get( $params )
 
     }//end of the loop
 
-    return civicrm_api3_create_success($event,$params,$eventDAO);
+    return civicrm_api3_create_success($event,$params,'event','get',$eventDAO);
 
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );

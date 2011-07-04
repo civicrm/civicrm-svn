@@ -140,7 +140,7 @@ function civicrm_api3_membership_create($params)
     $membership = array();
     _civicrm_api3_object_to_array($membershipBAO, $membership[$membershipBAO->id]);
 
-    return civicrm_api3_create_success($membership , $params, $membershipBAO);
+    return civicrm_api3_create_success($membership , $params,'membership','create', $membershipBAO);
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
@@ -249,7 +249,7 @@ function civicrm_api3_membership_get($params)
       }
     }
     
-    return civicrm_api3_create_success($members,$params);
+    return civicrm_api3_create_success($members,$params, 'membership','get');
     } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {

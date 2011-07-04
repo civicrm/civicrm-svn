@@ -70,7 +70,7 @@ function civicrm_api3_email_create( $params )
 	 } else {
 		 $values = array( );
 		 _civicrm_api3_object_to_array($emailBAO, $values[$emailBAO->id]);
-		 return civicrm_api3_create_success($values, $params,$emailBAO );
+		 return civicrm_api3_create_success($values, $params,'email','create',$emailBAO );
 	 }
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
@@ -149,9 +149,9 @@ function civicrm_api3_email_get($params)
         CRM_Core_DAO::storeValues( $emailBAO, $email );
         $emails[$emailBAO->id] = $email;
       }
-      return civicrm_api3_create_success($emails,$params,$emailBAO);
+      return civicrm_api3_create_success($emails,$params,'email','get',$emailBAO);
     } else {
-      return civicrm_api3_create_success(array(),$params,$emailBAO);
+      return civicrm_api3_create_success(array(),$params,'email','get',$emailBAO);
     }
 				
   } catch (PEAR_Exception $e) {

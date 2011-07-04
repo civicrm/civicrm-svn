@@ -64,7 +64,7 @@ function civicrm_api3_activity_type_get($params ) {
       civicrm_api3_verify_mandatory($params);
     require_once 'CRM/Core/OptionGroup.php';
     $activityTypes = CRM_Core_OptionGroup::values( 'activity_type' );
-    return civicrm_api3_create_success($activityTypes,$params);
+    return civicrm_api3_create_success($activityTypes,$params,'activity_type','get');
         } catch (PEAR_Exception $e) {
       return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {
@@ -105,7 +105,7 @@ function civicrm_api3_activity_type_create( $params ) {
     $activityObject = CRM_Core_OptionValue::addOptionValue( $params, $groupParams, $action, $optionValueID );
     $activityType = array();
     _civicrm_api3_object_to_array( $activityObject, $activityType[ $activityObject->id] );
-    return civicrm_api3_create_success($activityType,$params);
+    return civicrm_api3_create_success($activityType,$params,'activity_type','create');
     } catch (PEAR_Exception $e) {
       return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {

@@ -133,6 +133,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
          $params = array('version' => $this->_apiversion);
          $result = civicrm_api3_membership_create( $params );
          $this->assertEquals( 1, $result['is_error'],  "In line " . __LINE__ );
+         $this->assertEquals($result['id'], $result['values'][$result['id']]['id']);
      }
 
     /**
@@ -168,7 +169,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $result = civicrm_api($this->_entity,'create',  $this->_params );
         $params = array('membership_type_id' =>   $this->_membershipTypeID ,
                          'version'   => $this->_apiversion );
-        $membership = civicrm_api3_membership_get( $params );
+        $membership = civicrm_api('membership','get', $params );
         $result = civicrm_api('Membership','Delete',array('id'=>   $membership['id'] ,
          																						'version'  => $this->_apiversion,)); 
         $result = $membership['values'][$membership['id']];
@@ -179,7 +180,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $this->assertEquals($result['start_date'],         '2009-01-21', "In line " . __LINE__);
         $this->assertEquals($result['end_date'],           '2009-12-21', "In line " . __LINE__);
         $this->assertEquals($result['source'],             'Payment', "In line " . __LINE__);
-        $this->assertEquals($result['is_override'],         1, "In line " . __LINE__);
+        $this->assertEquals($result['is_override'],         1, "In line " . __LINE__);       
+        $this->assertEquals($result['id'], $membership['id']);
     }      
 
     /**
@@ -411,6 +413,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $this->assertEquals( $result['is_error'], 0 );
         $this->assertNotNull( $result['id'] );
         $this->assertEquals($this->_contactID,$result['values'][$result['id']]['contact_id']," in line " . __LINE__ );
+        $this->assertEquals($result['id'],$result['values'][$result['id']]['id']," in line " . __LINE__ );
     }
  
     /**

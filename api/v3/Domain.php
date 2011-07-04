@@ -95,7 +95,7 @@ function civicrm_api3_domain_get($params ) {
                 CRM_Core_BAO_Domain::getNameAndEmail( true );
             $domains[$domain['id']] = array_merge($domains[$domain['id']], $domain);
         }
-        return civicrm_api3_create_success($domains,$params,$dao);
+        return civicrm_api3_create_success($domains,$params,'domain','get',$dao);
                 
     } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );

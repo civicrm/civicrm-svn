@@ -69,7 +69,7 @@ function civicrm_api3_group_create( $params )
     } else {
       $values = array();
       _civicrm_api3_object_to_array_unique_fields($group, $values[$group->id]);
-      return civicrm_api3_create_success($values,$params,$group );
+      return civicrm_api3_create_success($values,$params,'group','create',$group );
     }
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );

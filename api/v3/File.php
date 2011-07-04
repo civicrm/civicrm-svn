@@ -81,7 +81,7 @@ function civicrm_api3_file_create( $params )
     $file = array();
     _civicrm_api3_object_to_array($fileDAO, $file);
 
-    return civicrm_create_success($file,$params,$fileDAO);
+    return civicrm_create_success($file,$params,'file','create',$fileDAO);
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
@@ -220,7 +220,7 @@ function civicrm_api3_entity_file_create( $params )
   $entityFile = array();
   _civicrm_api3_object_to_array( $entityFileDAO, $entityFile );
 
-  return civicrm_create_success($entityFile,$params,$entityFileDAO);
+  return civicrm_create_success($entityFile,$params,'entity_file','create',$entityFileDAO);
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
@@ -275,7 +275,7 @@ function civicrm_api3_files_by_entity_get($params) {
 			return civicrm_api3_create_error ( 'Exact match not found' );
 		}
 		
-		return civicrm_api3_create_success ( $files, $params, $entityFileDAO );
+		return civicrm_api3_create_success ( $files, $params,'file','get', $entityFileDAO );
 	} catch ( PEAR_Exception $e ) {
 		return civicrm_create_error ( $e->getMessage () );
 	} catch ( Exception $e ) {

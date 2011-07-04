@@ -155,7 +155,7 @@ function civicrm_api3_contact_create( $params )
      
     }
 
-    return civicrm_api3_create_success($values,$params);
+    return civicrm_api3_create_success($values,$params,'contact');
     
     return civicrm_api3_contact_update( $params, $create_new );
   } catch (Exception $e) {
@@ -258,7 +258,7 @@ function civicrm_api3_contact_get( $params )
         }
       }
     }
-    return civicrm_api3_create_success($returnContacts, $params);
+    return civicrm_api3_create_success($returnContacts, $params,'contact');
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {

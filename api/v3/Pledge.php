@@ -83,7 +83,7 @@ function civicrm_api3_pledge_create( $params ) {
 
     }
 
-    return civicrm_api3_create_success($pledgeArray,$params,$pledge);
+    return civicrm_api3_create_success($pledgeArray,$params,'pledge','create',$pledge);
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
@@ -117,7 +117,7 @@ function civicrm_api3_pledge_delete( $params ) {
 
     require_once 'CRM/Pledge/BAO/Pledge.php';
     if ( CRM_Pledge_BAO_Pledge::deletePledge( $pledgeID ) ) {
-      return civicrm_api3_create_success(array($pledgeID =>$pledgeID) );
+      return civicrm_api3_create_success(array($pledgeID =>$pledgeID),$params,'pledge','delete' );
     } else {
       return civicrm_api3_create_error(  'Could not delete pledge'  );
     }
@@ -199,7 +199,7 @@ function civicrm_api3_pledge_get( $params ) {
       }
     }
 
-    return civicrm_api3_create_success($pledge,$params,$dao);
+    return civicrm_api3_create_success($pledge,$params, 'pledge','get',$dao);
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
