@@ -324,6 +324,7 @@ class CRM_Event_BAO_Query
             $query->_tables['civicrm_participant'] = $query->_whereTables['civicrm_participant'] = 1;
             return;
 
+        case 'participant_status':
         case 'participant_status_id':
             $val = array( );
             if ( is_array( $value ) ) {
