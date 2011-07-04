@@ -47,6 +47,7 @@
         {/if}
 
         {include file="CRM/common/jsortable.tpl"}
+        <div id="merge_tag_status"></div>
         <div id="cat">
             {strip}
             <table id="options" class="display">
@@ -63,7 +64,7 @@
                     </tr>
                 </thead>
                 {foreach from=$rows item=row key=id }
-                <tr class="{cycle values="odd-row,even-row"} {$row.class} crm-tag">
+                <tr class="{cycle values="odd-row,even-row"} {$row.class} crm-tag" id="tag_row_{$row.id}">
                     <td class="crm-tag-name">{$row.name}</td>
                     <td class="crm-tag-id">{$row.id}</td>	
                     <td class="crm-tag-description">{$row.description} </td>
@@ -158,6 +159,12 @@ function mergeTag( fromId ) {
 					  data     : data, 
 					  async    : false,
 					  dataType : "json",
+					  success  : function( values ) {
+                                                         if ( values.status == true ) {
+                                                            cj('#tag_row_' + fromId).hide();
+                                                            cj('#merge_tag_status').addClass("message status").html( "'" + values.tagA + "' has been merged with '" + values.tagB + "'. All records previously tagged with '" + values.tagA + "' are now tagged with '" + values.tagB + "'.");
+                                                         }
+                                                     }
 				       });
 				cj(this).dialog("close"); 
 				cj(this).dialog("destroy");

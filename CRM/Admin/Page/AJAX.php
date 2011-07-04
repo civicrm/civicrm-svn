@@ -347,8 +347,18 @@ LIMIT $limit";
         $toId   = CRM_Utils_Type::escape( $_POST['toId'], 'Integer' );
         
         require_once 'CRM/Core/BAO/EntityTag.php';
-        CRM_Core_BAO_EntityTag::mergeTags( $fromId, $toId );
+        $status = CRM_Core_BAO_EntityTag::mergeTags( $fromId, $toId );
 
+        $query = "SELECT id, name FROM civicrm_tag WHERE id IN (%1, %2)";
+        $dao   = CRM_Core_DAO::executeQuery( $query, array( 1 => array($fromId, 'Integer'),
+                                                            2 => array($toId,   'Integer') ) );
+        $result = array( );
+        while( $dao->fetch( ) ) {
+            $result[($dao->id == $fromId ? 'tagA' : 'tagB')] = $dao->name;
+        }
+        $result['status'] = $status;
+
+        echo json_encode( $result );
         CRM_Utils_System::civiExit( );
     } 
 

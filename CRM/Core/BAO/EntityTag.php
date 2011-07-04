@@ -342,6 +342,8 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
 
         require_once 'CRM/Core/BAO/Tag.php';
         CRM_Core_BAO_Tag::del( $fromId );
+
+        return true;
     }
 }
 
