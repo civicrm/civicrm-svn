@@ -292,10 +292,12 @@ function civicrm_api_get_camel_name( $entity, $version = NULL )
 function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$version){
   $entity = _civicrm_api_get_entity_name_from_camel($entity);
         foreach($params as $field => $newparams){          
-            if (substr($field,0, 3) == 'api' && (is_array($newparams) || $newparams === 1) ){
-              
+            if ((is_array($newparams) || $newparams === 1) && substr($field,0, 3) == 'api'  ){
+                
+                //note this is only handling 1 result at the moment
                 $idIndex = _civicrm_api_get_results_id_index($params,$result);
-                              
+
+                // e.g. //'api.participant.delete' => 1 is a valid options 
                 if ($newparams === 1){
                   $newparams = array('version' => $version);
                 }
@@ -305,14 +307,16 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$versi
                 }
                 $subAPI = explode($separator,$field);
 
-                $action = empty($subAPI[2])?$action:$subAPI[2];
+                $subaction = empty($subAPI[2])?$action:$subAPI[2];
                 $subParams  = array();
                 
-                            
+                foreach ($result['values'] as $idIndex => $parentAPIValues ) {
+                  
+                          
                 if(strtolower($subAPI[1]) != 'contact'){
                   //contact spits the dummy at activity_id so what else won't it like?
-                  $subParams["entity_id"] = $result['id'];
-                  $subParams[strtolower($entity) . "_id"] = $result['id'];
+                  $subParams["entity_id"] = $parentAPIValues['id'];
+                  $subParams[strtolower($entity) . "_id"] = $parentAPIValues['id'];
                   $subParams['entity_table'] = civicrm_api_get_camel_name($entity);
                 }
                
@@ -321,7 +325,7 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$versi
               
                 }
                 if (strtolower(CRM_Utils_Array::value(2,$subAPI)) == 'delete'){
-                  $subParams["id"] = $result['id'];
+                  $subParams["id"] = $parentAPIValues['id'];
                 }
                 
                 $subParams['version'] = $version;
@@ -330,17 +334,18 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$versi
                     // it is a numerically indexed array - ie. multiple creates
                     foreach ($newparams as $entity => $entityparams){
                         $subParams = array_merge($subParams,$entityparams);
-                        _civicrm_api_replace_variables($subAPI[1],$action,$subParams,$result['values'][$idIndex],$separator);
-                         $result['values'][$result['id']][$field][] = civicrm_api($subAPI[1],$action,$subParams);
+                        _civicrm_api_replace_variables($subAPI[1],$subaction,$subParams,$result['values'][$idIndex],$separator);
+                         $result['values'][$result['id']][$field][] = civicrm_api($subAPI[1],$subaction,$subParams);
                         
                     }
                 }else{
 
                     $subParams = array_merge($subParams,$newparams);
-                    _civicrm_api_replace_variables($subAPI[1],$action,$subParams,$result['values'][$idIndex],$separator);
-                    $result['values'][$idIndex ][$field] = civicrm_api($subAPI[1],$action,$subParams);
+                    _civicrm_api_replace_variables($subAPI[1],$subaction,$subParams,$result['values'][$idIndex],$separator);
+                    $result['values'][$idIndex ][$field] = civicrm_api($subAPI[1],$subaction,$subParams);
                         
                 }
+               } 
             }
         }
 }
@@ -375,7 +380,7 @@ function _civicrm_api_replace_variables($entity,$action,&$params, &$parentResult
 
   foreach ($params as $field => $value) {
 
-    if(substr($value, 0,6) == '$value') {
+    if(is_string($value)  && substr($value, 0,6) == '$value') {
       $valuesubstitute =  substr($value, 7); 
      
       if (!empty($parentResult[$valuesubstitute])){ 
