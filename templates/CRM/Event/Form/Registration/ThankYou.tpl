@@ -191,7 +191,7 @@
                     {ts 1=$participantNo+1}Participant Information - Participant %1{/ts}	
                 </div>
                 {if $participant.additionalCustomPre}
-                    <fieldset class="label-left"><legend>{$participant.additionalCustomPreGroupTitle}</legend>
+		    <fieldset class="label-left"><div class="header-dark">{$participant.additionalCustomPreGroupTitle}</div>	
                         {foreach from=$participant.additionalCustomPre item=value key=field}
                             <div class="crm-section {$field}-section">
                                 <div class="label">{$field}</div>
@@ -204,7 +204,7 @@
 
                 {if $participant.additionalCustomPost}
 		{foreach from=$participant.additionalCustomPost item=value key=field}
-		 <fieldset class="label-left"><legend>{$participant.additionalCustomPostGroupTitle.$field.groupTitle}</legend>
+		<fieldset class="label-left"><div class="header-dark">{$participant.additionalCustomPostGroupTitle.$field.groupTitle}</div>
                         {foreach from=$participant.additionalCustomPost.$field item=value key=field}
                             <div class="crm-section {$field}-section">
                                 <div class="label">{$field}</div>
