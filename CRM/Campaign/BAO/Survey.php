@@ -880,7 +880,7 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
                                                           false, CRM_Core_Action::VIEW );
         
         //don't load these fields in grid.
-        $removeFields = array( 'File', 'Autocomplete-Select', 'RichTextEditor' );
+        $removeFields = array( 'File', 'RichTextEditor' );
         require_once 'CRM/Core/BAO/CustomField.php';
         
         require_once 'CRM/Contact/BAO/ContactType.php';

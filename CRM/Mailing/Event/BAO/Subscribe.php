@@ -63,7 +63,7 @@ class CRM_Mailing_Event_BAO_Subscribe extends CRM_Mailing_Event_DAO_Subscribe {
      * @access public
      * @static
      */
-    public static function &subscribe( $group_id, $email , $contactId = null ) {
+    public static function &subscribe( $group_id, $email , $contactId = null , $context = null) {
         // CRM-1797 - allow subscription only to public groups
         $params = array('id' => (int) $group_id);
         $defaults = array();
@@ -72,8 +72,8 @@ class CRM_Mailing_Event_BAO_Subscribe extends CRM_Mailing_Event_DAO_Subscribe {
 
         require_once 'CRM/Contact/BAO/Group.php';
         $bao = CRM_Contact_BAO_Group::retrieve($params, $defaults);
-        if ( $bao && substr($bao->visibility, 0, 6) != 'Public') {
-            return $success;
+        if ( $bao && substr($bao->visibility, 0, 6) != 'Public' && $context != 'profile') {
+          return $success;
         }
         
         $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
@@ -342,7 +342,7 @@ SELECT     civicrm_email.id as email_id
      * @public
      * @return void
      */
-    function commonSubscribe( &$groups, &$params, $contactId = null ) 
+ function commonSubscribe( &$groups, &$params, $contactId = null, $context = null) 
     {
         $contactGroups = CRM_Mailing_Event_BAO_Subscribe::getContactGroups($params['email']);
         $group = array( );
@@ -359,7 +359,7 @@ SELECT     civicrm_email.id as email_id
             }
             
             $se = self::subscribe( $groupID,
-                                   $params['email'], $contactId );
+                                   $params['email'], $contactId, $context );
             if ( $se !== null ) { 
                 $success       = true;
                 $groupAdded[]  = $title;

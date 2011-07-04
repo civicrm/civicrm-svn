@@ -75,10 +75,10 @@ class CRM_Bridge_OG_Drupal {
                 $params['group_type'] = $groupType;
             }
             
-            $group = civicrm_api('group', 'add', $params );
+
             $group = civicrm_group_add( $params );
             if ( ! civicrm_error( $group ) ) {
-                $params['group_id'] = $group['result'];
+                $params['group_id'] = $group['result']->id;
             }
         } else {
             // do this only if we have a valid id
