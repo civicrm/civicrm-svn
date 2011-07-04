@@ -150,7 +150,7 @@
         </tr>
         <tr class='crm-event-manage-registration-form-block-custom_post_add'>
             <td scope="row" class="label" width="20%"></td>
-	    <td><a href="javascript:addProfileBottom()">{ts}add another bottom profile{/ts}</a></td>
+	    <td><a href="javascript:addProfileBottom()">{ts}add profile{/ts}</a></td>
         </tr>
         <tr id="additional_profile_pre" class="crm-event-manage-registration-form-block-additional_custom_pre_id">
             <td scope="row" class="label" width="20%">{$form.additional_custom_pre_id.label}</td>
@@ -178,7 +178,7 @@
         </tr>
         <tr id="additional_profile_post_multiple" class='crm-event-manage-registration-form-block-additional_custom_post_add'>
             <td scope="row" class="label" width="20%"></td>
-	    <td><a href="javascript:addProfileBottomAdd()">{ts}add another additional bottom profile{/ts}</a></td>
+	    <td><a href="javascript:addProfileBottomAdd()">{ts}add profile{/ts}</a></td>
         </tr>
         </table>
         </fieldset>
