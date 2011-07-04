@@ -183,6 +183,34 @@ class CRM_Core_BAO_UFJoin extends CRM_Core_DAO_UFJoin {
         return array( $first, $second, $firstActive, $secondActive );
     } 
 
+   public static function getUFGroupIds1(&$params) { 
+    
+        $dao = new CRM_Core_DAO_UFJoin( ); 
+         
+        // CRM-4377 (ab)uses the module column
+        if (isset($params['module'])) {
+            $dao->module = CRM_Utils_Array::value('module', $params);
+        }
+        $dao->entity_table = CRM_Utils_Array::value( 'entity_table', $params );
+        $dao->entity_id    = CRM_Utils_Array::value( 'entity_id'   , $params );
+        $dao->orderBy( 'weight asc' );
+        $dao->find( );
+        $first  = $firstActive = null;
+        $second = $secondActive = array();
+
+        while ( $dao->fetch( ) ) {
+            if ($dao->weight == 1) {
+                $first = $dao->uf_group_id;
+                $firstActive = $dao->is_active; 
+            } else {
+                $second[] = $dao->uf_group_id;
+                $secondActive[] = $dao->is_active; 
+            }
+        } 
+        return array( $first, $second, $firstActive, $secondActive );
+    } 
+
+
 }
 
 

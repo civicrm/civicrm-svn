@@ -122,8 +122,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
 
             list( $defaults['custom_pre_id'],
                   $defaults['custom_post'] ) = 
-                CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
-            
+                CRM_Core_BAO_UFJoin::getUFGroupIds1( $ufJoinParams );
             $defaults['custom_post_id'] =  $defaults['custom_post'][0];
             
             if (is_numeric($defaults['custom_post'])) {
@@ -561,27 +560,23 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         CRM_Core_BAO_UFJoin::deleteAll( $ufJoinParams );
 
         $uf = array();
+        $wt = 2;
         if ( ! empty( $params['custom_pre_id'] ) ) {
             $uf[1] = $params['custom_pre_id'];  
+            $wt = 1;
         }
         
         if ( ! empty( $params['custom_post_id'] ) ) {
             $uf[2] = $params['custom_post_id'];
         }
         
-        $skipWeight = 0;
         if (CRM_Utils_Array::value('custom_post_id_multiple', $params)){
-            $skipWeight = 1;
             $uf = array_merge ($uf, $params['custom_post_id_multiple']);
         }
-
+        $uf = array_values($uf);
         if ( ! empty( $uf ) ) {
             foreach ( $uf as $weight => $ufGroupId) {
-                if ($skipWeight) {
-                    $ufJoinParams['weight'] = $weight+1;
-                } else {
-                    $ufJoinParams['weight'] = $weight;
-                }
+                $ufJoinParams['weight'] = $weight+$wt;
                 $ufJoinParams['uf_group_id'] = $ufGroupId;
                 CRM_Core_BAO_UFJoin::create( $ufJoinParams );
                 unset( $ufJoinParams['id'] );
