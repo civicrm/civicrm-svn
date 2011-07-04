@@ -148,12 +148,14 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 
                 list( $defaults['additional_custom_pre_id'],
                       $defaults['additional_custom_post'] ) = 
-                    CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinAddParams );
-
+                    CRM_Core_BAO_UFJoin::getUFGroupIds1( $ufJoinAddParams );
+                
+                $defaults['additional_custom_post_id'] =  $defaults['additional_custom_post'][0];
                 if (is_numeric($defaults['additional_custom_post'])) {
                     $defaults['additional_custom_post_id'] = $defaults['additional_custom_post']; 
                 } else  if (!empty($defaults['additional_custom_post'])) {
-                    unset($defaults['custom_post'][0]);
+                    unset($defaults['additional_custom_post'][0]);
+
                     $this->_profilePostMultipleAdd = $defaults['additional_custom_post'];
                     foreach ( $defaults['additional_custom_post'] as $key => $value){
                         self::buildMultipleProfileBottom($this, $key, 'additional_', ts('Profile for Additional Participants'));
@@ -592,14 +594,17 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         CRM_Core_BAO_UFJoin::deleteAll( $ufJoinParamsAdd );
         if (CRM_Utils_Array::value('is_multiple_registrations', $params ) ) {
             $ufAdd = array();
+            $wtAdd = 2;
             
             if ( array_key_exists('additional_custom_pre_id', $params)) {
                 if ( !CRM_Utils_Array::value('additional_custom_pre_id', $params) ) {
                     $ufAdd[1] = $params['custom_pre_id'];  
+                    $wtAdd = 1;
                 } else if ( CRM_Utils_Array::value('additional_custom_pre_id', $params) == 'none') {
                     
                 } else {            
                     $ufAdd[1] = $params['additional_custom_pre_id'];  
+                    $wtAdd = 1;
                 } 
             }
             
@@ -613,20 +618,16 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
 
                 }
             }
-            $skipWeightAdd = 0;
+
             if (CRM_Utils_Array::value('additional_custom_post_id_multiple', $params)){
-                $skipWeightAdd = 1;
                 $ufAdd = array_merge ($ufAdd, $params['additional_custom_post_id_multiple']);
             }
-            
+
+            $ufAdd = array_values($ufAdd);            
             if ( ! empty( $ufAdd ) ) {
                 foreach ( $ufAdd as $weightAdd => $ufGroupIdAdd) {
-                    if ($skipWeightAdd) {
-                        $ufJoinParamsAdd['weight'] = $weightAdd+1;
 
-                    } else {
-                        $ufJoinParamsAdd['weight'] = $weightAdd;
-                    }
+                    $ufJoinParamsAdd['weight'] = $weightAdd+$wtAdd;
                     $ufJoinParamsAdd['uf_group_id'] = $ufGroupIdAdd;
                     
                     CRM_Core_BAO_UFJoin::create( $ufJoinParamsAdd );
