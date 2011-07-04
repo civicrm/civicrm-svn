@@ -59,17 +59,12 @@ require_once 'api/v3/utils.php';
  * @deprecated - use constant_get
  */
 function civicrm_api3_activity_type_get($params ) {
-  _civicrm_api3_initialize(true);
-    try{
-      civicrm_api3_verify_mandatory($params);
+
+     civicrm_api3_verify_mandatory($params);
     require_once 'CRM/Core/OptionGroup.php';
     $activityTypes = CRM_Core_OptionGroup::values( 'activity_type' );
     return civicrm_api3_create_success($activityTypes,$params,'activity_type','get');
-        } catch (PEAR_Exception $e) {
-      return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-      return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**
@@ -89,8 +84,7 @@ function civicrm_api3_activity_type_get($params ) {
  */
  
 function civicrm_api3_activity_type_create( $params ) {
-    _civicrm_api3_initialize(true);
-    try{
+
     civicrm_api3_verify_mandatory($params,null,array('label','weight'));
     require_once 'CRM/Core/OptionGroup.php';
    
@@ -106,11 +100,7 @@ function civicrm_api3_activity_type_create( $params ) {
     $activityType = array();
     _civicrm_api3_object_to_array( $activityObject, $activityType[ $activityObject->id] );
     return civicrm_api3_create_success($activityType,$params,'activity_type','create');
-    } catch (PEAR_Exception $e) {
-      return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-      return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**
@@ -125,17 +115,12 @@ function civicrm_api3_activity_type_create( $params ) {
  * {@example ActivityTypeDelete.php 0}
  */
 function civicrm_api3_activity_type_delete( $params ) {
-    _civicrm_api3_initialize(true);
-    try{
+
       civicrm_api3_verify_mandatory($params,null,array('activity_type_id'));
 
     $activityTypeId = $params['activity_type_id'];
     require_once 'CRM/Core/BAO/OptionValue.php';
 
     return CRM_Core_BAO_OptionValue::del( $activityTypeId );
-    } catch (PEAR_Exception $e) {
-      return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-      return civicrm_api3_create_error( $e->getMessage() );
-    }
+ 
 }
