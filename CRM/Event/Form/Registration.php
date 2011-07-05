@@ -615,10 +615,16 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                                    );
             if ( $contactID ) {
                 if ( CRM_Core_BAO_UFGroup::filterUFGroups($id, $contactID)  ) {
-                    $fields = CRM_Core_BAO_UFGroup::getFields( $id, false, CRM_Core_Action::ADD ); 
+                    $fields = CRM_Core_BAO_UFGroup::getFields( $id, false, CRM_Core_Action::ADD,
+                                                               null , null, false, null,
+                                                               false, null, CRM_Core_Permission::CREATE,
+                                                               'field_name', true ); 
                 }
             } else {
-                $fields = CRM_Core_BAO_UFGroup::getFields( $id, false, CRM_Core_Action::ADD ); 
+                $fields = CRM_Core_BAO_UFGroup::getFields( $id, false, CRM_Core_Action::ADD,
+                                                               null , null, false, null,
+                                                               false, null, CRM_Core_Permission::CREATE,
+                                                               'field_name', true ); 
             }
 
             if ( is_array( $fields ) ) {

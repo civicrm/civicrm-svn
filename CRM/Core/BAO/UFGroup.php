@@ -267,7 +267,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                                $skipPermission = false,
                                $ctype = null,
                                $permissionType = CRM_Core_Permission::CREATE,
-                               $orderBy = 'field_name' ) 
+                               $orderBy = 'field_name' , $orderProfiles = null ) 
     {
         if ( !is_array( $id ) ) {
             $id = CRM_Utils_Type::escape( $id, 'Positive' );
@@ -300,6 +300,9 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             $query .= " AND $permissionClause ";
         }
 
+        if ( $orderProfiles AND count ($profileIds) > 1) {
+            $query .= " ORDER BY FIELD(  g.id, {$gids} )";
+        }
         $group =& CRM_Core_DAO::executeQuery( $query, $params );
         $fields = array( );
         $validGroup = false;
