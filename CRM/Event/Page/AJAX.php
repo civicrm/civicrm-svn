@@ -50,7 +50,10 @@ class CRM_Event_Page_AJAX
             $name = '%';
         }
         $whereClause = " title LIKE '$name%' AND ( civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0 )";
-        
+        $includeOld = CRM_Utils_Request::retrieve( 'includeOld', 'Boolean', CRM_Core_DAO::$_nullObject, false, true );
+        if ( ! $includeOld ) {
+            $whereClause .= " AND ( end_date IS NULL OR end_date >= NOW() )";
+        }
         $query = "
 SELECT title, id
 FROM civicrm_event
