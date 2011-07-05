@@ -583,7 +583,7 @@ function _civicrm_api3_add_formatted_param(&$values, $params)
     }
     
     if ( isset($values['gender']) ) {
-        if ( $params['gender_id'] ) {
+        if ( CRM_Utils_Array::value( 'gender_id', $params ) ) {
             $genders = array( );
             $genders = CRM_Core_PseudoConstant::gender( );
             $params['gender'] = $genders[$params['gender_id']];
@@ -662,8 +662,9 @@ function _civicrm_api3_add_formatted_param(&$values, $params)
     }
     
     /* Check for custom field values */
-    if ($fields['custom'] == null) {
-        $fields['custom'] =& CRM_Core_BAO_CustomField::getFields( $values['contact_type'], false, false, null, null, false, false, false );
+    if ( !CRM_Utils_Array::value( 'custom', $fields ) ) {
+        $fields['custom'] =& CRM_Core_BAO_CustomField::getFields( CRM_Utils_Array::value( 'contact_type', $values ),
+                                                                  false, false, null, null, false, false, false );
     }
     
     foreach ($values as $key => $value) {
