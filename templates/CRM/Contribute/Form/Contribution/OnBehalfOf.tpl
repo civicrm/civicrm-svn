@@ -24,10 +24,8 @@
  +--------------------------------------------------------------------+
 *}
 {* This file provides the HTML for the on-behalf-of form. Can also be used for related contact edit form. *}
-<div id='onBehalfOfOrg' class="crm-section"></div>
 
 {if $buildOnBehalfForm or $onBehalfRequired}
-<div id='onBehalfOfOrg' class="crm-section">
   <fieldset id="for_organization" class="for_organization-group">
   <legend>{$fieldSetTitle}</legend>
   {if ( $relatedOrganizationFound or $onBehalfRequired ) and !$organizationName}
@@ -99,9 +97,9 @@
       {/if}
     {/foreach}
   </div>
- 
   <div>{$form.mode.html}</div>
-</div>
+{else}
+    <div id='onBehalfOfOrg' class="crm-section"></div>
 {/if}
 
 {literal}
