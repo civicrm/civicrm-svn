@@ -122,7 +122,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
 
             list( $defaults['custom_pre_id'],
                   $defaults['custom_post'] ) = 
-                CRM_Core_BAO_UFJoin::getUFGroupIds1( $ufJoinParams );
+                CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
             $defaults['custom_post_id'] =  $defaults['custom_post'][0];
             
             if (is_numeric($defaults['custom_post'])) {
@@ -148,7 +148,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 
                 list( $defaults['additional_custom_pre_id'],
                       $defaults['additional_custom_post'] ) = 
-                    CRM_Core_BAO_UFJoin::getUFGroupIds1( $ufJoinAddParams );
+                    CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinAddParams );
                 
                 $defaults['additional_custom_post_id'] =  $defaults['additional_custom_post'][0];
                 if (is_numeric($defaults['additional_custom_post'])) {
