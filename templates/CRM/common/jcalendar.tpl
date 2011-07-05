@@ -46,7 +46,7 @@
     {$form.$elementName.html|crmReplace:class:hiddenElement}
 {/if}
 {assign var='displayDate' value=$elementId|cat:"_display"}
-<input type="text" name="{$displayDate}" id="{$displayDate}" class="dateplugin dpDate"/>
+<input type="text" name="{$displayDate}" id="{$displayDate}" class="dateplugin dpDate" autocomplete="off"/>
 {if $timeElement AND !$tElement}
     &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;{$form.$timeElement.html|crmReplace:class:six}
 {/if}

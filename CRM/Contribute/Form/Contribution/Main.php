@@ -54,6 +54,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
     protected $_defaults;
 
+    public $_membershipTypeValues;
     /** 
      * Function to set variables up before form is built 
      *                                                           
@@ -789,7 +790,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
              $fields['selectMembership'] != 'no_thanks') {
             require_once 'CRM/Member/BAO/Membership.php';
             require_once 'CRM/Member/BAO/MembershipType.php';
-            $memTypeDetails = CRM_Member_BAO_MembershipType::getMembershipTypeDetails( $fields['selectMembership']);
+            if ( !empty($self->_membershipTypeValues) ) {
+                $memTypeDetails = $self->_membershipTypeValues[$fields['selectMembership']];
+            } else {
+                $memTypeDetails = CRM_Member_BAO_Membership::buildMembershipTypeValues( $self,
+                                                                                        $fields['selectMembership'] );
+            }
             if ( $self->_values['amount_block_is_active'] &&
                  ! CRM_Utils_Array::value( 'is_separate_payment', $self->_membershipBlock ) ) {
                 require_once 'CRM/Utils/Money.php';
@@ -993,8 +999,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $params['amount'] = self::computeAmount( $params, $this );
         $memFee = null;
         if ( CRM_Utils_Array::value( 'selectMembership', $params ) ) {
-            $membershipTypeValues = CRM_Member_BAO_Membership::buildMembershipTypeValues( $this,
-                                                                                          $params['selectMembership'] );
+            if ( !empty($this->_membershipTypeValues) ) {
+                $membershipTypeValues = $this->_membershipTypeValues[$params['selectMembership']];
+            } else {
+                $membershipTypeValues = CRM_Member_BAO_Membership::buildMembershipTypeValues( $this,
+                                                                                              $params['selectMembership'] );
+            }
             $memFee = $membershipTypeValues['minimum_fee'];
             if ( !$params['amount'] && !$this->_separateMembershipPayment ) {
                 $params['amount'] = $memFee ? $memFee : 0;

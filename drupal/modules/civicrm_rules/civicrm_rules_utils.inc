@@ -64,8 +64,8 @@ function _civicrm_rules_group_contact( $contactId, $groupId, $action = 'add' ) {
                      'group_id' => $groupId,
                      'version' => 2
                      );
-  // This used to be civicrm_group_contact_common($params, $action);
-	civicrm_api('group_contact', 'common', $params, $action );
+    // This used to be civicrm_group_contact_common($params, $action);
+	$re = civicrm_api('group_contact', 'common', $params, $action );
 }
 
 /**
@@ -105,4 +105,29 @@ function _civicrm_rules_load_mailing( $mailingID ) {
     }
     
     return $mailing;
+}
+
+
+/*
+ * function to return labels for checkboxes & stuff
+ */
+function civicrm_rules_get_options( $type){
+    if(! civicrm_initialize()){
+        return;
+    }
+    require_once 'api/api.php';
+    $result = civicrm_api('OptionValue', 'Get' , array('version' => 3, 'option_group_name' => $type  ));
+    foreach($result['values'] as $options){
+        $values[$options['value']] = $options['label'];
+    }
+    return $values;
+}
+  
+/**
+ * Loads an entity into a version suitable for the rules actions
+ */
+function _civicrm_rules_load_fromAPI( $entity_id ,$entity) {
+    require_once 'api/api.php';
+    $entity = civicrm_api($entity_id, 'Get', array('version' =>3, 'id' => $entity_id) );
+    return $entity['values'][$entity['id']];
 }

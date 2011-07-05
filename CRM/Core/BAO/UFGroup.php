@@ -1168,7 +1168,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
      */
     static function createUFJoin( &$params, $ufGroupId ) 
     {
-        $groupTypes = $params['uf_group_type'];
+        $groupTypes = CRM_Utils_Array::value( 'uf_group_type', $params );
         
         // get ufjoin records for uf group
         $ufGroupRecord =& CRM_Core_BAO_UFGroup::getUFJoinRecord( $ufGroupId );

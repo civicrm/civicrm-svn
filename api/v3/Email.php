@@ -160,30 +160,3 @@ function civicrm_api3_email_get($params)
     return civicrm_api3_create_error( $e->getMessage() );
   }
 }
-
-/**
- * Replace an existing set of emails with an alternative set of emails
- *
- * @param  mixed[]  (reference ) input parameters
- *
- * {@schema Core/Email.xml}
- * {@example EmailReplace.php 0}
- * @param  array $params  an associative array of name/value pairs.
- *
- * @return  array details of saved emails else error
- * @access public
- */
-
-function civicrm_api3_email_replace($params) 
-{   
-  _civicrm_api3_initialize(true);
-  try {
-    civicrm_api3_verify_one_mandatory($params, null, 
-		array('contact_id'));
-    return _civicrm_api3_generic_replace('email', $params);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
-}

@@ -308,7 +308,7 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
                           $contactType,
                           $fieldNames['pk'],
                           $fieldNames['status'], 
-                          DUPLICATE_SKIP,
+                          CRM_Import_Parser::DUPLICATE_SKIP,
                           null, null, false,
                           CRM_Import_Parser::DEFAULT_TIMEOUT,
                           $contactSubType,

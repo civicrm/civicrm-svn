@@ -676,6 +676,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
                 }
                 
                 $membershipTypeValues = self::buildMembershipTypeValues( $form, $membershipTypeIds );
+                $form->_membershipTypeValues = $membershipTypeValues;
                 $endDate = null;
                 foreach ( $membershipTypeIds as $value ) {
                     $memType = $membershipTypeValues[$value];

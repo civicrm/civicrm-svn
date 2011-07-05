@@ -158,8 +158,8 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         
         $this->waitForPageToLoad('30000');
         
-        $this->waitForElementPresent('css=#memberSearch table tbody tr td span a.action-item-first');
-        $this->click('css=#memberSearch table tbody tr td span a.action-item-first');
+        $this->waitForElementPresent( "xpath=//div[@id='memberSearch']/table/tbody/tr" );
+        $this->click( "xpath=//div[@id='memberSearch']/table/tbody/tr/td[11]/span/a[text()='View']" );
         $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
         
         //View Membership Record
@@ -172,9 +172,8 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
             $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
                                preg_quote( $value ) );   
         }
-        $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
-        $this->waitForElementPresent( "xpath=id('MembershipView')/div[2]/div/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']" );
-        $this->click("xpath=id('MembershipView')/div[2]/div/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']");
+        
+        $this->click("xpath=//form[@id='MembershipView']/div[2]/div/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']");
         $this->waitForElementPresent( "_qf_ContributionView_cancel-bottom" ); 
         //View Contribution Record
         $verifyData = array(

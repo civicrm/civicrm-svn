@@ -140,6 +140,7 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         require_once 'CRM/Utils/Array.php';
         require_once 'CRM/Utils/Date.php';
         $currentYear  = date( 'Y' );
+        $currentMonth = date( 'm' );
         $previousYear = $currentYear - 1;
         $nextYear     = $currentYear + 1;
         $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 3, 25, $currentYear ) ); 
@@ -148,6 +149,18 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         $configVars   = new CRM_Core_Config_Variables( );        
         foreach ( array( 'joinDate', 'startDate', 'endDate' ) as $date ) {
             $$date = CRM_Utils_Date::customFormat( $$date, $configVars->dateformatFull ); 
+        }
+
+        $query = "
+SELECT end_event_adjust_interval 
+  FROM civicrm_membership_status 
+ WHERE start_event = 'join_date'
+   AND name = 'New'";
+        $endInterval  = CRM_Core_DAO::singleValueQuery( $query ) + 3;
+        
+        $status = 'New';
+        if ( $currentMonth >= $endInterval ) {
+            $status = 'Current';
         }
         
         // fill in Join Date
@@ -170,7 +183,7 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         
         $this->webtestVerifyTabularData( 
                                         array( 'Membership Type' => "Membership Type $title",
-                                               'Status'          => 'New',
+                                               'Status'          => $status,
                                                'Source'          => $sourceText,
                                                'Member Since'    => $joinDate,
                                                'Start date'      => $startDate,
@@ -282,6 +295,7 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         require_once 'CRM/Utils/Array.php';
         require_once 'CRM/Utils/Date.php';
         $currentYear  = date( 'Y' );
+        $currentMonth = date( 'm' );
         $previousYear = $currentYear - 1;
         $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 1, 15, $currentYear ) ); 
         $startDate    = date('Y-m-d', mktime( 0, 0, 0, 9, 1,  $previousYear  ) );
@@ -289,6 +303,18 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         $configVars   = new CRM_Core_Config_Variables( );        
         foreach ( array( 'joinDate', 'startDate', 'endDate' ) as $date ) {
             $$date = CRM_Utils_Date::customFormat( $$date, $configVars->dateformatFull ); 
+        }
+        
+        $query = "
+SELECT end_event_adjust_interval 
+  FROM civicrm_membership_status 
+ WHERE start_event = 'join_date'
+   AND name = 'New'";
+        $endInterval  = CRM_Core_DAO::singleValueQuery( $query ) + 1;
+        
+        $status = 'New';
+        if ( $currentMonth >= $endInterval ) {
+            $status = 'Current';
         }
         
         // fill in Join Date
@@ -311,7 +337,7 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         
         $this->webtestVerifyTabularData( 
                                         array( 'Membership Type' => "Membership Type {$title}",
-                                               'Status'          => 'Current',
+                                               'Status'          => $status,
                                                'Source'          => $sourceText,
                                                'Member Since'    => $joinDate,
                                                'Start date'      => $startDate,
@@ -424,6 +450,7 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         require_once 'CRM/Utils/Array.php';
         require_once 'CRM/Utils/Date.php';
         $currentYear  = date( 'Y' );
+        $currentMonth = date( 'm' );
         $previousYear = $currentYear - 1;
         $nextYear     = $currentYear + 1;
         $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 1, 5,  $currentYear ) ); 
@@ -432,6 +459,18 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         $configVars   = new CRM_Core_Config_Variables( );        
         foreach ( array( 'joinDate', 'startDate', 'endDate' ) as $date ) {
             $$date = CRM_Utils_Date::customFormat( $$date, $configVars->dateformatFull ); 
+        }
+
+        $query = "
+SELECT end_event_adjust_interval 
+  FROM civicrm_membership_status 
+ WHERE start_event = 'join_date'
+   AND name = 'New'";
+        $endInterval  = CRM_Core_DAO::singleValueQuery( $query ) + 1;
+        
+        $status = 'New';
+        if ( $currentMonth >= $endInterval ) {
+            $status = 'Current';
         }
         
         // fill in Join Date
@@ -454,7 +493,7 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         
         $this->webtestVerifyTabularData( 
                                         array( 'Membership Type' => "Membership Type {$title}",
-                                               'Status'          => 'Current',
+                                               'Status'          => $status,
                                                'Source'          => $sourceText,
                                                'Member Since'    => $joinDate,
                                                'Start date'      => $startDate,
@@ -564,13 +603,26 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         require_once 'CRM/Utils/Array.php';
         require_once 'CRM/Utils/Date.php';
         $currentYear  = date( 'Y' );
-        $nextYear = $currentYear + 1;
+        $currentMonth = date( 'm' );
+        $nextYear     = $currentYear + 1;
         $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 4, 5, $currentYear ) ); 
         $startDate    = date('Y-m-d', mktime( 0, 0, 0, 4, 1, $currentYear  ) );
         $endDate      = date('Y-m-d', mktime( 0, 0, 0, 3, 31, $nextYear ) );
         $configVars   = new CRM_Core_Config_Variables( );        
         foreach ( array( 'joinDate', 'startDate', 'endDate' ) as $date ) {
             $$date = CRM_Utils_Date::customFormat( $$date, $configVars->dateformatFull ); 
+        }
+
+        $query = "
+SELECT end_event_adjust_interval 
+  FROM civicrm_membership_status 
+ WHERE start_event = 'join_date'
+   AND name = 'New'";
+        $endInterval  = CRM_Core_DAO::singleValueQuery( $query ) + 4;
+        
+        $status = 'New';
+        if ( $currentMonth >= $endInterval ) {
+            $status = 'Current';
         }
         
         // fill in Join Date
@@ -593,7 +645,7 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         
         $this->webtestVerifyTabularData( 
                                         array( 'Membership Type' => "Membership Type $title",
-                                               'Status'          => 'New',
+                                               'Status'          => $status,
                                                'Source'          => $sourceText,
                                                'Member Since'    => $joinDate,
                                                'Start date'      => $startDate,

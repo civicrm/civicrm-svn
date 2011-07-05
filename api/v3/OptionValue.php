@@ -65,7 +65,9 @@ function civicrm_api3_option_value_create( $params )
     civicrm_api3_verify_mandatory ($params,'CRM_Core_BAO_OptionValue');
     
     require_once 'CRM/Core/BAO/OptionValue.php';
-    $ids             = array( 'optionValue' => $params['id'] );
+    if (CRM_Utils_Array::value('id', $params)){
+      $ids             = array( 'optionValue' => $params['id'] );
+    }
     $optionValueBAO = CRM_Core_BAO_OptionValue::add( $params, $ids );
 
     $values = array( );

@@ -409,7 +409,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				// dedupe matched single contact, check for 'unconfirmed' tag				
 				if (defined('CIVICRM_TAG_UNCONFIRMED')) {
 					require_once 'CRM/Core/DAO/EntityTag.php';
-					$tag =& new CRM_Core_DAO_EntityTag( );
+					$tag = new CRM_Core_DAO_EntityTag( );
 					$tag->entity_id  = $this->_contactId;
 					$tag->tag_id     = $this->_tagId;
 					
@@ -435,7 +435,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				$this->redirectIfSigned($params);
 				if (defined('CIVICRM_TAG_UNCONFIRMED')) {
 					require_once 'CRM/Core/DAO/EntityTag.php';
-					$tag =& new CRM_Core_DAO_EntityTag( );
+					$tag = new CRM_Core_DAO_EntityTag( );
 					$tag->entity_id  = $this->_contactId;
 					$tag->tag_id     = $this->_tagId;
 					

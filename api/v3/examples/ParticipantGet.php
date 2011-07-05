@@ -29,7 +29,7 @@ function participant_get_expectedresult(){
   'id' => 14,
   'values' => array( 
       '14' => array( 
-          'contact_id' => '18',
+          'contact_id' => '2',
           'contact_type' => 'Individual',
           'sort_name' => 'Anderson, Anthony',
           'display_name' => 'Mr. Anthony Anderson II',
@@ -44,8 +44,9 @@ function participant_get_expectedresult(){
           'participant_role_id' => '1',
           'participant_register_date' => '2007-02-19 00:00:00',
           'participant_source' => 'Wimbeldon',
-          'participant_is_pay_later' => '',
-          'participant_is_test' => '',
+          'participant_is_pay_later' => 0,
+          'participant_is_test' => 0,
+          'id' => '14',
         ),
     ),
 );
