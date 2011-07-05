@@ -24,16 +24,16 @@ function participant_delete_expectedresult(){
   'version' => 3,
   'count' => 2,
   'values' => array( 
-      '101' => array( 
+      '105' => array( 
           'contact_id' => '4',
           'contact_type' => 'Individual',
           'sort_name' => 'Anderson, Anthony',
           'display_name' => 'Mr. Anthony Anderson II',
-          'event_id' => '32',
+          'event_id' => '34',
           'event_title' => 'Annual CiviCRM meet',
           'event_start_date' => '2008-10-21 00:00:00',
           'event_end_date' => '2008-10-23 00:00:00',
-          'participant_id' => '101',
+          'participant_id' => '105',
           'event_type' => 'Conference',
           'participant_status_id' => '2',
           'participant_status' => 'Attended',
@@ -42,7 +42,7 @@ function participant_delete_expectedresult(){
           'participant_source' => 'Wimbeldon',
           'participant_is_pay_later' => 0,
           'participant_is_test' => 0,
-          'id' => '101',
+          'id' => '105',
           'api.participant.delete' => array( 
               'is_error' => 0,
               'version' => 3,
@@ -50,16 +50,16 @@ function participant_delete_expectedresult(){
               'values' => 1,
             ),
         ),
-      '102' => array( 
+      '106' => array( 
           'contact_id' => '4',
           'contact_type' => 'Individual',
           'sort_name' => 'Anderson, Anthony',
           'display_name' => 'Mr. Anthony Anderson II',
-          'event_id' => '32',
+          'event_id' => '34',
           'event_title' => 'Annual CiviCRM meet',
           'event_start_date' => '2008-10-21 00:00:00',
           'event_end_date' => '2008-10-23 00:00:00',
-          'participant_id' => '102',
+          'participant_id' => '106',
           'event_type' => 'Conference',
           'participant_status_id' => '2',
           'participant_status' => 'Attended',
@@ -68,7 +68,7 @@ function participant_delete_expectedresult(){
           'participant_source' => 'Wimbeldon',
           'participant_is_pay_later' => 0,
           'participant_is_test' => 0,
-          'id' => '102',
+          'id' => '106',
           'api.participant.delete' => array( 
               'is_error' => 0,
               'version' => 3,
