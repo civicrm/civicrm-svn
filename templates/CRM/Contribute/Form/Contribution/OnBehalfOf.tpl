@@ -56,7 +56,7 @@
        {else}
           {if $onBehalfOfFields.$fieldName.options_per_line != 0}
             <div class="label option-label">{$field.label}</div> 
-            <div class="content 3"> 
+            <div class="content"> 
               {assign var="count" value="1"} 
               {strip} 
               <table class="form-layout-compressed"> 
