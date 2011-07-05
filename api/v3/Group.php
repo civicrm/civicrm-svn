@@ -115,7 +115,7 @@ function civicrm_api3_group_get( $params )
       _civicrm_api3_object_to_array( $group, $groups[$group->id] );
     }
 
-    return civicrm_api3_create_success ($groups);
+    return civicrm_api3_create_success ($groups,$params,'group','create');
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
