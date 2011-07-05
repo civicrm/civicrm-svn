@@ -60,3 +60,11 @@ function civicrm_rules_rules_action_mailing_send_email( $to, $subject, $message,
         }
     }
 }
+
+function civicrm_rules_condition_mailing_approved($mailing, $settings) {
+    return $mailing->approval_status_id == 1; 
+}
+
+function civicrm_rules_condition_mailing_rejected($mailing, $settings) {
+    return $mailing->approval_status_id != 1; 
+}

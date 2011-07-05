@@ -36,6 +36,26 @@
 
 function civicrm_rules_get_condition() {
     return array(
+                 'civicrm_rules_condition_mailing_approved' => 
+                 array(
+                       'label' => t('Approval Status: Approved'),
+                       'arguments' => array(
+                                            'approvalstatus' => array(
+                                                                      'type' => 'mailing',
+                                                                      'label' => t('Approved'), ), ),
+                       'base'  => 'civicrm_rules_condition_mailing_approved' ,
+                       'group' => 'CiviCRM Mailing',
+                       ),
+                 'civicrm_rules_condition_mailing_rejected' => 
+                 array(
+                       'label' => t('Approval Status: Rejected'),
+                       'arguments' => array(
+                                            'approvalstatus' => array(
+                                                                      'type' => 'mailing',
+                                                                      'label' => t('Rejected'), ), ),
+                       'base'  => 'civicrm_rules_condition_mailing_rejected',
+                       'group' => 'CiviCRM Mailing',
+                       ),
                  'civicrm_rules_condition_participant_role' => 
                  array(
                        'label' => t('Participant Role'),
