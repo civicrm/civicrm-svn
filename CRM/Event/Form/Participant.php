@@ -1416,14 +1416,15 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             unset($event['end_date']);
            
             $role = CRM_Event_PseudoConstant::participantRole();
-            if ( is_array( $params['role_id'] ) ) {
+            $participantRoles = CRM_Utils_Array::value( 'role_id', $params );
+            if ( is_array( $participantRoles ) ) {
                 $selectedRoles = array( );
-                foreach ( array_keys( $params['role_id'] ) as $roleId ) {
+                foreach ( array_keys( $participantRoles ) as $roleId ) {
                     $selectedRoles[ ] = $role[$roleId];
                 }
                 $event['participant_role'] = implode( ', ', $selectedRoles );
             } else {
-                $event['participant_role'] = $role[$params['role_id']];
+                $event['participant_role'] = CRM_Utils_Array::value( $participantRoles, $role );
             }
             $event['is_monetary'] = $this->_isPaidEvent;
            

@@ -308,12 +308,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         $params['default_role_id'] = CRM_Utils_Array::value('default_role_id', $params, false);
         $params['id']              = $this->_id;
 
-        //new event, so lets set the created_id
-        if ( $this->_action & CRM_Core_Action::ADD ) { 
-            $session = CRM_Core_Session::singleton( );
-            $params['created_id']   = $session->get( 'userID' );
-            $params['created_date'] = date('YmdHis');
-        }   
+  
         
         $customFields = CRM_Core_BAO_CustomField::getFields( 'Event', false, false, 
                                                              CRM_Utils_Array::value( 'event_type_id', $params ) );

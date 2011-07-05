@@ -33,7 +33,7 @@ function activity_get_expectedresult(){
   'values' => array( 
       '0' => array( 
           'source_contact_id' => '17',
-          'id' => '1',
+          'id' => 1,
           'activity_type_id' => '1',
           'subject' => 'test activity type id',
           'location' => '',

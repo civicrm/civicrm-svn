@@ -17,7 +17,17 @@ CREATE TABLE IF NOT EXISTS civicrm_action_log (
 
 -- CRM-8370
 
-ALTER TABLE `civicrm_action_log` CHANGE `repetition_number` `repetition_number` INT( 10 ) UNSIGNED NULL COMMENT 'Keeps track of the sequence number of this repetition.';
 
 -- CRM-8085
 UPDATE civicrm_mailing SET domain_id = {$domainID} WHERE domain_id IS NULL;
+
+-- CRM-8402
+DELETE civicrm_entity_tag.* FROM civicrm_entity_tag,
+( SELECT MAX( id ) AS dtid, COUNT(*) AS dupcount FROM civicrm_entity_tag GROUP BY entity_table, entity_id, tag_id HAVING dupcount > 1 ) AS duplicates
+WHERE civicrm_entity_tag.id=duplicates.dtid;
+
+ALTER TABLE civicrm_entity_tag 
+DROP INDEX index_entity;
+
+ALTER TABLE civicrm_entity_tag 
+ADD UNIQUE INDEX UI_entity_id_entity_table_tag_id( entity_table, entity_id, tag_id );

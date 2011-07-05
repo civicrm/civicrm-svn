@@ -108,9 +108,9 @@ function civicrm_api3_membership_type_get($params)
         $membershipTypes[$membershipTypeBAO->id] = $membershipType;
       }
     } else {
-      return civicrm_api3_create_success(array(),$params,$membershipTypeBAO);
+      return civicrm_api3_create_success(array(),$params,'membership_type','create',$membershipTypeBAO);
     }
-    return civicrm_api3_create_success($membershipTypes,$params,$membershipTypeBAO);
+    return civicrm_api3_create_success($membershipTypes,$params,'membership_type','create',$membershipTypeBAO);
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {

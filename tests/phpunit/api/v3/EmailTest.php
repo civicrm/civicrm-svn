@@ -242,6 +242,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
             ),
         );
         $getReplace1 = civicrm_api('contact', 'get', $getReplace1Params);
+
         // $this->documentMe($getReplace1Params, $getReplace1, __FUNCTION__, __FILE__);
         $this->assertAPISuccess($getReplace1['values'][$this->_contactID]['api.email.replace'], 'In line ' . __LINE__);
         $this->assertEquals( 5, $getReplace1['values'][$this->_contactID]['api.email.replace']['count'], 'In line ' . __LINE__ );

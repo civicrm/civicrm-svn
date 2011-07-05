@@ -291,79 +291,71 @@ function civicrm_api_get_camel_name( $entity, $version = NULL )
  */
 function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$version){
   $entity = _civicrm_api_get_entity_name_from_camel($entity);
-        foreach($params as $field => $newparams){          
-            if (substr($field,0, 3) == 'api' && (is_array($newparams) || $newparams === 1) ){
-              
-                $idIndex = _civicrm_api_get_results_id_index($params,$result);
-                              
-                if ($newparams === 1){
-                  $newparams = array('version' => $version);
-                }
-                $separator = $field[3]; // can be api_ or api.
-                if (!($separator == '.' || $separator == '_')) {
-                    continue;
-                }
-                $subAPI = explode($separator,$field);
+	foreach ( $params as $field => $newparams ) {
+		if ((is_array ( $newparams ) || $newparams === 1) && substr ( $field, 0, 3 ) == 'api') {
+			
+			// 'api.participant.delete' => 1 is a valid options - handle 1 instead of an array
+			if ($newparams === 1) {
+				$newparams = array ('version' => $version );
+			}
+			$separator = $field [3]; // can be api_ or api.
+			if (! ($separator == '.' || $separator == '_')) {
+				continue;
+			}
+			$subAPI = explode ( $separator, $field );
+			
+			$subaction = empty ( $subAPI [2] ) ? $action : $subAPI [2];
+			$subParams = array ();
+			$subEntity = $subAPI [1];
+			
+			foreach ( $result ['values'] as $idIndex => $parentAPIValues ) {
+				
+				if (strtolower ( $subEntity ) != 'contact') {
+					//contact spits the dummy at activity_id so what else won't it like?
+					//set entity_id & entity table based on the parent's id & entity. e.g for something like
+					//note if the parent call is contact 'entity_table' will be set to 'contact' & 'id' to the contact id from
+					//the parent call. 
+					//in this case 'contact_id' will also be set to the parent's id
+					$subParams ["entity_id"] = $parentAPIValues ['id'];
+					$subParams ['entity_table'] = civicrm_api_get_camel_name ( $entity );
+					$subParams [strtolower ( $entity ) . "_id"] = $parentAPIValues ['id'];
+				}
+				
+				if(CRM_Utils_Array::value(strtolower ( $subEntity  . "_id"),$parentAPIValues)){
+				  //e.g. if event_id is in the values returned & subentity is event then pass in event_id as 'id'
+				  //TODO - this might need the camel treatment
+				  $subParams['id'] = $parentAPIValues[$subEntity  . "_id"];
+				}
+				
+				if (CRM_Utils_Array::value ( 'entity_table', $result ['values'] [$idIndex] ) == $subEntity) {
+					$subParams ['id'] = $result ['values'] [$idIndex] ['entity_id'];
+				
+				}
 
-                $action = empty($subAPI[2])?$action:$subAPI[2];
-                $subParams  = array();
-                
-                            
-                if(strtolower($subAPI[1]) != 'contact'){
-                  //contact spits the dummy at activity_id so what else won't it like?
-                  $subParams["entity_id"] = $result['id'];
-                  $subParams[strtolower($entity) . "_id"] = $result['id'];
-                  $subParams['entity_table'] = civicrm_api_get_camel_name($entity);
-                }
-               
-                if(CRM_Utils_Array::value('entity_table',$result['values'][$idIndex ]) == $subAPI[1] ) {
-                  $subParams['id'] = $result['values'][$idIndex ]['entity_id'];
-              
-                }
-                if (strtolower(CRM_Utils_Array::value(2,$subAPI)) == 'delete'){
-                  $subParams["id"] = $result['id'];
-                }
-                
-                $subParams['version'] = $version;
-                $subParams['sequential'] = 1;
-                if(array_key_exists(0, $newparams)){
-                    // it is a numerically indexed array - ie. multiple creates
-                    foreach ($newparams as $entity => $entityparams){
-                        $subParams = array_merge($subParams,$entityparams);
-                        _civicrm_api_replace_variables($subAPI[1],$action,$subParams,$result['values'][$idIndex],$separator);
-                         $result['values'][$result['id']][$field][] = civicrm_api($subAPI[1],$action,$subParams);
-                        
-                    }
-                }else{
-
-                    $subParams = array_merge($subParams,$newparams);
-                    _civicrm_api_replace_variables($subAPI[1],$action,$subParams,$result['values'][$idIndex],$separator);
-                    $result['values'][$idIndex ][$field] = civicrm_api($subAPI[1],$action,$subParams);
-                        
-                }
-            }
-        }
+				
+				
+				$subParams ['version'] = $version;
+				$subParams ['sequential'] = 1;
+				if (array_key_exists ( 0, $newparams )) {
+					// it is a numerically indexed array - ie. multiple creates
+					foreach ( $newparams as $entity => $entityparams ) {
+						$subParams = array_merge ( $subParams, $entityparams );
+						_civicrm_api_replace_variables ( $subAPI [1], $subaction, $subParams, $result ['values'] [$idIndex], $separator );
+						$result ['values'] [$result ['id']] [$field] [] = civicrm_api ( $subEntity, $subaction, $subParams );
+					
+					}
+				} else {
+					
+					$subParams = array_merge ( $subParams, $newparams );
+					_civicrm_api_replace_variables ( $subAPI [1], $subaction, $subParams, $result ['values'] [$idIndex], $separator );
+					$result ['values'] [$idIndex] [$field] = civicrm_api ( $subEntity, $subaction, $subParams );
+				
+				}
+			}
+		}
+	}
 }
-/*
- * Figure out the entity ID in the result array 
- * $result['id'] or 
- * $result['values'][1] or 
- * $result['values'][0]['id']
- * or
- * $result['values']['0']['entity_id']
- */
 
-function _civicrm_api_get_entity_ID_from_results(&$result,$entity){
-  if(CRM_Utils_Array::value('id',$result)){
-    return CRM_Utils_Array::value('id',$result);
-  }
-  if (CRM_Utils_Array::value('values',$result)){
-    
-  }else{
-    //hasn't been through create_success yet
-  }
-  
-}
 /*
  * Swap out any $values vars - ie. the value after $value is swapped for the parent $result
  * 'activity_type_id' => '$value.testfield',
@@ -375,7 +367,7 @@ function _civicrm_api_replace_variables($entity,$action,&$params, &$parentResult
 
   foreach ($params as $field => $value) {
 
-    if(substr($value, 0,6) == '$value') {
+    if(is_string($value)  && substr($value, 0,6) == '$value') {
       $valuesubstitute =  substr($value, 7); 
      
       if (!empty($parentResult[$valuesubstitute])){ 
@@ -409,17 +401,6 @@ function _civicrm_api_replace_variables($entity,$action,&$params, &$parentResult
 
     }   
   }
-
-/*
- * Get the field the results are indexed by (0 for sequential, $reuslt['id'] otherwise
- */
-function _civicrm_api_get_results_id_index(&$params,&$result){
-      if(CRM_Utils_Array::value('sequential',$params) == 1){
-        return  0;
-      }else{
-        return $result['id'];
-       }
-}
 
 /*
  * Convert possibly camel name to underscore separated entity name

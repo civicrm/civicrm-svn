@@ -97,7 +97,7 @@ function civicrm_api3_custom_group_create( $params )
             $fieldValues = civicrm_api3_custom_field_create( $fparams );
             $values[$fieldValues['id']]      = array_merge( $values[$customGroup->id] , $fieldValues['values'][$fieldValues['id']] );
         }
-        return civicrm_api3_create_success($values,$params);
+        return civicrm_api3_create_success($values,$params,'custom_group',$customGroup);
     } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {

@@ -422,9 +422,9 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     public $componentRegistry  = null;
 
     /**
-     * PDF reciept as attachment is enabled 
+     * PDF reciept as attachment is disabled by default (CRM-8350) 
      */
-    public $doNotAttachPDFReceipt = true;
+    public $doNotAttachPDFReceipt = false;
 
     /**
      * Provide addressSequence

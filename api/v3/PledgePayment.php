@@ -78,7 +78,7 @@ function civicrm_api3_pledge_payment_create( $params ) {
     //update pledge status
      CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $params['pledge_id']);
     
-    return civicrm_api3_create_success( $result ,$params,$dao);
+    return civicrm_api3_create_success( $result ,$params,'pledge_payment','create',$dao);
    
 }
 

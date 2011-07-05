@@ -84,7 +84,7 @@ function civicrm_api3_contribution_create($params) {
 		}
 		_civicrm_api3_object_to_array ( $contribution, $contributeArray [$contribution->id] );
 		
-		return civicrm_api3_create_success ( $contributeArray, $params );
+		return civicrm_api3_create_success ( $contributeArray, $params, 'contribution',$contribution );
 	} catch ( PEAR_Exception $e ) {
 		return civicrm_api3_create_error ( $e->getMessage () );
 	} catch ( Exception $e ) {
@@ -182,9 +182,9 @@ function civicrm_api3_contribution_get($params) {
 		while ( $dao->fetch () ) {
 			$contribution [$dao->contribution_id] = $query->store ( $dao );
 		}
-		$dao->free ();
+
 		
-		return civicrm_api3_create_success ( $contribution, $params );
+		return civicrm_api3_create_success ( $contribution, $params, 'contribution',$dao);
 	} catch ( PEAR_Exception $e ) {
 		return civicrm_api3_create_error ( $e->getMessage () );
 	} catch ( Exception $e ) {

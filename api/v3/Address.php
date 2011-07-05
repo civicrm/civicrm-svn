@@ -51,8 +51,7 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_address_create( &$params ) 
 {
-  _civicrm_api3_initialize( true );
-  try {
+
     civicrm_api3_verify_one_mandatory ($params, null, 
     array ('contact_id', 'id'));
     civicrm_api3_verify_mandatory ($params, null, array('location_type_id'));
@@ -106,13 +105,9 @@ function civicrm_api3_address_create( &$params )
 	 } else {
 		 $values = array( );
 		 CRM_Core_DAO::storeValues($addressBAO[0], $values);
-		 return civicrm_api3_create_success($values, $params);
+		 return civicrm_api3_create_success($values, $params,'address',$addressBAO);
 	 }
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 /**
  * Deletes an existing Address
@@ -126,8 +121,6 @@ function civicrm_api3_address_create( &$params )
  */
 function civicrm_api3_address_delete( &$params ) 
 {
-  _civicrm_api3_initialize( true );
-  try {
     civicrm_api3_verify_mandatory ($params,null,array ('id'));
     $addressID = CRM_Utils_Array::value( 'id', $params );
 
@@ -137,16 +130,12 @@ function civicrm_api3_address_delete( &$params )
     if ( $addressDAO->find( ) ) {
 		while ( $addressDAO->fetch() ) {
 			$addressDAO->delete();
-			return civicrm_api3_create_success();
+			return civicrm_api3_create_success(1,$params,'activity',$addressDAO);
 		}
 	} else {
 		return civicrm_api3_create_error( 'Could not delete address with id '.$addressID);
 	}
     
-  } catch (Exception $e) {
-    if (CRM_Core_Error::$modeException) throw $e;
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
 }
 
 /**
@@ -164,8 +153,6 @@ function civicrm_api3_address_delete( &$params )
 
 function civicrm_api3_address_get(&$params) 
 {   
-  _civicrm_api3_initialize(true );
-  try {
     civicrm_api3_verify_one_mandatory($params, null, 
 		array('id', 'contact_id', 'location_type_id'));
 	
@@ -185,15 +172,10 @@ function civicrm_api3_address_get(&$params)
         CRM_Core_DAO::storeValues( $addressBAO, $address );
         $addresses[$addressBAO->id] = $address;
       }
-      return civicrm_api3_create_success($addresses,$params,$addressBAO);
+      return civicrm_api3_create_success($addresses,$params,'activity','get',$addressBAO);
     } else {
-      return civicrm_api3_create_success(array(),$params,$addressBAO);
+      return civicrm_api3_create_success(array(),$params,'activity','get',$addressBAO);
     }
 				
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
 }
 

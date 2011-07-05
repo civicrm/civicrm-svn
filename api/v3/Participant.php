@@ -55,8 +55,7 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_participant_create($params)
 {
-    _civicrm_api3_initialize(true);
-    try{
+
         if ( ! isset($params['status_id'] )) {
             $params['participant_status_id']= $params['status_id'] = 1;
         }
@@ -79,13 +78,9 @@ function civicrm_api3_participant_create($params)
 
         $participantBAO = CRM_Event_BAO_Participant::create($params);
         _civicrm_api3_object_to_array($participantBAO , $participant[$participantBAO->id]);
-        return civicrm_api3_create_success( $participant );
+        return civicrm_api3_create_success( $participant,$params,'participant','create',$participantBAO );
     
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**
@@ -157,7 +152,7 @@ function civicrm_api3_participant_get( $params ) {
           _civicrm_api3_custom_data_get($participant[$dao->participant_id],'Participant',$dao->participant_id,null);          
     }
 
-        return civicrm_api3_create_success($participant,$params,$dao, 'participant');
+        return civicrm_api3_create_success($participant,$params, 'participant','get',$dao);
     } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {

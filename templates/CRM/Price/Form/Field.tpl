@@ -92,7 +92,7 @@
     <div id="price-block" {if $action eq 2 && $form.html_type.value.0 eq 'Text'} class="show-block" {else} class="hide-block" {/if}>
         <table class="form-layout">
             <tr class="crm-price-field-form-block-price">
-               <td class="label">{$form.price.label}</td>
+               <td class="label">{$form.price.label} <span class="crm-marker" title="{ts}This field is required.{/ts}">*</span></td>
                <td>{$form.price.html}
                {if $action neq 4}
                     <br /><span class="description">{ts}Unit price.{/ts}</span> {help id="id-negative"}

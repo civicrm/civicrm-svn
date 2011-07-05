@@ -59,23 +59,18 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
         // check for visibility, if visibility is Public Pages and they have the permission
         // return true
 		require_once 'CRM/Core/Permission.php';
-        if ( $this->_mailing->visibility == 'Public Pages' 
-		&& CRM_Core_Permission::check( 'view CiviMail content' )) {
+        if ( $this->_mailing->visibility == 'Public Pages' &&
+             CRM_Core_Permission::check( 'view public CiviMail content' )) {
             return true;
         }
 		
-		// need to check to see if the user has received the mail before
-		// can potentially use checksum
-		if ( $this->_mailing->visibility == 'User and User Admin Only' ) {
-			
-		}
-
         // if user is an admin, return true
-
         if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ||
              CRM_Core_Permission::check( 'access CiviMail' ) ) {
             return true;
         }
+
+        return false;
     }
 
     /** 
@@ -107,8 +102,11 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
         $this->_mailing->id = $this->_mailingID;
 
         require_once 'CRM/Core/Error.php';
-        if ( ! $this->_mailing->find( true ) ) {
-            CRM_Core_Error::statusBounce( ts('You do not have the necessary permission to approve this mailing.' ) );
+        if ( ! $this->_mailing->find( true ) ||
+             ! $this->checkPermission( ) ) {
+            require_once 'CRM/Utils/System.php';
+            CRM_Utils_System::permissionDenied( );
+            return;
         }
 
         CRM_Mailing_BAO_Mailing::tokenReplace( $this->_mailing );
