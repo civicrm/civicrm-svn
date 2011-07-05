@@ -337,7 +337,7 @@ function civicrm_api3_error( $params )
  * @param <type> $values
  * @return <type>
  */
-function _civicrm_api3_store_values( &$fields, $params, &$values ) 
+function _civicrm_api3_store_values( &$fields, &$params, &$values ) 
 {
     $valueFound = false;
     
@@ -482,7 +482,7 @@ function  civicrm_api3_update_get_existing($params, $function){
  * @return bool|CRM_Utils_Error
  * @access public
  */
-function _civicrm_api3_add_formatted_param(&$values, $params) 
+function _civicrm_api3_add_formatted_param(&$values, &$params) 
 {
     /* Crawl through the possible classes: 
      * Contact 
@@ -688,7 +688,7 @@ function _civicrm_api3_add_formatted_param(&$values, $params)
  * @return bool
  * @access public
  */
-function _civicrm_api3_add_formatted_location_blocks( &$values, $params ) 
+function _civicrm_api3_add_formatted_location_blocks( &$values, &$params ) 
 {
     static $fields = null;
     if ( $fields == null ) {
@@ -854,7 +854,7 @@ function _civicrm_api3_duplicate_formatted_contact($params)
  * @return bool|CRM_Core_Error
  * @access public
  */
-function _civicrm_api3_validate_formatted_contact($params) 
+function _civicrm_api3_validate_formatted_contact( &$params ) 
 {
     /* Look for offending email addresses */
     if ( array_key_exists( 'email', $params ) ) {
@@ -877,15 +877,18 @@ function _civicrm_api3_validate_formatted_contact($params)
     /* Validate custom data fields */
     if ( array_key_exists( 'custom', $params ) && is_array($params['custom']) ) {
         foreach ($params['custom'] as $key => $custom) {
-            if (is_array($custom)) {
-                $valid = CRM_Core_BAO_CustomValue::typecheck(
-                                                             $custom['type'], $custom['value']);
-                if (! $valid) {
-                    return civicrm_api3_create_error('Invalid value for custom field \'' .
-                                                     $custom['name']. '\'');
-                }
-                if ( $custom['type'] == 'Date' ) {
-                    $params['custom'][$key]['value'] = str_replace( '-', '', $params['custom'][$key]['value'] );
+            if ( is_array( $custom ) ) {
+                foreach ( $custom as $fieldId => $value ) {
+                    $valid = CRM_Core_BAO_CustomValue::typecheck( CRM_Utils_Array::value( 'type', $value ), 
+                                                                  CRM_Utils_Array::value( 'value', $value ) );
+                    if (! $valid) {
+                        return civicrm_api3_create_error( 'Invalid value for custom field \'' .
+                                                          CRM_Utils_Array::value( 'name', $custom ). '\'');
+                    }
+                    if ( $custom['type'] == 'Date' ) {
+                        $params['custom'][$key][$fieldId]['value'] = 
+                            str_replace( '-', '', $params['custom'][$key][$fieldId]['value'] );
+                    }
                 }
             }
         }

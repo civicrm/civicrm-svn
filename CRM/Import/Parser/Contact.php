@@ -36,7 +36,7 @@
 
 require_once 'CRM/Import/Parser.php';
 
-civicrm_api_include('utils', false, 2);
+civicrm_api_include( 'utils' );
 
 /**
  * class to parse contact csv files
@@ -532,8 +532,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     //if we send external id dedupe will stop.
                     unset( $dedupeParams['external_identifier'] );
                     
-                    $checkDedupe = _civicrm_duplicate_formatted_contact( $dedupeParams, $this->_dedupeRuleGroupID );
-                    if ( civicrm_duplicate( $checkDedupe ) ) {
+                    $checkDedupe = _civicrm_api3_duplicate_formatted_contact( $dedupeParams );
+                    if ( civicrm_api3_duplicate( $checkDedupe ) ) {
                         $matchingContactIds = explode( ',', $checkDedupe['error_message']['params'][0] );
                         if ( count( $matchingContactIds ) == 1 ) {
                             $params['id'] = array_pop( $matchingContactIds );
@@ -548,9 +548,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 }
             }
             
-            $error = _civicrm_duplicate_formatted_contact( $formatted,
-                                                           $this->_dedupeRuleGroupID );
-            if ( civicrm_duplicate($error) ) { 
+            $error = _civicrm_api3_duplicate_formatted_contact( $formatted );
+            if ( civicrm_api3_duplicate($error) ) { 
                 $matchedIDs = explode( ',', $error['error_message']['params'][0] );
                 if ( count( $matchedIDs) >= 1 ) {
                     $updateflag = true;
@@ -692,7 +691,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             if ( $this->_updateWithId ) {
                 $this->_retCode = CRM_Import_Parser::VALID;
             }
-        } else if ( civicrm_duplicate( $newContact ) ) {
+        } else if ( civicrm_api3_duplicate( $newContact ) ) {
             // if duplicate, no need of further processing
             if ( $onDuplicate == CRM_Import_Parser::DUPLICATE_SKIP ) {
                 $errorMessage = "Skipping duplicate record";
@@ -728,7 +727,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
 
         if ( $relationship ) {
             $primaryContactId = null;
-            if ( civicrm_duplicate($newContact) ) {
+            if ( civicrm_api3_duplicate($newContact) ) {
                 if ( CRM_Utils_Rule::integer( $newContact['error_message']['params'][0] ) ) {
                     $primaryContactId = $newContact['error_message']['params'][0];
                 }
@@ -736,7 +735,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 $primaryContactId = $newContact->id;
             }
             
-            if ( ( civicrm_duplicate($newContact)  || is_a( $newContact, 'CRM_Contact_BAO_Contact' ) ) 
+            if ( ( civicrm_api3_duplicate($newContact)  || is_a( $newContact, 'CRM_Contact_BAO_Contact' ) ) 
                  && $primaryContactId ) {
                 
                 //relationship contact insert
@@ -841,8 +840,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     $matchedIDs = array(  );
                     // To update/fill contact, get the matching contact Ids if duplicate contact found 
                     // otherwise get contact Id from object of related contact
-                    if ( is_array( $relatedNewContact ) && civicrm_error( $relatedNewContact ) ) {
-                        if ( civicrm_duplicate($relatedNewContact) ) {
+                    if ( is_array( $relatedNewContact ) && civicrm_api3_error( $relatedNewContact ) ) {
+                        if ( civicrm_api3_duplicate($relatedNewContact) ) {
                             $matchedIDs = explode(',',$relatedNewContact['error_message']['params'][0]);
                         } else {
                             $errorMessage = $relatedNewContact['error_message'];
@@ -876,7 +875,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         }
                     } 
                     static $relativeContact = array( ) ;
-                    if ( civicrm_duplicate( $relatedNewContact ) ) {
+                    if ( civicrm_api3_duplicate( $relatedNewContact ) ) {
                         if ( count( $matchedIDs ) >= 1 ) {
                             $relContactId = $matchedIDs[0];
                             //add relative contact to count during update & fill mode.
@@ -896,7 +895,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         $this->_newRelatedContacts[] = $relativeContact[] = $relContactId;
                     }
                     
-                    if ( civicrm_duplicate( $relatedNewContact ) ||
+                    if ( civicrm_api3_duplicate( $relatedNewContact ) ||
                          ( $relatedNewContact instanceof CRM_Contact_BAO_Contact ) ) {
                         //fix for CRM-1993.Checks for duplicate related contacts
                         if ( count( $matchedIDs ) >= 1 ) {
@@ -956,7 +955,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             return $this->processMessage( $values, $statusFieldName, $this->_retCode );
         }
         //dupe checking      
-        if ( is_array( $newContact ) && civicrm_error( $newContact ) ) {
+        if ( is_array( $newContact ) && civicrm_api3_error( $newContact ) ) {
             $code = null;
             
             if ( ( $code = CRM_Utils_Array::value( 'code', $newContact['error_message'] ) ) && 
@@ -996,8 +995,10 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 $vals = array( 'contact_id' => $contactId );
                
                 if ($onDuplicate == CRM_Import_Parser::DUPLICATE_REPLACE) {
-                    $result = civicrm_replace_contact_formatted( $contactId, $formatted, $contactFields );
-                    $cid    = $result['result'];
+                    civicrm_api( 'contact', 'delete', $vals );
+                    $cid = CRM_Contact_BAO_Contact::createProfileContact( $formatted, $contactFields, 
+                                                                          $contactId, null, null, 
+                                                                          $formatted['contact_type'] );
                 } else if ($onDuplicate == CRM_Import_Parser::DUPLICATE_UPDATE) {
                     $newContact = $this->createContact( $formatted, $contactFields, $onDuplicate, $contactId );
                 } else if ($onDuplicate == CRM_Import_Parser::DUPLICATE_FILL) {
@@ -1010,7 +1011,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     $newContact = CRM_Contact_BAO_Contact::retrieve( $contact, $defaults );
                 }
                 
-                if ( civicrm_error( $newContact ) ) {
+                if ( civicrm_api3_error( $newContact ) ) {
                     $contactID = $newContact['error_message']['params'][0];
                     if ( !in_array( $contactID, $this->_newContacts ) ) {
                         $this->_newContacts[] = $contactID;
@@ -1593,18 +1594,16 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         //get the prefix id etc if exists
         CRM_Contact_BAO_Contact::resolveDefaults($formatted, true);
         
-        civicrm_api_include('contact', false, 2);
+        civicrm_api_include( 'contact' );
         // setting required check to false, CRM-2839
         // plus we do our own required check in import
-        $error = civicrm_contact_check_params( $formatted,
-                                               $dupeCheck,
-                                               true,
-                                               false,
-                                               $dedupeRuleGroupID );
-        
+        $error = _civicrm_api3_contact_check_params( $formatted,
+                                                     $dupeCheck,
+                                                     true,
+                                                     false );
         if ( ( is_null( $error )                                                ) && 
-             ( civicrm_error( _civicrm_validate_formatted_contact($formatted) ) ) ) {
-            $error = _civicrm_validate_formatted_contact($formatted);
+             ( civicrm_api3_error( _civicrm_api3_validate_formatted_contact($formatted) ) ) ) {
+            $error = _civicrm_api3_validate_formatted_contact($formatted);
         }
         
         $newContact = $error;
@@ -1849,7 +1848,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     }
                     
                     if ( !$break ) {  
-                        _civicrm_add_formatted_param( $value, $formatted );
+                        _civicrm_api3_add_formatted_param( $value, $formatted );
                     }
                 }
                 if ( !$isAddressCustomField ) {
@@ -1871,15 +1870,14 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 $formatted[$key] = $field;
             }
             
-            _civicrm_add_formatted_param( $formatValues, $formatted );
+            _civicrm_api3_add_formatted_param( $formatValues, $formatted );
          
             //Handling Custom Data
             if ( ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $key ) ) 
                  && array_key_exists( $customFieldID, $customFields ) ) {
                 
-                //get the html type.
-                $type = $customFields[$customFieldID]['html_type'];
-                _civicrm_add_custom_formatted_param( $customFieldID, $key, $field, $formatted, $type );
+                $extends = CRM_Utils_Array::value( 'extends', $customFields[$customFieldID] );
+                _civicrm_api3_custom_format_params( $params, $formatted, $extends );
             }
         }
         
