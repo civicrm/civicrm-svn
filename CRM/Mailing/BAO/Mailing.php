@@ -1095,8 +1095,16 @@ AND civicrm_contact.is_opt_out =0";
         $mailParams['toEmail'] = $email;
 
         require_once 'CRM/Utils/Hook.php';
-        CRM_Utils_Hook::alterMailParams( $mailParams );
-
+        CRM_Utils_Hook::alterMailParams( $mailParams, 'civimail' );
+        
+        //cycle through mailParams and set headers array
+        foreach ( $mailParams as $paramKey => $paramValue ) {
+			//exclude values not intended for the header
+			if ( !in_array( $paramKey, array('text','html','attachments','toName', 'toEmail') ) ) {
+                $headers[$paramKey] = $paramValue;
+            }
+        }
+            
         if ( ! empty( $mailParams['text'] ) ) {
             $message->setTxtBody( $mailParams['text'] );
         }
