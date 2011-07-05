@@ -151,6 +151,7 @@ function clearAmountOther() {
 
 
     {if $is_for_organization} 
+        <div id='onBehalfOfOrg' class="crm-section"></div>
         {include file=CRM/Contribute/Form/Contribution/OnBehalfOf.tpl} 
     {/if} 
     {* User account registration option. Displays if enabled for one of the profiles on this page. *}
