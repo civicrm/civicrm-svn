@@ -724,7 +724,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
        SELECT DISTINCT *  from ( {$sqlClause} )
 as tbl ";
 
-        $query = $query . $groupBy. $order. $limit;
+        $query = $query . $groupBy. $order;
 
         $dao = CRM_Core_DAO::executeQuery( $query, $params );
         
@@ -789,6 +789,9 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
     WHERE  civicrm_case_activity.id IS NULL";
         }
 
+        //limit query in the last step
+        $query .= $limit;
+        
         $dao = CRM_Core_DAO::executeQuery( $query );
                 
         //CRM-3553, need to check user has access to target groups.

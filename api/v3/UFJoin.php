@@ -62,7 +62,7 @@ function civicrm_api3_uf_join_create($params)
 
     $ufJoin = CRM_Core_BAO_UFJoin::create($params);
     _civicrm_api3_object_to_array( $ufJoin, $ufJoinArray[]);
-    return civicrm_api3_create_success($ufJoinArray,$params);
+    return civicrm_api3_create_success($ufJoinArray,$params,'uf_join','create');
 
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
@@ -105,7 +105,7 @@ function civicrm_api3_uf_join_get($params)
       _civicrm_api3_object_to_array($ufJoinDAO, $ufJoin[$ufJoinDAO->id]);
     }
   
-    return civicrm_api3_create_success($ufJoin,$params,$dao);
+    return civicrm_api3_create_success($ufJoin,$params,'uf_join','get',$dao);
     
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );

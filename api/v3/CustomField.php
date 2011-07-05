@@ -99,7 +99,7 @@ function civicrm_api3_custom_field_create( $params )
         
         $customField = CRM_Core_BAO_CustomField::create($params);
         _civicrm_api3_object_to_array_unique_fields($customField , $values[$customField->id]);
-        return civicrm_api3_create_success($values,$params, $customField);
+        return civicrm_api3_create_success($values,$params, 'custom_field',$customField);
 	} catch ( PEAR_Exception $e ) {
 		return civicrm_api3_create_error ( $e->getMessage () );
 	} catch ( Exception $e ) {

@@ -89,7 +89,7 @@ function civicrm_api3_relationship_type_create( $params ) {
 
         _civicrm_api3_object_to_array( $relationType, $relType[$relationType->id] );
 
-        return civicrm_api3_create_success($relType,$params, $relationType);
+        return civicrm_api3_create_success($relType,$params,'relationship_type','create', $relationType);
     } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {
@@ -126,7 +126,7 @@ function civicrm_api3_relationship_type_get( $params  )
             _civicrm_api3_object_to_array( $relationType, $relationshipType[$relationType->id] );
             //   $relationshipTypes[] = $relationshipType;
         }
-        return civicrm_api3_create_success($relationshipType,$params,$relationType);
+        return civicrm_api3_create_success($relationshipType,$params,'relationship_type','get',$relationType);
 
     } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
@@ -160,7 +160,7 @@ function civicrm_api3_relationship_type_delete( $params ) {
         if (! $result ) {
             return civicrm_api3_create_error( 'Could not delete relationship type' ) ;
         }
-        return  civicrm_api3_create_success( $result, $params  );
+        return  civicrm_api3_create_success( $result, $params,'relationship_type','delete',$relationTypeBAO  );
     } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {

@@ -156,7 +156,7 @@ function civicrm_api3_event_get( $params )
 
     }//end of the loop
 
-    return civicrm_api3_create_success($event,$params,$eventDAO);
+    return civicrm_api3_create_success($event,$params,'event','get',$eventDAO);
 
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
@@ -181,7 +181,16 @@ function civicrm_api3_event_delete( $params )
 {
 
     civicrm_api3_verify_one_mandatory($params,null,array('event_id','id'));
-    $eventID = CRM_Utils_Array::value( 'event_id', $params )?CRM_Utils_Array::value( 'event_id', $params ):CRM_Utils_Array::value( 'id', $params );
+    $eventID = 
+        CRM_Utils_Array::value( 'event_id', $params ) ?
+        CRM_Utils_Array::value( 'event_id', $params ) :
+        CRM_Utils_Array::value( 'id', $params );
+
     require_once 'CRM/Event/BAO/Event.php';
+    return 
+        CRM_Event_BAO_Event::del( $eventID ) ?
+        civicrm_api3_create_success( ) :
+        civicrm_api3_create_error( ts( 'Error while deleting event' ) );
+
 }
 

@@ -213,7 +213,7 @@ function &civicrm_api3_create_error( $msg, $data = null,&$dao = null )
  * @dao object DAO object to be freed here
  * @return array $result
  */
-function civicrm_api3_create_success( $values = 1,$params=array(),&$dao = null , $entity = null)
+function civicrm_api3_create_success( $values = 1,$params=array(), $entity = null,$action = null,&$dao = null )
 {
     $result = array();
     $result['is_error'] = 0;
