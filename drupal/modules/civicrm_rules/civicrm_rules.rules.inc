@@ -120,7 +120,34 @@ function civicrm_rules_event_info( ) {
 
 
 function civicrm_rules_condition_info() {
-    return civicrm_rules_entities_condition_info();
+   return  array(
+                 'rules_condition_civicrm_mailing_approved' => 
+                 array(
+                       'label' => t('Approval Status: Approved'),
+                       'arguments' => array(
+                                            'approvalstatus' => array(
+                                                                      'type' => 'mailing',
+                                                                      'label' => t('Approved'), ), ),
+                       'module' => 'CiviCRM Mailing',
+                       ),
+                 'rules_condition_civicrm_mailing_rejected' => 
+                 array(
+                       'label' => t('Approval Status: Rejected'),
+                       'arguments' => array(
+                                            'approvalstatus' => array(
+                                                                      'type' => 'mailing',
+                                                                      'label' => t('Rejected'), ), ),
+                       'module' => 'CiviCRM Mailing',
+                       ),
+                 ) + civicrm_rules_entities_condition_info();
+}
+
+function rules_condition_civicrm_mailing_approved(&$mailing, $settings) {
+    return $mailing->approval_status_id == 1;
+}
+
+function rules_condition_civicrm_mailing_rejected(&$mailing, $settings) {
+    return $mailing->approval_status_id != 1;
 }
 
 /*
