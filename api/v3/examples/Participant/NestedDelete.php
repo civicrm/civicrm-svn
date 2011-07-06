@@ -6,7 +6,11 @@
  Criteria delete by nesting a GET & a DELETE
  */
 function participant_delete_example(){
-$params = '';
+$params = array( 
+  'version' => 3,
+  'contact_id' => 4,
+  'api.participant.delete' => 1,
+);
 
   require_once 'api/api.php';
   $result = civicrm_api( 'participant','delete',$params );
