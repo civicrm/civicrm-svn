@@ -1,4 +1,4 @@
-<?
+<?php
 
 class civicrm_api3  {
 
