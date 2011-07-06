@@ -34,6 +34,7 @@ function contact_get_expectedresult(){
           'contact_is_deleted' => 0,
           'civicrm_value_testgetwithcustomreturnsyntax_3_id' => '1',
           'custom_3' => 'custom string',
+          'id' => '1',
         ),
     ),
 );
