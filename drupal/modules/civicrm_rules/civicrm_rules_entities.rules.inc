@@ -149,7 +149,11 @@ function civicrm_rules_events_argument_civicrm_eventnode(&$entityobj){
   if(is_a($entityobj, 'CRM_Event_BAO_Event') || is_a($entityobj, 'CRM_Event_DAO_Event')){
      $eventID = $entityobj->id;
   }
-  $stuff['id'] = $eventID;
+  
+  if(is_a($entityobj, 'CRM_Event_BAO_Participant') || is_a($entityobj, 'CRM_Event_DAO_Participant')){
+     $eventID = $entityobj->event_id;
+  }
+
     //todo there must be a clever way to get a node based on the cck field but I don't know it yet
     //I looked into the search_index_links but that seems to rely on touching the node 
     // really I am only needing type_name now as I am specifying the field name to be 

@@ -35,10 +35,61 @@
  */
 
 /**
+* Implement the pre hook and fire the corresponding rules event. Note Mailing api is not std so can't be handled
+* but it doesn't have a delete function so that is dealt with by escaping on delete
+* 
+*/
+function civicrm_rules_civicrm_pre( $op, $objectName, $objectId, &$objectRef ) {
+	if ( ! module_exists( 'rules' ) || $op != 'delete' ) {
+		return;
+	}
+  $validObjects = variable_get('civicrm_rules_post_entities',array('Contact'));
+
+	if ( ! in_array( $objectName, $validObjects ) ) {
+		return;
+	}
+	
+	//make sure we have the array
+	  if(!is_array($objectRef) || empty($objectRef->id)){
+      $entityArray = civicrm_api($objectName,'getsingle',
+                                      array('version' => 3, 'id' => $objectId));
+	  }else{
+	    $entityArray = &$objectRef;
+	  }
+	  //convert it to a DAO
+    $dao = _civicrm_api3_load_DAO($objectName);
+    if(!empty($dao)) {
+	  foreach ($entityArray as $key => $value) {
+	    $dao->$key = $value ;
+	  }
+    }
+    $objectName = strtolower( $objectName );
+    $objectEvent = 'civicrm_event';
+    if($objectName != 'contact'){
+        // without the civicrm prefix too much chance of another drupal module being enabled
+       $objectEvent  =  $objectName = 'civicrm_' . $objectName;
+    }
+
+	$eventName = null;
+	switch ( $op ) {
+	case 'delete':
+        $eventName = "{$objectName}_{$op}";
+       
+        break;
+
+    default:
+        break;
+    }
+
+	if ( $eventName ) {
+		rules_invoke_event( $eventName, array($objectEvent => $dao) );
+	}
+}
+/**
 * Implement the post hook and fire the corresponding rules event
 */
 function civicrm_rules_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
-	if ( ! module_exists( 'rules' ) ) {
+	if ( ! module_exists( 'rules' ) || $op == 'delete' ) {
 		return;
 	}
 	
@@ -65,7 +116,6 @@ function civicrm_rules_civicrm_post( $op, $objectName, $objectId, &$objectRef ) 
 	switch ( $op ) {
   case 'create':
 	case 'edit':
-	case 'delete':
         $eventName = "{$objectName}_{$op}";
        
         break;
