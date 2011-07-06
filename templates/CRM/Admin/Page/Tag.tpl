@@ -69,7 +69,7 @@
                     <td class="crm-tag-id">{$row.id}</td>	
                     <td class="crm-tag-description">{$row.description} </td>
                     <td class="crm-tag-parent">{$row.parent} {if $row.parent_id}({$row.parent_id}){/if}</td>
-        	        <td>{$row.used_for}</td>
+        	    <td class="crm-tag-used_for">{$row.used_for}</td>
                     <td class="crm-tag-is_tagset">{if $row.is_tagset}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Tag Set{/ts}" />{/if}</td>
                     <td class="crm-tag-is_reserved">{if $row.is_reserved}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Reserved{/ts}" />{/if}</td>
                     <td>{$row.action|replace:'xx':$row.id}</td>
@@ -97,7 +97,7 @@
     {/if}
 
 <div id="mergeTagDialog">
-    {ts}Begin typing name of tag.{/ts}<br/>
+    {ts}Begin typing name of tag to merge into.{/ts}<br/>
     <input type="text" id="tag_name"/>
     <input type="hidden" id="tag_name_id" value="">
 </div>
@@ -109,9 +109,11 @@
 cj("#mergeTagDialog").hide( );
 
 function mergeTag( fromId ) {
+        var fromTag = cj('#tag_row_' + fromId).children('td.crm-tag-name').text();
+
         cj("#mergeTagDialog").show( );
 	cj("#mergeTagDialog").dialog({
-		title: "Select Tag",
+		title: "Merge tag into '" + fromTag + "'",
 		modal: true,
 		bgiframe: true, 
 		close: function(event, ui) { cj("#tag_name").unautocomplete( ); },
@@ -161,8 +163,10 @@ function mergeTag( fromId ) {
 					  dataType : "json",
 					  success  : function( values ) {
                                                          if ( values.status == true ) {
+                                                            cj('#tag_row_' + toId).children('td.crm-tag-used_for').text(values.tagB_used_for);
+                                                            var msg = "'" + values.tagA + "' has been merged with '" + values.tagB + "'. All records previously tagged with '" + values.tagA + "' are now tagged with '" + values.tagB + "'.";
+                                                            cj('#tag_row_' + fromId).before('<tr><td colspan="8"><div class="status message">' + msg + '</div></td></tr>'); 
                                                             cj('#tag_row_' + fromId).hide();
-                                                            cj('#merge_tag_status').addClass("message status").html( "'" + values.tagA + "' has been merged with '" + values.tagB + "'. All records previously tagged with '" + values.tagA + "' are now tagged with '" + values.tagB + "'.");
                                                          }
                                                      }
 				       });
