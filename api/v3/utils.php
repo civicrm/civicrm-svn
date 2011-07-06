@@ -1248,7 +1248,7 @@ function _civicrm_api3_validate_date(&$params,&$fieldname,&$fieldInfo){
  *   - all other items: keys which identify new/pre-existing records
  */
 function _civicrm_api3_generic_replace($entity, $params) {
-    _civicrm_api3_initialize(true);
+
     require_once 'CRM/Core/Transaction.php';
     $tx = new CRM_Core_Transaction();
     try {

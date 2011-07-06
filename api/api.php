@@ -320,9 +320,10 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$versi
 					$subParams ['entity_table'] = civicrm_api_get_camel_name ( $entity );
 					$subParams [strtolower ( $entity ) . "_id"] = $parentAPIValues ['id'];
 				}
-				
-				if(CRM_Utils_Array::value(strtolower ( $subEntity  . "_id"),$parentAPIValues)){
+				if(strtolower($entity) != 'contact' && CRM_Utils_Array::value(strtolower ( $subEntity  . "_id"),$parentAPIValues)){
 				  //e.g. if event_id is in the values returned & subentity is event then pass in event_id as 'id'
+				  //don't do this for contact as it does some wierd things like returning primary email & 
+				  //thus limiting the ability to chain email
 				  //TODO - this might need the camel treatment
 				  $subParams['id'] = $parentAPIValues[$subEntity  . "_id"];
 				}
