@@ -84,7 +84,8 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
                                                                     ),
                                   CRM_Core_Action::FOLLOWUP => array(
                                                                     'name'  => ts('Merge'),
-                                                                    'extra' => 'onclick = "mergeTag( %%id%% );"',
+                                                                    'class' => 'merge_tag',
+                                                                    'url'   => 'javascript:return false;',
                                                                     'title' => ts('Merge Tag')
                                                                     ),
                                   );

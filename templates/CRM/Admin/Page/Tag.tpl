@@ -107,11 +107,18 @@
 {literal}
 <script type="text/javascript">
 cj("#mergeTagDialog").hide( );
+cj( function() {
+    cj('.merge_tag').click(function(){
+        var row_id = cj(this).closest('tr').attr('id');
+        var tagId = row_id.split('_');
+        mergeTag( tagId[2] );
+    });    
+});
 
 function mergeTag( fromId ) {
-        var fromTag = cj('#tag_row_' + fromId).children('td.crm-tag-name').text();
+    var fromTag = cj('#tag_row_' + fromId).children('td.crm-tag-name').text();
 
-        cj("#mergeTagDialog").show( );
+    cj("#mergeTagDialog").show( );
 	cj("#mergeTagDialog").dialog({
 		title: "Merge tag into '" + fromTag + "'",
 		modal: true,
@@ -153,24 +160,23 @@ function mergeTag( fromId ) {
 					return false;
 				}
 				
-                                /* send synchronous request so that disabling any actions for slow servers*/
+                /* send synchronous request so that disabling any actions for slow servers*/
 				var postUrl = {/literal}"{crmURL p='civicrm/ajax/mergeTags' h=0 }"{literal}; 
 				var data    = 'fromId='+ fromId + '&toId='+ toId + "&key={/literal}{crmKey name='civicrm/ajax/mergeTags'}{literal}";
-                		cj.ajax({ type     : "POST", 
+                cj.ajax({ type     : "POST", 
 					  url      : postUrl, 
 					  data     : data, 
-					  async    : false,
 					  dataType : "json",
 					  success  : function( values ) {
-                                                         if ( values.status == true ) {
-                                                            cj('#tag_row_' + toId).children('td.crm-tag-used_for').text(values.tagB_used_for);
-                                                            var msg = "'" + values.tagA + "' has been merged with '" + values.tagB + "'. All records previously tagged with '" + values.tagA + "' are now tagged with '" + values.tagB + "'.";
-                                                            cj('#tag_row_' + fromId).before('<tr><td colspan="8"><div class="status message">' + msg + '</div></td></tr>'); 
-                                                            cj('#tag_row_' + fromId).hide();
-                                                         }
-                                                     }
-				       });
-				cj(this).dialog("close"); 
+                        if ( values.status == true ) {
+                            cj('#tag_row_' + toId).children('td.crm-tag-used_for').text(values.tagB_used_for);
+                            var msg = "'" + values.tagA + "' has been merged with '" + values.tagB + "'. All records previously tagged with '" + values.tagA + "' are now tagged with '" + values.tagB + "'.";
+                            cj('#tag_row_' + fromId).html('<td colspan="8"><div class="status message">' + msg + '</div></td>'); 
+                        }
+                      }
+                });
+				
+                cj(this).dialog("close"); 
 				cj(this).dialog("destroy");
  			},
 
@@ -178,7 +184,7 @@ function mergeTag( fromId ) {
 				cj(this).dialog("close"); 
 				cj(this).dialog("destroy"); 
 			} 
-                }
+          }
 	});
 }
 </script>
