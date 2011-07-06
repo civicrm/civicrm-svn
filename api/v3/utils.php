@@ -68,7 +68,19 @@ function civicrm_api3_verify_one_mandatory ($params, $daoName = null, $keyoption
     civicrm_api3_verify_mandatory ($params, $daoName, $keys  );
 }
 
-
+/*
+ * Load the DAO of the entity
+ */
+function _civicrm_api3_load_DAO($entity){
+      $dao = _civicrm_api3_get_DAO ($entity);
+       if (empty($dao)) {
+            return false;
+       }
+       $file = str_replace ('_','/',$dao).".php";
+       require_once ($file); 
+       $d = new $dao();
+       return $d;
+}
 /*
  * Function to return the DAO of the function or Entity
  * @param  $name is either a function of the api (civicrm_{entity}_create or the entity name 
