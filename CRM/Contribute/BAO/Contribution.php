@@ -515,12 +515,12 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             require_once 'CRM/Core/OptionValue.php';
             require_once 'CRM/Contribute/DAO/Product.php';
             require_once 'CRM/Contribute/DAO/ContributionProduct.php';
-            require_once 'CRM/Contribute/DAO/ContributionType.php';
+            require_once 'CRM/Financial/DAO/FinancialAccount.php';
             
             $impFields          = CRM_Contribute_DAO_Contribution::export( );
             $expFieldProduct    = CRM_Contribute_DAO_Product::export( );
             $expFieldsContrib   = CRM_Contribute_DAO_ContributionProduct::export( );
-            $typeField          = CRM_Contribute_DAO_ContributionType::export( );
+            $typeField          = CRM_Financial_DAO_FinancialAccount::export( );
             $optionField        = CRM_Core_OptionValue::getFields($mode ='contribute' );
             $contributionStatus = array( 'contribution_status' => array( 'title'     => 'Contribution Status',
                                                                          'name'      => 'contribution_status',

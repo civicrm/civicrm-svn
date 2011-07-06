@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
 
 <table>
-  <base>CRM/Invoice</base>
+  <base>CRM/Order</base>
   <class>Discount</class>
   <name>civicrm_discount</name>
   <comment>Stores discounts for events on the basis of date</comment>
