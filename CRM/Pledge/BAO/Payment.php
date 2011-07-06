@@ -656,6 +656,7 @@ WHERE  civicrm_pledge_payment.id = {$paymentId}
     static function getOldestPledgePayment( $pledgeID, $limit = 1 )
     {
         //get pending / overdue statuses
+        require_once('CRM/Contribute/PseudoConstant.php');
         $pledgeStatuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
 
         //get pending and overdue payments
