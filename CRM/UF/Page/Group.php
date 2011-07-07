@@ -451,7 +451,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page
                 case 'ActivityType':
                     require_once 'CRM/Core/PseudoConstant.php';
                     $typeName = 'Activity';
-                    $valueLabels = CRM_Core_PseudoConstant::ActivityType( );
+                    $valueLabels = CRM_Core_PseudoConstant::ActivityType(true, true, false, 'label', true);
                     break;
                 }
                 
