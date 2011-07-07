@@ -112,7 +112,12 @@
 <script type="text/javascript">
 var reset            = {/literal}"{$reset}"{literal};
 var onBehalfRequired = {/literal}"{$onBehalfRequired}"{literal};
+var mainDisplay      = {/literal}"{$mainDisplay}"{literal};
 cj( "div#id-onbehalf-orgname-help").hide( );
+
+if ( mainDisplay ) {
+    showOnBehalf( false );
+}
 
 cj( "#mode" ).hide( );
 cj( "#mode" ).attr( 'checked', 'checked' );
