@@ -29,8 +29,14 @@
 {/if}
 {if ! empty( $fields )}
 {* Wrap in crm-container div so crm styles are used.*}
-{* Replace div id with this logic if you want CMS account create and CMS edit to use CMS theme styles: id="{if $mode eq 4}crm-container{else}crm-profile-block{/if}" *}
-<div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
+{* Replace div id "crm-container" only when profile is not loaded in civicrm container, i.e for profile shown in my account and in profile standalone mode otherwise id should be "crm-profile-block" *}
+
+{if $action eq 1 or $action eq 2 or $action eq 4 }
+    <div id="crm-profile-block">
+{else}
+    <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
+{/if}
+
     {if $isDuplicate and ( ($action eq 1 and $mode eq 4 ) or ($action eq 2) or ($action eq 8192) ) }
         <div class="crm-submit-buttons"> 
              <span class="crm-button">{$form._qf_Edit_upload_duplicate.html}</span>
