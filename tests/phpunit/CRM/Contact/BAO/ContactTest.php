@@ -465,6 +465,12 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         //Now check DB for New Note
         $noteId = $this->assertDBNotNull( 'CRM_Core_DAO_Note', $updateParams['note'], 'id', 'note', 
                                           'Database check for New created note ' );
+        
+        //delete all notes related to contact
+        require_once 'CRM/Core/BAO/Note.php';
+        CRM_Core_BAO_Note::cleanContactNotes( $contactId );
+
+        
         //cleanup DB by deleting the contact
         Contact::delete( $contactId );
         $this->quickCleanup( array( 'civicrm_contact', 'civicrm_note' ) );
@@ -587,6 +593,11 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
             //delete the organization.
             Contact::delete( CRM_Utils_Array::value( 'cid', $val ) );
         }
+        
+        //delete all notes related to contact
+        require_once 'CRM/Core/BAO/Note.php';
+        CRM_Core_BAO_Note::cleanContactNotes( $contactId );
+
         
         //cleanup DB by deleting the contact
         Contact::delete( $contactId );
