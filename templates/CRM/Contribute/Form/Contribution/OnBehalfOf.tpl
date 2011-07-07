@@ -36,10 +36,11 @@
     </div>
   {/if}  
 
-  <div id="select_org" class="form-layout-compressed">
+  <div id="select_org" class="crm-section">
     {foreach from=$form.onbehalf item=field key=fieldName}
+    <div class="crm-section {$onBehalfOfFields.$fieldName.name}-section">
       {if $onBehalfOfFields.$fieldName.help_pre}
-        <div class='content description'>{$onBehalfOfFields.$fieldName.help_pre}</div>
+        &nbsp;&nbsp;<span class='description'>{$onBehalfOfFields.$fieldName.help_pre}</span>
       {/if}
       
        {if ( $fieldName eq 'organization_name' ) and $organizationName}
@@ -52,11 +53,14 @@
             <div id="id-onbehalf-orgname-enter-help" class="description">
                 {ts}Organization details have been prefilled for you. If this is not the organization you want to use, click "Enter a new organization" above.{/ts}
             </div>
+            {if $onBehalfOfFields.$fieldName.help_post}
+                 <span class='description'>{$onBehalfOfFields.$fieldName.help_post}</span>
+            {/if}
          </div>
        {else}
           {if $onBehalfOfFields.$fieldName.options_per_line != 0}
             <div class="label option-label">{$field.label}</div> 
-            <div class="content"> 
+            <div class="content 3"> 
               {assign var="count" value="1"} 
               {strip} 
               <table class="form-layout-compressed"> 
@@ -80,6 +84,9 @@
               </tr> 
               </table>
               {/strip}
+              {if $onBehalfOfFields.$fieldName.help_post}
+                 <span class='description'>{$onBehalfOfFields.$fieldName.help_post}</span>
+              {/if}
             </div>
           {else}
               <div class="label">{$field.label}</div>
@@ -88,14 +95,14 @@
                {if $fieldName eq 'organization_name'}
                  <div id="id-onbehalf-orgname-help" class="description">{ts}Start typing the name of an organization that you have saved previously to use it again. Otherwise click "Enter a new organization" above.{/ts}</div>
                {/if}
+               {if $onBehalfOfFields.$fieldName.help_post}
+                 <br /><span class='description'>{$onBehalfOfFields.$fieldName.help_post}</span>
+               {/if}
               </div>
           {/if}
        {/if}
-      {if $onBehalfOfFields.$fieldName.help_post}
-        <div class='content description'>{$onBehalfOfFields.$fieldName.help_post}</div>
-      {else}
-        <div class="clear">&nbsp;</div>
-      {/if}
+      <div class="clear"></div>
+    </div>
     {/foreach}
   </div>
   <div>{$form.mode.html}</div>
@@ -103,14 +110,22 @@
 
 {literal}
 <script type="text/javascript">
+var reset            = {/literal}"{$reset}"{literal};
 var onBehalfRequired = {/literal}"{$onBehalfRequired}"{literal};
 cj( "div#id-onbehalf-orgname-help").hide( );
+
+cj( "#mode" ).hide( );
+cj( "#mode" ).attr( 'checked', 'checked' );
+if ( cj( "#mode" ).attr( 'checked' ) && !reset ) {
+    $text = ' {/literal}{ts escape="js"}Use existing organization{/ts}{literal} ';
+    cj( "#createNewOrg" ).text( $text );
+    cj( "#mode" ).removeAttr( 'checked' );
+}
 
 function showOnBehalf( onBehalfRequired )
 {
     if ( cj( "#is_for_organization" ).attr( 'checked' ) || onBehalfRequired ) {
             cj( "#for_organization" ).html( '' );
-            var reset   = {/literal}"{$reset}"{literal};
             var urlPath = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&onbehalf=1'}"{literal};
             urlPath     = urlPath  + {/literal}"{$urlParams}"{literal};
             if ( reset ) {
@@ -151,89 +166,41 @@ function resetValues( filter )
    });
 }
 
-cj( "#mode" ).hide( );
-cj( "#mode" ).attr( 'checked', 'checked' );
+function createNew( ) 
+{
+    if ( cj( "#mode" ).attr( 'checked' ) ) {
+        $text = ' {/literal}{ts escape="js"}Use existing organization{/ts}{literal} ';
+        cj( "#onbehalf_organization_name" ).removeAttr( 'readonly' );
+        cj( "#mode" ).removeAttr( 'checked' );
 
-{/literal}
-
-{if ( $relatedOrganizationFound or $onBehalfRequired ) and $reset}
-  {if $organizationName}
-
-    {literal}
-    setOrgName( );
-
-    function createNew( ) 
-    {
-       if ( cj( "#mode" ).attr( 'checked' ) ) {
-           $text = ' {/literal}{ts escape="js"}Use existing organization{/ts}{literal} ';
-           cj( "#onbehalf_organization_name" ).removeAttr( 'readonly' );
-           cj( "#mode" ).removeAttr( 'checked' );
-
-           resetValues( false );
-       } else {
-           $text = ' {/literal}{ts escape="js"}Enter a new organization{/ts}{literal} ';
-           cj( "#mode" ).attr( 'checked', 'checked' );
-           setOrgName( );
-       }
-       cj( "#createNewOrg" ).text( $text );
+        resetValues( false );
+    } else {
+        $text = ' {/literal}{ts escape="js"}Enter a new organization{/ts}{literal} ';
+        cj( "#mode" ).attr( 'checked', 'checked' );
+        setOrgName( );
     }
+    cj( "#createNewOrg" ).text( $text );
+}
  
-    function setOrgName( )
-    {
-       var orgName = "{/literal}{$organizationName}{literal}";
-       var orgId   = "{/literal}{$orgId}{literal}";
-       cj( "#onbehalf_organization_name" ).val( orgName );
-       cj( "#onbehalf_organization_name" ).attr( 'readonly', true );
-       setLocationDetails( orgId );
-    }
+function setOrgName( )
+{
+    var orgName = "{/literal}{$organizationName}{literal}";
+    var orgId   = "{/literal}{$orgId}{literal}";
+    cj( "#onbehalf_organization_name" ).val( orgName );
+    cj( "#onbehalf_organization_name" ).attr( 'readonly', true );
+    setLocationDetails( orgId );
+}
 
-  {/literal}{else}{literal}
-
-       cj( "#orgOptions" ).show( );
-       var orgOption = cj( "input:radio[name=org_option]:checked" ).val( );
-       selectCreateOrg( orgOption, false );
-
-       cj( "input:radio[name='org_option']" ).click( function( ) {
-          orgOption = cj( "input:radio[name='org_option']:checked" ).val( );
-          selectCreateOrg( orgOption, true ); 
-       });
-
-       function selectCreateOrg( orgOption, reset )
-       {
-          if ( orgOption == 0 ) {
-              cj( "div#id-onbehalf-orgname-help").show( );
-              var dataUrl = {/literal}"{$employerDataURL}"{literal};
-	      cj( '#onbehalf_organization_name' ).autocomplete( dataUrl, 
-                                                                { width         : 180, 
-                                                                  selectFirst   : false,
-                                                                  matchContains : true
-              }).result( function( event, data, formatted ) {
-                   cj('#onbehalf_organization_name').val( data[0] );
-                   cj('#onbehalfof_id').val( data[1] );
-                   setLocationDetails( data[1] );
-              });
-          } else if ( orgOption == 1 ) {
-              cj( "input#onbehalf_organization_name" ).removeClass( 'ac_input' ).unautocomplete( );
-              cj( "div#id-onbehalf-orgname-help").hide( );
-              if ( reset ) {
-	          resetValues( false );
-              }
-          }
-       }
-
-  {/literal}{/if}
-   
-  {* Javascript method to populate the location fields when a different existing related contact is selected *}
-  {literal}
-  function setLocationDetails( contactID ) 
-  {
-      resetValues( true );
-      var locationUrl = {/literal}"{$locDataURL}"{literal} + contactID + "&ufId=" + {/literal}"{$profileId}"{literal};
-      cj.ajax({
-            url         : locationUrl,
-            dataType    : "json",
-            timeout     : 5000, //Time in milliseconds
-            success     : function( data, status ) {
+  
+function setLocationDetails( contactID ) 
+{
+    resetValues( true );
+    var locationUrl = {/literal}"{$locDataURL}"{literal} + contactID + "&ufId=" + {/literal}"{$profileId}"{literal};
+    cj.ajax({
+              url         : locationUrl,
+              dataType    : "json",
+              timeout     : 5000, //Time in milliseconds
+              success     : function( data, status ) {
                 for (var ele in data) { 
                    if ( data[ele].type == 'Radio' ) {
                        if ( data[ele].value ) {
@@ -247,14 +214,59 @@ cj( "#mode" ).attr( 'checked', 'checked' );
                        cj( "#" + ele ).val( data[ele].value );
                    }
                 }
-            },
-            error       : function( XMLHttpRequest, textStatus, errorThrown ) {
-                console.error("HTTP error status: ", textStatus);
-            }
-     });
-  }
+              },
+              error       : function( XMLHttpRequest, textStatus, errorThrown ) {
+                   console.error("HTTP error status: ", textStatus);
+              }
+    });
+}
 
-{/literal}{/if}{literal}
+var orgOption = '';
+cj( "input:radio[name='org_option']" ).click( function( ) {
+   orgOption = cj( "input:radio[name='org_option']:checked" ).val( );
+   selectCreateOrg( orgOption, true ); 
+});
+
+function selectCreateOrg( orgOption, reset )
+{
+    if ( orgOption == 0 ) {
+        cj( "div#id-onbehalf-orgname-help").show( );
+        var dataUrl = {/literal}"{$employerDataURL}"{literal};
+        cj( '#onbehalf_organization_name' ).autocomplete( dataUrl, 
+                                                          { width         : 180, 
+                                                          selectFirst   : false,
+                                                          matchContains : true
+        }).result( function( event, data, formatted ) {
+            cj('#onbehalf_organization_name').val( data[0] );
+            cj('#onbehalfof_id').val( data[1] );
+            setLocationDetails( data[1] );
+        });
+    } else if ( orgOption == 1 ) {
+        cj( "input#onbehalf_organization_name" ).removeClass( 'ac_input' ).unautocomplete( );
+        cj( "div#id-onbehalf-orgname-help").hide( );
+    }
+
+    if ( reset ) {
+        resetValues( false );
+    }
+}
+
+{/literal}
+
+{if ( $relatedOrganizationFound or $onBehalfRequired ) and $reset}
+  {if $organizationName}
+
+    {literal}
+    setOrgName( );
+
+  {/literal}{else}{literal}
+
+       cj( "#orgOptions" ).show( );
+       var orgOption = cj( "input:radio[name=org_option]:checked" ).val( );
+       selectCreateOrg( orgOption, false );
+  {/literal}{/if}
+ 
+{/if}{literal}
 </script>
 {/literal}
 </fieldset>
