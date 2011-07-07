@@ -559,6 +559,7 @@ SELECT $select
                                                                                          $fileDAO->id,
                                                                                          'entity_id',
                                                                                          'id' );
+                                                $customValue['imageURL'] = str_replace( 'persist/contribute', 'custom' ,$config->imageUploadURL) . $fileDAO->uri;
                                                 require_once 'CRM/Core/BAO/File.php';
                                                 list( $path ) = CRM_Core_BAO_File::path( $fileDAO->id, $entityId,
                                                                                          null, null);
