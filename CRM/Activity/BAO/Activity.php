@@ -1567,7 +1567,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
             
             $subject = "{$membershipType}";
             
-            if ( $activity->source != 'null' && !empty($activity->source) ) {
+            if ( !empty($activity->source) && $activity->source != 'null' ) {
                 $subject .= " - {$activity->source}";
             }
             
@@ -1617,7 +1617,7 @@ SELECT  display_name
                        
             require_once "CRM/Utils/Money.php";
             $subject .= CRM_Utils_Money::format($activity->total_amount, $activity->currency);
-            if ( $activity->source != 'null' ) {
+            if ( !empty($activity->source) && $activity->source != 'null' ) {
                 $subject .= " - {$activity->source}";
                 
             } 
