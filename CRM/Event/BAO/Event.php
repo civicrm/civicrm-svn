@@ -1121,7 +1121,10 @@ WHERE civicrm_event.is_active = 1
         require_once 'CRM/Core/BAO/UFGroup.php';
         if ( CRM_Core_BAO_UFGroup::filterUFGroups($gid, $cid) ){
             $values = array( );
-            $fields = CRM_Core_BAO_UFGroup::getFields( $gid, false, CRM_Core_Action::VIEW );
+            $fields = CRM_Core_BAO_UFGroup::getFields( $gid, false, CRM_Core_Action::VIEW,
+                                                       null , null, false, null,
+                                                       false, null, CRM_Core_Permission::CREATE,
+                                                       'field_name', true  );
 
             //this condition is added, since same contact can have multiple event registrations..
             $params = array( array( 'participant_id', '=', $participantId, 0, 0 ) );
