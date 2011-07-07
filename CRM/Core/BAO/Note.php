@@ -551,8 +551,12 @@ WHERE participant.contact_id = %1 AND  note.entity_table = 'civicrm_participant'
         CRM_Core_DAO::executeQuery( $participantQuery , $params );
         
         // delete all contact notes 
-        $contactQuery = "DELETE FROM civicrm_note WHERE entity_id = %1 AND entity_table = 'civicrm_contact'";
+        $contactQuery = "SELECT id FROM civicrm_note WHERE entity_id = %1 AND entity_table = 'civicrm_contact'";
         
-        CRM_Core_DAO::executeQuery( $contactQuery , $params );
+        $contactNoteId = CRM_Core_DAO::executeQuery( $contactQuery , $params );
+        while( $contactNoteId->fetch( ) ) {
+            self::del( $contactNoteId->id, false );
+        }
+        
     }
 }
