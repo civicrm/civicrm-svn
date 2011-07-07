@@ -532,6 +532,9 @@ div.spacer,
     padding-top: 10px;
 }
 
+#crm-container .button-disabled {
+    color: #CFCEC3!important;
+}
 
 #crm-container .form-layout-compressed td.describe-image {
     vertical-align: top;
