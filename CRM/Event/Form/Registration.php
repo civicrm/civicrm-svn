@@ -1124,7 +1124,7 @@ WHERE  v.option_group_id = g.id
         
         // force to ignore the authenticated user
         if ( $tempID === '0' ) {
-            return;
+            return $tempID;
         }
         
         //check if this is a checksum authentication
