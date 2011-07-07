@@ -344,7 +344,7 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
         $dao   = CRM_Core_DAO::executeQuery( $query, $queryParams );
         $tags  = array( );
         while( $dao->fetch( ) ) {
-            $tags[$dao->id] = explode( ",", $dao->used_for );
+            $tags[$dao->id] = $dao->used_for ? explode( ",", $dao->used_for ) : array( );
         }
         $usedFor = array_merge( $tags[$fromId], $tags[$toId] );
         $usedFor = implode( ',', array_unique($usedFor) );

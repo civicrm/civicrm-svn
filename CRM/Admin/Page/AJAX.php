@@ -242,11 +242,11 @@ class CRM_Admin_Page_AJAX
         $limit  = CRM_Utils_Type::escape( $_GET['limit'],  'Integer' );
         
         // build used-for clause to be used in main query
-        $usedFor = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $fromId, 'used_for' );
+        $usedForTagA   = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $fromId, 'used_for' );
         $usedForClause = array();
-        if ( $usedFor ) {
-            $usedArray = explode( ",", $usedFor );
-            foreach( $usedArray as $key => $value ) {
+        if ( $usedForTagA ) {
+            $usedForTagA = explode( ",", $usedForTagA );
+            foreach( $usedForTagA as $key => $value ) {
                 $usedForClause[] = "t1.used_for LIKE '%{$value}%'";
             }
         }
@@ -268,7 +268,22 @@ LIMIT $limit";
         $dao    = CRM_Core_DAO::executeQuery( $query );
         
         while( $dao->fetch( ) ) {
-            $tag = addcslashes($dao->name, '"') . "|{$dao->id}\n";
+            $warning = 0;
+            if ( !empty($dao->used_for) ) {
+                $usedForTagB = explode( ',', $dao->used_for );
+                if ( count($usedForTagA) < count($usedForTagB) ) {
+                    $warning = 1;
+                } else {
+                    sort($usedForTagB);
+                    sort($usedForTagA);
+                    $usedForDiff   = array_diff( $usedForTagB, $usedForTagA );
+                    $usedForInTagB = array_intersect( $usedForDiff, $usedForTagB );
+                    if ( !empty($usedForDiff) && !empty($usedForInTagB) ) {
+                        $warning = 1;
+                    }
+                }
+            }
+            $tag = addcslashes($dao->name, '"') . "|{$dao->id}|{$warning}\n";
             echo $tag = $dao->parent ? ( addcslashes($dao->parent, '"') . ' :: ' . $tag ) : $tag;
         }
         CRM_Utils_System::civiExit( );

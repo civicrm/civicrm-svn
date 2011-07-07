@@ -100,6 +100,7 @@
     {ts}Begin typing name of tag to merge into.{/ts}<br/>
     <input type="text" id="tag_name"/>
     <input type="hidden" id="tag_name_id" value="">
+    <div id="used_for_warning" class="status message"></div>
 </div>
 
 </div>
@@ -117,6 +118,7 @@ cj( function() {
 
 function mergeTag( fromId ) {
     var fromTag = cj('#tag_row_' + fromId).children('td.crm-tag-name').text();
+    cj('#used_for_warning').html('');
 
     cj("#mergeTagDialog").show( );
 	cj("#mergeTagDialog").dialog({
@@ -145,6 +147,11 @@ function mergeTag( fromId ) {
 			cj("#tag_name").focus();
 			cj("#tag_name").result(function(event, data, formatted) {
 				cj("input[id=tag_name_id]").val(data[1]);
+                                if ( data[2] == 1 ) {
+                                    cj('#used_for_warning').html("Warning: Selected tag has additional used-for options which would be merged into '" + fromTag + "'. Click ok to proceed.");
+                                } else {
+                                    cj('#used_for_warning').html('');
+                                }
 			});		    
 		},
 
