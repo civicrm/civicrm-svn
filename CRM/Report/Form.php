@@ -638,7 +638,7 @@ class CRM_Report_Form extends CRM_Core_Form {
 
     function addChartOptions( ) {
         if ( !empty( $this->_charts ) ) {
-            $this->addElement( 'select', "charts", ts( 'Chart' ), $this->_charts );
+            $this->addElement( 'select', "charts", ts( 'Chart' ), $this->_charts, array('onchange' => 'disablePrintPDFButtons(this.value);' ) );
             $this->assign( 'charts', $this->_charts );
             $this->addElement('submit', $this->_chartButtonName, ts('View') );
         }
