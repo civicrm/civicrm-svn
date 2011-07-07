@@ -30,7 +30,7 @@
 		<div class="ac_results" id="crm-contact-actions-list">
 			<div class="crm-contact-actions-list-inner">
 			  <div class="crm-contact_activities-list">
-			  {include file="CRM/Activity/Form/ActivityLinks.tpl"}
+			  {include file="CRM/Activity/Form/ActivityLinks.tpl" as_select=false}
 			  </div>
 			  
               <div class="crm-contact_print-list">
