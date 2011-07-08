@@ -85,7 +85,6 @@ class CRM_Mailing_Form_Search extends CRM_Core_Form {
                         $parent->set( $field, CRM_Utils_Date::processDate( $params[$field], $time ) );
                     } else {
                         $parent->set( $field, $params[$field] );
-                        $fromSession  = $parent->get($field);
                     }
                 } else {
                     $parent->set( $field, null );
