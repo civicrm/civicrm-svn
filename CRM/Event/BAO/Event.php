@@ -1231,14 +1231,7 @@ WHERE civicrm_event.is_active = 1
                 
                 unset( $values[$fields['participant_id']['title']] );
                 
-                //return if we only require array of participant's info.
-                if ( $isCustomProfile ) {
-                    if ( count($values) ) {
-                        return array( $values, $groupTitles );
-                    } else {
-                        return null;
-                    }
-                } 
+               
                 $val[] = $values;
                 
             }
@@ -1250,6 +1243,14 @@ WHERE civicrm_event.is_active = 1
         if ( count ($groupTitles)) {
             $template->assign( $name.'_grouptitle', $groupTitles );
         }
+        //return if we only require array of participant's info.
+        if ( $isCustomProfile ) {
+            if ( count($val) ) {
+                return array( $val, $groupTitles );
+            } else {
+                return null;
+            }
+        } 
     }
     /**  
      * Function to build the array for display the profile fields
@@ -1502,6 +1503,7 @@ WHERE  id = $cfID
                                  $isIdsArray = false, 
                                  $skipCancel = true ) 
     {
+        
         $customProfile = $additionalIDs = array( );
         if ( !$participantId ) {
             CRM_Core_Error::fatal(ts('Cannot find participant ID'));
@@ -1553,9 +1555,13 @@ WHERE  id = $cfID
                                                                                    $isTest, 
                                                                                    $isCustomProfile,
                                                                                    $participantParams );
+                   
                     if ( $profilePre ) {
-                        $customProfile[$i]['additionalCustomPre'] =  $profilePre;
-                        $customProfile[$i] = array_merge( $groupTitles, $customProfile[$i] );
+                        $profile =  $profilePre;
+                        // $customProfile[$i] = array_merge( $groupTitles, $customProfile[$i] );
+                        if ($i === 1) {
+                            $title = $groupTitles;
+                        }
                     }
                     
                     list( $profilePost, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_post_id'], 
@@ -1566,21 +1572,33 @@ WHERE  id = $cfID
                                                                                     $isTest, 
                                                                                     $isCustomProfile,
                                                                                     $participantParams );
+
                     if ( $profilePost ) {
                         if ( isset( $profilePre ) ){
-                            $customProfile[$i]['additionalCustomPost'] =  array_diff_assoc( $profilePost, $profilePre );
-                            $customProfile[$i] = array_merge( $groupTitles, $customProfile[$i] );
+                            $profile = array_merge ($profilePre,$profilePost)  ;
+                            if ($i === 1) {
+                                $title = array_merge( $title, $groupTitles);
+                            }
                         } else {
-                            $customProfile[$i]['additionalCustomPost'] = $profilePost;
-                            $customProfile[$i] = $groupTitles;
+                            $profile = $profilePost;
+                            if ($i === 1) {
+                                $title= $groupTitles;    
+                                
+                            }
                         }
+                        
+                        
                     }
+                    $profiles[] = $profile;
                     $i++;
                 }
             }
+            $customProfile['title'] = $title;
+            $customProfile['profile'] = $profiles;
         }
-        
+
         return $customProfile;
+
     }
     
     /* Function to retrieve all events those having location block set.
