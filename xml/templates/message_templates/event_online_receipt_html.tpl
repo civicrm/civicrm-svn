@@ -390,39 +390,37 @@ registration process.{/ts}</p>
        {/if}
       {/foreach}
      {/if}
+{if $customProfile}
 
-     {if $customProfile}
-      {foreach from=$customProfile item=value key=customName}
-       <tr>
+{foreach from=$customProfile.profile item=eachParticipant key=participantID}
+ <tr>
         <th {$headerStyle}>
-         {ts 1=$customName+1}Participant Information - Participant %1{/ts}
-        </th>
+
+{ts 1=$participantID+1}Participant Information - Participant %1{/ts}
+ </th>
        </tr>
-       {foreach from=$value item=val key=field}
-        {if $field eq 'additionalCustomPre' or $field eq 'additionalCustomPost'}
-         <tr>
+
+
+{foreach from=$eachParticipant item=eachProfile key=pid}
+ <tr>
           <td colspan="2" {$labelStyle}>
-           {if $field eq 'additionalCustomPre'}
-            {$additionalCustomPre_grouptitle}
-           {else}
-            {$additionalCustomPost_grouptitle}
-           {/if}
-          </td>
+
+{$customProfile.title.$pid}
+</td>
          </tr>
-         {foreach from=$val item=v key=f}
-          <tr>
-           <td {$labelStyle}>
-            {$f}
-           </td>
-           <td {$valueStyle}>
-            {$v}
-           </td>
-          </tr>
-         {/foreach}
-        {/if}
-       {/foreach}
-      {/foreach}
-     {/if}
+{foreach from=$eachProfile item=val key=field}
+ <tr>
+{foreach from=$val item=v key=f}
+  <td {$labelStyle}>{$field}</td> 
+    <td {$valueStyle}>{$v}</td> 
+{/foreach}
+</tr>
+{/foreach}
+
+
+{/foreach}
+{/foreach}
+{/if}
 
      {if $customGroup}
       {foreach from=$customGroup item=value key=customName}
