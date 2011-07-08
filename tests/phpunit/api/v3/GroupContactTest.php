@@ -99,23 +99,7 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
 
     ///////////////// civicrm_group_contact_get methods
 
-    function testGetWithWrongParamsType()
-    {
-        $params = 1;
-        $groups = civicrm_api3_group_contact_get( $params );
 
-        $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'Input variable `params` is not an array' );
-    }
-
-    function testGetWithEmptyParams( ) 
-    {
-        $params = array( 'version' => $this->_apiversion );
-        $groups = civicrm_api3_group_contact_get( $params );
-        
-        $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'Mandatory key(s) missing from params array: contact_id' );
-    }
     
     function testGet( ) 
     {
@@ -123,6 +107,22 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
                          'version'    => $this->_apiversion, );
         $result = civicrm_api3_group_contact_get( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);                  
+        foreach( $result as $v  ){ 
+            $this->assertEquals( $v['title'], $this->_group[$v['group_id']]['title'] );
+            $this->assertEquals( $v['visibility'], $this->_group[$v['group_id']]['visibility'] );
+            $this->assertEquals( $v['in_method'], $this->_group[$v['group_id']]['in_method'] );
+        }
+    }
+   
+        function testGetGroupID( ) 
+    {
+        $description = "Get all from group and display contacts";
+        $subfile = "GetWithGroupID";
+        $params = array( 'contact_id' => $this->__groupId1,
+                         'version'    => $this->_apiversion,
+                        'api.contact.get' => 1 );
+        $result = civicrm_api3_group_contact_get( $params );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile);                  
         foreach( $result as $v  ){ 
             $this->assertEquals( $v['title'], $this->_group[$v['group_id']]['title'] );
             $this->assertEquals( $v['visibility'], $this->_group[$v['group_id']]['visibility'] );

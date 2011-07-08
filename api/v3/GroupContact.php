@@ -55,9 +55,13 @@ function civicrm_api3_group_contact_get($params) {
 	_civicrm_api3_initialize ( true );
 	try {
 		
-		civicrm_api3_verify_mandatory ( $params, null, array ('contact_id' ) );
+		civicrm_api3_verify_mandatory ( $params, null );
 		require_once 'CRM/Contact/BAO/GroupContact.php';
 		if(empty($params['contact_id'])){
+		  if(empty($params['status'] )){
+		    //default to 'Added'
+		    $params['status'] ='Added';
+		  }
 		  //ie. id passed in so we have to return something
 		  return _civicrm_api3_basic_get('CRM_Contact_BAO_GroupContact', $params);
 		}
