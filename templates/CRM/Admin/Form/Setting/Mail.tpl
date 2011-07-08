@@ -38,6 +38,10 @@
             <td class="label">{$form.mailerJobSize.label}</td><td>{$form.mailerJobSize.html}<br />    
             <span class="description">{ts}If you want to utilize multi-threading enter the size you want your sub jobs to be split into (0 = disables multi-threading and processes mail as one single job - batch limits still apply){/ts}</span></td>
         </tr>
+        <tr class="crm-mail-form-block-mailerJobsMax">
+            <td class="label">{$form.mailerJobsMax.label}</td><td>{$form.mailerJobsMax.html}<br />    
+            <span class="description">{ts}The maximum number of mailer delivery jobs executing simultaneously (0 = allow as many processes to execute as started by cron){/ts}</span></td>
+        </tr>
         <tr class="crm-mail-form-block-verpSeparator">
             <td class="label">{$form.verpSeparator.label}</td><td>{$form.verpSeparator.html}<br />
             <span class="description">{ts}Separator character used when CiviMail generates VERP (variable envelope return path) Mail-From addresses.{/ts}</span></td>

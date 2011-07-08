@@ -73,6 +73,12 @@ class CRM_Mailing_Config extends CRM_Core_Component_Config {
      */
     public $mailerJobSize = 0;
 
+    /**
+     * How many parallel delivery cron jobs should we run
+     *
+     * @var int
+     */
+    public $mailerJobsMax = 0;
 }
 
 
