@@ -51,7 +51,7 @@
                        </a>
                    </li>
                  {/if}
-                 {if $userRecordUrl }
+                 {if !empty($userRecordUrl)}
                    <li class="crm-contact-user-record">
                       <a href="{$userRecordUrl}" class="user-record " title="{ts}User Record{/ts}">
                          <span><div class="icon user-record-icon"></div>{ts}User Record{/ts}</span>
