@@ -63,6 +63,14 @@ class CRM_Mailing_Form_Search extends CRM_Core_Form {
                                 ) ); 
     }
 
+    function setDefaultValues( ) {
+        $defaults = array( );
+        foreach ( array('Scheduled', 'Complete', 'Running') as $status ) {
+            $defaults['mailing_status'][$status] = 1;
+        }
+        return $defaults;
+    }
+
     function postProcess( ) {
         $params = $this->controller->exportValues( $this->_name );
         

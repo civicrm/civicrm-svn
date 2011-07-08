@@ -449,12 +449,14 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
         if( $this->_parent->get( 'scheduled' ) ) { 
             $clauses[] = "civicrm_mailing.scheduled_id IS NOT NULL";
             $clauses[] = "( civicrm_mailing.is_archived IS NULL OR civicrm_mailing.is_archived = 0 )";
-
             $status = $this->_parent->get('mailing_status');
-            $status = array_keys($status);
-            $status = implode("','", $status);
-
-            $clauses[] = "civicrm_mailing_job.status IN ('$status')";
+            if ( !empty( $status ) ) {
+                $status = array_keys($status);
+                $status = implode("','", $status);
+                $clauses[] = "civicrm_mailing_job.status IN ('$status')";
+            } else {
+                $clauses[] = "civicrm_mailing_job.status IN ('Scheduled', 'Complete', 'Running')";
+            }
         }
             
         if ( $sortBy &&
