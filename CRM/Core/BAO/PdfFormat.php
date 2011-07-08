@@ -213,6 +213,9 @@ class CRM_Core_BAO_PdfFormat extends CRM_Core_DAO_OptionValue
             require_once 'CRM/Utils/Weight.php';
             $filter = array( 'option_group_id' => self::_getGid() );
             $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight( 'CRM_Core_DAO_OptionValue', $filter );
+            
+            // also set the id to avoid NOTICES, CRM-8454
+            $defaults['id'] = null;
         }
         return $defaults;
     }
