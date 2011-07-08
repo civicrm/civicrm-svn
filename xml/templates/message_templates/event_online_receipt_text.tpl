@@ -206,29 +206,34 @@ registration process.{/ts}
 {/if}
 {/if} {* End of conditional section for Paid events *}
 
+
 {if $customPre}
+{foreach from=$customPre item=customPr key=i}
 ==========================================================={if $pricesetFieldsCount }===================={/if}
 
-{$customPre_grouptitle}
+{$customPre_grouptitle.$i}
 ==========================================================={if $pricesetFieldsCount }===================={/if}
 
-{foreach from=$customPre item=value key=customName}
+{foreach from=$customPr item=customValue key=customName}
 {if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
-{$customName}: {$value}
+ {$customName}: {$customValue}
 {/if}
+{/foreach}
 {/foreach}
 {/if}
 
 {if $customPost}
+{foreach from=$customPost item=customPos key=j}
 ==========================================================={if $pricesetFieldsCount }===================={/if}
 
-{$customPost_grouptitle}
+{$customPost_grouptitle.$j} 
 ==========================================================={if $pricesetFieldsCount }===================={/if}
 
-{foreach from=$customPost item=value key=customName}
+{foreach from=$customPos item=customValue key=customName}
 {if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
-{$customName}: {$value}
+ {$customName}: {$customValue}
 {/if}
+{/foreach}
 {/foreach}
 {/if}
 {if $customProfile}
