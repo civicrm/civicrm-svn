@@ -23,10 +23,10 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{assign var=chartId value=$chartType|cat:"_$instanceId"}
-{assign var=uploadURL value=$config->imageUploadURL|replace:'persist/contribute':'upload/openFlashChart'}
+{assign var=uploadURL value=$config->imageUploadURL|replace:'persist/contribute':'templates_c/en_US/openFlashChart'}
 {* Display weekly,Quarterly,monthly and yearly contributions using pChart (Bar and Pie) *}
 {if $chartEnabled and $chartSupported}
+<div class='crm-flashchart'>
 <table class="chart">
         <tr>
             <td>
@@ -38,6 +38,7 @@
             </td>
         </tr>
 </table>
+</div>
 
 {if !$section}
         {include file="CRM/common/openFlashChart.tpl" divId="open_flash_chart_$uniqueId"}
@@ -50,7 +51,7 @@
       
       var resourceURL = "{/literal}{$config->userFrameworkResourceURL}{literal}";
       var uploadURL   = "{/literal}{$uploadURL|cat:$chartId}{literal}.png";
-      var uploadDir   = "{/literal}{$config->uploadDir}openFlashChart/{literal}"; 
+      var uploadDir   = "{/literal}{$config->templateCompileDir}openFlashChart/{literal}"; 
 
       cj("input[id$='submit_print'],input[id$='submit_pdf']").bind('click', function(){ 
         var url = resourceURL +'packages/OpenFlashChart/php-ofc-library/ofc_upload_image.php';  // image creator php file path

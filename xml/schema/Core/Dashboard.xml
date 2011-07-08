@@ -49,6 +49,7 @@
         <type>text</type>
         <comment>dashlet content</comment>
         <add>3.1</add>
+        <drop>3.3</drop>
     </field>
     <field>
         <name>permission</name>
@@ -118,5 +119,6 @@
         <type>datetime</type>
         <comment>When was content populated</comment>
         <add>3.1</add>
+        <drop>3.3</drop>
     </field>
 </table>

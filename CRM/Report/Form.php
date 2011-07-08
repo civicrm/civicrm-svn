@@ -639,7 +639,7 @@ class CRM_Report_Form extends CRM_Core_Form {
 
     function addChartOptions( ) {
         if ( !empty( $this->_charts ) ) {
-            $this->addElement( 'select', "charts", ts( 'Chart' ), $this->_charts );
+            $this->addElement( 'select', "charts", ts( 'Chart' ), $this->_charts, array('onchange' => 'disablePrintPDFButtons(this.value);' ) );
             $this->assign( 'charts', $this->_charts );
             $this->addElement('submit', $this->_chartButtonName, ts('View') );
         }
@@ -1290,6 +1290,8 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
             require_once 'CRM/Utils/OpenFlashChart.php';
             $this->buildChart( $rows );
             $this->assign( 'chartEnabled', true );
+            $this->_chartId = "{$this->_params['charts']}_" . ($this->_id ? $this->_id : substr(get_class($this), 16)) . '_' . session_id( );
+            $this->assign('chartId',  $this->_chartId);
         }
         
         // unset columns not to be displayed.
@@ -1786,12 +1788,12 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                 if( $chartType =  CRM_Utils_Array::value( 'charts', $this->_params ) ) {
                     $config    =& CRM_Core_Config::singleton();
                     //get chart image name
-                    $chartImg  = $chartType . '_' . $this->_id . '.png';
+                    $chartImg  = $this->_chartId . '.png';
                     //get image url path
-                    $uploadUrl  = str_replace( 'persist/contribute', 'upload/openFlashChart', $config->imageUploadURL );
+                    $uploadUrl  = str_replace( 'persist/contribute', 'templates_c/en_US/openFlashChart', $config->imageUploadURL );
                     $uploadUrl .= $chartImg;
                     //get image doc path to overwrite
-                    $uploadImg = $config->uploadDir . 'openFlashChart/' . $chartImg;
+                    $uploadImg = $config->templateCompileDir . 'openFlashChart/' . $chartImg;
                     //Load the image
                     $chart = imagecreatefrompng( $uploadUrl );
                     //convert it into formattd png
