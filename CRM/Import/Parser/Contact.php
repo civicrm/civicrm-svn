@@ -1417,8 +1417,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 case 'geo_code_1' :   
                     if (!empty( $value ) ) {
                         foreach($value as $codeValue ) {
-                            if ( $codeValue['geo_code_1'] ) {
-                                if ( CRM_Utils_Rule::numeric($codeValue['geo_code_1'])) {
+                            if ( CRM_Utils_Array::value('geo_code_1', $codeValue) ) {
+                                if ( CRM_Utils_Rule::numeric($codeValue['geo_code_1']) ) {
                                     continue;
                                 } else {
                                     self::addToErrorMsg(ts('Geo code 1'), $errorMessage);
@@ -1430,8 +1430,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 case 'geo_code_2' :
                     if (!empty( $value ) ) {
                         foreach($value as $codeValue ) {
-                            if ( $codeValue['geo_code_2'] ) {
-                                if ( CRM_Utils_Rule::numeric($codeValue['geo_code_2'])) {
+                            if ( CRM_Utils_Array::value('geo_code_2', $codeValue) ) {
+                                if ( CRM_Utils_Rule::numeric($codeValue['geo_code_2']) ) {
                                     continue;
                                 } else {
                                     self::addToErrorMsg(ts('Geo code 2'), $errorMessage);

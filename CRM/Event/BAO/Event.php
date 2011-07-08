@@ -442,8 +442,8 @@ LIMIT      0, 10
                         $values['location'] = CRM_Core_BAO_Location::getValues( $params, true );
                         if ( is_numeric( CRM_Utils_Array::value('geo_code_1',$values['location']['address'][1]) ) ||
                              ( $config->mapGeoCoding &&
-                               $values['location']['address'][1]['city'] && 
-                               $values['location']['address'][1]['state_province_id']
+                               !empty($values['location']['address'][1]['city']) && 
+                               !empty($values['location']['address'][1]['state_province_id'])
                                ) ) {
                             $set = CRM_Utils_System::url( 'civicrm/contact/map/event',"reset=1&eid={$dao->id}" );
                         }

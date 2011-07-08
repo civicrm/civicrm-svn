@@ -249,7 +249,12 @@
                             <table>
                                 <tr>
                                     <td class="label">{ts 1=$add.location_type}%1&nbsp;Address{/ts}
-                                        {if $config->mapAPIKey AND $add.geo_code_1 AND $add.geo_code_2}
+                                        {if $config->mapAPIKey AND 
+					 !empty($add.geo_code_1) AND
+					 is_numeric($add.geo_code_1) AND
+					 !empty($add.geo_code_2) AND 
+					 is_numeric($add.geo_code_2) 
+					 }
                                             <br /><a href="{crmURL p='civicrm/contact/map' q="reset=1&cid=`$contactId`&lid=`$add.location_type_id`"}" title="{ts 1=`$add.location_type`}Map %1 Address{/ts}"><span class="geotag">{ts}Map{/ts}</span></a>
                                         {/if}</td>
                                     <td class="crm-contact-address_display">
