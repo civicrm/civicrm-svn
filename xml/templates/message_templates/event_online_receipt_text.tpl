@@ -238,32 +238,24 @@ registration process.{/ts}
 {/if}
 {if $customProfile}
 
-{foreach from=$customProfile item=value key=customName}
+{foreach from=$customProfile.profile item=eachParticipant key=participantID}
 ==========================================================={if $pricesetFieldsCount }===================={/if}
 
-{ts 1=$customName+1}Participant Information - Participant %1{/ts}
+{ts 1=$participantID+1}Participant Information - Participant %1{/ts}
 
 ==========================================================={if $pricesetFieldsCount }===================={/if}
 
-{foreach from=$value item=val key=field}
-{if $field eq 'additionalCustomPre' or $field eq 'additionalCustomPost' }
-{if $field eq 'additionalCustomPre' }
+{foreach from=$eachParticipant item=eachProfile key=pid}
 ----------------------------------------------------------{if $pricesetFieldsCount }--------------------{/if}
 
-{$additionalCustomPre_grouptitle}
+{$customProfile.title.$pid}
 ----------------------------------------------------------{if $pricesetFieldsCount }--------------------{/if}
 
-{else}
-----------------------------------------------------------{if $pricesetFieldsCount }--------------------{/if}
-
-{$additionalCustomPost_grouptitle}
-----------------------------------------------------------{if $pricesetFieldsCount }--------------------{/if}
-
-{/if}
+{foreach from=$eachProfile item=val key=field}
 {foreach from=$val item=v key=f}
-{$f}: {$v}
+{$field}: {$v}
 {/foreach}
-{/if}
+{/foreach}
 {/foreach}
 {/foreach}
 {/if}
