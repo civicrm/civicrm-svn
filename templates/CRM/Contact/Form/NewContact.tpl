@@ -41,7 +41,7 @@
 
 {literal}
 <script type="text/javascript">
-  var allowMultiClient = Boolean({/literal}{$multiClient}{literal});
+  var allowMultiClient = Boolean({/literal}{if !empty($multiClient)}1{else}0{/if}{literal});
   var newToken = '';
   var existingTokens = '';
   cj( function( ) {
