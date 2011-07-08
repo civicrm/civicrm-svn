@@ -226,13 +226,14 @@ class InstallRequirements {
                 @$this->requireMySQLVersion("5.0", array("MySQL $dbName Configuration", "MySQL version at least 5.0", "MySQL version 5.0 is required, you only have ", "MySQL " . mysql_get_server_info()));
             }
             $onlyRequire = ( $dbName == 'Drupal' ) ? true : false;
-            $this->requireDatabaseOrCreatePermissions($databaseConfig['server'],
+            $this->requireDatabaseOrCreatePermissions(
+                $databaseConfig['server'],
                 $databaseConfig['username'],
                 $databaseConfig['password'],
                 $databaseConfig['database'],
                 array("MySQL $dbName Configuration",
-                                                            "Can I access/create the database",
-                                                            "I can't create new databases and the database '$databaseConfig[database]' doesn't exist"),
+                      "Can I access/create the database",
+                      "I can't create new databases and the database '$databaseConfig[database]' doesn't exist"),
                 $onlyRequire );
             if ( $dbName != 'Drupal' ) {
                 $this->requireMySQLInnoDB($databaseConfig['server'],
