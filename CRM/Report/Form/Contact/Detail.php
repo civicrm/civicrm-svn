@@ -725,7 +725,7 @@ class CRM_Report_Form_Contact_Detail extends CRM_Report_Form {
     function alterComponentDisplay( &$componentRows ) {
         // custom code to alter rows
         require_once 'CRM/Core/PseudoConstant.php';
-        $activityTypes  = CRM_Core_PseudoConstant::activityType( true, false );
+        $activityTypes  = CRM_Core_PseudoConstant::activityType(true, true, false, 'label', true);
         $activityStatus = CRM_Core_PseudoConstant::activityStatus();
 
         $entryFound = false;
