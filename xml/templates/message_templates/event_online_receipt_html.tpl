@@ -351,45 +351,54 @@ registration process.{/ts}</p>
 
      {/if} {* End of conditional section for Paid events *}
 
-     {if $customPre}
-      <tr>
-       <th {$headerStyle}>
-        {$customPre_grouptitle}
-       </th>
-      </tr>
-      {foreach from=$customPre item=value key=customName}
-       {if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
-        <tr>
-         <td {$labelStyle}>
-          {$customName}
-         </td>
-         <td {$valueStyle}>
-          {$value}
-         </td>
-        </tr>
-       {/if}
-      {/foreach}
-     {/if}
+{if $customPre}
+{foreach from=$customPre item=customPr key=i}
 
-     {if $customPost}
-      <tr>
+ <tr>
        <th {$headerStyle}>
-        {$customPost_grouptitle}
+{$customPre_grouptitle.$i}
+ 
        </th>
       </tr>
-      {foreach from=$customPost item=value key=customName}
-       {if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
-        <tr>
+{foreach from=$customPr item=customValue key=customName}
+{if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
+  <tr>
          <td {$labelStyle}>
           {$customName}
          </td>
          <td {$valueStyle}>
-          {$value}
+          {$customValue}
          </td>
         </tr>
-       {/if}
-      {/foreach}
-     {/if}
+{/if}
+{/foreach}
+{/foreach}
+{/if}
+
+{if $customPost}
+{foreach from=$customPost item=customPos key=j}
+<tr>
+       <th {$headerStyle}>
+{$customPost_grouptitle.$j} 
+
+       </th>
+      </tr>
+
+{foreach from=$customPos item=customValue key=customName}
+{if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
+ <tr>
+         <td {$labelStyle}>
+          {$customName}
+         </td>
+         <td {$valueStyle}>
+          {$customValue}
+         </td>
+        </tr>
+{/if}
+{/foreach}
+{/foreach}
+{/if}
+
 {if $customProfile}
 
 {foreach from=$customProfile.profile item=eachParticipant key=participantID}
