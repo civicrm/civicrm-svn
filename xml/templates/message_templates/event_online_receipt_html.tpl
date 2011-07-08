@@ -353,80 +353,44 @@ registration process.{/ts}</p>
 
 {if $customPre}
 {foreach from=$customPre item=customPr key=i}
-
- <tr>
-       <th {$headerStyle}>
-{$customPre_grouptitle.$i}
- 
-       </th>
-      </tr>
-{foreach from=$customPr item=customValue key=customName}
-{if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
-  <tr>
-         <td {$labelStyle}>
-          {$customName}
-         </td>
-         <td {$valueStyle}>
-          {$customValue}
-         </td>
-        </tr>
-{/if}
-{/foreach}
+   <tr> <th {$headerStyle}>{$customPre_grouptitle.$i}</th></tr>
+   {foreach from=$customPr item=customValue key=customName}
+   {if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
+     <tr>
+         <td {$labelStyle}>{$customName}</td>
+         <td {$valueStyle}>{$customValue}</td>
+     </tr>
+   {/if}
+   {/foreach}
 {/foreach}
 {/if}
 
 {if $customPost}
 {foreach from=$customPost item=customPos key=j}
-<tr>
-       <th {$headerStyle}>
-{$customPost_grouptitle.$j} 
-
-       </th>
-      </tr>
-
-{foreach from=$customPos item=customValue key=customName}
-{if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
- <tr>
-         <td {$labelStyle}>
-          {$customName}
-         </td>
-         <td {$valueStyle}>
-          {$customValue}
-         </td>
-        </tr>
+   <tr> <th {$headerStyle}>{$customPost_grouptitle.$j}</th></tr>
+   {foreach from=$customPos item=customValue key=customName}
+   {if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
+     <tr>
+         <td {$labelStyle}>{$customName}</td>
+         <td {$valueStyle}>{$customValue}</td>
+     </tr>
 {/if}
 {/foreach}
 {/foreach}
 {/if}
 
 {if $customProfile}
-
 {foreach from=$customProfile.profile item=eachParticipant key=participantID}
- <tr>
-        <th {$headerStyle}>
-
-{ts 1=$participantID+1}Participant Information - Participant %1{/ts}
- </th>
-       </tr>
-
-
-{foreach from=$eachParticipant item=eachProfile key=pid}
- <tr>
-          <td colspan="2" {$labelStyle}>
-
-{$customProfile.title.$pid}
-</td>
-         </tr>
-{foreach from=$eachProfile item=val key=field}
- <tr>
-{foreach from=$val item=v key=f}
-  <td {$labelStyle}>{$field}</td> 
-    <td {$valueStyle}>{$v}</td> 
-{/foreach}
-</tr>
-{/foreach}
-
-
+     <tr><th {$headerStyle}>{ts 1=$participantID+1}Participant Information - Participant %1{/ts} </th></tr>
+     {foreach from=$eachParticipant item=eachProfile key=pid}
+     <tr><th {$headerStyle}>{$customProfile.title.$pid}</th></tr>
+     {foreach from=$eachProfile item=val key=field}
+     <tr>{foreach from=$val item=v key=f}
+         <td {$labelStyle}>{$field}</td> 
+         <td {$valueStyle}>{$v}</td> 
+         {/foreach}
+     </tr>
+     {/foreach}
 {/foreach}
 {/foreach}
 {/if}
