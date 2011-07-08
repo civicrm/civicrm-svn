@@ -253,7 +253,7 @@
                                             <br /><a href="{crmURL p='civicrm/contact/map' q="reset=1&cid=`$contactId`&lid=`$add.location_type_id`"}" title="{ts 1=`$add.location_type`}Map %1 Address{/ts}"><span class="geotag">{ts}Map{/ts}</span></a>
                                         {/if}</td>
                                     <td class="crm-contact-address_display">
-                                        {if $sharedAddresses.$locationIndex.shared_address_display.name}
+                                        {if !empty($sharedAddresses.$locationIndex.shared_address_display.name)}
                                              <strong>{ts}Shared with:{/ts}</strong><br />
                                              {$sharedAddresses.$locationIndex.shared_address_display.name}<br />
                                          {/if}
