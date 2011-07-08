@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $form.address.$blockId.street_address}
+{if !empty($form.address.$blockId.street_address)}
     <tr id="streetAddress_{$blockId}">
         <td colspan="2">
            {$form.address.$blockId.street_address.label}<br />
