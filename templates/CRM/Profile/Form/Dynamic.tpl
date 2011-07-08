@@ -136,7 +136,7 @@
             				{include file="CRM/Contact/Form/Edit/TagsAndGroups.tpl" type=$n context="profile"}
                        {elseif ( $form.$n.name eq 'image_URL' )}
             	            {$form.$n.html}
-                		    {if $imageURL}
+                		    {if !empty($imageURL)}
                  	 	        <div class="crm-section contact_image-section">
                  	 	            <div class="content">
                  	 	                {include file="CRM/Contact/Page/ContactImage.tpl"}

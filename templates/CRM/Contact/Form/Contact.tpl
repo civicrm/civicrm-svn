@@ -69,7 +69,7 @@
 	        <td>
     	        {$form.image_URL.label}&nbsp;&nbsp;{help id="id-upload-image" file="CRM/Contact/Form/Contact.hlp"}<br />
     	        {$form.image_URL.html|crmReplace:class:twenty}
-     	        {if $imageURL}
+     	        {if !empty($imageURL)}
      	            {include file="CRM/Contact/Page/ContactImage.tpl"}
      	        {/if}
  	        </td>

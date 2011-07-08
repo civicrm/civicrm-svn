@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Contact Summary template for new tabbed interface. Replaces Basic.tpl *}
-{if $imageURL }
+{if !empty($imageURL)}
     <div>
         {include file="CRM/Contact/Page/ContactImage.tpl"}
     </div>
