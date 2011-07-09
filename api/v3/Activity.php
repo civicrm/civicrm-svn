@@ -135,9 +135,7 @@ function civicrm_api3_activity_create( $params ) {
  * Return valid fields for API
  */
 function civicrm_api3_activity_getfields( $params ) {
-    require_once 'CRM/Activity/BAO/Activity.php';
-    $bao = new CRM_Activity_BAO_Activity();
-    $fields =$bao->fields();
+    $fields =  _civicrm_api_get_fields('activity') ;
     //activity_id doesn't appear to work so let's tell them to use 'id' (current focus is ensuring id works)
     $fields['id'] = $fields['activity_id'];
     unset ($fields['activity_id']);
@@ -154,8 +152,8 @@ function civicrm_api3_activity_getfields( $params ) {
                                            'type' => 1,);
 
     require_once ('CRM/Core/BAO/CustomField.php');
-    $fields =  $fields + _civicrm_api_get_custom_fields('activity') ;
-    return civicrm_api3_create_success($fields ,$params,'activity','create',$bao);
+
+    return civicrm_api3_create_success($fields );
 }
 
 
@@ -221,8 +219,6 @@ function civicrm_api3_activity_get( $params ) {
  */
 function civicrm_api3_activity_delete( $params )
 {
-
-
         civicrm_api3_verify_mandatory($params);
         $errors = array( );
 
