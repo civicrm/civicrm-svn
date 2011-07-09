@@ -857,7 +857,8 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                         $processed = CRM_Quest_BAO_Student::buildStudentForm( $this, $field );
                     }
                     if ( ! $processed ) {
-                        if ( substr($name, 0, 7) === 'do_not_' or substr($name, 0, 3) === 'is_' ) {  
+                        if ( substr($name, 0, 7) === 'do_not_' ||
+                             substr($name, 0, 3) === 'is_' ) {  
                             if ($details->$name) {
                                 $values[$index] = '[ x ]';
                             }
