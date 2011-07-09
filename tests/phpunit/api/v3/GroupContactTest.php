@@ -118,7 +118,7 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
     {
         $description = "Get all from group and display contacts";
         $subfile = "GetWithGroupID";
-        $params = array( 'contact_id' => $this->__groupId1,
+        $params = array( 'group_id' => $this->_groupId1,
                          'version'    => $this->_apiversion,
                         'api.contact.get' => 1 );
         $result = civicrm_api3_group_contact_get( $params );
@@ -129,6 +129,7 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
             $this->assertEquals( $v['in_method'], $this->_group[$v['group_id']]['in_method'] );
         }
     }
+
    
     ///////////////// civicrm_group_contact_add methods
 

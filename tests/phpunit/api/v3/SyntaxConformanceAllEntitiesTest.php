@@ -24,6 +24,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
        $this->toBeImplemented['create'] = array ('SurveyRespondant','OptionGroup','UFMatch','LocationType');
        $this->toBeImplemented['delete'] = array ('MembershipPayment','OptionGroup','SurveyRespondant','UFJoin','UFMatch','LocationType');
        $this->onlyIDNonZeroCount['get'] = array( 'ActivityType', 'Entity', 'Domain' );
+       $this->deprecatedAPI = array('Location', 'ActivityType');
     }
 
     function tearDown()    {
@@ -121,6 +122,10 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
      * @dataProvider entities
      */
     public function testGetFields($Entity){
+      if(in_array($Entity , $this->deprecatedAPI) || $Entity == 'Entity'){
+        return;
+      }
+      
       $result = civicrm_api($Entity, 'getfields', array('version' => 3));
       $this->assertTrue(is_array($result['values']), "$Entity ::get fields doesn't return values array in line " . __LINE__);
       foreach ($result['values'] as $key => $value) {
