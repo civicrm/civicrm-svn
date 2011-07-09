@@ -141,6 +141,5 @@ function civicrm_api3_domain_getfields(){
     $fields['domain_version'] = array('title' =>  "version of domain");
     $fields['current_domain'] = array('title' => "get loaded domain");
     unset ($fields['version']); 
-    print_r($fields);
     return civicrm_api3_create_success($fields);
 }
