@@ -1181,7 +1181,9 @@ function _civicrm_api3_validate_fields($entity, $action, &$params) {
   $testedEntities = array('relationship' => 1, 
   												'membership' => 1, 
   											  'event' => 1, 
-  											  'contribution');
+  											  'contribution' => 1,
+                          'activity' => 1,
+      );
   if(!array_key_exists(strtolower($entity), $testedEntities)){
     return;
   }
@@ -1190,7 +1192,6 @@ function _civicrm_api3_validate_fields($entity, $action, &$params) {
 	}
 	$fields = civicrm_api ( $entity, 'getfields', array ('version' => 3 ) );
 	$fields = $fields['values'];
-
 	foreach ( $fields as $fieldname => $fieldInfo ) {
     switch (CRM_Utils_Array::value ( 'type', $fieldInfo )){
       case 4:

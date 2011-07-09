@@ -163,13 +163,6 @@ function civicrm_api3_contact_create( $params )
   }
 }
 
-function civicrm_api3_contact_getfields( $params ) {
-    require_once 'CRM/Contact/BAO/Contact.php';
-    $contact = new CRM_Contact_BAO_Contact();
-    return ($contact->exportableFields('All'));
-    //return ($contact->fields());
-}
-
 
 /**
  * Retrieve one or more contacts, given a set of search params

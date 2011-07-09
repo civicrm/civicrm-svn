@@ -58,14 +58,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
       switch (strtolower($action)){
         case "getfields":
             $version = 3;
-            $dao = _civicrm_api3_get_DAO ($entity);
-            if (empty($dao)) {
-                return $errorFnName("API for $entity does not exist (join the API team and implement $function" );
-            }
-            $file = str_replace ('_','/',$dao).".php";
-            require_once ($file); 
-            $d = new $dao();
-            return civicrm_api3_create_success($d->fields());
+            return civicrm_api3_create_success(_civicrm_api_get_fields($entity));
             break;
         case "getcount":
           $result=civicrm_api ($entity,'get',$params);
@@ -418,4 +411,33 @@ function _civicrm_api_get_entity_name_from_camel($entity){
                                            preg_replace( '/(?=[A-Z])/', '_$0', $entity ) ) ),1);
     }
     return $entity;
+}
+
+/*
+ * returns fields allowable by api
+ */
+function _civicrm_api_get_fields($entity){
+    $dao = _civicrm_api3_get_DAO ($entity);
+    if (empty($dao)) {
+          return $errorFnName("API for $entity does not exist (join the API team and implement $function" );
+     }
+    $file = str_replace ('_','/',$dao).".php";
+    require_once ($file); 
+    $d = new $dao();
+    $fields = $d->fields() + _civicrm_api_get_custom_fields($entity) ;
+    return $fields;
+}
+
+/*
+ * Return an array of fields for a given entity - this is the same as the BAO function but 
+ * fields are prefixed with 'custom_' to represent api params
+ */
+function _civicrm_api_get_custom_fields($entity){
+  $customfields = array();
+  $customfields = CRM_Core_BAO_CustomField::getFields($entity) ;
+  foreach ($customfields as $key => $value) {
+    $customfields['custom_' . $key] = $value;
+    unset($customfields[$key]);
+  }
+  return $customfields;
 }

@@ -370,7 +370,8 @@ class api_v3_ContactTest extends CiviUnitTestCase
         $this->documentMe($params,$check  ,__FUNCTION__,__FILE__,$description,$subfile);
     
         $this->assertEquals("custom string", $check['values'][$check['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
-   
+        $fields = (civicrm_api('contact', 'getfields', $params)); 
+        $this->assertTrue(is_array($fields['values']['custom_'.$ids['custom_field_id']]));   
         $this->customFieldDelete($ids['custom_field_id']);
         $this->customGroupDelete($ids['custom_group_id']);      
 
@@ -423,7 +424,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
         $result = civicrm_api('contact','get', $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile);                  
         $this->assertEquals(1, $result['count']);
-        $params = array( 'filter.group_id' => 26),
+        $params = array( 'filter.group_id' => 26,
                          'version'    => $this->_apiversion,
                          'contact_type' => 'Individual');
         $result = civicrm_api('contact','get', $params );
