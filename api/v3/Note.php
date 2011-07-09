@@ -43,11 +43,6 @@
 require_once 'api/v3/utils.php';
 require_once 'CRM/Core/BAO/Note.php';
 
-function civicrm_api3_note_getfields($params) {
-	$bao = new CRM_Core_BAO_Note ();
-	return ($bao->fields ());
-}
-
 /**
  * Create Note
  *
