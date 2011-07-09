@@ -28,7 +28,7 @@ class api_v3_CampaignTest extends CiviUnitTestCase
     }
 
    public function testCreateCampaign () {
-        $result = civicrm_api3_campaign_create($this->params);
+        $result = civicrm_api('campaign', 'create', $this->params);
         $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
@@ -37,7 +37,7 @@ class api_v3_CampaignTest extends CiviUnitTestCase
     }
 
    public function testGetCampaign () {
-        $result = civicrm_api3_campaign_get($this->params);
+        $result = civicrm_api('campaign', 'get', ($this->params));
         $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
@@ -46,12 +46,12 @@ class api_v3_CampaignTest extends CiviUnitTestCase
     }
 
    public function testDeleteCampaign () {
-        $entity = civicrm_api3_campaign_get($this->params);   
-        $result = civicrm_api3_campaign_delete(array('version' =>3,'id' => $entity['id']));
+        $entity = civicrm_api('campaign', 'get', ($this->params));   
+        $result = civicrm_api('campaign', 'delete', array('version' =>3,'id' => $entity['id']));
         $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
 
-        $checkDeleted = civicrm_api3_campaign_get(array('version' =>3,));
+        $checkDeleted = civicrm_api('campaign', 'get', array('version' =>3,));
         $this->assertEquals( 0, $checkDeleted['count'], 'In line ' . __LINE__ );
         
     }
