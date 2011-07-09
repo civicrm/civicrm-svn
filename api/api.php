@@ -413,31 +413,3 @@ function _civicrm_api_get_entity_name_from_camel($entity){
     return $entity;
 }
 
-/*
- * returns fields allowable by api
- */
-function _civicrm_api_get_fields($entity){
-    $dao = _civicrm_api3_get_DAO ($entity);
-    if (empty($dao)) {
-          return $errorFnName("API for $entity does not exist (join the API team and implement $function" );
-     }
-    $file = str_replace ('_','/',$dao).".php";
-    require_once ($file); 
-    $d = new $dao();
-    $fields = $d->fields() + _civicrm_api_get_custom_fields($entity) ;
-    return $fields;
-}
-
-/*
- * Return an array of fields for a given entity - this is the same as the BAO function but 
- * fields are prefixed with 'custom_' to represent api params
- */
-function _civicrm_api_get_custom_fields($entity){
-  $customfields = array();
-  $customfields = CRM_Core_BAO_CustomField::getFields($entity) ;
-  foreach ($customfields as $key => $value) {
-    $customfields['custom_' . $key] = $value;
-    unset($customfields[$key]);
-  }
-  return $customfields;
-}
