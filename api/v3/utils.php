@@ -1332,6 +1332,7 @@ function _civicrm_api_get_fields($entity){
  * fields are prefixed with 'custom_' to represent api params
  */
 function _civicrm_api_get_custom_fields($entity){
+  require_once 'CRM/Core/BAO/CustomField.php';
   $customfields = array();
   $customfields = CRM_Core_BAO_CustomField::getFields($entity) ;
   foreach ($customfields as $key => $value) {
