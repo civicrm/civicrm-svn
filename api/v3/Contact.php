@@ -215,6 +215,19 @@ function civicrm_api3_contact_get( $params )
     $offset          = 0;
     $rowCount        = 25;
     $smartGroupCache = false;
+
+    if (array_key_exists ('filter_group_id',$params)) { // filter.group_id works both for 1,2,3 and array (1,2,3) 
+       if (is_string ($params['filter_group_id']))
+          $groups = explode (',',$params['filter_group_id']);
+       else
+          $groups = $params['filter_group_id'];
+        unset ($params['filter_group_id']);
+        $groups = array_flip ($groups);
+        $groups[key($groups)] = 1;
+        $params['group']=$groups;
+    }
+
+
     if ( array_key_exists ('return',$params)) {// handle the format return =sort_name,display_name...
       $returnProperties = explode (',',$params['return']);
       $returnProperties = array_flip ($returnProperties); 
