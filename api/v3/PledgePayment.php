@@ -140,14 +140,7 @@ function updatePledgePayments( $pledgeId, $paymentStatusId, $paymentIds  ){
  */
 
 function civicrm_api3_pledge_payment_getfields($action = 'get'){
-
-    $dao = new CRM_Pledge_BAO_Payment();
-
-    $fields = $dao->fields();
-    switch ($action){
-      case 'create' :
-        $fields['option.create_new'] = "Create new field rather than update an unpaid payment";
-    }
-    
-    return $fields;
+    $fields = _civicrm_api_get_fields('payment');
+    $fields['option.create_new'] = array('title' => "Create new field rather than update an unpaid payment");
+    return civicrm_api3_create_success($fields);
 }
