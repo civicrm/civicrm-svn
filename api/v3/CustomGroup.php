@@ -40,7 +40,7 @@
  * Files required for this package
  */
 require_once 'api/v3/utils.php';
-
+require_once 'CRM/Core/BAO/CustomGroup.php';
 /**
  * Most API functions take in associative arrays ( name => value pairs
  * as parameters. Some of the most commonly used parameters are
@@ -84,7 +84,7 @@ function civicrm_api3_custom_group_create( $params )
           return civicrm_api3_create_error( "First item in params['extends'] must be a class name (e.g. 'Contact')." );
         }
                 
-        require_once 'CRM/Core/BAO/CustomGroup.php';
+
         $customGroup = CRM_Core_BAO_CustomGroup::create($params);                             
         
         _civicrm_api3_object_to_array( $customGroup, $values[$customGroup->id] );
