@@ -122,7 +122,7 @@ function civicrm_api3_constant_get($params)
 function civicrm_api3_constant_getfields($params) {
   _civicrm_api3_initialize(true);
 
-  return civicrm_api3_create_success (array (
+  return civicrm_api3_create_success (array ('name' => array('options' =>
    'activityStatus',
    'activityType',
    'addressee',
@@ -162,7 +162,7 @@ function civicrm_api3_constant_getfields($params) {
    'ufGroup',
    'visibility',
    'worldRegion',
-   'wysiwygEditor'),
+   'wysiwygEditor')),
    $params);
 } 
 
