@@ -913,7 +913,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
                          'return_first_name' => true,
                          'sort'              => 'first_name',
                          'version'			=>  $this->_apiversion, );
-    $result = civicrm_api3_contact_get( $params );
+    $result = civicrm_api('contact', 'get', $params );
     $this->assertEquals( 1, $result['count'] , "In line " . __LINE__ );
     $this->assertEquals( 17, $result['id'], "In line " . __LINE__ );
     $this->assertEquals( 'Test', $result['values'][17]['first_name'] , "In line " . __LINE__);
@@ -933,7 +933,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
     $params = array( 'contact_id' => 17,
                          'sort'       => 'first_name' ,
                           'version'   => $this->_apiversion);
-    $result = civicrm_api3_contact_get( $params );
+    $result = civicrm_api('contact', 'get', $params );
     $this->assertEquals( 17, $result['values'][17]['contact_id'], "In line " . __LINE__ );
     $this->assertEquals( 'Test', $result['values'][17]['first_name'] , "In line " . __LINE__);
   }
@@ -944,7 +944,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
   public function testContactGetEmptyParams()
   {
     $params = array();
-    $result = civicrm_api3_contact_get( $params);
+    $result = civicrm_api('contact', 'get', $params);
    
     $this->assertTrue( is_array( $result ),'in line '. __LINE__ );
     $this->assertEquals( 1, $result['is_error'] ,'in line '. __LINE__);
@@ -957,7 +957,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
   public function testContactGetParamsNotArray()
   {
     $params = 17;
-    $result = civicrm_api3_contact_get( $params, true );
+    $result = civicrm_api('contact', 'get', $params, true );
     $this->assertTrue( is_array( $result ) );
     $this->assertEquals( 1, $result['is_error'] );
     $this->assertRegexp( "/not.*array/s",
@@ -978,7 +978,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
 
     $params = array( 'first_name' => 'Fred',
                       'version' => $this->_apiversion );
-    $result = civicrm_api3_contact_get( $params );
+    $result = civicrm_api('contact', 'get', $params );
     $this->assertTrue( is_array( $result ) , 'in line ' . __LINE__);
     $this->assertEquals( 0, $result['is_error'], 'in line ' . __LINE__ );
     $this->assertEquals( 0, $result['count'], 'in line ' . __LINE__ );
@@ -997,7 +997,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
 
     $params = array( 'first_name' => 'Test',
                       'version' 	=> $this->_apiversion );
-    $result = civicrm_api3_contact_get( $params );
+    $result = civicrm_api('contact', 'get', $params );
     $this->assertTrue( is_array( $result ) );
     $this->assertEquals(0, $result['is_error'], 'in line ' . __LINE__ );
     $this->assertEquals( 17, $result['values'][17]['contact_id'], 'in line ' . __LINE__  );
@@ -1058,7 +1058,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
 
     $params = array( 'email' => 'man2@yahoo.com',
                       'version'	=> $this->_apiversion );
-    $result = civicrm_api3_contact_get( $params );
+    $result = civicrm_api('contact', 'get', $params );
     $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
     $this->assertEquals( 1, $result['values'][1]['contact_id'], "In line " . __LINE__  );
     $this->assertEquals( 'man2@yahoo.com', $result['values'][1]['email'], "In line " . __LINE__  );
@@ -1330,7 +1330,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
    */
   function testContactCreateFormatIsSuccessFalse(){
 
-    $description = "This demonstrates use of the 'format.true_false' param. 
+    $description = "This demonstrates use of the 'format.is_success' param. 
     This param causes only the success or otherwise of the function to be returned as BOOLEAN";
     $subfile = "FormatIsSuccess_Fail";
     $params = array('version' => 3, 'id' => 500, 'format.is_success' => 1);

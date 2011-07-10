@@ -141,7 +141,7 @@ class api_v3_UFFieldTest extends CiviUnitTestCase
             'version'					 => $this->_apiversion,
             'uf_group_id'				 =>$this->_ufGroupId, 
         );
-        $ufField          = civicrm_api3_uf_field_create($params);
+        $ufField          = civicrm_api('uf_field', 'create', $params);
         $this->documentMe($params,$ufField ,__FUNCTION__,__FILE__); 
         unset ($params['version']);
         unset ($params[ 'uf_group_id']);
@@ -157,17 +157,17 @@ class api_v3_UFFieldTest extends CiviUnitTestCase
     function testCreateUFFieldWithEmptyParams()
     {
         $params = array();
-        $result = civicrm_api3_uf_field_create(  $params );
+        $result = civicrm_api('uf_field', 'create',   $params );
         $this->assertEquals($result['is_error'], 1);
     }
 
     function testCreateUFFieldWithWrongParams()
     {
-        $result = civicrm_api3_uf_field_create( array('field_name' => 'test field'));
+        $result = civicrm_api('uf_field', 'create',  array('field_name' => 'test field'));
         $this->assertEquals($result['is_error'], 1);
-        $result = civicrm_api3_uf_field_create( 'a string');
+        $result = civicrm_api('uf_field', 'create',  'a string');
         $this->assertEquals($result['is_error'], 1);
-        $result = civicrm_api3_uf_field_create( array('label' => 'name-less field'));
+        $result = civicrm_api('uf_field', 'create',  array('label' => 'name-less field'));
         $this->assertEquals($result['is_error'], 1);
     }
 
@@ -189,12 +189,12 @@ class api_v3_UFFieldTest extends CiviUnitTestCase
             'uf_group_id'				 => $this->_ufGroupId,
         );
 
-        $ufField          = civicrm_api3_uf_field_create($params);
+        $ufField          = civicrm_api('uf_field', 'create', $params);
         $this->assertEquals($ufField['is_error'], 0,'in line' . __LINE__);
         $this->_ufFieldId = $ufField['id'];
         $params = array('version'	 => $this->_apiversion,
                         'field_id'  => $ufField['id']);
-        $result = civicrm_api3_uf_field_delete($params);
+        $result = civicrm_api('uf_field', 'delete', $params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
         $this->assertEquals($result['is_error'], 0,'in line' . __LINE__);
     }

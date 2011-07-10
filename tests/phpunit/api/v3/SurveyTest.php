@@ -28,7 +28,7 @@ class api_v3_SurveyTest extends CiviUnitTestCase
     }
 
    public function testCreateSurvey () {
-        $result = civicrm_api3_survey_create($this->params);
+        $result = civicrm_api('survey','create',$this->params);
         $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
@@ -37,7 +37,7 @@ class api_v3_SurveyTest extends CiviUnitTestCase
     }
 
    public function testGetSurvey () {
-        $result = civicrm_api3_survey_get($this->params);
+        $result = civicrm_api('survey','get',$this->params);
         $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
@@ -46,12 +46,12 @@ class api_v3_SurveyTest extends CiviUnitTestCase
     }
 
    public function testDeleteSurvey () {
-        $entity = civicrm_api3_survey_get($this->params);   
-        $result = civicrm_api3_survey_delete(array('version' =>3,'id' => $entity['id']));
+        $entity = civicrm_api('survey','get',$this->params);   
+        $result = civicrm_api('survey','delete',array('version' =>3,'id' => $entity['id']));
         $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
 
-        $checkDeleted = civicrm_api3_survey_get(array('version' =>3,));
+        $checkDeleted = civicrm_api('survey','get',array('version' =>3,));
         $this->assertEquals( 0, $checkDeleted['count'], 'In line ' . __LINE__ );
         
     }

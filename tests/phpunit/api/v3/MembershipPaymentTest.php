@@ -58,17 +58,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
     
     ///////////////// civicrm_membership_payment_create methods
     
-    /**
-     * Test civicrm_membership_payment_create with wrong params type.
-     */
-    public function testCreateWrongParamsType()
-    {
-        
-        $params = 'eeee';
-        $CreateWrongParamsType = civicrm_api3_membership_payment_create($params);
-        $this->assertEquals( $CreateWrongParamsType['error_message'],'Input variable `params` is not an array');
-     
-    }
+
     
     /**
      * Test civicrm_membership_payment_create with empty params.
@@ -76,7 +66,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
     public function testCreateEmptyParams()
     {  
         $params = array('version' =>$this->_apiversion);
-        $CreateEmptyParams = civicrm_api3_membership_payment_create($params);
+        $CreateEmptyParams = civicrm_api('membership_payment','create', $params);
         $this->assertEquals( $CreateEmptyParams['error_message'],'Mandatory key(s) missing from params array: membership_id, contribution_id, membership_id');
     }
     
@@ -125,7 +115,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
                         'membership_id'      => $membership->id,
                         'version'						 => $this->_apiversion,
                         );
-        $result = civicrm_api3_membership_payment_create($params);
+        $result = civicrm_api('membership_payment','create', $params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['values'][$result['id']]['membership_id'],$membership->id ,'Check Membership Id in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['contribution_id'],$contribution->id ,'Check Contribution Id in line ' . __LINE__);
@@ -194,7 +184,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
                         'membership_id'      => $membership->id,
                         'version'						 => $this->_apiversion,
                         );
-        $Create = civicrm_api3_membership_payment_create($params);
+        $Create = civicrm_api('membership_payment','create', $params);
      
         $result = civicrm_api3_membership_payment_get($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
