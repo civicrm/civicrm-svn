@@ -61,9 +61,6 @@ require_once 'CRM/Contact/BAO/Contact.php';
  */
 function civicrm_api3_contact_create( $params )
 {
-    // call update and tell it to create a new contact
-  _civicrm_api3_initialize( true );
-  try {
     civicrm_api3_verify_mandatory($params,null,array('contact_type'));
 
     require_once 'CRM/Utils/Array.php';
@@ -158,9 +155,7 @@ function civicrm_api3_contact_create( $params )
     return civicrm_api3_create_success($values,$params,'contact');
     
     return civicrm_api3_contact_update( $params, $create_new );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 
