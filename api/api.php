@@ -149,8 +149,14 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
 
     return $result;
   } catch (PEAR_Exception $e) {
+    if(CRM_Utils_Array::value('format.is_success', $params) == 1){
+      return 0;
+    }
     return civicrm_api3_create_error( $e->getMessage(),null,$params );
   } catch (Exception $e) {
+    if(CRM_Utils_Array::value('format.is_success', $params) == 1){
+      return 0;
+    }
     return civicrm_api3_create_error( $e->getMessage(),null,$params );
   }
 }
