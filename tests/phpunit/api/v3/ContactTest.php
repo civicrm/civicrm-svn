@@ -416,21 +416,47 @@ class api_v3_ContactTest extends CiviUnitTestCase
                         'api.group_contact.create' => array('group_id' => $groupId));
 		      
 
-
         $contact =& civicrm_api('contact','create',$params);
-        $params = array( 'filter.group_id' => $groupId  ,
+        // testing as integer
+        $params = array( 'filter.group_id' => $groupId ,
                          'version'    => $this->_apiversion,
                          'contact_type' => 'Individual');
         $result = civicrm_api('contact','get', $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile);                  
         $this->assertEquals(1, $result['count']);
+        // group 26 doesn't exist, but we can still search contacts in it.
         $params = array( 'filter.group_id' => 26,
                          'version'    => $this->_apiversion,
                          'contact_type' => 'Individual');
         $result = civicrm_api('contact','get', $params );
         $this->assertEquals(0, $result['count'], " in line ". __LINE__);
-        
+        // testing as string
+        $params = array( 'filter.group_id' => "$groupId,26" ,
+                         'version'    => $this->_apiversion,
+                         'contact_type' => 'Individual');
+        $result = civicrm_api('contact','get', $params );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile);                  
+        $this->assertEquals(1, $result['count']);
+        $params = array( 'filter.group_id' => "26,27" ,
+                         'version'    => $this->_apiversion,
+                         'contact_type' => 'Individual');
+        $result = civicrm_api('contact','get', $params );
+        $this->assertEquals(0, $result['count'], " in line ". __LINE__);
+
+        // testing as string
+        $params = array( 'filter.group_id' => array($groupId,26) ,
+                         'version'    => $this->_apiversion,
+                         'contact_type' => 'Individual');
+        $result = civicrm_api('contact','get', $params );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile);                  
+        $this->assertEquals(1, $result['count']);
+        $params = array( 'filter.group_id' => array(26,27) ,
+                         'version'    => $this->_apiversion,
+                         'contact_type' => 'Individual');
+        $result = civicrm_api('contact','get', $params );
+        $this->assertEquals(0, $result['count'], " in line ". __LINE__);
     }
+
   /**
    *  Verify that attempt to create individual contact with first
    *  and last names and email succeeds

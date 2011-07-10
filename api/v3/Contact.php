@@ -214,10 +214,10 @@ function civicrm_api3_contact_get( $params )
       unset ($params['filter_group_id']);
     }
     if (array_key_exists ('filter.group_id',$params)) { // filter.group_id works both for 1,2,3 and array (1,2,3) 
-      if (is_string ($params['filter.group_id']))
-        $groups = explode (',',$params['filter.group_id']);
-      else
+      if (is_array ($params['filter.group_id']))
         $groups = $params['filter.group_id'];
+      else
+        $groups = explode (',',$params['filter.group_id']);
       unset ($params['filter.group_id']);
       $groups = array_flip ($groups);
       $groups[key($groups)] = 1;
