@@ -141,24 +141,6 @@ return array(
                                     
 }
 
-class rules_data_type_civicrm_event extends rules_data_type {
-    function load($id) {
 
-    }
-    
-    function get_identifier() {
-
-    }
-}
-
-class rules_data_type_civicrm_participant extends rules_data_type {
-    function load($id) {
-
-    }
-    
-    function get_identifier() {
-
-    }
-}
 
 
