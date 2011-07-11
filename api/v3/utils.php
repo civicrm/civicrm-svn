@@ -275,7 +275,7 @@ function civicrm_api3_create_success( $values = 1,$params=array(), $entity = nul
         $result['count'] = ! empty( $values ) ? 1 : 0;
     }
 
-    if ( isset( $params['sequential'] ) && 
+    if ( is_array($values) && isset( $params['sequential'] ) && 
          $params['sequential'] ==1 ) {
         $result['values'] =  array_merge($values);
     } else {
