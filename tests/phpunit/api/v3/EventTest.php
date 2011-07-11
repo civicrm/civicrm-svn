@@ -371,7 +371,7 @@ class api_v3_EventTest extends CiviUnitTestCase
                              'start_date'    => 20081021,
                              );
              
-             $events[$maxEvents]  = civicrm_api3_event_create($params);
+             $events[$maxEvents]  = civicrm_api('event','create',$params);
              $maxEvents--;
          }
          $params = array(
