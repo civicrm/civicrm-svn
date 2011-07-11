@@ -513,7 +513,7 @@ function civicrm_views_data() {
     // Organization Name
     $data['civicrm_contact']['current_employer'] = array(
                                                           'title' => t('Organization Name'), // The item it appears as on the UI,
-                                                          'real_field' => 'oranization_name',
+                                                          'real_field' => 'organization_name',
                                                           'help' => t('The display name of the contact\'s organizations.'), // The help that appears on the UI,
                                                           'field' => array(
                                                                            'handler' => 'views_handler_field',
