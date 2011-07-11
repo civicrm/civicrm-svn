@@ -217,10 +217,11 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $params['custom_'.$ids['custom_field_id']]  =  "custom string";
  
         $result = civicrm_api($this->_entity,'create', $params);
-        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__);
-        $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
 
-        $check = civicrm_api($this->_entity,'get',array('version' =>3, 'id' => $result['id']));
+        $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
+        $getParams = array('version' =>3, 'membership_type_id' => $params['membership_type_id']);
+        $check = civicrm_api($this->_entity,'get',$getParams);
+        $this->documentMe($getParams,$check  ,__FUNCTION__,__FILE__);
         $this->assertEquals("custom string", $check['values'][$result['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
 
         $this->customFieldDelete($ids['custom_field_id']);
