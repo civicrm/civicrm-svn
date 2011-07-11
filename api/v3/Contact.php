@@ -176,8 +176,6 @@ function civicrm_api3_contact_create( $params )
 
 function civicrm_api3_contact_get( $params )
 {
-  _civicrm_api3_initialize(true );
-  try {
 
     civicrm_api3_verify_mandatory($params);
         // fix for CRM-7384 cater for soft deleted contacts
@@ -263,11 +261,7 @@ function civicrm_api3_contact_get( $params )
       }
     }
     return civicrm_api3_create_success($returnContacts, $params,'contact');
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 

@@ -56,8 +56,6 @@ require_once 'CRM/Core/DAO/File.php';
  */
 function civicrm_api3_file_create( $params )
 {
-  _civicrm_api3_initialize(true);
-  try{
 
     civicrm_api3_verify_mandatory($params,'CRM_Core_DAO_File',array('file_type_id'));
 
@@ -82,11 +80,7 @@ function civicrm_api3_file_create( $params )
     _civicrm_api3_object_to_array($fileDAO, $file);
 
     return civicrm_create_success($file,$params,'file','create',$fileDAO);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**

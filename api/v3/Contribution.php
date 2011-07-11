@@ -348,9 +348,7 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = fal
  * 
  */
 function civicrm_api3_contribution_transact($params) {
-	_civicrm_api3_initialize ( true );
-	try {
-		
+
 		civicrm_api3_verify_mandatory ( $params );
 		
 		$values = array ();
@@ -416,10 +414,6 @@ function civicrm_api3_contribution_transact($params) {
 		
 		$contribution = civicrm_contribution_add ( $params );
 		return $contribution;
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_create_error ( $e->getMessage () );
-	}
+
 }
 
