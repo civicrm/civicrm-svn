@@ -96,7 +96,7 @@ function event_create_expectedresult(){
           'is_template' => '',
           'template_title' => '',
           'created_id' => '',
-          'created_date' => '20110702112941',
+          'created_date' => '20110711194944',
           'currency' => '',
           'campaign_id' => '',
         ),

@@ -7,7 +7,7 @@
  */
 function relationship_get_example(){
 $params = array( 
-  'contact_id' => 40,
+  'contact_id' => 2,
   'version' => 3,
 );
 
@@ -26,13 +26,13 @@ function relationship_get_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => 6,
+  'id' => 7,
   'values' => array( 
-      '6' => array( 
-          'id' => '6',
-          'cid' => '39',
-          'contact_id_a' => '39',
-          'contact_id_b' => '40',
+      '7' => array( 
+          'id' => '7',
+          'cid' => '1',
+          'contact_id_a' => '1',
+          'contact_id_b' => '2',
           'relationship_type_id' => '29',
           'relation' => 'Relation 2 for delete',
           'name' => 'Anderson, Anthony',
@@ -45,12 +45,12 @@ function relationship_get_expectedresult(){
           'country' => '',
           'city' => '',
           'state' => '',
-          'start_date' => '',
-          'end_date' => '',
+          'start_date' => '2011-01-01',
+          'end_date' => '2013-01-01',
           'description' => '',
           'is_active' => '1',
-          'is_permission_a_b' => '',
-          'is_permission_b_a' => '',
+          'is_permission_a_b' => 0,
+          'is_permission_b_a' => 0,
           'case_id' => '',
           'civicrm_relationship_type_id' => '29',
           'rtype' => 'b_a',

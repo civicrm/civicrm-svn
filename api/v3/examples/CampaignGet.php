@@ -36,7 +36,7 @@ function campaign_get_expectedresult(){
           'name' => 'campaign_title',
           'title' => 'campaign title',
           'is_active' => '1',
-          'created_date' => '2011-07-05 13:46:45',
+          'created_date' => '2011-07-11 19:48:32',
         ),
     ),
 );

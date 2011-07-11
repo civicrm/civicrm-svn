@@ -7,7 +7,7 @@
  */
 function entity_tag_create_example(){
 $params = array( 
-  'contact_id' => 10,
+  'contact_id' => 1,
   'tag_id' => 1,
   'version' => 3,
 );

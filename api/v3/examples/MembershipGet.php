@@ -7,7 +7,7 @@
  */
 function membership_get_example(){
 $params = array( 
-  'contact_id' => 9,
+  'contact_id' => 1,
   'membership_type_id' => 9,
   'join_date' => '2009-01-21',
   'start_date' => '2009-01-21',
@@ -38,11 +38,11 @@ function membership_get_expectedresult(){
   'values' => array( 
       '6' => array( 
           'id' => 6,
-          'contact_id' => 9,
+          'contact_id' => 1,
           'membership_type_id' => 9,
-          'join_date' => '20090121',
-          'start_date' => '20090121',
-          'end_date' => '20091221',
+          'join_date' => '20090121000000',
+          'start_date' => '20090121000000',
+          'end_date' => '20091221000000',
           'source' => 'Payment',
           'status_id' => 16,
           'is_override' => 1,

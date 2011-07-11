@@ -44,7 +44,7 @@ function campaign_create_expectedresult(){
           'parent_id' => '',
           'is_active' => '',
           'created_id' => '',
-          'created_date' => '20110705134645',
+          'created_date' => '20110711194832',
           'last_modified_id' => '',
           'last_modified_date' => '',
           'goal_general' => '',
