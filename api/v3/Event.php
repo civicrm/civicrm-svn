@@ -57,7 +57,7 @@ require_once 'api/v3/utils.php';
 */
 function civicrm_api3_event_create( $params )
 {
-    try {
+
     civicrm_api3_verify_mandatory ($params,'CRM_Event_DAO_Event',array ('start_date','event_type_id','title'));
    
     //format custom fields so they can be added
@@ -76,11 +76,7 @@ function civicrm_api3_event_create( $params )
     }
 
     return civicrm_api3_create_success($event,$params);
-      } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 
@@ -96,8 +92,7 @@ function civicrm_api3_event_create( $params )
 
 function civicrm_api3_event_get( $params )
 {
-  _civicrm_api3_initialize( true );
-  try {
+
     civicrm_api3_verify_mandatory($params);
 
     $inputParams            = array( );
@@ -158,11 +153,7 @@ function civicrm_api3_event_get( $params )
 
     return civicrm_api3_create_success($event,$params,'event','get',$eventDAO);
 
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
