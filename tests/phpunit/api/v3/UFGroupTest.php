@@ -235,7 +235,6 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
 
         $result = civicrm_api('uf_group', 'create', $this->params);
         $this->assertEquals(0,$result['is_error'], 'in line ' . __LINE__);   
-        $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
         
         $params = array('version' =>3, 'id' => $result['id']);
         $result = civicrm_api('uf_group', 'get',$params);   
