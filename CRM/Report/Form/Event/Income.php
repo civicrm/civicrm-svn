@@ -213,10 +213,10 @@ class CRM_Report_Form_Event_Income extends CRM_Report_Form {
         $statusDAO = CRM_Core_DAO::executeQuery( $status );
       
         while ( $statusDAO->fetch( ) ) {
-            $statusRows[$statusDAO->event_id][$participantStatus[$statusDAO->STATUSID]][] = $statusDAO->participant;
-            $statusRows[$statusDAO->event_id][$participantStatus[$statusDAO->STATUSID]][] = 
+            $statusRows[$statusDAO->event_id][$participantStatus[$statusDAO->STATUSID]]['total'] = $statusDAO->participant;
+            $statusRows[$statusDAO->event_id][$participantStatus[$statusDAO->STATUSID]]['round'] = 
                 round( ( $statusDAO->participant / $count[$statusDAO->event_id] ) * 100, 2 );
-            $statusRows[$statusDAO->event_id][$participantStatus[$statusDAO->STATUSID]][] = $statusDAO->amount;
+            $statusRows[$statusDAO->event_id][$participantStatus[$statusDAO->STATUSID]]['amount'] = $statusDAO->amount;
         }
 
         $rows['Status'] = $statusRows;
@@ -244,11 +244,11 @@ class CRM_Report_Form_Event_Income extends CRM_Report_Form {
         while ( $instrumentDAO->fetch( ) ) {
             //allow only if instrument is present in contribution table
             if ( $instrumentDAO->INSTRUMENT ) {
-                $instrumentRows[$instrumentDAO->event_id][$paymentInstruments[$instrumentDAO->INSTRUMENT]][] = 
+                $instrumentRows[$instrumentDAO->event_id][$paymentInstruments[$instrumentDAO->INSTRUMENT]]['total'] = 
                     $instrumentDAO->participant;
-                $instrumentRows[$instrumentDAO->event_id][$paymentInstruments[$instrumentDAO->INSTRUMENT]][] = 
+                $instrumentRows[$instrumentDAO->event_id][$paymentInstruments[$instrumentDAO->INSTRUMENT]]['round'] = 
                     round(($instrumentDAO->participant / $count[$instrumentDAO->event_id] ) * 100, 2 );
-                $instrumentRows[$instrumentDAO->event_id][$paymentInstruments[$instrumentDAO->INSTRUMENT]][] = $instrumentDAO->amount;
+                $instrumentRows[$instrumentDAO->event_id][$paymentInstruments[$instrumentDAO->INSTRUMENT]]['amount'] = $instrumentDAO->amount;
             }
         }
         $rows['Payment Method'] = $instrumentRows;
