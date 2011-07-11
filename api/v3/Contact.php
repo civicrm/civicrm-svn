@@ -43,7 +43,6 @@
 require_once 'api/v3/utils.php';
 require_once 'CRM/Contact/BAO/Contact.php';
 /**
- * @todo - make sure it doesn't create new if contact_id is set
  * @todo - get rid of update & merge into this - wrapper handles update
  *
  * @param  array   $params           (reference ) input parameters
@@ -285,8 +284,7 @@ function civicrm_api3_contact_get( $params )
  */
 function civicrm_api3_contact_delete( $params )
 {
-  _civicrm_api3_initialize(true);
-  try{
+
 
     require_once 'CRM/Contact/BAO/Contact.php';
     civicrm_api3_verify_mandatory($params,null,array('id'));
@@ -304,11 +302,7 @@ function civicrm_api3_contact_delete( $params )
     } else {
       return civicrm_api3_create_error(  'Could not delete contact'  );
     }
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 
