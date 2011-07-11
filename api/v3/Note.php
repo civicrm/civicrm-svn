@@ -57,9 +57,7 @@ require_once 'CRM/Core/BAO/Note.php';
  * {@example NoteCreate.php
  */
 function civicrm_api3_note_create($params) {
-	_civicrm_api3_initialize ( true );
-	try {
-		
+
 		if (! isset ( $params ['entity_table'] )) {
 			$params ['entity_table'] = "civicrm_contact";
 		}
@@ -86,11 +84,7 @@ function civicrm_api3_note_create($params) {
 		}
 		$result = civicrm_api3_create_success ( $note, $params );
 		return civicrm_api3_create_success ( $note, $params );
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
+
 }
 
 /**
@@ -104,17 +98,12 @@ function civicrm_api3_note_create($params) {
  * @access public
  */
 function civicrm_api3_note_delete($params) {
-	_civicrm_api3_initialize ( true );
-	try {
+
 		civicrm_api3_verify_mandatory ( $params, null, array ('id' ) );
 		
 		$result = new CRM_Core_BAO_Note ();
 		return $result->del ( $params ['id'] ) ? civicrm_api3_create_success () : civicrm_api3_create_error ( 'Error while deleting Note' );
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
+
 }
 
 /**
@@ -130,8 +119,7 @@ function civicrm_api3_note_delete($params) {
  */
 
 function civicrm_api3_note_get($params) {
-	_civicrm_api3_initialize ( true );
-	try {
+
 		
 		if (empty ( $params ['entity_table'] )) {
 			$params ['entity_table'] = "civicrm_contact";
@@ -140,11 +128,6 @@ function civicrm_api3_note_get($params) {
 		civicrm_api3_verify_mandatory ( $params );
     return _civicrm_api3_basic_get('CRM_Core_BAO_Note', $params);		
 	
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
 }
 
 /**
@@ -153,8 +136,7 @@ function civicrm_api3_note_get($params) {
  * @return array Nested associative array beginning with direct children of given note.
  */
 function &civicrm_api3_note_tree_get($params) {
-	_civicrm_api3_initialize ( true );
-	try {
+
 		civicrm_api3_verify_mandatory ( $params, null, array ('id' ) );
 		
 		if (! is_numeric ( $params ['id'] )) {
@@ -166,9 +148,5 @@ function &civicrm_api3_note_tree_get($params) {
 			$params ['snippet'] = FALSE;
 		$noteTree = CRM_Core_BAO_Note::getNoteTree ( $params ['id'], $params ['max_depth'], $params ['snippet'] );
 		return civicrm_api3_create_success ( $noteTree, $params );
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
+
 }

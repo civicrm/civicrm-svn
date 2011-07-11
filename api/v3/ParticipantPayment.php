@@ -57,8 +57,7 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_participant_payment_create($params)
 {
-  _civicrm_api3_initialize(true);
-  try{
+
     civicrm_api3_verify_mandatory($params,null,array('participant_id','contribution_id')) ;
 
     $ids= array();
@@ -72,11 +71,7 @@ function civicrm_api3_participant_payment_create($params)
     _civicrm_api3_object_to_array($participantPayment, $payment[$participantPayment->id]);
 
     return civicrm_api3_create_success($payment,$params);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -91,18 +86,12 @@ function civicrm_api3_participant_payment_create($params)
  */
 function civicrm_api3_participant_payment_delete( $params )
 {
-  _civicrm_api3_initialize(true);
 
-  try{
     civicrm_api3_verify_mandatory($params,null,array('id'));
     require_once 'CRM/Event/BAO/ParticipantPayment.php';
     $participant = new CRM_Event_BAO_ParticipantPayment();
 
     return $participant->deleteParticipantPayment( $params ) ? civicrm_api3_create_success( ) : civicrm_api3_create_error('Error while deleting participantPayment');
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 

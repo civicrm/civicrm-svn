@@ -3,21 +3,13 @@ require_once 'api/v3/utils.php';
 require_once 'CRM/Core/BAO/OptionGroup.php';
 
 function civicrm_api3_option_group_get( $params ) {
-    _civicrm_api3_initialize(true);
-    try{
+
     civicrm_api3_verify_mandatory($params);
+    $bao = new CRM_Core_BAO_OptionGroup( );
+    _civicrm_api3_dao_set_filter ( $bao, $params );
 
+    return civicrm_api3_create_success(_civicrm_api3_dao_to_array ($bao,$params),$params,'option_group','get',$bao);
 
-
-      $bao = new CRM_Core_BAO_OptionGroup( );
-      _civicrm_api3_dao_set_filter ( $bao, $params );
-
-      return civicrm_api3_create_success(_civicrm_api3_dao_to_array ($bao,$params),$params,'option_group','get',$bao);
-    } catch (PEAR_Exception $e) {
-      return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-      return civicrm_api3_create_error( $e->getMessage() );
-    }
 }
 /**
  * create/update survey

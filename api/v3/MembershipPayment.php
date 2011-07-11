@@ -52,8 +52,7 @@ require_once 'api/v3/utils.php';
  * @access public
  */
 function &civicrm_api3_membership_payment_create( $params ) {
-  _civicrm_api3_initialize(true);
-  try{
+
     civicrm_api3_verify_mandatory($params,'CRM_Member_DAO_MembershipPayment',array('contribution_id','membership_id'));
 
     require_once 'CRM/Core/Transaction.php';
@@ -74,11 +73,7 @@ function &civicrm_api3_membership_payment_create( $params ) {
     _civicrm_api3_object_to_array($mpDAO, $mpArray[$mpDAO->id]);
 
     return civicrm_api3_create_success($mpArray,$params);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -93,8 +88,7 @@ function &civicrm_api3_membership_payment_create( $params ) {
  * @access public
  */
 function &civicrm_api3_membership_payment_get( $params ) {
-  _civicrm_api3_initialize(true);
-  try{
+
     civicrm_api3_verify_mandatory($params);
 
 
@@ -113,9 +107,5 @@ function &civicrm_api3_membership_payment_get( $params ) {
     }
 
     return civicrm_api3_create_success($values,$params);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }

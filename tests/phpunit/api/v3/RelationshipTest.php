@@ -115,7 +115,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                         'is_active'  => 1
                         );
         
-        $result =& civicrm_api3_relationship_create($params);
+        $result =& civicrm_api('relationship', 'create', $params);
         $this->assertEquals( $result['is_error'], 1 );
     }
     

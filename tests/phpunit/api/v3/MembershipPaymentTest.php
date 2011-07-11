@@ -133,7 +133,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
     public function testGetWrongParamsType()
     { 
         $params = 'eeee';
-        $GetWrongParamsType = civicrm_api3_membership_payment_get($params);
+        $GetWrongParamsType = civicrm_api('membership_payment','get',$params);
         $this->assertEquals( $GetWrongParamsType['error_message'],'Input variable `params` is not an array');
     }
 
@@ -143,7 +143,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
     public function testGetEmptyParams()
     {
         $params = array();
-        $GetEmptyParams = civicrm_api3_membership_payment_get($params);
+        $GetEmptyParams = civicrm_api('membership_payment','get',$params);
         $this->assertEquals( $GetEmptyParams['error_message'],'Mandatory key(s) missing from params array: version');
         
     }
@@ -186,7 +186,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
                         );
         $Create = civicrm_api('membership_payment','create', $params);
      
-        $result = civicrm_api3_membership_payment_get($params);
+        $result = civicrm_api('membership_payment','get',$params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
         $this->assertEquals( $result['values'][$result['id']]['membership_id'],$membership->id ,'Check Membership Id');
         $this->assertEquals( $result['values'][$result['id']]['contribution_id'],$contribution->id ,'Check Contribution Id');

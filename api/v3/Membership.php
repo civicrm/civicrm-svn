@@ -56,8 +56,6 @@ require_once 'CRM/Utils/Array.php';
  */
 function civicrm_api3_membership_delete($params)
 {
-    _civicrm_api3_initialize(true);
-      try{ 
    
     civicrm_api3_verify_one_mandatory($params,null,array('id','membership_id'));
     $membershipID = empty($params['id']) ?$params['membership_id'] :$params['id'];
@@ -75,11 +73,7 @@ function civicrm_api3_membership_delete($params)
     $result = $membership->deleteMembership($membershipID);
 
     return $result ? civicrm_api3_create_success( ) : civicrm_api3_create_error('Error while deleting Membership');
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 
@@ -97,7 +91,7 @@ function civicrm_api3_membership_delete($params)
  */
 function civicrm_api3_membership_create($params)
 {
-  try{
+
 
 
     $error = _civicrm_api3_membership_check_params( $params );
@@ -141,11 +135,7 @@ function civicrm_api3_membership_create($params)
     _civicrm_api3_object_to_array($membershipBAO, $membership[$membershipBAO->id]);
 
     return civicrm_api3_create_success($membership , $params,'membership','create', $membershipBAO);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -164,7 +154,7 @@ function civicrm_api3_membership_create($params)
  */
 function civicrm_api3_membership_get($params)
 {
-  try{
+
     civicrm_api3_verify_mandatory($params);
 
     $contactID = $activeOnly = $membershipTypeId = $membershipType = null;
@@ -250,11 +240,7 @@ function civicrm_api3_membership_get($params)
     }
     
     return civicrm_api3_create_success($members,$params, 'membership','get');
-    } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 

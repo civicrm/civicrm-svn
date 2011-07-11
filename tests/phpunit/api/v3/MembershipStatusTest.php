@@ -148,55 +148,14 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
     }
 
 ///////////////// civicrm_membership_status_update methods
-
-    function testUpdateWrongParamsType( ) {
-        $params = 1;
-        $result = civicrm_api3_membership_status_update( $params );
-        $this->assertEquals( $result['is_error'], 1,"In line " . __LINE__ );
-    }
-
-    function testUpdateWithEmptyParams( )
-    {
-        $params = array( );
-        $result = civicrm_api3_membership_status_update( $params );
-        $this->assertEquals( $result['is_error'], 1,"In line " . __LINE__ );
-    }
-
-    function testUpdateWithMissingRequired( )
-    {
-        $params = array( 'title' => 'Does not make sense' );
-        $result = civicrm_api3_membership_status_update( $params );
-        $this->assertEquals( $result['is_error'], 1,"In line " . __LINE__ );
-    }
+//removed as none actually tested functionality - all just tested same stuff
+//generic tests test.
     
-    function testUpdate( ) 
-    {
-        $membershipStatusID = $this->membershipStatusCreate( );
-        $params = array( 'id'   => $membershipStatusID,
-                         'name' => 'new member',
-                          'version' =>$this->_apiversion,
-                         );
-        $result = civicrm_api3_membership_status_update( $params );
-        $this->assertEquals( $result['is_error'], 0 );
-        $this->membershipStatusDelete( $membershipStatusID );
-    }
+
 
 ///////////////// civicrm_membership_status_calc methods
 /*pending it being re-enabled
-    function testCalcWrongParamsType()
-    {
-        $params = 'incorrect value';
-        $result = civicrm_api3_membership_status_calc( $params );
-        $this->assertEquals( $result['is_error'], 1, "In line " . __LINE__ );
-    }
 
-    function testCalculateStatusWithEmptyParams( )
-    {
-        $calcParams = array( );
-        
-        $result = civicrm_api3_membership_status_calc( $calcParams );
-        $this->assertEquals( $result['is_error'], 1,"In line " . __LINE__ );
-    }
     
     function testCalculateStatusWithNoMembershipID( )
     {
