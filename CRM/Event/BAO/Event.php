@@ -990,7 +990,6 @@ WHERE civicrm_event.is_active = 1
                       'custom_post_id'=> $values['custom_post_id']
                       );
         
-        
         //get the params submitted by participant.
         $participantParams = CRM_Utils_Array::value( $participantId, $values['params'], array( ) );
         
@@ -1013,7 +1012,7 @@ WHERE civicrm_event.is_active = 1
                                      'id'     => $gId,
                                      'values' => $profileValues,
                                      'email'  => $email
-                                     );       
+                                     );
                         CRM_Core_BAO_UFGroup::commonSendMail( $contactID, $val );
                     }
                 }
@@ -1203,7 +1202,10 @@ WHERE civicrm_event.is_active = 1
                         while ( $grp->fetch( ) ) {
                             $grpTitles[] = $grp->title; 
                         }
-                        $values[$fields['group']['title']] = implode(', ', $grpTitles );
+                        if ( !empty( $grpTitles ) &&
+                             CRM_Utils_Array::value( 'title', $fields['group'] ) ) {
+                            $values[$fields['group']['title']] = implode(', ', $grpTitles );
+                        }
                         unset($fields['group']);
                     }
                 }
@@ -1244,9 +1246,7 @@ WHERE civicrm_event.is_active = 1
                 
                 unset( $values[$fields['participant_id']['title']] );
                 
-               
                 $val[] = $values;
-                
             }
         }
         if (count( $val ) ) {
@@ -1556,7 +1556,7 @@ WHERE  id = $cfID
                 $template = CRM_Core_Smarty::singleton( );
                 $isCustomProfile = true;
                 $i = 1;
-                $title = array( );
+                $title = $groupTitles = array( );
                 foreach ( $additionalIDs as $pId => $cId ) {
                     //get the params submitted by participant.
                     $participantParams = CRM_Utils_Array::value( $pId, $values['params'], array( ) );
