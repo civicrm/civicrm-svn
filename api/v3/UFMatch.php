@@ -56,13 +56,9 @@ require_once 'CRM/Core/BAO/UFMatch.php';
 */
 function civicrm_api3_uf_match_get($params)
 {
-
-    try{
         civicrm_api3_verify_mandatory($params);
         return _civicrm_api3_basic_get('CRM_Core_BAO_UFMatch', $params);
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 
