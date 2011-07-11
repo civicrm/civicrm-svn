@@ -1221,8 +1221,8 @@ WHERE civicrm_event.is_active = 1
                 if ( isset( $values[$fields['participant_fee_level']['title']] ) ) {
                     $feeLevel = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                                          $values[$fields['participant_fee_level']['title']] );
-                    foreach ( $feeLevel as $key => $val ) {
-                        if ( ! $val ) {
+                    foreach ( $feeLevel as $key => $value ) {
+                        if ( ! $value ) {
                             unset( $feeLevel[$key] );
                         }
                     }
@@ -1543,6 +1543,7 @@ WHERE  id = $cfID
                 $template = CRM_Core_Smarty::singleton( );
                 $isCustomProfile = true;
                 $i = 1;
+                $title = array( );
                 foreach ( $additionalIDs as $pId => $cId ) {
                     //get the params submitted by participant.
                     $participantParams = CRM_Utils_Array::value( $pId, $values['params'], array( ) );
