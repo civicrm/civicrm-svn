@@ -56,7 +56,7 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
     /**
      *  Test civicrm_activity_type_get()
      */
-    function testActivityTypeGetValues()
+    function testActivityTypeGet()
     {
         $params = array('version' => $this->_apiversion);
         $result =  civicrm_api( 'activity_type', 'get', $params);
