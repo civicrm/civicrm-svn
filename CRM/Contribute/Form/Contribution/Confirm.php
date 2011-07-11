@@ -197,6 +197,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 }
 
                 if ( strstr( $loc, 'custom' ) ) {
+                    if ( $value  && isset($this->_params['onbehalf']["{$loc}_id"]) ) {
+                        $value = $this->_params['onbehalf']["{$loc}_id"];
+                    }
                     $this->_params['onbehalf_location']["{$loc}"] = $value;
                 }
             }

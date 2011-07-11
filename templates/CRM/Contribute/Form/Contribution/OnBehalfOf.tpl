@@ -91,13 +91,17 @@
           {else}
               <div class="label">{$field.label}</div>
               <div class="content">
-               {$field.html}
-               {if $fieldName eq 'organization_name'}
-                 <div id="id-onbehalf-orgname-help" class="description">{ts}Start typing the name of an organization that you have saved previously to use it again. Otherwise click "Enter a new organization" above.{/ts}</div>
-               {/if}
-               {if $onBehalfOfFields.$fieldName.help_post}
-                 <br /><span class='description'>{$onBehalfOfFields.$fieldName.help_post}</span>
-               {/if}
+              {$field.html}
+              {if $fieldName eq 'organization_name'}
+                <div id="id-onbehalf-orgname-help" class="description">{ts}Start typing the name of an organization that you have saved previously to use it again. Otherwise click "Enter a new organization" above.{/ts}</div>
+              {/if}
+	      {if !empty($onBehalfOfFields.$fieldName.html_type)  && $onBehalfOfFields.$fieldName.html_type eq 'Autocomplete-Select'}
+	        {assign var=elementName value=onbehalf[$fieldName]}
+	        {include file="CRM/Custom/Form/AutoComplete.tpl" element_name=$elementName}
+	      {/if}
+              {if $onBehalfOfFields.$fieldName.help_post}
+                <br /><span class='description'>{$onBehalfOfFields.$fieldName.help_post}</span>
+              {/if}
               </div>
           {/if}
        {/if}
