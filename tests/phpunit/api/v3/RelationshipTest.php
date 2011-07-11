@@ -335,7 +335,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                         'max_multiple'     => 0,
                         'version'							=> $this->_apiversion,
                         );
-        $customGroup =& civicrm_api3_custom_group_create($params);
+        $customGroup =& civicrm_api('custom_group','create', $params);
         return null;
     }
 
@@ -392,7 +392,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                         'custom_group_id' => $this->_customGroupId,
                         );
         
-        $customField  =& civicrm_api3_custom_field_create( $params );
+        $customField  =& civicrm_api('custom_field','create',  $params );
         
         $ids[] = $customField['result']['customFieldId'];
         
@@ -409,7 +409,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                         'is_active'       => 1
                         );
         
-        $customField  =& civicrm_api3_custom_field_create( $params );			
+        $customField  =& civicrm_api('custom_field','create',  $params );			
         
         $ids[] = $customField['result']['customFieldId'];
         $params = array(
@@ -425,7 +425,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                         'is_active'       => 1
                         );
         
-        $customField  =& civicrm_api3_custom_field_create( $params );
+        $customField  =& civicrm_api('custom_field','create',  $params );
         $ids[] = $customField['result']['customFieldId'];
         return $ids;
     }
@@ -657,7 +657,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                                'contact_type_b' => 'Organization',
                                'version'				=>$this->_apiversion,
                                );
-        $result =& civicrm_api3_relationship_type_create( $relTypeParams );
+        $result =& civicrm_api('relationship_type','create', $relTypeParams );
         $this->assertEquals( $result['is_error'], 1 ,'in line ' .__LINE__);
         $this->assertEquals( $result['error_message'], 'Invalid value for relationship type ID', 'in line ' .__LINE__);
     } 
