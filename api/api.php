@@ -331,7 +331,10 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$versi
 					$subParams ['id'] = $result ['values'] [$idIndex] ['entity_id'];
 				
 				}
-
+				// if we are dealing with the same entity pass 'id' through (useful for get + delete for example)
+        if(strtolower($entity) == strtolower($subEntity)){
+          $subParams ['id'] = $result ['values'] [$idIndex] ['id'];
+        }
 				
 				
 				$subParams ['version'] = $version;
