@@ -218,12 +218,26 @@ class InstallRequirements {
          * Just check that the database configuration is okay
          */
     function checkdatabase($databaseConfig, $dbName) {
-        if($this->requireFunction('mysql_connect', array("PHP Configuration", "MySQL support", "MySQL support not included in PHP."))) {
-            $this->requireMySQLServer($databaseConfig['server'], array("MySQL $dbName Configuration", "Does the server exist",
-                                                                       "Can't find the a MySQL server on '$databaseConfig[server]'", $databaseConfig['server']));
-            if($this->requireMysqlConnection($databaseConfig['server'], $databaseConfig['username'], $databaseConfig['password'],
-                    array("MySQL $dbName Configuration", "Are the access credentials correct", "That username/password doesn't work"))) {
-                @$this->requireMySQLVersion("5.0", array("MySQL $dbName Configuration", "MySQL version at least 5.0", "MySQL version 5.0 is required, you only have ", "MySQL " . mysql_get_server_info()));
+        if($this->requireFunction('mysql_connect',
+                                  array("PHP Configuration", 
+                                        "MySQL support",
+                                        "MySQL support not included in PHP."))) {
+            $this->requireMySQLServer($databaseConfig['server'],
+                                      array("MySQL $dbName Configuration",
+                                            "Does the server exist",
+                                            "Can't find the a MySQL server on '$databaseConfig[server]'",
+                                            $databaseConfig['server']));
+            if($this->requireMysqlConnection($databaseConfig['server'],
+                                             $databaseConfig['username'],
+                                             $databaseConfig['password'],
+                    array("MySQL $dbName Configuration",
+                          "Are the access credentials correct",
+                          "That username/password doesn't work"))) {
+                @$this->requireMySQLVersion("5.0",
+                                            array("MySQL $dbName Configuration",
+                                                  "MySQL version at least 5.0",
+                                                  "MySQL version 5.0 is required, you only have ",
+                                                  "MySQL " . mysql_get_server_info()));
             }
             $onlyRequire = ( $dbName == 'Drupal' ) ? true : false;
             $this->requireDatabaseOrCreatePermissions(
@@ -642,7 +656,12 @@ class InstallRequirements {
         
     }
 
-    function requireDatabaseOrCreatePermissions($server, $username, $password, $database, $testDetails, $onlyRequire = false) {
+    function requireDatabaseOrCreatePermissions($server,
+                                                $username,
+                                                $password,
+                                                $database,
+                                                $testDetails,
+                                                $onlyRequire = false) {
         $this->testing($testDetails);
         $conn = @mysql_connect($server, $username, $password);
 
@@ -650,7 +669,7 @@ class InstallRequirements {
         if(@mysql_select_db($database)) {
             $okay = "Database '$database' exists";
         } else if ( $onlyRequire ) {
-            $testDetails[2] = 'The database does not exist';
+            $testDetails[2] = "The database: '$database' does not exist";
             $this->error($testDetails);
             return;
         } else {
