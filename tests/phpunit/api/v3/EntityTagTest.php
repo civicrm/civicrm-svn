@@ -232,25 +232,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
 
     ///////////////// civicrm_entity_tag_remove methods
 
-    function testEntityTagRemoveNoContactId( )
-    {
-        $entityTagParams = array(
-                                 'contact_id_i' => $this->_individualID,
-                                 'contact_id_h' => $this->_householdID,
-                                 'tag_id'       => $this->_tagID,
-                                 'version' =>$this->_apiversion 
-                                 );
-        $this->entityTagAdd( $entityTagParams );
-        
-        $params = array(
-                        'tag_id' => $this->_tagID,
-                        'version' =>$this->_apiversion 
-                        );
-                
-        $result = civicrm_api('entity_tag','delete', $params );
-        $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'contact_id is a required field' );
-    }
+
     
     function testEntityTagRemoveNoTagId( )
     {
@@ -341,24 +323,6 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
 
     ///////////////// civicrm_entity_tag_display methods
 
-    function testEntityTagDisplayNoContactId( )
-    {
-        $entityTagParams = array(
-                                 'contact_id' => $this->_individualID,
-                                 'tag_id'     => $this->_tagID,
-                                 'version' =>$this->_apiversion ,
-                                 );
-        $this->entityTagAdd( $entityTagParams );
-        
-        $params = array(
-                        'tag_id' => $this->_tagID,
-                        'version' =>$this->_apiversion ,
-                        );
-        
-        $result = civicrm_api3_entity_tag_display( $params );
-        $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( 'Mandatory key(s) missing from params array: one of (entity_id, contact_id)',$result['error_message'],'in line ' . __LINE__ );
-    }
 
     function testEntityTagDisplayWithContactId( )
     {
@@ -380,22 +344,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
 
     ///////////////// civicrm_tag_entities_get methods
 
-    function testGetEntitiesWithoutParams()
-    {
-        $params    = array(
-                           'contact_id' =>  $this->_individualID,
-                           'tag_id'     =>  $this->_tagID,
-                           'version'		=> $this->_apiversion, );
-        
-        $individualEntity = civicrm_api('entity_tag', 'create',  $params ); 
-        
-        $paramsEntity = array('version' =>$this->_apiversion , );
-        $entity = civicrm_api3_tag_entities_get( $paramsEntity );
-        $this->assertNotNull( $entity );
-        $this->assertEquals(1, $entity['is_error']);
-        $this->assertEquals("Mandatory key(s) missing from params array: tag_id", $entity['error_message']);
 
-    }
 
     ///////////////// civicrm_entity_tag_common methods
 

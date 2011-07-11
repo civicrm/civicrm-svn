@@ -64,8 +64,7 @@ require_once 'CRM/Mailing/Event/BAO/TrackableURLOpen.php';
  */
 function civicrm_api3_mailing_event_bounce($params)
 {   
-    _civicrm_api3_initialize( true );
-    try {
+
         civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_Bounce',array ( 'job_id', 'event_queue_id', 'hash', 'body' ) );
            
         $body = $params['body']; 
@@ -78,9 +77,7 @@ function civicrm_api3_mailing_event_bounce($params)
         } else {
             return civicrm_api3_create_error(  'Queue event could not be found'  );
         }
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }    
+  
     
 }
 
@@ -92,8 +89,7 @@ function civicrm_api3_mailing_event_bounce($params)
  */
 function civicrm_api3_mailing_event_confirm( $params ) 
 {
-    _civicrm_api3_initialize( true );
-    try {
+
         civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_Confirm',array ( 'contact_id', 'subscribe_id', 'hash' ) );
           
         $contact_id   = $params['contact_id']; 
@@ -106,9 +102,7 @@ function civicrm_api3_mailing_event_confirm( $params )
             return civicrm_api3_create_error( 'Confirmation failed' );
         }    
         return civicrm_api3_create_success( $params );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**
@@ -119,9 +113,7 @@ function civicrm_api3_mailing_event_confirm( $params )
  */
 function civicrm_api3_mailing_event_reply($params)
 {
-    _civicrm_api3_initialize( true );
-    
-    try {
+
         civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_Reply', array('job_id', 'event_queue_id', 'hash', 'bodyTxt', 'replyTo') );            
           
         $job       = $params['job_id']; 
@@ -141,9 +133,7 @@ function civicrm_api3_mailing_event_reply($params)
         CRM_Mailing_Event_BAO_Reply::send( $queue, $mailing, $bodyTxt, $replyto, $bodyHTML, $fullEmail );
 
         return civicrm_api3_create_success( $params );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**
@@ -154,8 +144,7 @@ function civicrm_api3_mailing_event_reply($params)
  */
 function civicrm_api3_mailing_event_forward($params) 
 {
-    _civicrm_api3_initialize( true );
-    try {
+
         civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_Forward', array('job_id', 'event_queue_id', 'hash', 'email') );
                    
         $job       = $params['job_id']; 
@@ -172,9 +161,7 @@ function civicrm_api3_mailing_event_forward($params)
         }
     
         return civicrm_api3_create_error( 'Queue event could not be found'  );    
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**
@@ -185,9 +172,7 @@ function civicrm_api3_mailing_event_forward($params)
  */
 function civicrm_api3_mailing_event_click($params) 
 {
-    _civicrm_api3_initialize( true );
 
-    try {
         civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_TrackableURLOpen', array('event_queue_id', 'url_id') );
           
         $url_id = $params['url_id']; 
@@ -200,9 +185,7 @@ function civicrm_api3_mailing_event_click($params)
         $values['is_error'] = 0;
         
         return civicrm_api3_create_success( $values );  
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**
@@ -213,9 +196,7 @@ function civicrm_api3_mailing_event_click($params)
  */
 function civicrm_api3_mailing_event_open($params) 
 {
-    _civicrm_api3_initialize( true );
 
-    try {
         civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_Opened', array('event_queue_id') );    
         $queue   = $params['event_queue_id']; 
         $success = CRM_Mailing_Event_BAO_Opened::open( $queue );
@@ -225,7 +206,5 @@ function civicrm_api3_mailing_event_open($params)
         }
 
         return civicrm_api3_create_success( $params );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }

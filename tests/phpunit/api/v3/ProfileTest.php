@@ -35,16 +35,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     }
    
     ////////////// test civicrm_api3_profile_get //////////////////
-    /**
-     * check with no array
-     */  
-    function testProfileGetNoArray( )
-    {
-        $params = null;
-        $result =& civicrm_api('profile','get', $params);
-        $this->assertEquals($result['is_error'], 1);
-        $this->assertEquals($result['error_message'], 'Input variable `params` is not an array');
-    }
+
 
     /**
      * check Without ProfileId
@@ -395,16 +386,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     }
 
     /////////////// test civicrm_api3_profile_apply //////////////////
-    /**
-     * check with no array
-     */  
-    function testProfileApplyNoArray( )
-    {
-        $params = null;
-        $result =& civicrm_api3_profile_apply($params);
-        $this->assertEquals($result['is_error'], 1);
-        $this->assertEquals($result['error_message'], 'Input variable `params` is not an array');
-    }
+ 
 
     /**
      * check Without ProfileId
@@ -413,7 +395,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     {
         $params = array( 'contact_id' => 1,
                          'version'    => 3 );
-        $result =& civicrm_api3_profile_apply($params);
+        $result =& civicrm_api('profile','apply',$params);
         $this->assertEquals($result['is_error'], 1);
         $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: profile_id' );
     }  
@@ -426,7 +408,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         $params = array( 'contact_id' => 1,
                          'profile_id' => 1000,
                          'version'    => 3 );
-        $result =& civicrm_api3_profile_apply($params);
+        $result =& civicrm_api('profile','apply',$params);
         $this->assertEquals($result['is_error'], 1);
     } 
 
@@ -449,7 +431,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
                          'country-1'        => '1013',
                          'state_province-1' => '1000' );
         
-        $result = civicrm_api3_profile_apply( $params );
+        $result = civicrm_api('profile','apply',$params );
         $this->documentMe($params, $result, __FUNCTION__, __FILE__); 
  
         $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
