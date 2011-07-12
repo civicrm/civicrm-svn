@@ -106,7 +106,7 @@
         			</li>
         		    {/if}
         		    {if $row.participant_listing_id}
-        		    	<li><a title="Public Participant Listing" class="action-item-wrap" href="{crmURL p='civicrm/event/participant' q="reset=1&id=`$row.id`"}">{ts}Public Participant Listing{/ts}</a>
+        		    	<li><a title="Public Participant Listing" class="action-item-wrap" href="{crmURL p='civicrm/event/participant' q="reset=1&id=`$row.id`" fe='true'}">{ts}Public Participant Listing{/ts}</a>
         		    	</li>
         		    {/if}
                         </ul> 
