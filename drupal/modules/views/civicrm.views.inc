@@ -511,8 +511,9 @@ function civicrm_views_data() {
                                                    );
 
     // Organization Name
-    $data['civicrm_contact']['organization_name'] = array(
+    $data['civicrm_contact']['current_employer'] = array(
                                                           'title' => t('Organization Name'), // The item it appears as on the UI,
+                                                          'real field' => 'organization_name',
                                                           'help' => t('The display name of the contact\'s organizations.'), // The help that appears on the UI,
                                                           'field' => array(
                                                                            'handler' => 'views_handler_field',
@@ -579,7 +580,7 @@ function civicrm_views_data() {
                          'do_not_trade'      => 1,
                          'is_opt_out'        => 1,
                          'contact_type'      => 1,
-                         'organization_name' => 1,
+                         'current_employer'  => 1,
                          );
     civicrm_views_add_fields( $fields, $data['civicrm_contact'], $skipFields, 'civicrm_contact' );
 
