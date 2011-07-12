@@ -390,7 +390,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         foreach ($fields as $name => $dontCare ) {
             if ( $name == 'onbehalf' ) {
                 foreach ( $dontCare as $key => $value ) {
-                    $defaults[$key] = $contact['onbehalf'][$key];
+                    if ( isset($contact['onbehalf'][$key]) ) {
+                        $defaults[$key] = $contact['onbehalf'][$key];
+                    }
+                    if ( isset($contact['onbehalf']["{$key}_id"]) ) {
+                        $defaults["{$key}_id"] = $contact['onbehalf']["{$key}_id"];
+                    }
                 }       
             } else if ( isset( $contact[$name] ) ) {
                 $defaults[$name] = $contact[$name];
