@@ -5898,12 +5898,13 @@ function civicrm_views_href( $text, $path, $query ) {
 // Creates new View fields from CiviCRM fields
 function civicrm_views_add_fields( &$fields, &$data, &$skipFields, $tableName ) {
     foreach ( $fields as $name => $value ) {
-        if ( CRM_Utils_Array::value( $name, $skipFields ) ||
-             ( isset($value['where']) &&
-               substr( $value['where'], 0, strlen( $tableName ) + 1 ) != "{$tableName}."
-               ) ) {
-            continue;
-        }
+        if ( isset($value['custom_field_id']) ||
+             CRM_Utils_Array::value( $name, $skipFields ) ||
+              ( isset($value['where']) &&
+                substr( $value['where'], 0, strlen( $tableName ) + 1 ) != "{$tableName}." )
+            ){
+             continue;
+         }
 
         $type = CRM_Utils_Array::value( 'type', $value, 'String' );
 
