@@ -1797,11 +1797,11 @@ ORDER BY civicrm_email.is_primary DESC";
                 }
             } else {
                 if ( substr($key, 0, 4) === 'url-' ) {
-                    list( $url, $cnt, $websiteTypeId ) = explode( '-', $key );
-                    if ( $websiteTypeId ) {
-                        $data['website'][$cnt]['website_type_id'] = $value;     
+                    $websiteField = explode( '-', $key );
+                    if ( isset( $websiteField[2] ) ) {
+                        $data['website'][$websiteField[1]]['website_type_id'] = $value;     
                     } else {
-                        $data['website'][$cnt]['url'] = $value;
+                        $data['website'][$websiteField[1]]['url'] = $value;
                     }
                 } else if ($key === 'individual_suffix') { 
                     $data['suffix_id'] = $value;
