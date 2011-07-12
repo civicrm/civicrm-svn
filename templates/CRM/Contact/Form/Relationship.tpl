@@ -508,6 +508,9 @@ function buildRelationFields( relType ) {
                 hide('addCurrentEmployee');
                 show('addCurrentEmployer');
             }
+        } else {
+            hide('addCurrentEmployee');
+            hide('addCurrentEmployer');
         }
         hide('relationship-refresh');
         show('relationship-refresh-save');
