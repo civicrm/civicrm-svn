@@ -1269,7 +1269,7 @@ GROUP BY cc.id';
      * @return void
      * @access public
      */
-    static function sendActivityCopy( $clientId, $activityId, $contacts, $attachments = null, $caseId )
+    static function sendActivityCopy( $clientId, $activityId, $contacts, $attachments = null, $caseId,  $urlContactId = null )
     {   
         if ( !$activityId ) {
             return;
@@ -1330,8 +1330,15 @@ GROUP BY cc.id';
 
         // if it’s a case activity, add hashed id to the template (CRM-5916)
         if ($caseId) {
+			// CRM-8400 add clientId to $tplParams for URL in mail
             $tplParams['idHash']  = substr(sha1(CIVICRM_SITE_KEY . $caseId), 0, 7);
-        }
+            $tplParams['urlContactId'] = $clientId;
+        } else {
+			// CRM-8400 add urlContactId to $tplParams for URL in mail
+			if ( $urlContactId ) {
+				$tplParams['urlContactId'] = $urlContactId;
+			}
+		}
 
         $result = array();
         list ($name, $address) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $session->get( 'userID' ) );
@@ -2449,20 +2456,39 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
                                                        'activity_type_id', 'id' );
         
         if ( CRM_Utils_Array::value( 'isCaseActivity', $tplParams ) ) {
-            $tplParams['editActURL'] = CRM_Utils_System::url( 'civicrm/case/activity', 
-                                                              "reset=1&cid={$activityParams['source_contact_id']}&caseid={$activityParams['case_id']}&action=update&id={$activityParams['source_record_id']}", true );
-            
-            $tplParams['viewActURL'] = CRM_Utils_System::url( 'civicrm/case/activity/view', 
-                                                              "reset=1&aid={$activityParams['source_record_id']}&cid={$activityParams['source_contact_id']}&caseID={$activityParams['case_id']}", true );
+			// CRM-8400 use urlContactId for cid in link if passed
+			if ( CRM_Utils_Array::value( 'urlContactId', $tplParams ) ) {
+				$tplParams['viewActURL'] = CRM_Utils_System::url( 'civicrm/case/activity/view', 
+																  "reset=1&aid={$activityParams['source_record_id']}&cid={$tplParams['urlContactId']}&caseID={$activityParams['case_id']}", true );
 
-            $tplParams['manageCaseURL'] = CRM_Utils_System::url( 'civicrm/contact/view/case', 
-                                                              "reset=1&id={$activityParams['case_id']}&cid={$tplParams['client_id']}&action=view&context=home", true );
+				$tplParams['manageCaseURL'] = CRM_Utils_System::url( 'civicrm/contact/view/case', 
+																  "reset=1&id={$activityParams['case_id']}&cid={$tplParams['urlContactId']}&action=view&context=home", true );
+				
+				$tplParams['editActURL'] = CRM_Utils_System::url( 'civicrm/case/activity', 
+																  "reset=1&cid={$tplParams['urlContactId']}&caseid={$activityParams['case_id']}&action=update&id={$activityParams['source_record_id']}", true );
+			} else {
+				
+				$tplParams['viewActURL'] = CRM_Utils_System::url( 'civicrm/case/activity/view', 
+																  "reset=1&aid={$activityParams['source_record_id']}&cid={$activityParams['source_contact_id']}&caseID={$activityParams['case_id']}", true );
+
+				$tplParams['manageCaseURL'] = CRM_Utils_System::url( 'civicrm/contact/view/case', 
+																  "reset=1&id={$activityParams['case_id']}&cid={$tplParams['client_id']}&action=view&context=home", true );
+			}
         } else {   
-            $tplParams['editActURL'] = CRM_Utils_System::url( 'civicrm/contact/view/activity', 
-                                                              "atype=$activityTypeId&action=update&reset=1&id={$activityParams['source_record_id']}&cid={$activityParams['source_contact_id']}&context=activity", true );
-            
-            $tplParams['viewActURL'] = CRM_Utils_System::url( 'civicrm/contact/view/activity', 
-                                                              "atype=$activityTypeId&action=view&reset=1&id={$activityParams['source_record_id']}&cid={$activityParams['source_contact_id']}&context=activity", true );
+			// CRM-8400 use urlContactId for cid in link if passed
+			if ( CRM_Utils_Array::value( 'urlContactId', $tplParams ) ) {
+				$tplParams['editActURL'] = CRM_Utils_System::url( 'civicrm/contact/view/activity', 
+																  "atype=$activityTypeId&action=update&reset=1&id={$activityParams['source_record_id']}&cid={$tplParams['urlContactId']}&context=activity", true );
+				
+				$tplParams['viewActURL'] = CRM_Utils_System::url( 'civicrm/contact/view/activity', 
+																  "atype=$activityTypeId&action=view&reset=1&id={$activityParams['source_record_id']}&cid={$tplParams['urlContactId']}&context=activity", true );
+			} else {
+				$tplParams['editActURL'] = CRM_Utils_System::url( 'civicrm/contact/view/activity', 
+																  "atype=$activityTypeId&action=update&reset=1&id={$activityParams['source_record_id']}&cid={$activityParams['source_contact_id']}&context=activity", true );
+				
+				$tplParams['viewActURL'] = CRM_Utils_System::url( 'civicrm/contact/view/activity', 
+																  "atype=$activityTypeId&action=view&reset=1&id={$activityParams['source_record_id']}&cid={$activityParams['source_contact_id']}&context=activity", true );
+			}
         }
     }
 
