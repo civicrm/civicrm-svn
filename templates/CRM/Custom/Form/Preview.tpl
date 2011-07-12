@@ -94,7 +94,11 @@
 	    {if $element.html_type eq 'Radio'}
 	    	<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}clear{/ts}</a>)</span>
 	    {elseif $element.html_type eq 'Autocomplete-Select'}
-	        {include file="CRM/Custom/Form/AutoComplete.tpl"}
+	        {if $element.data_type eq 'ContactReference'}
+                  {include file="CRM/Custom/Form/ContactReference.tpl"}
+                {else}
+	          {include file="CRM/Custom/Form/AutoComplete.tpl"}
+                {/if}
         {/if}
           </td>
 	{/if}

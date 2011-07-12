@@ -196,6 +196,19 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
                 $defaults['default_value'] = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Country', $countryId );
             }
             
+            if ( $defaults['data_type'] == 'ContactReference' && CRM_Utils_Array::value('filter', $defaults) ) {
+                $contactRefFilter = 'Advance';
+                if ( strpos($defaults['filter'], 'group=') !== false ) {
+                    $filterParts = explode('=', $defaults['filter'], 2);
+                    if ( CRM_Utils_Rule::positiveInteger($filterParts[1]) ) {
+                        $contactRefFilter = 'Group';
+                        $defaults['group_id'] = $filterParts[1];
+                        unset($defaults['filter']);
+                    }
+                }
+                $defaults['filter_selected'] = $contactRefFilter;
+            }
+
             if ( CRM_Utils_Array::value( 'data_type', $defaults ) ) {
                 $defaultDataType = array_search( $defaults['data_type'],
                                                  self::$_dataTypeKeys );
@@ -308,6 +321,24 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
                                      $optionTypes,
                                      array( 'onclick' => "showOptionSelect();"), '<br/>' );
         
+        
+        $contactGroups = CRM_Core_PseudoConstant::group( );
+        asort($contactGroups);
+
+        $this->add( 'select',
+                    'group_id',
+                    ts('Limit List to Group'), 
+                    array( '' => ts( '- select group -' ) ) + $contactGroups
+                    );
+        
+        $this->add( 'text',
+                    'filter',
+                    ts('Advanced Filter'),
+                    $attributes['filter']
+                    );
+        
+        $this->add('hidden', 'filter_selected', 'Group', array('id'=> 'filter_selected'));        
+
         //if empty option group freeze the option type.
         if ( $emptyOptGroup ) {
             $element->freeze( );
@@ -576,7 +607,8 @@ SELECT count(*)
                 break;
 
             case 'ContactReference':
-                //FIX ME
+                // FIX ME: add validations for filter
+                $self->setDefaults( array('filter_selected', $fields['filter_selected']) );
                 break;
             }
         } 
@@ -803,6 +835,16 @@ AND    option_group_id = %2";
         } else {
             $params['is_search_range'] = 0;
         }
+        
+        $filter = 'null';
+        if ( $dataTypeKey == 11 && CRM_Utils_Array::value('filter_selected', $params)) {
+            if ( $params['filter_selected'] == 'Advance' && trim(CRM_Utils_Array::value('filter', $params)) ) {
+                $filter = trim($params['filter']);
+            } else if ( $params['filter_selected'] == 'Group' && CRM_Utils_Array::value('group_id', $params) ) {
+                $filter = 'group=' . $params['group_id'];
+            }
+        }
+        $params['filter'] = $filter;
         
         // fix for CRM-316
         $oldWeight = null;

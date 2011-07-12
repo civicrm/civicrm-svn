@@ -33,6 +33,13 @@ function custom_option_html_type( ) {
     if ( !html_type_name && !data_type_id ) {
         return;
     }
+	
+    if ( data_type_id == 11) {
+      toggleContactRefFilter( );
+    } else {
+      cj('#field_advance_filter').hide();
+      cj('#contact_reference_group').hide();      
+    }
 
     if ( data_type_id < 4 ) {
         if ( html_type_name != "Text" ) {
@@ -160,6 +167,22 @@ function custom_option_html_type( ) {
             </table>
             </td>
         </tr>
+        <tr id='contact_reference_group'>
+            <td class="label">{$form.group_id.label}</td>	
+            <td class="html-adjust">
+              {$form.group_id.html}
+	      &nbsp;&nbsp;<span><a href="javascript:toggleContactRefFilter('Advance')">{ts}Advanced Filter{/ts}</a></span>
+	    </td>
+        </tr>	
+	<tr id='field_advance_filter'>
+            <td class="label">{$form.filter.label}</td>	
+            <td class="html-adjust">
+              {$form.filter.html}
+              &nbsp;&nbsp;<span><a href="javascript:toggleContactRefFilter('Group')">{ts}Filter by Group{/ts}</a></span>
+	      <br />
+	      <span class="description">{ts}Filter contact listing using Contact Get API parameters. EXAMPLE: To list Organizations in group 3:{/ts} "group_id=3&contact_type=Organization" {docURL page="CiviCRM Public APIs"}</span> 
+            </td>
+        </tr>
         <tr  class="crm-custom-field-form-block-options_per_line" id="optionsPerLine" {if $action neq 2 && ($form.data_type.value.0.0 >= 4 && $form.data_type.value.1.0 neq 'CheckBox' || $form.data_type.value.1.0 neq 'Radio' )}class="hide-block"{/if}>
             <td class="label">{$form.options_per_line.label}</td>	
             <td class="html-adjust">{$form.options_per_line.html|crmReplace:class:two}</td>
@@ -275,6 +298,21 @@ function custom_option_html_type( ) {
     	document.getElementsByName("is_searchable")[0].checked   = false; 
 	    document.getElementsByName("is_search_range")[1].checked = true;
         cj("#searchByRange").hide();
+    }
+
+    function toggleContactRefFilter(setSelected) {
+      if ( !setSelected ) {
+        setSelected =  cj('#filter_selected').val();
+      } else {
+        cj('#filter_selected').val(setSelected);
+      }
+      if ( setSelected == 'Advance' ) {
+        cj('#contact_reference_group').hide( );
+        cj('#field_advance_filter').show( );
+      } else {
+        cj('#field_advance_filter').hide( );
+        cj('#contact_reference_group').show( );
+      }
     }
 </script>
 {/literal}

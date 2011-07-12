@@ -43,6 +43,11 @@ class CRM_Contact_Page_AJAX
 {
     static function getContactList( ) 
     {
+        // If context is 'customfield' 
+        if ( CRM_Utils_Array::value( 'context', $_GET ) == 'customfield' ) {
+            return self::getContactListCustomField( );
+        }
+
         require_once 'CRM/Core/BAO/Preferences.php';
         $name   = CRM_Utils_Array::value( 's', $_GET );
         $name   = CRM_Utils_Type::escape( $name, 'String' );
@@ -227,6 +232,65 @@ LIMIT    0, {$limit}
         CRM_Utils_System::civiExit( );
     } 
     
+    static function getContactListCustomField( ) {
+        require_once 'CRM/Core/BAO/Preferences.php';
+        $name   = CRM_Utils_Array::value( 's', $_GET );
+        $name   = CRM_Utils_Type::escape( $name, 'String' );
+        $list   = array_keys( CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options' ), '1' );
+        $return = array_unique(array_merge(array('sort_name'), $list));
+        
+        $config = CRM_Core_Config::singleton( );
+
+        $limit = 10;
+        if ( CRM_Utils_Array::value( 'limit', $_GET) ) {
+            $limit = CRM_Utils_Type::escape( $_GET['limit'], 'Positive' );
+        }
+
+        $params = array('offset' => 0, 'rowCount' => $limit, 'version' => 3);
+        foreach ( $return as $fld ) {
+            $params["return.{$fld}"] = 1;
+        }
+        
+        $excludeGet  = array('reset', 'key', 'className', 'fnName', 'json', 'reset', 'context', 'timestamp', 'limit', 'id', 's', 'q');
+        foreach( $_GET as $param => $val ) {
+            if ( empty($val) || 
+                 in_array($param, $excludeGet) ||
+                 strpos($param, 'return.') !== false ) {
+                continue;
+            }
+            // FIX ME: needs escaping?
+            $params[$param] = $val;
+        }
+        
+        if ( $name )  {
+            $params['sort_name'] = $name;
+        }
+
+        $contact = civicrm_api('Contact','Get', $params);
+        
+        if ( CRM_Utils_Array::value('is_error', $contact) ) {
+            echo "$name|error\n";
+            CRM_Utils_System::civiExit( );
+        }
+
+        $contactList = '';
+        foreach( $contact['values'] as $value ) {
+            $view = array( );
+            foreach( $return as $fld ) {
+                if ( CRM_Utils_Array::value($fld, $value) ) {
+                    $view[] = $value[$fld];
+                }
+            }
+            echo $contactList = implode(' :: ', $view) . "|". $value['id'] ."\n";
+        }
+
+        if ( !$contactList ) {
+            echo "$name|$name\n";
+        }
+
+        CRM_Utils_System::civiExit( );
+    }
+
     /**
      * Function to fetch PCP ID by PCP Supporter sort_name, also displays PCP title and associated Contribution Page title
      */
