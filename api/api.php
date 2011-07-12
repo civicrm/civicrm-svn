@@ -316,7 +316,7 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$versi
 					//the parent call. 
 					//in this case 'contact_id' will also be set to the parent's id
 					$subParams ["entity_id"] = $parentAPIValues ['id'];
-					$subParams ['entity_table'] = civicrm_api_get_camel_name ( $entity );
+					$subParams ['entity_table'] = 'civicrm_' . _civicrm_api_get_entity_name_from_camel($entity);
 					$subParams [strtolower ( $entity ) . "_id"] = $parentAPIValues ['id'];
 				}
 				if(strtolower($entity) != 'contact' && CRM_Utils_Array::value(strtolower ( $subEntity  . "_id"),$parentAPIValues)){
