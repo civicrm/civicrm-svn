@@ -6050,6 +6050,18 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
                                       'field' => 'entity_id',
                                       ),
                   );
+        // expose custom data to users view - note I tested with contact & membership fields which worked
+        // event won't work due to missing relationship in chain. 
+        // 'contribution' & 'activity' not currently related to users so excluded
+        if($jointable != 'civicrm_event' && $jointable != 'civicrm_activity' && $jointable != 'civicrm_contribution'){
+          $data[$currentgroup['table_name']]['table']['join']['users'] = 
+            array(
+                              'left_table' => $jointable,
+															'left_field' => 'id',
+  														'field' => 'entity_id',
+
+                  );
+        }
         $currentgroupfields = $currentgroup['fields'];
         $customHTMLTypes = array( 'Select', 'Multi-Select', 'AdvMulti-Select', 'Radio', 'CheckBox', 
                                   'Select State/Province', 'Select Country', 'Multi-Select Country',
