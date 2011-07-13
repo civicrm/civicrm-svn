@@ -96,7 +96,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form
 
             // fix the display of the monetary value, CRM-4038
             require_once 'CRM/Utils/Money.php';
-            $defaults['value'] = CRM_Utils_Money::format($defaults['value'], null, '%a');
+            $defaults['value'] = CRM_Utils_Money::format( CRM_Utils_Array::value( 'value', $defaults ), null, '%a');
         }
         
         require_once 'CRM/Core/DAO.php';

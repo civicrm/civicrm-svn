@@ -1154,6 +1154,7 @@ WHERE  v.option_group_id = g.id
     function validatePriceSet( &$form, $params ) 
     {
         $errors = array( );
+        $hasOptMaxValue = false;
         if ( !is_array( $params ) || empty( $params )  ) {
             return $errors;
         }

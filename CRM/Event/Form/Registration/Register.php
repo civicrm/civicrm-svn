@@ -1247,7 +1247,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 if ( ! empty( $emailString ) ) {
                     require_once 'CRM/Contact/BAO/Contact.php';
                     $match = CRM_Contact_BAO_Contact::matchContactOnEmail( $emailString, 'Individual' ) ;
-                    $contactID = $match->contact_id;
+                    if ( !empty( $match ) ) {
+                        $contactID = $match->contact_id;
+                    }
                 }
             }
         }
