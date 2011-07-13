@@ -44,6 +44,8 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         // Log in using webtestLogin() method
         $this->webtestLogin();
         
+        $customGrp1 = "Custom Data1_" . substr(sha1(rand()), 0, 7);
+        $customGrp2 = "Custom Data2_" . substr(sha1(rand()), 0, 7);
         $firstName = 'Ma' . substr( sha1( rand( ) ), 0, 4 );
         $lastName  = 'An' . substr( sha1( rand( ) ), 0, 7 );
         $participantfname = 'Dany'. substr( sha1( rand( ) ), 0, 4 );
@@ -55,7 +57,33 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
         $this->webtestAddPaymentProcessor($processorName);
         
-        $customId = $this->_testGetCustomFieldId();
+        // create custom group1
+        $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
+        $this->click("newCustomDataGroup");
+        $this->waitForPageToLoad('30000');
+        $this->type("title",$customGrp1);
+        $this->select("extends[0]","value=Contact");
+        $this->click("_qf_Group_next-bottom");
+        $this->waitForPageToLoad('30000');
+        
+        // get custom group id
+        $elements = $this->parseURL( );
+        $customGrpId1 = $elements['queryString']['gid'];
+        
+        // Create second custom group
+        $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
+        $this->click("newCustomDataGroup");
+        $this->waitForPageToLoad('30000');
+        $this->type("title",$customGrp2);
+        $this->select("extends[0]","value=Individual");
+        $this->click("_qf_Group_next-bottom");
+        $this->waitForPageToLoad('30000');
+        
+        // get custom group id
+        $elements = $this->parseURL( );
+        $customGrpId2 = $elements['queryString']['gid'];
+        
+        $customId = $this->_testGetCustomFieldId( $customGrpId1 , $customGrpId2 );
         
         $profileId = $this->_testGetProfileId( $customId );
         
@@ -109,6 +137,47 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->verifyText( "xpath=//form[@id='ParticipantView']/div[2]/table/tbody/tr[3]/td[2]/a", preg_quote( $eventTitle ) ); 
         $this->verifyText( "xpath=//form[@id='ParticipantView']/div[2]/table/tbody/tr[6]/td[2]", preg_quote( $status ) ); 
         
+        // delete all custom data
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[0] );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteField_next-bottom" );
+        $this->waitForPageToLoad("30000");
+               
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[1] );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteField_next-bottom" );
+        $this->waitForPageToLoad("30000");
+        
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[2] );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteField_next-bottom" );
+        $this->waitForPageToLoad("30000");
+        
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group?action=delete&reset=1&id=" . $customGrpId1 );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteGroup_next-bottom" );
+        $this->waitForPageToLoad("30000");
+        
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId2 . "&id=" . $customId[3] );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteField_next-bottom" );
+        $this->waitForPageToLoad("30000");
+        
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId2 . "&id=" . $customId[4] );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteField_next-bottom" );
+        $this->waitForPageToLoad("30000");
+        
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId2 . "&id=" . $customId[5] );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteField_next-bottom" );
+        $this->waitForPageToLoad("30000");
+        
+        $this->open( $this->sboxPath . "civicrm/admin/uf/group?action=delete&id=" . $customGrpId2 );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteGroup_next-bottom" );
+        $this->waitForPageToLoad("30000");
+        
         //logout
         $this->open( $this->sboxPath . "civicrm/logout?reset=1" );
         $this->waitForPageToLoad( '30000' );
@@ -122,6 +191,16 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         // Log in using webtestLogin() method
         $this->webtestLogin();
         
+        // add the required Drupal permission
+        $this->open("{$this->sboxPath}admin/user/permissions");
+        $this->waitForElementPresent('edit-submit');
+        $this->check('edit-1-access-all-custom-data');
+        $this->click('edit-submit');
+        $this->waitForPageToLoad();
+        $this->assertTrue($this->isTextPresent('The changes have been saved.'));
+        
+        $customGrp1 = "Custom Data1_" . substr(sha1(rand()), 0, 7);
+        $customGrp2 = "Custom Data2_" . substr(sha1(rand()), 0, 7);
         $firstName = 'Ma' . substr( sha1( rand( ) ), 0, 4 );
         $lastName  = 'An' . substr( sha1( rand( ) ), 0, 7 );
         $participantfname = 'Dany'. substr( sha1( rand( ) ), 0, 4 );
@@ -133,7 +212,33 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
         $this->webtestAddPaymentProcessor($processorName);
         
-        $customId = $this->_testGetCustomFieldId();
+        // create custom group1
+        $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
+        $this->click("newCustomDataGroup");
+        $this->waitForPageToLoad('30000');
+        $this->type("title",$customGrp1);
+        $this->select("extends[0]","value=Contact");
+        $this->click("_qf_Group_next-bottom");
+        $this->waitForPageToLoad('30000');
+        
+        // get custom group id
+        $elements = $this->parseURL( );
+        $customGrpId1 = $elements['queryString']['gid'];
+        
+        // Create second custom group
+        $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
+        $this->click("newCustomDataGroup");
+        $this->waitForPageToLoad('30000');
+        $this->type("title",$customGrp2);
+        $this->select("extends[0]","value=Individual");
+        $this->click("_qf_Group_next-bottom");
+        $this->waitForPageToLoad('30000');
+        
+        // get custom group id
+        $elements = $this->parseURL( );
+        $customGrpId2 = $elements['queryString']['gid'];
+        
+        $customId = $this->_testGetCustomFieldId( $customGrpId1 , $customGrpId2 );
         
         $profileId =$this->_testGetProfileId( $customId );
         
@@ -197,19 +302,55 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->verifyText( "xpath=//form[@id='ParticipantView']/div[2]/table/tbody/tr[3]/td[2]/a", preg_quote( $eventTitle ) ); 
         $this->verifyText( "xpath=//form[@id='ParticipantView']/div[2]/table/tbody/tr[6]/td[2]", preg_quote( $status ) ); 
         
-        // logout
-        $this->open( $this->sboxPath . "civicrm/logout?reset=1" );
-        $this->waitForPageToLoad( '30000' );
+        // delete all custom data
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[0] );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteField_next-bottom" );
+        $this->waitForPageToLoad("30000");
+               
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[1] );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteField_next-bottom" );
+        $this->waitForPageToLoad("30000");
+        
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[2] );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteField_next-bottom" );
+        $this->waitForPageToLoad("30000");
+        
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group?action=delete&reset=1&id=" . $customGrpId1 );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteGroup_next-bottom" );
+        $this->waitForPageToLoad("30000");
+        
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId2 . "&id=" . $customId[3] );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteField_next-bottom" );
+        $this->waitForPageToLoad("30000");
+        
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId2 . "&id=" . $customId[4] );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteField_next-bottom" );
+        $this->waitForPageToLoad("30000");
+        
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId2 . "&id=" . $customId[5] );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteField_next-bottom" );
+        $this->waitForPageToLoad("30000");
+        
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group?action=delete&reset=1&id=" . $customGrpId2 );
+        $this->waitForPageToLoad("30000");
+        $this->click( "_qf_DeleteGroup_next-bottom" );
+        $this->waitForPageToLoad("30000");
     }
     
     
-    function _testGetCustomFieldId()
+    function _testGetCustomFieldId( $customGrpId1 , $customGrpId2 )
     {
         $customId = array();
         
         // Create a custom data to add in profile
-        $customGrp1 = "Custom Data1_" . substr(sha1(rand()), 0, 7);
-        $customGrp2 = "Custom Data2_" . substr(sha1(rand()), 0, 7);
+       
         $field1 = "Fname" . substr(sha1(rand()), 0, 7);
         $field2 = "Mname" . substr(sha1(rand()), 0, 7);
         $field3 = "Lname" . substr(sha1(rand()), 0, 7);
@@ -217,18 +358,9 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $field5 = "Address" . substr(sha1(rand()), 0, 7);
         $field6 = "Job" . substr(sha1(rand()), 0, 7);
         
-        $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
-        $this->click("newCustomDataGroup");
+        // add custom fields for group 1
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field/add?reset=1&action=add&gid=" .$customGrpId1 );
         $this->waitForPageToLoad('30000');
-        $this->type("title",$customGrp1);
-        $this->select("extends[0]","value=Contact");
-        $this->click("_qf_Group_next-bottom");
-        $this->waitForPageToLoad('30000');
-        
-        // get custom group id
-        $elements = $this->parseURL( );
-        $customGrpId1 = $elements['queryString']['gid'];
-        
         $this->type("label",$field1);
         $this->check("is_searchable");
         $this->click("_qf_Field_next_new-bottom");
@@ -256,19 +388,9 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $custom3 = $custom3[1];
         array_push($customId , $custom3);
         
-        // Create second custom group
-        $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
-        $this->click("newCustomDataGroup");
+        // add custom fields to group2
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field/add?reset=1&action=add&gid=" .$customGrpId2 );
         $this->waitForPageToLoad('30000');
-        $this->type("title",$customGrp2);
-        $this->select("extends[0]","value=Individual");
-        $this->click("_qf_Group_next-bottom");
-        $this->waitForPageToLoad('30000');
-        
-        // get custom group id
-        $elements = $this->parseURL( );
-        $customGrpId2 = $elements['queryString']['gid'];
-        
         $this->type("label",$field4);
         $this->select("data_type[0]","value=2");
         $this->check("is_searchable");
