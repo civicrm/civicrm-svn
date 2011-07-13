@@ -255,10 +255,10 @@ LIMIT    0, {$limit}
         foreach( $_GET as $param => $val ) {
             if ( empty($val) || 
                  in_array($param, $excludeGet) ||
-                 strpos($param, 'return.') !== false ) {
+                 strpos($param, 'return.') !== false ||
+                 strpos($param, 'api.') !== false ) {
                 continue;
             }
-            // FIX ME: needs escaping?
             $params[$param] = $val;
         }
         

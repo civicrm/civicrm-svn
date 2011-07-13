@@ -542,8 +542,9 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
             $errors['_qf_default'] = ts('Please enter valid - Data and Input Field Type.');
         }
 
-        if ( $default ) {
-            $dataType = self::$_dataTypeKeys[$fields['data_type'][0]];
+        $dataType = self::$_dataTypeKeys[$fields['data_type'][0]];
+
+        if ( $default || $dataType == 'ContactReference' ) {
             switch ( $dataType ) {
                 
             case 'Int':
@@ -607,7 +608,14 @@ SELECT count(*)
                 break;
 
             case 'ContactReference':
-                // FIX ME: add validations for filter
+                if ( $fields['filter_selected'] == 'Advance' &&
+                     CRM_Utils_Array::value('filter', $fields) ) {
+                    if ( strpos($fields['filter'], 'className=') !== false ||
+                         strpos($fields['filter'], 'fnName=') !== false ||
+                         strpos($fields['filter'], 'context=')!== false ) {
+                        $errors['filter'] = ts( 'Invalid parameters for filter' );
+                    }
+                }
                 $self->setDefaults( array('filter_selected', $fields['filter_selected']) );
                 break;
             }
