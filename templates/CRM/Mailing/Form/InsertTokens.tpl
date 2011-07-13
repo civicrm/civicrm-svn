@@ -224,7 +224,10 @@ function selectValue( val ) {
            ( isMailing ) ? text_message = "text_message" : text_message = "msg_text";
         }          
         var msg       = cj("#"+ text_message).val( );
-        var cursorlen = document.getElementById(text_message).selectionStart;
+       
+        var range = cj( "#"+ text_message ).getSelection();
+        var cursorlen = range.start;
+        
         var textlen   = msg.length;
         document.getElementById(text_message).value = msg.substring(0, cursorlen) + token + msg.substring(cursorlen, textlen);
         var cursorPos = (cursorlen + token.length);
@@ -247,7 +250,9 @@ function selectValue( val ) {
             oEditor.insertHtml(token2.toString() );
         } else {
             var msg       = document.getElementById(html_message).value;
-            var cursorlen = document.getElementById(html_message).selectionStart;
+            var range = cj( "#"+ text_message ).getSelection();
+            var cursorlen = range.start;
+ 
             var textlen   = msg.length;
             document.getElementById(html_message).value = msg.substring(0, cursorlen) + token2 + msg.substring(cursorlen, textlen);
             var cursorPos = (cursorlen + token2.length);
