@@ -393,6 +393,9 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                     if ( in_array( $responseFields[$key]['field_type'], $contactFieldTypes ) ) {
                         $fields[$key] = $responseFields[$key];
                         $contactParams[$key] = $value;
+                        if ( isset($params["{$key}_id"]) ) {
+                            $contactParams["{$key}_id"] = $params["{$key}_id"];
+                        }
                     }
                 }
             }
