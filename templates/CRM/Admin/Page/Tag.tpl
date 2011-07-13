@@ -178,7 +178,7 @@ function mergeTag( fromId ) {
                         if ( values.status == true ) {
                             cj('#tag_row_' + toId).children('td.crm-tag-used_for').text(values.tagB_used_for);
                             var msg = "'" + values.tagA + "' has been merged with '" + values.tagB + "'. All records previously tagged with '" + values.tagA + "' are now tagged with '" + values.tagB + "'.";
-                            cj('#tag_row_' + fromId).html('<td colspan="8"><div class="status message">' + msg + '</div></td>'); 
+                            cj('#tag_row_' + fromId).html('<td colspan="8"><div class="status message"><div class="icon inform-icon"></div>' + msg + '</div></td>'); 
                         }
                       }
                 });
