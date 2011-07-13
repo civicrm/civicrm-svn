@@ -63,8 +63,20 @@
 
 				/* exploder */
 				(document.selection && function() {
+                    // get the current cursor position
+                    // currently IE 8 does not support methods to get cursor start position
+                    // replace below code with the equivalent once method is available 
+                    var startPosition = e.value.length;
+                    var endPosition = startPosition + text.length;
+                    
+                    // set the value
+                    e.value = e.value.substr(0, startPosition) + text + e.value.substr( endPosition, e.value.length);
+                    
+                    // move the focus to correct position, end of inserted token 
 					e.focus();
-					document.selection.createRange().text = text;
+                    var range = e.createTextRange(); 
+                    range.move( "character", endPosition ); 
+                    range.select(); 
 					return this;
 				}) ||
 

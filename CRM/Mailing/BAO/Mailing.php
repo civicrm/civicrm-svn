@@ -2084,7 +2084,7 @@ SELECT $selectClause
                     array(
                           'size'     => "5",
                           'multiple' => true,
-                          'onchange' => "return tokenReplText(this);"
+                          'onclick'  => "return tokenReplText(this);"
                           )
                     );
         
@@ -2101,7 +2101,7 @@ SELECT $selectClause
                     array(
                           'size'     => "5",
                           'multiple' => true,
-                          'onchange' => "return tokenReplText(this);"
+                          'onclick'  => "return tokenReplText(this);"
                           )
                     );
         
@@ -2110,7 +2110,7 @@ SELECT $selectClause
                     array(
                           'size'     => "5",
                           'multiple' => true,
-                          'onchange' => "return tokenReplHtml(this);"
+                          'onclick'  => "return tokenReplHtml(this);"
                           )
                     );
         
