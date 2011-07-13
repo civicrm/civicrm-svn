@@ -76,37 +76,7 @@
 
 			)();
 
-		},
-
-        setCursorPosition: function( cursorPos ) {
-
-			var e = this.jquery ? this[0] : this;
-			var text = arguments[0] || '';
-            e.focus();
-			
-            return (
-
-				/* mozilla / dom 3.0 */
-				('selectionStart' in e && function() {
-					e.selectionStart = e.selectionEnd = cursorPos;
-                    return this;
-				}) ||
-
-				/* exploder */
-				(document.selection && function() {
-					
-					return this;
-				}) ||
-
-				/* browser not supported */
-				function() {
-					return this;
-				}
-
-			)();
-
 		}
-
 	};
 
 	jQuery.each(fieldSelection, function(i) { jQuery.fn[i] = this; });

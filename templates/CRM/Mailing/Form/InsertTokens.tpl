@@ -223,17 +223,9 @@ function selectValue( val ) {
         }else {
            ( isMailing ) ? text_message = "text_message" : text_message = "msg_text";
         }          
-        var msg       = cj("#"+ text_message).val( );
-       
-        var range = cj( "#"+ text_message ).getSelection();
-        var cursorlen = range.start;
         
-        var textlen   = msg.length;
-        document.getElementById(text_message).value = msg.substring(0, cursorlen) + token + msg.substring(cursorlen, textlen);
-        
-        var cursorPos = (cursorlen + token.length);
-        cj( "#"+ text_message ).setCursorPosition( cursorPos );
-        
+        cj( "#"+ text_message ).replaceSelection( token ); 
+
         if ( isMailing ) { 
              verify();
         }
@@ -249,15 +241,7 @@ function selectValue( val ) {
             oEditor = CKEDITOR.instances[html_message];
             oEditor.insertHtml(token2.toString() );
         } else {
-            var msg       = document.getElementById(html_message).value;
-            var range = cj( "#"+ text_message ).getSelection();
-            var cursorlen = range.start;
- 
-            var textlen   = msg.length;
-            document.getElementById(html_message).value = msg.substring(0, cursorlen) + token2 + msg.substring(cursorlen, textlen);
-            
-            var cursorPos = (cursorlen + token2.length);
-            cj( "#"+ html_message ).setCursorPosition( cursorPos );
+            cj( "#"+ html_message ).replaceSelection( token2 );
         }
 
         if ( isMailing ) { 
