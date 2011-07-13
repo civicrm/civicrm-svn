@@ -180,11 +180,7 @@ function civicrm_api3_pledge_get( $params ) {
 
     $pledge = array( );
     while ( $dao->fetch( ) ) {
-      if ($params['sequential']){
-        $pledge[] = $query->store( $dao );
-      }else{
         $pledge[$dao->pledge_id] = $query->store( $dao );
-      }
     }
 
     return civicrm_api3_create_success($pledge,$params, 'pledge','get',$dao);
