@@ -173,7 +173,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->click( "_qf_DeleteField_next-bottom" );
         $this->waitForPageToLoad("30000");
         
-        $this->open( $this->sboxPath . "civicrm/admin/uf/group?action=delete&id=" . $customGrpId2 );
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group?action=delete&reset=1&id=" . $customGrpId2 );
         $this->waitForPageToLoad("30000");
         $this->click( "_qf_DeleteGroup_next-bottom" );
         $this->waitForPageToLoad("30000");
