@@ -221,7 +221,32 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
                                {$this->_aliases['civicrm_email']}.is_primary = 1\n";     
         }
     }
+    function statistics( &$rows ) {
+        $statistics = parent::statistics( $rows );
 
+        if ( ! $this->_having ) {
+            $select = "
+            SELECT COUNT({$this->_aliases['civicrm_pledge']}.amount )       as count,
+                   SUM({$this->_aliases['civicrm_pledge']}.amount )         as amount,
+                   ROUND(AVG({$this->_aliases['civicrm_pledge']}.amount), 2) as avg
+            ";
+        
+            $sql = "{$select} {$this->_from} {$this->_where}";
+            $dao = CRM_Core_DAO::executeQuery( $sql );
+        
+            if ( $dao->fetch( ) ) {
+                $statistics['counts']['amount'] = array( 'value' => $dao->amount,
+                                                         'title' => 'Total Pledged',
+                                                         'type'  => CRM_Utils_Type::T_MONEY );
+                $statistics['counts']['count '] = array( 'value' => $dao->count,
+                                                         'title' => 'Total No Pledges' );
+                $statistics['counts']['avg   '] = array( 'value' => $dao->avg,
+                                                         'title' => 'Average',
+                                                         'type'  => CRM_Utils_Type::T_MONEY );
+            }
+        }
+        return $statistics;
+    }
     function orderBy( ) {
         $this->_orderBy = "ORDER BY {$this->_aliases['civicrm_contact']}.sort_name, {$this->_aliases['civicrm_contact']}.id";
     }
