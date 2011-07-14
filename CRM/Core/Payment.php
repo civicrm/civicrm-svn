@@ -93,7 +93,7 @@ abstract class CRM_Core_Payment {
         // make sure paymentProcessor is not empty
         // CRM-7424
         if ( empty( $paymentProcessor ) ) {
-            return null;
+            return CRM_Core_DAO::$_nullObject;
         }
 
         $cacheKey = "{$mode}_{$paymentProcessor['id']}_".(int)isset( $paymentForm );

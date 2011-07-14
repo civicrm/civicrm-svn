@@ -7,7 +7,7 @@
  */
 function phone_delete_example(){
 $params = array( 
-  'contact_id' => 2,
+  'contact_id' => 1,
   'location_type_id' => 7,
   'phone' => '021 512 755',
   'is_primary' => 1,

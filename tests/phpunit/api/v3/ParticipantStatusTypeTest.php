@@ -29,7 +29,7 @@ class api_v3_ParticipantStatusTypeTest extends CiviUnitTestCase
     }
 
    public function testCreateParticipantStatusType () {
-        $result = civicrm_api3_participant_status_type_create($this->params);
+        $result = civicrm_api('participant_status_type','create',$this->params);
         $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
@@ -38,7 +38,7 @@ class api_v3_ParticipantStatusTypeTest extends CiviUnitTestCase
     }
 
    public function testGetParticipantStatusType () {
-        $result = civicrm_api3_participant_status_type_get($this->params);
+        $result = civicrm_api('participant_status_type','get',$this->params);
         $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
@@ -49,8 +49,8 @@ class api_v3_ParticipantStatusTypeTest extends CiviUnitTestCase
    public function testDeleteParticipantStatusType () {
 
         $ParticipantStatusType = civicrm_api('ParticipantStatusType', 'Create',$this->params); 
-        $entity = civicrm_api3_participant_status_type_get(array('version' => 3));
-        $result = civicrm_api3_participant_status_type_delete(array('version' =>3,'id' => $ParticipantStatusType['id']));
+        $entity = civicrm_api('participant_status_type','get',array('version' => 3));
+        $result = civicrm_api('participant_status_type','delete',array('version' =>3,'id' => $ParticipantStatusType['id']));
         $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $getCheck = civicrm_api('ParticipantStatusType', 'GET',array('version' =>3,'id' => $ParticipantStatusType['id'])); 

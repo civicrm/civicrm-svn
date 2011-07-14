@@ -583,7 +583,7 @@ function civicrm_group_roles_add_remove_groups( $roles, $user, $op )
                     $contacts = array( $contact );
                     $gparams = array( 'version'=>'2','group_id' => $gid, 'contact_id' => $contact_id );
                     if ( $op == 'add' ) {
-                        $result = civicrm_api('group_contact', 'create', $gparams);
+                        $result = civicrm_api('group_contact', 'add', $gparams);
                     } else {
                         $result = civicrm_api('group_contact', 'remove', $gparams);
                     }

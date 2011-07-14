@@ -565,25 +565,27 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
             $status .= ts('Relationship record has been updated.');
         }
         
-        $note = new CRM_Core_DAO_Note( );
-        $note->entity_id = $relationshipIds[0];
-        $note->entity_table = 'civicrm_relationship';
-        $noteIds = array();
-        if ( $note->find(true) ) {
-            $id            = $note->id;    
-            $noteIds['id'] = $id;
+        if ( !empty( $relationshipIds ) ) {
+            $note = new CRM_Core_DAO_Note( );
+            $note->entity_id = $relationshipIds[0];
+            $note->entity_table = 'civicrm_relationship';
+            $noteIds = array();
+            if ( $note->find(true) ) {
+                $id            = $note->id;    
+                $noteIds['id'] = $id;
+            }
+            
+            $noteParams = array(
+                                'entity_id'     => $relationshipIds[0],
+                                'entity_table'  => 'civicrm_relationship',
+                                'note'          => $params['note'],
+                                'contact_id'    => $this->_contactId
+                                );
+            CRM_Core_BAO_Note::add( $noteParams , $noteIds );
+            
+            $params['relationship_ids'] = $relationshipIds;
         }
-        
-        $noteParams = array(
-                            'entity_id'     => $relationshipIds[0],
-                            'entity_table'  => 'civicrm_relationship',
-                            'note'          => $params['note'],
-                            'contact_id'    => $this->_contactId
-                            );
-        CRM_Core_BAO_Note::add( $noteParams , $noteIds );
-        
-        $params['relationship_ids'] = $relationshipIds;
-
+    
         // Membership for related contacts CRM-1657
         if ( CRM_Core_Permission::access( 'CiviMember' ) && ( !$duplicate ) ) {
             if ($this->_action & CRM_Core_Action::ADD ) {

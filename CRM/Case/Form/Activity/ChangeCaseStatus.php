@@ -102,7 +102,7 @@ class CRM_Case_Form_Activity_ChangeCaseStatus
      */
     public function beginPostProcess( &$form, &$params ) 
     {
-        $params['id'] = $params['case_id'];
+        $params['id'] = CRM_Utils_Array::value( 'case_id', $params );
     }
 
     /**

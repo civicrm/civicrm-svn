@@ -663,13 +663,13 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
      * @static
      */
     function deleteContact( $id, $restore = false, $skipUndelete = false )
-    {
+    {   
         require_once 'CRM/Activity/BAO/Activity.php';
-
+        
         if ( ! $id ) {
             return false;
         }
-
+        
         // make sure we have edit permission for this contact
         // before we delete
         require_once 'CRM/Contact/BAO/Contact/Permission.php';
@@ -677,7 +677,7 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
              ( $restore && !CRM_Core_Permission::check( 'access deleted contacts' ) ) ) {
             return false;
         }
-
+        
         // make sure this contact_id does not have any membership types
         $membershipTypeID = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType',
                                                          $id,
@@ -686,18 +686,18 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
         if ( $membershipTypeID ) {
             return false;
         }
-                                                         
+        
         $contact = new CRM_Contact_DAO_Contact();
         $contact->id = $id;
         if ( !$contact->find(true) ) {
             return false;
         }
-
+        
         if ( $restore ) {
             self::contactTrashRestore( $contact->id, true );
             return true;
         }
-
+        
         $contactType = $contact->contact_type;
         
         // currently we only clear employer cache.
@@ -706,36 +706,41 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
             require_once 'CRM/Contact/BAO/Contact/Utils.php';
             CRM_Contact_BAO_Contact_Utils::clearAllEmployee( $id );
         }
-
+        
         require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::pre( 'delete', $contactType, $id, CRM_Core_DAO::$_nullArray );
-
+        
         // start a new transaction
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
-
+        
         $config =& CRM_Core_Config::singleton();
         if ($skipUndelete or !$config->contactUndelete) {
+            
             //delete billing address if exists.
             require_once 'CRM/Contribute/BAO/Contribution.php';
             CRM_Contribute_BAO_Contribution::deleteAddress( null, $id );
-
+            
             // delete the log entries since we dont have triggers enabled as yet
             require_once 'CRM/Core/DAO/Log.php';
             $logDAO = new CRM_Core_DAO_Log();
             $logDAO->entity_table = 'civicrm_contact';
             $logDAO->entity_id    = $id;
             $logDAO->delete();
-
+            
             // do activity cleanup, CRM-5604
             require_once 'CRM/Activity/BAO/Activity.php';
             CRM_Activity_BAO_activity::cleanupActivity( $id );
-
+            
+            // delete all notes related to contact
+            require_once 'CRM/Core/BAO/Note.php';
+            CRM_Core_BAO_Note::cleanContactNotes( $id );
+            
             $contact->delete();
         } else {
             self::contactTrashRestore( $contact->id );
         }
-
+        
         //delete the contact id from recently view
         require_once 'CRM/Utils/Recent.php';
         CRM_Utils_Recent::delContact( $id );
@@ -1797,11 +1802,11 @@ ORDER BY civicrm_email.is_primary DESC";
                 }
             } else {
                 if ( substr($key, 0, 4) === 'url-' ) {
-                    list( $url, $cnt, $websiteTypeId ) = explode( '-', $key );
-                    if ( $websiteTypeId ) {
-                        $data['website'][$cnt]['website_type_id'] = $value;     
+                    $websiteField = explode( '-', $key );
+                    if ( isset( $websiteField[2] ) ) {
+                        $data['website'][$websiteField[1]]['website_type_id'] = $value;     
                     } else {
-                        $data['website'][$cnt]['url'] = $value;
+                        $data['website'][$websiteField[1]]['url'] = $value;
                     }
                 } else if ($key === 'individual_suffix') { 
                     $data['suffix_id'] = $value;

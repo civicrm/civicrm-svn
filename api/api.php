@@ -58,14 +58,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
       switch (strtolower($action)){
         case "getfields":
             $version = 3;
-            $dao = _civicrm_api3_get_DAO ($entity);
-            if (empty($dao)) {
-                return $errorFnName("API for $entity does not exist (join the API team and implement $function" );
-            }
-            $file = str_replace ('_','/',$dao).".php";
-            require_once ($file); 
-            $d = new $dao();
-            return civicrm_api3_create_success($d->fields());
+            return civicrm_api3_create_success(_civicrm_api_get_fields($entity));
             break;
         case "getcount":
           $result=civicrm_api ($entity,'get',$params);
@@ -156,8 +149,14 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
 
     return $result;
   } catch (PEAR_Exception $e) {
+    if(CRM_Utils_Array::value('format.is_success', $params) == 1){
+      return 0;
+    }
     return civicrm_api3_create_error( $e->getMessage(),null,$params );
   } catch (Exception $e) {
+    if(CRM_Utils_Array::value('format.is_success', $params) == 1){
+      return 0;
+    }
     return civicrm_api3_create_error( $e->getMessage(),null,$params );
   }
 }
@@ -317,12 +316,13 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$versi
 					//the parent call. 
 					//in this case 'contact_id' will also be set to the parent's id
 					$subParams ["entity_id"] = $parentAPIValues ['id'];
-					$subParams ['entity_table'] = civicrm_api_get_camel_name ( $entity );
+					$subParams ['entity_table'] = 'civicrm_' . _civicrm_api_get_entity_name_from_camel($entity);
 					$subParams [strtolower ( $entity ) . "_id"] = $parentAPIValues ['id'];
 				}
-				
-				if(CRM_Utils_Array::value(strtolower ( $subEntity  . "_id"),$parentAPIValues)){
+				if(strtolower($entity) != 'contact' && CRM_Utils_Array::value(strtolower ( $subEntity  . "_id"),$parentAPIValues)){
 				  //e.g. if event_id is in the values returned & subentity is event then pass in event_id as 'id'
+				  //don't do this for contact as it does some wierd things like returning primary email & 
+				  //thus limiting the ability to chain email
 				  //TODO - this might need the camel treatment
 				  $subParams['id'] = $parentAPIValues[$subEntity  . "_id"];
 				}
@@ -331,7 +331,10 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action,$entity,$versi
 					$subParams ['id'] = $result ['values'] [$idIndex] ['entity_id'];
 				
 				}
-
+				// if we are dealing with the same entity pass 'id' through (useful for get + delete for example)
+        if(strtolower($entity) == strtolower($subEntity)){
+          $subParams ['id'] = $result ['values'] [$idIndex] ['id'];
+        }
 				
 				
 				$subParams ['version'] = $version;
@@ -418,3 +421,4 @@ function _civicrm_api_get_entity_name_from_camel($entity){
     }
     return $entity;
 }
+

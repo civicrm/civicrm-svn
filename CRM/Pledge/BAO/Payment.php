@@ -225,6 +225,35 @@ WHERE     pledge_id = %1
         }
         return null;
     }
+
+    /**
+     * Delete pledge payment
+     *
+     * @param array $params associate array of field
+     *
+     * @return pledge payment id
+     * @static
+     */
+    static function del( $id )
+    {
+        require_once 'CRM/Pledge/DAO/Payment.php';
+        $payment = new CRM_Pledge_DAO_Payment( );
+        $payment->id = $id;
+        if ( $payment->find( ) ) {
+            $payment->fetch( );
+            
+            require_once 'CRM/Utils/Hook.php';
+            CRM_Utils_Hook::pre( 'delete',  'PledgePayment', $id, $payment );
+            
+            $result = $payment->delete( );
+            
+            CRM_Utils_Hook::post( 'delete',  'PledgePayment', $id, $payment );
+            
+            return $result;
+        } else {
+            return false;
+        }
+    }
     
     /**
      * Function to delete all pledge payments
@@ -658,6 +687,7 @@ WHERE  civicrm_pledge_payment.id = {$paymentId}
     static function getOldestPledgePayment( $pledgeID, $limit = 1 )
     {
         //get pending / overdue statuses
+        require_once('CRM/Contribute/PseudoConstant.php');
         $pledgeStatuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
 
         //get pending and overdue payments

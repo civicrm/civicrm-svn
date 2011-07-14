@@ -52,8 +52,7 @@ require_once 'CRM/Utils/Rule.php';
  * @access public
  */
 function civicrm_api3_pledge_create( $params ) {
-  _civicrm_api3_initialize(true );
-  try{
+
 
     if ($params['pledge_amount']){
       //acceptable in unique format or DB format but change to unique format here
@@ -84,11 +83,7 @@ function civicrm_api3_pledge_create( $params ) {
     }
 
     return civicrm_api3_create_success($pledgeArray,$params,'pledge','create',$pledge);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -101,8 +96,7 @@ function civicrm_api3_pledge_create( $params ) {
  * @access public
  */
 function civicrm_api3_pledge_delete( $params ) {
-  _civicrm_api3_initialize(true);
-  try{
+
 
     civicrm_api3_verify_one_mandatory ($params,null,array('id', 'pledge_id'));
     if (!empty($params['id'])){
@@ -121,11 +115,7 @@ function civicrm_api3_pledge_delete( $params ) {
     } else {
       return civicrm_api3_create_error(  'Could not delete pledge'  );
     }
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -138,8 +128,6 @@ function civicrm_api3_pledge_delete( $params ) {
  * @access public
  */
 function civicrm_api3_pledge_get( $params ) {
-  _civicrm_api3_initialize(true );
-  try{
     civicrm_api3_verify_mandatory ($params);
     if(!empty($params['id'])  && empty($params['pledge_id'])){
       //if you pass in 'id' it will be treated by the query as contact_id
@@ -192,19 +180,11 @@ function civicrm_api3_pledge_get( $params ) {
 
     $pledge = array( );
     while ( $dao->fetch( ) ) {
-      if ($params['sequential']){
-        $pledge[] = $query->store( $dao );
-      }else{
         $pledge[$dao->pledge_id] = $query->store( $dao );
-      }
     }
 
     return civicrm_api3_create_success($pledge,$params, 'pledge','get',$dao);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -332,13 +312,6 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
         break;
 
 
-      case 'create_date':
-      case 'scheduled_date':
-      case 'start_date':
-        if (!CRM_Utils_Rule::datetime($value)) {
-          return civicrm_api3_create_error("$key not a valid date: $value");
-        }
-        break;
       case 'installment_amount':
       case 'amount':
         if (!CRM_Utils_Rule::money($value)) {

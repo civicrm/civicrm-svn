@@ -134,7 +134,7 @@
 {else}
     {if $participantMode == 'test' }
         {assign var=registerMode value="TEST"}
-        {else if $participantMode == 'live'}
+    {elseif $participantMode == 'live'}
         {assign var=registerMode value="LIVE"}
     {/if}
     <h3>{if $action eq 1}{ts}New Event Registration{/ts}{elseif $action eq 8}{ts}Delete Event Registration{/ts}{else}{ts}Edit Event Registration{/ts}{/if}</h3>

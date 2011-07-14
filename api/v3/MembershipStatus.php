@@ -52,8 +52,7 @@ require_once 'CRM/Member/BAO/MembershipStatus.php';
  * @access public
  */
 function civicrm_api3_membership_status_create($params) {
-	_civicrm_api3_initialize ( true );
-	try {
+
 		
 		civicrm_api3_verify_one_mandatory ( $params, 'CRM_Member_DAO_MembershipStatus', array ('name', 'label' ) );
 		//move before verifiy? DAO check requires?
@@ -80,11 +79,7 @@ function civicrm_api3_membership_status_create($params) {
 			$values ['is_error'] = 0;
 			return civicrm_api3_create_success ( $values, $params );
 		}
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
+
 }
 
 /**
@@ -99,16 +94,11 @@ function civicrm_api3_membership_status_create($params) {
  */
 function civicrm_api3_membership_status_get($params) {
 
-	try {
 		civicrm_api3_verify_mandatory ( $params );
 
     return _civicrm_api3_basic_get('CRM_Member_BAO_MembershipStatus', $params);		
 
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
+
 }
 
 /**
@@ -118,20 +108,13 @@ function civicrm_api3_membership_status_get($params) {
  * Required parrmeters : id of a membership status
  *
  * @param  Array   $params  an associative array of name/value property values of civicrm_membership_status
- *
+ * @deprecated - should just use create
  * @return array of updated membership status property values
  * @access public
  */
 function &civicrm_api3_membership_status_update($params) {
-	_civicrm_api3_initialize ();
-	if (! is_array ( $params )) {
-		return civicrm_api3_create_error ( 'Input variable `params` is not an array' );
-	}
 	
-	if (! isset ( $params ['id'] )) {
-		return civicrm_api3_create_error ( 'Required parameter missing' );
-	}
-	
+	civicrm_api3_verify_mandatory ( $params ,null,array('id'));
 	//don't allow duplicate names.
 	$name = CRM_Utils_Array::value ( 'name', $params );
 	if ($name) {
@@ -172,17 +155,12 @@ function &civicrm_api3_membership_status_update($params) {
  * @access public
  */
 function civicrm_api3_membership_status_delete($params) {
-	_civicrm_api3_initialize ( true );
-	try {
+
 		civicrm_api3_verify_mandatory ( $params, null, array ('id' ) );
 		require_once 'CRM/Member/BAO/MembershipStatus.php';
 		$memberStatusDelete = CRM_Member_BAO_MembershipStatus::del ( $params ['id'], true );
 		return $memberStatusDelete ? civicrm_api3_create_error ( 'Error while deleting membership type Status' ) : civicrm_api3_create_success ();
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
+
 }
 
 /**

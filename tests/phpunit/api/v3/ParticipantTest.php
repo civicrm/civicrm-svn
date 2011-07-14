@@ -122,7 +122,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     function testGetWrongParamsType()
     {
         $params = 'a string';
-        $result = & civicrm_api3_participant_get($params);
+        $result = & civicrm_api('participant','get', $params);
 
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
     }
@@ -133,7 +133,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     function testGetEmptyParams()
     {
         $params = array();
-        $result = & civicrm_api3_participant_get($params);
+        $result = & civicrm_api('participant','get', $params);
 
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
     }
@@ -147,7 +147,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'participant_id'      => $this->_participantID,
                         'version'							=> $this->_apiversion,
                         );
-        $result =  civicrm_api3_participant_get($params);
+        $result =  civicrm_api('participant','get', $params);
       
         $this->assertEquals($result['values'][$this->_participantID]['event_id'], $this->_eventID);
         $this->assertEquals($result['values'][$this->_participantID]['participant_register_date'], '2007-02-19 00:00:00');
@@ -206,7 +206,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'return.status_id' => 1,
                         'return.participant_status_id' => 1,
        );
-        $result = & civicrm_api3_participant_get($params);
+        $result = & civicrm_api('participant','get', $params);
         $this->assertArrayHasKey('participant_status_id', $result['values'][$result['id']]);
     }
 
@@ -219,7 +219,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'contact_id'      => $this->_contactID,
                         'version'							=> $this->_apiversion,
                         );
-        $participant = & civicrm_api3_participant_get($params);
+        $participant = & civicrm_api('participant','get', $params);
 
         $this->assertEquals($this->_participantID, $participant['id'],
                             "In line " . __LINE__);
@@ -245,7 +245,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'version'							=> $this->_apiversion,
                         );
 
-        $participant = & civicrm_api3_participant_get($params);
+        $participant = & civicrm_api('participant','get', $params);
         $this->assertNotNull($participant['id']);
      
     }
@@ -260,7 +260,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'event_id'      => $this->_eventID,
                         'version'							=> $this->_apiversion,
                         );
-        $participant = & civicrm_api3_participant_get($params);
+        $participant = & civicrm_api('participant','get', $params);
         $this->assertEquals( $participant['is_error'],0 );
         $this->assertNotNull($participant['count'],3);
     }
@@ -273,7 +273,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     function testSearchWrongParamsType()
     {
         $params = 'a string';
-        $result = & civicrm_api3_participant_get($params);
+        $result = & civicrm_api('participant','get', $params);
 
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
     }
@@ -285,7 +285,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     function testSearchEmptyParams()
     {
         $params = array('version' =>$this->_apiversion);
-        $result = & civicrm_api3_participant_get($params);
+        $result = & civicrm_api('participant','get', $params);
 
         // expecting 3 participant records
         $this->assertEquals( $result['count'] , 3 );
@@ -300,7 +300,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'participant_id'      => $this->_participantID,
                         'version'							=> $this->_apiversion,
                         );
-        $participant = & civicrm_api3_participant_get($params);
+        $participant = & civicrm_api('participant','get', $params);
         $this->assertEquals($participant['values'][$this->_participantID]['event_id'], $this->_eventID);
         $this->assertEquals($participant['values'][$this->_participantID]['participant_register_date'], '2007-02-19 00:00:00');
         $this->assertEquals($participant['values'][$this->_participantID]['participant_source'],'Wimbeldon');
@@ -316,7 +316,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'contact_id'      => $this->_contactID2,
                         'version'					=> $this->_apiversion,
                         );
-        $participant = & civicrm_api3_participant_get($params);
+        $participant = & civicrm_api('participant','get', $params);
 
         $this->assertEquals(  $participant['count'] , 2 );
     }
@@ -333,7 +333,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'return.event_title' => 1,
                         'version'							=> $this->_apiversion,
                         );
-        $participant = & civicrm_api3_participant_get($params);
+        $participant = & civicrm_api('participant','get', $params);
         if (  $participant['count']  < 3 ) {
             $this->fail("Event search returned less than expected miniumum of 3 records.");
         }
@@ -354,7 +354,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'rowCount'      => 2,
                         'version'							=> $this->_apiversion,
                         );
-        $participant = & civicrm_api3_participant_get($params);
+        $participant = & civicrm_api('participant','get', $params);
      
         $this->assertEquals(  $participant['count'], 2,'in line ' . __LINE__);
     }
@@ -592,7 +592,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     function testDeleteWrongParamsType()
     {
         $params = 'a string';
-        $result = & civicrm_api3_participant_delete($params);
+        $result = & civicrm_api('participant','delete', $params);
 
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
     }
@@ -603,7 +603,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     function testDeleteEmptyParams()
     {
         $params = array();
-        $result = & civicrm_api3_participant_delete($params);
+        $result = & civicrm_api('participant','delete', $params);
 
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
     }
@@ -617,7 +617,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'id' => $this->_participantID,
                         'version' =>$this->_apiversion,
                         );
-        $participant = & civicrm_api3_participant_delete($params);
+        $participant = & civicrm_api('participant','delete', $params);
         $this->assertNotEquals( $participant['is_error'],1 );
         $this->assertDBState( 'CRM_Event_DAO_Participant', $this->_participantID, NULL, true );
 
@@ -634,7 +634,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'event_id'      => $this->_eventID,
                         'version'							=> $this->_apiversion,
                         );
-        $participant = & civicrm_api3_participant_delete($params);
+        $participant = & civicrm_api('participant','delete', $params);
         $this->assertEquals( $participant['is_error'],1 );
         $this->assertNotNull($participant['error_message']);
     }
@@ -646,8 +646,8 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
       $subfile = "NestedDelete";
       $participants = civicrm_api('Participant', 'Get', array('version'=> 3));
       $this->assertEquals($participants['count'], 3);
-
-      $participants = civicrm_api('Participant', 'Get', array('version'=> 3, 'contact_id' => $this->_contactID2, 'api.participant.delete' => 1));
+      $params = array('version'=> 3, 'contact_id' => $this->_contactID2, 'api.participant.delete' => 1);
+      $participants = civicrm_api('Participant', 'Get',$params );
       $this->documentMe($params,$participants ,__FUNCTION__,__FILE__,$description,$subfile);
       $participants = civicrm_api('Participant', 'Get', array('version'=> 3));
       $this->assertEquals( 1,$participants['count'],"only one participant should be left. line " . __LINE__);    
@@ -722,12 +722,12 @@ TEST COMMENteD OUT AS HAVE GIVIEN UP ON using filters on get
                         'version' => $this->_apiversion,
                      
                         );
-        $result = & civicrm_api3_participant_get($params);
+        $result = & civicrm_api('participant','get', $params);
         $this->assertEquals($result['is_error'], 0);
         $this->assertEquals($result['count'], 3);
      
         $params['participant_role_id'] =2;
-        $result =  civicrm_api3_participant_get($params);
+        $result =  civicrm_api('participant','get', $params);
         print_r($result);
         
         $this->assertEquals($result['is_error'], 0,  "in line " . __LINE__);

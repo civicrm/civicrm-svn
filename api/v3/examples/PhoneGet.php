@@ -31,8 +31,8 @@ function phone_get_expectedresult(){
       '1' => array( 
           'id' => '1',
           'location_type_id' => '1',
-          'is_primary' => '',
-          'is_billing' => '',
+          'is_primary' => 0,
+          'is_billing' => 0,
           'phone' => '204 222-1001',
           'phone_type_id' => '1',
         ),
@@ -40,10 +40,10 @@ function phone_get_expectedresult(){
           'id' => '4',
           'location_type_id' => '11',
           'is_primary' => '1',
-          'is_billing' => '',
+          'is_billing' => 0,
           'phone' => '021 512 755',
           'phone_type_id' => '1',
-          'contact_id' => '6',
+          'contact_id' => '1',
         ),
     ),
 );

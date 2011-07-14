@@ -414,9 +414,6 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                 //get the saved search mapping id
                 if ( $ssID ) {
                     $ssMappingId = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch', $ssID, 'mapping_id' );
-                }
-            
-                if (isset ( $ssMappingId ) ) {
                     $this->assign( 'ssMappingID', $ssMappingId );
                 }
             }
@@ -622,6 +619,9 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
             $this->_formValues = $this->get( 'formValues' );
             $this->_params =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
             $this->_returnProperties =& $this->returnProperties( );
+            if ( !empty( $this->_ufGroupID ) ) {
+                $this->set( 'id', $this->_ufGroupID );  
+            }
         }
 
         if ( empty( $this->_formValues ) ) {

@@ -1128,6 +1128,7 @@ LEFT JOIN  civicrm_country ON (civicrm_address.country_id = civicrm_country.id)
             
             require_once 'CRM/Member/BAO/MembershipType.php';
             foreach ( $details['memberships'] as $membershipId => $membershipValues ) {
+                $relTypeIds = array( );
                 if ( $action & CRM_Core_Action::DELETE ) {                   
                     // Delete memberships of the related contacts only if relationship type exists for membership type
                     $query = "

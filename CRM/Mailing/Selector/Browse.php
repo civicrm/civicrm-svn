@@ -458,16 +458,26 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
 
         $from = $this->_parent->get( 'mailing_from' );
         if ( ! CRM_Utils_System::isNull( $from ) ) {
-            $clauses[] = 'start_date >= %2';
+            $dateClause1[] = 'civicrm_mailing_job.start_date >= %2';
+            $dateClause2[] = 'civicrm_mailing_job.scheduled_date >= %2';
             $params[2] = array( $from, 'String' );
         }
 
         $to = $this->_parent->get( 'mailing_to' );
         if ( ! CRM_Utils_System::isNull( $to ) ) {
-            $clauses[] = 'start_date <= %3';
+            $dateClause1[] = 'civicrm_mailing_job.start_date <= %3';
+            $dateClause2[] = 'civicrm_mailing_job.scheduled_date <= %3';
             $params[3] = array( $to, 'String' );
         }
-        
+
+        if ( !empty($dateClause1) ) {
+            $dateClause1[] = "civicrm_mailing_job.status IN ('Complete', 'Running')";
+            $dateClause2[] = "civicrm_mailing_job.status IN ('Scheduled')";
+            $dateClause1   = implode( ' AND ', $dateClause1 );
+            $dateClause2   = implode( ' AND ', $dateClause2 );
+            $clauses[] = "( ({$dateClause1}) OR ({$dateClause2}) )";
+        }
+
         if ( $this->_parent->get( 'unscheduled' ) ) {
             $clauses[] = "civicrm_mailing_job.status is null";
             $clauses[] = "civicrm_mailing.scheduled_id IS NULL";
@@ -483,7 +493,14 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
         if( $this->_parent->get( 'scheduled' ) ) { 
             $clauses[] = "civicrm_mailing.scheduled_id IS NOT NULL";
             $clauses[] = "( civicrm_mailing.is_archived IS NULL OR civicrm_mailing.is_archived = 0 )";
-            $clauses[] = "civicrm_mailing_job.status IN ('Scheduled', 'Complete', 'Running')";
+            $status = $this->_parent->get('mailing_status');
+            if ( !empty( $status ) ) {
+                $status = array_keys($status);
+                $status = implode("','", $status);
+                $clauses[] = "civicrm_mailing_job.status IN ('$status')";
+            } else {
+                $clauses[] = "civicrm_mailing_job.status IN ('Scheduled', 'Complete', 'Running')";
+            }
         }
             
         if ( $sortBy &&

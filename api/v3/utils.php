@@ -68,7 +68,19 @@ function civicrm_api3_verify_one_mandatory ($params, $daoName = null, $keyoption
     civicrm_api3_verify_mandatory ($params, $daoName, $keys  );
 }
 
-
+/*
+ * Load the DAO of the entity
+ */
+function _civicrm_api3_load_DAO($entity){
+      $dao = _civicrm_api3_get_DAO ($entity);
+       if (empty($dao)) {
+            return false;
+       }
+       $file = str_replace ('_','/',$dao).".php";
+       require_once ($file); 
+       $d = new $dao();
+       return $d;
+}
 /*
  * Function to return the DAO of the function or Entity
  * @param  $name is either a function of the api (civicrm_{entity}_create or the entity name 
@@ -263,7 +275,7 @@ function civicrm_api3_create_success( $values = 1,$params=array(), $entity = nul
         $result['count'] = ! empty( $values ) ? 1 : 0;
     }
 
-    if ( isset( $params['sequential'] ) && 
+    if ( is_array($values) && isset( $params['sequential'] ) && 
          $params['sequential'] ==1 ) {
         $result['values'] =  array_merge($values);
     } else {
@@ -1674,7 +1686,9 @@ function _civicrm_api3_validate_fields($entity, $action, &$params) {
   $testedEntities = array('relationship' => 1, 
   												'membership' => 1, 
   											  'event' => 1, 
-  											  'contribution');
+  											  'contribution' => 1,
+                          'activity' => 1,
+      );
   if(!array_key_exists(strtolower($entity), $testedEntities)){
     return;
   }
@@ -1683,7 +1697,6 @@ function _civicrm_api3_validate_fields($entity, $action, &$params) {
 	}
 	$fields = civicrm_api ( $entity, 'getfields', array ('version' => 3 ) );
 	$fields = $fields['values'];
-
 	foreach ( $fields as $fieldname => $fieldInfo ) {
     switch (CRM_Utils_Array::value ( 'type', $fieldInfo )){
       case 4:
@@ -1741,7 +1754,7 @@ function _civicrm_api3_validate_date(&$params,&$fieldname,&$fieldInfo){
  *   - all other items: keys which identify new/pre-existing records
  */
 function _civicrm_api3_generic_replace($entity, $params) {
-    _civicrm_api3_initialize(true);
+
     require_once 'CRM/Core/Transaction.php';
     $tx = new CRM_Core_Transaction();
     try {
@@ -1802,4 +1815,34 @@ function _civicrm_api3_generic_replace($entity, $params) {
         $tx->rollback();
         return civicrm_api3_create_error( $e->getMessage() );
     }
+}
+
+/*
+ * returns fields allowable by api
+ */
+function _civicrm_api_get_fields($entity){
+    $dao = _civicrm_api3_get_DAO ($entity);
+    if (empty($dao)) {
+          return civicrm_api3_create_error("API for $entity does not exist (join the API team and implement $function" );
+     }
+    $file = str_replace ('_','/',$dao).".php";
+    require_once ($file); 
+    $d = new $dao();
+    $fields = $d->fields() + _civicrm_api_get_custom_fields($entity) ;
+    return $fields;
+}
+
+/*
+ * Return an array of fields for a given entity - this is the same as the BAO function but 
+ * fields are prefixed with 'custom_' to represent api params
+ */
+function _civicrm_api_get_custom_fields($entity){
+  require_once 'CRM/Core/BAO/CustomField.php';
+  $customfields = array();
+  $customfields = CRM_Core_BAO_CustomField::getFields($entity) ;
+  foreach ($customfields as $key => $value) {
+    $customfields['custom_' . $key] = $value;
+    unset($customfields[$key]);
+  }
+  return $customfields;
 }

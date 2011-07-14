@@ -7,8 +7,8 @@
  */
 function email_delete_example(){
 $params = array( 
-  'contact_id' => 3,
-  'location_type_id' => 8,
+  'contact_id' => 1,
+  'location_type_id' => 10,
   'email' => 'api@a-team.com',
   'is_primary' => 1,
   'version' => 3,

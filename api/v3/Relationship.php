@@ -57,9 +57,7 @@ require_once 'CRM/Contact/BAO/RelationshipType.php';
  * @todo create should handle update.
  */
 function civicrm_api3_relationship_create( $params ) {
-    _civicrm_api3_initialize(true );
-    try{
-        
+
         // check params for required fields (add/update)
         static $required = array( 'contact_id_a', 
                                   'contact_id_b',
@@ -101,11 +99,7 @@ function civicrm_api3_relationship_create( $params ) {
         $relationID = $relationshipBAO[4][0];
         return civicrm_api3_create_success( array( $relationID => array( 'id' => $relationID,
                                                                          'moreIDs' => implode( ',', $relationshipBAO[4] ) ) ) );
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**
@@ -119,8 +113,7 @@ function civicrm_api3_relationship_create( $params ) {
  */
 
 function civicrm_api3_relationship_delete( $params ) {
-    _civicrm_api3_initialize(true );
-    try{   
+
         civicrm_api3_verify_mandatory($params,null,array('id'));
 
         require_once 'CRM/Utils/Rule.php';
@@ -136,11 +129,7 @@ function civicrm_api3_relationship_delete( $params ) {
             $relationBAO->del( $params['id'] );
             return civicrm_api3_create_success(  'Deleted relationship successfully'  );
         }
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 
@@ -157,7 +146,6 @@ function civicrm_api3_relationship_delete( $params ) {
 function civicrm_api3_relationship_get($params) 
 {
 
-    try{
         civicrm_api3_verify_mandatory($params, null,array('contact_id'));
  
         require_once 'CRM/Contact/BAO/Relationship.php';
@@ -192,11 +180,7 @@ function civicrm_api3_relationship_get($params)
         
         return civicrm_api3_create_success( $relationships ,$params);
        
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**

@@ -7,8 +7,8 @@
  */
 function relationship_create_example(){
 $params = array( 
-  'contact_id_a' => 13,
-  'contact_id_b' => 14,
+  'contact_id_a' => 1,
+  'contact_id_b' => 2,
   'relationship_type_id' => 16,
   'start_date' => '2010-10-30',
   'end_date' => '2010-12-30',

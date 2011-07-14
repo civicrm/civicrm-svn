@@ -68,4 +68,18 @@
         </div>
     {/if}
 
+    {literal}
+    <script type="text/javascript">
+    var flashChartType = {/literal}{if $chartType}'{$chartType}'{else}''{/if}{literal};
+    function disablePrintPDFButtons( viewtype ) {
+      if (viewtype && flashChartType != viewtype) {
+        cj('#_qf_Summary_submit_pdf').attr('disabled', true).addClass('button-disabled');
+	cj('#_qf_Summary_submit_print').attr('disabled', true).addClass('button-disabled');
+      } else {
+        cj('#_qf_Summary_submit_pdf').removeAttr('disabled').removeClass('button-disabled');
+	cj('#_qf_Summary_submit_print').removeAttr('disabled').removeClass('button-disabled');
+      }
+    }
+    </script>
+    {/literal}
 {/if} {* NO print section ends *}

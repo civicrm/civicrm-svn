@@ -26,14 +26,15 @@ function group_contact_get_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => 3,
+  'id' => 1,
   'values' => array( 
-      '3' => array( 
-          'id' => '3',
+      '1' => array( 
+          'id' => '1',
           'group_id' => '1',
           'title' => 'New Test Group Created',
           'visibility' => 'Public Pages',
-          'in_date' => '2011-06-02 02:27:48',
+          'is_hidden' => 0,
+          'in_date' => '2011-07-11 19:49:50',
           'in_method' => 'API',
         ),
     ),

@@ -201,6 +201,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 }
 
                 if ( strstr( $loc, 'custom' ) ) {
+                    if ( $value  && isset($this->_params['onbehalf']["{$loc}_id"]) ) {
+                        $value = $this->_params['onbehalf']["{$loc}_id"];
+                    }
                     $this->_params['onbehalf_location']["{$loc}"] = $value;
                 }
             }
@@ -391,7 +394,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         foreach ($fields as $name => $dontCare ) {
             if ( $name == 'onbehalf' ) {
                 foreach ( $dontCare as $key => $value ) {
-                    $defaults[$key] = $contact['onbehalf'][$key];
+                    if ( isset($contact['onbehalf'][$key]) ) {
+                        $defaults[$key] = $contact['onbehalf'][$key];
+                    }
+                    if ( isset($contact['onbehalf']["{$key}_id"]) ) {
+                        $defaults["{$key}_id"] = $contact['onbehalf']["{$key}_id"];
+                    }
                 }       
             } else if ( isset( $contact[$name] ) ) {
                 $defaults[$name] = $contact[$name];
@@ -737,7 +745,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
             $fieldTypes = array( );
             require_once 'CRM/Core/BAO/CustomField.php';
-            if ( is_array( $paymentParams['onbehalf'] ) && !empty( $paymentParams['onbehalf'] ) ) {
+            if ( CRM_Utils_Array::value( 'onbehalf', $paymentParams ) && is_array( $paymentParams['onbehalf'] ) 
+                && !empty( $paymentParams['onbehalf'] ) ) {
                 foreach ( $paymentParams['onbehalf'] as $key => $value ) {
                     if ( strstr( $key, 'custom_' ) ) {
                         $this->_params[$key] = $value;

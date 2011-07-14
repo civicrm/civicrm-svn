@@ -1603,6 +1603,15 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         if (strstr($function, 'Create')){
             $action = 'create';
             $entityAction = 'Create';
+        }elseif(strstr($function, 'GetSingle')){
+            $action = 'getsingle';
+            $entityAction = 'GetSingle';
+        }elseif(strstr($function, 'GetValue')){
+            $action = 'getvalue';
+            $entityAction = 'GetValue';
+        }elseif(strstr($function, 'GetCount')){
+            $action = 'getcount';
+            $entityAction = 'GetCount';
         }elseif(strstr($function, 'Get')){
             $action = 'get';
             $entityAction = 'Get';
@@ -1625,7 +1634,17 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             $action = 'replace';
             $entityAction = 'Replace';
         }
-
+        
+        //unset hash field if it's in the values array because it changes every time so it makes the examples
+        // change too often if we leave it there. Alternative is just to set it to something random I guess
+        if(is_array($result['values'])){
+          foreach($result['values'] as $key => $value){
+            if(is_array($value) && array_key_exists('hash', $value)){
+              unset($result['values'][$key]['hash']);
+            }
+          }
+        }
+        
         if (strstr($entity,'UF')){// a cleverer person than me would do it in a single regex
             $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)(?<=UF)[A-Z]/','_$0', $entity));          
         }else{

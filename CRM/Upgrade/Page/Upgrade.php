@@ -95,6 +95,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                                       array( 1 => $latestVer )));
         
         $upgrade  = new CRM_Upgrade_Form( );
+        $preUpgradeMessage = null;
 
         $template = CRM_Core_Smarty::singleton( );
         $template->assign( 'pageTitle', ts('Upgrade CiviCRM to Version %1', 
@@ -169,7 +170,6 @@ SELECT  count( id ) as statusCount
             }
 
             // set pre-upgrade warnings if any -
-            $preUpgradeMessage = null;
             self::setPreUpgradeMessage( $preUpgradeMessage, $currentVer, $latestVer );
             
             //turning some tables to monolingual during 3.4.beta3, CRM-7869

@@ -295,12 +295,13 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
     public function buildQuickForm( ) 
     {  
         $contactID = parent::getContactID( );
+        $this->assign( 'contact_id', $contactID );
+        $display_name = '';
         if ( $contactID ) {
             require_once 'CRM/Contact/BAO/Contact.php';
-            $name = CRM_Contact_BAO_Contact::displayName( $contactID  );
-            $this->assign( 'display_name', $name );
-            $this->assign( 'contact_id', $contactID );
+            $display_name = CRM_Contact_BAO_Contact::displayName( $contactID  );
         }
+        $this->assign( 'display_name', $display_name );
 
         $config = CRM_Core_Config::singleton( );
         $this->add('hidden','scriptFee',null);
@@ -1246,7 +1247,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 if ( ! empty( $emailString ) ) {
                     require_once 'CRM/Contact/BAO/Contact.php';
                     $match = CRM_Contact_BAO_Contact::matchContactOnEmail( $emailString, 'Individual' ) ;
-                    $contactID = $match->contact_id;
+                    if ( !empty( $match ) ) {
+                        $contactID = $match->contact_id;
+                    }
                 }
             }
         }

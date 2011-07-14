@@ -74,8 +74,6 @@
     <fieldName>entity_table</fieldName>
     <fieldName>tag_id</fieldName>
     <unique>true</unique>
-    <add>2.2</add>
-    <drop>3.2</drop>
     <add>3.4</add>
   </index>
 </table>

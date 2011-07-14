@@ -573,6 +573,11 @@
      <access_arguments>access CiviCRM</access_arguments>
   </item>
   <item>
+     <path>civicrm/ajax/mergeTags</path>
+     <page_callback>CRM_Admin_Page_AJAX::mergeTags</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
      <path>civicrm/admin/price</path>
      <title>Price Sets</title>
      <page_callback>CRM_Price_Page_Set</page_callback>
@@ -614,6 +619,11 @@
   <item>
        <path>civicrm/ajax/taglist</path>
        <page_callback>CRM_Admin_Page_AJAX::getTagList</page_callback>
+       <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
+       <path>civicrm/ajax/mergeTagList</path>
+       <page_callback>CRM_Admin_Page_AJAX::mergeTagList</page_callback>
        <access_arguments>access CiviCRM</access_arguments>
   </item>
   <item>

@@ -546,6 +546,9 @@ div.spacer,
     padding-top: 10px;
 }
 
+#crm-container .button-disabled {
+    color: #CFCEC3!important;
+}
 
 #crm-container .form-layout-compressed td.describe-image {
     vertical-align: top;
@@ -812,6 +815,10 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 #crm-container table.report, 
 #crm-container table.chart  {
     width: auto;
+}
+
+#crm-container .crm-flashchart {
+    overflow: scroll;
 }
 
 #crm-container td.enclosingNested {
