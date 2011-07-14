@@ -2151,7 +2151,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                     array(
                           'size'     => "5",
                           'multiple' => true,
-                          'onchange' => "return tokenReplText(this);"
+                          'onclick'  => "return tokenReplText(this);"
                           )
                     );
         
@@ -2170,7 +2170,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                     array(
                           'size'     => "5",
                           'multiple' => true,
-                          'onchange' => "return tokenReplText(this);"
+                          'onclick'  => "return tokenReplText(this);"
                           )
                     );
         
@@ -2179,7 +2179,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                     array(
                           'size'     => "5",
                           'multiple' => true,
-                          'onchange' => "return tokenReplHtml(this);"
+                          'onclick'  => "return tokenReplHtml(this);"
                           )
                     );
         

@@ -17,7 +17,7 @@ class api_v3_OptionGroupTest extends CiviUnitTestCase
     }
 
     public function testGetOptionGroupByID () {
-        $result = civicrm_api3_option_group_get(array('id'=> 1, 'version' => 3));
+        $result = civicrm_api('option_group','get',array('id'=> 1, 'version' => 3));
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['id'], 'In line ' . __LINE__ );
@@ -25,7 +25,7 @@ class api_v3_OptionGroupTest extends CiviUnitTestCase
 
     public function testGetOptionGroupByName () {
         $params = array('name'=> 'preferred_communication_method', 'version' => 3);
-        $result = civicrm_api3_option_group_get($params);
+        $result = civicrm_api('option_group','get',$params);
         $this->documentMe($params,$result ,__FUNCTION__,__FILE__);
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
@@ -33,13 +33,13 @@ class api_v3_OptionGroupTest extends CiviUnitTestCase
     }
 
     public function testGetOptionGroup () {
-        $result = civicrm_api3_option_group_get(array('version' => 3));
+        $result = civicrm_api('option_group','get',array('version' => 3));
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertGreaterThan( 1, $result['count'], 'In line ' . __LINE__ );
     }
 
     public function testGetOptionDoesNotExist () {
-        $result = civicrm_api3_option_group_get(array('name'=> 'FSIGUBSFGOMUUBSFGMOOUUBSFGMOOBUFSGMOOIIB','version' => 3));
+        $result = civicrm_api('option_group','get',array('name'=> 'FSIGUBSFGOMUUBSFGMOOUUBSFGMOOBUFSGMOOIIB','version' => 3));
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 0, $result['count'], 'In line ' . __LINE__ );
     }

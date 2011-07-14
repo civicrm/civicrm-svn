@@ -70,28 +70,8 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
 
     ///////////////// civicrm_relationship_type_add methods
     
-    /**
-     * check with empty array
-     */    
-    function testRelationshipTypeCreateEmpty( )
-    {
-        $params = array('version' => 3 );        
-        $result = civicrm_api3_relationship_type_create( $params );
-        $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: contact_type_a, contact_type_b, name_a_b, name_b_a' );
-    }
     
-    /**
-     * check with No array
-     */
-    function testRelationshipTypeCreateParamsNotArray( )
-    {
-        $params = 'name_a_b = Employee of';   
-        $result = civicrm_api3_relationship_type_create( $params );                  
-        
-        $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array' );
-    }
+
     
     /**
      * check with no name
@@ -103,7 +83,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
                                'contact_type_b' => 'Organization',
                                'version'	    => $this->_apiversion,
                                );
-        $result = civicrm_api3_relationship_type_create( $relTypeParams );
+        $result = civicrm_api('relationship_type','create',$relTypeParams );
         
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 
@@ -120,7 +100,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
                                'name_b_a' => 'Relation 2 without contact type',
                                'version'  =>$this->_apiversion,
                                );
-        $result = civicrm_api3_relationship_type_create( $relTypeParams ); 
+        $result = civicrm_api('relationship_type','create',$relTypeParams ); 
 
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 
@@ -142,7 +122,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
                         'version' 		 => $this->_apiversion,
                         'sequential' =>    1,
                         );
-        $result = civicrm_api3_relationship_type_create( $params  );
+        $result = civicrm_api('relationship_type','create',$params  );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertNotNull( $result['values'][0]['id'], 'in line ' . __LINE__ );   
         unset($params['version']);
@@ -171,7 +151,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
     function testRelationshipTypeDeleteEmpty( )
     {
         $params = array( );
-        $result = civicrm_api3_relationship_type_delete( $params );
+        $result = civicrm_api('relationship_type','delete',$params );
         
         $this->assertEquals( $result['is_error'], 1 );
     }
@@ -183,7 +163,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
     function testRelationshipTypeDeleteParamsNotArray( )
     {
         $params = 'name_a_b = Test1';                            
-        $result = civicrm_api3_relationship_type_delete( $params );
+        $result = civicrm_api('relationship_type','delete',$params );
         
         $this->assertEquals( $result['is_error'], 1 );
     }
@@ -200,7 +180,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
                         'is_active'      => 0
                         );
         
-        $result = civicrm_api3_relationship_type_delete( $params );
+        $result = civicrm_api('relationship_type','delete',$params );
         
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: id, version' );
@@ -222,7 +202,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
                         'version'		 => $this->_apiversion,
                         );
         
-        $result =civicrm_api3_relationship_type_delete( $params );
+        $result =civicrm_api('relationship_type','delete',$params );
         
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'Invalid value for relationship type ID' );
@@ -239,7 +219,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
                         'version' => $this->_apiversion,  
             
                         );
-        $result =  civicrm_api3_relationship_type_delete( $params );
+        $result =  civicrm_api('relationship_type','delete',$params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
         $this->assertEquals( $result['is_error'], 0 );
     }
@@ -252,7 +232,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
     function testRelationshipTypeUpdateEmpty( )
     {
         $params = array( );        
-        $result = civicrm_api3_relationship_type_create( $params );
+        $result = civicrm_api('relationship_type','create',$params );
         
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: contact_type_a, contact_type_b, name_a_b, name_b_a, version' );
@@ -264,7 +244,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
     function testRelationshipTypeUpdateParamsNotArray( )
     {
         $params = 'name_a_b = Relation 1';                            
-        $result = civicrm_api3_relationship_type_create( $params );
+        $result = civicrm_api('relationship_type','create',$params );
         
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array' );
@@ -288,7 +268,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
                                'version'		=> $this->_apiversion,
                                );
 
-        $result =  civicrm_api3_relationship_type_create( $relTypeParams );  
+        $result =  civicrm_api('relationship_type','create',$relTypeParams );  
         $this->assertNotNull( $result['id'] );   
         unset($relTypeParams['version']);
         // assertDBState compares expected values in $result to actual values in the DB          
@@ -315,7 +295,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
                         'version'        => $this->_apiversion,
                         );
         
-        $result = & civicrm_api3_relationship_type_create( $params);  
+        $result = & civicrm_api('relationship_type','create',$params);  
         $this->assertNotNull( $result['id'] );   
         unset($params['version']);
         // assertDBState compares expected values in $result to actual values in the DB          
@@ -354,7 +334,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
                                 
                                      );
         $second = civicrm_api('RelationshipType', 'Create', $secondRelTypeParams);     
-        $results = civicrm_api3_relationship_type_get( array( 'version'	=> $this->_apiversion, ) );
+        $results = civicrm_api('relationship_type','get',array( 'version'	=> $this->_apiversion, ) );
 
         $this->assertEquals(2, $results['count']);
         $this->assertEquals(0, $results['is_error']);       
@@ -367,7 +347,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
     function testRelationshipTypesGetParamsNotArray( )
     {
       
-        $results =civicrm_api3_relationship_type_get( 'string' );
+        $results =civicrm_api('relationship_type','get','string' );
         $this->assertEquals(1, $results['is_error']);    
     }
     
@@ -406,7 +386,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
                          'name_b_a'    => 'Relation 33 for create',
                          'description' => 'Testing relationship type second'    ,     
                          'version'	   => $this->_apiversion );   
-        $results = civicrm_api3_relationship_type_get( $params );
+        $results = civicrm_api('relationship_type','get',$params );
 
         $this->assertEquals(0, $results['is_error'], ' in line ' . __LINE__ ); 
         $this->assertEquals(1, $results['count'], ' in line ' . __LINE__ );

@@ -82,7 +82,7 @@ class api_v3_DomainTest extends CiviUnitTestCase
         $this->cleanDB();
 
         $params = array('version' => 3);
-        $result = civicrm_api3_domain_get($params);
+        $result = civicrm_api('domain','get',$params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);     
 
         $this->assertType( 'array', $result, 'In line' . __LINE__ );
@@ -108,7 +108,7 @@ class api_v3_DomainTest extends CiviUnitTestCase
     public function testGetCurrentDomain()
     {
         $params = array('version' => 3, 'current_domain' => 1);
-        $result = civicrm_api3_domain_get($params);
+        $result = civicrm_api('domain','get',$params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);     
 
         $this->assertType( 'array', $result, 'In line' . __LINE__ );
@@ -138,7 +138,7 @@ class api_v3_DomainTest extends CiviUnitTestCase
      */
     public function testCreate()
     {
-        $result =& civicrm_api3_domain_create($this->params);
+        $result =& civicrm_api('domain', 'create', $this->params);
         $this->documentMe($this->params,$result,__FUNCTION__,__FILE__);       
         $this->assertType( 'array', $result );
         $this->assertEquals($result['is_error'], 0);
@@ -155,7 +155,7 @@ class api_v3_DomainTest extends CiviUnitTestCase
     public function testCreateWithEmptyParams()
     {
         $params = array( );
-        $result =& civicrm_api3_domain_create($params);
+        $result =& civicrm_api('domain', 'create', $params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -166,7 +166,7 @@ class api_v3_DomainTest extends CiviUnitTestCase
     public function testCreateWithWrongParams()
     {
         $params = 1;
-        $result =& civicrm_api3_domain_create($params);
+        $result =& civicrm_api('domain', 'create', $params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }    

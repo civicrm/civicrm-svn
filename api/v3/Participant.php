@@ -95,8 +95,7 @@ function civicrm_api3_participant_create($params)
  * @access public
  */
 function civicrm_api3_participant_get( $params ) {
-    _civicrm_api3_initialize(true );
-    try{
+
         $values = array( );
         civicrm_api3_verify_mandatory($params);
 
@@ -153,11 +152,7 @@ function civicrm_api3_participant_get( $params ) {
     }
 
         return civicrm_api3_create_success($participant,$params, 'participant','get',$dao);
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 
@@ -173,8 +168,7 @@ function civicrm_api3_participant_get( $params ) {
  */
 function &civicrm_api3_participant_delete( $params )
 {
-    _civicrm_api3_initialize(true);
-    try{
+
         civicrm_api3_verify_mandatory($params,null,array('id'));
 
         require_once 'CRM/Event/BAO/Participant.php';
@@ -187,11 +181,7 @@ function &civicrm_api3_participant_delete( $params )
             $values = civicrm_api3_create_error('Error while deleting participant');
         }
         return $values;
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 

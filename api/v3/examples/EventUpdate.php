@@ -58,7 +58,7 @@ function event_update_expectedresult(){
           'event_end_date' => '2008-10-23 00:00:00',
           'is_online_registration' => '1',
           'registration_start_date' => '2008-06-01 00:00:00',
-          'registration_end_date' => '0000-00-00 00:00:00',
+          'registration_end_date' => '2008-10-15 00:00:00',
           'max_participants' => '150',
           'event_full_text' => 'Sorry! We are already full',
           'is_monetary' => 0,
@@ -72,7 +72,7 @@ function event_update_expectedresult(){
           'is_multiple_registrations' => 0,
           'allow_same_participant_emails' => 0,
           'is_template' => 0,
-          'created_date' => '2011-07-02 11:29:41',
+          'created_date' => '2011-07-11 19:49:45',
         ),
     ),
 );

@@ -373,6 +373,24 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
             $colQuery = 'ALTER TABLE `civicrm_phone` ADD `phone_ext` VARCHAR( 16 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `phone` ';
             CRM_Core_DAO::executeQuery( $colQuery );
         }
-        
+
+        // handle db changes done for CRM-8218
+        $alterContactDashboard = false;
+        require_once 'CRM/Contact/DAO/DashboardContact.php';
+        $dao = new CRM_Contact_DAO_DashboardContact( );
+        $dbName = $dao->_database;
+
+        $chkContentQuery = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %1
+                        AND TABLE_NAME = 'civicrm_dashboard_contact' AND COLUMN_NAME = 'content'";
+        $contentExists = CRM_Core_DAO::singleValueQuery( $chkContentQuery,
+                                                          array( 1 => array( $dbName, 'String' ) ),
+                                                          true, false );
+        if ( !$contentExists ) {
+            $alterContactDashboard = true; 
+        }
+
+        $upgrade = new CRM_Upgrade_Form( );
+        $upgrade->assign( 'alterContactDashboard', $alterContactDashboard );
+        $upgrade->processSQL( $rev );
     }
   }

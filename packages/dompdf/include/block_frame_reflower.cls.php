@@ -37,7 +37,7 @@
 
  */
 
-/* $Id: block_frame_reflower.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
+/* $Id: block_frame_reflower.cls.php 358 2011-01-30 22:22:47Z fabien.menager $ */
 
 /**
  * Reflows block frames
@@ -46,19 +46,29 @@
  * @package dompdf
  */
 class Block_Frame_Reflower extends Frame_Reflower {
-  const MIN_JUSTIFY_WIDTH = 0.80;  // (Minimum line width to justify, as
-                                   // fraction of available width)
+  // Minimum line width to justify, as fraction of available width
+  const MIN_JUSTIFY_WIDTH = 0.80;
 
+  /**
+   * @var Block_Frame_Decorator
+   */
+  protected $_frame;
+  
   function __construct(Block_Frame_Decorator $frame) { parent::__construct($frame); }
 
-  //........................................................................
-
-  // Calculate the ideal used value for the width property as per:
-  // http://www.w3.org/TR/CSS21/visudet.html#Computing_widths_and_margins
-
+  /**
+   *  Calculate the ideal used value for the width property as per:
+   *  http://www.w3.org/TR/CSS21/visudet.html#Computing_widths_and_margins
+   *  
+   *  @param float $width
+   *  @return array
+   */
   protected function _calculate_width($width) {
     $style = $this->_frame->get_style();
     $w = $this->_frame->get_containing_block("w");
+
+    if( $style->position === "fixed" )
+      $w = $this->_frame->get_parent()->get_containing_block("w");
 
     $rm = $style->length_in_pt($style->margin_right, $w);
     $lm = $style->length_in_pt($style->margin_left, $w);
@@ -124,6 +134,7 @@ class Block_Frame_Reflower extends Frame_Reflower {
           $width = $diff;
 
         } else if ( $left === "auto" ) {
+          
           if ( $lm === "auto" )
             $lm = 0;
           if ( $rm === "auto" )
@@ -166,25 +177,34 @@ class Block_Frame_Reflower extends Frame_Reflower {
 
     }
 
-    $ret = array("width"=> $width, "margin_left" => $lm, "margin_right" => $rm, "left" => $left, "right" => $right);
-
-    return $ret;
+    return array("width"=> $width, "margin_left" => $lm, "margin_right" => $rm, "left" => $left, "right" => $right);
   }
 
-  // Call the above function, but resolve max/min widths
+  /** 
+   * Call the above function, but resolve max/min widths
+   * @return array
+   */
   protected function _calculate_restricted_width() {
-    $style = $this->_frame->get_style();
-    $cb = $this->_frame->get_containing_block();
+    $frame = $this->_frame;
+    $style = $frame->get_style();
+    $cb = $frame->get_containing_block();
+    
+    if ( $style->position === "fixed" )
+      $cb = $frame->get_root()->get_containing_block();
+    
+    //if ( $style->position === "absolute" )
+    //  $cb = $frame->find_positionned_parent()->get_containing_block();
 
     if ( !isset($cb["w"]) )
       throw new DOMPDF_Exception("Box property calculation requires containing block width");
 
     // Treat width 100% as auto
-    if ( $style->width === "100%" )
+    if ( $style->width === "100%" ) {
       $width = "auto";
-    else
+    }
+    else {
       $width = $style->length_in_pt($style->width, $cb["w"]);
-
+    }
     extract($this->_calculate_width($width));
 
     // Handle min/max width
@@ -204,35 +224,37 @@ class Block_Frame_Reflower extends Frame_Reflower {
     return array($width, $margin_left, $margin_right, $left, $right);
 
   }
-
-  //........................................................................
-
-  // Determine the unrestricted height of content within the block
+  
+  /** 
+   * Determine the unrestricted height of content within the block
+   * by adding each line's height
+   * @return float
+   */
   protected function _calculate_content_height() {
-
-    // Calculate the actual height
     $height = 0;
     
-    // Add the height of all lines
-    foreach ($this->_frame->get_lines() as $line)
+    foreach ($this->_frame->get_lines() as $line) {
       $height += $line["h"];
+    }
 
     return $height;
-
   }
 
-  // Determine the frame's restricted height
+  /** 
+   * Determine the frame's restricted height
+   * @return array
+   */
   protected function _calculate_restricted_height() {
     $style = $this->_frame->get_style();
     $content_height = $this->_calculate_content_height();
     $cb = $this->_frame->get_containing_block();
-
+    
     $height = $style->length_in_pt($style->height, $cb["h"]);
 
-    $top = $style->length_in_pt($style->top, $cb["h"]);
+    $top    = $style->length_in_pt($style->top, $cb["h"]);
     $bottom = $style->length_in_pt($style->bottom, $cb["h"]);
 
-    $margin_top = $style->length_in_pt($style->margin_top, $cb["h"]);
+    $margin_top    = $style->length_in_pt($style->margin_top, $cb["h"]);
     $margin_bottom = $style->length_in_pt($style->margin_bottom, $cb["h"]);
 
     if ( $style->position === "absolute" || $style->position === "fixed" ) {
@@ -243,7 +265,7 @@ class Block_Frame_Reflower extends Frame_Reflower {
                     $style->margin_top !== "auto" ? $style->margin_top : 0,
                     $style->padding_top,
                     $style->border_top_width,
-                    $height !== "height" ? $height : 0,
+                    $height !== "auto" ? $height : 0,
                     $style->border_bottom_width,
                     $style->padding_bottom,
                     $style->margin_bottom !== "auto" ? $style->margin_bottom : 0,
@@ -345,8 +367,8 @@ class Block_Frame_Reflower extends Frame_Reflower {
 
     } else {
 
-      // Expand the height if overflow is visible
-      if ( $height == "auto" && $content_height > $height && $style->overflow === "visible" )
+      // Expand the height if overflow is visible 
+      if ( $height === "auto" && $content_height > $height /* && $style->overflow === "visible" */) 
         $height = $content_height;
 
       // FIXME: this should probably be moved to a seperate function as per
@@ -393,42 +415,73 @@ class Block_Frame_Reflower extends Frame_Reflower {
 
   }
 
-  //........................................................................
-
+  /**
+   * Adjust the justification of each of our lines.
+   * http://www.w3.org/TR/CSS21/text.html#propdef-text-align
+   */
   protected function _text_align() {
     $style = $this->_frame->get_style();
     $w = $this->_frame->get_containing_block("w");
     $width = $style->length_in_pt($style->width, $w);
-
-    // Adjust the justification of each of our lines.
-    // http://www.w3.org/TR/CSS21/text.html#propdef-text-align
     switch ($style->text_align) {
 
     default:
     case "left":
+      foreach ($this->_frame->get_lines() as $line) {
+        if ( !$line["left"] ) continue;
+        foreach($line["frames"] as $frame) {
+          if ( $frame instanceof Block_Frame_Decorator) continue;
+          $frame->set_position( $frame->get_position("x") + $line["left"] );
+        }
+      }
       return;
 
     case "right":
       foreach ($this->_frame->get_lines() as $line) {
-
         // Move each child over by $dx
-        $dx = $width - $line["w"];
-        foreach($line["frames"] as $frame)
+        $dx = $width - $line["w"] - $line["right"];
+        
+        foreach($line["frames"] as $frame) {
+          // Block frames are not aligned by text-align
+          if ($frame instanceof Block_Frame_Decorator) continue;
+          
           $frame->set_position( $frame->get_position("x") + $dx );
-
+        }
       }
       break;
 
 
     case "justify":
-      foreach ($this->_frame->get_lines() as $i => $line) {
-
+      // We justify all lines except the last one
+      $lines = $this->_frame->get_lines(); // needs to be a variable (strict standards)
+      $lines = array_splice($lines, 0, -1);
+      
+      foreach($lines as $i => $line) {
+        if ( $line["br"] ) {
+          unset($lines[$i]);
+        }
+      }
+      
+      // One space character's width. Will be used to get a more accurate spacing
+      $space_width = Font_Metrics::get_text_width(" ", $style->font_family, $style->font_size);
+      
+      foreach ($lines as $i => $line) {
+        if ( $line["left"] ) {
+          foreach($line["frames"] as $frame) {
+            if ( !$frame instanceof Text_Frame_Decorator )
+              continue;
+  
+            $frame->set_position( $frame->get_position("x") + $line["left"] );
+          }
+        }
+          
         // Only set the spacing if the line is long enough.  This is really
         // just an aesthetic choice ;)
-        if ( $line["w"] > self::MIN_JUSTIFY_WIDTH * $width ) {
+        //if ( $line["left"] + $line["w"] + $line["right"] > self::MIN_JUSTIFY_WIDTH * $width ) {
+          
           // Set the spacing for each child
           if ( $line["wc"] > 1 )
-            $spacing = ($width - $line["w"]) / ($line["wc"] - 1);
+            $spacing = ($width - ($line["left"] + $line["w"] + $line["right"]) + $space_width) / ($line["wc"] - 1);
           else
             $spacing = 0;
 
@@ -436,74 +489,93 @@ class Block_Frame_Reflower extends Frame_Reflower {
           foreach($line["frames"] as $frame) {
             if ( !$frame instanceof Text_Frame_Decorator )
               continue;
-
+              
+            $text = $frame->get_text();
+            $spaces = mb_substr_count($text, " ");
+            
+            $char_spacing = $style->length_in_pt($style->letter_spacing);
+            $_spacing = $spacing + $char_spacing;
+            
             $frame->set_position( $frame->get_position("x") + $dx );
-            $frame->set_text_spacing($spacing);
-            $dx += mb_substr_count($frame->get_text(), " ") * $spacing;
+            $frame->set_text_spacing($_spacing);
+            
+            $dx += $spaces * $_spacing;
           }
 
           // The line (should) now occupy the entire width
           $this->_frame->set_line($i, null, $width);
 
-        }
+        //}
       }
       break;
 
     case "center":
     case "centre":
-      foreach ($this->_frame->get_lines() as $i => $line) {
+      foreach ($this->_frame->get_lines() as $line) {
         // Centre each line by moving each frame in the line by:
-        $dx = ($width - $line["w"]) / 2;
-        foreach ($line["frames"] as $frame)
+        $dx = ($width + $line["left"] - $line["w"] - $line["right"] ) / 2;
+        
+        foreach ($line["frames"] as $frame) {
+          // Block frames are not aligned by text-align
+          if ($frame instanceof Block_Frame_Decorator) continue;
+          
           $frame->set_position( $frame->get_position("x") + $dx );
+        }
       }
       break;
     }
-
   }
+  
   /**
-   * Align inline children vertically
+   * Align inline children vertically.
+   * Aligns each child vertically after each line is reflowed
    */
   function vertical_align() {
-    // Align each child vertically after each line is reflowed
+    
     foreach ( $this->_frame->get_lines() as $i => $line ) {
 
+      $height = $line["h"];
+    
       foreach ( $line["frames"] as $frame ) {
         $style = $frame->get_style();
 
         if ( $style->display !== "inline" && $style->display !== "text" )
           continue;
 
-        $align = $style->vertical_align;
-
+        // FIXME?
+        if ( $this instanceof Table_Cell_Frame_Reflower )
+          $align = $frame->get_frame()->get_style()->vertical_align;
+        else 
+          $align = $frame->get_frame()->get_parent()->get_style()->vertical_align;
+          
         $frame_h = $frame->get_margin_height();
-
+        $y = $line["y"];
+        
         switch ($align) {
 
         case "baseline":
-          $y = $line["y"] + $line["h"] - $frame_h;
+          $y += $height - $frame_h;
           break;
 
         case "middle":
-          $y = $line["y"] + ($line["h"] + $frame_h) / 2;
+          $y += ($height + $frame_h) / 2;
           break;
 
         case "sub":
-          $y = $line["y"] + 0.9 * $line["h"];
+          $y += 0.2 * $height;
           break;
 
         case "super":
-          $y = $line["y"] + 0.1 * $line["h"];
+          $y += -0.3 * $height;
           break;
 
-        case  "text-top":
+        case "text-top":
         case "top": // Not strictly accurate, but good enough for now
-          $y = $line["y"];
           break;
 
         case "text-bottom":
         case "bottom":
-          $y = $line["y"] + $line["h"] - $frame_h;
+          $y += $height - $frame_h;
           break;
         }
 
@@ -514,9 +586,7 @@ class Block_Frame_Reflower extends Frame_Reflower {
     }
   }
 
-  //........................................................................
-
-  function reflow() {
+  function reflow(Frame_Decorator $block = null) {
 
     // Check if a page break is forced
     $page = $this->_frame->get_root();
@@ -525,19 +595,28 @@ class Block_Frame_Reflower extends Frame_Reflower {
     // Bail if the page is full
     if ( $page->is_full() )
       return;
+      
+    // Generated content
+    $this->_set_content();
 
     // Collapse margins if required
     $this->_collapse_margins();
 
     $style = $this->_frame->get_style();
     $cb = $this->_frame->get_containing_block();
-
+    
+    if ( $style->counter_increment && ($increment = $style->counter_increment) !== "none" )
+      $this->_frame->increment_counter($increment);
+    
+    if ( $style->position === "fixed" )
+      $cb = $this->_frame->get_root()->get_containing_block();
+    
     // Determine the constraints imposed by this frame: calculate the width
     // of the content area:
     list($w, $left_margin, $right_margin, $left, $right) = $this->_calculate_restricted_width();
 
     // Store the calculated properties
-    $style->width = $w;
+    $style->width = $w . "pt";
     $style->margin_left = $left_margin."pt";
     $style->margin_right = $right_margin."pt";
     $style->left = $left ."pt";
@@ -560,37 +639,103 @@ class Block_Frame_Reflower extends Frame_Reflower {
                                          $style->margin_bottom,
                                          $style->padding_bottom), $cb["h"]);
 
-    $cb_x = $x + $left_margin +
-      $style->length_in_pt($style->border_left_width, $cb["w"]) +
-      $style->length_in_pt($style->padding_left, $cb["w"]);
+    $cb_x = $x + $left_margin + $style->length_in_pt(array($style->border_left_width, 
+                                                           $style->padding_left), $cb["w"]);
 
-    $cb_y = $line_y = $y + $top;
+    $cb_y = $y + $top;
 
     $cb_h = ($cb["h"] + $cb["y"]) - $bottom - $cb_y;
 
     // Set the y position of the first line in this block
-    $this->_frame->set_current_line($line_y);
-
+    $this->_frame->set_current_line($cb_y);
+    
+    $floating_children = array();
+    
     // Set the containing blocks and reflow each child
     foreach ( $this->_frame->get_children() as $child ) {
-
+      
       // Bail out if the page is full
       if ( $page->is_full() )
         break;
+
+      // Floating siblings
+      if ( DOMPDF_ENABLE_CSS_FLOAT && count($floating_children) ) {
+        $offset_left = 0;
+        $offset_right = 0;
+        
+        // We need to reflow the child to know its initial x position
+        $child->set_containing_block($cb_x, $cb_y, $w, $cb_h);
+        $child->reflow($this->_frame);
+          
+        $current_line = $this->_frame->get_current_line();
+        
+        foreach ( $floating_children as $child_key => $floating_child ) {
+          $float = $floating_child->get_style()->float;
+          $floating_width = $floating_child->get_margin_width();
+          $floating_x = $floating_child->get_position("x");
+          
+          if ( $float === "left" ) {
+            if ($current_line["left"] + $child->get_position("x") > $floating_x + $floating_width) continue;
+          }
+          else {
+            if ($current_line["left"] + $child->get_position("x") + $child->get_margin_width() < $w - $floating_width - $current_line["right"]) continue;
+          }
+          
+          // If the child is still shifted by the floating element
+          if ( $floating_child->get_position("y") + $floating_child->get_margin_height() > $current_line["y"] ) {
+            if ( $float === "left" )
+              $offset_left += $floating_width;
+            else
+              $offset_right += $floating_width;
+          }
+          
+          // else, the floating element won't shift anymore
+          else {
+            unset($floating_children[$child_key]);
+          }
+        }
+        
+        if ( $offset_left ) 
+          $this->_frame->set_current_line(array("left" => $offset_left));
+          
+        if ( $offset_right )
+          $this->_frame->set_current_line(array("right" => $offset_right));
+      }
       
       $child->set_containing_block($cb_x, $cb_y, $w, $cb_h);
-      $child->reflow();
-
+      $child->reflow($this->_frame);
+      
       // Don't add the child to the line if a page break has occurred
       if ( $page->check_page_break($child) )
         break;
-
-      // If the frame is not absolutely positioned, It's okay to add the frame
-      // to the line
-      if ( $child->get_style()->position !== "absolute" &&
-           $child->get_style()->position !== "fixed" ) {
-        $this->_frame->add_frame_to_line( $child );
+        
+      $child_style = $child->get_style();
+      
+      if ( DOMPDF_ENABLE_CSS_FLOAT && $child_style->float !== "none") {
+        $floating_children[] = $child;
+        
+        // Remove next frame's beginning whitespace
+        $next = $child->get_next_sibling();
+        if ( $next && $next instanceof Text_Frame_Decorator) {
+          $next->set_text(ltrim($next->get_text()));
+        }
+        
+        $float_x = $cb_x;
+        $float_y = $this->_frame->get_current_line("y");
+        
+        $child_style = $child->get_style();
+        
+        switch( $child_style->float ) {
+          case "left": break;
+          case "right": 
+            $width = $w;
+            $float_x += ($width - $child->get_margin_width());
+            break;
+        }
+        
+        $child->set_position($float_x, $float_y);
       }
+      
     }
 
     // Determine our height
@@ -602,10 +747,10 @@ class Block_Frame_Reflower extends Frame_Reflower {
     $style->bottom = $bottom;
 
     $this->_text_align();
-
     $this->vertical_align();
+    
+    if ( $block ) {
+      $block->add_frame_to_line($this->_frame);
+    }
   }
-
-  //........................................................................
-
 }

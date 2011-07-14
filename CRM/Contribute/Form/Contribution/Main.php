@@ -68,6 +68,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         // make sure we have right permission to edit this user
         $csContactID = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, false, $this->_userID );
         $reset       = CRM_Utils_Request::retrieve( 'reset', 'Boolean', CRM_Core_DAO::$_nullObject );
+        $mainDisplay = CRM_Utils_Request::retrieve( '_qf_Main_display', 'Boolean', CRM_Core_DAO::$_nullObject );
                 
         require_once 'CRM/Contact/BAO/Contact.php';
         if ( $csContactID != $this->_userID ) {
@@ -81,6 +82,10 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
         if ( $reset ) {
             $this->assign( 'reset', $reset );
+        }
+
+        if ( $mainDisplay ) {
+            $this->assign( 'mainDisplay', $mainDisplay );
         }
         $urlParams = "&id={$this->_id}&qfKey={$this->controller->_key}";
         $this->assign( 'urlParams', $urlParams );

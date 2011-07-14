@@ -45,7 +45,7 @@
  * - better accuracy on using different renderer as cpdf, added comments
  */
 
-/* $Id: text_renderer.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
+/* $Id: text_renderer.cls.php 357 2011-01-30 20:56:46Z fabien.menager $ */
 /**
  * Renders text frames
  *
@@ -54,7 +54,7 @@
  */
 class Text_Renderer extends Abstract_Renderer {
   
-  const DECO_THICKNESS = 0.04;     // Thickness of underline. Screen: 0.08, print: better less, e.g. 0.04
+  const DECO_THICKNESS = 0.02;     // Thickness of underline. Screen: 0.08, print: better less, e.g. 0.04
 
   //Tweaking if $base and $descent are not accurate.
   //Check method_exists( $this->_canvas, "get_cpdf" )
@@ -69,7 +69,10 @@ class Text_Renderer extends Abstract_Renderer {
   //........................................................................
 
   function render(Frame $frame) {
-    
+    $text = $frame->get_text();
+    if ( trim($text) === "" )
+      return;
+      
     $style = $frame->get_style();
     list($x, $y) = $frame->get_position();
     $cb = $frame->get_containing_block();
@@ -85,28 +88,45 @@ class Text_Renderer extends Abstract_Renderer {
 
     $x += $style->length_in_pt( array($ml, $pl, $bl), $cb["w"] );
 
-    $text = $frame->get_text();
-    
     $font = $style->font_family;
-    $size = $style->font_size;
+    $size = $frame_font_size = $style->font_size;
     $height = $style->height;    
-    $spacing = $frame->get_text_spacing() + $style->word_spacing;
+    $word_spacing = $frame->get_text_spacing() + $style->length_in_pt($style->word_spacing);
+    $char_spacing = $style->length_in_pt($style->letter_spacing);
+    $width = $style->width;
 
-//     if ( preg_replace("/[\s]+/", "", $text) == "" )
-//       return;
+    /*$text = str_replace(
+      array("{PAGE_NUM}"),
+      array($this->_canvas->get_page_number()), 
+      $text
+    );*/
     
     $this->_canvas->text($x, $y, $text,
                          $font, $size,
-                         $style->color, $spacing);
-
+                         $style->color, $word_spacing, $char_spacing);
+    
+    $line = $frame->get_containing_line();
+    
+    // FIXME Instead of using the tallest frame to position,
+    // the decoration, the text should be well placed
+    if ( false && $line["tallest_frame"] ) {
+      $base_frame = $line["tallest_frame"];
+      $style = $base_frame->get_style();
+      $size = $style->font_size;
+      $height = $line["h"] * ($size / $style->line_height);
+    }
+    
     if ( method_exists( $this->_canvas, "get_cpdf" ) ) {
-      $base = ($this->_canvas->get_cpdf()->fonts[$this->_canvas->get_cpdf()->currentFont]['FontBBox'][3]*$size)/1000;
-      $descent = ($this->_canvas->get_cpdf()->fonts[$this->_canvas->get_cpdf()->currentFont]['FontBBox'][1]*$size)/1000;
+      $cpdf = $this->_canvas->get_cpdf();
+      $fontBBox = $cpdf->fonts[$style->font_family]['FontBBox'];
+      $base = (($fontBBox[3]*$size)/1000) * 0.90;
+      $descent = ($fontBBox[1]*$size)/1000;
       //print '<pre>Text_Renderer cpdf:'.$base.' '.$descent.' '.$size.'</pre>';
     } else {
       //Descent is font part below baseline, typically negative. $height is about full height of font box.
       //$descent = -$size/6; is less accurate, depends on font family.
-      $base = $size;
+      // @todo Could we get font info for PDFlib adapter and others ?
+      $base = $size*1.08;
       $descent = $size-$height;
       //print '<pre>Text_Renderer other than cpdf:'.$base.' '.$descent.' '.$size.'</pre>';
     }
@@ -114,8 +134,7 @@ class Text_Renderer extends Abstract_Renderer {
     // Handle text decoration:
     // http://www.w3.org/TR/CSS21/text.html#propdef-text-decoration
     
-    // Draw all applicable text-decorations.  Start with the root and work
-    // our way down.
+    // Draw all applicable text-decorations.  Start with the root and work our way down.
     $p = $frame;
     $stack = array();
     while ( $p = $p->get_parent() )
@@ -124,10 +143,10 @@ class Text_Renderer extends Abstract_Renderer {
     while ( count($stack) > 0 ) {
       $f = array_pop($stack);
 
-      $deco_y = $y;
       if ( ($text_deco = $f->get_style()->text_decoration) === "none" )
         continue;
-
+        
+      $deco_y = $y; //$line["y"];
       $color = $f->get_style()->color;
 
       switch ($text_deco) {
@@ -136,7 +155,7 @@ class Text_Renderer extends Abstract_Renderer {
         continue;
 
       case "underline":
-        $deco_y += $base - $descent+ $size * (self::UNDERLINE_OFFSET - self::DECO_THICKNESS/2);
+        $deco_y += $base - $descent + $size * (self::UNDERLINE_OFFSET - self::DECO_THICKNESS/2);
         break;
 
       case "overline":
@@ -146,15 +165,18 @@ class Text_Renderer extends Abstract_Renderer {
       case "line-through":
         $deco_y += $base * 0.7 + $size * self::LINETHROUGH_OFFSET;
         break;
-
       }
 
       $dx = 0;
       $x1 = $x - self::DECO_EXTENSION;
-      $x2 = $x + $style->width + $dx + self::DECO_EXTENSION;
+      $x2 = $x + $width + $dx + self::DECO_EXTENSION;
       $this->_canvas->line($x1, $deco_y, $x2, $deco_y, $color, $size * self::DECO_THICKNESS);
 
     }
+    
+    if (DEBUG_LAYOUT && DEBUG_LAYOUT_LINES) {
+      $text_width = Font_Metrics::get_text_width($text, $font, $frame_font_size);
+      $this->_debug_layout(array($x, $y, $text_width+($line["wc"]-1)*$word_spacing, $frame_font_size), "orange", array(0.5, 0.5));
+    }
   }
-
 }

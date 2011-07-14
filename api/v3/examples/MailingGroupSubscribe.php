@@ -8,7 +8,7 @@
 function mailing_group_subscribe_example(){
 $params = array( 
   'email' => 'test@test.test',
-  'group_id' => 4,
+  'group_id' => 2,
   'contact_id' => 1,
   'version' => 3,
   'hash' => 'b15de8b64e2cec34',
@@ -26,7 +26,10 @@ $params = array(
  */
 function mailing_group_subscribe_expectedresult(){
 
-  $expectedResult = '';
+  $expectedResult = array( 
+  'is_error' => 1,
+  'error_message' => 'mail(): Failed to connect to mailserver at "localhost" port 25, verify your "SMTP" and "smtp_port" setting in php.ini or use ini_set()',
+);
 
   return $expectedResult  ;
 }

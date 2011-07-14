@@ -52,12 +52,15 @@ require_once 'api/v3/utils.php';
  * @return  array  list of groups, given contact subsribed to
  */
 function civicrm_api3_group_contact_get($params) {
-	_civicrm_api3_initialize ( true );
-	try {
+
 		
-		civicrm_api3_verify_mandatory ( $params, null, array ('contact_id' ) );
+		civicrm_api3_verify_mandatory ( $params, null );
 		require_once 'CRM/Contact/BAO/GroupContact.php';
 		if(empty($params['contact_id'])){
+		  if(empty($params['status'] )){
+		    //default to 'Added'
+		    $params['status'] ='Added';
+		  }
 		  //ie. id passed in so we have to return something
 		  return _civicrm_api3_basic_get('CRM_Contact_BAO_GroupContact', $params);
 		}
@@ -65,11 +68,7 @@ function civicrm_api3_group_contact_get($params) {
 
 		$values = & CRM_Contact_BAO_GroupContact::getContactGroup ( $params ['contact_id'], $status, null, false, true );
 		return civicrm_api3_create_success ( $values, $params );
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
+
 }
 
 /**
@@ -109,16 +108,11 @@ function civicrm_api3_group_contact_get($params) {
  * 
  */
 function civicrm_api3_group_contact_create($params) {
-	_civicrm_api3_initialize ( true );
-	try {
+
 		civicrm_api3_verify_mandatory ( $params, 'CRM_Contact_BAO_GroupContact' );
 		$action = CRM_Utils_Array::value('status',$params,'Added');
 		return _civicrm_api3_group_contact_common ( $params, $action );
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
+
 }
 
 /**
@@ -207,8 +201,7 @@ function _civicrm_api3_group_contact_common($params, $op = 'Added') {
  * @deprecated - this should be part of create but need to know we aren't missing something
  */
 function civicrm_api3_group_contact_update_status($params) {
-	_civicrm_api3_initialize ( true );
-	try {
+
 		civicrm_api3_verify_mandatory ( $params, null, array ('contact_id', 'group_id' ) );
 		
 		$method = CRM_Utils_Array::value ( 'method', $params, 'API' );
@@ -219,9 +212,5 @@ function civicrm_api3_group_contact_update_status($params) {
 		CRM_Contact_BAO_GroupContact::updateGroupMembershipStatus ( $params ['contact_id'], $params ['group_id'], $method, $tracking );
 		
 		return TRUE;
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
+
 }

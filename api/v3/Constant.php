@@ -91,8 +91,7 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_constant_get($params)
 {
-  _civicrm_api3_initialize(true);
-  try{
+ 
     civicrm_api3_verify_mandatory ($params,null,array ('name'));
     $name= $params ['name'];
     require_once 'CRM/Core/PseudoConstant.php';
@@ -110,19 +109,14 @@ function civicrm_api3_constant_get($params)
     }
 
     return civicrm_api3_create_error('Unknown civicrm constant or method not callable');
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 
 
 function civicrm_api3_constant_getfields($params) {
-  _civicrm_api3_initialize(true);
 
-  return civicrm_api3_create_success (array (
+  return civicrm_api3_create_success (array ('name' => array('options' =>
    'activityStatus',
    'activityType',
    'addressee',
@@ -162,7 +156,7 @@ function civicrm_api3_constant_getfields($params) {
    'ufGroup',
    'visibility',
    'worldRegion',
-   'wysiwygEditor'),
+   'wysiwygEditor')),
    $params);
 } 
 

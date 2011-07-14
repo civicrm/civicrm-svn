@@ -32,7 +32,7 @@ function option_group_get_expectedresult(){
           'id' => '1',
           'name' => 'preferred_communication_method',
           'description' => 'Preferred Communication Method',
-          'is_reserved' => '',
+          'is_reserved' => 0,
           'is_active' => '1',
         ),
     ),

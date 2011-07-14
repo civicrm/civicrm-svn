@@ -73,7 +73,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
     {
        $params = array('version'	=>$this->_apiversion,
                        );                        
-        $result=& civicrm_api3_pledge_payment_get($params);
+        $result=& civicrm_api('pledge_payment','get',$params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals(0, $result['is_error'], " in line " . __LINE__);
         $this->assertEquals(5, $result['count'], " in line " . __LINE__);
@@ -94,12 +94,12 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
                         'status_id'							 => 1,
           
                   );                        
-           $createResult = civicrm_api3_pledge_payment_create($createparams);
+           $createResult = civicrm_api('pledge_payment','create',$createparams);
            $this->assertEquals(0, $createResult['is_error'], " in line " . __LINE__);
            $params = array('version'	=>$this->_apiversion,
                            'contribution_id'        => $this->_contributionID, 	
                              );
-          $result= civicrm_api3_pledge_payment_get($params);                     
+          $result= civicrm_api('pledge_payment','get',$params);                     
           $this->assertEquals(0, $result['is_error'], " in line " . __LINE__); 
           $this->assertEquals(1, $result['count'], " in line " . __LINE__); 
                      
@@ -119,13 +119,13 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
                         'status_id'							 => 1,
           
                   );                        
-           $createResult = civicrm_api3_pledge_payment_create($createparams);
+           $createResult = civicrm_api('pledge_payment','create',$createparams);
            $this->assertEquals(0, $createResult['is_error'], " in line " . __LINE__);
            $params = array('version'	=>$this->_apiversion,
                            'status_id'  => 1,
                              );
 
-          $result = civicrm_api3_pledge_payment_get($params);                     
+          $result = civicrm_api('pledge_payment','get',$params);                     
           $this->assertEquals(0, $result['is_error'], " in line " . __LINE__); 
           $this->assertEquals(1, $result['count'], " in line " . __LINE__); 
                      
@@ -139,7 +139,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
       //check that 5 pledge payments exist at the start
       $getParams = array('version'	=>$this->_apiversion,
                        );                        
-      $beforeAdd=& civicrm_api3_pledge_payment_get($getParams);
+      $beforeAdd=& civicrm_api('pledge_payment','get',$getParams);
       $this->assertEquals(0, $beforeAdd['is_error'], " in line " . __LINE__);
       $this->assertEquals(5, $beforeAdd['count'], " in line " . __LINE__);
       
@@ -153,18 +153,18 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
                         'actual_amount'					 => 20,
           
                   );                        
-      $result = civicrm_api3_pledge_payment_create($params);
+      $result = civicrm_api('pledge_payment','create',$params);
       $this->documentMe($params,$result,__FUNCTION__,__FILE__);
       $this->assertEquals(0, $result['is_error'], " in line " . __LINE__);
       
       //check existing updated not new one created - 'create' means add contribution_id in this context
-      $afterAdd=& civicrm_api3_pledge_payment_get($getParams);
+      $afterAdd=& civicrm_api('pledge_payment','get',$getParams);
       $this->assertEquals(0, $beforeAdd['is_error'], " in line " . __LINE__);
       $this->assertEquals(5, $afterAdd['count'], " in line " . __LINE__);   
 
       //get the created payment & check it out
       $getParams['id'] = $result['id'];
-      $getIndPayment= civicrm_api3_pledge_payment_get($getParams);  
+      $getIndPayment= civicrm_api('pledge_payment','get',$getParams);  
       $this->assertEquals(1, $getIndPayment['count'], " in line " . __LINE__); 
       $this->assertEquals(20, $getIndPayment['values'][$result['id']]['actual_amount'], " in line " . __LINE__); 
 
@@ -180,11 +180,11 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
       $params['contribution_id'] =  $contribution['id'];
       
  
-      $resultCont2= civicrm_api3_pledge_payment_create($params);
+      $resultCont2= civicrm_api('pledge_payment','create',$params);
       $this->assertEquals(0, $resultCont2['is_error'], " in line " . __LINE__);
       //make sure original is untouched & has not been updated
       $this->assertGreaterThan( $result['id'], $resultCont2['id']," in line " . __LINE__);
-      $getIndPaymentAgain= civicrm_api3_pledge_payment_get($getParams);      
+      $getIndPaymentAgain= civicrm_api('pledge_payment','get',$getParams);      
       $this->assertEquals(1, $getIndPaymentAgain['count'], " in line " . __LINE__);  
       $this->assertEquals($this->_contributionID, $getIndPaymentAgain['values'][$result['id']]['contribution_id'], " in line " . __LINE__); 
       
@@ -210,7 +210,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
       $this->assertEquals(0,  $contribution['is_error'], " in line " . __LINE__);  
 
       $params['contribution_id'] =  $contribution['id'];
-      $resultCont2= civicrm_api3_pledge_payment_create($params);
+      $resultCont2= civicrm_api('pledge_payment','create',$params);
       $i++;
     }
      // check that only 5 exist & we got an error setting the 6th
@@ -223,7 +223,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
       
       //
       $params['option.create_new'] =1;
-      $resultcreatenew = civicrm_api3_pledge_payment_create($params);
+      $resultcreatenew = civicrm_api('pledge_payment','create',$params);
       $this->assertEquals(0,$resultcreatenew['is_error'], "in line " . __LINE__); 
       $result = civicrm_api('PledgePayment','Get',array('version' => 3, 
                                                         $pledge_id => $this->_pledgeID));
@@ -271,12 +271,12 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
                         'actual_amount'					 => 20,
           
                   );                        
-      $result = civicrm_api3_pledge_payment_create($params);
+      $result = civicrm_api('pledge_payment','create',$params);
 
       $this->assertEquals(0, $result['is_error'], " in line " . __LINE__);
       
       //check existing updated not new one created - 'create' means add contribution_id in this context
-      $afterAdd=& civicrm_api3_pledge_payment_get(array('version' => 3,    'contribution_id'        => $contributionID ,) );
+      $afterAdd=& civicrm_api('pledge_payment','get',array('version' => 3,    'contribution_id'        => $contributionID ,) );
       $this->assertEquals(1, $afterAdd['count'], " in line " . __LINE__);   
 
        
@@ -292,7 +292,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
                         'actual_amount'					 => 20,
           
                   );                        
-      $result = civicrm_api3_pledge_payment_create($params);
+      $result = civicrm_api('pledge_payment','create',$params);
       $updateparams = array('id' => $result['id'],
                         		'status_id' =>1,
                             'version'		=>$this->_apiversion,
@@ -318,11 +318,11 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
                         'actual_amount'					 => 20,
           
                   );                        
-        $pledgePayment= civicrm_api3_pledge_payment_create($params);
+        $pledgePayment= civicrm_api('pledge_payment','create',$params);
 
         $deleteParams = array('id' => $pledgePayment['id'],
                                'version'									=>$this->_apiversion, );
-        $result = civicrm_api3_pledge_payment_delete($deleteParams);
+        $result = civicrm_api('pledge_payment','delete',$deleteParams);
         $this->documentMe($deleteParams,$result,__FUNCTION__,__FILE__);
         $this->assertEquals(0, $result['is_error'], " in line " . __LINE__);
         

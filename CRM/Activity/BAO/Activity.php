@@ -832,12 +832,13 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
                 $values[$activityID]['case_subject'] = $dao->case_subject;
             } else {
                 $values[$activityID]['recipients'] = ts('(recipients)');
+                $values[$activityID]['target_contact_name']   = '';
+                $values[$activityID]['assignee_contact_name'] = '';
+                $values[$activityID]['mailingId']             = '';
                 if ( $accessCiviMail && in_array( $dao->source_record_id, $mailingIDs ) ) {
                     $values[$activityID]['mailingId'] = 
                         CRM_Utils_System::url( 'civicrm/mailing/report', 
                                                "mid={$dao->source_record_id}&reset=1&cid={$dao->source_contact_id}&context=activitySelector" ); 
-                    $values[$activityID]['target_contact_name'] = '';
-                    $values[$activityID]['assignee_contact_name'] = '';
                 }
             }
         }
@@ -1570,7 +1571,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
             
             $subject = "{$membershipType}";
             
-            if ( $activity->source != 'null' && !empty($activity->source) ) {
+            if ( !empty($activity->source) && $activity->source != 'null' ) {
                 $subject .= " - {$activity->source}";
             }
             
@@ -1620,7 +1621,7 @@ SELECT  display_name
                        
             require_once "CRM/Utils/Money.php";
             $subject .= CRM_Utils_Money::format($activity->total_amount, $activity->currency);
-            if ( $activity->source != 'null' ) {
+            if ( !empty($activity->source) && $activity->source != 'null' ) {
                 $subject .= " - {$activity->source}";
                 
             } 

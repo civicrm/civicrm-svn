@@ -37,8 +37,8 @@ function survey_get_expectedresult(){
           'instructions' => 'Call people, ask for money',
           'max_number_of_contacts' => '12',
           'is_active' => '1',
-          'is_default' => '',
-          'created_date' => '2011-06-02 02:38:30',
+          'is_default' => 0,
+          'created_date' => '2011-07-11 19:51:59',
         ),
     ),
 );

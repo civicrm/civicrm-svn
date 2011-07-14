@@ -1079,8 +1079,8 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                 $attachments =& CRM_Core_BAO_File::getEntityFile( 'civicrm_activity', $activity->id );
 
                 require_once "CRM/Case/BAO/Case.php";
-                $result = CRM_Case_BAO_Case::sendActivityCopy( null, $activity->id, $mailToContacts, $attachments, null );
-                
+                // CRM-8400 add param with _currentlyViewedContactId for URL link in mail
+                $result = CRM_Case_BAO_Case::sendActivityCopy( null, $activity->id, $mailToContacts, $attachments, null, $this->_currentlyViewedContactId );
                 $mailStatus .= ts("A copy of the activity has also been sent to assignee contacts(s)."); 
             }
         }

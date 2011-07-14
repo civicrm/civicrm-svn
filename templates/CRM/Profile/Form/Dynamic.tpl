@@ -29,8 +29,14 @@
 {/if}
 {if ! empty( $fields )}
 {* Wrap in crm-container div so crm styles are used.*}
-{* Replace div id with this logic if you want CMS account create and CMS edit to use CMS theme styles: id="{if $mode eq 4}crm-container{else}crm-profile-block{/if}" *}
-<div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
+{* Replace div id "crm-container" only when profile is not loaded in civicrm container, i.e for profile shown in my account and in profile standalone mode otherwise id should be "crm-profile-block" *}
+
+{if $action eq 1 or $action eq 2 or $action eq 4 }
+    <div id="crm-profile-block">
+{else}
+    <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
+{/if}
+
     {if $isDuplicate and ( ($action eq 1 and $mode eq 4 ) or ($action eq 2) or ($action eq 8192) ) }
         <div class="crm-submit-buttons"> 
              <span class="crm-button">{$form._qf_Edit_upload_duplicate.html}</span>
@@ -120,7 +126,7 @@
                        {if $n|substr:0:3 eq 'im-'}
                          {assign var="provider" value=$n|cat:"-provider_id"}
                          {$form.$provider.html}&nbsp;
-                       {else if $n|substr:0:4 eq 'url-'}
+                       {elseif $n|substr:0:4 eq 'url-'}
                          {assign var="websiteType" value=$n|cat:"-website_type_id"}
                          {$form.$websiteType.html}&nbsp;
                        {/if}
@@ -130,7 +136,7 @@
             				{include file="CRM/Contact/Form/Edit/TagsAndGroups.tpl" type=$n context="profile"}
                        {elseif ( $form.$n.name eq 'image_URL' )}
             	            {$form.$n.html}
-                		    {if $imageURL}
+                		    {if !empty($imageURL)}
                  	 	        <div class="crm-section contact_image-section">
                  	 	            <div class="content">
                  	 	                {include file="CRM/Contact/Page/ContactImage.tpl"}

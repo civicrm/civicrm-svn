@@ -83,12 +83,15 @@
 	    {* here build the survey profile fields *}
 	    {if $surveyFields}
 	    {foreach from=$surveyFields item=field key=fieldName}
-		<td class="compressed">
+        <td class="compressed {$field.data_type} {$fieldName}">
                 {if ( $field.data_type eq 'Date') or 
-		    ( $fieldName eq 'thankyou_date' ) or ( $fieldName eq 'cancel_date' ) or ( $fieldName eq 'receipt_date' ) or (  $fieldName eq 'activity_date_time') }
+            ( $fieldName eq 'thankyou_date' ) or ( $fieldName eq 'cancel_date' ) or ( $fieldName eq 'receipt_date' ) or (  $fieldName eq 'activity_date_time') }
                     {include file="CRM/common/jcalendar.tpl" elementName=$fieldName elementIndex=$voterId batchUpdate=1}
                 {else}
                    {$form.field.$voterId.$fieldName.html}
+                {/if}
+		{if $field.html_type eq 'Autocomplete-Select'}
+		  {include file="CRM/Custom/Form/AutoComplete.tpl" element_name = field[`$voterId`][`$fieldName`]}
                 {/if}
 		</td> 
             {/foreach}

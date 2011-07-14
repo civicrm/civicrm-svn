@@ -252,7 +252,7 @@ class CRM_Core_PseudoConstant
     private static $honorType;
 
     /**
-     * activity type
+     * activity status
      * @var array
      * @static
      */

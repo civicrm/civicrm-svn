@@ -26,7 +26,7 @@
 {* Displays Activities. *}
 
 <div>
-  {if !$noFieldSet}	
+  {if empty($noFieldSet)}	
   <h3 class="crm-table-title">{ts}Activities{/ts}</h3>
   {/if}
 {if $rows}

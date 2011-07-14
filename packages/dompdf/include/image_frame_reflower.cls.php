@@ -44,7 +44,7 @@
  * - Time consuming additional image file scan only when really needed
  */
 
-/* $Id: image_frame_reflower.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
+/* $Id: image_frame_reflower.cls.php 357 2011-01-30 20:56:46Z fabien.menager $ */
 
 /**
  * Image reflower class
@@ -58,18 +58,27 @@ class Image_Frame_Reflower extends Frame_Reflower {
     parent::__construct($frame);
   }
 
-  function reflow() {
+  function reflow(Frame_Decorator $block = null) {
+    $this->_frame->position();
     
+    //FLOAT
+    //$frame = $this->_frame;
+    //$page = $frame->get_root();
+    //if (DOMPDF_ENABLE_CSS_FLOAT && $frame->get_style()->float !== "none" ) {
+    //  $page->add_floating_frame($this);
+    //}
     // Set the frame's width
     $this->get_min_max_width();
     
+    if ( $block ) {
+      $block->add_frame_to_line($this->_frame);
+    }
   }
 
   function get_min_max_width() {
-
     if (DEBUGPNG) {
       // Determine the image's size. Time consuming. Only when really needed?
-      list($img_width, $img_height) = getimagesize($this->_frame->get_image_url());
+      list($img_width, $img_height) = dompdf_getimagesize($this->_frame->get_image_url());
       print "get_min_max_width() ".
         $this->_frame->get_style()->width.' '.
         $this->_frame->get_style()->height.';'.
@@ -81,9 +90,7 @@ class Image_Frame_Reflower extends Frame_Reflower {
         $img_height.'|' ;
     }
 
-    // We need to check both the *parent's* style as well as the current node's because images are wrapped...
     $style = $this->_frame->get_style();
-    $stylep = $this->_frame->get_parent()->get_style();
 
     //own style auto or invalid value: use natural size in px
     //own style value: ignore suffix text including unit, use given number as px
@@ -91,7 +98,7 @@ class Image_Frame_Reflower extends Frame_Reflower {
     //
     //special ignored unit: e.g. 10ex: e treated as exponent; x ignored; 10e completely invalid ->like auto
 
-    $width = ($style->width > 0 ? $style->width : ($stylep->width > 0 ? $stylep->width : 0));
+    $width = ($style->width > 0 ? $style->width : 0);
     if ( is_percent($width) ) {
       $t = 0.0;
       for ($f = $this->_frame->get_parent(); $f; $f = $f->get_parent()) {
@@ -101,7 +108,7 @@ class Image_Frame_Reflower extends Frame_Reflower {
         }
       }
       $width = ((float)rtrim($width,"%") * $t)/100; //maybe 0
-    } else {
+    } elseif ( !mb_strpos($width, 'pt') ) {
       // Don't set image original size if "%" branch was 0 or size not given.
       // Otherwise aspect changed on %/auto combination for width/height
       // Resample according to px per inch
@@ -109,7 +116,7 @@ class Image_Frame_Reflower extends Frame_Reflower {
       $width = (float)($width * 72) / DOMPDF_DPI;
     }
 
-    $height = ($style->height > 0 ? $style->height : ($stylep->height > 0 ? $stylep->height : 0));
+    $height = ($style->height > 0 ? $style->height : 0);
     if ( is_percent($height) ) {
       $t = 0.0;
       for ($f = $this->_frame->get_parent(); $f; $f = $f->get_parent()) {
@@ -119,7 +126,7 @@ class Image_Frame_Reflower extends Frame_Reflower {
         }
       }
       $height = ((float)rtrim($height,"%") * $t)/100; //maybe 0
-    } else {
+    } elseif ( !mb_strpos($height, 'pt') ) {
       // Don't set image original size if "%" branch was 0 or size not given.
       // Otherwise aspect changed on %/auto combination for width/height
       // Resample according to px per inch
@@ -129,11 +136,11 @@ class Image_Frame_Reflower extends Frame_Reflower {
 
     if ($width == 0 || $height == 0) {
       // Determine the image's size. Time consuming. Only when really needed!
-      list($img_width, $img_height) = getimagesize($this->_frame->get_image_url());
+      list($img_width, $img_height) = dompdf_getimagesize($this->_frame->get_image_url());
+      
       // don't treat 0 as error. Can be downscaled or can be catched elsewhere if image not readable.
       // Resample according to px per inch
       // See also List_Bullet_Image_Frame_Decorator::__construct
-      
       if ($width == 0 && $height == 0) {
         $width = (float)($img_width * 72) / DOMPDF_DPI;
         $height = (float)($img_height * 72) / DOMPDF_DPI;
@@ -146,30 +153,8 @@ class Image_Frame_Reflower extends Frame_Reflower {
 
     if (DEBUGPNG) print $width.' '.$height.';';
 
-    // Synchronize the styles
-    $inner_style = $this->_frame->get_style();
-    $inner_style->width = $style->width = $width . "pt";
-    $inner_style->height = $style->height = $height . "pt";
-
-    $inner_style->padding_top = $style->padding_top;
-    $inner_style->padding_right = $style->padding_right;
-    $inner_style->padding_bottom = $style->padding_bottom;
-    $inner_style->padding_left = $style->padding_left;
-
-    $inner_style->border_top_width = $style->border_top_width;
-    $inner_style->border_right_width = $style->border_right_width;
-    $inner_style->border_bottom_width = $style->border_bottom_width;
-    $inner_style->border_left_width = $style->border_left_width;
-
-    $inner_style->border_top_style = $style->border_top_style;
-    $inner_style->border_right_style = $style->border_right_style;
-    $inner_style->border_bottom_style = $style->border_bottom_style;
-    $inner_style->border_left_style = $style->border_left_style;
-
-    $inner_style->margin_top = $style->margin_top;
-    $inner_style->margin_right = $style->margin_right;
-    $inner_style->margin_bottom = $style->margin_bottom;
-    $inner_style->margin_left = $style->margin_left;
+    $style->width = $width . "pt";
+    $style->height = $height . "pt";
 
     return array( $width, $width, "min" => $width, "max" => $width);
     

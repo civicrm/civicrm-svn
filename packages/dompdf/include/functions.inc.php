@@ -48,8 +48,15 @@
  * - relax windows path syntax, use uniform path delimiter. Used for background images.
  */
 
-/* $Id: functions.inc.php 216 2010-03-11 22:49:18Z ryan.masten $ */
+/* $Id: functions.inc.php 361 2011-02-16 21:03:05Z fabien.menager $ */
 
+function def($name, $value = true) {
+  if (!defined($name)) {
+    define($name, $value);
+  }
+}
+
+if ( !function_exists("pre_r") ) {
 /**
  * print_r wrapper for html/cli output
  *
@@ -61,7 +68,6 @@
  * @param bool $return
  *
  */
-if ( !function_exists("pre_r") ) {
 function pre_r($mixed, $return = false) {
   if ($return)
     return "<pre>" . print_r($mixed, true) . "</pre>";
@@ -79,6 +85,7 @@ function pre_r($mixed, $return = false) {
 }
 }
 
+if ( !function_exists("pre_var_dump") ) {
 /**
  * var_dump wrapper for html/cli output
  *
@@ -87,11 +94,43 @@ function pre_r($mixed, $return = false) {
  *
  * @param mixed $mixed variable or expression to display.
  */
-if ( !function_exists("pre_var_dump") ) {
 function pre_var_dump($mixed) {
   if ( php_sapi_name() !== "cli")
     echo("<pre>");
+    
   var_dump($mixed);
+  
+  if ( php_sapi_name() !== "cli")
+    echo("</pre>");
+}
+}
+
+if ( !function_exists("d") ) {
+/**
+ * generic debug function
+ *
+ * Takes everything and does its best to give a good debug output
+ *
+ * @param mixed $mixed variable or expression to display.
+ */
+function d($mixed) {
+  if ( php_sapi_name() !== "cli")
+    echo("<pre>");
+    
+  // line
+  if (is_array($mixed) && array_key_exists("tallest_frame", $mixed)) {
+    echo "<strong>LINE</strong>:\n";
+    foreach($mixed as $key => $value) {
+      if (is_array($value) || is_object($value)) continue;
+      echo "  $key:\t".var_export($value,true)."\n";
+    }
+  }
+  
+  // other
+  else {
+    var_export($mixed);
+  }
+  
   if ( php_sapi_name() !== "cli")
     echo("</pre>");
 }
@@ -120,8 +159,8 @@ function build_url($protocol, $host, $base_path, $url) {
     return $protocol . $host . $base_path;
   }
 
-  // Is the url already fully qualified?
-  if ( mb_strpos($url, "://") !== false )
+  // Is the url already fully qualified or a Data URI?
+  if ( mb_strpos($url, "://") !== false || mb_strpos($url, "data:") === 0 )
     return $url;
 
   $ret = $protocol;
@@ -136,6 +175,7 @@ function build_url($protocol, $host, $base_path, $url) {
       $ret .= realpath($base_path).'/';
     }
     $ret .= $url;
+    $ret = preg_replace("/\?(.*)$/", "", $ret);
     return $ret;
   }
 
@@ -191,7 +231,7 @@ function explode_url($url) {
 
     if ( isset($arr["path"]) && $arr["path"] !== "" ) {
       // Do we have a trailing slash?
-      if ( $arr["path"]{ mb_strlen($arr["path"]) - 1 } === "/" ) {
+      if ( $arr["path"][ mb_strlen($arr["path"]) - 1 ] === "/" ) {
         $path = $arr["path"];
         $file = "";
       } else {
@@ -272,21 +312,11 @@ function dec2roman($num) {
 
   $ret = "";
   switch (mb_strlen($num)) {
-
-  case 4:
-    $ret .= $thou[$num[3]];
-
-  case 3:
-    $ret .= $hund[$num[2]];
-
-  case 2:
-    $ret .= $tens[$num[1]];
-
-  case 1:
-    $ret .= $ones[$num[0]];
-
-  default:
-    break;
+    case 4: $ret .= $thou[$num[3]];
+    case 3: $ret .= $hund[$num[2]];
+    case 2: $ret .= $tens[$num[1]];
+    case 1: $ret .= $ones[$num[0]];
+    default: break;
   }
   return $ret;
 
@@ -301,87 +331,442 @@ function dec2roman($num) {
 function is_percent($value) { return false !== mb_strpos($value, "%"); }
 
 /**
+ * Parses a data URI scheme
+ * http://en.wikipedia.org/wiki/Data_URI_scheme
+ * @param string $data_uri The data URI to parse
+ * @return array The result with charset, mime type and decoded data
+ */
+function parse_data_uri($data_uri) {
+  if (!preg_match('/^data:(?P<mime>[a-z0-9\/+-.]+)(;charset=(?P<charset>[a-z0-9-])+)?(?P<base64>;base64)?\,(?P<data>.*)?/i', $data_uri, $match)) {
+    return false;
+  }
+  
+  $match['data'] = rawurldecode($match['data']);
+  $result = array(
+    'charset' => $match['charset'] ? $match['charset'] : 'US-ASCII',
+    'mime'    => $match['mime'] ? $match['mime'] : 'text/plain',
+    'data'    => $match['base64'] ? base64_decode($match['data']) : $match['data'],
+  );
+  
+  return $result;
+}
+
+/**
  * mb_string compatibility
  */
+if ( !function_exists("mb_strlen") ) {
+  
+  define('MB_OVERLOAD_MAIL', 1);
+  define('MB_OVERLOAD_STRING', 2);
+  define('MB_OVERLOAD_REGEX', 4);
+  define('MB_CASE_UPPER', 0);
+  define('MB_CASE_LOWER', 1);
+  define('MB_CASE_TITLE', 2);
 
-if ( !function_exists("mb_convert_encoding") ) {
-  function mb_convert_encoding($data, $to_encoding, $from_encoding='UTF-8') {
-    if (str_replace('-', '', strtolower($to_encoding)) == 'utf8') {
+  function mb_convert_encoding($data, $to_encoding, $from_encoding = 'UTF-8') {
+    if (str_replace('-', '', strtolower($to_encoding)) === 'utf8') {
       return utf8_encode($data);
     } else {
       return utf8_decode($data);
     }
   }
-}
-
-if ( !function_exists("mb_detect_encoding") ) {
-  function mb_detect_encoding($data, $encoding_list=array('iso-8859-1'), $strict=false) {
+  
+  function mb_detect_encoding($data, $encoding_list = array('iso-8859-1'), $strict = false) {
     return 'iso-8859-1';
   }
-}
-
-if ( !function_exists("mb_detect_order") ) {
-  function mb_detect_order($encoding_list=array('iso-8859-1')) {
+  
+  function mb_detect_order($encoding_list = array('iso-8859-1')) {
     return 'iso-8859-1';
   }
-}
-
-if ( !function_exists("mb_internal_encoding") ) {
-  function mb_internal_encoding($encoding=NULL) {
+  
+  function mb_internal_encoding($encoding = null) {
     if (isset($encoding)) {
       return true;
     } else {
       return 'iso-8859-1';
     }
   }
-}
 
-if ( !function_exists("mb_strlen") ) {
-  function mb_strlen($str, $encoding='iso-8859-1') {
-    if (str_replace('-', '', strtolower($encoding)) == 'utf8') {
-      return strlen(utf8_encode($data));
-    } else {
-      return strlen(utf8_decode($data));
+  function mb_strlen($str, $encoding = 'iso-8859-1') {
+    switch (str_replace('-', '', strtolower($encoding))) {
+      case "utf8": return strlen(utf8_encode($str));
+      case "8bit": return strlen($str);
+      default:     return strlen(utf8_decode($str));
     }
   }
-}
-
-if ( !function_exists("mb_strpos") ) {
+  
   function mb_strpos($haystack, $needle, $offset = 0) {
     return strpos($haystack, $needle, $offset);
   }
-}
-
-if ( !function_exists("mb_strrpos") ) {
+  
   function mb_strrpos($haystack, $needle, $offset = 0) {
     return strrpos($haystack, $needle, $offset);
   }
-}
-
-if ( !function_exists("mb_strtolower") ) {
-  function mb_strtolower($str) {
+  
+  function mb_strtolower( $str ) {
     return strtolower($str);
   }
-}
-
-if ( !function_exists("mb_strtoupper") ) {
-  function mb_strtoupper($str) {
+  
+  function mb_strtoupper( $str ) {
     return strtoupper($str);
   }
-}
-
-if ( !function_exists("mb_substr") ) {
-  function mb_substr($str, $start, $length=null, $encoding='iso-8859-1') {
+  
+  function mb_substr($string, $start, $length = null, $encoding = 'iso-8859-1') {
     if ( is_null($length) )
-      return substr($str, $start);
+      return substr($string, $start);
     else
-      return substr($str, $start, $length);
+      return substr($string, $start, $length);
+  }
+  
+  function mb_substr_count($haystack, $needle, $encoding = 'iso-8859-1') {
+    return substr_count($haystack, $needle);
+  }
+  
+  function mb_encode_numericentity($str, $convmap, $encoding) {
+    return htmlspecialchars($str);
+  }
+  
+  function mb_convert_case($str, $mode = MB_CASE_UPPER, $encoding = array()) {
+    switch($mode) {
+      case MB_CASE_UPPER: return mb_strtoupper($str);
+      case MB_CASE_LOWER: return mb_strtolower($str);
+      case MB_CASE_TITLE: return ucwords(mb_strtolower($str));
+      default: return $str;
+    }
+  }
+  
+  function mb_list_encodings() {
+    return array(
+      "ISO-8859-1",
+      "UTF-8",
+      "8bit",
+    );
   }
 }
 
-if ( !function_exists("mb_substr_count") ) {
-  function mb_substr_count($haystack, $needle) {
-    return substr_count($haystack, $needle);
+/** 
+ * Decoder for RLE8 compression in windows bitmaps
+ * http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/bitmaps_6x0u.asp
+ */
+function rle8_decode ($str, $width){
+  $lineWidth = $width + (3 - ($width-1) % 4);
+  $out = '';
+  $cnt = strlen($str);
+  
+  for ($i = 0; $i <$cnt; $i++) {
+    $o = ord($str[$i]);
+    switch ($o){
+      case 0: # ESCAPE
+        $i++;
+        switch (ord($str[$i])){
+          case 0: # NEW LINE
+            $padCnt = $lineWidth - strlen($out)%$lineWidth;
+            if ($padCnt<$lineWidth) $out .= str_repeat(chr(0), $padCnt); # pad line
+            break;
+          case 1: # END OF FILE
+            $padCnt = $lineWidth - strlen($out)%$lineWidth;
+            if ($padCnt<$lineWidth) $out .= str_repeat(chr(0), $padCnt); # pad line
+            break 3;
+          case 2: # DELTA
+            $i += 2;
+            break;
+          default: # ABSOLUTE MODE
+            $num = ord($str[$i]);
+            for ($j = 0; $j < $num; $j++)
+              $out .= $str[++$i];
+            if ($num % 2) $i++;
+        }
+      break;
+      default:
+      $out .= str_repeat($str[++$i], $o);
+    }
+  }
+  return $out;
+}
+
+/** 
+ * Decoder for RLE4 compression in windows bitmaps
+ * see http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/bitmaps_6x0u.asp
+ */
+function rle4_decode ($str, $width) {
+  $w = floor($width/2) + ($width % 2);
+  $lineWidth = $w + (3 - ( ($width-1) / 2) % 4);    
+  $pixels = array();
+  $cnt = strlen($str);
+  
+  for ($i = 0; $i < $cnt; $i++) {
+    $o = ord($str[$i]);
+    switch ($o) {
+      case 0: # ESCAPE
+        $i++;
+        switch (ord($str[$i])){
+          case 0: # NEW LINE
+            while (count($pixels)%$lineWidth!=0)
+              $pixels[]=0;
+            break;
+          case 1: # END OF FILE
+            while (count($pixels)%$lineWidth!=0)
+              $pixels[]=0;
+            break 3;
+          case 2: # DELTA
+            $i += 2;
+            break;
+          default: # ABSOLUTE MODE
+            $num = ord($str[$i]);
+            for ($j = 0; $j < $num; $j++){
+              if ($j%2 == 0){
+                $c = ord($str[++$i]);
+                $pixels[] = ($c & 240)>>4;
+              } else
+                $pixels[] = $c & 15;
+            }
+            if ($num % 2) $i++;
+       }
+       break;
+      default:
+        $c = ord($str[++$i]);
+        for ($j = 0; $j < $o; $j++)
+          $pixels[] = ($j%2==0 ? ($c & 240)>>4 : $c & 15);
+    }
+  }
+  
+  $out = '';
+  if (count($pixels)%2) $pixels[]=0;
+  $cnt = count($pixels)/2;
+  
+  for ($i = 0; $i < $cnt; $i++)
+    $out .= chr(16*$pixels[2*$i] + $pixels[2*$i+1]);
+    
+  return $out;
+} 
+
+if ( !function_exists("imagecreatefrombmp") ) {
+
+/**
+ * Credit goes to mgutt 
+ * http://www.programmierer-forum.de/function-imagecreatefrombmp-welche-variante-laeuft-t143137.htm
+ * Modified by Fabien Menager to support RGB555 BMP format
+ */
+function imagecreatefrombmp($filename) {
+  try {
+  // version 1.00
+  if (!($fh = fopen($filename, 'rb'))) {
+    trigger_error('imagecreatefrombmp: Can not open ' . $filename, E_USER_WARNING);
+    return false;
+  }
+  
+  // read file header
+  $meta = unpack('vtype/Vfilesize/Vreserved/Voffset', fread($fh, 14));
+  
+  // check for bitmap
+  if ($meta['type'] != 19778) {
+    trigger_error('imagecreatefrombmp: ' . $filename . ' is not a bitmap!', E_USER_WARNING);
+    return false;
+  }
+  
+  // read image header
+  $meta += unpack('Vheadersize/Vwidth/Vheight/vplanes/vbits/Vcompression/Vimagesize/Vxres/Vyres/Vcolors/Vimportant', fread($fh, 40));
+  
+  // read additional bitfield header
+  if ($meta['compression'] == 3) {
+    $meta += unpack('VrMask/VgMask/VbMask', fread($fh, 12));
+  }
+  
+  //pre_r($filename);pre_r($meta);
+  
+  // set bytes and padding
+  $meta['bytes'] = $meta['bits'] / 8;
+  $meta['decal'] = 4 - (4 * (($meta['width'] * $meta['bytes'] / 4)- floor($meta['width'] * $meta['bytes'] / 4)));
+  if ($meta['decal'] == 4) {
+    $meta['decal'] = 0;
+  }
+  
+  // obtain imagesize
+  if ($meta['imagesize'] < 1) {
+    $meta['imagesize'] = $meta['filesize'] - $meta['offset'];
+    // in rare cases filesize is equal to offset so we need to read physical size
+    if ($meta['imagesize'] < 1) {
+      $meta['imagesize'] = @filesize($filename) - $meta['offset'];
+      if ($meta['imagesize'] < 1) {
+        trigger_error('imagecreatefrombmp: Can not obtain filesize of ' . $filename . '!', E_USER_WARNING);
+        return false;
+      }
+    }
+  }
+  
+  // calculate colors
+  $meta['colors'] = !$meta['colors'] ? pow(2, $meta['bits']) : $meta['colors'];
+  
+  // read color palette
+  $palette = array();
+  if ($meta['bits'] < 16) {
+    $palette = unpack('l' . $meta['colors'], fread($fh, $meta['colors'] * 4));
+    // in rare cases the color value is signed
+    if ($palette[1] < 0) {
+      foreach ($palette as $i => $color) {
+        $palette[$i] = $color + 16777216;
+      }
+    }
+  }
+  
+  // create gd image
+  $im = imagecreatetruecolor($meta['width'], $meta['height']);
+  $data = fread($fh, $meta['imagesize']);
+  
+  // uncompress data
+  switch ($meta['compression']) {
+    case 1: $data = rle8_decode($data, $meta['width']); break;
+    case 2: $data = rle4_decode($data, $meta['width']); break;
+  }
+
+  $p = 0;
+  $vide = chr(0);
+  $y = $meta['height'] - 1;
+  $error = 'imagecreatefrombmp: ' . $filename . ' has not enough data!';
+
+  // loop through the image data beginning with the lower left corner
+  while ($y >= 0) {
+    $x = 0;
+    while ($x < $meta['width']) {
+      switch ($meta['bits']) {
+        case 32:
+        case 24:
+          if (!($part = substr($data, $p, 3 /*$meta['bytes']*/))) {
+            trigger_error($error, E_USER_WARNING);
+            return $im;
+          }
+          $color = unpack('V', $part . $vide);
+          break;
+        case 16:
+          if (!($part = substr($data, $p, 2 /*$meta['bytes']*/))) {
+            trigger_error($error, E_USER_WARNING);
+            return $im;
+          }
+          $color = unpack('v', $part);
+
+          if (empty($meta['rMask']) || $meta['rMask'] != 0xf800)
+            $color[1] = (($color[1] & 0x7c00) >> 7) * 65536 + (($color[1] & 0x03e0) >> 2) * 256 + (($color[1] & 0x001f) << 3); // 555
+          else 
+            $color[1] = (($color[1] & 0xf800) >> 8) * 65536 + (($color[1] & 0x07e0) >> 3) * 256 + (($color[1] & 0x001f) << 3); // 565
+          break;
+        case 8:
+          $color = unpack('n', $vide . substr($data, $p, 1));
+          $color[1] = $palette[ $color[1] + 1 ];
+          break;
+        case 4:
+          $color = unpack('n', $vide . substr($data, floor($p), 1));
+          $color[1] = ($p * 2) % 2 == 0 ? $color[1] >> 4 : $color[1] & 0x0F;
+          $color[1] = $palette[ $color[1] + 1 ];
+          break;
+        case 1:
+          $color = unpack('n', $vide . substr($data, floor($p), 1));
+          switch (($p * 8) % 8) {
+            case 0: $color[1] =  $color[1] >> 7; break;
+            case 1: $color[1] = ($color[1] & 0x40) >> 6; break;
+            case 2: $color[1] = ($color[1] & 0x20) >> 5; break;
+            case 3: $color[1] = ($color[1] & 0x10) >> 4; break;
+            case 4: $color[1] = ($color[1] & 0x8 ) >> 3; break;
+            case 5: $color[1] = ($color[1] & 0x4 ) >> 2; break;
+            case 6: $color[1] = ($color[1] & 0x2 ) >> 1; break;
+            case 7: $color[1] = ($color[1] & 0x1 );      break;
+          }
+          $color[1] = $palette[ $color[1] + 1 ];
+          break;
+        default:
+          trigger_error('imagecreatefrombmp: ' . $filename . ' has ' . $meta['bits'] . ' bits and this is not supported!', E_USER_WARNING);
+          return false;
+      }
+      imagesetpixel($im, $x, $y, $color[1]);
+      $x++;
+      $p += $meta['bytes'];
+    }
+    $y--;
+    $p += $meta['decal'];
+  }
+  fclose($fh);
+  return $im;
+  } catch (Exception $e) {var_dump($e);}
+}
+}
+
+/**
+ * getimagesize doesn't give a good size for 32bit BMP image v5
+ * 
+ * @param string $filename
+ * @return array The same format as getimagesize($filename)
+ */
+function dompdf_getimagesize($filename) {
+  $size = getimagesize($filename);
+  
+  if ( $size[0] == null || $size[1] == null ) {
+    $data = file_get_contents($filename, null, null, 0, 26);
+    
+    if ( substr($data, 0, 2) === "BM" ) {
+      $meta = unpack('vtype/Vfilesize/Vreserved/Voffset/Vheadersize/Vwidth/Vheight', $data);
+      $size[0] = (int)$meta['width'];
+      $size[1] = (int)$meta['height'];
+    }
+  }
+  
+  return $size;
+}
+
+/**
+ * Converts a CMYK color to RGB
+ * 
+ * @param int $c
+ * @param int $m
+ * @param int $y
+ * @param int $k
+ * @return object
+ */
+function cmyk_to_rgb($c, $m = null, $y = null, $k = null) {
+  if (is_array($c)) {
+    list($c, $m, $y, $k) = $c;
+  }
+  
+  $c *= 255;
+  $m *= 255;
+  $y *= 255;
+  $k *= 255;
+  
+  $r = (1 - round(2.55 * ($c+$k))) ;
+  $g = (1 - round(2.55 * ($m+$k))) ;
+  $b = (1 - round(2.55 * ($y+$k))) ;
+    
+  if($r<0) $r = 0;
+  if($g<0) $g = 0;
+  if($b<0) $b = 0;
+    
+  return array(
+    $r, $g, $b,
+    "r" => $r, "g" => $g, "b" => $b
+  );
+}
+
+function unichr($c) {
+  if ($c <= 0x7F) {
+    return chr($c);
+  } else if ($c <= 0x7FF) {
+    return chr(0xC0 | $c >>  6) . chr(0x80 | $c & 0x3F);
+  } else if ($c <= 0xFFFF) {
+    return chr(0xE0 | $c >> 12) . chr(0x80 | $c >> 6 & 0x3F)
+                                . chr(0x80 | $c & 0x3F);
+  } else if ($c <= 0x10FFFF) {
+    return chr(0xF0 | $c >> 18) . chr(0x80 | $c >> 12 & 0x3F)
+                                . chr(0x80 | $c >> 6 & 0x3F)
+                                . chr(0x80 | $c & 0x3F);
+  }
+  return false;
+}
+
+if ( !function_exists("date_default_timezone_get") ) {
+  function date_default_timezone_get() {
+    return "";
+  }
+  
+  function date_default_timezone_set($timezone_identifier) {
+    return true;
   }
 }
 
@@ -418,6 +803,9 @@ function record_warnings($errno, $errstr, $errfile, $errline) {
  * Print a useful backtrace
  */
 function bt() {
+  if ( php_sapi_name() !== "cli")
+    echo("<pre>");
+    
   $bt = debug_backtrace();
 
   array_shift($bt); // remove actual bt() call
@@ -436,6 +824,9 @@ function bt() {
     $i++;
   }
   echo "\n";
+  
+  if ( php_sapi_name() !== "cli")
+    echo("</pre>");
 }
 
 /**
@@ -444,9 +835,7 @@ function bt() {
  * @param string $type  The type of debug messages to print
  */
 function dompdf_debug($type, $msg) {
-  global $_DOMPDF_DEBUG_TYPES;
-  global $_dompdf_show_warnings;
-  global $_dompdf_debug;
+  global $_DOMPDF_DEBUG_TYPES, $_dompdf_show_warnings, $_dompdf_debug;
   if ( isset($_DOMPDF_DEBUG_TYPES[$type]) && ($_dompdf_show_warnings || $_dompdf_debug) ) {
     $arr = debug_backtrace();
 
@@ -455,10 +844,10 @@ function dompdf_debug($type, $msg) {
   }
 }
 
+if ( !function_exists("print_memusage") ) {
 /**
  * Dump memory usage
  */
-if ( !function_exists("print_memusage") ) {
 function print_memusage() {
   global $memusage;
   echo ("Memory Usage\n");
@@ -477,10 +866,10 @@ function print_memusage() {
 }
 }
 
+if ( !function_exists("enable_mem_profile") ) {
 /**
  * Initialize memory profiling code
  */
-if ( !function_exists("enable_mem_profile") ) {
 function enable_mem_profile() {
     global $memusage;
     $memusage = array("Startup" => memory_get_usage());
@@ -488,12 +877,12 @@ function enable_mem_profile() {
 }
 }
 
+if ( !function_exists("mark_memusage") ) {
 /**
  * Record the current memory usage
  *
  * @param string $location a meaningful location
  */
-if ( !function_exists("mark_memusage") ) {
 function mark_memusage($location) {
   global $memusage;
   if ( isset($memusage) )
@@ -501,20 +890,53 @@ function mark_memusage($location) {
 }
 }
 
+if ( !function_exists('sys_get_temp_dir')) {
 /**
  * Find the current system temporary directory
  *
  * @link http://us.php.net/manual/en/function.sys-get-temp-dir.php#85261
  */
-if ( !function_exists('sys_get_temp_dir')) {
-  function sys_get_temp_dir() {
-    if (!empty($_ENV['TMP'])) { return realpath($_ENV['TMP']); }
-    if (!empty($_ENV['TMPDIR'])) { return realpath( $_ENV['TMPDIR']); }
-    if (!empty($_ENV['TEMP'])) { return realpath( $_ENV['TEMP']); }
-    $tempfile=tempnam(uniqid(rand(),TRUE),'');
-    if (file_exists($tempfile)) {
-    unlink($tempfile);
-    return realpath(dirname($tempfile));
+function sys_get_temp_dir() {
+  if (!empty($_ENV['TMP'])) { return realpath($_ENV['TMP']); }
+  if (!empty($_ENV['TMPDIR'])) { return realpath( $_ENV['TMPDIR']); }
+  if (!empty($_ENV['TEMP'])) { return realpath( $_ENV['TEMP']); }
+  $tempfile=tempnam(uniqid(rand(),TRUE),'');
+  if (file_exists($tempfile)) {
+  unlink($tempfile);
+  return realpath(dirname($tempfile));
+  }
+}
+}
+
+if ( function_exists("memory_get_peak_usage") ) {
+  function DOMPDF_memory_usage(){
+    return memory_get_peak_usage(true);
+  }
+}
+else if ( function_exists("memory_get_peak_usage") ) {
+  function DOMPDF_memory_usage(){
+    return memory_get_usage(true);
+  }
+}
+else {
+  function DOMPDF_memory_usage(){
+    return "N/A";
+  }
+}
+
+/**
+ * Affect null to the unused objects
+ * @param unknown_type $object
+ */
+function clear_object(&$object) {
+  if ( is_object($object) ) {
+    foreach (array_keys((array)$object) as $key) {
+      clear_object($property);
+    }
+    foreach(get_class_vars(get_class($object)) as $property => $value) {
+      clear_object($property);
     }
   }
+  $object = null;
+  unset($object);
 }

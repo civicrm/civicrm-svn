@@ -131,17 +131,29 @@ function civicrm_api3_activity_create( $params ) {
 
 }
 
-
+/*
+ * Return valid fields for API
+ */
 function civicrm_api3_activity_getfields( $params ) {
-    require_once 'CRM/Activity/BAO/Activity.php';
-    $bao = new CRM_Activity_BAO_Activity();
-    $fields =$bao->exportableFields('Activity');
+    $fields =  _civicrm_api_get_fields('activity') ;
     //activity_id doesn't appear to work so let's tell them to use 'id' (current focus is ensuring id works)
     $fields['id'] = $fields['activity_id'];
-    $fields['assignee_contact_id'] = 'assigned to';
-    $fields['activity_status_id'] = 'Status id';
     unset ($fields['activity_id']);
-    return civicrm_api3_create_success($fields ,$params,'activity','create',$bao);
+    $fields['assignee_contact_id'] = array('name' => 'assignee_id',
+                                           'title' => 'assigned to',
+                                           'type' => 1,
+                                           'FKClassName' => 'CRM_Activity_DAO_ActivityAssignment');
+    $fields['target_contact_id'] = array('name' => 'target_id',
+                                           'title' => 'Activity Target',
+                                           'type' => 1,
+                                           'FKClassName' => 'CRM_Activity_DAO_ActivityTarget');
+    $fields['activity_status_id'] = array('name' => 'status_id',
+                                           'title' => 'Status Id',
+                                           'type' => 1,);
+
+    require_once ('CRM/Core/BAO/CustomField.php');
+
+    return civicrm_api3_create_success($fields );
 }
 
 
@@ -207,8 +219,6 @@ function civicrm_api3_activity_get( $params ) {
  */
 function civicrm_api3_activity_delete( $params )
 {
-
-
         civicrm_api3_verify_mandatory($params);
         $errors = array( );
 
@@ -342,9 +352,6 @@ SELECT  count(*)
         return civicrm_api3_create_error('Invalid Activity Duration (in minutes)' );
     }
 
-    if ( CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
-        $params['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'] );
-    }
 
      //if adding a new activity & date_time not set make it now
     if (!CRM_Utils_Array::value( 'id', $params ) &&

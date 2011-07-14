@@ -42,7 +42,7 @@ function group_get_expectedresult(){
       'cache_date' => '',
       'parents' => '',
       'children' => '',
-      'is_hidden' => '',
+      'is_hidden' => 0,
     ),
 );
 

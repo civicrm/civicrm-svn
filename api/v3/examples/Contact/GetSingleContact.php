@@ -32,6 +32,7 @@ function contact_get_expectedresult(){
   'first_name' => 'Test',
   'last_name' => 'Contact',
   'contact_is_deleted' => 0,
+  'id' => '17',
 );
 
   return $expectedResult  ;

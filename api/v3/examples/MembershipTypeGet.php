@@ -50,7 +50,7 @@ function membership_type_get_expectedresult(){
           'receipt_text_signup' => '',
           'receipt_text_renewal' => '',
           'autorenewal_msg_id' => '',
-          'auto_renew' => '',
+          'auto_renew' => 0,
           'is_active' => '1',
         ),
     ),

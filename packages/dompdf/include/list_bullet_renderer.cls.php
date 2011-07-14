@@ -43,7 +43,7 @@
  * - bullet size proportional to font size, center position
  */
 
-/* $Id: list_bullet_renderer.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
+/* $Id: list_bullet_renderer.cls.php 354 2011-01-24 21:59:54Z fabien.menager $ */
 
 /**
  * Renders list bullets
@@ -54,13 +54,58 @@
 class List_Bullet_Renderer extends Abstract_Renderer {
 
   //........................................................................
-
+  private function make_counter($n, $type, $pad = null){
+    $n = intval($n);
+    $text = "";
+    $uppercase = false;
+    
+    switch ($type) {
+      case "decimal-leading-zero":
+      case "decimal":
+      case "1":
+        if ($pad) 
+          $text = str_pad($n, $pad, "0", STR_PAD_LEFT);
+        else 
+          $text = $n;
+        break;
+      
+      case "upper-alpha":
+      case "upper-latin":
+      case "A":
+        $uppercase = true;
+      case "lower-alpha":
+      case "lower-latin":
+      case "a":
+        $text = chr( ($n % 26) + ord('a') - 1);
+        break;
+        
+      case "upper-roman":
+      case "I":
+        $uppercase = true;
+      case "lower-roman":
+      case "i":
+        $text = dec2roman($n);
+        break;
+      
+      case "lower-greek":
+        $text = unichr($n + 944);
+        break;
+    }
+    
+    if ($uppercase) 
+      $text = strtoupper($text);
+      
+    return $text.".";
+  }
+  
   function render(Frame $frame) {
 
     $style = $frame->get_style();
     $font_size = $style->get_font_size();
     $line_height = $style->length_in_pt($style->line_height, $frame->get_containing_block("w"));
 
+    $this->_set_opacity( $frame->get_opacity( $style->opacity ) );
+    
     // Handle list-style-image
     // If list style image is requested but missing, fall back to predefined types
     if ( $style->list_style_image !== "none" &&
@@ -74,7 +119,7 @@ class List_Bullet_Renderer extends Abstract_Renderer {
       // Tested php ver: value measured in px, suffix "px" not in value: rtrim unnecessary.
       //$w = $frame->get_width();
       //$h = $frame->get_height();
-      list($width, $height) = getimagesize($img);
+      list($width, $height) = dompdf_getimagesize($img);
       $w = (((float)rtrim($width, "px")) * 72) / DOMPDF_DPI;
       $h = (((float)rtrim($height, "px")) * 72) / DOMPDF_DPI;
       
@@ -111,10 +156,44 @@ class List_Bullet_Renderer extends Abstract_Renderer {
         $y += ($font_size*(1-List_Bullet_Frame_Decorator::BULLET_DESCENT-List_Bullet_Frame_Decorator::BULLET_SIZE))/2;
         $this->_canvas->filled_rectangle($x, $y, $w, $w, $style->color);
         break;
+		
+      case "decimal-leading-zero":
+      case "decimal":
+      case "lower-alpha":
+      case "lower-latin":
+      case "lower-roman":
+      case "lower-greek":
+      case "upper-alpha":
+      case "upper-latin":
+      case "upper-roman":
+      case "1": // HTML 4.0 compatibility
+      case "a":
+      case "i":
+      case "A":
+      case "I":
+        list($x,$y) = $frame->get_position();
+        
+        $pad = null;
+        if ( $bullet_style === "decimal-leading-zero" ) {
+          $pad = strlen($frame->get_parent()->get_parent()->get_node()->getAttribute("dompdf-children-count"));
+        }
+        
+        $index = $frame->get_node()->getAttribute("dompdf-counter");
+        $text = $this->make_counter($index, $bullet_style, $pad);
+        $font_family = $style->font_family;
+        $spacing = 0; //$frame->get_text_spacing() + $style->word_spacing;
+        
+        if ( trim($text) == "" )
+          return;
+
+        $x -= Font_Metrics::get_text_width($text, $font_family, $font_size, $spacing);
+        
+        $this->_canvas->text($x, $y, $text,
+                             $font_family, $font_size,
+                             $style->color, $spacing);
       
       case "none":
         break;
-
       }
     }
   }

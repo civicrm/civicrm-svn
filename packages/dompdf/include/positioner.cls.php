@@ -37,7 +37,7 @@
 
  */
 
-/* $Id: positioner.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
+/* $Id: positioner.cls.php 283 2010-07-19 17:57:40Z fabien.menager $ */
 
 /**
  * Base Positioner class
@@ -57,7 +57,13 @@ abstract class Positioner {
   function __construct(Frame_Decorator $frame) {
     $this->_frame = $frame;
   }
-
+  
+  /**
+   * Class destructor
+   */
+  function __destruct() {
+  	clear_object($this);
+  }
   //........................................................................
 
   abstract function position();

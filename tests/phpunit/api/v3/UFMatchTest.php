@@ -70,7 +70,7 @@ class api_v3_UFMatchTest extends CiviUnitTestCase
     {   
         $params   = array('uf_id' => 42,
                            'version' => $this->_apiversion);
-        $result = civicrm_api3_uf_match_get($params);
+        $result = civicrm_api('uf_match', 'get', $params);
         $this->assertEquals($result['values'][$result['id']]['contact_id'], 69);
         $this->assertEquals($result['is_error'], 0);
     }
@@ -78,7 +78,7 @@ class api_v3_UFMatchTest extends CiviUnitTestCase
     function testGetUFMatchIDWrongParam()
     {
         $params = 'a string';
-        $result = civicrm_api3_uf_match_get($params);
+        $result = civicrm_api('uf_match', 'get', $params);
         $this->assertEquals($result['is_error'], 1);
     }
 
@@ -89,7 +89,7 @@ class api_v3_UFMatchTest extends CiviUnitTestCase
     {
         $params   = array('contact_id' => 69,
                            'version' => $this->_apiversion);
-        $result = civicrm_api3_uf_match_get($params);
+        $result = civicrm_api('uf_match', 'get', $params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals($result['values'][$result['id']]['uf_id'], 42);
         $this->assertEquals($result['is_error'], 0);
@@ -99,7 +99,7 @@ class api_v3_UFMatchTest extends CiviUnitTestCase
     function testGetUFIDWrongParam()
     {
         $params = 'a string';
-        $result = civicrm_api3_uf_match_get($params);
+        $result = civicrm_api('uf_match', 'get', $params);
         $this->assertEquals($result['is_error'], 1);
     }
 
