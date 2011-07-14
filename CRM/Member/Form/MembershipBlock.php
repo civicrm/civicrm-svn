@@ -75,6 +75,11 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         } else {
             $this->assign('membershipBlockId', $defaults['id']);
         }
+        require_once 'CRM/Price/BAO/Set.php';
+        $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $this->_id );
+        if ( $priceSetId ) {
+            $defaults['price_set_id'] = $priceSetId;
+        }
         return $defaults;
     }
     
@@ -269,10 +274,17 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             $dao = new CRM_Member_DAO_MembershipBlock();
             $dao->copyValues($params);
             $dao->save();
+            
+            // check for price set.
+            $priceSetID = CRM_Utils_Array::value( 'price_set_id', $params );
+            if ( $priceSetID ) {
+                CRM_Price_BAO_Set::addTo( 'civicrm_contribution_page', $this->_id, $priceSetID );
+            }
+
         }
         parent::endPostProcess( );
     }
-    
+        
     /** 
      * Return a descriptive name for the page, used in wizard header 
      * 
