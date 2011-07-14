@@ -122,10 +122,10 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
                           'grouping'=> 'contact-fields',
                           ),
                    
-                   'civicrm_contribution_type' =>
+                   'civicrm_financial_account' =>
                    array( 'dao'           => 'CRM_Financial_DAO_FinancialAccount',
                           'fields'        =>
-                          array( 'contribution_type' => null, ), 
+                          array( 'financial_account' => null, ), 
                           'filters' =>             
                           array( 'id' => 
                                  array( 'name'    => 'id',
@@ -275,9 +275,9 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
               INNER JOIN civicrm_contact {$alias_constituent} 
                          ON {$this->_aliases['civicrm_contribution']}.contact_id = 
                             {$alias_constituent}.id
-              LEFT  JOIN civicrm_contribution_type  {$this->_aliases['civicrm_contribution_type']} 
+              LEFT  JOIN civicrm_financial_account  {$this->_aliases['civicrm_financial_account']} 
                          ON {$this->_aliases['civicrm_contribution']}.financial_account_id = 
-                            {$this->_aliases['civicrm_contribution_type']}.id
+                            {$this->_aliases['civicrm_financial_account']}.id
               LEFT  JOIN civicrm_contact {$alias_creditor}
                          ON {$this->_aliases['civicrm_contribution_soft']}.contact_id = 
                             {$alias_creditor}.id 

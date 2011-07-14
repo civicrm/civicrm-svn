@@ -113,7 +113,7 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
         
         $headers = array( 'external_identifier'    => 'External Identifier',
                           'fee_amount'             => 'Fee Amount',
-                          'contribution_type'      => 'Contribution Type',
+                          'financial_account'      => 'Contribution Type',
                           'contribution_status_id' => 'Contribution Status',
                           'total_amount'           => 'Total Amount'
                           );
@@ -121,14 +121,14 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
         $rows = array( 
                       array( 'external_identifier'    => $externalId1, 
                              'fee_amount'             => '200',
-                             'contribution_type'      => 'Donation',
+                             'financial_account'      => 'Donation',
                              'contribution_status_id' => 'Completed',
                              'total_amount'           => '200'
                              ),
                       
                       array( 'external_identifier'    => $externalId2,
                              'fee_amount'             => '400',
-                             'contribution_type'      => 'Donation',
+                             'financial_account'      => 'Donation',
                              'contribution_status_id' => 'Completed',
                              'total_amount'           => '400'
                              )

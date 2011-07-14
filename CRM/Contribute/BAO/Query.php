@@ -82,11 +82,11 @@ class CRM_Contribute_BAO_Query
         }
 
         // get contribution_type
-        if ( CRM_Utils_Array::value( 'contribution_type', $query->_returnProperties ) ) {
-            $query->_select['contribution_type']  = "civicrm_contribution_type.name as contribution_type";
-            $query->_element['contribution_type'] = 1;
+        if ( CRM_Utils_Array::value( 'financial_account', $query->_returnProperties ) ) {
+            $query->_select['financial_account']  = "civicrm_financial_account.name as financial_account";
+            $query->_element['financial_account'] = 1;
             $query->_tables['civicrm_contribution'] = 1;
-            $query->_tables['civicrm_contribution_type'] = 1;
+            $query->_tables['civicrm_financial_account'] = 1;
         }
         
         if ( CRM_Utils_Array::value( 'contribution_note', $query->_returnProperties ) ) {
@@ -213,7 +213,7 @@ class CRM_Contribute_BAO_Query
             return;
 
         case 'financial_account_id':
-        case 'contribution_type':
+        case 'financial_account':
             require_once 'CRM/Contribute/PseudoConstant.php';
             $cType = $value;
             $types = CRM_Contribute_PseudoConstant::contributionType( );
@@ -469,11 +469,11 @@ class CRM_Contribute_BAO_Query
             break;
 
             
-        case 'civicrm_contribution_type':
+        case 'civicrm_financial_account':
             if ( $mode & CRM_Contact_BAO_Query::MODE_CONTRIBUTE ) {
-                $from = " INNER JOIN civicrm_contribution_type ON civicrm_contribution.financial_account_id = civicrm_contribution_type.id ";
+                $from = " INNER JOIN civicrm_financial_account ON civicrm_contribution.financial_account_id = civicrm_financial_account.id "
             } else {
-                $from = " $side JOIN civicrm_contribution_type ON civicrm_contribution.financial_account_id = civicrm_contribution_type.id ";
+                $from = " $side JOIN civicrm_financial_account ON civicrm_contribution.financial_account_id = civicrm_financial_account.id ";
             }
       
             break;
@@ -536,7 +536,7 @@ class CRM_Contribute_BAO_Query
                                 'contact_sub_type'        => 1, 
                                 'sort_name'               => 1, 
                                 'display_name'            => 1,
-                                'contribution_type'       => 1,
+                                'financial_account'       => 1,
                                 'contribution_source'     => 1,
                                 'receive_date'            => 1,
                                 'thankyou_date'           => 1,

@@ -116,13 +116,13 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                                         'options'       => CRM_Core_PseudoConstant::stateProvince( ),), ),
                           ),
 
-                   'civicrm_contribution_type' =>
+                   'civicrm_financial_account' =>
                    array( 'dao'           => 'CRM_Financial_DAO_FinancialAccount',
                           'fields'        =>
-                          array( 'contribution_type'   => null, ), 
+                          array( 'financial_account'   => null, ), 
                           'grouping'      => 'contri-fields',
                           'group_bys'     =>
-                          array( 'contribution_type'   => null, ), ),
+                          array( 'financial_account'   => null, ), ),
 
                    'civicrm_contribution' =>
                    array( 'dao'           => 'CRM_Contribute_DAO_Contribution',
@@ -324,7 +324,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                     foreach ( $table['fields'] as $fieldName => $field ) {
                         if ( CRM_Utils_Array::value( $field['name'], $fields['fields'] ) && 
                              $fields['fields'][$field['name']] && 
-                             in_array( $field['name'], array( 'sort_name', 'postal_greeting_display', 'contribution_source', 'contribution_type' ) ) ) {
+                             in_array( $field['name'], array( 'sort_name', 'postal_greeting_display', 'contribution_source', 'financial_account' ) ) ) {
                             $grouping[] = $field['title'];
                         }
                     }
@@ -360,8 +360,8 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
              INNER JOIN civicrm_contribution   {$this->_aliases['civicrm_contribution']} 
                      ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND
                         {$this->_aliases['civicrm_contribution']}.is_test = 0
-             LEFT  JOIN civicrm_contribution_type  {$this->_aliases['civicrm_contribution_type']} 
-                     ON {$this->_aliases['civicrm_contribution']}.financial_account_id ={$this->_aliases['civicrm_contribution_type']}.id
+             LEFT  JOIN civicrm_financial_account  {$this->_aliases['civicrm_financial_account']} 
+                     ON {$this->_aliases['civicrm_contribution']}.financial_account_id ={$this->_aliases['civicrm_financial_account']}.id
              LEFT  JOIN civicrm_email {$this->_aliases['civicrm_email']} 
                      ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND 
                         {$this->_aliases['civicrm_email']}.is_primary = 1) 

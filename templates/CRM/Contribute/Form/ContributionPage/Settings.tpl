@@ -38,7 +38,7 @@
             <span class="description">{ts}This title will be displayed at the top of the page.<br />Please use only alphanumeric, spaces, hyphens and dashes for Title.{/ts}</td>
 	</tr>
 	<tr class="crm-contribution-contributionpage-settings-form-block-contribution_type_id"><td class="label">{$form.financial_account_id.label}</td><td>{$form.contribution_type_id.html}<br />	
-            <span class="description">{ts}Select the corresponding contribution type for contributions made using this page.{/ts}</span> {help id="id-contribution_type"}</td>
+            <span class="description">{ts}Select the corresponding contribution type for contributions made using this page.{/ts}</span> {help id="id-financial_account"}</td>
 	</tr>
 	
 	{* CRM-7362 --add campaign to contribution page *}

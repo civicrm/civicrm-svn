@@ -158,7 +158,7 @@ class CRM_Contribute_Import_Field {
         case 'currency':
             return CRM_Utils_Rule::currencyCode($this->_value);
             break;
-        case 'contribution_type':
+        case 'financial_account':
             static $contributionTypes = null;
             if (!$contributionTypes) {
                 $contributionTypes =& CRM_Contribute_PseudoConstant::contributionType();

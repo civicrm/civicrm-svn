@@ -82,7 +82,7 @@
         <tr class="crm-contribution-form-block-contribution_type_id"><td class="label">{$form.financial_account_id.label}</td><td{$valueStyle}>{$form.contribution_type_id.html}&nbsp;
         {if $is_test}
         {ts}(test){/ts}
-        {/if} {help id="id-contribution_type"}
+        {/if} {help id="id-financial_account"}
         </td></tr>
 	
 	{if $action eq 2 and $lineItem}

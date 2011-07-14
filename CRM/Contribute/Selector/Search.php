@@ -77,7 +77,7 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
                                  'sort_name',
                                  'amount_level',
                                  'total_amount',
-                                 'contribution_type',
+                                 'financial_account',
                                  'contribution_source',
                                  'receive_date',
                                  'thankyou_date',
@@ -359,7 +359,7 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
             }
 
             if ( $row['is_test'] ) {
-                $row['contribution_type'] = $row['contribution_type'] . ' (test)';
+                $row['financial_account'] = $row['financial_account'] . ' (test)';
             }
             
             $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->contribution_id;

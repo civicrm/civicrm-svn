@@ -476,7 +476,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
         }
         
         if ( $values['is_monetary'] ) {
-            //check if contribution type is selected
+            //check if financial account is selected
             if ( !$values['financial_account_id'] ) {
                 $errors['financial_account_id'] = ts( "Please select contribution type." );
             }

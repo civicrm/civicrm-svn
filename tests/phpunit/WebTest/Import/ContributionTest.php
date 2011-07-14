@@ -83,7 +83,7 @@ class WebTest_Import_ContributionTest extends ImportCiviSeleniumTestCase {
             
         $headers = array( 'email'                  => 'Email',
                           'fee_amount'             => 'Fee Amount',
-                          'contribution_type'      => 'Contribution Type',
+                          'financial_account'      => 'Contribution Type',
                           'contribution_status_id' => 'Contribution Status',
                           'total_amount'           => 'Total Amount'
                           );
@@ -91,14 +91,14 @@ class WebTest_Import_ContributionTest extends ImportCiviSeleniumTestCase {
         $rows = array( 
                       array( 'email'                  => $email1, 
                              'fee_amount'             => '200',
-                             'contribution_type'      => 'Donation',
+                             'financial_account'      => 'Donation',
                              'contribution_status_id' => 'Completed',
                              'total_amount'           => '200'
                              ),
                       
                       array( 'email'                  => $email2,
                              'fee_amount'             => '400',
-                             'contribution_type'      => 'Donation',
+                             'financial_account'      => 'Donation',
                              'contribution_status_id' => 'Completed',
                              'total_amount'           => '400'
                              )
@@ -117,7 +117,7 @@ class WebTest_Import_ContributionTest extends ImportCiviSeleniumTestCase {
         
         $headers = array( 'household'              => 'Household Name',
                           'fee_amount'             => 'Fee Amount',
-                          'contribution_type'      => 'Contribution Type',
+                          'financial_account'      => 'Contribution Type',
                           'contribution_status_id' => 'Contribution Status',
                           'total_amount'           => 'Total Amount'
                           );
@@ -126,14 +126,14 @@ class WebTest_Import_ContributionTest extends ImportCiviSeleniumTestCase {
             array( 
                   array( 'household'              => $household1, 
                          'fee_amount'             => '200',
-                         'contribution_type'      => 'Donation',
+                         'financial_account'      => 'Donation',
                          'contribution_status_id' => 'Completed',
                          'total_amount'           => '200'
                          ),
                   
                   array( 'household'              => $household2,
                          'fee_amount'             => '400',
-                         'contribution_type'      => 'Donation',
+                         'financial_account'      => 'Donation',
                          'contribution_status_id' => 'Completed',
                          'total_amount'           => '400'
                          )
@@ -152,7 +152,7 @@ class WebTest_Import_ContributionTest extends ImportCiviSeleniumTestCase {
         
         $headers = array( 'organization'           => 'Organization Name',
                           'fee_amount'             => 'Fee Amount',
-                          'contribution_type'      => 'Contribution Type',
+                          'financial_account'      => 'Contribution Type',
                           'contribution_status_id' => 'Contribution Status',
                           'total_amount'           => 'Total Amount'
                           );
@@ -161,14 +161,14 @@ class WebTest_Import_ContributionTest extends ImportCiviSeleniumTestCase {
             array( 
                   array( 'organization'           => $organization1, 
                          'fee_amount'             => '200',
-                         'contribution_type'      => 'Donation',
+                         'financial_account'      => 'Donation',
                          'contribution_status_id' => 'Completed',
                          'total_amount'           => '200'
                          ),
                   
                   array( 'organization'           => $organization2,
                          'fee_amount'             => '400',
-                         'contribution_type'      => 'Donation',
+                         'financial_account'      => 'Donation',
                          'contribution_status_id' => 'Completed',
                          'total_amount'           => '400' 
                          )

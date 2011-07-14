@@ -58,7 +58,7 @@ function civicrm_api3_membership_type_create($params)
      
     $ids['membershipType']   = CRM_Utils_Array::value( 'id', $values );
     $ids['memberOfContact']  = CRM_Utils_Array::value( 'member_of_contact_id', $values );
-    $ids['contributionType'] = CRM_Utils_Array::value( 'contribution_type_id', $values );
+    $ids['contributionType'] = CRM_Utils_Array::value( 'financial_account_id', $values );
 
     require_once 'CRM/Member/BAO/MembershipType.php';
     $membershipTypeBAO = CRM_Member_BAO_MembershipType::add($values, $ids);

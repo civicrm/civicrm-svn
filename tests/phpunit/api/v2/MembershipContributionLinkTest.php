@@ -99,7 +99,7 @@ class api_v2_MembershipContributionLinkTest extends CiviUnitTestCase
         $params = array (
                          'contact_id'             => $contactId,
                          'currency'               => 'USD',
-                         'contribution_type_id'   => $this->_contributionTypeID,
+                         'financial_account_id'   => $this->_contributionTypeID,
                          'contribution_status_id' => 1,
                          'contribution_page_id'   => null, 
                          'payment_instrument_id'  => 1,
@@ -171,7 +171,7 @@ class api_v2_MembershipContributionLinkTest extends CiviUnitTestCase
         $params = array (
                          'contact_id'             => $contactId,
                          'currency'               => 'USD',
-                         'contribution_type_id'   => $this->_contributionTypeID,
+                         'financial_account_id'   => $this->_contributionTypeID,
                          'contribution_status_id' => 1,
                          'contribution_page_id'   => null, 
                          'payment_instrument_id'  => 1,

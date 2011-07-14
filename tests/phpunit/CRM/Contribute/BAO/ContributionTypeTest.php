@@ -59,9 +59,9 @@ class CRM_Contribute_BAO_ContributionTypeTest extends CiviUnitTestCase
 
         $result = $this->assertDBNotNull( 'CRM_Contribute_BAO_ContributionType', $contributionType->id ,
                                           'name', 'id',
-                                          'Database check on updated contribution type record.' );
+                                          'Database check on updated financial account record.' );
         
-        $this->assertEquals( $result, 'Donations', 'Verify contribution type name.');
+        $this->assertEquals( $result, 'Donations', 'Verify financial account name.');
     }
 
     /**
@@ -79,7 +79,7 @@ class CRM_Contribute_BAO_ContributionTypeTest extends CiviUnitTestCase
         $defaults = array();
         $result = CRM_Contribute_BAO_ContributionType::retrieve( $params, $defaults );
 
-        $this->assertEquals( $result->name, 'Donations', 'Verify contribution type name.');
+        $this->assertEquals( $result->name, 'Donations', 'Verify financial account name.');
     }
 
     /**
@@ -94,11 +94,11 @@ class CRM_Contribute_BAO_ContributionTypeTest extends CiviUnitTestCase
         $ids = array();
         $contributionType = CRM_Contribute_BAO_ContributionType::add( $params, $ids );
         $result = CRM_Contribute_BAO_ContributionType::setIsActive( $contributionType->id, 0 );
-        $this->assertEquals( $result, true , 'Verify contribution type record updation for is_active.');
+        $this->assertEquals( $result, true , 'Verify financial account record updation for is_active.');
         
         $isActive = $this->assertDBNotNull( 'CRM_Contribute_BAO_ContributionType', $contributionType->id ,
                                             'is_active', 'id',
-                                            'Database check on updated for contribution type is_active.' );
+                                            'Database check on updated for financial account is_active.' );
         $this->assertEquals( $isActive, 0, 'Verify contribution types is_active.');
     }
 

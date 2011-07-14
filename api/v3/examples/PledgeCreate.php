@@ -43,7 +43,7 @@ function pledge_create_expectedresult(){
       '0' => array( 
           'id' => 2,
           'contact_id' => 7,
-          'contribution_type_id' => '1',
+          'financial_account_id' => '1',
           'contribution_page_id' => '',
           'amount' => 100,
           'original_installment_amount' => 20,

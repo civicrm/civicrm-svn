@@ -81,7 +81,7 @@ class api_v2_PledgeTest extends CiviUnitTestCase
                         'scheduled_date'    => date('Ymd',$dayaftertomorrow),  
                         'pledge_amount'         => 100.00,
                         'pledge_status_id'         => '2',
-                        'contribution_type_id'  => '1',
+                        'financial_account_id'  => '1',
                         'pledge_original_installment_amount' => 20,
                         'frequency_interval'             => 1,
                         'frequency_unit'             => 'month',
@@ -143,7 +143,7 @@ class api_v2_PledgeTest extends CiviUnitTestCase
                         'scheduled_date'    => date('Ymd',$dayaftertomorrow),   
                         'pledge_amount'         => 100.00,
                         'pledge_status_id'         => '2',
-                        'contribution_type_id'  => '1',
+                        'financial_account_id'  => '1',
                         'pledge_original_installment_amount' => 20,
                         'frequency_interval'             => 5,
                         'frequency_unit'             => 'year',
@@ -158,7 +158,7 @@ class api_v2_PledgeTest extends CiviUnitTestCase
         $this->assertEquals($pledge['frequency_interval'],5, 'In line ' . __LINE__);
         $this->assertEquals($pledge['frequency_day'],15, 'In line ' . __LINE__);
         $this->assertEquals($pledge['original_installment_amount'],20, 'In line ' . __LINE__);
-        $this->assertEquals($pledge['contribution_type_id'],1, 'In line ' . __LINE__);
+        $this->assertEquals($pledge['financial_account_id'],1, 'In line ' . __LINE__);
         $this->assertEquals($pledge['status_id'],2, 'In line ' . __LINE__);
         $this->assertEquals($pledge['create_date'],date('Ymd'), 'In line ' . __LINE__);
         $this->assertEquals($pledge['start_date'],date('Ymd'), 'In line ' . __LINE__);        
@@ -201,7 +201,7 @@ class api_v2_PledgeTest extends CiviUnitTestCase
                         'contact_id'             => $this->_individualId,    
                         'pledge_status_id'   => 3,
                         'amount'             => 100,
-                        'contribution_type_id' => 1,
+                        'financial_account_id' => 1,
                         'start_date' => date('Ymd'),
                         'installments' => 10,
                         );

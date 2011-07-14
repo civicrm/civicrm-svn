@@ -173,7 +173,7 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form
         
         $title = $displayName . 
             ' - (' . CRM_Utils_Money::format( $values['total_amount'] ) . ' ' . 
-            ' - ' . $values['contribution_type'] . ')';
+            ' - ' . $values['financial_account'] . ')';
         
         $recentOther = array( );
         if ( CRM_Core_Permission::checkActionPermission('CiviContribute', CRM_Core_Action::UPDATE) ) {

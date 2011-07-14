@@ -1235,7 +1235,7 @@ WHERE  contribution_id = {$this->_id}
                 CRM_Core_Error::fatal( 'Could not find a system table' );
             }
             
-            // add some contribution type details to the params list
+            // add some financial account details to the params list
             // if folks need to use it
             $paymentParams['contributionType_name']                = 
                 $this->_params['contributionType_name']            = $contributionType->name;

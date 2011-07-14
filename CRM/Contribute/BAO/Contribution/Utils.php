@@ -46,7 +46,7 @@ class CRM_Contribute_BAO_Contribution_Utils
      * @param array   $premiumParams   array with premium related key
      * value pairs  
      * @param int     $contactID       contact id  
-     * @param int     $contributionTypeId   contribution type id  
+     * @param int     $contributionTypeId   financial account id  
      * @param int     $component   component id  
      * 
      * @return array associated array
@@ -66,8 +66,8 @@ class CRM_Contribute_BAO_Contribution_Utils
         
         require_once 'CRM/Financial/DAO/FinancialAccount.php';
         $contributionType = new CRM_Contribute_DAO_ContributionType( );
-        if ( isset( $paymentParams['contribution_type'] ) ) {
-            $contributionType->id = $paymentParams['contribution_type'];
+        if ( isset( $paymentParams['financial_account'] ) ) {
+            $contributionType->id = $paymentParams['financial_account'];
         } else if ( CRM_Utils_Array::value( 'pledge_id', $form->_values ) ) {
             $contributionType->id = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Pledge', 
                                                                  $form->_values['pledge_id'], 
@@ -79,7 +79,7 @@ class CRM_Contribute_BAO_Contribution_Utils
             CRM_Core_Error::fatal( 'Could not find a system table' );
         }
         
-        // add some contribution type details to the params list
+        // add some financial account details to the params list
         // if folks need to use it
         $paymentParams['contributionType_name']                = 
             $form->_params['contributionType_name']            = $contributionType->name;

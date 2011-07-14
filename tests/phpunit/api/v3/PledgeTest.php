@@ -151,7 +151,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $this->assertEquals($result['values'][0]['frequency_interval'],5, 'In line ' . __LINE__);
         $this->assertEquals($result['values'][0]['frequency_day'],15, 'In line ' . __LINE__);
         $this->assertEquals($result['values'][0]['original_installment_amount'],20, 'In line ' . __LINE__);
-    //    $this->assertEquals($result['values'][0]['contribution_type_id'],1, 'In line ' . __LINE__);
+    //    $this->assertEquals($result['values'][0]['financial_account_id'],1, 'In line ' . __LINE__);
         $this->assertEquals($result['values'][0]['status_id'],2, 'In line ' . __LINE__);
         $this->assertEquals($result['values'][0]['create_date'],date('Ymd'), 'In line ' . __LINE__);
         $this->assertEquals($result['values'][0]['start_date'],date('Ymd'), 'In line ' . __LINE__);        
@@ -272,7 +272,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
                         'contact_id'             => $this->_individualId,    
                         'pledge_status_id'   => 3,
                         'amount'             => 100,
-                        'contribution_type_id' => 1,
+                        'financial_account_id' => 1,
                         'start_date' => date('Ymd'),
                         'installments' => 10,
                         'version'			 =>$this->_apiversion,

@@ -1333,7 +1333,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                     }
                 }
                 
-                //insert contribution type name in receipt.
+                //insert financial account name in receipt.
                 $this->assign( 'contributionTypeName', CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
                                                                                     $contributionParams['financial_account_id'] ) );
                 require_once 'CRM/Contribute/BAO/Contribution.php';

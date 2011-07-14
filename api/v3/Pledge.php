@@ -59,7 +59,7 @@ function civicrm_api3_pledge_create( $params ) {
       //acceptable in unique format or DB format but change to unique format here
       $params['amount'] = $params['pledge_amount'];
     }
-     $required =  array('contact_id', 'amount', array('pledge_contribution_type_id','contribution_type_id') , 'installments','start_date');
+     $required =  array('contact_id', 'amount', array('pledge_contribution_type_id','financial_account_id') , 'installments','start_date');
     
     if(CRM_Utils_Array::value('id',$params)){
       //todo move this into civicrm_api3_verify mandatory in some way - or civicrm_api

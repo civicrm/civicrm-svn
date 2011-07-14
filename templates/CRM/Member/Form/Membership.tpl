@@ -315,7 +315,7 @@ function setPaymentBlock( mode ) {
     
     cj.post( dataUrl, {mtype: memType}, function( data ) {
         if ( !mode ) {
-            // skip this for test and live modes because contribution type is set automatically
+            // skip this for test and live modes because financial account is set automatically
             cj("#financial_account_id").val( data.financial_account_id );            
         } 
         cj("#total_amount").val( data.total_amount );

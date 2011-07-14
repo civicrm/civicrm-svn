@@ -372,7 +372,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
     static function resolveDefaults(&$defaults, $reverse = false)
     {
         require_once 'CRM/Contribute/PseudoConstant.php';
-        self::lookupValue($defaults, 'contribution_type', CRM_Contribute_PseudoConstant::contributionType(), $reverse);
+        self::lookupValue($defaults, 'financial_account', CRM_Contribute_PseudoConstant::contributionType(), $reverse);
         self::lookupValue($defaults, 'payment_instrument', CRM_Contribute_PseudoConstant::paymentInstrument(), $reverse);
         self::lookupValue($defaults, 'contribution_status', CRM_Contribute_PseudoConstant::contributionStatus(), $reverse);
         self::lookupValue($defaults, 'pcp', CRM_Contribute_PseudoConstant::pcPage(), $reverse);
@@ -1167,7 +1167,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
                        LEFT JOIN civicrm_contact contact
                               ON ccs.contribution_id = cc.id AND
                                  cc.contact_id = contact.id 
-                       LEFT JOIN civicrm_contribution_type cct
+                       LEFT JOIN civicrm_financial_account cct
                               ON cc.financial_account_id = cct.id
                   WHERE cc.is_test = {$isTest} AND ccs.contact_id = " . $contact_id;
        
@@ -1181,7 +1181,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
             $result[$cs->id]['contributor_id']    = $cs->contributor_id;
             $result[$cs->id]['contribution_id']   = $cs->contribution_id;
             $result[$cs->id]['contributor_name']  = $cs->display_name;
-            $result[$cs->id]['contribution_type'] = $cs->contributionType;
+            $result[$cs->id]['financial_account'] = $cs->contributionType;
             $result[$cs->id]['receive_date']      = $cs->receive_date;
             $result[$cs->id]['pcp_id']            = $cs->pcp_id;
             $result[$cs->id]['pcp_title']         = $cs->pcp_title;

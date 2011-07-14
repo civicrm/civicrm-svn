@@ -43,7 +43,7 @@
                             <br /> {ts}(Recurring Contribution){/ts}
                         {/if}
                     </td>
-                    <td>{$row.contribution_type}</td>
+                    <td>{$row.financial_account}</td>
                     <td>{$row.receive_date|truncate:10:''|crmDate}</td>
                     <td>{$row.receipt_date|truncate:10:''|crmDate}</td>
                     <td>{$row.contribution_status}</td>

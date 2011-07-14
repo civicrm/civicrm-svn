@@ -827,7 +827,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $title = 'Membership Type ' . substr(sha1(rand()), 0, 7);
         $memTypeParams = array( 'membership_type'   => $title,
                                 'member_org'        => $membershipOrg,
-                                'contribution_type' => 2,
+                                'financial_account' => 2,
                                 'period_type'       => $period_type,
                                 );
       
@@ -857,7 +857,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->waitForElementPresent( "xpath=//div[@id='membership_type_form']/fieldset/table[2]/tbody/tr[2]/td[2]" );
       
         $this->type( 'minimum_fee', '100' );
-        $this->select( 'financial_account_id', "value={$memTypeParams['contribution_type']}" );
+        $this->select( 'financial_account_id', "value={$memTypeParams['financial_account']}" );
       
         $this->type( 'duration_interval', $duration_interval );
         $this->select( 'duration_unit', "label={$duration_unit}" );

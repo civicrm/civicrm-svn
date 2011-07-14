@@ -859,7 +859,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $params['receipt_date'] = $params['receive_date'];
             }
             
-            //insert contribution type name in receipt.
+            //insert financial account name in receipt.
             $formValues['contributionType_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
                                                                                 $formValues['financial_account_id'] );
         }

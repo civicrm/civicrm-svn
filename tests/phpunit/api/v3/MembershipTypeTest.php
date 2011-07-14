@@ -76,7 +76,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
   {
       $params = array( 'name'                 => '60+ Membership',
                        'description'          => 'people above 60 are given health instructions',
-                       'contribution_type_id' => 1 ,
+                       'financial_account_id' => 1 ,
                        'minimum_fee'          => '200',
                        'duration_unit'        => 'month',
                        'duration_interval'    => '10',
@@ -100,7 +100,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
       $this->assertEquals($membershiptype['is_error'],'0', 'In line ' . __LINE__ );
       $this->assertEquals($membershiptype['values'][$id]['name'],'General', 'In line ' . __LINE__  . " id is " .$id  );
       $this->assertEquals($membershiptype['values'][$id]['member_of_contact_id'],$this->_contactID, 'In line ' . __LINE__ );
-      $this->assertEquals($membershiptype['values'][$id]['contribution_type_id'],1, 'In line ' . __LINE__ );
+      $this->assertEquals($membershiptype['values'][$id]['financial_account_id'],1, 'In line ' . __LINE__ );
       $this->assertEquals($membershiptype['values'][$id]['duration_unit'],'year', 'In line ' . __LINE__ );
       $this->assertEquals($membershiptype['values'][$id]['duration_interval'],'1', 'In line ' . __LINE__ );
       $this->assertEquals($membershiptype['values'][$id]['period_type'],'rolling', 'In line ' . __LINE__ );
@@ -115,7 +115,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
       $membershiptype = & civicrm_api3_membership_type_create( $params );
       $this->assertEquals( $membershiptype['is_error'], 1 );
       $this->assertEquals( $membershiptype['error_message'], 
-                           'Mandatory key(s) missing from params array: domain_id, member_of_contact_id, contribution_type_id, name, duration_unit, duration_interval');
+                           'Mandatory key(s) missing from params array: domain_id, member_of_contact_id, financial_account_id, name, duration_unit, duration_interval');
   }
 
   function testCreateWithWrongParamsType()
@@ -130,7 +130,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
   {
       $params = array( 'name'                 => '60+ Membership',
                        'description'          => 'people above 60 are given health instructions',                        
-                       'contribution_type_id' => 1,
+                       'financial_account_id' => 1,
                        'domain_id'            => '1',
                        'minimum_fee'          => '200',
                        'duration_unit'        => 'month',
@@ -161,7 +161,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
     $membershiptype = & civicrm_api3_membership_type_create($params);
     $this->assertEquals( $membershiptype['is_error'], 1 );
     $this->assertEquals( $membershiptype['error_message'],
-                         'Mandatory key(s) missing from params array: contribution_type_id');
+                         'Mandatory key(s) missing from params array: financial_account_id');
   }
    
   function testCreateWithoutDurationUnit()
@@ -169,7 +169,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
       $params = array( 'name'                 => '80+ Membership',
                        'description'          => 'people above 80 are given health instructions',                        
                        'member_of_contact_id' => $this->_contactID,
-                       'contribution_type_id' => 1,
+                       'financial_account_id' => 1,
                        'domain_id'            => '1',
                        'minimum_fee'          => '200',
                        'duration_interval'    => '10',                 
@@ -198,14 +198,14 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
       $membershiptype = & civicrm_api3_membership_type_create($params);
       $this->assertEquals( $membershiptype['is_error'], 1 );
       $this->assertEquals( $membershiptype['error_message'],
-                           'Mandatory key(s) missing from params array: contribution_type_id, duration_interval');
+                           'Mandatory key(s) missing from params array: financial_account_id, duration_interval');
   }
 
   function testCreateWithoutNameandDomainIDandDurationUnit()
   {
       $params = array( 'description'          => 'people above 50 are given health instructions',
                        'member_of_contact_id' => $this->_contactID,
-                       'contribution_type_id' => 1,
+                       'financial_account_id' => 1,
                        'minimum_fee'          => '200',
                        'duration_interval'    => '10',
                        'period_type'          => 'rolling',
@@ -223,7 +223,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
   {
       $params = array( 'description'          => 'people above 50 are given health instructions',
                        'member_of_contact_id' => $this->_contactID,
-                       'contribution_type_id' => 1,
+                       'financial_account_id' => 1,
                        'domain_id'            => '1',
                        'minimum_fee'          => '200',
                        'duration_unit'        => 'month',
@@ -243,7 +243,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
       $params = array( 'name'                 => '40+ Membership',
                        'description'          => 'people above 40 are given health instructions', 
                        'member_of_contact_id' => $this->_contactID,
-                       'contribution_type_id' => 1,
+                       'financial_account_id' => 1,
                        'domain_id'            => '1',
                        'minimum_fee'          => '200',
                        'duration_unit'        => 'month',
@@ -276,7 +276,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
       $membershiptype = & civicrm_api3_membership_type_create($params);
       $this->assertEquals( $membershiptype['is_error'], 1 );
       $this->assertEquals( $membershiptype['error_message'],
-                           'Mandatory key(s) missing from params array: domain_id, member_of_contact_id, contribution_type_id, name, duration_unit, duration_interval, version');
+                           'Mandatory key(s) missing from params array: domain_id, member_of_contact_id, financial_account_id, name, duration_unit, duration_interval, version');
   }
 
 
@@ -285,7 +285,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
       $params = array( 'name'                 => '60+ Membership',
                        'description'          => 'people above 60 are given health instructions',                        
                        'member_of_contact_id' => $this->_contactID,
-                       'contribution_type_id' => 1,
+                       'financial_account_id' => 1,
                        'minimum_fee'          => '1200',
                        'duration_unit'        => 'month',
                        'duration_interval'    => '10',
@@ -326,7 +326,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
             
       $this->assertEquals($membershiptype['values'][0]['name'],'Updated General', "in line " . __LINE__);
       $this->assertEquals($membershiptype['values'][0]['member_of_contact_id'],'2', "in line " . __LINE__);
-      $this->assertEquals($membershiptype['values'][0]['contribution_type_id'],'2', "in line " . __LINE__);
+      $this->assertEquals($membershiptype['values'][0]['financial_account_id'],'2', "in line " . __LINE__);
       $this->assertEquals($membershiptype['values'][0]['duration_unit'],'month', "in line " . __LINE__);
       $this->assertEquals($membershiptype['values'][0]['duration_interval'],'10', "in line " . __LINE__);
       $this->assertEquals($membershiptype['values'][0]['period_type'],'fixed', "in line " . __LINE__);

@@ -74,7 +74,7 @@ class CRM_Contribute_BAO_PCPTest extends CiviUnitTestCase
         // Delete our test object
         require_once 'CRM/Core/DAO.php';
         $delParams = array( 'id' => $pcpBlock->id );
-        // FIXME: Currently this delete fails with an FK constraint error: DELETE FROM civicrm_contribution_type  WHERE (  civicrm_contribution_type.id = 5 )
+        // FIXME: Currently this delete fails with an FK constraint error: DELETE FROM civicrm_financial_account  WHERE (  civicrm_financial_account.id = 5 )
         // CRM_Core_DAO::deleteTestObjects( 'CRM_Contribute_DAO_PCPBlock', $delParams );
         
     }
@@ -103,7 +103,7 @@ class CRM_Contribute_BAO_PCPTest extends CiviUnitTestCase
         // Delete our test object
         require_once 'CRM/Core/DAO.php';
         $delParams = array( 'id' => $pcp->id );
-        // FIXME: Currently this delete fails with an FK constraint error: DELETE FROM civicrm_contribution_type  WHERE (  civicrm_contribution_type.id = 5 )
+        // FIXME: Currently this delete fails with an FK constraint error: DELETE FROM civicrm_financial_account  WHERE (  civicrm_financial_account.id = 5 )
         // CRM_Core_DAO::deleteTestObjects( 'CRM_Contribute_DAO_PCP', $delParams );
         
     }
@@ -133,7 +133,7 @@ class CRM_Contribute_BAO_PCPTest extends CiviUnitTestCase
         // Delete our test object
         require_once 'CRM/Core/DAO.php';
         $delParams = array( 'id' => $pcp->id );
-        // FIXME: Currently this delete fails with an FK constraint error: DELETE FROM civicrm_contribution_type  WHERE (  civicrm_contribution_type.id = 5 )
+        // FIXME: Currently this delete fails with an FK constraint error: DELETE FROM civicrm_financial_account  WHERE (  civicrm_financial_account.id = 5 )
         // CRM_Core_DAO::deleteTestObjects( 'CRM_Contribute_DAO_PCP', $delParams );
     }
 

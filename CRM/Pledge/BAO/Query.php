@@ -104,7 +104,7 @@ class CRM_Pledge_BAO_Query
         }
         
         if ( CRM_Utils_Array::value( 'pledge_contribution_type', $query->_returnProperties ) ) {
-            $query->_select['pledge_contribution_type']  = "(SELECT civicrm_contribution_type.name FROM civicrm_contribution_type WHERE civicrm_contribution_type.id = civicrm_pledge.financial_account_id) as pledge_contribution_type";
+            $query->_select['pledge_contribution_type']  = "(SELECT civicrm_financial_account.name FROM civicrm_financial_account WHERE civicrm_financial_account.id = civicrm_pledge.financial_account_id) as pledge_contribution_type";
             $query->_element['pledge_contribution_type'] = 1;
             $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
         }
@@ -431,7 +431,7 @@ class CRM_Pledge_BAO_Query
             break;
 
         case 'pledge_contribution_type':
-            $from .= " $side JOIN civicrm_contribution_type ON civicrm_pledge.financial_account_id = civicrm_contribution_type.id ";
+            $from .= " $side JOIN civicrm_financial_account ON civicrm_pledge.financial_account_id = civicrm_financial_account.id ";
             break;
 
         case 'pledge_contact_b':

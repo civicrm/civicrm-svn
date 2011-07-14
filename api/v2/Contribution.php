@@ -420,11 +420,11 @@ function _civicrm_contribute_format_params( &$params, &$values, $create=false ) 
             $contributionTypeId = CRM_Utils_Array::key( ucfirst( $value ), 
                                                         CRM_Contribute_PseudoConstant::financialAccount( ) );
             if ( $contributionTypeId ) {
-                if ( CRM_Utils_Array::value( 'contribution_type_id', $values ) &&
-                     $contributionTypeId != $values['contribution_type_id'] ) {
+                if ( CRM_Utils_Array::value( 'financial_account_id', $values ) &&
+                     $contributionTypeId != $values['financial_account_id'] ) {
                     return civicrm_create_error( 'Mismatched Contribution Type and Contribution Type Id' );
                 } 
-                $values['contribution_type_id'] = $contributionTypeId; 
+                $values['financial_account_id'] = $contributionTypeId; 
             } else {
                 return civicrm_create_error( 'Invalid Contribution Type' );
             }

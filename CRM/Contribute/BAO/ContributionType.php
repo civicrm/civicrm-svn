@@ -126,7 +126,7 @@ class CRM_Contribute_BAO_ContributionType extends CRM_Contribute_DAO_Contributio
     
     static function del($contributionTypeId) 
     {
-        //checking if contribution type is present  
+        //checking if financial account is present  
         $check = false;
         
         //check dependencies

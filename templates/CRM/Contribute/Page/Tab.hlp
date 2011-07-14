@@ -27,7 +27,7 @@
 {ts}Optional identifier for the contribution source (campaign name, event, mailer, etc.).{/ts}
 {/htxt}
 
-{htxt id="id-contribution_type"}
+{htxt id="id-financial_account"}
 {ts}Select the appropriate contribution type for this transaction.{/ts}
 {/htxt}
 

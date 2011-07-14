@@ -733,7 +733,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     /** 
      * Function to create Contribution Type
      * 
-     * @return int $id of contribution type created
+     * @return int $id of financial account created
      */    
     function contributionTypeCreate($apiversion = 2) 
     {

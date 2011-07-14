@@ -240,8 +240,8 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
                         $value[$val] = CRM_Utils_Date::processDate( $value[$val] );
                     }
                 }
-                if ($value['contribution_type']) {
-                    $value['financial_account_id'] = $value['contribution_type'];
+                if ($value['financial_account']) {
+                    $value['financial_account_id'] = $value['financial_account'];
                 }
 
                 if ( CRM_Utils_Array::value( 'payment_instrument', $value ) ) {
@@ -252,7 +252,7 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
                     $value['source'] = $value['contribution_source'];
                 }
                 
-                unset($value['contribution_type']);
+                unset($value['financial_account']);
                 unset($value['contribution_source']);
                 $contribution = CRM_Contribute_BAO_Contribution::add( $value ,$ids ); 
                 

@@ -93,13 +93,13 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
                                  ),
                           ),
 
-                   'civicrm_contribution_type' =>
+                   'civicrm_financial_account' =>
                    array( 'dao'           => 'CRM_Financial_DAO_FinancialAccount',
                           'fields'        =>
-                          array( 'contribution_type'   => null, ), 
+                          array( 'financial_account'   => null, ), 
                           'grouping'      => 'contri-fields',
                           'group_bys'     =>
-                          array( 'contribution_type'   => 
+                          array( 'financial_account'   => 
                                  array('name' => 'id'), ), ),
 
                    'civicrm_contribution' =>
@@ -205,7 +205,7 @@ contribution2_total_amount_count, contribution2_total_amount_sum',
         $append = null;
         
         // since contact fields not related to contribution type
-        if ( array_key_exists('contribution_type', $this->_params['group_bys']) ||
+        if ( array_key_exists('financial_account', $this->_params['group_bys']) ||
              array_key_exists('contribution_source', $this->_params['group_bys']) ) {
             unset($this->_columns['civicrm_contact']['fields']['id']);
         }
@@ -312,7 +312,7 @@ LEFT JOIN civicrm_email   {$this->_aliases['civicrm_email']}
 LEFT JOIN civicrm_phone   {$this->_aliases['civicrm_phone']}    
        ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND {$this->_aliases['civicrm_phone']}.is_primary = 1";
             
-        } else if ( $fromTable == 'civicrm_contribution_type' ) {
+        } else if ( $fromTable == 'civicrm_financial_account' ) {
             $contriCol  = "financial_account_id";
         } else if ( $fromTable == 'civicrm_contribution' ) {
             $contriCol  = $fromCol;
@@ -395,13 +395,13 @@ LEFT  JOIN (
                         'country_id'          => array( 'country_id' ),
                         'state_province_id'   => array( 'country_id', 'state_province_id' ),
                         'contribution_source' => array( 'contribution_source' ),
-                        'contribution_type'   => array( 'contribution_type' ),
+                        'financial_account'   => array( 'financial_account' ),
                         );
         $idMapping = array( 'id'                  => 'Contact',
                             'country_id'          => 'Country',
                             'state_province_id'   => 'State/Province',
                             'contribution_source' => 'Contribution Source',
-                            'contribution_type'   => 'Contribution Type',
+                            'financial_account'   => 'Contribution Type',
                             'sort_name'           => 'Contact Name',
                             'email'               => 'Email',
                             'phone'               => 'Phone' );
@@ -410,7 +410,7 @@ LEFT  JOIN (
             $errors['fields'] = ts('Please select at least one Group by field.');
             
         } else if ( ( array_key_exists('contribution_source', $fields['group_bys'] )  ||
-                      array_key_exists('contribution_type',   $fields['group_bys'] )) &&
+                      array_key_exists('financial_account',   $fields['group_bys'] )) &&
                     ( count( $fields['group_bys']) > 1 ) ) {
             
             $errors['fields'] = ts('You can not use other Group by with Contribution type or Contribution source.');

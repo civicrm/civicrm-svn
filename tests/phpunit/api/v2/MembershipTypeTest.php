@@ -77,7 +77,7 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
         $params = array(
                         'name'                 => '60+ Membership',
                         'description'          => 'people above 60 are given health instructions',
-                        'contribution_type_id' => 1 ,
+                        'financial_account_id' => 1 ,
                         'minimum_fee'          => '200',
                         'duration_unit'        => 'month',
                         'duration_interval'    => '10',
@@ -97,7 +97,7 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
                        
         $this->assertEquals($membershiptype[$id]['name'],'General', 'In line ' . __LINE__ );
         $this->assertEquals($membershiptype[$id]['member_of_contact_id'],$this->_contactID);
-        $this->assertEquals($membershiptype[$id]['contribution_type_id'],1);
+        $this->assertEquals($membershiptype[$id]['financial_account_id'],1);
         $this->assertEquals($membershiptype[$id]['duration_unit'],'year');
         $this->assertEquals($membershiptype[$id]['duration_interval'],'1');
         $this->assertEquals($membershiptype[$id]['period_type'],'rolling');
@@ -128,7 +128,7 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
         $params = array(
                         'name'                 => '60+ Membership',
                         'description'          => 'people above 60 are given health instructions',                        
-                        'contribution_type_id' => 1,
+                        'financial_account_id' => 1,
                         'domain_id'            => '1',
                         'minimum_fee'          => '200',
                         'duration_unit'        => 'month',
@@ -157,7 +157,7 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
                         );
         $membershiptype = & civicrm_membership_type_create($params);
         $this->assertEquals( $membershiptype['is_error'], 1 );
-        $this->assertEquals( $membershiptype['error_message'],'Required fields contribution_type_id for CRM_Member_DAO_MembershipType are not found');
+        $this->assertEquals( $membershiptype['error_message'],'Required fields financial_account_id for CRM_Member_DAO_MembershipType are not found');
 
     }   
          
@@ -167,7 +167,7 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
         $params = array(
                         'name'                 => '80+ Membership',
                         'description'          => 'people above 80 are given health instructions',                        'member_of_contact_id' => $this->_contactID,
-                        'contribution_type_id' => 1,
+                        'financial_account_id' => 1,
                         'domain_id'            => '1',
                         'minimum_fee'          => '200',
                         'duration_interval'    => '10',                 
@@ -203,7 +203,7 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
         $params = array(
                         'description'          => 'people above 50 are given health instructions',
                         'member_of_contact_id' => $this->_contactID,
-                        'contribution_type_id' => 1,
+                        'financial_account_id' => 1,
                         'domain_id'            => '1',
                         'minimum_fee'          => '200',
                         'duration_unit'        => 'month',
@@ -223,7 +223,7 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
                         'name'                 => '40+ Membership',
                         'description'          => 'people above 40 are given health instructions', 
                         'member_of_contact_id' => $this->_contactID,
-                        'contribution_type_id' => 1,
+                        'financial_account_id' => 1,
                         'domain_id'            => '1',
                         'minimum_fee'          => '200',
                         'duration_unit'        => 'month',
@@ -263,7 +263,7 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
         $params = array(
                         'name'                 => '60+ Membership',
                         'description'          => 'people above 60 are given health instructions',                        'member_of_contact_id' => $this->_contactID,
-                        'contribution_type_id' => 1,
+                        'financial_account_id' => 1,
                         'minimum_fee'          => '1200',
                         'duration_unit'        => 'month',
                         'duration_interval'    => '10',
@@ -289,7 +289,7 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
                         'id'                        => $id,
                         'name'                      => 'Updated General',
                         'member_of_contact_id'      => $newMembOrgID,
-                        'contribution_type_id'      => '1',
+                        'financial_account_id'      => '1',
                         'duration_unit'             => 'month',
                         'duration_interval'         => '10',
                         'period_type'               => 'fixed',
@@ -297,7 +297,7 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
         $membershiptype = & civicrm_membership_type_update($params);
         $this->assertEquals($membershiptype['name'],'Updated General');
         $this->assertEquals($membershiptype['member_of_contact_id'], $newMembOrgID);
-        $this->assertEquals($membershiptype['contribution_type_id'],'1');
+        $this->assertEquals($membershiptype['financial_account_id'],'1');
         $this->assertEquals($membershiptype['duration_unit'],'month');
         $this->assertEquals($membershiptype['duration_interval'],'10');
         $this->assertEquals($membershiptype['period_type'],'fixed');
