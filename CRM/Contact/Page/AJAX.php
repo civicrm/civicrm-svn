@@ -236,13 +236,13 @@ LIMIT    0, {$limit}
         $name   = CRM_Utils_Type::escape( $name, 'String' );
         $action = CRM_Utils_Type::escape( CRM_Utils_Array::value('action', $_GET), 'String' );
 
-        if ( empty($action) ||
+        if ( !empty($action) &&
              !in_array($action, array('get', 'lookup')) ) {
             echo "$name|error\n";
             CRM_Utils_System::civiExit( );
         }
         
-        if ( $action == 'lookup' ) {
+        if ( !empty($action) && $action == 'lookup' ) {
             // Check permissions 
             $access = false;
             if ( CRM_Core_Permission::check( 'edit all contacts' ) ||
@@ -273,17 +273,19 @@ LIMIT    0, {$limit}
             $params["return.{$fld}"] = 1;
         }
         
-        $excludeGet  = array('reset', 'key', 'className', 'fnName', 'json', 'reset', 'context', 'timestamp', 'limit', 'id', 's', 'q', 'action');
-        foreach( $_GET as $param => $val ) {
-            if ( empty($val) || 
-                 in_array($param, $excludeGet) ||
-                 strpos($param, 'return.') !== false ||
-                 strpos($param, 'api.') !== false ) {
-                continue;
+        if ( !empty($action) ) {
+            $excludeGet  = array('reset', 'key', 'className', 'fnName', 'json', 'reset', 'context', 'timestamp', 'limit', 'id', 's', 'q', 'action');
+            foreach( $_GET as $param => $val ) {
+                if ( empty($val) || 
+                     in_array($param, $excludeGet) ||
+                     strpos($param, 'return.') !== false ||
+                     strpos($param, 'api.') !== false ) {
+                    continue;
+                }
+                $params[$param] = $val;
             }
-            $params[$param] = $val;
         }
-        
+            
         if ( $name )  {
             $params['sort_name'] = $name;
         }
