@@ -233,9 +233,32 @@ LIMIT    0, {$limit}
     } 
     
     static function getContactListCustomField( ) {
-        require_once 'CRM/Core/BAO/Preferences.php';
         $name   = CRM_Utils_Array::value( 's', $_GET );
         $name   = CRM_Utils_Type::escape( $name, 'String' );
+        $action = CRM_Utils_Type::escape( CRM_Utils_Array::value('action', $_GET), 'String' );
+
+        if ( empty($action) ||
+             !in_array($action, array('get', 'lookup')) ) {
+            echo "$name|error\n";
+            CRM_Utils_System::civiExit( );
+        }
+        
+        if ( $action == 'lookup' ) {
+            // Check permissions 
+            $access = false;
+            if ( CRM_Core_Permission::check( 'edit all contacts' ) ||
+                 CRM_Core_Permission::check( 'view all contacts' ) ||
+                 CRM_Core_Permission::check( 'profile listings and forms' ) ||
+                 CRM_Core_Permission::check( 'profile listings' ) ) {
+                $access = true;
+            }
+            if ( !$access ) {
+                echo "$name|$name\n";
+                CRM_Utils_System::civiExit( );
+            }
+        }
+
+        require_once 'CRM/Core/BAO/Preferences.php';
         $list   = array_keys( CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options' ), '1' );
         $return = array_unique(array_merge(array('sort_name'), $list));
         
@@ -251,7 +274,7 @@ LIMIT    0, {$limit}
             $params["return.{$fld}"] = 1;
         }
         
-        $excludeGet  = array('reset', 'key', 'className', 'fnName', 'json', 'reset', 'context', 'timestamp', 'limit', 'id', 's', 'q');
+        $excludeGet  = array('reset', 'key', 'className', 'fnName', 'json', 'reset', 'context', 'timestamp', 'limit', 'id', 's', 'q', 'action');
         foreach( $_GET as $param => $val ) {
             if ( empty($val) || 
                  in_array($param, $excludeGet) ||
@@ -266,7 +289,7 @@ LIMIT    0, {$limit}
             $params['sort_name'] = $name;
         }
 
-        $contact = civicrm_api('Contact','Get', $params);
+        $contact = civicrm_api('Contact', 'Get', $params);
         
         if ( CRM_Utils_Array::value('is_error', $contact) ) {
             echo "$name|error\n";

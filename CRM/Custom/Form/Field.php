@@ -198,12 +198,23 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
             
             if ( $defaults['data_type'] == 'ContactReference' && CRM_Utils_Array::value('filter', $defaults) ) {
                 $contactRefFilter = 'Advance';
-                if ( strpos($defaults['filter'], 'group=') !== false ) {
-                    $filterParts = explode('=', $defaults['filter'], 2);
-                    if ( CRM_Utils_Rule::positiveInteger($filterParts[1]) ) {
+                if ( strpos($defaults['filter'], 'action=lookup') !== false &&
+                     strpos($defaults['filter'], 'group=') !== false ) { 
+                    $filterParts = explode('&', $defaults['filter']);
+
+                    if ( count($filterParts) == 2 ) {
                         $contactRefFilter = 'Group';
-                        $defaults['group_id'] = $filterParts[1];
-                        unset($defaults['filter']);
+                        foreach($filterParts as $part ) {
+                            if ( strpos($part, 'group=') === false ) {
+                                continue;
+                            }
+                            $groups = substr($part, strpos($part, '=')+1);
+                            foreach(explode(',', $groups) as $grp) {
+                                if ( CRM_Utils_Rule::positiveInteger($grp) ) {
+                                    $defaults['group_id'][] = $grp;
+                                }
+                            }
+                        }
                     }
                 }
                 $defaults['filter_selected'] = $contactRefFilter;
@@ -328,7 +339,9 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
         $this->add( 'select',
                     'group_id',
                     ts('Limit List to Group'), 
-                    array( '' => ts( '- select group -' ) ) + $contactGroups
+                    $contactGroups,
+                    false,
+                    array( 'multiple'=> 'multiple' )
                     );
         
         $this->add( 'text',
@@ -610,10 +623,13 @@ SELECT count(*)
             case 'ContactReference':
                 if ( $fields['filter_selected'] == 'Advance' &&
                      CRM_Utils_Array::value('filter', $fields) ) {
-                    if ( strpos($fields['filter'], 'className=') !== false ||
-                         strpos($fields['filter'], 'fnName=') !== false ||
-                         strpos($fields['filter'], 'context=')!== false ) {
-                        $errors['filter'] = ts( 'Invalid parameters for filter' );
+                    if ( strpos($fields['filter'], 'entity=') !== false ) {
+                        $errors['filter'] = ts( "Please do not include entity parameter (entity is always 'contact')" );
+                    } else if ( strpos($fields['filter'], 'action=') === false ) {
+                        $errors['filter'] = ts("please specify 'action' parameter, it should be 'lookup' or 'get'" );
+                    } else if ( strpos($fields['filter'], 'action=get') === false &&
+                                strpos($fields['filter'], 'action=lookup') === false ) {
+                        $errors['filter'] = ts( "Only 'get' and 'lookup' actions are supported." );
                     }
                 }
                 $self->setDefaults( array('filter_selected', $fields['filter_selected']) );
@@ -849,7 +865,8 @@ AND    option_group_id = %2";
             if ( $params['filter_selected'] == 'Advance' && trim(CRM_Utils_Array::value('filter', $params)) ) {
                 $filter = trim($params['filter']);
             } else if ( $params['filter_selected'] == 'Group' && CRM_Utils_Array::value('group_id', $params) ) {
-                $filter = 'group=' . $params['group_id'];
+
+                $filter = 'action=lookup&group=' . implode(',', $params['group_id']);
             }
         }
         $params['filter'] = $filter;
