@@ -35,7 +35,7 @@
  */
 
 require_once 'CRM/Core/Page/Basic.php';
-require_once 'CRM/Core/DAO/PaymentProcessor.php';
+require_once 'CRM/Financial/DAO/PaymentProcessor.php';
 
 /**
  * Page for displaying list of payment processors
@@ -131,7 +131,7 @@ class CRM_Admin_Page_PaymentProcessor extends CRM_Core_Page_Basic
     {
         // get all custom groups sorted by weight
         $paymentProcessor = array();
-        $dao = new CRM_Core_DAO_PaymentProcessor();
+        $dao = new CRM_Financial_DAO_PaymentProcessor();
         $dao->is_test   = 0;
         $dao->orderBy('name');
         $dao->find();

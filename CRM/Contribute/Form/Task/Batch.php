@@ -158,7 +158,7 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
         require_once "CRM/Core/BAO/CustomField.php";
         $customFields = CRM_Core_BAO_CustomField::getFields( 'Contribution' );
         foreach ( $this->_contributionIds as $contributionId ) {
-            $typeId = CRM_Core_DAO::getFieldValue( "CRM_Contribute_DAO_Contribution", $contributionId, 'contribution_type_id' ); 
+            $typeId = CRM_Core_DAO::getFieldValue( "CRM_Contribute_DAO_Contribution", $contributionId, 'financial_account_id' ); 
             foreach ( $this->_fields as $name => $field ) {
                 if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $name ) ) {
                     $customValue = CRM_Utils_Array::value( $customFieldID, $customFields );
@@ -241,7 +241,7 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
                     }
                 }
                 if ($value['contribution_type']) {
-                    $value['contribution_type_id'] = $value['contribution_type'];
+                    $value['financial_account_id'] = $value['contribution_type'];
                 }
 
                 if ( CRM_Utils_Array::value( 'payment_instrument', $value ) ) {

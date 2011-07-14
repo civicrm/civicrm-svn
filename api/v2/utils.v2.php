@@ -925,7 +925,7 @@ function _civicrm_contribute_formatted_param( &$params, &$values, $create=false 
             break;
         case 'contribution_type':            
             require_once 'CRM/Contribute/PseudoConstant.php';
-            $contriTypes = CRM_Contribute_PseudoConstant::contributionType( );
+            $contriTypes = CRM_Contribute_PseudoConstant::financialAccount( );
             foreach ( $contriTypes as $val => $type ) {
                 if ( strtolower( $value ) == strtolower( $type ) ) {
                     $values['contribution_type_id'] = $val;

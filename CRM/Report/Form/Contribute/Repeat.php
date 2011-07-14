@@ -94,7 +94,7 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
                           ),
 
                    'civicrm_contribution_type' =>
-                   array( 'dao'           => 'CRM_Contribute_DAO_ContributionType',
+                   array( 'dao'           => 'CRM_Financial_DAO_FinancialAccount',
                           'fields'        =>
                           array( 'contribution_type'   => null, ), 
                           'grouping'      => 'contri-fields',
@@ -313,7 +313,7 @@ LEFT JOIN civicrm_phone   {$this->_aliases['civicrm_phone']}
        ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND {$this->_aliases['civicrm_phone']}.is_primary = 1";
             
         } else if ( $fromTable == 'civicrm_contribution_type' ) {
-            $contriCol  = "contribution_type_id";
+            $contriCol  = "financial_account_id";
         } else if ( $fromTable == 'civicrm_contribution' ) {
             $contriCol  = $fromCol;
         } else if ( $fromTable == 'civicrm_address' ) {

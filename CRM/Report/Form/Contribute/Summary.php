@@ -117,7 +117,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                           ),
 
                    'civicrm_contribution_type' =>
-                   array( 'dao'           => 'CRM_Contribute_DAO_ContributionType',
+                   array( 'dao'           => 'CRM_Financial_DAO_FinancialAccount',
                           'fields'        =>
                           array( 'contribution_type'   => null, ), 
                           'grouping'      => 'contri-fields',
@@ -149,7 +149,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                                         'default'      => array( 1 ),
                                         ), 
 
-                                'contribution_type_id'   =>
+                                'financial_account_id'   =>
                                    array( 'title'        => ts( 'Contribution Type' ), 
                                           'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                           'options'      => CRM_Contribute_PseudoConstant::contributionType( )
@@ -361,7 +361,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                      ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND
                         {$this->_aliases['civicrm_contribution']}.is_test = 0
              LEFT  JOIN civicrm_contribution_type  {$this->_aliases['civicrm_contribution_type']} 
-                     ON {$this->_aliases['civicrm_contribution']}.contribution_type_id ={$this->_aliases['civicrm_contribution_type']}.id
+                     ON {$this->_aliases['civicrm_contribution']}.financial_account_id ={$this->_aliases['civicrm_contribution_type']}.id
              LEFT  JOIN civicrm_email {$this->_aliases['civicrm_email']} 
                      ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND 
                         {$this->_aliases['civicrm_email']}.is_primary = 1) 

@@ -73,9 +73,9 @@
         {/if}
            
         <table id="contributionType" class="form-layout">
-            <tr class="crm-event-manage-fee-form-block-contribution_type_id">
-               <td class="label">{$form.contribution_type_id.label}<span class="marker"> *</span></td>
-               <td>{$form.contribution_type_id.html}</td>
+            <tr class="crm-event-manage-fee-form-block-financial_account_id">
+               <td class="label">{$form.financial_account_id.label}<span class="marker"> *</span></td>
+               <td>{$form.financial_account_id.html}</td>
             </tr>
             <tr>
                <td>&nbsp;</td>

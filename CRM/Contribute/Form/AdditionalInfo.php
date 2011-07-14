@@ -287,7 +287,7 @@ class CRM_Contribute_Form_AdditionalInfo
         $customFields = CRM_Core_BAO_CustomField::getFields( 'Contribution',
                                                              false,
                                                              false, 
-                                                             CRM_Utils_Array::value('contribution_type_id',
+                                                             CRM_Utils_Array::value('financial_account_id',
                                                                                     $params ) );
         $formatted['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
                                                                       $customFields,
@@ -309,7 +309,7 @@ class CRM_Contribute_Form_AdditionalInfo
         $this->assign('receiptType', 'contribution');
         // Retrieve Contribution Type Name from contribution_type_id
         $params['contributionType_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
-                                                                        $params['contribution_type_id'] );
+                                                                        $params['financial_account_id'] );
         if ( CRM_Utils_Array::value( 'payment_instrument_id', $params ) ) {
             require_once 'CRM/Contribute/PseudoConstant.php';
             $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument( );

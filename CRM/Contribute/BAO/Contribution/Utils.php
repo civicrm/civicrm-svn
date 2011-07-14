@@ -64,14 +64,14 @@ class CRM_Contribute_BAO_Contribution_Utils
         require_once 'CRM/Core/Payment/Form.php';
         CRM_Core_Payment_Form::mapParams( $form->_bltID, $form->_params, $paymentParams, true );
         
-        require_once 'CRM/Contribute/DAO/ContributionType.php';
+        require_once 'CRM/Financial/DAO/FinancialAccount.php';
         $contributionType = new CRM_Contribute_DAO_ContributionType( );
         if ( isset( $paymentParams['contribution_type'] ) ) {
             $contributionType->id = $paymentParams['contribution_type'];
         } else if ( CRM_Utils_Array::value( 'pledge_id', $form->_values ) ) {
             $contributionType->id = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Pledge', 
                                                                  $form->_values['pledge_id'], 
-                                                                 'contribution_type_id' );
+                                                                 'financial_account_id' );
         } else {
             $contributionType->id = $contributionTypeId;
         }
@@ -190,7 +190,7 @@ class CRM_Contribute_BAO_Contribution_Utils
                                                                                               true, true, true );
                 
                 $paymentParams['contributionID'    ] = $contribution->id;
-                $paymentParams['contributionTypeID'] = $contribution->contribution_type_id;
+                $paymentParams['contributionTypeID'] = $contribution->financial_account_id;
                 $paymentParams['contributionPageID'] = $contribution->contribution_page_id;
                 
                 if ( $form->_values['is_recur'] && $contribution->contribution_recur_id ) {
@@ -407,10 +407,10 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
             $transaction['trxn_id'] = md5( uniqid( rand( ), true ) );
         }
 
-        if ( ! isset( $transaction['contribution_type_id'] ) ) {
+        if ( ! isset( $transaction['financial_account_id'] ) ) {
             require_once 'CRM/Contribute/PseudoConstant.php';
             $contributionTypes = array_keys( CRM_Contribute_PseudoConstant::contributionType( ) );
-            $transaction['contribution_type_id'] = $contributionTypes[0];
+            $transaction['financial_account_id'] = $contributionTypes[0];
         }
 
         if ( ($type == 'paypal') && (!isset( $transaction['net_amount'] )) ) {
@@ -645,7 +645,7 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
             CRM_Core_BAO_CustomField::getFields  ( 'Contribution',
                                                    false,
                                                    false, 
-                                                   CRM_Utils_Array::value('contribution_type_id',
+                                                   CRM_Utils_Array::value('financial_account_id',
                                                                           $params ) );
         $params['custom'] = 
             CRM_Core_BAO_CustomField::postProcess( $params,

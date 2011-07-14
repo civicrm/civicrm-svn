@@ -82,11 +82,11 @@ class CRM_Event_Form_EventFees
  
         if ( $form->_eventId ) {
             //get receipt text and contribution type
-            $returnProperities = array( 'confirm_email_text', 'contribution_type_id', 'campaign_id' );
+            $returnProperities = array( 'confirm_email_text', 'financial_account_id', 'campaign_id' );
             $details = array( );
             CRM_Core_DAO::commonRetrieveAll( 'CRM_Event_DAO_Event', 'id', $form->_eventId, $details, $returnProperities );
-            if ( CRM_Utils_Array::value( 'contribution_type_id', $details[$form->_eventId] ) ) {
-                $defaults[$form->_pId]['contribution_type_id'] = $details[$form->_eventId]['contribution_type_id'];
+            if ( CRM_Utils_Array::value( 'financial_account_id', $details[$form->_eventId] ) ) {
+                $defaults[$form->_pId]['financial_account_id'] = $details[$form->_eventId]['contribution_type_id'];
             }
         }
         
@@ -326,7 +326,7 @@ class CRM_Event_Form_EventFees
             $contribution = new CRM_Contribute_DAO_Contribution( );
             $contribution->id = $contriId;
             $contribution->find( true );
-            foreach( array('contribution_type_id', 'payment_instrument_id','contribution_status_id', 'receive_date', 'total_amount' ) as $f ) {
+            foreach( array('financial_account_id', 'payment_instrument_id','contribution_status_id', 'receive_date', 'total_amount' ) as $f ) {
                 if ( $f == 'receive_date' ) {
                     list( $defaults[$form->_pId]['receive_date'] ) = CRM_Utils_Date::setDateDefaults( $contribution->$f );
                 } else {
@@ -487,7 +487,7 @@ SELECT  id, html_type
                                   array('onclick' =>"return showHideByValue('record_contribution','','payment_information','table-row','radio',false);"));
                 
                 require_once 'CRM/Contribute/PseudoConstant.php';
-                $form->add('select', 'contribution_type_id', 
+                $form->add('select', 'financial_account_id', 
                            ts( 'Contribution Type' ), 
                            array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionType( ) );
                 

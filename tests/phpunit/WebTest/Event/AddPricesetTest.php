@@ -243,7 +243,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent('_qf_Fee_upload-bottom');
       $this->click('CIVICRM_QFID_1_2');
       $this->select('payment_processor_id', 'label=' . $processorName);
-      $this->select('contribution_type_id', 'value=4');
+      $this->select('financial_account_id', 'value=4');
       $this->select('price_set_id', 'label=' . $setTitle);
       
       $this->click('_qf_Fee_upload-bottom');
@@ -418,7 +418,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent('_qf_Fee_upload-bottom');
       $this->click('CIVICRM_QFID_1_2');
       $this->select('payment_processor_id', 'label=' . $processorName);
-      $this->select('contribution_type_id', 'value=4');
+      $this->select('financial_account_id', 'value=4');
       $this->select('price_set_id', 'label=' . $setTitle);
       
       $this->click('_qf_Fee_upload-bottom');

@@ -238,7 +238,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             $defaults['max_reminders']           = 1;
             $defaults['additional_reminder_day'] = 5;
             $defaults['frequency_unit']          = array_search( 'month', $this->_freqUnits );
-            $defaults['contribution_type_id']    = array_search( 'Donation', CRM_Contribute_PseudoConstant::contributionType() );
+            $defaults['financial_account_id']    = array_search( 'Donation', CRM_Contribute_PseudoConstant::contributionType() );
         }
         
         $pledgeStatus      = CRM_Contribute_PseudoConstant::contributionStatus( );
@@ -420,7 +420,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
 
         $this->addDate( 'acknowledge_date', ts('Acknowledgment Date') );
         
-        $this->add('select', 'contribution_type_id', 
+        $this->add('select', 'financial_account_id', 
                    ts( 'Contribution Type' ), 
                    array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionType( ),
                    true );
@@ -550,7 +550,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
                          'frequency_interval',
                          'frequency_day',
                          'installments',
-                         'contribution_type_id',
+                         'financial_account_id',
                          'initial_reminder_day',
                          'max_reminders',
                          'additional_reminder_day',

@@ -99,20 +99,20 @@
        <comment>Is this account tax-deductible?</comment>
        <add>1.3</add>
   </field>
-  <filed>
+  <field>
        <name>is_tax</name>
        <type>boolean</type>
        <default>1</default>
        <comment>Is this account for taxes?</comment>
        <add>4.1</add>
-  </filed>
-  <filed>
+  </field>
+  <field>
        <name>tax_rate</name>
        <type>decimal</type>
        <default>0</default>
        <comment>The percentage of the total_amount that is due for this tax.</comment>
        <add>4.1</add>
-  </filed>
+  </field>
   <field>
        <name>is_reserved</name>
        <type>boolean</type>

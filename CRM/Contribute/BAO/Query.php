@@ -212,12 +212,12 @@ class CRM_Contribute_BAO_Query
             $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
             return;
 
-        case 'contribution_type_id':
+        case 'financial_account_id':
         case 'contribution_type':
             require_once 'CRM/Contribute/PseudoConstant.php';
             $cType = $value;
             $types = CRM_Contribute_PseudoConstant::contributionType( );
-            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_contribution.contribution_type_id", 
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_contribution.financial_account_id", 
                                                                               $op, $value, "Integer" ) ;
             $query->_qill[$grouping ][] = ts( 'Contribution Type - %1', array( 1 => $types[$cType] ) );
             $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
@@ -471,9 +471,9 @@ class CRM_Contribute_BAO_Query
             
         case 'civicrm_contribution_type':
             if ( $mode & CRM_Contact_BAO_Query::MODE_CONTRIBUTE ) {
-                $from = " INNER JOIN civicrm_contribution_type ON civicrm_contribution.contribution_type_id = civicrm_contribution_type.id ";
+                $from = " INNER JOIN civicrm_contribution_type ON civicrm_contribution.financial_account_id = civicrm_contribution_type.id ";
             } else {
-                $from = " $side JOIN civicrm_contribution_type ON civicrm_contribution.contribution_type_id = civicrm_contribution_type.id ";
+                $from = " $side JOIN civicrm_contribution_type ON civicrm_contribution.financial_account_id = civicrm_contribution_type.id ";
             }
       
             break;
@@ -615,7 +615,7 @@ class CRM_Contribute_BAO_Query
                    CRM_Core_PseudoConstant::currencySymbols( 'name' ) );
 
         require_once 'CRM/Contribute/PseudoConstant.php';
-        $form->add('select', 'contribution_type_id', 
+        $form->add('select', 'financial_account_id', 
                    ts( 'Contribution Type' ),
                    array( '' => ts( '- select -' ) ) +
                    CRM_Contribute_PseudoConstant::contributionType( ) );

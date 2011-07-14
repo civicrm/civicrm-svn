@@ -73,7 +73,7 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->webtestNewDialogContact( $firstName, "Contributor", $firstName . "@example.com" );
       
       // select contribution type
-      $this->select("contribution_type_id", "value=1");
+      $this->select("financial_account_id", "value=1");
       
       // fill in Received Date
       $this->webtestFillDate('receive_date');

@@ -1271,7 +1271,7 @@ class CRM_GCD {
         $contact_id = $organizationDAO->contact_id;
         
         $membershipType = "INSERT INTO civicrm_membership_type
-        (name, description, member_of_contact_id, contribution_type_id, minimum_fee, duration_unit, duration_interval, period_type, fixed_period_start_day, fixed_period_rollover_day, relationship_type_id, relationship_direction, visibility, weight, is_active)
+        (name, description, member_of_contact_id, financial_account_id, minimum_fee, duration_unit, duration_interval, period_type, fixed_period_start_day, fixed_period_rollover_day, relationship_type_id, relationship_direction, visibility, weight, is_active)
         VALUES
         ('General', 'Regular annual membership.', ". $contact_id .", 3, 100, 'year', 1, 'rolling',null, null, 7, 'b_a', 'Public', 1, 1),
         ('Student', 'Discount membership for full-time students.', ". $contact_id .", 1, 50, 'year', 1, 'rolling', null, null, 7, 'b_a', 'Public', 2, 1),
@@ -1504,7 +1504,7 @@ VALUES
         $defaultFee3 = CRM_Core_DAO::singleValueQuery( $sql, CRM_Core_DAO::$_nullArray ); 
 
         $event = "INSERT INTO civicrm_event
-        ( title, summary, description, event_type_id, participant_listing_id, is_public, start_date, end_date, is_online_registration, registration_link_text, max_participants, event_full_text, is_monetary, contribution_type_id, is_map, is_active, fee_label, is_show_location, loc_block_id,intro_text, footer_text, confirm_title, confirm_text, confirm_footer_text, is_email_confirm, confirm_email_text, confirm_from_name, confirm_from_email, cc_confirm, bcc_confirm, default_fee_id, thankyou_title, thankyou_text, thankyou_footer_text, is_pay_later, pay_later_text, pay_later_receipt, is_multiple_registrations, allow_same_participant_emails, currency )
+        ( title, summary, description, event_type_id, participant_listing_id, is_public, start_date, end_date, is_online_registration, registration_link_text, max_participants, event_full_text, is_monetary, financial_account_id, is_map, is_active, fee_label, is_show_location, loc_block_id,intro_text, footer_text, confirm_title, confirm_text, confirm_footer_text, is_email_confirm, confirm_email_text, confirm_from_name, confirm_from_email, cc_confirm, bcc_confirm, default_fee_id, thankyou_title, thankyou_text, thankyou_footer_text, is_pay_later, pay_later_text, pay_later_receipt, is_multiple_registrations, allow_same_participant_emails, currency )
         VALUES
         ( 'Fall Fundraiser Dinner', 'Kick up your heels at our Fall Fundraiser Dinner/Dance at Glen Echo Park! Come by yourself or bring a partner, friend or the entire family!', 'This event benefits our teen programs. Admission includes a full 3 course meal and wine or soft drinks. Grab your dancing shoes, bring the kids and come join the party!', 3, 1, 1, '" . date('Y-m-d 17:00:00', strtotime("+6 months")) . "', '" . date('Y-m-d 17:00:00', strtotime("+6 months +2 days")) . "', 1, 'Register Now', 100, 'Sorry! The Fall Fundraiser Dinner is full. Please call Jane at 204 222-1000 ext 33 if you want to be added to the waiting list.', 1, 4, 1, 1, 'Dinner Contribution', 1 ,$eventLok1,'Fill in the information below to join as at this wonderful dinner event.', NULL, 'Confirm Your Registration Information', 'Review the information below carefully.', NULL, 1, 'Contact the Development Department if you need to make any changes to your registration.', 'Fundraising Dept.', 'development@example.org', NULL, NULL, {$defaultFee1}, 'Thanks for Registering!', '<p>Thank you for your support. Your contribution will help us build even better tools.</p><p>Please tell your friends and colleagues about this wonderful event.</p>', '<p><a href=http://civicrm.org>Back to CiviCRM Home Page</a></p>', 1, 'I will send payment by check', 'Send a check payable to Our Organization within 3 business days to hold your reservation. Checks should be sent to: 100 Main St., Suite 3, San Francisco CA 94110', 1, 0, 'USD' ),
         ( 'Summer Solstice Festival Day Concert', 'Festival Day is coming! Join us and help support your parks.', 'We will gather at noon, learn a song all together,  and then join in a joyous procession to the pavilion. We will be one of many groups performing at this wonderful concert which benefits our city parks.', 5, 1, 1, '" . date('Y-m-d 12:00:00', strtotime("-1 day")) . "', '" . date('Y-m-d 17:00:00', strtotime("-1 day")) . "', 1, 'Register Now', 50, 'We have all the singers we can handle. Come to the pavilion anyway and join in from the audience.', 1, 2, NULL, 1, 'Festival Fee', 1, $eventLok2, 'Complete the form below and click Continue to register online for the festival. Or you can register by calling us at 204 222-1000 ext 22.', '', 'Confirm Your Registration Information', '', '', 1, 'This email confirms your registration. If you have questions or need to change your registration - please do not hesitate to call us.', 'Event Dept.', 'events@example.org', '', NULL, {$defaultFee2}, 'Thanks for Your Joining In!', '<p>Thank you for your support. Your participation will help build new parks.</p><p>Please tell your friends and colleagues about the concert.</p>', '<p><a href=http://civicrm.org>Back to CiviCRM Home Page</a></p>', 0, NULL, NULL, 1, 0, 'USD' ),
@@ -1514,7 +1514,7 @@ VALUES
         
         //CRM-4464
         $eventTemplates = "INSERT INTO civicrm_event 
-        ( is_template, template_title, event_type_id, default_role_id, participant_listing_id, is_public, is_monetary, is_online_registration, is_multiple_registrations, allow_same_participant_emails, is_email_confirm, contribution_type_id, fee_label, confirm_title, thankyou_title, confirm_from_name, confirm_from_email, is_active, currency )
+        ( is_template, template_title, event_type_id, default_role_id, participant_listing_id, is_public, is_monetary, is_online_registration, is_multiple_registrations, allow_same_participant_emails, is_email_confirm, financial_account_id, fee_label, confirm_title, thankyou_title, confirm_from_name, confirm_from_email, is_active, currency )
         VALUES
         ( 1, 'Free Meeting without Online Registration', 4, 1, 1, 1, 0, 0, null, null, null, null,             null, null, null, null, null, 1, 'USD'  ), 
         ( 1, 'Free Meeting with Online Registration',    4, 1, 1, 1, 0, 1,    1,    1,    0, null,             null, 'Confirm Your Registration Information', 'Thanks for Registering!', null, null, 1, 'USD'  ),
@@ -1568,58 +1568,58 @@ SELECT  id
         
         $participant = "
 INSERT INTO civicrm_participant
-        (contact_id, event_id, status_id, role_id, register_date, source, fee_level, is_test, fee_amount, fee_currency)
+        (contact_id, event_id, status_id, role_id, register_date, source, fee_level, is_test, total_amount)
 VALUES
-        ( ". $randomContacts[0]  .", 1, 1, 1, '2009-01-21', 'Check', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[1]  .", 2, 2, 2, '2008-05-07', 'Credit Card', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[2]  .", 3, 3, 3, '2008-05-05', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD') ,
-        ( ". $randomContacts[3]  .", 1, 4, 4, '2008-10-21', 'Direct Transfer', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[4]  .", 2, 1, 1, '2008-01-10', 'Check', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[5]  .", 3, 2, 2, '2008-03-05', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[6]  .", 1, 3, 3, '2009-07-21', 'Direct Transfer', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[7]  .", 2, 4, 4, '2009-03-07', 'Credit Card', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[8]  .", 3, 1, 1, '2008-02-05', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[9]  .", 1, 2, 2, '2008-02-01', 'Check', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[10]  .", 2, 3, 3, '2009-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[11]  .", 3, 4, 4, '2009-03-06', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[12]  .", 1, 1, 2, '2008-06-04', 'Credit Card', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[13]  .", 2, 2, 3, '2008-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[14]  .", 3, 4, 1, '2008-07-04', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[15]  .", 1, 4, 2, '2009-01-21', 'Credit Card', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[16]  .", 2, 2, 3, '2008-01-10', 'Credit Card', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[17]  .", 3, 3, 1, '2009-03-05', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[18]  .", 1, 2, 1, '2008-10-21', 'Direct Transfer', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[19]  .", 2, 4, 1, '2009-01-10', 'Credit Card', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[20]  .", 3, 1, 4, '2008-03-25', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[21]  .", 1, 2, 3, '2009-10-21', 'Direct Transfer', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[22]  .", 2, 4, 1, '2008-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[23]  .", 3, 3, 1, '2008-03-11', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[24]  .", 3, 2, 2, '2008-04-05', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[25]  .", 1, 1, 1, '2009-01-21', 'Check', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[26]  .", 2, 2, 2, '2008-05-07', 'Credit Card', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[27]  .", 3, 3, 3, '2009-12-12', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[28]  .", 1, 4, 4, '2009-12-13', 'Credit Card', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[29]  .", 2, 1, 1, '2009-12-14', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[30]  .", 3, 2, 2, '2009-12-15', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[31]  .", 1, 3, 3, '2009-07-21', 'Check', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[32]  .", 2, 4, 4, '2009-03-07', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[33]  .", 3, 1, 1, '2009-12-15', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[34]  .", 1, 2, 2, '2009-12-13', 'Direct Transfer', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[35]  .", 2, 3, 3, '2009-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[36]  .", 3, 4, 4, '2009-03-06', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[37]  .", 1, 1, 2, '2009-12-13', 'Direct Transfer', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[38]  .", 2, 2, 3, '2008-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[39]  .", 3, 4, 1, '2009-12-14', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[40]  .", 1, 4, 2, '2009-01-21', 'Credit Card', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[41]  .", 2, 2, 3, '2009-12-15', 'Credit Card', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[42]  .", 3, 3, 1, '2009-03-05', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[43]  .", 1, 2, 1, '2009-12-13', 'Direct Transfer', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[44]  .", 2, 4, 1, '2009-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[45]  .", 3, 1, 4, '2009-12-13', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[46]  .", 1, 2, 3, '2009-10-21', 'Credit Card', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[47]  .", 2, 4, 1, '2009-12-10', 'Credit Card', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[48]  .", 3, 3, 1, '2009-03-11', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[49]  .", 3, 2, 2, '2009-04-05', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD');
+        ( ". $randomContacts[0]  .", 1, 1, 1, '2009-01-21', 'Check', 'Single', 0, 50 ),
+        ( ". $randomContacts[1]  .", 2, 2, 2, '2008-05-07', 'Credit Card', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[2]  .", 3, 3, 3, '2008-05-05', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800 ) ,
+        ( ". $randomContacts[3]  .", 1, 4, 4, '2008-10-21', 'Direct Transfer', 'Single', 0, 50 ),
+        ( ". $randomContacts[4]  .", 2, 1, 1, '2008-01-10', 'Check', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[5]  .", 3, 2, 2, '2008-03-05', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[6]  .", 1, 3, 3, '2009-07-21', 'Direct Transfer', 'Single', 0, 50 ),
+        ( ". $randomContacts[7]  .", 2, 4, 4, '2009-03-07', 'Credit Card', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[8]  .", 3, 1, 1, '2008-02-05', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[9]  .", 1, 2, 2, '2008-02-01', 'Check', 'Single', 0, 50 ),
+        ( ". $randomContacts[10]  .", 2, 3, 3, '2009-01-10', 'Direct Transfer', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[11]  .", 3, 4, 4, '2009-03-06', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[12]  .", 1, 1, 2, '2008-06-04', 'Credit Card', 'Single', 0, 50 ),
+        ( ". $randomContacts[13]  .", 2, 2, 3, '2008-01-10', 'Direct Transfer', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[14]  .", 3, 4, 1, '2008-07-04', 'Check', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[15]  .", 1, 4, 2, '2009-01-21', 'Credit Card', 'Single', 0, 50 ),
+        ( ". $randomContacts[16]  .", 2, 2, 3, '2008-01-10', 'Credit Card', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[17]  .", 3, 3, 1, '2009-03-05', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[18]  .", 1, 2, 1, '2008-10-21', 'Direct Transfer', 'Single', 0, 50 ),
+        ( ". $randomContacts[19]  .", 2, 4, 1, '2009-01-10', 'Credit Card', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[20]  .", 3, 1, 4, '2008-03-25', 'Check', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[21]  .", 1, 2, 3, '2009-10-21', 'Direct Transfer', 'Single', 0, 50 ),
+        ( ". $randomContacts[22]  .", 2, 4, 1, '2008-01-10', 'Direct Transfer', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[23]  .", 3, 3, 1, '2008-03-11', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[24]  .", 3, 2, 2, '2008-04-05', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[25]  .", 1, 1, 1, '2009-01-21', 'Check', 'Single', 0, 50 ),
+        ( ". $randomContacts[26]  .", 2, 2, 2, '2008-05-07', 'Credit Card', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[27]  .", 3, 3, 3, '2009-12-12', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[28]  .", 1, 4, 4, '2009-12-13', 'Credit Card', 'Single', 0, 50 ),
+        ( ". $randomContacts[29]  .", 2, 1, 1, '2009-12-14', 'Direct Transfer', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[30]  .", 3, 2, 2, '2009-12-15', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[31]  .", 1, 3, 3, '2009-07-21', 'Check', 'Single', 0, 50 ),
+        ( ". $randomContacts[32]  .", 2, 4, 4, '2009-03-07', 'Direct Transfer', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[33]  .", 3, 1, 1, '2009-12-15', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[34]  .", 1, 2, 2, '2009-12-13', 'Direct Transfer', 'Single', 0, 50 ),
+        ( ". $randomContacts[35]  .", 2, 3, 3, '2009-01-10', 'Direct Transfer', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[36]  .", 3, 4, 4, '2009-03-06', 'Check', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[37]  .", 1, 1, 2, '2009-12-13', 'Direct Transfer', 'Single', 0, 50 ),
+        ( ". $randomContacts[38]  .", 2, 2, 3, '2008-01-10', 'Direct Transfer', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[39]  .", 3, 4, 1, '2009-12-14', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[40]  .", 1, 4, 2, '2009-01-21', 'Credit Card', 'Single', 0, 50 ),
+        ( ". $randomContacts[41]  .", 2, 2, 3, '2009-12-15', 'Credit Card', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[42]  .", 3, 3, 1, '2009-03-05', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[43]  .", 1, 2, 1, '2009-12-13', 'Direct Transfer', 'Single', 0, 50 ),
+        ( ". $randomContacts[44]  .", 2, 4, 1, '2009-01-10', 'Direct Transfer', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[45]  .", 3, 1, 4, '2009-12-13', 'Check', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[46]  .", 1, 2, 3, '2009-10-21', 'Credit Card', 'Single', 0, 50 ),
+        ( ". $randomContacts[47]  .", 2, 4, 1, '2009-12-10', 'Credit Card', 'Soprano', 0, 50 ),
+        ( ". $randomContacts[48]  .", 3, 3, 1, '2009-03-11', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800 ),
+        ( ". $randomContacts[49]  .", 3, 2, 2, '2009-04-05', 'Check', 'Tiny-tots (ages 5-8)', 0, 800 );
 ";
         CRM_Core_DAO::executeQuery( $participant, CRM_Core_DAO::$_nullArray );
    
@@ -1697,21 +1697,21 @@ VALUES
     {
         $query = "
 INSERT INTO civicrm_contribution
-    (contact_id, contribution_type_id, payment_instrument_id, receive_date, non_deductible_amount, total_amount, trxn_id, currency, cancel_date, cancel_reason, receipt_date, thankyou_date, source )
+    (contact_id, financial_account_id, non_deductible_amount, total_amount, source )
 VALUES
-    (2, 1, 4, '2010-04-11 00:00:00', 0.00, 125.00, 'check #1041', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
-    (4, 1, 1, '2010-03-21 00:00:00', 0.00, 50.00, 'P20901X1', 'USD', NULL, NULL, NULL, NULL, 'Online: Save the Penguins' ),
-    (6, 1, 4, '2010-04-29 00:00:00', 0.00, 25.00, 'check #2095', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
-    (8, 1, 4, '2010-04-11 00:00:00', 0.00, 50.00, 'check #10552', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
-    (16, 1, 4, '2010-04-15 00:00:00', 0.00, 500.00, 'check #509', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
-    (19, 1, 4, '2010-04-11 00:00:00', 0.00, 175.00, 'check #102', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
-    (82, 1, 1, '2010-03-27 00:00:00', 0.00, 50.00, 'P20193L2', 'USD', NULL, NULL, NULL, NULL, 'Online: Save the Penguins' ),
-    (92, 1, 1, '2010-03-08 00:00:00', 0.00, 10.00, 'P40232Y3', 'USD', NULL, NULL, NULL, NULL, 'Online: Help CiviCRM' ),
-    (34, 1, 1, '2010-04-22 00:00:00', 0.00, 250.00, 'P20193L6', 'USD', NULL, NULL, NULL, NULL, 'Online: Help CiviCRM' ),
-    (71, 1, 1, '2009-07-01 11:53:50', 0.00, 500.00, 'PL71', 'USD', NULL, NULL, NULL, NULL, NULL ),
-    (43, 1, 1, '2009-07-01 12:55:41', 0.00, 200.00, 'PL43II', 'USD', NULL, NULL, NULL, NULL, NULL ),
-    (32, 1, 1, '2009-10-01 11:53:50', 0.00, 200.00, 'PL32I', 'USD', NULL, NULL, NULL, NULL, NULL ),
-    (32, 1, 1, '2009-12-01 12:55:41', 0.00, 200.00, 'PL32II', 'USD', NULL, NULL, NULL, NULL, NULL );
+    (2, 1, 0.00, 125.00, 'Apr 2007 Mailer 1' ),
+    (4, 1, 0.00, 50.00, 'Online: Save the Penguins' ),
+    (6, 1, 0.00, 25.00, 'Apr 2007 Mailer 1' ),
+    (8, 1, 0.00, 50.00, 'Apr 2007 Mailer 1' ),
+    (16, 1, 0.00, 500.00, 'Apr 2007 Mailer 1' ),
+    (19, 1, 0.00, 175.00, 'Apr 2007 Mailer 1' ),
+    (82, 1, 0.00, 50.00, 'Online: Save the Penguins' ),
+    (92, 1, 0.00, 10.00, 'Online: Help CiviCRM' ),
+    (34, 1, 0.00, 250.00, 'Online: Help CiviCRM' ),
+    (71, 1, 0.00, 500.00, NULL ),
+    (43, 1, 0.00, 200.00, NULL ),
+    (32, 1, 0.00, 200.00, NULL ),
+    (32, 1, 0.00, 200.00, NULL );
 ";
         CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         
@@ -1758,7 +1758,7 @@ VALUES
     function addPledge( )
     {
         $pledge = "INSERT INTO civicrm_pledge
-        (contact_id, contribution_type_id, contribution_page_id, amount, original_installment_amount, currency,frequency_unit, frequency_interval, frequency_day, installments, start_date, create_date, acknowledge_date, modified_date, cancel_date, end_date, honor_contact_id, honor_type_id, status_id, is_test) 
+        (contact_id, financial_account_id, contribution_page_id, amount, original_installment_amount, currency,frequency_unit, frequency_interval, frequency_day, installments, start_date, create_date, acknowledge_date, modified_date, cancel_date, end_date, honor_contact_id, honor_type_id, status_id, is_test) 
         VALUES 
        (71, 1, 1, 500.00, '500', 'USD', 'month', 1, 1, 1, '2009-07-01 00:00:00', '2009-06-26 00:00:00', NULL, NULL, NULL,'2009-07-01 00:00:00', NULL, NULL, 1, 0),
        (43, 1, 1, 800.00, '200', 'USD', 'month', 3, 1, 4, '2009-07-01 00:00:00', '2009-06-23 00:00:00', '2009-06-23 00:00:00', NULL, NULL, '2009-04-01 10:11:40', NULL, NULL, 5, 0),

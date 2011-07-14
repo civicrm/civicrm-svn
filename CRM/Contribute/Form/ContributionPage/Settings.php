@@ -88,7 +88,7 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
         // name
         $this->add('text', 'title', ts('Title'), $attributes['title'], true);
 
-        $this->add('select', 'contribution_type_id',
+        $this->add('select', 'financial_account_id',
                    ts( 'Contribution Type' ),
                    CRM_Contribute_PseudoConstant::contributionType( ),
                    true );

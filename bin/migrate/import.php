@@ -145,11 +145,11 @@ WHERE      v.option_group_id = %1
     }
 
     function contributionTypes( &$xml ) {
-        require_once 'CRM/Contribute/BAO/ContributionType.php';
+        require_once 'CRM/Financial/DAO/FinancialAccount.php';
         
         foreach ( $xml->ContributionTypes as $contributionTypesXML ) {
             foreach ( $contributionTypesXML->ContributionType as $contributionTypeXML ) {
-                $contributionType = new CRM_Contribute_DAO_ContributionType( );
+                $contributionType = new CRM_Financial_DAO_FinancialAccount( );
                 $this->copyData( $contributionType, $contributionTypeXML, true, 'name' );
             }
         }

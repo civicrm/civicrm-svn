@@ -49,7 +49,7 @@ class CRM_Member_Page_AJAX
         
         $contributionType = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
                                                          $memType, 
-                                                         'contribution_type_id' );
+                                                         'financial_account_id' );
         
         $totalAmount = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
                                                     $memType, 
@@ -59,7 +59,7 @@ class CRM_Member_Page_AJAX
         require_once 'CRM/Utils/Money.php';
         $totalAmount = CRM_Utils_Money::format( $totalAmount, null, '%a' );
         
-        $details = array( 'contribution_type_id' => $contributionType,
+        $details = array( 'financial_account_id' => $contributionType,
                           'total_amount'         => $totalAmount );                                         
         
         echo json_encode( $details );

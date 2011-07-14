@@ -487,7 +487,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $this->addElement('checkbox', 'record_contribution', ts('Record Membership Payment?') );
             
             require_once 'CRM/Contribute/PseudoConstant.php';
-            $this->add('select', 'contribution_type_id', 
+            $this->add('select', 'financial_account_id', 
                        ts( 'Contribution Type' ), 
                        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionType( ) );
             
@@ -703,8 +703,8 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         //total amount condition arise when membership type having no
         //minimum fee
         if ( isset( $params['record_contribution'] ) ) { 
-            if ( ! $params['contribution_type_id'] ) {
-                $errors['contribution_type_id'] = ts('Please enter the contribution Type.');
+            if ( ! $params['financial_account_id'] ) {
+                $errors['financial_account_id'] = ts('Please enter the contribution Type.');
             } 
             if ( !$params['total_amount'] ) {
                 $errors['total_amount'] = ts('Please enter the contribution.'); 
@@ -843,7 +843,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         list( $userName, $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $ids['userId'] );
 
         if ( CRM_Utils_Array::value( 'record_contribution', $formValues ) ) {
-            $recordContribution = array( 'total_amount', 'contribution_type_id', 'payment_instrument_id', 
+            $recordContribution = array( 'total_amount', 'financial_account_id', 'payment_instrument_id', 
                                          'trxn_id', 'contribution_status_id', 'check_number', 'campaign_id' );
             
             foreach ( $recordContribution as $f ) {
@@ -861,7 +861,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             
             //insert contribution type name in receipt.
             $formValues['contributionType_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
-                                                                                $formValues['contribution_type_id'] );
+                                                                                $formValues['financial_account_id'] );
         }
 
         if ( $this->_mode ) {
@@ -873,9 +873,9 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             }else{
               $params['total_amount'] = $formValues['total_amount']  ;
             }
-            $params['contribution_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
+            $params['financial_account_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
                                                                            $params['membership_type_id'],
-                                                                           'contribution_type_id' );
+                                                                           'financial_account_id' );
             require_once 'CRM/Core/BAO/PaymentProcessor.php';
             $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $formValues['payment_processor_id'],
                                                                                   $this->_mode );
@@ -939,7 +939,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $this->_params['currencyID'    ] = $config->defaultCurrency;
             $this->_params['payment_action'] = 'Sale';
             $this->_params['invoiceID']      = md5( uniqid( rand( ), true ) );
-            $this->_params['contribution_type_id'] = $params['contribution_type_id'];
+            $this->_params['financial_account_id'] = $params['financial_account_id'];
         
             // at this point we've created a contact and stored its address etc
             // all the payment processors expect the name and address to be in the 
@@ -965,13 +965,13 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                                                                      $this->_params, 
                                                                                      $result, 
                                                                                      $contactID, 
-                                                                                     $params['contribution_type_id'],  
+                                                                                     $params['financial_account_id'],  
                                                                                      false,
                                                                                      true, 
                                                                                      false );
                 $paymentParams['contactID']           = $contactID;
                 $paymentParams['contributionID'    ]  = $contribution->id;
-                $paymentParams['contributionTypeID']  = $contribution->contribution_type_id;
+                $paymentParams['contributionTypeID']  = $contribution->financial_account_id;
                 $paymentParams['contributionPageID']  = $contribution->contribution_page_id;
                 $paymentParams['contributionRecurID'] = $contribution->contribution_recur_id;
                 $ids['contribution']                  = $contribution->id;

@@ -89,7 +89,7 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
                                                                     'statistics'   => 
                                                                           array('sum' => ts( 'Amount' )),
                                                                   ),
-                          		 'contribution_type_id' 	=> array( 'title'   => ts('Contribution Type'),
+                          		 'financial_account_id' 	=> array( 'title'   => ts('Contribution Type'),
                                                                   'default' => true,
                                                                 ),
                                  'trxn_id'              	=> array( 'title' => ts('Trans #'),
@@ -114,7 +114,7 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
                           'filters' =>             
                           array( 'receive_date'           => 
                                     array( 'operatorType' => CRM_Report_Form::OP_DATE ),
-                                 'contribution_type_id'   =>
+                                 'financial_account_id'   =>
                                     array( 'title'        => ts( 'Contribution Type' ), 
                                            'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                            'options'      => CRM_Contribute_PseudoConstant::contributionType( )

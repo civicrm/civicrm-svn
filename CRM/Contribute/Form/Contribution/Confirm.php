@@ -673,7 +673,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             // all the payment processors expect the name and address to be in the 
             // so we copy stuff over to first_name etc. 
             $paymentParams      = $this->_params;
-            $contributionTypeId = $this->_values['contribution_type_id'];
+            $contributionTypeId = $this->_values['financial_account_id'];
 
             require_once 'CRM/Core/BAO/CustomField.php';
             foreach ( $paymentParams['onbehalf'] as $key => $value ) {
@@ -873,7 +873,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         // first create the contribution record
         $contribParams = array(
                                'contact_id'            => $contactID,
-                               'contribution_type_id'  => $contributionType->id,
+                               'financial_account_id'  => $contributionType->id,
                                'contribution_page_id'  => $contributionPageId,
                                'receive_date'          => $now,
                                'non_deductible_amount' => $nonDeductibleAmount,
@@ -1024,7 +1024,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 $pledgeParams['installment_amount'     ] = $pledgeParams['actual_amount'] = $contribution->total_amount;
                 $pledgeParams['contribution_id'        ] = $contribution->id;
                 $pledgeParams['contribution_page_id'   ] = $contribution->contribution_page_id;
-                $pledgeParams['contribution_type_id'   ] = $contribution->contribution_type_id;
+                $pledgeParams['financial_account_id'   ] = $contribution->financial_account_id;
                 $pledgeParams['frequency_interval'     ] = $params['pledge_frequency_interval'];
                 $pledgeParams['installments'           ] = $params['pledge_installments'];
                 $pledgeParams['frequency_unit'         ] = $params['pledge_frequency_unit'];

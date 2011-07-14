@@ -136,9 +136,9 @@
         <tr class="crm-membership-form-block-record_contribution"><td colspan="2">    
           <fieldset id="recordContribution"><legend>{ts}Membership Payment and Receipt{/ts}</legend>
               <table>
-                  <tr class="crm-membership-form-block-contribution_type_id">
-                      <td class="label">{$form.contribution_type_id.label}</td>
-                      <td>{$form.contribution_type_id.html}<br />
+                  <tr class="crm-membership-form-block-financial_account_id">
+                      <td class="label">{$form.financial_account_id.label}</td>
+                      <td>{$form.financial_account_id.html}<br />
                       <span class="description">{ts}Select the appropriate contribution type for this payment.{/ts}</span></td>
                   </tr>
                   <tr class="crm-membership-form-block-total_amount">
@@ -316,7 +316,7 @@ function setPaymentBlock( mode ) {
     cj.post( dataUrl, {mtype: memType}, function( data ) {
         if ( !mode ) {
             // skip this for test and live modes because contribution type is set automatically
-            cj("#contribution_type_id").val( data.contribution_type_id );            
+            cj("#financial_account_id").val( data.financial_account_id );            
         } 
         cj("#total_amount").val( data.total_amount );
     }, 'json');    

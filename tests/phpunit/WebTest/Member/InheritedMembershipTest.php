@@ -71,7 +71,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase
         
         $this->type( 'minimum_fee', '100' );
         
-        $this->select( 'contribution_type_id', 'value=2' );
+        $this->select( 'financial_account_id', 'value=2' );
         
         $this->type( 'duration_interval', 1 );
         $this->select( 'duration_unit', 'label=year' );

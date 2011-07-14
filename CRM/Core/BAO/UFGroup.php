@@ -2541,7 +2541,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         case 'Contribute':
             $componentBAO = 'CRM_Contribute_BAO_Contribution';
             $componentBAOName = 'Contribution';
-            $componentSubType = array( 'contribution_type_id' );
+            $componentSubType = array( 'financial_account_id' );
             break;
             
         case 'Event':    

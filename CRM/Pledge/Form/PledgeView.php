@@ -80,7 +80,7 @@ class CRM_Pledge_Form_PledgeView extends CRM_Core_Form
             $values['contribution_page'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $values['contribution_page_id'], 'title' );
         }
         
-        $values['contribution_type'] = CRM_Utils_Array::value( $values['contribution_type_id'], CRM_Contribute_PseudoConstant::contributionType() );
+        $values['contribution_type'] = CRM_Utils_Array::value( $values['financial_account_id'], CRM_Contribute_PseudoConstant::contributionType() );
         
         if ( $values['status_id'] ) { 
             $values['pledge_status'] = CRM_Utils_Array::value( $values['status_id'], CRM_Contribute_PseudoConstant::contributionStatus() );

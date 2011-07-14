@@ -143,7 +143,7 @@ class CRM_Utils_VersionCheck
                 }
 
                 // get active payment processor types
-                require_once 'CRM/Core/DAO/PaymentProcessor.php';
+                require_once 'CRM/Financial/DAO/PaymentProcessor.php';
                 $dao = new CRM_Core_DAO_PaymentProcessor;
                 $dao->is_active = 1;
                 $dao->find();

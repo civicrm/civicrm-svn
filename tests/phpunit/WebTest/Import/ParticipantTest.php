@@ -285,7 +285,7 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
         $this->waitForElementPresent("_qf_Fee_upload-bottom");
         $this->click("CIVICRM_QFID_1_2");
         $this->select("payment_processor_id", "label=" . $params['payment_processor']);
-        $this->select("contribution_type_id", "value=4");
+        $this->select("financial_account_id", "value=4");
 
         $counter = 1;
         foreach ( $params['fee_level'] as $label => $amount ) { 

@@ -412,13 +412,13 @@ function _civicrm_contribute_format_params( &$params, &$values, $create=false ) 
             }
             break;
         case 'contribution_type_id' :
-            if ( !CRM_Utils_Array::value( $value, CRM_Contribute_PseudoConstant::contributionType( ) ) ) {
+            if ( !CRM_Utils_Array::value( $value, CRM_Contribute_PseudoConstant::financialAccount( ) ) ) {
                 return civicrm_create_error( 'Invalid Contribution Type Id' );
             }
             break;
         case 'contribution_type':
             $contributionTypeId = CRM_Utils_Array::key( ucfirst( $value ), 
-                                                        CRM_Contribute_PseudoConstant::contributionType( ) );
+                                                        CRM_Contribute_PseudoConstant::financialAccount( ) );
             if ( $contributionTypeId ) {
                 if ( CRM_Utils_Array::value( 'contribution_type_id', $values ) &&
                      $contributionTypeId != $values['contribution_type_id'] ) {

@@ -283,7 +283,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             $contributionParams['receipt_date'] = ( CRM_Utils_Array::value('receipt_date', $params) ) ? $params['receipt_date'] : 'null';
             $contributionParams['source']       = CRM_Utils_Array::value('contribution_source', $params);
             $contributionParams['non_deductible_amount'] = 'null';
-            $recordContribution = array( 'contact_id', 'total_amount', 'receive_date', 'contribution_type_id', 
+            $recordContribution = array( 'contact_id', 'total_amount', 'receive_date', 'financial_account_id', 
                                          'payment_instrument_id', 'trxn_id', 'invoice_id', 'is_test', 
                                          'contribution_status_id', 'check_number', 'campaign_id' );
             foreach ( $recordContribution as $f ) {
@@ -1085,11 +1085,11 @@ AND civicrm_membership.is_test = %2";
         $contributionTypeId = null;
         
         if ( $form->_values['amount_block_is_active']) {
-            $contributionTypeId = $form->_values['contribution_type_id'];
+            $contributionTypeId = $form->_values['financial_account_id'];
         } else {
             $paymentDone  = true ;
             $params['amount'] = $minimumFee;
-            $contributionTypeId = $membershipDetails['contribution_type_id']; 
+            $contributionTypeId = $membershipDetails['financial_account_id']; 
         }
 
         //amount must be greater than zero for 
@@ -1121,7 +1121,7 @@ AND civicrm_membership.is_test = %2";
         if ( $memBlockDetails['is_separate_payment']  && ! $paymentDone ) {
             require_once 'CRM/Contribute/DAO/ContributionType.php';
             $contributionType = new CRM_Contribute_DAO_ContributionType( );
-            $contributionType->id = $membershipDetails['contribution_type_id']; 
+            $contributionType->id = $membershipDetails['financial_account_id']; 
             if ( ! $contributionType->find( true ) ) {
                 CRM_Core_Error::fatal( "Could not find a system table" );
             }
@@ -1899,7 +1899,7 @@ FROM   civicrm_membership_type
         
         $membershipTypeValues = array( );
         $membershipTypeFields = array( 'id', 'minimum_fee', 'name', 'is_active', 
-                                       'description', 'contribution_type_id', 'auto_renew' );
+                                       'description', 'financial_account_id', 'auto_renew' );
         
         while ( $dao->fetch( ) ) {
             $membershipTypeValues[$dao->id] = array( );

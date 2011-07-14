@@ -423,7 +423,7 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
                                                 'direction' => CRM_Utils_Sort::DONTCARE,
                                                 ),
                                           array('name'      => ts('Type'),
-                                                'sort'      => 'contribution_type_id',
+                                                'sort'      => 'financial_account_id',
                                                 'direction' => CRM_Utils_Sort::DONTCARE,
                                                 ),
                                           array(

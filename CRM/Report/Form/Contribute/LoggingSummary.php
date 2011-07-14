@@ -94,7 +94,7 @@ class CRM_Report_Form_Contribute_LoggingSummary extends CRM_Logging_ReportSummar
                         'default' => true,
                         'title'   => ts('Action'),
                     ),
-                    'contribution_type_id' => array(
+                    'financial_account_id' => array(
                         'no_display'    => true,
                         'required'      => true,
                     ),
@@ -129,7 +129,7 @@ class CRM_Report_Form_Contribute_LoggingSummary extends CRM_Logging_ReportSummar
                 ),
             ),
             'civicrm_contribution_type' => array(
-                'dao' => 'CRM_Contribute_DAO_ContributionType',
+                'dao' => 'CRM_Financial_DAO_FinancialAccount',
                 'fields' => array(
                     'id' => array(
                         'no_display' => true,
@@ -224,7 +224,7 @@ class CRM_Report_Form_Contribute_LoggingSummary extends CRM_Logging_ReportSummar
             LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact_altered_contact']}
             ON ({$this->_aliases['log_civicrm_contribution']}.contact_id = {$this->_aliases['civicrm_contact_altered_contact']}.id)
             LEFT JOIN civicrm_contribution_type {$this->_aliases['civicrm_contribution_type']}
-            ON ({$this->_aliases['log_civicrm_contribution']}.contribution_type_id = {$this->_aliases['civicrm_contribution_type']}.id)
+            ON ({$this->_aliases['log_civicrm_contribution']}.financial_account_id = {$this->_aliases['civicrm_contribution_type']}.id)
             LEFT JOIN civicrm_option_value {$this->_aliases['civicrm_contribution_status']}
             ON ({$this->_aliases['log_civicrm_contribution']}.contribution_status_id = {$this->_aliases['civicrm_contribution_status']}.value)
             INNER JOIN civicrm_option_group

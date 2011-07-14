@@ -129,9 +129,9 @@
      <weight>365</weight>
   </item>
   <item>
-     <path>civicrm/admin/contribute/contributionType</path>
-     <title>Contribution Types</title>
-     <page_callback>CRM_Contribute_Page_ContributionType</page_callback>
+     <path>civicrm/admin/financial/financialAccount</path>
+     <title>Financial Account</title>
+     <page_callback>CRM_Financial_Page_FinancialAccount</page_callback>
      <desc>Contribution types are used to categorize contributions for reporting and accounting purposes. These are also referred to as Funds.</desc>
      <adminGroup>CiviContribute</adminGroup>
      <icon>admin/small/contribution_types.png</icon>

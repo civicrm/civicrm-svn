@@ -583,11 +583,11 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                                                                 $pending, $isAdditionalAmount );
                     
                     $value['contributionID'    ] = $contribution->id;
-                    $value['contributionTypeID'] = $contribution->contribution_type_id; 
+                    $value['contributionTypeID'] = $contribution->financial_account_id; 
                     $value['receive_date']       = $contribution->receive_date;
                     $value['trxn_id']            = $contribution->trxn_id;
                     $value['contributionID'    ] = $contribution->id;
-                    $value['contributionTypeID'] = $contribution->contribution_type_id;
+                    $value['contributionTypeID'] = $contribution->financial_account_id;
                 }
                 $value['contactID'] = $contactID;
                 $value['eventID']   = $this->_eventId;
@@ -814,8 +814,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
 
         $contribParams = array(
                                'contact_id'            => $contactID,
-                               'contribution_type_id'  => $form->_values['event']['contribution_type_id'] ?
-                               $form->_values['event']['contribution_type_id'] : $params['contribution_type_id'],
+                               'contribution_type_id'  => $form->_values['event']['financial_account_id'] ?
+                               $form->_values['event']['financial_account_id'] : $params['financial_account_id'],
                                'receive_date'          => $now,
                                'total_amount'          => $params['amount'],
                                'amount_level'          => $params['amount_level'],

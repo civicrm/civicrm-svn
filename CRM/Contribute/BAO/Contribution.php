@@ -332,7 +332,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             $contributionTypes = CRM_Contribute_PseudoConstant::contributionType();
             $title = CRM_Contact_BAO_Contact::displayName( $contribution->contact_id ) . 
                 ' - (' . CRM_Utils_Money::format( $contribution->total_amount, $contribution->currency ) . ' ' . 
-                ' - ' . $contributionTypes[$contribution->contribution_type_id] . ')';
+                ' - ' . $contributionTypes[$contribution->financial_account_id] . ')';
             
             $recentOther = array( );
             if ( CRM_Core_Permission::checkActionPermission('CiviContribute', CRM_Core_Action::UPDATE) ) {
@@ -498,7 +498,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             $fields = array_merge($fields, $tmpFields);
             $fields = array_merge($fields, $note);
             $fields = array_merge($fields, $optionFields);
-            require_once 'CRM/Contribute/DAO/ContributionType.php';
+            require_once 'CRM/Financial/DAO/FinancialAccount.php';
             $fields = array_merge($fields, CRM_Contribute_DAO_ContributionType::export( ) );
             $fields = array_merge($fields, CRM_Core_BAO_CustomField::getFieldsForImport('Contribution'));
             self::$_importableFields = $fields;
@@ -763,7 +763,7 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
         $contributionFields =& CRM_Contribute_DAO_Contribution::export( );
         require_once 'CRM/Core/OptionValue.php';
         $contributionFields = array_merge( $contributionFields, CRM_Core_OptionValue::getFields($mode ='contribute' ) );
-        require_once 'CRM/Contribute/DAO/ContributionType.php';
+        require_once 'CRM/Financial/DAO/FinancialAccount.php';
         $contributionFields = array_merge( $contributionFields, CRM_Contribute_DAO_ContributionType::export( ) );
         
         foreach ($contributionFields as $key => $var) {
@@ -860,8 +860,8 @@ GROUP BY p.id
         while( $honorDAO->fetch( ) ) {
             $params[$honorDAO->id]['honorId']      = $honorDAO->contact_id;            
             $params[$honorDAO->id]['display_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $honorDAO->contact_id, 'display_name' );
-            $params[$honorDAO->id]['type']         = $type[$honorDAO->contribution_type_id];
-            $params[$honorDAO->id]['type_id']      = $honorDAO->contribution_type_id;
+            $params[$honorDAO->id]['type']         = $type[$honorDAO->financial_account_id];
+            $params[$honorDAO->id]['type_id']      = $honorDAO->financial_account_id;
             $params[$honorDAO->id]['amount']       = CRM_Utils_Money::format( $honorDAO->total_amount , $honorDAO->currency );
             $params[$honorDAO->id]['source']       = $honorDAO->source;
             $params[$honorDAO->id]['receive_date'] = $honorDAO->receive_date;
@@ -1168,7 +1168,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
                               ON ccs.contribution_id = cc.id AND
                                  cc.contact_id = contact.id 
                        LEFT JOIN civicrm_contribution_type cct
-                              ON cc.contribution_type_id = cct.id
+                              ON cc.financial_account_id = cct.id
                   WHERE cc.is_test = {$isTest} AND ccs.contact_id = " . $contact_id;
        
         $cs = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
@@ -1575,7 +1575,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
             require_once 'CRM/Contribute/BAO/Contribution.php';
             $contributionParams = array( );
             $fields = array( 'contact_id', 'total_amount', 'receive_date', 'is_test', 'campaign_id',
-                             'payment_instrument_id', 'trxn_id', 'invoice_id', 'contribution_type_id', 
+                             'payment_instrument_id', 'trxn_id', 'invoice_id', 'financial_account_id', 
                              'contribution_status_id', 'non_deductible_amount', 'receipt_date', 'check_number' );
             foreach ( $fields as $field ) {
                 if ( !CRM_Utils_Array::value( $field, $params ) ) continue;

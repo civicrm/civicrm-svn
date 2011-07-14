@@ -111,7 +111,7 @@
         <tr id="acknowledgeDate"><td class="label" class="crm-pledge-form-block-acknowledge_date">{$form.acknowledge_date.label}</td>
             <td>{include file="CRM/common/jcalendar.tpl" elementName=acknowledge_date}<br />
             <span class="description">{ts}Date when an acknowledgment of the pledge was sent.{/ts}</span></td></tr>
-            <tr class="crm-pledge-form-block-contribution_type_id"><td class="label">{$form.contribution_type_id.label}</td><td>{$form.contribution_type_id.html}<br />
+            <tr class="crm-pledge-form-block-financial_account_id"><td class="label">{$form.financial_account_id.label}</td><td>{$form.financial_account_id.html}<br />
             <span class="description">{ts}Sets the default contribution type for payments against this pledge.{/ts}</span></td></tr>
 
 	    {* CRM-7362 --add campaign *}

@@ -165,7 +165,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
         // fill in step 1 (Title and Settings)
         $contributionPageTitle = "Title $contributionTitle";
         $this->type( 'title', $contributionPageTitle );
-        $this->select( 'contribution_type_id', 'value=1' );
+        $this->select( 'financial_account_id', 'value=1' );
         
         // select campaign
         $this->click("campaign_id");

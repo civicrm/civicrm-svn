@@ -161,7 +161,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
         $this->add('hidden','action',$this->_action); //required in form rule
 
         require_once 'CRM/Contribute/PseudoConstant.php';
-        $this->add('select', 'contribution_type_id', ts( 'Contribution Type' ), 
+        $this->add('select', 'financial_account_id', ts( 'Contribution Type' ), 
                    array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionType( ) );
 
         require_once 'CRM/Contact/BAO/Relationship.php';
@@ -276,12 +276,12 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
                 $errors['member_org'] = ts('Please select the membership organization');
             }
             
-            if ( empty( $params['contribution_type_id'] ) ) {
-                $errors['contribution_type_id'] = ts('Please enter a contribution type.');
+            if ( empty( $params['financial_account_id'] ) ) {
+                $errors['financial_account_id'] = ts('Please enter a contribution type.');
             }
             
             if ( ($params['minimum_fee'] > 0 ) && !$params['contribution_type_id'] ) {
-                $errors['contribution_type_id'] = ts('Please enter the contribution type.');
+                $errors['financial_account_id'] = ts('Please enter the contribution type.');
             }
             
             if ( empty( $params['duration_unit'] ) ) {
@@ -396,7 +396,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
                              'renewal_msg_id',
                              'duration_interval',
                              'renewal_reminder_day',
-                             'contribution_type_id',
+                             'financial_account_id',
                              'fixed_period_start_day',
                              'fixed_period_rollover_day' );
             

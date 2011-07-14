@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Core/Form.php';
+require_once 'CRM/Core/OptionGroup.php';
 
 /**
  * This class generates form components generic to Mobile provider
@@ -71,17 +72,24 @@ class CRM_Contribute_Form extends CRM_Core_Form
     function setDefaultValues( ) {
         $defaults = array( );
         $params   = array( );
+        
 
         if ( isset( $this->_id ) ) {
             $params = array( 'id' => $this->_id );
             require_once(str_replace('_', DIRECTORY_SEPARATOR, $this->_BAOName) . ".php");
             eval( $this->_BAOName . '::retrieve( $params, $defaults );' );
         }
-
         if ($this->_action == CRM_Core_Action::DELETE) {
             $this->assign( 'delName', $defaults['name'] );
         } elseif ($this->_action == CRM_Core_Action::ADD) {
+            $condition = " AND is_default = 1";
+            $values = CRM_Core_OptionGroup::values( 'activity_contacts', false, false, false, $condition );
+            $defaults['financial_account_type_id'] = array_keys( $values );
             $defaults['is_active'] = 1;
+            $defaults['is_default'] = 1;
+        }elseif ($this->_action & CRM_Core_Action::UPDATE){
+            $organisationId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $this->_id, 'contact_id' );
+            $this->assign('organisationId', $organisationId );                            
         }
         
         return $defaults;

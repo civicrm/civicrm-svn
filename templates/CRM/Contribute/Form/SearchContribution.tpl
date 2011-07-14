@@ -37,7 +37,7 @@
         <td>
             <label>{ts}Contribution Type{/ts}</label>
             <div class="listing-box">
-                {foreach from=$form.contribution_type_id item="contribution_val"}
+                {foreach from=$form.financial_account_id item="contribution_val"}
                 <div class="{cycle values="odd-row,even-row"}">
                      {$contribution_val.html}
                   </div>

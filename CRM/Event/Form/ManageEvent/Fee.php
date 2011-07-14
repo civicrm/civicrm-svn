@@ -261,7 +261,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
                     ts( 'Payment Processor' ),
                     array('' => ts( '- select -' )) + $paymentProcessor );
         
-        $this->add('select', 'contribution_type_id',ts( 'Contribution Type' ),
+        $this->add('select', 'financial_account_id',ts( 'Contribution Type' ),
                    array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionType( ) );
         
         // add pay later options
@@ -477,8 +477,8 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
         
         if ( $values['is_monetary'] ) {
             //check if contribution type is selected
-            if ( !$values['contribution_type_id'] ) {
-                $errors['contribution_type_id'] = ts( "Please select contribution type." );
+            if ( !$values['financial_account_id'] ) {
+                $errors['financial_account_id'] = ts( "Please select contribution type." );
             }
             
             //check for the event fee label (mandatory)
@@ -652,7 +652,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
                 }
             }
         } else {
-            $params['contribution_type_id'] = '';
+            $params['financial_account_id'] = '';
            
         }
         

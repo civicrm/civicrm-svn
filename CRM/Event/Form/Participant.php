@@ -534,9 +534,9 @@ SELECT civicrm_custom_group.name as name,
             if ( CRM_Utils_Array::value( 'event_id' , $defaults[$this->_id] ) ) {
                 $contributionTypeId =  CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event',
                                                                     $defaults[$this->_id]['event_id'], 
-                                                                    'contribution_type_id' );
+                                                                    'financial_account_id' );
                 if ( $contributionTypeId ){
-                    $defaults[$this->_id]['contribution_type_id'] = $contributionTypeId;
+                    $defaults[$this->_id]['financial_account_id'] = $contributionTypeId;
                 }
             }
             
@@ -914,8 +914,8 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             }
         }
         
-        if ( CRM_Utils_Array::value( 'record_contribution', $values ) && !  CRM_Utils_Array::value( 'contribution_type_id', $values ) ){
-            $errorMsg['contribution_type_id'] = ts( 'Please enter the associated Contribution Type' );
+        if ( CRM_Utils_Array::value( 'record_contribution', $values ) && !  CRM_Utils_Array::value( 'financial_account_id', $values ) ){
+            $errorMsg['financial_account_id'] = ts( 'Please enter the associated Contribution Type' );
         }
         
         // validate contribution status for 'Failed'.
@@ -1221,8 +1221,8 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             require_once 'CRM/Event/Form/Registration/Confirm.php';
             require_once 'CRM/Event/Form/Registration.php';
             //add contribution record
-            $this->_params['contribution_type_id'] = 
-                CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $params['event_id'], 'contribution_type_id' );
+            $this->_params['financial_account_id'] = 
+                CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $params['event_id'], 'financial_account_id' );
             $this->_params['mode'] = $this->_mode;
 
             //add contribution reocord
@@ -1321,7 +1321,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                 $contributionParams['non_deductible_amount'] = 'null';
                 $contributionParams['receipt_date'         ] = CRM_Utils_Array::value( 'send_receipt', $params ) ? CRM_Utils_Array::value( 'receive_date', $params ) : 'null';
                 
-                $recordContribution = array( 'contact_id', 'contribution_type_id',
+                $recordContribution = array( 'contact_id', 'financial_account_id',
                                              'payment_instrument_id', 'trxn_id', 
                                              'contribution_status_id', 'receive_date', 
                                              'check_number', 'campaign_id' );
@@ -1335,7 +1335,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                 
                 //insert contribution type name in receipt.
                 $this->assign( 'contributionTypeName', CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
-                                                                                    $contributionParams['contribution_type_id'] ) );
+                                                                                    $contributionParams['financial_account_id'] ) );
                 require_once 'CRM/Contribute/BAO/Contribution.php';
                 $contributions = array( );
                 if ( $this->_single ) {

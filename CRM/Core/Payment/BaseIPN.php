@@ -106,9 +106,9 @@ class CRM_Core_Payment_BaseIPN {
         $objects['participant']       = null;
         $objects['pledge_payment']    = null;
 
-        require_once 'CRM/Contribute/DAO/ContributionType.php';
+        require_once 'CRM/Financial/DAO/FinancialAccount.php';
         $contributionType = new CRM_Contribute_DAO_ContributionType( );
-        $contributionType->id = $contribution->contribution_type_id;
+        $contributionType->id = $contribution->financial_account_id;
         if ( ! $contributionType->find( true ) ) {
             CRM_Core_Error::debug_log_message( "Could not find contribution type record: $contributionTypeID" );
             echo "Failure: Could not find contribution type record for $contributionTypeID<p>";
@@ -338,7 +338,7 @@ class CRM_Core_Payment_BaseIPN {
             } else if ( $recurContrib->id ) {
                 $contribution->contribution_page_id = null;
                 $values['amount'] = $recurContrib->amount;
-                $values['contribution_type_id'] = $objects['contributionType']->id;
+                $values['financial_account_id'] = $objects['contributionType']->id;
                 $values['title'] = $source = ts( 'Offline Recurring Contribution' );
                 $values['is_email_receipt'] = true;
                 require_once 'CRM/Core/BAO/Domain.php';
@@ -733,8 +733,8 @@ class CRM_Core_Payment_BaseIPN {
             $template->assign( 'totalAmount' , $input['amount'] );
         }
 
-        if ( $contribution->contribution_type_id ) {
-            $values['contribution_type_id'] = $contribution->contribution_type_id;
+        if ( $contribution->financial_account_id ) {
+            $values['financial_account_id'] = $contribution->financial_account_id;
         } 
 
         $template->assign( 'trxn_id', $contribution->trxn_id );

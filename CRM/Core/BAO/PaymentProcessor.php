@@ -34,7 +34,7 @@
  *
  */
 
-require_once 'CRM/Core/DAO/PaymentProcessor.php';
+require_once 'CRM/Financial/DAO/PaymentProcessor.php';
 
 /**
  * This class contains payment processor related functions.

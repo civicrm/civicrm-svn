@@ -25,7 +25,7 @@
  +--------------------------------------------------------------------+
 */
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Contribute/BAO/ContributionType.php';
+require_once 'CRM/Financial/DAO/FinancialAccount.php';
 
 class CRM_Contribute_BAO_ContributionTypeTest extends CiviUnitTestCase 
 {
@@ -33,7 +33,7 @@ class CRM_Contribute_BAO_ContributionTypeTest extends CiviUnitTestCase
     function get_info( ) 
     {
         return array(
-                     'name'        => 'ContributionType BAOs',
+                     'name'        => 'FinancialAccount BAOs',
                      'description' => 'Test all Contribute_BAO_Contribution methods.',
                      'group'       => 'CiviCRM BAO Tests',
                      );

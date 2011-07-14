@@ -69,8 +69,8 @@ class WebTest_Contribute_OfflineRecurContributionTest extends CiviSeleniumTestCa
       $this->waitForElementPresent('payment_processor_id');
       $this->select('payment_processor_id',  "label={$processorName}");
 
-      $this->click('contribution_type_id');
-      $this->select('contribution_type_id', 'label=Donation');
+      $this->click('financial_account_id');
+      $this->select('financial_account_id', 'label=Donation');
       $this->type('total_amount', '10');
 
       // recurring contribution fields

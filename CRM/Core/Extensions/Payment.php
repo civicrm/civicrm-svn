@@ -111,9 +111,9 @@ class CRM_Core_Extensions_Payment
         require_once 'CRM/Core/PseudoConstant.php';
         $paymentProcessors = CRM_Core_PseudoConstant::paymentProcessor( TRUE );        
 
-        require_once "CRM/Core/DAO/PaymentProcessor.php";
+        require_once "CRM/Financial/DAO/PaymentProcessor.php";
         foreach( $paymentProcessors as $id => $name ) {
-            $dao = new CRM_Core_DAO_PaymentProcessor();
+            $dao = new CRM_Financial_DAO_PaymentProcessor();
             $dao->id = $id;
             $dao->find( );
             while ($dao->fetch( )) {                

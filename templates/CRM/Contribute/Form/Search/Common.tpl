@@ -60,7 +60,7 @@
 </tr>
 <tr>
 	<td><label>{ts}Contribution Type{/ts}</label> <br />
-	{$form.contribution_type_id.html|crmReplace:class:twenty}</td>
+	{$form.financial_account_id.html|crmReplace:class:twenty}</td>
 	<td><label>{ts}Contribution Page{/ts}</label> <br />
 	{$form.contribution_page_id.html|crmReplace:class:twenty}</td>
 </tr>

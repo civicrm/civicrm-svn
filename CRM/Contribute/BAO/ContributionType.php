@@ -34,7 +34,7 @@
  *
  */
 
-require_once 'CRM/Contribute/DAO/ContributionType.php';
+require_once 'CRM/Financial/DAO/FinancialAccount.php';
 
 class CRM_Contribute_BAO_ContributionType extends CRM_Contribute_DAO_ContributionType 
 {
