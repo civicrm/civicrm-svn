@@ -94,7 +94,7 @@ class CRM_Core_BAO_CustomValueTable
 
                                 CRM_Utils_Array::lookupValue( $states, 'state_province',
                                                               CRM_Core_PseudoConstant::stateProvince(), true );
-                                if ( !$states['state_province_id'] ) {
+                                if ( !CRM_Utils_Array::value( 'state_province_id' , $states ) ) {
                                     CRM_Utils_Array::lookupValue( $states, 'state_province',
                                                                   CRM_Core_PseudoConstant::stateProvinceAbbreviation(), true );
                                 }
@@ -129,7 +129,7 @@ class CRM_Core_BAO_CustomValueTable
                                 $countries['country'] = trim($countryVal);
                                 CRM_Utils_Array::lookupValue( $countries, 'country',
                                                               CRM_Core_PseudoConstant::country(), true );
-                                if ( ! $countries['country_id'] ) {
+                                if ( !CRM_Utils_Array::value( 'country_id' , $countries ) ) {
                                     CRM_Utils_Array::lookupValue( $countries, 'country',
                                                                   CRM_Core_PseudoConstant::countryIsoCode(), true );
                                 }
