@@ -772,14 +772,14 @@ VALUES
   (@option_group_id_label, '{ts escape="sql"}Avery L7163{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":9,"font-style":"","metric":"in","lMargin":0.18,"tMargin":0.6,"NX":2,"NY":7,"SpaceX":0.1,"SpaceY":0,"width":3.9,"height":1.5,"lPadding":0.20,"tPadding":0.20}{/literal}',          'L7163', 'Avery', NULL, 0, 11, NULL, 0, 1, 1, NULL, NULL);
 
 -- financial accounts
-SELECT @opid := id FROM civicrm_option_value WHERE name = 'Revenue';
+SELECT @opval := value FROM civicrm_option_value WHERE name = 'Revenue';
 INSERT INTO
    `civicrm_financial_account` (`name`, `financial_account_type_id`, `is_reserved`, `is_active`, `is_deductible`)
 VALUES
-  ( '{ts escape="sql"}Donation{/ts}'             , @opid, 0, 1, 1 ),
-  ( '{ts escape="sql"}Member Dues{/ts}'          , @opid, 0, 1, 1 ), 
-  ( '{ts escape="sql"}Campaign Contribution{/ts}', @opid, 0, 1, 0 ),
-  ( '{ts escape="sql"}Event Fee{/ts}'            , @opid, 0, 1, 0 );
+  ( '{ts escape="sql"}Donation{/ts}'             , @opval, 0, 1, 1 ),
+  ( '{ts escape="sql"}Member Dues{/ts}'          , @opval, 0, 1, 1 ), 
+  ( '{ts escape="sql"}Campaign Contribution{/ts}', @opval, 0, 1, 0 ),
+  ( '{ts escape="sql"}Event Fee{/ts}'            , @opval, 0, 1, 0 );
 
 -- Now insert option values which require domainID
 --

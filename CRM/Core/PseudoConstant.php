@@ -1659,8 +1659,7 @@ ORDER BY name";
     {
         if ( ! self::$financialAccountType ) {
             require_once 'CRM/Core/OptionGroup.php';
-            //self::$financialAccountType = CRM_Core_OptionGroup::values('financial_account_type');
-            self::$financialAccountType = CRM_Core_OptionGroup::values('activity_contacts');
+            self::$financialAccountType = CRM_Core_OptionGroup::values('financial_account_type');
         }
         return self::$financialAccountType;
     }
