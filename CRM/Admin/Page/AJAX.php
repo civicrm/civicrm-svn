@@ -251,7 +251,6 @@ class CRM_Admin_Page_AJAX
             }
         }
         $usedForClause  = !empty( $usedForClause ) ? implode( " OR " , $usedForClause ) : '1';
-        $reservedClause = !CRM_Core_Permission::check('administer reserved tags') ? "AND t1.is_reserved != 1" : '';
 
         // query to list mergable tags
         $query  = "
@@ -263,7 +262,6 @@ WHERE  t2.id IS NULL      AND
        t1.id <> {$fromId} AND 
        t1.name LIKE '%{$name}%' AND
        ({$usedForClause}) 
-       {$reservedClause}
 LIMIT $limit";
         $dao    = CRM_Core_DAO::executeQuery( $query );
         
@@ -359,28 +357,24 @@ LIMIT $limit";
 
 
     static function mergeTags( ) {
-        $fromId = CRM_Utils_Type::escape( $_POST['fromId'], 'Integer' );
-        $toId   = CRM_Utils_Type::escape( $_POST['toId'],   'Integer' );
+        $tagAId = CRM_Utils_Type::escape( $_POST['fromId'], 'Integer' );
+        $tagBId   = CRM_Utils_Type::escape( $_POST['toId'],   'Integer' );
         
         $query = "SELECT id, name, used_for FROM civicrm_tag WHERE id IN (%1, %2)";
-        $dao   = CRM_Core_DAO::executeQuery( $query, array( 1 => array($fromId, 'Integer'),
-                                                            2 => array($toId,   'Integer') ) );
-        $result = array( );
-        require_once 'CRM/Core/OptionGroup.php';
-        $usedFor = CRM_Core_OptionGroup::values('tag_used_for');
-        while( $dao->fetch( ) ) {
-            $result[($dao->id == $fromId ? 'tagA' : 'tagB')] = $dao->name;
-            $usedForList = explode( ",", $dao->used_for );
-            foreach ( $usedForList as &$val ) {
+        $dao   = CRM_Core_DAO::executeQuery( $query, array( 1 => array($tagAId, 'Integer'),
+                                                            2 => array($tagBId, 'Integer') ) );
+        
+        require_once 'CRM/Core/BAO/EntityTag.php';
+        $result = CRM_Core_BAO_EntityTag::mergeTags( $tagAId, $tagBId );
+
+        if ( !empty( $result['tagB_used_for'] ) ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            $usedFor = CRM_Core_OptionGroup::values('tag_used_for');
+            foreach ( $result['tagB_used_for'] as &$val ) {
                 $val = $usedFor[$val];
             }
-            $usedForList = implode( ', ', $usedForList );
-            $result[($dao->id == $fromId ? 'tagA_used_for' : 'tagB_used_for')] = $usedForList;
+            $result['tagB_used_for'] = implode( ', ', $result['tagB_used_for'] );
         }
-
-        require_once 'CRM/Core/BAO/EntityTag.php';
-        $status = CRM_Core_BAO_EntityTag::mergeTags( $fromId, $toId );
-        $result['status'] = $status;
 
         echo json_encode( $result );
         CRM_Utils_System::civiExit( );
