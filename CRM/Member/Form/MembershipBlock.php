@@ -140,7 +140,16 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             
             $this->addFormRule(array('CRM_Member_Form_MembershipBlock', 'formRule') , $this->_id);
         }
-
+        require_once 'CRM/Price/BAO/Set.php';
+        $price = CRM_Price_BAO_Set::getAssoc( false, 'CiviMember');
+        if ( CRM_Utils_System::isNull( $price ) ) {
+            $this->assign('price', false );
+        } else {
+            $this->assign('price', true );
+        }
+        $this->add('select', 'price_set_id', ts( 'Select Membership Price Set' ),
+                   (array( '' => ts( '- select -' )) + $price)
+                   );
         $session = CRM_Core_Session::singleton();
         $single = $session->get('singleForm');
         if ( $single ) {

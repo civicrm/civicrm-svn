@@ -100,6 +100,11 @@
           <tr class="crm-member-membershipblock-form-block-display_min_fee">
               <td class="label"></td><td class="html-adjust">{$form.display_min_fee.html}&nbsp;{$form.display_min_fee.label} {help id="id-display-fee"}<br />
               <span class="description">{ts}Display the membership fee along with the membership name and description for each membership option?{/ts}</span></td>
+	  </tr>
+          <tr class="crm-member-membershipblock-form-block-price_set_id">
+              <td class="label">{$form.price_set_id.label}</td>
+	      <td>{$form.price_set_id.html}</td>
+	 </tr>     	    
       </table>
    </div>
   {else}

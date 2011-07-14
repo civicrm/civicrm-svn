@@ -139,7 +139,12 @@ class CRM_Price_Form_Set extends CRM_Core_Form
                              'CiviContribute' => array( 'title'  => ts( 'Contribution' ),
                                                         'extend' => CRM_Core_Component::getComponentID( 'CiviContribute' ),
                                                         'tables' => array( 'civicrm_contribution', 
-                                                                           'civicrm_contribution_page' ) ) );
+                                                                           'civicrm_contribution_page' ) ),
+                             'CiviMember'     => array( 'title'  => ts( 'Membership' ),
+                                                        'extend' => CRM_Core_Component::getComponentID( 'CiviMember' ),
+                                                        'tables' => array( 'civicrm_membership', 
+                                                                           'civicrm_contribution_page' ) ),
+                             );
         foreach ( $components as $compName => $compValues ) {
             // take only enabled components.
             if ( !in_array( $compName, $config->enableComponents ) ) continue;
