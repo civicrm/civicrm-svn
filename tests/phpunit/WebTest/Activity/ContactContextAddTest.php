@@ -74,10 +74,10 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
 
       // Now we're filling the "Assigned To" field.
       // Typing contact's name into the field (using typeKeys(), not type()!)...
-      $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", $firstName1);
+      $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
 
       // ...waiting for drop down with results to show up...
-      $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
+      $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
       
       // ...clicking first result (which is a li element), selenium picks first matching element so we don't need to specify that...
       $this->click("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
