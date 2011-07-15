@@ -2503,4 +2503,52 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
         }
         return $this->_selectedTables;
     }
+
+    /*
+     * function for adding address fields to construct function in reports
+     * 
+     * @return array address fields for construct clause
+     */
+    function addAddressFields(){
+               return array('civicrm_address' =>
+                  array( 'dao'      => 'CRM_Core_DAO_Address',
+                         'fields'   =>
+                         array( 
+                          			'street_number'     => array( 'name'  => 'street_number',
+                                                                              'title' => ts( 'Street Number' ),
+                                                                              'type'  => 1 ),
+                               'street_name'       => array( 'name'  => 'street_name',
+                                                                              'title' => ts( 'Street Name' ),
+                                                                              'type'  => 1 ),
+                               'street_unit'       => array( 'name'  => 'street_unit',
+                                                                              'title' => ts( 'Street Unit' ),
+                                                                              'type'  => 1 ),'street_address'    => null,
+                                'city'              => null,
+                                'postal_code'       => null,
+                                'state_province_id' => 
+                                array( 'title'      => ts( 'State/Province' ), ),
+                                'country_id'        => 
+                                array( 'title'      => ts( 'Country' ),  
+                                       'default'    => true ), 
+                                'county_id'  =>
+                                array( 'title'      => ts( 'County' ),  
+                                       'default'    => false ), 
+                                ),
+                         'group_bys' =>
+                          array( 'street_address'    => null,
+                                 'city'              => null,
+                                 'postal_code'       => null,
+                                 'state_province_id' => 
+                                 array( 'title'   => ts( 'State/Province' ), ),
+                                 'country_id'        => 
+                                 array( 'title'   => ts( 'Country' ), ),
+                                 'county_id'        => 
+                                 array( 'title'      => ts( 'County' ), ),
+                                 ),
+                         'grouping'=> 'contact-fields',
+                         ),
+    );
+    }
+    
 }
+
