@@ -49,6 +49,19 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $this->_apiversion = 3;
         $this->_contributionTypeId = $this->contributionTypeCreate();
         $this->_individualId = $this->individualCreate( );
+        $this->params = array(
+                        'contact_id'             => $this->_individualId,
+                        'receive_date'           => date('Ymd'),
+                        'total_amount'           => 100.00,
+                        'contribution_type_id'   => $this->_contributionTypeId,
+                        'non_deductible_amount'  => 10.00,
+                        'fee_amount'             => 51.00,
+                        'net_amount'             => 91.00,
+
+                        'source'                 => 'SSF',
+                        'contribution_status_id' => 1,
+                        'version'								=> $this->_apiversion,
+                        );
     }
     
     function tearDown() 
@@ -155,6 +168,13 @@ class api_v3_ContributionTest extends CiviUnitTestCase
                           'version'         => $this->_apiversion));
 
 
+     }
+     
+     function testTearDown(){
+       $contribution = civicrm_api('Contribution', 'create', $this->params);
+       $this->contributionTypeDelete();   
+       $this->assertEquals(1, 1);  
+       civicrm_api('contribution', 'delete', array('version' => 3, 'id' => $contribution['id']));
      }
 
 ///////////////// civicrm_contribution_
