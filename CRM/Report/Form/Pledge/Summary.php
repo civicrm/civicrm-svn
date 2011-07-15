@@ -41,7 +41,8 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
     protected $_summary = null;
     protected $_totalPaid = false;
     protected $_customGroupExtends = array( 'Pledge' );
-
+    protected $_customGroupGroupBy = true;
+    
     function __construct( ) {
         $this->_columns = 
             array(
@@ -50,8 +51,9 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
                          'fields'    =>
                          array( 'sort_name' => 
                                 array( 'title'     => ts( 'Contact Name' ),
-                                       'required'  => true,
-                                       'no_repeat' => true ),
+                                       'required'  => false,
+                                       'no_repeat' => true,
+                                			 'default'    => true  ),
                                 ),
                          'filters'   =>             
                          array('sort_name'    => 
@@ -62,20 +64,7 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
                          'grouping'  => 'contact-fields',
                          ),
 			    
-                  'civicrm_address' =>
-                  array( 'dao'      => 'CRM_Core_DAO_Address',
-                         'fields'   =>
-                         array( 'street_address'    => null,
-                                'city'              => null,
-                                'postal_code'       => null,
-                                'state_province_id' => 
-                                array( 'title'      => ts( 'State/Province' ), ),
-                                'country_id'        => 
-                                array( 'title'      => ts( 'Country' ),  
-                                       'default'    => true ), 
-                                ),
-                         'grouping'=> 'contact-fields',
-                         ),
+
                   
                   'civicrm_email' => 
                   array( 'dao'    => 'CRM_Core_DAO_Email',
@@ -152,7 +141,7 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
                                        'group'   => true,
                                        'options' => CRM_Core_PseudoConstant::group( ) ) ), ),
                   
-                  );
+                  ) + $this->addAddressFields();
 
         $this->_tagFilter = true;
         parent::__construct( );
@@ -166,6 +155,60 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
         $select = array( );
         $this->_columnHeaders = array( );
         foreach ( $this->_columns as $tableName => $table ) {
+              if ( array_key_exists('group_bys', $table) ) {
+                foreach ( $table['group_bys'] as $fieldName => $field ) {
+                    if ( $tableName == 'civicrm_address' ) {
+                        $this->_addressField = true;
+                    }
+                    if ( CRM_Utils_Array::value( $fieldName, $this->_params['group_bys'] ) ) {
+                        switch ( CRM_Utils_Array::value( $fieldName, $this->_params['group_bys_freq'] ) ) {
+                        case 'YEARWEEK' :
+                            $select[] = "DATE_SUB({$field['dbAlias']}, INTERVAL WEEKDAY({$field['dbAlias']}) DAY) AS {$tableName}_{$fieldName}_start";
+                            $select[] = "YEARWEEK({$field['dbAlias']}) AS {$tableName}_{$fieldName}_subtotal";
+                            $select[] = "WEEKOFYEAR({$field['dbAlias']}) AS {$tableName}_{$fieldName}_interval";
+                            $field['title'] = 'Week';
+                            break;
+                            
+                        case 'YEAR' :
+                            $select[] = "MAKEDATE(YEAR({$field['dbAlias']}), 1)  AS {$tableName}_{$fieldName}_start";
+                            $select[] = "YEAR({$field['dbAlias']}) AS {$tableName}_{$fieldName}_subtotal";
+                            $select[] = "YEAR({$field['dbAlias']}) AS {$tableName}_{$fieldName}_interval";
+                            $field['title'] = 'Year';
+                            break;
+                            
+                        case 'MONTH':
+                            $select[] = "DATE_SUB({$field['dbAlias']}, INTERVAL (DAYOFMONTH({$field['dbAlias']})-1) DAY) as {$tableName}_{$fieldName}_start";
+                            $select[] = "MONTH({$field['dbAlias']}) AS {$tableName}_{$fieldName}_subtotal";
+                            $select[] = "MONTHNAME({$field['dbAlias']}) AS {$tableName}_{$fieldName}_interval";
+                            $field['title'] = 'Month';
+                            break;
+                            
+                        case 'QUARTER':
+                            $select[] = "STR_TO_DATE(CONCAT( 3 * QUARTER( {$field['dbAlias']} ) -2 , '/', '1', '/', YEAR( {$field['dbAlias']} ) ), '%m/%d/%Y') AS {$tableName}_{$fieldName}_start";
+                            $select[] = "QUARTER({$field['dbAlias']}) AS {$tableName}_{$fieldName}_subtotal";
+                            $select[] = "QUARTER({$field['dbAlias']}) AS {$tableName}_{$fieldName}_interval";
+                            $field['title'] = 'Quarter';
+                            break;
+                            
+                        }
+                        if ( CRM_Utils_Array::value( $fieldName, $this->_params['group_bys_freq'] ) ) {
+                            $this->_interval = $field['title'];
+                            $this->_columnHeaders["{$tableName}_{$fieldName}_start"]['title'] = 
+                                $field['title'] . ' Beginning';
+                            $this->_columnHeaders["{$tableName}_{$fieldName}_start"]['type']  = 
+                                $field['type'];
+                            $this->_columnHeaders["{$tableName}_{$fieldName}_start"]['group_by'] = 
+                                $this->_params['group_bys_freq'][$fieldName];
+
+                            // just to make sure these values are transfered to rows.
+                            // since we need that for calculation purpose, 
+                            // e.g making subtotals look nicer or graphs
+                            $this->_columnHeaders["{$tableName}_{$fieldName}_interval"] = array('no_display' => true);
+                            $this->_columnHeaders["{$tableName}_{$fieldName}_subtotal"] = array('no_display' => true);
+                        }
+                    }
+                }
+            }
             if ( array_key_exists('fields', $table) ) {
                 foreach ( $table['fields'] as $fieldName => $field ) {
                     if ( CRM_Utils_Array::value( 'required', $field ) ||
@@ -221,6 +264,49 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
                                {$this->_aliases['civicrm_email']}.is_primary = 1\n";     
         }
     }
+    
+    function groupBy( ) {
+        $this->_groupBy = "";
+        $append = false;
+
+        if ( is_array($this->_params['group_bys']) && 
+             !empty($this->_params['group_bys']) ) {
+            foreach ( $this->_columns as $tableName => $table ) {
+                if ( array_key_exists('group_bys', $table) ) {
+                    foreach ( $table['group_bys'] as $fieldName => $field ) {
+                        if ( CRM_Utils_Array::value( $fieldName, $this->_params['group_bys'] ) ) {
+                            if ( CRM_Utils_Array::value( 'chart', $field ) ) {
+                                $this->assign( 'chartSupported', true );
+                            }
+
+                            if ( CRM_Utils_Array::value('frequency', $table['group_bys'][$fieldName]) && 
+                                 CRM_Utils_Array::value($fieldName, $this->_params['group_bys_freq']) ) {
+                                
+                                $append = "YEAR({$field['dbAlias']}),";
+                                if ( in_array(strtolower($this->_params['group_bys_freq'][$fieldName]), 
+                                              array('year')) ) {
+                                    $append = '';
+                                }
+                                $this->_groupBy[] = "$append {$this->_params['group_bys_freq'][$fieldName]}({$field['dbAlias']})";
+                                $append = true;
+                            } else {
+                                $this->_groupBy[] = $field['dbAlias'];
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if ( !empty($this->_statFields) && 
+                 (( $append && count($this->_groupBy) <= 1 ) || (!$append)) && !$this->_having ) {
+                $this->_rollup = " WITH ROLLUP";
+            }
+            $this->_groupBy = "GROUP BY " . implode( ', ', $this->_groupBy ) . " {$this->_rollup} ";
+        } else {
+            $this->_groupBy = "GROUP BY {$this->_aliases['civicrm_contact']}.id";
+        }
+    }
+    
     function statistics( &$rows ) {
         $statistics = parent::statistics( $rows );
 
@@ -304,15 +390,7 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
 
         // get the acl clauses built before we assemble the query
         $this->buildACLClause( $this->_aliases['civicrm_contact'] );
-        $this->select ( );
-        $this->from   ( );
-        $this->orderBy( );
-        $this->customDataFrom( );
-        $this->where  ( ); 
-        $this->limit( );  
-        
-        $sql   = "{$this->_select} {$this->_from} {$this->_where} {$this->_orderBy} {$this->_limit}";
-        
+        $sql = $this->buildQuery( );
         $rows  = $payment = array();
         $count = $due = $paid = 0;
         
@@ -511,7 +589,13 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
                 }
                 $entryFound = true;
             }
-
+            if ( array_key_exists('civicrm_address_county_id', $row) ) {
+                if ( $value = $row['civicrm_address_county_id'] ) {
+                    $rows[$rowNum]['civicrm_address_county_id'] = 
+                        CRM_Core_PseudoConstant::county( $value, false );
+                }
+                $entryFound = true;
+            }
             // skip looking further in rows, if first row itself doesn't 
             // have the column we need
             if ( !$entryFound ) {
