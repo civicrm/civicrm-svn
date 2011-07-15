@@ -164,7 +164,7 @@ $.TokenList = function (input, url_or_data, settings) {
             outline: "none"
         })
         .attr("id", settings.idPrefix + input.id)
-        .focus(function () {
+        .click(function () {
             if (settings.tokenLimit === null || settings.tokenLimit !== token_count) {
                 show_dropdown_hint();
             }
@@ -464,7 +464,7 @@ $.TokenList = function (input, url_or_data, settings) {
             if(found_existing_token) {
                 select_token(found_existing_token);
                 input_token.insertAfter(found_existing_token);
-                input_box.focus();
+                //input_box.focus();
                 return;
             }
         }
