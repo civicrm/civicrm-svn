@@ -2515,10 +2515,13 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
      * @return array address fields for construct clause
      */
     function addAddressFields(){
+    
+      
+      
                return array('civicrm_address' =>
                   array( 'dao'      => 'CRM_Core_DAO_Address',
                          'fields'   =>
-                         array( 
+                         array( 'street_address'    => null,
                           			'street_number'     => array( 'name'  => 'street_number',
                                                                               'title' => ts( 'Street Number' ),
                                                                               'type'  => 1 ),
@@ -2530,14 +2533,15 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                                                                               'type'  => 1 ),'street_address'    => null,
                                 'city'              => null,
                                 'postal_code'       => null,
+                                'county_id'  =>
+                                array( 'title'      => ts( 'County' ),  
+                                       'default'    => false ),
                                 'state_province_id' => 
                                 array( 'title'      => ts( 'State/Province' ), ),
                                 'country_id'        => 
                                 array( 'title'      => ts( 'Country' ),  
                                        'default'    => true ), 
-                                'county_id'  =>
-                                array( 'title'      => ts( 'County' ),  
-                                       'default'    => false ), 
+ 
                                 ),
                          'group_bys' =>
                           array( 'street_address'    => null,
@@ -2550,9 +2554,91 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                                  'county_id'        => 
                                  array( 'title'      => ts( 'County' ), ),
                                  ),
-                         'grouping'=> 'contact-fields',
+                         'filters'   =>   array( 
+                         					'street_number'   => array( 'title'   => ts( 'Street Number' ),
+                                                                              'type'    => 1,
+                                                                              'name'    => 'street_number' ),
+                                  'street_name'     => array( 'title'    => ts( 'Street Name' ),
+                                                                              'name'     => 'street_name',
+                                                                              'operator' => 'like' ),
+                                  'postal_code'     => array( 'title'   => ts( 'Postal Code' ),
+                                                                              'type'    => 1,
+                                                                              'name'    => 'postal_code' ),
+                                  'city'            => array( 'title'   => ts( 'City' ),
+                                                                              'operator' => 'like',
+                                                                              'name'    => 'city' ),
+                                  'state_province_id' =>  array( 'name'  => 'state_province_id',
+                                                                                 'title' => ts( 'State/Province' ), 
+                                                                                 'operatorType' => 
+                                                                                 CRM_Report_Form::OP_MULTISELECT,
+                                                                                 'options'       => 
+                                                                                 CRM_Core_PseudoConstant::stateProvince()), 
+                                   'country_id'        =>  array( 'name'         => 'country_id',
+                                                                                 'title'        => ts( 'Country' ), 
+                                                                                 'operatorType' => 
+                                                                                 CRM_Report_Form::OP_MULTISELECT,
+                                                                                 'options'       => 
+                                                                                 CRM_Core_PseudoConstant::country( ) ) ),
+                                  'order_bys' =>   array( 'street_name'       => array( 'title'   => ts( 'Street Name' ) ),
+                                                  'street_number'     => array( 'title'   => 'Odd / Even Street Number' ) ),
+                          
+                          				'grouping'  => 'location-fields',
                          ),
     );
+    }
+    /*
+     * Do AlterDisplay processing on Address Fields
+     */
+    function alterDisplayAddressFields(&$row,&$rows,&$rowNum,$baseUrl,$urltxt){
+          $entryFound = false;
+           // handle country
+            if ( array_key_exists('civicrm_address_country_id', $row) ) {
+                if ( $value = $row['civicrm_address_country_id'] ) {
+                    $rows[$rowNum]['civicrm_address_country_id'] = 
+                        CRM_Core_PseudoConstant::country( $value, false );
+                    $url = CRM_Report_Utils_Report::getNextUrl( $baseUrl,
+                                                                "reset=1&force=1&" . 
+                                                                "country_id_op=in&country_id_value={$value}",
+                                                                $this->_absoluteUrl, $this->_id );
+                    $rows[$rowNum]['civicrm_address_country_id_link'] = $url;
+                    $rows[$rowNum]['civicrm_address_country_id_hover'] = 
+                        ts("$urltxt for this country.");
+                }
+                
+             $entryFound = true;
+            }
+               if ( array_key_exists('civicrm_address_county_id', $row) ) {
+                if ( $value = $row['civicrm_address_county_id'] ) {
+                    $rows[$rowNum]['civicrm_address_county_id'] = 
+                        CRM_Core_PseudoConstant::county( $value, false );
+                    $url = CRM_Report_Utils_Report::getNextUrl( $baseUrl,
+                                                                "reset=1&force=1&" . 
+                                                                "county_id_op=in&county_id_value={$value}",
+                                                                $this->_absoluteUrl, $this->_id );
+                    $rows[$rowNum]['civicrm_address_county_id_link'] = $url;
+                    $rows[$rowNum]['civicrm_address_county_id_hover'] = 
+                        ts("$urltxt for this county.");
+                }
+                $entryFound = true;
+            }
+             // handle state province
+            if ( array_key_exists('civicrm_address_state_province_id', $row) ) {
+                if ( $value = $row['civicrm_address_state_province_id'] ) {
+                    $rows[$rowNum]['civicrm_address_state_province_id'] = 
+                        CRM_Core_PseudoConstant::stateProvince( $value, false );
+
+                    $url = 
+                        CRM_Report_Utils_Report::getNextUrl( $baseUrl,
+                                                             "reset=1&force=1&state_province_id_op=in&state_province_id_value={$value}", 
+                                                             $this->_absoluteUrl, $this->_id );
+                    $rows[$rowNum]['civicrm_address_state_province_id_link']  = $url;
+                    $rows[$rowNum]['civicrm_address_state_province_id_hover'] = 
+                        ts("$urltxt  for this state.");
+                }
+                $entryFound = true;
+            }
+            
+            return $entryFound;
     }
     
 }
