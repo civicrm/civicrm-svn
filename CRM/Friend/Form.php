@@ -118,12 +118,12 @@ LEFT JOIN  civicrm_contribution_page contrib ON ( pcp.contribution_page_id = con
                 $pcp->free( );
             }
             
-            $this->assign('context', 'pcp');
             $this->assign('pcpTitle', $this->_title);
         } else {
             CRM_Core_Error::fatal( ts( 'page argument missing or invalid' ) );
         }
-       
+        $this->assign('context', $page);
+
         $session = CRM_Core_Session::singleton( );
         $this->_contactID = $session->get( 'userID' );
         if ( ! $this->_contactID ) {

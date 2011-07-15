@@ -70,9 +70,7 @@ class CRM_Profile_Form_Edit extends CRM_Profile_Form
         //set the block no
         $this->_blockNo = CRM_Utils_Request::retrieve( 'blockNo', 'String', $this );
             
-        if ( $this->_context ) {
-            $this->assign( 'context', $this->_context );
-        }
+        $this->assign( 'context', $this->_context );
 
         if ( $this->_blockNo ) {
             $this->assign( 'blockNo', $this->_blockNo );
