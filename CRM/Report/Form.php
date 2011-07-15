@@ -2410,7 +2410,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
      * template to hide them.
      */
     function preProcessOrderBy( &$formValues ) {
-        if ( !$formValues['order_bys'] ) {
+        if ( empty($formValues['order_bys']) ) {
             return;
         }
         // Object to show/hide form elements
@@ -2518,7 +2518,16 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                return array('civicrm_address' =>
                   array( 'dao'      => 'CRM_Core_DAO_Address',
                          'fields'   =>
-                         array( 'street_address'    => null,
+                         array( 
+                          			'street_number'     => array( 'name'  => 'street_number',
+                                                                              'title' => ts( 'Street Number' ),
+                                                                              'type'  => 1 ),
+                               'street_name'       => array( 'name'  => 'street_name',
+                                                                              'title' => ts( 'Street Name' ),
+                                                                              'type'  => 1 ),
+                               'street_unit'       => array( 'name'  => 'street_unit',
+                                                                              'title' => ts( 'Street Unit' ),
+                                                                              'type'  => 1 ),'street_address'    => null,
                                 'city'              => null,
                                 'postal_code'       => null,
                                 'state_province_id' => 
