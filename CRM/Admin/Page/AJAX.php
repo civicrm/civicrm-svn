@@ -262,15 +262,14 @@ class CRM_Admin_Page_AJAX
             }
         }
         $usedForClause  = !empty( $usedForClause ) ? implode( " OR " , $usedForClause ) : '1';
+        sort($usedForTagA);
 
         // query to list mergable tags
         $query  = "
-SELECT t1.name, t1.id, t1.used_for, t3.name as parent
+SELECT t1.name, t1.id, t1.used_for, t2.name as parent
 FROM   civicrm_tag t1 
-LEFT JOIN civicrm_tag t2 ON t1.id = t2.parent_id
-LEFT JOIN civicrm_tag t3 ON t1.parent_id = t3.id
-WHERE  t2.id IS NULL      AND 
-       t1.id <> {$fromId} AND 
+LEFT JOIN civicrm_tag t2 ON t1.parent_id = t2.id
+WHERE  t1.id <> {$fromId} AND 
        t1.name LIKE '%{$name}%' AND
        ({$usedForClause}) 
 LIMIT $limit";
@@ -280,16 +279,10 @@ LIMIT $limit";
             $warning = 0;
             if ( !empty($dao->used_for) ) {
                 $usedForTagB = explode( ',', $dao->used_for );
-                if ( count($usedForTagA) < count($usedForTagB) ) {
+                sort($usedForTagB);
+                $usedForDiff   = array_diff( $usedForTagA, $usedForTagB );
+                if ( !empty($usedForDiff) ) {
                     $warning = 1;
-                } else {
-                    sort($usedForTagB);
-                    sort($usedForTagA);
-                    $usedForDiff   = array_diff( $usedForTagB, $usedForTagA );
-                    $usedForInTagB = array_intersect( $usedForDiff, $usedForTagB );
-                    if ( !empty($usedForDiff) && !empty($usedForInTagB) ) {
-                        $warning = 1;
-                    }
                 }
             }
             $tag = addcslashes($dao->name, '"') . "|{$dao->id}|{$warning}\n";
@@ -427,10 +420,6 @@ LIMIT $limit";
     static function mergeTags( ) {
         $tagAId = CRM_Utils_Type::escape( $_POST['fromId'], 'Integer' );
         $tagBId   = CRM_Utils_Type::escape( $_POST['toId'],   'Integer' );
-        
-        $query = "SELECT id, name, used_for FROM civicrm_tag WHERE id IN (%1, %2)";
-        $dao   = CRM_Core_DAO::executeQuery( $query, array( 1 => array($tagAId, 'Integer'),
-                                                            2 => array($tagBId, 'Integer') ) );
         
         require_once 'CRM/Core/BAO/EntityTag.php';
         $result = CRM_Core_BAO_EntityTag::mergeTags( $tagAId, $tagBId );

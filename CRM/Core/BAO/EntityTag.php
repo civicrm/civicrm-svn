@@ -359,14 +359,13 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
                               2 => array($tagAId, 'Integer') );
 
         // re-compute used_for field
-        $query = "SELECT id, name, used_for, parent_id FROM civicrm_tag WHERE id IN (%1, %2)";
+        $query = "SELECT id, name, used_for FROM civicrm_tag WHERE id IN (%1, %2)";
         $dao   = CRM_Core_DAO::executeQuery( $query, $queryParams );
         $tags  = array( );
         while( $dao->fetch( ) ) {
             $label = ( $dao->id == $tagAId ) ? 'tagA' : 'tagB';
             $tags[$label] = $dao->name;
             $tags["{$label}_used_for"]  = $dao->used_for ? explode( ",", $dao->used_for ) : array( );
-            $tags["{$label}_parent_id"] = $dao->parent_id ? $dao->parent_id : "NULL";
         }
         $usedFor = array_merge( $tags["tagA_used_for"], $tags["tagB_used_for"] );
         $usedFor = implode( ',', array_unique($usedFor) );
@@ -376,13 +375,11 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
         $sqls   = array( 
                         // 1. update entity tag entries
                         "UPDATE civicrm_entity_tag SET tag_id = %1 WHERE tag_id = %2",
-                        // 2. update used_for & parent info for tag B
+                        // 2. update used_for info for tag B
                         "UPDATE civicrm_tag SET used_for = '{$usedFor}' WHERE id = %1",
-                        // 3. if tag A was a parent tag, make sure parent linking is maintained for its children
-                        "UPDATE civicrm_tag SET parent_id = {$tags['tagA_parent_id']} where parent_id = %2",
-                        // 4. remove tag A, if tag B is getting merged into A
+                        // 3. remove tag A, if tag A is getting merged into B
                         "DELETE FROM civicrm_tag WHERE id = %2",
-                        // 5. remove duplicate entity tag records
+                        // 4. remove duplicate entity tag records
                         "DELETE et1.* from civicrm_entity_tag et1 
 INNER JOIN ( SELECT * FROM civicrm_entity_tag 
 GROUP BY entity_table, entity_id, tag_id HAVING count(*) > 1 ) et2 ON et1.id = et2.id",
