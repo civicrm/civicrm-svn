@@ -186,9 +186,10 @@ class CRM_Utils_PDF_Label extends TCPDF {
     function getFontNames() {
         // Define labels for TCPDF core fonts
         $fontLabel = array(
-            'courier'   => ts('Courier'),
-            'helvetica' => ts('Helvetica'),
-            'times'     => ts('Times New Roman'),
+            'courier'    => ts('Courier'),
+            'helvetica'  => ts('Helvetica'),
+            'times'      => ts('Times New Roman'),
+            'dejavusans' => ts('Deja Vu Sans (UTF-8)')
         );
         $tcpdfFonts = $this->fontlist;
         foreach ( $tcpdfFonts as $fontName ) {

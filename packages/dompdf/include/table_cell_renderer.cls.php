@@ -37,7 +37,7 @@
 
  */
 
-/* $Id: table_cell_renderer.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
+/* $Id: table_cell_renderer.cls.php 311 2010-09-05 20:02:01Z fabien.menager $ */
 
 /**
  * Renders table cells
@@ -51,12 +51,16 @@ class Table_Cell_Renderer extends Block_Renderer {
 
   function render(Frame $frame) {
     $style = $frame->get_style();
-    list($x, $y, $w, $h) = $frame->get_padding_box();
 
+    $this->_set_opacity( $frame->get_opacity( $style->opacity ) );
+    
     // Draw our background, border and content
     if ( ($bg = $style->background_color) !== "transparent" ) {
       list($x, $y, $w, $h) = $frame->get_padding_box();
-      $this->_canvas->filled_rectangle( $x, $y, $w, $h, $style->background_color );
+      $this->_canvas->filled_rectangle( $x, $y, $w, $h, $bg );
+    }
+    else {
+      list($x, $y, $w, $h) = $frame->get_padding_box();
     }
 
     if ( ($url = $style->background_image) && $url !== "none" ) {
@@ -65,10 +69,12 @@ class Table_Cell_Renderer extends Block_Renderer {
 
     if ( $style->border_collapse !== "collapse" ) {
       $this->_render_border($frame, "bevel");
+      $this->_render_outline($frame, "bevel");
       return;
     }
 
     // The collapsed case is slightly complicated...
+    // @todo Add support for outlines here
 
     $cellmap = Table_Frame_Decorator::find_parent_table($frame)->get_cellmap();
     $cells = $cellmap->get_spanned_cells($frame);

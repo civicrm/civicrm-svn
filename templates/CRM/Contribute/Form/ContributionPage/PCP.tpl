@@ -31,7 +31,7 @@
 	</div>
 {/if}
 <div id="help">
-{ts}Allow constituents to create their own personal fundraising pages linked to this contribution page.{/ts}
+{ts}Allow constituents to create their own personal fundraising pages linked to this contribution page.{/ts} {help id="id-pcp_intro_help"}
 </div>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <table class="form-layout">

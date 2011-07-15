@@ -79,7 +79,7 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
 
         if ( $mailingID ) {
             require_once 'CRM/Mailing/DAO/Mailing.php';
-            $dao =&new  CRM_Mailing_DAO_Mailing();
+            $dao = new  CRM_Mailing_DAO_Mailing();
             $dao->id = $mailingID; 
             $dao->find(true);
             // override_verp must be flipped, as in 3.2 we reverted

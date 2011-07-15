@@ -95,6 +95,10 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
         $this->assertEquals( $params['trxn_id'], $contribution->trxn_id, 'Check for transcation id .' );
         $this->assertEquals( $params['net_amount'],$contribution->net_amount, 'Check for Amount updation.' );
 
+        //Delete Contribution
+        $this->contributionDelete( $contribution->id );
+        
+        //Delete Contact
         Contact::delete( $contactId );
     }
     
@@ -156,7 +160,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
         $contribution = CRM_Contribute_BAO_Contribution::create( $params ,$ids );
         
         // Check that the custom field value is saved
-        $customValueParams = array( 'entityID'                  => $contactId,
+        $customValueParams = array( 'entityID'                  => $contribution->id,
                                     'custom_'.$customField->id  => 1 
                                     );
         $values = CRM_Core_BAO_CustomValueTable::getValues( $customValueParams );
@@ -165,6 +169,9 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
         $this->assertEquals( $params['trxn_id'], $contribution->trxn_id, 'Check for transcation id creation.' );
         $this->assertEquals( $contactId, $contribution->contact_id, 'Check for contact id for Conribution.' );
         
+        $this->contributionDelete( $contribution->id );
+        Custom::deleteField( $customField ); 
+        Custom::deleteGroup( $customGroup );
         Contact::delete( $contactId );
     } 
     
@@ -271,6 +278,10 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
         
         //Delete honor contact
         Contact::delete( $contact );
+
+        //Delete Contribution record
+        $this->contributionDelete( $contribution->id );
+
         //Delete contributor contact
         Contact::delete( $contactId );
     }
@@ -325,6 +336,9 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
         $sortName = CRM_Contribute_BAO_Contribution::sortName( $contribution->id );
 
         $this->assertEquals( 'Whatson, Shane', $sortName, 'Check for sort name.' );
+        
+        //Delete Contribution
+        $this->contributionDelete( $contribution->id );
         //Delete Contact
         Contact::delete( $contactId );
     }
@@ -398,6 +412,9 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
        CRM_Contribute_BAO_ManagePremiums::del( $premium->id);
        $this->assertDBNull( 'CRM_Contribute_DAO_Product',$premium->name, 
                              'id','name','Database check for deleted Product.' );
+
+       //Delete Contribution
+       $this->contributionDelete( $contribution->id );
        //Delete Contact
        Contact::delete( $contactId );
     }
@@ -444,6 +461,10 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                       );
         $contributionID = CRM_Contribute_BAO_Contribution::checkDuplicateIds( $data );
         $this->assertEquals( $contributionID, $contribution->id, 'Check for duplicate transcation id .' );
+        
+        // Delete Contribution
+        $this->contributionDelete( $contribution->id );
+        // Delete Contact
         Contact::delete( $contactId );
     }
 }

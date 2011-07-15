@@ -49,9 +49,10 @@
  * - Add comments about configuration parameter implications
  */
 
-/* $Id: dompdf_config.inc.php 216 2010-03-11 22:49:18Z ryan.masten $ */
+/* $Id: dompdf_config.inc.php 363 2011-02-17 21:18:25Z fabien.menager $ */
 
-//error_reporting(E_STRICT | E_ALL);
+//error_reporting(E_STRICT | E_ALL | E_DEPRECATED);
+//ini_set("display_errors", 1);
 
 /**
  * The root of your DOMPDF installation
@@ -67,6 +68,26 @@ define("DOMPDF_INC_DIR", DOMPDF_DIR . "/include");
  * The location of the DOMPDF lib directory
  */
 define("DOMPDF_LIB_DIR", DOMPDF_DIR . "/lib");
+
+/**
+ * Some installations don't have $_SERVER['DOCUMENT_ROOT']
+ * http://fyneworks.blogspot.com/2007/08/php-documentroot-in-iis-windows-servers.html
+ */
+if( !isset($_SERVER['DOCUMENT_ROOT']) ) {
+  $path = "";
+  
+  if ( isset($_SERVER['SCRIPT_FILENAME']) )
+    $path = $_SERVER['SCRIPT_FILENAME'];
+  elseif ( isset($_SERVER['PATH_TRANSLATED']) )
+    $path = str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']);
+    
+  $_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr($path, 0, 0-strlen($_SERVER['PHP_SELF'])));
+}
+
+/** Include the custom config file if it exists */
+if ( file_exists(DOMPDF_DIR . "/dompdf_config.custom.inc.php") ){
+  require_once(DOMPDF_DIR . "/dompdf_config.custom.inc.php");
+}
 
 //FIXME: Some function definitions rely on the constants defined by DOMPDF. However, might this location prove problematic?
 require_once(DOMPDF_INC_DIR . "/functions.inc.php");
@@ -99,7 +120,7 @@ require_once(DOMPDF_INC_DIR . "/functions.inc.php");
  *
  * *Please note the trailing slash.*
  */
-define("DOMPDF_FONT_DIR", DOMPDF_DIR . "/lib/fonts/");
+def("DOMPDF_FONT_DIR", DOMPDF_DIR . "/lib/fonts/");
 
 /**
  * The location of the DOMPDF font cache directory
@@ -108,13 +129,8 @@ define("DOMPDF_FONT_DIR", DOMPDF_DIR . "/lib/fonts/");
  * This folder must already exist!
  * It contains the .afm files, on demand parsed, converted to php syntax and cached
  * This folder can be the same as DOMPDF_FONT_DIR
- *
- * *Please note the trailing slash.*
  */
-
-if (!defined("DOMPDF_FONT_CACHE")) {
-  define("DOMPDF_FONT_CACHE", DOMPDF_FONT_DIR);
-}
+def("DOMPDF_FONT_CACHE", DOMPDF_FONT_DIR);
 
 /**
  * The location of a temporary directory.
@@ -123,9 +139,7 @@ if (!defined("DOMPDF_FONT_CACHE")) {
  * The temporary directory is required to download remote images and when
  * using the PFDLib back end.
  */
-if (!defined('DOMPDF_TEMP_DIR')) {
-  define("DOMPDF_TEMP_DIR", sys_get_temp_dir());
-}
+def("DOMPDF_TEMP_DIR", sys_get_temp_dir());
 
 /**
  * ==== IMPORTANT ====
@@ -139,9 +153,7 @@ if (!defined('DOMPDF_TEMP_DIR')) {
  * direct class use like:
  * $dompdf = new DOMPDF();	$dompdf->load_html($htmldata); $dompdf->render(); $pdfdata = $dompdf->output();
  */
-if (!defined("DOMPDF_CHROOT")) {
-  define("DOMPDF_CHROOT", realpath(DOMPDF_DIR));
-}
+def("DOMPDF_CHROOT", realpath(DOMPDF_DIR));
 
 /**
  * Whether to use Unicode fonts or not.
@@ -154,11 +166,8 @@ if (!defined("DOMPDF_CHROOT")) {
  *
  * When enabled, dompdf can support all Unicode glyphs.  Any glyphs used in a
  * document must be present in your fonts, however.
- *
  */
-if (!defined("DOMPDF_UNICODE_ENABLED")) {
-  define("DOMPDF_UNICODE_ENABLED", false);
-}
+def("DOMPDF_UNICODE_ENABLED", true);
 
 /**
  * The path to the tt2pt1 utility (used to convert ttf to afm)
@@ -171,10 +180,10 @@ if (!defined("DOMPDF_UNICODE_ENABLED")) {
  *
  * @link http://ttf2pt1.sourceforge.net/
  */
-if (!defined("TTF2AFM")) {
-  define("TTF2AFM", DOMPDF_LIB_DIR ."/ttf2ufm/ttf2ufm-src/ttf2pt1");
-  //define("TTF2AFM", "/usr/bin/ttf2pt1");
-}
+if ( strpos(PHP_OS, "WIN") === false )
+  def("TTF2AFM", DOMPDF_LIB_DIR ."/ttf2ufm/ttf2ufm-src/ttf2pt1");
+else 
+  def("TTF2AFM", "C:\\Program Files\\GnuWin32\\bin\\ttf2pt1.exe");
 
 /**
  * The PDF rendering backend to use
@@ -204,9 +213,7 @@ if (!defined("TTF2AFM")) {
  * @link http://www.ros.co.nz/pdf
  * @link http://www.php.net/image
  */
-if (!defined("DOMPDF_PDF_BACKEND")) {
-  define("DOMPDF_PDF_BACKEND", "CPDF");
-}
+def("DOMPDF_PDF_BACKEND", "CPDF");
 
 /**
  * PDFlib license key
@@ -220,9 +227,7 @@ if (!defined("DOMPDF_PDF_BACKEND")) {
  * If pdflib present in web server and auto or selected explicitely above,
  * a real license code must exist!
  */
-if (!defined("DOMPDF_PDFLIB_LICENSE")) {
-  #define("DOMPDF_PDFLIB_LICENSE", "your license key here");
-}
+#def("DOMPDF_PDFLIB_LICENSE", "your license key here");
 
 /**
  * html target media view which should be rendered into pdf.
@@ -234,9 +239,7 @@ if (!defined("DOMPDF_PDFLIB_LICENSE")) {
  * the desired content might be different (e.g. screen or projection view of html file).
  * Therefore allow specification of content here.
  */
-if (!defined("DOMPDF_DEFAULT_MEDIA_TYPE")) {
-  define("DOMPDF_DEFAULT_MEDIA_TYPE", "screen");
-}
+def("DOMPDF_DEFAULT_MEDIA_TYPE", "screen");
 
 /**
  * The default paper size.
@@ -245,10 +248,7 @@ if (!defined("DOMPDF_DEFAULT_MEDIA_TYPE")) {
  *
  * @see CPDF_Adapter::PAPER_SIZES for valid sizes
  */
-if (!defined("DOMPDF_DEFAULT_PAPER_SIZE")) {
-  define("DOMPDF_DEFAULT_PAPER_SIZE", "letter");
-}
-
+def("DOMPDF_DEFAULT_PAPER_SIZE", "letter");
 
 /**
  * The default font family
@@ -256,9 +256,8 @@ if (!defined("DOMPDF_DEFAULT_PAPER_SIZE")) {
  * Used if no suitable fonts can be found. This must exist in the font folder.
  * @var string
  */
-if (!defined("DOMPDF_DEFAULT_FONT")) {
-  define("DOMPDF_DEFAULT_FONT", "serif");
-}
+def("DOMPDF_DEFAULT_FONT", "serif");
+
 /**
  * Image DPI setting
  *
@@ -292,9 +291,7 @@ if (!defined("DOMPDF_DEFAULT_FONT")) {
  *
  * @var int
  */
-if (!defined("DOMPDF_DPI")) {
-  define("DOMPDF_DPI", "96");
-}
+def("DOMPDF_DPI", 96);
 
 /**
  * Enable inline PHP
@@ -308,9 +305,17 @@ if (!defined("DOMPDF_DPI")) {
  *
  * @var bool
  */
-if (!defined("DOMPDF_ENABLE_PHP")) {
-  define("DOMPDF_ENABLE_PHP", true);
-}
+def("DOMPDF_ENABLE_PHP", false);
+
+/**
+ * Enable inline Javascript
+ *
+ * If this setting is set to true then DOMPDF will automatically insert
+ * JavaScript code contained within <script type="text/javascript"> ... </script> tags.
+ *
+ * @var bool
+ */
+def("DOMPDF_ENABLE_JAVASCRIPT", true);
 
 /**
  * Enable remote file access
@@ -329,17 +334,32 @@ if (!defined("DOMPDF_ENABLE_PHP")) {
  *
  * @var bool
  */
-if (!defined("DOMPDF_ENABLE_REMOTE")) {
-  define("DOMPDF_ENABLE_REMOTE", true);
-}
+def("DOMPDF_ENABLE_REMOTE", true);
+
+/**
+ * The debug output log
+ * @var string
+ */
+def("DOMPDF_LOG_OUTPUT_FILE", DOMPDF_FONT_DIR."log.htm");
+
+/**
+ * A ratio applied to the fonts height to be more like browsers' line height
+ */
+def("DOMPDF_FONT_HEIGHT_RATIO", 1.1);
+
+/**
+ * Enable CSS float
+ *
+ * Allows people to disabled CSS float support
+ * @var bool
+ */
+def("DOMPDF_ENABLE_CSS_FLOAT", false);
  
 /**
  * DOMPDF autoload function
  *
  * If you have an existing autoload function, add a call to this function
  * from your existing __autoload() implementation.
- *
- * TODO: use spl_autoload(), if available
  *
  * @param string $class
  */
@@ -350,13 +370,59 @@ function DOMPDF_autoload($class) {
     require_once($filename);
 }
 
+// If SPL autoload functions are available (PHP >= 5.1.2)
 if ( function_exists("spl_autoload_register") ) {
-   spl_autoload_register("DOMPDF_autoload");
-   if (function_exists('__autoload')) {
-       // Be polite and ensure that userland autoload gets retained
-       spl_autoload_register('__autoload');
-   }
-} else if ( !function_exists("__autoload") ) {
+  $autoload = "DOMPDF_autoload";
+  $funcs = spl_autoload_functions();
+  
+  // No functions currently in the stack. 
+  if ( $funcs === false ) { 
+    spl_autoload_register($autoload); 
+  }
+  
+  // If PHP >= 5.3 the $prepend argument is available
+  else if ( version_compare(PHP_VERSION, '5.3', '>=') ) {
+    spl_autoload_register($autoload, true, true); 
+  }
+  
+  else {
+    // Unregister existing autoloaders... 
+    $compat = version_compare(PHP_VERSION, '5.1.2', '<=') && 
+              version_compare(PHP_VERSION, '5.1.0', '>=');
+              
+    foreach ($funcs as $func) { 
+      if (is_array($func)) { 
+        // :TRICKY: There are some compatibility issues and some 
+        // places where we need to error out 
+        $reflector = new ReflectionMethod($func[0], $func[1]); 
+        if (!$reflector->isStatic()) { 
+          throw new Exception('This function is not compatible with non-static object methods due to PHP Bug #44144.'); 
+        }
+        
+        // Suprisingly, spl_autoload_register supports the 
+        // Class::staticMethod callback format, although call_user_func doesn't 
+        if ($compat) $func = implode('::', $func); 
+      }
+      
+      spl_autoload_unregister($func); 
+    } 
+    
+    // Register the new one, thus putting it at the front of the stack... 
+    spl_autoload_register($autoload); 
+    
+    // Now, go back and re-register all of our old ones. 
+    foreach ($funcs as $func) { 
+      spl_autoload_register($func); 
+    }
+    
+    // Be polite and ensure that userland autoload gets retained
+    if ( function_exists("__autoload") ) {
+      spl_autoload_register("__autoload");
+    }
+  }
+}
+
+else if ( !function_exists("__autoload") ) {
   /**
    * Default __autoload() function
    *
@@ -417,12 +483,15 @@ $_DOMPDF_DEBUG_TYPES = array(); //array("page-break" => 1);
  * E.g. on repeated display of same pdf in browser when pdf is not taken out of
  * the browser cache and the premature output prevents setting of the mime type.
  */
-if (!defined('DEBUGPNG')) {
-  define('DEBUGPNG',0);
-}
-if (!defined('DEBUGKEEPTEMP')) {
-  define('DEBUGKEEPTEMP',0);
-}
-if (!defined('DEBUGCSS')) {
-  define('DEBUGCSS',0);
-}
+def('DEBUGPNG', false);
+def('DEBUGKEEPTEMP', false);
+def('DEBUGCSS', false);
+
+/* Layout debugging. Will display rectangles around different block levels.
+ * Visible in the PDF itself.
+ */
+def('DEBUG_LAYOUT', false);
+def('DEBUG_LAYOUT_LINES', true);
+def('DEBUG_LAYOUT_BLOCKS', true);
+def('DEBUG_LAYOUT_INLINE', true);
+def('DEBUG_LAYOUT_PADDINGBOX', true);

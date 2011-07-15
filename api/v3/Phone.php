@@ -51,8 +51,7 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_phone_create( $params ) 
 {
-  _civicrm_api3_initialize( true );
-  try {
+
     civicrm_api3_verify_one_mandatory ($params, null, array ('contact_id', 'id'));
 	/*
 	 * if is_primary is not set in params, set default = 0
@@ -108,9 +107,7 @@ function civicrm_api3_phone_create( $params )
 		 CRM_Core_DAO::storeValues($phoneBAO, $values[$phoneBAO->id]);
 		 return civicrm_api3_create_success($values, $params,$phoneBAO);
 	 }
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 /**
  * Deletes an existing Phone
@@ -124,8 +121,7 @@ function civicrm_api3_phone_create( $params )
  */
 function civicrm_api3_phone_delete( $params ) 
 {
-  _civicrm_api3_initialize( true );
-  try {
+
     civicrm_api3_verify_mandatory ($params,null,array ('id'));
     $phoneID = CRM_Utils_Array::value( 'id', $params );
 
@@ -141,10 +137,7 @@ function civicrm_api3_phone_delete( $params )
 		return civicrm_api3_create_error( 'Could not delete phone with id '.$phoneID);
 	}
     
-  } catch (Exception $e) {
-    if (CRM_Core_Error::$modeException) throw $e;
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -162,8 +155,7 @@ function civicrm_api3_phone_delete( $params )
 
 function civicrm_api3_phone_get($params) 
 {   
-  _civicrm_api3_initialize(true );
-  try {
+
     civicrm_api3_verify_mandatory($params);
 	
     require_once 'CRM/Core/BAO/Phone.php';
@@ -181,9 +173,6 @@ function civicrm_api3_phone_get($params)
     } else {
       return civicrm_api3_create_success(array(),$params,$bao);
     }
-				
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 

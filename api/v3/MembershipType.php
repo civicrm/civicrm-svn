@@ -51,8 +51,7 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_membership_type_create($params) 
 {
-  _civicrm_api3_initialize(true);
-  try{
+
     $values = $params;
     civicrm_api3_verify_mandatory($values,'CRM_Member_DAO_MembershipType' ,array('name',  'duration_unit','duration_interval'));
      
@@ -67,11 +66,6 @@ function civicrm_api3_membership_type_create($params)
     $membershipTypeBAO->free();
     return civicrm_api3_create_success($membershipType,$params);
 
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
 }
 
 /**
@@ -86,8 +80,6 @@ function civicrm_api3_membership_type_create($params)
  */
 function civicrm_api3_membership_type_get($params) 
 {
-  _civicrm_api3_initialize(true);
-  try{
 
     civicrm_api3_verify_mandatory($params);
 
@@ -108,14 +100,10 @@ function civicrm_api3_membership_type_get($params)
         $membershipTypes[$membershipTypeBAO->id] = $membershipType;
       }
     } else {
-      return civicrm_api3_create_success(array(),$params,$membershipTypeBAO);
+      return civicrm_api3_create_success(array(),$params,'membership_type','create',$membershipTypeBAO);
     }
-    return civicrm_api3_create_success($membershipTypes,$params,$membershipTypeBAO);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+    return civicrm_api3_create_success($membershipTypes,$params,'membership_type','create',$membershipTypeBAO);
+
 }
 
 /**
@@ -130,8 +118,7 @@ function civicrm_api3_membership_type_get($params)
  * @access public
  */
 function civicrm_api3_membership_type_delete( $params ) {
-  _civicrm_api3_initialize(true);
-  try{
+
     civicrm_api3_verify_mandatory($params,null,array('id'));
 
     require_once 'CRM/Member/BAO/MembershipType.php';
@@ -139,9 +126,5 @@ function civicrm_api3_membership_type_delete( $params ) {
     return $memberDelete ?
     civicrm_api3_create_success(  $memberDelete ) :
     civicrm_api3_create_error('Error while deleting membership type. id : ' . $params['id']);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }

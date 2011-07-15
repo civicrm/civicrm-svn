@@ -297,11 +297,10 @@ $earthDistanceSQL  <= $distance
         
         require_once( str_replace('_', DIRECTORY_SEPARATOR, $config->geocodeMethod ) . '.php' );
         eval( $config->geocodeMethod . '::format( $proximityAddress );' );
-        if ( ! isset( $proximityAddress['geo_code_1'] ) ||
-             ! isset( $proximityAddress['geo_code_2'] ) ) {
+        if ( ! is_numeric( CRM_Utils_Array::value('geo_code_1', $proximityAddress) ) ||
+             ! is_numeric( CRM_Utils_Array::value('geo_code_2', $proximityAddress) ) ) {
             return;
         }
-
 
         if ( isset( $proximityAddress['distance_unit'] ) &&
              $proximityAddress['distance_unit'] == 'miles' ) {

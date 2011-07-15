@@ -467,23 +467,24 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $registerUrl = "{$this->sboxPath}civicrm/contribute/transact?reset=1&id=$pageId";
         
         $this->open( $registerUrl );
+        $this->waitForElementPresent('_qf_Main_upload-bottom');
         
         $firstName = 'Eia' . substr(sha1(rand()), 0, 4);
         $lastName = 'Ande' . substr(sha1(rand()), 0, 4);
-        $organisationName = 'Test org '.substr(sha1(rand()), 0, 7);
+        $name = $firstName .' ' .$lastName;
+        $organisationName = 'TestOrg'.substr(sha1(rand()), 0, 7);
         
-        $this->type( 'email-5', $firstName . '@example.com' );
+        $email = $firstName . '@example.com';
+        $this->type( 'email-5', $email );
         $this->click('is_for_organization');
-        $this->type( 'organization_name', $organisationName );
-        $this->type( 'phone_1_phone', '2222-222222' );
-        $this->type( 'email_1_email', $organisationName.'@example.com' );
-        $this->type( 'address_1_street_address',  '54A Excelsior Ave. Apt 1C');
-        $this->type( 'address_1_supplemental_address_1', 'address 1' );
-        $this->type( 'address_1_supplemental_address_2', 'address 2' );
-        $this->type( 'address_1_city', 'Driftwood'  );
-        $this->type( 'address_1_postal_code', '75653'  );
-        $this->select( 'address_1_country_id',"value=1228" );
-        $this->select('address_1_state_province_id',"value=1061" );
+        $this->type( 'onbehalf_organization_name', $organisationName );
+        $this->type( 'onbehalf_phone-3-1', '2222-222222' );
+        $this->type( 'onbehalf_email-3', $organisationName.'@example.com' );
+        $this->type( 'onbehalf_street_address-3',  '54A Excelsior Ave. Apt 1C');
+        $this->type( 'onbehalf_city-3', 'Driftwood'  );
+        $this->type( 'onbehalf_postal_code-3', '75653'  );
+        $this->select( 'onbehalf_country-3',"value=1228" );
+        $this->select('onbehalf_state_province-3',"value=1061" );
         
         $this->type( 'first_name', $firstName );
         $this->type( 'last_name', $lastName );
@@ -511,12 +512,13 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->click( "_qf_Confirm_next-bottom" );
         $this->waitForPageToLoad( '30000' );
         
-        $endDate = date( 'F jS, Y', strtotime( " +1 year -1 day" ) );
-       
+               
         // Log in using webtestLogin() method
+        $this->open( $this->sboxPath );
         $this->webtestLogin();
         
         //Find member
+        $endDate = date( 'F jS, Y', strtotime( " +1 year -1 day" ) );
         $this->open( $this->sboxPath . "civicrm/member/search&reset=1" );
         $this->waitForPageToLoad( '30000' );
         $this->waitForElementPresent( "member_end_date_high" );
@@ -534,6 +536,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
                                        'Member'          => $organisationName,
                                        'Membership Type' => $membershipTypeTitle,
                                        'Status'          => 'New',
+                                       'End date'        => $endDate
                                        );
         
         foreach ( $verifyMembershipData as $label => $value ) {
@@ -555,9 +558,10 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         
         //View Membership Record
         $verifyMembershipData =  array(
-                                       'Member'          => '$firstName $lastName',
+                                       'Member'          => $name,
                                        'Membership Type' => $membershipTypeTitle,
                                        'Status'          => 'New',
+                                       'End date'        => $endDate
                                        );
         
         foreach ( $verifyMembershipData as $label => $value ) {
@@ -572,18 +576,16 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $registerUrl = "{$this->sboxPath}civicrm/contribute/transact?reset=1&id=$pageId";
         $this->open($registerUrl);
         
-        $this->type( "email-5", $firstName . "@example.com" );
+        $this->type( "email-5", $email );
         $this->click('is_for_organization');
-        $this->type( 'organization_name', $organisationName );
-        $this->type( 'phone_1_phone', '2222-222222' );
-        $this->type( 'email_1_email', $organisationName.'@example.com' );
-        $this->type( 'address_1_street_address',  '22A Excelsior Ave. Unit 1h');
-        $this->type( 'address_1_supplemental_address_1', 'address l  1' );
-        $this->type( 'address_1_supplemental_address_2', 'address l 2' );
-        $this->type( 'address_1_city', 'Driftwood'  );
-        $this->type( 'address_1_postal_code', '75653'  );
-        $this->select( 'address_1_country_id',"value=1228" );
-        $this->select('address_1_state_province_id',"value=1061" );
+        $this->type( 'onbehalf_organization_name', $organisationName );
+        $this->type( 'onbehalf_phone-3-1', '2222-222222' );
+        $this->type( 'onbehalf_email-3', $organisationName.'@example.com' );
+        $this->type( 'onbehalf_street_address-3',  '22A Excelsior Ave. Unit 1h');
+        $this->type( 'onbehalf_city-3', 'Driftwood'  );
+        $this->type( 'onbehalf_postal_code-3', '75653'  );
+        $this->select( 'onbehalf_country-3',"value=1228" );
+        $this->select( 'onbehalf_state_province-3',"value=1061" );
         
         $this->type( 'first_name', $firstName );
         $this->type( 'last_name', $lastName );
@@ -614,9 +616,11 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad( '30000' );
         
          // Log in using webtestLogin() method
+        $this->open( $this->sboxPath );
         $this->webtestLogin();
         
         //Find member
+        $endDate = date( 'F jS, Y', strtotime( " +2 year -1 day" ) );
         $this->open( $this->sboxPath . "civicrm/member/search&reset=1" );
         $this->waitForPageToLoad( '30000' );
         $this->waitForElementPresent( "member_end_date_high" );
@@ -633,6 +637,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $verifyMembershipData =  array(
                                        'Member'          => $organisationName,
                                        'Membership Type' => $membershipTypeTitle,
+                                       'End date'        => $endDate
                                        );
         
         foreach ( $verifyMembershipData as $label => $value ) {
@@ -654,8 +659,9 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         
         //View Membership Record
         $verifyMembershipData =  array(
-                                       'Member'          => '$firstName $lastName',
+                                       'Member'          => $name,
                                        'Membership Type' => $membershipTypeTitle,
+                                       'End date'        => $endDate
                                        );
         
         foreach ( $verifyMembershipData as $label => $value ) {

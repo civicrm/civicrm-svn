@@ -649,6 +649,8 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             $ids['uf_field'] = $this->_id;
         }
         
+        $name = $this->_selectFields[$params['field_name'][1]];
+        
         // temporary hack to for website
         if ( $params['field_name'][1] == 'url' ) {
             $params['field_name'][1] = 'url-1';
@@ -660,7 +662,6 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             return;
         } else {
             $ufField = CRM_Core_BAO_UFField::add( $params, $ids );
-            $name = $this->_selectFields[$ufField->field_name];
              
             //reset other field is searchable and in selector settings, CRM-4363
             if ( $this->_hasSearchableORInSelector && 

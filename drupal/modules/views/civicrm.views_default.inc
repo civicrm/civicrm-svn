@@ -30,422 +30,310 @@ function civicrm_views_default_views() {
         $view->name = 'civicrm_events';
         $view->description = 'CiviCRM Event Calendar';
         $view->tag = 'CiviEvent';
-        $view->view_php = '';
         $view->base_table = 'civicrm_event';
-        $view->is_cacheable = FALSE;
-        $view->api_version = 2;
-        $view->disabled = TRUE; /* Edit this to true to make a default view disabled initially */
+        $view->human_name = '';
+        $view->core = 0;
+        $view->api_version = '3.0-alpha1';
+        $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+        
+        /* Display: Defaults */
         $handler = $view->new_display('default', 'Defaults', 'default');
-        $handler->override_option('fields', array(
-                                                  'start_date' => array(
-                                                                        'label' => '',
-                                                                        'alter' => array(
-                                                                                         'alter_text' => 0,
-                                                                                         'text' => '',
-                                                                                         'make_link' => 0,
-                                                                                         'path' => '',
-                                                                                         'alt' => '',
-                                                                                         'prefix' => '',
-                                                                                         'suffix' => '',
-                                                                                         'help' => '',
-                                                                                         'trim' => 0,
-                                                                                         'max_length' => '',
-                                                                                         'word_boundary' => 1,
-                                                                                         'ellipsis' => 1,
-                                                                                         'strip_tags' => 0,
-                                                                                         'html' => 0,
-                                                                                         ),
-                                                                        'date_format' => 'medium',
-                                                                        'custom_date_format' => '',
-                                                                        'exclude' => 0,
-                                                                        'id' => 'start_date',
-                                                                        'table' => 'civicrm_event',
-                                                                        'field' => 'start_date',
-                                                                        'relationship' => 'none',
-                                                                        ),
-                                                  'title' => array(
-                                                                   'label' => '',
-                                                                   'alter' => array(
-                                                                                    'alter_text' => 0,
-                                                                                    'text' => '',
-                                                                                    'make_link' => 0,
-                                                                                    'path' => '',
-                                                                                    'alt' => '',
-                                                                                    'prefix' => '',
-                                                                                    'suffix' => '',
-                                                                                    'help' => '',
-                                                                                    'trim' => 0,
-                                                                                    'max_length' => '',
-                                                                                    'word_boundary' => 1,
-                                                                                    'ellipsis' => 1,
-                                                                                    'strip_tags' => 0,
-                                                                                    'html' => 0,
-                                                                                    ),
-                                                                   'link_to_civicrm_event' => 'page',
-                                                                   'custom_link' => '',
-                                                                   'exclude' => 0,
-                                                                   'id' => 'title',
-                                                                   'table' => 'civicrm_event',
-                                                                   'field' => 'title',
-                                                                   'relationship' => 'none',
-                                                                   ),
-                                                  ));
-        $handler->override_option('sorts', array(
-                                                 'start_date' => array(
-                                                                       'order' => 'ASC',
-                                                                       'granularity' => 'second',
-                                                                       'id' => 'start_date',
-                                                                       'table' => 'civicrm_event',
-                                                                       'field' => 'start_date',
-                                                                       'relationship' => 'none',
-                                                                       ),
-                                                 ));
-        $handler->override_option('arguments', array(
-                                                     'date_argument' => array(
-                                                                              'default_action' => 'default',
-                                                                              'style_plugin' => 'default_summary',
-                                                                              'style_options' => array(),
-                                                                              'wildcard' => 'all',
-                                                                              'wildcard_substitution' => 'All',
-                                                                              'title' => '',
-                                                                              'default_argument_type' => 'date',
-                                                                              'default_argument' => '',
-                                                                              'validate_type' => 'none',
-                                                                              'validate_fail' => 'not found',
-                                                                              'date_fields' => array(
-                                                                                                     'civicrm_event.start_date' => 'civicrm_event.start_date',
-                                                                                                     ),
-                                                                              'year_range' => '-3:+3',
-                                                                              'date_method' => 'OR',
-                                                                              'granularity' => 'month',
-                                                                              'id' => 'date_argument',
-                                                                              'table' => 'civicrm_event',
-                                                                              'field' => 'date_argument',
-                                                                              'validate_user_argument_type' => 'uid',
-                                                                              'validate_user_roles' => array(
-                                                                                                             '2' => 0,
-                                                                                                             '8' => 0,
-                                                                                                             '12' => 0,
-                                                                                                             '14' => 0,
-                                                                                                             '9' => 0,
-                                                                                                             '15' => 0,
-                                                                                                             '10' => 0,
-                                                                                                             '5' => 0,
-                                                                                                             '4' => 0,
-                                                                                                             '7' => 0,
-                                                                                                             '11' => 0,
-                                                                                                             '6' => 0,
-                                                                                                             '13' => 0,
-                                                                                                             ),
-                                                                              'relationship' => 'none',
-                                                                              'default_options_div_prefix' => '',
-                                                                              'default_argument_user' => 0,
-                                                                              'default_argument_fixed' => '',
-                                                                              'default_argument_php' => '',
-                                                                              'validate_argument_node_type' => array(
-                                                                                                                     'webform' => 0,
-                                                                                                                     'blog' => 0,
-                                                                                                                     'broadcast' => 0,
-                                                                                                                     'class' => 0,
-                                                                                                                     'feed' => 0,
-                                                                                                                     'icalfeed' => 0,
-                                                                                                                     'page' => 0,
-                                                                                                                     'podcast' => 0,
-                                                                                                                     'story' => 0,
-                                                                                                                     'video_upload' => 0,
-                                                                                                                     'wiki' => 0,
-                                                                                                                     ),
-                                                                              'validate_argument_node_access' => 0,
-                                                                              'validate_argument_nid_type' => 'nid',
-                                                                              'validate_argument_vocabulary' => array(
-                                                                                                                      '2' => 0,
-                                                                                                                      '3' => 0,
-                                                                                                                      '6' => 0,
-                                                                                                                      '4' => 0,
-                                                                                                                      '5' => 0,
-                                                                                                                      ),
-                                                                              'validate_argument_type' => 'tid',
-                                                                              'validate_argument_transform' => 0,
-                                                                              'validate_user_restrict_roles' => 0,
-                                                                              'validate_argument_php' => '',
-                                                                              ),
-                                                     ));
-        $handler->override_option('filters', array(
-                                                   'is_active' => array(
-                                                                        'operator' => '=',
-                                                                        'value' => '1',
-                                                                        'group' => '0',
-                                                                        'exposed' => FALSE,
-                                                                        'expose' => array(
-                                                                                          'operator' => FALSE,
-                                                                                          'label' => '',
-                                                                                          ),
-                                                                        'id' => 'is_active',
-                                                                        'table' => 'civicrm_event',
-                                                                        'field' => 'is_active',
-                                                                        'relationship' => 'none',
-                                                                        ),
-                                                   'is_public' => array(
-                                                                        'operator' => '=',
-                                                                        'value' => '1',
-                                                                        'group' => '0',
-                                                                        'exposed' => FALSE,
-                                                                        'expose' => array(
-                                                                                          'operator' => FALSE,
-                                                                                          'label' => '',
-                                                                                          ),
-                                                                        'id' => 'is_public',
-                                                                        'table' => 'civicrm_event',
-                                                                        'field' => 'is_public',
-                                                                        'relationship' => 'none',
-                                                                        ),
-                                                   'is_template' => array(
-                                                                          'operator' => '=',
-                                                                          'value' => '0',
-                                                                          'group' => '0',
-                                                                          'exposed' => FALSE,
-                                                                          'expose' => array(
-                                                                                            'operator' => FALSE,
-                                                                                            'label' => '',
-                                                                                            ),
-                                                                          'id' => 'is_template',
-                                                                          'table' => 'civicrm_event',
-                                                                          'field' => 'is_template',
-                                                                          'relationship' => 'none',
-                                                                          ),
-                                                   ));
-        $handler->override_option('access', array(
-                                                  'type' => 'none',
-                                                  ));
-        $handler->override_option('title', 'Events');
-        $handler->override_option('header_empty', 1);
-        $handler->override_option('items_per_page', 0);
-        $handler->override_option('use_more', 0);
-        $handler->override_option('style_plugin', 'calendar_nav');
+        $handler->display->display_options['title'] = 'Events';
+        $handler->display->display_options['items_per_page'] = 0;
+        $handler->display->display_options['access']['type'] = 'none';
+        $handler->display->display_options['cache']['type'] = 'none';
+        $handler->display->display_options['query']['type'] = 'views_query';
+        $handler->display->display_options['exposed_form']['type'] = 'basic';
+        $handler->display->display_options['pager']['type'] = 'full';
+        $handler->display->display_options['style_plugin'] = 'calendar_nav';
+        /* Field: CiviCRM Events: Start Date */
+        $handler->display->display_options['fields']['start_date']['id'] = 'start_date';
+        $handler->display->display_options['fields']['start_date']['table'] = 'civicrm_event';
+        $handler->display->display_options['fields']['start_date']['field'] = 'start_date';
+        $handler->display->display_options['fields']['start_date']['label'] = '';
+        $handler->display->display_options['fields']['start_date']['alter']['alter_text'] = 0;
+        $handler->display->display_options['fields']['start_date']['alter']['make_link'] = 0;
+        $handler->display->display_options['fields']['start_date']['alter']['trim'] = 0;
+        $handler->display->display_options['fields']['start_date']['alter']['word_boundary'] = 1;
+        $handler->display->display_options['fields']['start_date']['alter']['ellipsis'] = 1;
+        $handler->display->display_options['fields']['start_date']['alter']['strip_tags'] = 0;
+        $handler->display->display_options['fields']['start_date']['alter']['html'] = 0;
+        $handler->display->display_options['fields']['start_date']['date_format'] = 'medium';
+        /* Field: CiviCRM Events: Title */
+        $handler->display->display_options['fields']['title']['id'] = 'title';
+        $handler->display->display_options['fields']['title']['table'] = 'civicrm_event';
+        $handler->display->display_options['fields']['title']['field'] = 'title';
+        $handler->display->display_options['fields']['title']['label'] = '';
+        $handler->display->display_options['fields']['title']['alter']['alter_text'] = 0;
+        $handler->display->display_options['fields']['title']['alter']['make_link'] = 0;
+        $handler->display->display_options['fields']['title']['alter']['trim'] = 0;
+        $handler->display->display_options['fields']['title']['alter']['word_boundary'] = 1;
+        $handler->display->display_options['fields']['title']['alter']['ellipsis'] = 1;
+        $handler->display->display_options['fields']['title']['alter']['strip_tags'] = 0;
+        $handler->display->display_options['fields']['title']['alter']['html'] = 0;
+        $handler->display->display_options['fields']['title']['link_to_civicrm_event'] = 'page';
+        /* Sort criterion: CiviCRM Events: Start Date */
+        $handler->display->display_options['sorts']['start_date']['id'] = 'start_date';
+        $handler->display->display_options['sorts']['start_date']['table'] = 'civicrm_event';
+        $handler->display->display_options['sorts']['start_date']['field'] = 'start_date';
+        /* Contextual filter: Date: Date (civicrm_event) */
+        $handler->display->display_options['arguments']['date_argument']['id'] = 'date_argument';
+        $handler->display->display_options['arguments']['date_argument']['table'] = 'civicrm_event';
+        $handler->display->display_options['arguments']['date_argument']['field'] = 'date_argument';
+        $handler->display->display_options['arguments']['date_argument']['default_action'] = 'default';
+        $handler->display->display_options['arguments']['date_argument']['exception']['title_enable'] = 1;
+        $handler->display->display_options['arguments']['date_argument']['default_argument_type'] = 'date';
+        $handler->display->display_options['arguments']['date_argument']['summary']['format'] = 'default_summary';
+        $handler->display->display_options['arguments']['date_argument']['specify_validation'] = 1;
+        $handler->display->display_options['arguments']['date_argument']['year_range'] = '-3:+3';
+        $handler->display->display_options['arguments']['date_argument']['granularity'] = 'month';
+        $handler->display->display_options['arguments']['date_argument']['date_fields'] = array(
+          'civicrm_event.start_date' => 'civicrm_event.start_date',
+        );
+        $handler->display->display_options['arguments']['date_argument']['date_method'] = 'OR';
+        $handler->display->display_options['arguments']['date_argument']['date_group'] = 'date';
+        /* Filter criterion: CiviCRM Events: Is Active */
+        $handler->display->display_options['filters']['is_active']['id'] = 'is_active';
+        $handler->display->display_options['filters']['is_active']['table'] = 'civicrm_event';
+        $handler->display->display_options['filters']['is_active']['field'] = 'is_active';
+        $handler->display->display_options['filters']['is_active']['value'] = '1';
+        $handler->display->display_options['filters']['is_active']['expose']['operator'] = FALSE;
+        /* Filter criterion: CiviCRM Events: Is Public */
+        $handler->display->display_options['filters']['is_public']['id'] = 'is_public';
+        $handler->display->display_options['filters']['is_public']['table'] = 'civicrm_event';
+        $handler->display->display_options['filters']['is_public']['field'] = 'is_public';
+        $handler->display->display_options['filters']['is_public']['value'] = '1';
+        $handler->display->display_options['filters']['is_public']['expose']['operator'] = FALSE;
+        /* Filter criterion: CiviCRM Events: Include Template */
+        $handler->display->display_options['filters']['is_template']['id'] = 'is_template';
+        $handler->display->display_options['filters']['is_template']['table'] = 'civicrm_event';
+        $handler->display->display_options['filters']['is_template']['field'] = 'is_template';
+        $handler->display->display_options['filters']['is_template']['value'] = '0';
+        $handler->display->display_options['filters']['is_template']['expose']['operator'] = FALSE;
+        
+        /* Display: Events page */
         $handler = $view->new_display('calendar', 'Events page', 'calendar_1');
-        $handler->override_option('path', 'events');
-        $handler->override_option('menu', array(
-                                                'type' => 'none',
-                                                'title' => '',
-                                                'description' => '',
-                                                'weight' => 0,
-                                                'name' => 'navigation',
-                                                ));
-        $handler->override_option('tab_options', array(
-                                                       'type' => 'none',
-                                                       'title' => '',
-                                                       'description' => '',
-                                                       'weight' => 0,
-                                                       ));
-        $handler->override_option('calendar_colors', array(
-                                                           '0' => array(),
-                                                           ));
-        $handler->override_option('calendar_colors_vocabulary', array());
-        $handler->override_option('calendar_colors_taxonomy', array());
-        $handler->override_option('calendar_popup', 0);
-        $handler->override_option('calendar_date_link', '');
+        $handler->display->display_options['items_per_page'] = 0;
+        $handler->display->display_options['pager']['type'] = 'some';
+        $handler->display->display_options['style_plugin'] = 'calendar_nav';
+        $handler->display->display_options['defaults']['style_options'] = FALSE;
+        $handler->display->display_options['path'] = 'events';
+        $handler->display->display_options['calendar_colors'] = array(
+          0 => array(),
+        );
+        
+        /* Display: Events block */
         $handler = $view->new_display('calendar_block', 'Events block', 'calendar_block_1');
-        $handler->override_option('block_description', 'Events Calendar');
-        $handler->override_option('block_caching', -1);
+        $handler->display->display_options['items_per_page'] = 0;
+        $handler->display->display_options['pager']['type'] = 'some';
+        $handler->display->display_options['style_plugin'] = 'calendar_nav';
+        $handler->display->display_options['defaults']['style_options'] = FALSE;
+        $handler->display->display_options['block_description'] = 'Events Calendar';
+        
+        /* Display: Year view */
         $handler = $view->new_display('calendar_period', 'Year view', 'calendar_period_1');
-        $handler->override_option('style_plugin', 'calendar_style');
-        $handler->override_option('style_options', array(
-                                                         'display_type' => 'year',
-                                                         'name_size' => 1,
-                                                         'max_items' => 0,
-                                                         ));
-        $handler->override_option('attachment_position', 'after');
-        $handler->override_option('inherit_arguments', TRUE);
-        $handler->override_option('inherit_exposed_filters', TRUE);
-        $handler->override_option('displays', array(
-                                                    'calendar_1' => 'calendar_1',
-                                                    'default' => 0,
-                                                    'calendar_block_1' => 0,
-                                                    ));
-        $handler->override_option('calendar_type', 'year');
+        $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+        $handler->display->display_options['style_plugin'] = 'calendar_style';
+        $handler->display->display_options['style_options']['name_size'] = '1';
+        $handler->display->display_options['style_options']['with_weekno'] = '0';
+        $handler->display->display_options['style_options']['multiday_theme'] = '0';
+        $handler->display->display_options['style_options']['theme_style'] = '0';
+        $handler->display->display_options['style_options']['max_items'] = '0';
+        $handler->display->display_options['style_options']['max_items_behavior'] = 'more';
+        $handler->display->display_options['style_options']['groupby_times'] = 'hour';
+        $handler->display->display_options['style_options']['groupby_times_custom'] = '';
+        $handler->display->display_options['style_options']['groupby_field'] = '';
+        $handler->display->display_options['defaults']['style_options'] = FALSE;
+        $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+        $handler->display->display_options['defaults']['row_options'] = FALSE;
+        $handler->display->display_options['displays'] = array(
+          'calendar_1' => 'calendar_1',
+          'default' => 0,
+          'calendar_block_1' => 0,
+        );
+        $handler->display->display_options['attachment_position'] = 'after';
+        $handler->display->display_options['inherit_exposed_filters'] = TRUE;
+        
+        /* Display: Month view */
         $handler = $view->new_display('calendar_period', 'Month view', 'calendar_period_2');
-        $handler->override_option('style_plugin', 'calendar_style');
-        $handler->override_option('style_options', array(
-                                                         'display_type' => 'month',
-                                                         'name_size' => '99',
-                                                         'with_weekno' => '1',
-                                                         'date_fields' => NULL,
-                                                         'max_items' => 0,
-                                                         ));
-        $handler->override_option('attachment_position', 'after');
-        $handler->override_option('inherit_arguments', TRUE);
-        $handler->override_option('inherit_exposed_filters', TRUE);
-        $handler->override_option('displays', array(
-                                                    'calendar_1' => 'calendar_1',
-                                                    'default' => 0,
-                                                    'calendar_block_1' => 0,
-                                                    ));
-        $handler->override_option('calendar_type', 'month');
+        $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+        $handler->display->display_options['style_plugin'] = 'calendar_style';
+        $handler->display->display_options['style_options']['name_size'] = '99';
+        $handler->display->display_options['style_options']['with_weekno'] = '1';
+        $handler->display->display_options['style_options']['multiday_theme'] = '0';
+        $handler->display->display_options['style_options']['theme_style'] = '0';
+        $handler->display->display_options['style_options']['max_items'] = '0';
+        $handler->display->display_options['style_options']['max_items_behavior'] = 'more';
+        $handler->display->display_options['style_options']['groupby_times'] = 'hour';
+        $handler->display->display_options['style_options']['groupby_times_custom'] = '';
+        $handler->display->display_options['style_options']['groupby_field'] = '';
+        $handler->display->display_options['defaults']['style_options'] = FALSE;
+        $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+        $handler->display->display_options['defaults']['row_options'] = FALSE;
+        $handler->display->display_options['displays'] = array(
+          'calendar_1' => 'calendar_1',
+          'default' => 0,
+          'calendar_block_1' => 0,
+        );
+        $handler->display->display_options['attachment_position'] = 'after';
+        $handler->display->display_options['inherit_exposed_filters'] = TRUE;
+        
+        /* Display: Day view */
         $handler = $view->new_display('calendar_period', 'Day view', 'calendar_period_3');
-        $handler->override_option('style_plugin', 'calendar_style');
-        $handler->override_option('style_options', array(
-                                                         'name_size' => '99',
-                                                         'with_weekno' => 0,
-                                                         'max_items' => 0,
-                                                         'max_items_behavior' => 'more',
-                                                         'groupby_times' => 'hour',
-                                                         'groupby_times_custom' => '',
-                                                         'groupby_field' => '',
-                                                         ));
-        $handler->override_option('attachment_position', 'after');
-        $handler->override_option('inherit_arguments', TRUE);
-        $handler->override_option('inherit_exposed_filters', TRUE);
-        $handler->override_option('displays', array(
-                                                    'calendar_1' => 'calendar_1',
-                                                    'default' => 0,
-                                                    'calendar_block_1' => 0,
-                                                    ));
-        $handler->override_option('calendar_type', 'day');
+        $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+        $handler->display->display_options['style_plugin'] = 'calendar_style';
+        $handler->display->display_options['style_options']['name_size'] = '99';
+        $handler->display->display_options['style_options']['with_weekno'] = '0';
+        $handler->display->display_options['style_options']['multiday_theme'] = '0';
+        $handler->display->display_options['style_options']['theme_style'] = '0';
+        $handler->display->display_options['style_options']['max_items'] = '0';
+        $handler->display->display_options['style_options']['max_items_behavior'] = 'more';
+        $handler->display->display_options['style_options']['groupby_times'] = 'hour';
+        $handler->display->display_options['style_options']['groupby_times_custom'] = '';
+        $handler->display->display_options['style_options']['groupby_field'] = '';
+        $handler->display->display_options['defaults']['style_options'] = FALSE;
+        $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+        $handler->display->display_options['defaults']['row_options'] = FALSE;
+        $handler->display->display_options['displays'] = array(
+          'calendar_1' => 'calendar_1',
+          'default' => 0,
+          'calendar_block_1' => 0,
+        );
+        $handler->display->display_options['attachment_position'] = 'after';
+        $handler->display->display_options['inherit_exposed_filters'] = TRUE;
+        
+        /* Display: Week view */
         $handler = $view->new_display('calendar_period', 'Week view', 'calendar_period_4');
-        $handler->override_option('style_plugin', 'calendar_style');
-        $handler->override_option('style_options', array(
-                                                         'name_size' => '99',
-                                                         'with_weekno' => 0,
-                                                         'max_items' => 0,
-                                                         'max_items_behavior' => 'more',
-                                                         'groupby_times' => 'hour',
-                                                         'groupby_times_custom' => '',
-                                                         'groupby_field' => '',
-                                                         ));
-        $handler->override_option('attachment_position', 'after');
-        $handler->override_option('inherit_arguments', TRUE);
-        $handler->override_option('inherit_exposed_filters', TRUE);
-        $handler->override_option('displays', array(
-                                                    'calendar_1' => 'calendar_1',
-                                                    'default' => 0,
-                                                    'calendar_block_1' => 0,
-                                                    ));
-        $handler->override_option('calendar_type', 'week');
+        $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+        $handler->display->display_options['style_plugin'] = 'calendar_style';
+        $handler->display->display_options['style_options']['name_size'] = '99';
+        $handler->display->display_options['style_options']['with_weekno'] = '0';
+        $handler->display->display_options['style_options']['multiday_theme'] = '0';
+        $handler->display->display_options['style_options']['theme_style'] = '0';
+        $handler->display->display_options['style_options']['max_items'] = '0';
+        $handler->display->display_options['style_options']['max_items_behavior'] = 'more';
+        $handler->display->display_options['style_options']['groupby_times'] = 'hour';
+        $handler->display->display_options['style_options']['groupby_times_custom'] = '';
+        $handler->display->display_options['style_options']['groupby_field'] = '';
+        $handler->display->display_options['defaults']['style_options'] = FALSE;
+        $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+        $handler->display->display_options['defaults']['row_options'] = FALSE;
+        $handler->display->display_options['displays'] = array(
+          'calendar_1' => 'calendar_1',
+          'default' => 0,
+          'calendar_block_1' => 0,
+        );
+        $handler->display->display_options['attachment_position'] = 'after';
+        $handler->display->display_options['inherit_exposed_filters'] = TRUE;
+        
+        /* Display: Block view */
         $handler = $view->new_display('calendar_period', 'Block view', 'calendar_period_5');
-        $handler->override_option('style_plugin', 'calendar_style');
-        $handler->override_option('style_options', array(
-                                                         'display_type' => 'month',
-                                                         'name_size' => '1',
-                                                         ));
-        $handler->override_option('attachment_position', 'after');
-        $handler->override_option('inherit_arguments', TRUE);
-        $handler->override_option('inherit_exposed_filters', TRUE);
-        $handler->override_option('displays', array(
-                                                    'calendar_1' => 0,
-                                                    'default' => 0,
-                                                    'calendar_block_1' => 'calendar_block_1',
-                                                    ));
-        $handler->override_option('calendar_type', 'month');
+        $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+        $handler->display->display_options['style_plugin'] = 'calendar_style';
+        $handler->display->display_options['style_options']['name_size'] = '1';
+        $handler->display->display_options['style_options']['with_weekno'] = '0';
+        $handler->display->display_options['style_options']['multiday_theme'] = '0';
+        $handler->display->display_options['style_options']['theme_style'] = '0';
+        $handler->display->display_options['style_options']['max_items'] = '0';
+        $handler->display->display_options['style_options']['max_items_behavior'] = 'more';
+        $handler->display->display_options['style_options']['groupby_times'] = 'hour';
+        $handler->display->display_options['style_options']['groupby_times_custom'] = '';
+        $handler->display->display_options['style_options']['groupby_field'] = '';
+        $handler->display->display_options['defaults']['style_options'] = FALSE;
+        $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+        $handler->display->display_options['defaults']['row_options'] = FALSE;
+        $handler->display->display_options['displays'] = array(
+          'calendar_1' => 0,
+          'default' => 0,
+          'calendar_block_1' => 'calendar_block_1',
+        );
+        $handler->display->display_options['attachment_position'] = 'after';
+        $handler->display->display_options['inherit_exposed_filters'] = TRUE;
+        
+        /* Display: Upcoming Events */
         $handler = $view->new_display('block', 'Upcoming Events', 'block_1');
-        $handler->override_option('fields', array(
-                                                  'start_date' => array(
-                                                                        'label' => '',
-                                                                        'alter' => array(
-                                                                                         'alter_text' => 0,
-                                                                                         'text' => '',
-                                                                                         'make_link' => 0,
-                                                                                         'path' => '',
-                                                                                         'alt' => '',
-                                                                                         'prefix' => '',
-                                                                                         'suffix' => '',
-                                                                                         'help' => '',
-                                                                                         'trim' => 0,
-                                                                                         'max_length' => '',
-                                                                                         'word_boundary' => 1,
-                                                                                         'ellipsis' => 1,
-                                                                                         'strip_tags' => 0,
-                                                                                         'html' => 0,
-                                                                                         ),
-                                                                        'date_format' => 'medium',
-                                                                        'custom_date_format' => '',
-                                                                        'exclude' => 0,
-                                                                        'id' => 'start_date',
-                                                                        'table' => 'civicrm_event',
-                                                                        'field' => 'start_date',
-                                                                        'relationship' => 'none',
-                                                                        ),
-                                                  'title' => array(
-                                                                   'label' => '',
-                                                                   'alter' => array(
-                                                                                    'alter_text' => 0,
-                                                                                    'text' => '',
-                                                                                    'make_link' => 0,
-                                                                                    'path' => '',
-                                                                                    'alt' => '',
-                                                                                    'prefix' => '',
-                                                                                    'suffix' => '',
-                                                                                    'help' => '',
-                                                                                    'trim' => 0,
-                                                                                    'max_length' => '',
-                                                                                    'word_boundary' => 1,
-                                                                                    'ellipsis' => 1,
-                                                                                    'strip_tags' => 0,
-                                                                                    'html' => 0,
-                                                                                    ),
-                                                                   'link_to_civicrm_event' => 'page',
-                                                                   'custom_link' => '',
-                                                                   'exclude' => 0,
-                                                                   'id' => 'title',
-                                                                   'table' => 'civicrm_event',
-                                                                   'field' => 'title',
-                                                                   'relationship' => 'none',
-                                                                   ),
-                                                  ));
-        $handler->override_option('arguments', array());
-        $handler->override_option('filters', array(
-                                                   'is_active' => array(
-                                                                        'operator' => '=',
-                                                                        'value' => '1',
-                                                                        'group' => '0',
-                                                                        'exposed' => FALSE,
-                                                                        'expose' => array(
-                                                                                          'operator' => FALSE,
-                                                                                          'label' => '',
-                                                                                          ),
-                                                                        'id' => 'is_active',
-                                                                        'table' => 'civicrm_event',
-                                                                        'field' => 'is_active',
-                                                                        'relationship' => 'none',
-                                                                        ),
-                                                   'is_public' => array(
-                                                                        'operator' => '=',
-                                                                        'value' => '1',
-                                                                        'group' => '0',
-                                                                        'exposed' => FALSE,
-                                                                        'expose' => array(
-                                                                                          'operator' => FALSE,
-                                                                                          'label' => '',
-                                                                                          ),
-                                                                        'id' => 'is_public',
-                                                                        'table' => 'civicrm_event',
-                                                                        'field' => 'is_public',
-                                                                        'relationship' => 'none',
-                                                                        ),
-                                                   'is_template' => array(
-                                                                          'operator' => '=',
-                                                                          'value' => '0',
-                                                                          'group' => '0',
-                                                                          'exposed' => FALSE,
-                                                                          'expose' => array(
-                                                                                            'operator' => FALSE,
-                                                                                            'label' => '',
-                                                                                            ),
-                                                                          'id' => 'is_template',
-                                                                          'table' => 'civicrm_event',
-                                                                          'field' => 'is_template',
-                                                                          'relationship' => 'none',
-                                                                          ),
-                                                   ));
-        $handler->override_option('title', 'Upcoming Events');
-        $handler->override_option('items_per_page', 5);
-        $handler->override_option('use_more', 1);
-        $handler->override_option('style_plugin', 'list');
-        $handler->override_option('style_options', array(
-                                                         'grouping' => '',
-                                                         'type' => 'ul',
-                                                         ));
-        $handler->override_option('block_description', 'Upcoming Events');
-        $handler->override_option('block_caching', -1);
+        $handler->display->display_options['defaults']['title'] = FALSE;
+        $handler->display->display_options['title'] = 'Upcoming Events';
+        $handler->display->display_options['defaults']['items_per_page'] = FALSE;
+        $handler->display->display_options['defaults']['use_more'] = FALSE;
+        $handler->display->display_options['use_more'] = TRUE;
+        $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+        $handler->display->display_options['style_plugin'] = 'list';
+        $handler->display->display_options['defaults']['style_options'] = FALSE;
+        $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+        $handler->display->display_options['row_plugin'] = 'fields';
+        $handler->display->display_options['defaults']['row_options'] = FALSE;
+        $handler->display->display_options['defaults']['fields'] = FALSE;
+        /* Field: CiviCRM Events: Start Date */
+        $handler->display->display_options['fields']['start_date']['id'] = 'start_date';
+        $handler->display->display_options['fields']['start_date']['table'] = 'civicrm_event';
+        $handler->display->display_options['fields']['start_date']['field'] = 'start_date';
+        $handler->display->display_options['fields']['start_date']['label'] = '';
+        $handler->display->display_options['fields']['start_date']['alter']['alter_text'] = 0;
+        $handler->display->display_options['fields']['start_date']['alter']['make_link'] = 0;
+        $handler->display->display_options['fields']['start_date']['alter']['trim'] = 0;
+        $handler->display->display_options['fields']['start_date']['alter']['word_boundary'] = 1;
+        $handler->display->display_options['fields']['start_date']['alter']['ellipsis'] = 1;
+        $handler->display->display_options['fields']['start_date']['alter']['strip_tags'] = 0;
+        $handler->display->display_options['fields']['start_date']['alter']['html'] = 0;
+        $handler->display->display_options['fields']['start_date']['date_format'] = 'medium';
+        /* Field: CiviCRM Events: Title */
+        $handler->display->display_options['fields']['title']['id'] = 'title';
+        $handler->display->display_options['fields']['title']['table'] = 'civicrm_event';
+        $handler->display->display_options['fields']['title']['field'] = 'title';
+        $handler->display->display_options['fields']['title']['label'] = '';
+        $handler->display->display_options['fields']['title']['alter']['alter_text'] = 0;
+        $handler->display->display_options['fields']['title']['alter']['make_link'] = 0;
+        $handler->display->display_options['fields']['title']['alter']['trim'] = 0;
+        $handler->display->display_options['fields']['title']['alter']['word_boundary'] = 1;
+        $handler->display->display_options['fields']['title']['alter']['ellipsis'] = 1;
+        $handler->display->display_options['fields']['title']['alter']['strip_tags'] = 0;
+        $handler->display->display_options['fields']['title']['alter']['html'] = 0;
+        $handler->display->display_options['fields']['title']['link_to_civicrm_event'] = 'page';
+        $handler->display->display_options['defaults']['arguments'] = FALSE;
+        $handler->display->display_options['defaults']['filters'] = FALSE;
+        /* Filter criterion: CiviCRM Events: Is Active */
+        $handler->display->display_options['filters']['is_active']['id'] = 'is_active';
+        $handler->display->display_options['filters']['is_active']['table'] = 'civicrm_event';
+        $handler->display->display_options['filters']['is_active']['field'] = 'is_active';
+        $handler->display->display_options['filters']['is_active']['value'] = '1';
+        $handler->display->display_options['filters']['is_active']['expose']['operator'] = FALSE;
+        /* Filter criterion: CiviCRM Events: Is Public */
+        $handler->display->display_options['filters']['is_public']['id'] = 'is_public';
+        $handler->display->display_options['filters']['is_public']['table'] = 'civicrm_event';
+        $handler->display->display_options['filters']['is_public']['field'] = 'is_public';
+        $handler->display->display_options['filters']['is_public']['value'] = '1';
+        $handler->display->display_options['filters']['is_public']['expose']['operator'] = FALSE;
+        /* Filter criterion: CiviCRM Events: Include Template */
+        $handler->display->display_options['filters']['is_template']['id'] = 'is_template';
+        $handler->display->display_options['filters']['is_template']['table'] = 'civicrm_event';
+        $handler->display->display_options['filters']['is_template']['field'] = 'is_template';
+        $handler->display->display_options['filters']['is_template']['value'] = '0';
+        $handler->display->display_options['filters']['is_template']['expose']['operator'] = FALSE;
+        $handler->display->display_options['block_description'] = 'Upcoming Events';
+        $translatables['civicrm_events'] = array(
+          t('Defaults'),
+          t('Events'),
+          t('more'),
+          t('Apply'),
+          t('Reset'),
+          t('Sort by'),
+          t('Asc'),
+          t('Desc'),
+          t('Items per page'),
+          t('- All -'),
+          t('Offset'),
+          t('All'),
+          t('Events page'),
+          t('Events block'),
+          t('Events Calendar'),
+          t('Year view'),
+          t('Month view'),
+          t('Day view'),
+          t('Week view'),
+          t('Block view'),
+          t('Upcoming Events'),
+        );
 
         $views[$view->name] = $view;
 

@@ -100,7 +100,7 @@ class CRM_Upgrade_Incremental_php_ThreeFour {
         // visibility in table civicrm_mailing
         $renameColumnVisibility = CRM_Core_DAO::checkFieldExists( 'civicrm_mailing', 'visibilty' ); 
         
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->assign( 'renameColumnVisibility', $renameColumnVisibility);
         $upgrade->processSQL( $rev );
     }   
@@ -109,7 +109,7 @@ class CRM_Upgrade_Incremental_php_ThreeFour {
     {
         require_once 'CRM/Core/DAO.php';
         $addPetitionOptionGroup = !(boolean) CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 'msg_tpl_workflow_petition', 'id', 'name' );
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->assign( 'addPetitionOptionGroup', $addPetitionOptionGroup );
         $upgrade->processSQL( $rev );
     }
@@ -150,7 +150,66 @@ class CRM_Upgrade_Incremental_php_ThreeFour {
         }
         $ufGroups->free( );
 
+        // CRM-8134 add phone_ext column if it wasn't already added for this site in 3.3.7 upgrade (3.3.7 was released after 3.4.0)
+        require_once 'CRM/Contact/DAO/Contact.php';
+        $dao = new CRM_Contact_DAO_Contact( );
+        $dbName = $dao->_database;
+
+        $chkExtQuery = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %1
+                        AND TABLE_NAME = 'civicrm_phone' AND COLUMN_NAME = 'phone_ext'";
+        $extensionExists = CRM_Core_DAO::singleValueQuery( $chkExtQuery,
+                                                          array( 1 => array( $dbName,    'String' ) ),
+                                                          true, false );
+
+        if ( !$extensionExists ) {
+            $colQuery = 'ALTER TABLE `civicrm_phone` ADD `phone_ext` VARCHAR( 16 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `phone` ';
+            CRM_Core_DAO::executeQuery( $colQuery );
+        }
+
+        $sql = "SELECT id FROM civicrm_location_type WHERE name = 'Main'";
+        if ( !CRM_Core_DAO::singleValueQuery( $sql ) ) {
+            $query = "
+INSERT INTO civicrm_location_type ( name, description, is_reserved, is_active )
+     VALUES ( 'Main', 'Main office location', 0, 1 );";
+            CRM_Core_DAO::executeQuery( $query );
+        }
+
         $upgrade = new CRM_Upgrade_Form;
-        $upgrade->processSQL($rev); 
+        $upgrade->processSQL($rev);
+         
     }
+
+    function upgrade_3_4_4( $rev ) 
+    {
+        // CRM-8315, update report instance criteria.
+        require_once 'CRM/Report/DAO/Instance.php';
+        $modifiedReportIds = array( 'member/summary', 'member/detail' );
+        
+        $instances = CRM_Core_DAO::executeQuery("SELECT id, form_values, report_id FROM civicrm_report_instance WHERE report_id IN ('". implode("','", $modifiedReportIds )."')");
+        
+        while( $instances->fetch( ) ) {
+            $formValues = unserialize( $instances->form_values );
+            
+            // replace display_name fields by sort_name
+            if ( !isset($formValues['membership_start_date_relative']) &&
+                 !iseet($formValues['membership_end_date_relative']) ) {
+                $formValues['membership_start_date_relative'] = '0';
+                $formValues['membership_start_date_from']     = '';
+                $formValues['membership_start_date_to']       = '';
+                $formValues['membership_end_date_relative']   = '0';
+                $formValues['membership_end_date_from']       = '';
+                $formValues['membership_end_date_to']         = '';
+            }
+
+            // save updated instance criteria
+            $dao = new CRM_Report_DAO_Instance( );
+            $dao->id = $instances->id;
+            $dao->form_values = serialize( $formValues );
+            $dao->save( );
+            $dao->free( );
+        }
+        
+        $upgrade = new CRM_Upgrade_Form( );
+        $upgrade->processSQL( $rev );
+    }   
   }

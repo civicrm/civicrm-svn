@@ -91,11 +91,12 @@ class CRM_Case_Form_Activity_OpenCase
         require_once 'CRM/Utils/Date.php';
         list( $defaults['start_date'], $defaults['start_date_time'] ) = CRM_Utils_Date::setDateDefaults( );
         
-        // set case status to 'ongoing'
-        $defaults['status_id'] = 1;
-
-        // set default encounter medium, location type and phone type defaults are set in DB
+        // set default case status, encounter medium, location type and phone type defaults are set in DB
         require_once "CRM/Core/OptionGroup.php";
+        $caseStatus = CRM_Core_OptionGroup::values('case_status', false, false, false, 'AND is_default = 1');
+        if ( count($caseStatus) == 1 ) {
+            $defaults['status_id'] = key($caseStatus);
+        }
         $medium = CRM_Core_OptionGroup::values('encounter_medium', false, false, false, 'AND is_default = 1');
         if ( count($medium) == 1 ) {
             $defaults['medium_id'] = key($medium);

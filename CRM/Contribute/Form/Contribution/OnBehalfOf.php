@@ -49,8 +49,7 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
     {
         $session   = CRM_Core_Session::singleton( );
         $contactID = $session->get( 'userID' );
-        $form->_relatedOrganizationFound = false;
-
+                        
         $form->_profileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'on_behalf_organization',
                                                          'id', 'name' );
         $form->assign( 'profileId', $form->_profileId );
@@ -67,8 +66,12 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
                 $form->assign( 'employerDataURL', $dataURL );
             }
             
-            $form->assign( 'relatedOrganizationFound', $form->_relatedOrganizationFound );
-            
+            if ( $form->_values['is_for_organization'] != 2 ) {
+                $form->assign( 'relatedOrganizationFound', $form->_relatedOrganizationFound );
+            } else {
+                $form->assign( 'onBehalfRequired', $form->_onBehalfRequired );
+            }
+                                   
             if ( count( $form->_employers ) == 1 ) {
                 foreach ( $form->_employers as $id => $value ) {
                     $form->_organizationName = $value['name'];
@@ -98,11 +101,11 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
         $contactID = $session->get( 'userID' );
 
         if ( $contactID && count( $form->_employers ) >= 1 ) {
-            $form->add('text', 'organization_id', ts('Select an existing related Organization OR Enter a new one') );
+            $form->add('text', 'organization_id', ts('Select an existing related Organization OR enter a new one') );
             $form->add('hidden', 'onbehalfof_id', '', array( 'id' => 'onbehalfof_id' ) );
             
-            $orgOptions = array( 0 => ts('Select existing organization'),
-                                 1 => ts('Create new organization') );
+            $orgOptions = array( 0 => ts('Select an existing organization'),
+                                 1 => ts('Enter a new organization') );
             
             $form->addRadio( 'org_option', ts('options'), $orgOptions );
             $form->setDefaults( array( 'org_option' => 0 ) );
@@ -119,12 +122,27 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
             $fieldTypes = array_merge( $fieldTypes, array( 'Contribution' ) );
         }
         
+        $stateCountryMap = array( );
         foreach ( $profileFields as $name => $field ) {
             if ( in_array( $field['field_type'], $fieldTypes ) ) {
+                list( $prefixName, $index ) = CRM_Utils_System::explode( '-', $name, 2 );
+                if ( $prefixName == 'state_province' || $prefixName == 'country' || $prefixName == 'county' ) {
+                    if ( ! array_key_exists( $index, $stateCountryMap ) ) {
+                        $stateCountryMap[$index] = array( );
+                    }
+                    $stateCountryMap[$index][$prefixName] = 'onbehalf_' . $name;
+                }
+                
                 CRM_Core_BAO_UFGroup::buildProfile( $form, $field, null, null, false, true );
             }
         }
+        
+        if ( !empty($stateCountryMap) ) {
+            require_once 'CRM/Core/BAO/Address.php';
+            CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap );
+        }
 
+        $form->assign('onBehalfOfFields', $profileFields);
         $form->addElement( 'hidden', 'hidden_onbehalf_profile', 1 );
     }
 }

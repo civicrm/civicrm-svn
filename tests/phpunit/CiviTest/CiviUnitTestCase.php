@@ -342,7 +342,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-        eval( '$object   =& new ' . $daoName . '( );' );
+        eval( '$object   = new ' . $daoName . '( );' );
         $object->id =  $id;
         $verifiedCount = 0;
         
@@ -449,6 +449,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $this->assertTrue( $value,
                            ts( "%1 element not null?",
                                array( 1 => $key ) ) );
+    }
+    
+    function assertAPISuccess( $apiResult, $prefix = '' ) {
+        if (!empty($prefix)) {
+          $prefix .= ': ';
+        }
+        $this->assertEquals( 0, $apiResult['is_error'], $prefix . $apiResult['error_message'] );
     }
     
     /** 
@@ -1122,13 +1129,15 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * 
      * @return int location id of created location
      */    
-    function locationTypeCreate( ) 
+    function locationTypeCreate( $params = null ) 
     {
-        $params = array('name'             => 'New Location Type',
-                        'vcard_name'       => 'New Location Type',
-                        'description'      => 'Location Type for Delete',
-                        'is_active'        => 1,
-                        );
+        if ( $params === null ) {
+            $params = array('name'             => 'New Location Type',
+                            'vcard_name'       => 'New Location Type',
+                            'description'      => 'Location Type for Delete',
+                            'is_active'        => 1,
+                            );
+        }
 
         require_once 'CRM/Core/DAO/LocationType.php';
         $locationType = new CRM_Core_DAO_LocationType( );
@@ -1594,6 +1603,15 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         if (strstr($function, 'Create')){
             $action = 'create';
             $entityAction = 'Create';
+        }elseif(strstr($function, 'GetSingle')){
+            $action = 'getsingle';
+            $entityAction = 'GetSingle';
+        }elseif(strstr($function, 'GetValue')){
+            $action = 'getvalue';
+            $entityAction = 'GetValue';
+        }elseif(strstr($function, 'GetCount')){
+            $action = 'getcount';
+            $entityAction = 'GetCount';
         }elseif(strstr($function, 'Get')){
             $action = 'get';
             $entityAction = 'Get';
@@ -1612,8 +1630,21 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         } elseif(strstr($function, 'Apply')){
             $action = 'apply';
             $entityAction = 'Apply';
+        } elseif(strstr($function, 'Replace')){
+            $action = 'replace';
+            $entityAction = 'Replace';
         }
-
+        
+        //unset hash field if it's in the values array because it changes every time so it makes the examples
+        // change too often if we leave it there. Alternative is just to set it to something random I guess
+        if(is_array($result['values'])){
+          foreach($result['values'] as $key => $value){
+            if(is_array($value) && array_key_exists('hash', $value)){
+              unset($result['values'][$key]['hash']);
+            }
+          }
+        }
+        
         if (strstr($entity,'UF')){// a cleverer person than me would do it in a single regex
             $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)(?<=UF)[A-Z]/','_$0', $entity));          
         }else{
@@ -1753,11 +1784,44 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
             $tableDAO = CRM_Core_DAO::executeQuery( $query );
             while ( $tableDAO->fetch() ) {
                 $sql = "DROP TABLE {$tableDAO->tableName}";
-                CRM_Core_DAO::executeQuery( $sql );
-            }
-        }
-    }
+				CRM_Core_DAO::executeQuery ( $sql );
+			}
+		}
+	}
+    
+  /*
+   * Function does a 'Get' on the entity & compares the fields in the Params with those returned
+   * Default behaviour is to also delete the entity
+   * @param array $params params array to check agains
+   * @param int  $id id of the entity concerned
+   * @param string $entity name of entity concerned (e.g. membership)
+   * @param bool $delete should the entity be deleted as part of this check
+   * 
+   */
+  function getAndCheck($params,$id,$entity,$delete = 1){
 
+        $result = civicrm_api($entity,'GetSingle', array( 'id' => $id ,
+                                   
+                                  'version'        =>$this->_apiversion));
+
+        if($delete){
+        civicrm_api($entity,'Delete',array( 'id' => $id ,
+                                  'version'        =>$this->_apiversion));
+        }
+
+        
+        if (strtolower($entity) =='contribution'){
+          $params['receive_date'] = date('Y-m-d H:i:s' ,strtotime($params['receive_date']));
+          unset($params['payment_instrument_id']);//this is not returned in id format
+          $params['contribution_source'] = $params['source'];
+          unset($params['source']);        
+        }
+        foreach($params as $key => $value){
+          if($key == 'version' )continue;
+          $this->assertEquals($value, $result[$key],$key . " value: $value doesn't match " . print_r($result,true) . 'in line' . __LINE__);        
+          
+        } 
+    }
 }
 
 function CiviUnitTestCase_fatalErrorHandler( $message ) {

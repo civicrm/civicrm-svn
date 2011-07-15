@@ -75,7 +75,7 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         $activityContacts = CRM_Core_PseudoConstant::activityContacts();
         $sel1 = $sel2 = $sel3 = $sel4 = $sel5 = array();
         $options = array( 'manual' => ts('Choose Recipient(s)'), 
-                          'group'  => ts('CiviCRM Group')  );
+                          'group'  => ts('Select a Group')  );
         foreach ( $mapping as $value ) {
             $entityValue  = CRM_Utils_Array::value('entity_value', $value );
             $entityStatus = CRM_Utils_Array::value('entity_status', $value );
@@ -358,27 +358,24 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
                 $$elem = $smarty->fetch("string:{$$elem}");
             }
             
-            $message = new Mail_mime("\n");
-            
+            $mailParams = array();
+
             /* Do contact-specific token replacement in text mode, and add to the
              * message if necessary */
             if ( !$html || $contact['preferred_mail_format'] == 'Text' ||
-                 $contact['preferred_mail_format'] == 'Both') 
-                {
-                    // render the &amp; entities in text mode, so that the links work
-                    $text = str_replace('&amp;', '&', $text);
-                    $message->setTxtBody($text);
-                    
-                    unset( $text );
-                }
+                 $contact['preferred_mail_format'] == 'Both') {
+                // render the &amp; entities in text mode, so that the links work
+                $text = str_replace('&amp;', '&', $text);
+                $mailParams['text'] = $text;
+                unset( $text );
+            }
             
-            if ($html && ( $contact['preferred_mail_format'] == 'HTML' ||
-                           $contact['preferred_mail_format'] == 'Both'))
-                {
-                    $message->setHTMLBody($html);
-                    
-                    unset( $html );
-                }
+            if ( $html && ( $contact['preferred_mail_format'] == 'HTML' ||
+                            $contact['preferred_mail_format'] == 'Both') ) {
+                $mailParams['html'] = $html;
+                unset( $html );
+            }
+
             $recipient = "\"{$contact['display_name']}\" <$email>";
             
             $matches = array();
@@ -407,31 +404,11 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
           
             $messageSubject = $smarty->fetch("string:{$messageSubject}");
 
-            $headers = array(
-                             'From'      => $from,
-                             'Subject'   => $messageSubject,
-                             );
-            $headers['To'] = $recipient;
-            
-            $mailMimeParams = array(
-                                    'text_encoding' => '8bit',
-                                    'html_encoding' => '8bit',
-                                    'head_charset'  => 'utf-8',
-                                    'text_charset'  => 'utf-8',
-                                    'html_charset'  => 'utf-8',
-                                    );
-            $message->get($mailMimeParams);
-            $message->headers($headers);
+            $mailParams['from']     = $from;
+            $mailParams['subject']  = $messageSubject;
+            $mailParams['toEmail']  = $recipient;
 
-            $config = CRM_Core_Config::singleton();
-            $mailer =& $config->getMailer();
-            
-            $body = $message->get();
-            $headers = $message->headers();
-            
-            CRM_Core_Error::ignoreException( );
-            $result = $mailer->send($recipient, $headers, $body);
-            CRM_Core_Error::setCallback();
+            $result = CRM_Utils_Mail::send( $mailParams );
         }
         $schedule->free( );
         

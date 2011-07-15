@@ -58,8 +58,7 @@ require_once 'CRM/Mailing/Event/BAO/TrackableURLOpen.php';
  */
 function civicrm_api3_mailing_group_event_unsubscribe($params) 
 {
-    _civicrm_api3_initialize( true );
-    try {
+
         civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_Unsubscribe', array('job_id', 'event_queue_id', 'hash') );    
           
         $job   = $params['job_id']; 
@@ -74,9 +73,7 @@ function civicrm_api3_mailing_group_event_unsubscribe($params)
         }
         
         return civicrm_api3_create_error('Queue event could not be found'  );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**
@@ -87,8 +84,7 @@ function civicrm_api3_mailing_group_event_unsubscribe($params)
  */
 function civicrm_api3_mailing_group_event_domain_unsubscribe($params) 
 {
-    _civicrm_api3_initialize( true );
-    try {
+
         civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_Unsubscribe', array('job_id', 'event_queue_id', 'hash') );
           
         $job   = $params['job_id']; 
@@ -103,9 +99,7 @@ function civicrm_api3_mailing_group_event_domain_unsubscribe($params)
 
         CRM_Mailing_Event_BAO_Unsubscribe::send_unsub_response($queue, null, true, $job);
         return civicrm_api3_create_success( $params );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**
@@ -116,8 +110,7 @@ function civicrm_api3_mailing_group_event_domain_unsubscribe($params)
  */
 function civicrm_api3_mailing_group_event_resubscribe($params) 
 {
-    _civicrm_api3_initialize( true );
-    try {
+
         civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_Unsubscribe', array('job_id', 'event_queue_id', 'hash') );
  
         $job   = $params['job_id']; 
@@ -131,9 +124,7 @@ function civicrm_api3_mailing_group_event_resubscribe($params)
             return civicrm_api3_create_success( $params );
         }
         return civicrm_api3_create_error( 'Queue event could not be found' ) ;
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**
@@ -144,8 +135,7 @@ function civicrm_api3_mailing_group_event_resubscribe($params)
  */
 function civicrm_api3_mailing_group_event_subscribe($params) 
 {
-    _civicrm_api3_initialize( true );
-    try {
+
         civicrm_api3_verify_mandatory ( $params,'CRM_Mailing_Event_DAO_Subscribe', array('email', 'group_id') );
           
         $email      = $params['email']; 
@@ -174,7 +164,5 @@ function civicrm_api3_mailing_group_event_subscribe($params)
             return civicrm_api3_create_success( $values );
         }
         return civicrm_api3_create_error( 'Subscription failed');
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }

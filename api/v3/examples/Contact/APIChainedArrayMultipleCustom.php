@@ -52,6 +52,7 @@ function contact_get_expectedresult(){
           'email_id' => '1',
           'email' => 'man3@yahoo.com',
           'on_hold' => 0,
+          'id' => '1',
           'api.website.getValue' => 'http://civicrm.org',
           'api.Contribution.getCount' => 2,
           'api.CustomValue.get' => array( 

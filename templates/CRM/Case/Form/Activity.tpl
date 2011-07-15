@@ -35,22 +35,16 @@
 {literal}
 <script type="text/javascript">
 var target_contact = assignee_contact = target_contact_id = '';
+
 {/literal}
-
-{if $targetContactValues}
-{foreach from=$targetContactValues key=id item=name}
-     {literal} target_contact += '{"name":"'+{/literal}"{$name}"{literal}+'","id":"'+{/literal}"{$id}"{literal}+'"},';{/literal}
-{/foreach}
-{literal} eval( 'target_contact = [' + target_contact + ']'); {/literal}
+{if $target_contact}
+    var target_contact = {$target_contact};
 {/if}
-
-{if $assigneeContactCount}
-{foreach from=$assignee_contact key=id item=name}
-     {literal} assignee_contact += '{"name":"'+{/literal}"{$name}"{literal}+'","id":"'+{/literal}"{$id}"{literal}+'"},';{/literal}
-{/foreach}
-{literal} eval( 'assignee_contact = [' + assignee_contact + ']'); {/literal}
+    
+{if $assignee_contact}
+    var assignee_contact = {$assignee_contact};
 {/if}
-
+ 
 {literal}
 var target_contact_id = assignee_contact_id = null;
 //loop to set the value of cc and bcc if form rule.

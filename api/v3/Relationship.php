@@ -44,11 +44,6 @@ require_once 'CRM/Contact/BAO/Relationship.php';
 require_once 'CRM/Contact/BAO/RelationshipType.php';
 
 
-function civicrm_api3_relationship_getfields( $params ) {
-    $bao = new CRM_Contact_BAO_Relationship();
-    return ($bao->fields());
-}
-
 /**
  * Add or update a relationship
  *
@@ -62,9 +57,7 @@ function civicrm_api3_relationship_getfields( $params ) {
  * @todo create should handle update.
  */
 function civicrm_api3_relationship_create( $params ) {
-    _civicrm_api3_initialize(true );
-    try{
-        
+
         // check params for required fields (add/update)
         static $required = array( 'contact_id_a', 
                                   'contact_id_b',
@@ -106,11 +99,7 @@ function civicrm_api3_relationship_create( $params ) {
         $relationID = $relationshipBAO[4][0];
         return civicrm_api3_create_success( array( $relationID => array( 'id' => $relationID,
                                                                          'moreIDs' => implode( ',', $relationshipBAO[4] ) ) ) );
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**
@@ -124,8 +113,7 @@ function civicrm_api3_relationship_create( $params ) {
  */
 
 function civicrm_api3_relationship_delete( $params ) {
-    _civicrm_api3_initialize(true );
-    try{   
+
         civicrm_api3_verify_mandatory($params,null,array('id'));
 
         require_once 'CRM/Utils/Rule.php';
@@ -141,11 +129,7 @@ function civicrm_api3_relationship_delete( $params ) {
             $relationBAO->del( $params['id'] );
             return civicrm_api3_create_success(  'Deleted relationship successfully'  );
         }
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 
@@ -162,7 +146,6 @@ function civicrm_api3_relationship_delete( $params ) {
 function civicrm_api3_relationship_get($params) 
 {
 
-    try{
         civicrm_api3_verify_mandatory($params, null,array('contact_id'));
  
         require_once 'CRM/Contact/BAO/Relationship.php';
@@ -197,11 +180,7 @@ function civicrm_api3_relationship_get($params)
         
         return civicrm_api3_create_success( $relationships ,$params);
        
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**
@@ -246,13 +225,7 @@ function _civicrm_api3_relationship_format_params( $params, &$values ) {
             }
             break;
             
-        case 'start_date':
-        case 'end_date':
-            if (!CRM_Utils_Rule::qfDate($value)) {
-                return civicrm_api3_create_error("$key not a valid date: $value");
-            }
-            
-            break;
+
             
         case 'relationship_type':
             foreach ( $relationTypes as $relTypId => $relValue ) {
@@ -304,8 +277,7 @@ function _civicrm_api3_relationship_format_params( $params, &$values ) {
 }
 function _civicrm_api3_relationship_check_params( &$params ) {
 
-    $params['start_date'] = date("Ymd", strtotime($params['start_date']));
-    $params['end_date'] = date("Ymd", strtotime($params['end_date']));
+
     // check params for validity of Relationship id
     if ( CRM_Utils_Array::value( 'id', $params ) ) {
         require_once 'CRM/Contact/BAO/Relationship.php';

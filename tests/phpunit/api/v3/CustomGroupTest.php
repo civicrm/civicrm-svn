@@ -15,7 +15,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
 {
     protected $_apiversion;
     protected $_entity;
-        
+    protected $_params;
+        public $DBResetRequired = true;        
     function get_info( )
     {
         return array(
@@ -29,6 +30,17 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
     {   
         $this->_apiversion =3;
         $this->_entity = 'CustomGroup';
+        $this->_params = array( 'title'            => 'Test_Group_1',
+                         'name'             => 'test_group_1',
+                         'extends'          => 'Individual',
+                         'weight'           => 4,
+                         'collapse_display' => 1,
+                         'style'            => 'Inline',
+                         'help_pre'         => 'This is Pre Help For Test Group 1',
+                         'help_post'        => 'This is Post Help For Test Group 1',
+                         'is_active'        => 1,
+                         'version'          => $this->_apiversion,
+                         );
         parent::setUp();
     }
     
@@ -44,7 +56,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
     function testCustomGroupCreateNoParam()
     {
         $params = array( 'version' => $this->_apiversion, );
-        $customGroup =& civicrm_api3_custom_group_create($params);
+        $customGroup =& civicrm_api('custom_group', 'create', $params);
         $this->assertEquals($customGroup['is_error'], 1 ,'In line ' . __LINE__); 
         $this->assertEquals($customGroup['error_message'],
                             'Mandatory key(s) missing from params array: extends, title' ,'In line ' . __LINE__);
@@ -68,7 +80,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         
                          );
         
-        $customGroup =& civicrm_api3_custom_group_create($params);
+        $customGroup =& civicrm_api('custom_group', 'create', $params);
         $this->assertEquals($customGroup['error_message'],'Mandatory key(s) missing from params array: extends');
         $this->assertEquals($customGroup['is_error'],1);
     }
@@ -91,7 +103,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                          'version'          => $this->_apiversion,
                          );
         
-        $customGroup =& civicrm_api3_custom_group_create($params);
+        $customGroup =& civicrm_api('custom_group', 'create', $params);
         $this->assertEquals($customGroup['error_message'], 'Mandatory key(s) missing from params array: extends');
         $this->assertEquals($customGroup['is_error'], 1);
     }
@@ -121,7 +133,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                          'version'          => $this->_apiversion,
                          );
         
-        $customGroup =& civicrm_api3_custom_group_create($params);
+        $customGroup =& civicrm_api('custom_group', 'create', $params);
         $this->assertEquals($customGroup['is_error'], 0);
         $this->assertNotNull($customGroup['id'], 'in line ' . __LINE__);
         $this->assertNotNull($customGroup['values'][$customGroup['id']]['id'], 'in line ' . __LINE__);
@@ -146,7 +158,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                          'version'          => $this->_apiversion,
                          );
         
-        $result =& civicrm_api3_custom_group_create($params);
+        $result =& civicrm_api('custom_group', 'create', $params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);         
         $this->assertEquals($result['is_error'], 0);
         $this->assertNotNull($result['id']);
@@ -154,7 +166,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         $this->customGroupDelete($result['id']);
 
         unset( $params['style'] );
-        $customGroup =& civicrm_api3_custom_group_create($params);
+        $customGroup =& civicrm_api('custom_group', 'create', $params);
         $this->assertEquals($customGroup['is_error'], 0);
         $this->assertNotNull($customGroup['id']);
         $this->assertEquals($customGroup['values'][$customGroup['id']]['style'], 'Inline');
@@ -167,7 +179,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
     function testCustomGroupCreateNotArray()
     {
         $params = null;
-        $customGroup =& civicrm_api3_custom_group_create($params);
+        $customGroup =& civicrm_api('custom_group', 'create', $params);
         $this->assertEquals($customGroup['is_error'], 1);
         $this->assertEquals($customGroup['error_message'],'Input variable `params` is not an array' );
     }
@@ -186,7 +198,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                         'version'          => $this->_apiversion,
                         );
         
-        $customGroup =& civicrm_api3_custom_group_create($params);
+        $customGroup =& civicrm_api('custom_group', 'create', $params);
         $this->assertEquals($customGroup['error_message'],'Mandatory key(s) missing from params array: title');
         $this->assertEquals($customGroup['is_error'], 1);
 	} 
@@ -207,7 +219,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                         'version'          => $this->_apiversion,
                         );
         
-        $customGroup =& civicrm_api3_custom_group_create($params);
+        $customGroup =& civicrm_api('custom_group', 'create', $params);
         $this->assertEquals($customGroup['is_error'], 0);
         $this->assertNotNull($customGroup['id']);
         $this->assertEquals($customGroup['values'][$customGroup['id']]['extends'], 'Household');
@@ -232,7 +244,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                         'version'          => $this->_apiversion, 
                         );
         
-        $customGroup =& civicrm_api3_custom_group_create($params);
+        $customGroup =& civicrm_api('custom_group', 'create', $params);
         $this->assertEquals($customGroup['is_error'], 0);
         $this->assertNotNull($customGroup['id']);
         $this->assertEquals($customGroup['values'][$customGroup['id']]['extends'], 'Contribution');
@@ -257,7 +269,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                         'version'          => $this->_apiversion,
                         );
         
-        $customGroup =& civicrm_api3_custom_group_create($params); 
+        $customGroup =& civicrm_api('custom_group', 'create', $params); 
         $this->assertEquals($customGroup['is_error'], 0);
         $this->assertNotNull($customGroup['id']);
         $this->assertEquals($customGroup['values'][$customGroup['id']]['extends'], 'Group');
@@ -281,7 +293,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                         'version'          => $this->_apiversion,
                         );
         
-        $customGroup =& civicrm_api3_custom_group_create($params);
+        $customGroup =& civicrm_api('custom_group', 'create', $params);
         $this->assertEquals($customGroup['is_error'], 0);
         $this->assertNotNull($customGroup['id']);
         $this->assertEquals($customGroup['values'][$customGroup['id']]['extends'], 'Activity');
@@ -296,7 +308,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
     function testCustomGroupDeleteWithoutGroupID( )
     {
         $params = array( 'version' => $this->_apiversion, );
-        $customGroup =& civicrm_api3_custom_group_delete($params);
+        $customGroup =& civicrm_api('custom_group', 'delete', $params);
         $this->assertEquals($customGroup['is_error'], 1);
         $this->assertEquals($customGroup['error_message'],'Mandatory key(s) missing from params array: id');
     }    
@@ -307,7 +319,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
     function testCustomGroupDeleteNoArray( )
     {
         $params = null;
-        $customGroup =& civicrm_api3_custom_group_delete($params);
+        $customGroup =& civicrm_api('custom_group', 'delete', $params);
         $this->assertEquals($customGroup['is_error'], 1);
         $this->assertEquals($customGroup['error_message'],'Input variable `params` is not an array' );
     }    
@@ -319,9 +331,26 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         $customGroup = $this->customGroupCreate('Individual', 'test_group'); 
         $params = array('id'      => $customGroup['id'],
                         'version' =>$this->_apiversion);                         
-        $result =& civicrm_api3_custom_group_delete($params);
+        $result =& civicrm_api('custom_group', 'delete', $params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals($result ['is_error'], 0);
     } 
-    
+    /*
+     * main success get function
+     */
+    public function testGetCustomGroupSuccess(){
+
+        civicrm_api($this->_entity,'create', $this->_params);
+        $params = array('version' => 3);
+        $result = civicrm_api($this->_entity,'get',$params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);  
+        $this->assertEquals($result['is_error'], 0,'in line' . __LINE__);
+        $values = $result['values'][$result['id']];
+        foreach($this->_params as $key => $value){
+          if($key == 'version' || $key == 'weight')continue;
+          $this->assertEquals($value, $values[$key],$key . " doesn't match " . print_r($values,true) . 'in line' . __LINE__);        
+          
+        } 
+       civicrm_api($this->_entity,'delete',$values);
+    }
 }

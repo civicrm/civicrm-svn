@@ -87,6 +87,23 @@ class api_v3_APITest extends CiviUnitTestCase {
 
     }
  
-
-  
+   /*
+    * test that error doesn't occur for non-existant file
+    */
+   function testAPIWrapperIncludeNoFile(){
+     
+   
+    $result =  civicrm_api('RandomFile','get', array('version' => 3));
+    $this->assertEquals($result['is_error'], 1 );
+    $this->assertEquals($result['error_message'], 'API (RandomFile,get) does not exist (join the API team and implement civicrm_api3_random_file_get' );
+   }
+   
+   function testAPIWrapperCamelCaseFunction(){
+     $result = civicrm_api('OptionGroup', 'Get', array('version' => 3,));
+     $this->assertEquals(0, $result['is_error']);
+   }
+   function testAPIWrapperLcaseFunction(){
+     $result = civicrm_api('OptionGroup', 'get', array('version' => 3,));
+     $this->assertEquals(0, $result['is_error']);
+   }
 }

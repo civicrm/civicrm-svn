@@ -37,6 +37,7 @@ require_once 'api/v3/utils.php';
  */
 class api_v3_UtilsTest extends CiviUnitTestCase {
     protected $_apiversion;
+    public $DBResetRequired = false;
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
@@ -170,6 +171,12 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
 	 * Test GET DAO function returns DAO
 	 */
 	function testGetDAO(){
+	 $DAO =  _civicrm_api3_get_DAO ('civicrm_api3_custom_group_get');
+	 $this->assertEquals('CRM_Core_DAO_CustomGroup', $DAO );
+	 $DAO =  _civicrm_api3_get_DAO ('custom_group');
+	 $this->assertEquals('CRM_Core_DAO_CustomGroup', $DAO );
+	 	$DAO =  _civicrm_api3_get_DAO ('CustomGroup');
+	 $this->assertEquals('CRM_Core_DAO_CustomGroup', $DAO );
 	 $DAO =  _civicrm_api3_get_DAO ('civicrm_api3_custom_field_get');
 	 $this->assertEquals('CRM_Core_DAO_CustomField', $DAO );
 	 $DAO =  _civicrm_api3_get_DAO ('civicrm_api3_survey_get');
@@ -178,7 +185,8 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
 	 $this->assertEquals('CRM_Pledge_DAO_Payment', $DAO );
 	 $DAO =  _civicrm_api3_get_DAO ('civicrm_api3_website_get');
 	 $this->assertEquals('CRM_Core_DAO_Website', $DAO );
-	  
+	 $DAO =  _civicrm_api3_get_DAO ('Membership');
+	 $this->assertEquals('CRM_Member_DAO_Membership', $DAO );	  
 	}
 	/*
 	 * Test GET DAO function returns DAO
@@ -193,4 +201,48 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
 
 	}
 	
+	function test_civicrm_api3_validate_fields(){
+	  $params = array('start_date' => '2010-12-20', 'end_date' => '');
+	  _civicrm_api3_validate_fields('relationship','get',$params);
+	  $this->assertEquals('20101220000000', $params['start_date']);
+	  $this->assertEquals('', $params['end_date']);
+	}
+	
+	function test_civicrm_api3_validate_fields_membership(){
+	  $params = array('start_date' => '2010-12-20', 'end_date' => '', 'membership_end_date' => '0','join_date' => '2010-12-20', 'membership_start_date' => '2010-12-20');
+	  _civicrm_api3_validate_fields('Membership','get',$params);
+	  $this->assertEquals('20101220000000', $params['start_date'], 'in line '. __LINE__);
+	  $this->assertEquals('', $params['end_date']);
+	  $this->assertEquals('20101220000000', $params['membership_start_date'], 'membership_start_date not set in line '. __LINE__);
+	  $this->assertEquals('20101220000000', $params['join_date'], 'join_date not set in line '. __LINE__);
+	}
+	
+	
+	function test_civicrm_api3_validate_fields_event(){
+	           
+	  $params = array(  'registration_start_date' => 20080601,
+            'registration_end_date'   => '2008-10-15','start_date' => '2010-12-20', 'end_date' => '');
+	  _civicrm_api3_validate_fields('event','create',$params);
+	  $this->assertEquals('20101220000000', $params['start_date'], 'in line ' . __LINE__);
+	  $this->assertEquals('20081015000000', $params['registration_end_date'], 'in line ' . __LINE__);
+	  $this->assertEquals('', $params['end_date'], 'in line ' . __LINE__);
+	  $this->assertEquals('20080601000000', $params['registration_start_date']);	  
+	}
+	function test_civicrm_api3_validate_fields_exception(){
+	  $params = array('join_date' => 'abc', );
+	  try{
+	     _civicrm_api3_validate_fields('Membership','get',$params);
+	   } catch (Exception $expected) {
+        $this->assertEquals ( 'join_date is not a valid date: abc', $expected->getMessage () );  
+    }
+	}
+	
+	function testGetFields(){
+	  $result = civicrm_api('membership', 'getfields', array('version' => 3));
+	  $this->assertArrayHasKey('values', $result);
+	  $result = civicrm_api('relationship', 'getfields', array('version' => 3));
+	  $this->assertArrayHasKey('values', $result);
+	  $result = civicrm_api('event', 'getfields', array('version' => 3));
+	  $this->assertArrayHasKey('values', $result);
+	}
 }

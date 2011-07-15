@@ -53,17 +53,9 @@ require_once 'CRM/Contact/DAO/GroupOrganization.php';
  */
 function civicrm_api3_group_organization_get( $params )
 {
-  try{
-
     civicrm_api3_verify_one_mandatory($params);
-
-
     return _civicrm_api3_basic_get('CRM_Contact_DAO_GroupOrganization', $params);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -73,9 +65,7 @@ function civicrm_api3_group_organization_get( $params )
  */
 function civicrm_api3_group_organization_create( $params )
 {
-  _civicrm_api3_initialize( true);
 
-  try{
 
     civicrm_api3_verify_mandatory($params,null,array('organization_id','group_id'));  
 
@@ -87,12 +77,9 @@ function civicrm_api3_group_organization_create( $params )
     }
 
     _civicrm_api3_object_to_array( $groupOrgBAO, $values );
-    return civicrm_api3_create_success( $values,$params, $groupOrgBAO);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+    return civicrm_api3_create_success( $values,$params, 'group_organization','get',$groupOrgBAO);
+
+
 }
 
 
@@ -109,16 +96,11 @@ function civicrm_api3_group_organization_create( $params )
 
 function civicrm_api3_group_organization_delete( $params )
 {
-  _civicrm_api3_initialize( true);
-  try{
+
 
     civicrm_api3_verify_mandatory($params,null,array('id'));  
     require_once 'CRM/Contact/BAO/GroupOrganization.php';
     $result = CRM_Contact_BAO_GroupOrganization::delete( $params['id'] );
     return $result ? civicrm_api3_create_success(  'Deleted Group Organization successfully'  ):civicrm_api3_create_error(  'Could not delete Group Organization'  );
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }

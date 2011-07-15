@@ -37,7 +37,7 @@
 
  */
 
-/* $Id: table_cell_frame_reflower.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
+/* $Id: table_cell_frame_reflower.cls.php 358 2011-01-30 22:22:47Z fabien.menager $ */
 
 
 /**
@@ -56,7 +56,7 @@ class Table_Cell_Frame_Reflower extends Block_Frame_Reflower {
 
   //........................................................................
 
-  function reflow() {
+  function reflow(Frame_Decorator $block = null) {
 
     $style = $this->_frame->get_style();
 
@@ -90,11 +90,11 @@ class Table_Cell_Frame_Reflower extends Block_Frame_Reflower {
     $top_space = $style->length_in_pt(array($style->margin_top,
                                             $style->padding_top,
                                             $style->border_top_width),
-                                      $w);
+                                      $h);
     $bottom_space = $style->length_in_pt(array($style->margin_bottom,
                                                $style->padding_bottom,
                                                $style->border_bottom_width),
-                                      $w);
+                                      $h);
 
     $style->width = $cb_w = $w - $left_space - $right_space;
 
@@ -116,14 +116,12 @@ class Table_Cell_Frame_Reflower extends Block_Frame_Reflower {
         break;
     
       $child->set_containing_block($content_x, $content_y, $cb_w, $h);
-      $child->reflow();
-
-      $this->_frame->add_frame_to_line( $child );
+      $child->reflow($this->_frame);
 
     }
 
     // Determine our height
-    $style_height = $style->length_in_pt($style->height, $w);
+    $style_height = $style->length_in_pt($style->height, $h);
 
     $this->_frame->set_content_height($this->_calculate_content_height());
 
@@ -132,7 +130,7 @@ class Table_Cell_Frame_Reflower extends Block_Frame_Reflower {
     // Let the cellmap know our height
     $cell_height = $height / count($cells["rows"]);
 
-    if ($style_height < $height)
+    if ($style_height <= $height)
       $cell_height += $top_space + $bottom_space;
 
     foreach ($cells["rows"] as $i)

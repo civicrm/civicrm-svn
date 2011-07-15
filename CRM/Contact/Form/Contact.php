@@ -331,7 +331,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             require_once 'CRM/Contact/BAO/Relationship.php';
             $currentEmployer = CRM_Contact_BAO_Relationship::getCurrentEmployer( array( $this->_contactId ) );
             $defaults['current_employer_id'] = CRM_Utils_Array::value( 'org_id', $currentEmployer[$this->_contactId] );
-            $this->assign( 'currentEmployer', $defaults['current_employer_id'] );            
             
             foreach ( $defaults['email'] as $dontCare => &$val ) {
                 if (isset( $val['signature_text'] ) ) {
@@ -343,7 +342,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             }
             
         }
-        
+        $this->assign( 'currentEmployer', CRM_Utils_Array::value('current_employer_id', $defaults) );            
+
         // set defaults for blocks ( custom data, address, communication preference, notes, tags and groups )
         foreach( $this->_editOptions as $name => $label ) {                
             if ( !in_array( $name, array( 'Address', 'Notes' ) ) ) {
@@ -895,7 +895,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 $contactGroupList =& CRM_Contact_BAO_GroupContact::getContactGroup( $params['contact_id'], 'Added' );
                 if ( is_array($contactGroupList) ) {
                     foreach ( $contactGroupList as $key ) {
-                        if ( $params['group'][$key['group_id']] != 1 ) {
+                        if ( $params['group'][$key['group_id']] != 1 &&
+                             !CRM_Utils_Array::value( 'is_hidden', $key ) ) {
                             $params['group'][$key['group_id']] = -1;
                         }
                     }
@@ -1188,10 +1189,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 
                 $parseSuccess[$instance] = $success;
                 
-                // reset element values.
-                if ( !$success ) {
-                    $parsedFields = array_fill_keys( array_keys($parsedFields), '' );
-                }
+                // we do not reset element values, but keep what we've parsed
+                // in case of partial matches: CRM-8378
                 
                 // merge parse address in to main address block.
                 $address = array_merge( $address, $parsedFields );

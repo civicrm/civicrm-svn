@@ -169,14 +169,16 @@ class CRM_Core_Extensions_Extension
             return simplexml_load_file( $file,
             'SimpleXMLElement', LIBXML_NOCDATA);
         } else {
-            CRM_Core_Error::fatal( 'Extension directory ' . $file . ' does not exist.' );
+            CRM_Core_Error::fatal( 'Extension file ' . $file . ' does not exist.' );
         }
         return array();
     }
     
     public function install( ) {
-        $this->download();
-        $this->installFiles();
+        if( $this->status != self::STATUS_LOCAL ) {
+            $this->download();
+            $this->installFiles();
+        }
         $this->_registerExtensionByType();
         $this->_createExtensionEntry();
     }
@@ -198,7 +200,7 @@ class CRM_Core_Extensions_Extension
         require_once 'CRM/Utils/File.php';
         require_once 'CRM/Core/Config.php';
         $config =& CRM_Core_Config::singleton( );
-        
+
         $zip = new ZipArchive;
         $res = $zip->open( $this->tmpFile );
         if ($res === TRUE) {

@@ -52,8 +52,7 @@ require_once 'CRM/Core/BAO/UFGroup.php';
  * @access public 
  */
 function civicrm_api3_uf_group_create($params) {
-	_civicrm_api3_initialize ( true );
-	try {
+
 		civicrm_api3_verify_mandatory ( $params, 'CRM_Core_DAO_UFGroup' );
 		
 		$ids = array ();
@@ -65,11 +64,7 @@ function civicrm_api3_uf_group_create($params) {
 		_civicrm_api3_object_to_array ( $ufGroup, $ufGroupArray [$ufGroup->id] );
 		
 		return civicrm_api3_create_success ( $ufGroupArray, $params );
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
+
 }
 
 /**
@@ -102,15 +97,9 @@ function civicrm_api3_uf_group_get( $params )
  *
  */
 function civicrm_api3_uf_group_delete($params) {
-	_civicrm_api3_initialize ( true );
-	try {
+
 		civicrm_api3_verify_mandatory ( $params, null, array ('id' ) );
 		require_once 'CRM/Core/BAO/UFGroup.php';
 		return CRM_Core_BAO_UFGroup::del ( $params ['id'] );
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
 
 }

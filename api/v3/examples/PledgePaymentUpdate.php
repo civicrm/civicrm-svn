@@ -7,9 +7,9 @@
  */
 function pledge_payment_update_example(){
 $params = array( 
-  'contact_id' => 7,
-  'pledge_id' => 8,
-  'contribution_id' => 15,
+  'contact_id' => 1,
+  'pledge_id' => 1,
+  'contribution_id' => 1,
   'version' => 3,
   'status_id' => 2,
   'actual_amount' => 20,
@@ -34,14 +34,14 @@ function pledge_payment_update_expectedresult(){
   'values' => array( 
       '33' => array( 
           'id' => 33,
-          'pledge_id' => '8',
-          'contribution_id' => '15',
+          'pledge_id' => '1',
+          'contribution_id' => '1',
           'scheduled_amount' => '20.00',
           'actual_amount' => '20.00',
           'currency' => 'USD',
-          'scheduled_date' => '2011-06-02 00:00:00',
+          'scheduled_date' => '2011-07-11 00:00:00',
           'reminder_date' => '',
-          'reminder_count' => '',
+          'reminder_count' => 0,
           'status_id' => 1,
         ),
     ),

@@ -511,8 +511,9 @@ function civicrm_views_data() {
                                                    );
 
     // Organization Name
-    $data['civicrm_contact']['organization_name'] = array(
+    $data['civicrm_contact']['current_employer'] = array(
                                                           'title' => t('Organization Name'), // The item it appears as on the UI,
+                                                          'real field' => 'organization_name',
                                                           'help' => t('The display name of the contact\'s organizations.'), // The help that appears on the UI,
                                                           'field' => array(
                                                                            'handler' => 'views_handler_field',
@@ -579,7 +580,7 @@ function civicrm_views_data() {
                          'do_not_trade'      => 1,
                          'is_opt_out'        => 1,
                          'contact_type'      => 1,
-                         'organization_name' => 1,
+                         'current_employer'  => 1,
                          );
     civicrm_views_add_fields( $fields, $data['civicrm_contact'], $skipFields, 'civicrm_contact' );
 
@@ -916,10 +917,9 @@ function civicrm_views_data() {
                                                );
 
     //Address name
-    $link = l(t('In Global Settings'), 'civicrm/admin/setting/preferences/address', array('query' => array('reset=1')));
     $data['civicrm_address']['name'] = array(
                                              'title' => t('Address Name'),
-                                             'help' => t('Be sure addres name is enabled %link', array('%link' => $link)),
+                                             'help' => t('Be sure addres name is enabled in CiviCRM' ),
                                              'field' => array(
                                                               'handler' => 'views_handler_field',
                                                               'click sortable' => TRUE,
@@ -2118,6 +2118,18 @@ function civicrm_views_data() {
                                                                 'handler' => 'views_handler_sort',
                                                                 ),
                                                 );
+    //Contact ID for relationship to contact record (brings in Contact custom fields)
+    $data['civicrm_contribution']['contact_id'] = array(
+                                                        'title'  => t('Contact Record ID'),
+                                                        'help' => 'Bring Contact Record the complete contact record to the party',
+                                                        'relationship' => array(
+                                                                  'base' => 'civicrm_contact',
+                                                                  'field' => 'id',
+                                                                  'handler' => 'views_handler_relationship',
+                                                                  'label' => t('CiviCRM Contact, with custom fields'),
+                                                                  ),
+                                                        
+                                                        );
     //Contribution Type
     $data['civicrm_contribution']['financial_account'] = array(
                                                                'title' => t('Contribution Type'),
@@ -5887,12 +5899,13 @@ function civicrm_views_href( $text, $path, $query ) {
 // Creates new View fields from CiviCRM fields
 function civicrm_views_add_fields( &$fields, &$data, &$skipFields, $tableName ) {
     foreach ( $fields as $name => $value ) {
-        if ( CRM_Utils_Array::value( $name, $skipFields ) ||
-             ( isset($value['where']) &&
-               substr( $value['where'], 0, strlen( $tableName ) + 1 ) != "{$tableName}."
-               ) ) {
-            continue;
-        }
+        if ( isset($value['custom_field_id']) ||
+             CRM_Utils_Array::value( $name, $skipFields ) ||
+              ( isset($value['where']) &&
+                substr( $value['where'], 0, strlen( $tableName ) + 1 ) != "{$tableName}." )
+            ){
+             continue;
+         }
 
         $type = CRM_Utils_Array::value( 'type', $value, 'String' );
 
@@ -5912,8 +5925,7 @@ function civicrm_views_add_fields( &$fields, &$data, &$skipFields, $tableName ) 
                                       'argument' => array(
                                                           'handler' => civicrm_get_argument_handler ( $type ),
                                                           ),                                      
-                                      );
-        );
+                                     );
 
         // For date fields add in 6 arguments
         // not sure how its numeric here, but leaving it as is for now
@@ -6039,6 +6051,18 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
                                       'field' => 'entity_id',
                                       ),
                   );
+        // expose custom data to users view - note I tested with contact & membership fields which worked
+        // event won't work due to missing relationship in chain. 
+        // 'contribution' & 'activity' not currently related to users so excluded
+        if($jointable != 'civicrm_event' && $jointable != 'civicrm_activity' && $jointable != 'civicrm_contribution'){
+          $data[$currentgroup['table_name']]['table']['join']['users'] = 
+            array(
+                              'left_table' => $jointable,
+															'left_field' => 'id',
+  														'field' => 'entity_id',
+
+                  );
+        }
         $currentgroupfields = $currentgroup['fields'];
         $customHTMLTypes = array( 'Select', 'Multi-Select', 'AdvMulti-Select', 'Radio', 'CheckBox', 
                                   'Select State/Province', 'Select Country', 'Multi-Select Country',

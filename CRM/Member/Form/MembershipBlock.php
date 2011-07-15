@@ -243,7 +243,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             if ( is_array($params['membership_type']) ) {
                 foreach( $params['membership_type'] as $k => $v) {
                     if ( $v ) {
-                        $membershipTypes[$k] =  $params["auto_renew_$k"];
+                        $membershipTypes[$k] = CRM_Utils_Array::value( "auto_renew_$k", $params );
                     }
                 }
             }

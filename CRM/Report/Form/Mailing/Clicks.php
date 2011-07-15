@@ -359,7 +359,7 @@ class CRM_Report_Form_Mailing_Clicks extends CRM_Report_Form {
 		$mailing->query($query);
 		
 		while($mailing->fetch()) {
-			$data[$mailing->name] = $mailing->name;
+			$data[mysql_real_escape_string($mailing->name)] = $mailing->name;
 		}
 
 		return $data;

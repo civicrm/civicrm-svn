@@ -26,7 +26,7 @@
 {* CiviCase -  build activity to a case*}
 <div id="fileOnCaseDialog"></div>
 
-{if $buildCaseActivityForm}
+{if !empty($buildCaseActivityForm)}
 <div class="crm-block crm-form-block crm-case-activitytocase-form-block">
 <table class="form-layout">
      <tr class="crm-case-activitytocase-form-block-unclosed_cases">
@@ -149,7 +149,7 @@ function fileOnCase( action, activityID, currentCaseId ) {
                           } else {
 					          var destUrl = {/literal}"{crmURL p='civicrm/contact/view/case' q='reset=1&action=view&id=' h=0 }"{literal}; 
 						      var context = '';
-						      {/literal}{if $fulltext}{literal}
+						      {/literal}{if !empty($fulltext)}{literal}
     						    context = '&context={/literal}{$fulltext}{literal}';
     						  {/literal}{/if}{literal}											     	 	                     
 						      var caseUrl = destUrl + selectedCaseId + '&cid=' + contactId + context;

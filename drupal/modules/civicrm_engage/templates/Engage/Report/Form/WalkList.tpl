@@ -8,7 +8,7 @@
     	{if $pageNum eq 1}
 	    <div>
 	{else}
-	    <div class="page">
+        <div {$newgroupdiv}>
 	{/if}
        	<table class="head">
         

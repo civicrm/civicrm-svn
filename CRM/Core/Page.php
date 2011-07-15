@@ -176,7 +176,7 @@ class CRM_Core_Page {
             } else {
                 $content = self::$_template->fetch( 'CRM/common/print.tpl' );
             }
-            CRM_Utils_System::appendJSFile( $pageTemplateFile, $content );
+            CRM_Utils_System::appendTPLFile( $pageTemplateFile, $content );
 
             if ( $this->_print == CRM_Core_Smarty::PRINT_PDF ) {
                 require_once 'CRM/Utils/PDF/Utils.php';
@@ -191,7 +191,7 @@ class CRM_Core_Page {
         $config = CRM_Core_Config::singleton();
         $content = self::$_template->fetch( 'CRM/common/'. strtolower($config->userFramework) .'.tpl' );
 
-        CRM_Utils_System::appendJSFile( $pageTemplateFile, $content );
+        CRM_Utils_System::appendTPLFile( $pageTemplateFile, $content );
 
         echo CRM_Utils_System::theme( 'page', $content, true, $this->_print );
         return;

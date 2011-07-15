@@ -59,10 +59,6 @@ class CRM_UpdateMembershipRecord {
             
             //log the execution time of script
             CRM_Core_Error::debug_log_message( 'UpdateMembershipRecord.php' );
-            
-            // load bootstrap to call hooks
-            require_once 'CRM/Utils/System.php';
-            CRM_Utils_System::loadBootStrap(  );
         }
     }
 

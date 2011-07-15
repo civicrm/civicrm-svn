@@ -30,7 +30,7 @@
 SET FOREIGN_KEY_CHECKS=0;
 
 {foreach from=$dropOrder item=name}
-DROP TABLE IF EXISTS {$name};
+DROP TABLE IF EXISTS `{$name}`;
 {/foreach}
 
 SET FOREIGN_KEY_CHECKS=1;

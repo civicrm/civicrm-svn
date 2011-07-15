@@ -66,8 +66,8 @@ class CRM_Contact_Form_Search_Custom_Proximity
             require_once 'CRM/Utils/Geocode/Google.php';
             CRM_Utils_Geocode_Google::format( $this->_formValues );
 
-            if ( ! isset( $this->_formValues['geo_code_1'] ) ||
-                 ! isset( $this->_formValues['geo_code_2'] ) ||
+            if ( ! is_numeric( CRM_Utils_Array::value('geo_code_1', $this->_formValues) ) ||
+                 ! is_numeric( CRM_Utils_Array::value('geo_code_2', $this->_formValues) ) ||
                  ! isset( $this->_formValues['distance'] ) ) {
                 CRM_Core_Error::fatal( ts( 'Could not geocode input' ) );
             }

@@ -47,10 +47,6 @@ class CRM_ParticipantProcessor
 
         //log the execution time of script
         CRM_Core_Error::debug_log_message( 'ParticipantProcessor.php' );
-        
-        //load bootstrap to call hooks
-        require_once 'CRM/Utils/System.php';
-        CRM_Utils_System::loadBootStrap(  );
    }
     
     public function updateParticipantStatus( )

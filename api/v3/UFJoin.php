@@ -56,19 +56,13 @@ require_once 'CRM/Core/BAO/UFJoin.php';
  */
 function civicrm_api3_uf_join_create($params)
 {
-  _civicrm_api3_initialize(true);
-  try{
+
     civicrm_api3_verify_mandatory($params,'CRM_Core_DAO_UFJoin',array());
 
     $ufJoin = CRM_Core_BAO_UFJoin::create($params);
     _civicrm_api3_object_to_array( $ufJoin, $ufJoinArray[]);
-    return civicrm_api3_create_success($ufJoinArray,$params);
+    return civicrm_api3_create_success($ufJoinArray,$params,'uf_join','create');
 
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
 }
 
 
@@ -85,8 +79,7 @@ function civicrm_api3_uf_join_create($params)
 
 function civicrm_api3_uf_join_get($params)
 { 
-  _civicrm_api3_initialize(true);
-  try{
+
     civicrm_api3_verify_one_mandatory($params,null,array('id','entity_table','entity_id','weight'));
     $ufJoinDAO = new CRM_Core_DAO_UFJoin();
     //get the unique name of fields from the schema 
@@ -105,12 +98,8 @@ function civicrm_api3_uf_join_get($params)
       _civicrm_api3_object_to_array($ufJoinDAO, $ufJoin[$ufJoinDAO->id]);
     }
   
-    return civicrm_api3_create_success($ufJoin,$params,$dao);
+    return civicrm_api3_create_success($ufJoin,$params,'uf_join','get',$dao);
     
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 

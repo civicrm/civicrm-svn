@@ -26,13 +26,13 @@
 <tr><td colspan="3" style="padding:0;">
 <table style="border:none;">
 <tr>
-    {if $form.address.$blockId.city}
+    {if !empty($form.address.$blockId.city)}
        <td>
           {$form.address.$blockId.city.label}<br />
           {$form.address.$blockId.city.html}
        </td>
     {/if}
-    {if $form.address.$blockId.postal_code}
+    {if !empty($form.address.$blockId.postal_code)}
        <td>
           {$form.address.$blockId.postal_code.label}<br />
           {$form.address.$blockId.postal_code.html}

@@ -43,7 +43,6 @@
 require_once 'api/v3/utils.php';
 require_once 'CRM/Contact/BAO/Contact.php';
 /**
- * @todo - make sure it doesn't create new if contact_id is set
  * @todo - get rid of update & merge into this - wrapper handles update
  *
  * @param  array   $params           (reference ) input parameters
@@ -61,9 +60,6 @@ require_once 'CRM/Contact/BAO/Contact.php';
  */
 function civicrm_api3_contact_create( $params )
 {
-    // call update and tell it to create a new contact
-  _civicrm_api3_initialize( true );
-  try {
     civicrm_api3_verify_mandatory($params,null,array('contact_type'));
 
     require_once 'CRM/Utils/Array.php';
@@ -155,19 +151,10 @@ function civicrm_api3_contact_create( $params )
      
     }
 
-    return civicrm_api3_create_success($values,$params);
+    return civicrm_api3_create_success($values,$params,'contact');
     
     return civicrm_api3_contact_update( $params, $create_new );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
-}
 
-function civicrm_api3_contact_getfields( $params ) {
-    require_once 'CRM/Contact/BAO/Contact.php';
-    $contact = new CRM_Contact_BAO_Contact();
-    return ($contact->exportableFields('All'));
-    //return ($contact->fields());
 }
 
 
@@ -189,8 +176,6 @@ function civicrm_api3_contact_getfields( $params ) {
 
 function civicrm_api3_contact_get( $params )
 {
-  _civicrm_api3_initialize(true );
-  try {
 
     civicrm_api3_verify_mandatory($params);
         // fix for CRM-7384 cater for soft deleted contacts
@@ -215,6 +200,23 @@ function civicrm_api3_contact_get( $params )
     $offset          = 0;
     $rowCount        = 25;
     $smartGroupCache = false;
+
+    if (array_key_exists ('filter_group_id',$params)) {
+      $params['filter.group_id'] = $params['filter_group_id'];
+      unset ($params['filter_group_id']);
+    }
+    if (array_key_exists ('filter.group_id',$params)) { // filter.group_id works both for 1,2,3 and array (1,2,3) 
+      if (is_array ($params['filter.group_id']))
+        $groups = $params['filter.group_id'];
+      else
+        $groups = explode (',',$params['filter.group_id']);
+      unset ($params['filter.group_id']);
+      $groups = array_flip ($groups);
+      $groups[key($groups)] = 1;
+      $params['group']=$groups;
+    }
+
+
     if ( array_key_exists ('return',$params)) {// handle the format return =sort_name,display_name...
       $returnProperties = explode (',',$params['return']);
       $returnProperties = array_flip ($returnProperties); 
@@ -258,12 +260,8 @@ function civicrm_api3_contact_get( $params )
         }
       }
     }
-    return civicrm_api3_create_success($returnContacts, $params);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+    return civicrm_api3_create_success($returnContacts, $params,'contact');
+
 }
 
 
@@ -280,8 +278,7 @@ function civicrm_api3_contact_get( $params )
  */
 function civicrm_api3_contact_delete( $params )
 {
-  _civicrm_api3_initialize(true);
-  try{
+
 
     require_once 'CRM/Contact/BAO/Contact.php';
     civicrm_api3_verify_mandatory($params,null,array('id'));
@@ -299,11 +296,7 @@ function civicrm_api3_contact_delete( $params )
     } else {
       return civicrm_api3_create_error(  'Could not delete contact'  );
     }
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 

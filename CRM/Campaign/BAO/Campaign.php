@@ -78,6 +78,7 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
         $campaign->save();
        
         /* Create the campaign group record */
+        require_once 'CRM/Contact/BAO/Group.php';
         $groupTableName   = CRM_Contact_BAO_Group::getTableName( );
         require_once 'CRM/Campaign/DAO/CampaignGroup.php';
        

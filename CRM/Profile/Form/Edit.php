@@ -70,9 +70,7 @@ class CRM_Profile_Form_Edit extends CRM_Profile_Form
         //set the block no
         $this->_blockNo = CRM_Utils_Request::retrieve( 'blockNo', 'String', $this );
             
-        if ( $this->_context ) {
-            $this->assign( 'context', $this->_context );
-        }
+        $this->assign( 'context', $this->_context );
 
         if ( $this->_blockNo ) {
             $this->assign( 'blockNo', $this->_blockNo );
@@ -278,6 +276,19 @@ SELECT module
                 $urlParams .= "&cs=" . $this->get( 'cs' );
             }
             $url = CRM_Utils_System::url( 'civicrm/profile/view', $urlParams );
+        } else {
+            // Replace tokens from post URL
+            $contactParams  = array( 'contact_id' => $this->_id );
+            require_once 'api/v2/Contact.php';
+            $contact =& civicrm_contact_get($contactParams);
+            
+            require_once 'CRM/Mailing/BAO/Mailing.php';
+            $dummyMail = new CRM_Mailing_BAO_Mailing(); 
+            $dummyMail->body_text = $this->_postURL;
+            $tokens = $dummyMail->getTokens();
+            
+            require_once 'CRM/Utils/Token.php';
+            $url = CRM_Utils_Token::replaceContactTokens($this->_postURL, $contact[$this->_id], false, CRM_Utils_Array::value('text', $tokens));
         }
 
         $session->replaceUserContext( $url );

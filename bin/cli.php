@@ -87,13 +87,15 @@ class civicrm_CLI {
     
         $config =& CRM_Core_Config::singleton(); 
 
-        // this does not return on failure
-        // require_once 'CRM/Utils/System.php';
-        CRM_Utils_System::authenticateScript( true,$user,$pass );
-
+        $_SERVER['SERVER_SOFTWARE'] = null;
+        
         // bootstrap CMS environment
         global $civicrm_root;
         $_SERVER['SCRIPT_FILENAME'] = "$civicrm_root/bin/cli.php";
+        
+        // this does not return on failure
+        // require_once 'CRM/Utils/System.php';
+        CRM_Utils_System::authenticateScript( true,$user,$pass );
        
     }
 

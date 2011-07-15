@@ -71,8 +71,7 @@ require_once 'CRM/Core/BAO/CustomField.php';
 
 function civicrm_api3_custom_field_create( $params )
 {
-	_civicrm_api3_initialize ( true );
-	try {
+
         civicrm_api3_verify_mandatory($params,null,array('custom_group_id','label'));
         
         if ( !( CRM_Utils_Array::value('option_type', $params ) ) ) {
@@ -99,12 +98,8 @@ function civicrm_api3_custom_field_create( $params )
         
         $customField = CRM_Core_BAO_CustomField::create($params);
         _civicrm_api3_object_to_array_unique_fields($customField , $values[$customField->id]);
-        return civicrm_api3_create_success($values,$params, $customField);
-	} catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
+        return civicrm_api3_create_success($values,$params, 'custom_field',$customField);
+
 }
 
 /**
@@ -118,8 +113,6 @@ function civicrm_api3_custom_field_create( $params )
  **/
 function civicrm_api3_custom_field_delete( $params )
 {
-	_civicrm_api3_initialize ( true );
-	try {
         civicrm_api3_verify_mandatory($params,null,array('id'));
         
         $field = new CRM_Core_BAO_CustomField( );
@@ -131,11 +124,8 @@ function civicrm_api3_custom_field_delete( $params )
         return $customFieldDelete ?
             civicrm_api3_create_error('Error while deleting custom field') :
             civicrm_api3_create_success( );
-    } catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
+
+
 }
 
 /**
@@ -148,15 +138,10 @@ function civicrm_api3_custom_field_delete( $params )
  **/
 function civicrm_api3_custom_field_get($params)
 {
-    _civicrm_api3_initialize ( true );
-	try {
+
         civicrm_api3_verify_mandatory($params);
         return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
-    } catch ( PEAR_Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	} catch ( Exception $e ) {
-		return civicrm_api3_create_error ( $e->getMessage () );
-	}
+
 }
 
 /*
@@ -251,11 +236,6 @@ function _civicrm_api3_custom_field_validate_field( $fieldName, $value, $fieldDe
         }
         break;
         
-    case 'Date':
-        if ( ! CRM_Utils_Rule::date($value) ) {
-            $errors[$fieldName] = 'Invalid date (use YYYY-MM-DD ) format for '. $fieldName;
-        }
-        break;
         
     case 'Boolean':
         if ( $value != '1' && $value != '0' ) {

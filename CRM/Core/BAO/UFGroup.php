@@ -267,7 +267,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                                $skipPermission = false,
                                $ctype = null,
                                $permissionType = CRM_Core_Permission::CREATE,
-                               $orderBy = 'field_name' ) 
+                               $orderBy = 'field_name' , $orderProfiles = null ) 
     {
         if ( !is_array( $id ) ) {
             $id = CRM_Utils_Type::escape( $id, 'Positive' );
@@ -300,6 +300,9 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             $query .= " AND $permissionClause ";
         }
 
+        if ( $orderProfiles AND count ($profileIds) > 1) {
+            $query .= " ORDER BY FIELD(  g.id, {$gids} )";
+        }
         $group =& CRM_Core_DAO::executeQuery( $query, $params );
         $fields = array( );
         $validGroup = false;
@@ -800,10 +803,18 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                     $params[$index] = $details->$name;
                     $values[$index] = $languages[$details->$name];
                 } else if ( $name == 'group' ) {
+                    require_once 'CRM/Contact/BAO/Group.php';
+                    require_once 'CRM/Core/Permission.php';
+                    require_once 'CRM/Utils/Array.php';
                     $groups = CRM_Contact_BAO_GroupContact::getContactGroup( $cid, 'Added', null, false, true );
                     $title  = $ids = array( );
+                    
                     foreach ( $groups as $g ) {
-                        if ( $g['visibility'] != 'User and User Admin Only' ) {
+                        // CRM-8362: User and User Admin visibility groups should be included in display if user has VIEW permission on that group
+                        $groupPerm = CRM_Contact_BAO_Group::checkPermission( $g['group_id'], $g['title'] );
+
+                        if ( $g['visibility'] != 'User and User Admin Only' ||
+                             CRM_Utils_Array::key(CRM_Core_Permission::VIEW, $groupPerm ) ) {
                             $title[] = $g['title'];
                             if ( $g['visibility'] == 'Public Pages' ) {
                                 $ids[] = $g['group_id'];
@@ -849,7 +860,8 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                         $processed = CRM_Quest_BAO_Student::buildStudentForm( $this, $field );
                     }
                     if ( ! $processed ) {
-                        if ( substr($name, 0, 7) === 'do_not_' or substr($name, 0, 3) === 'is_' ) {  
+                        if ( substr($name, 0, 7) === 'do_not_' ||
+                             substr($name, 0, 3) === 'is_' ) {  
                             if ($details->$name) {
                                 $values[$index] = '[ x ]';
                             }
@@ -875,10 +887,12 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                                     $params[$index] = $values[$index] = $fileURL['file_url'];
                                 } else {
                                     $customVal = null;
-                                    if ( isset($dao) && ($dao->data_type == 'Int' ||
-                                                         $dao->data_type == 'Boolean' ) ) {
+                                    if ( isset($dao) && property_exists( $dao, 'data_type' ) &&
+                                         ($dao->data_type == 'Int' ||
+                                          $dao->data_type == 'Boolean' ) ) {
                                         $customVal = (int ) ($details->{$name});
-                                    } else if ( isset($dao) && $dao->data_type == 'Float' ) {
+                                    } else if ( isset($dao) && property_exists( $dao, 'data_type' )
+                                                && $dao->data_type == 'Float' ) {
                                         $customVal = (float ) ($details->{$name});
                                     } else if ( !CRM_Utils_System::isNull( explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                                                                                     $details->{$name} ) ) ) {
@@ -1166,7 +1180,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
      */
     static function createUFJoin( &$params, $ufGroupId ) 
     {
-        $groupTypes = $params['uf_group_type'];
+        $groupTypes = CRM_Utils_Array::value( 'uf_group_type', $params );
         
         // get ufjoin records for uf group
         $ufGroupRecord =& CRM_Core_BAO_UFGroup::getUFJoinRecord( $ufGroupId );
@@ -1527,15 +1541,23 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->add('file', $name, $title, $attributes, $required );
             $form->addUploadElement( $name );
         } else if ( substr($fieldName, 0, 2) === 'im' ) {
+            $form->add('text', $name, $title, $attributes, $required );
             if ( !$contactId ) {
-                $form->add('select', $name . '-provider_id', $title, 
-                           array('' => ts('- select -')) + CRM_Core_PseudoConstant::IMProvider(), $required);
+                if ( $onBehalf ) {
+                    if ( substr( $name, -1 ) == ']' ) { 
+                        $providerName = substr( $name, 0, $name.length - 1).'-provider_id]';
+                    }
+                    $form->add('select', $providerName, null, 
+                               array('' => ts('- select -')) + CRM_Core_PseudoConstant::IMProvider(), $required);
+                } else {
+                    $form->add('select', $name . '-provider_id', $title, 
+                               array('' => ts('- select -')) + CRM_Core_PseudoConstant::IMProvider(), $required);
+                }
             
                 if ($view && $mode != CRM_Profile_Form::MODE_SEARCH) {
                     $form->freeze($name.'-provider_id');
                 }
             }
-            $form->add('text', $name, $title, $attributes, $required );
         } else if ( ( $fieldName === 'birth_date' ) || ( $fieldName === 'deceased_date' ) ) { 
             $form->addDate( $name, $title, $required, array( 'formatType' => 'birth') );
         } else if ( in_array($fieldName, array( 'membership_start_date','membership_end_date','join_date')) ) {  
@@ -1661,7 +1683,14 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->addRule($name, ts('Enter a valid Website.'), 'url');
             
             //Website type select
-            $form->addElement('select', $name .'-website_type_id', null, CRM_Core_PseudoConstant::websiteType( ) );
+            if ( $onBehalf ) {
+                if ( substr( $name, -1 ) == ']' ) { 
+                    $websiteTypeName = substr( $name, 0, $name.length - 1).'-website_type_id]';
+                }
+                $form->addElement('select', $websiteTypeName, null, CRM_Core_PseudoConstant::websiteType( ) );
+            } else {
+                $form->addElement('select', $name .'-website_type_id', null, CRM_Core_PseudoConstant::websiteType( ) );
+            }
         } else if ($fieldName == 'note' ) {  //added because note appeared as a standard text input
             $form->add('textarea', $name, $title, $attributes, $required );
         } else if (substr($fieldName, 0, 6) === 'custom') {

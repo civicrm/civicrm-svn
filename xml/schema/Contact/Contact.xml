@@ -236,11 +236,13 @@
   </field>
   <field>
       <name>hash</name>
+      <title>Contact Hash</title>
       <type>varchar</type>
       <length>32</length>
       <comment>Key for validating requests related to this contact.</comment>
       <add>1.1</add>
       <change>1.5</change>
+       <export>true</export>
   </field>
   <index>
        <name>index_hash</name>

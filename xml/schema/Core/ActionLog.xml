@@ -79,7 +79,6 @@
   <field>
       <name>repetition_number</name>
       <type>int unsigned</type>
-      <required>true</required>
       <comment>Keeps track of the sequence number of this repetition.</comment>
       <add>3.4</add>
   </field>

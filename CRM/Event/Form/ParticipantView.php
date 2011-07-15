@@ -174,7 +174,8 @@ class CRM_Event_Form_ParticipantView extends CRM_Core_Form
         }
         $this->assign( 'displayName', $displayName );
          
-        $title = $displayName . ' (' . $participantRoles[$values[$participantID]['role_id']] . ' - ' . $eventTitle . ')' ;
+        $roleId = CRM_Utils_Array::value( 'role_id', $values[$participantID] );
+        $title = $displayName . ' (' . CRM_Utils_Array::value( $roleId, $participantRoles ) . ' - ' . $eventTitle . ')';
         
         require_once 'CRM/Core/DAO.php';
         $sep = CRM_Core_DAO::VALUE_SEPARATOR;

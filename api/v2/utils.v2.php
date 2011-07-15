@@ -365,8 +365,8 @@ function _civicrm_add_formatted_param(&$values, &$params)
     }
     
     /* Check for custom field values */
-    if ($fields['custom'] == null) {
-        $fields['custom'] =& CRM_Core_BAO_CustomField::getFields( $values['contact_type'] );
+    if ( !CRM_Utils_Array::value( 'custom' , $fields ) ) {
+        $fields['custom'] =& CRM_Core_BAO_CustomField::getFields( CRM_Utils_Array::value( 'contact_type' , $values ) );
     }
     
     foreach ($values as $key => $value) {

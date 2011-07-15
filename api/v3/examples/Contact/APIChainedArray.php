@@ -53,6 +53,7 @@ function contact_get_expectedresult(){
           'email_id' => '1',
           'email' => 'man3@yahoo.com',
           'on_hold' => 0,
+          'id' => '1',
           'api.website.get' => array( 
               'is_error' => 0,
               'version' => 3,
@@ -70,14 +71,14 @@ function contact_get_expectedresult(){
               'is_error' => 0,
               'version' => 3,
               'count' => 1,
-              'id' => 5,
+              'id' => 4,
               'values' => array( 
                   '0' => array( 
                       'contact_id' => '1',
                       'contact_type' => 'Individual',
                       'sort_name' => 'xyz3, abc3',
                       'display_name' => 'abc3 xyz3',
-                      'contribution_id' => '5',
+                      'contribution_id' => '4',
                       'currency' => 'USD',
                       'receive_date' => '2011-01-01 00:00:00',
                       'non_deductible_amount' => '10.00',
@@ -96,6 +97,7 @@ function contact_get_expectedresult(){
                       'contribution_status_id' => '1',
                       'contribution_status' => 'Completed',
                       'contribution_payment_instrument' => 'Credit Card',
+                      'id' => '4',
                     ),
                 ),
             ),

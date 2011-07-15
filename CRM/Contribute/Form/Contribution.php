@@ -224,10 +224,18 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
         if ( $this->_mode ) {
             $validProcessors = array( );
             $processors = CRM_Core_PseudoConstant::paymentProcessor( false, false, "billing_mode IN ( 1, 3 )" );
+            // at this stage only Authorize.net has been tested to support future start dates so if it's enabled let the template know 
+            // to show receive date
+            $processorsSupportingFutureStartDate = array('Authorize.net');   
+            $processorsSupportingFutureStartDate  = array_intersect($processors,$processorsSupportingFutureStartDate);
+            if (!empty($processorsSupportingFutureStartDate )){
+                $this->assign( 'processorSupportsFutureStartDate', true );                 
+            }
             foreach ( $processors as $ppID => $label ) {
                 require_once 'CRM/Core/BAO/PaymentProcessor.php';
                 require_once 'CRM/Core/Payment.php';
                 $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $this->_mode );
+                
                 if ( $paymentProcessor['payment_processor_type'] == 'PayPal' && !$paymentProcessor['user_name'] ) {
                     continue;
                 } else if ( $paymentProcessor['payment_processor_type'] == 'Dummy' && $this->_mode == 'live' ) {
@@ -1117,7 +1125,7 @@ WHERE  contribution_id = {$this->_id}
         //Credit Card Contribution.
         if ( $this->_mode ) {
             $unsetParams = array( 'trxn_id', 'payment_instrument_id', 'contribution_status_id',
-                                  'receive_date', 'cancel_date', 'cancel_reason' );
+                                   'cancel_date', 'cancel_reason' );
             foreach ( $unsetParams as $key ) {
                 if ( isset( $submittedValues[$key] ) ) {
                     unset( $submittedValues[$key] );

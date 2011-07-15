@@ -47,8 +47,7 @@ require_once 'api/v3/utils.php';
  *
  */
 function civicrm_api3_domain_get($params ) {
-    _civicrm_api3_initialize(true);
-    try{
+
         civicrm_api3_verify_mandatory($params);
         $params['version'] = CRM_Utils_array::value('domain_version',$params);
         unset($params['version']);
@@ -95,13 +94,8 @@ function civicrm_api3_domain_get($params ) {
                 CRM_Core_BAO_Domain::getNameAndEmail( true );
             $domains[$domain['id']] = array_merge($domains[$domain['id']], $domain);
         }
-        return civicrm_api3_create_success($domains,$params,$dao);
-                
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+        return civicrm_api3_create_success($domains,$params,'domain','get',$dao);
+
 }
 
 /**
@@ -112,8 +106,7 @@ function civicrm_api3_domain_get($params ) {
  * @example
  */
 function civicrm_api3_domain_create( $params ) {
-    _civicrm_api3_initialize(true);
-    try{
+
         require_once 'CRM/Core/BAO/Domain.php';
 
         civicrm_api3_verify_mandatory($params,'CRM_Core_BAO_Domain');
@@ -123,11 +116,6 @@ function civicrm_api3_domain_create( $params ) {
         _civicrm_api3_object_to_array( $domain, $domain_array[$domain->id] );
         return civicrm_api3_create_success($domain_array,$params);
 
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
 }
 
 /* 
@@ -137,12 +125,9 @@ function civicrm_api3_domain_create( $params ) {
  */
 
 function civicrm_api3_domain_getfields(){
-    require_once 'CRM/Core/DAO/Domain.php';
-    $dao = new CRM_Core_DAO_Domain( );
-    $fields = _civicrm_api3_build_fields_array($dao, FALSE);
-    $fields['domain_version'] = "version of domain";
-    $fields['current_domain'] = "BOOL get loaded domain";
-    unset ($fields['version']);
-    
-    return $fields;
+    $fields = _civicrm_api_get_fields('domain');
+    $fields['domain_version'] = array('title' =>  "version of domain");
+    $fields['current_domain'] = array('title' => "get loaded domain");
+    unset ($fields['version']); 
+    return civicrm_api3_create_success($fields);
 }

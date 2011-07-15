@@ -37,7 +37,7 @@
 
  */
 
-/* $Id: renderer.cls.php 217 2010-03-11 23:03:57Z ryan.masten $ */
+/* $Id: renderer.cls.php 351 2011-01-19 20:27:02Z fabien.menager $ */
 
 /**
  * Concrete renderer
@@ -63,7 +63,14 @@ class Renderer extends Abstract_Renderer {
    * @var array
    */
   private $_callbacks;
-    
+  
+  /**
+   * Class destructor
+   */
+  function __destruct() {
+  	clear_object($this);
+  }
+  
   /**
    * Advance the canvas to the next page
    */  
@@ -84,8 +91,29 @@ class Renderer extends Abstract_Renderer {
       flush();
     }
 
-    $display = $frame->get_style()->display;
+    $style = $frame->get_style();
+    $display = $style->display;
     
+    // Starts the CSS transformation
+    if ( $style->transform && is_array($style->transform) ) {
+      $this->_canvas->save();
+      list($x, $y, $w, $h) = $frame->get_padding_box();
+      $origin = $style->transform_origin;
+      
+      foreach($style->transform as $transform) {
+        list($function, $values) = $transform;
+        if ( $function === "matrix" ) {
+          $function = "transform";
+        }
+        
+        $values = array_map("floatval", $values);
+        $values[] = $x + $style->length_in_pt($origin[0], $style->width);
+        $values[] = $y + $style->length_in_pt($origin[1], $style->height);
+        
+        call_user_func_array(array($this->_canvas, $function), $values);
+      }
+    }
+  
     switch ($display) {
       
     case "block":
@@ -146,8 +174,37 @@ class Renderer extends Abstract_Renderer {
     // Check for begin frame callback
     $this->_check_callbacks("begin_frame", $frame);
     
-    foreach ($frame->get_children() as $child)
-      $this->render($child);
+    // Starts the overflow: hidden box
+    if ( $style->overflow === "hidden" ) {
+      list($x, $y, $w, $h) = $frame->get_padding_box();
+      $this->_canvas->clipping_rectangle($x, $y, $w, $h);
+    }
+  
+    $page = $frame->get_root()->get_reflower();
+    
+    foreach ($frame->get_children() as $child) {
+      $child_style = $child->get_style();
+      
+      // Stacking context
+      if ( $child_style->z_index !== false && ($child_style->z_index !== "auto" || in_array($child_style->position, Style::$POSITIONNED_TYPES)) ) {
+        $z_index = ($child_style->z_index === "auto") ? 0 : intval($child_style->z_index);
+        $page->add_frame_to_stacking_context($child, $z_index);
+        $child_style->z_index = false;
+      }
+      
+      else {
+        $this->render($child);
+      }
+    }
+      
+    // Ends the overflow: hidden box
+    if ( $style->overflow === "hidden" ) {
+      $this->_canvas->clipping_end();
+    }
+
+    if ( $style->transform && is_array($style->transform) ) {
+      $this->_canvas->restore();
+    }
 
     // Check for end frame callback
     $this->_check_callbacks("end_frame", $frame);
@@ -196,35 +253,35 @@ class Renderer extends Abstract_Renderer {
       
       switch ($type) {
       case "block":
-        $this->_renderers["block"] = new Block_Renderer($this->_dompdf);
+        $this->_renderers[$type] = new Block_Renderer($this->_dompdf);
         break;
 
       case "inline":
-        $this->_renderers["inline"] = new Inline_Renderer($this->_dompdf);
+        $this->_renderers[$type] = new Inline_Renderer($this->_dompdf);
         break;
 
       case "text":
-        $this->_renderers["text"] = new Text_Renderer($this->_dompdf);
+        $this->_renderers[$type] = new Text_Renderer($this->_dompdf);
         break;
 
       case "image":
-        $this->_renderers["image"] = new Image_Renderer($this->_dompdf);
+        $this->_renderers[$type] = new Image_Renderer($this->_dompdf);
         break;
       
       case "table-cell":
-        $this->_renderers["table-cell"] = new Table_Cell_Renderer($this->_dompdf);
+        $this->_renderers[$type] = new Table_Cell_Renderer($this->_dompdf);
         break;
 
       case "list-bullet":
-        $this->_renderers["list-bullet"] = new List_Bullet_Renderer($this->_dompdf);
+        $this->_renderers[$type] = new List_Bullet_Renderer($this->_dompdf);
         break;
 
       case "php":
-        $this->_renderers["php"] = new PHP_Evaluator($this->_canvas);
+        $this->_renderers[$type] = new PHP_Evaluator($this->_canvas);
         break;
 
       case "javascript":
-        $this->_renderers["javascript"] = new Javascript_Embedder($this->_dompdf);
+        $this->_renderers[$type] = new Javascript_Embedder($this->_dompdf);
         break;
         
       }

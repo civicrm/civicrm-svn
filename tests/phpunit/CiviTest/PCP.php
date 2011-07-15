@@ -107,7 +107,7 @@ class PCPBlock extends PHPUnit_Framework_Testcase
         }
 
         require_once 'CRM/Contribute/DAO/PCPBlock.php';
-        $dao     =& new CRM_Contribute_DAO_PCPBlock( );
+        $dao     = new CRM_Contribute_DAO_PCPBlock( );
         $dao->id = $params['blockId'];
         if ( $dao->find( true ) ) {
             $resultBlock = $dao->delete( );

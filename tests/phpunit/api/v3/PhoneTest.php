@@ -60,12 +60,12 @@ class api_v3_PhoneTest extends CiviUnitTestCase
     public function testCreatePhone() {
        
         //check there are no phones to start with
-        $get = civicrm_api3_phone_get( array('version' => 3,
+        $get = civicrm_api('phone','get', array('version' => 3,
                                              'location_type_id' => $this->_locationType->id) );
 
         $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
         $this->assertEquals( 0, $get['count'], 'Contact not successfully deleted In line ' . __LINE__ );        
-        $result = civicrm_api3_phone_create($this->params);
+        $result = civicrm_api('phone','create',$this->params);
 
         $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
@@ -74,28 +74,28 @@ class api_v3_PhoneTest extends CiviUnitTestCase
  
         // $this->assertEquals( 1, $result['id'], 'In line ' . __LINE__ );
 
-        $delresult = civicrm_api3_phone_delete( array('id'=> $result['id'], 'version' => 3) );
+        $delresult = civicrm_api('phone','delete', array('id'=> $result['id'], 'version' => 3) );
         $this->assertEquals( 0, $delresult['is_error'], 'In line ' . __LINE__ );
     }
     
     public function testDeletePhone() {
  
          //check there are no phones to start with
-        $get = civicrm_api3_phone_get(array('version' => 3,
+        $get = civicrm_api('phone','get',array('version' => 3,
                                       'location_type_id' => $this->_locationType->id,));
         $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
         $this->assertEquals( 0, $get['count'], 'Contact already exists ' . __LINE__ );        
          
         //create one
-        $create = civicrm_api3_phone_create($this->params);
+        $create = civicrm_api('phone','create',$this->params);
        
         $this->assertEquals( 0, $create['is_error'], 'In line ' . __LINE__ );
         
-        $result = civicrm_api3_phone_delete( array('id'=> $create['id'], 'version' => 3) );
+        $result = civicrm_api('phone','delete', array('id'=> $create['id'], 'version' => 3) );
         $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
-        $get = civicrm_api3_phone_get(array('version' => 3,
+        $get = civicrm_api('phone','get',array('version' => 3,
                                       'location_type_id' => $this->_locationType->id,));
         $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
         $this->assertEquals( 0, $get['count'], 'Contact not successfully deleted In line ' . __LINE__ );   
@@ -147,7 +147,7 @@ class api_v3_PhoneTest extends CiviUnitTestCase
      */
     public function testGet()
     {  
-        $result = civicrm_api3_phone_create($this->params);
+        $result = civicrm_api('phone','create',$this->params);
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
        
         $params = array( 'contact_id' => $phone['id'],

@@ -51,8 +51,7 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_tag_create( $params ) 
 {
-  _civicrm_api3_initialize( true );
-  try {
+
     civicrm_api3_verify_mandatory ($params,null,array ('name'));
 
     if ( !array_key_exists ('used_for', $params)) {
@@ -74,13 +73,9 @@ function civicrm_api3_tag_create( $params )
     } else {
         $values = array( );
         _civicrm_api3_object_to_array($tagBAO, $values[$tagBAO->id]);
-        return civicrm_api3_create_success($values,$params);
+        return civicrm_api3_create_success($values,$params,'tag','create',$tagBAO);
     }
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -94,17 +89,13 @@ function civicrm_api3_tag_create( $params )
  */
 function civicrm_api3_tag_delete( $params ) 
 {
-  _civicrm_api3_initialize( true );
-  try {
+
     civicrm_api3_verify_mandatory ($params,null,array ('tag_id'));
     $tagID = CRM_Utils_Array::value( 'tag_id', $params );
 
     require_once 'CRM/Core/BAO/Tag.php';
-    return CRM_Core_BAO_Tag::del( $tagID ) ? civicrm_api3_create_success( ) : civicrm_api3_create_error(  ts( 'Could not delete tag' )  );
-  } catch (Exception $e) {
-    if (CRM_Core_Error::$modeException) throw $e;
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+    return CRM_Core_BAO_Tag::del( $tagID ) ? civicrm_api3_create_success(1,$params,'tag','delete' ) : civicrm_api3_create_error(  ts( 'Could not delete tag' )  );
+
 }
 
 /**
@@ -122,8 +113,7 @@ function civicrm_api3_tag_delete( $params )
 
 function civicrm_api3_tag_get($params) 
 {   
-   try {
-  _civicrm_api3_initialize( true );
+
     civicrm_api3_verify_mandatory($params);
     require_once 'CRM/Core/BAO/Tag.php';
     $tagBAO = new CRM_Core_BAO_Tag();
@@ -141,14 +131,9 @@ function civicrm_api3_tag_get($params)
         _civicrm_api3_object_to_array( $tagBAO, $tag );
         $tags[$tagBAO->id] = $tag;
       }
-      return civicrm_api3_create_success($tags,$params,$tagBAO);
+      return civicrm_api3_create_success($tags,$params,'tag','get',$tagBAO);
     } else {
-      return civicrm_api3_create_success(array(),$params,$tagBAO);
+      return civicrm_api3_create_success(array(),$params,'tag','get',$tagBAO);
     }
 
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
 }

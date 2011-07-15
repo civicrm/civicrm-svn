@@ -249,8 +249,8 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('filters', $table) ) { 
                 foreach ( $table['filters'] as $fieldName => $field ) {
-                    
                     $clause = null;
+             
                     if ( CRM_Utils_Array::value( 'type', $field ) & CRM_Utils_Type::T_DATE ) {
                         $relative = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params );
                         $from     = CRM_Utils_Array::value( "{$fieldName}_from"    , $this->_params );
@@ -286,7 +286,6 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                 }
             }
         }
-        
         if ( empty( $clauses ) ) {
             $this->_where = "WHERE {$this->_aliases['civicrm_participant']}.is_test = 0 ";
         } else {
@@ -329,7 +328,7 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
         $this->buildACLClause( $this->_aliases['civicrm_contact'] );
         // build query
         $sql = $this->buildQuery( true );
-
+      
         // build array of result based on column headers. This method also allows 
         // modifying column headers before using it to build result set i.e $rows.
         $this->buildRows ( $sql, $rows );

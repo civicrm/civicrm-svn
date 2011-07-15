@@ -465,9 +465,15 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         //Now check DB for New Note
         $noteId = $this->assertDBNotNull( 'CRM_Core_DAO_Note', $updateParams['note'], 'id', 'note', 
                                           'Database check for New created note ' );
+        
+        //delete all notes related to contact
+        require_once 'CRM/Core/BAO/Note.php';
+        CRM_Core_BAO_Note::cleanContactNotes( $contactId );
+
+        
         //cleanup DB by deleting the contact
         Contact::delete( $contactId );
-        $this->quickCleanup( array( 'civicrm_contact') );
+        $this->quickCleanup( array( 'civicrm_contact', 'civicrm_note' ) );
     }
     
     /**
@@ -588,6 +594,11 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
             Contact::delete( CRM_Utils_Array::value( 'cid', $val ) );
         }
         
+        //delete all notes related to contact
+        require_once 'CRM/Core/BAO/Note.php';
+        CRM_Core_BAO_Note::cleanContactNotes( $contactId );
+
+        
         //cleanup DB by deleting the contact
         Contact::delete( $contactId );
         $this->quickCleanup( array( 'civicrm_contact') );
@@ -668,7 +679,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         //Now check DB for contact.
         $this->assertDBNull( 'CRM_Contact_DAO_Contact',$contactId , 
                              'id', 'sort_name', 'Database check, contact deleted successfully.' );
-        $this->quickCleanup( array( 'civicrm_contact') );
+        $this->quickCleanup( array( 'civicrm_contact', 'civicrm_note' ) );
     }
     
     /**

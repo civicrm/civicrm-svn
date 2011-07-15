@@ -59,7 +59,8 @@ class CRM_Contribute_BAO_Contribution_Utils
                                     &$premiumParams,
                                     $contactID,
                                     $contributionTypeId,
-                                    $component = 'contribution' )
+                                    $component = 'contribution', 
+                                    $fieldTypes = null )
     { 
         require_once 'CRM/Core/Payment/Form.php';
         CRM_Core_Payment_Form::mapParams( $form->_bltID, $form->_params, $paymentParams, true );
@@ -278,7 +279,8 @@ class CRM_Contribute_BAO_Contribution_Utils
         // finally send an email receipt
         require_once 'CRM/Contribute/BAO/ContributionPage.php';
         $form->_values['contribution_id'] = $contribution->id;
-        CRM_Contribute_BAO_ContributionPage::sendMail( $contactID, $form->_values, $contribution->is_test );
+        CRM_Contribute_BAO_ContributionPage::sendMail( $contactID, $form->_values, $contribution->is_test,
+                                                       false, $fieldTypes );
     }
 
     /**

@@ -70,7 +70,7 @@
 					<td class="label">{$element.field_title}</td>
 					{if $element.field_type == 'File'}
 					    {if $element.field_value.displayURL}
-						<td class="html-adjust"><a href="javascript:imagePopUp('{$element.field_value.displayURL}')" ><img src="{$element.field_value.displayURL}" height = "100" width="100"></a></td>
+						<td class="html-adjust"><a href="javascript:imagePopUp('{$element.field_value.imageURL}')" ><img src="{$element.field_value.displayURL}" height = "100" width="100"></a></td>
 					    {else}
 						<td class="html-adjust"><a href="{$element.field_value.fileURL}">{$element.field_value.fileName}</a></td>
 					    {/if}

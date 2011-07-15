@@ -151,6 +151,7 @@ function clearAmountOther() {
 
 
     {if $is_for_organization} 
+        <div id='onBehalfOfOrg' class="crm-section"></div>
         {include file=CRM/Contribute/Form/Contribution/OnBehalfOf.tpl} 
     {/if} 
     {* User account registration option. Displays if enabled for one of the profiles on this page. *}
@@ -358,8 +359,10 @@ function enablePeriod ( ) {
 }
 
 {/literal}{if $relatedOrganizationFound}{literal}
-  cj( "#is_for_organization" ).attr( 'checked', true );
-  showOnBehalf( );
+   cj( "#is_for_organization" ).attr( 'checked', true );
+   showOnBehalf( false );
+{/literal}{elseif $onBehalfRequired}{literal}
+   showOnBehalf( true );
 {/literal}{/if}{literal}
 
 {/literal}{if $honor_block_is_active AND $form.honor_type_id.html}{literal}

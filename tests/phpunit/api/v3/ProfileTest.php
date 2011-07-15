@@ -35,16 +35,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     }
    
     ////////////// test civicrm_api3_profile_get //////////////////
-    /**
-     * check with no array
-     */  
-    function testProfileGetNoArray( )
-    {
-        $params = null;
-        $result =& civicrm_api3_profile_get($params);
-        $this->assertEquals($result['is_error'], 1);
-        $this->assertEquals($result['error_message'], 'Input variable `params` is not an array');
-    }
+
 
     /**
      * check Without ProfileId
@@ -53,7 +44,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     {
         $params = array( 'contact_id' => 1,
                          'version'    => 3 );
-        $result =& civicrm_api3_profile_get($params);
+        $result =& civicrm_api('profile','get', $params);
         $this->assertEquals($result['is_error'], 1);
         $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: profile_id' );
     }  
@@ -66,7 +57,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         $params = array( 'contact_id' => 1,
                          'profile_id' => 1000,
                          'version'    => 3 );
-        $result =& civicrm_api3_profile_get($params);
+        $result =& civicrm_api('profile','get', $params);
         $this->assertEquals($result['is_error'], 1);
     } 
 
@@ -82,7 +73,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
                             'contact_id' => $contactId,
                             'version'    => 3);
 
-        $result = civicrm_api3_profile_get( $params );
+        $result = civicrm_api('profile','get',  $params );
         $this->documentMe($params, $result, __FUNCTION__, __FILE__); 
 
         $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
@@ -104,7 +95,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         list($params, $expected) = $this->_createContactWithActivity( );
         
         unset( $params['activity_id']);
-        $result = civicrm_api3_profile_get( $params );
+        $result = civicrm_api('profile','get',  $params );
 
         $this->assertEquals($result['is_error'], 1);
         $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: activity_id' );
@@ -121,7 +112,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         list($params, $expected) = $this->_createContactWithActivity( );
         
         $params['activity_id'] = 100001;
-        $result = civicrm_api3_profile_get( $params );
+        $result = civicrm_api('profile','get',  $params );
 
         $this->assertEquals($result['is_error'], 1);
         $this->assertEquals($result['error_message'], 'Invalid Activity Id (aid).');
@@ -158,7 +149,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         list($params, $expected) = $this->_createContactWithActivity( );
         
         $params['activity_id'] = $activityValues['id'];
-        $result = civicrm_api3_profile_get( $params );
+        $result = civicrm_api('profile','get',  $params );
         
         $this->assertEquals($result['is_error'], 1);
         $this->assertEquals($result['error_message'], 'This activity cannot be edited or viewed via this profile.');
@@ -173,7 +164,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     {        
         list($params, $expected) = $this->_createContactWithActivity( );
         
-        $result = civicrm_api3_profile_get( $params );
+        $result = civicrm_api('profile','get',  $params );
 
         $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
                              . " error message: " . CRM_Utils_Array::value('error_message', $result) );
@@ -194,7 +185,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     function testProfileSetNoArray( )
     {
         $params = null;
-        $result =& civicrm_api3_profile_set($params);
+        $result =& civicrm_api('profile','set', $params);
         $this->assertEquals($result['is_error'], 1);
         $this->assertEquals($result['error_message'], 'Input variable `params` is not an array');
     }
@@ -206,7 +197,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     {
         $params = array( 'contact_id' => 1,
                          'version'    => 3 );
-        $result =& civicrm_api3_profile_set($params);
+        $result =& civicrm_api('profile','set', $params);
         $this->assertEquals($result['is_error'], 1);
         $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: profile_id' );
     }  
@@ -219,7 +210,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         $params = array( 'contact_id' => 1,
                          'profile_id' => 1000,
                          'version'    => 3 );
-        $result =& civicrm_api3_profile_set($params);
+        $result =& civicrm_api('profile','set', $params);
         $this->assertEquals($result['is_error'], 1);
     } 
 
@@ -241,7 +232,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         $params    = array_merge( array( 'profile_id' => 25, 'contact_id' => $contactId, 'version' => 3 ),
                                   $updateParams );
 
-        $result =& civicrm_api3_profile_set($params);
+        $result =& civicrm_api('profile','set', $params);
 
         $this->assertEquals($result['is_error'], 1);
         $this->assertEquals($result['error_message'], 'Missing required parameters for profile id 25: email-Primary');
@@ -268,7 +259,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         $params    = array_merge( array( 'profile_id' => 25, 'contact_id' => $contactId, 'version' => 3 ),
                                   $updateParams );
 
-        $result = civicrm_api3_profile_set( $params );
+        $result = civicrm_api('profile','set',  $params );
         $this->documentMe($params, $result, __FUNCTION__, __FILE__); 
 
         $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
@@ -277,7 +268,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         $getParams    = array( 'profile_id' => 25,
                                'contact_id' => $contactId,
                                'version'    => 3);
-        $profileDetails = civicrm_api3_profile_get( $getParams );
+        $profileDetails = civicrm_api('profile','get',  $getParams );
 
         $this->assertEquals( 0, $profileDetails['is_error'], "In line " . __LINE__
                              . " error message: " . CRM_Utils_Array::value('error_message', $profileDetails) );
@@ -299,7 +290,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         
         $params = array_merge($params, $expected);
         unset( $params['activity_id']);
-        $result = civicrm_api3_profile_set( $params );
+        $result = civicrm_api('profile','set',  $params );
 
         $this->assertEquals($result['is_error'], 1);
         $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: activity_id' );
@@ -317,7 +308,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         
         $params = array_merge($params, $expected);
         $params['activity_id'] = 100001;
-        $result = civicrm_api3_profile_set( $params );
+        $result = civicrm_api('profile','set',  $params );
 
         $this->assertEquals($result['is_error'], 1);
         $this->assertEquals($result['error_message'], 'Invalid Activity Id (aid).');
@@ -355,7 +346,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         
         $params = array_merge($params, $expected);
         $params['activity_id'] = $activityValues['id'];
-        $result = civicrm_api3_profile_set( $params );
+        $result = civicrm_api('profile','set',  $params );
         
         $this->assertEquals($result['is_error'], 1);
         $this->assertEquals($result['error_message'], 'This activity cannot be edited or viewed via this profile.');
@@ -380,8 +371,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase
                                 'activity_status_id'      => '2'
                           );
         $profileParams = array_merge($params, $updateParams);
-        $profile = civicrm_api3_profile_set( $profileParams );
-        $result  = civicrm_api3_profile_get( $params );
+        $profile = civicrm_api('profile','set',  $profileParams );
+        $result  = civicrm_api('profile','get',  $params );
         $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
                              . " error message: " . CRM_Utils_Array::value('error_message', $result) );
         
@@ -395,16 +386,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     }
 
     /////////////// test civicrm_api3_profile_apply //////////////////
-    /**
-     * check with no array
-     */  
-    function testProfileApplyNoArray( )
-    {
-        $params = null;
-        $result =& civicrm_api3_profile_apply($params);
-        $this->assertEquals($result['is_error'], 1);
-        $this->assertEquals($result['error_message'], 'Input variable `params` is not an array');
-    }
+ 
 
     /**
      * check Without ProfileId
@@ -413,7 +395,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     {
         $params = array( 'contact_id' => 1,
                          'version'    => 3 );
-        $result =& civicrm_api3_profile_apply($params);
+        $result =& civicrm_api('profile','apply',$params);
         $this->assertEquals($result['is_error'], 1);
         $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: profile_id' );
     }  
@@ -426,7 +408,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
         $params = array( 'contact_id' => 1,
                          'profile_id' => 1000,
                          'version'    => 3 );
-        $result =& civicrm_api3_profile_apply($params);
+        $result =& civicrm_api('profile','apply',$params);
         $this->assertEquals($result['is_error'], 1);
     } 
 
@@ -449,7 +431,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
                          'country-1'        => '1013',
                          'state_province-1' => '1000' );
         
-        $result = civicrm_api3_profile_apply( $params );
+        $result = civicrm_api('profile','apply',$params );
         $this->documentMe($params, $result, __FUNCTION__, __FILE__); 
  
         $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__

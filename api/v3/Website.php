@@ -52,8 +52,6 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_website_create( $params ) 
 {
-
-  try {
     civicrm_api3_verify_one_mandatory ($params, null, array ('contact_id', 'id'));
     
     require_once 'CRM/Core/BAO/Website.php';
@@ -65,13 +63,9 @@ function civicrm_api3_website_create( $params )
 	 } else {
 		 $values = array( );
 		 _civicrm_api3_object_to_array($websiteBAO, $values[$websiteBAO->id]);
-		 return civicrm_api3_create_success($values, $params);
+		 return civicrm_api3_create_success($values, $params,'website','get');
 	 }
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 /**
  * Deletes an existing Website
@@ -86,7 +80,6 @@ function civicrm_api3_website_create( $params )
 function civicrm_api3_website_delete( $params ) 
 {
 
-  try {
     civicrm_api3_verify_mandatory ($params,null,array ('id'));
     $websiteID = CRM_Utils_Array::value( 'id', $params );
 
@@ -96,16 +89,12 @@ function civicrm_api3_website_delete( $params )
     if ( $websiteDAO->find( ) ) {
 		while ( $websiteDAO->fetch() ) {
 			$websiteDAO->delete();
-			return civicrm_api3_create_success();
+			return civicrm_api3_create_success(1,$params,'website','delete');
 		}
 	} else {
 		return civicrm_api3_create_error( 'Could not delete website with id '.$websiteID);
 	}
-    
-  } catch (Exception $e) {
-    if (CRM_Core_Error::$modeException) throw $e;
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -124,7 +113,6 @@ function civicrm_api3_website_delete( $params )
 function civicrm_api3_website_get( $params ) 
 {   
 
-  try {
     civicrm_api3_verify_mandatory($params );
 	
     require_once 'CRM/Core/BAO/Website.php';
@@ -145,13 +133,8 @@ function civicrm_api3_website_get( $params )
         }
         return civicrm_api3_create_success($websites,$params,$websiteBAO);
     } else {
-        return civicrm_api3_create_success(array(),$params,$websiteBAO);
+        return civicrm_api3_create_success(array(),$params,'website','get',$websiteBAO);
     }
-				
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 

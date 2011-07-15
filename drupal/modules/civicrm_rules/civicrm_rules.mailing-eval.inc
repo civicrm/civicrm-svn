@@ -34,71 +34,37 @@
  *
  */
 
-/**
- * This file contains functions that calls civicrm apis for data manupulation / retrieval
- */
+require_once 'civicrm_rules_utils.inc';
 
-/**
- * Function to get the list of groups
- */
-function _civicrm_get_groups( ) {
-	civicrm_initialize( );
-	$params = array( 'return.id' => 1, 'return.title' => 1 );
-	$groupInformation = civicrm_api('group', 'get', $params);
+function civicrm_rules_rules_action_mailing_send_email( $to, $subject, $message, $from = NULL, $settings, RulesState $state, RulesPlugin $element ) {
+    if( isset($state->variables['mailing']) && $state->variables['mailing']->id ) {
+        $to       = str_replace( array( "\r", "\n" ), ',', $to );
+        $toEmails = explode( ',', $to );
+        if ( empty( $toEmails ) ) { 
+            return;
+        }
+        require_once 'CRM/Utils/Token.php';
+        $tokens['mailing'] = array( 'mailing.editUrl',
+                                    'mailing.scheduleUrl', 
+                                    'mailing.html', 
+                                    'mailing.creatorEmail', 
+                                    'mailing.creator' );
 
-	$groups = array( );	
-	foreach ( $groupInformation as $values ) {
-		$groups[ $values['id'] ] = $values['title'];
-	}
-	
-	return $groups;
-}	
-
-/**
- * Function to add contacts to group
- */
-function _civicrm_rules_group_contact( $contactId, $groupId, $action = 'add' ) {	
-	civicrm_initialize( );
-	$params = array( 'contact_id' => $contactId,
-									 'group_id' => $groupId
-								 );
-  // This used to be civicrm_group_contact_common($params, $action);
-	civicrm_api('group_contact', 'common', $params, $action );
-}
-
-/**
- * Loads a contact into a version suitable for the rules actions
- */
-function _civicrm_rules_load_contact( $contactID ) {
-    require_once 'CRM/Contact/DAO/Contact.php';
-    $contact = new CRM_Contact_DAO_Contact( );
-    $contact->id = $contactID;
-
-    if ( $contact->id ) {
-        // load the contact data here
-        $contact->find( true );
+        $params = array( );
+        $params['from']    = !empty( $from ) ? str_replace( array( "\r", "\n" ), '', $from ) : 'Admin';
+        $params['subject'] = CRM_Utils_Token::replaceMailingTokens( $subject, $state->variables['mailing'], null, $tokens );
+        $params['html']  = CRM_Utils_Token::replaceMailingTokens( $message, $state->variables['mailing'], null, $tokens );
+        foreach ( $toEmails as $toEmail ) {
+            $params['toEmail']    = CRM_Utils_Token::replaceMailingTokens( $toEmail, $state->variables['mailing'], null, $tokens );
+            CRM_Utils_Mail::send( $params );
+        }
     }
-    
-    return $contact;
 }
 
-function _civicrm_rules_in_group( $contact, $group ) {
-    // check if contact is in the group gid
-    return true;
+function civicrm_rules_condition_mailing_approved($mailing, $settings) {
+    return $mailing->approval_status_id == 1; 
 }
 
-/**
- * Loads a mailing into a version suitable for the rules actions
- */
-function _civicrm_rules_load_mailing( $mailingID ) {
-    require_once 'CRM/Mailing/DAO/Mailing.php';
-    $mailing = new CRM_Mailing_DAO_Mailing( );
-    $mailing->id = $mailingID;
-
-    if ( $mailing->id ) {
-        // load the mailing data here
-        $mailing->find( true );
-    }
-    
-    return $mailing;
+function civicrm_rules_condition_mailing_rejected($mailing, $settings) {
+    return $mailing->approval_status_id != 1; 
 }

@@ -269,6 +269,7 @@ class CRM_Contribute_BAO_Query
             $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
             return;
 
+        case 'contribution_status':
         case 'contribution_status_id':
             if ( is_array( $value ) ) {
                 foreach ($value as $k => $v) {

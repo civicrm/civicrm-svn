@@ -65,27 +65,8 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase
     
     //---------- civicrm_mailing_event_subscribe methods ---------
     
-    /**
-     * Test civicrm_mailing_group_event_subscribe with wrong params type.
-     */
-    public function testMailerGroupSubscribeWrongParamsType( )
-    {
-        $params ='is_string';
-        $result =& civicrm_api3_mailing_group_event_subscribe($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__ );       
-    }
-    
-    /**
-     * Test civicrm_mailing_group_event_subscribe with empty params.
-     */
-    public function testMailerGroupSubscribeEmptyParams( )
-    {
-        $params = array( );
-        $result =& civicrm_api3_mailing_group_event_subscribe($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: group_id, contact_id, hash, time_stamp, email, group_id, version', 'In line ' . __LINE__ );
-    }
+
+
     
     /**
      * Test civicrm_mailing_group_event_subscribe with wrong params.
@@ -100,7 +81,7 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase
                         'time_stamp'   => '20111111010101',
                         'hash'         => 'sasa'
                         );
-        $result =& civicrm_api3_mailing_group_event_subscribe($params);
+        $result =& civicrm_api('mailing_group_event','subscribe',$params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         if ( $result['error_message'] != 'Subscription failed' ) {
             $this->assertEquals( $result['error_message'], 'Invalid Group id', 'In line ' . __LINE__ );
@@ -129,7 +110,7 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase
                         'hash'         => 'b15de8b64e2cec34',
                         'time_stamp'   => '20101212121212'
                         );
-        $result = civicrm_api3_mailing_group_event_subscribe($params);
+        $result = civicrm_api('mailing_group_event','subscribe',$params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);    
         $this->assertEquals($result['is_error'], 0, 'in line ' . __LINE__);
         $this->assertEquals($result['values']['contact_id'], $contactID);
@@ -138,28 +119,7 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase
     }
     
     //-------- civicrm_mailing_group_event_unsubscribe methods-----------
-    /**
-     * Test civicrm_mailing_group_event_unsubscribe with wrong params type.
-     */
-    public function testMailerGroupUnsubscribeWrongParamsType( )
-    {
-        $params ='is_string';
-        $result =& civicrm_api3_mailing_group_event_unsubscribe($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__ );       
-    }
-    
-    /**
-     * Test civicrm_mailing_group_event_unsubscribe with empty params.
-     */
-    public function testMailerGroupUnsubscribeEmptyParams( )
-    {
-        $params = array( );
-        $result =& civicrm_api3_mailing_group_event_unsubscribe($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: event_queue_id, org_unsubscribe, time_stamp, job_id, event_queue_id, hash, version', 'In line ' . __LINE__ );
-    }
-    
+   
     /**
      * Test civicrm_mailing_group_event_unsubscribe with wrong params.
      */
@@ -174,33 +134,13 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase
                         'time_stamp'      => '20101212121212'    
                         );
                         
-        $result =& civicrm_api3_mailing_group_event_unsubscribe($params);
+        $result =& civicrm_api('mailing_group_event','unsubscribe',$params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Queue event could not be found', 'In line ' . __LINE__ );
     }
     
     //--------- civicrm_mailing_group_event_domain_unsubscribe methods -------
-    /**
-     * Test civicrm_mailing_group_event_domain_unsubscribe with wrong params type.
-     */
-    public function testMailerGroupDomainUnsubscribeWrongParamsType( )
-    {
-        $params ='is_string';
-        $result =& civicrm_api3_mailing_group_event_domain_unsubscribe($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__ );       
-    }
-    
-    /**
-     * Test civicrm_mailing_group_event_domain_unsubscribe with empty params.
-     */
-    public function testMailerGroupDomainUnsubscribeEmptyParams( )
-    {
-        $params = array( );
-        $result =& civicrm_api3_mailing_group_event_domain_unsubscribe($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: event_queue_id, org_unsubscribe, time_stamp, job_id, event_queue_id, hash, version', 'In line ' . __LINE__ );
-    }
+
     
     /**
      * Test civicrm_mailing_group_event_domain_unsubscribe with wrong params.
@@ -216,7 +156,7 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase
                         'time_stamp'      => '20101212121212'
                         );
                         
-        $result =& civicrm_api3_mailing_group_event_domain_unsubscribe($params);
+        $result =& civicrm_api('mailing_group_event_domain','unsubscribe',$params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Queue event could not be found', 'In line ' . __LINE__ );
     }
@@ -226,24 +166,7 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase
     /**
      * Test civicrm_mailing_group_event_resubscribe with wrong params type.
      */
-    public function testMailerGroupResubscribeWrongParamsType( )
-    {
-        $params ='is_string';
-        $result =& civicrm_api3_mailing_group_event_resubscribe($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__ );       
-    }
-    
-    /**
-     * Test civicrm_mailing_group_event_resubscribe with empty params.
-     */
-    public function testMailerGroupResubscribeEmptyParams( )
-    {
-        $params = array( );
-        $result =& civicrm_api3_mailing_group_event_resubscribe($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: event_queue_id, org_unsubscribe, time_stamp, job_id, event_queue_id, hash, version', 'In line ' . __LINE__ );
-    }
+
     
     /**
      * Test civicrm_mailing_group_event_resubscribe with wrong params.
@@ -258,7 +181,7 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase
                         'version'         => $this->_apiversion,
                         'time_stamp'      => '20101212121212'
                         );
-        $result =& civicrm_api3_mailing_group_event_resubscribe($params);
+        $result =& civicrm_api('mailing_group_event','resubscribe',$params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Queue event could not be found', 'In line ' . __LINE__ );
     }
@@ -284,7 +207,7 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase
                         'hash'         => 'b15de8b64e2cec34',
                         'time_stamp'   => '20101212121212'
                         );
-        $result =& civicrm_api3_mailing_group_event_subscribe($params);
+        $result =& civicrm_api('mailing_group_event','subscribe',$params);
 
         $this->assertEquals($result['is_error'], 0);
         $this->assertEquals($result['values']['contact_id'], $contactID);
@@ -299,7 +222,7 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase
                         );
 
         require_once 'api/v3/Mailing.php';    
-        $result =& civicrm_api3_mailing_event_confirm($params);
+        $result =& civicrm_api('mailing_event','confirm',$params);
 
         $this->assertEquals($result['is_error'], 0);        
         $this->contactDelete( $contactID );

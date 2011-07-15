@@ -217,9 +217,17 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
      */
     static function getDashletInfo( $dashletID ) {
         $dashletInfo = array( );
-        $dao = new CRM_Core_DAO_Dashboard( );
+        
+        $params   = array( 1 => array( $dashletID, 'Integer' ) );
+        $query = "SELECT label, url FROM civicrm_dashboard WHERE id = %1";
+        $dashboadDAO = CRM_Core_DAO::executeQuery( $query, $params );
+        $dashboadDAO->fetch( );
 
-        $dao->id = $dashletID;
+        // build the content
+        require_once 'CRM/Contact/DAO/DashboardContact.php';
+        $dao = new CRM_Contact_DAO_DashboardContact( );
+
+        $dao->dashboard_id = $dashletID;
         $dao->find( true );
 
         //reset content based on the cache time set in config
@@ -233,15 +241,14 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
         }
 
         // if content is empty and url is set, retrieve it from url
-        if ( !$dao->content && $dao->url ) {
-            $url = $dao->url;
+        if ( !$dao->content && $dashboadDAO->url ) {
+            $url = $dashboadDAO->url;
             
             // CRM-7087 
             // -lets use relative url for internal use.
             // -make sure relative url should not be htmlize.
-            if ( substr( $dao->url, 0, 4 ) != 'http' ) {
-                $urlParam = CRM_Utils_System::explode( '&', $dao->url, 2 );
-                $url      = CRM_Utils_System::url( $urlParam[0], $urlParam[1], false, null, false );
+            if ( substr( $dashboadDAO->url, 0, 4 ) != 'http' ) {
+                $url = CRM_Utils_System::url( $dashboadDAO->url, null, false, null, false );
             }
 
             //get content from url
@@ -250,7 +257,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
             $dao->save( );
         }
 
-        $dashletInfo = array( 'title'      => $dao->label,
+        $dashletInfo = array( 'title'      => $dashboadDAO->label,
                               'content'    => $dao->content);
 
         if ( $dao->is_fullscreen ) {                       
@@ -424,7 +431,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
      * @static 
      */
     static function resetDashletCache( ) {
-        $query = "UPDATE civicrm_dashboard SET content = NULL";
+        $query = "UPDATE civicrm_dashboard_contact SET content = NULL";
         $dao = CRM_Core_DAO::executeQuery( $query );
     }
     

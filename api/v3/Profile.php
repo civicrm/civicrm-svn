@@ -58,11 +58,13 @@ require_once 'CRM/Core/Permission.php';
  *
  */
 function civicrm_api3_profile_get( $params ) {
-    _civicrm_api3_initialize( true );
-    try{
+
         civicrm_api3_verify_mandatory($params, null, array('profile_id', 'contact_id'));
-        
-        // FIX ME: check profile exists
+
+        if ( !CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $params['profile_id'], 'is_active' ) ) {
+            return civicrm_api3_create_error('Invalid value for profile_id');
+        }
+
         $isContactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileType( $params['profile_id'] );
                 
         if ( CRM_Core_BAO_UFField::checkProfileType($params['profile_id']) && !$isContactActivityProfile ) {
@@ -114,11 +116,7 @@ function civicrm_api3_profile_get( $params ) {
         $result['values'] = $values;
         
         return $result;
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**
@@ -134,11 +132,13 @@ function civicrm_api3_profile_get( $params ) {
  *
  */
 function civicrm_api3_profile_set( $params ) {
-    _civicrm_api3_initialize( true );
-    try{
+
         civicrm_api3_verify_mandatory($params, null, array('profile_id', 'contact_id'));
         
-        // FIX ME: check profile exists
+        if ( !CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $params['profile_id'], 'is_active' ) ) {
+            return civicrm_api3_create_error('Invalid value for profile_id');
+        }
+
         $isContactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileType( $params['profile_id'] );
                 
         if ( CRM_Core_BAO_UFField::checkProfileType($params['profile_id']) && !$isContactActivityProfile ) {
@@ -257,11 +257,7 @@ function civicrm_api3_profile_set( $params ) {
         }
   
         return $result;
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
+
 }
 
 /**
@@ -277,11 +273,14 @@ function civicrm_api3_profile_set( $params ) {
  *
  */
 function civicrm_api3_profile_apply( $params ) {
-  _civicrm_api3_initialize( true );
-  try{  
+
       civicrm_api3_verify_mandatory($params, null, array('profile_id', 'contact_id'));
       require_once 'CRM/Contact/BAO/Contact.php';
       
+      if ( !CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $params['profile_id'], 'is_active' ) ) {
+          return civicrm_api3_create_error('Invalid value for profile_id');
+      }
+
       $profileFields = CRM_Core_BAO_UFGroup::getFields( $params['profile_id'], 
                                                         false, 
                                                         null, 
@@ -305,9 +304,5 @@ function civicrm_api3_profile_apply( $params ) {
       }
       
       return civicrm_api3_create_success( $data );
-  } catch (PEAR_Exception $e) {
-      return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-      return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }

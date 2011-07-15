@@ -57,16 +57,15 @@ require_once 'api/v3/utils.php';
 */
 function civicrm_api3_event_create( $params )
 {
-    try {
+
     civicrm_api3_verify_mandatory ($params,'CRM_Event_DAO_Event',array ('start_date','event_type_id','title'));
-    $params['start_date'] = CRM_Utils_Date::processDate( $params['start_date'] );
-    $params['end_date'] = CRM_Utils_Date::processDate( $params['end_date'] );
    
     //format custom fields so they can be added
     $value = array();
     _civicrm_api3_custom_format_params( $params, $values, 'Event' );
     $params = array_merge($values,$params);
     require_once 'CRM/Event/BAO/Event.php';
+
     $eventBAO = CRM_Event_BAO_Event::create($params);
 
     if ( is_a( $eventBAO, 'CRM_Core_Error' ) ) {
@@ -77,11 +76,7 @@ function civicrm_api3_event_create( $params )
     }
 
     return civicrm_api3_create_success($event,$params);
-      } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 
@@ -97,8 +92,7 @@ function civicrm_api3_event_create( $params )
 
 function civicrm_api3_event_get( $params )
 {
-  _civicrm_api3_initialize( true );
-  try {
+
     civicrm_api3_verify_mandatory($params);
 
     $inputParams            = array( );
@@ -157,13 +151,9 @@ function civicrm_api3_event_get( $params )
 
     }//end of the loop
 
-    return civicrm_api3_create_success($event,$params,$eventDAO);
+    return civicrm_api3_create_success($event,$params,'event','get',$eventDAO);
 
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -175,24 +165,23 @@ function civicrm_api3_event_get( $params )
  *
  * @return boolean        true if success, error otherwise
  * @access public
+ * 
+ * note API has legacy support for 'event_id'
  */
 function civicrm_api3_event_delete( $params )
 {
 
-  try {
     civicrm_api3_verify_one_mandatory($params,null,array('event_id','id'));
-
-
-    $eventID = CRM_Utils_Array::value( 'event_id', $params )?CRM_Utils_Array::value( 'event_id', $params ):CRM_Utils_Array::value( 'id', $params );
-
+    $eventID = 
+        CRM_Utils_Array::value( 'event_id', $params ) ?
+        CRM_Utils_Array::value( 'event_id', $params ) :
+        CRM_Utils_Array::value( 'id', $params );
 
     require_once 'CRM/Event/BAO/Event.php';
+    return 
+        CRM_Event_BAO_Event::del( $eventID ) ?
+        civicrm_api3_create_success( ) :
+        civicrm_api3_create_error( ts( 'Error while deleting event' ) );
 
-    return CRM_Event_BAO_Event::del( $eventID ) ?  civicrm_api3_create_success( ) : civicrm_api3_create_error(  'Error while deleting event' );
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
 }
 

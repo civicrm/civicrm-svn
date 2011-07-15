@@ -58,8 +58,6 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_group_create( $params )
 {
-  _civicrm_api3_initialize(true );
-  try{
      
     civicrm_api3_verify_mandatory($params,null,array('title'));
     $group = CRM_Contact_BAO_Group::create( $params );
@@ -69,13 +67,9 @@ function civicrm_api3_group_create( $params )
     } else {
       $values = array();
       _civicrm_api3_object_to_array_unique_fields($group, $values[$group->id]);
-      return civicrm_api3_create_success($values,$params,$group );
+      return civicrm_api3_create_success($values,$params,'group','create',$group );
     }
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -90,10 +84,7 @@ function civicrm_api3_group_create( $params )
  */
 function civicrm_api3_group_get( $params )
 {
-  try{
-
-    _civicrm_api3_initialize(true );
-    civicrm_api3_verify_mandatory($params);
+     civicrm_api3_verify_mandatory($params);
 
     $returnProperties = array( );
     foreach ( $params as $n => $v ) {
@@ -115,12 +106,8 @@ function civicrm_api3_group_get( $params )
       _civicrm_api3_object_to_array( $group, $groups[$group->id] );
     }
 
-    return civicrm_api3_create_success ($groups);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+    return civicrm_api3_create_success ($groups,$params,'group','create');
+
 }
 
 /**
@@ -139,14 +126,9 @@ function civicrm_api3_group_get( $params )
  */
 function civicrm_api3_group_delete( $params )
 {
-  _civicrm_api3_initialize( true);
-  try{
+
     civicrm_api3_verify_mandatory($params,null,array('id'));
     CRM_Contact_BAO_Group::discard( $params['id'] );
     return civicrm_api3_create_success( true );
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }

@@ -95,6 +95,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                                       array( 1 => $latestVer )));
         
         $upgrade  = new CRM_Upgrade_Form( );
+        $preUpgradeMessage = null;
 
         $template = CRM_Core_Smarty::singleton( );
         $template->assign( 'pageTitle', ts('Upgrade CiviCRM to Version %1', 
@@ -169,7 +170,6 @@ SELECT  count( id ) as statusCount
             }
 
             // set pre-upgrade warnings if any -
-            $preUpgradeMessage = null;
             self::setPreUpgradeMessage( $preUpgradeMessage, $currentVer, $latestVer );
             
             //turning some tables to monolingual during 3.4.beta3, CRM-7869
@@ -501,7 +501,7 @@ SELECT  count( id ) as statusCount
         }
         $template->assign( 'addDeceasedStatus', $addDeceasedStatus ); 
 
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
 
@@ -511,7 +511,7 @@ SELECT  count( id ) as statusCount
         $threeOne = new CRM_Upgrade_ThreeOne_ThreeOne( );
         $threeOne->upgrade_3_1_3( );
         
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
 
@@ -527,8 +527,10 @@ SELECT  count( id ) as statusCount
 
     function setPreUpgradeMessage ( &$preUpgradeMessage, $currentVer, $latestVer ) 
     {
-        if ( version_compare($currentVer, '3.3.alpha1') <  0  &&
-             version_compare($latestVer,  '3.3.alpha1') >= 0  ) {
+        if ( ( version_compare($currentVer, '3.3.alpha1') <  0  &&
+               version_compare($latestVer,  '3.3.alpha1') >= 0 ) ||
+             ( version_compare($currentVer, '3.4.alpha1') <  0  &&
+               version_compare($latestVer,  '3.4.alpha1') >= 0 ) ) {
             $query = "
 SELECT  id 
   FROM  civicrm_mailing_job 

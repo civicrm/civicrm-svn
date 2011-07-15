@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Contact Summary template for new tabbed interface. Replaces Basic.tpl *}
-{if $imageURL }
+{if !empty($imageURL)}
     <div>
         {include file="CRM/Contact/Page/ContactImage.tpl"}
     </div>
@@ -156,7 +156,7 @@
                             <td class="label" id="tagLink"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contactId&selectedChild=tag"}" title="{ts}Edit Tags{/ts}">{ts}Tags{/ts}</a></td><td id="tags">{$contactTag}</td>
                             {/if}
                             {if !empty($userRecordUrl)}
-                            <td class="label">{ts}User ID{/ts}</td><td class="crm-contact-user_record_id"><a title="View user record" class="user-record-link" href="{$userRecordUrl}">{$userRecordId}</a></div>
+                            <td class="label">{ts}User ID{/ts}</td><td class="crm-contact-user_record_id"><a title="View user record" class="user-record-link" href="{$userRecordUrl}">{$userRecordId}</a></td>
                             {/if}
                             {if !empty($source)}
                             <td class="label">{ts}Source{/ts}</td><td class="crm-contact_source">{$source}</td>
@@ -249,11 +249,16 @@
                             <table>
                                 <tr>
                                     <td class="label">{ts 1=$add.location_type}%1&nbsp;Address{/ts}
-                                        {if $config->mapAPIKey AND $add.geo_code_1 AND $add.geo_code_2}
+                                        {if $config->mapAPIKey AND 
+					 !empty($add.geo_code_1) AND
+					 is_numeric($add.geo_code_1) AND
+					 !empty($add.geo_code_2) AND 
+					 is_numeric($add.geo_code_2) 
+					 }
                                             <br /><a href="{crmURL p='civicrm/contact/map' q="reset=1&cid=`$contactId`&lid=`$add.location_type_id`"}" title="{ts 1=`$add.location_type`}Map %1 Address{/ts}"><span class="geotag">{ts}Map{/ts}</span></a>
                                         {/if}</td>
                                     <td class="crm-contact-address_display">
-                                        {if $sharedAddresses.$locationIndex.shared_address_display.name}
+                                        {if !empty($sharedAddresses.$locationIndex.shared_address_display.name)}
                                              <strong>{ts}Shared with:{/ts}</strong><br />
                                              {$sharedAddresses.$locationIndex.shared_address_display.name}<br />
                                          {/if}

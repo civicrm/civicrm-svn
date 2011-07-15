@@ -97,16 +97,19 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
                                                                   'default'   => true ),
                                 'membership_end_date'   => array( 'title'     => ts('End Date'),
                                                                   'default'   => true ),
-                                'join_date'             => null,
-                                
+                                'join_date'             => array( 'title'     => ts('Join Date'),
+                                                                  'default'   => true ),
                                 'source'                => array( 'title' => 'Source'),
                                 ), 
                           'filters' => array( 					      
                                              'join_date'    =>
-                                             array( 'operatorType'  => CRM_Report_Form::OP_DATE),
-
+                                             array( 'operatorType'  => CRM_Report_Form::OP_DATE ),
+                                             'membership_start_date' =>
+                                             array( 'operatorType'  => CRM_Report_Form::OP_DATE ),
+                                             'membership_end_date'   =>
+                                             array( 'operatorType'  => CRM_Report_Form::OP_DATE ),
                                              'owner_membership_id'  =>
-                                             array( 'title'         => ts('Membership Owner ID'),
+                                             array( 'title'         => ts('Membership Owner ID' ),
                                                     'operatorType'  => CRM_Report_Form::OP_INT,
                                                    ),
                                              'tid'          =>

@@ -536,7 +536,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         if ( $onBehalf ) {
             $this->click('is_organization');
             $this->type('for_organization', "On behalf $hash");
-            $this->click('CIVICRM_QFID_2_4');          
+            if ( $onBehalf == 'required' ) {
+                $this->click('CIVICRM_QFID_2_4');          
+            } else if ( $onBehalf == 'optional' ) {
+                $this->click('CIVICRM_QFID_1_2');  
+            }
         }
 
         $this->fillRichTextField( 'intro_text', 'This is introductory message for ' . $pageTitle,'CKEditor' );

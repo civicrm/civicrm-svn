@@ -17,14 +17,14 @@ class api_v3_OptionValueTest extends CiviUnitTestCase
     }
 
     public function testGetOptionValueByID () {
-        $result = civicrm_api3_option_value_get(array('id'=> 1, 'version' => $this->_apiversion));
+        $result = civicrm_api('option_value','get',array('id'=> 1, 'version' => $this->_apiversion));
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['id'], 'In line ' . __LINE__ );
     }
 
     public function testGetOptionValueByValue () {
-        $result = civicrm_api3_option_value_get(array('option_group_id'=> 1, 'value' => '1', 'version' => $this->_apiversion));
+        $result = civicrm_api('option_value','get',array('option_group_id'=> 1, 'value' => '1', 'version' => $this->_apiversion));
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['id'], 'In line ' . __LINE__ );
@@ -32,7 +32,7 @@ class api_v3_OptionValueTest extends CiviUnitTestCase
 
     public function testGetOptionGroup () {
         $params = array('option_group_id'=> 1, 'version' => $this->_apiversion);
-        $result = civicrm_api3_option_value_get($params);
+        $result = civicrm_api('option_value','get',$params);
         $this->documentMe($params,$result ,__FUNCTION__,__FILE__);
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertGreaterThan( 1, $result['count'], 'In line ' . __LINE__ );
@@ -43,14 +43,14 @@ class api_v3_OptionValueTest extends CiviUnitTestCase
     public function testGetOptionGroupByName () {
         $activityTypesParams = array('option_group_name'=> 'activity_type', 'version' => $this->_apiversion);
         $params= array( 'version' => $this->_apiversion);
-        $activityTypes = civicrm_api3_option_value_get($activityTypesParams);
-        $result = civicrm_api3_option_value_get($params);
+        $activityTypes = civicrm_api('option_value','get',$activityTypesParams);
+        $result = civicrm_api('option_value','get',$params);
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertGreaterThan( 1, $activityTypes['count'], 'In line ' . __LINE__ );
         $this->assertGreaterThan( $activityTypes['count'], $result['count'], 'In line ' . __LINE__ );
     }
     public function testGetOptionDoesNotExist () {
-        $result = civicrm_api3_option_value_get(array('label'=> 'FSIGUBSFGOMUUBSFGMOOUUBSFGMOOBUFSGMOOIIB','version' => $this->_apiversion));
+        $result = civicrm_api('option_value','get',array('label'=> 'FSIGUBSFGOMUUBSFGMOOUUBSFGMOOBUFSGMOOIIB','version' => $this->_apiversion));
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 0, $result['count'], 'In line ' . __LINE__ );
     }
