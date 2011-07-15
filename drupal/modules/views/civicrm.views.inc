@@ -751,6 +751,28 @@ function civicrm_views_data() {
                                                                                'handler' => 'views_handler_sort',
                                                                                ),
                                                                );
+    //FULL STREET ADDRESS SUPPLEMENTAL 1
+    $data['civicrm_address']['supplemental_address_2'] = array(
+                                                               'title' => t('2nd Supplemental Street Address'),
+                                                               'help' => t('2nd Supplemental Street Address such as Apartment or Suite Number or Department'),
+                                                               'field' => array(
+                                                                                'handler' => 'views_handler_field',
+                                                                                'click sortable' => TRUE,
+                                                                                ),
+
+                                                               'argument' => array(
+                                                                                   'handler' => 'views_handler_argument',
+                                                                                   ),
+
+                                                               'filter' => array(
+                                                                                 'handler' => 'views_handler_filter_string',
+                                                                                 'allow empty' => TRUE,
+                                                                                 ),
+
+                                                               'sort' => array(
+                                                                               'handler' => 'views_handler_sort',
+                                                                               ),
+                                                               );
 
     //CITY OR SUBURB THE ADDRESS IS AT
     $data['civicrm_address']['city'] = array(
