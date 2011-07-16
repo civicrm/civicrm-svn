@@ -572,30 +572,8 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
                 $entryFound = true;
             } 
             
-            // handle state province
-            if ( array_key_exists('civicrm_address_state_province_id', $row) ) {
-                if ( $value = $row['civicrm_address_state_province_id'] ) {
-                    $rows[$rowNum]['civicrm_address_state_province_id'] = 
-                        CRM_Core_PseudoConstant::stateProvinceAbbreviation( $value, false );
-                }
-                $entryFound = true;
-            }
-            
-            // handle country
-            if ( array_key_exists('civicrm_address_country_id', $row) ) {
-                if ( $value = $row['civicrm_address_country_id'] ) {
-                    $rows[$rowNum]['civicrm_address_country_id'] = 
-                        CRM_Core_PseudoConstant::country( $value, false );
-                }
-                $entryFound = true;
-            }
-            if ( array_key_exists('civicrm_address_county_id', $row) ) {
-                if ( $value = $row['civicrm_address_county_id'] ) {
-                    $rows[$rowNum]['civicrm_address_county_id'] = 
-                        CRM_Core_PseudoConstant::county( $value, false );
-                }
-                $entryFound = true;
-            }
+            $entryFound =  $this->alterDisplayAddressFields($row,$rows,$rowNum,'pledge/summary','List all pledge(s) for this ')?true:$entryFound;
+ 
             // skip looking further in rows, if first row itself doesn't 
             // have the column we need
             if ( !$entryFound ) {
