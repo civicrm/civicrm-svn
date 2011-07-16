@@ -576,13 +576,13 @@ class CRM_Report_Form extends CRM_Core_Form {
                         if ( isset($table['grouping']) ) { 
                             $tableName = $table['grouping'];
                         }
-                        $colGroups[$tableName]['fields'][$fieldName] = $field['title'];
+                        $colGroups[$tableName]['fields'][$fieldName] = CRM_Utils_Array::value('title',$field);
 
                         if ( isset($table['group_title']) ) { 
                             $colGroups[$tableName]['group_title'] = $table['group_title'];
                         }
 
-                        $options[$fieldName] = $field['title'];
+                        $options[$fieldName] = CRM_Utils_Array::value('title',$field);
                     }
                 } 
             }
@@ -1414,6 +1414,12 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('fields', $table) ) {
                 foreach ( $table['fields'] as $fieldName => $field ) {
+                    if ( $tableName == 'civicrm_address' ) {
+                        $this->_addressField = true;
+                    }
+                    if ( $tableName == 'civicrm_email' ) {
+                        $this->_emailField = true;
+                    }
                     if ( CRM_Utils_Array::value( 'required', $field ) ||
                          CRM_Utils_Array::value( $fieldName, $this->_params['fields'] ) ) {
 
@@ -1457,7 +1463,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                             }   
                         } else {
                             $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
-                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
+                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = CRM_Utils_Array::value('title',$field);
                             $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
                         }
                     }
@@ -1468,6 +1474,12 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
             if ( array_key_exists('group_bys', $table) ) {
                 foreach ( $table['group_bys'] as $fieldName => $field ) {
 
+                    if ( $tableName == 'civicrm_address' ) {
+                        $this->_addressField = true;
+                    }
+                    if ( $tableName == 'civicrm_email' ) {
+                        $this->_emailField = true;
+                    }
                     // 1. In many cases we want select clause to be built in slightly different way 
                     //    for a particular field of a particular type.
                     // 2. This method when used should receive params by reference and modify $this->_columnHeaders
@@ -2533,7 +2545,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
        $addressFields = array('civicrm_address' =>
                   array( 'dao'      => 'CRM_Core_DAO_Address',
                          'fields'   =>
-                         array( 'street_address'    => null,
+                         array( 'street_address'    => array('title' => ts( 'Street Address' ),),
                           			'street_number'     => array( 'name'  => 'street_number',
                                                                               'title' => ts( 'Street Number' ),
                                                                               'type'  => 1 ),
@@ -2543,8 +2555,8 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                                'street_unit'       => array( 'name'  => 'street_unit',
                                                                               'title' => ts( 'Street Unit' ),
                                                                               'type'  => 1 ),'street_address'    => null,
-                                'city'              => null,
-                                'postal_code'       => null,
+                                'city'              => array('title' => ts( 'City' ),),
+                                'postal_code'       => array('title' => ts( 'Postal Code' ),),
                                 'county_id'  =>
                                 array( 'title'      => ts( 'County' ),  
                                        'default'    => false ),
@@ -2666,6 +2678,20 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
             }
             
             return $entryFound;
+    }
+    /*
+     * Add Address into From Table if required
+     */
+    
+    function addAddressFromClause(){
+       // include address field if address column is to be included
+        if ( $this->_addressField ) {  
+            $this->_from .= "
+                 LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} 
+                           ON ({$this->_aliases['civicrm_contact']}.id = 
+                               {$this->_aliases['civicrm_address']}.contact_id) AND
+                               {$this->_aliases['civicrm_address']}.is_primary = 1\n";
+        }
     }
     
 }
