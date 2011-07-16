@@ -250,7 +250,7 @@ function civicrm_api3_create_success( $values = 1,$params=array(), $entity = nul
         if(is_object ($dao)){
             $allFields = array_keys($dao->fields());
             $paramFields = array_keys($params);
-            $undefined = array_diff ($paramFields, $allFields,array_keys($_COOKIE),array ('action','entity','debug','version','check_permissions','IDS_request_uri','IDS_user_agent','return','sequential'));
+            $undefined = array_diff ($paramFields, $allFields,array_keys($_COOKIE),array ('action','entity','debug','version','check_permissions','IDS_request_uri','IDS_user_agent','return','sequential,rowCount'));
             if ($undefined) 
                 $result['undefined_fields'] = array_merge ($undefined);
         }
@@ -382,12 +382,17 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
          
     }
     
-    $offset = CRM_Utils_Array::value('option.offset', $params,0);
-    $offset = CRM_Utils_Array::value('offset', $params,  $offset);
+    $offset = CRM_Utils_Array::value('option.offset', $params, 0);
+    $offset = CRM_Utils_Array::value('option_offset', $params,$offset ); // dear PHP thought it would be a good idea to transform a.b into a_b in the get/post
+//XAV->eileen do you want it?     $offset = CRM_Utils_Array::value('offset', $params,  $offset);
     $rowCount = CRM_Utils_Array::value('option.limit', $params,25);
+    $rowCount = CRM_Utils_Array::value('option_limit', $params,$rowCount);
     $dao->limit( (int)$offset, (int)$rowCount );
     if(CRM_Utils_Array::value('option.sort', $params)){
        $dao->orderBy( $params['option.sort'] );
+    }
+    if(CRM_Utils_Array::value('option_sort', $params)){
+       $dao->orderBy( $params['option_sort'] );
     }
     
     if (!$fields) 
