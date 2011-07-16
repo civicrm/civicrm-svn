@@ -153,7 +153,7 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                                         'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                         'options'      => array( 0 => 'First by Contributor', 
                                                                  1 => 'Second or Later by Contributor') ), ), ),
-                   ) + $this->addAddressFields();
+                   ) + $this->addAddressFields(false);
 
         $this->_tagFilter = true;
         parent::__construct( );
@@ -327,8 +327,7 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                 }
             }
             
-            $entryFound =  $this->alterDisplayAddressFields($row,$rows,$rowNum,'contribute/detail','List all contribution(s) for this ')?true:$entryFound;
- 
+
 
             // convert display name to links
             if ( array_key_exists('civicrm_contact_sort_name', $row) && 
@@ -356,7 +355,8 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                     ts("View Details of this Contribution.");
                 $entryFound = true;
             }
-            
+            $entryFound =  $this->alterDisplayAddressFields($row,$rows,$rowNum,'contribute/detail','List all contribution(s) for this ')?true:$entryFound;
+ 
             // skip looking further in rows, if first row itself doesn't 
             // have the column we need
             if ( !$entryFound ) {

@@ -1672,6 +1672,19 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
 
     function groupBy( ) {
         $this->_groupBy = "";
+        if ( CRM_Utils_Array::value( 'group_bys', $this->_params ) &&
+             is_array($this->_params['group_bys']) &&
+             !empty($this->_params['group_bys']) ) {
+            foreach ( $this->_columns as $tableName => $table ) {
+                if ( array_key_exists('group_bys', $table) ) {
+                    foreach ( $table['group_bys'] as $fieldName => $field ) {
+								if ( CRM_Utils_Array::value( $fieldName, $this->_params['group_bys'] ) ) {
+                                    $this->_groupBy[] = $field['dbAlias'];
+								}
+                    }
+                }
+            }
+        } 
     }
 
     function orderBy( ) {
@@ -2511,14 +2524,13 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
 
     /*
      * function for adding address fields to construct function in reports
-     * 
+     * @param bool $groupBy Add GroupBy? Not appropriate for detail report
+     * @param bool $orderBy Add GroupBy? Not appropriate for detail report
      * @return array address fields for construct clause
      */
-    function addAddressFields(){
-    
+    function addAddressFields($groupBy =1, $orderBy = FALSE){     
       
-      
-               return array('civicrm_address' =>
+       $addressFields = array('civicrm_address' =>
                   array( 'dao'      => 'CRM_Core_DAO_Address',
                          'fields'   =>
                          array( 'street_address'    => null,
@@ -2543,17 +2555,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                                        'default'    => true ), 
  
                                 ),
-                         'group_bys' =>
-                          array( 'street_address'    => null,
-                                 'city'              => null,
-                                 'postal_code'       => null,
-                                 'state_province_id' => 
-                                 array( 'title'   => ts( 'State/Province' ), ),
-                                 'country_id'        => 
-                                 array( 'title'   => ts( 'Country' ), ),
-                                 'county_id'        => 
-                                 array( 'title'      => ts( 'County' ), ),
-                                 ),
+
                          'filters'   =>   array( 
                          					'street_number'   => array( 'title'   => ts( 'Street Number' ),
                                                                               'type'    => 1,
@@ -2567,6 +2569,12 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                                   'city'            => array( 'title'   => ts( 'City' ),
                                                                               'operator' => 'like',
                                                                               'name'    => 'city' ),
+                                  'county_id' =>  array( 'name'  => 'county_id',
+                                                                               'title' => ts( 'County' ), 
+                                                                                 'operatorType' => 
+                                                                                 CRM_Report_Form::OP_MULTISELECT,
+                                                                                 'options'       => 
+                                                                                 CRM_Core_PseudoConstant::county( ) ) ,
                                   'state_province_id' =>  array( 'name'  => 'state_province_id',
                                                                                  'title' => ts( 'State/Province' ), 
                                                                                  'operatorType' => 
@@ -2579,12 +2587,31 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                                                                                  CRM_Report_Form::OP_MULTISELECT,
                                                                                  'options'       => 
                                                                                  CRM_Core_PseudoConstant::country( ) ) ),
-                                  'order_bys' =>   array( 'street_name'       => array( 'title'   => ts( 'Street Name' ) ),
-                                                  'street_number'     => array( 'title'   => 'Odd / Even Street Number' ) ),
                           
                           				'grouping'  => 'location-fields',
                          ),
+                         
     );
+      if($orderBy){
+        $addressFields['civicrm_address']['order_bys'] =
+                         array( 'street_name'       => array( 'title'   => ts( 'Street Name' ) ),
+                                'street_number'     => array( 'title'   => 'Odd / Even Street Number' ) 
+                               );
+      }
+      if ($groupBy){
+        $addressFields['civicrm_address']['group_bys'] =
+                            array( 'street_address'    => null,
+                                 'city'              => null,
+                                 'postal_code'       => null,
+                                 'state_province_id' => 
+                                 array( 'title'   => ts( 'State/Province' ), ),
+                                 'country_id'        => 
+                                 array( 'title'   => ts( 'Country' ), ),
+                                 'county_id'        => 
+                                 array( 'title'      => ts( 'County' ), ),
+                                 );
+      }
+    return $addressFields;
     }
     /*
      * Do AlterDisplay processing on Address Fields

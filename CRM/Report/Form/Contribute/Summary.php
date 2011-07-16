@@ -502,8 +502,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                 $entryFound = true;
             }
 
-            $entryFound =  $this->alterDisplayAddressFields($row,$rows,$rowNum,'contribute/detail','List all contribution(s) for this ')?true:$entryFound;
-            
+  
             // convert display name to links
             if ( array_key_exists('civicrm_contact_sort_name', $row) && 
                  array_key_exists('civicrm_contact_id', $row) ) {
@@ -515,6 +514,8 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                     ts("Lists detailed contribution(s) for this record.");
                 $entryFound = true;
             }
+            $entryFound =  $this->alterDisplayAddressFields($row,$rows,$rowNum,'contribute/detail','List all contribution(s) for this ')?true:$entryFound;
+          
 
             // skip looking further in rows, if first row itself doesn't 
             // have the column we need
