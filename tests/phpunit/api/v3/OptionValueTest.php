@@ -45,6 +45,45 @@ class api_v3_OptionValueTest extends CiviUnitTestCase
  
      }
 
+    
+        /**
+     *  Test offset param
+     */
+     function testGetOptionValueOffSet()
+     
+     {
+
+        $result = civicrm_api('option_value','getcount',array('option_group_id'=> 1,
+                                                         'value' => '1', 
+                                                         'version' => $this->_apiversion,
+                                                          ));
+       $result2 =  civicrm_api('option_value','getcount',array('option_group_id'=> 1,
+                                                         'value' => '1', 
+                                                         'version' => $this->_apiversion,
+                                                          'option.offset' => 1 ));                                                
+      $this->assertGreaterThan($result2 , $result );
+     }
+     
+        /**
+     *  Test offset param
+     */
+     function testGetValueOptionValueSort()
+     {
+       $description = "demonstrates use of Sort param (available in many api functions). Also, getsingle";
+       $subfile = 'SortOption';
+        $result = civicrm_api('option_value','getsingle',array('option_group_id'=> 1,
+                                                        'version' => $this->_apiversion,
+                                                         'option.sort' => 'label ASC',
+                                                         'option.limit' => 1
+                                                          ));
+     $params = array(																		'option_group_id'=> 1,
+                                                          'version' => $this->_apiversion,
+                                                         'option.sort' => 'label DESC',
+                                                         'option.limit' => 1 );
+      $result2 =  civicrm_api('option_value','getsingle',$params);   
+      $this->documentMe($params,$result2 ,__FUNCTION__,__FILE__,$description,$subfile);                                             
+      $this->assertGreaterThan($result['label'] , $result2['label'] );
+     }
     public function testGetOptionGroup () {
         $params = array('option_group_id'=> 1, 'version' => $this->_apiversion);
         $result = civicrm_api('option_value','get',$params);
