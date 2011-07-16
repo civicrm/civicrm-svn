@@ -84,6 +84,30 @@ class api_v3_OptionValueTest extends CiviUnitTestCase
       $this->documentMe($params,$result2 ,__FUNCTION__,__FILE__,$description,$subfile);                                             
       $this->assertGreaterThan($result['label'] , $result2['label'] );
      }
+
+   /**
+    * Try to emulate a pagination: fetch the first page of 10 options, then fetch the second page with an offset of 9 (instead of 10) and check the start of the second page is the end of the 1st one.
+    */
+
+     function   testGetValueOptionPagination() {
+       $pageSize=10;
+        $page1 = civicrm_api('option_value','get',array('option.limit' => $pageSize,
+                                                         'version' => $this->_apiversion
+                                                          ));
+       $page2 =  civicrm_api('option_value','get',array('option_limit'=> $pageSize,
+                                                        'option.offset' => $pageSize -1, // normally should be pageSize, obviously
+                                                         'version' => $this->_apiversion
+                                                         ));                                                
+       $this->assertEquals($pageSize, $page1['count'], "Check only 10 retrieved in the 1st page " . __LINE__ );
+       $this->assertEquals($pageSize, $page2['count'], "Check only 10 retrieved in the 2nd page " . __LINE__ );
+       
+       $last = array_pop ($page1['values']);
+       $first = array_shift ($page2['values']);
+
+      $this->assertEquals($first , $last, "the first item of the second page should be the last of the 1st" . __LINE__);
+
+     }
+
     public function testGetOptionGroup () {
         $params = array('option_group_id'=> 1, 'version' => $this->_apiversion);
         $result = civicrm_api('option_value','get',$params);
