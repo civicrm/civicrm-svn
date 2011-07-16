@@ -95,7 +95,7 @@ class api_v3_OptionValueTest extends CiviUnitTestCase
                                                          'version' => $this->_apiversion
                                                           ));
        $page2 =  civicrm_api('option_value','get',array('option_limit'=> $pageSize,
-                                                        'option.offset' => $pageSize -1, // normally should be pageSize, obviously
+                                                        'option.offset' => $pageSize -1, // if you use it for pagination, option.offset=pageSize*pageNumber
                                                          'version' => $this->_apiversion
                                                          ));                                                
        $this->assertEquals($pageSize, $page1['count'], "Check only 10 retrieved in the 1st page " . __LINE__ );
@@ -104,7 +104,7 @@ class api_v3_OptionValueTest extends CiviUnitTestCase
        $last = array_pop ($page1['values']);
        $first = array_shift ($page2['values']);
 
-      $this->assertEquals($first , $last, "the first item of the second page should be the last of the 1st" . __LINE__);
+      $this->assertEquals($first , $last, "the first item of the second page should be the last of the 1st page" . __LINE__);
 
      }
 
