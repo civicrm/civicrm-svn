@@ -29,6 +29,21 @@ class api_v3_OptionValueTest extends CiviUnitTestCase
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['id'], 'In line ' . __LINE__ );
     }
+    
+    
+        /**
+     *  Test limit param
+     */
+     function testGetOptionValueLimit()
+     {
+         $params = array( 'version'			=>  $this->_apiversion,);
+         $result =& civicrm_api('option_value','getcount',$params);        
+         $this->assertGreaterThan(1, $result, "Check more than one exists In line " . __LINE__ );
+         $params['option.limit'] = 1;
+         $result =& civicrm_api('option_value','getcount',$params);    
+         $this->assertEquals(1, $result, "Check only 1 retrieved " . __LINE__ );
+ 
+     }
 
     public function testGetOptionGroup () {
         $params = array('option_group_id'=> 1, 'version' => $this->_apiversion);
@@ -41,8 +56,8 @@ class api_v3_OptionValueTest extends CiviUnitTestCase
      * test that using option_group_name returns more than 1 & less than all
      */
     public function testGetOptionGroupByName () {
-        $activityTypesParams = array('option_group_name'=> 'activity_type', 'version' => $this->_apiversion);
-        $params= array( 'version' => $this->_apiversion);
+        $activityTypesParams = array('option_group_name'=> 'activity_type', 'version' => $this->_apiversion, 'option.limit' => 100);
+        $params= array( 'version' => $this->_apiversion,  'option.limit' => 100);
         $activityTypes = civicrm_api('option_value','get',$activityTypesParams);
         $result = civicrm_api('option_value','get',$params);
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
