@@ -1719,7 +1719,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                         // For custom fields referenced in $this->_customGroupExtends
                         $fields = $table['fields'];
                     }
-                    if ( is_array( $fields ) ) {
+                    if ( !empty($fields) && is_array( $fields ) ) {
                         foreach ( $fields as $fieldName => $field ) {
                             if ( $fieldName == $orderBy['column'] ) {
                                 $orderByField = $field;
