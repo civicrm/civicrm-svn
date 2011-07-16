@@ -2306,6 +2306,9 @@ SELECT  $mailing.id as mailing_id
      */
     public function getMailingContent( &$report, &$form ) 
     {
+        $htmlHeader = $textHeader = null;
+        $htmlFooter = $textFooter = null;
+
         require_once 'CRM/Mailing/BAO/Component.php';
         if ($report['mailing']['header_id']) { 
             $header = new CRM_Mailing_BAO_Component();
