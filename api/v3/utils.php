@@ -381,6 +381,15 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
       $dao->id = $params[$entity. "_id"];
          
     }
+    
+    $offset = CRM_Utils_Array::value('option.offset', $params,0);
+    $offset = CRM_Utils_Array::value('offset', $params,  $offset);
+    $rowCount = CRM_Utils_Array::value('option.limit', $params,25);
+    $dao->limit( (int)$offset, (int)$rowCount );
+    if(CRM_Utils_Array::value('option.sort', $params)){
+       $dao->orderBy( $params['option.sort'] );
+    }
+    
     if (!$fields) 
          return;
     foreach ($fields as $field) {
