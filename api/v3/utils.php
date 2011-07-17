@@ -395,6 +395,20 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
        $dao->orderBy( $params['option_sort'] );
     }
     
+    //accept filters like filter.activity_date_time_high
+    if(strstr(implode(',', array_keys($params)), 'filter')){
+      foreach ($params as $paramkey => $paramvalue) {
+        if(strstr($paramkey, 'filter') && strstr($paramkey, 'high')){
+          $fieldName = substr($paramkey , 7,-5);
+          $dao->whereAdd( "($fieldName <= $paramvalue )" );        
+        }
+        if(strstr($paramkey, 'filter') && strstr($paramkey, 'low')){
+          $fieldName = substr($paramkey , 7,-4);
+          $dao->whereAdd( "($fieldName >= $paramvalue )" );        
+        }
+      }
+    }  
+
     if (!$fields) 
          return;
     foreach ($fields as $field) {

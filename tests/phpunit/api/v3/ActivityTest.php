@@ -664,7 +664,57 @@ class api_v3_ActivityTest extends CiviUnitTestCase
       civicrm_api('Activity','Delete',array('version' => 3, 'id' => $result['id']));
       
     }
-
+    /*
+     * test that get functioning does filtering
+     */
+    function testGetFilterMaxDate(){
+      $params = array(
+                        'source_contact_id'   => 17,
+                        'subject'             => 'Make-it-Happen Meeting',
+                        'activity_date_time'  => '20110101',
+                        'duration'            => 120,
+                        'location'            => 'Pensulvania',
+                        'details'             => 'a test activity',
+                        'status_id'           => 1,
+                        'activity_name'       => 'Test activity type',
+                        'version'             => $this->_apiversion,
+                        'priority_id'         => 1,
+                        );
+      $activityOne = civicrm_api('Activity','Create', $params    );     
+      $params['activity_date_time'] = 20120216;
+      $activityTwo = civicrm_api('Activity','Create', $params    );     
+      $result = civicrm_api('Activity','Get', array(
+      																				'version' => 3,
+      																				));
+      $description = "demonstrates _low filter (at time of writing doesn't work if contact_id is set";
+      $subfile = "DateTimeLow";
+      $this->assertEquals(2, $result['count']);
+      $params =  array(
+      																				'version' => 3,
+                                              'filter.activity_date_time_low' => '20120101000000',
+                                              'sequential' => 1,
+      																				);
+      $result = civicrm_api('Activity','Get',$params);
+      $this->documentMe($params, $result, __FUNCTION__,__FILE__,$description,$subfile);
+      $this->assertEquals(1, $result['count'], 'in line ' . __LINE__);
+      $description = "demonstrates _high filter (at time of writing doesn't work if contact_id is set";
+      $subfile = "DateTimeHigh";
+      $this->assertEquals( '2012-02-16 00:00:00',$result['values'][0]['activity_date_time'],'in line ' . __LINE__); 
+      $params =  array(
+                                              'source_contact_id' => 17,
+      																				'version' => 3,
+                                              'filter.activity_date_time_high' => '20120101000000',
+                                              'sequential' => 1,
+      																				);
+      $result = civicrm_api('Activity','Get',$params);
+      $this->documentMe($params, $result, __FUNCTION__,__FILE__,$description,$subfile);
+  
+      $this->assertEquals(1, $result['count']);
+      $this->assertEquals('2011-01-01 00:00:00',$result['values'][0]['activity_date_time'], 'in line ' . __LINE__); 
+  
+      civicrm_api('Activity','Delete',array('version' => 3, 'id' => $activityOne['id']));
+      civicrm_api('Activity','Delete',array('version' => 3, 'id' => $activityTwo['id']));      
+    }
     /**
      *  Test civicrm_activity_get() with a good activity ID which
      *  has associated custom data
