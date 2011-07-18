@@ -36,7 +36,7 @@
 
 require_once 'CRM/Report/Form.php';
 
-class CRM_Report_Form_Pledge_Stats extends CRM_Report_Form {
+class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
 
     protected $_summary = null;
     protected $_totalPaid = false;
@@ -347,7 +347,7 @@ class CRM_Report_Form_Pledge_Stats extends CRM_Report_Form {
                 $entryFound = true;
             } 
             
-            $entryFound =  $this->alterDisplayAddressFields($row,$rows,$rowNum,'pledge/stats','List all pledge(s) for this ')?true:$entryFound;
+            $entryFound =  $this->alterDisplayAddressFields($row,$rows,$rowNum,'pledge/summary','List all pledge(s) for this ')?true:$entryFound;
  
             // skip looking further in rows, if first row itself doesn't 
             // have the column we need
