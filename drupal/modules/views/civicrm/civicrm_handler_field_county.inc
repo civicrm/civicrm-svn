@@ -31,10 +31,11 @@
  *
  */
 
-class civicrm_handler_field_county extends views_handler_field {
+class civicrm_handler_field_county extends civicrm_handler_field_address {
     static $_counties;
 
     function construct( ) {
+        parent::construct();
         if ( ! self::$_counties ) {
             if ( ! civicrm_initialize( ) ) {
                 return;

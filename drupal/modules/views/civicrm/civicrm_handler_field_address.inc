@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                               |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -24,70 +24,80 @@
 */
 
 /**
- * Field handler for phone field
+ * Generic field handler for address and location fields
  *
  * @ingroup civicrm_field_handlers
  */
-
-class civicrm_handler_field_phone extends civicrm_handler_field_location {
-    static $_phoneType;
+class civicrm_handler_field_address extends civicrm_handler_field_location {
+    static $_locationOps;
 
     function construct( ) {
         parent::construct();
-        if ( ! self::$_phoneType ) {
+        if ( ! self::$_locationOps ) {
             if ( ! civicrm_initialize( ) ) {
                 return;
             }
-            require_once 'CRM/Core/PseudoConstant.php';
-            self::$_phoneType = CRM_Core_PseudoConstant::phoneType( );
+            self::$_locationOps = array(0=>'AND',1=>'OR');
         }
+    }
+    
+    /**
+     * Get this field's label.
+     */
+    function label() {
+      if (!isset($this->options['label'])) {
+        return $this->ui_name();
+      }
+      return $this->options['label'];
     }
     
     function option_definition() {
         $options = parent::option_definition();
-        $options['phone_type'] = array('default' => 0);
+        $label = !empty($this->definition['label']) ? $this->definition['label'] : $this->label();
+        $options['label'] = array('default' => $label, 'translatable' => TRUE);
+        $options['is_billing'] = array('default' => '');
         return $options;
     }
-    
+
     function options_form(&$form, &$form_state) {
         parent::options_form($form, $form_state);
-        $phoneOptions = array( 0=>'Any' );
-        foreach(self::$_phoneType as $id => $type){
-            $phoneOptions[$id] = $type;
-        }
-        $form['phone_type'] = array(
-                                    '#type' => 'radios',
-                                    '#title' => 'Phone type for this field',
-                                    '#options' => $phoneOptions,
-                                    '#description' => t('Phone type to be displayed for this field'),
-                                    '#default_value' => $this->options['phone_type'],
+        $form['is_billing'] = array(
+                                    '#type' => 'checkbox',
+                                    '#title' => 'Show only Billing Address record?',
+                                    '#options' => array(0=>'No',1=>'Yes'),
+                                    '#description' => t('Check above box if you want only the <strong>Billing Address</strong> record displayed.'),
+                                    '#default_value' =>  $this->options['is_billing'],
                                     '#fieldset' => 'location_choices',
                                     );
+
     }
     
     function ensure_my_table() {
         if (!isset($this->table_alias)) {
             if (!method_exists($this->query, 'ensure_table')) { vpr_trace(); exit; }
-            if($this->options['phone_type'] > 0){
-                $join = $this->get_join();
-                $extra = parent::location_extras();
+            $extra = array();
+            $extra = parent::location_extras();
+            if(isset($this->options['is_billing']) && $this->options['is_billing']){
                 $extra[] = array(
-                                'value' => $this->options['phone_type'],
+                                'value' => $this->options['is_billing'],
                                 'numeric' => TRUE,
-                                'field' => 'phone_type_id',
+                                'field' => 'is_billing',
                                 'operator' => '=',
                                 );
+            }
+            if(isset($extra)) {
+                $join = $this->get_join();
                 $join->extra = $extra;
                 $join->extra_type = self::$_locationOps[$this->options['location_op']];
-                $this->table_alias = $this->query->add_table($this->table, $this->relationship,  $join);
-            } 
-            else {
-                $join = $this->get_join();
-                $join->extra = parent::location_extras();
-                $join->extra_type = self::$_locationOps[$this->options['location_op']];
-                $this->table_alias = $this->query->add_table($this->table, $this->relationship,  $join);
+                $this->table_alias = $this->query->add_table($this->table, $this->relationship,  $join);                
             }
+            else {
+                $this->table_alias = $this->query->ensure_table($this->table, $this->relationship); 
+            }
+            
         }
         return $this->table_alias;
     }
+
 }
+?>

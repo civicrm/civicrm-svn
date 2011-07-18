@@ -711,7 +711,7 @@ function civicrm_views_data() {
                                                        'title' => t('Full Street Address'),
                                                        'help' => t('Full Street Address without Country, State or Postcode'),
                                                        'field' => array(
-                                                                        'handler' => 'views_handler_field',
+                                                                        'handler' => 'civicrm_handler_field_address',
                                                                         'click sortable' => TRUE,
                                                                         ),
 
@@ -734,7 +734,7 @@ function civicrm_views_data() {
                                                                'title' => t('Supplemental Street Address'),
                                                                'help' => t('Supplemental Street Address such as Apartment or Suite Number or Department'),
                                                                'field' => array(
-                                                                                'handler' => 'views_handler_field',
+                                                                                'handler' => 'civicrm_handler_field_address',
                                                                                 'click sortable' => TRUE,
                                                                                 ),
 
@@ -756,7 +756,7 @@ function civicrm_views_data() {
                                                                'title' => t('2nd Supplemental Street Address'),
                                                                'help' => t('2nd Supplemental Street Address such as Apartment or Suite Number or Department'),
                                                                'field' => array(
-                                                                                'handler' => 'views_handler_field',
+                                                                                'handler' => 'civicrm_handler_field_address',
                                                                                 'click sortable' => TRUE,
                                                                                 ),
 
@@ -779,7 +779,7 @@ function civicrm_views_data() {
                                              'title' => t('City / Suburb'),
                                              'help' => t('The City or Suburb the address is at'),
                                              'field' => array(
-                                                              'handler' => 'views_handler_field',
+                                                              'handler' => 'civicrm_handler_field_address',
                                                               'click sortable' => TRUE,
                                                               ),
 
@@ -803,7 +803,7 @@ function civicrm_views_data() {
                                                        'real field' => 'state_province_id',
                                                        'help' => t('The State or Province of the Address'),
                                                        'field' => array(
-                                                                        'handler' => 'civicrm_handler_field_state',
+                                                                        'handler' => 'civicrm_handler_field_address',
                                                                         'click sortable' => TRUE,
                                                                         ),
 
@@ -826,7 +826,7 @@ function civicrm_views_data() {
                                                     'title' => t('ZIP / Postal Code'),
                                                     'help' => t('ZIP / Postal Code of the Address'),
                                                     'field' => array(
-                                                                     'handler' => 'views_handler_field',
+                                                                     'handler' => 'civicrm_handler_field_address',
                                                                      'click sortable' => TRUE,
                                                                      ),
 
@@ -849,7 +849,7 @@ function civicrm_views_data() {
                                                    'title' => t('Latitude'),
                                                    'help' => t('Latitude of the Address for mapping'),
                                                    'field' => array(
-                                                                    'handler' => 'views_handler_field',
+                                                                    'handler' => 'civicrm_handler_field_address',
                                                                     'click sortable' => TRUE,
                                                                     ),
 
@@ -872,7 +872,7 @@ function civicrm_views_data() {
                                                    'title' => t('Longitude'),
                                                    'help' => t('Longitude of the Address for mapping'),
                                                    'field' => array(
-                                                                    'handler' => 'views_handler_field',
+                                                                    'handler' => 'civicrm_handler_field_address',
                                                                     'click sortable' => TRUE,
                                                                     ),
 
@@ -943,7 +943,7 @@ function civicrm_views_data() {
                                              'title' => t('Address Name'),
                                              'help' => t('Be sure addres name is enabled in CiviCRM' ),
                                              'field' => array(
-                                                              'handler' => 'views_handler_field',
+                                                              'handler' => 'civicrm_handler_field_address',
                                                               'click sortable' => TRUE,
                                                               ),
 
@@ -6346,8 +6346,14 @@ function civicrm_views_handlers() {
                        'civicrm_handler_field_gender' => array(
                                                                'parent' => 'views_handler_field',
                                                                ),
+                       'civicrm_handler_field_location' => array(
+                                                               'parent' => 'views_handler_field',
+                                                               ),
+                       'civicrm_handler_field_address' => array(
+                                                              'parent' => 'civicrm_handler_field_location',
+                                                              ),
                        'civicrm_handler_field_phone' => array(
-                                                              'parent' => 'views_handler_field',
+                                                              'parent' => 'civicrm_handler_field_location',
                                                               ),
                        'civicrm_handler_field_phone_type' => array(
                                                                    'parent' => 'views_handler_field',
@@ -6356,16 +6362,16 @@ function civicrm_views_handlers() {
                                                                       'parent' => 'views_handler_field',
                                                                       ),
                        'civicrm_handler_field_state' => array(
-                                                              'parent' => 'views_handler_field',
+                                                              'parent' => 'civicrm_handler_field_location',
                                                               ),
                        'civicrm_handler_field_country' => array(
-                                                                'parent' => 'views_handler_field',
+                                                                'parent' => 'civicrm_handler_field_location',
                                                                 ),
                        'civicrm_handler_field_county' => array(
-                                                               'parent' => 'views_handler_field',
+                                                               'parent' => 'civicrm_handler_field_location',
                                                                ),
                        'civicrm_handler_field_email' => array(
-                                                              'parent' => 'views_handler_field',
+                                                              'parent' => 'civicrm_handler_field_location',
                                                               ),
                        'civicrm_handler_field_datetime' => array(
                                                                  'parent' => 'views_handler_field_date',
