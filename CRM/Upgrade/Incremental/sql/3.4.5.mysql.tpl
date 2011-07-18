@@ -34,9 +34,22 @@ ADD UNIQUE INDEX UI_entity_id_entity_table_tag_id( entity_table, entity_id, tag_
 
 -- CRM-8513
 
-SELECT @report_template_gid := MAX(id)     FROM civicrm_option_group WHERE name = 'report_template';
+SELECT @report_template_gid := MAX(id) FROM civicrm_option_group WHERE name = 'report_template';
+
+{if $multilingual}
+   {foreach from=$locales item=locale}
+      UPDATE civicrm_option_value SET label_{$locale} = 'Pledge Report (Detail)', description_{$locale} = 'Pledge Report' WHERE option_group_id = @report_template_gid AND value = 'pledge/summary';
+   {/foreach}
+{else}
+      UPDATE civicrm_option_value SET label = 'Pledge Report (Detail)', description = 'Pledge Report' WHERE option_group_id = @report_template_gid AND value = 'pledge/summary';
+{/if}
+
+UPDATE civicrm_option_value SET name = 'CRM_Report_Form_Pledge_Detail', value = 'pledge/detail' WHERE option_group_id = @report_template_gid AND value = 'pledge/summary';
+
+UPDATE civicrm_report_instance SET report_id = 'pledge/detail' WHERE report_id = 'pledge/summary';
+
 SELECT @weight              := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @report_template_gid;
 SELECT @pledgeCompId        := MAX(id)     FROM civicrm_component where name = 'CiviPledge';
 INSERT INTO civicrm_option_value
   (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, component_id) VALUES
-  (@report_template_gid, {localize}'Pledge Statistics Report'{/localize}, 'pledge/stats', 'CRM_Report_Form_Pledge_Stats', @weight := @weight + 1, {localize}'Pledge Statistics Report.'{/localize}, 1, @pledgeCompId);
+  (@report_template_gid, {localize}'Pledge Summary Report'{/localize}, 'pledge/summary', 'CRM_Report_Form_Pledge_Summary', @weight := @weight + 1, {localize}'Pledge Summary Report.'{/localize}, 1, @pledgeCompId);
