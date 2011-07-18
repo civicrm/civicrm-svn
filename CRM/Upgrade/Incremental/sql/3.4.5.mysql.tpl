@@ -31,3 +31,12 @@ DROP INDEX index_entity;
 
 ALTER TABLE civicrm_entity_tag 
 ADD UNIQUE INDEX UI_entity_id_entity_table_tag_id( entity_table, entity_id, tag_id );
+
+-- CRM-8513
+
+SELECT @report_template_gid := MAX(id)     FROM civicrm_option_group WHERE name = 'report_template';
+SELECT @weight              := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @report_template_gid;
+SELECT @pledgeCompId        := MAX(id)     FROM civicrm_component where name = 'CiviPledge';
+INSERT INTO civicrm_option_value
+  (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, component_id) VALUES
+  (@report_template_gid, {localize}'Pledge Statistics Report'{/localize}, 'pledge/stats', 'CRM_Report_Form_Pledge_Stats', @weight := @weight + 1, {localize}'Pledge Statistics Report.'{/localize}, 1, @pledgeCompId);
