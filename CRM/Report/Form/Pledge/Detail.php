@@ -40,8 +40,8 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
 
     protected $_summary = null;
     protected $_totalPaid = false;
-    protected $_customGroupExtends = array( 'Pledge' );
-    protected $_customGroupGroupBy = true;
+    protected $_customGroupExtends = array( 'Pledge', 'Individual' );
+
     
     function __construct( ) {
         $this->_columns = 
@@ -141,7 +141,7 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
                                        'group'   => true,
                                        'options' => CRM_Core_PseudoConstant::group( ) ) ), ),
                   
-                  ) + $this->addAddressFields();
+                  ) + $this->addAddressFields(false,true);
 
         $this->_tagFilter = true;
         parent::__construct( );
