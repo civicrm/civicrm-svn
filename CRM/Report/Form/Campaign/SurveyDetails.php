@@ -44,8 +44,8 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
     protected $_phoneField   = false;
     
     protected $_summary      = null;
-    
-    protected $_customGroupExtends = array( 'Contact', 'Individual', 'Household', 'Organization' );
+    protected $_customGroupGroupBy = true;   
+    protected $_customGroupExtends = array( 'Contact', 'Individual', 'Household', 'Organization', 'Activity' );
     
     private static $_surveyRespondentStatus;
 
