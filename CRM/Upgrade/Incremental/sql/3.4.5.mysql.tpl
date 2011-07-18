@@ -53,3 +53,19 @@ SELECT @pledgeCompId        := MAX(id)     FROM civicrm_component where name = '
 INSERT INTO civicrm_option_value
   (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, component_id) VALUES
   (@report_template_gid, {localize}'Pledge Summary Report'{/localize}, 'pledge/summary', 'CRM_Report_Form_Pledge_Summary', @weight := @weight + 1, {localize}'Pledge Summary Report.'{/localize}, 1, @pledgeCompId);
+
+-- CRM-8519
+UPDATE civicrm_payment_processor 
+SET `url_site` = 'https://sec.paymentexpress.com/pxpay/pxpay.aspx' 
+WHERE `url_site` = 'https://www.paymentexpress.com/pxpay/pxpay.aspx' 
+OR url_site = 'https://sec2.paymentexpress.com/pxpay/pxpay.aspx';
+
+UPDATE civicrm_payment_processor 
+SET `url_site` = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx' 
+WHERE `url_site` = 'https://www.paymentexpress.com/pxpay/pxaccess.aspx' 
+OR url_site = 'https://sec2.paymentexpress.com/pxpay/pxpay/pxaccess.aspx';
+
+UPDATE civicrm_payment_processor_type
+SET url_site_default = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx',
+    url_site_test_default = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx' 
+WHERE name = 'Payment_Express';
