@@ -2583,18 +2583,21 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                                                                               'name'    => 'city' ),
                                   'county_id' =>  array( 'name'  => 'county_id',
                                                                                'title' => ts( 'County' ), 
+                                                         'type'         => CRM_Utils_Type::T_INT,
                                                                                  'operatorType' => 
                                                                                  CRM_Report_Form::OP_MULTISELECT,
                                                                                  'options'       => 
                                                                                  CRM_Core_PseudoConstant::county( ) ) ,
                                   'state_province_id' =>  array( 'name'  => 'state_province_id',
                                                                                  'title' => ts( 'State/Province' ), 
+                                                                 'type'         => CRM_Utils_Type::T_INT,
                                                                                  'operatorType' => 
                                                                                  CRM_Report_Form::OP_MULTISELECT,
                                                                                  'options'       => 
                                                                                  CRM_Core_PseudoConstant::stateProvince()), 
                                    'country_id'        =>  array( 'name'         => 'country_id',
                                                                                  'title'        => ts( 'Country' ), 
+                                                                  'type'         => CRM_Utils_Type::T_INT,
                                                                                  'operatorType' => 
                                                                                  CRM_Report_Form::OP_MULTISELECT,
                                                                                  'options'       => 
