@@ -381,7 +381,7 @@ registration process.{/ts}</p>
 
 {if $customProfile}
 {foreach from=$customProfile.profile item=eachParticipant key=participantID}
-     <tr><th {$headerStyle}>{ts 1=$participantID+1}Participant Information - Participant %1{/ts} </th></tr>
+     <tr><th {$headerStyle}>{ts 1=$participantID+2}Participant Information - Participant %1{/ts} </th></tr>
      {foreach from=$eachParticipant item=eachProfile key=pid}
      <tr><th {$headerStyle}>{$customProfile.title.$pid}</th></tr>
      {foreach from=$eachProfile item=val key=field}
