@@ -80,7 +80,7 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
 
         if ( $this->_restore && !CRM_Core_Permission::check( 'access deleted contacts' ) ) {
             CRM_Core_Error::fatal( ts( 'You do not have permission to access this contact.' ) );
-        } else if ( $this->_skipUndelete && !CRM_Core_Permission::check( 'delete contacts' ) ) {
+        } else if ( !CRM_Core_Permission::check( 'delete contacts' ) ) {
             CRM_Core_Error::fatal( ts( 'You do not have permission to delete this contact.' ) );
         }
 

@@ -2545,7 +2545,7 @@ UNION
                  }
                  
                  // if still user does not have required permissions, check acl.
-                 if ( !$hasAllPermissions ) {
+                 if ( !$hasAllPermissions && $values['ref'] != 'delete-contact' ) {
                      if ( in_array( $values['ref'], $aclPermissionedTasks ) && 
                           $corePermission == CRM_Core_Permission::EDIT ) {
                          $hasAllPermissions = true; 
