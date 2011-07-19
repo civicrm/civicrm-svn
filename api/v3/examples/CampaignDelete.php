@@ -8,10 +8,7 @@
 function campaign_delete_example(){
 $params = array( 
   'version' => 3,
-  'title' => 'campaign title',
-  'activity_type_id' => '',
-  'max_number_of_contacts' => 12,
-  'instructions' => 'Call people, ask for money',
+  'id' => 2,
 );
 
   require_once 'api/api.php';
@@ -40,11 +37,14 @@ function campaign_delete_expectedresult(){
 
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* campaign_delete 
+* 
+* testDeleteCampaign and can be found in 
+* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3CampaignTest.php
+* 
 * You can see the outcome of the API tests at 
 * http://tests.dev.civicrm.org/trunk/results-api_v3
 * and review the wiki at
-* http://wiki.civicrm.org/confluence/display/CRMDOC40/CiviCRM+Public+APIs
+* http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */

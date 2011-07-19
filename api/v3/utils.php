@@ -1211,6 +1211,7 @@ function _civicrm_api3_validate_fields($entity, $action, &$params) {
   											  'event' => 1, 
   											  'contribution' => 1,
                           'activity' => 1,
+                          'campaign' => 1,
       );
   if(!array_key_exists(strtolower($entity), $testedEntities)){
     return;
