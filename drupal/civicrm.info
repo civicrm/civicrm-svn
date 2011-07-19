@@ -14,10 +14,8 @@ files[] = modules/views/civicrm.views_default.inc
 
 ; field handlers
 files[] = modules/views/civicrm/civicrm_handler_field.inc
-files[] = modules/views/civicrm/civicrm_handler_field_activity.inc
 files[] = modules/views/civicrm/civicrm_handler_field_activity_status.inc
 files[] = modules/views/civicrm/civicrm_handler_field_activity_type.inc
-files[] = modules/views/civicrm/civicrm_handler_field_activityType.inc
 files[] = modules/views/civicrm/civicrm_handler_field_contact_link.inc
 files[] = modules/views/civicrm/civicrm_handler_field_contribution_page.inc	
 files[] = modules/views/civicrm/civicrm_handler_field_contribution_status.inc
@@ -105,9 +103,6 @@ files[] = modules/views/civicrm/views_handler_argument_civicrm_month.inc
 files[] = modules/views/civicrm/views_handler_argument_civicrm_week.inc
 files[] = modules/views/civicrm/views_handler_argument_civicrm_year.inc
 files[] = modules/views/civicrm/views_handler_argument_civicrm_year_month.inc
-files[] = modules/views/civicrm/views_handler_field_civicrm_country.inc
-files[] = modules/views/civicrm/views_handler_field_civicrm_county.inc
-files[] = modules/views/civicrm/views_handler_field_civicrm_state.inc
 
 ; relationship handlers
 files[] = modules/views/civicrm/civicrm_handler_relationship.inc
