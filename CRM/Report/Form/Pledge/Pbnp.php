@@ -270,6 +270,7 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
             //handle the Contribution Type Ids
             if ( array_key_exists('civicrm_pledge_contribution_type_id', $row) ) {
                 if ( $value = $row['civicrm_pledge_contribution_type_id'] ) {
+                    require_once 'CRM/Contribute/PseudoConstant.php';
                     $rows[$rowNum]['civicrm_pledge_contribution_type_id'] = 
                         CRM_Contribute_PseudoConstant::contributionType( $value, false );
                 }
@@ -279,8 +280,9 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
             //handle the Status Ids
             if ( array_key_exists( 'civicrm_pledge_status_id', $row ) ) {
                 if ( $value = $row['civicrm_pledge_status_id'] ) {
+                    require_once 'CRM/Contribute/PseudoConstant.php';
                     $rows[$rowNum]['civicrm_pledge_status_id'] = 
-                        CRM_Core_OptionGroup::getLabel( 'contribution_status', $value );
+                        CRM_Contribute_PseudoConstant::contributionStatus($value);
                 }
                 $entryFound = true;
             } 
