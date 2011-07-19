@@ -261,16 +261,29 @@ class api_v3_MembershipTest extends CiviUnitTestCase
      * Memberships expected.
      */
     function testGetOnlyActive()
-    {
+    {   
+        $decription = "Demonstrates use of 'filter' active_only' param";
         $this->_membershipID = $this->contactMembershipCreate( $this->_params );
+        $subfile = 'filterIsCurrent';
         $params = array ( 'contact_id'  => $this->_contactID,
                           'active_only' => 1,
                           'version'    => $this->_apiversion);
 
         $membership =& civicrm_api('membership','get', $params );
-        $result = $membership['values'][$this->_membershipID];
+        $result = $membership['values'][$this->_membershipID];       
         $this->assertEquals($membership['values'][$this->_membershipID]['status_id'], $this->_membershipStatusID, "In line " . __LINE__);
         $this->assertEquals($membership['values'][$this->_membershipID]['contact_id'], $this->_contactID, "In line " . __LINE__);
+        $params = array ( 'contact_id'  => $this->_contactID,
+                          'filters' => array('is_current' => 1,),
+                          'version'    => $this->_apiversion);
+    
+        $membership =& civicrm_api('membership','get', $params );
+        $this->documentMe($params, $membership, __FUNCTION__, __FILE__, $description,$subfile);
+        $result = $membership['values'][$this->_membershipID];       
+        $this->assertEquals($membership['values'][$this->_membershipID]['status_id'], $this->_membershipStatusID, "In line " . __LINE__);
+        $this->assertEquals($membership['values'][$this->_membershipID]['contact_id'], $this->_contactID, "In line " . __LINE__);
+        
+        
         $result = civicrm_api('Membership','Delete',array('id'=>   $this->_membershipID ,
          																						'version'  => $this->_apiversion,));  
     }
