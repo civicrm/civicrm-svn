@@ -147,14 +147,14 @@ class WebTest_Contact_ContactTagTest extends CiviSeleniumTestCase {
       //add Tagset to contact
       $this->click("//div[@id='Tag']/div[3]/div[2]/ul/li[1]/input");
       $this->typeKeys("//div[@id='Tag']/div[3]/div[2]/ul/li[1]/input",'tagset1');
-      $this->waitForElementPresent("//div[@id='Tag']/div[3]/div[2]/div/ul/li");
-      $this->click("//div[@id='Tag']/div[3]/div[2]/div/ul/li");
+      $this->waitForElementPresent("//div[@id='Tag']/div[3]/div[2]/ul/li");
+      $this->click("//div[@id='Tag']/div[3]/div[2]/ul/li");
       
-      
+      $this->waitForElementPresent("//div[@id='Tag']/div[3]/div[2]/ul/li[1]/span");
       $this->click("//div[@id='Tag']/div[3]/div[2]/ul/li[2]/input");
       $this->typeKeys("//div[@id='Tag']/div[3]/div[2]/ul/li[2]/input",'tagset2');
-      $this->waitForElementPresent("//div[@id='Tag']/div[3]/div[2]/div/ul/li");
-      $this->click("//div[@id='Tag']/div[3]/div[2]/div/ul/li");
+      $this->waitForElementPresent("//div[@id='Tag']/div[3]/div[2]/ul/li");
+      $this->click("//div[@id='Tag']/div[3]/div[2]/ul/li");
       
       // Type search name in autocomplete.
       $this->typeKeys("css=input#sort_name_navigation", $firstName);
