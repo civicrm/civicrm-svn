@@ -5,28 +5,30 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_CustomValueTest extends CiviUnitTestCase 
 {
     protected $_apiversion;
-    protected $_individual;
+    protected $individual;
     protected $params;
     protected $id;
-    public $DBResetRequired = true;  
+    public $DBResetRequired = false;  
     function setUp() 
     {
+        parent::setUp();
         $this->_apiversion = 3;
         $this->individual = $this->individualCreate();
         $this->params = array('version' => $this->_apiversion, 
         											'entity_id' => $this->individual);
         $this->ids['single'] = $this->entityCustomGroupWithSingleFieldCreate( 'mySingleField','Contacts');
         $this->ids['multi'] = $this->CustomGroupMultipleCreateWithFields();
-        parent::setUp();
+
     }
 
     function tearDown() 
-    {  
-        $this->customFieldDelete($ids['single']['custom_field_id']);
-        $this->customGroupDelete($ids['single']['custom_group_id']); 
-        $this->customFieldDelete($ids['multi']['custom_field_id'][0]);
-        $this->customFieldDelete($ids['multi']['custom_field_id'][1]);
-        $this->customGroupDelete($ids['multi']['custom_group_id'][2]); 
+    {   
+        $this->contactDelete( $this->individual);
+        $this->customFieldDelete($this->ids['single']['custom_field_id']);
+        $this->customGroupDelete($this->ids['single']['custom_group_id']); 
+        $this->customFieldDelete($this->ids['multi']['custom_field_id'][0]);
+        $this->customFieldDelete($this->ids['multi']['custom_field_id'][1]);
+        $this->customGroupDelete($this->ids['multi']['custom_group_id']); 
     }
 
    public function testCreateCustomValue () {
@@ -36,8 +38,7 @@ class api_v3_CustomValueTest extends CiviUnitTestCase
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertAPISuccess($result, 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
-        $this->assertNotNull( $result['values'][$result['id']]['id'], 'In line ' . __LINE__ );           
-
+        $result = civicrm_api('custom_value','get',$params);
     }
 /*
    public function testGetCustomValue () {

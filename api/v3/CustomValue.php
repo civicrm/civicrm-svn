@@ -67,7 +67,9 @@ require_once 'CRM/Core/BAO/CustomValueTable.php';
  */
 function civicrm_api3_custom_value_create( $params ) {
   civicrm_api3_verify_mandatory($params, null, array('entity_id'));
-
+  if(substr($params['entity_table'],0,7) == 'civicrm'){
+    $params['entity_table'] = substr($params['entity_table'],8,7);
+  }
   $create = array('entityID' => $params['entity_id']);
   // Translate names and
   //Convert arrays to multi-value strings
@@ -122,9 +124,6 @@ function civicrm_api3_custom_value_create( $params ) {
  **/
 function civicrm_api3_custom_value_get($params) {
   civicrm_api3_verify_mandatory($params, null, array('entity_id'));
-  if(substr($params['entity_table'],0,7) == 'civicrm'){
-    $params['entity_table'] = ucfirst(substr($params['entity_table'],8));
-  }
 
   $getParams = array(
     'entityID' => $params['entity_id'],
