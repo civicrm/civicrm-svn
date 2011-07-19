@@ -179,7 +179,7 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
       
       // ...clicking first result (which is a li element), selenium picks first matching element so we don't need to specify that...
-      $this->click("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
+      $this->click("css=tr.crm-activity-form-block-assignee_contact_id td ul li");
 
       // ...again, waiting for the box with contact name to show up...
       $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
