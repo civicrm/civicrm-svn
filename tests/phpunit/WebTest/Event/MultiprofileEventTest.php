@@ -45,7 +45,6 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->webtestLogin();
         
         $customGrp1 = "Custom Data1_" . substr(sha1(rand()), 0, 7);
-        $customGrp2 = "Custom Data2_" . substr(sha1(rand()), 0, 7);
         $firstName = 'Ma' . substr( sha1( rand( ) ), 0, 4 );
         $lastName  = 'An' . substr( sha1( rand( ) ), 0, 7 );
         $participantfname = 'Dany'. substr( sha1( rand( ) ), 0, 4 );
@@ -70,20 +69,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $elements = $this->parseURL( );
         $customGrpId1 = $elements['queryString']['gid'];
         
-        // Create second custom group
-        $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
-        $this->click("newCustomDataGroup");
-        $this->waitForPageToLoad('30000');
-        $this->type("title",$customGrp2);
-        $this->select("extends[0]","value=Individual");
-        $this->click("_qf_Group_next-bottom");
-        $this->waitForPageToLoad('30000');
-        
-        // get custom group id
-        $elements = $this->parseURL( );
-        $customGrpId2 = $elements['queryString']['gid'];
-        
-        $customId = $this->_testGetCustomFieldId( $customGrpId1 , $customGrpId2 );
+        $customId = $this->_testGetCustomFieldId( $customGrpId1 );
         
         $profileId = $this->_testGetProfileId( $customId );
         
@@ -160,25 +146,9 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->click( "_qf_DeleteGroup_next-bottom" );
         $this->waitForPageToLoad("30000");
         
-        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId2 . "&id=" . $customId[3] );
-        $this->waitForPageToLoad("30000");
-        $this->click( "_qf_DeleteField_next-bottom" );
-        $this->waitForPageToLoad("30000");
-        
-        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId2 . "&id=" . $customId[4] );
-        $this->waitForPageToLoad("30000");
-        $this->click( "_qf_DeleteField_next-bottom" );
-        $this->waitForPageToLoad("30000");
-        
-        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId2 . "&id=" . $customId[5] );
-        $this->waitForPageToLoad("30000");
-        $this->click( "_qf_DeleteField_next-bottom" );
-        $this->waitForPageToLoad("30000");
-        
-        $this->open( $this->sboxPath . "civicrm/admin/custom/group?action=delete&reset=1&id=" . $customGrpId2 );
-        $this->waitForPageToLoad("30000");
-        $this->click( "_qf_DeleteGroup_next-bottom" );
-        $this->waitForPageToLoad("30000");
+        // logout
+        $this->open( $this->sboxPath . "civicrm/logout?reset=1" );
+        $this->waitForPageToLoad( '30000' );
     }
     
     function testAnoumyousRegisterPage()
@@ -197,7 +167,6 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->assertTrue($this->isTextPresent('The changes have been saved.'));
         
         $customGrp1 = "Custom Data1_" . substr(sha1(rand()), 0, 7);
-        $customGrp2 = "Custom Data2_" . substr(sha1(rand()), 0, 7);
         $firstName = 'Ma' . substr( sha1( rand( ) ), 0, 4 );
         $lastName  = 'An' . substr( sha1( rand( ) ), 0, 7 );
         $participantfname = 'Dany'. substr( sha1( rand( ) ), 0, 4 );
@@ -228,20 +197,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $elements = $this->parseURL( );
         $customGrpId1 = $elements['queryString']['gid'];
         
-        // Create second custom group
-        $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
-        $this->click("newCustomDataGroup");
-        $this->waitForPageToLoad('30000');
-        $this->type("title",$customGrp2);
-        $this->select("extends[0]","value=Individual");
-        $this->click("_qf_Group_next-bottom");
-        $this->waitForPageToLoad('30000');
-        
-        // get custom group id
-        $elements = $this->parseURL( );
-        $customGrpId2 = $elements['queryString']['gid'];
-        
-        $customId = $this->_testGetCustomFieldId( $customGrpId1 , $customGrpId2 );
+        $customId = $this->_testGetCustomFieldId( $customGrpId1 );
         
         $profileId =$this->_testGetProfileId( $customId );
         
@@ -369,30 +325,9 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad("30000");
         $this->click( "_qf_DeleteGroup_next-bottom" );
         $this->waitForPageToLoad("30000");
-        
-        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId2 . "&id=" . $customId[3] );
-        $this->waitForPageToLoad("30000");
-        $this->click( "_qf_DeleteField_next-bottom" );
-        $this->waitForPageToLoad("30000");
-        
-        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId2 . "&id=" . $customId[4] );
-        $this->waitForPageToLoad("30000");
-        $this->click( "_qf_DeleteField_next-bottom" );
-        $this->waitForPageToLoad("30000");
-        
-        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId2 . "&id=" . $customId[5] );
-        $this->waitForPageToLoad("30000");
-        $this->click( "_qf_DeleteField_next-bottom" );
-        $this->waitForPageToLoad("30000");
-        
-        $this->open( $this->sboxPath . "civicrm/admin/custom/group?action=delete&reset=1&id=" . $customGrpId2 );
-        $this->waitForPageToLoad("30000");
-        $this->click( "_qf_DeleteGroup_next-bottom" );
-        $this->waitForPageToLoad("30000");
-        
     }
     
-    function _testGetCustomFieldId( $customGrpId1 , $customGrpId2 )
+    function _testGetCustomFieldId( $customGrpId1 )
     {
         $customId = array();
         
@@ -401,9 +336,6 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $field1 = "Fname" . substr(sha1(rand()), 0, 7);
         $field2 = "Mname" . substr(sha1(rand()), 0, 7);
         $field3 = "Lname" . substr(sha1(rand()), 0, 7);
-        $field4 = "Phone" . substr(sha1(rand()), 0, 7);
-        $field5 = "Address" . substr(sha1(rand()), 0, 7);
-        $field6 = "Job" . substr(sha1(rand()), 0, 7);
         
         // add custom fields for group 1
         $this->open( $this->sboxPath . "civicrm/admin/custom/group/field/add?reset=1&action=add&gid=" .$customGrpId1 );
@@ -435,36 +367,6 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $custom3 = $custom3[1];
         array_push($customId , $custom3);
         
-        // add custom fields to group2
-        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field/add?reset=1&action=add&gid=" .$customGrpId2 );
-        $this->waitForPageToLoad('30000');
-        $this->type("label",$field4);
-        $this->select("data_type[0]","value=2");
-        $this->check("is_searchable");
-        $this->click("_qf_Field_next_new-bottom");
-        $this->waitForPageToLoad('30000');
-        $this->type("label",$field5);
-        $this->check("is_searchable");
-        $this->click("_qf_Field_next_new-bottom");
-        $this->waitForPageToLoad('30000');
-        $this->type("label",$field6);
-        $this->select("data_type[0]","value=6");
-        $this->check("is_searchable");
-        $this->click("_qf_Field_next-bottom");
-        $this->waitForPageToLoad('30000');
-        
-        // get id of custom fields
-        $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?reset=1&action=browse&gid=" .$customGrpId2 );
-        $custom4 = explode( '&id=', $this->getAttribute( "xpath=//div[@id='option11_wrapper']/table/tbody/tr[1]/td[7]/span/a@href" ) );
-        $custom4 = $custom4[1];
-        array_push($customId , $custom4);
-        $custom5 = explode( '&id=', $this->getAttribute( "xpath=//div[@id='option11_wrapper']/table/tbody/tr[2]/td[7]/span/a@href" ) );
-        $custom5 = $custom5[1];
-        array_push($customId , $custom5);
-        $custom6 = explode( '&id=', $this->getAttribute( "xpath=//div[@id='option11_wrapper']/table/tbody/tr[3]/td[7]/span/a@href" ) );
-        $custom6 = $custom6[1];
-        array_push($customId , $custom6);
-        
         return $customId;
     }
     
@@ -476,8 +378,8 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         // Go to Online Contribution tab
         $this->click("link=Online Registration");
         $this->waitForElementPresent("_qf_Registration_upload-bottom");
-        $this->select("custom_post_id_multiple_1" , "value=");
-        $this->select("custom_post_id_multiple_2" , "value=");
+        $this->select("additional_custom_post_id_multiple_1" , "value=");
+        $this->select("additional_custom_post_id_multiple_2" , "value=");
         $this->select("additional_custom_post_id_multiple_3" , "value=");
         $this->select("additional_custom_post_id_multiple_4" , "value=");
         $this->click("_qf_Registration_upload-bottom");
@@ -547,12 +449,10 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         array_push($profileId,$profileId6);
         
         $profilefield = array(
-                              'custom_'.$customId[3] =>  'custom_'.$customId[3],
-                              'custom_'.$customId[4] =>  'custom_'.$customId[4],
-                              'custom_'.$customId[5] =>  'custom_'.$customId[5]
+                              'participant_role' => 'participant_role'
                               );
         $location = 0;
-        $type = "Individual";
+        $type = "Participant";
         $profileId7 = $this->_testCreateProfile($profilefield,$location,$type);
         array_push($profileId,$profileId7);
         
@@ -805,10 +705,8 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         
         $this->type( "middle_name", "xyz" );
         $this->click( "CIVICRM_QFID_2_4");
+        $this->select("participant_role","value=1");
         
-        $this->type( "custom_".$customId[3], "452345234" );
-        $this->type( "custom_".$customId[4], "test" );
-        $this->click( "CIVICRM_QFID_0_10" );
         $this->click("_qf_Register_upload-bottom");
         $this->waitForElementPresent( "_qf_Participant_1_next-Array" );
         
@@ -839,76 +737,75 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad('30000');
         $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
         $this->click("_qf_Confirm_next-bottom");
-        //$this->waitForPageToLoad('30000');
     }
     
-     function _testEventRegistrationAfterRemoving( $eventPageId , $customId , $firstName2 , $lastName2 , $participantfname2 , $participantlname2 , $email3 , $email4 )
-     {
-         $this->open($this->sboxPath . 'civicrm/event/register?id=' .$eventPageId.'&reset=1');
-         $this->waitForElementPresent( "_qf_Register_upload-bottom" );
-         $this->select("additional_participants","value=1");
-         
-         $this->type("email-5",$email4);
-         $this->type("first_name",$firstName2);
-         $this->type("last_name",$lastName2);
-         $this->type("street_address-1","Test street addres");
-         $this->type("city-1","Mumbai");
-         $this->type("postal_code-1","2354");
-         $this->select("state_province-1","value=1001");
-         
-         // Credit Card Info
-         $this->select( "credit_card_type", "value=Visa" );
-         $this->type( "credit_card_number", "4111111111111111" );
-         $this->type( "cvv2", "000" );
-         $this->select( "credit_card_exp_date[M]", "value=1" );
-         $this->select( "credit_card_exp_date[Y]", "value=2020" );
-         
-         //Billing Info
-         $this->type( "billing_first_name", $firstName2 . 'billing' );
-         $this->type( "billing_last_name", $lastName2 . 'billing'  );
-         $this->type( "billing_street_address-5", "0121 Mount Highschool." );
-         $this->type( " billing_city-5", "Shangai" );
-         $this->select( "billing_country_id-5", "value=1228" );
-         $this->select( "billing_state_province_id-5", "value=1004" );
-         $this->type( "billing_postal_code-5", "94129" );  
-         
-         $this->type( "current_employer", "ABCD" ); 
-         $this->type( "job_title", "Painter" ); 
-         
-         $this->type( "custom_".$customId[0], "fname_custom1" );
-         $this->type( "custom_".$customId[1], "mname_custom1" );
-         $this->type( "custom_".$customId[2], "lname_custom1" );
-         
-         $this->type( "middle_name", "xyz" );
-         $this->click( "CIVICRM_QFID_2_4");
-         
-         $this->type( "custom_".$customId[3], "452345234" );
-         $this->type( "custom_".$customId[4], "test" );
-         $this->click( "CIVICRM_QFID_0_10" );
-         $this->click("_qf_Register_upload-bottom");
-         $this->waitForElementPresent( "_qf_Participant_1_next-Array" );
-         
-         $this->type("email-5",$email3);
-         $this->type("first_name",$participantfname2);
-         $this->type("last_name",$participantlname2);
-         $this->type("street_address-1","participant street addres");
-         $this->type("city-1","pune");
-         $this->type("postal_code-1","2354");
-         $this->select("state_province-1","value=1001");
-         
-         $this->type( "custom_".$customId[0], "participant_custom1" );
-         $this->type( "custom_".$customId[1], "participant_custom1" );
-         $this->type( "custom_".$customId[2], "participant_custom1" );
-         
-         $this->type( "street_address-Primary", "Primary street address" );
-         $this->type( "city-Primary", "primecity" );
-         $this->type( "phone-Primary-1", "98667764" );
-         $this->type( "postal_code-Primary", "6548" );
-                 
-         $this->click("_qf_Participant_1_next-Array");
-         $this->waitForPageToLoad('30000');
-         $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
-         $this->click("_qf_Confirm_next-bottom");
-         
-     }
+    function _testEventRegistrationAfterRemoving( $eventPageId , $customId , $firstName2 , $lastName2 , $participantfname2 , $participantlname2 , $email3 , $email4 )
+    {
+        $this->open($this->sboxPath . 'civicrm/event/register?id=' .$eventPageId.'&reset=1');
+        $this->waitForElementPresent( "_qf_Register_upload-bottom" );
+        $this->select("additional_participants","value=1");
+        
+        $this->type("email-5",$email4);
+        $this->type("first_name",$firstName2);
+        $this->type("last_name",$lastName2);
+        $this->type("street_address-1","Test street addres");
+        $this->type("city-1","Mumbai");
+        $this->type("postal_code-1","2354");
+        $this->select("state_province-1","value=1001");
+        
+        // Credit Card Info
+        $this->select( "credit_card_type", "value=Visa" );
+        $this->type( "credit_card_number", "4111111111111111" );
+        $this->type( "cvv2", "000" );
+        $this->select( "credit_card_exp_date[M]", "value=1" );
+        $this->select( "credit_card_exp_date[Y]", "value=2020" );
+        
+        //Billing Info
+        $this->type( "billing_first_name", $firstName2 . 'billing' );
+        $this->type( "billing_last_name", $lastName2 . 'billing'  );
+        $this->type( "billing_street_address-5", "0121 Mount Highschool." );
+        $this->type( " billing_city-5", "Shangai" );
+        $this->select( "billing_country_id-5", "value=1228" );
+        $this->select( "billing_state_province_id-5", "value=1004" );
+        $this->type( "billing_postal_code-5", "94129" );  
+        
+        $this->type( "current_employer", "ABCD" ); 
+        $this->type( "job_title", "Painter" ); 
+        
+        $this->type( "nick_name", "Nickkk" ); 
+        $this->type( "url-1", "http://www.testweb.com" ); 
+        
+        $this->type( "street_address-Primary", "Primary street address" );
+        $this->type( "city-Primary", "primecity" );
+        $this->type( "phone-Primary-1", "9866776422" );
+        $this->type( "postal_code-Primary", "6534" );
+        
+        $this->type( "custom_".$customId[0], "fname_custom1" );
+        $this->type( "custom_".$customId[1], "mname_custom1" );
+        $this->type( "custom_".$customId[2], "lname_custom1" );
+        
+        $this->type( "middle_name", "xyz" );
+        $this->click( "CIVICRM_QFID_2_4");
+        $this->select("participant_role","value=1");
+        
+        $this->click("_qf_Register_upload-bottom");
+        $this->waitForElementPresent( "_qf_Participant_1_next-Array" );
+        
+        $this->type("email-5",$email3);
+        $this->type("first_name",$participantfname2);
+        $this->type("last_name",$participantlname2);
+        $this->type("street_address-1","participant street addres");
+        $this->type("city-1","pune");
+        $this->type("postal_code-1","2354");
+        $this->select("state_province-1","value=1001");
+        
+        $this->type( "current_employer", "ABCD" ); 
+        $this->type( "job_title", "BATCHER" ); 
+        
+        $this->click("_qf_Participant_1_next-Array");
+        $this->waitForPageToLoad('30000');
+        $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
+        $this->click("_qf_Confirm_next-bottom");
+        
+    }
 }
