@@ -81,16 +81,16 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       
       // ...waiting for drop down with results to show up...
       $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
+      $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
       
-      //token-input-dropdown-facebook
-      // ...clicking first result...
-      $this->click("css=tr.crm-activity-form-block-target_contact_id td ul li");
+      // ...need to use mouseDownAt on first result (which is a li element), click does not work
+      $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
 
       // ...again, waiting for the box with contact name to show up (span with delete token class indicates that it's present)...
-      //    $this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td ul li input#token-input-delete-token-facebook");
+      $this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td ul li input#token-input-delete-token-facebook");
       
       // ...and verifying if the page contains properly formatted display name for chosen contact.
-      //$this->assertTrue($this->isTextPresent("Anderson, $firstName1"), "Contact not found in line " . __LINE__ );
+      $this->assertTrue($this->isTextPresent("Anderson, $firstName1"), "Contact not found in line " . __LINE__ );
 
       // Now we're doing the same for "Assigned To" field.
       // Typing contact's name into the field (using typeKeys(), not type()!)...

@@ -177,10 +177,11 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
 
       // ...waiting for drop down with results to show up...
       $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
+      $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
       
-      // ...clicking first result (which is a li element), selenium picks first matching element so we don't need to specify that...
-      $this->click("css=tr.crm-activity-form-block-assignee_contact_id td ul li");
-
+      // ...need to use mouseDownAt on first result (which is a li element), click does not work
+      $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
+     
       // ...again, waiting for the box with contact name to show up...
       $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
       
