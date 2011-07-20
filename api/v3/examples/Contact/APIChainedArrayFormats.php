@@ -60,7 +60,7 @@ function contact_get_expectedresult(){
           'api.Contribution.getCount' => 2,
           'api.CustomValue.get' => array( 
               'is_error' => 1,
-              'error_message' => 'Invalid entity type: "civicrm_ contact"',
+              'error_message' => 'No values found for the specified entity ID and custom field(s).',
             ),
           'api.Note.get' => array( 
               'is_error' => 0,

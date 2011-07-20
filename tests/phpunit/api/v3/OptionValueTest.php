@@ -39,7 +39,7 @@ class api_v3_OptionValueTest extends CiviUnitTestCase
          $params = array( 'version'			=>  $this->_apiversion,);
          $result =& civicrm_api('option_value','getcount',$params);        
          $this->assertGreaterThan(1, $result, "Check more than one exists In line " . __LINE__ );
-         $params['option.limit'] = 1;
+         $params['options']['limit'] = 1;
          $result =& civicrm_api('option_value','getcount',$params);    
          $this->assertEquals(1, $result, "Check only 1 retrieved " . __LINE__ );
  
@@ -60,7 +60,7 @@ class api_v3_OptionValueTest extends CiviUnitTestCase
        $result2 =  civicrm_api('option_value','getcount',array('option_group_id'=> 1,
                                                          'value' => '1', 
                                                          'version' => $this->_apiversion,
-                                                          'option.offset' => 1 ));                                                
+                                                         'options' => array('offset' => 1 )));                                                
       $this->assertGreaterThan($result2 , $result );
      }
      
@@ -73,13 +73,13 @@ class api_v3_OptionValueTest extends CiviUnitTestCase
        $subfile = 'SortOption';
         $result = civicrm_api('option_value','getsingle',array('option_group_id'=> 1,
                                                         'version' => $this->_apiversion,
-                                                         'option.sort' => 'label ASC',
-                                                         'option.limit' => 1
+                                                         'options' => array('sort' => 'label ASC',
+                                                         										'limit' => 1)
                                                           ));
      $params = array(																		'option_group_id'=> 1,
-                                                          'version' => $this->_apiversion,
-                                                         'option.sort' => 'label DESC',
-                                                         'option.limit' => 1 );
+                                                         'version' => $this->_apiversion,
+                                                         'options' => array('sort' => 'label DESC',
+                                                         										'limit' => 1) );
       $result2 =  civicrm_api('option_value','getsingle',$params);   
       $this->documentMe($params,$result2 ,__FUNCTION__,__FILE__,$description,$subfile);                                             
       $this->assertGreaterThan($result['label'] , $result2['label'] );
@@ -91,11 +91,11 @@ class api_v3_OptionValueTest extends CiviUnitTestCase
 
      function   testGetValueOptionPagination() {
        $pageSize=10;
-        $page1 = civicrm_api('option_value','get',array('option.limit' => $pageSize,
+        $page1 = civicrm_api('option_value','get',array('options' => array('limit' => $pageSize),
                                                          'version' => $this->_apiversion
                                                           ));
-       $page2 =  civicrm_api('option_value','get',array('option_limit'=> $pageSize,
-                                                        'option.offset' => $pageSize -1, // if you use it for pagination, option.offset=pageSize*pageNumber
+       $page2 =  civicrm_api('option_value','get',array('options' => array('limit' => $pageSize,
+                                                        'offset' => $pageSize -1,), // if you use it for pagination, option.offset=pageSize*pageNumber
                                                          'version' => $this->_apiversion
                                                          ));                                                
        $this->assertEquals($pageSize, $page1['count'], "Check only 10 retrieved in the 1st page " . __LINE__ );

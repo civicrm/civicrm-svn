@@ -39,7 +39,7 @@
 /**
  * Include common API util functions
  */
-require_once 'api/v3/utils.php';
+require_once 'CRM/Contact/DAO/RelationshipType.php';
 
 
 /**
@@ -95,26 +95,8 @@ function civicrm_api3_relationship_type_create( $params ) {
 function civicrm_api3_relationship_type_get( $params  )
 {
 
-        civicrm_api3_verify_mandatory($params);
-        require_once 'CRM/Contact/DAO/RelationshipType.php';
-        $relationshipTypes = array();
-        $relationshipType  = array();
-        $relationType      = new CRM_Contact_DAO_RelationshipType();
-        if ( !empty( $params ) && is_array( $params ) ) {
-            $properties = array_keys( $relationType->fields() );
-            foreach ($properties as $name) {
-                if ( array_key_exists( $name, $params ) ) {
-                    $relationType->$name = $params[$name];
-                }
-            }
-        }
-        $relationType->find();
-        while( $relationType->fetch() ) {
-            _civicrm_api3_object_to_array( $relationType, $relationshipType[$relationType->id] );
-            //   $relationshipTypes[] = $relationshipType;
-        }
-        return civicrm_api3_create_success($relationshipType,$params,'relationship_type','get',$relationType);
-
+   civicrm_api3_verify_mandatory($params);
+   return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 
 }
 

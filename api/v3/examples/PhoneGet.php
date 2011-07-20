@@ -38,12 +38,11 @@ function phone_get_expectedresult(){
         ),
       '4' => array( 
           'id' => '4',
+          'contact_id' => '1',
           'location_type_id' => '11',
           'is_primary' => '1',
           'is_billing' => 0,
           'phone' => '021 512 755',
-          'phone_type_id' => '1',
-          'contact_id' => '1',
         ),
     ),
 );
