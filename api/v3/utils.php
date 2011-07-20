@@ -344,23 +344,19 @@ function civicrm_api3_error( $params )
 
 /**
  *
- * @param <type> $fields
- * @param <type> $params
- * @param <type> $values
- * @return <type>
+ * @param array $fields
+ * @param array $params
+ * @param array $values
+ * @return Bool $valueFound
  */
 function _civicrm_api3_store_values( &$fields, $params, &$values ) 
 {
     $valueFound = false;
     
-    foreach ($fields as $name => $field) {
-        // ignore all ids for now
-        if ( $name === 'id' || substr( $name, -1, 3 ) === '_id' ) {
-            continue;
-        }
-        
-        if ( array_key_exists( $name, $params ) ) {
-            $values[$name] = $params[$name];
+     $keys = array_intersect_key($params,$fields);
+     foreach($keys as $name => $value) {
+       if( $name !== 'id' ) {
+            $values[$name] = $value;
             $valueFound = true;
         }
     }
