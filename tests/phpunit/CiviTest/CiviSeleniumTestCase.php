@@ -83,6 +83,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     function webtestLogin( $admin = false ) {
         $password = $admin ? $this->settings->adminPassword : $this->settings->password;
         $username = $admin ? $this->settings->adminUsername : $this->settings->username;
+        // Make sure login form is available
+        $this->waitForElementPresent('edit-submit');
         $this->type('edit-name', $username);
         $this->type('edit-pass', $password);
         $this->click('edit-submit');
