@@ -9,14 +9,8 @@ function contact_get_example(){
 $params = array( 
   'id' => 1,
   'version' => 3,
-  'api.website.getValue' => array( 
-      'return' => 'url',
-    ),
   'api_Contribution_get' => array(),
-  'api.CustomValue.get' => 1,
-  'api.Note.get' => 1,
   'sequential' => 1,
-  'api.Membership.getCount' => array(),
   'format.smarty' => 'api/v3/exampleLetter.tpl',
 );
 
