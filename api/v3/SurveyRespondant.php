@@ -47,6 +47,7 @@ require_once 'CRM/Campaign/BAO/Petition.php';
  * @return array (reference )        contribution_id of created or updated record
  * @static void
  * @access public
+ * @deprecated - api currently not supported
  */
 function &civicrm_api3_survey_respondant_get( $params ) {
 
@@ -64,7 +65,9 @@ function &civicrm_api3_survey_respondant_get( $params ) {
 
 
 }
-
+/*
+ * @deprecated - api currently not supported
+ */
 function &civicrm_api3_survey_respondant_count( $params ) {
 
     $petition = new CRM_Campaign_BAO_Petition();
