@@ -146,8 +146,8 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     if (CRM_Utils_Array::value( 'is_error', $result, 0 ) == 0) {
         _civicrm_api_call_nested_api($params, $result, $action,$entity,$version);
     }
-     if(CRM_Utils_Array::value('format.smarty', $params) ){
-      return _civicrm_api_parse_result_through_smarty($result,$params);
+     if(CRM_Utils_Array::value('format.smarty', $params) || CRM_Utils_Array::value('format_smarty', $params) ){
+     // return _civicrm_api_parse_result_through_smarty($result,$params);
     }
     return $result;
   } catch (PEAR_Exception $e) {
@@ -433,6 +433,7 @@ function _civicrm_api_parse_result_through_smarty(&$result, &$params){
         require_once 'CRM/Core/Smarty.php';
         $smarty =& CRM_Core_Smarty::singleton();
         $smarty->assign('result',$result);
-        return  $smarty->fetch("../templates/" .$params['format.smarty']);
+        $template = CRM_Utils_Array::value('format.smarty', $params,$params['format_smarty']);
+        return  $smarty->fetch("../templates/" .$template);
 
 }

@@ -1,6 +1,8 @@
 <?php
 
-
+/*
+ * disabled for now while I check out security issues
+ */
 
 /*
  demonstrates use of smarty as output
