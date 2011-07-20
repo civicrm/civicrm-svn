@@ -342,7 +342,29 @@ class CRM_Utils_Array {
             }
         }
         return true;
-    }    
+    }
+    /**
+     * Function to determine how many levels in array for multidimensional arrays
+     * @param array $array
+     * 
+     * @return integer $levels containing number of levels in array
+     * @static
+     */
+    static function getLevelsArray( $array ) {
+		if ( !is_array( $array ) ) {
+			return 0;
+		}
+		$jsonString = json_encode( $array );
+		$parts = explode( "}", $jsonString);
+		$max = 0;
+		foreach ( $parts as $part ) {
+			$countLevels = substr_count( $part, "{");
+			if ( $countLevels > $max ) {
+				$max = $countLevels;
+			}
+		}
+		return $max;
+	}
 }
 
 
