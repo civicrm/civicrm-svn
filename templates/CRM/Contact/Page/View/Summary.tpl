@@ -249,7 +249,7 @@
                             <table>
                                 <tr>
                                     <td class="label">{ts 1=$add.location_type}%1&nbsp;Address{/ts}
-                                        {if $config->mapAPIKey AND 
+                                        {if $config->mapProvider AND 
 					 !empty($add.geo_code_1) AND
 					 is_numeric($add.geo_code_1) AND
 					 !empty($add.geo_code_2) AND 
