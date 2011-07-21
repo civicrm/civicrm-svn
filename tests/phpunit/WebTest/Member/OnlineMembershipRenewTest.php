@@ -75,15 +75,21 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         
         $firstName = 'Ma'.substr( sha1( rand( ) ), 0, 4 );
         $lastName  = 'An'.substr( sha1( rand( ) ), 0, 7 );
+        $email = $firstName . "@example.com";
+        
+        //logout
+        $this->open($this->sboxPath . "civicrm/logout&reset=1");
+        $this->waitForPageToLoad('30000');
         
         //Go to online membership signup page
         $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id=2" );
         $this->waitForElementPresent( "_qf_Main_upload-bottom" );
         $this->click( "CIVICRM_QFID_2_4");
         
-        //Type first name and last name
+        //Type first name and last name and email
         $this->type( "first_name", $firstName );
         $this->type( "last_name",$lastName );
+        $this->type("email-5", $email);
         
         //Credit Card Info
         $this->select( "credit_card_type", "value=Visa" );
@@ -110,6 +116,9 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->click( "_qf_Confirm_next-bottom" );
         $this->waitForPageToLoad( '30000' );
         
+        // Log in using webtestLogin() method
+        $this->open( $this->sboxPath );
+        $this->webtestLogin();
         //Find Member
         $this->open( $this->sboxPath . "civicrm/member/search&reset=1" );
         $this->waitForElementPresent( "member_end_date_high" );
@@ -133,9 +142,21 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
             $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
                                preg_quote( $value ) );   
         }
+
+        //logout
+        $this->open($this->sboxPath . "civicrm/logout&reset=1");
+        $this->waitForPageToLoad('30000');
+
         $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id=2" );
         $this->waitForElementPresent( "_qf_Main_upload-bottom" );
-        $this->assertTrue($this->isChecked( "CIVICRM_QFID_2_4" ));
+
+        $this->click( "CIVICRM_QFID_2_4");
+        
+        //Type first name and last name and email
+        $this->type( "first_name", $firstName );
+        $this->type( "last_name",$lastName );
+        $this->type("email-5", $email);
+
         //Credit Card Info
         $this->select( "credit_card_type", "value=Visa" );
         $this->select( "credit_card_type", "label=Visa" );
@@ -143,6 +164,16 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->type( "cvv2", "000" );
         $this->select( "credit_card_exp_date[M]", "value=1" );
         $this->select( "credit_card_exp_date[Y]", "value=2020" );
+        
+        //Billing Info
+        $this->type( "billing_first_name", $firstName."billing" );
+        $this->type( "billing_last_name", $lastName."billing" );
+        $this->type( "billing_street_address-5", "15 Main St." );
+        $this->type( " billing_city-5", "San Jose" );
+        $this->select( "billing_country_id-5", "value=1228" );
+        $this->select( "billing_state_province_id-5", "value=1004" );
+        $this->type( "billing_postal_code-5", "94129" ); 
+        
         $this->click( "_qf_Main_upload-bottom" );
         
         $this->waitForPageToLoad( '30000' );
@@ -150,6 +181,9 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->click( "_qf_Confirm_next-bottom" );
         $this->waitForPageToLoad( '30000' );
         
+        // Log in using webtestLogin() method
+        $this->open( $this->sboxPath );
+        $this->webtestLogin();
         //Find Member
         $this->open( $this->sboxPath . "civicrm/member/search&reset=1" );
         $this->waitForElementPresent( "member_end_date_high" );
