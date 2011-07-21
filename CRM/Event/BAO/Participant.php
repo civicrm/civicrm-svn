@@ -65,6 +65,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
      */
     static $_statusTransitionsRules = array( 
                                             'Pending from pay later'  => array('Registered', 'Cancelled'),
+                                            'Pending from incomplete transaction'  => array('Registered', 'Cancelled'),
                                             'On waitlist'             => array('Cancelled' , 'Pending from waitlist'),
                                             'Pending from waitlist'   => array('Registered', 'Cancelled'),
                                             'Awaiting approval'       => array('Cancelled' , 'Pending from approval'),

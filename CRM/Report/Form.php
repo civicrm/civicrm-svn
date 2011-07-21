@@ -2064,10 +2064,10 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                     //get chart image name
                     $chartImg  = $this->_chartId . '.png';
                     //get image url path
-                    $uploadUrl  = str_replace( 'persist/contribute', 'templates_c/en_US/openFlashChart', $config->imageUploadURL );
+                    $uploadUrl  = str_replace( '/persist/contribute/', '/persist/', $config->imageUploadURL ) . 'openFlashChart/';
                     $uploadUrl .= $chartImg;
                     //get image doc path to overwrite
-                    $uploadImg = $config->templateCompileDir . 'openFlashChart/' . $chartImg;
+                    $uploadImg = str_replace( '/persist/contribute/', '/persist/', $config->imageUploadDir ) . 'openFlashChart/' . $chartImg;
                     //Load the image
                     $chart = imagecreatefrompng( $uploadUrl );
                     //convert it into formattd png
