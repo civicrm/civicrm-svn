@@ -143,6 +143,11 @@ class CRM_Report_Form extends CRM_Core_Form {
     protected $_tagFilter = false;
 
     /**
+     * build groups filter
+     *
+     */
+    protected $_groupFilter = false;
+    /**
      * Navigation fields
      *
      * @var array
@@ -217,6 +222,9 @@ class CRM_Report_Form extends CRM_Core_Form {
             $this->buildTagFilter( );
         }
         
+        if( $this->_groupFilter){
+           $this->buildGroupFilter();
+        }
         // do not allow custom data for reports if user don't have
         // permission to access custom data.
         if ( !empty( $this->_customGroupExtends ) && !CRM_Core_Permission::check( 'access all custom data' ) ) {
@@ -902,7 +910,28 @@ class CRM_Report_Form extends CRM_Core_Form {
                        );
         }
     }
-
+    
+    /*
+     * Adds group filters to _columns (called from _Constuct
+     */
+     function buildGroupFilter( ) {
+          $this->_columns['civicrm_group']['filters'] =         
+                          array( 'gid' => 
+                                 array( 'name'         => 'group_id',
+                                        'title'        => ts( 'Group' ),
+                                        'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                        'group'        => true,
+                                        'options'      => CRM_Core_PseudoConstant::group( ) ), 
+                   
+                           );
+       if(empty($this->_columns['civicrm_group']['dao'])){
+          $this->_columns['civicrm_group']['dao']  = 'CRM_Contact_DAO_GroupContact';
+       }
+       if(empty($this->_columns['civicrm_group']['alias'])){
+          $this->_columns['civicrm_group']['alias']  = 'cgroup';
+       }                   
+     }
+     
     static function getSQLOperator( $operator = "like" ) {
         switch ( $operator ) {
         case 'eq':
