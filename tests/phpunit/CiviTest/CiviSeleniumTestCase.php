@@ -930,12 +930,13 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         // Select the activity type from the activity dropdown
         $this->select("other_activity", "label=Meeting");
+        
         $this->waitForElementPresent("_qf_Activity_upload");
 
         $this->assertTrue($this->isTextPresent("Anderson, " . $firstName2), "Contact not found in line " . __LINE__ );
 
         // Typing contact's name into the field (using typeKeys(), not type()!)...
-        $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", $firstName1);
+        $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
 
         // ...waiting for drop down with results to show up...
         $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
