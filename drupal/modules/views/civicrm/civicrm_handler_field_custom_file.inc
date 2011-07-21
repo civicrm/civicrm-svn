@@ -42,14 +42,10 @@ class civicrm_handler_field_custom_file extends views_handler_field {
     
     function render( $values ) {
         $value = $values->{$this->field_alias};
-        CRM_Core_Error::debug( '$value', $value );
-        CRM_Core_Error::debug( '$values', $values );
-        
         if ( ! is_null( $value ) ) {
             $fileType = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_File',
                                                      $value,
                                                      'mime_type' );
-            
             
             if ( $fileType && in_array($fileType,  array( "image/jpeg", "image/pjpeg", "image/gif", "image/x-png", "image/png" ) ) ) {
                 $uri = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_File',
