@@ -18,8 +18,6 @@
 {if $editTagSet}
 <script type="text/javascript">
 {literal}
-    eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
-    
     var tagUrl = {/literal}"{$tagset.tagUrl}&key={crmKey name='civicrm/ajax/taglist'}"{literal};
     var entityTags = '';
     {/literal}{if $tagset.entityTags}{literal}
@@ -30,7 +28,17 @@
     cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) input")
         .addClass("taglist_{/literal}{$tagset.parentID}{literal}")
     cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) .taglist_{/literal}{$tagset.parentID}{literal}"  )
-        .tokenInput( tagUrl, { prePopulate: entityTags, classes: tokenClass, hintText: hintText, ajaxCallbackFunction: 'processTags_{/literal}{$tagset.parentID}{literal}'});
+        .tokenInput( tagUrl, {
+              prePopulate: entityTags, 
+              theme: 'facebook', 
+              hintText: hintText, 
+              onAdd: function ( item ) { 
+                processTags_{/literal}{$tagset.parentID}{literal}( 'select', item.id );
+              },
+              onDelete: function ( item ) { 
+                processTags_{/literal}{$tagset.parentID}{literal}( 'delete', item.id );
+              } 
+         });
     cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input)").addClass("crm-processed-input");    
     function processTags_{/literal}{$tagset.parentID}{literal}( action, id ) {
         var postUrl          = "{/literal}{crmURL p='civicrm/ajax/processTags' h=0}{literal}";
