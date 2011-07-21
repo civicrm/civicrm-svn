@@ -178,8 +178,7 @@ class WebTest_Contact_ContactTagTest extends CiviSeleniumTestCase {
       // Visit contact summary page.
       $this->click("css=div.ac_results-inner li");
       $this->waitForPageToLoad("30000");
-      $this->verifyText("xpath=//div[@id='contact-summary']/div[@id='contactTopBar']/table/tbody/tr[2]/td[@id='tags']", 'tagset1, tagset2');
-      
+      $this->assertTrue($this->isTextPresent("tagset1, tagset2"));
   }  
 }
 ?>
