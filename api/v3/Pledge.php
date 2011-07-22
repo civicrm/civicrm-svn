@@ -268,6 +268,7 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
     //status id is left null for pledge payments in BAO
     // so we are hacking in the addition of the pledge_status_id to pending here
     if(empty($values['status_id']) && $params['installments'] ==1){
+      require_once 'CRM/Contribute/PseudoConstant.php';
       $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
       $values['status_id'] = array_search( 'Pending', $contributionStatus);
     }
