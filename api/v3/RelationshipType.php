@@ -39,8 +39,7 @@
 /**
  * Include common API util functions
  */
-require_once 'CRM/Contact/DAO/RelationshipType.php';
-
+require_once 'CRM/Contact/BAO/RelationshipType.php';
 
 /**
  * Function to create relationship type
@@ -73,12 +72,11 @@ function civicrm_api3_relationship_type_create( $params ) {
             $ids['relationshipType'] = CRM_Utils_Array::value( 'id', $params );
         }
 
-        require_once 'CRM/Contact/BAO/RelationshipType.php';
         $relationType = new CRM_Contact_BAO_RelationshipType();
         $relationType = CRM_Contact_BAO_RelationshipType::add( $params, $ids );
-
+        
         $relType = array( );
-
+        
         _civicrm_api3_object_to_array( $relationType, $relType[$relationType->id] );
 
         return civicrm_api3_create_success($relType,$params,'relationship_type','create', $relationType);
