@@ -225,7 +225,7 @@ class CRM_Case_Form_Activity_OpenCase
             }
         } else {
             //check selected contact for multi client option
-            if ( isset( $fields[contact][1] ) && !$fields[contact][1] ) {
+            if ( isset( $fields['contact'][1] ) && !$fields['contact'][1] ) {
                 $errors['contact[1]'] = ts('Please select a valid contact or create new contact');
             }
         }
