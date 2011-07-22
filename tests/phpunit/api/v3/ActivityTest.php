@@ -742,6 +742,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->assertEquals( 17, $result['values'][0]['source_contact_id'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['values'][0]['activity_type_id'], 'In line ' . __LINE__ );
         $this->assertEquals( 'test activity type id', $result['values'][0]['subject'],'In line ' . __LINE__ );
+        $this->customFieldDelete($ids['custom_field_id']);
+        $this->customGroupDelete($ids['custom_group_id']);
     }
     /**
      *  Test civicrm_activity_get() with a good activity ID which
