@@ -158,7 +158,7 @@ END AS 'relType'
             $autoRenew = $isRecur ? true : false;
         }
         
-        if ( $values['is_test'] ) {
+        if ( CRM_Utils_Array::value('is_test', $values ) )  {
             $values['membership_type'] .= ' (test) ';
         }
 
