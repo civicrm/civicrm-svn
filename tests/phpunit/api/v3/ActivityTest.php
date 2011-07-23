@@ -357,7 +357,9 @@ class api_v3_ActivityTest extends CiviUnitTestCase
 
         require_once 'CRM/Core/BAO/Setting.php';
         CRM_Core_BAO_Setting::enableComponent( 'CiviCampaign' );
-      
+        //flush cache by calling with reset
+        $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name', true );
+        
         $defaults = array();
 
         $params = array(
@@ -619,7 +621,10 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                                                                          dirname(__FILE__)
                                                                          . '/dataset/activity_4_13.xml') );
 
-        $contact = civicrm_api('Contact','Create',array('display_name' => "The Rock", 'contact_type' => 'Individual', 'version' => 3, 'api.activity.create' => array('id' => 13, 'assignee_contact_id' => '$value.id',)));                                                            
+        $contact = civicrm_api('Contact','Create',array('display_name' => "The Rock", 
+        																								'contact_type' => 'Individual', 
+        																								'version' => 3, 
+        																								'api.activity.create' => array('id' => 13, 'assignee_contact_id' => '$value.id',)));                                                            
         $params = array( 'activity_id' => 13,
                          'version'			=> $this->_apiversion,
                          'sequential'  =>1,
@@ -627,10 +632,9 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         								 'api.contact.get' => array('id' => '$value.source_contact_id', ));
      
         $result = civicrm_api( 'Activity','Get',$params );
-            $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile);     
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile);     
         
-        $this->assertEquals( 0, $result['is_error'],
-                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+        $this->assertAPISuccess($result);
         $this->assertEquals( 13, $result['id'],  'In line ' . __LINE__ );
         $this->assertEquals( 17, $result['values'][0]['source_contact_id'], 'In line ' . __LINE__ );
 
