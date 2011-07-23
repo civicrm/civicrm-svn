@@ -334,7 +334,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         );
         
         $result =& civicrm_api('activity','create', $params );
-        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) .' in line ' . __LINE__ );
         $result =& civicrm_api('activity','get', $params );
@@ -846,8 +846,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         
         $result =& civicrm_api('activity','delete',$params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        $this->assertEquals( $result['is_error'], 0,
-                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+        $this->assertAPISuccess($result);
     }
 
 
@@ -1052,20 +1051,19 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         
         $contact2 = $this->individualCreate( $contact2Params );
 
-        $params['assignee_contact_id'] = array( $contact1 => $contact1 );
-        $params['target_contact_id']   = array( $contact2 => $contact2 );
+        $params['assignee_contact_id'] = array( $contact1 ,$contact2  );
+        $params['target_contact_id']   = array(  $contact2 => $contact2 );
         $result = civicrm_api('Activity','Create', $params );
 
         $result = civicrm_api('activity', 'create' ,  $params );
         $activityId = $result['id'];
-        $this->assertEquals( 0, $result['is_error'],
-                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+        $this->assertAPISuccess($result);
         $result = civicrm_api($this->_entity,'get',array('return.assignee_contact_id' => 1, 'return.target_contact_id' => 1, 'version' =>3, 'id' => $result['id']));
         
         $assignee = $result['values'][$result['id']]['assignee_contact_id'];
         $target   = $result['values'][$result['id']]['target_contact_id'];
 
-        $this->assertEquals( 1, count($assignee), ' in line ' . __LINE__);
+        $this->assertEquals( 2, count($assignee), ' in line ' . __LINE__);
         $this->assertEquals( 1, count($target), ' in line ' . __LINE__);
         $this->assertEquals( true, in_array($contact1, $assignee), ' in line ' . __LINE__);
         $this->assertEquals( true, in_array($contact2, $target), ' in line ' . __LINE__);
