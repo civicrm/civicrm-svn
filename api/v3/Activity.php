@@ -293,7 +293,7 @@ SELECT  count(*)
 
 
     require_once 'CRM/Core/PseudoConstant.php';
-    $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name', true );
+    $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'name', true );
 
     $activityName   = CRM_Utils_Array::value( 'activity_name', $params );
     $activityTypeId = CRM_Utils_Array::value( 'activity_type_id', $params );
