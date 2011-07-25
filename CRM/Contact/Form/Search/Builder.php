@@ -235,7 +235,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
                                     $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter correct Data ( in valid format ).");
                                 }
                             } else {
-                                if (!preg_match( '/^[(][\']([A-Za-z0-9\'\,\s]+)[\'][)]$/', $inVal) ) {
+                                if (!preg_match( '/^[(]([A-Za-z0-9åäöÅÄÖüÜœŒæÆøØ\,\s]+)[)]$/', $inVal) ) {
                                     $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter correct Data ( in valid format ).");
                                 }
                             }
@@ -245,6 +245,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
                                 $parenValues = array();
                                 $parenValues = explode ( ',', trim( $inVal, "(..)" ) );
                                 foreach ( $parenValues as $val ) {
+                                    $val = trim( $val );
                                     if ( !$val && $val !='0' ) {
                                         $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter the values correctly.");
                                     }

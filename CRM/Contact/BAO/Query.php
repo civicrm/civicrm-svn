@@ -4009,6 +4009,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
                 // supporting multiple values in IN clause
                 $val = array();
                 foreach ( $values as $v ) {
+                    $v = trim( $v );
                     $val[] = "'" . CRM_Utils_Type::escape( $v, $dataType ) . "'";
                 }
                 $value = "(" . implode( $val, "," ) . ")";
