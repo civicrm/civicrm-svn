@@ -16,6 +16,7 @@ files[] = modules/views/civicrm.views_default.inc
 files[] = modules/views/civicrm/civicrm_handler_field.inc
 files[] = modules/views/civicrm/civicrm_handler_field_activity_status.inc
 files[] = modules/views/civicrm/civicrm_handler_field_activity_type.inc
+files[] = modules/views/civicrm/civicrm_handler_field_address.inc
 files[] = modules/views/civicrm/civicrm_handler_field_contact_link.inc
 files[] = modules/views/civicrm/civicrm_handler_field_contribution_page.inc	
 files[] = modules/views/civicrm/civicrm_handler_field_contribution_status.inc

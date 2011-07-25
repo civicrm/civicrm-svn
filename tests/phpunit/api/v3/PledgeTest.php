@@ -188,6 +188,36 @@ class api_v3_PledgeTest extends CiviUnitTestCase
       $pledge   =& civicrm_api('pledge','delete',$pledgeID);
     }
     
+    /*
+     * Test creation of pledge with only one payment.
+     * 
+     * Pledge status id left empty as it is not a required field 
+     * http://issues.civicrm.org/jira/browse/CRM-8551
+     * 
+     */
+    function testCreatePledgeSinglePayment(){
+      $params =  array(  'scheduled_date'     => '20110510',
+      									 'frequency_unit'     => 'week',
+    										 'frequency_day'      =>  3,
+    										 'frequency_interval' => 2,
+                         'installments'   => 1,
+      );
+
+      $params = array_merge($this->params,$params);
+       unset ($params['pledge_status_id']); 
+
+      $pledge = civicrm_api('Pledge','Create',$params);
+
+          
+      //ensure that correct number of payments created & last payment has the right date
+      $payments = civicrm_api('PledgePayment','Get',array('version' =>3, 'pledge_id' => $result['id'], 'sequential' => 1));
+      $this->assertEquals($payments['is_error'], 0 , 'In line ' . __LINE__);
+      $this->assertEquals(1 ,$payments['count'], 'In line '. __LINE__);
+      $this->assertEquals(2 ,$payments['values'][0]['status_id'], 'In line '. __LINE__);
+      $pledgeID = array( 'id' => $pledge['id'], 'version' => 3 );
+      $pledge   =& civicrm_api('pledge','delete',$pledgeID);
+    }
+    
 /*
  * test that using original_installment_amount rather than pledge_original_installment_amount works
  * Pledge field behaviour is a bit random & so pledge has come to try to handle both unique & non -unique fields
@@ -233,7 +263,8 @@ class api_v3_PledgeTest extends CiviUnitTestCase
     {
    
         $params = $this->params;
-        unset ($params['status_id']);             
+        unset ($params['status_id']); 
+        unset ($params['pledge_status_id']);             
         $result=& civicrm_api('pledge','create',$params);
         $this->assertEquals(0, $result['is_error'], "in line " . __LINE__);
         $this->assertEquals(2, $result['values'][0]['status_id'], "in line " . __LINE__);
@@ -322,7 +353,9 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $this->assertEquals( $pledge['error_message'], 'Mandatory key(s) missing from params array: one of (id, pledge_id)' );
     }
     
-    
+    /*
+     * legacy support for pledge_id
+     */  
     function testDeletePledge()
     {
 
@@ -335,6 +368,20 @@ class api_v3_PledgeTest extends CiviUnitTestCase
 
     }
     
+    /*
+     * std is to accept id
+     */
+   function testDeletePledgeUseID()
+    {
+
+        $pledgeID = $this->pledgeCreate( $this->_individualId  );
+        $params         = array( 'id' => $pledgeID,
+                                  'version'  => $this->_apiversion );
+        $result   = civicrm_api('pledge','delete', $params );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals( $result['is_error'], 0 );
+
+    }
     /*
      * test to make sure suite has deleted all pledges
      */

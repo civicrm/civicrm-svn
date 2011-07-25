@@ -50,7 +50,7 @@ require_once 'CRM/Core/BAO/CustomValueTable.php';
  *
  * @param $params  expected keys are in format custom_fieldID:recordID or custom_groupName:fieldName:recordID
  * for example:
- * 'id' => 123, // entity ID. You do not need to specify entity type, we figure it out based on the fields you're using
+ * 'entity_id' => 123, // entity ID. You do not need to specify entity type, we figure it out based on the fields you're using
  * 'custom_6' => 'foo', // (omitting :id) inserts or updates a field in a single-valued group
  * 'custom_24' => array('bar', 'baz'), // custom_24 is checkbox or multiselect, so pass items as an array
  * 'custom_33:5' => value, // in this case custom_33 is part of a multi-valued group, and we're updating record id 5
@@ -66,10 +66,11 @@ require_once 'CRM/Core/BAO/CustomValueTable.php';
  * 
  */
 function civicrm_api3_custom_value_create( $params ) {
-  civicrm_api3_verify_mandatory($params, null, array('id'));
-
-  $create = array('entityID' => $params['id']);
-
+  civicrm_api3_verify_mandatory($params, null, array('entity_id'));
+  if(substr($params['entity_table'],0,7) == 'civicrm'){
+    $params['entity_table'] = substr($params['entity_table'],8,7);
+  }
+  $create = array('entityID' => $params['entity_id']);
   // Translate names and
   //Convert arrays to multi-value strings
   $sp = CRM_Core_DAO::VALUE_SEPARATOR;
@@ -97,7 +98,6 @@ function civicrm_api3_custom_value_create( $params ) {
     }
     $create['custom_' . $key] = $param;
   }
-
   $result = CRM_Core_BAO_CustomValueTable::setValues($create);
   if ($result['is_error']) {
     return civicrm_api3_create_error($result['error_message']);
@@ -129,6 +129,9 @@ function civicrm_api3_custom_value_get($params) {
     'entityID' => $params['entity_id'],
     'entityType' => $params['entity_table'],
   );
+  if(strstr($getParams['entityType'], 'civicrm_' )){
+    $getParams['entityType'] = ucfirst(substr($getParams['entityType'],8));
+  }
   unset($params['entity_id'], $params['entity_table']);
   foreach ($params as $id => $param) {
     if ($param && substr($id, 0, 6) == 'return') {

@@ -1,6 +1,5 @@
 <?php
-require_once 'api/v3/utils.php';
-
+require_once 'CRM/Core/BAO/OptionValue.php';
 function civicrm_api3_option_value_get( $params ) {
 
      civicrm_api3_verify_mandatory($params);
@@ -13,13 +12,8 @@ function civicrm_api3_option_value_get( $params ) {
        $params['option_group_id'] = $optionGroup['id'];
       }    
       
-      require_once 'CRM/Core/BAO/OptionValue.php';
-      $bao = new CRM_Core_BAO_OptionValue( );
-
-      _civicrm_api3_dao_set_filter ( $bao, $params );
-
-      return civicrm_api3_create_success(_civicrm_api3_dao_to_array ($bao,$params));
-
+      return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+      
 }
 
 /**
@@ -58,7 +52,7 @@ function civicrm_api3_option_value_create( $params )
     }
     civicrm_api3_verify_mandatory ($params,'CRM_Core_BAO_OptionValue');
     
-    require_once 'CRM/Core/BAO/OptionValue.php';
+
     if (CRM_Utils_Array::value('id', $params)){
       $ids             = array( 'optionValue' => $params['id'] );
     }

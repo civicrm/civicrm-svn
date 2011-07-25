@@ -217,15 +217,18 @@ class CRM_Case_Form_Activity_OpenCase
         }
 
         $errors = array( );
-        //check if contact is selected in standalone mode
-        if ( isset( $fields['contact_select_id'][1] ) && !$fields['contact_select_id'][1] ) {
-            $errors['contact[1]'] = ts('Please select a contact or create new contact');
+
+        if ( !$form->_allowMultiClient ) {
+            //check if contact is selected in standalone mode
+            if ( isset( $fields['contact_select_id'][1] ) && !$fields['contact_select_id'][1] ) {
+                $errors['contact[1]'] = ts('Please select a contact or create new contact');
+            }
+        } else {
+            //check selected contact for multi client option
+            if ( isset( $fields['contact'][1] ) && !$fields['contact'][1] ) {
+                $errors['contact[1]'] = ts('Please select a valid contact or create new contact');
+            }
         }
-        //check selected contact for multi client option
-        if ( $form->_allowMultiClient && isset( $fields[contact][1] ) && !$fields[contact][1] ) {
-            $errors['contact[1]'] = ts('Please select a valid contact or create new contact');
-        }
-        
         return $errors;
     }
 

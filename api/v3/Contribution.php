@@ -123,7 +123,12 @@ function civicrm_api3_contribution_delete($params) {
 function civicrm_api3_contribution_get($params) {
 
 		civicrm_api3_verify_mandatory ( $params );
-		
+		if(CRM_Utils_Array::value('id', $params) ){
+    //api supports 'id' but BAO supports 'contribution_id. Change it here
+		  $params['contribution_id'] = CRM_Utils_Array::value('contribution_id', $params,$params['id']);
+		  unset ($params['id']);
+		}
+
 		$inputParams = array ();
 		$returnProperties = array ();
 		$otherVars = array ('sort', 'offset', 'rowCount' );

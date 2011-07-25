@@ -711,7 +711,7 @@ function civicrm_views_data() {
                                                        'title' => t('Full Street Address'),
                                                        'help' => t('Full Street Address without Country, State or Postcode'),
                                                        'field' => array(
-                                                                        'handler' => 'views_handler_field',
+                                                                        'handler' => 'civicrm_handler_field_address',
                                                                         'click sortable' => TRUE,
                                                                         ),
 
@@ -734,7 +734,30 @@ function civicrm_views_data() {
                                                                'title' => t('Supplemental Street Address'),
                                                                'help' => t('Supplemental Street Address such as Apartment or Suite Number or Department'),
                                                                'field' => array(
-                                                                                'handler' => 'views_handler_field',
+                                                                                'handler' => 'civicrm_handler_field_address',
+                                                                                'click sortable' => TRUE,
+                                                                                ),
+
+                                                               'argument' => array(
+                                                                                   'handler' => 'views_handler_argument',
+                                                                                   ),
+
+                                                               'filter' => array(
+                                                                                 'handler' => 'views_handler_filter_string',
+                                                                                 'allow empty' => TRUE,
+                                                                                 ),
+
+                                                               'sort' => array(
+                                                                               'handler' => 'views_handler_sort',
+                                                                               ),
+                                                               );
+
+    //FULL STREET ADDRESS SUPPLEMENTAL 2
+    $data['civicrm_address']['supplemental_address_2'] = array(
+                                                               'title' => t('2nd Supplemental Street Address'),
+                                                               'help' => t('2nd Supplemental Street Address such as Apartment or Suite Number or Department'),
+                                                               'field' => array(
+                                                                                'handler' => 'civicrm_handler_field_address',
                                                                                 'click sortable' => TRUE,
                                                                                 ),
 
@@ -757,7 +780,7 @@ function civicrm_views_data() {
                                              'title' => t('City / Suburb'),
                                              'help' => t('The City or Suburb the address is at'),
                                              'field' => array(
-                                                              'handler' => 'views_handler_field',
+                                                              'handler' => 'civicrm_handler_field_address',
                                                               'click sortable' => TRUE,
                                                               ),
 
@@ -781,7 +804,7 @@ function civicrm_views_data() {
                                                        'real field' => 'state_province_id',
                                                        'help' => t('The State or Province of the Address'),
                                                        'field' => array(
-                                                                        'handler' => 'civicrm_handler_field_state',
+                                                                        'handler' => 'civicrm_handler_field_address',
                                                                         'click sortable' => TRUE,
                                                                         ),
 
@@ -804,7 +827,7 @@ function civicrm_views_data() {
                                                     'title' => t('ZIP / Postal Code'),
                                                     'help' => t('ZIP / Postal Code of the Address'),
                                                     'field' => array(
-                                                                     'handler' => 'views_handler_field',
+                                                                     'handler' => 'civicrm_handler_field_address',
                                                                      'click sortable' => TRUE,
                                                                      ),
 
@@ -827,7 +850,7 @@ function civicrm_views_data() {
                                                    'title' => t('Latitude'),
                                                    'help' => t('Latitude of the Address for mapping'),
                                                    'field' => array(
-                                                                    'handler' => 'views_handler_field',
+                                                                    'handler' => 'civicrm_handler_field_address',
                                                                     'click sortable' => TRUE,
                                                                     ),
 
@@ -850,7 +873,7 @@ function civicrm_views_data() {
                                                    'title' => t('Longitude'),
                                                    'help' => t('Longitude of the Address for mapping'),
                                                    'field' => array(
-                                                                    'handler' => 'views_handler_field',
+                                                                    'handler' => 'civicrm_handler_field_address',
                                                                     'click sortable' => TRUE,
                                                                     ),
 
@@ -921,7 +944,7 @@ function civicrm_views_data() {
                                              'title' => t('Address Name'),
                                              'help' => t('Be sure addres name is enabled in CiviCRM' ),
                                              'field' => array(
-                                                              'handler' => 'views_handler_field',
+                                                              'handler' => 'civicrm_handler_field_address',
                                                               'click sortable' => TRUE,
                                                               ),
 
@@ -5511,7 +5534,7 @@ function civicrm_views_data() {
                                                                           ),
 
                                                       'filter' => array(
-                                                                                                            'handler' => 'views_handler_filter_numeric',
+                                                                        'handler' => 'views_handler_filter_numeric',
                                                                         'allow empty' => TRUE,
                                                                         ),
 
@@ -6079,7 +6102,9 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
             if ( in_array( $currentfield['html_type'],
                            $customHTMLTypes ) ) {
                 $handler = 'civicrm_handler_field_custom';
-            } else {
+            } else if ( $currentfield['html_type'] == 'File' ) {
+                $handler = 'civicrm_handler_field_custom_file';
+             }else {
                 $handler = civicrm_get_field_handler( $currentfield['data_type'] );
             }
             
@@ -6121,7 +6146,7 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
             }
         }
     }
-    return $data;
+    return $data; 
 }
 
 
@@ -6288,3 +6313,289 @@ function civicrm_date_views_tables() {
                  'civicrm_activity',
                  'civicrm_campaign',);
 }
+
+// Telling Views where to get the Handlers
+function civicrm_views_handlers() {
+    return array(
+                 'info' => array(
+                                 'path' => drupal_get_path('module', 'civicrm') . '/modules/views/civicrm',
+                                 ),
+                 'handlers' =>
+
+                 //FIELD HANDLAAARRRRS! Field Handlers!
+
+                 array(
+                       // LINK FIELDS GO HERE
+                       'civicrm_handler_field_link_contact' => array(
+                                                                     'parent' => 'views_handler_field',
+                                                                     ),
+                       'civicrm_handler_field_link_event' => array(
+                                                                   'parent' => 'views_handler_field',
+                                                                   ),
+                       'civicrm_handler_field_link_participant' => array(
+                                                                         'parent' => 'views_handler_field',
+                                                                         ),
+                       'civicrm_handler_field_link_contribution' => array(
+                                                                          'parent' => 'views_handler_field',
+                                                                          ),
+                       'civicrm_handler_field_link_activity' => array(
+                                                                      'parent' => 'views_handler_field',
+                                                                      ),
+                       'civicrm_handler_field_link_relationship' => array(
+                                                                          'parent' => 'views_handler_field',
+                                                                          ),
+                       'civicrm_handler_field_contact_link' => array(
+                                                                     'parent' => 'views_handler_field',
+                                                                     ),
+                       'civicrm_handler_field_gender' => array(
+                                                               'parent' => 'views_handler_field',
+                                                               ),
+                       'civicrm_handler_field_location' => array(
+                                                               'parent' => 'views_handler_field',
+                                                               ),
+                       'civicrm_handler_field_address' => array(
+                                                              'parent' => 'civicrm_handler_field_location',
+                                                              ),
+                       'civicrm_handler_field_phone' => array(
+                                                              'parent' => 'civicrm_handler_field_location',
+                                                              ),
+                       'civicrm_handler_field_phone_type' => array(
+                                                                   'parent' => 'views_handler_field',
+                                                                   ),
+                       'civicrm_handler_field_location_type' => array(
+                                                                      'parent' => 'views_handler_field',
+                                                                      ),
+                       'civicrm_handler_field_state' => array(
+                                                              'parent' => 'civicrm_handler_field_location',
+                                                              ),
+                       'civicrm_handler_field_country' => array(
+                                                                'parent' => 'civicrm_handler_field_location',
+                                                                ),
+                       'civicrm_handler_field_county' => array(
+                                                               'parent' => 'civicrm_handler_field_location',
+                                                               ),
+                       'civicrm_handler_field_email' => array(
+                                                              'parent' => 'civicrm_handler_field_location',
+                                                              ),
+                       'civicrm_handler_field_datetime' => array(
+                                                                 'parent' => 'views_handler_field_date',
+                                                                 ),
+                       'civicrm_handler_field_event_type' => array(
+                                                                   'parent' => 'views_handler_field',
+                                                                   ),
+                       'civicrm_handler_field_event_link' => array(
+                                                                   'parent' => 'views_handler_field',
+                                                                   ),
+                       'civicrm_handler_field_event_price_set' => array(
+                                                                        'parent' => 'views_handler_field_prerender_list',
+                                                                        ),
+                       'civicrm_handler_field_participant_status' => array(
+                                                                           'parent' => 'views_handler_field',
+                                                                           ),
+                       'civicrm_handler_field_participant_role' => array(
+                                                                         'parent' => 'views_handler_field',
+                                                                         ),
+                       'civicrm_handler_field_contribution_type' => array(
+                                                                          'parent' => 'views_handler_field',
+                                                                          ),
+                       'civicrm_handler_field_contribution_page' => array(
+                                                                          'parent' => 'views_handler_field',
+                                                                          ),
+                       'civicrm_handler_field_payment_instrument' => array(
+                                                                           'parent' => 'views_handler_field',
+                                                                           ),
+                       'civicrm_handler_field_contribution_status' => array(
+                                                                            'parent' => 'views_handler_field',
+                                                                            ),
+                       'civicrm_handler_field_activity_status' => array(
+                                                                        'parent' => 'views_handler_field',
+                                                                        ),
+                       'civicrm_handler_field_activity_type' => array(
+                                                                      'parent' => 'views_handler_field',
+                                                                      ),
+                       'civicrm_handler_field_priority' => array(
+                                                                 'parent' => 'views_handler_field',
+                                                                 ),
+                       'civicrm_handler_field_encounter_medium' => array (
+                                                                          'parent' => 'views_handler_field',
+                                                                          ),
+
+                       'civicrm_handler_field_relationship_type' => array(
+                                                                          'parent' => 'views_handler_field',
+                                                                          ),
+                                                                          
+                       'civicrm_handler_field_drupalid' => array(
+                                                                 'parent' => 'views_handler_field',
+                                                                 ),      
+                       'civicrm_handler_field_membership_type' => array(
+                                                                        'parent' => 'views_handler_field',
+                                                                        ),
+                       'civicrm_handler_field_membership_status' => array(
+                                                                          'parent' => 'views_handler_field',
+                                                                          ),
+                       'civicrm_handler_relationship_contact2users' => array(
+                                                                             'parent' => 'views_handler_relationship',
+                                                                             ),
+                       'civicrm_handler_field_markup' => array(
+                                                               'parent' => 'views_handler_field',
+                                                               ),
+                       'civicrm_handler_field_custom' => array(
+                                                               'parent' => 'views_handler_field',
+                                                               ),
+                       'civicrm_handler_field_custom_file' => array( 
+                                                                    'parent' => 'views_handler_field',
+                                                                     ),
+                       'civicrm_handler_field_campaign_type' => array(
+                                                                      'parent' => 'views_handler_field',
+                                                                      ),
+                       'civicrm_handler_field_campaign_status' => array(
+                                                                        'parent' => 'views_handler_field',
+                                                                        ),
+                       'civicrm_handler_field_grant_type' => array(
+                                                                   'parent' => 'views_handler_field',
+                                                                   ),
+                       'civicrm_handler_field_grant_status' => array(
+                                                                     'parent' => 'views_handler_field',
+                                                                     ),
+                                                                          
+                       //FILTER HANDDLEAARRRS! Filter Handlers!
+                       'civicrm_handler_filter_datetime' => array(
+                                                                  'parent' => 'views_handler_filter_date',
+                                                                  ),
+
+
+                       'civicrm_handler_filter_gender' => array(
+                                                                'parent' => 'views_handler_filter_in_operator',
+                                                                ),
+                       'civicrm_handler_filter_phone_type' => array(
+                                                                    'parent' => 'views_handler_filter_in_operator',
+                                                                    ),
+                       'civicrm_handler_filter_location_type' => array(
+                                                                       'parent' => 'views_handler_filter_in_operator',
+                                                                       ),
+                       'civicrm_handler_filter_state' => array(
+                                                               'parent' => 'views_handler_filter_in_operator',
+                                                               ),
+                       'civicrm_handler_filter_country' => array(
+                                                                 'parent' => 'views_handler_filter_in_operator',
+                                                                 ),
+                       'civicrm_handler_filter_county' => array(
+                                                                'parent' => 'views_handler_filter_in_operator',
+                                                                ),
+                       'civicrm_handler_filter_event_type' => array(
+                                                                    'parent' => 'views_handler_filter_in_operator',
+                                                                    ),
+                       'civicrm_handler_filter_participant_status' => array(
+                                                                            'parent' => 'views_handler_filter_in_operator',
+                                                                            ),
+                       'civicrm_handler_filter_group_status'=> array(
+                                                                     'parent' => 'views_handler_filter_in_operator',
+                                                                     ),
+                       'civicrm_handler_filter_group_title'=> array(
+                                                                    'parent' => 'views_handler_filter_in_operator',
+                                                                    ),
+                       'civicrm_handler_filter_tag_title' => array(
+                                                                   'parent' => 'views_handler_filter_in_operator',
+                                                                   ),
+                       'civicrm_handler_filter_participant_role' => array(
+                                                                          'parent' => 'views_handler_filter_in_operator',
+                                                                          ),
+                       'civicrm_handler_filter_contribution_type' => array(
+                                                                           'parent' => 'views_handler_filter_in_operator',
+                                                                           ),
+                       'civicrm_handler_filter_contribution_page' => array(
+                                                                           'parent' => 'views_handler_filter_in_operator',
+                                                                           ),
+                       'civicrm_handler_filter_payment_instrument' => array(
+                                                                            'parent' => 'views_handler_filter_in_operator',
+                                                                            ),
+                       'civicrm_handler_filter_contribution_status' => array(
+                                                                             'parent' => 'views_handler_filter_in_operator',
+                                                                             ),
+                       'civicrm_handler_filter_activity_status' => array(
+                                                                         'parent' => 'views_handler_filter_in_operator',
+                                                                         ),
+                       'civicrm_handler_filter_activity_type' => array(
+                                                                       'parent' => 'views_handler_filter_in_operator',
+                                                                       ),
+                       'civicrm_handler_filter_priority' => array(
+                                                                  'parent' => 'views_handler_filter_in_operator'
+                                                                  ),
+                       'civicrm_handler_filter_encounter_medium' => array (
+                                                                           'parent' => 'views_handler_filter_in_operator',
+                                                                           ),
+                       'civicrm_contact_date_api_filter_handler' => array(
+                                                                          'parent' => 'date_api_filter_handler',
+                                                                          ),
+                       'civicrm_handler_filter_relationship_type' => array(
+                                                                           'parent' => 'views_handler_filter_in_operator',
+                                                                           ),    
+                       'civicrm_handler_filter_contact_type' => array(
+                                                                      'parent' => 'views_handler_filter_in_operator',
+                                                                      ),                                                                           
+                       'civicrm_handler_filter_membership_type' => array(
+                                                                         'parent' => 'views_handler_filter_in_operator',
+                                                                         ),
+                       'civicrm_handler_filter_membership_status' => array(
+                                                                           'parent' => 'views_handler_filter_in_operator',
+                                                                           ),
+                       'civicrm_handler_filter_mailing_name' => array(
+                                                                      'parent' => 'views_handler_filter_in_operator',
+                                                                      ),
+                       'civicrm_handler_filter_custom_option' => array(
+                                                                       'parent' => 'views_handler_filter_in_operator',
+                                                                       ),
+                       'civicrm_handler_filter_custom_single_option' => array(
+                                                                              'parent' => 'views_handler_filter_in_operator',
+                                                                              ),
+
+                       'civicrm_handler_filter_campaign_status' => array(
+                                                                         'parent' => 'views_handler_filter_in_operator',
+                                                                         ),
+                       'civicrm_handler_filter_campaign_type' => array(
+                                                                       'parent' => 'views_handler_filter_in_operator',
+                                                                       ),
+                       'civicrm_handler_filter_grant_type' => array(
+                                                                    'parent' => 'views_handler_filter_in_operator',
+                                                                    ),                                      
+                       'civicrm_handler_filter_grant_status' => array(
+                                                                      'parent' => 'views_handler_filter_in_operator',
+                                                                      ),                                      
+                       
+                       // ARGUMENT HANDLERS
+                       'civicrm_handler_argument_date_api_contact' => array(
+                                                                            'parent' => 'date_api_argument_handler',
+                                                                            ),
+                       'views_handler_argument_civicrm_fulldate' => array(
+                                                                          'parent' => 'views_handler_argument_date'
+                                                                          ),
+                       'views_handler_argument_civicrm_year' => array(
+                                                                      'parent' => 'views_handler_argument_date'
+                                                                      ),
+                       'views_handler_argument_civicrm_year_month' => array(
+                                                                            'parent' => 'views_handler_argument_date'
+                                                                            ),
+                       'views_handler_argument_civicrm_month' => array(
+                                                                       'parent' => 'views_handler_argument_date'
+                                                                       ),
+                       'views_handler_argument_civicrm_day' => array(
+                                                                     'parent' => 'views_handler_argument_date'
+                                                                     ),
+                       'views_handler_argument_civicrm_week' => array(
+                                                                      'parent' => 'views_handler_argument_date'
+                                                                      ),
+                       //SORT Handlers
+                       'civicrm_handler_sort_date' => array(
+                                                            'parent' => 'views_handler_sort_date',
+                                                            ),
+                       //Relationship Handlers
+                       'civicrm_handler_relationship' => array(
+                                                           'parent'=> 'views_handler_relationship',
+                                                            ),
+                        ),
+
+                 );
+                 
+
+}
+

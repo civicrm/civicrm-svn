@@ -250,7 +250,7 @@ function civicrm_api3_create_success( $values = 1,$params=array(), $entity = nul
         if(is_object ($dao)){
             $allFields = array_keys($dao->fields());
             $paramFields = array_keys($params);
-            $undefined = array_diff ($paramFields, $allFields,array_keys($_COOKIE),array ('action','entity','debug','version','check_permissions','IDS_request_uri','IDS_user_agent','return','sequential'));
+            $undefined = array_diff ($paramFields, $allFields,array_keys($_COOKIE),array ('action','entity','debug','version','check_permissions','IDS_request_uri','IDS_user_agent','return','sequential','rowCount','option_offset','option_limit','option_sort'));
             if ($undefined) 
                 $result['undefined_fields'] = array_merge ($undefined);
         }
@@ -344,23 +344,19 @@ function civicrm_api3_error( $params )
 
 /**
  *
- * @param <type> $fields
- * @param <type> $params
- * @param <type> $values
- * @return <type>
+ * @param array $fields
+ * @param array $params
+ * @param array $values
+ * @return Bool $valueFound
  */
 function _civicrm_api3_store_values( &$fields, &$params, &$values ) 
 {
     $valueFound = false;
     
-    foreach ($fields as $name => $field) {
-        // ignore all ids for now
-        if ( $name === 'id' || substr( $name, -1, 3 ) === '_id' ) {
-            continue;
-        }
-        
-        if ( array_key_exists( $name, $params ) ) {
-            $values[$name] = $params[$name];
+     $keys = array_intersect_key($params,$fields);
+     foreach($keys as $name => $value) {
+       if( $name !== 'id' ) {
+            $values[$name] = $value;
             $valueFound = true;
         }
     }
@@ -381,10 +377,77 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
       $dao->id = $params[$entity. "_id"];
          
     }
+    //apply options like sort
+     _civicrm_api3_apply_options_to_dao($params, $dao );   
+    
+    //accept filters like filter.activity_date_time_high
+    // std is now 'filters' => .. 
+    if(strstr(implode(',', array_keys($params)), 'filter')){
+      if(is_array($params['filters'])){
+        foreach ($params['filters'] as $paramkey =>$paramvalue) {
+          _civicrm_api3_apply_filters_to_dao($paramkey,$paramvalue, $dao );
+        }
+      }else{
+        foreach ($params as $paramkey => $paramvalue) {
+          if(strstr($paramkey, 'filter') ){
+            _civicrm_api3_apply_filters_to_dao(substr($paramkey,7),$paramvalue, $dao );
+          }
+       }
+      }
+    }  
+
     if (!$fields) 
          return;
     foreach ($fields as $field) {
         $dao->$field = $params [$field];
+    }
+
+}
+
+/*
+ * Apply filters (e.g. high, low) to DAO object (prior to find)
+ * @param string $filterField field name of filter
+ * @param string $filterValue field value of filter
+ * @param object $dao DAO object
+ */
+function   _civicrm_api3_apply_filters_to_dao($filterField,$filterValue, &$dao ){
+   if( strstr($filterField, 'high') ){
+          $fieldName = substr($filterField ,0,-5);
+          $dao->whereAdd( "($fieldName <= $filterValue )" );        
+    }
+   if(strstr($filterField, 'low')){
+          $fieldName = substr($filterField ,0,-4);
+          $dao->whereAdd( "($fieldName >= $filterValue )" );        
+    }
+}
+
+/*
+ * Apply options (e.g. sort, limit, order by) to DAO object (prior to find)
+ * @param array $params params array as passed into civicrm_api
+ * @param object $dao DAO object
+ */
+function   _civicrm_api3_apply_options_to_dao(&$params, &$dao, $defaults = array() ){
+    $sort = CRM_Utils_Array::value('option.sort', $params, 0);
+    $sort = CRM_Utils_Array::value('option_sort', $params, $sort);  
+    
+    $offset = CRM_Utils_Array::value('option.offset', $params, 0);
+    $offset = CRM_Utils_Array::value('option_offset', $params,$offset ); // dear PHP thought it would be a good idea to transform a.b into a_b in the get/post
+
+    //XAV->eileen do you want it?     $offset = CRM_Utils_Array::value('offset', $params,  $offset);
+    $limit = CRM_Utils_Array::value('option.limit', $params,25);
+    $limit = CRM_Utils_Array::value('option_limit', $params,$limit);
+    
+    if(is_array($params['options'])){
+      $offset = CRM_Utils_Array::value('offset', $params['options'],$offset );
+      $limit = CRM_Utils_Array::value('limit', $params['options'],$limit );
+      $sort = CRM_Utils_Array::value('sort', $params['options'],$sort );
+    }
+    
+    $dao->limit( (int)$offset, (int)$limit);
+    
+
+    if(!empty($sort)){
+       $dao->orderBy( $sort);
     }
 
 }
@@ -1688,6 +1751,7 @@ function _civicrm_api3_validate_fields($entity, $action, &$params) {
   											  'event' => 1, 
   											  'contribution' => 1,
                           'activity' => 1,
+                          'campaign' => 1,
       );
   if(!array_key_exists(strtolower($entity), $testedEntities)){
     return;
@@ -1846,3 +1910,4 @@ function _civicrm_api_get_custom_fields($entity){
   }
   return $customfields;
 }
+

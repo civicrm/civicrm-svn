@@ -533,6 +533,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
         $params['id'] = $contactID;
         $params['version'] = API_LATEST_VERSION;
+        $params['skip_undelete'] = 1;
         $result = civicrm_api('Contact','delete',$params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Could not delete contact, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
@@ -1353,7 +1354,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * @param string $className
      * @param string $title  name of custom group
      */
-    function customGroupCreate( $extends, $title = 'title' ) {
+    function customGroupCreate( $extends = 'Contact', $title = 'title' ) {
 
         if (CRM_Utils_Array::value('title',$extends)){
             $params = $extends;
@@ -1472,6 +1473,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     
     function entityCustomGroupWithSingleFieldCreate( $function,$filename){
         $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
+        if(empty($entity)){
+          $entity = 'Contact';
+        }
         $customGroup = $this->CustomGroupCreate($entity,$function);
       
         $customField = $this->customFieldCreate( $customGroup['id'], $function ) ;
@@ -1650,13 +1654,17 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }else{
             $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)[A-Z]/','_$0', $entity)); 
         }   
+        require_once 'CRM/Core/Smarty.php';
+        $smarty =& CRM_Core_Smarty::singleton();
+        $smarty->assign('testfunction',$function);
         $function = $fnPrefix . "_" .strtolower($action);
         require_once 'CRM/Core/Smarty.php';
         $smarty =& CRM_Core_Smarty::singleton();
         $smarty->assign('function',$function);
         $smarty->assign('fnPrefix',$fnPrefix);
         $smarty->assign('params',$params);   
-        $smarty->assign('entity',$entity);   
+        $smarty->assign('entity',$entity);  
+        $smarty->assign('filename',basename($filename)); 
         $smarty->assign('description',$description);         
         $smarty->assign('result',$result); 
        // $smarty->registerPlugin("modifier","print_array", "print_array");

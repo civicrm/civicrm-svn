@@ -1203,9 +1203,24 @@ class api_v3_ContactTest extends CiviUnitTestCase
     $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
     . " error message: " . CRM_Utils_Array::value('error_message', $result) );
     $this->assertEquals( 1, $result['id'], "In line " . __LINE__ );
+    $this->assertEquals(2,$result['values'][$result['id']]['api.Contribution.getCount'], "In line " . __LINE__); 
     $this->assertEquals(0,$result['values'][$result['id']]['api.Note.get']['is_error'], "In line " . __LINE__);
     $this->assertEquals("http://civicrm.org",$result['values'][$result['id']]['api.website.getValue'], "In line " . __LINE__);
     // delete the contact
+    
+    $params = array('id' => $result['id'], 'version' => 3, 
+    								'api_Contribution_get' => array(  
+                      ),
+                      'sequential' => 1,
+                      'format.smarty' => 'api/v3/exampleLetter.tpl' );
+     $subfile = 'smartyExample';
+     $description = "demonstrates use of smarty as output";
+     $result = civicrm_api('Contact','Get',$params); 
+   //  $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile); 
+  //   $this->assertContains('USD', $result);
+   //  $this->assertContains('Dear', $result);
+  //   $this->assertContains('Friday', $result);
+     
     civicrm_api('contact', 'delete' , $result );
     $this->customGroupDelete($ids['custom_group_id']);
     $this->customGroupDelete($moreids['custom_group_id']);

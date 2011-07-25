@@ -11,13 +11,10 @@ class api_v3_CampaignTest extends CiviUnitTestCase
     function setUp() 
     {
         $this->_apiversion = 3;
-        $phoneBankActivity =  civicrm_api('Option_value','Get', array('label' => 'PhoneBank','version' =>$this->_apiversion,'sequential' =>1));
-        $phoneBankActivityTypeID = $phoneBankActivity['values'][0]['value'];
         $this->params = array('version' =>3,
                               'title'   => "campaign title",
-                              'activity_type_id' => $phoneBankActivityTypeID,
-                              'max_number_of_contacts' => 12,
-                              'instructions'		=> "Call people, ask for money",
+                              'description'		=> "Call people, ask for money",
+                              'created_date' 		=> 'first sat of July 2008',
 
                            );
         parent::setUp();
@@ -28,15 +25,17 @@ class api_v3_CampaignTest extends CiviUnitTestCase
     }
 
    public function testCreateCampaign () {
+        $description = "Create a campaign - Note use of relative dates here http://www.php.net/manual/en/datetime.formats.relative.php";
         $result = civicrm_api('campaign', 'create', $this->params);
-        $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
+        $this->documentMe($this->params,$result,__FUNCTION__,__FILE__, $description); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
         $this->assertNotNull( $result['values'][$result['id']]['id'], 'In line ' . __LINE__ );           
-
+        $this->getAndCheck(array_merge($this->params, array('created_date' => '2008-07-05 00:00:00')), $result['id'], 'campaign', true);
     }
 
    public function testGetCampaign () {
+        $result = civicrm_api('campaign', 'create', $this->params);
         $result = civicrm_api('campaign', 'get', ($this->params));
         $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
@@ -47,8 +46,9 @@ class api_v3_CampaignTest extends CiviUnitTestCase
 
    public function testDeleteCampaign () {
         $entity = civicrm_api('campaign', 'get', ($this->params));   
-        $result = civicrm_api('campaign', 'delete', array('version' =>3,'id' => $entity['id']));
-        $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
+        $delete = array('version' =>3,'id' => $entity['id']);
+        $result = civicrm_api('campaign', 'delete', $delete);
+        $this->documentMe($delete,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
 
         $checkDeleted = civicrm_api('campaign', 'get', array('version' =>3,));
