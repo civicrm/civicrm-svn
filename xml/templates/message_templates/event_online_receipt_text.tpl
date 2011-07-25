@@ -241,7 +241,7 @@ registration process.{/ts}
 {foreach from=$customProfile.profile item=eachParticipant key=participantID}
 ==========================================================={if $pricesetFieldsCount }===================={/if}
 
-{ts 1=$participantID+1}Participant Information - Participant %1{/ts}
+{ts 1=$participantID+2}Participant Information - Participant %1{/ts}
 
 ==========================================================={if $pricesetFieldsCount }===================={/if}
 

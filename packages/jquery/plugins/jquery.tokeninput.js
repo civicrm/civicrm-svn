@@ -239,7 +239,8 @@ $.TokenList = function (input, url_or_data, settings) {
                 case KEY.TAB:
                 case KEY.ENTER:
                 case KEY.NUMPAD_ENTER:
-                case KEY.COMMA:
+                // Comma should NOT select token CRM-8488
+                // case KEY.COMMA:
                   if(selected_dropdown_item) {
                     add_token($(selected_dropdown_item).data("tokeninput"));
                     return false;

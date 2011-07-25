@@ -97,7 +97,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     {        
         $p = array(
                         'contact_id'             => $this->_individualId,
-                        'receive_date'           => date('Ymd'),
+                        'receive_date'           => '2010-01-20',
                         'total_amount'           => 100.00,
                         'contribution_type_id'   => $this->_contributionTypeId,
                         'non_deductible_amount'  => 10.00,

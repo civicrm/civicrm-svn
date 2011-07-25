@@ -751,7 +751,8 @@ function civicrm_views_data() {
                                                                                'handler' => 'views_handler_sort',
                                                                                ),
                                                                );
-    //FULL STREET ADDRESS SUPPLEMENTAL 1
+
+    //FULL STREET ADDRESS SUPPLEMENTAL 2
     $data['civicrm_address']['supplemental_address_2'] = array(
                                                                'title' => t('2nd Supplemental Street Address'),
                                                                'help' => t('2nd Supplemental Street Address such as Apartment or Suite Number or Department'),
@@ -5533,7 +5534,7 @@ function civicrm_views_data() {
                                                                           ),
 
                                                       'filter' => array(
-                                                                                                            'handler' => 'views_handler_filter_numeric',
+                                                                        'handler' => 'views_handler_filter_numeric',
                                                                         'allow empty' => TRUE,
                                                                         ),
 
@@ -6100,7 +6101,9 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
             if ( in_array( $currentfield['html_type'],
                            $customHTMLTypes ) ) {
                 $handler = 'civicrm_handler_field_custom';
-            } else {
+            } else if ( $currentfield['html_type'] == 'File' ) {
+                $handler = 'civicrm_handler_field_custom_file';
+             }else {
                 $handler = civicrm_get_field_handler( $currentfield['data_type'] );
             }
             
@@ -6142,7 +6145,7 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
             }
         }
     }
-    return $data;
+    return $data; 
 }
 
 
@@ -6438,6 +6441,9 @@ function civicrm_views_handlers() {
                        'civicrm_handler_field_custom' => array(
                                                                'parent' => 'views_handler_field',
                                                                ),
+                       'civicrm_handler_field_custom_file' => array( 
+                                                                    'parent' => 'views_handler_field',
+                                                                     ),
                        'civicrm_handler_field_campaign_type' => array(
                                                                       'parent' => 'views_handler_field',
                                                                       ),

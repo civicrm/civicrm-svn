@@ -31,3 +31,51 @@ DROP INDEX index_entity;
 
 ALTER TABLE civicrm_entity_tag 
 ADD UNIQUE INDEX UI_entity_id_entity_table_tag_id( entity_table, entity_id, tag_id );
+
+-- CRM-8513
+
+SELECT @report_template_gid := MAX(id) FROM civicrm_option_group WHERE name = 'report_template';
+
+{if $multilingual}
+   {foreach from=$locales item=locale}
+      UPDATE civicrm_option_value SET label_{$locale} = 'Pledge Report (Detail)', description_{$locale} = 'Pledge Report' WHERE option_group_id = @report_template_gid AND value = 'pledge/summary';
+   {/foreach}
+{else}
+      UPDATE civicrm_option_value SET label = 'Pledge Report (Detail)', description = 'Pledge Report' WHERE option_group_id = @report_template_gid AND value = 'pledge/summary';
+{/if}
+
+UPDATE civicrm_option_value SET name = 'CRM_Report_Form_Pledge_Detail', value = 'pledge/detail' WHERE option_group_id = @report_template_gid AND value = 'pledge/summary';
+
+UPDATE civicrm_report_instance SET report_id = 'pledge/detail' WHERE report_id = 'pledge/summary';
+
+SELECT @weight              := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @report_template_gid;
+SELECT @pledgeCompId        := MAX(id)     FROM civicrm_component where name = 'CiviPledge';
+INSERT INTO civicrm_option_value
+  (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, component_id) VALUES
+  (@report_template_gid, {localize}'Pledge Summary Report'{/localize}, 'pledge/summary', 'CRM_Report_Form_Pledge_Summary', @weight := @weight + 1, {localize}'Pledge Summary Report.'{/localize}, 1, @pledgeCompId);
+
+-- CRM-8519
+UPDATE civicrm_payment_processor 
+SET `url_site` = 'https://sec.paymentexpress.com/pxpay/pxpay.aspx' 
+WHERE `url_site` = 'https://www.paymentexpress.com/pxpay/pxpay.aspx' 
+OR url_site = 'https://sec2.paymentexpress.com/pxpay/pxpay.aspx';
+
+UPDATE civicrm_payment_processor 
+SET `url_site` = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx' 
+WHERE `url_site` = 'https://www.paymentexpress.com/pxpay/pxaccess.aspx' 
+OR url_site = 'https://sec2.paymentexpress.com/pxpay/pxpay/pxaccess.aspx';
+
+UPDATE civicrm_payment_processor_type
+SET url_site_default = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx',
+    url_site_test_default = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx' 
+WHERE name = 'Payment_Express';
+
+
+-- CRM-8125
+SELECT @option_group_id_languages := MAX(id) FROM civicrm_option_group WHERE name = 'languages';
+UPDATE civicrm_option_value SET label = 'Persian (Iran)' WHERE value = 'fa' AND option_group_id = @option_group_id_languages;
+INSERT INTO civicrm_option_value
+  (option_group_id, is_default, is_active, name, value, {localize field='label'}label{/localize}, weight)
+VALUES
+(@option_group_id_languages, 0, 1, 'de_CH', 'de', {localize}'{ts escape="sql"}German (Swiss){/ts}'{/localize}, @counter := @counter + 1),
+(@option_group_id_languages, 0, 1, 'es_PR', 'es', {localize}'{ts escape="sql"}Spanish; Castilian (Puerto Rico){/ts}'{/localize}, @counter := @counter + 1);

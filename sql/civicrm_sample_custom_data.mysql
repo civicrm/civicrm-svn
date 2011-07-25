@@ -87,7 +87,7 @@ INSERT INTO civicrm_custom_field ( custom_group_id, label, name, data_type, html
 
 INSERT INTO civicrm_option_value ( option_group_id, label, value, name, weight ) VALUES  ( @ogid, 'Bean Broth', 'bean', 'Bean_Broth', 1 ), ( @ogid, 'Chicken Combo', 'chicken', 'Chicken_Combo', 2), ( @ogid, 'Salmon Stew',  'salmon', 'Salmon_Stew',   3);
 
-CREATE TABLE civicrm_value_food_preference_2 ( id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Default MySQL primary key', entity_id INT(10) UNSIGNED NOT NULL COMMENT 'Table that this extends', soup_selection_4 VARCHAR(255) DEFAULT NULL, PRIMARY KEY (id), UNIQUE KEY unique_entity_id (entity_id) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+CREATE TABLE civicrm_value_food_preference_2 ( id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Default MySQL primary key', entity_id INT(10) UNSIGNED NOT NULL COMMENT 'Table that this extends', soup_selection_4 VARCHAR(255) DEFAULT NULL, PRIMARY KEY (id), UNIQUE KEY unique_entity_id (entity_id), CONSTRAINT `FK_civicrm_value_food_preference_2_entity_id` FOREIGN KEY (`entity_id`) REFERENCES `civicrm_participant` (`id`) ON DELETE CASCADE ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Donors’ custom data
 

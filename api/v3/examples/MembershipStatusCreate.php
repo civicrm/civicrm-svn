@@ -26,9 +26,9 @@ function membership_status_create_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 2,
-  'id' => 16,
+  'id' => 17,
   'values' => array( 
-      'id' => 16,
+      'id' => 17,
       'is_error' => 0,
     ),
 );

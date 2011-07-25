@@ -60,10 +60,6 @@ function civicrm_api3_pledge_create( $params ) {
     }
      $required =  array('contact_id', 'amount', array('pledge_contribution_type_id','contribution_type_id') , 'installments','start_date');
     
-    if(CRM_Utils_Array::value('id',$params)){
-      //todo move this into civicrm_api3_verify mandatory in some way - or civicrm_api
-      $required =  array('id');
-    }
    civicrm_api3_verify_mandatory ($params,null,$required);
      
     $values  = array( );
@@ -267,6 +263,15 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
     //at this point both should be the same so unset both if not set - passing in empty
     //value causes crash rather creating new - do it before next section as null values ignored in 'switch'
     unset($values['id']);
+    
+    //if you have a single installment when creating & you don't set the pledge status (not a required field) then 
+    //status id is left null for pledge payments in BAO
+    // so we are hacking in the addition of the pledge_status_id to pending here
+    if(empty($values['status_id']) && $params['installments'] ==1){
+      require_once 'CRM/Contribute/PseudoConstant.php';
+      $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
+      $values['status_id'] = array_search( 'Pending', $contributionStatus);
+    }
   }
   if ( !empty( $params['scheduled_date']) ){
     //scheduled date is required to set next payment date - defaults to start date

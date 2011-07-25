@@ -56,8 +56,35 @@ function contact_get_expectedresult(){
           'api.website.getValue' => 'http://civicrm.org',
           'api.Contribution.getCount' => 2,
           'api.CustomValue.get' => array( 
-              'is_error' => 1,
-              'error_message' => 'Invalid entity type: "civicrm_ contact"',
+              'is_error' => 0,
+              'version' => 3,
+              'count' => 3,
+              'values' => array( 
+                  'testGetIndividualWithChainedArraysAndMultipleCustom' => array( 
+                      '0' => array( 
+                          'testGetIndividualWithChainedArraysAndMultipleCustom' => 'value 4',
+                        ),
+                    ),
+                  'API_Custom_Group' => array( 
+                      '1' => array( 
+                          'Cust_Field' => 'value 2',
+                          'field_2' => 'warm beer',
+                          'field_3' => '',
+                        ),
+                      '2' => array( 
+                          'Cust_Field' => 'value 3',
+                          'field_2' => '',
+                          'field_3' => '',
+                        ),
+                    ),
+                  'another_group' => array( 
+                      '1' => array( 
+                          'Cust_Field' => '',
+                          'field_2' => 'vegemite',
+                          'field_3' => '',
+                        ),
+                    ),
+                ),
             ),
         ),
     ),
