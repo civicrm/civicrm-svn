@@ -532,10 +532,16 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
         foreach ( $fields as $key => $field ) {
             $contactID = $field['contact_id'];
             /* Compose the mailing */
-            $recipient = null;
+            $recipient    = $replyToEmail = null;
+            $replyValue   = strcmp( $mailing->replyto_email, $mailing->from_email );
+            if ( $replyValue ) {
+                $replyToEmail = $mailing->replyto_email;
+            }
+
             $message =& $mailing->compose( $this->id, $field['id'], $field['hash'],
                                            $field['contact_id'], $field['email'],
-                                           $recipient, false, $details[0][$contactID], $attachments );
+                                           $recipient, false, $details[0][$contactID], $attachments, 
+                                           false, null, $replyToEmail );
             
             /* Send the mailing */
             $body    =& $message->get();

@@ -964,7 +964,8 @@ AND civicrm_contact.is_opt_out =0";
      */
     public function &compose($job_id, $event_queue_id, $hash, $contactId, 
                              $email, &$recipient, $test, 
-                             $contactDetails, &$attachments, $isForward = false, $fromEmail = null ) 
+                             $contactDetails, &$attachments, $isForward = false, 
+                             $fromEmail = null, $replyEmail = null ) 
     {
         require_once 'CRM/Utils/Token.php';
         require_once 'CRM/Activity/BAO/Activity.php';
@@ -983,6 +984,10 @@ AND civicrm_contact.is_opt_out =0";
             $headers['From'] = "<{$fromEmail}>";
         } 
 
+        if ( $replyEmail && ( $fromEmail != $replyEmail ) ) {
+            $headers['Reply-To'] = "<{$replyEmail}>";
+        }
+        
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
             require_once 'CRM/Core/Smarty/resources/String.php';
