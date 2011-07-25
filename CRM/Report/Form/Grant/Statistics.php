@@ -378,7 +378,8 @@ SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count ,
 
         $grantAmountAwarded = "
 SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count , 
-         SUM({$this->_aliases['civicrm_grant']}.amount_granted) as grantedAmount 
+         SUM({$this->_aliases['civicrm_grant']}.amount_granted) as grantedAmount,
+         SUM({$this->_aliases['civicrm_grant']}.amount_total) as totalAmount
   {$this->_from} ";
         
         if ( !empty($this->_where) ) {
@@ -387,7 +388,8 @@ SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count ,
         $values = CRM_Core_DAO::executeQuery( $grantAmountAwarded );
         while ( $values->fetch( ) ) {
             $awardedGrants       = $values->count;
-            $awardedGrantsAmount = $values->grantedAmount;
+            $awardedGrantsAmount = $values->totalAmount;
+            $amountGranted       = $values->grantedAmount;
         }
 
         foreach ( $rows as $key => $values ) {
@@ -453,7 +455,7 @@ SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count ,
                                                       'amount' => $totalAmount ),
                    'grants_awarded'         => array( 'title'  => ts('Grants Awarded'),
                                                       'count'  => $awardedGrants,
-                                                      'amount' => $awardedGrantsAmount ),
+                                                      'amount' => $amountGranted ),
                    'grants_report_received' => array( 'title'  => ts('Grant Reports Received'),
                                                       'count'  => $grantReportsReceived ), );
         
