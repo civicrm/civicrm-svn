@@ -318,6 +318,10 @@ class CRM_Core_BAO_Setting
             if ( $lcMessages ) {
                 // update config lcMessages - CRM-5027 fixed.
                 $defaults['lcMessages'] = $lcMessages;
+                
+                //CRM-8559, cache navigation do not respect locale if it is changed, so reseting cache.
+                require_once 'CRM/Core/BAO/Cache.php';
+                CRM_Core_BAO_Cache::deleteGroup( 'navigation' );
             } else {
                 // if a single-lang site or the above didn't yield a result, use default
                 $lcMessages = $defaults['lcMessages'];
