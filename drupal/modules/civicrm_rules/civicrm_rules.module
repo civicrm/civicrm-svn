@@ -45,7 +45,7 @@ function civicrm_rules_civicrm_pre( $op, $objectName, $objectId, &$objectRef ) {
 	}
   $validObjects = variable_get('civicrm_rules_post_entities',array('Contact'));
 
-	if ( ! in_array( $objectName, $validObjects ) ) {
+	if ( ! in_array( strtolower($objectName), $validObjects ) ) {
 		return;
 	}
 	
