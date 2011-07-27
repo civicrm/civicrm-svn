@@ -28,6 +28,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     {
         $this->_apiversion = 3;
         parent::setUp();
+        
     }
     
     function tearDown() 
@@ -125,7 +126,10 @@ class api_v3_ProfileTest extends CiviUnitTestCase
      * check contact activity profile with wrong activity type
      */
     function testContactActvityGetWrongActivityType( )
-    {        
+    {     
+        //flush cache by calling with reset
+        $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name', true );
+     
         $sourceContactId = $this->householdCreate( );
 
         $activityparams = array( 'source_contact_id'  => $sourceContactId,
@@ -321,7 +325,10 @@ class api_v3_ProfileTest extends CiviUnitTestCase
      * check contact activity profile with wrong activity type
      */
     function testContactActvitySetWrongActivityType( )
-    {        
+    {    
+        //flush cache by calling with reset
+        $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name', true );
+ 
         $sourceContactId = $this->householdCreate( );
 
         $activityparams = array( 'source_contact_id'  => $sourceContactId,
