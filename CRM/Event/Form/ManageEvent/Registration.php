@@ -512,7 +512,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 if ( CRM_Utils_Array::value('custom_post_id_multiple', $values) ) {
                     foreach( $values['custom_post_id_multiple'] as $count => $customPostMultiple ) {
                         if ( $customPostMultiple ) {
-                            $errorMsg["custom_post_id_multiple[{$count}]"] = ts('Please disable PDF receipt as an attachment if you want to add additional profiles.') . '( ' . CRM_Utils_System::href('Click Here', 'civicrm/admin/setting/misc', 'reset=1' ) . ' )';
+                            $errorMsg["custom_post_id_multiple[{$count}]"] = ts('Please disable PDF receipt as an attachment in <a href="%1">Miscellaneous Settings</a> if you want to add additional profiles.', array( 1 => CRM_Utils_System::url( 'civicrm/admin/setting/misc', 'reset=1' ) ) );
                             break;
                         }
                     }
@@ -522,7 +522,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                      CRM_Utils_Array::value('additional_custom_post_id_multiple',  $values) ) {
                     foreach( $values['additional_custom_post_id_multiple'] as $count => $customPostMultiple ) {
                         if ( $customPostMultiple ) {
-                            $errorMsg["additional_custom_post_id_multiple[{$count}]"] = ts('Please disable PDF receipt as an attachment if you want to add additional profiles.') . '( ' . CRM_Utils_System::href('Click Here', 'civicrm/admin/setting/misc', 'reset=1' ) . ' )';
+                           $errorMsg["additional_custom_post_id_multiple[{$count}]"] = ts('Please disable PDF receipt as an attachment in <a href="%1">Miscellaneous Settings</a> if you want to add additional profiles.', array( 1 => CRM_Utils_System::url( 'civicrm/admin/setting/misc', 'reset=1' ) ) );
                             break;
                         }
                     }
