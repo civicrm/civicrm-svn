@@ -366,7 +366,7 @@ class CRM_Utils_REST
         CRM_Core_Error::setCallback( array( 'CRM_Utils_REST', 'fatal' ) );
         $result = civicrm_api ($args[1], $args[2],$params);
         CRM_Core_Error::setCallback( );
-	      if ($version == 2) {
+        if ( $params['version'] == 2) {
            $result['deprecated'] = "Please upgrade to API v3";
         }
 
