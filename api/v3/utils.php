@@ -101,8 +101,10 @@ function _civicrm_api3_get_DAO ($name) {
           //for some reason pledge_payment doesn't follow normal conventions of BAO being the same as table name
           $name = 'Payment';
         }
-
     }  
+    if(strtolower($name) =='individual' || strtolower($name) =='household' ||strtolower($name) =='organization'){
+          $name = 'Contact';
+    }
     return $dao[civicrm_api_get_camel_name($name,3)];
 }
 

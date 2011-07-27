@@ -143,7 +143,7 @@ class CRM_Contact_Page_AJAX
         } else {
            $strSearch = "$name%";
         }
-        $includeEmailFrom = $includeNickName = '';
+        $includeEmailFrom = $includeNickName = $exactIncludeNickName = '';
         if ( $config->includeNickNameInName ) {
             $includeNickName = " OR nick_name LIKE '$strSearch'";
             $exactIncludeNickName = " OR nick_name LIKE '$name'";
