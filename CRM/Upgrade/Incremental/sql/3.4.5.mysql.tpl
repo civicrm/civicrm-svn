@@ -73,7 +73,15 @@ WHERE name = 'Payment_Express';
 
 -- CRM-8125
 SELECT @option_group_id_languages := MAX(id) FROM civicrm_option_group WHERE name = 'languages';
-UPDATE civicrm_option_value SET label = 'Persian (Iran)' WHERE value = 'fa' AND option_group_id = @option_group_id_languages;
+
+{if $multilingual}
+   {foreach from=$locales item=locale}
+     UPDATE civicrm_option_value SET label_{$locale} = '{ts escape="sql"}Persian (Iran){/ts}' WHERE value = 'fa' AND option_group_id = @option_group_id_languages;
+   {/foreach}
+{else}
+     UPDATE civicrm_option_value SET label = '{ts escape="sql"}Persian (Iran){/ts}' WHERE value = 'fa' AND option_group_id = @option_group_id_languages;
+{/if}
+
 INSERT INTO civicrm_option_value
   (option_group_id, is_default, is_active, name, value, {localize field='label'}label{/localize}, weight)
 VALUES
