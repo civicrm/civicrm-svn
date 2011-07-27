@@ -534,14 +534,13 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                     foreach( $values['custom_post_id_multiple'] as $count => $customPostMultiple ) {
                         self::buildMultipleProfileBottom($form, $count);
                     }
-                    $form->assign( 'profilePostMultiple', array_keys($values['custom_post_id_multiple']) );
-                    
+                    $form->assign( 'profilePostMultiple', $values['custom_post_id_multiple'] );
                 }
                 if ( CRM_Utils_Array::value('additional_custom_post_id_multiple',  $values) ) {
                     foreach( $values['additional_custom_post_id_multiple'] as $count => $customPostMultiple ) {
                         self::buildMultipleProfileBottom($form, $count, 'additional_', ts('Profile for Additional Participants')); 
                     }
-                    $form->assign( 'profilePostMultipleAdd',  array_keys($values['additional_custom_post_id_multiple']) );
+                    $form->assign( 'profilePostMultipleAdd', $values['additional_custom_post_id_multiple'] );
                 }
             }
             
