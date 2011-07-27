@@ -71,6 +71,15 @@ function civicrm_rules_entities_condition_info() {
                                                                ),
                  );
 }
+/**
+ * Returns conditions available for CiviCRM Rules
+ */
+function civicrm_rules_entities_conditions( $label, $type = 'contact' ) {
+
+    $default = array($type   => array('type'  => $type,'label' => $label ));
+   
+  return $default;
+}
 
 /*
  * Hook Arguments - define the objects that will be loaded by each event & made available for actions
