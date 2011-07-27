@@ -221,9 +221,8 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
         CRM_Core_BAO_Cache::deleteGroup( 'contact fields' );  
 
         //CRM-8559, cache navigation do not respect locale if it is changed, so reseting cache.
-        require_once 'CRM/Core/BAO/Navigation.php';
-        CRM_Core_BAO_Navigation::resetNavigation( );
-        
+        CRM_Core_BAO_Cache::deleteGroup( 'navigation' );
+
         // we do this only to initialize monetary decimal point and thousand separator
         $config = CRM_Core_Config::singleton();
 

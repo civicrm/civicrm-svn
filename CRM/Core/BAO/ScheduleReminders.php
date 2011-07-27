@@ -292,13 +292,13 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
         return $list;
     }
 
-    static function sendReminder( $contactId, $email, $mappingID, $from, $tokenParams ) {
+    static function sendReminder( $contactId, $email, $scheduleID, $from, $tokenParams ) {
         require_once 'CRM/Core/BAO/Domain.php';
         require_once 'CRM/Utils/String.php';
         require_once 'CRM/Utils/Token.php';
 
         $schedule = new CRM_Core_DAO_ActionSchedule( );
-        $schedule->mapping_id = $mappingID;
+        $schedule->id = $scheduleID;
 
         $domain = CRM_Core_BAO_Domain::getDomain( );
         $result = null;
