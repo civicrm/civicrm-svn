@@ -46,6 +46,10 @@
             <td class="label">{$form.verpSeparator.label}</td><td>{$form.verpSeparator.html}<br />
             <span class="description">{ts}Separator character used when CiviMail generates VERP (variable envelope return path) Mail-From addresses.{/ts}</span></td>
         </tr>
+        <tr class="crm-mail-form-block-replyTo">
+            <td class="label">{$form.replyTo.label}</td><td>{$form.replyTo.html}<br />
+            <span class="description">{ts}Check to enable Reply To functionality for CiviMail.{/ts}</span></td>
+        </tr>
       </table>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>     
 <div class="spacer"></div>

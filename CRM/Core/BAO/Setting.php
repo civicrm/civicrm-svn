@@ -265,6 +265,10 @@ class CRM_Core_BAO_Setting
                 
                 if ( in_array($lcMessagesRequest, array_keys( $languageLimit ) ) ) {
                     $lcMessages = $lcMessagesRequest;
+                    
+                    //CRM-8559, cache navigation do not respect locale if it is changed, so reseting cache.
+                    require_once 'CRM/Core/BAO/Cache.php';
+                    CRM_Core_BAO_Cache::deleteGroup( 'navigation' );
                 } else {
                     $lcMessagesRequest = null;
                 }
