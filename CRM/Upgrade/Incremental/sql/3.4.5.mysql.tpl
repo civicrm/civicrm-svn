@@ -1,3 +1,6 @@
+-- CRM-8248
+{include file='../CRM/Upgrade/3.4.5.msg_template/civicrm_msg_template.tpl'}
+
 -- CRM-8348
 
 CREATE TABLE IF NOT EXISTS civicrm_action_log (
