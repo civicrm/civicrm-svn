@@ -1209,74 +1209,79 @@ WHERE civicrm_event.is_active = 1
                         unset($fields['group']);
                     }
                 }
-                
+
                 CRM_Core_BAO_UFGroup::getValues( $cid, $fields, $values, false, $params );
                 
-            if ( isset( $fields['participant_status_id']['title'] ) &&
-                 isset( $values[$fields['participant_status_id']['title']] ) &&
-                 is_numeric( $values[$fields['participant_status_id']['title']] ) ) {
-                $status = array( );
-                $status = CRM_Event_PseudoConstant::participantStatus( );
-                $values[$fields['participant_status_id']['title']] = $status[$values[$fields['participant_status_id']['title']]];
-            }
+                if ( isset( $fields['participant_status_id']['title'] ) &&
+                    isset( $values[$fields['participant_status_id']['title']] ) &&
+                    is_numeric( $values[$fields['participant_status_id']['title']] ) ) {
+                    $status = array( );
+                    $status = CRM_Event_PseudoConstant::participantStatus( );
+                    $values[$fields['participant_status_id']['title']] = $status[$values[$fields['participant_status_id']['title']]];
+               }
                 
-            if ( isset( $fields['participant_role_id']['title'] ) && 
-                 isset( $values[$fields['participant_role_id']['title']] ) &&
-                 is_numeric( $values[$fields['participant_role_id']['title']] ) ) {
-                $roles = array( );
-                $roles = CRM_Event_PseudoConstant::participantRole( );
-                $values[$fields['participant_role_id']['title']] = $roles[$values[$fields['participant_role_id']['title']]];
-            }
+                if ( isset( $fields['participant_role_id']['title'] ) && 
+                    isset( $values[$fields['participant_role_id']['title']] ) &&
+                    is_numeric( $values[$fields['participant_role_id']['title']] ) ) {
+                    $roles = array( );
+                    $roles = CRM_Event_PseudoConstant::participantRole( );
+                    $values[$fields['participant_role_id']['title']] = $roles[$values[$fields['participant_role_id']['title']]];
+                }
                 
-            if ( isset( $fields['participant_register_date']['title'] ) &&
-                 isset( $values[$fields['participant_register_date']['title']] ) ) {
-                $values[$fields['participant_register_date']['title']] = 
+                if ( isset( $fields['participant_register_date']['title'] ) &&
+                    isset( $values[$fields['participant_register_date']['title']] ) ) {
+                    $values[$fields['participant_register_date']['title']] = 
                     CRM_Utils_Date::customFormat( $values[$fields['participant_register_date']['title']] );
-            }
+                }
                 
-            //handle fee_level for price set
-            if ( isset( $fields['participant_fee_level']['title'] ) &&
-                 isset( $values[$fields['participant_fee_level']['title']] ) ) {
-                $feeLevel = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
-                                     $values[$fields['participant_fee_level']['title']] );
-                foreach ( $feeLevel as $key => $val ) {
-                    if ( ! $val ) {
-                        unset( $feeLevel[$key] );
+                //handle fee_level for price set
+                if ( isset( $fields['participant_fee_level']['title'] ) &&
+                    isset( $values[$fields['participant_fee_level']['title']] ) ) {
+                    $feeLevel = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                         $values[$fields['participant_fee_level']['title']] );
+                    foreach ( $feeLevel as $key => $val ) {
+                        if ( ! $val ) {
+                            unset( $feeLevel[$key] );
+                        }
+                        $values[$fields['participant_fee_level']['title']] = implode( ",", $feeLevel );
                     }
-                    $values[$fields['participant_fee_level']['title']] = implode( ",", $feeLevel );
-                }
                 
-            unset( $values[$fields['participant_id']['title']] );
+                    unset( $values[$fields['participant_id']['title']] );
                 
-            //return if we only require array of participant's info.
-            if ( $isCustomProfile ) {
-                if ( count($values) ) {
-                    return array( $values, $groupTitles );
-                } else {
-                    return null;
-                }
-            } 
+                    //return if we only require array of participant's info.
+                    if ( $isCustomProfile ) {
+                        if ( count($values) ) {
+                            return array( $values, $groupTitles );
+                        } else {
+                            return null;
+                        }
+                    } 
 
-            if ( count( $values ) ) {
-                $template->assign( $name, $values );
-            }
-        }
-        if (count( $val ) ) {
-            $template->assign( $name, $val );
-        }
+                    if ( count( $values ) ) {
+                        $template->assign( $name, $values );
+                    }
+                }
+
+                if (count( $val ) ) {
+                    $template->assign( $name, $val );
+                }
         
-        if ( count ($groupTitles)) {
-            $template->assign( $name.'_grouptitle', $groupTitles );
-        }
-        //return if we only require array of participant's info.
-        if ( $isCustomProfile ) {
-            if ( count($val) ) {
-                return array( $val, $groupTitles );
-            } else {
-                return null;
+                if ( count ($groupTitles)) {
+                    $template->assign( $name.'_grouptitle', $groupTitles );
+                }
+
+                //return if we only require array of participant's info.
+                if ( $isCustomProfile ) {
+                    if ( count($val) ) {
+                        return array( $val, $groupTitles );
+                    } else {
+                        return null;
+                    }
+                } 
             }
-        } 
+        }
     }
+
     /**  
      * Function to build the array for display the profile fields
      *  
