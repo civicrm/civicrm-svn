@@ -57,6 +57,7 @@ function civicrm_rules_civicrm_pre( $op, $objectName, $objectId, &$objectRef ) {
 	    $entityArray = &$objectRef;
 	  }
 	  //convert it to a DAO
+	  require_once 'api/v3/utils.php';
     $dao = _civicrm_api3_load_DAO($objectName);
     if(!empty($dao)) {
 	  foreach ($entityArray as $key => $value) {
@@ -101,7 +102,7 @@ function civicrm_rules_civicrm_post( $op, $objectName, $objectId, &$objectRef ) 
 	// process only contacts for now
 	$validObjects = variable_get('civicrm_rules_post_entities',array('Contact'));
 
-	if ( ! in_array( $objectName, $validObjects ) ) {
+	if ( ! in_array(  strtolower($objectName), $validObjects ) ) {
 		return;
 	}
 
