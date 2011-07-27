@@ -93,6 +93,7 @@ class CRM_Cron_Action {
 
         $actionSchedule = new CRM_Core_DAO_ActionSchedule( );
         $actionSchedule->mapping_id = $mappingID;
+        $actionSchedule->is_active = 1;
         $actionSchedule->find( false );
 
         $tokenFields = array( );
@@ -177,6 +178,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL";
     public function buildRecipientContacts( $mappingID ) {
         $actionSchedule = new CRM_Core_DAO_ActionSchedule( );
         $actionSchedule->mapping_id = $mappingID;
+        $actionSchedule->is_active = 1;
         $actionSchedule->find( );
 
         while ( $actionSchedule->fetch( ) ) {
