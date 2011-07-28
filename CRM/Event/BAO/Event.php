@@ -1239,47 +1239,36 @@ WHERE civicrm_event.is_active = 1
                     isset( $values[$fields['participant_fee_level']['title']] ) ) {
                     $feeLevel = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                                          $values[$fields['participant_fee_level']['title']] );
-                    foreach ( $feeLevel as $key => $val ) {
-                        if ( ! $val ) {
+                    foreach ( $feeLevel as $key => $value ) {
+                        if ( ! $value ) {
                             unset( $feeLevel[$key] );
                         }
-                        $values[$fields['participant_fee_level']['title']] = implode( ",", $feeLevel );
                     }
+                    $values[$fields['participant_fee_level']['title']] = implode( ",", $feeLevel );
+                }
                 
-                    unset( $values[$fields['participant_id']['title']] );
+                unset( $values[$fields['participant_id']['title']] );
                 
-                    //return if we only require array of participant's info.
-                    if ( $isCustomProfile ) {
-                        if ( count($values) ) {
-                            return array( $values, $groupTitles );
-                        } else {
-                            return null;
-                        }
-                    } 
-
-                    if ( count( $values ) ) {
-                        $template->assign( $name, $values );
-                    }
-                }
-
-                if (count( $val ) ) {
-                    $template->assign( $name, $val );
-                }
-        
-                if ( count ($groupTitles)) {
-                    $template->assign( $name.'_grouptitle', $groupTitles );
-                }
-
-                //return if we only require array of participant's info.
-                if ( $isCustomProfile ) {
-                    if ( count($val) ) {
-                        return array( $val, $groupTitles );
-                    } else {
-                        return null;
-                    }
-                } 
+                $val[] = $values;
             }
         }
+
+        if (count( $val ) ) {
+            $template->assign( $name, $val );
+        }
+        
+        if ( count ($groupTitles)) {
+            $template->assign( $name.'_grouptitle', $groupTitles );
+        }
+        
+        //return if we only require array of participant's info.
+        if ( $isCustomProfile ) {
+            if ( count($val) ) {
+                return array( $val, $groupTitles );
+            } else {
+                return null;
+            }
+        } 
     }
 
     /**  
