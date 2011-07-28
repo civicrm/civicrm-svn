@@ -264,9 +264,7 @@ function checkEmail( ) {
        cj("#send_confirmation_receipt").hide( );
 
        // set receive data to null.
-       document.getElementById("receive_date[M]").value = null;
-       document.getElementById("receive_date[d]").value = null;
-       document.getElementById("receive_date[Y]").value = null;
+       clearDateTime( 'receive_date' );
     } else {
        cj("#send_confirmation_receipt").show( );
     }	
