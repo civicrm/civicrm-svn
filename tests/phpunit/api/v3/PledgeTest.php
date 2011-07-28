@@ -153,8 +153,8 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $this->assertEquals($result['values'][0]['original_installment_amount'],20, 'In line ' . __LINE__);
     //    $this->assertEquals($result['values'][0]['contribution_type_id'],1, 'In line ' . __LINE__);
         $this->assertEquals($result['values'][0]['status_id'],2, 'In line ' . __LINE__);
-        $this->assertEquals($result['values'][0]['create_date'],date('Ymd'), 'In line ' . __LINE__);
-        $this->assertEquals($result['values'][0]['start_date'],date('Ymd'), 'In line ' . __LINE__);        
+        $this->assertEquals($result['values'][0]['create_date'],date('Ymd') . '000000', 'In line ' . __LINE__);
+        $this->assertEquals($result['values'][0]['start_date'],date('Ymd') . '000000', 'In line ' . __LINE__);        
         $this->assertEquals($result['is_error'], 0 , 'In line ' . __LINE__);
         $payments = civicrm_api('PledgePayment','Get',array('version' =>3, 'pledge_id' => $result['id'], 'sequential' => 1));
         $this->assertEquals($payments['is_error'], 0 , 'In line ' . __LINE__);
