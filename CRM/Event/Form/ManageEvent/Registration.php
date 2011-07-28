@@ -123,11 +123,11 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
             list( $defaults['custom_pre_id'],
                   $defaults['custom_post'] ) = 
                 CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
-            $defaults['custom_post_id'] =  $defaults['custom_post'][0];
             
-            if (is_numeric($defaults['custom_post'])) {
+            if ( isset( $defaults['custom_post'] ) && is_numeric($defaults['custom_post'])) {
                 $defaults['custom_post_id'] =  $defaults['custom_post']; 
             } else if (!empty($defaults['custom_post'])) {
+                $defaults['custom_post_id'] =  $defaults['custom_post'][0];
                 unset($defaults['custom_post'][0]);
                 $this->_profilePostMultiple = $defaults['custom_post'];
                 foreach ( $defaults['custom_post'] as $key => $value){
@@ -137,7 +137,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 }
             }  
             
-            $this->assign('profilePostMultiple', $defaults['custom_post']);
+            $this->assign('profilePostMultiple', CRM_Utils_Array::value('custom_post', $defaults ));
 
             if ($defaults['is_multiple_registrations']) {
                 // CRM-4377: set additional participants’ profiles – set to ‘none’ if explicitly unset (non-active)
@@ -150,10 +150,10 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                       $defaults['additional_custom_post'] ) = 
                     CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinAddParams );
                 
-                $defaults['additional_custom_post_id'] =  $defaults['additional_custom_post'][0];
-                if (is_numeric($defaults['additional_custom_post'])) {
+                if (isset( $defaults['additional_custom_post'] ) && is_numeric($defaults['additional_custom_post'])) {
                     $defaults['additional_custom_post_id'] = $defaults['additional_custom_post']; 
                 } else  if (!empty($defaults['additional_custom_post'])) {
+                    $defaults['additional_custom_post_id'] =  $defaults['additional_custom_post'][0];
                     unset($defaults['additional_custom_post'][0]);
 
                     $this->_profilePostMultipleAdd = $defaults['additional_custom_post'];
@@ -162,7 +162,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                         $defaults["additional_custom_post_id_multiple[$key]"] = $value;
                     }
                 }  
-                $this->assign('profilePostMultipleAdd', $defaults['additional_custom_post']);
+                $this->assign('profilePostMultipleAdd', CRM_Utils_Array::value( 'additional_custom_post', $defaults ));
             }
         } else {
             $defaults['is_email_confirm'] = 0;
