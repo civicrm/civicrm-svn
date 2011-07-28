@@ -147,13 +147,8 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
         _civicrm_api_call_nested_api($params, $result, $action,$entity,$version);
     }
      if(CRM_Utils_Array::value('format.smarty', $params) || CRM_Utils_Array::value('format_smarty', $params) ){
-      return _civicrm_api_parse_result_through_smarty($result,$params);
+     // return _civicrm_api_parse_result_through_smarty($result,$params);
     }
-     if(CRM_Utils_Array::value('format.jgrid', $params) || CRM_Utils_Array::value('format_jgrid', $params) ){
-      return _civicrm_api_jgrid_format($result,$params);
-    }
-    
-    
     return $result;
   } catch (PEAR_Exception $e) {
     if(CRM_Utils_Array::value('format.is_success', $params) == 1){
@@ -440,29 +435,5 @@ function _civicrm_api_parse_result_through_smarty(&$result, &$params){
         $smarty->assign('result',$result);
         $template = CRM_Utils_Array::value('format.smarty', $params,$params['format_smarty']);
         return  $smarty->fetch("../templates/" .$template);
-
-}
-
-
-/*
- * Parses result through smarty
- * @param array $result result of API call
- */
-
-function _civicrm_api_jgrid_format(&$result, &$params){
-  
-        $jgrid = array('records' => $result['count'],
-                                      'page' => 1,
-                                      'total' => 2);
-        foreach ($result['values'] as $key => $valueArray) {
-          $cells = array();
-          foreach ($valueArray as $field => $value){
-           $cells[] =  $value;
-          }
-          $jgrid['rows'][]  = array('id' => $valueArray['id'],
-                                     'cells' => array_merge($cells));
-
-        }
-        return  $jgrid;
 
 }
