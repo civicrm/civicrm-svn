@@ -42,10 +42,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     function setUp() 
     {
         parent::setUp();
-        $tablesToTruncate = array( 'civicrm_contribution',
-                                   'civicrm_contact');
-
-        $this->quickCleanup( $tablesToTruncate );
+        
         $this->_apiversion = 3;
         $this->_contributionTypeId = $this->contributionTypeCreate();
         $this->_individualId = $this->individualCreate( );
@@ -69,6 +66,10 @@ class api_v3_ContributionTest extends CiviUnitTestCase
 
         $this->contributionTypeDelete();
         $this->contactDelete($this->_individualId); 
+        $tablesToTruncate = array( 'civicrm_contribution',
+                                   'civicrm_contact');
+
+        $this->quickCleanup( $tablesToTruncate );
     }
 
 ///////////////// civicrm_contribution_get methods
@@ -170,13 +171,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
 
      }
      
-     function testTearDown(){
-       $contribution = civicrm_api('Contribution', 'create', $this->params);
-       $this->contributionTypeDelete();   
-       $this->assertEquals(1, 1);  
-       civicrm_api('contribution', 'delete', array('version' => 3, 'id' => $contribution['id']));
-     }
-
+   
 ///////////////// civicrm_contribution_
      
     function testCreateEmptyParamsContribution()
