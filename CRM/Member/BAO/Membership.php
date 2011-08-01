@@ -1331,10 +1331,10 @@ AND civicrm_membership.is_test = %2";
         
         // CRM-7297 - allow membership type to be be changed during renewal so long as the parent org of new membershipType 
         // is the same as the parent org of an existing membership of the contact
-        $currentMembership =  CRM_Member_BAO_Membership::getContactMembership( $contactID, 
-                $membershipTypeID, $is_test, $form->_membershipId, TRUE );
+        $currentMembership =  
+            CRM_Member_BAO_Membership::getContactMembership( $contactID, $membershipTypeID, 
+                                                             $is_test, $form->_membershipId, TRUE );
         if ( $currentMembership ) {
-        	
             $activityType = 'Membership Renewal';
             $form->set("renewal_mode", true );
             

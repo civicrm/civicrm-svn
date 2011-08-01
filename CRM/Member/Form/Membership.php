@@ -658,16 +658,15 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
 
             //  Default values for start and end dates if not supplied
             //  on the form
-                $defaultDates = 
-                    CRM_Member_BAO_MembershipType::getDatesForMembershipType(
-                                                                         $params['membership_type_id'][1],
-                                                                         $joinDate,
-                                                                         $startDate,
-                                                                         $endDate);
+            $defaultDates = 
+                CRM_Member_BAO_MembershipType::getDatesForMembershipType( $params['membership_type_id'][1],
+                                                                          $joinDate,
+                                                                          $startDate,
+                                                                          $endDate );
             
             if ( !$startDate ) {
                 $startDate = CRM_Utils_Array::value( 'start_date',
-                                                   $defaultDates );
+                                                     $defaultDates );
             }
             if ( !$endDate ) {
                 $endDate = CRM_Utils_Array::value( 'end_date',
@@ -869,10 +868,10 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             if( empty( $formValues['total_amount'] ) ) { 
                 // if total amount not provided minimum for membership type is used
                 $params['total_amount'] = $formValues['total_amount']  = 
-                CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
-                                             $params['membership_type_id'],'minimum_fee' );
+                    CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
+                                                 $params['membership_type_id'],'minimum_fee' );
             } else {
-              $params['total_amount'] = $formValues['total_amount']  ;
+                $params['total_amount'] = $formValues['total_amount']  ;
             }
             $params['contribution_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
                                                                            $params['membership_type_id'],
