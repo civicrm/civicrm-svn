@@ -199,7 +199,7 @@
 }
 {/if}
 
-{if ($action eq 1 or ( $action eq 2 and !$hasPayment) ) and !$participantMode} 
+{if $paid and ($action eq 1 or ( $action eq 2 and !$hasPayment) ) and !$participantMode} 
 {include file="CRM/common/showHideByFieldValue.tpl" 
     trigger_field_id    ="payment_instrument_id"
     trigger_value       = '4'
