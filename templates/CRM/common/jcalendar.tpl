@@ -49,7 +49,7 @@
 {assign var='displayDate' value=$elementId|cat:"_display"}
 
 {if $action neq 4 && $action neq 1028}
-    <input type="text" name="{$displayDate}" id="{$displayDate}" class="dateplugin dpDate" autocomplete="off"/>
+    <input type="text" name="{$displayDate}" id="{$displayDate}" class="dateplugin" autocomplete="off"/>
 {/if}
 
 {if $timeElement AND !$tElement}
@@ -82,10 +82,12 @@
         case 'mm/dd':
             altDateFormat = 'mm/dd';
             break;
-        case 'M yy':
-            altDateFormat = 'yy-mm';
-            break;
-     }
+      }
+      
+      if ( !( ( date_format == 'M yy' ) || ( date_format == 'yy' ) || ( date_format == 'yy-mm' ) ) ) {
+          cj( element_date ).addClass( 'dpDate' );
+      }
+
       {/literal}
       var yearRange   = currentYear - parseInt( cj( alt_field ).attr('startOffset') ); 
           yearRange  += ':';
