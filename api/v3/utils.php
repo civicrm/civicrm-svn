@@ -1250,6 +1250,7 @@ function _civicrm_api3_validate_fields($entity, $action, &$params) {
   											  'contribution' => 1,
                           'activity' => 1,
                           'campaign' => 1,
+                          'pledge'   => 1,
       );
   if(!array_key_exists(strtolower($entity), $testedEntities)){
     return;
@@ -1293,7 +1294,7 @@ function _civicrm_api3_validate_date(&$params,&$fieldname,&$fieldInfo){
 			} 
 			if ((CRM_Utils_Array::value ('name', $fieldInfo) != $fieldname ) && CRM_Utils_Array::value ( $fieldname , $params )) {
 			  //If the unique field name differs from the db name & is set handle it here
-			  if (strtotime($params [$fieldInfo ['name']]) ==0) {
+			  if (strtotime($params [$fieldname]) ==0) {
 	         throw new exception ($fieldname. " is not a valid date: " . $params [$fieldname]);
         }
 				$params [$fieldname] = CRM_Utils_Date::processDate ( $params [$fieldname] );

@@ -102,6 +102,8 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                                  'contribution_type_id' => array( 'title'   => ts('Contribution Type'),
                                                                   'default' => true,
                                                                 ),
+                                'payment_instrument_id' => array( 'title'   => ts('Payment Type'),
+                                                                            ),
                                  'trxn_id'              => null,
                                  'receive_date'         => array( 'default' => true ),
                                  'receipt_date'         => null,
@@ -120,6 +122,11 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                                     array( 'title'        => ts( 'Contribution Type' ), 
                                            'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                            'options'      => CRM_Contribute_PseudoConstant::contributionType( )
+                                         ),
+                                 'payment_instrument_id'   =>
+                                    array( 'title'        => ts( 'Payment Type' ), 
+                                           'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                           'options'      => CRM_Contribute_PseudoConstant::paymentInstrument( )
                                          ),
                                 'contribution_status_id' => 
                                     array( 'title'        => ts( 'Contribution Status' ), 
@@ -297,7 +304,7 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
         $entryFound = false;
         $display_flag = $prev_cid = $cid =  0;
         $contributionTypes = CRM_Contribute_PseudoConstant::contributionType( );
-        
+        $paymentInstruments = CRM_Contribute_PseudoConstant::paymentInstrument( );        
         foreach ( $rows as $rowNum => $row ) {
             if ( !empty($this->_noRepeats) && $this->_outputMode != 'csv' ) {
                 // don't repeat contact details if its same as the previous row
@@ -344,7 +351,10 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                 $rows[$rowNum]['civicrm_contribution_contribution_type_id'] = $contributionTypes[$value];
                 $entryFound = true;
             }
-
+            if ( $value = CRM_Utils_Array::value( 'civicrm_contribution_payment_instrument_id', $row ) ) {
+                $rows[$rowNum]['civicrm_contribution_payment_instrument_id'] = $paymentInstruments[$value];
+                $entryFound = true;
+            }
             if ( ( $value = CRM_Utils_Array::value( 'civicrm_contribution_total_amount_sum', $row ) ) && 
                  CRM_Core_Permission::check( 'access CiviContribute' ) ) {
                 $url = CRM_Utils_System::url( "civicrm/contact/view/contribution" , 

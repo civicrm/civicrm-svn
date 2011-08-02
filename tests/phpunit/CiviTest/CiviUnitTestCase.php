@@ -1830,6 +1830,42 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
           
         } 
     }
+  /* 
+   *Function to get formatted values in  the actual and expected result
+   *@param array $actual actual calculated values
+   *@param array $expected expected values
+   *
+   */
+    function checkArrayEquals( &$actual, &$expected ) 
+    {
+        self::unsetId( $actual );
+        self::unsetId( $expected );
+        $this->assertEquals( $actual, $expected );
+    }
+    
+    /*
+     *Function to unset the key 'id' from the array
+     *@param array $unformattedArray The array from which the 'id' has to be unset
+     *
+     */
+    static function unsetId( &$unformattedArray ) 
+    {
+        $formattedArray = array( );
+        if ( array_key_exists( 'id', $unformattedArray ) ) unset( $unformattedArray['id'] );
+        if ( CRM_Utils_Array::value( 'values', $unformattedArray ) && is_array( $unformattedArray['values'] ) ) {
+            foreach ( $unformattedArray['values'] as $key => $value ) {
+                if ( is_Array( $value ) ) {
+                    foreach( $value as $k => $v ) {
+                        if ( $k == 'id' ) unset( $value[$k] );
+                    }
+                } else if ( $key == 'id' ) {
+                    $unformattedArray[$key];
+                }
+                $formattedArray = array( $value );
+            }
+            $unformattedArray['values'] = $formattedArray;
+        }
+    } 
 }
 
 function CiviUnitTestCase_fatalErrorHandler( $message ) {

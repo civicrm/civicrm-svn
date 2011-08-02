@@ -119,11 +119,23 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( ); 
         
+        if ( CRM_Utils_Array::value( 'id', $params ) ) {
+            CRM_Utils_Hook::pre( 'edit', 'Case', $params['id'], $params );
+        } else {
+            CRM_Utils_Hook::pre( 'create', 'Case', $null, $params );
+        }
+        
         $case = self::add( $params );
 
         if ( is_a( $case, 'CRM_Core_Error') ) {
             $transaction->rollback( );
             return $case;
+        }
+
+        if ( CRM_Utils_Array::value( 'id', $params ) ) {
+            CRM_Utils_Hook::post( 'edit', 'Case', $case->id, $case );
+        } else {
+            CRM_Utils_Hook::post( 'create', 'Case', $case->id, $case );
         }
         $transaction->commit( );
                 
@@ -329,6 +341,8 @@ INNER JOIN  civicrm_option_value ov ON ( ca.case_type_id=ov.value AND ov.option_
      */ 
     static function deleteCase( $caseId , $moveToTrash = false ) 
     {
+        CRM_Utils_Hook::pre( 'delete', 'Case', $caseId, CRM_Core_DAO::$_nullArray );
+        
         //delete activities
         $activities = self::getCaseActivityDates( $caseId );
         if ( $activities ) {
@@ -357,6 +371,8 @@ INNER JOIN  civicrm_option_value ov ON ( ca.case_type_id=ov.value AND ov.option_
             // CRM-7364, disable relationships
             self::enableDisableCaseRelationships( $caseId, false );            
        	
+            CRM_Utils_Hook::post( 'delete', 'Case', $caseId, $case );
+
             // remove case from recent items.
             $caseRecent = array(
                                 'id'   => $caseId,

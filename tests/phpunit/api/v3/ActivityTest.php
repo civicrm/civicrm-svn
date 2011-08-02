@@ -114,8 +114,6 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     {
         $tablesToTruncate = array( 'civicrm_contact', 
                                    'civicrm_activity',
-                                   'civicrm_option_group',
-                                   'civicrm_option_value'
                                    );
         $this->quickCleanup( $tablesToTruncate, true );
     }

@@ -391,7 +391,18 @@ class CRM_Core_Payment_BaseIPN {
                 //we might be renewing membership, 
                 //so make status override false.  
                 $formatedParams['is_override'] = false;
-
+                
+                // CRM-8141 update the membership type with the value recorded in log when membership created/renewed
+                // this picks up membership type changes during renewals
+                $sql = "SELECT membership_type_id FROM civicrm_membership_log WHERE membership_id=$membership->id ORDER BY id DESC LIMIT 1;";
+                require_once 'CRM/Core/DAO.php';
+                $dao = new CRM_Core_DAO;
+                $dao->query( $sql );
+                if ( ! $dao->fetch( ) ) {
+                	CRM_Core_Error::fatal( ts( 'Missing expected civicrm_membership_log.' ) );
+                }
+                $formatedParams['membership_type_id'] = $dao->membership_type_id;
+                $dao->free();
                 $membership->copyValues( $formatedParams );
                 $membership->save( );
 
