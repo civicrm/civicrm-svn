@@ -507,27 +507,28 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 }
             }  
             
-            $config = CRM_Core_Config::singleton();
-            if ( $config->doNotAttachPDFReceipt ) {
-                if ( CRM_Utils_Array::value('custom_post_id_multiple', $values) ) {
-                    foreach( $values['custom_post_id_multiple'] as $count => $customPostMultiple ) {
-                        if ( $customPostMultiple ) {
-                            $errorMsg["custom_post_id_multiple[{$count}]"] = ts('Please disable PDF receipt as an attachment in <a href="%1">Miscellaneous Settings</a> if you want to add additional profiles.', array( 1 => CRM_Utils_System::url( 'civicrm/admin/setting/misc', 'reset=1' ) ) );
-                            break;
-                        }
-                    }
-                }
-                
-                if ( CRM_Utils_Array::value('is_multiple_registrations', $values) &&
-                     CRM_Utils_Array::value('additional_custom_post_id_multiple',  $values) ) {
-                    foreach( $values['additional_custom_post_id_multiple'] as $count => $customPostMultiple ) {
-                        if ( $customPostMultiple ) {
-                           $errorMsg["additional_custom_post_id_multiple[{$count}]"] = ts('Please disable PDF receipt as an attachment in <a href="%1">Miscellaneous Settings</a> if you want to add additional profiles.', array( 1 => CRM_Utils_System::url( 'civicrm/admin/setting/misc', 'reset=1' ) ) );
-                            break;
-                        }
-                    }
-                }
-            }
+            // // CRM-8485
+            // $config = CRM_Core_Config::singleton();
+            // if ( $config->doNotAttachPDFReceipt ) {
+            //     if ( CRM_Utils_Array::value('custom_post_id_multiple', $values) ) {
+            //         foreach( $values['custom_post_id_multiple'] as $count => $customPostMultiple ) {
+            //             if ( $customPostMultiple ) {
+            //                 $errorMsg["custom_post_id_multiple[{$count}]"] = ts('Please disable PDF receipt as an attachment in <a href="%1">Miscellaneous Settings</a> if you want to add additional profiles.', array( 1 => CRM_Utils_System::url( 'civicrm/admin/setting/misc', 'reset=1' ) ) );
+            //                 break;
+            //             }
+            //         }
+            //     }
+            //    
+            //     if ( CRM_Utils_Array::value('is_multiple_registrations', $values) &&
+            //          CRM_Utils_Array::value('additional_custom_post_id_multiple',  $values) ) {
+            //         foreach( $values['additional_custom_post_id_multiple'] as $count => $customPostMultiple ) {
+            //             if ( $customPostMultiple ) {
+            //                $errorMsg["additional_custom_post_id_multiple[{$count}]"] = ts('Please disable PDF receipt as an attachment in <a href="%1">Miscellaneous Settings</a> if you want to add additional profiles.', array( 1 => CRM_Utils_System::url( 'civicrm/admin/setting/misc', 'reset=1' ) ) );
+            //                 break;
+            //             }
+            //         }
+            //     }
+            // }
             
             if ( !empty($errorMsg) ) {
                 if ( CRM_Utils_Array::value('custom_post_id_multiple', $values) ) {
