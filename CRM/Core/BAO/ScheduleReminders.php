@@ -230,7 +230,8 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         require_once 'CRM/Core/PseudoConstant.php';
         require_once 'CRM/Event/PseudoConstant.php';
 
-        $activity_type = CRM_Core_PseudoConstant::activityType(false);
+        $activity_type = CRM_Core_PseudoConstant::activityType(false) + CRM_Core_PseudoConstant::activityType(false, true);
+        asort($activity_type);
         $activity_status = CRM_Core_PseudoConstant::activityStatus();
         $event_type = CRM_Event_PseudoConstant::eventType();
         $civicrm_event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
