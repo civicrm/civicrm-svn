@@ -66,10 +66,6 @@ class api_v3_ContributionTest extends CiviUnitTestCase
 
         $this->contributionTypeDelete();
         $this->contactDelete($this->_individualId); 
-        $tablesToTruncate = array( 'civicrm_contribution',
-                                   'civicrm_contact');
-
-        $this->quickCleanup( $tablesToTruncate );
     }
 
 ///////////////// civicrm_contribution_get methods
@@ -269,12 +265,12 @@ class api_v3_ContributionTest extends CiviUnitTestCase
      */
     function testContributionCreateExample( )
     {
-
         require_once 'api/v3/examples/ContributionCreate.php';
         $result = contribution_create_example();
+        $contributionId = $result['id'];
         $expectedResult = contribution_create_expectedresult();
-        $this->assertEquals($result,$expectedResult);
-        $this->contributionDelete( $result['id'] );
+        $this->checkArrayEquals( $result, $expectedResult );
+        $this->contributionDelete( $contributionId );
     }
     
     //To Update Contribution
@@ -542,4 +538,3 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         } 
     }
 }
-
