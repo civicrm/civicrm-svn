@@ -95,7 +95,10 @@ class CRM_Price_Form_Set extends CRM_Core_Form
     static function formRule( $fields, $files, $options ) 
     {
         $errors = array( );
-        
+        if ( array_key_exists( CRM_Core_Component::getComponentID( 'CiviMember' ), $fields['extends'] ) &&
+             count( $fields['extends'] > 1 ) ) {
+            $errors['extends'] = ts('If you plan on using this price set for membership signup and renewal, you can not also use it for Events or Contributions. However, a membership price set may include additional fields for non-membership options that requires an additional fee (e.g. magazine subscription).');
+        }
         //checks the given price set doesnot start with digit
         $title = $fields['title']; 
         $asciiValue = ord( $title{0} );//gives the ascii value
