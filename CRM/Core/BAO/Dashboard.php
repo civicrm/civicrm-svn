@@ -227,6 +227,8 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
         require_once 'CRM/Contact/DAO/DashboardContact.php';
         $dao = new CRM_Contact_DAO_DashboardContact( );
 
+        $session = CRM_Core_Session::singleton( ); 
+        $dao->contact_id   = $session->get('userID');
         $dao->dashboard_id = $dashletID;
         $dao->find( true );
 
