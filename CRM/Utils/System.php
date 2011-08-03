@@ -148,6 +148,8 @@ class CRM_Utils_System {
             if ( $maintenance ) {
                 drupal_set_breadcrumb( '' );
                 drupal_maintenance_theme();
+                print theme('maintenance_page', array('content' => $content));
+                exit( );
             }
             $out = $content;
             $ret = true;
