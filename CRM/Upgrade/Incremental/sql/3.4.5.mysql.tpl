@@ -90,3 +90,9 @@ INSERT INTO civicrm_option_value
 VALUES
 (@option_group_id_languages, 0, 1, 'de_CH', 'de', {localize}'{ts escape="sql"}German (Swiss){/ts}'{/localize}, @counter := @counter + 1),
 (@option_group_id_languages, 0, 1, 'es_PR', 'es', {localize}'{ts escape="sql"}Spanish; Castilian (Puerto Rico){/ts}'{/localize}, @counter := @counter + 1);
+
+-- CRM-8218, contact dashboard changes
+{if $alterContactDashboard}
+    ALTER TABLE `civicrm_dashboard` DROP `content`, DROP `created_date`;
+    ALTER TABLE `civicrm_dashboard_contact`  ADD `content` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `weight`,  ADD `created_date` DATETIME NULL DEFAULT NULL AFTER `content`;
+{/if}
