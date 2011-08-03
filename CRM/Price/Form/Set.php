@@ -174,7 +174,12 @@ class CRM_Price_Form_Set extends CRM_Core_Form
         $this->addGroup( $extends, 'extends', ts('Used For'), '&nbsp;', true );
 
         $this->addRule( 'extends', ts('%1 is a required field.', array(1 => ts('Used For'))), 'required' );
-
+        require_once 'CRM/Contribute/PseudoConstant.php';
+        $this->add( 'select', 'contribution_type_id', 
+                    ts( 'Contribution Type (Membership Fees)' ), 
+                    array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionType( ),
+                    true);
+        
         // help text
         $this->add( 'textarea', 'help_pre', ts('Pre-form Help'), 
                     CRM_Core_DAO::getAttribute( 'CRM_Price_DAO_Set', 'help_pre' ) );
