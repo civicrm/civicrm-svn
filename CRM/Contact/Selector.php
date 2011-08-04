@@ -349,11 +349,11 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             return $csvHeaders;
         } else if ( $output == CRM_Core_Selector_Controller::SCREEN ) {
             $csvHeaders = array( ts('Name') );
-            foreach ( $this->getColHeads($action, $output) as $column ) {
+            foreach ( $this->getColHeads($action, $output) as $key => $column ) {
                 if ( array_key_exists( 'name', $column ) &&
                      $column['name']                     &&
                      $column['name'] != ts( 'Name' ) ) {
-                    $csvHeaders[] = $column['name'];
+                    $csvHeaders[$key] = $column['name'];
                 }
             }
             return $csvHeaders;
@@ -790,41 +790,48 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
     private static function &_getColumnHeaders() 
     {
         if ( ! isset( self::$_columnHeaders ) )
-        { self::$_columnHeaders = array(
-                                          array('desc' => ts('Contact Type') ),
-                                          array(
-                                                'name'      => ts('Name'),
-                                                'sort'      => 'sort_name',
-                                                'direction' => CRM_Utils_Sort::ASCENDING,
-                                                ),
-                                          array('name' => ts('Address') ),
-                                          array(
-                                                'name'      => ts('City'),
-                                                'sort'      => 'city',
-                                                'direction' => CRM_Utils_Sort::DONTCARE,
-                                                ),
-                                          array(
-                                                'name'      => ts('State'),
-                                                'sort'      => 'state_province',
-                                                'direction' => CRM_Utils_Sort::DONTCARE,
-                                                ),
-                                          array(
-                                                'name'      => ts('Postal'),
-                                                'sort'      => 'postal_code',
-                                                'direction' => CRM_Utils_Sort::DONTCARE,
-                                                ),
-                                          array(
-                                                'name'      => ts('Country'),
-                                                'sort'      => 'country',
-                                                'direction' => CRM_Utils_Sort::DONTCARE,
-                                                ),
-                                          array(
-                                                'name'      => ts('Email'),
-                                                'sort'      => 'email',
-                                                'direction' => CRM_Utils_Sort::DONTCARE,
-                                                ),
-                                          array('name' => ts('Phone') )
-                );
+        { 
+            require_once 'CRM/Core/BAO/Preferences.php';
+            $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+            
+            self::$_columnHeaders = array( 'contact_type' => array('desc' => ts('Contact Type') ),
+                                           'sort_name'    => array(
+                                                                   'name'      => ts('Name'),
+                                                                   'sort'      => 'sort_name',
+                                                                   'direction' => CRM_Utils_Sort::ASCENDING,
+                                                 ) );
+
+            $defaultAddress = array( 'street_address' => array( 'name' => ts('Address') ), 
+                                     'city'   => array( 'name'      => ts('City'),
+                                                        'sort'      => 'city',
+                                                        'direction' => CRM_Utils_Sort::DONTCARE,
+                                                        ),
+                                     'state_province' => array( 'name'      => ts('State'),
+                                                                'sort'      => 'state_province',
+                                                                'direction' => CRM_Utils_Sort::DONTCARE,
+                                                                ),
+                                     'postal_code' => array( 'name'      => ts('Postal'),
+                                                             'sort'      => 'postal_code',
+                                                             'direction' => CRM_Utils_Sort::DONTCARE,
+                                                             ),
+                                     'country' => array( 'name'      => ts('Country'),
+                                                         'sort'      => 'country',
+                                                         'direction' => CRM_Utils_Sort::DONTCARE,
+                                                         ),
+                                     ); 
+            
+            foreach ( $defaultAddress as $columnName => $column ) {
+                if ( CRM_Utils_Array::value($columnName, $addressOptions) ) {
+                    self::$_columnHeaders[$columnName] = $column;  
+                }
+            }
+           
+            self::$_columnHeaders['email'] = array( 'name'      => ts('Email'),
+                                                    'sort'      => 'email',
+                                                    'direction' => CRM_Utils_Sort::DONTCARE,
+                                                    );
+            
+            self::$_columnHeaders['phone'] = array( 'name' => ts('Phone') );
         }
         return self::$_columnHeaders;
     }
