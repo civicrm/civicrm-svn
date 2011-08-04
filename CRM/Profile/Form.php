@@ -271,7 +271,6 @@ class CRM_Profile_Form extends CRM_Core_Form
             $this->setDefaults( $defaults );    
         }
         
-        $this->setDefaultsValues();
     }
     
     /** 
@@ -336,6 +335,9 @@ class CRM_Profile_Form extends CRM_Core_Form
                         $text = ts("Delete Attached File");
                         $customFiles[$field['name']]['deleteURL'] =
                             "<a href=\"{$deleteURL}\" onclick = \"if (confirm( ' $deleteExtra ' )) this.href+='&amp;confirmed=1'; else return false;\">$text</a>";
+
+                        // also delete the required rule that we've set on the form element
+                        $this->removeFileRequiredRules( $field['name'] );
                     }
                 } 
             }
@@ -587,6 +589,8 @@ class CRM_Profile_Form extends CRM_Core_Form
                                $this->_duplicateButtonName,
                                ts( 'Save Matching Contact' ) );
         }
+
+        $this->setDefaultsValues();
     }
    
     /*

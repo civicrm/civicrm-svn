@@ -14,3 +14,16 @@
 7. Create a civicrm.settings.php file here: wp-content/plugins/civicrm
 
 8. Make sure your resource url is: http://wp/wp-content/plugins/civicrm/civicrm/
+
+9. Add the following to the top of: wp-config.php
+
+/**
+ * hack to enable session support
+ */
+if ( ! session_id( ) ) {
+    session_start( );
+}
+$_GET['noheader'] = 1;
+
+
+

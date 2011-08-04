@@ -161,11 +161,11 @@ class CRM_Core_Config_Defaults
                 if ( CRM_Utils_System::checkURL( "{$baseURL}components/com_civicrm/civicrm/{$testIMG}" ) ) {
                     $defaults['userFrameworkResourceURL'] = $baseURL . "components/com_civicrm/civicrm/";
                 }
-            } else if ( $config->userFramework == 'Standalone' ) {
+            } else if ( $config->userFramework == 'WordPress' ) {
                 // potentially sane default for standalone;
                 // could probably be smarter about this, but this
                 // should work in many cases
-                $defaults['userFrameworkResourceURL'] = str_replace( 'standalone/', '', $baseURL );
+                $defaults['userFrameworkResourceURL'] = $baseURL . "wp-content/plugins/CiviCRM/CiviCRM/";
             } else {
                 // Drupal setting
                 // check and see if we are installed in sites/all (for D5 and above)
