@@ -50,8 +50,13 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
         $session   = CRM_Core_Session::singleton( );
         $contactID = $session->get( 'userID' );
                         
-        $form->_profileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'on_behalf_organization',
-                                                         'id', 'name' );
+        require_once 'CRM/Core/BAO/UFJoin.php'; 
+        $ufJoinParams     = array( 'module'       => 'onBehalf',
+                                   'entity_table' => 'civicrm_contribution_page',   
+                                   'entity_id'    => $form->_id );   
+        $profileId        = CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
+        $form->_profileId = $profileId[0];
+
         $form->assign( 'profileId', $form->_profileId );
                
         if ( $contactID ) {

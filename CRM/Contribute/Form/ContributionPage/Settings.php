@@ -60,16 +60,25 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
      */
     function setDefaultValues()
     {
+        $defaults = parent::setDefaultValues();
+
         if ( $this->_id ) {
             $title = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage',
                                                   $this->_id,
                                                   'title' );
             CRM_Utils_System::setTitle( ts( 'Title and Settings (%1)',
                                             array( 1 => $title ) ) );
+            require_once 'CRM/Core/BAO/UFJoin.php';
+
+            $ufJoinParams = array( 'module'       => 'OnBehalf',
+                                   'entity_table' => 'civicrm_contribution_page',  
+                                   'entity_id'    => $this->_id );
+            $defaults['onbehalf_profile_id'] = CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams ); 
         } else {
             CRM_Utils_System::setTitle( ts( 'Title and Settings' ) );
         }
-        return parent::setDefaultValues();
+
+        return $defaults;
     }
     
     /**
@@ -103,6 +112,14 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
 
         // is on behalf of an organization ?
         $this->addElement('checkbox', 'is_organization', ts('Allow individuals to contribute and / or signup for membership on behalf of an organization?'), null, array('onclick' =>"showHideByValue('is_organization',true,'for_org_text','table-row','radio',false);showHideByValue('is_organization',true,'for_org_option','table-row','radio',false);") );
+
+        $required = array( 'Contact', 'Organization' );
+        $optional = array( 'Contribution', 'Membership' );
+        require_once "CRM/Core/BAO/UFGroup.php";
+        $profiles = CRM_Core_BAO_UFGroup::getValidProfiles( $required, $optional );
+        $this->add( 'select', 'onbehalf_profile_id' , ts('Organization Profile'), 
+                    array( '' => ts('- select -') ) + $profiles );
+
         $options = array(); 
         $options[] = HTML_QuickForm::createElement('radio', null, null, ts('Optional'), 1 );
         $options[] = HTML_QuickForm::createElement('radio', null, null, ts('Required'), 2 );
@@ -194,6 +211,21 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
 
         require_once 'CRM/Contribute/BAO/ContributionPage.php';
         $dao =& CRM_Contribute_BAO_ContributionPage::create( $params );
+
+        $ufJoinParams = array( 'is_active'    => 1, 
+                               'module'       => 'OnBehalf',
+                               'entity_table' => 'civicrm_contribution_page', 
+                               'entity_id'    => $this->_id );
+
+        require_once 'CRM/Core/BAO/UFJoin.php';
+        // first delete all past entries
+        CRM_Core_BAO_UFJoin::deleteAll( $ufJoinParams );
+
+        if ( CRM_Utils_Array::value( 'onbehalf_profile_id', $params ) ) {
+            $ufJoinParams['weight'     ] = 1;
+            $ufJoinParams['uf_group_id'] = $params['onbehalf_profile_id'];
+            CRM_Core_BAO_UFJoin::create( $ufJoinParams );
+        }
 
         $this->set( 'id', $dao->id );
         if ( $this->_action & CRM_Core_Action::ADD ) {

@@ -114,6 +114,9 @@ class CRM_Core_Page_AJAX_Location
                         
             foreach ( $location as $fld => $values ) {
                 $locType = $values[1]['location_type_id'];
+                if ( !$locType ) {
+                    $locType = 'Primary';
+                }
                 if ( $fld == 'email' ) {
                     $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
                                                                      'value' => $location[$fld][1][$fld] );

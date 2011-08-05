@@ -56,6 +56,10 @@
                     {ts 1=$profileURL}To change the organization data collected use the "On Behalf Of Organization" profile (<a href="%1">Administer > Customize > CiviCRM Profile</a>).{/ts}
                 </td>
             </tr>
+            <tr class="crm-contribution-onbehalf_profile_id">
+                <td class="label">{$form.onbehalf_profile_id.label}</td>
+                <td>{$form.onbehalf_profile_id.html}</td>
+            </tr>
             <tr id="for_org_text" class="crm-contribution-contributionpage-settings-form-block-for_organization">
                 <td class="label">{$form.for_organization.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='for_organization' id=$contributionPageID}{/if}</td>
                 <td>{$form.for_organization.html}<br />

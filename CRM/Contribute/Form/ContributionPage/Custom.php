@@ -98,7 +98,8 @@ class CRM_Contribute_Form_ContributionPage_Custom extends CRM_Contribute_Form_Co
             
         require_once 'CRM/Core/BAO/UFJoin.php';
 
-        $ufJoinParams = array( 'entity_table' => 'civicrm_contribution_page',  
+        $ufJoinParams = array( 'module'       => 'CiviContribute',
+                               'entity_table' => 'civicrm_contribution_page',  
                                'entity_id'    => $this->_id );
         list( $defaults['custom_pre_id'],
               $defaults['custom_post_id'] ) = 

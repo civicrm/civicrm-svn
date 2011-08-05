@@ -2112,6 +2112,40 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         return $profiles;
     }
 
+    /**
+     * Function to check whether a profile is valid combination of 
+     * required and/or optional profile types
+     *
+     * @param array   $required   array of types those are required
+     * @param array   $optional   array of types those are optional
+     *
+     * @return array  $profiles  associative array of profiles  
+     * @static
+     * @access public
+     */
+    static function getValidProfiles( $required, $optional = null ) 
+    {
+        if ( !is_array( $required ) || empty( $required ) ) {
+            return;
+        }
+
+        require_once 'CRM/Core/BAO/UFField.php';
+        $profiles = array();
+        $ufGroups = CRM_Core_PseudoConstant::ufgroup( );
+        
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::aclGroup( CRM_Core_Permission::ADMIN, null, 'civicrm_uf_group', $ufGroups, $ufGroups );
+
+        foreach ( $ufGroups as $id => $title ) {
+            $type = CRM_Core_BAO_UFField::checkValidProfileType( $id, $required, $optional );
+            if ( $type ) {
+                $profiles[$id] = $title;
+            }
+        }
+        
+        return $profiles;
+    }
+
    /**
      * Function to get default value for Register. 
      *
