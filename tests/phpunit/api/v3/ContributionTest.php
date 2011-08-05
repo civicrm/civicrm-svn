@@ -42,10 +42,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     function setUp() 
     {
         parent::setUp();
-        $tablesToTruncate = array( 'civicrm_contribution',
-                                   'civicrm_contact');
-
-        $this->quickCleanup( $tablesToTruncate );
+        
         $this->_apiversion = 3;
         $this->_contributionTypeId = $this->contributionTypeCreate();
         $this->_individualId = $this->individualCreate( );
@@ -170,13 +167,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
 
      }
      
-     function testTearDown(){
-       $contribution = civicrm_api('Contribution', 'create', $this->params);
-       $this->contributionTypeDelete();   
-       $this->assertEquals(1, 1);  
-       civicrm_api('contribution', 'delete', array('version' => 3, 'id' => $contribution['id']));
-     }
-
+   
 ///////////////// civicrm_contribution_
      
     function testCreateEmptyParamsContribution()
@@ -241,18 +232,45 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $this->contributionGetnCheck($params,$contribution['id']);   
 
     }
-    
+    function testCreateContributionWithNote()
+    {
+       $description = "Demonstrates creating contribution with Note Entity";
+       $subfile = "ContributionCreateWithNote";
+       $params = array(
+                        'contact_id'             => $this->_individualId,                              
+                        'receive_date'           => date('Ymd'),
+                        'total_amount'           => 100.00,
+                        'contribution_type_id'   => $this->_contributionTypeId,
+                        'payment_instrument_id'  => 1,
+                        'non_deductible_amount'  => 10.00,
+                        'fee_amount'             => 50.00,
+                        'net_amount'             => 90.00,
+                        'trxn_id'                => 12345,
+                        'invoice_id'             => 67890,
+                        'source'                 => 'SSF',
+                        'contribution_status_id' => 1,
+                        'version' =>$this->_apiversion,
+                        'note' => 'my contribution note',
+                        );
+        
+        $contribution=& civicrm_api('contribution', 'create', $params);
+        $this->documentMe($params, $contribution,__FUNCTION__,__FILE__,$description, $subfile);  
+        $result = civicrm_api('note','get', array('version' => 3,'entity_table'=> 'civicrm_contribution', 'entity_id' => $contribution['id'],'sequential' => 1));
+        $this->assertAPISuccess($result);
+        $this->assertEquals('my contribution note', $result['values'][0]['note']) ;
+        civicrm_api('contribution', 'delete', array('version' => 3, 'id' => $contribution['id']));
+    } 
     /**
      *  Test  using example code
      */
     function testContributionCreateExample( )
     {
-
         require_once 'api/v3/examples/ContributionCreate.php';
         $result = contribution_create_example();
+        $contributionId = $result['id'];
         $expectedResult = contribution_create_expectedresult();
-        $this->assertEquals($result,$expectedResult);
-        $this->contributionDelete( $result['id'] );
+        $this->checkArrayEquals( $result, $expectedResult );
+        $this->contributionDelete( $contributionId );
     }
     
     //To Update Contribution
@@ -502,7 +520,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
 
         $contribution = civicrm_api('Contribution','Get', array( 'id' => $id ,
                                   'version'        =>$this->_apiversion));
-
+  
         if($delete){
         civicrm_api('contribution', 'delete', array( 'id' => $id ,
                                   'version'        =>$this->_apiversion));
@@ -520,4 +538,3 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         } 
     }
 }
-

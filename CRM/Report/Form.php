@@ -1021,7 +1021,11 @@ class CRM_Report_Form extends CRM_Core_Form {
             if ( $value !== null && is_array( $value ) && count( $value ) > 0 ) {
                 $sqlOP  = self::getSQLOperator( $op );
                 if ( CRM_Utils_Array::value( 'type', $field ) == CRM_Utils_Type::T_STRING ) {
-                    $clause = "{$field['dbAlias']} $sqlOP ( '" . implode( "' , '", $value ) . "')";
+                    //cycle through selections and esacape values
+                    foreach ( $value as $key => $selection ) {
+                        $value[$key] = CRM_Utils_Type::escape( $selection, $type );
+                    }
+                    $clause = "( {$field['dbAlias']} $sqlOP ( '" . implode( "' , '", $value ) . "') )" ;
                 } else {
                     // for numerical values
                     $clause = "{$field['dbAlias']} $sqlOP (" . implode( ', ', $value ) . ")";

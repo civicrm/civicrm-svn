@@ -1,3 +1,6 @@
+-- CRM-8248
+{include file='../CRM/Upgrade/3.4.5.msg_template/civicrm_msg_template.tpl'}
+
 -- CRM-8348
 
 CREATE TABLE IF NOT EXISTS civicrm_action_log (
@@ -73,9 +76,23 @@ WHERE name = 'Payment_Express';
 
 -- CRM-8125
 SELECT @option_group_id_languages := MAX(id) FROM civicrm_option_group WHERE name = 'languages';
-UPDATE civicrm_option_value SET label = 'Persian (Iran)' WHERE value = 'fa' AND option_group_id = @option_group_id_languages;
+
+{if $multilingual}
+   {foreach from=$locales item=locale}
+     UPDATE civicrm_option_value SET label_{$locale} = '{ts escape="sql"}Persian (Iran){/ts}' WHERE value = 'fa' AND option_group_id = @option_group_id_languages;
+   {/foreach}
+{else}
+     UPDATE civicrm_option_value SET label = '{ts escape="sql"}Persian (Iran){/ts}' WHERE value = 'fa' AND option_group_id = @option_group_id_languages;
+{/if}
+
 INSERT INTO civicrm_option_value
   (option_group_id, is_default, is_active, name, value, {localize field='label'}label{/localize}, weight)
 VALUES
 (@option_group_id_languages, 0, 1, 'de_CH', 'de', {localize}'{ts escape="sql"}German (Swiss){/ts}'{/localize}, @counter := @counter + 1),
 (@option_group_id_languages, 0, 1, 'es_PR', 'es', {localize}'{ts escape="sql"}Spanish; Castilian (Puerto Rico){/ts}'{/localize}, @counter := @counter + 1);
+
+-- CRM-8218, contact dashboard changes
+{if $alterContactDashboard}
+    ALTER TABLE `civicrm_dashboard` DROP `content`, DROP `created_date`;
+    ALTER TABLE `civicrm_dashboard_contact`  ADD `content` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `weight`,  ADD `created_date` DATETIME NULL DEFAULT NULL AFTER `content`;
+{/if}

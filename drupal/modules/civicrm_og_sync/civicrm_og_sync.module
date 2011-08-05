@@ -49,9 +49,9 @@
  * Changes in contacts and group memberships, however, can readily be handled.
  * The old code calls into group creation code, which is probably why it was
  * so hard to get right.  This update will instead do a "look before you leap"
- * approach, and if a group in CiviCRM does not have a counterpart in OG, it will
- * be treated as "a feature", since there's a lot of use for groups beyond mirroring
- * OG for most organizations.
+ * approach, and if a group in CiviCRM does not have a counterpart in OG, it
+ * will be treated as "a feature", since there's a lot of use for groups beyond
+ * mirroring OG for most organizations.
  */
 
 /**

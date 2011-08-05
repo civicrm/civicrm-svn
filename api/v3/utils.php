@@ -101,8 +101,10 @@ function _civicrm_api3_get_DAO ($name) {
           //for some reason pledge_payment doesn't follow normal conventions of BAO being the same as table name
           $name = 'Payment';
         }
-
     }  
+    if(strtolower($name) =='individual' || strtolower($name) =='household' ||strtolower($name) =='organization'){
+          $name = 'Contact';
+    }
     return $dao[civicrm_api_get_camel_name($name,3)];
 }
 
@@ -1752,6 +1754,7 @@ function _civicrm_api3_validate_fields($entity, $action, &$params) {
   											  'contribution' => 1,
                           'activity' => 1,
                           'campaign' => 1,
+                          'pledge'   => 1,
       );
   if(!array_key_exists(strtolower($entity), $testedEntities)){
     return;
@@ -1795,7 +1798,7 @@ function _civicrm_api3_validate_date(&$params,&$fieldname,&$fieldInfo){
 			} 
 			if ((CRM_Utils_Array::value ('name', $fieldInfo) != $fieldname ) && CRM_Utils_Array::value ( $fieldname , $params )) {
 			  //If the unique field name differs from the db name & is set handle it here
-			  if (strtotime($params [$fieldInfo ['name']]) ==0) {
+			  if (strtotime($params [$fieldname]) ==0) {
 	         throw new exception ($fieldname. " is not a valid date: " . $params [$fieldname]);
         }
 				$params [$fieldname] = CRM_Utils_Date::processDate ( $params [$fieldname] );

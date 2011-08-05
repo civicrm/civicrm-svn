@@ -219,7 +219,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
         $dashletInfo = array( );
         
         $params   = array( 1 => array( $dashletID, 'Integer' ) );
-        $query = "SELECT label, url FROM civicrm_dashboard WHERE id = %1";
+        $query = "SELECT label, url, fullscreen_url FROM civicrm_dashboard WHERE id = %1";
         $dashboadDAO = CRM_Core_DAO::executeQuery( $query, $params );
         $dashboadDAO->fetch( );
 
@@ -227,6 +227,8 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
         require_once 'CRM/Contact/DAO/DashboardContact.php';
         $dao = new CRM_Contact_DAO_DashboardContact( );
 
+        $session = CRM_Core_Session::singleton( ); 
+        $dao->contact_id   = $session->get('userID');
         $dao->dashboard_id = $dashletID;
         $dao->find( true );
 
@@ -248,7 +250,8 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
             // -lets use relative url for internal use.
             // -make sure relative url should not be htmlize.
             if ( substr( $dashboadDAO->url, 0, 4 ) != 'http' ) {
-                $url = CRM_Utils_System::url( $dashboadDAO->url, null, false, null, false );
+                $urlParam = CRM_Utils_System::explode( '&', $dashboadDAO->url, 2 );
+                $url = CRM_Utils_System::url( $urlParam[0], $urlParam[1], true, null, false );
             }
 
             //get content from url
@@ -261,14 +264,13 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
                               'content'    => $dao->content);
 
         if ( $dao->is_fullscreen ) {                       
-            $fullscreenUrl = $dao->fullscreen_url;
+            $fullscreenUrl = $dashboadDAO->fullscreen_url;
             if ( substr( $fullscreenUrl, 0, 4 ) != 'http' ) {
-                $urlParam = CRM_Utils_System::explode( '&', $dao->fullscreen_url, 2 );
+                $urlParam = CRM_Utils_System::explode( '&', $dashboadDAO->fullscreen_url, 2 );
                 $fullscreenUrl = CRM_Utils_System::url( $urlParam[0], $urlParam[1], true, null, false );
             }
             $dashletInfo['fullscreenUrl'] = $fullscreenUrl;
         }                     
-
         return $dashletInfo;
     }
      

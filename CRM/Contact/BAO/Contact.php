@@ -1183,19 +1183,14 @@ WHERE id={$id}; ";
                                                        array ( 'name'  => 'organization_name',
                                                                'title' => ts('Current Employer') )
                                                        ));
-                $locationType = array( );
-                if ($status) {
-                    $locationType['location_type'] = array ('name' => 'location_type',
-                                                            'where' => 'civicrm_location_type.name',
-                                                            'title' => ts('Location Type'));
-                }
-            
-                $IMProvider = array( );
-                if ( $status ) {
-                    $IMProvider['im_provider'] = array ('name' => 'im_provider',
-                                                        'where' => 'im_provider.name',
-                                                        'title' => ts('IM Provider'));
-                }
+
+                $locationType = array( 'location_type' => array ('name' => 'location_type',
+                                                                 'where' => 'civicrm_location_type.name',
+                                                                 'title' => ts('Location Type') ) );
+
+                $IMProvider   = array( 'im_provider'   => array ('name' => 'im_provider',
+                                                                 'where' => 'im_provider.name',
+                                                                 'title' => ts('IM Provider') ) );
             
                 $locationFields = array_merge(  $locationType,
                                                 CRM_Core_DAO_Address::export( ),

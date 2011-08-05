@@ -70,7 +70,8 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         $participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
         $activityStatus = CRM_Core_PseudoConstant::activityStatus();
         $event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
-        $activityType = CRM_Core_PseudoConstant::activityType(false);
+        $activityType = CRM_Core_PseudoConstant::activityType(false) + CRM_Core_PseudoConstant::activityType(false, true);
+        asort($activityType);
         $eventType = CRM_Event_PseudoConstant::eventType();
         $activityContacts = CRM_Core_PseudoConstant::activityContacts();
         $sel1 = $sel2 = $sel3 = $sel4 = $sel5 = array();
@@ -229,7 +230,8 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         require_once 'CRM/Core/PseudoConstant.php';
         require_once 'CRM/Event/PseudoConstant.php';
 
-        $activity_type = CRM_Core_PseudoConstant::activityType(false);
+        $activity_type = CRM_Core_PseudoConstant::activityType(false) + CRM_Core_PseudoConstant::activityType(false, true);
+        asort($activity_type);
         $activity_status = CRM_Core_PseudoConstant::activityStatus();
         $event_type = CRM_Event_PseudoConstant::eventType();
         $civicrm_event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );

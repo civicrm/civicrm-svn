@@ -452,7 +452,7 @@
             }
 
             for ( var i in roleGroupMapper ) {
-                if ( ( i != 0 ) && document.getElementById( "role_id["+i+"]" ).checked == true ) {
+                if ( ( i > 0 ) && ( document.getElementById( "role_id["+i+"]" ).checked ) ) {
                     var splitGroup = roleGroupMapper[i].split(",");
                     for ( j = 0; j < splitGroup.length; j++ ) {
                         groupUnload[x+j+1] = splitGroup[j];
@@ -528,7 +528,7 @@
 		buildCustomData( '{$customDataType}', 'null', 'null' );
 		{literal}
         for ( var i in roleGroupMapper ) {
-            if ( ( i != 0 ) && document.getElementById( "role_id["+i+"]" ).checked == true ) {
+            if ( ( i > 0 ) && ( document.getElementById( "role_id["+i+"]" ).checked ) ) {
                {/literal}
                showCustomData( '{$customDataType}', i, {$roleCustomDataTypeID} );
                {literal}  
