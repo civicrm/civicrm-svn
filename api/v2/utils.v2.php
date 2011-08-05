@@ -134,16 +134,15 @@ function _civicrm_store_values( &$fields, &$params, &$values )
 {
     $valueFound = false;
     
+    $keys = array_intersect_key($params, $fields);
     foreach ($fields as $name => $field) {
         // ignore all ids for now
         if ( $name === 'id' || substr( $name, -1, 3 ) === '_id' ) {
             continue;
         }
         
-        if ( array_key_exists( $name, $params ) ) {
-            $values[$name] = $params[$name];
-            $valueFound = true;
-        }
+        $values[$name] = $params[$name];
+        $valueFound = true;
     }
     return $valueFound;
 }
