@@ -113,26 +113,26 @@ class CRM_Core_Page_AJAX_Location
             $website       = CRM_Core_BAO_Website::getValues( $entityBlock, $values );
                         
             foreach ( $location as $fld => $values ) {
-                $locType = $values[1]['location_type_id'];
-                if ( !$locType ) {
-                    $locType = 'Primary';
-                }
-                if ( $fld == 'email' ) {
-                    $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
-                                                                     'value' => $location[$fld][1][$fld] );
-                    unset( $profileFields["{$fld}-{$locType}"] );
-                } else if ( $fld == 'phone' ) {
-                    $phoneTypeId = $values[1]['phone_type_id'];
-                    $elements["onbehalf_{$fld}-{$locType}-{$phoneTypeId}"] = array( 'type'  => 'Text',
-                                                                                    'value' => $location[$fld][1][$fld] );
-                    unset( $profileFields["{$fld}-{$locType}"] );
-                } else if ( $fld == 'im' ) {
-                    $providerId = $values[1]['provider_id'];
-                    $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
-                                                                     'value' => $location[$fld][1][$fld] );
-                    $elements["onbehalf_{$fld}-{$locType}-provider_id"] = 
-                        array( 'type'  => 'Select',
-                               'value' => $location[$fld][1]['provider_id'] );
+                if ( is_array( $values ) && !empty( $values ) ) {
+                    $locType = $values[1]['location_type_id'];
+                    if ( $fld == 'email' ) {
+                        $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
+                                                                         'value' => $location[$fld][1][$fld] );
+                        unset( $profileFields["{$fld}-{$locType}"] );
+                    } else if ( $fld == 'phone' ) {
+                        $phoneTypeId = $values[1]['phone_type_id'];
+                        $elements["onbehalf_{$fld}-{$locType}-{$phoneTypeId}"] = array( 'type'  => 'Text',
+                                                                                        'value' => $location[$fld][1][$fld] );
+                        unset( $profileFields["{$fld}-{$locType}-{$phoneTypeId}"] );
+                    } else if ( $fld == 'im' ) {
+                        $providerId = $values[1]['provider_id'];
+                        $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
+                                                                         'value' => $location[$fld][1][$fld] );
+                        $elements["onbehalf_{$fld}-{$locType}provider_id"] = 
+                            array( 'type'  => 'Select',
+                                   'value' => $location[$fld][1]['provider_id'] );
+                        unset( $profileFields["{$fld}-{$locType}-{$providerId}"] );
+                    }
                 }
             }
             
@@ -144,6 +144,7 @@ class CRM_Core_Page_AJAX_Location
                     $elements["onbehalf_url-1-website_type_id"] = 
                         array( 'type'  => 'Select',
                                'value' => $website[1]['website_type_id'] );
+                    unset( $profileFields["url-1"] );
                 }
             }
             
