@@ -41,7 +41,6 @@ function civicrm_wp_initialize( ) {
             exit( );
         }
 
-
         $settingsFile = 
             WP_PLUGIN_DIR . DIRECTORY_SEPARATOR .
             'civicrm' . DIRECTORY_SEPARATOR .
@@ -49,11 +48,11 @@ function civicrm_wp_initialize( ) {
         $error = include_once( $settingsFile );
 
 	    // get ready for problems
-        $docLinkInstall = "http://wiki.civicrm.org/confluence/display/CRMDOC/Drupal+Installation+Guide";
+        $docLinkInstall = "http://wiki.civicrm.org/confluence/display/CRMDOC/WordPress+Installation+Guide";
         $docLinkTrouble = "http://wiki.civicrm.org/confluence/display/CRMDOC/Installation+and+Configuration+Trouble-shooting";
         $forumLink      = "http://forum.civicrm.org/index.php/board,6.0.html";
 
-	    $errorMsgAdd = t("Please review the <a href='!1'>Drupal Installation Guide</a> and the <a href='!2'>Trouble-shooting page</a> for assistance. If you still need help installing, you can often find solutions to your issue by searching for the error message in the <a href='!3'>installation support section of the community forum</a>.</strong></p>", 
+	    $errorMsgAdd = t("Please review the <a href='!1'>WordPress Installation Guide</a> and the <a href='!2'>Trouble-shooting page</a> for assistance. If you still need help installing, you can often find solutions to your issue by searching for the error message in the <a href='!3'>installation support section of the community forum</a>.</strong></p>", 
                          array('!1' => $docLinkInstall, '!2' => $docLinkTrouble, '!3' => $forumLink ) );
         
 
@@ -70,6 +69,7 @@ function civicrm_wp_initialize( ) {
         $error = include_once( 'CRM/Core/Config.php' );
         if ( $error == false ) {
             $failure = true;
+            //FIX ME
             drupal_set_message( "<strong><p class='error'>" . 
                                 t("Oops! - The path for including CiviCRM code files is not set properly. Most likely there is an error in the <em>civicrm_root</em> setting in your CiviCRM settings file (!1).", 
                                    array( '!1' => $settingsFile ) ) .
@@ -84,8 +84,10 @@ function civicrm_wp_initialize( ) {
         // initialize the system by creating a config object
         $config =& CRM_Core_Config::singleton();
 
+        //get logged in user id
+        global $current_user;
         $session =& CRM_Core_Session::singleton( );
-        $session->set( 'userID', 1 );
+        $session->set( 'userID', $current_user->ID );
     }
 
     return true;
