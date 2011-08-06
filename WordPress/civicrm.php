@@ -13,8 +13,8 @@ Author URI: http://civicrm.org/
 License: AGPL3
 */
 
-// there is session handling in WP hence we start it for CiviCRM pages
-if ( ! session_id( ) ) {
+// there is no session handling in WP hence we start it for CiviCRM pages
+if ( !session_id( ) ) {
     session_start( );
 }
 
