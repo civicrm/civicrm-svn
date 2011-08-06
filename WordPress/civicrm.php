@@ -13,6 +13,14 @@ Author URI: http://civicrm.org/
 License: AGPL3
 */
 
+// there is session handling in WP hence we start it for CiviCRM pages
+if ( ! session_id( ) ) {
+    session_start( );
+}
+
+//this is require for ajax calls
+$_GET['noheader'] = 1;
+
 define('WP_DEBUG', true);
 
 function civicrm_wp_add_menu_items( ) {
@@ -58,7 +66,7 @@ function civicrm_wp_initialize( ) {
 
         if ( $error == false ) {
             $failure = true;
-	        drupal_set_message( "<strong><p class='error'>" . 
+	        civicrm_wp_set_title( "<strong><p class='error'>" . 
                                 t("Oops! - The CiviCRM settings file (civicrm.settings.php) was not found in the expected location ") . 
                                 "(" . $settingsFile . "). </p><p class='error'>" .
                                 $errorMsgAdd . '</p></strong>' );
@@ -70,7 +78,7 @@ function civicrm_wp_initialize( ) {
         if ( $error == false ) {
             $failure = true;
             //FIX ME
-            drupal_set_message( "<strong><p class='error'>" . 
+            civicrm_wp_set_title( "<strong><p class='error'>" . 
                                 t("Oops! - The path for including CiviCRM code files is not set properly. Most likely there is an error in the <em>civicrm_root</em> setting in your CiviCRM settings file (!1).", 
                                    array( '!1' => $settingsFile ) ) .
                                 "</p><p class='error'> &raquo; " . 
