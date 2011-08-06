@@ -162,10 +162,7 @@ class CRM_Core_Config_Defaults
                     $defaults['userFrameworkResourceURL'] = $baseURL . "components/com_civicrm/civicrm/";
                 }
             } else if ( $config->userFramework == 'WordPress' ) {
-                // potentially sane default for standalone;
-                // could probably be smarter about this, but this
-                // should work in many cases
-                $defaults['userFrameworkResourceURL'] = $baseURL . "wp-content/plugins/CiviCRM/CiviCRM/";
+                $defaults['userFrameworkResourceURL'] = $baseURL . "wp-content/plugins/civicrm/civicrm/";
             } else {
                 // Drupal setting
                 // check and see if we are installed in sites/all (for D5 and above)
@@ -208,9 +205,9 @@ class CRM_Core_Config_Defaults
                 // we need to remove the administrator/ from the end
                 $tempURL = str_replace( "/administrator/", "/", $baseURL );
                 $defaults['imageUploadURL'] = $tempURL . "media/civicrm/persist/contribute/";
-            } else if ( $config->userFramework == 'Standalone' ) {
+            } else if ( $config->userFramework == 'WordPress' ) {
                 //for standalone no need of sites/defaults directory
-                $defaults['imageUploadURL'] = $baseURL . "files/civicrm/persist/contribute/";
+                $defaults['imageUploadURL'] = $baseURL . "wp-content/plugins/civicrm/files/civicrm/persist/contribute/";
             } else {
                 $defaults['imageUploadURL'] = $baseURL . "sites/default/files/civicrm/persist/contribute/";
             }
