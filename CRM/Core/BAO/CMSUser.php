@@ -238,32 +238,10 @@ class CRM_Core_BAO_CMSUser
             $loginUrl  = str_replace( 'administrator/', '', $loginUrl );
             $loginUrl .= 'index.php?option=com_user&view=login';
         } elseif ( $isDrupal ) {
-            $loginUrl .= 'user';
-            // For Drupal we can redirect user to current page after login by passing it as destination.
-            require_once 'CRM/Utils/System.php';
-            $args = null;
-
-            $id = $form->get( 'id' );
-            if ( $id ) {
-                $args .= "&id=$id";
-            } else {
-                $gid =  $form->get( 'gid' );
-                if ( $gid ) {
-                    $args .= "&gid=$gid";
-                } else {
-                     // Setup Personal Campaign Page link uses pageId
-                     $pageId =  $form->get( 'pageId' );
-                    if ( $pageId ) {
-                        $args .= "&pageId=$pageId&action=add";
-                    }
-                }
-            }
-    
-            if ( $args ) {
-                // append destination so user is returned to form they came from after login
-                $destination = CRM_Utils_System::currentPath( ) . '?reset=1' . $args;
-                $loginUrl .= '?destination=' . urlencode( $destination );
-             }
+          $loginUrl .= 'user';
+          // append destination so user is returned to form they came from after login
+          $destination = self::getDrupalLoginDestination($form);
+          if(!empty($destination) $loginUrl .= '?destination=' . urlencode( $destination );
         }
         $form->assign( 'loginUrl', $loginUrl );
         $form->assign( 'showCMS', $showCMS ); 
@@ -471,7 +449,39 @@ SELECT username, email
         $db_uf->disconnect( );
         return $result;
     }
+    /*
+     * Function to get the drupal destination string. When this is passed in the
+     * URL the user will be directed to it after filling in the drupal form
+     * @param object $form Form object representing the 'current' form - to which the user will be returned
+     * @return string $destination destination value for URL
+     */
+    static function getDrupalLoginDestination(&$form){
+
+      require_once 'CRM/Utils/System.php';
+            $args = null;
+
+            $id = $form->get( 'id' );
+            if ( $id ) {
+                $args .= "&id=$id";
+            } else {
+                $gid =  $form->get( 'gid' );
+                if ( $gid ) {
+                    $args .= "&gid=$gid";
+                } else {
+                     // Setup Personal Campaign Page link uses pageId
+                     $pageId =  $form->get( 'pageId' );
+                    if ( $pageId ) {
+                        $args .= "&pageId=$pageId&action=add";
+                    }
+                }
+            }
     
+            if ( $args ) {
+                // append destination so user is returned to form they came from after login
+                $destination = CRM_Utils_System::currentPath( ) . '?reset=1' . $args;
+             }
+           return $destination;
+    }
     /**
      * Function to create a user in Drupal.
      *  
