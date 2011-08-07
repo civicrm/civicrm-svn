@@ -26,7 +26,9 @@ if ( stristr( PHP_OS, 'WIN' ) ) {
 }
 
 // set installation type - drupal
-session_start();
+if ( !session_id( ) ) {
+    session_start();
+}
 
 // unset civicrm session if any
 if ( array_key_exists( 'CiviCRM', $_SESSION ) ) {
@@ -44,27 +46,32 @@ if ( isset($_GET['mode']) ) {
 global $installType;
 $installType = strtolower($_SESSION['install_type']);
 
-if ( ! in_array($installType, array('drupal')) ) {
+if ( !in_array($installType, array('drupal', 'wordpress')) ) {
     $errorTitle = "Oops! Unsupported installation mode";
     $errorMsg   = "";
     errorDisplayPage( $errorTitle, $errorMsg );
 }
 
 global $crmPath;
-$crmPath = dirname ( dirname( $_SERVER['SCRIPT_FILENAME'] ) );
+global $installDirPath;
+if ( $installType == 'drupal' ) {
+    $crmPath        = dirname ( dirname( $_SERVER['SCRIPT_FILENAME'] ) );
+    $installDirPath = '';
+} elseif ( $installType == 'wordpress' ) {
+    $crmPath =  WP_PLUGIN_DIR . DIRECTORY_SEPARATOR .
+        'civicrm' . DIRECTORY_SEPARATOR .
+        'civicrm' . DIRECTORY_SEPARATOR;
+    $installDirPath =  WP_PLUGIN_DIR . DIRECTORY_SEPARATOR .
+        'civicrm' . DIRECTORY_SEPARATOR .
+        'civicrm' . DIRECTORY_SEPARATOR .
+        'install' . DIRECTORY_SEPARATOR;
+}
+
 require_once $crmPath.'/CRM/Utils/System.php';
 
 $docLink = CRM_Utils_System::docURL2( 'Installation and Upgrades', false, 'Installation Guide' );
 
 if ( $installType == 'drupal' ) {
-    // do not check 'sites/all/modules' only since it could be a multi-site
-    // install. Rather check for existance of sites & modules in the url
-    
-    //old pattern where we do has to have civicrm in sites/.../modules/
-    //$pattern =  "/" . preg_quote('sites' . CIVICRM_DIRECTORY_SEPARATOR, CIVICRM_DIRECTORY_SEPARATOR) . 
-    //    "([a-zA-Z0-9_.]+)" . 
-    //    preg_quote(CIVICRM_DIRECTORY_SEPARATOR . 'modules', CIVICRM_DIRECTORY_SEPARATOR) . "/";
-    
     //lets check only /modules/.
     $pattern = '/' . preg_quote( CIVICRM_DIRECTORY_SEPARATOR . 'modules', CIVICRM_DIRECTORY_SEPARATOR ) . '/';
     
@@ -118,9 +125,8 @@ if (isset($_REQUEST['seedLanguage']) and isset($langs[$_REQUEST['seedLanguage']]
     $seedLanguage = $_REQUEST['seedLanguage'];
 }
 
+global $cmsPath;
 if ( $installType == 'drupal' ) {
-    global $cmsPath;
-    
     //CRM-6840 -don't force to install in sites/all/modules/ 
     require_once "$crmPath/CRM/Utils/System/Drupal.php";
     $cmsPath = CRM_Utils_System_Drupal::cmsRootPath( );
@@ -130,6 +136,10 @@ if ( $installType == 'drupal' ) {
                                      'sites'   . CIVICRM_DIRECTORY_SEPARATOR .
                                      $siteDir  . CIVICRM_DIRECTORY_SEPARATOR .
                                      'civicrm.settings.php' );
+} elseif ( $installType == 'wordpress' ) {
+    $cmsPath = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'civicrm';
+    $alreadyInstalled = file_exists( $cmsPath  . CIVICRM_DIRECTORY_SEPARATOR .
+                                     'civicrm.settings.php' );
 }
 
 // Exit with error if CiviCRM has already been installed.
@@ -138,6 +148,8 @@ if ($alreadyInstalled ) {
     if ( $installType == 'drupal' ) {
 
         $errorMsg = "CiviCRM has already been installed in this Drupal site. <ul><li>To <strong>start over</strong>, you must delete or rename the existing CiviCRM settings file - <strong>civicrm.settings.php</strong> - from <strong>" . implode(CIVICRM_DIRECTORY_SEPARATOR, array('[your Drupal root directory]', 'sites', $siteDir)) . "</strong>.</li><li>To <strong>upgrade an existing installation</strong>, refer to the online " . $docLink . ".</li></ul>";
+    } elseif ( $installType == 'wordpress' ) {
+        $errorMsg = "CiviCRM has already been installed in this WordPress site. <ul><li>To <strong>start over</strong>, you must delete or rename the existing CiviCRM settings file - <strong>civicrm.settings.php</strong> - from <strong>" . $cmsPath . "</strong>.</li><li>To <strong>upgrade an existing installation</strong>, refer to the online " . $docLink . ".</li></ul>";
     }
     errorDisplayPage( $errorTitle, $errorMsg );
 }
@@ -170,17 +182,27 @@ if ( $installType == 'drupal' ) {
         $errorMsg = "This version of CiviCRM can only be used with Drupal 7.x. Please ensure that '$drupalVersionFile' exists if you are running Drupal 7.0 and over. Refer to the online " . $docLink . " for information about installing CiviCRM.";
         errorDisplayPage( $errorTitle, $errorMsg );
     }
+} elseif ( $installType == 'wordpress' ) {
+    //HACK for now
+    $civicrm_version['cms'] = 'WordPress';
+
+    // Ensure that they have downloaded the correct version of CiviCRM
+    if ( $civicrm_version['cms'] != 'WordPress' ) {
+        $errorTitle = "Oops! Incorrect CiviCRM Version";
+        $errorMsg = "This installer can only be used for the WordPress version of CiviCRM. Refer to the online " . $docLink . " for information about installing CiviCRM for Drupal or Joomla!";
+        errorDisplayPage( $errorTitle, $errorMsg );
+    }
 }
 
 // Check requirements
 $req = new InstallRequirements();
 $req->check();
 
-if($req->hasErrors()) {
+if ( $req->hasErrors() ) {
     $hasErrorOtherThanDatabase = true;
 }
 
-if($databaseConfig) {
+if ( $databaseConfig ) {
     $dbReq = new InstallRequirements();
     $dbReq->checkdatabase($databaseConfig, 'CiviCRM');
     if ( $installType == 'drupal' ) {
@@ -192,7 +214,7 @@ if($databaseConfig) {
 if(isset($_REQUEST['go']) && !$req->hasErrors() && !$dbReq->hasErrors()) {
     // Confirm before reinstalling
     if(!isset($_REQUEST['force_reinstall']) && $alreadyInstalled) {
-        include('template.html');
+        include( $installDirPath .'template.html' );
     } else {
         $inst = new Installer();
         $inst->install($_REQUEST);
@@ -200,7 +222,7 @@ if(isset($_REQUEST['go']) && !$req->hasErrors() && !$dbReq->hasErrors()) {
 
     // Show the config form
 } else {
-    include('template.html');
+    include( $installDirPath . 'template.html' );
 }
 
 /**
@@ -215,9 +237,9 @@ if(isset($_REQUEST['go']) && !$req->hasErrors() && !$dbReq->hasErrors()) {
 class InstallRequirements {
     var $errors, $warnings, $tests;
 
-        /**
-         * Just check that the database configuration is okay
-         */
+    /**
+     * Just check that the database configuration is okay
+     */
     function checkdatabase($databaseConfig, $dbName) {
         if($this->requireFunction('mysql_connect',
                                   array("PHP Configuration", 
@@ -312,21 +334,27 @@ class InstallRequirements {
         }
 
         $configIDSiniDir = null;
+        global $cmsPath;
         if ( $installType == 'drupal' ) {
-            global $cmsPath;
             $siteDir = getSiteDir( $cmsPath, $_SERVER['SCRIPT_FILENAME'] );
 
             // make sure that we can write to sites/default and files/
-            $writableDirectories = array( 'sites' . CIVICRM_DIRECTORY_SEPARATOR . $siteDir . CIVICRM_DIRECTORY_SEPARATOR . 'files',
-                                          'sites' . CIVICRM_DIRECTORY_SEPARATOR . $siteDir );
-            foreach ( $writableDirectories as $dir ) {
-                $this->requireWriteable( $cmsPath . CIVICRM_DIRECTORY_SEPARATOR . $dir,
-                    array("File permissions", "Is the $dir folder writeable?", null ),
-                    true );
-            }
-            //check for Config.IDS.ini, file may exist in re-install
-            $configIDSiniDir  = array( $cmsPath ,'sites', $siteDir, 'files', 'civicrm', 'upload' ,'Config.IDS.ini' );
+            $writableDirectories = array( $cmsPath . 'sites' . CIVICRM_DIRECTORY_SEPARATOR . $siteDir . CIVICRM_DIRECTORY_SEPARATOR . 'files',
+                                          $cmsPath . 'sites' . CIVICRM_DIRECTORY_SEPARATOR . $siteDir );
+        } elseif ( $installType == 'wordpress' ) {
+            // make sure that we can write to plugins/civicrm  and plugins/civicrm/files/
+            $writableDirectories = array( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'files', $cmsPath );
         }
+
+        foreach ( $writableDirectories as $dir ) {
+            $this->requireWriteable( CIVICRM_DIRECTORY_SEPARATOR . $dir,
+                array("File permissions", "Is the $dir folder writeable?", null ),
+                true );
+        }
+        
+        //check for Config.IDS.ini, file may exist in re-install
+        $configIDSiniDir  = array( $cmsPath ,'sites', $siteDir, 'files', 'civicrm', 'upload' ,'Config.IDS.ini' );
+ 
         if ( is_array( $configIDSiniDir ) && !empty( $configIDSiniDir ) ) {
             $configIDSiniFile = implode( CIVICRM_DIRECTORY_SEPARATOR, $configIDSiniDir );
             if ( file_exists( $configIDSiniFile ) ) {
@@ -790,28 +818,29 @@ class Installer extends InstallRequirements {
             $config['mysql']['password'],
             $config['mysql']['database'] );
         // Build database
-        require_once 'civicrm.php';
+        require_once $installDirPath . 'civicrm.php';
         civicrm_main( $config );
 
         // clean output
         @ob_clean();
 
-        if(! $this->errors) {
+        if ( !$this->errors ) {
             global $installType;
-            echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
-            echo '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">';
-            echo '<head>';
-            echo '<title>CiviCRM Installed</title>';
-            echo '<link rel="stylesheet" type="text/css" href="template.css" />';
-            echo '</head>';
-            echo '<body>';
-            echo '<div style="padding: 1em;"><p class="good">CiviCRM has been successfully installed</p>';
-            echo '<ul>';
-            $docLinkConfig = CRM_Utils_System::docURL2( 'Configuring a New Site', false, 'here' );
-            if (!function_exists('ts')) {
-                $docLinkConfig = "<a href=\"{$docLinkConfig}\">here</a>";
-            }
+
             if ( $installType == 'drupal' ) {
+                echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+                echo '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">';
+                echo '<head>';
+                echo '<title>CiviCRM Installed</title>';
+                echo '<link rel="stylesheet" type="text/css" href="template.css" />';
+                echo '</head>';
+                echo '<body>';
+                echo '<div style="padding: 1em;"><p class="good">CiviCRM has been successfully installed</p>';
+                echo '<ul>';
+                $docLinkConfig = CRM_Utils_System::docURL2( 'Configuring a New Site', false, 'here' );
+                if (!function_exists('ts')) {
+                    $docLinkConfig = "<a href=\"{$docLinkConfig}\">here</a>";
+                }
                 $drupalURL     = civicrm_cms_base( );
                 $drupalPermissionsURL = "{$drupalURL}index.php?q=admin/people/permissions";
                 $drupalURL .= "index.php?q=civicrm/admin/configtask&reset=1";
@@ -846,7 +875,6 @@ class Installer extends InstallRequirements {
                 // rebuild modules, so that civicrm is added
                 system_rebuild_module_data();
 
-
                 // now enable civicrm module.
                 module_enable( array('civicrm', 'civicrmtheme') );
 
@@ -860,12 +888,28 @@ class Installer extends InstallRequirements {
                 $GLOBALS['user'] = $original_user;
                 drupal_save_session(TRUE);
 
+                echo '</ul>';
+                echo '</div>';
+                echo '</body>';
+                echo '</html>';
+            } elseif ( $installType == 'wordpress' ) {
+                echo '<div>CiviCRM Installed</div>';
+                echo '<div style="padding: 1em;"><p class="good">CiviCRM has been successfully installed</p>';
+                echo '<ul>';
+                $docLinkConfig = CRM_Utils_System::docURL2( 'Configuring a New Site', false, 'here' );
+                if (!function_exists('ts')) {
+                    $docLinkConfig = "<a href=\"{$docLinkConfig}\">here</a>";
+                }
+            
+                $cmsURL     = civicrm_cms_base( );
+                $cmsURL .= "wp-admin/admin.php?page=CiviCRM&q=civicrm/admin/configtask&reset=1";
+                $registerSiteURL = "http://civicrm.org/civicrm/profile/create?reset=1&gid=15";
+                
+                echo "<li>Use the <a target='_blank' href=\"$cmsURL\">Configuration Checklist</a> to review and configure settings for your new site</li>
+                    <li> Have you registered this site at CiviCRM.org? If not, please help strengthen the CiviCRM ecosystem by taking a few minutes to <a href='$registerSiteURL' target='_blank'>fill out the site registration form</a>. The information collected will help us prioritize improvements, target our communications and build the community. If you have a technical role for this site, be sure to check Keep in Touch to receive technical updates (a low volume  mailing list).</li>";
+                echo '</ul>';
+                echo '</div>';
             }
-
-            echo '</ul>';
-            echo '</div>';
-            echo '</body>';
-            echo '</html>';
         }
 
         return $this->errors;
