@@ -241,6 +241,18 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
         $group->find(true);
         
         foreach ( $contactIds as $contactId ) {
+          if( $status=='Deleted') {
+            $query = "DELETE FROM civicrm_group_contact WHERE contact_id=$contactId AND group_id=$groupId";
+            $dao = CRM_Core_DAO::executeQuery( $query );
+            $historyParams = array( 'group_id' => $groupId,
+                                    'contact_id' => $contactId,
+                                    'status' => $status,
+                                    'method' => $method,
+                                    'date' => $date,
+                                    'tracking' => $tracking);
+            CRM_Contact_BAO_SubscriptionHistory::create($historyParams);
+          }
+          else {
             $groupContact = new CRM_Contact_DAO_GroupContact( );
             $groupContact->group_id   = $groupId;
             $groupContact->contact_id = $contactId;
@@ -264,6 +276,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
             CRM_Contact_BAO_SubscriptionHistory::create($historyParams);
             $groupContact->status = $status;
             $groupContact->save( );
+          }
         }
         
         // also reset the acl cache
