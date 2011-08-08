@@ -272,6 +272,12 @@ class CRM_Utils_System_WordPress {
     }
 
     static function logout( ) {
+        // destroy session
+        if ( session_id( ) ) {
+            session_destroy();
+        }
+        wp_logout( );
+        wp_redirect( wp_login_url() );
     }
 
     static function updateCategories( ) {
