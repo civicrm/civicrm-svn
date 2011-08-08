@@ -349,7 +349,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         
         $this->assign( 'single', $this->_single );
         
-        if ( !$this->_action ) {
+        if ( !$this->_id ) {
             $this->_action = CRM_Utils_Request::retrieve( 'action', 'String', $this, false, 'add' );
         }
         $this->assign( 'action'  , $this->_action   );
