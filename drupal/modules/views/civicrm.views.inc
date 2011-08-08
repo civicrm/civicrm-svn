@@ -6021,12 +6021,9 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
 
     //Feels a bit hacky this next 10 lines but it was the only way I could get getTree to play nice with the data
     $config =& CRM_Core_Config::singleton( );
-    if ($style == 'Inline') {
-        $tree = CRM_Core_BAO_CustomGroup::getTree( $entity_type, CRM_Core_DAO::$_nullObject, null, null, $subType, null );
-    }
-    else {
-        $tree = CRM_Core_BAO_CustomGroup::getTree( $entity_type, CRM_Core_DAO::$_nullObject, null, $groupID);
-    }
+
+    // from http://forum.civicrm.org/index.php/topic,17658.msg73901.html#msg73901, CRM-7860
+    $tree = CRM_Core_BAO_CustomGroup::getTree( $entity_type, CRM_Core_DAO::$_nullObject, null, $groupID, $subType, null );
 
     $jointable = null;
     switch ($entity_type) {
