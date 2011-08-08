@@ -166,6 +166,11 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
         if ( strstr( $values['title'], '/' ) ) {
             $errors['title'] = ts( "Please do not use '/' in Title" );
         }
+
+        if ( CRM_Utils_Array::value( 'is_organization', $values ) &&
+             !CRM_Utils_Array::value( 'onbehalf_profile_id', $values ) ) {
+            $errors['onbehalf_profile_id'] = ts( 'Please select a profile to collect organization information on this contribution page.' );
+        }
         
         return $errors;
     }

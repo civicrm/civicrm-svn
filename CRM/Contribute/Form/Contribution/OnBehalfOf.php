@@ -58,6 +58,7 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
         $form->_profileId = $profileId[0];
 
         $form->assign( 'profileId', $form->_profileId );
+        $form->assign( 'mode', $form->_mode );
                
         if ( $contactID ) {
             $form->_employers = CRM_Contact_BAO_Relationship::getPermissionedEmployer( $contactID );

@@ -1208,6 +1208,37 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         
         $transaction->commit( ); 
 
+        require_once 'CRM/Contribute/PseudoConstant.php';
+        require_once 'CRM/Contact/BAO/Contact.php';  
+        require_once 'CRM/Utils/Recent.php';
+        $url = CRM_Utils_System::url( 'civicrm/contact/view/contribution', 
+                                      "action=view&reset=1&id={$contribution->id}&cid={$contribution->contact_id}&context=home" );
+        $contributionTypes = CRM_Contribute_PseudoConstant::contributionType();
+
+        $title = CRM_Contact_BAO_Contact::displayName( $contribution->contact_id ) . 
+            ' - (' . CRM_Utils_Money::format( $contribution->total_amount, $contribution->currency ) . ' ' . 
+            ' - ' . $contributionTypes[$contribution->contribution_type_id] . ')';
+
+        $recentOther = array( );
+        if ( CRM_Core_Permission::checkActionPermission( 'CiviContribute', CRM_Core_Action::UPDATE ) ) {
+            $recentOther['editUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/contribution', 
+                                                             "action=update&reset=1&id={$contribution->id}&cid={$contribution->contact_id}&context=home" );
+        }
+        
+        if ( CRM_Core_Permission::checkActionPermission( 'CiviContribute', CRM_Core_Action::DELETE ) ) {
+            $recentOther['deleteUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/contribution', 
+                                                               "action=delete&reset=1&id={$contribution->id}&cid={$contribution->contact_id}&context=home" );
+        }
+        
+        // add the recently created Contribution
+        CRM_Utils_Recent::add( $title,
+                               $url,
+                               $contribution->id,
+                               'Contribution',
+                               $contribution->contact_id,
+                               null,
+                               $recentOther
+                               );
         return $contribution;
     }
 

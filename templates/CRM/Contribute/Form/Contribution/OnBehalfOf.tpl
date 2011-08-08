@@ -117,6 +117,7 @@
 var reset            = {/literal}"{$reset}"{literal};
 var onBehalfRequired = {/literal}"{$onBehalfRequired}"{literal};
 var mainDisplay      = {/literal}"{$mainDisplay}"{literal};
+var mode             = {/literal}"{$mode}"{literal};
 cj( "div#id-onbehalf-orgname-help").hide( );
 
 if ( mainDisplay ) {
@@ -137,6 +138,9 @@ function showOnBehalf( onBehalfRequired )
             cj( "#for_organization" ).html( '' );
             var urlPath = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&onbehalf=1'}"{literal};
             urlPath     = urlPath  + {/literal}"{$urlParams}"{literal};
+            if ( mode == 'test' ) {
+                urlPath = urlPath  + '&action=preview';
+            }
             if ( reset ) {
                 urlPath = urlPath + '&reset=' + reset;
             }

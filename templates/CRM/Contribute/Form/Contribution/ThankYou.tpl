@@ -209,10 +209,12 @@
     
     {if $onbehalfProfile}
       <div class="crm-group onBehalf_display-group">
-         <fieldset class="label-left">
-            {include file="CRM/UF/Form/Block.tpl" fields=$onbehalfProfile}
-            <div class="label">Email &nbsp;&nbsp;{$onBehalfEmail}</div>
-         </fieldset>
+         {include file="CRM/UF/Form/Block.tpl" fields=$onbehalfProfile}
+         <div class="crm-section organization_email-section">
+            <div class="label">Organization Email</div>
+            <div class="content">{$onBehalfEmail}</div>
+            <div class="clear"></div>
+         </div>
       </div>
     {/if}
     
