@@ -254,7 +254,10 @@ function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
 }
 
 /**
- * Check if the given array is actually an error
+ * Check if the result is an error. Note that this function has been retained from 
+ * api v2 for convenience but the result is more standardised in v3 and param
+ * 'format.is_success' => 1
+ * will result in a boolean success /fail being returned if that is what you need.
  *
  * @param  array   $params           (reference ) input parameters
  *
@@ -262,11 +265,11 @@ function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
  * @static void
  * @access public
  */
-function civicrm_error( $params ) 
+function civicrm_error( $result ) 
 {
-    if ( is_array( $params ) ) {
-        return ( array_key_exists( 'is_error', $params ) &&
-                 $params['is_error'] ) ? true : false;
+    if ( is_array( $result ) ) {
+        return ( array_key_exists( 'is_error', $result ) &&
+                 $result['is_error'] ) ? true : false;
     }
     return false;
 }
