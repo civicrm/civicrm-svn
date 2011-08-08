@@ -845,20 +845,26 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         
         $noteAttributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Note' );
         $this->add('textarea', 'note', ts('Notes'), $noteAttributes['note']);
+                
+        $buttons[] = array ( 'type'      => 'upload',
+                             'name'      => ts('Save'), 
+                             'isDefault' => true,
+                             'js'        => $confirmJS 
+                             );
+
+        $path = CRM_Utils_System::currentPath( );
+        if ( strpos( $path, 'civicrm/contact/search' ) !== 0 ) { 
+            $buttons[] = array ( 'type'      => 'upload',
+                                 'name'      => ts('Save and New'), 
+                                 'subName'   => 'new',
+                                 'js'        => $confirmJS 
+                                 );
+        }
+        $buttons[] = array ( 'type'      => 'cancel', 
+                             'name'      => ts('Cancel')
+                             );
         
-        $this->addButtons(array( 
-                                array ( 'type'      => 'upload',
-                                        'name'      => ts('Save'), 
-                                        'isDefault' => true,
-                                        'js'        => $confirmJS ),
-                                array ( 'type'      => 'upload',
-                                        'name'      => ts('Save and New'), 
-                                        'subName'   => 'new',
-                                        'js'        => $confirmJS ),         
-                                array ( 'type'      => 'cancel', 
-                                        'name'      => ts('Cancel') ), 
-                                ) 
-                          );
+        $this->addButtons( $buttons );
         if ($this->_action == CRM_Core_Action::VIEW) { 
             $this->freeze();
         } 
