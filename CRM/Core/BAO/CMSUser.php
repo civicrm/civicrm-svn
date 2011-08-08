@@ -241,7 +241,7 @@ class CRM_Core_BAO_CMSUser
           $loginUrl .= 'user';
           // append destination so user is returned to form they came from after login
           $destination = self::getDrupalLoginDestination($form);
-          if(!empty($destination) $loginUrl .= '?destination=' . urlencode( $destination );
+          if ( !empty($destination) ) $loginUrl .= '?destination=' . urlencode( $destination );
         }
         $form->assign( 'loginUrl', $loginUrl );
         $form->assign( 'showCMS', $showCMS ); 
