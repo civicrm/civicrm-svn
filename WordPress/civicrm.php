@@ -111,13 +111,43 @@ function civicrm_wp_initialize( ) {
         // initialize the system by creating a config object
         $config =& CRM_Core_Config::singleton();
 
-        //get logged in user id
+        // sync the logged in user with WP
         global $current_user;
-        $session =& CRM_Core_Session::singleton( );
-        $session->set( 'userID', $current_user->ID );
+        require_once 'CRM/Core/BAO/UFMatch.php';
+        CRM_Core_BAO_UFMatch::synchronize( $current_user, false, 'WordPress',
+                                           civicrm_get_ctype( 'Individual' ) );
+
     }
 
     return true;
+}
+
+/**
+ * Function to get the contact type
+ * @param string $default contact type
+ *
+ * @return $ctype contact type
+ */
+function civicrm_get_ctype( $default = null ) 
+{
+    // here we are creating a new contact
+    // get the contact type from the POST variables if any
+
+    if ( isset( $_REQUEST['ctype'] ) ) {
+        $ctype = $_REQUEST['ctype'];
+    } else if ( isset( $_REQUEST['edit'] ) &&
+                isset( $_REQUEST['edit']['ctype'] ) ) {
+        $ctype = $_REQUEST['edit']['ctype'];
+    } else {
+        $ctype = $default;
+    }
+
+    if ( $ctype != 'Individual'   &&
+         $ctype != 'Organization' &&
+         $ctype != 'Household' ) {
+        $ctype = $default;
+    }
+    return $ctype; 
 }
 
 function civicrm_wp_invoke( ) {
