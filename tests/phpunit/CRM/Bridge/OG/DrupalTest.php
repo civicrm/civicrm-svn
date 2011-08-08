@@ -61,7 +61,7 @@ class CRM_Bridge_OG_DrupalTest extends CiviUnitTestCase
     $params = array('source' => 'OG Sync Group ACL :1969:');
     
     // this is the function we are testing
-    CRM_Bridge_OG_Drupal::updateCiviACLRole( &$params, 'delete');
+    CRM_Bridge_OG_Drupal::updateCiviACLRole( $params, 'delete');
     $newCount = civicrm_api('OptionValue','GetCount',$getOptionGroupParams);
     
     //one option value (role) should have been deleted
