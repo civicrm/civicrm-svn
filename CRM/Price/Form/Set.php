@@ -95,8 +95,9 @@ class CRM_Price_Form_Set extends CRM_Core_Form
     static function formRule( $fields, $files, $options ) 
     {
         $errors = array( );
+        $count = count($fields['extends']);
         if ( array_key_exists( CRM_Core_Component::getComponentID( 'CiviMember' ), $fields['extends'] ) &&
-             count( $fields['extends'] > 1 ) ) {
+             $count > 1  ) {
             $errors['extends'] = ts('If you plan on using this price set for membership signup and renewal, you can not also use it for Events or Contributions. However, a membership price set may include additional fields for non-membership options that requires an additional fee (e.g. magazine subscription).');
         }
         //checks the given price set doesnot start with digit
@@ -246,6 +247,7 @@ class CRM_Price_Form_Set extends CRM_Core_Form
         $nameLength          = CRM_Core_DAO::getAttribute( 'CRM_Price_DAO_Set', 'name' );
         $params['name']      = CRM_Utils_String::titleToVar( $params['title'], CRM_Utils_Array::value( 'maxlength' , $nameLength ) );
         $params['is_active'] = CRM_Utils_Array::value( 'is_active', $params, false );
+        $params['contribution_type_id'] = CRM_Utils_Array::value( 'contribution_type_id', $params, false );
         
         $compIds = array( );
         $extends = CRM_Utils_Array::value( 'extends', $params );
