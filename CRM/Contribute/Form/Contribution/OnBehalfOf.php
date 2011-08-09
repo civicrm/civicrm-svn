@@ -56,6 +56,16 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
                                    'entity_id'    => $form->_id );   
         $profileId        = CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
         $form->_profileId = $profileId[0];
+        
+        if ( !CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $form->_profileId, 'is_active' ) ) {
+            CRM_Core_Error::fatal( ts( 'This contribution page has been configured for contribution on behalf of an organization and the selected onbehalf profile is disabled.' ) );
+        }
+
+        $requiredProfileFields = array( 'organization_name', 'email' );
+        $validProfile          = CRM_Core_BAO_UFGroup::checkValidProfile( $id, $requiredProfileFields );
+        if ( !$validProfile ) {
+            CRM_Core_Error::fatal( ts( 'This contribution page has been configured for contribution on behalf of an organization and the required fields of the selected onbehalf profile are disabled.' ) );
+        }
 
         $form->assign( 'profileId', $form->_profileId );
         $form->assign( 'mode', $form->_mode );

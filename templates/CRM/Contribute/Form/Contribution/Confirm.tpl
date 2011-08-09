@@ -147,7 +147,7 @@
       <div class="crm-group onBehalf_display-group">
          {include file="CRM/UF/Form/Block.tpl" fields=$onbehalfProfile}
          <div class="crm-section organization_email-section">
-            <div class="label">Organization Email</div>
+            <div class="label">{ts}Organization Email{/ts}</div>
             <div class="content">{$onBehalfEmail}</div>
             <div class="clear"></div>
          </div>

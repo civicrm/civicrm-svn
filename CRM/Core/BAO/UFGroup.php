@@ -2146,6 +2146,49 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         return $profiles;
     }
 
+    /**
+     * Function to check whether a profile is valid combination of 
+     * required profile fields
+     *
+     * @param array   $ufId       integer id of the profile
+     * @param array   $required   array of fields those are required in the profile
+     *
+     * @return array  $profiles  associative array of profiles  
+     * @static
+     * @access public
+     */
+    static function checkValidProfile( $ufId, $required = null ) 
+    {
+        if ( !$ufId ) {
+            return;
+        }
+
+        $validProfile = false;
+        if ( !CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $ufId, 'is_active' ) ) {
+            return $validProfile;
+        }
+        
+        $profileFields = self::getFields( $ufId, false, CRM_Core_Action::VIEW, null,
+                                          null, false, null, false, null, 
+                                          CRM_Core_Permission::CREATE, null );
+        
+        $validProfile = array( );
+        if ( !empty( $profileFields ) ) {
+            $fields = array_keys( $profileFields );
+            foreach ( $fields as $val ) {
+                foreach ( $required as $key => $field ) {
+                    if ( strpos( $val, $field ) === 0 ) {
+                        unset( $required[$key] );
+                    }
+                }
+            }
+            
+            $validProfile = ( empty( $required ) ) ? true : false;
+        }
+        
+        return $validProfile;
+    }
+
    /**
      * Function to get default value for Register. 
      *
