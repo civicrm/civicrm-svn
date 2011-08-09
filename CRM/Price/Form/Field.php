@@ -188,12 +188,14 @@ class CRM_Price_Form_Field extends CRM_Core_Form
         
         // Text box for Participant Count for a field
         require_once 'CRM/Core/Component.php';
-        $eventComponentId = CRM_Core_Component::getComponentID( 'CiviEvent' );
 
+        $eventComponentId = CRM_Core_Component::getComponentID( 'CiviEvent' );
+        $memberComponentId = CRM_Core_Component::getComponentID( 'CiviMember' );
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Price_DAO_FieldValue' );
-        
+        $this->assign( 'useForMember', false );        
         if ( in_array( $eventComponentId, $this->_extendComponentId ) ) {
             $this->add('text', 'count', ts('Participant Count'), $attributes['count'] );
+
             $this->addRule('count', ts('Participant Count should be a positive number') , 'positiveInteger');
             
             $this->add('text', 'max_value', ts('Max Participants'), $attributes['max_value'] );
@@ -203,6 +205,9 @@ class CRM_Price_Form_Field extends CRM_Core_Form
 
             $this->assign( 'useForEvent', true );
         } else {
+            if ( in_array( $memberComponentId, $this->_extendComponentId ) ) {
+                $this->assign( 'useForMember', true );
+            }
             $this->assign( 'useForEvent', false );
         }
         
@@ -247,7 +252,12 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                 $this->addRule('option_max_value['.$i.']' , ts('Please enter a valid Max Participants.'),'positiveInteger');
                 
                 // description 
-                $this->add('textArea', 'option_description['.$i.']', ts('Description'), array('rows' => 1, 'cols' => 40 ));
+                //$this->add('textArea', 'option_description['.$i.']', ts('Description'), array('rows' => 1, 'cols' => 40 ));
+            } else if ( in_array( $memberComponentId, $this->_extendComponentId ) ) {
+                require_once 'CRM/Member/PseudoConstant.php';
+                $membershipTypes = CRM_Member_PseudoConstant::membershipType();
+                $this->add( 'select', 'membership_type_id['.$i.']', ts('Membership Type'), $membershipTypes );
+                $this->add('checkbox', 'auto_renew['.$i.']', ts('Auto Renew?'));
             }
             
             // weight
@@ -544,7 +554,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form
             $params['option_label']        = array( 1 => $params['label'] );
             $params['option_count']        = array( 1 => $params['count'] );
             $params['option_max_value']    = array( 1 => $params['max_value'] );
-            $params['option_description']  = array( 1 => $params['description'] );
+            //$params['option_description']  = array( 1 => $params['description'] );
             $params['option_weight']       = array( 1 => $params['weight'] );
             $params['is_active']           = array( 1 => 1 );
         }
