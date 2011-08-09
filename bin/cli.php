@@ -75,6 +75,7 @@ class civicrm_CLI {
                 $file = $a[count($a) - 1]; 
                 die ("\nUsage: \$cd /your/civicrm/root; \$php5 bin/". $file." -u user -p password -s yoursite.org (or default)\n");
             }
+            $_SERVER["SCRIPT_NAME"] = "/index.php"; // workaround drupal f** magic bootstrap
         }
         $this->site=$site;
         $this->setEnv();
