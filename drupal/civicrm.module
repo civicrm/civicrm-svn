@@ -492,6 +492,13 @@ function civicrm_register_data($edit, &$user, $category, $reset, $doNotProcess =
         // $doNotProcess == false always
         CRM_Core_BAO_UFMatch::synchronize( $user, true, 'Drupal', $ctype );
         $userID = CRM_Core_BAO_UFMatch::getContactId( $user->uid );
+
+        // CRM-7858
+        if ( isset( $edit['mail'] ) ) {
+            CRM_Core_BAO_UFMatch::updateContactEmail( $userID,
+                                                      trim( $edit['mail'] ) );
+        }
+
         $html = CRM_Core_BAO_UFGroup::getEditHTML( $userID, '',
                                                    2,
                                                    true,

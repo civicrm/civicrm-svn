@@ -61,8 +61,6 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
             return;
         }
         
-        //print "synchronize called with uniq_id " . $user->identity_url . "<br/>";
-
         if ( $uf == 'Drupal' ) {
             $key   = 'uid';
             $login = 'name';
@@ -112,7 +110,6 @@ WHERE     openid = %1";
         $ufID   = $session->get( 'ufID'   );
         
         if ( ! $update && $ufID == $user->$key ) {
-            //print "Already processed this user<br/>";
             return;
         }
 
@@ -143,7 +140,6 @@ WHERE     openid = %1";
             $uniqId = $user->$mail;
         }
 
-        //print "Calling synchronizeUFMatch...<br/>";
         $ufmatch =& self::synchronizeUFMatch( $user, $user->$key, $uniqId, $uf, null, $ctype, $isLogin );
         if ( ! $ufmatch ) {
             return;
