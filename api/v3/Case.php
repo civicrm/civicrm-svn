@@ -70,8 +70,7 @@ require_once 'CRM/Case/PseudoConstant.php';
  * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
 function civicrm_api3_case_create($params) {
-    _civicrm_api3_initialize ( true );
-    try {
+
         civicrm_api3_verify_mandatory($params);
         if (! CRM_Utils_Array::value('status_id', $params ))
             $params['status_id'] = 1; // ongoing
@@ -121,11 +120,7 @@ function civicrm_api3_case_create($params) {
         // return case
         $details = _civicrm_api3_case_read ( $case->id );
         return civicrm_api3_create_success ( $details );
-    } catch ( PEAR_Exception $e ) {
-        return civicrm_api3_create_error ( $e->getMessage () );
-    } catch ( Exception $e ) {
-        return civicrm_api3_create_error ( $e->getMessage () );
-    }
+
 }
 
 /**
@@ -144,15 +139,12 @@ function civicrm_api3_case_create($params) {
  * @return (get mode, case_id provided): Array with case details, case roles, case activity ids, (search mode, case_id not provided): Array of cases found
  * @access public
  *
- * @todo Erik Hommel 16 dec 2010 use utils function civicrm_verify_mandatory to check for required params
  * @todo Erik Hommel 16 dec 2010 check if all DB fields are returned
- * @todo Erik Hommel 16 dec 2010 Introduce version as param
  * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
 function civicrm_api3_case_get($params) {
-    _civicrm_api3_initialize ( true );
-    try {
 
+        civicrm_api3_verify_mandatory($params);
         //get mode
         if(CRM_Utils_Array::value('id',$params)){
             $caseId = $params['id'];
@@ -256,11 +248,7 @@ SELECT DISTINCT case_id
         }
 
         return civicrm_api3_create_error ( 'Missing required parameter. Must provide case_id, client_id, activity_id, or contact_id.' );
-    } catch ( PEAR_Exception $e ) {
-        return civicrm_api3_create_error ( $e->getMessage () );
-    } catch ( Exception $e ) {
-        return civicrm_api3_create_error ( $e->getMessage () );
-    }
+ 
 }
 
 /**
@@ -290,9 +278,6 @@ SELECT DISTINCT case_id
  *
  */
 function civicrm_api3_case_activity_create($params) {
-    _civicrm_api3_initialize ( true );
-    try {
-
         //check parameters
         $errors = _civicrm_api3_case_check_params ( $params, 'activity' );
 
@@ -310,11 +295,6 @@ function civicrm_api3_case_activity_create($params) {
         CRM_Case_BAO_Case::processCaseActivity ( $caseParams );
 
         return civicrm_api3_create_success ( array('id' => $activity->id, 'case_id' => $params['case_id']) );
-    } catch ( PEAR_Exception $e ) {
-        return civicrm_api3_create_error ( $e->getMessage () );
-    } catch ( Exception $e ) {
-        return civicrm_api3_create_error ( $e->getMessage () );
-    }
 }
 
 /**
@@ -336,8 +316,6 @@ function civicrm_api3_case_activity_create($params) {
  *
  */
 function civicrm_api3_case_update($params) {
-    _civicrm_api3_initialize ( true );
-    try {
 
         civicrm_api3_verify_mandatory ( $params );
         $errors = array ();
@@ -392,11 +370,7 @@ function civicrm_api3_case_update($params) {
         _civicrm_api3_object_to_array ( $dao, $case );
 
         return civicrm_api3_create_success ( $case );
-    } catch ( PEAR_Exception $e ) {
-        return civicrm_api3_create_error ( $e->getMessage () );
-    } catch ( Exception $e ) {
-        return civicrm_api3_create_error ( $e->getMessage () );
-    }
+
 }
 
 /**
@@ -418,8 +392,6 @@ function civicrm_api3_case_update($params) {
  * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
 function civicrm_api3_case_delete($params) {
-    _civicrm_api3_initialize ();
-    try {
 
         //check parameters
         $errors = _civicrm_api3_case_check_params ( $params, 'delete' );
@@ -432,11 +404,7 @@ function civicrm_api3_case_delete($params) {
         } else {
             return civicrm_api3_create_error ( 'Could not delete case.' );
         }
-    } catch ( PEAR_Exception $e ) {
-        return civicrm_api3_create_error ( $e->getMessage () );
-    } catch ( Exception $e ) {
-        return civicrm_api3_create_error ( $e->getMessage () );
-    }
+
 }
 
 /***********************************/
