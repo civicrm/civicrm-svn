@@ -203,7 +203,10 @@ class CRM_Profile_Form extends CRM_Core_Form
         $this->_activityId = CRM_Utils_Request::retrieve('aid', 'Positive', $this, false, 0, 'GET');
         if (is_numeric($this->_activityId)) {
           require_once 'CRM/Activity/BAO/Activity.php';
-          $this->_activityId = CRM_Activity_BAO_Activity::getLatestActivityId($this->_activityId);
+          $latestRevisionId = CRM_Activity_BAO_Activity::getLatestActivityId($this->_activityId);
+          if ($latestRevisionId) { 
+            $this->_activityId = $latestRevisionId;
+          }
         }
         $this->_isContactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileType( $this->_gid );
             
