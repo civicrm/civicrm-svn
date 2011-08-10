@@ -26,6 +26,12 @@
        <comment>Currency Name</comment>
        <add>1.7</add>
   </field>
+  <index>
+    <name>UI_name</name>
+    <fieldName>name</fieldName>
+    <unique>true</unique>
+    <add>4.1</add>
+  </index>
   <field>
        <name>symbol</name>
        <type>varchar</type>
