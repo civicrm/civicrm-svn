@@ -2159,11 +2159,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
      */
     static function checkValidProfile( $ufId, $required = null ) 
     {
+        $validProfile = false;
         if ( !$ufId ) {
-            return;
+            return $validProfile;
         }
 
-        $validProfile = false;
         if ( !CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $ufId, 'is_active' ) ) {
             return $validProfile;
         }

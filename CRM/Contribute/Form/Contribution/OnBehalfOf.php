@@ -62,7 +62,7 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
         }
 
         $requiredProfileFields = array( 'organization_name', 'email' );
-        $validProfile          = CRM_Core_BAO_UFGroup::checkValidProfile( $id, $requiredProfileFields );
+        $validProfile          = CRM_Core_BAO_UFGroup::checkValidProfile( $form->_profileId, $requiredProfileFields );
         if ( !$validProfile ) {
             CRM_Core_Error::fatal( ts( 'This contribution page has been configured for contribution on behalf of an organization and the required fields of the selected onbehalf profile are disabled.' ) );
         }
