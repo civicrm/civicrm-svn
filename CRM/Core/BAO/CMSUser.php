@@ -549,44 +549,35 @@ SELECT username, email
      * @static
      */
     static function createJoomlaUser( &$params, $mail ) 
-    {
-        $userParams = &JComponentHelper::getParams( 'com_users' );
-        
-        $defaultUserGroup = $userParams->get( 'new_usertype', 2 );
-        
-        // Prepare the values for a new Joomla! user.
-        $values                 = array( );
-        $values['name']         = trim( $params['cms_name'] );
-        $values['username']     = trim( $params['cms_name'] );
-        $values['password']     = $params['cms_pass'];
-        $values['password2']    = $params['cms_confirm_pass'];
-        $values['email']        = trim( $params[$mail] );
-        $values['groups']       = array( $defaultUserGroup );
-        $values['usertype']     = 'deprecated';
-        $values['sendEmail']    = 0;
-        
-        $useractivation = $userParams->get( 'useractivation' );
-        if ( $useractivation == 1 ) { 
-            jimport('joomla.user.helper');
-            // block the User
-            $values['block'] = 1; 
-            $values['activation'] =JUtility::getHash( JUserHelper::genRandomPassword() ); 
-        } else { 
-            // don't block the user
-            $values['block'] = 0; 
-        }
-        
-        // Get an empty JUser instance.
-        $user =& JUser::getInstance( 0 );
-        $user->bind( $values );
-        
-        // Store the Joomla! user.
-        if ( ! $user->save( ) ) {
-            // Error can be accessed via $user->getError();
-            return false;
-        }
-        
-        return $user->get('id');
+    {	
+		if ( isset($values['first_name']) && isset($values['last_name']) ) {
+			$fullname = trim( $values['first_name'].' '.$values['last_name'] );
+		} else {
+			$fullname = trim( $params['cms_name'] );
+		}
+		
+		$values              = array( );
+        $values['name']      = $fullname;
+        $values['username']  = trim( $params['cms_name'] );
+        $values['password1'] = $params['cms_pass'];
+        $values['email1']    = trim( $params[$mail] );
+
+		JLoader::import( 'joomla.application.component.model' );
+		JLoader::import( 'registration', JPATH_SITE . DS . 'components' . DS . 'com_users' . DS . 'models' );
+		
+		$lang   = JFactory::getLanguage();
+		$lang->load('com_users');
+
+		$model  = JModel::getInstance( 'registration', 'UsersModel' );
+		$return = $model->register($values);
+		
+		$uid = '';
+		if ($return !== false) {
+			$user = JFactory::getUser( $values['username'] );
+			$uid  = $user->id;
+		}
+		
+		return $uid;
     }
     
     static function updateUFName( $ufID, $ufName ) 
