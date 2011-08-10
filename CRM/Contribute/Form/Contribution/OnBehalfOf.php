@@ -142,11 +142,14 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
         foreach ( $profileFields as $name => $field ) {
             if ( in_array( $field['field_type'], $fieldTypes ) ) {
                 list( $prefixName, $index ) = CRM_Utils_System::explode( '-', $name, 2 );
-                if ( $prefixName == 'state_province' || $prefixName == 'country' || $prefixName == 'county' ) {
+                if ( in_array( $prefixName, array( 'state_province', 'country', 'county' ) ) ) {
                     if ( ! array_key_exists( $index, $stateCountryMap ) ) {
                         $stateCountryMap[$index] = array( );
                     }
                     $stateCountryMap[$index][$prefixName] = 'onbehalf_' . $name;
+                } else if ( in_array( $prefixName, array( 'organization_name', 'email' ) ) &&
+                            !CRM_Utils_Array::value( 'is_required', $field ) ) {
+                    $field['is_required'] = 1;
                 }
                 
                 CRM_Core_BAO_UFGroup::buildProfile( $form, $field, null, null, false, true );

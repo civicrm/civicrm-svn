@@ -194,13 +194,13 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                             $this->_params['onbehalf_location'][$blockName][$locType][$locTypeId] = $typeId;
                         }
                     }
-                }
-
-                if ( strstr( $loc, 'custom' ) ) {
+                } else if ( strstr( $loc, 'custom' ) ) {
                     if ( $value  && isset($this->_params['onbehalf']["{$loc}_id"]) ) {
                         $value = $this->_params['onbehalf']["{$loc}_id"];
                     }
                     $this->_params['onbehalf_location']["{$loc}"] = $value;
+                } else {
+                    $this->_params['onbehalf_location'][$field]   = $value;
                 }
             }
         } else if ( CRM_Utils_Array::value( 'is_for_organization', $this->_values ) ) {

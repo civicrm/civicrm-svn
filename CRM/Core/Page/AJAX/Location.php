@@ -171,7 +171,7 @@ class CRM_Core_Page_AJAX_Location
             
             //set custom field defaults
             $defaults = array( );
-            CRM_Core_BAO_UFGroup::setProfileDefaults( $cid, $profileFields, $defaults );
+            CRM_Core_BAO_UFGroup::setProfileDefaults( $cid, $profileFields, $defaults, true, null, null, true );
             
             if ( !empty( $defaults ) ) {
                 foreach ( $profileFields as $key => $val ) {
@@ -185,6 +185,15 @@ class CRM_Core_Page_AJAX_Location
                                 $elements["onbehalf[{$key}][{$k}]"]['type'] = $val['html_type'];
                                 $elements["onbehalf[{$key}][{$k}]"]['value'] = $v;
                             }
+                        } else if ( $val['html_type'] == 'Multi-Select' ) {
+                            foreach ( $defaults[$key] as $k => $v ) {
+                                $elements["onbehalf_{$key}"]['type'] = $val['html_type'];
+                                $elements["onbehalf_{$key}"]['value'][$k] = $v;
+                            }
+                        } else if ( $val['html_type'] == 'Autocomplete-Select' ) {
+                            $elements["onbehalf_{$key}"]['type']  = $val['html_type'];
+                            $elements["onbehalf_{$key}"]['value'] = $defaults[$key];
+                            $elements["onbehalf_{$key}"]['id'] = $defaults["{$key}_id"];
                         } else {
                             $elements["onbehalf_{$key}"]['type'] = $val['html_type'];
                             $elements["onbehalf_{$key}"]['value'] = $defaults[$key];
