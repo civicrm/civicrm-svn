@@ -4,3 +4,6 @@ ALTER TABLE `civicrm_custom_field` ADD `filter` VARCHAR(255) NULL COMMENT 'Store
 
 -- CRM-8062
 ALTER TABLE `civicrm_subscription_history` CHANGE `status` `status` ENUM( 'Added', 'Removed', 'Pending', 'Deleted' ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'The state of the contact within the group' 
+
+-- CRM-8616
+DELETE FROM civicrm_currency WHERE name = 'EEK';
