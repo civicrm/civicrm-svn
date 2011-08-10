@@ -31,7 +31,7 @@ function civicrm_engage_admin_settings($form_state = NULL){
     '#title'=> t("Group break on odds / evens"),
     '#type' => 'checkbox',
     '#description' => t('Do you want a group-break between each side of the street'),
-    '#default_value' => variable_get('civicrm_engage_pagebreak_odd_even',"1"),
+    '#default_value' => variable_get('civicrm_engage_groupbreak_odd_even',"1"),
   );
    $form['break_settings']['civicrm_engage_groupbreak_street']= array(
     '#title'=> t("Group break on street "),
@@ -49,7 +49,7 @@ function civicrm_engage_admin_settings($form_state = NULL){
   '#title'=> t("Group break on zip code"),
   '#type' => 'checkbox',
   '#description' => t('Do you want a group-break between each side of the street'),
-  '#default_value' => variable_get('civicrm_engage_pagebreak_zip',"1"),
+  '#default_value' => variable_get('civicrm_engage_groupbreak_zip',"1"),
   );
   $form['break_settings']['civicrm_engage_lines_per_group']= array(
     '#title'=> t("Row limit per group"),
