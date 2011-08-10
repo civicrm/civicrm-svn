@@ -1224,10 +1224,17 @@ function _civicrm_api3_custom_data_get(&$returnArray,$entity,$entity_id ,$groupI
     CRM_Core_BAO_CustomGroup::setDefaults( $groupTree, $customValues );
     if ( !empty( $customValues ) ) {
         foreach ( $customValues as $key => $val ) {
+            if(strstr($key, '_id')){
+              $idkey = substr($key,0,-3);
+              $returnArray['custom_' . (CRM_Core_BAO_CustomField::getKeyID($idkey ) . "_id")] = $val;
+              $returnArray[$key] = $val;
+            }else{
             // per standard - return custom_fieldID
             $returnArray['custom_' . (CRM_Core_BAO_CustomField::getKeyID($key))] = $val;
+
             //not standard - but some api did this so guess we should keep - cheap as chips
             $returnArray[$key] = $val;
+            }
         }
     }
 }
