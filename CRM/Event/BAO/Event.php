@@ -700,7 +700,7 @@ WHERE civicrm_address.geo_code_1 IS NOT NULL
             $startDate =  CRM_Utils_Type::escape( $start, 'Date' );
         } else {
             // get events with start date >= today
-            $startDate =  date("Y-m-d");
+            $startDate =  date("Y-m-d G:i:s");
         }
 
 
@@ -711,7 +711,7 @@ WHERE civicrm_address.geo_code_1 IS NOT NULL
         } else {
             // get events with end date >= today, not sure of this logic
             // but keeping this for backward compatibility as per issue CRM-5133
-            $endDate =  date("Y-m-d");
+            $endDate =  date("Y-m-d G:i:s");
             $endCondition = " AND ( civicrm_event.end_date >= '{$endDate}' OR civicrm_event.end_date IS NULL ) ";
         }
         
