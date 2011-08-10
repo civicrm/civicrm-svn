@@ -257,7 +257,8 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                 require_once 'CRM/Member/PseudoConstant.php';
                 $membershipTypes = CRM_Member_PseudoConstant::membershipType();
                 $this->add( 'select', 'membership_type_id['.$i.']', ts('Membership Type'), $membershipTypes );
-                $this->add('checkbox', 'auto_renew['.$i.']', ts('Auto Renew?'));
+                $options = array( ts('No auto-renew option'), ts('Give option, but not required'), ts('Auto-renew required ') );
+                $element = $this->add( 'select', 'auto_renew['.$i.']', ts('Auto Renew?'), $options );
             }
             
             // weight
