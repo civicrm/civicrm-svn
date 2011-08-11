@@ -64,6 +64,8 @@ WHERE   id = %1";
         require_once 'CRM/Utils/Money.php';
         $details['total_amount'] = CRM_Utils_Money::format( $details['total_amount'], null, '%a' );
                 
+        $options = array( ts('No auto-renew option'), ts('Give option, but not required'), ts('Auto-renew required ') );
+        $details['auto_renew'] = $options[$details['auto_renew']];
         echo json_encode( $details );
         CRM_Utils_System::civiExit( );
     }
