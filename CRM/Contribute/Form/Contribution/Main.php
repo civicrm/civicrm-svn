@@ -90,7 +90,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $this->_onbehalf = CRM_Utils_Array::value( 'onbehalf', $_GET );
                 
         CRM_Contribute_Form_Contribution_OnBehalfOf::preProcess( $this );
-        if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $_POST ) ) {
+        if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $_POST ) &&
+             CRM_Utils_Array::value( 'is_for_organization', $_POST ) ) {
             CRM_Contribute_Form_Contribution_OnBehalfOf::buildQuickForm( $this );
         }
                 
