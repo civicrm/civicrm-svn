@@ -8,9 +8,7 @@
 function activity_get_example(){
 $params = array( 
   'version' => 3,
-  'filters' => array( 
-      'activity_date_time_low' => '20120101000000',
-    ),
+  'filter.activity_date_time_low' => '20120101000000',
   'sequential' => 1,
 );
 

@@ -280,10 +280,24 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         
         //flush component settings
         CRM_Core_Component::getEnabledComponents(true);
-        $tablesToTruncate = array('civicrm_contact');
 
+        $tablesToTruncate = array('civicrm_contact');
         $this->quickCleanup( $tablesToTruncate );
-        
+    }
+
+    /**
+     * emulate a logged in user since certain functions use that
+     * value to store a record in the DB (like activity)
+     * CRM-8180
+     */
+    public function createLoggedInUser( ) {
+        $params = array( 'first_name'   => 'Logged In',
+                         'last_name'    => 'User ' . rand( ),
+                         'contact_type' => 'Individual' );
+        $contactID = $this->individualCreate( $params );
+
+        $session = CRM_Core_Session::singleton( );
+        $session->set( 'userID', $contactID );
     }
 
     public function cleanDB() {
@@ -481,7 +495,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * @return int    id of Individual created
      */
     function individualCreate( $params = null) {
-
         if ( $params === null ) {
             $params = array( 'first_name'       => 'Anthony',
                              'middle_name'      => 'J.',
@@ -521,11 +534,14 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     private function _contactCreate( $params ) {
         $result = civicrm_api( 'Contact','create',$params );
-        if ( CRM_Utils_Array::value( 'is_error', $result ) ||(
-                                                              ! CRM_Utils_Array::value( 'contact_id', $result ) && ! CRM_Utils_Array::value( 'id', $result )) ) {
+        if ( CRM_Utils_Array::value( 'is_error', $result ) ||
+             ( ! CRM_Utils_Array::value( 'contact_id', $result ) && 
+               ! CRM_Utils_Array::value( 'id', $result )) ) {
             throw new Exception( 'Could not create test contact, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
         }
-        return isset($result['contact_id'])?$result['contact_id']:CRM_Utils_Array::value( 'id', $result );
+        return isset($result['contact_id']) ? 
+            $result['contact_id'] :
+            CRM_Utils_Array::value( 'id', $result );
     }
     
     function contactDelete( $contactID ) 

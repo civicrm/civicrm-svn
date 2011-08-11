@@ -60,8 +60,9 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         parent::setUp();
         $tablesToTruncate = array( 'civicrm_activity',
                                    'civicrm_contact',
-                                  'civicrm_custom_group',
-                                   'civicrm_custom_field',         );
+                                   'civicrm_custom_group',
+                                   'civicrm_custom_field',
+                                   );
 
         $this->quickCleanup( $tablesToTruncate );
 
@@ -101,6 +102,9 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                 'status_id' => 2,
                 'priority_id' => 1, 
                 'version' => $this->_apiversion);
+
+        // create a logged in USER since the code references it for source_contact_id
+        $this->createLoggedInUser( );
     }
 
 
@@ -195,9 +199,6 @@ class api_v3_ActivityTest extends CiviUnitTestCase
 
     /**
      *  Test civicrm_activity_id() with missing source_contact_id is put with the current user.
-     *  note that there is no valid user in the test suite so this produces a fail - bit of a dud test really!
-     *  
-     *  !
      */
     function testActivityCreateWithMissingContactId( )
     {
@@ -213,8 +214,9 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         );
 
         $result =& civicrm_api('activity','create',$params);
-        
-        $this->assertEquals( $result['is_error'], 1,
+
+        // we should use the session contact ID, CRM-8180
+        $this->assertEquals( $result['is_error'], 0,
                              "In line " . __LINE__ );
     }
 
