@@ -143,7 +143,17 @@ class CRM_Price_Form_Option extends CRM_Core_Form
             
             // label
             $this->add('text', 'label', ts('Option Label'),null, true);
+            $memberComponentId = CRM_Core_Component::getComponentID( 'CiviMember' );
+            $extendComponentId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_oid, 'extends', 'id' );
             
+            if ( $memberComponentId == $extendComponentId ) {
+                require_once 'CRM/Member/PseudoConstant.php';
+                $membershipTypes = CRM_Member_PseudoConstant::membershipType();
+                $this->add( 'select', 'membership_type_id', ts('Membership Type'), 
+                            array(ts('- select -')) + $membershipTypes );
+            }
+            
+            //CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $this->_fid, 'weight', 'id' );
             // FIX ME: duplicate rule?
             /*
             $this->addRule( 'label',
