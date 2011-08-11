@@ -128,6 +128,12 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
                                      'title'     => ts( 'Grant Report Due' ),
                                      'type' => CRM_Utils_Type::T_DATE
                                       ),
+                               'decision_date'=>
+                               array( 
+                                     'name'      => 'decision_date' ,
+                                     'title'     => ts( 'Grant Decision Date' ),
+                                     'type' => CRM_Utils_Type::T_DATE
+                                      ),
                                'rationale'=>
                                array( 
                                      'name'      => 'rationale' ,
@@ -172,7 +178,12 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
                                      'title'        => ts('Grant Report Due'),
                                      'operatorType' => CRM_Report_Form::OP_DATE,
                                      'type' => CRM_Report_Form::OP_DATE),
-                               
+                               'decision_date'=>
+                               array( 
+                                     'title'     => ts( 'Grant Decision Date' ),
+                                     'operatorType' => CRM_Report_Form::OP_DATE,
+                                     'type' => CRM_Utils_Type::T_DATE
+                                      ),
                                ),
                          'group_bys'=>
                          array(
@@ -194,7 +205,10 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
                                'money_transfer_date'=>
                                array(
                                      'title'        => ts('Money Transfer Date')),
-                               ),                 
+                               'decision_date'=>
+                               array( 
+                                     'title'     => ts( 'Grant Decision Date' )),
+                               ),             
                          ),
                    );
         
