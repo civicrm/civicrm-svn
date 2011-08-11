@@ -75,12 +75,22 @@
 
 </div>
 
+<script type="text/javascript">
 {if $preview}
 {literal}
-<script type="text/javascript">
 cj(function() {
    cj().crmaccordions(); 
 });
-</script>
 {/literal}
 {/if}
+
+{literal}
+cj(function() {
+   cj('#start_date').change( function( ) { 
+       if ( cj(this).val( ) ) {
+          cj('#now').attr( 'checked', false );
+       }
+   });
+});
+{/literal}
+</script>
