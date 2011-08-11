@@ -58,8 +58,9 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
         $form->_profileId = $profileId[0];
          
         if ( CRM_Utils_Array::value( 'is_for_organization', $form->_values ) ) {
-            if ( !CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $form->_profileId, 'is_active' ) ) {
-                CRM_Core_Error::fatal( ts( 'This contribution page has been configured for contribution on behalf of an organization and the selected onbehalf profile is disabled.' ) );
+            if ( !$form->_profileId ||
+                 !CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $form->_profileId, 'is_active' ) ) {
+                CRM_Core_Error::fatal( ts( 'This contribution page has been configured for contribution on behalf of an organization and the selected onbehalf profile is either disabled or not found.' ) );
             }
             
             $requiredProfileFields = array( 'organization_name', 'email' );
