@@ -258,8 +258,9 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                 $membershipTypes = CRM_Member_PseudoConstant::membershipType();
                 $js =  array( 'onchange'  => "calculateRowValues( $i );");
                 $this->add( 'select', 'membership_type_id['.$i.']', ts('Membership Type'), $membershipTypes, false, $js);
-                $options = array( ts('No auto-renew option'), ts('Give option, but not required'), ts('Auto-renew required ') );
-                $element = $this->add( 'select', 'auto_renew['.$i.']', ts('Auto Renew?'), $options );
+                $this->add('text','auto_renew['.$i.']', ts('Auto Renew?'), $attributes['label']);
+                //  $options = array( ts('No auto-renew option'), ts('Give option, but not required'), ts('Auto-renew required ') );
+                //$element = $this->add( 'select', 'auto_renew['.$i.']', ts('Auto Renew?'), $options );
             }
             
             // weight
