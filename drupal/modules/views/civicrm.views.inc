@@ -2658,6 +2658,7 @@ function civicrm_views_data() {
                                                                      'handler' => 'views_handler_sort',
                                                                      ),
                                                      );
+    
     //Numeric Contact ID of the Soft Credit recipient
     $data['civicrm_contribution_soft']['contact_id'] = array(
                                                              'title' => t('Contact ID'),
@@ -2687,7 +2688,6 @@ function civicrm_views_data() {
                                                                                       'label' => t('Soft Contribution -> Contact Record'),
                                                                                       ),
                                                             );
-
     //Soft Credit Amount
     $data['civicrm_contribution_soft']['amount'] = array(
                                                          'title' => t('Amount'),

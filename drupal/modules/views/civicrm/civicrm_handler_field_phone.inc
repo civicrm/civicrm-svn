@@ -68,7 +68,7 @@ class civicrm_handler_field_phone extends civicrm_handler_field_location {
     function ensure_my_table() {
         if (!isset($this->table_alias)) {
             if (!method_exists($this->query, 'ensure_table')) { vpr_trace(); exit; }
-            if($this->options['phone_type'] > 0){
+            if(isset($this->options['phone_type']) && $this->options['phone_type']){
                 $join = $this->get_join();
                 $extra = parent::location_extras();
                 $extra[] = array(

@@ -198,13 +198,13 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                             $this->_params['onbehalf_location'][$blockName][$locType][$locTypeId] = $typeId;
                         }
                     }
-                }
-
-                if ( strstr( $loc, 'custom' ) ) {
+                } else if ( strstr( $loc, 'custom' ) ) {
                     if ( $value  && isset($this->_params['onbehalf']["{$loc}_id"]) ) {
                         $value = $this->_params['onbehalf']["{$loc}_id"];
                     }
                     $this->_params['onbehalf_location']["{$loc}"] = $value;
+                } else {
+                    $this->_params['onbehalf_location'][$field]   = $value;
                 }
             }
         } else if ( CRM_Utils_Array::value( 'is_for_organization', $this->_values ) ) {
@@ -318,7 +318,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $this->buildCustom( $this->_values['custom_post_id'], 'customPost', true );
 
         if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $params ) ) {
-            $profileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'on_behalf_organization', 'id', 'name' );
+            require_once 'CRM/Core/BAO/UFJoin.php'; 
+            $ufJoinParams    = array( 'module'       => 'onBehalf',
+                                      'entity_table' => 'civicrm_contribution_page',   
+                                      'entity_id'    => $this->_id );   
+            $OnBehalfProfile = CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
+            $profileId       = $OnBehalfProfile[0];
 
             $fieldTypes = array( 'Contact', 'Organization' );
             if ( is_array( $this->_membershipBlock ) && !empty( $this->_membershipBlock ) ) {
@@ -1337,6 +1342,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         foreach ( $behalfOrganization as $locFld => $value ) {
             if ( in_array( $locFld, array( 'phone', 'email', 'address' ) ) ) {
                 $locTypeId = array_keys( $value );
+                if ( $locTypeId[0] == 'Primary' ) {
+                    $locTypeId[0] = 1;
+                    $behalfOrganization[$locFld][$locTypeId[0]]['email'] = $value['Primary']['email'];
+                    unset( $behalfOrganization[$locFld]['Primary'] );
+                }
                 $behalfOrganization[$locFld][$locTypeId[0]]['is_primary'] = 1;
                 $behalfOrganization[$locFld][$locTypeId[0]]['location_type_id'] = $locTypeId[0];
             }

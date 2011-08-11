@@ -2114,6 +2114,83 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         return $profiles;
     }
 
+    /**
+     * Function to check whether a profile is valid combination of 
+     * required and/or optional profile types
+     *
+     * @param array   $required   array of types those are required
+     * @param array   $optional   array of types those are optional
+     *
+     * @return array  $profiles  associative array of profiles  
+     * @static
+     * @access public
+     */
+    static function getValidProfiles( $required, $optional = null ) 
+    {
+        if ( !is_array( $required ) || empty( $required ) ) {
+            return;
+        }
+
+        require_once 'CRM/Core/BAO/UFField.php';
+        $profiles = array();
+        $ufGroups = CRM_Core_PseudoConstant::ufgroup( );
+        
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::aclGroup( CRM_Core_Permission::ADMIN, null, 'civicrm_uf_group', $ufGroups, $ufGroups );
+
+        foreach ( $ufGroups as $id => $title ) {
+            $type = CRM_Core_BAO_UFField::checkValidProfileType( $id, $required, $optional );
+            if ( $type ) {
+                $profiles[$id] = $title;
+            }
+        }
+        
+        return $profiles;
+    }
+
+    /**
+     * Function to check whether a profile is valid combination of 
+     * required profile fields
+     *
+     * @param array   $ufId       integer id of the profile
+     * @param array   $required   array of fields those are required in the profile
+     *
+     * @return array  $profiles  associative array of profiles  
+     * @static
+     * @access public
+     */
+    static function checkValidProfile( $ufId, $required = null ) 
+    {
+        $validProfile = false;
+        if ( !$ufId ) {
+            return $validProfile;
+        }
+
+        if ( !CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $ufId, 'is_active' ) ) {
+            return $validProfile;
+        }
+        
+        $profileFields = self::getFields( $ufId, false, CRM_Core_Action::VIEW, null,
+                                          null, false, null, false, null, 
+                                          CRM_Core_Permission::CREATE, null );
+        
+        $validProfile = array( );
+        if ( !empty( $profileFields ) ) {
+            $fields = array_keys( $profileFields );
+            foreach ( $fields as $val ) {
+                foreach ( $required as $key => $field ) {
+                    if ( strpos( $val, $field ) === 0 ) {
+                        unset( $required[$key] );
+                    }
+                }
+            }
+            
+            $validProfile = ( empty( $required ) ) ? true : false;
+        }
+        
+        return $validProfile;
+    }
+
    /**
      * Function to get default value for Register. 
      *
@@ -2605,8 +2682,10 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 $noteDetails = array( );
                 $noteDetails = CRM_Core_BAO_Note::getNote( $componentId, 'civicrm_participant' );
                 $defaults[$fldName] = array_pop($noteDetails);  
-            }  else if ( in_array( $name, array( 'contribution_type', 'payment_instrument', 'participant_status', 'participant_role', 'membership_status', 'membership_type' ) ) )  {
+            }  else if ( in_array( $name, array( 'contribution_type', 'payment_instrument', 'participant_status', 'participant_role', 'membership_type' ) ) )  {
                 $defaults[$fldName] = $values["{$name}_id"];
+            } else if ( $name == 'membership_status' ) {
+                $defaults[$fldName] = $values['status_id'];
             } else if ( $customFieldInfo = CRM_Core_BAO_CustomField::getKeyID( $name, true ) ) {
                 if ( empty( $formattedGroupTree ) ) {
                     //get the groupTree as per subTypes.

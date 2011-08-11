@@ -431,7 +431,9 @@ INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
         $eventFullText  = ts( 'This event is full !!!' );
         $participants   = CRM_Core_DAO::executeQuery( $query, $eventParams );
         while ( $participants->fetch( ) ) {
-            $eventFullText = $participants->event_full_text;
+            if ( $participants->event_full_text ) {
+                $eventFullText = $participants->event_full_text;
+            }
             $eventMaxSeats = $participants->max_participants;
             //don't have limit for event seats.
             if ( $participants->max_participants == null ) {
@@ -441,7 +443,7 @@ INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
         
         //get the total event seats occupied by these participants.
         $eventRegisteredSeats = CRM_Event_BAO_Event::eventTotalSeats( $eventId, $eventSeatsWhere );
-        
+
         if ( $eventRegisteredSeats ) {
             if ( $eventRegisteredSeats >= $eventMaxSeats ) {
                 $result = $eventFullText;
