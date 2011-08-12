@@ -236,6 +236,9 @@ reminder.action_schedule_id = %1";
                 }
                 $where[] = " e.is_current_revision = 1 ";
                 $where[] = " e.is_deleted = 0 ";
+                
+                $join[] = "INNER JOIN civicrm_contact c ON c.id = {$contactField}";
+                $where[] = "c.is_deleted = 0";
 
                 $startEvent = ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
                     "(e.activity_date_time, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
