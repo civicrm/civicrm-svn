@@ -85,11 +85,13 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         if ( $mainDisplay ) {
             $this->assign( 'mainDisplay', $mainDisplay );
         }
-        $urlParams = "&id={$this->_id}&qfKey={$this->controller->_key}";
-        $this->assign( 'urlParams', $urlParams );
-        $this->_onbehalf = CRM_Utils_Array::value( 'onbehalf', $_GET );
-                        
-        if ( $this->_onbehalf ) {
+        
+        $this->_onbehalf = false;
+        if ( CRM_Utils_Array::value( 'is_for_organization', $this->_values ) ) {
+            $urlParams = "&id={$this->_id}&qfKey={$this->controller->_key}";
+            $this->assign( 'urlParams', $urlParams );
+            $this->_onbehalf = CRM_Utils_Array::value( 'onbehalf', $_GET );
+            
             require_once 'CRM/Contribute/Form/Contribution/OnBehalfOf.php';
             CRM_Contribute_Form_Contribution_OnBehalfOf::preProcess( $this );
             if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $_POST ) &&
@@ -97,7 +99,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 CRM_Contribute_Form_Contribution_OnBehalfOf::buildQuickForm( $this );
             }
         }
-   
+        
         if (  CRM_Utils_Array::value( 'id', $this->_pcpInfo )  && 
               CRM_Utils_Array::value( 'intro_text', $this->_pcpInfo ) ) {
             $this->assign( 'intro_text' , $this->_pcpInfo['intro_text'] );
