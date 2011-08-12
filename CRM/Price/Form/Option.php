@@ -72,7 +72,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form
                                                    $this);
         $this->_oid  = CRM_Utils_Request::retrieve('oid' , 'Positive',
                                                    $this);
-        
+                
      }
 
     /**
@@ -144,7 +144,8 @@ class CRM_Price_Form_Option extends CRM_Core_Form
             // label
             $this->add('text', 'label', ts('Option Label'),null, true);
             $memberComponentId = CRM_Core_Component::getComponentID( 'CiviMember' );
-            $extendComponentId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_fid, 'extends', 'id' );
+            $this->_sid = CRM_Utils_Request::retrieve('sid', 'Positive', $this);
+            $extendComponentId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_sid, 'extends', 'id' );
             
             if ( $memberComponentId == $extendComponentId ) {
                 require_once 'CRM/Member/PseudoConstant.php';
