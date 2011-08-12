@@ -129,7 +129,9 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                 $defaultArray[$params['default_option']] = 1;
             }
         }  
-        $select = array( ts('No auto-renew option'), ts('Give option, but not required'), ts('Auto-renew required') );
+
+        require_once 'CRM/Core/PseudoConstant.php';
+        $select = CRM_Core_PseudoConstant::autoRenew();
         for ( $index = 1; $index <= $maxIndex; $index++ ) {
             
             if ( CRM_Utils_Array::value( $index, $params['option_label'] ) &&
