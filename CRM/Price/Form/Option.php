@@ -148,7 +148,11 @@ class CRM_Price_Form_Option extends CRM_Core_Form
             // label
             $this->add('text', 'label', ts('Option Label'),null, true);
             $memberComponentId = CRM_Core_Component::getComponentID( 'CiviMember' );
-            $this->_sid = CRM_Utils_Request::retrieve('sid', 'Positive', $this);
+            if ( $this->_action == CRM_Core_Action::UPDATE ) {
+                $this->_sid = CRM_Utils_Request::retrieve('sid', 'Positive', $this);
+            } elseif ( $this->_action == CRM_Core_Action::ADD ) {
+                $this->_sid= CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $this->_fid, 'price_set_id', 'id' );
+            }
             $extendComponentId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_sid, 'extends', 'id' );
             
             if ( $memberComponentId == $extendComponentId ) {
