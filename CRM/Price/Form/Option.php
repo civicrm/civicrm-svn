@@ -107,9 +107,13 @@ class CRM_Price_Form_Option extends CRM_Core_Form
             $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Price_DAO_FieldValue', $fieldValues);
             $defaults['is_active'] = 1;
         }
+        
+        if ( !CRM_Utils_System::isNull( $defaults['auto_renew'] ) ) {
+            require_once 'CRM/Core/PseudoConstant.php';
+            $options = CRM_Core_PseudoConstant::autoRenew();
+            $defaults['auto_renew'] = $options[$defaults['auto_renew']];
+        }
         return $defaults;
-
-       
     }
     
     /**
