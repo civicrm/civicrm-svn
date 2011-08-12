@@ -257,7 +257,9 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                 require_once 'CRM/Member/PseudoConstant.php';
                 $membershipTypes = CRM_Member_PseudoConstant::membershipType();
                 $js =  array( 'onchange'  => "calculateRowValues( $i );");
-                $this->add( 'select', 'membership_type_id['.$i.']', ts('Membership Type'), $membershipTypes, false, $js);
+
+                $this->add( 'select', 'membership_type_id['.$i.']', ts('Membership Type'),  
+                            array(' ') + $membershipTypes, false, $js);
                 $this->add('text','auto_renew['.$i.']', ts('Auto Renew?'), 
                            array('size'=> 25, 'style'=> "background-color:#EBECE4", 'READONLY'));
             }
