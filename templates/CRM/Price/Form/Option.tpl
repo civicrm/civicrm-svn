@@ -91,11 +91,20 @@
 
 </div>
 
-{include file="CRM/common/showHideByFieldValue.tpl" 
-    trigger_field_id    ="membership_type_id"
-    trigger_value       = ''
-    target_element_id   ="autoRenew" 
-    target_element_type ="table-row"
-    field_type          ="select"
-    invert              = 1
-}
+{literal}
+     <script type="text/javascript">
+     
+     function calculateRowValues( ) {
+      var mtype = cj("#membership_type_id").val();
+      var postUrl = "{/literal}{crmURL p='civicrm/ajax/memType' h=0}{literal}";
+      cj.post( postUrl, {mtype: mtype}, function( data ) {
+       	       cj("#amount").val( data.total_amount );   
+	       cj("#label").val( data.name );   
+	       cj("#auto_renew").val( data.auto_renew );   
+      
+      }, 'json');  
+     }
+
+    {/literal}
+</script>
+

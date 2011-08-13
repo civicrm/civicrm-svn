@@ -159,7 +159,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form
                 require_once 'CRM/Member/PseudoConstant.php';
                 $membershipTypes = CRM_Member_PseudoConstant::membershipType();
                 $this->add( 'select', 'membership_type_id', ts('Membership Type'), array('' => ' ') + $membershipTypes, false,
-                            array( 'onClick' => "showHideByValue('membership_type_id','','autoRenew','table-row','select',false);")   );
+                            array( 'onClick' => "calculateRowValues( );")   );
                 
                 
                 $this->add('text','auto_renew', ts('Auto Renew?'), 
