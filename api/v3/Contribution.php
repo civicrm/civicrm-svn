@@ -194,8 +194,8 @@ function civicrm_api3_contribution_getfields( $params ) {
                                            'title' => 'note',
                                            'type' => 2,
                                            'description' => 'Associated Note in the notes table');
-    $fields['soft_credit_id'] = array('name' => 'soft_credit_id',
-                                           'title' => 'Soft Credit ID',
+    $fields['soft_credit_to'] = array('name' => 'soft_credit_to',
+                                           'title' => 'Soft Credit contact ID',
                                            'type' => 1,
                                            'description' => 'ID of Contact to be Soft credited to',
                                            'FKClassName' => 'CRM_Contact_DAO_Contact');
