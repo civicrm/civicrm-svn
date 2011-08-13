@@ -43,7 +43,7 @@
                <td class="label">{$form.label.label}</td>
                <td>{$form.label.html}</td>
             </tr>
-	    <tr class="crm-price-option-form-block-auto_renew">
+	    <tr  id="autoRenew" class="crm-price-option-form-block-auto_renew">
                <td class="label">{$form.auto_renew.label}</td>
                <td>{$form.auto_renew.html}</td>
             </tr>
@@ -90,3 +90,12 @@
     </div>
 
 </div>
+
+{include file="CRM/common/showHideByFieldValue.tpl" 
+    trigger_field_id    ="membership_type_id"
+    trigger_value       = ''
+    target_element_id   ="autoRenew" 
+    target_element_type ="table-row"
+    field_type          ="select"
+    invert              = 1
+}
