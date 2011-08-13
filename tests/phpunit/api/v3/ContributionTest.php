@@ -38,7 +38,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     protected $_contribution;
     protected $_contributionTypeId;
     protected $_apiversion;
-    
+    protected $params;    
     function setUp() 
     {
         parent::setUp();
@@ -259,7 +259,38 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $this->assertAPISuccess($result);
         $this->assertEquals('my contribution note', $result['values'][0]['note']) ;
         civicrm_api('contribution', 'delete', array('version' => 3, 'id' => $contribution['id']));
+    }
+    /*
+     * This is the test for creating soft credits - however a 'get' is not yet possible via API
+     * as the current BAO functions are contact-centric (from what I can find)
+     * 
+     */ 
+    function testCreateContributionWithSoftCredt()
+    {
+       $description = "Demonstrates creating contribution with SoftCredit";
+       $subfile = "ContributionCreateWithSoftCredit";
+       $contact2 = civicrm_api('Contact', 'create', array('version' => 3,'display_name' => 'superman', 'version' => 3, 'contact_type' => 'Individual'));
+       $params = $this->params + array(
+                        'soft_credit_to'             => $contact2['id'],                              
+                        );
+      
+        $contribution=& civicrm_api('contribution', 'create', $params);
+        $this->documentMe($params, $contribution,__FUNCTION__,__FILE__,$description, $subfile);  
+  //     $result = civicrm_api('contribution','get', array('version' => 3,'return'=> 'soft_credit_to', 'sequential' => 1));
+  //     $this->assertAPISuccess($result);
+  //     $this->assertEquals($contact2['id'], $result['values'][$result['id']]['soft_credit_to']) ;
+  //    well - the above doesn't work yet so lets do SQL        
+        $query = "SELECT count(*) FROM civicrm_contribution_soft WHERE contact_id = " . $contact2['id'];
+        $count = CRM_Core_DAO::singleValueQuery( $query);
+        $this->assertEquals(1,$count) ;
+
+        civicrm_api('contribution', 'delete', array('version' => 3, 'id' => $contribution['id']));
+        civicrm_api('contact', 'delete', array('version' => 3, 'id' => $contact2['id']));
+   
     } 
+    
+    
+    
     /**
      *  Test  using example code
      */
