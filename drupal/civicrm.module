@@ -965,3 +965,4 @@ function civicrm_drupal_wysiwyg_update_value($element, $caller) {
         $element->setValue(check_markup($value, $element->format));
     }
 }
+

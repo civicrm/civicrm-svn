@@ -119,7 +119,11 @@ WHERE  entity_id = $contactID
     }
 
     if ( ! empty( $clauses ) ) {
-        $where .= ' AND (' . implode( ' OR ', $clauses ) . ')';
+        if ( ! empty( $where )  ) {
+            $where .= ' AND (' . implode( ' OR ', $clauses ) . ')';
+        } else {
+            $where .= ' (' . implode( ' OR ', $clauses ) . ')';
+        }
     }
 }
 
