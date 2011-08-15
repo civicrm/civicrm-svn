@@ -423,6 +423,15 @@ class CRM_Utils_REST
     CRM_Utils_System::civiExit( );
   }
 
+  static function APIDoc ( ) {
+
+    CRM_Utils_System::setTitle ("API Parameters");
+    $template = CRM_Core_Smarty::singleton( );
+    return CRM_Utils_System::theme( 'page',
+      $template->fetch( 'CRM/Core/APIDoc.tpl' ),
+      true );
+  }
+
   static function ajaxDoc ( ) {
 
     CRM_Utils_System::setTitle ("API explorer and generator");
