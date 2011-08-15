@@ -81,7 +81,7 @@
   </field>
   <field>
      <name>content</name>
-     <type>text</type>
+     <type>longtext</type>
      <comment>dashlet content</comment>
      <add>3.3</add>
   </field>

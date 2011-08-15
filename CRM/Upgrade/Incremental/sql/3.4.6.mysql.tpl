@@ -13,4 +13,8 @@ VALUES
 (@option_group_id_languages, 0, 1, 'de_CH', 'de', {localize}'{ts escape="sql"}German (Swiss){/ts}'{/localize},                   @weight := @languages_max_weight + 1),
 (@option_group_id_languages, 0, 1, 'es_PR', 'es', {localize}'{ts escape="sql"}Spanish; Castilian (Puerto Rico){/ts}'{/localize}, @weight := @languages_max_weight + 2);
 
+-- CRM-8653
 UPDATE civicrm_dashboard SET url = 'civicrm/report/instance/3&reset=1&section=2&snippet=4&context=dashlet' WHERE url = 'civicrm/report/instance/3&reset=1&section=2&snippet=4';
+
+-- CRM-8654
+ALTER TABLE `civicrm_dashboard_contact` CHANGE `content` `content` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'dashlet content';
