@@ -45,7 +45,16 @@ class CRM_Member_Page_AJAX
     function getMemberTypeDefaults( $config ) 
     {
         require_once 'CRM/Utils/Type.php';
+        if (!$_POST['mtype']) {
+            $details['name'] = '';
+            $details['auto_renew'] = '';
+            $details['total_amount'] = '';
+            
+            echo json_encode( $details );
+            CRM_Utils_System::civiExit( );
+        }
         $memType  = CRM_Utils_Type::escape( $_POST['mtype'], 'Integer') ; 
+        
 
 
         $query = "SELECT name, minimum_fee AS total_amount, contribution_type_id, auto_renew 

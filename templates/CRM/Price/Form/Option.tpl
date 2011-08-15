@@ -98,9 +98,15 @@
       var mtype = cj("#membership_type_id").val();
       var postUrl = "{/literal}{crmURL p='civicrm/ajax/memType' h=0}{literal}";
       cj.post( postUrl, {mtype: mtype}, function( data ) {
+      	       if( data.auto_renew  == '' ) {
+		   cj("#autoRenew").hide( );
+	       } else {
+	       	   cj("#auto_renew").val( data.auto_renew );   
+		   cj("#autoRenew").show( );
+	       }
+
        	       cj("#amount").val( data.total_amount );   
 	       cj("#label").val( data.name );   
-	       cj("#auto_renew").val( data.auto_renew );   
       
       }, 'json');  
      }
