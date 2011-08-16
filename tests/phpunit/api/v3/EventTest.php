@@ -76,6 +76,7 @@ class api_v3_EventTest extends CiviUnitTestCase
 
         $this->_event   = civicrm_api('Event','Create',$params);
         $this->_eventId = $this->_event['id'];
+       
     }
 
     function tearDown() 
@@ -151,6 +152,40 @@ class api_v3_EventTest extends CiviUnitTestCase
         $this->assertEquals( 1,$result['count'], 'confirm only one event found in line ' . __LINE__ );   
         $this->assertEquals( 2,$allEvents ['count'], 'confirm two events exist (ie. one not found) ' . __LINE__ ); 
         $this->assertEquals($currentEvent['id'], $result['id'],'' );
+  
+    }
+
+    
+    /*
+     * Test 'is.Current' option. Existing event is 'old' so only current should be returned
+     */
+    function testGetReturnIsFull( )
+    {  
+        $contactID = $this->individualCreate();
+        $params = array( 'id' => $this->_eventId,
+                         'version'=> $this->_apiversion,
+          							 'max_participants' => 1,
+        );
+        $result = civicrm_api( 'Event','Create',$params);  
+
+        $getEventParams = array(  'id' => $this->_eventId,
+        													'version'=> $this->_apiversion,
+                                  'return.is_full' => 1,);
+
+        $currentEvent = civicrm_api('Event', 'getsingle', $getEventParams);
+        $description = "demonstrates use of return is_full ";
+        $subfile = "IsFullOption";
+        $this->assertEquals(0, $currentEvent['is_full'],' is full is set in line ' . __LINE__);
+        $this->assertEquals(1, $currentEvent['available_places'], 'available places is set in line ' . __LINE__);        
+        $participant = civicrm_api('Participant', 'create', array('version' => 3,'participant_status' => 1, 'role_id' => 1, 'contact_id' => $contactID,'event_id' => $this->_eventId));
+        $currentEvent = civicrm_api('Event', 'getsingle', $getEventParams);
+        
+        $this->documentMe($getEventParams ,$currentEvent,__FUNCTION__,__FILE__,$description,$subfile); 
+        $this->assertEquals(1, $currentEvent['is_full'],' is full is set in line ' . __LINE__);
+        $this->assertEquals(0, $currentEvent['available_places'], 'available places is set in line ' . __LINE__);        
+        
+        $this->contactDelete($contactID);
+
   
     }
     
