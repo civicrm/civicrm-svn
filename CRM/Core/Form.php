@@ -206,7 +206,11 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         }
         
         if ( $required ) {
-            $error = $this->addRule($name, ts('%1 is a required field.', array(1 => $label)) , 'required');
+            if ( $type == 'file' ) {
+                $error = $this->addRule($name, ts('%1 is a required field.', array(1 => $label)) , 'uploadedfile');
+            } else {
+                $error = $this->addRule($name, ts('%1 is a required field.', array(1 => $label)) , 'required');
+            }
             if (HTML_QuickForm::isError($error)) {
                 CRM_Core_Error::fatal(HTML_QuickForm::errorMessage($element));
             }
@@ -1093,6 +1097,20 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
             $defaultCurrency = $config->defaultCurrency;
         }
         $this->setDefaults( array( $name => $defaultCurrency ) );
+    }
+
+    function removeFileRequiredRules( $elementName ) {
+        $this->_required = array_diff($this->_required, array($elementName) );
+        if ( isset( $this->_rules[$elementName] ) ) {
+            foreach ( $this->_rules[$elementName] as $index => $ruleInfo ) {
+                if ( $ruleInfo['type'] == 'uploadedfile' ) {
+                    unset($this->_rules[$elementName][$index]);
+                }
+            }
+            if ( empty( $this->_rules[$elementName] ) ) {
+                unset( $this->_rules[$elementName] );
+            }
+        }
     }
 
 }

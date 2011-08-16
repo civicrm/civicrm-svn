@@ -122,9 +122,9 @@ class CRM_Utils_SoapServer
      * @access public
      * @static
      */
-    public function authenticate($name, $pass) {
+    public function authenticate($name, $pass, $loadCMSBootstrap = true ) {
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $this->ufClass ) . '.php' );
-        eval ('$result =& ' . $this->ufClass . '::authenticate($name, $pass);');
+        eval ('$result =& ' . $this->ufClass . '::authenticate($name, $pass, $loadCMSBootstrap );');
 
         if (empty($result)) {
             throw new SoapFault('Client', 'Invalid login');

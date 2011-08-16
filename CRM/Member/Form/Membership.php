@@ -111,7 +111,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                 }
             }
             if ( empty( $validProcessors )  ) {
-                CRM_Core_Error::fatal( ts( 'Could not find valid payment processor for this page' ) );
+               CRM_Core_Error::fatal( ts( 'Could not find valid payment processor for this page' ) );
             } else {
                 $this->_processors = $validProcessors;  
             }
@@ -656,23 +656,22 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 }
             }
 
-	    //  Default values for start and end dates if not supplied
-	    //  on the form
-	    $defaultDates = 
-            CRM_Member_BAO_MembershipType::getDatesForMembershipType(
-                                                                     $params['membership_type_id'][1],
-                                                                     $joinDate,
-                                                                     $startDate,
-                                                                     $endDate);
-
-	    if ( !$startDate ) {
-            $startDate = CRM_Utils_Array::value( 'start_date',
-                                                 $defaultDates );
-	    }
-	    if ( !$endDate ) {
-            $endDate = CRM_Utils_Array::value( 'end_date',
-                                               $defaultDates );
-	    }
+            //  Default values for start and end dates if not supplied
+            //  on the form
+            $defaultDates = 
+                CRM_Member_BAO_MembershipType::getDatesForMembershipType( $params['membership_type_id'][1],
+                                                                          $joinDate,
+                                                                          $startDate,
+                                                                          $endDate );
+            
+            if ( !$startDate ) {
+                $startDate = CRM_Utils_Array::value( 'start_date',
+                                                     $defaultDates );
+            }
+            if ( !$endDate ) {
+                $endDate = CRM_Utils_Array::value( 'end_date',
+                                                   $defaultDates );
+            }
 
             //CRM-3724, check for availability of valid membership status.
             if ( !CRM_Utils_Array::value( 'is_override',  $params ) ) {
@@ -807,7 +806,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                         'reminder_date',
                         'receive_date'
                         );
-        $currentTime = getDate();        
         foreach ( $dates as $d ) {
             //first give priority to form values then calDates.
             $date = CRM_Utils_Array::value( $d, $formValues ); 
@@ -867,13 +865,13 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         }
 
         if ( $this->_mode ) {
-            if(empty($formValues['total_amount'])){
-            // if total amount not provided minium for membership type is used
+            if( empty( $formValues['total_amount'] ) ) { 
+                // if total amount not provided minimum for membership type is used
                 $params['total_amount'] = $formValues['total_amount']  = 
-                CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
-                                             $params['membership_type_id'],'minimum_fee' );
-            }else{
-              $params['total_amount'] = $formValues['total_amount']  ;
+                    CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
+                                                 $params['membership_type_id'],'minimum_fee' );
+            } else {
+                $params['total_amount'] = $formValues['total_amount']  ;
             }
             $params['contribution_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
                                                                            $params['membership_type_id'],
@@ -1095,7 +1093,9 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 
                 // here we might updated dates, so get from object.
                 foreach ( $calcDates as $date => &$val ) {
-                    if ( $membership->$date ) $val = $membership->$date;
+                    if ( $membership->$date ) {
+                    	$val = $membership->$date;
+                    }
                 }
             } else {
                 $membership =& CRM_Member_BAO_Membership::create( $params, $ids );

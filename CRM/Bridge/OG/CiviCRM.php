@@ -95,10 +95,12 @@ class CRM_Bridge_OG_CiviCRM {
         foreach ( $contactIDs as $contactID ) {
             $drupalID = civicrm_uf_id_get( $contactID );
             if ( $drupalID ) {
+                $crm_user = user_load($drupalID);
+                
                 if ( $op == 'add' ) {
-                    og_save_subscription( $ogID, $drupalID, array( 'is_active' => 1 ) );
+                    og_group( $ogID, 'user', $crm_user );
                 } else {
-                    og_delete_subscription( $ogID, $drupalID );
+                    og_ungroup( $ogID, 'user', $crm_user );
                 }
             }
         }

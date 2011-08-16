@@ -280,10 +280,24 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         
         //flush component settings
         CRM_Core_Component::getEnabledComponents(true);
-        $tablesToTruncate = array('civicrm_contact');
 
+        $tablesToTruncate = array('civicrm_contact');
         $this->quickCleanup( $tablesToTruncate );
-        
+    }
+
+    /**
+     * emulate a logged in user since certain functions use that
+     * value to store a record in the DB (like activity)
+     * CRM-8180
+     */
+    public function createLoggedInUser( ) {
+        $params = array( 'first_name'   => 'Logged In',
+                         'last_name'    => 'User ' . rand( ),
+                         'contact_type' => 'Individual' );
+        $contactID = $this->individualCreate( $params );
+
+        $session = CRM_Core_Session::singleton( );
+        $session->set( 'userID', $contactID );
     }
 
     public function cleanDB() {
@@ -481,7 +495,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * @return int    id of Individual created
      */
     function individualCreate( $params = null) {
-
         if ( $params === null ) {
             $params = array( 'first_name'       => 'Anthony',
                              'middle_name'      => 'J.',
@@ -521,11 +534,14 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     private function _contactCreate( $params ) {
         $result = civicrm_api( 'Contact','create',$params );
-        if ( CRM_Utils_Array::value( 'is_error', $result ) ||(
-                                                              ! CRM_Utils_Array::value( 'contact_id', $result ) && ! CRM_Utils_Array::value( 'id', $result )) ) {
+        if ( CRM_Utils_Array::value( 'is_error', $result ) ||
+             ( ! CRM_Utils_Array::value( 'contact_id', $result ) && 
+               ! CRM_Utils_Array::value( 'id', $result )) ) {
             throw new Exception( 'Could not create test contact, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
         }
-        return isset($result['contact_id'])?$result['contact_id']:CRM_Utils_Array::value( 'id', $result );
+        return isset($result['contact_id']) ? 
+            $result['contact_id'] :
+            CRM_Utils_Array::value( 'id', $result );
     }
     
     function contactDelete( $contactID ) 
@@ -533,6 +549,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
         $params['id'] = $contactID;
         $params['version'] = API_LATEST_VERSION;
+        $params['skip_undelete'] = 1;
         $result = civicrm_api('Contact','delete',$params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Could not delete contact, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
@@ -1353,7 +1370,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * @param string $className
      * @param string $title  name of custom group
      */
-    function customGroupCreate( $extends, $title = 'title' ) {
+    function customGroupCreate( $extends = 'Contact', $title = 'title' ) {
 
         if (CRM_Utils_Array::value('title',$extends)){
             $params = $extends;
@@ -1472,6 +1489,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     
     function entityCustomGroupWithSingleFieldCreate( $function,$filename){
         $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
+        if(empty($entity)){
+          $entity = 'Contact';
+        }
         $customGroup = $this->CustomGroupCreate($entity,$function);
       
         $customField = $this->customFieldCreate( $customGroup['id'], $function ) ;
@@ -1650,13 +1670,17 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }else{
             $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)[A-Z]/','_$0', $entity)); 
         }   
+        require_once 'CRM/Core/Smarty.php';
+        $smarty =& CRM_Core_Smarty::singleton();
+        $smarty->assign('testfunction',$function);
         $function = $fnPrefix . "_" .strtolower($action);
         require_once 'CRM/Core/Smarty.php';
         $smarty =& CRM_Core_Smarty::singleton();
         $smarty->assign('function',$function);
         $smarty->assign('fnPrefix',$fnPrefix);
         $smarty->assign('params',$params);   
-        $smarty->assign('entity',$entity);   
+        $smarty->assign('entity',$entity);  
+        $smarty->assign('filename',basename($filename)); 
         $smarty->assign('description',$description);         
         $smarty->assign('result',$result); 
        // $smarty->registerPlugin("modifier","print_array", "print_array");
@@ -1822,6 +1846,42 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
           
         } 
     }
+  /* 
+   *Function to get formatted values in  the actual and expected result
+   *@param array $actual actual calculated values
+   *@param array $expected expected values
+   *
+   */
+    function checkArrayEquals( &$actual, &$expected ) 
+    {
+        self::unsetId( $actual );
+        self::unsetId( $expected );
+        $this->assertEquals( $actual, $expected );
+    }
+    
+    /*
+     *Function to unset the key 'id' from the array
+     *@param array $unformattedArray The array from which the 'id' has to be unset
+     *
+     */
+    static function unsetId( &$unformattedArray ) 
+    {
+        $formattedArray = array( );
+        if ( array_key_exists( 'id', $unformattedArray ) ) unset( $unformattedArray['id'] );
+        if ( CRM_Utils_Array::value( 'values', $unformattedArray ) && is_array( $unformattedArray['values'] ) ) {
+            foreach ( $unformattedArray['values'] as $key => $value ) {
+                if ( is_Array( $value ) ) {
+                    foreach( $value as $k => $v ) {
+                        if ( $k == 'id' ) unset( $value[$k] );
+                    }
+                } else if ( $key == 'id' ) {
+                    $unformattedArray[$key];
+                }
+                $formattedArray = array( $value );
+            }
+            $unformattedArray['values'] = $formattedArray;
+        }
+    } 
 }
 
 function CiviUnitTestCase_fatalErrorHandler( $message ) {

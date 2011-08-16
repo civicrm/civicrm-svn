@@ -211,5 +211,27 @@ INSERT INTO civicrm_location_type ( name, description, is_reserved, is_active )
         
         $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
-    }   
+    }
+
+    function upgrade_3_4_5( $rev ) 
+    {        
+        // handle db changes done for CRM-8218
+        $alterContactDashboard = false;
+        require_once 'CRM/Contact/DAO/DashboardContact.php';
+        $dao = new CRM_Contact_DAO_DashboardContact( );
+        $dbName = $dao->_database;
+
+        $chkContentQuery = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %1
+                        AND TABLE_NAME = 'civicrm_dashboard_contact' AND COLUMN_NAME = 'content'";
+        $contentExists = CRM_Core_DAO::singleValueQuery( $chkContentQuery,
+                                                          array( 1 => array( $dbName, 'String' ) ),
+                                                          true, false );
+        if ( !$contentExists ) {
+            $alterContactDashboard = true; 
+        }
+
+        $upgrade = new CRM_Upgrade_Form( );
+        $upgrade->assign( 'alterContactDashboard', $alterContactDashboard );
+        $upgrade->processSQL( $rev );
+    }
   }

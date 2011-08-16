@@ -283,6 +283,10 @@ class CRM_Core_DAO extends DB_DataObject
             $this->insert();
         }
         $this->free( );
+
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::postSave( $this );
+
         return $this;
     }
 

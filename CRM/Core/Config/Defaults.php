@@ -94,7 +94,7 @@ class CRM_Core_Config_Defaults
         // enable profile add to group double Opt-In if Civimail enabled
         if ( in_array( 'CiviMail', $this->enableComponents ) ) {
             // set defined value for Profile add to group double Opt-In from civicrm settings file else true 
-            $this->profileAddToGroupDoubleOptIn = defined( 'CIVICRM_PROFILE_ADD_TO_GROUP_DOUBLE_OPTIN' ) ? (bool) CIVICRM_PROFILE_ADD_TO_GROUP_DOUBLE_OPTIN : true;
+            $this->profileAddToGroupDoubleOptIn = defined( 'CIVICRM_PROFILE_ADD_TO_GROUP_DOUBLE_OPTIN' ) ? (bool) CIVICRM_PROFILE_ADD_TO_GROUP_DOUBLE_OPTIN : false;
         }
 
        //email notifications to activity Assignees
@@ -161,11 +161,8 @@ class CRM_Core_Config_Defaults
                 if ( CRM_Utils_System::checkURL( "{$baseURL}components/com_civicrm/civicrm/{$testIMG}" ) ) {
                     $defaults['userFrameworkResourceURL'] = $baseURL . "components/com_civicrm/civicrm/";
                 }
-            } else if ( $config->userFramework == 'Standalone' ) {
-                // potentially sane default for standalone;
-                // could probably be smarter about this, but this
-                // should work in many cases
-                $defaults['userFrameworkResourceURL'] = str_replace( 'standalone/', '', $baseURL );
+            } else if ( $config->userFramework == 'WordPress' ) {
+                $defaults['userFrameworkResourceURL'] = $baseURL . "wp-content/plugins/civicrm/civicrm/";
             } else {
                 // Drupal setting
                 // check and see if we are installed in sites/all (for D5 and above)
@@ -208,9 +205,9 @@ class CRM_Core_Config_Defaults
                 // we need to remove the administrator/ from the end
                 $tempURL = str_replace( "/administrator/", "/", $baseURL );
                 $defaults['imageUploadURL'] = $tempURL . "media/civicrm/persist/contribute/";
-            } else if ( $config->userFramework == 'Standalone' ) {
+            } else if ( $config->userFramework == 'WordPress' ) {
                 //for standalone no need of sites/defaults directory
-                $defaults['imageUploadURL'] = $baseURL . "files/civicrm/persist/contribute/";
+                $defaults['imageUploadURL'] = $baseURL . "wp-content/plugins/civicrm/files/civicrm/persist/contribute/";
             } else {
                 $defaults['imageUploadURL'] = $baseURL . "sites/default/files/civicrm/persist/contribute/";
             }

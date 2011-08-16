@@ -46,7 +46,7 @@ class CRM_Bridge_OG_Drupal {
         $groupParams               = $params;
         $groupParams['source']     = CRM_Bridge_OG_Utils::ogSyncName( $params['og_id'] );
         $groupParams['group_type'] = array( '2' => 1 );
-        self::updateCiviGroup( $groupParams, $op, $groupType );
+        self::updateCiviGroup( $groupParams, $op );
 
         if ( CRM_Bridge_OG_Utils::aclEnabled( ) ) {
             // next create or update the CiviCRM ACL group

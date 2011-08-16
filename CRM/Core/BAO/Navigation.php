@@ -224,9 +224,11 @@ FROM civicrm_navigation WHERE domain_id = $domainID {$whereClause} ORDER BY pare
 
     // helper function for getNavigationList( )
     static function _getNavigationLabel( $list, &$navigations, $separator = '' ) {
+        $i18n =& CRM_Core_I18n::singleton();
         foreach ( $list as $label => $val ) {
             if ( $label == 'navigation_id' ) continue;
-            $navigations[is_array( $val ) ? $val['navigation_id'] : $val] = "{$separator}{$label}";
+            $translatedLabel = $i18n->crm_translate($label, array('context' => 'menu'));
+            $navigations[is_array( $val ) ? $val['navigation_id'] : $val] = "{$separator}{$translatedLabel}";
             if ( is_array( $val ) ) {
                 self::_getNavigationLabel( $val, $navigations, $separator . '&nbsp;&nbsp;&nbsp;&nbsp;' );
             }

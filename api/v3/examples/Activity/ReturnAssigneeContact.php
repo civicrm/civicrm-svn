@@ -35,29 +35,37 @@ function activity_get_expectedresult(){
   'values' => array( 
       '0' => array( 
           'id' => '13',
-          'source_contact_id' => '17',
+          'source_contact_id' => '18',
           'activity_type_id' => '1',
           'subject' => 'test activity type id',
           'status_id' => '1',
           'priority_id' => '1',
           'assignee_contact_id' => array( 
-              '0' => '18',
+              '0' => '19',
             ),
           'api.contact.get' => array( 
               'is_error' => 0,
               'version' => 3,
               'count' => 1,
-              'id' => 17,
+              'id' => 18,
               'values' => array( 
                   '0' => array( 
-                      'contact_id' => '17',
+                      'contact_id' => '18',
                       'contact_type' => 'Individual',
-                      'display_name' => 'Test Contact',
+                      'sort_name' => 'User 449921007, Logged In',
+                      'display_name' => 'Logged In User 449921007',
+                      'do_not_email' => 0,
+                      'do_not_phone' => 0,
+                      'do_not_mail' => 0,
+                      'do_not_sms' => 0,
+                      'do_not_trade' => 0,
                       'is_opt_out' => 0,
-                      'first_name' => 'Test',
-                      'last_name' => 'Contact',
+                      'preferred_mail_format' => 'Both',
+                      'first_name' => 'Logged In',
+                      'last_name' => 'User 449921007',
+                      'is_deceased' => 0,
                       'contact_is_deleted' => 0,
-                      'id' => '17',
+                      'id' => '18',
                     ),
                 ),
             ),
@@ -73,11 +81,14 @@ function activity_get_expectedresult(){
 
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* activity_get 
+* 
+* testActivityGetGoodID1 and can be found in 
+* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3ActivityTest.php
+* 
 * You can see the outcome of the API tests at 
 * http://tests.dev.civicrm.org/trunk/results-api_v3
 * and review the wiki at
-* http://wiki.civicrm.org/confluence/display/CRMDOC40/CiviCRM+Public+APIs
+* http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */

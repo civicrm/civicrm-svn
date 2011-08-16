@@ -37,7 +37,8 @@
 require_once 'CRM/Report/Form.php';
 
 class CRM_Report_Form_Activity extends CRM_Report_Form {
-
+  
+    protected $_addressField         = false;
     protected $_emailField         = false;
     protected $_customGroupExtends = array( 'Activity' );
 
@@ -201,7 +202,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                        'alias'   => 'case_activity'
                                        ),
  
-                                  );
+                                  ) + $this->addAddressFields();
         
         if ( $campaignEnabled ) {
             // Add display column and filter for Survey Results if CiviCampaign is enabled
@@ -227,6 +228,9 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                         if ( $tableName == 'civicrm_email' ) {
                             $this->_emailField = true;
                         } 
+                        if ( $tableName == 'civicrm_address' ) {
+                            $this->_addressField = true;
+                        }
                         if ( !CRM_Utils_Array::value( 'activity_type_id', $this->_params['group_bys'] ) &&
                              ( in_array( $fieldName, array('contact_assignee', 'assignee_contact_id' ) ) || 
                                in_array( $fieldName, array( 'contact_target', 'target_contact_id' ) ) ) ) { 
@@ -288,6 +292,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                    ON {$this->_aliases['civicrm_activity_assignment']}.assignee_contact_id = civicrm_email_assignee.contact_id AND 
                       civicrm_email_assignee.is_primary = 1 ";
         }
+        $this->addAddressFromClause();
     }
 
     function where( ) {
@@ -501,7 +506,8 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                     $entryFound = true;
                 }
             }
-            
+            $entryFound =  $this->alterDisplayAddressFields($row,$rows,$rowNum,'activity','List all activities for this ')?true:$entryFound;
+ 
             if ( !$entryFound ) {
                 break;
             }

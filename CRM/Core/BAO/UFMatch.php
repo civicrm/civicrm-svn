@@ -61,8 +61,6 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
             return;
         }
         
-        //print "synchronize called with uniq_id " . $user->identity_url . "<br/>";
-
         if ( $uf == 'Drupal' ) {
             $key   = 'uid';
             $login = 'name';
@@ -71,6 +69,10 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
             $key   = 'id';
             $login = 'username';
             $mail  = 'email';
+        } else if ( $uf == 'WordPress' ) {
+            $key   = 'id';
+            $login = 'user_login';
+            $mail  = 'user_email';
         } else if ( $uf == 'Standalone' ) {
             $key = 'id';
             $mail = 'email';
@@ -106,9 +108,8 @@ WHERE     openid = %1";
         // return.
         $userID = $session->get( 'userID' );        
         $ufID   = $session->get( 'ufID'   );
-
+        
         if ( ! $update && $ufID == $user->$key ) {
-            //print "Already processed this user<br/>";
             return;
         }
 
@@ -139,7 +140,6 @@ WHERE     openid = %1";
             $uniqId = $user->$mail;
         }
 
-        //print "Calling synchronizeUFMatch...<br/>";
         $ufmatch =& self::synchronizeUFMatch( $user, $user->$key, $uniqId, $uf, null, $ctype, $isLogin );
         if ( ! $ufmatch ) {
             return;
@@ -280,6 +280,8 @@ WHERE     openid = %1";
             } else {
                 if ( $uf == 'Drupal' ) {
                     $mail = 'mail';
+                } elseif ( $uf = 'WordPress' ) {
+                    $mail = 'user_email';
                 } else {
                     $mail = 'email';
                 }

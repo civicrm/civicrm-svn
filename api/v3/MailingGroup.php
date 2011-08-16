@@ -166,3 +166,21 @@ function civicrm_api3_mailing_group_event_subscribe($params)
         return civicrm_api3_create_error( 'Subscription failed');
 
 }
+
+function civicrm_api3_mailing_group_getfields($params) {
+    $dao = _civicrm_api3_get_DAO('Subscribe');
+    $file = str_replace ('_','/',$dao).".php";
+    require_once ($file); 
+    $d = new $dao();
+    $fields = $d->fields();
+    $d->free( );
+
+    $dao = _civicrm_api3_get_DAO('Unsubscribe');
+    $file = str_replace ('_','/',$dao).".php";
+    require_once ($file); 
+    $d = new $dao();
+    $fields = $fields + $d->fields();
+    $d->free( );
+
+    return civicrm_api3_create_success($fields);
+} 

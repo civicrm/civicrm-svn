@@ -21,8 +21,7 @@ function hide(id) {
 <p>Thanks for choosing to use CiviCRM!  Please follow the instructions below to get CiviCRM
 installed.</p>
 
-<form action="index.php" method="post">
-
+<form name="civicrm_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
 <?php if(isset($hasErrorOtherThanDatabase)) { ?>
 <p class="error">You aren't currently able to install the software.  Please <a style="color: #CCF" href="#requirements">see below</a> for details.</p>
 <?php } else { ?>

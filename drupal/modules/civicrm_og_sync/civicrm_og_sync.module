@@ -49,9 +49,9 @@
  * Changes in contacts and group memberships, however, can readily be handled.
  * The old code calls into group creation code, which is probably why it was
  * so hard to get right.  This update will instead do a "look before you leap"
- * approach, and if a group in CiviCRM does not have a counterpart in OG, it will
- * be treated as "a feature", since there's a lot of use for groups beyond mirroring
- * OG for most organizations.
+ * approach, and if a group in CiviCRM does not have a counterpart in OG, it
+ * will be treated as "a feature", since there's a lot of use for groups beyond
+ * mirroring OG for most organizations.
  */
 
 /**
@@ -62,19 +62,31 @@
  */
 function civicrm_og_sync_node_insert( $node ) {
     _civicrm_og_sync_node_action( $node ) ;
-  }
+}
+
 function civicrm_og_sync_node_update( $node ) {
     _civicrm_og_sync_node_action( $node );
 }
+
 function civicrm_og_sync_node_delete( $node ) {
     if ( !_civicrm_og_sync_check_isvalid( $node ) ) {
         return;
     }
     require_once 'CRM/Bridge/OG/Drupal.php';
-    CRM_Bridge_OG_Drupal::nodeapi( $params, 'delete' );
-    _civicrm_og_sync_clear_context();
-    
+
+    if ( $group = og_get_group('node', $node->nid) ) {
+        if ( empty($group->gid) ) {
+            return;
+        }
+        $params = array( 'name'        => $title,
+                         'title'       => $title,
+                         'og_id'       => $group->gid );
+        
+        CRM_Bridge_OG_Drupal::nodeapi( $params, 'delete' );
+        _civicrm_og_sync_clear_context();
+    }
 }
+
 function civicrm_og_sync_og( $op, $nid, $uid, $args = array( ) ) {
     
     //User actions need to call hook_og, or hook_civicrm_post, but
@@ -238,20 +250,20 @@ function civicrm_og_sync_enable()
     // get OG content types
     
     $ogGroupIds =  og_get_group_ids('node');
-    foreach( $ogGroupIds as $nid ){
+    $subscribers = og_get_group_ids('user');
+    foreach( $ogGroupIds as $nid => $gid ) {
         $node = node_load( $nid );
         $title  = trim( $node->title );
         $params = array( 'name'        => $title,
                          'title'       => $title,
                          'is_active'   => 1,
-                         'og_id'       => $node->nid );
+                         'og_id'       => $gid );
         
         // add the group
         require_once 'CRM/Bridge/OG/Drupal.php';
         CRM_Bridge_OG_Drupal::nodeapi( $params, 'add' );
         
         // add the subscribers
-        $subscribers = og_get_group_ids('user');
         foreach($subscribers as $uid ) {
             $is_admin = false;
             if ( $uid == $node->uid ) $is_admin = true;
@@ -299,20 +311,26 @@ function _civicrm_og_sync_node_action( $node ) {
     
     if ( !_civicrm_og_sync_check_isvalid( $node ) ) {
         return;
-        
-    } 
+    }
+
     $title  = trim( $node->title );
-    $params = array( 'name'        => $title,
-                     'title'       => $title,
-                     'is_active'   => 1,
-                     'og_id'       => $node->nid );
-    
-    require_once 'CRM/Bridge/OG/Drupal.php'; 
-    CRM_Bridge_OG_Drupal::nodeapi( $params, 'add' ); 
-    
-    // also call the user hook since OG does not for admin
-    civicrm_og_sync_og( 'user update', $node->nid, $node->uid, array( 'is_admin' => 1 ) );
-    _civicrm_og_sync_clear_context(); 
+    if ( $group = og_get_group('node', $node->nid) ) {
+        if ( empty($group->gid) ) {
+            return;
+        }
+        $params = array( 'name'        => $title,
+                         'title'       => $title,
+                         'is_active'   => 1,
+                         'og_id'       => $group->gid );
+        
+        require_once 'CRM/Bridge/OG/Drupal.php'; 
+        
+        CRM_Bridge_OG_Drupal::nodeapi( $params, 'add' );
+        
+        // also call the user hook since OG does not for admin
+        civicrm_og_sync_og( 'user update', $group->gid, $node->uid, array( 'is_admin' => 1 ) );
+        _civicrm_og_sync_clear_context();
+    }
 }
 
 /*

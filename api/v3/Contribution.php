@@ -123,7 +123,12 @@ function civicrm_api3_contribution_delete($params) {
 function civicrm_api3_contribution_get($params) {
 
 		civicrm_api3_verify_mandatory ( $params );
-		
+		if(CRM_Utils_Array::value('id', $params) ){
+    //api supports 'id' but BAO supports 'contribution_id. Change it here
+		  $params['contribution_id'] = CRM_Utils_Array::value('contribution_id', $params,$params['id']);
+		  unset ($params['id']);
+		}
+
 		$inputParams = array ();
 		$returnProperties = array ();
 		$otherVars = array ('sort', 'offset', 'rowCount' );
@@ -175,7 +180,19 @@ function civicrm_api3_contribution_get($params) {
 		return civicrm_api3_create_success ( $contribution, $params, 'contribution',$dao);
 
 }
+/*
+ * Return valid fields for API
+ */
+function civicrm_api3_contribution_getfields( $params ) {
+    $fields =  _civicrm_api_get_fields('contribution') ;
+    $fields['note'] = array('name' => 'note',
+                                           'title' => 'note',
+                                           'type' => 2,
+                                           'description' => 'Associated Note in the notes table');
 
+
+    return civicrm_api3_create_success($fields );
+}
 /**
  * This function ensures that we have the right input contribution parameters
  *

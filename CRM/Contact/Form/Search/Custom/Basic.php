@@ -47,7 +47,6 @@ class CRM_Contact_Form_Search_Custom_Basic
 
         $this->normalize( );
         $this->_columns = array( ts('')        => 'contact_type'    ,
-                                 ts('')        => 'contact_sub_type',
                                  ts('Name'   ) => 'sort_name'       ,
                                  ts('Address') => 'street_address'  ,
                                  ts('City'   ) => 'city'            ,
@@ -59,7 +58,17 @@ class CRM_Contact_Form_Search_Custom_Basic
 
         $params           =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         $returnProperties = array( );
+        $returnProperties['contact_sub_type'] = 1;
+
+        require_once 'CRM/Core/BAO/Preferences.php';
+        $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+
         foreach ( $this->_columns as $name => $field ) {
+            if ( in_array($field, array('street_address', 'city', 'state_province', 'postal_code', 'country') ) &&
+                 !CRM_Utils_Array::value($field, $addressOptions) ) {
+                unset($this->_columns[$name]);
+                continue;
+            }
             $returnProperties[$field] = 1;
         }
 

@@ -38,7 +38,7 @@
 /**
  * Include utility functions
  */
-require_once 'api/v3/utils.php';
+require_once 'CRM/Core/BAO/Phone.php';
 
 /**
  *  Add an Phone for a contact
@@ -157,22 +157,9 @@ function civicrm_api3_phone_get($params)
 {   
 
     civicrm_api3_verify_mandatory($params);
-	
-    require_once 'CRM/Core/BAO/Phone.php';
-    $bao = new CRM_Core_BAO_Phone();
-    _civicrm_api3_dao_set_filter ( $bao, $params );
 
-    
-    if ( $bao->find() ) {
-      $phones = array();
-      while ( $bao->fetch() ) {
-        CRM_Core_DAO::storeValues( $bao, $phone );
-        $phones[$bao->id] = $phone;
-      }
-      return civicrm_api3_create_success($phones,$params,$bao);
-    } else {
-      return civicrm_api3_create_success(array(),$params,$bao);
-    }
+    return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+ 
 
 }
 
