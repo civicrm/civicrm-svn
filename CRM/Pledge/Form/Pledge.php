@@ -441,7 +441,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
                           array( '' => ts( '- select -' ) ) + $pledgePages );
 
         require_once "CRM/Core/BAO/Preferences.php";
-        $mailingInfo =& CRM_Core_BAO_Preferences::mailingPreferences();
+        $mailingInfo = CRM_Core_BAO_Preferences::mailingPreferences();
         $this->assign( 'outBound_option', $mailingInfo['outBound_option'] );
 
         //build custom data
@@ -634,7 +634,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
                 
         //create pledge record.
         require_once 'CRM/Pledge/BAO/Pledge.php';
-        $pledge =& CRM_Pledge_BAO_Pledge::create( $params );
+        $pledge = CRM_Pledge_BAO_Pledge::create( $params );
 
         $statusMsg = null;
         

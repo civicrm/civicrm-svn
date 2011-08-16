@@ -349,7 +349,7 @@ class CRM_Core_BAO_Setting
 
 
     static function getConfigSettings( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $url = $dir = $siteName = $siteRoot = null;
         if ( $config->userFramework == 'Joomla' ) {
@@ -398,7 +398,7 @@ class CRM_Core_BAO_Setting
     }
 
     static function getBestGuessSettings( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $url = $config->userFrameworkBaseURL;
         $siteName = $siteRoot = null;
@@ -532,7 +532,7 @@ WHERE  option_group_id = (
             ts('Directory and Resource URLs have been updated in the moved database to reflect current site location.') .
             '<br />';
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         // clear the template_c and upload directory also
         $config->cleanup( 3, true );
@@ -553,7 +553,7 @@ WHERE  option_group_id = (
             db_query("DELETE FROM {sessions} WHERE 1");
             $moveStatus .= ts('Drupal session table cleared.') . '<br />';
         } else {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $session->reset( 2 );
             $moveStatus .= ts('Session has been reset.') . '<br />';
         }
@@ -572,7 +572,7 @@ WHERE  option_group_id = (
      * @static
      */
     static function enableComponent( $componentName ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( in_array( $componentName, $config->enableComponents ) ) {
             // component is already enabled
             return true;

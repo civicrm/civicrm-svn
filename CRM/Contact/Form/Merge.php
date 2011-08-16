@@ -232,7 +232,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $this->addElement('checkbox', 'toggleSelect', null, null, array('onclick' => "return toggleCheckboxVals('move_',this);"));
 
         require_once 'CRM/Contact/DAO/Contact.php';
-        $fields =& CRM_Contact_DAO_Contact::fields();
+        $fields = CRM_Contact_DAO_Contact::fields();
 
         // FIXME: there must be a better way
         foreach (array('main', 'other') as $moniker) {
@@ -353,8 +353,8 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $this->assign( 'mainLocAddress', json_encode( $mainLocAddress ) );        
         
         // handle custom fields
-        $mainTree  =& CRM_Core_BAO_CustomGroup::getTree($this->_contactType, $this, $this->_cid, -1);
-        $otherTree =& CRM_Core_BAO_CustomGroup::getTree($this->_contactType, $this, $this->_oid, -1);
+        $mainTree  = CRM_Core_BAO_CustomGroup::getTree($this->_contactType, $this, $this->_cid, -1);
+        $otherTree = CRM_Core_BAO_CustomGroup::getTree($this->_contactType, $this, $this->_oid, -1);
         if (!isset($diffs['custom'])) $diffs['custom'] = array();
         foreach ($otherTree as $gid => $group) {
             $foundField = false;
@@ -478,7 +478,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             $session->resetScope( 'selectedSearchContactIds' );
         }
         
-        $relTables =& CRM_Dedupe_Merger::relTables();
+        $relTables = CRM_Dedupe_Merger::relTables();
         $moveTables = $locBlocks = $tableOperations = array( );
         foreach ( $formValues as $key => $value ) {
             if ($value == $this->_qfZeroBug) $value = '0';
@@ -580,7 +580,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         CRM_Core_OptionGroup::lookupValues( $submitted, $names, true );
 
         // FIXME: fix custom fields so they're edible by createProfileContact()
-        $cgTree =& CRM_Core_BAO_CustomGroup::getTree( $this->_contactType, $this, null, -1 );
+        $cgTree = CRM_Core_BAO_CustomGroup::getTree( $this->_contactType, $this, null, -1 );
         
         $cFields = array( );
         foreach ( $cgTree as $key => $group ) {
@@ -692,7 +692,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             // get the contact_id -> file_id mapping
             $fileIds = array();
             $sql = "SELECT entity_id, {$columnName} AS file_id FROM {$tableName} WHERE entity_id IN ({$this->_cid}, {$this->_oid})";
-            $dao =& CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+            $dao = CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
             while ($dao->fetch()) {
                 $fileIds[$dao->entity_id] = $dao->file_id;
             }

@@ -615,7 +615,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         
     public function logActivityAction( $activity, $logMessage = null ) 
     {
-        $session = & CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $id = $session->get('userID');
         if ( !$id ) $id = $activity->source_contact_id;
         require_once 'CRM/Core/BAO/Log.php';
@@ -796,7 +796,7 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
                 
         //CRM-3553, need to check user has access to target groups.
         require_once 'CRM/Mailing/BAO/Mailing.php';
-        $mailingIDs =& CRM_Mailing_BAO_Mailing::mailingACLIDs( );
+        $mailingIDs = CRM_Mailing_BAO_Mailing::mailingACLIDs( );
         $accessCiviMail = ( ( CRM_Core_Permission::check( 'access CiviMail' ) ) ||
                             ( CRM_Mailing_Info::workflowEnabled( ) && CRM_Core_Permission::check( 'create mailings' ) ) );
         
@@ -856,7 +856,7 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
         // see which of the cids are of deleted contacts
         if ($cids) {
             $sql = 'SELECT id FROM civicrm_contact WHERE id IN (' . implode(', ', $cids) . ') AND is_deleted = 1';
-            $dao =& CRM_Core_DAO::executeQuery($sql);
+            $dao = CRM_Core_DAO::executeQuery($sql);
             $dels = array();
             while ($dao->fetch()) {
                 $dels[] = $dao->id;
@@ -1650,7 +1650,7 @@ SELECT  display_name
         }
         
         // create assignment activity if created by logged in user
-        $session = & CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $id = $session->get('userID');
         if ( $id ) { 
             $activityParams['source_contact_id']   = $id;
@@ -1764,7 +1764,7 @@ AND cl.modified_id  = c.id
                 $query .= " ORDER BY ca.id DESC";
 
                 $params = array( 1 => array( $originalID, 'Integer' ) );
-                $dao    =& CRM_Core_DAO::executeQuery( $query, $params );
+                $dao    = CRM_Core_DAO::executeQuery( $query, $params );
             
                 while ( $dao->fetch( ) ) {
                     $priorActivities[$index][$dao->activityID]['id']   = $dao->activityID;
@@ -1823,7 +1823,7 @@ AND cl.modified_id  = c.id
             return;
         }
        
-        $session = & CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
        
         $followupParams                      = array( );
         $followupParams['parent_id']         = $activityId;
@@ -2266,7 +2266,7 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
         $context = CRM_Utils_Array::value('context', $params);
  
         // get contact activities
-        $activities =& CRM_Activity_BAO_Activity::getActivities( $params );
+        $activities = CRM_Activity_BAO_Activity::getActivities( $params );
         
         // add total
         $params['total'] = CRM_Activity_BAO_Activity::getActivitiesCount( $params );

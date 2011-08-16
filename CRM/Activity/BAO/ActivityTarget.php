@@ -94,7 +94,7 @@ class CRM_Activity_BAO_ActivityTarget extends CRM_Activity_DAO_ActivityTarget
             JOIN civicrm_contact ON target_contact_id = civicrm_contact.id
             WHERE activity_id = %1 AND civicrm_contact.is_deleted = 0
         ';
-        $target =& CRM_Core_DAO::executeQuery($sql, array(1 => array($activity_id, 'Integer')));
+        $target = CRM_Core_DAO::executeQuery($sql, array(1 => array($activity_id, 'Integer')));
         while ( $target->fetch() ) {
             $targetArray[] = $target->target_contact_id;
         }

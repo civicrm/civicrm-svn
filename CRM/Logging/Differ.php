@@ -72,7 +72,7 @@ class CRM_Logging_Differ
 
         // find ids in this table that were affected in the given connection (based on connection id and a ±10 s time period around the date)
         $sql = "SELECT DISTINCT id FROM `{$this->db}`.`log_$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND)";
-        $dao =& CRM_Core_DAO::executeQuery($sql, $params);
+        $dao = CRM_Core_DAO::executeQuery($sql, $params);
         while ($dao->fetch()) {
             $diffs = array_merge($diffs, $this->diffsInTableForId($table, $dao->id));
         }
@@ -192,7 +192,7 @@ class CRM_Logging_Differ
 
     private function sqlToArray($sql, $params)
     {
-        $dao =& CRM_Core_DAO::executeQuery($sql, $params);
+        $dao = CRM_Core_DAO::executeQuery($sql, $params);
         $dao->fetch();
         return $dao->toArray();
     }
@@ -209,12 +209,12 @@ class CRM_Logging_Differ
         );
 
         $sql = "SELECT id, title FROM `{$this->db}`.log_civicrm_custom_group WHERE log_date <= %2 AND table_name = %3 ORDER BY log_date DESC LIMIT 1";
-        $cgDao =& CRM_Core_DAO::executeQuery($sql, $params);
+        $cgDao = CRM_Core_DAO::executeQuery($sql, $params);
         $cgDao->fetch();
 
         $params[3] = array($cgDao->id, 'Integer');
         $sql = "SELECT column_name, data_type, label, name, option_group_id FROM `{$this->db}`.log_civicrm_custom_field WHERE log_date <= %2 AND custom_group_id = %3 ORDER BY log_date";
-        $cfDao =& CRM_Core_DAO::executeQuery($sql, $params);
+        $cfDao = CRM_Core_DAO::executeQuery($sql, $params);
 
         while ($cfDao->fetch()) {
             $titles[$cfDao->column_name] = "{$cgDao->title}: {$cfDao->label}";
@@ -227,7 +227,7 @@ class CRM_Logging_Differ
                 $values[$cfDao->column_name] = array();
                 $params[3] = array($cfDao->option_group_id, 'Integer');
                 $sql = "SELECT label, value FROM `{$this->db}`.log_civicrm_option_value WHERE log_date <= %2 AND option_group_id = %3 ORDER BY log_date";
-                $ovDao =& CRM_Core_DAO::executeQuery($sql, $params);
+                $ovDao = CRM_Core_DAO::executeQuery($sql, $params);
                 while ($ovDao->fetch()) {
                     $values[$cfDao->column_name][$ovDao->value] = $ovDao->label;
                 }

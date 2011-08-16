@@ -159,7 +159,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
             $isEdit = false;
         }
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $address->copyValues($params);
 
         $address->save( );
@@ -586,7 +586,7 @@ ORDER BY civicrm_address.is_primary DESC, address_id ASC";
         $params = array( 1 => array( $id, 'Integer' ) );
 
         $addresses = array( );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         $count = 1;
         while ( $dao->fetch( ) ) {
             if ( $updateBlankLocInfo ) {
@@ -628,7 +628,7 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
                
         $params = array( 1 => array( $entityId, 'Integer' ) );
         $addresses = array( );
-        $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
         $locationCount = 1;
         while ( $dao->fetch( ) ) {
             $addresses[$locationCount] = $dao->address_id;

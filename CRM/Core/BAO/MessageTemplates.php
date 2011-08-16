@@ -213,7 +213,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             
             require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
-            $smarty =& CRM_Core_Smarty::singleton( );
+            $smarty = CRM_Core_Smarty::singleton( );
             foreach( array( 'text', 'html') as $elem) {
                 $$elem = $smarty->fetch("string:{$$elem}");
             }
@@ -464,7 +464,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         // parse the three elements with Smarty
         require_once 'CRM/Core/Smarty/resources/String.php';
         civicrm_smarty_register_string_resource();
-        $smarty =& CRM_Core_Smarty::singleton();
+        $smarty = CRM_Core_Smarty::singleton();
         foreach ($params['tplParams'] as $name => $value) {
             $smarty->assign($name, $value);
         }

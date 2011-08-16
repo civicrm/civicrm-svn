@@ -295,7 +295,7 @@ SELECT data_type
   FROM civicrm_custom_field
  WHERE id = %1";
         $params = array( 1 => array( $fieldId, 'Integer' ) );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         if ( $dao->fetch( ) ) {
             switch ( $dao->data_type ) {
             case 'Int':

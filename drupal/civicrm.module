@@ -50,7 +50,7 @@ function civicrm_html_head()
         require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton();
 
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $buffer = $template->fetch( 'CRM/common/jquery.files.tpl' );
         $lines  = preg_split( '/\s+/', $buffer );
         foreach ( $lines as $line ) {
@@ -168,10 +168,10 @@ function civicrm_permission()
         return;
     }
 
-    $config =& CRM_Core_Config::singleton();
+    $config = CRM_Core_Config::singleton();
 
     require_once 'CRM/Core/Permission.php';
-    $permissions =& CRM_Core_Permission::basicPermissions( );
+    $permissions = CRM_Core_Permission::basicPermissions( );
     $perms_array = array();
     foreach ($permissions as $perm => $title) {
       //order matters here, but we deal with that later
@@ -313,7 +313,7 @@ function civicrm_initialize( )
         $initialized = true;
 
         // initialize the system by creating a config object
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
       
         // Add module-specific header elements
         $header = civicrm_html_head();
@@ -463,7 +463,7 @@ function _civicrm_categories_access( $profile_id ) {
     }
 
     require_once 'CRM/Core/BAO/UFGroup.php';
-    $allUFGroups =& CRM_Core_BAO_UFGroup::getModuleUFGroup( 'User Account', 0, false );
+    $allUFGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup( 'User Account', 0, false );
 
     require_once 'CRM/Utils/Array.php';
     if ( is_array( CRM_Utils_Array::value( $profile_id, $allUFGroups ) ) ) {
@@ -648,7 +648,7 @@ function civicrm_cache_disable( ) {
  * qfKey
  */
 function civicrm_key_disable( ) {
-    $config =& CRM_Core_Config::singleton( );
+    $config = CRM_Core_Config::singleton( );
     $config->keyDisable = true;
 }
 

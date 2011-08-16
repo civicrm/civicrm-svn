@@ -96,7 +96,7 @@ class CRM_Campaign_Page_Petition_Confirm extends CRM_Core_Page
     public static function confirm($contact_id, $subscribe_id, $hash, $activity_id, $petition_id) 
     {
         require_once 'CRM/Mailing/Event/BAO/Subscribe.php';
-        $se =& CRM_Mailing_Event_BAO_Subscribe::verify($contact_id, $subscribe_id, $hash);
+        $se = CRM_Mailing_Event_BAO_Subscribe::verify($contact_id, $subscribe_id, $hash);
         
         if (! $se) {
             return false;

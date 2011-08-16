@@ -129,7 +129,7 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
                                               $this, false, 'browse'); // default to 'browse'
         
         if ($action & CRM_Core_Action::DELETE) {
-            $session = & CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/custom/group/', 'action=browse'));
             $controller = new CRM_Core_Controller_Simple( 'CRM_Custom_Form_DeleteGroup',"Delete Cutom Set", null );
             $id = CRM_Utils_Request::retrieve('id', 'Positive',

@@ -1255,7 +1255,7 @@ WHERE  contribution_id = {$this->_id}
             }
 
             // force a reget of the payment processor in case the form changed it, CRM-7179
-            $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this, true );
+            $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this, true );
             
             $result = null;
             

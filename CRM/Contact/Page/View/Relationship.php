@@ -93,7 +93,7 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
         $viewNote = CRM_Core_BAO_Note::getNote($this->_id);
         $this->assign( 'viewNote', $viewNote );
 		
-        $groupTree =& CRM_Core_BAO_CustomGroup::getTree('Relationship', $this, $this->_id,0,$relType);
+        $groupTree = CRM_Core_BAO_CustomGroup::getTree('Relationship', $this, $this->_id,0,$relType);
         CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree );
 
         $rType = CRM_Utils_Array::value('rtype', $viewRelationship[$this->_id] );
@@ -143,7 +143,7 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
      */
     function browse( ) 
     {
-        $links =& self::links( );
+        $links = self::links( );
         
         //CRM-4418, handling edit and delete separately. 
         $permissions = array( $this->_permission );

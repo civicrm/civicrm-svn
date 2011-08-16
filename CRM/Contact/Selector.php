@@ -191,9 +191,9 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
 
             //CRM_Core_Error::debug( 'f', $this->_fields );
             
-            $this->_customFields =& CRM_Core_BAO_CustomField::getFieldsForImport( 'Individual' );
+            $this->_customFields = CRM_Core_BAO_CustomField::getFieldsForImport( 'Individual' );
 
-            $this->_returnProperties =& CRM_Contact_BAO_Contact::makeHierReturnProperties( $this->_fields );
+            $this->_returnProperties = CRM_Contact_BAO_Contact::makeHierReturnProperties( $this->_fields );
             $this->_returnProperties['contact_type'] = 1;
             $this->_returnProperties['contact_sub_type'] = 1;
             $this->_returnProperties['sort_name'   ] = 1;
@@ -428,7 +428,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                                                  'direction' => CRM_Utils_Sort::ASCENDING,
                                                  )
                                            );
-            $properties =& self::makeProperties( $this->_returnProperties );
+            $properties = self::makeProperties( $this->_returnProperties );
 
             foreach ( $properties as $prop ) {
                 if ( $prop == 'contact_type' || $prop == 'contact_sub_type' || $prop == 'sort_name' ) {
@@ -550,7 +550,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             $names[] =  "status";
             
         } else if ( ! empty( $this->_returnProperties ) ) {
-            $names =& self::makeProperties( $this->_returnProperties );
+            $names = self::makeProperties( $this->_returnProperties );
         } else {
             $names = self::$_properties;
         }
@@ -563,7 +563,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         }
         
         require_once 'CRM/Core/OptionGroup.php';
-        $links =& self::links( $this->_context, $this->_contextMenu, $this->_key );
+        $links = self::links( $this->_context, $this->_contextMenu, $this->_key );
         
         //check explicitly added contact to a Smart Group.
         $groupID   = CRM_Utils_Array::key( '1', $this->_formValues['group'] );  
@@ -571,15 +571,15 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         // for CRM-3157 purposes
         require_once 'CRM/Core/PseudoConstant.php';
         if ( in_array('country',        $names ) ) {
-            $countries =& CRM_Core_PseudoConstant::country();
+            $countries = CRM_Core_PseudoConstant::country();
         }
 
         if ( in_array('state_province', $names ) ) {
-            $provinces =& CRM_Core_PseudoConstant::stateProvince();
+            $provinces = CRM_Core_PseudoConstant::stateProvince();
         }
 
         if ( in_array('world_region',   $names ) ) {
-            $regions   =& CRM_Core_PseudoConstant::worldRegion();
+            $regions   = CRM_Core_PseudoConstant::worldRegion();
         }
 
         $seenIDs = array( );

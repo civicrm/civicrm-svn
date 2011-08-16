@@ -1101,7 +1101,7 @@ SELECT contact_id
  WHERE id IN ( $IDs )
 ";
 
-        $dao =& CRM_Core_DAO::executeQuery( $query );
+        $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
             $contactIDs[] = $dao->contact_id;
         }

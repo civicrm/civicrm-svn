@@ -91,7 +91,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
 
         $transaction = new CRM_Core_Transaction( );
         
-        $priceField =& self::add( $params, $ids );
+        $priceField = self::add( $params, $ids );
         
         if ( is_a( $priceField, 'CRM_Core_Error') ) {
             $transaction->rollback( );
@@ -426,7 +426,7 @@ WHERE
     AND option_group.id    = option_value.option_group_id
     AND option_value.label = %2";
         
-        $dao    =& CRM_Core_DAO::executeQuery($query, array(1 => array($optionGroupName, 'String'), 2 => array($optionLabel, 'String')));
+        $dao    = CRM_Core_DAO::executeQuery($query, array(1 => array($optionGroupName, 'String'), 2 => array($optionLabel, 'String')));
         
         while ( $dao->fetch( ) ) {
             return $dao->id;

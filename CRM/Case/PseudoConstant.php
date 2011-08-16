@@ -208,7 +208,7 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
 
             $query .= "  ORDER BY v.weight";
             
-            $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+            $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
 
             $activityTypes = array();
             while( $dao->fetch() ) {

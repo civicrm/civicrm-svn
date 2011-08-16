@@ -128,7 +128,7 @@ class CRM_Upgrade_Incremental_php_ThreeFour {
             CRM_Core_I18n_Schema::rebuildMultilingualSchema($upgrade->locales, $rev);
 
             // turn a set of columns singlelingual
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $tables = array('civicrm_address', 'civicrm_contact', 'civicrm_mailing', 'civicrm_mailing_component');
             foreach ($tables as $table) {
                 CRM_Core_I18n_Schema::makeSinglelingualTable($config->lcMessages, $table, 'CRM_Core_I18n_SchemaStructure_3_4_beta2');

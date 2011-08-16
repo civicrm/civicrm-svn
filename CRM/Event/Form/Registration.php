@@ -381,7 +381,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                     }
                     
                     // ensure that processor has a valid config
-                    $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
+                    $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
                     $error = $payment->checkConfig( );
                     if ( ! empty( $error ) ) {
                         CRM_Core_Error::fatal( $error );
@@ -436,7 +436,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             $params = array( 'id' => $this->_eventId );
             
             // get the billing location type
-            $locationTypes =& CRM_Core_PseudoConstant::locationType( );
+            $locationTypes = CRM_Core_PseudoConstant::locationType( );
             
             // CRM-8108 remove ts from Billing as the location type can not be translated in CiviCRM!
             //$this->_bltID = array_search( ts('Billing'),  $locationTypes );
@@ -688,7 +688,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             if ( $addCaptcha &&
                  ! $viewOnly ) {
                 require_once 'CRM/Utils/ReCAPTCHA.php';
-                $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
+                $captcha = CRM_Utils_ReCAPTCHA::singleton( );
                 $captcha->add( $this );
                 $this->assign( 'isCaptcha' , true );
             }
@@ -847,7 +847,7 @@ WHERE  v.option_group_id = g.id
 ";
         $p = array( 1 => array( $groupName , 'String' ) );
                
-        $dao =& CRM_Core_DAO::executeQuery( $query, $p );
+        $dao = CRM_Core_DAO::executeQuery( $query, $p );
         if ( $dao->fetch( ) ) {
             $roleID = $dao->value;
         }
@@ -1120,7 +1120,7 @@ WHERE  v.option_group_id = g.id
             }
                 
             $templateFile = "CRM/Event/Form/Registration/{$this->_eventId}/{$templateName}.tpl";
-            $template =& CRM_Core_Form::getTemplate( );
+            $template = CRM_Core_Form::getTemplate( );
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;
             }

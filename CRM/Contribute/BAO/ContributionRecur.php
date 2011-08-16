@@ -63,7 +63,7 @@ class CRM_Contribute_BAO_ContributionRecur extends CRM_Contribute_DAO_Contributi
         
         $duplicates = array( );
         if ( self::checkDuplicate( $params, $duplicates ) ) {
-            $error =& CRM_Core_Error::singleton( ); 
+            $error = CRM_Core_Error::singleton( ); 
             $d = implode( ', ', $duplicates );
             $error->push( CRM_Core_Error::DUPLICATE_CONTRIBUTION,
                           'Fatal',
@@ -78,7 +78,7 @@ class CRM_Contribute_BAO_ContributionRecur extends CRM_Contribute_DAO_Contributi
 
 	// set currency for CRM-1496
 	if ( ! isset( $recurring->currency ) ) {
-	  $config =& CRM_Core_Config::singleton( );
+	  $config = CRM_Core_Config::singleton( );
 	  $recurring->currency = $config->defaultCurrency;
 	}
 	      $result = $recurring->save( );
@@ -131,7 +131,7 @@ class CRM_Contribute_BAO_ContributionRecur extends CRM_Contribute_DAO_Contributi
         }
 
         $query = "SELECT id FROM civicrm_contribution_recur WHERE $clause";
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         $result = false;
         while ( $dao->fetch( ) ) {
             $duplicates[] = $dao->id;

@@ -48,7 +48,7 @@ function civicrm_uninstall( ) {
     }
 
     require_once 'CRM/Core/Config.php';
-    $config =& CRM_Core_Config::singleton();
+    $config = CRM_Core_Config::singleton();
 
     require_once 'CRM/Core/DAO.php';
     CRM_Core_DAO::dropAllTables( );

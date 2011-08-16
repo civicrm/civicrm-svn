@@ -205,7 +205,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         $voterClause = $this->voterClause( );
         
         require_once 'CRM/Contact/BAO/Query.php';
-        $this->_queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
+        $this->_queryParams = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         
         $selector = new CRM_Campaign_Selector_Search( $this->_queryParams,
                                                       $this->_action,
@@ -428,7 +428,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
     {
         $interviewerId = CRM_Utils_Array::value( 'survey_interviewer_id', $this->_formValues ); 
         if ( !$interviewerId ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $this->_formValues['survey_interviewer_id'] = $interviewerId = $session->get( 'userID' );
         }
         $this->set( 'interviewerId', $interviewerId );

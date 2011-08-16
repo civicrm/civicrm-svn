@@ -696,7 +696,7 @@ class CRM_ProcessAuthorizeReport {
             );
 
             require_once 'CRM/Contribute/BAO/FinancialTrxn.php';
-            $trxn =& CRM_Contribute_BAO_FinancialTrxn::create($trxnParams);
+            $trxn = CRM_Contribute_BAO_FinancialTrxn::create($trxnParams);
             if (is_a($trxn,  'CRM_Core_Error')) {
                 $this->_addToSummary("A TRANSACTION RECORD COULD NOT BE CREATED. PLEASE REVIEW $csv_name FOR subscription_id=$subscription_id");
                 CRM_Core_DAO::transaction('ROLLBACK');

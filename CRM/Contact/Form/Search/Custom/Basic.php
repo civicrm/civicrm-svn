@@ -56,7 +56,7 @@ class CRM_Contact_Form_Search_Custom_Basic
                                  ts('Email'  ) => 'email'           ,
                                  ts('Phone'  ) => 'phone'           );
 
-        $params           =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
+        $params           = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         $returnProperties = array( );
         $returnProperties['contact_sub_type'] = 1;
 

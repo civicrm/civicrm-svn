@@ -130,7 +130,7 @@ function civicrm_user_categories()
     require_once 'CRM/Core/BAO/UFGroup.php';
     require_once 'CRM/Core/BAO/UFField.php';
 
-    $allUFGroups =& CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account');
+    $allUFGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account');
     $ufGroups = array( );
 
     $weight = 100;
@@ -187,7 +187,7 @@ function civicrm_user_view( $user, $view_mode ){
 
         $ctype = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $userID, 'contact_type' );
 
-        $ufGroups =& CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account', 0, false);
+        $ufGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account', 0, false);
         $weight   = 100;
         foreach ( $ufGroups as $id => $title ) {
             

@@ -86,7 +86,7 @@ class CRM_Contribute_BAO_PCP extends CRM_Contribute_DAO_PCP
 
 	    // set currency for CRM-1496
 	    if ( ! isset( $dao->currency ) ) {
-	      $config =& CRM_Core_Config::singleton( );
+	      $config = CRM_Core_Config::singleton( );
 	      $dao->currency = $config->defaultCurrency;
 	    }
 	

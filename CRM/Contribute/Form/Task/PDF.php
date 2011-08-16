@@ -150,7 +150,7 @@ AND    {$this->_componentClause}";
         $contribIDs = implode( ',', $this->_contributionIds );
 
         require_once 'CRM/Contribute/Form/Task/Status.php';
-        $details =& CRM_Contribute_Form_Task_Status::getDetails( $contribIDs );
+        $details = CRM_Contribute_Form_Task_Status::getDetails( $contribIDs );
 
         require_once 'CRM/Core/Payment/BaseIPN.php';
         $baseIPN = new CRM_Core_Payment_BaseIPN( );

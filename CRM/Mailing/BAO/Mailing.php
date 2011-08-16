@@ -782,7 +782,7 @@ AND civicrm_contact.do_not_email = 0
 AND civicrm_contact.is_deceased = 0
 AND civicrm_email.on_hold = 0
 AND civicrm_contact.is_opt_out =0";
-                $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray);
+                $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray);
                 if ($dao->fetch( ) ) {
                     $params = array(
                                     'job_id'        => $testParams['job_id'],
@@ -802,7 +802,7 @@ AND civicrm_contact.do_not_email =0
 AND civicrm_contact.is_deceased = 0
 AND civicrm_email.on_hold = 0
 AND civicrm_contact.is_opt_out =0";
-                    $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray);
+                    $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray);
                     if ($dao->fetch( ) ) {
                         $params = array(
                                         'job_id'        => $testParams['job_id'],
@@ -856,7 +856,7 @@ AND civicrm_contact.is_opt_out =0";
         require_once 'CRM/Core/BAO/Domain.php';
         $config = CRM_Core_Config::singleton();
         $bao = new CRM_Mailing_BAO_Mailing();
-        $bao->_domain =& CRM_Core_BAO_Domain::getDomain( );
+        $bao->_domain = CRM_Core_BAO_Domain::getDomain( );
         $bao->from_name = $bao->from_email = $bao->subject = '';
 
         // use $bao's instance method to get verp and urls
@@ -974,7 +974,7 @@ AND civicrm_contact.is_opt_out =0";
         
         if ($this->_domain == null) {
             require_once 'CRM/Core/BAO/Domain.php';
-            $this->_domain =& CRM_Core_BAO_Domain::getDomain( );
+            $this->_domain = CRM_Core_BAO_Domain::getDomain( );
         }
 
         list( $verp, $urls, $headers) = $this->getVerpAndUrlsAndHeaders($job_id, $event_queue_id, $hash, $email, $isForward );
@@ -1172,7 +1172,7 @@ AND civicrm_contact.is_opt_out =0";
     function tokenReplace( &$mailing )
     {
         require_once 'CRM/Core/BAO/Domain.php';
-        $domain =& CRM_Core_BAO_Domain::getDomain( );
+        $domain = CRM_Core_BAO_Domain::getDomain( );
         foreach ( array('text', 'html') as $type ) {
             require_once 'CRM/Utils/Token.php';
             $tokens = $mailing->getTokens();
@@ -1236,7 +1236,7 @@ AND civicrm_contact.is_opt_out =0";
           $data = CRM_Utils_Token::getActionTokenReplacement($token, $verp, $urls, $html);
         } else if ( $type == 'domain' ) {
             require_once 'CRM/Core/BAO/Domain.php';
-            $domain =& CRM_Core_BAO_Domain::getDomain( );
+            $domain = CRM_Core_BAO_Domain::getDomain( );
             $data = CRM_Utils_Token::getDomainTokenReplacement($token, $domain, $html);
         } else if( $type == 'mailing') {
             require_once 'CRM/Mailing/BAO/Mailing.php';
@@ -1791,7 +1791,7 @@ AND civicrm_contact.is_opt_out =0";
             return;
         }
 
-        $mailingIDs =& CRM_Mailing_BAO_Mailing::mailingACLIDs( );
+        $mailingIDs = CRM_Mailing_BAO_Mailing::mailingACLIDs( );
         if ( ! in_array( $id,
                          $mailingIDs ) ) {
             CRM_Core_Error::fatal( ts( 'You do not have permission to access this mailing report' ) );
@@ -1802,7 +1802,7 @@ AND civicrm_contact.is_opt_out =0";
     static function mailingACL( $alias = null ) {
         $mailingACL = " ( 0 ) ";
 
-        $mailingIDs =& self::mailingACLIDs( );
+        $mailingIDs = self::mailingACLIDs( );
         if ( ! empty( $mailingIDs ) ) {
             $mailingIDs = implode( ',', $mailingIDs );
             $tableName  = !$alias ? self::getTableName( ) : $alias;

@@ -278,7 +278,7 @@ class CRM_Event_Form_ManageEvent_Location extends CRM_Event_Form_ManageEvent
         $params['entity_id']    = $this->_id;
         
         require_once 'CRM/Core/BAO/LocationType.php';
-        $defaultLocationType =& CRM_Core_BAO_LocationType::getDefault();
+        $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
         foreach ( array( 'address', 'phone', 'email' ) as $block )  {
             if ( !CRM_Utils_Array::value( $block, $params ) || !is_array( $params[$block] ) )  continue;
             foreach ( $params[$block] as $count => &$values ) {

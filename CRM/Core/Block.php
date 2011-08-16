@@ -282,7 +282,7 @@ class CRM_Core_Block {
 
         case self::ADD:
             require_once "CRM/Core/BAO/LocationType.php";
-            $defaultLocation =& CRM_Core_BAO_LocationType::getDefault();
+            $defaultLocation = CRM_Core_BAO_LocationType::getDefault();
             $defaultPrimaryLocationId = $defaultLocation->id;
             
             $values = array( 'postURL' => CRM_Utils_System::url( 'civicrm/contact/add', 'reset=1&ct=Individual' ), 
@@ -301,7 +301,7 @@ class CRM_Core_Block {
 
         case self::RECENTLY_VIEWED:
             require_once 'CRM/Utils/Recent.php';
-            $recent  =& CRM_Utils_Recent::get( );
+            $recent  = CRM_Utils_Recent::get( );
             self::setProperty( self::RECENTLY_VIEWED, 'templateValues', array( 'recentlyViewed' => $recent ) );
             break;
 
@@ -475,7 +475,7 @@ class CRM_Core_Block {
         $config = CRM_Core_Config::singleton( );
 
         $path = 'navigation';
-        $values =& CRM_Core_Menu::getNavigation( );
+        $values = CRM_Core_Menu::getNavigation( );
         if ( $values ) {
             self::setProperty( self::MENU, 'templateValues', array( 'menu' => $values ) );
         }

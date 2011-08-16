@@ -344,9 +344,9 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
         $dataPatterns     = $this->get( 'dataPatterns' );
         $hasLocationTypes = $this->get( 'fieldTypes' );
                 
-        $this->_location_types  =& CRM_Core_PseudoConstant::locationType();
+        $this->_location_types  = CRM_Core_PseudoConstant::locationType();
 
-        $defaultLocationType =& CRM_Core_BAO_LocationType::getDefault();
+        $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
 
         /* FIXME: dirty hack to make the default option show up first.  This
          * avoids a mozilla browser bug with defaults on dynamically constructed
@@ -420,7 +420,7 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
                 
                 $relatedFields = array();
                 require_once 'CRM/Contact/BAO/Contact.php'; 
-                $relatedFields =& CRM_Contact_BAO_Contact::importableFields( $cType );
+                $relatedFields = CRM_Contact_BAO_Contact::importableFields( $cType );
                 unset($relatedFields['']);
                 $values = array();
                 foreach ($relatedFields as $name => $field ) {
@@ -860,7 +860,7 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
         //Updating Mapping Records
         if ( CRM_Utils_Array::value('updateMapping', $params)) {
             
-            $locationTypes =& CRM_Core_PseudoConstant::locationType();            
+            $locationTypes = CRM_Core_PseudoConstant::locationType();            
 
             $mappingFields = new CRM_Core_DAO_MappingField();
             $mappingFields->mapping_id = $params['mappingId'];
@@ -931,7 +931,7 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
             
             $saveMapping = CRM_Core_BAO_Mapping::add( $mappingParams );
             
-            $locationTypes =& CRM_Core_PseudoConstant::locationType();
+            $locationTypes = CRM_Core_PseudoConstant::locationType();
             $contactType = $this->get('contactType');
             switch ($contactType) {
             case CRM_Import_Parser::CONTACT_INDIVIDUAL :

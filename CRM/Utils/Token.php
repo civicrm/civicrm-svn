@@ -311,7 +311,7 @@ class CRM_Utils_Token
             if ($cfID = CRM_Core_BAO_CustomField::getKeyID($token)) {
                 // only generate cv if we need it
                 if ( $cv === null ) {
-                    $cv =& CRM_Core_BAO_CustomValue::getContactValues($org['contact_id']);
+                    $cv = CRM_Core_BAO_CustomValue::getContactValues($org['contact_id']);
                 }
                 foreach ($cv as $cvFieldID => $value ) {
                     if ($cvFieldID == $cfID) {

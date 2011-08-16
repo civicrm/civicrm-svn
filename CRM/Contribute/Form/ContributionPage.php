@@ -146,7 +146,7 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
     {
         $this->applyFilter('__ALL__', 'trim');
 
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $this->_cancelURL = CRM_Utils_Array::value( 'cancelURL', $_POST );
         
         if ( !$this->_cancelURL ) {

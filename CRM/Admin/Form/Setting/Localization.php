@@ -56,10 +56,10 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
     {
         $config = CRM_Core_Config::singleton();
        
-        $i18n   =& CRM_Core_I18n::singleton();
+        $i18n   = CRM_Core_I18n::singleton();
         CRM_Utils_System::setTitle(ts('Settings - Localization'));
 
-        $locales =& CRM_Core_I18n::languages();
+        $locales = CRM_Core_I18n::languages();
 
         require_once 'CRM/Core/DAO/Domain.php';
         $domain = new CRM_Core_DAO_Domain();

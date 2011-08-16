@@ -186,7 +186,7 @@ class CRM_Member_Form_Search extends CRM_Core_Form
         } 
 
         require_once 'CRM/Contact/BAO/Query.php';
-        $this->_queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues ); 
+        $this->_queryParams = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues ); 
         $selector = new CRM_Member_Selector_Search( $this->_queryParams,
                                                     $this->_action,
                                                     null,
@@ -316,7 +316,7 @@ class CRM_Member_Form_Search extends CRM_Core_Form
         CRM_Core_BAO_CustomValue::fixFieldValueOfTypeMemo( $this->_formValues );
 
         require_once 'CRM/Contact/BAO/Query.php';
-        $this->_queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues ); 
+        $this->_queryParams = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues ); 
 
         $this->set( 'formValues' , $this->_formValues  );
         $this->set( 'queryParams', $this->_queryParams );
@@ -339,7 +339,7 @@ class CRM_Member_Form_Search extends CRM_Core_Form
         } 
 
         require_once 'CRM/Contact/BAO/Query.php';
-        $this->_queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
+        $this->_queryParams = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         
         require_once "CRM/Member/Selector/Search.php";
         $selector = new CRM_Member_Selector_Search( $this->_queryParams,

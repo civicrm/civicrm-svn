@@ -274,7 +274,7 @@ INNER JOIN civicrm_membership_payment mp ON m.id = mp.membership_id AND mp.contr
     function checkMD5( $ids, $input ) {
         $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ids['paymentProcessor'],
                                                                        $input['is_test'] ? 'test' : 'live' );
-        $paymentObject    =& CRM_Core_Payment::singleton( $input['is_test'] ? 'test' : 'live', $paymentProcessor );
+        $paymentObject    = CRM_Core_Payment::singleton( $input['is_test'] ? 'test' : 'live', $paymentProcessor );
 
         if ( ! $paymentObject->checkMD5 ( $input['MD5_Hash'], $input['trxn_id'], $input['amount'], true ) ) {
             CRM_Core_Error::debug_log_message( "MD5 Verification failed." );

@@ -66,7 +66,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
      */
     public static function &reply($job_id, $queue_id, $hash, $replyto = null) {
         /* First make sure there's a matching queue event */
-        $q =& CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
+        $q = CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
 
         $success = null;
 
@@ -145,7 +145,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
                 $ct = "{$parts[0]} boundary=\"$boundary\"";
             }
         } else {
-            $domain =& CRM_Core_BAO_Domain::getDomain( );
+            $domain = CRM_Core_BAO_Domain::getDomain( );
             
             $emails = CRM_Core_BAO_Email::getTableName();
             $eq = CRM_Mailing_Event_BAO_Queue::getTableName();
@@ -184,7 +184,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             
             $message->setTxtBody($bodyTxt);
             $message->setHTMLBody($bodyHTML);
-            $b =& CRM_Utils_Mail::setMimeParams( $message );
+            $b = CRM_Utils_Mail::setMimeParams( $message );
             $h =& $message->headers($headers);
         }
 
@@ -236,7 +236,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
         $message = new Mail_Mime("\n");
 
         require_once 'CRM/Core/BAO/Domain.php';        
-        $domain =& CRM_Core_BAO_Domain::getDomain( );
+        $domain = CRM_Core_BAO_Domain::getDomain( );
         list ($domainEmailName, $_) = CRM_Core_BAO_Domain::getNameAndEmail();
 
         require_once 'CRM/Core/BAO/MailSettings.php';
@@ -277,7 +277,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             $message->setTxtBody($text);
         }
         
-        $b =& CRM_Utils_Mail::setMimeParams( $message );
+        $b = CRM_Utils_Mail::setMimeParams( $message );
         $h =& $message->headers($headers);
         
         $mailer =& $config->getMailer();

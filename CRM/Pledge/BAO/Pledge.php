@@ -108,7 +108,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
 
         // set currency for CRM-1496
         if ( ! isset( $pledge->currency ) ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $pledge->currency = $config->defaultCurrency;
         }
 
@@ -554,7 +554,7 @@ WHERE  $whereCond
         
         //handle domain token values
         require_once 'CRM/Core/BAO/Domain.php';
-        $domain =& CRM_Core_BAO_Domain::getDomain( );
+        $domain = CRM_Core_BAO_Domain::getDomain( );
         $tokens = array ( 'domain'  => array( 'name', 'phone', 'address', 'email'),
                           'contact' => CRM_Core_SelectValues::contactTokens());
         require_once 'CRM/Utils/Token.php';
@@ -579,7 +579,7 @@ WHERE  $whereCond
         //handle custom data.
         if ( CRM_Utils_Array::value( 'hidden_custom', $params ) ) {
             require_once 'CRM/Core/BAO/CustomGroup.php';
-            $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Pledge', CRM_Core_DAO::$_nullObject,$params['id'] );
+            $groupTree = CRM_Core_BAO_CustomGroup::getTree( 'Pledge', CRM_Core_DAO::$_nullObject,$params['id'] );
             $pledgeParams = array( array( 'pledge_id', '=', $params['id'], 0, 0 ) );   
             $customGroup = array(); 
             // retrieve custom data

@@ -169,7 +169,7 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form
         );
 
         // let the template know who updated whom when
-        $dao =& CRM_Core_DAO::executeQuery($this->whoWhomWhenSql(), $params);
+        $dao = CRM_Core_DAO::executeQuery($this->whoWhomWhenSql(), $params);
         $dao->fetch();
         $this->assign('who_url',   CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$dao->who_id}"));
         $this->assign('whom_url',  CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$dao->whom_id}"));

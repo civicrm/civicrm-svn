@@ -76,7 +76,7 @@ class CRM_UF_Form_Group extends CRM_Core_Form
             $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false, 0 );
         }
         $this-> assign('gid',$this->_id);
-        $this->_group    =& CRM_Core_PseudoConstant::group( ); 
+        $this->_group    = CRM_Core_PseudoConstant::group( ); 
         
         // setting title for html page
         if ( $this->_action & CRM_Core_Action::UPDATE ) {

@@ -584,7 +584,7 @@ function _civicrm_api3_add_formatted_param(&$values, &$params)
     
     //first add core contact values since for other Civi modules they are not added
     require_once 'CRM/Contact/BAO/Contact.php';
-    $contactFields =& CRM_Contact_DAO_Contact::fields( );
+    $contactFields = CRM_Contact_DAO_Contact::fields( );
     _civicrm_api3_store_values( $contactFields, $values, $params );
     
     if (isset($values['contact_type'])) {
@@ -815,7 +815,7 @@ function _civicrm_api3_add_formatted_location_blocks( &$values, &$params )
     
     if ( !array_key_exists( 'Address', $fields ) ) {
         require_once 'CRM/Core/DAO/Address.php';
-        $fields['Address'] =& CRM_Core_DAO_Address::fields( );
+        $fields['Address'] = CRM_Core_DAO_Address::fields( );
     }
     _civicrm_api3_store_values( $fields['Address'], $values, $params['address'][$addressCnt] );
     
@@ -1071,7 +1071,7 @@ function _civicrm_api3_check_required_fields( $params, $daoName, $return = FALSE
  */
 function _civicrm_api3_participant_formatted_param( $params, &$values, $create=false) 
 {
-    $fields =& CRM_Event_DAO_Participant::fields( );
+    $fields = CRM_Event_DAO_Participant::fields( );
     _civicrm_api3_store_values( $fields, $params, $values );
     
     require_once 'CRM/Core/OptionGroup.php';
@@ -1223,7 +1223,7 @@ function _civicrm_api3_contribute_formatted_param( $params, &$values, $create=fa
 {
     // copy all the contribution fields as is
    
-    $fields =& CRM_Contribute_DAO_Contribution::fields( );
+    $fields = CRM_Contribute_DAO_Contribution::fields( );
       
     _civicrm_api3_store_values( $fields, $params, $values );
 
@@ -1572,7 +1572,7 @@ function civicrm_api3_check_contact_dedupe( $params ) {
         $cIndieFields = $cTempIndieFields;
 
         require_once "CRM/Core/BAO/LocationType.php";
-        $defaultLocation =& CRM_Core_BAO_LocationType::getDefault();
+        $defaultLocation = CRM_Core_BAO_LocationType::getDefault();
 
         //set the value to default location id else set to 1
         if ( !$defaultLocationId = (int)$defaultLocation->id ) $defaultLocationId = 1;

@@ -124,7 +124,7 @@ function civicrm_api3_mailing_event_reply($params)
         $bodyHTML  = CRM_Utils_Array::value('bodyHTML', $params);
         $fullEmail = CRM_Utils_Array::value('fullEmail', $params);
 
-        $mailing =& CRM_Mailing_Event_BAO_Reply::reply($job, $queue, $hash, $replyto);
+        $mailing = CRM_Mailing_Event_BAO_Reply::reply($job, $queue, $hash, $replyto);
 
         if (empty($mailing)) {
             return civicrm_api3_create_error( 'Queue event could not be found'  );

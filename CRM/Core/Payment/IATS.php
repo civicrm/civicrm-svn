@@ -233,7 +233,7 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
     }
     
     function &error( $error = null ) {
-        $e =& CRM_Core_Error::singleton( );
+        $e = CRM_Core_Error::singleton( );
         if ( is_object($error) ) {
             $e->push( $error->getResponseCode( ),
                       0, null,

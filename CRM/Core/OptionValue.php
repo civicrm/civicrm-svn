@@ -358,7 +358,7 @@ class CRM_Core_OptionValue
     static function select( &$query ) 
     {
         if ( ! empty( $query->_params ) || ! empty( $query->_returnProperties ) ) {
-            $field =& self::getFields();
+            $field = self::getFields();
             foreach ( $field as $name => $title ) {
                 list( $tableName, $fieldName ) = explode( '.', $title['where'] ); 
                 if ( CRM_Utils_Array::value( $name, $query->_returnProperties ) ) {
@@ -440,7 +440,7 @@ FROM
         
         $query = $select . $from . $where . $order;
         
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         
         while( $dao->fetch( ) ) {
             $values[$dao->id] = array( 'id'          => $dao->id, 

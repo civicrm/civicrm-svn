@@ -99,7 +99,7 @@ class CRM_Case_Page_AJAX
             }
         }
         
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
 
         require_once "CRM/Activity/BAO/Activity.php";
         require_once "CRM/Core/OptionGroup.php";
@@ -164,7 +164,7 @@ class CRM_Case_Page_AJAX
         require_once 'CRM/Case/BAO/Case.php';
         $result = CRM_Case_BAO_Case::addCaseToContact( $params );
 
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
 
         require_once "CRM/Activity/BAO/Activity.php";
         require_once "CRM/Core/OptionGroup.php";

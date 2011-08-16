@@ -214,7 +214,7 @@ WHERE     ct.id = cp.contribution_type_id AND
     public static function deleteSet( $id )
     {
         // remove from all inactive forms
-        $usedBy =& self::getUsedBy( $id );
+        $usedBy = self::getUsedBy( $id );
         if ( isset( $usedBy['civicrm_event'] ) ) {
             require_once 'CRM/Event/DAO/Event.php';
             foreach ( $usedBy['civicrm_event'] as $eventId => $unused ) {
@@ -373,7 +373,7 @@ WHERE     ct.id = cp.contribution_type_id AND
             $query .= " AND civicrm_price_set.extends LIKE '%$componentId%' ";
         }
         
-        $dao =& CRM_Core_DAO::executeQuery( $query );
+        $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch() ) {
             $priceSets[$dao->id] = $dao->title;
         }       
@@ -438,7 +438,7 @@ AND ( expire_on IS NULL OR expire_on >= {$currentTime} )
 
         $sql = $select . $from . $where . $dateSelect . $orderBy;
 
-        $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
 
         $visibility = CRM_Core_PseudoConstant::visibility( 'name' );
         
@@ -466,7 +466,7 @@ AND ( expire_on IS NULL OR expire_on >= {$currentTime} )
 SELECT help_pre, help_post
 FROM   civicrm_price_set
 WHERE  id = %1";
-        $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
         if ( $dao->fetch( ) ) {
             $setTree[$setID]['help_pre'] = $dao->help_pre;
             $setTree[$setID]['help_post'] = $dao->help_post;

@@ -162,7 +162,7 @@ class CRM_Contact_Form_Edit_CommunicationPreferences
 
         // CRM-7119: set preferred_language to default if unset
         if (!isset($defaults['preferred_language']) or empty($defaults['preferred_language'])) {
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $defaults['preferred_language'] = $config->lcMessages;
         }
 

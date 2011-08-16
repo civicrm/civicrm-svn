@@ -593,7 +593,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
         $result = self::deformat( $response );
 
         if ( curl_errno( $ch ) ) {
-            $e =& CRM_Core_Error::singleton( );
+            $e = CRM_Core_Error::singleton( );
             $e->push( curl_errno( $ch ),
                       0, null,
                       curl_error( $ch ) );
@@ -604,7 +604,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
 
         if ( strtolower( $result['ack'] ) != 'success' &&
              strtolower( $result['ack'] ) != 'successwithwarning' ) {
-            $e =& CRM_Core_Error::singleton( );
+            $e = CRM_Core_Error::singleton( );
             $e->push( $result['l_errorcode0'],
                       0, null,
                       "{$result['l_shortmessage0']} {$result['l_longmessage0']}" );

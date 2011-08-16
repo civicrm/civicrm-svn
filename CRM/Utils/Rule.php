@@ -312,7 +312,7 @@ class CRM_Utils_Rule
         // first remove all white space
         $value = str_replace( array( ' ', "\t", "\n" ), '', $value );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( $config->monetaryThousandSeparator ) {
             $mon_thousands_sep = $config->monetaryThousandSeparator;
@@ -509,7 +509,7 @@ class CRM_Utils_Rule
     {
         static $currencyCodes = null;
         if (!$currencyCodes) {
-            $currencyCodes =& CRM_Core_PseudoConstant::currencyCode();
+            $currencyCodes = CRM_Core_PseudoConstant::currencyCode();
         }
         if (in_array($value, $currencyCodes)) {
             return true;
@@ -535,7 +535,7 @@ class CRM_Utils_Rule
     {
         if ( $value ) {            
             require_once 'CRM/Core/BAO/CustomOption.php';
-            $selectOption =& CRM_Core_BAO_CustomOption::valuesByID( $options['fieldID'], $options['optionGroupID'] );
+            $selectOption = CRM_Core_BAO_CustomOption::valuesByID( $options['fieldID'], $options['optionGroupID'] );
             
             if ( !in_array( $value, $selectOption ) ) {
                 return false;

@@ -81,7 +81,7 @@ LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
     WHERE  participant.status_id IN {$statusIds}
  ORDER BY  participant.register_date, participant.id 
 ";
-        $dao =& CRM_Core_DAO::executeQuery( $query );
+        $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
             
             $participantDetails[$dao->id] = array( 'id'               => $dao->id,

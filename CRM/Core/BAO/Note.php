@@ -118,7 +118,7 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
              * is to hide privacy notes unless the note creator is the current user.
              */
             if ( $noteValues['privacy'] ) {
-                $session =& CRM_Core_Session::singleton( );
+                $session = CRM_Core_Session::singleton( );
                 $userID  = $session->get( 'userID' );
                 return ( $noteValues['contact_id'] != $userID );
             } else {
@@ -376,7 +376,7 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
 ORDER BY  modified_date desc";
         $params = array( 1 => array( $id, 'Integer' ) );
         
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         
         while ( $dao->fetch() ) {
             $viewNote[$dao->id] = $dao->note;

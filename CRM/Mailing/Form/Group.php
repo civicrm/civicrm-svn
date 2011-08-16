@@ -183,9 +183,9 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         CRM_Campaign_BAO_Campaign::addCampaign( $this, $campaignId );
         
         //get the mailing groups.
-        $groups =& CRM_Core_PseudoConstant::group('Mailing');
+        $groups = CRM_Core_PseudoConstant::group('Mailing');
 
-        $mailings =& CRM_Mailing_PseudoConstant::completed();
+        $mailings = CRM_Mailing_PseudoConstant::completed();
         if (! $mailings) {
             $mailings = array();
         }

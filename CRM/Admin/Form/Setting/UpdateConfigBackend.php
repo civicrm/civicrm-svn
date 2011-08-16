@@ -79,7 +79,7 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
         if ( ! $this->_defaults ) {
             parent::setDefaultValues( );
 
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             list( $this->_defaults['newBaseURL'],
                   $this->_defaults['newBaseDir'],
                   $this->_defaults['newSiteName'] ) = CRM_Core_BAO_Setting::getBestGuessSettings( );

@@ -132,7 +132,7 @@ function civicrm_engage_civicrm_config( &$config ) {
 
     // fix template path
     $templateDir = $engageRoot . 'templates' . DIRECTORY_SEPARATOR;
-    $template =& CRM_Core_Smarty::singleton( );
+    $template = CRM_Core_Smarty::singleton( );
     if ( is_array( $template->template_dir ) ) {
         $template->template_dir = array_merge( array( $templateDir ),
                                                $template->template_dir );

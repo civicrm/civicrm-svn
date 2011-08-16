@@ -97,7 +97,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag
 
         $sql .= " ORDER BY parent_id,name";
 
-        $dao =& CRM_Core_DAO::executeQuery( $sql, CRM_Core_DAO::$_nullArray, true, null, false, false );
+        $dao = CRM_Core_DAO::executeQuery( $sql, CRM_Core_DAO::$_nullArray, true, null, false, false );
 
         $orphan = array();
         while ( $dao->fetch( ) ) {
@@ -331,7 +331,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag
     
         // save creator id and time
         if ( !$tag->id ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $tag->created_id   = $session->get('userID');
             $tag->created_date = date('YmdHis'); 
         }

@@ -550,7 +550,7 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
 
         // for CRM-3157 purposes
         require_once 'CRM/Core/I18n.php';
-        $i18n =& CRM_Core_I18n::singleton();
+        $i18n = CRM_Core_I18n::singleton();
         
         while ( 1 ) {
             $limitQuery = "{$queryString} LIMIT {$offset}, {$rowCount}";

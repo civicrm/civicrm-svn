@@ -161,7 +161,7 @@ class CRM_Contribute_Import_Field {
         case 'contribution_type':
             static $contributionTypes = null;
             if (!$contributionTypes) {
-                $contributionTypes =& CRM_Contribute_PseudoConstant::contributionType();
+                $contributionTypes = CRM_Contribute_PseudoConstant::contributionType();
             }
             if (in_array($this->_value, $contributionTypes)) {
                 return true;
@@ -172,7 +172,7 @@ class CRM_Contribute_Import_Field {
         case 'payment_instrument':
             static $paymentInstruments = null;
             if (!$paymentInstruments) {
-                $paymentInstruments =& CRM_Contribute_PseudoConstant::paymentInstrument();
+                $paymentInstruments = CRM_Contribute_PseudoConstant::paymentInstrument();
             }
             if (in_array($this->_value, $paymentInstruments)) {
                 return true;
@@ -189,7 +189,7 @@ class CRM_Contribute_Import_Field {
         if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($this->_name)) {
             static $customFields = null;
             if (!$customFields) {
-                $customFields =& CRM_Core_BAO_CustomField::getFields('Contribution');
+                $customFields = CRM_Core_BAO_CustomField::getFields('Contribution');
             }
             if (!array_key_exists($customFieldID, $customFields)) {
                 return false;

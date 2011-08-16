@@ -414,7 +414,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
 
             // check if we can retrieve from database cache
             require_once 'CRM/Core/BAO/Cache.php'; 
-            $fields =& CRM_Core_BAO_Cache::getItem( 'contact fields', "custom importableFields $cacheKey" );
+            $fields = CRM_Core_BAO_Cache::getItem( 'contact fields', "custom importableFields $cacheKey" );
 
             if ( $fields === null ) {
                 $cfTable = self::getTableName();
@@ -496,7 +496,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                         ORDER BY $cgTable.weight, $cgTable.title,
                                  $cfTable.weight, $cfTable.label";
          
-                $dao =& CRM_Core_DAO::executeQuery( $query );
+                $dao = CRM_Core_DAO::executeQuery( $query );
 
                 $fields = array( );
                 while ( ( $dao->fetch( ) ) != null) {
@@ -1483,7 +1483,7 @@ SELECT id
             }
 
             require_once 'CRM/Core/DAO/File.php';
-            $config = & CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
 
             $fName    = $value['name']; 
             $mimeType = $value['type']; 
@@ -1870,7 +1870,7 @@ SELECT label, value
  WHERE option_group_id = $optionGroupID
 ";
 
-            $dao =& CRM_Core_DAO::executeQuery( $query );
+            $dao = CRM_Core_DAO::executeQuery( $query );
             while ( $dao->fetch( ) ) {
                 if ( $field['data_type'] == 'Int' || $field['data_type'] == 'Float' ) {
                     $num = round($dao->value, 2);

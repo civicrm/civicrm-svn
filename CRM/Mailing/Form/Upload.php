@@ -479,7 +479,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
         }
         require_once 'CRM/Core/BAO/Domain.php';
 
-        $domain =& CRM_Core_BAO_Domain::getDomain();
+        $domain = CRM_Core_BAO_Domain::getDomain();
 
         require_once 'CRM/Mailing/BAO/Mailing.php';
         $mailing = new CRM_Mailing_BAO_Mailing();

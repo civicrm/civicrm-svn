@@ -45,7 +45,7 @@ class JFormFieldCivicustomsearch extends JFormField {
         // Initiate CiviCRM
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 		require_once 'CRM/Core/Config.php';
-		$config =& CRM_Core_Config::singleton( );
+		$config = CRM_Core_Config::singleton( );
         $query =  "
 SELECT value, description
 FROM civicrm_option_value

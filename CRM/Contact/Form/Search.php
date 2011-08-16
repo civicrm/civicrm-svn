@@ -521,8 +521,8 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         /**
          * set the varios class variables
          */
-        $this->_group           =& CRM_Core_PseudoConstant::group( );
-        $this->_groupIterator   =& CRM_Core_PseudoConstant::groupIterator( );
+        $this->_group           = CRM_Core_PseudoConstant::group( );
+        $this->_groupIterator   = CRM_Core_PseudoConstant::groupIterator( );
         $this->_tag             =  CRM_Core_BAO_Tag::getTags( );
         $this->_done            =  false;
 
@@ -600,7 +600,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         if ( ! empty( $_POST ) && !$this->controller->isModal( ) ) {
             $this->_formValues = $this->controller->exportValues($this->_name); 
             $this->normalizeFormValues( );
-            $this->_params =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
+            $this->_params = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
             $this->_returnProperties =& $this->returnProperties( );
 
             // also get the uf group id directly from the post value
@@ -617,7 +617,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
             $this->set( 'operator', $this->_operator );
         } else {
             $this->_formValues = $this->get( 'formValues' );
-            $this->_params =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
+            $this->_params = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
             $this->_returnProperties =& $this->returnProperties( );
             if ( !empty( $this->_ufGroupID ) ) {
                 $this->set( 'id', $this->_ufGroupID );  
@@ -639,9 +639,9 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
 
                 //fix for CRM-1505
                 if ( CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch', $this->_ssID, 'mapping_id' ) ) {
-                    $this->_params =& CRM_Contact_BAO_SavedSearch::getSearchParams( $this->_ssID );
+                    $this->_params = CRM_Contact_BAO_SavedSearch::getSearchParams( $this->_ssID );
                 } else {
-                    $this->_params =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
+                    $this->_params = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
                 }
                 $this->_returnProperties =& $this->returnProperties( );
             } else {

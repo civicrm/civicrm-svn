@@ -37,7 +37,7 @@ function civicrm_setup( ) {
         'components'        . DIRECTORY_SEPARATOR .
         'com_civicrm';
 
-    $jConfig =& JFactory::getConfig( );
+    $jConfig = JFactory::getConfig( );
     set_time_limit(4000);
 
     // Path to the archive
@@ -67,7 +67,7 @@ function civicrm_setup( ) {
         JFolder::create( $compileDir, 0777 );
     }
 
-    $db =& JFactory::getDBO();
+    $db = JFactory::getDBO();
     $db->setQuery(' SELECT count( * )
 FROM information_schema.tables
 WHERE table_name LIKE "civicrm_domain"
@@ -139,7 +139,7 @@ function civicrm_source( $fileName, $lineMode = false ) {
 
     require_once 'DB.php';
 
-    $db  =& DB::connect( $dsn );
+    $db  = DB::connect( $dsn );
     if ( PEAR::isError( $db ) ) {
         die( "Cannot open $dsn: " . $db->getMessage( ) );
     }

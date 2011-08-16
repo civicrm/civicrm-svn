@@ -285,7 +285,7 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
         // lets trim all the whitespace
         $this->applyFilter('__ALL__', 'trim');
         
-        $attributes =& CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_CustomField' );
+        $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_CustomField' );
         
         // label
         $this->add( 'text',
@@ -372,7 +372,7 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
                 $_showHide->addShow($showBlocks);
             }
             
-            $optionAttributes =& CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue' );
+            $optionAttributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue' );
             // label
             $this->add('text','option_label['.$i.']', ts('Label'),
                        $optionAttributes['label']);
@@ -895,7 +895,7 @@ SELECT id
   FROM civicrm_state_province 
  WHERE LOWER(name) = '$fieldStateProvince' 
     OR abbreviation = '$fieldStateProvince'";
-                $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+                $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
                 if ( $dao->fetch() ) {
                     $params['default_value'] = $dao->id;
                 }
@@ -908,7 +908,7 @@ SELECT id
   FROM civicrm_country
  WHERE LOWER(name) = '$fieldCountry' 
     OR iso_code = '$fieldCountry'";
-                $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+                $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
                 if ( $dao->fetch() ) {
                     $params['default_value'] = $dao->id;
                 }

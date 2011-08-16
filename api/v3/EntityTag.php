@@ -62,7 +62,7 @@ function civicrm_api3_entity_tag_get( $params ) {
     }
 
     require_once 'CRM/Core/BAO/EntityTag.php';
-    $values =& CRM_Core_BAO_EntityTag::getTag( $entityID, $entityTable );
+    $values = CRM_Core_BAO_EntityTag::getTag( $entityID, $entityTable );
     $result = array( );
     foreach ( $values as $v ) {
         $result[] = array( 'tag_id' => $v );
@@ -95,7 +95,7 @@ function civicrm_api3_entity_tag_display( $params ) {
         }
 
         require_once 'CRM/Core/BAO/EntityTag.php';
-        $values =& CRM_Core_BAO_EntityTag::getTag( $entityID, $entityTable );
+        $values = CRM_Core_BAO_EntityTag::getTag( $entityID, $entityTable );
         $result = array( );
         $tags   = CRM_Core_PseudoConstant::tag( );
         foreach ( $values as $v ) {
@@ -121,7 +121,7 @@ function civicrm_api3_tag_entities_get( $params )
     require_once 'CRM/Core/BAO/EntityTag.php';
     $tag      = new CRM_Core_BAO_Tag();
     $tag->id  = CRM_Utils_Array::value( 'tag_id', $params ) ? $params['tag_id'] : null;
-    $entities =& CRM_Core_BAO_EntityTag::getEntitiesByTag($tag);    
+    $entities = CRM_Core_BAO_EntityTag::getEntitiesByTag($tag);    
     return $entities;   
 
 }

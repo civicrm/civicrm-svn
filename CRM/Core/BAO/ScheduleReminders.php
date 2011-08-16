@@ -355,7 +355,7 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
             
             require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
-            $smarty =& CRM_Core_Smarty::singleton( );
+            $smarty = CRM_Core_Smarty::singleton( );
             foreach( array( 'text', 'html') as $elem) {
                 $$elem = $smarty->fetch("string:{$$elem}");
             }

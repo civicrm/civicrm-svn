@@ -187,7 +187,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
 
             // first, attempt to get configuration object from cache
             require_once 'CRM/Utils/Cache.php';
-            $cache =& CRM_Utils_Cache::singleton( );
+            $cache = CRM_Utils_Cache::singleton( );
             self::$_singleton = $cache->get( 'CRM_Core_Config' );
 
 
@@ -342,7 +342,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         $this->_initDAO( );
 
         // also initialize the logger
-        self::$_log =& Log::singleton( 'display' );
+        self::$_log = Log::singleton( 'display' );
 
         // initialize component registry early to avoid "race" 
         // between CRM_Core_Config and CRM_Core_Component (they
@@ -377,7 +377,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
     static public function &getLog() 
     {
         if ( ! isset( self::$_log ) ) {
-            self::$_log =& Log::singleton( 'display' );
+            self::$_log = Log::singleton( 'display' );
         }
 
         return self::$_log;
@@ -482,7 +482,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
     {
         if ( ! isset( self::$_mail ) ) {
             require_once "CRM/Core/BAO/Preferences.php";
-            $mailingInfo =& CRM_Core_BAO_Preferences::mailingPreferences();;
+            $mailingInfo = CRM_Core_BAO_Preferences::mailingPreferences();;
                         
             if ( defined( 'CIVICRM_MAILER_SPOOL' ) &&
                  CIVICRM_MAILER_SPOOL ) {
@@ -513,7 +513,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                 // CRM-7510
                 $params['timeout'] = 30;
 
-                self::$_mail =& Mail::factory( 'smtp', $params );
+                self::$_mail = Mail::factory( 'smtp', $params );
             } elseif ($mailingInfo['outBound_option'] == 1) {
                 if ( $mailingInfo['sendmail_path'] == '' ||
                      ! $mailingInfo['sendmail_path'] ) {
@@ -522,10 +522,10 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                 $params['sendmail_path'] = $mailingInfo['sendmail_path'];
                 $params['sendmail_args'] = $mailingInfo['sendmail_args'];
                 
-                self::$_mail =& Mail::factory( 'sendmail', $params );
+                self::$_mail = Mail::factory( 'sendmail', $params );
             } elseif ($mailingInfo['outBound_option'] == 3) {
                 $params = array( );
-                self::$_mail =& Mail::factory( 'mail', $params );
+                self::$_mail = Mail::factory( 'mail', $params );
             } else {
                 CRM_Core_Session::setStatus( ts( 'There is no valid SMTP server Setting Or SendMail path setting. Click <a href=\'%1\'>Administer CiviCRM >> Global Settings</a> to set the OutBound Email.', array( 1 => CRM_Utils_System::url('civicrm/admin/setting', 'reset=1'))));
  
@@ -653,7 +653,7 @@ OR       TABLE_NAME LIKE 'civicrm_task_action_temp%' )
         if ( $path && $path == 'civicrm/upgrade' ) {
             return true;
         }
-        $config =& self::singleton( );
+        $config = self::singleton( );
         if ( CRM_Utils_Array::value( $config->userFrameworkURLVar, $_GET ) == 'civicrm/upgrade' ) {
             return true;
         }

@@ -57,7 +57,7 @@ class CRM_Utils_System_Joomla {
         $template = CRM_Core_Smarty::singleton( );
         $template->assign( 'pageTitle', $pageTitle );
 
-		$document=& JFactory::getDocument();
+		$document= JFactory::getDocument();
 		$document->setTitle($title);
 
         return;
@@ -119,7 +119,7 @@ class CRM_Utils_System_Joomla {
      * @static
      */
     static function addHTMLHead( $string = null, $includeAll = false ) {
-        $document =& JFactory::getDocument( );
+        $document = JFactory::getDocument( );
 
         if ( $string ) {
             $document->addCustomTag( $string );
@@ -359,7 +359,7 @@ class CRM_Utils_System_Joomla {
     static function getUFLocale()
     {
         if ( defined('_JEXEC') ) {
-            $conf	=& JFactory::getConfig();
+            $conf	= JFactory::getConfig();
             $locale	= $conf->getValue('config.language');
             return str_replace('-', '_', $locale);
         }

@@ -139,7 +139,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         
         $participantBAO->save();
         
-        $session = & CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         
         // reset the group contact cache for this group
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
@@ -207,7 +207,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             $status = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant', $params['id'], 'status_id' );
         }
         
-        $participant =& self::add($params);
+        $participant = self::add($params);
             
         if ( is_a( $participant, 'CRM_Core_Error') ) {
             $transaction->rollback( );
@@ -226,7 +226,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             self::updateParticipantStatus( $participant->id, $status, $participant->status_id );
         }
         
-        $session = & CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $id = $session->get('userID');
         if ( !$id ) {
             $id = $params['contact_id'];
@@ -574,7 +574,7 @@ INNER JOIN  civicrm_price_field field       ON ( value.price_field_id = field.id
      AND  participant.status_id IN {$statusIds}
 GROUP BY  participant.event_id
 ";
-        $dao =& CRM_Core_DAO::executeQuery( $query ); 
+        $dao = CRM_Core_DAO::executeQuery( $query ); 
         if ( $dao->fetch( ) ) { 
             
             //unlimited space.
@@ -751,7 +751,7 @@ FROM   civicrm_participant
    LEFT JOIN civicrm_contact ON (civicrm_participant.contact_id = civicrm_contact.id)
 WHERE  civicrm_participant.id = {$participantId}
 ";
-        $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         
         $details = array( );
         while ( $dao->fetch() ) {
@@ -911,7 +911,7 @@ WHERE  civicrm_participant.id = {$participantId}
         $clause = implode( ' AND ', $clause );
         
         $query = "SELECT id FROM civicrm_participant WHERE $clause";
-        $dao =& CRM_Core_DAO::executeQuery( $query, $input );
+        $dao = CRM_Core_DAO::executeQuery( $query, $input );
         $result = false;
         while ( $dao->fetch( ) ) {
             $duplicates[] = $dao->id;
@@ -1210,7 +1210,7 @@ UPDATE  civicrm_participant
         
         //get all participants data.
         $query = "SELECT * FROM civicrm_participant WHERE id IN {$participantIdClause}";
-        $dao   =& CRM_Core_DAO::executeQuery( $query );
+        $dao   = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
             $participantDetails[$dao->id] = array( 'id'               => $dao->id,
                                                    'role'             => $participantRoles[$dao->role_id],
@@ -1236,7 +1236,7 @@ UPDATE  civicrm_participant
             // making all tokens available to templates.
             require_once 'CRM/Core/BAO/Domain.php';
             require_once 'CRM/Core/SelectValues.php';
-            $domain =& CRM_Core_BAO_Domain::getDomain( );
+            $domain = CRM_Core_BAO_Domain::getDomain( );
             $tokens = array ( 'domain'  => array( 'name', 'phone', 'address', 'email'),
                               'contact' => CRM_Core_SelectValues::contactTokens( ));
             

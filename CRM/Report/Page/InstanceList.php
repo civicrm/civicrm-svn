@@ -112,7 +112,7 @@ class CRM_Report_Page_InstanceList extends CRM_Core_Page
         //option value ID of the Report
         $ovID = $title = null;
         $ovID = CRM_Utils_Request::retrieve( 'ovid', 'Positive', $this );
-        $rows =& self::info( $ovID, $title );
+        $rows = self::info( $ovID, $title );
         
         $this->assign('list', $rows);
         if ( $ovID ) {

@@ -560,7 +560,7 @@ SELECT label, value
  WHERE option_group_id = {$dao->optionGroupID}
 ";
                     
-                    $option =& CRM_Core_DAO::executeQuery( $query );
+                    $option = CRM_Core_DAO::executeQuery( $query );
                     while ( $option->fetch( ) ) {
                         $dataType = $dao->dataType;
                         if ( $dataType == 'Int' || $dataType == 'Float' ) {

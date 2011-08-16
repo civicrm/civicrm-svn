@@ -58,7 +58,7 @@ class CRM_Core_BAO_CMSUser
         $config = CRM_Core_Config::singleton( );
 
         CRM_Core_Error::ignoreException( );
-        $db_uf =& self::dbHandle( $config );
+        $db_uf = self::dbHandle( $config );
 
         if ( $config->userFramework == 'Drupal' ) { 
             $id   = 'uid'; 
@@ -179,7 +179,7 @@ class CRM_Core_BAO_CMSUser
         //if CMS is configured for not to allow creating new CMS user,
         //don't build the form,Fixed for CRM-4036
         if ( $isJoomla ) {
-            $userParams = &JComponentHelper::getParams('com_users');
+            $userParams = JComponentHelper::getParams('com_users');
             if ( !$userParams->get('allowUserRegistration') ) {
                 return false;
             }
@@ -550,7 +550,7 @@ SELECT username, email
      */
     static function createJoomlaUser( &$params, $mail ) 
     {
-        $userParams = &JComponentHelper::getParams( 'com_users' );
+        $userParams = JComponentHelper::getParams( 'com_users' );
         
         $defaultUserGroup = $userParams->get( 'new_usertype', 2 );
         
@@ -577,7 +577,7 @@ SELECT username, email
         }
         
         // Get an empty JUser instance.
-        $user =& JUser::getInstance( 0 );
+        $user = JUser::getInstance( 0 );
         $user->bind( $values );
         
         // Store the Joomla! user.

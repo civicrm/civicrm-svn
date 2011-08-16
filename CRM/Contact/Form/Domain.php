@@ -226,7 +226,7 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
         $domain = CRM_Core_BAO_Domain::edit($params, $this->_id);
 
         require_once 'CRM/Core/BAO/LocationType.php';
-        $defaultLocationType =& CRM_Core_BAO_LocationType::getDefault();
+        $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
         
         $location = array();
         $params['address'][1]['location_type_id'] = $defaultLocationType->id;

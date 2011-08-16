@@ -58,7 +58,7 @@ class CRM_Mailing_Info extends CRM_Core_Component_Info
 
 
     static function workflowEnabled( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $enableWorkflow = defined( 'CIVICRM_CIVIMAIL_WORKFLOW' ) ? (bool) CIVICRM_CIVIMAIL_WORKFLOW : false;
 

@@ -130,7 +130,7 @@ class CRM_Profile_Page_View extends CRM_Core_Page
             }
         } else {
             require_once 'CRM/Core/BAO/UFGroup.php';
-            $ufGroups =& CRM_Core_BAO_UFGroup::getModuleUFGroup('Profile'); 
+            $ufGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup('Profile'); 
 
             $profileGroups = array();
             foreach ($ufGroups as $groupid => $group) {
@@ -178,7 +178,7 @@ class CRM_Profile_Page_View extends CRM_Core_Page
     function getTemplateFileName() {
         if ( $this->_gid ) {
             $templateFile = "CRM/Profile/Page/{$this->_gid}/View.tpl";
-            $template     =& CRM_Core_Page::getTemplate( );
+            $template     = CRM_Core_Page::getTemplate( );
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;
             }

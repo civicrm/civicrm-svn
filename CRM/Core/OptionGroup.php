@@ -67,7 +67,7 @@ class CRM_Core_OptionGroup
             }
         }
         if ($localize) {
-            $i18n =& CRM_Core_I18n::singleton();
+            $i18n = CRM_Core_I18n::singleton();
             $i18n->localizeArray(self::$_values);
         }
         return self::$_values;
@@ -78,7 +78,7 @@ class CRM_Core_OptionGroup
                              $valueColumnName = 'label', $onlyActive = true ) 
     {
         $cacheKey = "CRM_OG_{$name}_{$flip}_{$grouping}_{$localize}_{$condition}_{$valueColumnName}_{$onlyActive}";
-        $cache =& CRM_Utils_Cache::singleton( );
+        $cache = CRM_Utils_Cache::singleton( );
         $var = $cache->get( $cacheKey );
         if ( $var ) {
             return $var;
@@ -106,9 +106,9 @@ WHERE  v.option_group_id = g.id
         $query .= "  ORDER BY v.weight";
 
         $p = array( 1 => array( $name, 'String' ) );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $p );
+        $dao = CRM_Core_DAO::executeQuery( $query, $p );
         
-        $var =& self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
+        $var = self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
         $cache->set( $cacheKey, $var );
 
         // call option value hook
@@ -122,7 +122,7 @@ WHERE  v.option_group_id = g.id
     {
         $cacheKey = "CRM_OG_ID_{$id}_{$flip}_{$grouping}_{$localize}_{$valueColumnName}";
 
-        $cache =& CRM_Utils_Cache::singleton( );
+        $cache = CRM_Utils_Cache::singleton( );
         $var = $cache->get( $cacheKey );
         if ( $var ) {
             return $var;
@@ -140,9 +140,9 @@ WHERE  v.option_group_id = g.id
   ORDER BY v.weight, v.label; 
 ";
         $p = array( 1 => array( $id, 'Integer' ) );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $p );
+        $dao = CRM_Core_DAO::executeQuery( $query, $p );
            
-        $var =& self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
+        $var = self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
         $cache->set( $cacheKey, $var );
 
         return $var;
@@ -239,7 +239,7 @@ WHERE  v.option_group_id = g.id
         }
         $p = array( 1 => array( $groupName , 'String' ),
                     2 => array( $value, 'Integer' ) );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $p );
+        $dao = CRM_Core_DAO::executeQuery( $query, $p );
         if ( $dao->fetch( ) ) {
             return $dao->label;
         }
@@ -269,7 +269,7 @@ WHERE  v.option_group_id = g.id
 
         $p = array( 1 => array( $groupName , 'String' ),
                     2 => array( $label     , $labelType ) );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $p );
+        $dao = CRM_Core_DAO::executeQuery( $query, $p );
         if ( $dao->fetch( ) ) {
             $dao->free( );
             return $dao->value;
@@ -424,7 +424,7 @@ WHERE  v.option_group_id = g.id
 
         $p = array( 1 => array( $groupName , 'String' ),
                     2 => array( $fieldValue, $fieldType ) );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $p );
+        $dao = CRM_Core_DAO::executeQuery( $query, $p );
         $row = array( );
 
         if ( $dao->fetch( ) ) {

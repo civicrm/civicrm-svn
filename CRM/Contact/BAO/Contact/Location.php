@@ -69,7 +69,7 @@ LEFT JOIN civicrm_email ON ( civicrm_contact.id = civicrm_email.contact_id {$pri
 WHERE     civicrm_contact.id = %1";
 
         $params = array( 1 => array( $id, 'Integer' ) );
-        $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
         if ( $dao->fetch( ) ) {
             return array( $dao->display_name, $dao->email, $dao->location_type_id, $dao->id );
         }
@@ -106,7 +106,7 @@ LEFT JOIN civicrm_phone ON ( civicrm_phone.contact_id = civicrm_contact.id )
       AND civicrm_contact.id = %1";
 
         $params = array( 1 => array( $id, 'Integer' ) );
-        $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
         if ( $dao->fetch( ) ) {
             return array( $dao->display_name, $dao->phone );
         }
@@ -160,7 +160,7 @@ AND civicrm_contact.id IN $idString ";
             $params[1] = array( $locationTypeID, 'Integer' );
         }
 
-        $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
 
         $locations = array( );
         $config = CRM_Core_Config::singleton( );

@@ -48,9 +48,9 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Core_Page {
   
         $count   = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, null, null, true);
         
-        $in      =& CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Added' );
-        $pending =& CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Pending' );
-        $out     =& CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Removed' );
+        $in      = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Added' );
+        $pending = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Pending' );
+        $out     = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Removed' );
 
         $this->assign       ( 'groupCount'  , $count );
         $this->assign_by_ref( 'groupIn'     , $in );

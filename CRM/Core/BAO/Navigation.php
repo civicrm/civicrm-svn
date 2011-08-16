@@ -196,7 +196,7 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation
 
         // check if we can retrieve from database cache
         require_once 'CRM/Core/BAO/Cache.php'; 
-        $navigations =& CRM_Core_BAO_Cache::getItem( 'navigation', $cacheKeyString );
+        $navigations = CRM_Core_BAO_Cache::getItem( 'navigation', $cacheKeyString );
 
         if ( ! $navigations ) {
             $domainID  = CRM_Core_Config::domainID( );
@@ -224,7 +224,7 @@ FROM civicrm_navigation WHERE domain_id = $domainID {$whereClause} ORDER BY pare
 
     // helper function for getNavigationList( )
     static function _getNavigationLabel( $list, &$navigations, $separator = '' ) {
-        $i18n =& CRM_Core_I18n::singleton();
+        $i18n = CRM_Core_I18n::singleton();
         foreach ( $list as $label => $val ) {
             if ( $label == 'navigation_id' ) continue;
             $translatedLabel = $i18n->crm_translate($label, array('context' => 'menu'));
@@ -428,7 +428,7 @@ ORDER BY parent_id, weight";
     function getMenuName( &$value, &$skipMenuItems ) {
         // we need to localise the menu labels (CRM-5456) and don’t
         // want to use ts() as it would throw the ts-extractor off
-        $i18n =& CRM_Core_I18n::singleton();
+        $i18n = CRM_Core_I18n::singleton();
 
         $name       = $i18n->crm_translate($value['attributes']['label'], array('context' => 'menu'));
         $url        = $value['attributes']['url'];
@@ -734,7 +734,7 @@ ORDER BY parent_id, weight";
       {
           $query  = "SELECT parent_id, weight FROM civicrm_navigation WHERE id = %1";
           $params = array( $navigationID, 'Integer' );
-          $dao =& CRM_Core_DAO::executeQuery( $query, array( 1 => $params ) );
+          $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => $params ) );
           $dao->fetch();            
           return array( 'parent_id' => $dao->parent_id,
                         'weight'    => $dao->weight );

@@ -91,7 +91,7 @@ LEFT JOIN civicrm_email      ON contact_a.id = civicrm_email.contact_id
     WHERE civicrm_email.email = %1";
             
             $params = array( 1 => array( $email, 'String' ) );
-            $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+            $dao = CRM_Core_DAO::executeQuery( $query, $params );
             $id = array( );
             // lets just use the first contact id we got
             if ( $dao->fetch( ) ) {
@@ -200,7 +200,7 @@ SELECT     civicrm_email.id as email_id
         $config = CRM_Core_Config::singleton();
 
         require_once 'CRM/Core/BAO/Domain.php';
-        $domain =& CRM_Core_BAO_Domain::getDomain();
+        $domain = CRM_Core_BAO_Domain::getDomain();
         
         //get the default domain email address.
         list( $domainEmailName, $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( );
@@ -273,7 +273,7 @@ SELECT     civicrm_email.id as email_id
 
         $message->setHTMLBody($html);
         $message->setTxtBody($text);
-        $b =& CRM_Utils_Mail::setMimeParams( $message );
+        $b = CRM_Utils_Mail::setMimeParams( $message );
         $h =& $message->headers($headers);
         $mailer =& $config->getMailer();
 
@@ -318,7 +318,7 @@ SELECT     civicrm_email.id as email_id
                  WHERE civicrm_email.email = %1";
         
         $params = array( 1 => array( $email, 'String' ) );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         $groups = array();
         while ( $dao->fetch( ) ) {
             $groups[$dao->group_id] = array(

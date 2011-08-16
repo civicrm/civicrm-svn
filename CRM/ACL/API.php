@@ -165,7 +165,7 @@ class CRM_ACL_API {
         if ( array_key_exists( $key, $cache ) ) {
             $groups =& $cache[$key];
         } else {
-            $groups =& self::group( $type, $contactID, $tableName, $allGroups, $includedGroups );
+            $groups = self::group( $type, $contactID, $tableName, $allGroups, $includedGroups );
             $cache[$key] = $groups;
         }
 

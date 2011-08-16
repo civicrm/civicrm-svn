@@ -440,7 +440,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $paymentProcessorID,
                                                                        $mode );
         
-        $ipn    =& self::singleton( $mode, $module, $paymentProcessor );
+        $ipn    = self::singleton( $mode, $module, $paymentProcessor );
         
         // Create new response object
         $merchant_id  = $paymentProcessor['user_name'];

@@ -266,7 +266,7 @@ function _civicrm_api3_membership_format_params( $params, &$values, $create=fals
 {
   require_once "CRM/Member/DAO/Membership.php";
   require_once "CRM/Member/PseudoConstant.php";
-  $fields =& CRM_Member_DAO_Membership::fields( );
+  $fields = CRM_Member_DAO_Membership::fields( );
   _civicrm_api3_store_values( $fields, $params, $values );
 
   foreach ($params as $key => $value) {

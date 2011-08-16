@@ -270,7 +270,7 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
     {
         if ( $this->_id ) {
             $templateFile = "CRM/Contribute/Page/{$this->_id}/PCPInfo.tpl";
-            $template     =& CRM_Core_Page::getTemplate( );
+            $template     = CRM_Core_Page::getTemplate( );
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;
             }

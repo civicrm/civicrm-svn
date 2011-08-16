@@ -186,7 +186,7 @@ class CRM_Price_Page_Option extends CRM_Core_Page
             $sid = CRM_Price_BAO_Set::getSetId($params);
             
             require_once 'CRM/Price/BAO/Set.php';
-            $usedBy  =& CRM_Price_BAO_Set::getUsedBy( $sid );   
+            $usedBy  = CRM_Price_BAO_Set::getUsedBy( $sid );   
         }
         // set the userContext stack
         $session = CRM_Core_Session::singleton( );

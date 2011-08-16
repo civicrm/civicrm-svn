@@ -278,7 +278,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
 
             // also check for billing informatin
             // get the billing location type
-            $locationTypes =& CRM_Core_PseudoConstant::locationType( );
+            $locationTypes = CRM_Core_PseudoConstant::locationType( );
             // CRM-8108 remove ts around Billing location type
             //$this->_bltID = array_search( ts('Billing'),  $locationTypes );
             $this->_bltID = array_search( 'Billing',  $locationTypes );
@@ -789,7 +789,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
                 if ( $addCaptcha &&
                      ! $viewOnly ) {
                     require_once 'CRM/Utils/ReCAPTCHA.php';
-                    $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
+                    $captcha = CRM_Utils_ReCAPTCHA::singleton( );
                     $captcha->add( $this );
                     $this->assign( 'isCaptcha', true );
                 }
@@ -801,7 +801,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
     {
         if ( $this->_id ) {
             $templateFile = "CRM/Contribute/Form/Contribution/{$this->_id}/{$this->_name}.tpl";
-            $template =& CRM_Core_Form::getTemplate( );
+            $template = CRM_Core_Form::getTemplate( );
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;
             }

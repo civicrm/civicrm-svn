@@ -82,7 +82,7 @@ AND     ( g.cache_date IS NULL OR
         )
 ";
 
-        $dao      =& CRM_Core_DAO::executeQuery( $query );
+        $dao      = CRM_Core_DAO::executeQuery( $query );
         $groupIDs = array( );
         while ( $dao->fetch() ) {
             $groupIDs[] = $dao->id;
@@ -247,7 +247,7 @@ WHERE  id = %1
         $customClass = null;
         if ( $savedSearchID ) {
             require_once 'CRM/Contact/BAO/SavedSearch.php';
-            $ssParams =& CRM_Contact_BAO_SavedSearch::getSearchParams($savedSearchID);
+            $ssParams = CRM_Contact_BAO_SavedSearch::getSearchParams($savedSearchID);
 
             // rectify params to what proximity search expects if there is a value for prox_distance
             // CRM-7021
@@ -262,7 +262,7 @@ WHERE  id = %1
                                              $savedSearchID,
                                              'mapping_id' ) ) {
                 require_once "CRM/Core/BAO/Mapping.php";
-                $fv =& CRM_Contact_BAO_SavedSearch::getFormValues($savedSearchID);
+                $fv = CRM_Contact_BAO_SavedSearch::getFormValues($savedSearchID);
                 $returnProperties = CRM_Core_BAO_Mapping::returnProperties( $fv );
             }
 
@@ -323,7 +323,7 @@ WHERE  civicrm_group_contact.status = 'Added'
             require_once 'CRM/Contact/BAO/Group.php';
             $childrenIDs = explode( ',', $group->children );
             foreach ( $childrenIDs as $childID ) {
-                $contactIDs =& CRM_Contact_BAO_Group::getMember( $childID, false );
+                $contactIDs = CRM_Contact_BAO_Group::getMember( $childID, false );
                 $values = array( );
                 foreach ( $contactIDs as $contactID => $dontCare) {
                     $values[] = "({$groupID},{$contactID})";

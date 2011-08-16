@@ -93,7 +93,7 @@ class CRM_Cron_Action {
         $actionSchedule->find( false );
 
         $tokenFields = array( );
-        $session = & CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
 
         while ( $actionSchedule->fetch( ) ) {
             $extraSelect = $extraJoin = '';

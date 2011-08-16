@@ -16,7 +16,7 @@ class Widget {
     public $methodTable;
 
 	function __construct( ) {
-		$this->methodTable =& CRM_Widget_Widget::methodTable( );
+		$this->methodTable = CRM_Widget_Widget::methodTable( );
 
     }
 

@@ -246,7 +246,7 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
     static function create( &$params, $entityTable, $entityID ) 
     {
         // get categories for the contact id
-        $entityTag =& CRM_Core_BAO_EntityTag::getTag( $entityID, $entityTable );
+        $entityTag = CRM_Core_BAO_EntityTag::getTag( $entityID, $entityTable );
         
         // get the list of all the categories
         require_once 'CRM/Core/BAO/Tag.php';

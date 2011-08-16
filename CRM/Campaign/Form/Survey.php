@@ -279,7 +279,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $defaultOption = array();
         $_showHide = new CRM_Core_ShowHideBlocks('','');
                     
-        $optionAttributes =& CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue' );
+        $optionAttributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue' );
         $optionAttributes['label']['size'] = $optionAttributes['value']['size'] = 25;
 
         for($i = 1; $i <= self::NUM_OPTION; $i++) {

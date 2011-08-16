@@ -203,7 +203,7 @@ class CRM_Core_Page_AJAX_Location
         }
 
         require_once 'CRM/Core/PseudoConstant.php';
-        $result =& CRM_Core_PseudoConstant::stateProvinceForCountry( $_GET['_value'] );
+        $result = CRM_Core_PseudoConstant::stateProvinceForCountry( $_GET['_value'] );
 
         $elements = array( array( 'name'  => ts('- select a state-'),
             'value' => '' ) );
@@ -226,7 +226,7 @@ class CRM_Core_Page_AJAX_Location
         } else {
 
             require_once 'CRM/Core/PseudoConstant.php';
-            $result =& CRM_Core_PseudoConstant::countyForState( $_GET['_value'] );
+            $result = CRM_Core_PseudoConstant::countyForState( $_GET['_value'] );
 
             $elements = array( array( 'name'  => ts('- select -'),
                 'value' => '' ) );

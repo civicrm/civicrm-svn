@@ -227,7 +227,7 @@ class CRM_Contact_Form_Edit_Address
             // And we can't set it to 'address_' because we want to set it in a slightly different format.
             CRM_Core_BAO_CustomGroup::buildQuickForm( $form, $groupTree, false, 1, 'dnc_' );
 
-            $template  =& CRM_Core_Smarty::singleton( );
+            $template  = CRM_Core_Smarty::singleton( );
             $tplGroupTree = $template->get_template_vars( 'address_groupTree' );
             $tplGroupTree = empty($tplGroupTree) ? array() : $tplGroupTree;
 
@@ -299,7 +299,7 @@ class CRM_Contact_Form_Edit_Address
                     if ( $stateProvinceDAO->country_id != $countryId ) {
                         // countries mismatch hence display error
                         $stateProvinces = CRM_Core_PseudoConstant::stateProvince( );
-                        $countries =& CRM_Core_PseudoConstant::country( );
+                        $countries = CRM_Core_PseudoConstant::country( );
                         $errors["address[$instance][state_province_id]"] = ts( 'State/Province %1 is not part of %2. It belongs to %3.', 
                                                                            array( 1 => $stateProvinces[$stateProvinceId],
                                                                                   2 => $countries[$countryId],
@@ -315,7 +315,7 @@ class CRM_Contact_Form_Edit_Address
                     $countyDAO->id = $countyId;
                     $countyDAO->find(true);
                     if ( $countyDAO->state_province_id != $stateProvinceId ) {
-                        $counties =& CRM_Core_PseudoConstant::county( );
+                        $counties = CRM_Core_PseudoConstant::county( );
                         $errors["address[$instance][county_id]"] = ts( 'County %1 is not part of %2. It belongs to %3.', 
                                                                            array( 1 => $counties[$countyId],
                                                                                   2 => $stateProvinces[$stateProvinceId],

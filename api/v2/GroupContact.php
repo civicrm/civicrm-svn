@@ -63,7 +63,7 @@ function civicrm_group_contact_get( &$params )
 
     $status = CRM_Utils_Array::value( 'status', $params, 'Added' );
     require_once 'CRM/Contact/BAO/GroupContact.php';
-    $values =& CRM_Contact_BAO_GroupContact::getContactGroup( $params['contact_id'], $status, null, false, true );
+    $values = CRM_Contact_BAO_GroupContact::getContactGroup( $params['contact_id'], $status, null, false, true );
     return $values;
 }
 

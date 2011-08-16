@@ -104,7 +104,7 @@ function civicrm_mailer_event_unsubscribe($params)
     $queue = $params['event_queue_id']; 
     $hash  = $params['hash']; 
 
-    $groups =& CRM_Mailing_Event_BAO_Unsubscribe::unsub_from_mailing($job, $queue, $hash); 
+    $groups = CRM_Mailing_Event_BAO_Unsubscribe::unsub_from_mailing($job, $queue, $hash); 
 
     if (count($groups)) {
         CRM_Mailing_Event_BAO_Unsubscribe::send_unsub_response($queue, $groups, false, $job);
@@ -160,7 +160,7 @@ function civicrm_mailer_event_resubscribe($params)
     $queue = $params['event_queue_id']; 
     $hash  = $params['hash']; 
 
-    $groups =& CRM_Mailing_Event_BAO_Resubscribe::resub_to_mailing($job, $queue, $hash);
+    $groups = CRM_Mailing_Event_BAO_Resubscribe::resub_to_mailing($job, $queue, $hash);
     
     if (count($groups)) {
         CRM_Mailing_Event_BAO_Resubscribe::send_resub_response($queue, $groups, false, $job);
@@ -195,7 +195,7 @@ function civicrm_mailer_event_subscribe($params)
         return civicrm_create_error( ts( 'Invalid Group id' ) );
     }
         
-    $subscribe =& CRM_Mailing_Event_BAO_Subscribe::subscribe($group_id, $email, $contact_id);
+    $subscribe = CRM_Mailing_Event_BAO_Subscribe::subscribe($group_id, $email, $contact_id);
 
     if ($subscribe !== null) {
         /* Ask the contact for confirmation */
@@ -268,7 +268,7 @@ function civicrm_mailer_event_reply($params)
     $bodyHTML  = CRM_Utils_Array::value('bodyHTML', $params);
     $fullEmail = CRM_Utils_Array::value('fullEmail', $params);
 
-    $mailing =& CRM_Mailing_Event_BAO_Reply::reply($job, $queue, $hash, $replyto);
+    $mailing = CRM_Mailing_Event_BAO_Reply::reply($job, $queue, $hash, $replyto);
 
     if (empty($mailing)) {
         return civicrm_create_error( ts( 'Queue event could not be found' ) );

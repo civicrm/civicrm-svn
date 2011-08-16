@@ -761,7 +761,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         
         if ( $self->_values['event']['is_monetary'] ) {
             if ( is_array( $self->_paymentProcessor ) ) {
-                $payment =& CRM_Core_Payment::singleton( $self->_mode, $self->_paymentProcessor, $this );
+                $payment = CRM_Core_Payment::singleton( $self->_mode, $self->_paymentProcessor, $this );
                 $error   =  $payment->checkConfig( $self->_mode );
                 if ( $error ) {
                     $errors['_qf_default'] = $error;
@@ -943,7 +943,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             $this->set( 'invoiceID', $invoiceID );
 
             if ( is_array( $this->_paymentProcessor ) ) {
-                $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this ); 
+                $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this ); 
             }
             // default mode is direct
             $this->set( 'contributeMode', 'direct' ); 
@@ -1098,7 +1098,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     unset( $value["email-{$this->_bltID}"] ); 
                 }
 
-                $contactID =& CRM_Event_Form_Registration_Confirm::updateContactFields( $contactID, $value, $fields );
+                $contactID = CRM_Event_Form_Registration_Confirm::updateContactFields( $contactID, $value, $fields );
                
                 // lets store the contactID in the session
                 // we dont store in userID in case the user is doing multiple

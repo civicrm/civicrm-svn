@@ -235,7 +235,7 @@ SELECT start_date, end_date, join_date
  WHERE id = %1
 ";
     $params = array( 1 => array( $membershipID, 'Integer' ) );
-    $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+    $dao = CRM_Core_DAO::executeQuery( $query, $params );
     if ( $dao->fetch( ) ) {
         require_once 'CRM/Member/BAO/MembershipStatus.php';
         // CRM-7248 added $excludeIsAdmin to this function, also 'today' param

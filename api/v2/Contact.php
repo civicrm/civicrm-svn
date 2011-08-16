@@ -388,7 +388,7 @@ function civicrm_contact_get( &$params, $deprecated_behavior = false )
     }
 
     require_once 'CRM/Contact/BAO/Query.php';
-    $newParams =& CRM_Contact_BAO_Query::convertFormValues( $inputParams );
+    $newParams = CRM_Contact_BAO_Query::convertFormValues( $inputParams );
     list( $contacts, $options ) = CRM_Contact_BAO_Query::apiQuery( $newParams,
                                                                    $returnProperties,
                                                                    null,
@@ -455,7 +455,7 @@ function civicrm_contact_delete( &$params )
         return civicrm_create_error( ts( 'Could not find contact_id in input parameters' ) );
     }
 
-    $session =& CRM_Core_Session::singleton( );
+    $session = CRM_Core_Session::singleton( );
     if ( $contactID ==  $session->get( 'userID' ) ) {
         return civicrm_create_error( ts( 'This contact record is linked to the currently logged in user account - and cannot be deleted.' ) );
     }
@@ -508,7 +508,7 @@ function &civicrm_contact_search( &$params )
     }
 
     require_once 'CRM/Contact/BAO/Query.php';
-    $newParams =& CRM_Contact_BAO_Query::convertFormValues( $inputParams );
+    $newParams = CRM_Contact_BAO_Query::convertFormValues( $inputParams );
     list( $contacts, $options ) = CRM_Contact_BAO_Query::apiQuery( $newParams,
                                                                    $returnProperties,
                                                                    null,
@@ -774,7 +774,7 @@ function civicrm_contact_search_count( &$params )
 {
     // convert the params to new format
     require_once 'CRM/Contact/Form/Search.php';
-    $newP =& CRM_Contact_BAO_Query::convertFormValues( $params );
+    $newP = CRM_Contact_BAO_Query::convertFormValues( $params );
     $query = new CRM_Contact_BAO_Query( $newP );
     return $query->searchQuery( 0, 0, null, true );
 }

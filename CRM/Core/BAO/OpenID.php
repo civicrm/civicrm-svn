@@ -121,7 +121,7 @@ ORDER BY
         $params = array( 1 => array( $id, 'Integer' ) );
 
         $openids = $values = array( );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         $count = 1;
         while ( $dao->fetch( ) ) {
             $values = array( 'locationType'     => $dao->locationType,

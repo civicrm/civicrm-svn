@@ -109,7 +109,7 @@ function civicrm_wp_initialize( ) {
         $initialized = true;
 
         // initialize the system by creating a config object
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
 
         // sync the logged in user with WP
         global $current_user;
@@ -172,7 +172,7 @@ function civicrm_wp_scripts( ) {
     }
     
     require_once 'CRM/Core/Smarty.php';
-    $template =& CRM_Core_Smarty::singleton( );
+    $template = CRM_Core_Smarty::singleton( );
     $buffer = $template->fetch( 'CRM/common/jquery.files.tpl' );
     $lines  = preg_split( '/\s+/', $buffer );
     foreach ( $lines as $line ) {
@@ -196,7 +196,7 @@ function civicrm_wp_styles( ) {
     }
     
     require_once 'CRM/Core/Smarty.php';
-    $template =& CRM_Core_Smarty::singleton( );
+    $template = CRM_Core_Smarty::singleton( );
     $buffer = $template->fetch( 'CRM/common/jquery.files.tpl' );
     $lines  = preg_split( '/\s+/', $buffer );
     foreach ( $lines as $line ) {

@@ -197,7 +197,7 @@ function civicrm_api3_relationship_get($params)
 function _civicrm_api3_relationship_format_params( $params, &$values ) {
     // copy all the relationship fields as is
    
-    $fields =& CRM_Contact_DAO_Relationship::fields( );
+    $fields = CRM_Contact_DAO_Relationship::fields( );
     _civicrm_api3_store_values( $fields, $params, $values );
 
     $relationTypes = CRM_Core_PseudoConstant::relationshipType( 'name' );

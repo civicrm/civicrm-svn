@@ -469,7 +469,7 @@ class CRM_Profile_Form extends CRM_Core_Form
         $anonUser = false; // if false, user is not logged-in. 
         if ( ! $userID ) {
             require_once 'CRM/Core/BAO/LocationType.php';
-            $defaultLocationType =& CRM_Core_BAO_LocationType::getDefault();
+            $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
             $primaryLocationType = $defaultLocationType->id;
             $anonUser = true; 
             $this->assign( 'anonUser', true );
@@ -549,7 +549,7 @@ class CRM_Profile_Form extends CRM_Core_Form
         //finally add captcha to form.
         if ( $this->_isAddCaptcha ) {
             require_once 'CRM/Utils/ReCAPTCHA.php';
-            $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
+            $captcha = CRM_Utils_ReCAPTCHA::singleton( );
             $captcha->add( $this );
         }
         $this->assign( "isCaptcha", $this->_isAddCaptcha );
@@ -771,7 +771,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                     if ($stateProvinceDAO->country_id != $countryId) {
                         // country mismatch hence display error
                         $stateProvinces = CRM_Core_PseudoConstant::stateProvince();
-                        $countries =& CRM_Core_PseudoConstant::country();
+                        $countries = CRM_Core_PseudoConstant::country();
                         $errors[$key] = "State/Province " . $stateProvinces[$stateProvinceId] . " is not part of ". $countries[$countryId] . ". It belongs to " . $countries[$stateProvinceDAO->country_id] . "." ;
                     }
                 }
@@ -790,7 +790,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                     if ($countyDAO->state_province_id != $stateProvinceId) {
                         // state province mismatch hence display error
                         $stateProvinces = CRM_Core_PseudoConstant::stateProvince();
-                        $counties =& CRM_Core_PseudoConstant::county();
+                        $counties = CRM_Core_PseudoConstant::county();
                         $errors[$key] = "County " . $counties[$countyId] . " is not part of ". $stateProvinces[$stateProvinceId] . ". It belongs to " . $stateProvinces[$countyDAO->state_province_id] . "." ;
                     }
                 }
@@ -1031,7 +1031,7 @@ class CRM_Profile_Form extends CRM_Core_Form
         if ( $this->_gid ) {
             $ufGroups[$this->_gid] =  1;
         } else if ( $this->_mode == self::MODE_REGISTER ) {
-            $ufGroups = & CRM_Core_BAO_UFGroup::getModuleUFGroup('User Registration');
+            $ufGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup('User Registration');
         }
         
         foreach( $ufGroups as $gId => $val ) {
@@ -1061,7 +1061,7 @@ class CRM_Profile_Form extends CRM_Core_Form
     function getTemplateFileName() {
         if ( $this->_gid ) {
             $templateFile = "CRM/Profile/Form/{$this->_gid}/{$this->_name}.tpl";
-            $template =& CRM_Core_Form::getTemplate( );
+            $template = CRM_Core_Form::getTemplate( );
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;
             }

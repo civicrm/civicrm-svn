@@ -360,7 +360,7 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
                         'sort'             => $sort,
                         );
         $config = CRM_Core_Config::singleton();
-        $rows =& CRM_Activity_BAO_Activity::getActivities( $params );
+        $rows = CRM_Activity_BAO_Activity::getActivities( $params );
         
         if ( empty( $rows ) ) {
             return $rows;

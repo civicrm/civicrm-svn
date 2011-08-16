@@ -108,13 +108,13 @@ INNER JOIN civicrm_contact ON ( civicrm_membership.contact_id = civicrm_contact.
 WHERE      civicrm_membership.is_test = 0";
 
         $params = array( );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         
         $today = date( "Y-m-d" );
         $count = 0;
 
         require_once 'CRM/Core/Smarty.php';
-        $smarty =& CRM_Core_Smarty::singleton();
+        $smarty = CRM_Core_Smarty::singleton();
         
         require_once 'CRM/Core/BAO/Domain.php';
         $domainValues     = CRM_Core_BAO_Domain::getNameAndEmail( );
@@ -261,7 +261,7 @@ WHERE      civicrm_membership.is_test = 0";
                             ", End Date - " . CRM_Utils_Date::customFormat(CRM_Utils_Date::isoToMysql($dao->end_date), $config->dateformatFull);
                         $activityParams['source_record_id']   = $dao->membership_id;
 
-                        $session = & CRM_Core_Session::singleton();
+                        $session = CRM_Core_Session::singleton();
                         $activityParams['source_contact_id']   = $session->get('userID') ? $session->get('userID') : $dao->contact_id;
                         $activityParams['assignee_contact_id'] = $dao->contact_id;
 

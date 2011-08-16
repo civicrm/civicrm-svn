@@ -922,7 +922,7 @@ INNER JOIN  civicrm_contact ON civicrm_relationship.contact_id_b = civicrm_conta
 			$params[3] = array( $relationshipID, 'Integer' );
 		}
         
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         
         $values = array( );
         while ( $dao->fetch( ) ) {
@@ -1058,13 +1058,13 @@ INNER JOIN  civicrm_contact ON civicrm_relationship.contact_id_b = civicrm_conta
         $query  = $select . $from . $where . $groupBy . $orderBy;
 				    
         $params = array( 1 => array( $caseID, 'Integer' ) );
-        $dao    =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao    = CRM_Core_DAO::executeQuery( $query, $params );
         $params['total'] = $dao->N;
 
         //FIXME: need to optimize/cache these queries
         $limit  = " LIMIT $start, $rp";
         $query .= $limit;
-        $dao    =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao    = CRM_Core_DAO::executeQuery( $query, $params );
         
         require_once "CRM/Utils/Date.php";
         require_once "CRM/Core/PseudoConstant.php";
@@ -1256,7 +1256,7 @@ WHERE cr.case_id =  %1 AND ce.is_primary= 1
 GROUP BY cc.id';
         
         $params = array( 1 => array( $caseID, 'Integer' ) );
-        $dao    =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao    = CRM_Core_DAO::executeQuery( $query, $params );
 
         while ( $dao->fetch( ) ) {
             if ( $skipDetails ) {
@@ -1718,7 +1718,7 @@ AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
                   WHERE cc.id = %1 {$where} {$groupBy}";
         
         $params = array( 1 => array( $caseID, 'Integer' ) );
-        $dao    =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao    = CRM_Core_DAO::executeQuery( $query, $params );
         
         while ( $dao->fetch( ) ) {
             $values[$dao->id]['id']            = $dao->id;
@@ -1783,7 +1783,7 @@ LEFT JOIN  civicrm_contact cca ON cca.id = civicrm_relationship.contact_id_a
         }
         
         require_once 'CRM/Core/OptionGroup.php';
-        $session = & CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $activityParams = array('source_contact_id'    => $session->get( 'userID' ),
                                 'subject'              => $caseRelationship.' : '. $assigneContactName,
                                 'activity_date_time'   => date('YmdHis'),

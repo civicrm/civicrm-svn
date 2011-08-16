@@ -42,7 +42,7 @@ class CRM_Event_Form_ManageEvent_TabHeader {
     static function build( &$form ) {
         $tabs = $form->get( 'tabHeader' );
         if ( !$tabs || !CRM_Utils_Array::value('reset', $_GET) ) {
-            $tabs =& self::process( $form );
+            $tabs = self::process( $form );
             $form->set( 'tabHeader', $tabs );
         }
         $form->assign_by_ref( 'tabHeader', $tabs );
@@ -147,7 +147,7 @@ WHERE      e.id = %1
     }
 
     static function reset( &$form ) {
-        $tabs =& self::process( $form );
+        $tabs = self::process( $form );
         $form->set( 'tabHeader', $tabs );
     }
 

@@ -127,7 +127,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             $this->assign( 'showBestResult', $showBestResult );
         }
         
-        $this->_fields =& CRM_Contact_BAO_Contact::importableFields( 'All', true, true, true );
+        $this->_fields = CRM_Contact_BAO_Contact::importableFields( 'All', true, true, true );
         $this->_fields = array_merge( CRM_Activity_BAO_Activity::exportableFields( 'Activity' ), $this->_fields );
         
         //unset campaign related fields.
@@ -251,9 +251,9 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->add('hidden', 'field_id', $this->_id);
          
         $fields = array();
-        $fields['Individual'  ] =& CRM_Contact_BAO_Contact::importableFields('Individual', false, false, true);
-        $fields['Household'   ] =& CRM_Contact_BAO_Contact::importableFields('Household', false, false, true);
-        $fields['Organization'] =& CRM_Contact_BAO_Contact::importableFields('Organization', false, false, true);
+        $fields['Individual'  ] = CRM_Contact_BAO_Contact::importableFields('Individual', false, false, true);
+        $fields['Household'   ] = CRM_Contact_BAO_Contact::importableFields('Household', false, false, true);
+        $fields['Organization'] = CRM_Contact_BAO_Contact::importableFields('Organization', false, false, true);
         
         // add current employer for individuals
         $fields['Individual']['current_employer'] = array( 'name'  => 'organization_name',
@@ -329,11 +329,11 @@ class CRM_UF_Form_Field extends CRM_Core_Form
 
         if ( CRM_Core_Permission::access( 'Quest' ) ) {
             require_once 'CRM/Quest/BAO/Student.php';
-            $fields['Student'] =& CRM_Quest_BAO_Student::exportableFields();
+            $fields['Student'] = CRM_Quest_BAO_Student::exportableFields();
         }
 
         if ( CRM_Core_Permission::access( 'CiviContribute' ) ) {
-            $contribFields =& CRM_Contribute_BAO_Contribution::getContributionFields();
+            $contribFields = CRM_Contribute_BAO_Contribution::getContributionFields();
             if ( ! empty( $contribFields ) ) {
                 unset( $contribFields['is_test'] );
                 unset( $contribFields['is_pay_later'] );
@@ -344,7 +344,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
 
         if ( CRM_Core_Permission::access( 'CiviEvent' ) ) {
             require_once 'CRM/Event/BAO/Query.php';
-            $participantFields =& CRM_Event_BAO_Query::getParticipantFields( true );
+            $participantFields = CRM_Event_BAO_Query::getParticipantFields( true );
             if ( ! empty( $participantFields ) ) {
                 unset($participantFields['external_identifier'] );
                 unset($participantFields['event_id'] );
@@ -367,7 +367,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         
         if ( CRM_Core_Permission::access( 'CiviMember' ) ) {
             require_once 'CRM/Member/BAO/Membership.php';
-            $membershipFields =& CRM_Member_BAO_Membership::getMembershipFields(); 
+            $membershipFields = CRM_Member_BAO_Membership::getMembershipFields(); 
             unset( $membershipFields['membership_id'] );
             unset( $membershipFields['join_date'] );
             unset( $membershipFields['membership_start_date'] );
@@ -424,8 +424,8 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->assign( 'noSearchable', $noSearchable );
 
         require_once 'CRM/Core/BAO/LocationType.php';
-        $this->_location_types =& CRM_Core_PseudoConstant::locationType();        
-        $defaultLocationType =& CRM_Core_BAO_LocationType::getDefault();
+        $this->_location_types = CRM_Core_PseudoConstant::locationType();        
+        $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
         
        /* FIXME: dirty hack to make the default option show up first.  This
         * avoids a mozilla browser bug with defaults on dynamically constructed

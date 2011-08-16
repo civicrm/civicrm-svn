@@ -99,7 +99,7 @@ WHERE     openid = %1";
         // make sure we load the joomla object to get valid information
         if ( $uf == 'Joomla' ) {
             if ( ! isset( $user->id ) || ! isset( $user->email ) ) {
-                $user =& JFactory::getUser( );
+                $user = JFactory::getUser( );
             }
         }
 
@@ -140,7 +140,7 @@ WHERE     openid = %1";
             $uniqId = $user->$mail;
         }
 
-        $ufmatch =& self::synchronizeUFMatch( $user, $user->$key, $uniqId, $uf, null, $ctype, $isLogin );
+        $ufmatch = self::synchronizeUFMatch( $user, $user->$key, $uniqId, $uf, null, $ctype, $isLogin );
         if ( ! $ufmatch ) {
             return;
         }
@@ -267,9 +267,9 @@ WHERE     openid = %1";
             } else {
                 require_once 'CRM/Contact/BAO/Contact.php';
                 if ( $uf == 'Standalone' ) {
-                    $dao =& CRM_Contact_BAO_Contact::matchContactOnOpenId( $uniqId, $ctype );
+                    $dao = CRM_Contact_BAO_Contact::matchContactOnOpenId( $uniqId, $ctype );
                 } else {
-                    $dao =& CRM_Contact_BAO_Contact::matchContactOnEmail( $uniqId, $ctype );
+                    $dao = CRM_Contact_BAO_Contact::matchContactOnEmail( $uniqId, $ctype );
                 }
             }
 
@@ -456,7 +456,7 @@ AND    domain_id    = %4
                      WHERE id =  %2";
                 $p = array( 1 => array( $emailAddress, 'String'  ),
                             2 => array( $emailID, 'Integer' ) );
-                $dao =& CRM_Core_DAO::executeQuery( $query, $p );
+                $dao = CRM_Core_DAO::executeQuery( $query, $p );
             } else {
                 //else insert a new email record
                 require_once 'CRM/Core/DAO/Email.php';

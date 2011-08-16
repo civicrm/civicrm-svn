@@ -23,7 +23,7 @@ class CivicrmHelperApi {
             'civicrm.settings.php';
 
         require_once 'CRM/Core/Config.php';
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
     }
 
 	function civiimport($path)

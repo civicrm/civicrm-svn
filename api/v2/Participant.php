@@ -182,7 +182,7 @@ function &civicrm_participant_search( &$params ) {
         $returnProperties = CRM_Event_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_EVENT );
     }
 
-    $newParams =& CRM_Contact_BAO_Query::convertFormValues( $params);
+    $newParams = CRM_Contact_BAO_Query::convertFormValues( $params);
     $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null );
     list( $select, $from, $where, $having ) = $query->query( );
     
@@ -192,7 +192,7 @@ function &civicrm_participant_search( &$params ) {
         $sql .= " ORDER BY $sort ";
     }
     $sql .= " LIMIT $offset, $rowCount ";
-    $dao =& CRM_Core_DAO::executeQuery( $sql, CRM_Core_DAO::$_nullArray );
+    $dao = CRM_Core_DAO::executeQuery( $sql, CRM_Core_DAO::$_nullArray );
     
     $participant = array( );
     while ( $dao->fetch( ) ) {

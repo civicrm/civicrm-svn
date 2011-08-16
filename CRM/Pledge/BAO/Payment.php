@@ -185,7 +185,7 @@ WHERE     pledge_id = %1
         
         // set currency for CRM-1496
         if ( ! isset( $payment->currency ) ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $payment->currency = $config->defaultCurrency;
         }
         

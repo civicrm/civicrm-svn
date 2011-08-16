@@ -245,13 +245,13 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
             foreach ( $processors as $ppID => $label ) {
                 require_once 'CRM/Core/BAO/PaymentProcessor.php';
                 require_once 'CRM/Core/Payment.php';
-                $paymentProcessor =& CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $this->_mode );
+                $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $this->_mode );
                 if ( $paymentProcessor['payment_processor_type'] == 'PayPal' && !$paymentProcessor['user_name'] ) {
                     continue;
                 } else if ( $paymentProcessor['payment_processor_type'] == 'Dummy' && $this->_mode == 'live' ) {
                     continue;
                 } else {
-                    $paymentObject =& CRM_Core_Payment::singleton( $this->_mode, $paymentProcessor, $this );
+                    $paymentObject = CRM_Core_Payment::singleton( $this->_mode, $paymentProcessor, $this );
                     $error = $paymentObject->checkConfig( );
                     if ( empty( $error ) ) {
                         $validProcessors[$ppID] = $label;
@@ -266,7 +266,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
             }
             // also check for billing information
             // get the billing location type
-            $locationTypes =& CRM_Core_PseudoConstant::locationType( );
+            $locationTypes = CRM_Core_PseudoConstant::locationType( );
             // CRM-8108 remove ts around Billing location type
             //$this->_bltID = array_search( ts('Billing'),  $locationTypes );
             $this->_bltID = array_search( 'Billing',  $locationTypes );
@@ -432,7 +432,7 @@ SELECT civicrm_custom_group.name as name,
    AND extends = 'Participant'
    AND is_active = 1";
             
-            $dao =& CRM_Core_DAO::executeQuery( $query );
+            $dao = CRM_Core_DAO::executeQuery( $query );
             while ( $dao->fetch( ) ) {
                 if ( $dao->value ) {
                     $getRole = explode( CRM_Core_DAO::VALUE_SEPARATOR, $dao->value );
@@ -729,7 +729,7 @@ SELECT civicrm_custom_group.name as name,
 SELECT     civicrm_event.id as id, civicrm_event.event_type_id as event_type_id
 FROM       civicrm_event
 WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
-        $dao =& CRM_Core_DAO::executeQuery( $query );
+        $dao = CRM_Core_DAO::executeQuery( $query );
         $eventAndTypeMapping = array();
         while ( $dao->fetch( ) ) {
             $eventAndTypeMapping[$dao->id] = $dao->event_type_id;
@@ -1191,7 +1191,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             require_once 'CRM/Core/Payment/Form.php';
             CRM_Core_Payment_Form::mapParams( $this->_bltID, $this->_params, $paymentParams, true );
             
-            $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
+            $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
             
             $result =& $payment->doDirectPayment( $paymentParams );
             
@@ -1341,12 +1341,12 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                 require_once 'CRM/Contribute/BAO/Contribution.php';
                 $contributions = array( );
                 if ( $this->_single ) {
-                    $contributions[] =& CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
+                    $contributions[] = CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
                 } else {
                     $ids = array( );
                     foreach ( $this->_contactIds as $contactID ) {
                         $contributionParams['contact_id'] = $contactID;
-                        $contributions[] =& CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
+                        $contributions[] = CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
                     }           
                 }
                 

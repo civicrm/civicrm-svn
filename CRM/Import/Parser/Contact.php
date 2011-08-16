@@ -437,7 +437,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
      */
     function import( $onDuplicate, &$values, $doGeocodeAddress = false ) 
     { 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $this->_unparsedStreetAddressContacts = array( );
         if ( ! $doGeocodeAddress ) {
             // CRM-5854, reset the geocode method to null to prevent geocoding
@@ -462,7 +462,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         static $contactFields = null;
         if ( $contactFields == null) {
             require_once "CRM/Contact/DAO/Contact.php";
-            $contactFields =& CRM_Contact_DAO_Contact::import( );
+            $contactFields = CRM_Contact_DAO_Contact::import( );
         }              
         
         //check if external identifier exists in database
@@ -1614,7 +1614,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             }
             
             // pass doNotResetCache flag since resetting and rebuilding cache could be expensive.
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $config->doNotResetCache = 1;
             $cid = CRM_Contact_BAO_Contact::createProfileContact( $formatted, $contactFields, 
                                                                   $contactId, null, null, 

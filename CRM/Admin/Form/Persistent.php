@@ -46,7 +46,7 @@ class CRM_Admin_Form_Persistent extends CRM_Core_Form {
         $this->_config   = CRM_Utils_Request::retrieve( 'config', 'Integer', $this, 0 );
         $this->_action   = CRM_Utils_Request::retrieve( 'action', 'String', $this, false );
 
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $session->pushUserContext( CRM_Utils_System::url( 'civicrm/admin/tplstrings', 'reset=1' ) );
         CRM_Utils_System::setTitle( ts('DB Template Strings') );
         parent::preProcess(); 

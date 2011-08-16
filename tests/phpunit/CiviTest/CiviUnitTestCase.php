@@ -262,7 +262,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
         // initialize the object once db is loaded
         require_once 'CRM/Core/Config.php';
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
 
         // when running unit tests, use mockup user framework
         $config->setUserFramework( 'UnitTests' );
@@ -1671,11 +1671,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)[A-Z]/','_$0', $entity)); 
         }   
         require_once 'CRM/Core/Smarty.php';
-        $smarty =& CRM_Core_Smarty::singleton();
+        $smarty = CRM_Core_Smarty::singleton();
         $smarty->assign('testfunction',$function);
         $function = $fnPrefix . "_" .strtolower($action);
         require_once 'CRM/Core/Smarty.php';
-        $smarty =& CRM_Core_Smarty::singleton();
+        $smarty = CRM_Core_Smarty::singleton();
         $smarty->assign('function',$function);
         $smarty->assign('fnPrefix',$fnPrefix);
         $smarty->assign('params',$params);   

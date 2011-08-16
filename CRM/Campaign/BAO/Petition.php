@@ -275,7 +275,7 @@ SELECT  petition.id                         as id,
             $sql .= " AND status_id = ". (int) $status_id;
         $sql .= " GROUP BY civicrm_address.country_id";
         $fields = array ('total','country_id','country_iso','country');
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
             $row = array();
             foreach ($fields as $field) {
@@ -309,7 +309,7 @@ SELECT  petition.id                         as id,
         require_once 'CRM/Contact/BAO/Contact.php';
 
         $statusTotal = array();$total =0;
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
             $total += $dao->total;
             $statusTotal['status'][$dao->status_id] = $dao->total;
@@ -334,7 +334,7 @@ SELECT  petition.id                         as id,
             AND ov.option_group_id = og.id
             AND og.name = 'activity_type'";
 
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
             //$survey['campaign_id'] = $dao->campaign_id;
             //$survey['campaign_name'] = $dao->campaign_name;
@@ -384,7 +384,7 @@ SELECT  petition.id                         as id,
         $fields = array ('id','survey_id','contact_id','activity_date_time','activity_type_id','status_id','first_name','last_name', 'sort_name','gender_id','country_id','state_province_id','country_iso','country');
         $sql .= " ORDER BY  a.activity_date_time";
 
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
             $row = array();
             foreach ($fields as $field) {
@@ -445,7 +445,7 @@ SELECT  petition.id                         as id,
 
         require_once 'CRM/Contact/BAO/Contact.php';
 
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
             $signature[$dao->id]['id'] = $dao->id;
             $signature[$dao->id]['source_record_id'] = $dao->source_record_id;
@@ -557,7 +557,7 @@ SELECT  petition.id                         as id,
                 $params['contactId'] );
 
             //    require_once 'CRM/Core/BAO/Domain.php';
-            //    $domain =& CRM_Core_BAO_Domain::getDomain();
+            //    $domain = CRM_Core_BAO_Domain::getDomain();
             $config = CRM_Core_Config::singleton();
             $localpart   = CRM_Core_BAO_MailSettings::defaultLocalpart();
 

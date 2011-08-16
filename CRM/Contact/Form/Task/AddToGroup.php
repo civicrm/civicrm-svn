@@ -224,13 +224,13 @@ class CRM_Contact_Form_Task_AddToGroup extends CRM_Contact_Form_Task {
             $groupParams['is_active'  ] = 1;
            
             require_once 'CRM/Contact/BAO/Group.php';
-            $createdGroup   =& CRM_Contact_BAO_Group::create( $groupParams );
+            $createdGroup   = CRM_Contact_BAO_Group::create( $groupParams );
             $groupID        = $createdGroup->id;
             $groupName      = $groupParams['title'];
              
         } else {
             $groupID   = $params['group_id'];
-            $group   =& CRM_Core_PseudoConstant::group( );
+            $group   = CRM_Core_PseudoConstant::group( );
             $groupName = $group[$groupID];
             
         }

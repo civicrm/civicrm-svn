@@ -46,7 +46,7 @@ class JFormFieldCiviContribPages extends JFormField
         // Initiate CiviCRM
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 		require_once 'CRM/Core/Config.php';
-		$config =& CRM_Core_Config::singleton( );
+		$config = CRM_Core_Config::singleton( );
         
         $options = array();
         $options[] = JHTML::_('select.option', '0', JText::_('- Select Contribution Page -') );

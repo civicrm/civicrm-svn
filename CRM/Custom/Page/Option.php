@@ -170,7 +170,7 @@ SELECT   *
 ORDER BY weight, label
 ";
         $params =  array( 1 => array( $optionGroupID, 'Integer' ) );
-        $dao    =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao    = CRM_Core_DAO::executeQuery( $query, $params );
 
         $customOption = array( );
         $fields = array( 'label', 'value', 'is_active', 'weight' );

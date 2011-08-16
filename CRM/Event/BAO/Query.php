@@ -52,7 +52,7 @@ class CRM_Event_BAO_Query
     static function &getParticipantFields( $onlyParticipant = false ) 
     {
         require_once 'CRM/Event/BAO/Participant.php';
-        $fields =& CRM_Event_BAO_Participant::importableFields( 'Individual', true, $onlyParticipant );
+        $fields = CRM_Event_BAO_Participant::importableFields( 'Individual', true, $onlyParticipant );
         return $fields;
     }
     

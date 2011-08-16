@@ -56,7 +56,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
 
     function setDefaultValues( ) {
         $defaults = array( );
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
 
         parent::cbsDefaultValues( $defaults );
         if ( $this->_config->editor_id ) {
@@ -92,7 +92,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
         $drupal_wysiwyg = false;
         $wysiwyg_options = array( '' => ts( 'Textarea' ) ) + CRM_Core_PseudoConstant::wysiwygEditor( );
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $extra = array();
 
         //if not using Joomla, remove Joomla default editor option
@@ -142,7 +142,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
      */
     public function postProcess() 
     {
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         if ( $this->_action == CRM_Core_Action::VIEW ) {
             return;
         }

@@ -236,7 +236,7 @@ class CRM_Utils_File {
     function sourceSQLFile( $dsn, $fileName, $prefix = null, $isQueryString = false, $dieOnErrors = true ) {
         require_once 'DB.php';
 
-        $db  =& DB::connect( $dsn );
+        $db  = DB::connect( $dsn );
         if ( PEAR::isError( $db ) ) {
             die( "Cannot open $dsn: " . $db->getMessage( ) );
         }
@@ -366,7 +366,7 @@ HTACCESS;
         static $_path = null;
         if ( ! $_path ) {
             if ( $templateCompileDir == null ) {
-                $config =& CRM_Core_Config::singleton( );
+                $config = CRM_Core_Config::singleton( );
                 $templateCompileDir = $config->templateCompileDir;
             }
             

@@ -57,7 +57,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
     public function setDefaultValues( ) 
     {
         $defaults = array( );
-        $defaults =& parent::setDefaultValues( );
+        $defaults = parent::setDefaultValues( );
                 
         //finding default weight to be put 
         if ( !isset  ( $defaults['weight'] ) ||( ! $defaults['weight'] ) ) {
@@ -136,7 +136,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
         if ( !empty( $msgTemplates ) ) $hasMsgTemplates = true;
         
         //Auto-renew Option
-        $paymentProcessor =& CRM_Core_PseudoConstant::paymentProcessor( false, false, 'is_recur = 1');
+        $paymentProcessor = CRM_Core_PseudoConstant::paymentProcessor( false, false, 'is_recur = 1');
         $isAuthorize = false;
         $options = array( );
         $allowAutoRenewMsg = false;

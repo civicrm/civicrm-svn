@@ -42,7 +42,7 @@ class CiviTestCase extends PHPUnit_Framework_Testcase
         parent::__construct( );
 
         require_once 'CRM/Core/Config.php';
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
     }
 
     function civiGet( $path, $params, $abort = false ) {
@@ -91,7 +91,7 @@ class CiviTestCase extends PHPUnit_Framework_Testcase
     function isCiviURL( $url, $ignoreVariations = true ) {
         static $config = null;
         if ( ! $config ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
         }
         
         if ( strpos( $url,

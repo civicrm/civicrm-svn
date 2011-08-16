@@ -93,7 +93,7 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
              is_numeric( $contactID )) {
 			$this->_contactID = $contactID;
 		} else {
-			$session   =& CRM_Core_Session::singleton( );
+			$session   = CRM_Core_Session::singleton( );
 			$this->_contactID = $session->get( 'userID' );
         }
 

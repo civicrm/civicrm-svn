@@ -181,7 +181,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
 
         if ($this->_action & CRM_Core_Action::ADD) {
             require_once 'CRM/Event/PseudoConstant.php';
-            $eventTemplates =& CRM_Event_PseudoConstant::eventTemplates();
+            $eventTemplates = CRM_Event_PseudoConstant::eventTemplates();
             if (CRM_Utils_System::isNull( $eventTemplates )) {
                 $this->assign('noEventTemplates', true);
             } else {
@@ -238,7 +238,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         $this->addRule('max_participants', ts('Max participants should be a positive number') , 'positiveInteger');
 
         require_once 'CRM/Event/PseudoConstant.php';
-        $participantStatuses =& CRM_Event_PseudoConstant::participantStatus();
+        $participantStatuses = CRM_Event_PseudoConstant::participantStatus();
         if (in_array('On waitlist', $participantStatuses) and in_array('Pending from waitlist', $participantStatuses)) {
             $this->addElement('checkbox', 'has_waitlist', ts('Offer a Waitlist?'), null, array( 'onclick' => "showHideByValue('has_waitlist','0','id-event_full','table-row','radio',true); showHideByValue('has_waitlist','0','id-waitlist-text','table-row','radio',false);" ));
             $this->add('textarea', 'waitlist_text',   ts('Waitlist Message'), $attributes['waitlist_text']);

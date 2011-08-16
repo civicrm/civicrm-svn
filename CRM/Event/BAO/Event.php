@@ -150,7 +150,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
             return $event;
         }
         
-        $session   = & CRM_Core_Session::singleton();
+        $session   = CRM_Core_Session::singleton();
         $contactId = $session->get('userID');
         if ( !$contactId ) {
             $contactId = CRM_Utils_Array::value( 'contact_id', $params );
@@ -314,7 +314,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         $query .= " ORDER BY title asc";
         $events = array( );
         
-        $dao =& CRM_Core_DAO::executeQuery( $query );
+        $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
             if ( CRM_Event_BAO_Event::checkPermission( $dao->id ) && $dao->title ) { 
                 $events[$dao->id] = $dao->title . ' - '.CRM_Utils_Date::customFormat($dao->start_date);
@@ -343,7 +343,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
                         ( e.is_template IS NULL OR e.is_template = 0) AND
                         e.start_date >= DATE_SUB( NOW(), INTERVAL 7 day );";
         
-        $dao =& CRM_Core_DAO::executeQuery( $query );
+        $dao = CRM_Core_DAO::executeQuery( $query );
         
         if ( $dao->fetch( ) ) {
             $eventSummary['total_events'] = $dao->total_events;
@@ -780,7 +780,7 @@ WHERE civicrm_event.is_active = 1
 
 
         $params = array( 1 => array( $optionGroupId, 'Integer' ) );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         $all = array( );
         $config = CRM_Core_Config::singleton( );
         
@@ -1034,7 +1034,7 @@ WHERE civicrm_event.is_active = 1
                 list( $displayName, $email ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $contactID );
             } else {
                 // get the billing location type
-                $locationTypes =& CRM_Core_PseudoConstant::locationType( );
+                $locationTypes = CRM_Core_PseudoConstant::locationType( );
                 $bltID = array_search( 'Billing',  $locationTypes );
                 list( $displayName, $email ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $contactID, false, $bltID );
             }
@@ -1357,7 +1357,7 @@ WHERE civicrm_event.is_active = 1
                     $values[$index] = $suffix[$params[$name]];
                 } else if ( in_array($name, array('addressee', 'email_greeting', 'postal_greeting') ) ) {
                             $filterCondition = array( 'greeting_type' => $name ); 
-                            $greeting =& CRM_Core_PseudoConstant::greeting( $filterCondition );
+                            $greeting = CRM_Core_PseudoConstant::greeting( $filterCondition );
                             $values[$index] = $greeting[$params[$name]];
                 } else if ( $name === 'preferred_communication_method' ) {
                     $communicationFields = CRM_Core_PseudoConstant::pcm();
@@ -1385,7 +1385,7 @@ WHERE civicrm_event.is_active = 1
                 } else if ( $name == 'tag' ) {
                     require_once 'CRM/Core/BAO/EntityTag.php';
                     $entityTags = $params[$name];
-                    $allTags    =& CRM_Core_PseudoConstant::tag();
+                    $allTags    = CRM_Core_PseudoConstant::tag();
                     $title = array( );
                     if ( is_array($entityTags) ) {
                         foreach ( $entityTags as $tagId => $dontCare ) { 
@@ -1760,7 +1760,7 @@ WHERE  ce.loc_block_id = $locBlockId";
             $allEvents = CRM_Event_PseudoConstant::event( null, true );
             $createdEvents = array( );
 
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             if ( $userID = $session->get( 'userID' )) {
                 $createdEvents = array_keys( CRM_Event_PseudoConstant::event( null, true, "created_id={$userID}" ) );
             }

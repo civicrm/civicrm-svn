@@ -88,7 +88,7 @@ class CRM_Utils_REST
         require_once 'CRM/Utils/System.php';
         require_once 'CRM/Core/DAO.php';
 
-        $result =& CRM_Utils_System::authenticate($name, $pass);
+        $result = CRM_Utils_System::authenticate($name, $pass);
 
         if (empty($result)) {
             return self::error( 'Could not authenticate user, invalid name or password.' );
@@ -105,7 +105,7 @@ class CRM_Utils_REST
         }
 
         // Test to see if I can pull the data I need, since I know I have a good value.
-        $user =& CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $api_key, 'id', $api_key);
+        $user = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $api_key, 'id', $api_key);
 
         $session->set('api_key', $api_key);
         $session->set('key', $result[2]);
@@ -323,7 +323,7 @@ class CRM_Utils_REST
     }
 
     function process( &$args, $restInterface = true ) {
-        $params =& self::buildParamList( );
+        $params = self::buildParamList( );
         $params['check_permissions'] = true;
         $fnName = $apiFile = null;
         require_once 'CRM/Utils/String.php';

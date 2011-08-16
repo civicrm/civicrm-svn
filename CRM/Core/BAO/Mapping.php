@@ -375,7 +375,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
         
         if ( CRM_Core_Permission::access( 'Quest' ) ) {
             require_once 'CRM/Quest/BAO/Student.php';
-            $fields['Student'] =& CRM_Quest_BAO_Student::exportableFields();
+            $fields['Student'] = CRM_Quest_BAO_Student::exportableFields();
             $compArray['Student'] = 'Student';
         }
         
@@ -392,7 +392,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
         if ( ( $mappingType == 'Search Builder' ) || ( $exportMode == CRM_Export_Form_Select::CONTRIBUTE_EXPORT ) ) {
             if ( CRM_Core_Permission::access( 'CiviContribute' ) ) {
                 require_once 'CRM/Contribute/BAO/Contribution.php';
-                $fields['Contribution'] =& CRM_Contribute_BAO_Contribution::exportableFields();
+                $fields['Contribution'] = CRM_Contribute_BAO_Contribution::exportableFields();
                 unset($fields['Contribution']['contribution_contact_id']);
                 $compArray['Contribution'] = ts('Contribution');
             }
@@ -401,7 +401,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
         if ( ( $mappingType == 'Search Builder' ) || ( $exportMode == CRM_Export_Form_Select::EVENT_EXPORT ) ) {
             if ( CRM_Core_Permission::access( 'CiviEvent' ) ) {
                 require_once 'CRM/Event/BAO/Participant.php';
-                $fields['Participant'] =& CRM_Event_BAO_Participant::exportableFields( );
+                $fields['Participant'] = CRM_Event_BAO_Participant::exportableFields( );
                 unset($fields['Participant']['participant_contact_id']);
                 $compArray['Participant'] = ts('Participant');
             }
@@ -410,7 +410,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
         if ( ( $mappingType == 'Search Builder' ) || ( $exportMode == CRM_Export_Form_Select::MEMBER_EXPORT ) ) {
             if ( CRM_Core_Permission::access( 'CiviMember' ) ) {
                 require_once 'CRM/Member/BAO/Membership.php';
-                $fields['Membership'] =& CRM_Member_BAO_Membership::getMembershipFields( $exportMode );
+                $fields['Membership'] = CRM_Member_BAO_Membership::getMembershipFields( $exportMode );
                 unset($fields['Membership']['membership_contact_id']);
                 $compArray['Membership'] = ts('Membership');
             }
@@ -419,7 +419,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
         if ( ( $mappingType == 'Search Builder' ) || ( $exportMode == CRM_Export_Form_Select::PLEDGE_EXPORT ) ) {
             if ( CRM_Core_Permission::access( 'CiviPledge' ) ) {
                 require_once 'CRM/Pledge/BAO/Pledge.php';
-                $fields['Pledge'] =& CRM_Pledge_BAO_Pledge::exportableFields( );
+                $fields['Pledge'] = CRM_Pledge_BAO_Pledge::exportableFields( );
                 unset($fields['Pledge']['pledge_contact_id']);
                 $compArray['Pledge'] = ts('Pledge');
             }
@@ -428,11 +428,11 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
         if ( ( $mappingType == 'Search Builder' ) || ( $exportMode == CRM_Export_Form_Select::CASE_EXPORT ) ) {
             if ( CRM_Core_Permission::access( 'CiviCase' ) ) {
                 require_once 'CRM/Case/BAO/Case.php';
-                $fields['Case']    =& CRM_Case_BAO_Case::exportableFields( );
+                $fields['Case']    = CRM_Case_BAO_Case::exportableFields( );
                 $compArray['Case'] = ts('Case');
                 
                 require_once 'CRM/Activity/BAO/Activity.php';
-                $fields['Activity']    =& CRM_Activity_BAO_Activity::exportableFields( 'Case' );
+                $fields['Activity']    = CRM_Activity_BAO_Activity::exportableFields( 'Case' );
                 $compArray['Activity'] = ts('Case Activity');
                 
                 unset($fields['Case']['case_contact_id']);
@@ -441,7 +441,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
         if ( ( $mappingType == 'Search Builder' ) || ( $exportMode == CRM_Export_Form_Select::GRANT_EXPORT ) ) {
             if ( CRM_Core_Permission::access( 'CiviGrant' ) ) {
                 require_once 'CRM/Grant/BAO/Grant.php';
-                $fields['Grant'] =& CRM_Grant_BAO_Grant::exportableFields( );
+                $fields['Grant'] = CRM_Grant_BAO_Grant::exportableFields( );
                 unset( $fields['Grant']['grant_contact_id'] );
                 $compArray['Grant'] = ts('Grant');
             }
@@ -449,7 +449,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
 
         if ( ( $mappingType == 'Search Builder' ) || ( $exportMode == CRM_Export_Form_Select::ACTIVITY_EXPORT ) ) {
             require_once 'CRM/Activity/BAO/Activity.php';
-            $fields['Activity'] =& CRM_Activity_BAO_Activity::exportableFields( 'Activity' );
+            $fields['Activity'] = CRM_Activity_BAO_Activity::exportableFields( 'Activity' );
             $compArray['Activity'] = ts('Activity');
         }
 
@@ -518,9 +518,9 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
 
         $mapperKeys      = array_keys( $mapperFields );
         
-        $locationTypes  =& CRM_Core_PseudoConstant::locationType();
+        $locationTypes  = CRM_Core_PseudoConstant::locationType();
         
-        $defaultLocationType =& CRM_Core_BAO_LocationType::getDefault();
+        $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
         
         /* FIXME: dirty hack to make the default option show up first.  This
          * avoids a mozilla browser bug with defaults on dynamically constructed
@@ -1033,7 +1033,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
             return $fields;
         }
         
-        $locationTypes  =& CRM_Core_PseudoConstant::locationType();
+        $locationTypes  = CRM_Core_PseudoConstant::locationType();
         foreach ( $params['mapper'] as $key => $value ) {
             foreach ( $value as $k => $v ) {
                 if ( isset ($v[1] ) ) {

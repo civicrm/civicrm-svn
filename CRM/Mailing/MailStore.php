@@ -54,7 +54,7 @@ class CRM_Mailing_MailStore
         $name ? $dao->name = $name : $dao->is_default = 1;
         if (!$dao->find(true)) throw new Exception("Could not find entry named $name in civicrm_mail_settings");
 
-        $protocols =& CRM_Core_PseudoConstant::mailProtocol();
+        $protocols = CRM_Core_PseudoConstant::mailProtocol();
 
         switch ($protocols[$dao->protocol]) {
 

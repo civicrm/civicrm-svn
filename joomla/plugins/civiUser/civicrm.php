@@ -63,7 +63,7 @@ class plgCiviCRMUser extends JPlugin
 		// Instantiate CiviCRM
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 		require_once 'CRM/Core/Config.php';
-		$civiConfig =& CRM_Core_Config::singleton( );
+		$civiConfig = CRM_Core_Config::singleton( );
 		
 		// Reset Navigation
 		require_once 'CRM/Core/BAO/Navigation.php';
@@ -89,7 +89,7 @@ class plgCiviCRMUser extends JPlugin
 		// Instantiate CiviCRM
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 		require_once 'CRM/Core/Config.php';
-		$civiConfig =& CRM_Core_Config::singleton( );
+		$civiConfig = CRM_Core_Config::singleton( );
 		
 		// Reset Navigation
 		require_once 'CRM/Core/BAO/UFMatch.php';

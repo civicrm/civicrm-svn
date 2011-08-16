@@ -244,7 +244,7 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
         $this->add( 'select', 'visibility', ts('Visibility'),
                     CRM_Core_SelectValues::ufVisibility( true ), true ); 
         
-        $groupNames =& CRM_Core_PseudoConstant::group();
+        $groupNames = CRM_Core_PseudoConstant::group();
 
         $parentGroups = $parentGroupElements = array( );
         if ( isset( $this->_id ) &&
@@ -414,7 +414,7 @@ AND    id <> %3
                                                                        'Group' );
             
             require_once 'CRM/Contact/BAO/Group.php';
-            $group =& CRM_Contact_BAO_Group::create( $params );
+            $group = CRM_Contact_BAO_Group::create( $params );
             
             /*
              * Remove any parent groups requested to be removed

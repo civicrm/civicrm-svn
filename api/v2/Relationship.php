@@ -164,7 +164,7 @@ function civicrm_relationship_update( $params ) {
        
        $relationship_id = (int) $params['relationship_id'];
        $query = "SELECT * FROM civicrm_relationship WHERE id = $relationship_id";
-       $daoRelations = & CRM_Core_DAO::executeQuery( $query );
+       $daoRelations = CRM_Core_DAO::executeQuery( $query );
        while ($daoRelations->fetch()) {
            foreach ($names as $name) {
                $current_values[$name] = $daoRelations->$name;
@@ -308,7 +308,7 @@ function civicrm_contact_relationship_get( $contact_a, $contact_b = null, $relat
 function _civicrm_relationship_format_params( &$params, &$values ) {
     // copy all the relationship fields as is
    
-    $fields =& CRM_Contact_DAO_Relationship::fields( );
+    $fields = CRM_Contact_DAO_Relationship::fields( );
     _civicrm_store_values( $fields, $params, $values );
 
     $relationTypes = CRM_Core_PseudoConstant::relationshipType( 'name', true );

@@ -89,7 +89,7 @@ class CRM_Contact_Form_Search_Criteria {
         $attributes['job_title']['size'] = 30;
         $form->addElement('text', 'job_title', ts('Job Title'), $attributes['job_title'], 'size="30"' );
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         if (CRM_Core_Permission::check('access deleted contacts') and $config->contactUndelete) {
             $form->add('checkbox', 'deleted_contacts', ts('Search in Trash (deleted contacts)'));
         }
@@ -108,7 +108,7 @@ class CRM_Contact_Form_Search_Criteria {
         $componentProfiles = array( );
         $componentProfiles = CRM_Core_BAO_UFGroup::getProfiles($types);
 
-        $ufGroups           =& CRM_Core_BAO_UFGroup::getModuleUFGroup('Search Profile', 1);
+        $ufGroups           = CRM_Core_BAO_UFGroup::getModuleUFGroup('Search Profile', 1);
         $accessibleUfGroups = CRM_Core_Permission::ufGroup( CRM_Core_Permission::VIEW );
 
         $searchProfiles = array ( );
@@ -124,7 +124,7 @@ class CRM_Contact_Form_Search_Criteria {
                           array('0' => ts('- default view -')) + $searchProfiles );
 
         require_once 'CRM/Contact/Form/Search.php';
-        $componentModes =& CRM_Contact_Form_Search::getModeSelect( );
+        $componentModes = CRM_Contact_Form_Search::getModeSelect( );
 
         // unset contributions or participants if user does not have
         // permission on them

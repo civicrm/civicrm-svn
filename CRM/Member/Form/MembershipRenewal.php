@@ -105,13 +105,13 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
             foreach ( $processors as $ppID => $label ) {
                 require_once 'CRM/Core/BAO/PaymentProcessor.php';
                 require_once 'CRM/Core/Payment.php';
-                $paymentProcessor =& CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $this->_mode );
+                $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $this->_mode );
                 if ( $paymentProcessor['payment_processor_type'] == 'PayPal' && !$paymentProcessor['user_name'] ) {
                     continue;
                 } else if ( $paymentProcessor['payment_processor_type'] == 'Dummy' && $this->_mode == 'live' ) {
                 	continue;
                 } else {
-                    $paymentObject =& CRM_Core_Payment::singleton( $this->_mode, $paymentProcessor, $this );
+                    $paymentObject = CRM_Core_Payment::singleton( $this->_mode, $paymentProcessor, $this );
                     $error = $paymentObject->checkConfig( );
                     if ( empty( $error ) ) {
                         $validProcessors[$ppID] = $label;
@@ -126,7 +126,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
             }
             // also check for billing information
             // get the billing location type
-            $locationTypes =& CRM_Core_PseudoConstant::locationType( );
+            $locationTypes = CRM_Core_PseudoConstant::locationType( );
             // CRM-8108 remove ts around Billing location type
             //$this->_bltID = array_search( ts('Billing'),  $locationTypes );
             $this->_bltID = array_search( 'Billing',  $locationTypes );
@@ -173,7 +173,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
         	return CRM_Custom_Form_CustomData::setDefaultValues( $this );
         }
         $defaults = array( );
-        $defaults =& parent::setDefaultValues( );
+        $defaults = parent::setDefaultValues( );
         $this->_memType = $defaults['membership_type_id'];
         
         // set renewal_date to today in correct input format (setDateDefaults uses today if no value passed)
@@ -271,7 +271,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
     	parent::buildQuickForm( );
         
         $defaults = array( );
-        $defaults =& parent::setDefaultValues( );
+        $defaults = parent::setDefaultValues( );
         $this->_memType = $defaults['membership_type_id'];
         $this->assign('customDataType', 'Membership');
         $this->assign('customDataSubType',  $this->_memType );
@@ -413,7 +413,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         $this->assign( 'email', $this->_contributorEmail );
 
         require_once "CRM/Core/BAO/Preferences.php";
-        $mailingInfo =& CRM_Core_BAO_Preferences::mailingPreferences();
+        $mailingInfo = CRM_Core_BAO_Preferences::mailingPreferences();
         $this->assign( 'outBound_option', $mailingInfo['outBound_option'] );
 
         if ( CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $this->_id, 'contribution_recur_id' ) ) {
@@ -559,7 +559,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             require_once 'CRM/Core/Payment/Form.php';
             CRM_Core_Payment_Form::mapParams( $this->_bltID, $this->_params, $paymentParams, true );
             
-            $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
+            $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
             
             $result =& $payment->doDirectPayment( $paymentParams );
             
@@ -643,7 +643,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             }   
 
             require_once 'CRM/Contribute/BAO/Contribution.php';
-            $contribution =& CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
+            $contribution = CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
            
             require_once 'CRM/Member/DAO/MembershipPayment.php';
             require_once 'CRM/Utils/Hook.php';
@@ -669,7 +669,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                     );
             
                 require_once 'CRM/Core/BAO/FinancialTrxn.php';
-                $trxn =& CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
+                $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
             }
         }
 
@@ -693,7 +693,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $formValues['paidBy'] = $paymentInstrument[$formValues['payment_instrument_id']];
             
             //get the group Tree
-            $this->_groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Membership', $this, $this->_id, false,$this->_memType);
+            $this->_groupTree = CRM_Core_BAO_CustomGroup::getTree( 'Membership', $this, $this->_id, false,$this->_memType);
             
             // retrieve custom data
             require_once "CRM/Core/BAO/UFGroup.php";

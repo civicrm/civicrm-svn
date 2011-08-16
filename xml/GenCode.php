@@ -151,7 +151,7 @@ file_put_contents($sqlCodePath . "civicrm_navigation.mysql", $smarty->fetch( 'ci
 $smarty->clear_all_assign();
 $smarty->assign('build_version',$build_version);
 
-$config =& CRM_Core_Config::singleton(false);
+$config = CRM_Core_Config::singleton(false);
 $locales = array( );
 if (substr($config->gettextResourceDir, 0, 1) === '/') {
     $localeDir = $config->gettextResourceDir;
@@ -418,7 +418,7 @@ function getTable( $tableXML, &$database, &$tables ) {
                     'localizable'=> $localizable,
                     'log'        => value( 'log', $tableXML, 'false' ) );
     
-    $config  =& CRM_Core_Config::singleton(false);
+    $config  = CRM_Core_Config::singleton(false);
     $fields  = array( );
     foreach ( $tableXML->field as $fieldXML ) {
         if ( value( 'drop', $fieldXML, 0 ) > 0 and value( 'drop', $fieldXML, 0 ) <= $build_version) {
@@ -445,7 +445,7 @@ function getTable( $tableXML, &$database, &$tables ) {
         getPrimaryKey( $tableXML->primaryKey, $fields, $table );
     }
 
-    $config  =& CRM_Core_Config::singleton(false);
+    $config  = CRM_Core_Config::singleton(false);
     if ( value( 'index', $tableXML ) ) {
         $index   = array( );
         foreach ( $tableXML->index as $indexXML ) {

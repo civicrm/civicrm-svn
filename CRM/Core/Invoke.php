@@ -89,7 +89,7 @@ class CRM_Core_Invoke
         }
 
         // also initialize the i18n framework
-        $i18n   =& CRM_Core_I18n::singleton( );
+        $i18n   = CRM_Core_I18n::singleton( );
 
         if ( $config->userFramework == 'Standalone' ) {
             require_once 'CRM/Core/Session.php';
@@ -104,13 +104,13 @@ class CRM_Core_Invoke
 
         // get the menu items
         $path = implode( '/', $args );
-        $item =& CRM_Core_Menu::get( $path );
+        $item = CRM_Core_Menu::get( $path );
 
         // we should try to compute menus, if item is empty and stay on the same page,
         // rather than compute and redirect to dashboard.
         if ( !$item ) {
             CRM_Core_Menu::store( false );
-            $item =& CRM_Core_Menu::get( $path );
+            $item = CRM_Core_Menu::get( $path );
         }
         
         if ( $config->userFramework == 'Joomla' && $item ) {
@@ -247,7 +247,7 @@ class CRM_Core_Invoke
         $wrapper = new CRM_Utils_Wrapper( );
         
         require_once 'CRM/Core/Component.php';
-        $properties =& CRM_Core_Component::contactSubTypeProperties( $contact_sub_type, 'Edit' );
+        $properties = CRM_Core_Component::contactSubTypeProperties( $contact_sub_type, 'Edit' );
         if( $properties ) {
             $wrapper->run( $properties['class'], ts('New %1', array(1 => $contact_sub_type)), $action, true );
         } else {

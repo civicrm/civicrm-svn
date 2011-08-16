@@ -183,7 +183,7 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
             
             if ( $addCaptcha ) {
                 require_once 'CRM/Utils/ReCAPTCHA.php';
-                $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
+                $captcha = CRM_Utils_ReCAPTCHA::singleton( );
                 $captcha->add( $this );
                 $this->assign( "isCaptcha" , true );
             }
@@ -253,7 +253,7 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
                     $isPrimary = 0;
                    if ( $locTypeId == 'Primary') {
                        require_once "CRM/Core/BAO/LocationType.php";
-                       $locTypeId = & CRM_Core_BAO_LocationType::getDefault();
+                       $locTypeId = CRM_Core_BAO_LocationType::getDefault();
                        $isPrimary = 1;
                    }
 
@@ -271,7 +271,7 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
         if ( $ids ) {
             $this->_contactID = $ids['0'];
         }
-        $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params, $this->_fields, $this->_contactID );
+        $contactID = CRM_Contact_BAO_Contact::createProfileContact( $params, $this->_fields, $this->_contactID );
         $this->set('contactID', $contactID);
         
         if ( !empty($params['email']) ) {

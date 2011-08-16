@@ -87,7 +87,7 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
                 $count++;
             }
         }
-        $supported =& CRM_Dedupe_BAO_RuleGroup::supportedFields($this->_contactType);
+        $supported = CRM_Dedupe_BAO_RuleGroup::supportedFields($this->_contactType);
         if ( is_array( $supported ) ) {
             foreach($supported as $table => $fields) {
                 foreach($fields as $field => $title) {

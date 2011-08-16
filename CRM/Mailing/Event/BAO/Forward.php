@@ -50,7 +50,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
      * Create a new forward event, create a new contact if necessary
      */
     static function &forward($job_id, $queue_id, $hash, $forward_email, $fromEmail = null, $comment = null ) {
-        $q =& CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
+        $q = CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
         
         $successfulForward = false;
         $contact_id = null;
@@ -67,7 +67,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
         $mailing    =   CRM_Mailing_BAO_Mailing::getTableName();
         $forward    =   self::getTableName();
        
-        $domain     =& CRM_Core_BAO_Domain::getDomain( );
+        $domain     = CRM_Core_BAO_Domain::getDomain( );
        
         $dao = new CRM_Core_Dao();
         $dao->query("
@@ -136,7 +136,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
             'job_id' => $job_id,
         );
         
-        $queue =& CRM_Mailing_Event_BAO_Queue::create($queue_params);
+        $queue = CRM_Mailing_Event_BAO_Queue::create($queue_params);
         
         $forward = new CRM_Mailing_Event_BAO_Forward();
         $forward->time_stamp = date('YmdHis');

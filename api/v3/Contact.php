@@ -237,7 +237,7 @@ function civicrm_api3_contact_get( $params )
     }
 
     require_once 'CRM/Contact/BAO/Query.php';
-    $newParams =& CRM_Contact_BAO_Query::convertFormValues( $inputParams );
+    $newParams = CRM_Contact_BAO_Query::convertFormValues( $inputParams );
     list( $contacts, $options ) = CRM_Contact_BAO_Query::apiQuery( $newParams,
                                                                    $returnProperties,
                                                                    null,
@@ -285,7 +285,7 @@ function civicrm_api3_contact_delete( $params )
     $contactID = CRM_Utils_Array::value( 'id', $params );
 
 
-    $session =& CRM_Core_Session::singleton( );
+    $session = CRM_Core_Session::singleton( );
     if ( $contactID ==  $session->get( 'userID' ) ) {
       return civicrm_api3_create_error(  'This contact record is linked to the currently logged in user account - and cannot be deleted.'  );
     }

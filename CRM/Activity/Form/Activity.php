@@ -1061,7 +1061,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
 
         // send copy to assignee contacts.CRM-4509
         $mailStatus = '';
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         
         if ( !CRM_Utils_Array::crmIsEmptyArray($params['assignee_contact_id']) && $config->activityAssigneeNotification ) {
             $mailToContacts = array( );
@@ -1076,7 +1076,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             
             if ( !CRM_Utils_array::crmIsEmptyArray($mailToContacts) ) {
                 //include attachments while sendig a copy of activity.
-                $attachments =& CRM_Core_BAO_File::getEntityFile( 'civicrm_activity', $activity->id );
+                $attachments = CRM_Core_BAO_File::getEntityFile( 'civicrm_activity', $activity->id );
 
                 require_once "CRM/Case/BAO/Case.php";
                 // CRM-8400 add param with _currentlyViewedContactId for URL link in mail

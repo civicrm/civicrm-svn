@@ -57,7 +57,7 @@ class CRM_Contribute_BAO_Query
             self::$_contributionFields = array( );
             
             require_once 'CRM/Contribute/BAO/Contribution.php';
-            $fields =& CRM_Contribute_BAO_Contribution::exportableFields( );
+            $fields = CRM_Contribute_BAO_Contribution::exportableFields( );
             
             unset( $fields['contribution_contact_id'] );
 

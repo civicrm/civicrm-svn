@@ -89,9 +89,9 @@ class CRM_Contact_Form_Edit_TagsandGroups
                 $ids = '= '.$groupID;
             } else {
                 if ( $visibility ) {
-                    $group  =& CRM_Core_PseudoConstant::allGroup( );
+                    $group  = CRM_Core_PseudoConstant::allGroup( );
                 } else {
-                    $group  =& CRM_Core_PseudoConstant::group( );
+                    $group  = CRM_Core_PseudoConstant::group( );
                 }
                 $ids = implode( ',', array_keys( $group ) );
                 $ids = 'IN ('.$ids.')';
@@ -137,7 +137,7 @@ class CRM_Contact_Form_Edit_TagsandGroups
             $tag = CRM_Core_BAO_Tag::getTags( );
             
             foreach ($tag as $id => $name) {
-                $elements[] =& HTML_QuickForm::createElement('checkbox', $id, null, $name);
+                $elements[] = HTML_QuickForm::createElement('checkbox', $id, null, $name);
             }
             if ( ! empty( $elements ) ) { 
                 $form->addGroup( $elements, $fName, $tagName, '<br />' );
@@ -180,7 +180,7 @@ class CRM_Contact_Form_Edit_TagsandGroups
             }
 
             require_once 'CRM/Contact/BAO/GroupContact.php';
-            $contactGroup =& CRM_Contact_BAO_GroupContact::getContactGroup( $id, 'Added', null, false, true );  
+            $contactGroup = CRM_Contact_BAO_GroupContact::getContactGroup( $id, 'Added', null, false, true );  
             if ( $contactGroup ) {  
                 foreach ( $contactGroup as $group ) {  
                     $defaults[$fName .'['. $group['group_id'] .']'] = 1;  
@@ -195,7 +195,7 @@ class CRM_Contact_Form_Edit_TagsandGroups
             }
             
             require_once 'CRM/Core/BAO/EntityTag.php';
-            $contactTag =& CRM_Core_BAO_EntityTag::getTag($id);  
+            $contactTag = CRM_Core_BAO_EntityTag::getTag($id);  
             if ( $contactTag ) {  
                 foreach ( $contactTag as $tag ) {  
                     $defaults[$fName .'[' . $tag . ']' ] = 1;  

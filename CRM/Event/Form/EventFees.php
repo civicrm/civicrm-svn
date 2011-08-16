@@ -556,7 +556,7 @@ SELECT  id, html_type
         }
 
         require_once "CRM/Core/BAO/Preferences.php";
-        $mailingInfo =& CRM_Core_BAO_Preferences::mailingPreferences();
+        $mailingInfo = CRM_Core_BAO_Preferences::mailingPreferences();
         $form->assign( 'outBound_option', $mailingInfo['outBound_option'] );
         $form->assign( 'hasPayment', $form->_paymentId );
     }

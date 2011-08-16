@@ -583,7 +583,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
                 if ( $addCaptcha &&
                      ! $viewOnly ) {
                     require_once 'CRM/Utils/ReCAPTCHA.php';
-                    $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
+                    $captcha = CRM_Utils_ReCAPTCHA::singleton( );
                     $captcha->add( $this );
                     $this->assign( "isCaptcha" , true );
                 }                

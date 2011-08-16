@@ -155,7 +155,7 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
                                           'sectionTitle' => ts( 'Your Contacts / Organizations' ),
                                           'weight'       => 40 );
          
-            $links =& self::links( );
+            $links = self::links( );
             $currentRelationships = CRM_Contact_BAO_Relationship::getRelationship($this->_contactId,
                                                                                   CRM_Contact_BAO_Relationship::CURRENT,
                                                                                   0, 0, 0,

@@ -628,7 +628,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         //check for notification settings for assignee contacts
         $selectedContacts = array( 'contact_check' );
         
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         if ( $config->activityAssigneeNotification ) {
             $selectedContacts[] = 'assignee_contact_id';  
         }

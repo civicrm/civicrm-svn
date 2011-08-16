@@ -45,7 +45,7 @@ class JFormFieldCiviProfiles extends JFormField {
         // Initiate CiviCRM
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 		require_once 'CRM/Core/Config.php';
-		$config =& CRM_Core_Config::singleton( );
+		$config = CRM_Core_Config::singleton( );
         
         $ufGroups = CRM_Core_PseudoConstant::ufGroup( );
         $options[] = JHTML::_( 'select.option', '', JText::_( '- Select Profile -' ) );

@@ -132,7 +132,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
         if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE ) {
             // clear any descendant groups cache if exists
             require_once 'CRM/Core/BAO/Cache.php';
-            $finalGroups =& CRM_Core_BAO_Cache::deleteGroup( 'descendant groups for an org' );
+            $finalGroups = CRM_Core_BAO_Cache::deleteGroup( 'descendant groups for an org' );
         }
 
         // delete from group table
@@ -404,7 +404,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
 
             // clear any descendant groups cache if exists
             require_once 'CRM/Core/BAO/Cache.php';
-            $finalGroups =& CRM_Core_BAO_Cache::deleteGroup( 'descendant groups for an org' );
+            $finalGroups = CRM_Core_BAO_Cache::deleteGroup( 'descendant groups for an org' );
 
             // this is always required, since we don't know when a 
             // parent group is removed

@@ -290,7 +290,7 @@ $earthDistanceSQL  <= $distance
             $qill[] = $proximityAddress['country'];
         }
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( empty( $config->geocodeMethod ) ) {
             CRM_Core_Error::fatal( ts( 'Proximity searching requires you to set a valid geocoding provider' ) );
         }

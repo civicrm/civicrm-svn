@@ -345,7 +345,7 @@ class CRM_Core_PseudoConstant
                                      $filter = 'is_active', $condition = null, $orderby = null, $key = 'id' ) 
     {
         $cacheKey = "CRM_PC_{$name}_{$all}_{$key}_{$retrieve}_{$filter}_{$condition}_{$orderby}";
-        $cache =& CRM_Utils_Cache::singleton( );
+        $cache = CRM_Utils_Cache::singleton( );
         $var = $cache->get( $cacheKey );
         if ( $var ) {
             return $var;
@@ -714,7 +714,7 @@ class CRM_Core_PseudoConstant
             $config = CRM_Core_Config::singleton();
             if ( $limit ) {
                 // limit the state/province list to the countries specified in CIVICRM_PROVINCE_LIMIT
-                $countryIsoCodes =& self::countryIsoCode();
+                $countryIsoCodes = self::countryIsoCode();
                 $limitCodes = $config->provinceLimit( );
                 $limitIds = array();
                 foreach ($limitCodes as $code) {
@@ -731,7 +731,7 @@ class CRM_Core_PseudoConstant
             // localise the province names if in an non-en_US locale
             global $tsLocale;
             if ($tsLocale != '' and $tsLocale != 'en_US') {
-                $i18n =& CRM_Core_I18n::singleton();
+                $i18n = CRM_Core_I18n::singleton();
                 $i18n->localizeArray(self::$stateProvince, array('context' => 'province'));
                 asort(self::$stateProvince);
             }
@@ -775,7 +775,7 @@ WHERE  id = %1";
 
             if ( $limit ) {
                 $config = CRM_Core_Config::singleton();
-                $countryIsoCodes =& self::countryIsoCode();
+                $countryIsoCodes = self::countryIsoCode();
                 $limitCodes = $config->provinceLimit( );
                 $limitIds = array();
                 foreach ($limitCodes as $code) {
@@ -851,7 +851,7 @@ WHERE  id = %1";
 
             // if default country is set, percolate it to the top
             if ( $config->defaultContactCountry( ) ) {
-                $countryIsoCodes =& self::countryIsoCode();
+                $countryIsoCodes = self::countryIsoCode();
                 $defaultID = array_search($config->defaultContactCountry( ), $countryIsoCodes); 
                 if ( $defaultID !== false ) {
                     $default[$defaultID] = CRM_Utils_Array::value($defaultID,self::$country);
@@ -862,7 +862,7 @@ WHERE  id = %1";
             // localise the country names if in an non-en_US locale
             global $tsLocale;
             if ($tsLocale != '' and $tsLocale != 'en_US') {
-                $i18n =& CRM_Core_I18n::singleton();
+                $i18n = CRM_Core_I18n::singleton();
                 $i18n->localizeArray(self::$country, array('context' => 'country'));
                 asort(self::$country);
             }
@@ -1482,7 +1482,7 @@ ORDER BY name";
         $config = CRM_Core_Config::singleton( );
         global $tsLocale;
         if ( $tsLocale != '' and $tsLocale != 'en_US' ) {
-            $i18n =& CRM_Core_I18n::singleton();
+            $i18n = CRM_Core_I18n::singleton();
             $i18n->localizeArray( $result );
             asort( $result );
         }

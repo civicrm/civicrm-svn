@@ -382,7 +382,7 @@ function civicrm_upgrade_db() {
     $_GET['q'] = 'civicrm/upgrade';
     require_once 'CRM/Core/Config.php';
     require_once 'CRM/Core/Smarty.php';
-    $template =& CRM_Core_Smarty::singleton( );
+    $template = CRM_Core_Smarty::singleton( );
 
     require_once 'CRM/Utils/System.php';
     require_once 'CRM/Core/BAO/Domain.php';
@@ -447,11 +447,11 @@ function civicrm_cache_clear() {
     $config->clearDBCache( );
 
     // also cleanup the templates_c directory
-    $config =& CRM_Core_Config::singleton( );
+    $config = CRM_Core_Config::singleton( );
     $config->cleanup( 1 , false );
 
     // also cleanup the session object
-    $session =& CRM_Core_Session::singleton( );
+    $session = CRM_Core_Session::singleton( );
     $session->reset(1);
 
     drush_log(dt('Cache cleared.'), 'ok');
@@ -688,7 +688,7 @@ function civicrm_rest() {
     $rest = new CRM_Utils_REST();
 
     require_once 'CRM/Core/Config.php';
-    $config =& CRM_Core_Config::singleton();
+    $config = CRM_Core_Config::singleton();
 
     global $civicrm_root;
     // adding dummy script, since based on this api file path is computed.
@@ -793,7 +793,7 @@ function _civicrm_init( ) {
 
     // also initialize config object
     require_once 'CRM/Core/Config.php';
-    $config =& CRM_Core_Config::singleton( );
+    $config = CRM_Core_Config::singleton( );
 
     $init = true;
     return $init;

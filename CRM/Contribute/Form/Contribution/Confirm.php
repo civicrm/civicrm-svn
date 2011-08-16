@@ -61,7 +61,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                                 CRM_Core_DAO::$_nullObject, false, null, 'GET' );
             if ( $rfp ) {
                 require_once 'CRM/Core/Payment.php'; 
-                $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
+                $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
                 $expressParams = $payment->getExpressCheckoutDetails( $this->get( 'token' ) );
 
                 $this->_params['payer'       ] = $expressParams['payer'       ];
@@ -1033,7 +1033,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $contribParams['total_amount']          = trim(CRM_Utils_Money::format($contribParams['total_amount'], ' '));
 
         //add contribution record
-        $contribution =& CRM_Contribute_BAO_Contribution::add( $contribParams, $ids );
+        $contribution = CRM_Contribute_BAO_Contribution::add( $contribParams, $ids );
         
         // process price set, CRM-5095
         if ( $contribution->id && $form->_priceSetId ) {
@@ -1191,7 +1191,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                 );
             
             require_once 'CRM/Core/BAO/FinancialTrxn.php';
-            $trxn =& CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
+            $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
         }
         
         //create contribution activity w/ individual and target
@@ -1258,7 +1258,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $ids = array( ); 
         
         require_once 'CRM/Contribute/BAO/ContributionRecur.php';
-        $recurring =& CRM_Contribute_BAO_ContributionRecur::add( $recurParams, $ids );
+        $recurring = CRM_Contribute_BAO_ContributionRecur::add( $recurParams, $ids );
         if ( is_a( $recurring, 'CRM_Core_Error' ) ) {
             CRM_Core_Error::displaySessionError( $result );
             $urlString = 'civicrm/contribute/transact';

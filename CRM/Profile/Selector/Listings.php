@@ -189,12 +189,12 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                                                                  false, $this->_profileIds );
         $this->_customFields =& $customFields;
         
-        $returnProperties =& CRM_Contact_BAO_Contact::makeHierReturnProperties( $this->_fields );        
+        $returnProperties = CRM_Contact_BAO_Contact::makeHierReturnProperties( $this->_fields );        
         $returnProperties['contact_type']     = 1;
         $returnProperties['contact_sub_type'] = 1;
         $returnProperties['sort_name'   ]     = 1;
 
-        $queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_params, 1 );            
+        $queryParams = CRM_Contact_BAO_Query::convertFormValues( $this->_params, 1 );            
         $this->_query   = new CRM_Contact_BAO_Query( $queryParams, $returnProperties, $this->_fields );
         $this->_options =& $this->_query->_options;
     }//end of constructor
@@ -442,7 +442,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                 $this->_editLink = true;
             }
         }
-        $links =& self::links( $this->_map, $this->_editLink, $this->_linkToUF, $this->_profileIds );
+        $links = self::links( $this->_map, $this->_editLink, $this->_linkToUF, $this->_profileIds );
         
         require_once 'CRM/Core/PseudoConstant.php';
         $locationTypes = CRM_Core_PseudoConstant::locationType( );
@@ -516,7 +516,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
         while ($result->fetch()) {
             if (isset($result->country)) {
                 // the query returns the untranslated country name
-                $i18n =& CRM_Core_I18n::singleton();
+                $i18n = CRM_Core_I18n::singleton();
                 $result->country = $i18n->translate($result->country);
             }
             $row = array( );

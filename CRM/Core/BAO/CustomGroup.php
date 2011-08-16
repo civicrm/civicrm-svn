@@ -389,7 +389,7 @@ ORDER BY civicrm_custom_group.weight,
         $queryString = "$strSelect $strFrom $strWhere $orderBy";
         //crm_core_error::debug('$queryString', $queryString );
         // dummy dao needed
-        $crmDAO =& CRM_Core_DAO::executeQuery( $queryString, $params );
+        $crmDAO = CRM_Core_DAO::executeQuery( $queryString, $params );
         
         $customValueTables = array( );
 
@@ -724,7 +724,7 @@ SELECT $select
         $queryString = $select . $from . $where . $orderBy;
              
         // dummy dao needed
-        $crmDAO =& CRM_Core_DAO::executeQuery( $queryString, $params );
+        $crmDAO = CRM_Core_DAO::executeQuery( $queryString, $params );
         
         // process records
         while($crmDAO->fetch()) {
@@ -1277,7 +1277,7 @@ SELECT $select
             return;
         }
         
-        $groupTree   =& CRM_Core_BAO_CustomGroup::getTree( $type, $form );
+        $groupTree   = CRM_Core_BAO_CustomGroup::getTree( $type, $form );
         $customValue = array( );
         $htmlType    = array( 'CheckBox', 'Multi-Select', 'AdvMulti-Select', 'Select', 'Radio' );
         
@@ -1448,7 +1448,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
                         );
 
         require_once 'CRM/Core/BAO/CustomField.php';
-        $tableParams =& CRM_Core_BAO_CustomField::defaultCustomTableSchema( $params );
+        $tableParams = CRM_Core_BAO_CustomField::defaultCustomTableSchema( $params );
 
         require_once 'CRM/Core/BAO/SchemaHandler.php';
         CRM_Core_BAO_SchemaHandler::createTable( $tableParams );

@@ -275,7 +275,7 @@ class CRM_Contribute_Form_ManagePremiums extends CRM_Contribute_Form
             $imageFile = CRM_Utils_Array::value( 'uploadFile', $params );
             $imageFile = $imageFile['name'];
 
-            $config = & CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
            
             $ids   = array( );
             $error = false; 

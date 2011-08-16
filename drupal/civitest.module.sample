@@ -209,7 +209,7 @@ function civitest_civicrm_buildAmount( $pageType,
                                                      'name' );
 
     // get the logged in user id 
-    $session =& CRM_Core_Session::singleton();
+    $session = CRM_Core_Session::singleton();
     $userID  = $session->get( 'userID' );
 
     if ( $userID ) {
@@ -266,7 +266,7 @@ function civitest_civicrm_tabs( &$tabs, $contactID ) {
 function civitest_civicrm_enableDisable( $recordBAO, $recordID, $isActive ) {
      // create an activity for enable/disable relationship type
      if ( $recordBAO == 'CRM_Contact_BAO_RelationshipType' ) {
-         $session =& CRM_Core_Session::singleton( );
+         $session = CRM_Core_Session::singleton( );
          $uid     = $session->get('userID');
          if( $uid ) {
              $params = array( 'activity_type_id'   => 1,
@@ -631,7 +631,7 @@ function civitest_civicrm_buildForm( $formName, &$form ) {
     if ( $formName == 'CRM_Contribute_Form_Contribution_Main' ) {
         if ( is_array( $form->_membershipBlock ) ) {
             //get logged in contact
-            $session   = & CRM_Core_Session::singleton();
+            $session   = CRM_Core_Session::singleton();
             $contactID = $session->get('userID');
             
             //check for existing membership
@@ -695,7 +695,7 @@ function civitest_civicrm_buildForm( $formName, &$form ) {
 	// {$form.discountCode.label}&nbsp;{$form.discountCode.html}
 
         // also assign to template
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $beginHookFormElements = $template->get_template_vars( 'beginHookFormElements' );
         if ( ! $beginHookFormElements ) {
             $beginHookFormElements = array( );
@@ -913,7 +913,7 @@ function civitest_civicrm_config( &$config ) {
 
     // fix template path
     $templateDir = $civitestRoot . 'templates' . DIRECTORY_SEPARATOR;
-    $template =& CRM_Core_Smarty::singleton( );
+    $template = CRM_Core_Smarty::singleton( );
     array_unshift( $template->template_dir, $templateDir );
 }
 
@@ -922,7 +922,7 @@ function custom_ts( $string, $params = array( ) ) {
     
     static $i18n = null;
     if ( ! $i18n ) {
-        $i18n =& CRM_Core_I18n::singleton();
+        $i18n = CRM_Core_I18n::singleton();
     }
     return $i18n->crm_translate( $string, $params );
 }
@@ -1369,7 +1369,7 @@ function civitest_civicrm_import( $object, $usage, &$objectRef, $params ) {
 			}
             
 			//only add tag to contact if not already present
-			$entityTags =& CRM_Core_BAO_EntityTag::getTag($contactID);
+			$entityTags = CRM_Core_BAO_EntityTag::getTag($contactID);
 			if ( !in_array($tagid, $entityTags) ) {
 				$entityParams = array('tag_id' => $tagid, 'contact_id' => $contactID );
 				$entityTag = civicrm_entity_tag_add( $entityParams );

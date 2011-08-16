@@ -162,11 +162,11 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
 
             // if action is delete do the needful.
             if ($action & (CRM_Core_Action::DELETE)) {
-                $usedBy =& CRM_Price_BAO_Set::getUsedBy( $sid );
+                $usedBy = CRM_Price_BAO_Set::getUsedBy( $sid );
                 
                 if ( empty( $usedBy ) ) {
                     // prompt to delete
-                    $session = & CRM_Core_Session::singleton();
+                    $session = CRM_Core_Session::singleton();
                     $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/price', 'action=browse'));
                     $controller = new CRM_Core_Controller_Simple( 'CRM_Price_Form_DeleteSet','Delete Price Set', null );
                     // $id = CRM_Utils_Request::retrieve('sid', 'Positive', $this, false, 0);

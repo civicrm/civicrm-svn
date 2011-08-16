@@ -120,7 +120,7 @@ SELECT module
    AND uf_group_id = %1
 ";
         $params = array( 1 => array( $this->_gid, 'Integer' ) );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         if ( ! $dao->fetch( ) ) {
             CRM_Core_Error::fatal( ts( 'The requested Profile (gid=%1) is not configured to be used for \'Profile\' edit and view forms in its Settings. Contact the site administrator if you need assistance.',
                                       array( 1 => $this->_gid )) );        

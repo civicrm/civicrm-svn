@@ -138,7 +138,7 @@ class CRM_Utils_Mail
             }
         }
         
-        $message =& self::setMimeParams( $msg );
+        $message = self::setMimeParams( $msg );
         $headers =& $msg->headers($headers);
         
         $to = array( $params['toEmail'] );
@@ -154,7 +154,7 @@ class CRM_Utils_Mail
         }
         
         $result = null;
-        $mailer =& CRM_Core_Config::getMailer( );
+        $mailer = CRM_Core_Config::getMailer( );
         CRM_Core_Error::ignoreException( );
         if ( is_object( $mailer ) ) {
             $result = $mailer->send($to, $headers, $message);
@@ -248,7 +248,7 @@ class CRM_Utils_Mail
      */
     static function validOutBoundMail() {
         require_once "CRM/Core/BAO/Preferences.php";
-        $mailingInfo =& CRM_Core_BAO_Preferences::mailingPreferences();
+        $mailingInfo = CRM_Core_BAO_Preferences::mailingPreferences();
         if ( $mailingInfo['outBound_option'] == 3 ) {
            return true;
         } else  if ( $mailingInfo['outBound_option'] == 0 ) {

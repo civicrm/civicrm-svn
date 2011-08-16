@@ -51,7 +51,7 @@ class CRM_Mailing_Event_BAO_Resubscribe {
      */
     public static function &resub_to_mailing($job_id, $queue_id, $hash) {
         /* First make sure there's a matching queue event */
-        $q =& CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
+        $q = CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
         $success = null;
         if (! $q) {
             return $success;
@@ -195,7 +195,7 @@ class CRM_Mailing_Event_BAO_Resubscribe {
         // param is_domain is not supported as of now.
 
         $config = CRM_Core_Config::singleton();
-        $domain =& CRM_Core_BAO_Domain::getDomain( );
+        $domain = CRM_Core_BAO_Domain::getDomain( );
 
         $jobTable = CRM_Mailing_BAO_Job::getTableName();
         $mailingTable = CRM_Mailing_DAO_Mailing::getTableName();
@@ -280,7 +280,7 @@ class CRM_Mailing_Event_BAO_Resubscribe {
                          'Return-Path'   => "do-not-reply@$emailDomain",
                          );
         
-        $b =& CRM_Utils_Mail::setMimeParams( $message );
+        $b = CRM_Utils_Mail::setMimeParams( $message );
         $h =& $message->headers($headers);
 
         $mailer =& $config->getMailer();

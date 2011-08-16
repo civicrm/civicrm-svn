@@ -43,7 +43,7 @@ class CRM_Contribute_Form_ContributionPage_TabHeader
     {
         $tabs = $form->get( 'tabHeader' );
         if ( !$tabs || !CRM_Utils_Array::value('reset', $_GET) ) {
-            $tabs =& self::process( $form );
+            $tabs = self::process( $form );
             $form->set( 'tabHeader', $tabs );
         }
         $form->assign_by_ref( 'tabHeader', $tabs );
@@ -158,7 +158,7 @@ class CRM_Contribute_Form_ContributionPage_TabHeader
 
     static function reset( &$form ) 
     {
-        $tabs =& self::process( $form );
+        $tabs = self::process( $form );
         $form->set( 'tabHeader', $tabs );
     }
 

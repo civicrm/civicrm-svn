@@ -262,7 +262,7 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
 
             // set approval details if workflow is not enabled 
             if ( ! CRM_Mailing_Info::workflowEnabled( ) ) {
-                $session =& CRM_Core_Session::singleton( );
+                $session = CRM_Core_Session::singleton( );
                 $mailing->approver_id         = $session->get( 'userID' );
                 $mailing->approval_date       = date('YmdHis');
                 $mailing->approval_status_id  = 1; 
@@ -278,7 +278,7 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
             }
  
             // also set the scheduled_id 
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $mailing->scheduled_id   = $session->get( 'userID' );
             $mailing->scheduled_date = date('YmdHis');
             $mailing->created_date  = CRM_Utils_Date::isoToMysql( $mailing->created_date );

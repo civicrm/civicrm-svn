@@ -95,7 +95,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         $membership->save( );
         $membership->free( );
         
-        $session = & CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         if ( empty( $membership->contact_id ) || empty( $membership->status_id ) ){
             // this means we are in renewal mode and are just updating the membership
             // record or this is an API update call and all fields are not present in the update record
@@ -253,7 +253,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         
-        $membership =& self::add($params, $ids);
+        $membership = self::add($params, $ids);
         
         if ( is_a( $membership, 'CRM_Core_Error') ) {
             $transaction->rollback( );
@@ -291,7 +291,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             }
             
             require_once 'CRM/Contribute/BAO/Contribution.php';
-            $contribution =& CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
+            $contribution = CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
             
             //insert payment record for this membership
             if( !CRM_Utils_Array::value( 'contribution', $ids ) ||
@@ -645,7 +645,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
             require_once 'CRM/Member/DAO/Membership.php';
 
             if ( !$memberContactId ) {
-                $session = & CRM_Core_Session::singleton();
+                $session = CRM_Core_Session::singleton();
                 $cid     = $session->get('userID');    
             } else {
                 $cid     = $memberContactId;
@@ -1153,7 +1153,7 @@ AND civicrm_membership.is_test = %2";
             $result = null;
             if ($form->_values['is_monetary'] && !$form->_params['is_pay_later']) {
                 require_once 'CRM/Core/Payment.php';
-                $payment =& CRM_Core_Payment::singleton( $form->_mode, $form->_paymentProcessor, $form );
+                $payment = CRM_Core_Payment::singleton( $form->_mode, $form->_paymentProcessor, $form );
                 
                 if ( $form->_contributeMode == 'express' ) {
                     $result =& $payment->doExpressCheckout( $tempParams );
@@ -1257,7 +1257,7 @@ AND civicrm_membership.is_test = %2";
             if ( $form->_values['is_monetary'] && $form->_amount > 0.0 && !$form->_params['is_pay_later'] ) {
                 // this does not return
                 require_once 'CRM/Core/Payment.php';
-                $payment =& CRM_Core_Payment::singleton( $form->_mode, $form->_paymentProcessor, $form );
+                $payment = CRM_Core_Payment::singleton( $form->_mode, $form->_paymentProcessor, $form );
                 $payment->doTransferCheckout( $form->_params, 'contribute' );
             }
         }
@@ -1542,7 +1542,7 @@ AND civicrm_membership.is_test = %2";
         }
         
         $memParams['custom'] = $customFieldsFormatted;
-        $membership =& self::create( $memParams, $ids, false, $activityType );
+        $membership = self::create( $memParams, $ids, false, $activityType );
         // not sure why this statement is here, seems quite odd :( - Lobo: 12/26/2010
         // related to: http://forum.civicrm.org/index.php/topic,11416.msg49072.html#msg49072
         $membership->find(true);

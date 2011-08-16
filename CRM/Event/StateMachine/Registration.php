@@ -84,7 +84,7 @@ class CRM_Event_StateMachine_Registration extends CRM_Core_StateMachine
         //to add instances of Additional Participant page, only if user has entered any additional participants
         if ( $additionalParticipant ) {
             require_once "CRM/Event/Form/Registration/AdditionalParticipant.php";
-            $extraPages =& CRM_Event_Form_Registration_AdditionalParticipant::getPages( $additionalParticipant );
+            $extraPages = CRM_Event_Form_Registration_AdditionalParticipant::getPages( $additionalParticipant );
             $pages = array_merge( $pages, $extraPages );
         }
 

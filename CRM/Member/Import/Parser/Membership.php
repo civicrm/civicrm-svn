@@ -75,7 +75,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
     function init( ) 
     {
         require_once 'CRM/Member/BAO/Membership.php';
-        $fields =& CRM_Member_BAO_Membership::importableFields( $this->_contactType, false );
+        $fields = CRM_Member_BAO_Membership::importableFields( $this->_contactType, false );
 
         foreach ($fields as $name => $field) {
             $field['type']          = CRM_Utils_Array::value( 'type', $field, CRM_Utils_Type::T_INT );
@@ -328,7 +328,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
         static $indieFields = null;
         if ($indieFields == null) {
             require_once('CRM/Member/DAO/Membership.php');
-            $tempIndieFields =& CRM_Member_DAO_Membership::import();
+            $tempIndieFields = CRM_Member_DAO_Membership::import();
             $indieFields = $tempIndieFields;
         }
 
@@ -381,7 +381,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                     $ids = array( 'membership' => $formatValues['membership_id'],
                                   'userId'     => $session->get('userID') );
                     
-                    $newMembership =& CRM_Member_BAO_Membership::create( $formatted , $ids, true );
+                    $newMembership = CRM_Member_BAO_Membership::create( $formatted , $ids, true );
                     if ( civicrm_error( $newMembership ) ) {
                         array_unshift($values, $newMembership['is_error']." for Membership ID ". $formatValues['membership_id'].". Row was skipped.");
                         return CRM_Member_Import_Parser::ERROR;

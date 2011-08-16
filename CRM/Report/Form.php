@@ -2064,7 +2064,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                 echo $content;
             } else {
                 if( $chartType =  CRM_Utils_Array::value( 'charts', $this->_params ) ) {
-                    $config    =& CRM_Core_Config::singleton();
+                    $config    = CRM_Core_Config::singleton();
                     //get chart image name
                     $chartImg  = $this->_chartId . '.png';
                     //get image url path
@@ -2241,7 +2241,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
       cf.is_active = 1 AND 
       cf.is_searchable = 1
 ORDER BY cg.weight, cf.weight";
-        $customDAO =& CRM_Core_DAO::executeQuery( $sql );
+        $customDAO = CRM_Core_DAO::executeQuery( $sql );
         
         $curTable  = null;
         while( $customDAO->fetch() ) {
@@ -2315,7 +2315,7 @@ ORDER BY cg.weight, cf.weight";
                     }
                     if( $this->_customGroupFilters ) {
                         $curFilters[$fieldName]['options'] = array( );
-                        $ogDAO =& CRM_Core_DAO::executeQuery( "SELECT ov.value, ov.label FROM civicrm_option_value ov WHERE ov.option_group_id = %1 ORDER BY ov.weight", array(1 => array($customDAO->option_group_id, 'Integer')) );
+                        $ogDAO = CRM_Core_DAO::executeQuery( "SELECT ov.value, ov.label FROM civicrm_option_value ov WHERE ov.option_group_id = %1 ORDER BY ov.weight", array(1 => array($customDAO->option_group_id, 'Integer')) );
                         while( $ogDAO->fetch() ) {
                             $curFilters[$fieldName]['options'][$ogDAO->value] = $ogDAO->label;
                         }

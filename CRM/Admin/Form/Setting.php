@@ -123,7 +123,7 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
         CRM_Core_BAO_Setting::add($params);
 
         // also delete the CRM_Core_Config key from the database
-        $cache =& CRM_Utils_Cache::singleton( );
+        $cache = CRM_Utils_Cache::singleton( );
         $cache->delete( 'CRM_Core_Config' );
 
         // save autocomplete search options

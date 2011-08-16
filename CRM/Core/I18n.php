@@ -186,7 +186,7 @@ class CRM_Core_I18n
 
         // do all wildcard translations first
         require_once 'CRM/Utils/Array.php';
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $stringTable = CRM_Utils_Array::value( $config->lcMessages,
                                                $config->localeCustomStrings );
         
@@ -352,7 +352,7 @@ function ts($text, $params = array())
 
     global $tsLocale;
     if (!$i18n or $locale != $tsLocale) {
-        $i18n =& CRM_Core_I18n::singleton();
+        $i18n = CRM_Core_I18n::singleton();
         $locale = $tsLocale;
         if (isset($config->customTranslateFunction) and function_exists($config->customTranslateFunction)) {
             $function = $config->customTranslateFunction;

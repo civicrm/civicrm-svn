@@ -1120,7 +1120,7 @@ class CRM_Utils_System {
         // flush out all cache entries so we can reload new data
         // a bit aggressive, but livable for now
         require_once 'CRM/Utils/Cache.php';
-        $cache =& CRM_Utils_Cache::singleton( );
+        $cache = CRM_Utils_Cache::singleton( );
         $cache->flush( );
     }
 
@@ -1165,7 +1165,7 @@ class CRM_Utils_System {
     static function baseCMSURL( ) {
         static $_baseURL = null;
         if ( ! $_baseURL ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $_baseURL = $userFrameworkBaseURL = $config->userFrameworkBaseURL;
 
             if ( $config->userFramework == 'Joomla' ) {
@@ -1226,7 +1226,7 @@ class CRM_Utils_System {
         $baseURL = self::baseCMSURL( );
 
         //CRM-7622: drop the language from the URL if requested (and it’s there)
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         if ($removeLanguagePart) {
             $baseURL = self::languageNegotiationURL($baseURL, false, true);
         }
@@ -1332,7 +1332,7 @@ class CRM_Utils_System {
      * @static
      */
     static function appendTPLFile( $fileName, &$content ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( isset( $config->customTemplateDir ) &&
              $config->customTemplateDir ) {
             $additionalTPLFile = str_replace( '.tpl', '.extra.tpl', $fileName );

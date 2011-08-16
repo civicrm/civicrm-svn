@@ -157,7 +157,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             require_once "CRM/Core/BAO/CustomGroup.php";
             $removeCustomFieldTypes = array ('Contribution', 'Membership');
             require_once 'CRM/Contribute/BAO/Contribution.php';
-            $contribFields =& CRM_Contribute_BAO_Contribution::getContributionFields();
+            $contribFields = CRM_Contribute_BAO_Contribution::getContributionFields();
             
             // remove component related fields
             foreach ( $this->_fields as $name => $dontCare ) {
@@ -1056,7 +1056,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     //default action is Sale
                     $params['payment_action'] = 'Sale';
                     
-                    $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this ); 
+                    $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this ); 
                     $token = $payment->setExpressCheckout( $params ); 
                     if ( is_a( $token, 'CRM_Core_Error' ) ) { 
                         CRM_Core_Error::displaySessionError( $token ); 

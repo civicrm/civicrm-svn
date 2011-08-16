@@ -480,7 +480,7 @@ SELECT  count( id ) as statusCount
     {
         // upgrade all roles who have 'access CiviEvent' permission, to also have 
         // newly added permission 'edit_all_events', CRM-5472
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Drupal' ) {
             $roles = user_roles(false, 'access CiviEvent');
             if ( !empty($roles) ) {
@@ -492,7 +492,7 @@ SELECT  count( id ) as statusCount
         }
 
         //make sure 'Deceased' membership status present in db,CRM-5636
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         
         $addDeceasedStatus = false;
         $sql = "SELECT max(id) FROM civicrm_membership_status where name = 'Deceased'"; 

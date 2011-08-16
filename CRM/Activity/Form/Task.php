@@ -154,7 +154,7 @@ SELECT source_contact_id
   FROM civicrm_activity
  WHERE id IN ( $IDs )
 ";
-        $dao =& CRM_Core_DAO::executeQuery( $query );
+        $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
             $contactIDs[] = $dao->source_contact_id;
         }

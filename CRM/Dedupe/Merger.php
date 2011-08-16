@@ -176,9 +176,9 @@ class CRM_Dedupe_Merger
         $cid = (int) $cid;
         $groups = array();
 
-        $relTables =& self::relTables();
-        $cidRefs   =& self::cidRefs();
-        $eidRefs   =& self::eidRefs();
+        $relTables = self::relTables();
+        $cidRefs   = self::cidRefs();
+        $eidRefs   = self::eidRefs();
         foreach ($relTables as $group => $params) {
             $sqls = array();
             foreach ($params['tables'] as $table) {
@@ -409,7 +409,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             $affected = array_unique(array_intersect($affected, $tables));
         } else { 
             // if there aren't any specific tables, don't affect the ones handled by relTables()
-            $relTables =& self::relTables();
+            $relTables = self::relTables();
             $handled = array();
             foreach ($relTables as $params) {
                 $handled = array_merge($handled, $params['tables']);
@@ -510,8 +510,8 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         }
 
         require_once 'CRM/Core/BAO/CustomValueTable.php';
-        $mainEvs  =& CRM_Core_BAO_CustomValueTable::getEntityValues($mainId);
-        $otherEvs =& CRM_Core_BAO_CustomValueTable::getEntityValues($otherId);
+        $mainEvs  = CRM_Core_BAO_CustomValueTable::getEntityValues($mainId);
+        $otherEvs = CRM_Core_BAO_CustomValueTable::getEntityValues($otherId);
         $keys = array_unique(array_merge(array_keys($mainEvs), array_keys($otherEvs)));
         foreach ($keys as $key) {
             if ($mainEvs[$key] != $otherEvs[$key]) $diffs['custom'][] = $key;

@@ -431,7 +431,7 @@ function _civicrm_api_get_entity_name_from_camel($entity){
 
 function _civicrm_api_parse_result_through_smarty(&$result, &$params){
         require_once 'CRM/Core/Smarty.php';
-        $smarty =& CRM_Core_Smarty::singleton();
+        $smarty = CRM_Core_Smarty::singleton();
         $smarty->assign('result',$result);
         $template = CRM_Utils_Array::value('format.smarty', $params,$params['format_smarty']);
         return  $smarty->fetch("../templates/" .$template);

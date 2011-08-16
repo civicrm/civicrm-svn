@@ -194,7 +194,7 @@ AND        v.name IN (%2)
                         $params = array( 1 => array( (string ) $customGroupXML->extends_entity_column_value_option_group, 
                                                      'String' ),
                                          2 => array( (string ) $optValues, 'String' ) );
-                        $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
+                        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
 
                         $valueIDs = array( );
                         while ( $dao->fetch() ) {

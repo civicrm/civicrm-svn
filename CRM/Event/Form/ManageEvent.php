@@ -231,7 +231,7 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
     public function buildQuickForm( )  
     { 
         $className = CRM_Utils_System::getClassName($this);
-        $session = & CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         
         $this->_cancelURL = CRM_Utils_Array::value( 'cancelURL', $_POST );
         

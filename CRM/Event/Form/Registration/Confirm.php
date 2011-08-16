@@ -92,7 +92,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             //we lost rfp in case of additional participant. So set it explicitly.
             if ( $rfp || CRM_Utils_Array::value( 'additional_participants', $this->_params[0], false ) ) {
                 require_once 'CRM/Core/Payment.php'; 
-                $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
+                $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
                 $expressParams = $payment->getExpressCheckoutDetails( $this->get( 'token' ) );
                              
                 $params['payer'       ] = $expressParams['payer'       ];
@@ -515,7 +515,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             if ( $this->_values['event']['is_monetary'] ) {
                 require_once 'CRM/Core/Payment.php';
                 if ( is_array( $this->_paymentProcessor ) ) {
-                    $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
+                    $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
                 }
                 $pending = false;
                 $result  = null;
@@ -874,7 +874,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         }
         
 		// create contribution record
-        $contribution =& CRM_Contribute_BAO_Contribution::add( $contribParams, $ids );
+        $contribution = CRM_Contribute_BAO_Contribution::add( $contribParams, $ids );
         
         // return if pending
         if ( $pending || ($contribution->total_amount == 0) ) {
@@ -896,7 +896,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                             );
         
         require_once 'CRM/Core/BAO/FinancialTrxn.php';
-        $trxn =& CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
+        $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
 
         $transaction->commit( );
         

@@ -296,7 +296,7 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
         CRM_Core_BAO_CustomValue::fixFieldValueOfTypeMemo( $this->_formValues );
         
         require_once 'CRM/Contact/BAO/Query.php';
-        $this->_params =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
+        $this->_params = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         $this->_returnProperties =& $this->returnProperties( );
         parent::postProcess( );
     }

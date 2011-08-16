@@ -90,7 +90,7 @@ class CRM_Core_Payment_BaseIPN {
         if ( ! empty( $params ) ) {
             // update contact record
             require_once "CRM/Contact/BAO/Contact.php";
-            $contact =& CRM_Contact_BAO_Contact::createProfileContact( $params, CRM_Core_DAO::$_nullArray, $ids['contact'] );
+            $contact = CRM_Contact_BAO_Contact::createProfileContact( $params, CRM_Core_DAO::$_nullArray, $ids['contact'] );
         }
         
         return true;
@@ -517,7 +517,7 @@ class CRM_Core_Payment_BaseIPN {
                                 );
             
             require_once 'CRM/Core/BAO/FinancialTrxn.php';
-            $trxn =& CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
+            $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
         }
         
         //update corresponding pledge payment record
@@ -561,7 +561,7 @@ class CRM_Core_Payment_BaseIPN {
     function getBillingID( &$ids ) {
         // get the billing location type
         require_once "CRM/Core/PseudoConstant.php";
-        $locationTypes  =& CRM_Core_PseudoConstant::locationType( );
+        $locationTypes  = CRM_Core_PseudoConstant::locationType( );
         // CRM-8108 remove the ts around the Billing locationtype
         //$ids['billing'] =  array_search( ts('Billing'),  $locationTypes );
         $ids['billing'] =  array_search( 'Billing',  $locationTypes );
@@ -675,7 +675,7 @@ class CRM_Core_Payment_BaseIPN {
             }
         }
 
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         // CRM_Core_Error::debug('tpl',$template);
         //assign honor infomation to receiptmessage
         if ( $honarID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution',
@@ -949,7 +949,7 @@ class CRM_Core_Payment_BaseIPN {
         $transaction = new CRM_Core_Transaction( );
         
         // reset template values.
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $template->clearTemplateVars( ); 
         
         if ( !$baseIPN->validateData( $input, $ids, $objects, false ) ) {

@@ -436,7 +436,7 @@ function civicrm_group_roles_add_rule_form($form, $form_state = array( ),  $edit
 
     // get civicrm groups
     require_once "CRM/Core/PseudoConstant.php";
-    $groups =& CRM_Core_PseudoConstant::group( );
+    $groups = CRM_Core_PseudoConstant::group( );
     
     //Let's get rid of the authenticated role as it is a useless option for this module
     unset($roles[2]);

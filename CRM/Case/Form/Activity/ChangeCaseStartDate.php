@@ -151,7 +151,7 @@ WHERE civicrm_case.id=  %1";
             CRM_Core_Error::fatal('Required parameter missing for ChangeCaseType - end post processing');
         }
         
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         
         // 1. save activity subject with new start date
         $currentStartDate = CRM_Utils_Date::customFormat( CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case',
@@ -205,7 +205,7 @@ WHERE civicrm_case.id=  %1";
             $openCaseParams['activity_date_time'] = $params['start_date'];
             $openCaseParams['target_contact_id'] = $oldActivityDefaults['target_contact'];
             $openCaseParams['assignee_contact_id'] = $oldActivityDefaults['assignee_contact'];
-            $session = & CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $openCaseParams['source_contact_id'] = $session->get( 'userID' );
             
             // original_id always refers to the first activity, so only update if null (i.e. this is the second revision)

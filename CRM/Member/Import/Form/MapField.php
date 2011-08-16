@@ -298,7 +298,7 @@ class CRM_Member_Import_Form_MapField extends CRM_Core_Form {
         foreach ($mapperKeys as $key) {
             $this->_fieldUsed[$key] = false;
         }
-        $this->_location_types = & CRM_Core_PseudoConstant::locationType();
+        $this->_location_types = CRM_Core_PseudoConstant::locationType();
         $sel1 = $this->_mapperFields;
         if ( !$this->get('onDuplicate') ) {
             unset($sel1['id']);

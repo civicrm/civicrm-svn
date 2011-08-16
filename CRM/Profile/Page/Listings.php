@@ -399,11 +399,11 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
                                                           CRM_Core_BAO_UFGroup::LISTINGS_VISIBILITY,
                                                           false, $gid );
 
-        $returnProperties =& CRM_Contact_BAO_Contact::makeHierReturnProperties( $fields );
+        $returnProperties = CRM_Contact_BAO_Contact::makeHierReturnProperties( $fields );
         $returnProperties['contact_type'] = 1;
         $returnProperties['sort_name'   ] = 1;
 
-        $queryParams =& CRM_Contact_BAO_Query::convertFormValues( $params, 1 );
+        $queryParams = CRM_Contact_BAO_Query::convertFormValues( $params, 1 );
         $query   = new CRM_Contact_BAO_Query( $queryParams, $returnProperties, $fields );
         
         $ids = $query->searchQuery( 0, 0, null, 
@@ -418,7 +418,7 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
     function getTemplateFileName() {
         if ( $this->_gid ) {
             $templateFile = "CRM/Profile/Page/{$this->_gid}/Listings.tpl";
-            $template     =& CRM_Core_Page::getTemplate( );
+            $template     = CRM_Core_Page::getTemplate( );
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;
             }

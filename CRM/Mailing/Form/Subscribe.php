@@ -151,7 +151,7 @@ ORDER BY title";
         if ( $addCaptcha ) {
             // add captcha
             require_once 'CRM/Utils/ReCAPTCHA.php';
-            $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
+            $captcha = CRM_Utils_ReCAPTCHA::singleton( );
             $captcha->add( $this );
         }
         

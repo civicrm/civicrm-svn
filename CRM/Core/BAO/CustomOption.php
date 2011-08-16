@@ -158,7 +158,7 @@ WHERE  id = %1
         case 'Radio':
         case 'Autocomplete-Select':
             if ( !in_array( $dataType, array( 'Boolean', 'ContactReference' ) ) ) {
-                $options =& self::valuesByID( $fieldId );
+                $options = self::valuesByID( $fieldId );
             }
         }
 
@@ -285,7 +285,7 @@ SET    {$dao->columnName} = REPLACE( {$dao->columnName}, %1, %2 )";
         }
         
         require_once 'CRM/Core/OptionGroup.php';
-        $options =& CRM_Core_OptionGroup::valuesByID( $optionGroupID );
+        $options = CRM_Core_OptionGroup::valuesByID( $optionGroupID );
 
         require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::customFieldOptions( $customFieldID, $options, false );

@@ -303,7 +303,7 @@ class CRM_Core_Payment_Elavon extends CRM_Core_Payment
      **************************************************/
     function &errorExit ( $errorCode = null, $errorMessage = null )
     {
-        $e =& CRM_Core_Error::singleton( );
+        $e = CRM_Core_Error::singleton( );
         if ( $errorCode ) {
             $e->push( $errorCode, 0, null, $errorMessage );
         } else {

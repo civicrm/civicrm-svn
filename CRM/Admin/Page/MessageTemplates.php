@@ -71,7 +71,7 @@ class CRM_Admin_Page_MessageTemplates extends CRM_Core_Page_Basic
                 )
             )
         ';
-        $dao =& CRM_Core_DAO::executeQuery($sql);
+        $dao = CRM_Core_DAO::executeQuery($sql);
         while ($dao->fetch()) {
             $this->_revertible[$dao->id] = $dao->orig_id;
         }

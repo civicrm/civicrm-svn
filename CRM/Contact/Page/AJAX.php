@@ -378,7 +378,7 @@ LIMIT    0, {$limit}
         $label         = CRM_Utils_Type::escape( $_GET['s'], 'String' );
         
         require_once 'CRM/Core/BAO/CustomOption.php';
-        $selectOption =& CRM_Core_BAO_CustomOption::valuesByID( $fieldID, $optionGroupID );
+        $selectOption = CRM_Core_BAO_CustomOption::valuesByID( $fieldID, $optionGroupID );
 
         $completeList = null;
         foreach ( $selectOption as $id => $value ) {
@@ -1014,7 +1014,7 @@ LIMIT {$offset}, {$rowCount}
             $result = $query->searchQuery($offset, $rowCount, $sort, false, false,
                                           false, false,false,null, $sortOrder);
             
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
 
             //variable is set if only one record is foun and that record already has relationship with the contact
             $duplicateRelationship = 0;

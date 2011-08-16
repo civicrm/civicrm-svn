@@ -103,7 +103,7 @@ class CRM_Case_Form_Activity_OpenCase
         }
         
         require_once 'CRM/Core/BAO/LocationType.php';
-        $defaultLocationType =& CRM_Core_BAO_LocationType::getDefault();
+        $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
         if ( $defaultLocationType->id ) {
             $defaults['location[1][location_type_id]'] = $defaultLocationType->id;
         }

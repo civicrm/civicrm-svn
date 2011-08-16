@@ -193,7 +193,7 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
         }
 
         require_once 'CRM/Contribute/BAO/ContributionPage.php';
-        $dao =& CRM_Contribute_BAO_ContributionPage::create( $params );
+        $dao = CRM_Contribute_BAO_ContributionPage::create( $params );
 
         $this->set( 'id', $dao->id );
         if ( $this->_action & CRM_Core_Action::ADD ) {

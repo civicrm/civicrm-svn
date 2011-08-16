@@ -98,7 +98,7 @@ SELECT  pledge.contact_id              as contact_id,
         GROUP By  payment.id
         ";
         
-        $dao =& CRM_Core_DAO::executeQuery( $query );
+        $dao = CRM_Core_DAO::executeQuery( $query );
         
         require_once 'CRM/Contact/BAO/Contact/Utils.php';
         require_once 'CRM/Utils/Date.php';
@@ -155,7 +155,7 @@ SELECT  pledge.contact_id              as contact_id,
             // retrieve domain tokens
             require_once 'CRM/Core/BAO/Domain.php';
             require_once 'CRM/Core/SelectValues.php';
-            $domain =& CRM_Core_BAO_Domain::getDomain( );
+            $domain = CRM_Core_BAO_Domain::getDomain( );
             $tokens = array ( 'domain'  => array( 'name', 'phone', 'address', 'email'),
                               'contact' => CRM_Core_SelectValues::contactTokens( ));
             

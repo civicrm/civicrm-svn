@@ -163,7 +163,7 @@ WHERE      {$whereClause}
    
     $totalGeocoded = $totalAddresses = $totalAddressParsed = 0;
     
-    $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+    $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
     
     if ( $processGeocode ) {
         require_once( str_replace('_', DIRECTORY_SEPARATOR, $config->geocodeMethod ) . '.php' );

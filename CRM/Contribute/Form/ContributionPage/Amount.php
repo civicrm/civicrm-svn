@@ -91,7 +91,7 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
 
         $this->addElement('checkbox', 'is_monetary', ts('Execute real-time monetary transactions') );
         
-        $paymentProcessor =& CRM_Core_PseudoConstant::paymentProcessor( );
+        $paymentProcessor = CRM_Core_PseudoConstant::paymentProcessor( );
         $recurringPaymentProcessor = array( );
 
         if ( !empty( $paymentProcessor ) ) {
@@ -101,7 +101,7 @@ SELECT id
   FROM civicrm_payment_processor
  WHERE id IN ({$paymentProcessorIds})
    AND is_recur = 1";
-            $dao =& CRM_Core_DAO::executeQuery( $query );
+            $dao = CRM_Core_DAO::executeQuery( $query );
             while ( $dao->fetch( ) ) {
                 $recurringPaymentProcessor[] = $dao->id;
             } 

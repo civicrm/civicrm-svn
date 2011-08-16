@@ -108,7 +108,7 @@ class CRM_Core_Extensions
      * @return void
      */
     public function __construct( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if( isset( $config->extensionsDir ) ) {
             $this->_extDir = $config->extensionsDir;
         }
@@ -329,7 +329,7 @@ class CRM_Core_Extensions
     public function _discoverRemote( ) {
 
         require_once 'CRM/Core/Config.php';
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $tsPath = $config->extensionsDir . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'timestamp.txt';
         $timestamp = false;
 
@@ -597,7 +597,7 @@ class CRM_Core_Extensions
     public function grabCachedKeyList( ) {
         require_once 'CRM/Core/Config.php';
         $result = array();
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $cachedPath = $config->extensionsDir . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
         $files = scandir( $cachedPath );
         foreach( $files as $dc => $fname ) {
@@ -657,7 +657,7 @@ class CRM_Core_Extensions
 
     public function grabRemoteInfoFile( $key, $cached = false ) {
         require_once 'CRM/Core/Config.php';
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'cache';
         $filename = $path . DIRECTORY_SEPARATOR . $key . '.xml';

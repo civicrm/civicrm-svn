@@ -77,7 +77,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
     function init( ) 
     {
         require_once 'CRM/Contribute/BAO/Contribution.php';
-        $fields =& CRM_Contribute_BAO_Contribution::importableFields( $this->_contactType , false );
+        $fields = CRM_Contribute_BAO_Contribution::importableFields( $this->_contactType , false );
         
         $fields = array_merge( $fields,
                                array( 'soft_credit' => array( 'title'         => ts('Soft Credit'),
@@ -299,7 +299,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
         static $indieFields = null;
         if ($indieFields == null) {
             require_once('CRM/Contribute/DAO/Contribution.php');
-            $tempIndieFields =& CRM_Contribute_DAO_Contribution::import();
+            $tempIndieFields = CRM_Contribute_DAO_Contribution::import();
             $indieFields = $tempIndieFields;
         }
         
@@ -396,7 +396,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                         }
                     }
                     
-                    $newContribution =& CRM_Contribute_BAO_Contribution::create( $formatted , $ids );
+                    $newContribution = CRM_Contribute_BAO_Contribution::create( $formatted , $ids );
                     $this->_newContributions[] = $newContribution->id;                    
                     
                     //return soft valid since we need to show how soft credits were added

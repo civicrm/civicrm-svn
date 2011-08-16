@@ -248,7 +248,7 @@ FROM        civicrm_contact cc
 INNER JOIN  civicrm_group_contact gc ON 
            (gc.contact_id = cc.id AND gc.status = 'Added' AND gc.group_id IN (" . implode(',', $siteGroups) . "))";
 
-            $dao =& CRM_Core_DAO::executeQuery( $query );
+            $dao = CRM_Core_DAO::executeQuery( $query );
             while ( $dao->fetch() ) {
                 $siteContacts[] = $dao->id;
             }

@@ -84,7 +84,7 @@ class CRM_Contact_BAO_ContactType extends CRM_Contact_DAO_ContactType {
 
         $argString = $all ? 'CRM_CT_BTI_1' : 'CRM_CT_BTI_0';
         if ( ! array_key_exists( $argString, $_cache ) ) {
-            $cache =& CRM_Utils_Cache::singleton( );
+            $cache = CRM_Utils_Cache::singleton( );
             $_cache[$argString] = $cache->get( $argString );
             if ( ! $_cache[$argString] ) {
                 $sql = "
@@ -164,7 +164,7 @@ WHERE  parent_id IS NULL
         }
 
         if ( (!array_key_exists( $argString, $_cache )) || $ignoreCache ) {
-            $cache =& CRM_Utils_Cache::singleton( );
+            $cache = CRM_Utils_Cache::singleton( );
             $_cache[$argString] = $cache->get( $argString );
             if ( ! $_cache[$argString] || $ignoreCache ) {
                 $_cache[$argString] = array( );
@@ -270,7 +270,7 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
 
         $argString = $all ? 'CRM_CT_CTI_1' : 'CRM_CT_CTI_0';
         if ( ! array_key_exists( $argString, $_cache ) ) {
-            $cache =& CRM_Utils_Cache::singleton( );
+            $cache = CRM_Utils_Cache::singleton( );
             $_cache[$argString] = $cache->get( $argString );
             if ( ! $_cache[$argString] ) {
                 $_cache[$argString] = array( );
@@ -344,7 +344,7 @@ WHERE  type.name IS NOT NULL
         $argString  = $all ? 'CRM_CT_GSE_1' : 'CRM_CT_GSE_0';
         $argString .= $isSeperator ? '_1' : '_0';
         if ( ! array_key_exists( $argString, $_cache ) ) {
-            $cache =& CRM_Utils_Cache::singleton( );
+            $cache = CRM_Utils_Cache::singleton( );
             $_cache[$argString] = $cache->get( $argString );
             
             if ( ! $_cache[$argString] ) {

@@ -185,7 +185,7 @@ implements CRM_Contact_Form_Search_Interface {
 	
         // add custom group fields to SELECT and FROM clause
         require_once 'CRM/Core/BAO/CustomGroup.php';
-        $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Activity', $form, null, null, '', null );
+        $groupTree = CRM_Core_BAO_CustomGroup::getTree( 'Activity', $form, null, null, '', null );
 	
         foreach ($groupTree as $key) {
             if ($key['extends'] == 'Activity') {

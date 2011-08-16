@@ -88,7 +88,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
         $duplicates = array( );
         if ( self::checkDuplicate( $params, $duplicates,
                                    CRM_Utils_Array::value( 'contribution', $ids ) ) ) {
-            $error =& CRM_Core_Error::singleton( ); 
+            $error = CRM_Core_Error::singleton( ); 
             $d = implode( ', ', $duplicates );
             $error->push( CRM_Core_Error::DUPLICATE_CONTRIBUTION,
                           'Fatal',
@@ -255,7 +255,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             CRM_Core_BAO_CustomValueTable::store( $params['custom'], 'civicrm_contribution', $contribution->id );
         }
 
-        $session = & CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
 
         if ( CRM_Utils_Array::value('note', $params) ) {
             require_once 'CRM/Core/BAO/Note.php';
@@ -718,7 +718,7 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
         }
         
         $query = "SELECT id FROM civicrm_contribution WHERE $clause";
-        $dao =& CRM_Core_DAO::executeQuery( $query, $input );
+        $dao = CRM_Core_DAO::executeQuery( $query, $input );
         $result = false;
         while ( $dao->fetch( ) ) {
             $duplicates[] = $dao->id;
@@ -760,7 +760,7 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
      */
     static function getContributionFields( ) 
     {
-        $contributionFields =& CRM_Contribute_DAO_Contribution::export( );
+        $contributionFields = CRM_Contribute_DAO_Contribution::export( );
         require_once 'CRM/Core/OptionValue.php';
         $contributionFields = array_merge( $contributionFields, CRM_Core_OptionValue::getFields($mode ='contribute' ) );
         require_once 'CRM/Contribute/DAO/ContributionType.php';
@@ -793,7 +793,7 @@ GROUP BY p.id
 
         $config = CRM_Core_Config::singleton( );
         $params = array( 1 => array( $pageID, 'Integer' ) );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         
         if ( $dao->fetch( ) ) {
             return array( $dao->goal, $dao->total );
@@ -941,7 +941,7 @@ SELECT count(*) as count,
    AND b.receive_date <  $endDate
 GROUP BY currency
 ";
-        $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         $count = 0;
         $amount = $average = array( );
         require_once 'CRM/Utils/Money.php';
@@ -983,7 +983,7 @@ GROUP BY currency
         }
         $clause = implode( ' AND ', $clause );
         $query = "SELECT id FROM civicrm_contribution WHERE $clause";
-        $dao =& CRM_Core_DAO::executeQuery( $query, $input );
+        $dao = CRM_Core_DAO::executeQuery( $query, $input );
        
         while ( $dao->fetch( ) ) {
             $result = $dao->id;
@@ -1042,7 +1042,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
 {$additionalClause}
 ";
 
-        $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
 
         while ( $dao->fetch() ) {
             $paymentDetails[$dao->id] = array ( 'total_amount'        => $dao->total_amount,
@@ -1103,7 +1103,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
 
     	// set currency for CRM-1496
     	if ( ! isset( $softContribution->currency ) ) {
-    	  $config =& CRM_Core_Config::singleton( );
+    	  $config = CRM_Core_Config::singleton( );
     	  $softContribution->currency = $config->defaultCurrency;
     	}
 
@@ -1599,7 +1599,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
             
             $ids = array( 'contribution' => $contributionId );
             require_once 'CRM/Contribute/BAO/Contribution.php';
-            $contribution =& CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
+            $contribution = CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
         }
         
         return $updateResult; 

@@ -614,7 +614,7 @@ function _civicrm_member_roles_get_data($type)
         break;
     }
 
-    $dao =& CRM_Core_DAO::executeQuery($sql);
+    $dao = CRM_Core_DAO::executeQuery($sql);
   
     $result = array();
     while ($dao->fetch()) {
