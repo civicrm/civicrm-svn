@@ -152,8 +152,8 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         } else {
             $this->assign('price', true );
         }
-        $this->add('select', 'price_set_id', ts( 'Select Membership Price Set' ),
-                   (array( '' => ts( '- select -' )) + $price)
+        $this->add( 'select', 'price_set_id', ts( 'Select Membership Price Set' ), (array( '' => ts( '- none -' )) + $price), false,
+                    array( 'onClick' => "showHideByValue('price_set_id','','priceSet|requiredSignup|separatePayment|displayFee','table-row','select',false);")
                    );
         $session = CRM_Core_Session::singleton();
         $single = $session->get('singleForm');
