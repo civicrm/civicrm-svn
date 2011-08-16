@@ -151,7 +151,7 @@ function civicrm_engage_perm()
 
 function civicrm_engage_menu() {
 
-  $items['admin/settings/civicrm_engage'] = array(
+  $items['admin/config/civicrm/civicrm_engage'] = array(
     'title' => t('Civicrm engage settings'),
     'description' => t('CiviCRM Engage Configuration'),
     'page callback' => 'drupal_get_form',
