@@ -89,6 +89,12 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
                                         'default'    => true,
                                         'required'   => true, ), ),
                           'grouping'  => 'contact-fields',
+                          'filters'   =>             
+                          array( 'sort_name'    => 
+                                 array( 'title'      => ts( 'Contact Name' )  ),
+                                 'id'           => 
+                                 array( 'title'      => ts( 'Contact ID' ),
+                                        'no_display' => true ), ),
                           ),
                    
                    'civicrm_email'   =>
@@ -435,19 +441,18 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
             $relContactAlias = 'contact_relationship';
             $relationshipWhere = " AND {$this->_aliases['civicrm_contact']}.id IN ( SELECT DISTINCT {$relContactAlias}.id FROM civicrm_contact {$relContactAlias} {$this->_relationshipFrom} WHERE {$relContactAlias}.id = {$this->_aliases['civicrm_contact']}.id AND {$this->_relationshipWhere} )";                
         }
+        
+        $addWhere = '';                
+        if ( $this->_referenceYear ) {
+            if ( $this->_referenceType == 'other_year' ) {
+                $addWhere = "AND {$this->_aliases['civicrm_contact']}.id NOT IN ( SELECT DISTINCT cont.id FROM civicrm_contact cont, civicrm_contribution contri WHERE  cont.id = contri.contact_id AND YEAR (contri.receive_date) = {$this->_referenceYear } AND contri.is_test = 0 )";
+            } else {
+                $addWhere = "AND {$this->_aliases['civicrm_contact']}.id IN ( SELECT DISTINCT cont.id FROM civicrm_contact cont, civicrm_contribution contri WHERE  cont.id = contri.contact_id AND YEAR (contri.receive_date) = {$this->_referenceYear } AND contri.is_test = 0 )";
+            }
+        }
             
         if( !CRM_Utils_Array::value( 'charts', $this->_params ) ) {  
             $this->limit( );
-
-            $addWhere = '';
-            
-            if ( $this->_referenceYear ) {
-                if ( $this->_referenceType == 'other_year' ) {
-                    $addWhere = "AND {$this->_aliases['civicrm_contact']}.id NOT IN ( SELECT DISTINCT cont.id FROM civicrm_contact cont, civicrm_contribution contri WHERE  cont.id = contri.contact_id AND YEAR (contri.receive_date) = {$this->_referenceYear } AND contri.is_test = 0 )";
-                } else {
-                    $addWhere = "AND (YEAR({$this->_aliases['civicrm_contribution']}.receive_date) IN ({$this->_referenceYear}))";
-                }
-            }           
 
             $getContacts = "SELECT SQL_CALC_FOUND_ROWS {$this->_aliases['civicrm_contact']}.id as cid, SUM({$this->_aliases['civicrm_contribution']}.total_amount) as civicrm_contribution_total_amount_sum {$this->_from} {$this->_where} {$addWhere} {$relationshipWhere} GROUP BY {$this->_aliases['civicrm_contact']}.id {$this->_having} {$this->_limit}";
             
@@ -463,15 +468,6 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
         $relationshipRows = array( );
         if ( !empty($contactIds) || CRM_Utils_Array::value( 'charts', $this->_params ) ) {
             if ( CRM_Utils_Array::value( 'charts', $this->_params ) ) { 
-                $addWhere = '';                
-                if ( $this->_referenceYear ) {
-                    if ( $this->_referenceType == 'other_year' ) {
-                        $addWhere = "AND {$this->_aliases['civicrm_contact']}.id NOT IN ( SELECT DISTINCT cont.id FROM civicrm_contact cont, civicrm_contribution contri WHERE  cont.id = contri.contact_id AND YEAR (contri.receive_date) = {$this->_referenceYear } AND contri.is_test = 0 )";
-                    } else {
-                        $addWhere = "AND {$this->_aliases['civicrm_contact']}.id IN ( SELECT DISTINCT cont.id FROM civicrm_contact cont, civicrm_contribution contri WHERE  cont.id = contri.contact_id AND YEAR (contri.receive_date) = {$this->_referenceYear } AND contri.is_test = 0 )";
-                    }
-                }
- 
                 $sqlContribution = "{$this->_select} {$this->_from} {$this->_where} {$addWhere} {$relationshipWhere} {$this->_groupBy}";
             } else {
                 $sqlContribution = "{$this->_select} {$this->_from} {$this->_where} AND {$this->_aliases['civicrm_contact']}.id IN (".implode( ',', $contactIds ).") {$this->_statusClause} {$this->_groupBy} ";
