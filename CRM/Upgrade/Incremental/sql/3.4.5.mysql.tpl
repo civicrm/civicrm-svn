@@ -24,10 +24,10 @@ ALTER TABLE `civicrm_action_log` CHANGE `repetition_number` `repetition_number` 
 -- CRM-8085
 UPDATE civicrm_mailing SET domain_id = {$domainID} WHERE domain_id IS NULL;
 
--- CRM-8402
-DELETE civicrm_entity_tag.* FROM civicrm_entity_tag,
-( SELECT MAX( id ) AS dtid, COUNT(*) AS dupcount FROM civicrm_entity_tag GROUP BY entity_table, entity_id, tag_id HAVING dupcount > 1 ) AS duplicates
-WHERE civicrm_entity_tag.id=duplicates.dtid;
+-- CRM-8402, CRM-8679
+DELETE et2.* from civicrm_entity_tag et1 
+INNER JOIN civicrm_entity_tag et2 ON et1.entity_table = et2.entity_table AND et1.entity_id = et2.entity_id AND et1.tag_id = et2.tag_id
+WHERE et1.id < et2.id;
 
 ALTER TABLE civicrm_entity_tag 
 DROP INDEX index_entity;
