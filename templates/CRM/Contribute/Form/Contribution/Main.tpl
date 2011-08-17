@@ -69,7 +69,7 @@ function clearAmountOther() {
     <div id="priceset">
         <fieldset>
             <legend>{ts}Contribution{/ts}</legend>
-            {include file="CRM/Price/Form/PriceSet.tpl"}
+            {include file="CRM/Price/Form/PriceSet.tpl" extends="Contribution"}
         </fieldset>
     </div>
 {else}
