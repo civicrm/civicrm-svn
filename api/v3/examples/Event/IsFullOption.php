@@ -5,7 +5,7 @@
 /*
  demonstrates use of return is_full 
  */
-function event_get_example(){
+function event_getsingle_example(){
 $params = array( 
   'id' => 1,
   'version' => 3,
@@ -13,7 +13,7 @@ $params = array(
 );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'event','get',$params );
+  $result = civicrm_api( 'event','getsingle',$params );
 
   return $result;
 }
@@ -21,7 +21,7 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function event_get_expectedresult(){
+function event_getsingle_expectedresult(){
 
   $expectedResult = array( 
   'id' => '1',
@@ -45,7 +45,7 @@ function event_get_expectedresult(){
   'is_multiple_registrations' => 0,
   'allow_same_participant_emails' => 0,
   'is_template' => 0,
-  'created_date' => '2011-08-16 21:22:56',
+  'created_date' => '2011-08-18 08:31:47',
   'available_places' => 0,
   'is_full' => 1,
 );
@@ -59,7 +59,7 @@ function event_get_expectedresult(){
 /*
 * This example has been generated from the API test suite. The test that created it is called
 * 
-* testGetReturnIsFull and can be found in 
+* testGetSingleReturnIsFull and can be found in 
 * http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3EventTest.php
 * 
 * You can see the outcome of the API tests at 
