@@ -1987,12 +1987,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                                                     }
                                                 }
                                             } else if ( $fieldName == 'phone' ) {
-                                                if ($phoneTypeId) {
-                                                    if ( $value['phone'][$phoneTypeId] ) {
-                                                        $defaults[$fldName] = $value['phone'][$phoneTypeId];
-                                                    }
+                                                if ( $phoneTypeId &&
+                                                     isset( $value['phone'][$phoneTypeId] ) ) {
+                                                    $defaults[$fldName] = $value['phone'][$phoneTypeId];
                                                 } else {
-                                                    $defaults[$fldName] = $value['phone'];
+                                                    $defaults[$fldName] = CRM_Utils_Array::value( 'phone', $value );
                                                 }
                                             } else if ( $fieldName == 'email' ) {
                                                 //adding the first email (currently we don't support multiple emails of same location type)
