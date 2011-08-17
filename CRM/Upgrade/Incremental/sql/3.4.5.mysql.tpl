@@ -32,11 +32,6 @@ WHERE civicrm_entity_tag.id=duplicates.dtid;
 ALTER TABLE civicrm_entity_tag 
 DROP INDEX index_entity;
 
--- delete duplicate entity tag entries before we add unique constraint
-DELETE et1.* from civicrm_entity_tag et1 
-INNER JOIN ( SELECT * FROM civicrm_entity_tag 
-GROUP BY entity_table, entity_id, tag_id HAVING count(*) > 1 ) et2 ON et1.id = et2.id;
-
 ALTER TABLE civicrm_entity_tag 
 ADD UNIQUE INDEX UI_entity_id_entity_table_tag_id( entity_table, entity_id, tag_id );
 
