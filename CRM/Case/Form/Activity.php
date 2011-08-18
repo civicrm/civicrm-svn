@@ -362,6 +362,9 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
      */
     public function postProcess() 
     {
+        require_once 'CRM/Core/Transaction.php';
+        $tx = new CRM_Core_Transaction();
+
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             $statusMsg = null;
           

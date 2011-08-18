@@ -297,6 +297,9 @@ class CRM_Case_Form_Case extends CRM_Core_Form
      */
     public function postProcess() 
     {
+        require_once 'CRM/Core/Transaction.php';
+        $tx = new CRM_Core_Transaction();
+
         // check if dedupe button, if so return.
         $buttonName = $this->controller->getButtonName( );
         if ( isset( $this->_dedupeButtonName ) && $buttonName == $this->_dedupeButtonName ) {
