@@ -36,6 +36,7 @@
 
 
 require_once 'CRM/Member/Import/Parser.php';
+require_once 'api/api.php';
 
 /**
  * class to parse membership csv files
@@ -210,8 +211,10 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                         CRM_Import_Parser_Contact::addToErrorMsg('End date', $errorMessage);
                     }
                     break;
-                case 'membership_type_id':    
-                    if (!CRM_Utils_Array::crmInArray( $val, CRM_Member_PseudoConstant::membershipType() )) {    
+                case 'membership_type_id':  
+                    $membershipTypes = CRM_Member_PseudoConstant::membershipType();
+                    if (!CRM_Utils_Array::crmInArray( $val, $membershipTypes ) &&
+                        !array_key_exists( $val, $membershipTypes ) ) {    
                         CRM_Import_Parser_Contact::addToErrorMsg('Membership Type', $errorMessage);
                     }
                     break;                    
@@ -255,8 +258,9 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
      */
     function import( $onDuplicate, &$values) 
     {
-        civicrm_api_include('membership', false, 2);
-    
+        civicrm_api_include( 'membership', false, 3 );
+        civicrm_api_include( 'utils', false, 3 );
+        
         // first make sure this is a valid line
         $response = $this->summary( $values );
         if ( $response != CRM_Member_Import_Parser::VALID ) {
@@ -266,7 +270,8 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
         $params =& $this->getActiveFieldParams( );
         
         //assign join date equal to start date if join date is not provided
-        if( !$params['join_date'] && $params['membership_start_date']) {
+        if( !CRM_Utils_Array::value( 'join_date', $params ) && 
+            CRM_Utils_Array::value( 'membership_start_date', $params ) ) {
             $params['join_date'] = $params['membership_start_date'];
         }
                
@@ -341,8 +346,8 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
             $formatValues[$key] = $field;
         }
         
-        $formatError = _civicrm_membership_formatted_param( $formatValues, $formatted, true);
-        
+        $formatError = _civicrm_api3_membership_format_params( $formatValues, $formatted, true);
+                
         if ( $formatError ) {
             array_unshift($values, $formatError['error_message']);
             return CRM_Member_Import_Parser::ERROR;
@@ -382,7 +387,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                                   'userId'     => $session->get('userID') );
                     
                     $newMembership = CRM_Member_BAO_Membership::create( $formatted , $ids, true );
-                    if ( civicrm_error( $newMembership ) ) {
+                    if ( civicrm_api3_error( $newMembership ) ) {
                         array_unshift($values, $newMembership['is_error']." for Membership ID ". $formatValues['membership_id'].". Row was skipped.");
                         return CRM_Member_Import_Parser::ERROR;
                     } else {
@@ -397,17 +402,17 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
         }
         
         //Format dates
-        $startDate  = CRM_Utils_Date::customFormat($formatted['start_date'],'%Y-%m-%d');
-        $endDate    = CRM_Utils_Date::customFormat($formatted['end_date'],'%Y-%m-%d');
-        $joinDate   = CRM_Utils_Date::customFormat($formatted['join_date'],'%Y-%m-%d');          
+        $startDate  = CRM_Utils_Date::customFormat( CRM_Utils_Array::value( 'start_date', $formatted ), '%Y-%m-%d' );
+        $endDate    = CRM_Utils_Date::customFormat( CRM_Utils_Array::value( 'end_date', $formatted ),'%Y-%m-%d' );
+        $joinDate   = CRM_Utils_Date::customFormat( CRM_Utils_Array::value( 'join_date', $formatted ),'%Y-%m-%d' );  
         
         if ( $this->_contactIdIndex < 0 ) {
             
             //retrieve contact id using contact dedupe rule
             $formatValues['contact_type'] = $this->_contactType;
-            $error = civicrm_check_contact_dedupe( $formatValues );
+            $error = civicrm_api3_check_contact_dedupe( $formatValues );
             
-            if ( civicrm_duplicate( $error ) ) { 
+            if ( civicrm_api3_duplicate( $error ) ) { 
                 $matchedIDs = explode(',',$error['error_message']['params'][0]);
                 if (count( $matchedIDs) >1) {                   
                     array_unshift($values,"Multiple matching contact records detected for this row. The membership was not imported");
@@ -438,7 +443,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                                                                                               'today',
                                                                                               $excludeIsAdmin );
                     
-                    if ( ! $formatted['status_id']) {                        
+                    if ( ! CRM_Utils_Array::value( 'status_id', $formatted ) ) {                        
                         $formatted['status_id'] = $calcStatus['id'];
                     } elseif ( !CRM_Utils_Array::value('is_override', $formatted ) ) { 
                         if ( empty( $calcStatus ) ) {
@@ -451,8 +456,9 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                         }
                     }
                     
-                    $newMembership = civicrm_contact_membership_create( $formatted );
-                    if ( civicrm_error( $newMembership ) ) {
+                    $formatted['version'] = 3;
+                    $newMembership = civicrm_api( 'membership', 'create', $formatted );
+                    if ( civicrm_api3_error( $newMembership ) ) {
                         array_unshift($values, $newMembership['error_message']);
                         return CRM_Member_Import_Parser::ERROR;
                     }
@@ -538,8 +544,9 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                 }
             }
             
-            $newMembership = civicrm_contact_membership_create( $formatted );
-            if ( civicrm_error( $newMembership ) ) {
+            $formatted['version'] = 3;
+            $newMembership = civicrm_api( 'membership', 'create', $formatted );
+            if ( civicrm_api3_error( $newMembership ) ) {
                 array_unshift($values, $newMembership['error_message']);
                 return CRM_Member_Import_Parser::ERROR;
             }

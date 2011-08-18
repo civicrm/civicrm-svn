@@ -278,9 +278,11 @@ SELECT module
             $url = CRM_Utils_System::url( 'civicrm/profile/view', $urlParams );
         } else {
             // Replace tokens from post URL
-            $contactParams  = array( 'contact_id' => $this->_id );
-            require_once 'api/v2/Contact.php';
-            $contact =& civicrm_contact_get($contactParams);
+            $contactParams  = array( 'contact_id' => $this->_id,
+                                     'version'    => 3 );
+            require_once 'api/api.php';
+            $contact = civicrm_api( 'contact', 'get', $contactParams );
+            $contact = reset( $contact['values'] );
             
             require_once 'CRM/Mailing/BAO/Mailing.php';
             $dummyMail = new CRM_Mailing_BAO_Mailing(); 
@@ -288,7 +290,7 @@ SELECT module
             $tokens = $dummyMail->getTokens();
             
             require_once 'CRM/Utils/Token.php';
-            $url = CRM_Utils_Token::replaceContactTokens($this->_postURL, $contact[$this->_id], false, CRM_Utils_Array::value('text', $tokens));
+            $url = CRM_Utils_Token::replaceContactTokens($this->_postURL, $contact, false, CRM_Utils_Array::value('text', $tokens));
         }
 
         $session->replaceUserContext( $url );

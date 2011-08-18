@@ -107,7 +107,8 @@ LEFT JOIN civicrm_email      ON contact_a.id = civicrm_email.contact_id
             require_once 'CRM/Core/BAO/LocationType.php';
             require_once 'api/v2/utils.v2.php';
             /* If the contact does not exist, create one. */
-            $formatted = array('contact_type' => 'Individual');
+            $formatted = array( 'contact_type' => 'Individual',
+                                'version'      => 3 );
             $locationType = CRM_Core_BAO_LocationType::getDefault( );
             $value = array('email' => $email,
                            'location_type_id' => $locationType->id );
@@ -116,9 +117,9 @@ LEFT JOIN civicrm_email      ON contact_a.id = civicrm_email.contact_id
             require_once 'CRM/Import/Parser.php';
             $formatted['onDuplicate'] = CRM_Import_Parser::DUPLICATE_SKIP;
             $formatted['fixAddress'] = true;
-            require_once 'api/v2/Contact.php';
-            $contact =& civicrm_contact_format_create($formatted);
-            if ( civicrm_error( $contact ) ) {
+            require_once 'api/api.php';
+            $contact = civicrm_api( 'contact', 'create', $formatted );
+            if ( civicrm_api3_error( $contact ) ) {
                 return $success;
             }
             $contact_id = $contact['id'];

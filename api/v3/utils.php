@@ -439,7 +439,7 @@ function   _civicrm_api3_apply_options_to_dao(&$params, &$dao, $defaults = array
     $limit = CRM_Utils_Array::value('option.limit', $params,25);
     $limit = CRM_Utils_Array::value('option_limit', $params,$limit);
     
-    if(is_array($params['options'])){
+    if( is_array( CRM_Utils_Array::value( 'options', $params ) ) ){
       $offset = CRM_Utils_Array::value('offset', $params['options'],$offset );
       $limit = CRM_Utils_Array::value('limit', $params['options'],$limit );
       $sort = CRM_Utils_Array::value('sort', $params['options'],$sort );

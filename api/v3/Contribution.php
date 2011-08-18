@@ -429,8 +429,8 @@ function civicrm_api3_contribution_transact($params) {
 			}
 		}
 		
-		$contribution = civicrm_contribution_add ( $params );
-		return $contribution;
+		$contribution = civicrm_api( 'contribution', 'create', $params );
+		return $contribution['values'];
 
 }
 

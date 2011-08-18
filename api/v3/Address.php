@@ -167,12 +167,37 @@ function civicrm_api3_address_get(&$params)
     }
     
     if ( $addressBAO->find() ) {
-      $addresses = array();
-      while ( $addressBAO->fetch() ) {
-        CRM_Core_DAO::storeValues( $addressBAO, $address );
-        $addresses[$addressBAO->id] = $address;
-      }
-      return civicrm_api3_create_success($addresses,$params,'activity','get',$addressBAO);
+        $addresses = array();
+        while ( $addressBAO->fetch() ) {
+            CRM_Core_DAO::storeValues( $addressBAO, $address );
+        
+            if ( !empty( $addressBAO->state_province_id ) ) {
+                $addressBAO->state = CRM_Core_PseudoConstant::stateProvinceAbbreviation( $addressBAO->state_province_id,
+                                                                                         false );
+                $addressBAO->state_name = CRM_Core_PseudoConstant::stateProvince( $addressBAO->state_province_id, false );
+            }
+            
+            if ( ! empty( $addressBAO->country_id ) ) {
+                $addressBAO->country = CRM_Core_PseudoConstant::country( $addressBAO->country_id );
+                
+                //get world region 
+                $regionId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Country', $addressBAO->country_id, 'region_id' );
+                
+                $addressBAO->world_region = CRM_Core_PseudoConstant::worldregion( $regionId );
+            }
+            
+            $addressBAO->addDisplay( );
+            
+            $address['display'     ] = $addressBAO->display;
+            $address['display_text'] = $addressBAO->display_text;
+            
+            if ( is_numeric( $addressBAO->master_id ) ) {
+                $address['use_shared_address'] = 1;
+            }            
+            
+            $addresses[$addressBAO->id] = $address;
+        }
+        return civicrm_api3_create_success($addresses,$params,'activity','get',$addressBAO);
     } else {
       return civicrm_api3_create_success(array(),$params,'activity','get',$addressBAO);
     }
