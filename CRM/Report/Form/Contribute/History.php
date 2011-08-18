@@ -38,18 +38,15 @@ require_once 'CRM/Report/Form.php';
 require_once 'CRM/Contribute/PseudoConstant.php';
 
 class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
+    // Primary Contacts count limit
+    const  
+        ROW_COUNT_LIMIT = 10;
+    
     protected $_addressField = false;
     protected $_emailField = false;
     protected $_phoneField = false;
-    protected $_relationshipField  = false;
     protected $_relationshipColumns = array( );
-    protected $_relationshipFilters = array( );
-
-    protected $_charts = array( ''         => 'Tabular',
-                                'barChart' => 'Bar Chart',
-                                'pieChart' => 'Pie Chart'
-                                );
-    
+     
     protected $_customGroupExtends = array( 'Contribution' );
 
     protected $_referenceYear = null;
@@ -210,7 +207,6 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
     }
 
     function preProcess( ) {
-        $this->assign('chartSupported', true);
         parent::preProcess( );
     }     
 
@@ -239,7 +235,6 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
                             $this->_phoneField = true;
                         }
                         if ( $tableName == 'civicrm_relationship' ) {
-                            $this->_relationshipField = true;
                             $this->_relationshipColumns["{$tableName}_{$fieldName}"] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
                             $this->_columnHeaders[ "{$tableName}_{$fieldName}" ]['type'] = CRM_Utils_Array::value('type', $field);
                             $this->_columnHeaders[ "{$tableName}_{$fieldName}" ]['title'] = $field['title']; 
@@ -303,12 +298,9 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
                         {$this->_aliases['civicrm_phone']}.is_primary = 1) ";
         }
 
-        $this->_relationshipFrom = '';
-        if ( $this->_relationshipField ) {
-            $relContacAlias = 'contact_relationship';
-            $this->_relationshipFrom  = " LEFT JOIN civicrm_relationship {$this->_aliases['civicrm_relationship']} 
+        $relContacAlias = 'contact_relationship';
+        $this->_relationshipFrom  = " INNER JOIN civicrm_relationship {$this->_aliases['civicrm_relationship']} 
                      ON (({$this->_aliases['civicrm_relationship']}.contact_id_a = {$relContacAlias}.id OR {$this->_aliases['civicrm_relationship']}.contact_id_b = {$relContacAlias}.id ) AND {$this->_aliases['civicrm_relationship']}.is_active = 1) ";
-        }
         
         if ( $this->_addressField ) {
             $this->_from .= "
@@ -322,11 +314,16 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
     function where( ) {
         $whereClauses = $havingClauses = $relationshipWhere = array( );
         $this->_relationshipWhere = '';
+        $this->_statusClause      = '';
 
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('filters', $table) ) {
                 foreach ( $table['filters'] as $fieldName => $field ) {
                     $clause = null;
+                    if ( $fieldName == 'this_year' || $fieldName == 'other_year' ) {
+                        continue;
+                    }
+
                     if ( CRM_Utils_Array::value( 'type', $field ) & CRM_Utils_Type::T_DATE ) {
                         $relative = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params );
                         $from     = CRM_Utils_Array::value( "{$fieldName}_from"    , $this->_params );
@@ -350,6 +347,11 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
                             $relationshipWhere[] = $clause;
                             continue;
                         }
+                        
+                        if ( $fieldName == 'contribution_status_id' ) {
+                            $this->_statusClause = " AND ". $clause;
+                        }
+
                         if ( CRM_Utils_Array::value( 'having', $field ) ) {
                             $havingClauses[] = $clause;
                         } else {
@@ -377,13 +379,41 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
         }
         
         if ( !empty($relationshipWhere) ) {
-            $this->_relationshipField = true;
-            $this->_relationshipWhere = implode(' AND ', $relationshipWhere);
+            $this->_relationshipWhere = ' AND ' . implode(' AND ', $relationshipWhere);
         }
     }
 
     function groupBy( ) {
         $this->_groupBy =  "GROUP BY {$this->_aliases['civicrm_contribution']}.contact_id, YEAR({$this->_aliases['civicrm_contribution']}.receive_date)";
+    }
+
+    //Override to set limit is 10
+    function limit( $rowCount = self::ROW_COUNT_LIMIT ) {
+        parent::limit( $rowCount );
+    }
+    
+    //Override to set pager with limit is 10
+    function setPager( $rowCount = self::ROW_COUNT_LIMIT ) {
+        parent::setPager( $rowCount );
+    }
+
+    function statistics( &$rows ) {
+        $statistics = parent::statistics( $rows );
+        $count = 0;
+        foreach( $rows as $rownum => $row ) {
+            if ( is_numeric($rownum) ) {
+                $count++; 
+            }
+        }
+        $statistics['counts']['rowCount'] = array( 'title' => ts('Primary Contact(s) Listed'),
+                                                   'value' => $count );
+        
+        if ( $this->_rowsFound && ($this->_rowsFound > $count) ) {
+            $statistics['counts']['rowsFound'] = array( 'title' => ts('Total Primary Contact(s)'),
+                                                        'value' => $this->_rowsFound );
+        }
+
+        return $statistics;
     }
 
     static function formRule( $fields, $files, $self ) {  
@@ -430,100 +460,143 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
             $this->_referenceYear = $this->_params['other_year_value'];
             $this->_referenceType = 'other_year';
         }
-        $this->_params['this_year_value'] = $this->_params['other_year_value'] = null;        
     }
  
     function buildRows( &$rows ) {        
-        $contactIds = array( );
-       
-        $relationshipWhere = '';
-        if ( $this->_relationshipField && $this->_relationshipWhere ) {
-            $relContactAlias = 'contact_relationship';
-            $relationshipWhere = " AND {$this->_aliases['civicrm_contact']}.id IN ( SELECT DISTINCT {$relContactAlias}.id FROM civicrm_contact {$relContactAlias} {$this->_relationshipFrom} WHERE {$relContactAlias}.id = {$this->_aliases['civicrm_contact']}.id AND {$this->_relationshipWhere} )";                
-        }
-        
+        $contactIds = array( ); 
+                      
         $addWhere = '';                
         if ( $this->_referenceYear ) {
             if ( $this->_referenceType == 'other_year' ) {
                 $addWhere = "AND {$this->_aliases['civicrm_contact']}.id NOT IN ( SELECT DISTINCT cont.id FROM civicrm_contact cont, civicrm_contribution contri WHERE  cont.id = contri.contact_id AND YEAR (contri.receive_date) = {$this->_referenceYear } AND contri.is_test = 0 )";
             } else {
-                $addWhere = "AND {$this->_aliases['civicrm_contact']}.id IN ( SELECT DISTINCT cont.id FROM civicrm_contact cont, civicrm_contribution contri WHERE  cont.id = contri.contact_id AND YEAR (contri.receive_date) = {$this->_referenceYear } AND contri.is_test = 0 )";
+                $addWhere = "AND {$this->_aliases['civicrm_contact']}.id IN ( SELECT DISTINCT cont.id FROM civicrm_contact cont, civicrm_contribution contri WHERE cont.id = contri.contact_id AND YEAR (contri.receive_date) = {$this->_referenceYear } AND contri.is_test = 0 )";
             }
         }
             
-        if( !CRM_Utils_Array::value( 'charts', $this->_params ) ) {  
-            $this->limit( );
-
-            $getContacts = "SELECT SQL_CALC_FOUND_ROWS {$this->_aliases['civicrm_contact']}.id as cid, SUM({$this->_aliases['civicrm_contribution']}.total_amount) as civicrm_contribution_total_amount_sum {$this->_from} {$this->_where} {$addWhere} {$relationshipWhere} GROUP BY {$this->_aliases['civicrm_contact']}.id {$this->_having} {$this->_limit}";
-            
-            $dao  = CRM_Core_DAO::executeQuery( $getContacts );
-         
-            while( $dao->fetch( ) ) {
-                $contactIds[] =  $dao->cid;
-            }
-            $dao->free( );
-            $this->setPager( );            
+        $this->limit( );
+        $getContacts = "SELECT SQL_CALC_FOUND_ROWS {$this->_aliases['civicrm_contact']}.id as cid, SUM({$this->_aliases['civicrm_contribution']}.total_amount) as civicrm_contribution_total_amount_sum {$this->_from} {$this->_where} {$addWhere} GROUP BY {$this->_aliases['civicrm_contact']}.id {$this->_having} {$this->_limit}";
+        
+        $dao  = CRM_Core_DAO::executeQuery( $getContacts );
+        
+        while( $dao->fetch( ) ) {
+            $contactIds[] =  $dao->cid;
         }
+        $dao->free( );
+        $this->setPager( );            
 
         $relationshipRows = array( );
-        if ( !empty($contactIds) || CRM_Utils_Array::value( 'charts', $this->_params ) ) {
-            if ( CRM_Utils_Array::value( 'charts', $this->_params ) ) { 
-                $sqlContribution = "{$this->_select} {$this->_from} {$this->_where} {$addWhere} {$relationshipWhere} {$this->_groupBy}";
-            } else {
-                $sqlContribution = "{$this->_select} {$this->_from} {$this->_where} AND {$this->_aliases['civicrm_contact']}.id IN (".implode( ',', $contactIds ).") {$this->_statusClause} {$this->_groupBy} ";
-                $relationshipRows = $this->buildRelationshipRows( $contactIds );
-            }
+        if ( empty($contactIds) ) {
+            return;
+        }
+              
+        $primaryContributions = $this->buildContributionRows( $contactIds );
 
-            $current_year    = $this->_referenceYear ? $this->_referenceYear : date('Y');
-            $previous_year   = $current_year - 1;        
-            $previous_pyear  = $current_year - 2;        
-            $previous_ppyear = $current_year - 3; 
-            $upTo_year       = $current_year - 4; 
+        list($relationshipRows, $relatedContactIds) = $this->buildRelationshipRows( $contactIds );
+        
+        if ( empty($relatedContactIds) ) {
+            $rows = $primaryContributions;
+            return;
+        }
+        
+        $relatedContributions = $this->buildContributionRows( $relatedContactIds );
+
+        $current_year = $this->_referenceYear ? $this->_referenceYear : date('Y');
+        $summaryYears = array($current_year, $current_year - 1, $current_year - 2, $current_year - 3, $current_year - 4);
+    
+        foreach(  $primaryContributions as $cid => $primaryRow ) {
+            $row = $primaryRow;
+            if ( !isset($relationshipRows[$cid]) ) {
+                $rows[$cid] = $row;
+                continue;
+            }
+            $total = array( );
+            $total['civicrm_contact_sort_name'] = ts('Total');
+            foreach( $summaryYears as $year ) {
+                $total[$year] = CRM_Utils_Array::value($year, $primaryRow, 0);  
+            }
             
-            $dao  = CRM_Core_DAO::executeQuery( $sqlContribution );
-            $contributionSum = 0;
-            $yearcal = array( );
-            while ( $dao->fetch( ) ) {
-                if ( !$dao->civicrm_contact_id ) {
+            $relatedContact = false;
+            $rows[$cid] = $row;
+            foreach( $relationshipRows[$cid] as $relcid => $relRow ) {
+                if ( !isset($relatedContributions[$relcid]) ) {
                     continue;
                 }
+                $relatedContact = true;
+                $relatedRow = $relatedContributions[$relcid];
+                foreach( $summaryYears as $year ) {
+                    $total[$year] += CRM_Utils_Array::value($year, $relatedRow, 0);  
+                }
                 
-                if ( $this->_relationshipField && isset($relationshipRows[$dao->civicrm_contact_id]) ) {
-                    $rows[$dao->civicrm_contact_id]['relationships'] = $relationshipRows[$dao->civicrm_contact_id];
-                }
-                foreach ( $this->_columnHeaders as $key => $value ) {
-                    if ( property_exists( $dao, $key ) ) {
-                        $rows[$dao->civicrm_contact_id][$key] = $dao->$key;
+                foreach( array_keys($this->_relationshipColumns) as $col ) {
+                    if ( CRM_Utils_Array::value($col, $relRow) ) {
+                        $relatedRow[$col] = $relRow[$col];
                     }
                 }
-                if ( $dao->civicrm_contribution_receive_date ) {
-                    if( $dao->civicrm_contribution_receive_date > $upTo_year ) {
-                        $contributionSum += $dao->civicrm_contribution_total_amount;
-                        $rows[$dao->civicrm_contact_id][$dao->civicrm_contribution_receive_date] = $dao->civicrm_contribution_total_amount;
-                    }
-                } else {
-                    $rows[$dao->civicrm_contact_id]['civicrm_life_time_total'] = $dao->civicrm_contribution_total_amount;
-                    if ( ( $dao->civicrm_contribution_total_amount - $contributionSum ) > 0 ) {
-                        $rows[$dao->civicrm_contact_id]["civicrm_upto_{$upTo_year}"] = $dao->civicrm_contribution_total_amount - $contributionSum;
-                    }
-                    $contributionSum = 0;  
-                }
-            }  
-            $dao->free( );            
+                $rows["{$cid}_{$relcid}"] =  $relatedRow;
+            }
+            if ( $relatedContact ) {
+                $rows["{$cid}_total"] = $total; 
+                $rows["{$cid}_bank"]  = array( 'civicrm_contact_sort_name' => '&nbsp;');
+            }
+        }        
+    }
+    
+    function buildContributionRows( $contactIds ) {
+        $rows = array( );
+        if ( empty($contactIds) ) {
+            return $rows;
         }
 
+        $sqlContribution = "{$this->_select} {$this->_from} WHERE {$this->_aliases['civicrm_contact']}.id IN (".implode( ',', $contactIds ).") AND {$this->_aliases['civicrm_contribution']}.is_test = 0 {$this->_statusClause} {$this->_groupBy} ";
+        
+        $current_year    = $this->_referenceYear ? $this->_referenceYear : date('Y');
+        $previous_year   = $current_year - 1;        
+        $previous_pyear  = $current_year - 2;        
+        $previous_ppyear = $current_year - 3; 
+        $upTo_year       = $current_year - 4; 
+        
+        $dao  = CRM_Core_DAO::executeQuery( $sqlContribution );
+        $contributionSum = 0;
+        $yearcal = array( );
+        while ( $dao->fetch( ) ) {
+            if ( !$dao->civicrm_contact_id ) {
+                continue;
+            }
+            
+            foreach ( $this->_columnHeaders as $key => $value ) {
+                if ( property_exists( $dao, $key ) ) {
+                    $rows[$dao->civicrm_contact_id][$key] = $dao->$key;
+                }
+            }
+            if ( $dao->civicrm_contribution_receive_date ) {
+                if( $dao->civicrm_contribution_receive_date > $upTo_year ) {
+                    $contributionSum += $dao->civicrm_contribution_total_amount;
+                    $rows[$dao->civicrm_contact_id][$dao->civicrm_contribution_receive_date] = $dao->civicrm_contribution_total_amount;
+                }
+            } else {
+                if ( ( $dao->civicrm_contribution_total_amount - $contributionSum ) > 0 ) {
+                    $rows[$dao->civicrm_contact_id]["civicrm_upto_{$upTo_year}"] = $dao->civicrm_contribution_total_amount - $contributionSum;
+                }
+                $contributionSum = 0;  
+            }
+        }  
+        $dao->free( );
+        return $rows;
     }
     
     function buildRelationshipRows( $contactIds ) {
-        $relationshipRows = array( );
-
-        if ( !$this->_relationshipField || empty($this->_relationshipColumns) ) {
-            return $relationshipRows;
+        $relationshipRows = $relatedContactIds = array( );
+        if ( empty($contactIds) ) {
+            return array($relationshipRows, $relatedContactIds);
         }
-        
-        $relContactAlias = 'contact_relationship';
-        $sqlRelationship = "SELECT ". implode(', ', $this->_relationshipColumns) . ", {$this->_aliases['civicrm_relationship']}.relationship_type_id as relationship_type_id, {$this->_aliases['civicrm_relationship']}.contact_id_a as contact_id_a, {$this->_aliases['civicrm_relationship']}.contact_id_b as contact_id_b FROM civicrm_contact {$relContactAlias} {$this->_relationshipFrom} WHERE {$relContactAlias}.id IN (". implode(',', $contactIds).") GROUP BY {$relContactAlias}.id, {$this->_aliases['civicrm_relationship']}.relationship_type_id";
 
+        $relContactAlias = 'contact_relationship';
+        $addRelSelect    = '';
+        if ( !empty($this->_relationshipColumns) ) {
+            $addRelSelect = ', '. implode(', ', $this->_relationshipColumns);
+        }
+        $sqlRelationship = "SELECT {$this->_aliases['civicrm_relationship']}.relationship_type_id as relationship_type_id, {$this->_aliases['civicrm_relationship']}.contact_id_a as contact_id_a, {$this->_aliases['civicrm_relationship']}.contact_id_b as contact_id_b {$addRelSelect} FROM civicrm_contact {$relContactAlias} {$this->_relationshipFrom} WHERE {$relContactAlias}.id IN (". implode(',', $contactIds).") AND {$this->_aliases['civicrm_relationship']}.is_active = 1 {$this->_relationshipWhere} GROUP BY {$this->_aliases['civicrm_relationship']}.contact_id_a, {$this->_aliases['civicrm_relationship']}.contact_id_b";
         $relationshipTypes = CRM_Core_PseudoConstant::relationshipType();
         
         $dao = CRM_Core_DAO::executeQuery( $sqlRelationship );
@@ -534,74 +607,48 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
             }
             if ( in_array($dao->contact_id_a, $contactIds) ) {
                 $row['civicrm_relationship_relationship_type_id'] = $relationshipTypes[$dao->relationship_type_id]['label_a_b'];
-                $relationshipRows[$dao->contact_id_a][$dao->relationship_type_id] = $row;
+                $row['civicrm_relationship_contact_id'] = $dao->contact_id_b;
+                $relationshipRows[$dao->contact_id_a][$dao->contact_id_b] = $row;
+                $relatedContactIds[$dao->contact_id_b] = $dao->contact_id_b;
             } 
             if ( in_array($dao->contact_id_b, $contactIds) ) {
+                $row['civicrm_relationship_contact_id'] = $dao->contact_id_a;
                 $row['civicrm_relationship_relationship_type_id'] = $relationshipTypes[$dao->relationship_type_id]['label_b_a'];
-                $relationshipRows[$dao->contact_id_b][$dao->relationship_type_id] = $row; 
+                $relationshipRows[$dao->contact_id_b][$dao->contact_id_a] = $row; 
+                $relatedContactIds[$dao->contact_id_a] = $dao->contact_id_a;
             }
         }
-        $dao->free( );    
-        return $relationshipRows;
+        $dao->free( );
+        return array($relationshipRows, $relatedContactIds);
     }
 
-    function buildChart( &$rows ) {
-        $graphRows           = array();
-        $count               = 0;
-        $current_year        = $this->_referenceYear ? $this->_referenceYear : date('Y');
-        $previous_year       = $current_year - 1;
-        $previous_two_year   = $current_year - 2;
-        $previous_three_year = $current_year - 3;
-        $upto                = $current_year - 4;
-  
-        if ( $this->_referenceType != 'other_year' ) {
-            $interval[$current_year]                 = $current_year;
-        }
-        $interval[$previous_year]                = $previous_year;
-        $interval[$previous_two_year]            = $previous_two_year;
-        $interval[$previous_three_year]          = $previous_three_year;
-        $interval["upto_{$upto}"]   = "Up To {$upto}";
-            
-        foreach ( $rows as $key => $row ) {
-            if ( $this->_referenceType != 'other_year' ) {
-                $display[$current_year] = CRM_Utils_Array::value( $current_year, $display, 0) + CRM_Utils_Array::value($current_year , $row);
-            }
-            $display[$previous_year] = CRM_Utils_Array::value( $previous_year, $display, 0) + CRM_Utils_Array::value( $previous_year, $row);
-            $display[$previous_two_year] = CRM_Utils_Array::value( $previous_two_year, $display, 0) + CRM_Utils_Array::value( $previous_two_year, $row);
-            $display[$previous_three_year] = CRM_Utils_Array::value( $previous_three_year, $display, 0) + CRM_Utils_Array::value( $previous_three_year, $row);
-            $display["upto_{$upto}"] = CRM_Utils_Array::value("upto_{$upto}", $display, 0) + CRM_Utils_Array::value("civicrm_upto_{$upto}", $row);
+    function alterDisplay( &$rows ) {
+        if ( empty($rows) ) {
+            return;
         }
         
-        $graphRows['value'] = $display;
-        $config  = CRM_Core_Config::Singleton();
-        $chartInfo = array( 'legend' => ts('Contribution History Report'),
-                            'xname'  => 'Year',
-                            'yname'  => "Amount ({$config->defaultCurrency})"
-                            );
-
-        if ( $this->_params['charts'] ) {
-            // build the chart.
-            require_once 'CRM/Utils/OpenFlashChart.php';
-            CRM_Utils_OpenFlashChart::reportChart( $graphRows, $this->_params['charts'], $interval, $chartInfo );
-            $this->assign( 'chartType', $this->_params['charts'] );
-        }
-    }
-
-    function alterDisplay( &$rows ) {       
-        $relationTypeOp    = array( );
-        $relationshipTypes = CRM_Core_PseudoConstant::relationshipType();
-        foreach( $relationshipTypes as $rid => $rtype ) {
-            if ( $rtype['label_a_b'] != $rtype['label_b_a'] ) {
-                $relationTypeOp[$rid] = "{$rtype['label_a_b']}/{$rtype['label_b_a']}";
-            } else {
-                $relationTypeOp[$rid] = $rtype['label_a_b'];
-            }
-        }
-        
+        $last_primary = null;
         foreach ( $rows as $rowNum => $row ) {
-            //Convert Display name into link
-            if ( array_key_exists('civicrm_contact_sort_name', $row) &&
-                 array_key_exists('civicrm_contact_id', $row) ) {
+            // Highlight primary contact and amount row 
+            if ( is_numeric($rowNum) ||
+                 ( $last_primary && ($rowNum == "{$last_primary}_total") ) ) {
+                $last_primary = $rowNum;
+                foreach( $row as $key => $value ) {
+                    if ( $key == 'civicrm_contact_id' ) {
+                        continue;
+                    }
+                    if ( empty($value) ) {
+                        $row[$key] = '';
+                        continue;
+                    }
+                    $row[$key] = '<strong>' . $value . '</strong>';
+                }
+                $rows[$rowNum] = $row;
+            } 
+            
+            // Convert Display name into link
+            if ( CRM_Utils_Array::value('civicrm_contact_sort_name', $row) &&
+                 CRM_Utils_Array::value('civicrm_contact_id', $row) ) {
                 $url = CRM_Report_Utils_Report::getNextUrl( 'contribute/detail', 
                                                             'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id'],
                                                             $this->_absoluteUrl, $this->_id );
@@ -609,22 +656,6 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
                 $rows[$rowNum]['civicrm_contact_sort_name_hover'] =  
                     ts("View Contribution Details for this Contact.");
             }
-            if ( array_key_exists('relationships', $row) ) {
-                $rel_row = array( );
-                foreach ( $row['relationships'] as $relationship ) {
-                    foreach( array_keys($this->_relationshipColumns) as $rel_col ) {
-                        if ( CRM_Utils_Array::value($rel_col, $relationship) ) {
-                            $rel_row[$rel_col][] = $relationship[$rel_col];
-                        }
-                    }
-                }
-                
-                foreach( array_keys($this->_relationshipColumns) as $rel_col ) {
-                    if ( isset($rel_row[$rel_col]) ) {
-                        $rows[$rowNum][$rel_col] = implode(', ', $rel_row[$rel_col]); 
-                    }
-                }
-            }
         }
-    }
+    }    
 }
