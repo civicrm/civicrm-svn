@@ -18,3 +18,12 @@ UPDATE civicrm_dashboard SET url = 'civicrm/report/instance/3&reset=1&section=2&
 
 -- CRM-8654
 ALTER TABLE `civicrm_dashboard_contact` CHANGE `content` `content` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'dashlet content';
+
+-- CRM-8664
+SELECT @ogrID           := max(id) from civicrm_option_group where name = 'report_template';
+SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';	
+SELECT @max_weight      := MAX(ROUND(weight)) from civicrm_option_value WHERE option_group_id = @ogrID;
+INSERT INTO civicrm_option_value
+  (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight,{localize field='description'}description{/localize}, is_optgroup,is_reserved, is_active, component_id, visibility_id ) 
+VALUES
+    (@ogrID  , {localize}'{ts escape="sql"}Contribution History By Relationship Report{/ts}'{/localize}, 'contribute/history', 'CRM_Report_Form_Contribute_History', NULL, 0, 0,  @max_weight+1, {localize}'{ts escape="sql"}List contact\'s donation history, grouped by year, along with contributions attributed to any of the contact\'s related contacts.{/ts}'{/localize}, 0, 0, 1, @contributeCompId, NULL);
