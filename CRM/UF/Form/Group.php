@@ -289,11 +289,11 @@ class CRM_UF_Form_Group extends CRM_Core_Form
         
         //validate profile title as well as name.
         $title  = $fields['title'];
-        $name   = CRM_Utils_String::munge( $title, '_', 64 );
-        $query  = 'select count(*) from civicrm_uf_group where ( name like %1 OR title like %2 ) and id != %3';
+        $name   = CRM_Utils_String::munge( $title, '_', 56 );
+        $name  .= $self->_id ? $self->_id : '';
+        $query  = 'select count(*) from civicrm_uf_group where ( name like %1 ) and id != %2';
         $pCnt   = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $name,           'String'  ),
-                                                                 2 => array( $title,          'String'  ),
-                                                                 3 => array( (int)$self->_id, 'Integer' ) ) );
+                                                                 2 => array( (int)$self->_id, 'Integer' ) ) );
         if ( $pCnt ) {
             $errors['title'] = ts( 'Profile \'%1\' already exists in Database.', array( 1 => $title ) );
         }

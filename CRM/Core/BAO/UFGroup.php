@@ -1158,12 +1158,17 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
 
         $ufGroupID = CRM_Utils_Array::value( 'ufgroup', $ids );
         if ( ! $ufGroupID ) {
-            $ufGroup->name = CRM_Utils_String::munge( $ufGroup->title, '_', 64 );
+            $ufGroup->name = CRM_Utils_String::munge( $ufGroup->title, '_', 56 );
         }
         $ufGroup->id = $ufGroupID;
 
         $ufGroup->save();
         
+        if ( ! $ufGroupID ) {
+            $ufGroup->name = $ufGroup->name . "_{$ufGroup->id}";
+            $ufGroup->save( );
+        }
+
         return $ufGroup;
     }    
 
@@ -2151,6 +2156,12 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                                                    null, 
                                                    $fieldsFix );
 
+        if ( $pos = strrpos($copy->name, "_{$id}") ) {
+            $copy->name = substr_replace($copy->name, '', $pos);
+        }
+        $copy->name = CRM_Utils_String::munge($copy->name, '_', 56) . "_{$copy->id}";
+        $copy->save( );
+                    
         $copyUFJoin  =& CRM_Core_DAO::copyGeneric( 'CRM_Core_DAO_UFJoin', 
                                                    array( 'uf_group_id' => $id ), 
                                                    array( 'uf_group_id' => $copy->id),
