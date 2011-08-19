@@ -22,35 +22,44 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
+
 /*
- * Heavily based on anonymous code contribution. No claim.
+ * Developed by Jim Taylor.
  * CiviCRM Views Integration
  *
- * civicrm_handler_filter_website_type.inc
- * Filters Website Types, and is configured using the labels from the database
+ * civicrm_handler_filter_activity_status.inc
+ * Filters Activity Statuses, and is configured using the labels from the database
  *
  */
 
-
-class civicrm_handler_filter_website_type extends views_handler_filter_in_operator {
-    static $_websiteTypes;
+class civicrm_handler_filter_pseudo_constant extends views_handler_filter_in_operator {
+    public $_pseudo_constant;
 
     function construct( ) {
         parent::construct();
-        if ( ! self::$_websiteTypes ) {
-            if ( ! civicrm_initialize( ) ) {
-                return;
-            }
-            require_once 'CRM/Core/PseudoConstant.php';
-            self::$_websiteTypes = CRM_Core_PseudoConstant::websiteType( );
+        if ( ! civicrm_initialize( ) ||
+             ! isset($this->definition['pseudo class']) ||
+             ! isset($this->definition['pseudo method']) ) {
+            return;
         }
+        
+        // Load pseudo arguments if passed as array from hook_views_data
+        if ( isset($this->definition['pseudo args']) && is_array($this->definition['pseudo args']) ) {
+          $this->definition['pseudo args'];
+        }
+        else {
+          $pseudo_args = array();    
+        }
+        require_once str_replace('_',DIRECTORY_SEPARATOR,$this->definition['pseudo class']) .'.php';
+        // Include and call the Pseudo Class method
+        $this->_pseudo_constant = call_user_func_array($this->definition['pseudo class'] ."::". $this->definition['pseudo method'],$pseudo_args);
     }
 
     function get_value_options() {
         if (!isset($this->value_options)) {
-            $this->value_title = t('Website type');
+            $this->value_title = $this->definition['title'];
             $options = array( );
-            foreach (self::$_websiteTypes as $id => $name ) {
+            foreach ($this->_pseudo_constant as $id => $name ) {
                 $options[$id] = $name;
             }
             $this->value_options = $options;
@@ -58,4 +67,3 @@ class civicrm_handler_filter_website_type extends views_handler_filter_in_operat
     }
 
 }
-?>

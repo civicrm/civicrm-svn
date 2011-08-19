@@ -22,23 +22,34 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
-
-/**
- * Field handler to provide access control for the Participant Status (which is a lookup)
+/*
+ * Developed by Jim Taylor.
  *
- * @ingroup civicrm_field_handlers
+ * civicrm_handler_field_pseudo_constant.inc
+ * Display's Pseudo Constant after grabbing the label from the database
+ *
  */
-class civicrm_handler_field_participant_role extends views_handler_field {
-    static $_participant_role;
+class civicrm_handler_field_pseudo_constant extends views_handler_field {
+    public $_pseudo_constant;
 
     function construct( ) {
-        if ( ! self::$_participant_role ) {
-            if ( ! civicrm_initialize( ) ) {
-                return;
-            }
-            require_once 'CRM/Core/OptionGroup.php';
-            self::$_participant_role = CRM_Core_OptionGroup::values( 'participant_role', false );
+        if ( ! civicrm_initialize( ) ||
+             ! isset($this->definition['pseudo class']) ||
+             ! isset($this->definition['pseudo method']) ) {
+            return;
         }
+
+        // Load pseudo arguments if passed as array from hook_views_data
+        if ( isset($this->definition['pseudo args']) && is_array($this->definition['pseudo args']) ) {
+          $this->definition['pseudo args'];
+        }
+        else {
+          $pseudo_args = array();    
+        }
+        
+        // Include and call the Pseudo Class method
+        require_once str_replace('_',DIRECTORY_SEPARATOR,$this->definition['pseudo class']) .'.php';
+        $this->_pseudo_constant = call_user_func_array($this->definition['pseudo class'] ."::". $this->definition['pseudo method'],$pseudo_args);
     }
 
     function render( $values ) {
@@ -47,8 +58,7 @@ class civicrm_handler_field_participant_role extends views_handler_field {
              (int ) $sid <= 0 ) {
             return null;
         }
-
-        return self::$_participant_role[$values->{$this->field_alias}];
+        return $this->_pseudo_constant[$values->{$this->field_alias}];
     }
 }
 

@@ -245,8 +245,10 @@ function civicrm_views_data() {
                                                'real field' => 'gender_id',
                                                'help' => t('Contact\'s Gender'),
                                                'field' => array(
-                                                                'handler' => 'civicrm_handler_field_gender',
+                                                                'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                 'click sortable' => TRUE,
+                                                                'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                'pseudo method' => 'gender',
                                                                 ),
 
                                                'argument' => array(
@@ -254,8 +256,10 @@ function civicrm_views_data() {
                                                                    ),
 
                                                'filter' => array(
-                                                                 'handler' => 'civicrm_handler_filter_gender',
+                                                                 'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                  'allow empty' => TRUE,
+                                                                 'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                 'pseudo method' => 'gender',
                                                                  ),
 
                                                'sort' => array(
@@ -533,28 +537,36 @@ function civicrm_views_data() {
                                                      'title' => t('Contact Type'), // The item it appears as on the UI,
                                                      'help'  => t('Contact Type'), // The help that appears on the UI,
                                                      'field' => array(
-                                                                      'handler' => 'views_handler_field',
+                                                                      'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                       'click sortable' => TRUE,
+                                                                      'pseudo class' => t('CRM_Core_SelectValues'),
+                                                                      'pseudo method' => t('contactType'),                                                     
                                                                       ),
                                                      'sort' => array(
                                                                      'handler' => 'views_handler_sort',
                                                                      ),
                                                      'filter' => array(
-                                                                       'handler' => 'civicrm_handler_filter_contact_type',
+                                                                       'handler' => 'civicrm_handler_filter_pseudo_constant',
+                                                                       'pseudo class' => t('CRM_Contact_BAO_ContactType'),
+                                                                       'pseudo method' => t('basicTypePairs'),                                                     
+
                                                                        ),
                                                      );
     //Contact Sub Type
     $data['civicrm_contact']['contact_sub_type'] = array(
                                                          'title' => t('Contact Sub Type'),
-
                                                          'help' => t('The Sub-type for the Contact'),
                                                          'field' => array(
                                                                           'handler' => 'civicrm_handler_field',
                                                                           'click sortable' => TRUE,
+                                                                          'pseudo class' => t('CRM_Contact_BAO_ContactType'),
+                                                                          'pseudo method' => t('subTypesPairs'),                                                     
                                                                           ),
 
                                                          'filter' => array(
-                                                                           'handler' => 'civicrm_handler_filter_contact_type',
+                                                                           'handler' => 'civicrm_handler_filter_pseudo_constant',
+                                                                           'pseudo class' => t('CRM_Contact_BAO_ContactType'),
+                                                                           'pseudo method' => t('subTypesPairs'),                                                     
                                                                            ),
 
                                                          'sort' => array(
@@ -580,6 +592,7 @@ function civicrm_views_data() {
                          'do_not_trade'      => 1,
                          'is_opt_out'        => 1,
                          'contact_type'      => 1,
+                         'contact_sub_type'  => 1,
                          'current_employer'  => 1,
                          );
     civicrm_views_add_fields( $fields, $data['civicrm_contact'], $skipFields, 'civicrm_contact' );
@@ -689,8 +702,10 @@ function civicrm_views_data() {
                                                       'real field' => 'location_type_id',
                                                       'help' => t('The Location of the Address for the Contact'),
                                                       'field' => array(
-                                                                       'handler' => 'civicrm_handler_field_location_type',
+                                                                       'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                        'click sortable' => TRUE,
+                                                                       'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                       'pseudo method' => 'locationType',
                                                                        ),
 
                                                       'argument' => array(
@@ -698,7 +713,9 @@ function civicrm_views_data() {
                                                                           ),
 
                                                       'filter' => array(
-                                                                        'handler' => 'civicrm_handler_filter_location_type',
+                                                                        'handler' => 'civicrm_handler_filter_pseudo_constant',
+                                                                        'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                        'pseudo method' => 'locationType',
                                                                         ),
 
                                                       'sort' => array(
@@ -806,6 +823,8 @@ function civicrm_views_data() {
                                                        'field' => array(
                                                                         'handler' => 'civicrm_handler_field_address',
                                                                         'click sortable' => TRUE,
+                                                                        'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                        'pseudo method' => 'stateProvince',
                                                                         ),
 
                                                        'argument' => array(
@@ -813,8 +832,10 @@ function civicrm_views_data() {
                                                                            ),
 
                                                        'filter' => array(
-                                                                         'handler' => 'civicrm_handler_filter_state',
+                                                                         'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                          'allow empty' => TRUE,
+                                                                         'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                         'pseudo method' => 'stateProvince',
                                                                          ),
 
                                                        'sort' => array(
@@ -899,6 +920,8 @@ function civicrm_views_data() {
                                                 'field' => array(
                                                                  'handler' => 'civicrm_handler_field_country',
                                                                  'click sortable' => TRUE,
+                                                                 'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                 'pseudo method' => 'country',
                                                                  ),
 
                                                 'argument' => array(
@@ -906,8 +929,10 @@ function civicrm_views_data() {
                                                                     ),
 
                                                 'filter' => array(
-                                                                  'handler' => 'civicrm_handler_filter_country',
+                                                                  'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                   'allow empty' => TRUE,
+                                                                  'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                  'pseudo method' => 'country',
                                                                   ),
 
                                                 'sort' => array(
@@ -921,8 +946,10 @@ function civicrm_views_data() {
                                                'real field' => 'county_id',
                                                'help' => t('The County of the Address'),
                                                'field' => array(
-                                                                'handler' => 'civicrm_handler_field_county',
+                                                                'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                 'click sortable' => TRUE,
+                                                                'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                'pseudo method' => 'county',
                                                                 ),
 
                                                'argument' => array(
@@ -930,8 +957,10 @@ function civicrm_views_data() {
                                                                    ),
 
                                                'filter' => array(
-                                                                 'handler' => 'civicrm_handler_filter_county',
+                                                                 'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                  'allow empty' => TRUE,
+                                                                 'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                 'pseudo method' => 'county',
                                                                  ),
 
                                                'sort' => array(
@@ -1316,8 +1345,10 @@ function civicrm_views_data() {
                                                  'real field' => 'phone_type_id',
                                                  'help' => t('The Type, either Phone, Mobile, Fax or Pager'),
                                                  'field' => array(
-                                                                  'handler' => 'civicrm_handler_field_phone_type',
+                                                                  'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                   'click sortable' => TRUE,
+                                                                  'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                  'pseudo method' => 'phoneType',
                                                                   ),
 
                                                  'argument' => array(
@@ -1326,8 +1357,10 @@ function civicrm_views_data() {
 
 
                                                  'filter' => array(
-                                                                   'handler' => 'civicrm_handler_filter_phone_type',
+                                                                   'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                    'allow empty' => TRUE,
+                                                                   'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                   'pseudo method' => 'phoneType',
                                                                    ),
 
                                                  'sort' => array(
@@ -1392,8 +1425,10 @@ function civicrm_views_data() {
                                                      'real field' => 'website_type_id',
                                                      'help' => t('The type of website for the contact'),
                                                      'field' => array(
-                                                                      'handler' => 'civicrm_handler_field_website_type',
+                                                                      'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                       'click sortable' => TRUE,
+                                                                      'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                      'pseudo method' => 'websiteType',
                                                                       ),
 
                                                      'argument' => array(
@@ -1401,8 +1436,10 @@ function civicrm_views_data() {
                                                                          ),
 
                                                      'filter' => array(
-                                                                       'handler' => 'civicrm_handler_filter_website_type',
+                                                                       'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                        'allow empty' => TRUE,
+                                                                       'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                       'pseudo method' => 'websiteType',
                                                                        ),
 
                                                      'sort' => array(
@@ -1493,8 +1530,10 @@ function civicrm_views_data() {
                                                  'real field' => 'event_type_id',
                                                  'help' => t('The Event Type'),
                                                  'field' => array(
-                                                                  'handler' => 'civicrm_handler_field_event_type',
+                                                                  'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                   'click sortable' => TRUE,
+                                                                  'pseudo class' => 'CRM_Event_PseudoConstant',
+                                                                  'pseudo method' => 'eventType',
                                                                   ),
 
                                                  'argument' => array(
@@ -1502,7 +1541,9 @@ function civicrm_views_data() {
                                                                      ),
 
                                                  'filter' => array(
-                                                                   'handler' => 'civicrm_handler_filter_event_type',
+                                                                  'handler' => 'civicrm_handler_filter_pseudo_constant',
+                                                                  'pseudo class' => 'CRM_Event_PseudoConstant',
+                                                                  'pseudo method' => 'eventType',
                                                                    ),
 
                                                  'sort' => array(
@@ -1870,8 +1911,10 @@ function civicrm_views_data() {
                                                    'real field' => 'status_id',
                                                    'help' => t('The Status of the Participant\'s Booking and Attendance'),
                                                    'field' => array(
-                                                                    'handler' => 'civicrm_handler_field_participant_status',
+                                                                    'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                     'click sortable' => TRUE,
+                                                                    'pseudo class' => 'CRM_Event_PseudoConstant',
+                                                                    'pseudo method' => 'participantStatus',
                                                                     ),
 
                                                    'argument' => array(
@@ -1879,8 +1922,10 @@ function civicrm_views_data() {
                                                                        ),
 
                                                    'filter' => array(
-                                                                     'handler' => 'civicrm_handler_filter_participant_status',
+                                                                     'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                      'allow empty' => TRUE,
+                                                                     'pseudo class' => 'CRM_Event_PseudoConstant',
+                                                                     'pseudo method' => 'participantStatus',
                                                                      ),
 
                                                    'sort' => array(
@@ -1894,8 +1939,10 @@ function civicrm_views_data() {
                                                  'real field' => 'role_id',
                                                  'help' => t('The Role the Participant is registered for.'),
                                                  'field' => array(
-                                                                  'handler' => 'civicrm_handler_field_participant_role',
+                                                                  'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                   'click sortable' => TRUE,
+                                                                  'pseudo class' => 'CRM_Event_PseudoConstant',
+                                                                  'pseudo method' => 'participantRole',
                                                                   ),
 
                                                  'argument' => array(
@@ -1903,8 +1950,10 @@ function civicrm_views_data() {
                                                                      ),
 
                                                  'filter' => array(
-                                                                   'handler' => 'civicrm_handler_filter_participant_role',
+                                                                   'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                    'allow empty' => TRUE,
+                                                                   'pseudo class' => 'CRM_Event_PseudoConstant',
+                                                                   'pseudo method' => 'participantRole',
                                                                    ),
 
                                                  'sort' => array(
@@ -2159,8 +2208,10 @@ function civicrm_views_data() {
                                                                'real field' => 'contribution_type_id',
                                                                'help' => t('The Type of Contribution made, ie Member Dues, Event Fees etc'),
                                                                'field' => array(
-                                                                                'handler' => 'civicrm_handler_field_contribution_type',
+                                                                                'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                                 'click sortable' => TRUE,
+                                                                                'pseudo class' => 'CRM_Contribute_PseudoConstant',
+                                                                                'pseudo method' => 'contributionType',                                                                                                                                                    
                                                                                 ),
 
                                                                'argument' => array(
@@ -2168,8 +2219,10 @@ function civicrm_views_data() {
                                                                                    ),
 
                                                                'filter' => array(
-                                                                                 'handler' => 'civicrm_handler_filter_contribution_type',
+                                                                                 'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                                  'allow empty' => TRUE,
+                                                                                 'pseudo class' => 'CRM_Contribute_PseudoConstant',
+                                                                                 'pseudo method' => 'contributionType',                                                                                                                                                    
                                                                                  ),
 
                                                                'sort' => array(
@@ -2183,8 +2236,10 @@ function civicrm_views_data() {
                                                                'real field' => 'contribution_page_id',
                                                                'help' => t('The Page this Contribution came from'),
                                                                'field' => array(
-                                                                                'handler' => 'civicrm_handler_field_contribution_page',
+                                                                                'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                                 'click sortable' => TRUE,
+                                                                                'pseudo class' => 'CRM_Contribute_PseudoConstant',
+                                                                                'pseudo method' => 'contributionPage',
                                                                                 ),
 
                                                                'argument' => array(
@@ -2192,8 +2247,10 @@ function civicrm_views_data() {
                                                                                    ),
 
                                                                'filter' => array(
-                                                                                 'handler' => 'civicrm_handler_filter_contribution_page',
+                                                                                 'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                                  'allow empty' => TRUE,
+                                                                                 'pseudo class' => 'CRM_Contribute_PseudoConstant',
+                                                                                 'pseudo method' => 'contributionPage',
                                                                                  ),
 
                                                                'sort' => array(
@@ -2207,8 +2264,10 @@ function civicrm_views_data() {
                                                                 'real field' => 'payment_instrument_id',
                                                                 'help' => t('The Payment Instrument Used for the Contribution'),
                                                                 'field' => array(
-                                                                                 'handler' => 'civicrm_handler_field_payment_instrument',
+                                                                                 'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                                  'click sortable' => TRUE,
+                                                                                 'pseudo class' => 'CRM_Contribute_PseudoConstant',
+                                                                                 'pseudo method' => 'paymentInstrument',
                                                                                  ),
 
                                                                 'argument' => array(
@@ -2216,8 +2275,10 @@ function civicrm_views_data() {
                                                                                     ),
 
                                                                 'filter' => array(
-                                                                                  'handler' => 'civicrm_handler_filter_payment_instrument',
+                                                                                  'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                                   'allow empty' => TRUE,
+                                                                                  'pseudo class' => 'CRM_Contribute_PseudoConstant',
+                                                                                  'pseudo method' => 'paymentInstrument',
                                                                                   ),
 
                                                                 'sort' => array(
@@ -2522,8 +2583,10 @@ function civicrm_views_data() {
                                                                  'real field' => 'contribution_status_id',
                                                                  'help' => t('The Status of this Contribution'),
                                                                  'field' => array(
-                                                                                  'handler' => 'civicrm_handler_field_contribution_status',
+                                                                                  'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                                   'click sortable' => TRUE,
+                                                                                  'pseudo class' => 'CRM_Contribute_PseudoConstant',
+                                                                                  'pseudo method' => 'contributionStatus',                                                                                  
                                                                                   ),
 
                                                                  'argument' => array(
@@ -2531,8 +2594,10 @@ function civicrm_views_data() {
                                                                                      ),
 
                                                                  'filter' => array(
-                                                                                   'handler' => 'civicrm_handler_filter_contribution_status',
+                                                                                   'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                                    'allow empty' => TRUE,
+                                                                                   'pseudo class' => 'CRM_Contribute_PseudoConstant',
+                                                                                   'pseudo method' => 'contributionStatus',                                                                                  
                                                                                    ),
 
                                                                  'sort' => array(
@@ -3297,8 +3362,10 @@ function civicrm_views_data() {
                                                        'real field' => 'activity_type_id',
                                                        'help' => t('The Type of Activity'),
                                                        'field' => array(
-                                                                        'handler' => 'civicrm_handler_field_activity_type',
+                                                                        'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                         'click sortable' => TRUE,
+                                                                        'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                        'pseudo method' => 'activityType',
                                                                         ),
 
                                                        'argument' => array(
@@ -3306,8 +3373,10 @@ function civicrm_views_data() {
                                                                            ),
 
                                                        'filter' => array(
-                                                                         'handler' => 'civicrm_handler_filter_activity_type',
+                                                                         'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                          'allow empty' => TRUE,
+                                                                         'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                         'pseudo method' => 'activityType',
                                                                          ),
 
                                                        'sort' => array(
@@ -3321,8 +3390,10 @@ function civicrm_views_data() {
                                                 'real field' => 'status_id',
                                                 'help' => t('The Status of this Activity'),
                                                 'field' => array(
-                                                                 'handler' => 'civicrm_handler_field_activity_status',
+                                                                 'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                  'click sortable' => TRUE,
+                                                                 'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                 'pseudo method' => 'activityStatus',
                                                                  ),
 
                                                 'argument' => array(
@@ -3330,8 +3401,10 @@ function civicrm_views_data() {
                                                                     ),
 
                                                 'filter' => array(
-                                                                  'handler' => 'civicrm_handler_filter_activity_status',
+                                                                  'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                   'allow empty' => TRUE,
+                                                                  'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                  'pseudo method' => 'activityStatus',
                                                                   ),
 
                                                 'sort' => array(
@@ -3345,8 +3418,10 @@ function civicrm_views_data() {
                                                   'real field' => 'priority_id',
                                                   'help' => t('The Priority of this Activity'),
                                                   'field' => array(
-                                                                   'handler' => 'civicrm_handler_field_priority',
+                                                                   'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                    'click sortable' => TRUE,
+                                                                   'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                   'pseudo method' => 'priority',                                                                   
                                                                    ),
 
                                                   'argument' => array(
@@ -3354,8 +3429,10 @@ function civicrm_views_data() {
                                                                       ),
 
                                                   'filter' => array(
-                                                                    'handler' => 'civicrm_handler_filter_priority',
+                                                                    'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                     'allow empty' => TRUE,
+                                                                    'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                                    'pseudo method' => 'priority',                                                                   
                                                                     ),
 
                                                   'sort' => array(
@@ -3964,8 +4041,10 @@ function civicrm_views_data() {
                                                            'real field' => 'membership_type_id',
                                                            'help' => t('The Type of Membership'),
                                                            'field' => array(
-                                                                            'handler' => 'civicrm_handler_field_membership_type',
+                                                                            'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                             'click sortable' => TRUE,
+                                                                            'pseudo class' => 'CRM_Member_PseudoConstant',
+                                                                            'pseudo method' => 'membershipType',
                                                                             ),
 
                                                            'argument' => array(
@@ -3973,8 +4052,10 @@ function civicrm_views_data() {
                                                                                ),
 
                                                            'filter' => array(
-                                                                             'handler' => 'civicrm_handler_filter_membership_type',
+                                                                             'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                              'allow empty' => TRUE,
+                                                                             'pseudo class' => 'CRM_Member_PseudoConstant',
+                                                                             'pseudo method' => 'membershipType',
                                                                              ),
 
                                                            'sort' => array(
@@ -4074,8 +4155,10 @@ function civicrm_views_data() {
                                                   'real field' => 'status_id',
                                                   'help' => t('The Status of the Membership'),
                                                   'field' => array(
-                                                                   'handler' => 'civicrm_handler_field_membership_status',
+                                                                   'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                    'click sortable' => TRUE,
+                                                                   'pseudo class' => 'CRM_Member_PseudoConstant',
+                                                                   'pseudo method' => 'membershipStatus',
                                                                    ),
 
                                                   'argument' => array(
@@ -4083,8 +4166,10 @@ function civicrm_views_data() {
                                                                       ),
 
                                                   'filter' => array(
-                                                                    'handler' => 'civicrm_handler_filter_membership_status',
+                                                                    'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                     'allow empty' => TRUE,
+                                                                    'pseudo class' => 'CRM_Member_PseudoConstant',
+                                                                    'pseudo method' => 'membershipStatus',
                                                                     ),
 
                                                   'sort' => array(
@@ -4324,13 +4409,17 @@ function civicrm_views_data() {
                                             'field' => array(
                                                              'handler' => 'views_handler_field',
                                                              'click sortable' => TRUE,
+                                                             'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                             'pseudo method' => 'allGroup',
                                                              ),
                                             'argument' => array(
                                                                 'handler' => 'views_handler_argument',
                                                                 ),
 
                                             'filter' => array(
-                                                              'handler' => 'civicrm_handler_filter_group_title',
+                                                              'handler' => 'civicrm_handler_filter_pseudo_constant',
+                                                              'pseudo class' => 'CRM_Core_PseudoConstant',
+                                                              'pseudo method' => 'allGroup',
                                                               ),
 
 
@@ -4404,6 +4493,8 @@ function civicrm_views_data() {
                                          'field' => array(
                                                           'handler' => 'views_handler_field',
                                                           'click sortable' => TRUE,
+                                                          'pseudo class' => 'CRM_Member_PseudoConstant',
+                                                          'pseudo method' => 'tag',
                                                           ),
 
                                          'argument' => array(
@@ -4411,7 +4502,9 @@ function civicrm_views_data() {
                                                              ),
 
                                          'filter' => array(
-                                                           'handler' => 'civicrm_handler_filter_tag_title',
+                                                           'handler' => 'civicrm_handler_filter_pseudo_constant',
+                                                           'pseudo class' => 'CRM_Member_PseudoConstant',
+                                                           'pseudo method' => 'tag',
                                                            ),
 
                                          'sort' => array(
@@ -4478,6 +4571,8 @@ function civicrm_views_data() {
                                              'field' => array(
                                                               'handler' => 'views_handler_field',
                                                               'click sortable' => TRUE,
+                                                              'pseudo class' => 'CRM_Mailing_PseudoConstant',
+                                                              'pseudo method' => 'completed',
                                                               ),
 
                                              'argument' => array(
@@ -4485,8 +4580,10 @@ function civicrm_views_data() {
                                                                  ),
 
                                              'filter' => array(
-                                                               'handler' => 'civicrm_handler_filter_mailing_name',
+                                                               'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                'allow empty' => TRUE,
+                                                               'pseudo class' => 'CRM_Mailing_PseudoConstant',
+                                                               'pseudo method' => 'completed',
                                                                ),
 
                                              'sort' => array(
@@ -5413,8 +5510,10 @@ function civicrm_views_data() {
                                                        'real field' => 'campaign_type_id',
                                                        'help' => t('The Type of Campaign, ie Direct Mail, Constituent Engagement etc'),
                                                        'field' => array(
-                                                                        'handler' => 'civicrm_handler_field_campaign_type',
+                                                                        'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                         'click sortable' => TRUE,
+                                                                        'pseudo class' => 'CRM_Campaign_PseudoConstant',
+                                                                        'pseudo method' => 'campaignType',                                                                        
                                                                         ),
 
                                                        'argument' => array(
@@ -5422,8 +5521,10 @@ function civicrm_views_data() {
                                                                            ),
 
                                                        'filter' => array(
-                                                                         'handler' => 'civicrm_handler_filter_campaign_type',
+                                                                         'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                          'allow empty' => TRUE,
+                                                                         'pseudo class' => 'CRM_Campaign_PseudoConstant',
+                                                                         'pseudo method' => 'campaignType',                                                                        
                                                                          ),
 
                                                        'sort' => array(
@@ -5436,8 +5537,10 @@ function civicrm_views_data() {
                                                          'real field' => 'status_id',
                                                          'help' => t('The Status of the Campaign, ie Completed, Cancelled etc'),
                                                          'field' => array(
-                                                                          'handler' => 'civicrm_handler_field_campaign_status',
+                                                                          'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                           'click sortable' => TRUE,
+                                                                          'pseudo class' => 'CRM_Campaign_PseudoConstant',
+                                                                          'pseudo method' => 'campaignStatus',
                                                                           ),
 
                                                          'argument' => array(
@@ -5445,8 +5548,10 @@ function civicrm_views_data() {
                                                                              ),
 
                                                          'filter' => array(
-                                                                           'handler' => 'civicrm_handler_filter_campaign_status',
+                                                                           'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                            'allow empty' => TRUE,
+                                                                           'pseudo class' => 'CRM_Campaign_PseudoConstant',
+                                                                           'pseudo method' => 'campaignStatus',
                                                                            ),
 
                                                          'sort' => array(
@@ -5628,15 +5733,19 @@ function civicrm_views_data() {
                                                    'real field' => 'status_id',
                                                    'help' => t('The Status of this Grant'),
                                                    'field' => array(
-                                                                    'handler' => 'civicrm_handler_field_grant_status',
+                                                                    'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                     'click sortable' => TRUE,
+                                                                    'pseudo class' => 'CRM_Grant_PseudoConstant',
+                                                                    'pseudo method' => 'grantStatus',
                                                                     ),
                                                    'argument' => array(
                                                                        'handler' => 'views_handler_argument',
                                                                        ),
                                                    'filter' => array(
-                                                                     'handler' => 'civicrm_handler_filter_grant_status',
+                                                                     'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                      'allow empty' => TRUE,
+                                                                     'pseudo class' => 'CRM_Grant_PseudoConstant',
+                                                                     'pseudo method' => 'grantStatus',
                                                                      ),
                                                    'sort' => array(
                                                                    'handler' => 'views_handler_sort',
@@ -5753,15 +5862,19 @@ function civicrm_views_data() {
                                                  'real field' => 'grant_type_id',
                                                  'help' => t('The Type of this Grant.'),
                                                  'field' => array(
-                                                                  'handler' => 'civicrm_handler_field_grant_type',
+                                                                  'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                   'click sortable' => TRUE,
+                                                                  'pseudo class' => 'CRM_Grant_PseudoConstant',
+                                                                  'pseudo method' => 'grantType',
                                                                   ),
                                                  'argument' => array(
                                                                      'handler' => 'views_handler_argument',
                                                                      ),
                                                  'filter' => array(
-                                                                   'handler' => 'civicrm_handler_filter_grant_type',
+                                                                   'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                    'allow empty' => TRUE,
+                                                                   'pseudo class' => 'CRM_Grant_PseudoConstant',
+                                                                   'pseudo method' => 'grantType',
                                                                    ),
                                                  'sort' => array(
                                                                  'handler' => 'views_handler_sort',
