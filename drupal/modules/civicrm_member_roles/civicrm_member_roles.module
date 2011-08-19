@@ -24,7 +24,7 @@ function civicrm_member_roles_menu()
               'description' => t('Add/remove association rules and configure settings. Also perform manual synchronization.'),
               'page callback' => 'civicrm_member_roles_show_rules',
               'access callback' => 'user_access',
-              'access arguments' => array('access settings'),
+              'access arguments' => array('access civicrm member role setting'),
               'type' => MENU_NORMAL_ITEM,
               );   
    
@@ -32,7 +32,7 @@ function civicrm_member_roles_menu()
         array(
               'title' => t('List Association Rule(s)'),
               'access callback' => 'user_access',
-              'access arguments' => array('access settings'),
+              'access arguments' => array('access civicrm member role setting'),
               'weight' => -5,
               'type' => MENU_DEFAULT_LOCAL_TASK,
               ); 
@@ -43,7 +43,7 @@ function civicrm_member_roles_menu()
               'page callback' => 'drupal_get_form',
               'page arguments' => array('civicrm_member_roles_add_rule_form'),
               'access callback' => 'user_access',
-              'access arguments' => array('access settings'),
+              'access arguments' => array('access civicrm member role setting'),
               'type' => MENU_LOCAL_TASK,
               );
     
@@ -53,7 +53,7 @@ function civicrm_member_roles_menu()
               'page callback' => 'drupal_get_form',
               'page arguments' => array('civicrm_member_roles_add_rule_form', 1),
               'access callback' => 'user_access',
-              'access arguments' => array('access settings'),
+              'access arguments' => array('access civicrm member role setting'),
               'type' => MENU_LOCAL_TASK,
               );
     
@@ -63,7 +63,7 @@ function civicrm_member_roles_menu()
               'page callback' => 'drupal_get_form',
               'page arguments' => array('civicrm_member_roles_configure'),
               'access callback' => 'user_access',
-              'access arguments' => array('access settings'),
+              'access arguments' => array('access civicrm member role setting'),
               'type' => MENU_LOCAL_TASK,
               );
 
@@ -73,7 +73,7 @@ function civicrm_member_roles_menu()
               'page callback' => 'drupal_get_form',
               'page arguments' => array('civicrm_member_roles_manual_sync'),
               'access callback' => 'user_access',
-              'access arguments' => array('access settings'),
+              'access arguments' => array('access civicrm member role setting'),
               'type' => MENU_LOCAL_TASK,
               ); 
        
