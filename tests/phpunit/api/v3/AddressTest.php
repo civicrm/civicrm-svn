@@ -34,8 +34,7 @@ class api_v3_AddressTest extends CiviUnitTestCase
     protected $_contactID;
     protected $_locationType;
     protected $params;
-    protected $params2;
-    
+     
     function setUp() 
     {
         $this->_apiversion = 3;
@@ -54,16 +53,6 @@ class api_v3_AddressTest extends CiviUnitTestCase
 															 'country_id'		=>	'1152',
 															 'city'				=>	'Brummen',
                                'is_primary'       => 1,
-                               'version'          => $this->_apiversion );
-        $this->params2 = array( 'contact_id'       => $this->_contactID,
-                               'location_type_id' => $this->_locationType->id,
-        											 'street_name'		=>	'Big Street',
-															 'street_number'		=>	'23',
-															 'street_address'	=>	'Big 23',
-															 'postal_code'		=>	'6971 BN',
-															 'country_id'		=>	'1152',
-															 'city'				=>	'ZebraCity',
-                               'is_primary'       => 0,
                                'version'          => $this->_apiversion );
         
     }
