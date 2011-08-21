@@ -120,7 +120,7 @@ class api_v3_AddressTest extends CiviUnitTestCase
     } 
     
     /**
-     * Test civicrm_address_get - success expected.
+     * Test civicrm_address_get with sort option- success expected.
      */
     public function testGetAddressSort()
     {  
