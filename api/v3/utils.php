@@ -397,13 +397,19 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
             }
         }
     }  
+    
 
     if (!$fields) 
         return;
     foreach ($fields as $field) {
         $dao->$field = $params [$field];
     }
-
+    if(!empty($params['return']) && is_array($params['return'])){
+      $dao->selectAdd( ); 
+      foreach ($params['return'] as $returnValue ) {
+        $dao->selectAdd( $returnValue); 
+      }
+    }
 }
 
 /*
@@ -1258,6 +1264,7 @@ function _civicrm_api3_validate_fields($entity, $action, &$params) {
                             'activity' => 1,
                             'campaign' => 1,
                             'pledge'   => 1,
+                            'tag'      => 1,
                             );
     if(!array_key_exists(strtolower($entity), $testedEntities)){
         return;
