@@ -1597,6 +1597,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * To turn this off (e.g. on the server) set 
      * define(DONT_DOCUMENT_TEST_CONFIG ,1);
      * in your settings file
+     * @param array $params array as passed to civicrm_api function
+     * @param array $result array as received from the civicrm_api function
+     * @param string $function calling function - generally __FUNCTION__
+     * @param string $filename called from file - generally __FILE__
+     * @param string $description descriptive text for the example file
+     * @param string $subfile name for subfile - if this is completed the example will be put in a subfolder (named by the entity)
      */
     function documentMe($params,$result,$function,$filename,$description = "", $subfile = null ){
         if(DONT_DOCUMENT_TEST_CONFIG ==1){
