@@ -34,7 +34,8 @@ class api_v3_AddressTest extends CiviUnitTestCase
     protected $_contactID;
     protected $_locationType;
     protected $params;
-
+    protected $params2;
+    
     function setUp() 
     {
         $this->_apiversion = 3;
@@ -54,7 +55,17 @@ class api_v3_AddressTest extends CiviUnitTestCase
 															 'city'				=>	'Brummen',
                                'is_primary'       => 1,
                                'version'          => $this->_apiversion );
-
+        $this->params2 = array( 'contact_id'       => $this->_contactID,
+                               'location_type_id' => $this->_locationType->id,
+        											 'street_name'		=>	'Big Street',
+															 'street_number'		=>	'23',
+															 'street_address'	=>	'Big 23',
+															 'postal_code'		=>	'6971 BN',
+															 'country_id'		=>	'1152',
+															 'city'				=>	'ZebraCity',
+                               'is_primary'       => 0,
+                               'version'          => $this->_apiversion );
+        
     }
 
     function tearDown() 
@@ -119,5 +130,23 @@ class api_v3_AddressTest extends CiviUnitTestCase
         $this->assertEquals( $address['values'][$address['id']]['address'], $result['values'][$tag['id']]['address'], 'In line ' . __LINE__ );
     } 
     
+    /**
+     * Test civicrm_address_get - success expected.
+     */
+    public function testGetAddressSort()
+    {  
+        civicrm_api('address','create',$this->params);
+        $subfile = "AddressSort";
+        $description = "Demonstrates Use of sort filter";
+        $params = array( 'options' => array('sort' => 'street_address DESC'),
+                         'version' => $this->_apiversion  ,
+                         'sequential' => 1,
+                          );
+        $result = civicrm_api('Address', 'Get', ($params));
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__, $description,$subfile);
+        $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
+        $this->assertEquals( 2, $result['count'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Ambachtstraat 23',$result['values'][0]['street_address'], 'In line ' . __LINE__ );
+   } 
+    
 }
-
