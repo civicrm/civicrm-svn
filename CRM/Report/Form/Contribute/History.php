@@ -227,6 +227,11 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
             
         }
 
+        $this->_columns['civicrm_contribution']['fields']['aggregate_amount'] = 
+            array( 'title'         =>  ts('Aggregate Amount'),
+                   'type'          => CRM_Utils_Type::T_MONEY,
+                   'is_statistics' => true );
+        
         $this->_tagFilter = true;
         parent::__construct( );
     }
@@ -518,6 +523,7 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
             $summaryYears[] = $yearConter;
             $yearConter++;
         }
+        $summaryYears[] = 'aggregate_amount';
 
         foreach(  $primaryContributions as $cid => $primaryRow ) {
             $row = $primaryRow;
@@ -589,6 +595,11 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
                     $rows[$dao->civicrm_contact_id]["civicrm_upto_{$this->_yearStatisticsFrom}"] += $dao->civicrm_contribution_total_amount;
                 }
             }
+            
+            if ( !isset($rows[$dao->civicrm_contact_id]['aggregate_amount']) ) {
+                $rows[$dao->civicrm_contact_id]['aggregate_amount'] = 0;
+            }
+            $rows[$dao->civicrm_contact_id]['aggregate_amount'] += $dao->civicrm_contribution_total_amount;
         }  
         $dao->free( );
         return $rows;
