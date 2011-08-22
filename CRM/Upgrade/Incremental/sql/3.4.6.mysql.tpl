@@ -4,7 +4,7 @@ ALTER TABLE `civicrm_price_set`
    ADD `contribution_type_id` int(10) unsigned default NULL COMMENT 'Conditional foreign key to civicrm_contribution_type.id.',
    ADD CONSTRAINT `FK_civicrm_price_set_contribution_type_id` FOREIGN KEY (`contribution_type_id`) REFERENCES `civicrm_contribution_type` (`id`) ON DELETE SET NULL;
 
-ALTER TABLE `civicrm_price_field`
+ALTER TABLE `civicrm_price_field_value`
    ADD `membership_type_id` int(10) unsigned default NULL COMMENT 'Conditional foreign key to civicrm_membership_type.id.',
    ADD CONSTRAINT `FK_civicrm_price_field_value_membership_type_id` FOREIGN KEY (`membership_type_id`) REFERENCES `civicrm_membership_type` (`id`) ON DELETE SET NULL;
 
