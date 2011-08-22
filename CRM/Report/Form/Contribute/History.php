@@ -153,7 +153,7 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
                                           array('sum'    => ts( 'Aggregate Amount' ) ) ),
                                    'receive_date' => 
                                    array( 'required'   => true,
-                                          'defaulr'    => true,
+                                          'default'    => true,
                                           'no_display' => true ) ),
                             'grouping'              => 'contri-fields',
                             'filters'               =>             
