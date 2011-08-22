@@ -170,13 +170,14 @@ WHERE      civicrm_membership.is_test = 0";
                     $deceasedMembership =  $memberParams;
                     $deceasedMembership['status_id'] = $deceaseStatusId; 
                     $deceasedMembership['createActivity'] = true;
+                    $deceasedMembership['version'] = 3;
                     
                     //since there is change in status.
                     $statusChange = array( 'status_id' => $deceaseStatusId );
                     $smarty->append_by_ref('memberParams', $statusChange, true );
                     
                     //process membership record.
-                    civicrm_contact_membership_create( $deceasedMembership );
+                    civicrm_api( 'membership', 'create', $deceasedMembership );
                 }
                 continue;
             }
@@ -195,7 +196,8 @@ WHERE      civicrm_membership.is_test = 0";
                 
                 // CRM-7248: added excludeIsAdmin param to the following fn call to prevent moving to admin statuses
                 //get the membership status as per id.
-                $newStatus = civicrm_membership_status_calc( array( 'membership_id' => $dao->membership_id ), true );
+                $newStatus = civicrm_api( 'membership_status', 'calc',
+                                          array( 'membership_id' => $dao->membership_id ), true );
                 $statusId  = CRM_Utils_Array::value( 'id', $newStatus );
                 
                 //process only when status change.
@@ -205,13 +207,14 @@ WHERE      civicrm_membership.is_test = 0";
                     $memParams = $memberParams;
                     $memParams['status_id']      = $statusId;
                     $memParams['createActivity'] = true; 
-                    
+                    $memParams['version']        = 3;
+                                        
                     //since there is change in status.
                     $statusChange = array( 'status_id' => $statusId );
                     $smarty->append_by_ref('memberParams', $statusChange, true );
                     
                     //process member record.
-                    civicrm_contact_membership_create( $memParams );
+                    civicrm_api( 'membership', 'create', $memParams );
                 }
             }
             
