@@ -266,7 +266,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon
             $params  = array( 'contact_id'  => $contactId );
             
 			list( $contact ) = $mailing->getDetails($params, $returnProperties, $skipOnHold, $skipDeceased );
-            if ( civicrm_error( $contact ) ) {
+            if ( civicrm_api3_error( $contact ) ) {
                 $notSent[] = $contactId;
                 continue;
             }

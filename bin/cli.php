@@ -124,7 +124,7 @@ class civicrm_CLI {
     }
 
     static function fatal( $pearError ) {
-        return civicrm_create_error($pearError->getMessage(),$pearError->getDebugInfo());
+        return civicrm_api3_create_error($pearError->getMessage(),$pearError->getDebugInfo());
     }
 
 }

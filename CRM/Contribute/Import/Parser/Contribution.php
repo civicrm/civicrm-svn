@@ -254,7 +254,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
 
         $params =& $this->getActiveFieldParams( );            
                 
-        $formatted = array( );
+        $formatted = array( 'version' => 3 );
 
         // don't add to recent items, CRM-4399
         $formatted['skipRecentView'] = true;
@@ -313,7 +313,8 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
         
         //import contribution record according to select contact type
         if ( $onDuplicate == CRM_Contribute_Import_Parser::DUPLICATE_SKIP && 
-             ( $paramValues['contribution_contact_id'] || $paramValues['external_identifier'] ) ) {
+             ( CRM_Utils_Array::value( 'contribution_contact_id', $paramValues ) || 
+               CRM_Utils_Array::value( 'external_identifier', $paramValues ) ) ) {
             $paramValues['contact_type'] = $this->_contactType;
         } else if( $onDuplicate == CRM_Contribute_Import_Parser::DUPLICATE_UPDATE && 
                    ( $paramValues['contribution_id'] || $values['trxn_id'] || $paramValues['invoice_id'] ) ) {
@@ -329,7 +330,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
             $paramValues['onDuplicate'] = $onDuplicate;
         }
         
-        $formatError = _civicrm_contribute_formatted_param( $paramValues, $formatted, true);
+        $formatError = _civicrm_api3_contribute_formatted_param( $paramValues, $formatted, true);
         
         if ( $formatError ) {
             array_unshift($values, $formatError['error_message']);
@@ -433,9 +434,9 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
             }
 
             //retrieve contact id using contact dedupe rule
-            $error = civicrm_check_contact_dedupe( $paramValues );
-            
-            if ( civicrm_duplicate( $error ) ) {
+            $error = civicrm_api3_check_contact_dedupe( $paramValues );
+                        
+            if ( civicrm_api3_duplicate( $error ) ) {
                 $matchedIDs = explode(',',$error['error_message']['params'][0]);        
                 if (count( $matchedIDs) >1) {
                     array_unshift($values,"Multiple matching contact records detected for this row. The contribution was not imported");
@@ -444,8 +445,8 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                     $cid = $matchedIDs[0];
                     $formatted['contact_id'] = $cid;
                     
-                    $newContribution = civicrm_contribution_format_create( $formatted );
-                    if ( civicrm_error( $newContribution ) ) { 
+                    $newContribution = civicrm_api( 'contribution','create', $formatted );
+                    if ( civicrm_api3_error( $newContribution ) ) { 
                         if ( is_array( $newContribution['error_message'] ) ) {
                             array_unshift($values, $newContribution['error_message']['message']);
                             if ( $newContribution['error_message']['params'][0] ) {
@@ -512,8 +513,8 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                     return CRM_Contribute_Import_Parser::ERROR;
                 }
             }
-            $newContribution = civicrm_contribution_format_create( $formatted );
-            if ( civicrm_error( $newContribution ) ) { 
+            $newContribution = civicrm_api( 'contribution','create', $formatted );
+            if ( civicrm_api3_error( $newContribution ) ) { 
                 if ( is_array( $newContribution['error_message'] ) ) {
                     array_unshift($values, $newContribution['error_message']['message']);
                     if ( $newContribution['error_message']['params'][0] ) {

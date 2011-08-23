@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Activity/Import/Parser.php';
+require_once 'api/api.php';
 
 /**
  * class to parse activity csv files
@@ -267,6 +268,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
             }
         }
         //date-Format part ends
+        civicrm_api_include( 'utils', false, 3 );
         require_once 'api/v2/utils.v2.php';
         $formatError = _civicrm_activity_formatted_param( $params, $params, true );
         
@@ -285,9 +287,9 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
             //retrieve contact id using contact dedupe rule.
             //since we are support only individual's activity import.
             $params['contact_type'] = 'Individual';
-            $error = civicrm_check_contact_dedupe( $params );
+            $error = civicrm_api3_check_contact_dedupe( $params );
             
-            if ( civicrm_duplicate( $error ) ) {
+            if ( civicrm_api3_duplicate( $error ) ) {
                 $matchedIDs = explode(',',$error['error_message']['params'][0]);
                 if (count( $matchedIDs) > 1) {
                     array_unshift($values,"Multiple matching contact records detected for this row. The activity was not imported");

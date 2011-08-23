@@ -77,7 +77,7 @@ class CRM_Bridge_OG_Drupal {
             
 
             $group = civicrm_group_add( $params );
-            if ( ! civicrm_error( $group ) ) {
+            if ( ! civicrm_api3_error( $group ) ) {
                 $params['group_id'] = $group['result']->id;
             }
         } else {

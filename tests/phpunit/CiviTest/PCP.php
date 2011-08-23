@@ -56,8 +56,9 @@ class PCPBlock extends PHPUnit_Framework_Testcase
             }
             else {
                 // we assume api v3.
-                // TODO: Update this when api/v3/UFField.php is finished.
-                $ufField = civicrm_uf_field_create($profileId , $value );
+                $value['version'] = 3;
+                $value['uf_group_id'] = $profileId;
+                $ufField = civicrm_api( 'uf_field', 'create', $value );
             }
         }
         $joinParams =  array(

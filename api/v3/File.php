@@ -79,7 +79,7 @@ function civicrm_api3_file_create( $params )
     $file = array();
     _civicrm_api3_object_to_array($fileDAO, $file);
 
-    return civicrm_create_success($file,$params,'file','create',$fileDAO);
+    return civicrm_api3_create_success($file,$params,'file','create',$fileDAO);
 
 }
 
@@ -200,7 +200,7 @@ function civicrm_api3_entity_file_create( $params )
   $entityFile = array();
   _civicrm_api3_object_to_array( $entityFileDAO, $entityFile );
 
-  return civicrm_create_success($entityFile,$params,'entity_file','create',$entityFileDAO);
+  return civicrm_api3_create_success($entityFile,$params,'entity_file','create',$entityFileDAO);
 
 }
 
