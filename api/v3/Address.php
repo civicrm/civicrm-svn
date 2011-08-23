@@ -150,27 +150,7 @@ function civicrm_api3_address_delete( &$params )
 function civicrm_api3_address_get(&$params) 
 {   
     civicrm_api3_verify_one_mandatory($params); 
-	
-    require_once 'CRM/Core/BAO/Address.php';
-    $addressBAO = new CRM_Core_BAO_Address();
-    $fields = array_keys($addressBAO->fields());
-
-    foreach ( $fields as $name) {
-        if (array_key_exists($name, $params)) {
-            $addressBAO->$name = $params[$name];
-        }
-    }
-    
-    if ( $addressBAO->find() ) {
-      $addresses = array();
-      while ( $addressBAO->fetch() ) {
-        CRM_Core_DAO::storeValues( $addressBAO, $address );
-        $addresses[$addressBAO->id] = $address;
-      }
-      return civicrm_api3_create_success($addresses,$params,'activity','get',$addressBAO);
-    } else {
-      return civicrm_api3_create_success(array(),$params,'activity','get',$addressBAO);
-    }
+	  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 				
 }
 
