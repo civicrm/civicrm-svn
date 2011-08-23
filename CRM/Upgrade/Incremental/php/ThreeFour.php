@@ -234,4 +234,29 @@ INSERT INTO civicrm_location_type ( name, description, is_reserved, is_active )
         $upgrade->assign( 'alterContactDashboard', $alterContactDashboard );
         $upgrade->processSQL( $rev );
     }
+
+    function upgrade_3_4_6( $rev ) 
+    {
+        require_once 'CRM/Report/DAO/Instance.php';
+        $modifiedReportIds = array( 'event/summary' );
+        
+        $instances = CRM_Core_DAO::executeQuery("SELECT id, form_values, report_id FROM civicrm_report_instance WHERE report_id IN ('". implode("','", $modifiedReportIds )."')");
+        $eventDates = array( 'event_start_date_from', 'event_start_date_to', 'event_end_date_from', 'event_end_date_to');
+        while( $instances->fetch( ) ) {
+            $formValues = unserialize( $instances->form_values );
+            foreach ( $eventDates as $date ) {
+                if ( isset( $formValues[$date] ) && $formValues[$date] == ' ' ) {
+                    $formValues[$date] = '';
+                }
+            }
+            // save updated instance criteria
+            $dao = new CRM_Report_DAO_Instance( );
+            $dao->id = $instances->id;
+            $dao->form_values = serialize( $formValues );
+            $dao->save( );
+            $dao->free( );
+        }
+        $upgrade = new CRM_Upgrade_Form( );
+        $upgrade->processSQL( $rev );
+    }
   }
