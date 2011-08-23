@@ -1,4 +1,4 @@
--- CRM-8125
+-- CRM-8619
 
 SELECT @option_group_id_languages := MAX( id ) FROM civicrm_option_group WHERE name = 'languages';
 
@@ -21,7 +21,7 @@ ALTER TABLE `civicrm_dashboard_contact` CHANGE `content` `content` LONGTEXT CHAR
 
 -- CRM-8664
 SELECT @ogrID           := max(id) from civicrm_option_group where name = 'report_template';
-SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';	
+SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @max_weight      := MAX(ROUND(weight)) from civicrm_option_value WHERE option_group_id = @ogrID;
 INSERT INTO civicrm_option_value
   (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight,{localize field='description'}description{/localize}, is_optgroup,is_reserved, is_active, component_id, visibility_id ) 
