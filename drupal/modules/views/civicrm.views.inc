@@ -560,13 +560,13 @@ function civicrm_views_data() {
                                                                           'handler' => 'civicrm_handler_field',
                                                                           'click sortable' => TRUE,
                                                                           'pseudo class' => t('CRM_Contact_BAO_ContactType'),
-                                                                          'pseudo method' => t('subTypesPairs'),                                                     
+                                                                          'pseudo method' => t('subTypePairs'),                                                     
                                                                           ),
 
                                                          'filter' => array(
                                                                            'handler' => 'civicrm_handler_filter_pseudo_constant',
                                                                            'pseudo class' => t('CRM_Contact_BAO_ContactType'),
-                                                                           'pseudo method' => t('subTypesPairs'),                                                     
+                                                                           'pseudo method' => t('subTypePairs'),                                                     
                                                                            ),
 
                                                          'sort' => array(
