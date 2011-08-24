@@ -2001,7 +2001,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                                 $pair[$op] = (count($val) == 1) ? ( ($op == 'notin')? ts('Is Not'): ts('Is') ) : $pair[$op];
                                 $val       = implode( ', ', $val );
                                 $value     = "{$pair[$op]} " . $val;
-                            } else if ( !is_array( $val ) && !empty( $val ) && isset($field['options']) &&
+                            } else if ( !is_array( $val ) && ( !empty( $val ) || $val == '0' ) && isset($field['options']) &&
                                         is_array( $field['options'] ) && !empty( $field['options'] ) ) { 
                                 $value = "{$pair[$op]} " . CRM_Utils_Array::value( $val, $field['options'], $val );
                             } else if ( $val ) {
@@ -2456,7 +2456,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
             foreach( $prop['filters'] as $fieldAlias => $val ) {
                 foreach( array( 'value', 'min', 'max', 'relative' ,'from', 'to' ) as $attach ) {
                     if ( isset( $this->_params[$fieldAlias.'_'.$attach ] ) &&
-                         !empty( $this->_params[$fieldAlias.'_'.$attach ] ) ) {
+                         ( !empty( $this->_params[$fieldAlias.'_'.$attach ] ) || $this->_params[$fieldAlias.'_'.$attach ] == '0' ) ) {
                         return true;
                     } 
                 }
