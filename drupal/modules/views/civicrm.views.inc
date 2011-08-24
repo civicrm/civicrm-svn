@@ -6334,8 +6334,8 @@ function civicrm_get_filter_handler($type) {
                      'allow empty' => TRUE,);
     case "Float":
     case "Int":
-        return array('handler' =>'views_handler_filter_numeric');
-
+        return array('handler' =>'views_handler_filter_numeric',
+                     'allow empty' => TRUE,);
     case "Date":
         return array('handler' =>'civicrm_handler_filter_datetime');
 
@@ -6345,15 +6345,18 @@ function civicrm_get_filter_handler($type) {
     case "StateProvince":
         return array('handler' =>'civicrm_handler_filter_pseudo_constant',
                      'pseudo class' => 'CRM_Core_PseudoConstant',
-                     'pseudo method' => 'stateProvince',);  
+                     'pseudo method' => 'stateProvince',
+                     'allow empty' => TRUE,);
     case "Country":
         return array('handler' =>'civicrm_handler_filter_pseudo_constant',
                      'pseudo class' => 'CRM_Core_PseudoConstant',
-                     'pseudo method' => 'country',);
+                     'pseudo method' => 'country',
+                     'allow empty' => TRUE,);
     case "County":
         return array('handler' =>'civicrm_handler_filter_pseudo_constant',
                      'pseudo class' => 'CRM_Core_PseudoConstant',
-                     'pseudo method' => 'county',);    
+                     'pseudo method' => 'county',
+                     'allow empty' => TRUE,);
     default:
         return array('handler' =>'views_handler_filter_string',
                      'allow empty' => TRUE,);
