@@ -592,31 +592,6 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $this->relationshipTypeDelete( $this->_relTypeID ); 
     }
 
-
-    ///////////////// civicrm_relationship_get methods
-    
-    /**
-     * check with empty array
-     */    
-    function testRelationshipGetEmptyParams( )
-    {
-        //get relationship
-        $params = array('version' => $this->_apiversion );
-        $result =& civicrm_api('relationship','get',$params );
-        $this->assertEquals( $result['is_error'], 1 );
-   }
-    
-    /**
-     * check with params Not Array.
-     */
-    function testRelationshipGetParamsNotArray( )
-    {
-        $params = 'relationship';                            
-        
-        $result =& civicrm_api('relationship','get',$params );
-        $this->assertEquals( $result['is_error'], 1 );
-    }
-    
     /**
      * check with valid params array.
      */
@@ -641,7 +616,31 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0,'in line ' .__LINE__ );
     }
-    
+    /**
+     * check with valid params array.
+     * (The get function will behave differently without 'contact_id' passed
+     */
+    function testRelationshipsGetGeneric( )
+    {
+        $relParams = array(
+                           'contact_id_a'         => $this->_cId_a,
+                           'contact_id_b'         => $this->_cId_b,
+                           'relationship_type_id' => $this->_relTypeID,
+                           'start_date'           => '2011-01-01',
+                           'end_date'             => '2013-01-01',
+                           'is_active'            => 1,
+                           'version'              => $this->_apiversion,
+                           );
+
+        $result = civicrm_api('relationship','create',$relParams );
+        
+        //get relationship
+        $params = array( 'contact_id_b' => $this->_cId_b ,
+                          'version'     => $this->_apiversion);
+        $result =& civicrm_api('relationship','get',$params );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals( $result['is_error'], 0,'in line ' .__LINE__ );
+    }
    ///////////////// civicrm_relationship_type_add methods
     
    /**
