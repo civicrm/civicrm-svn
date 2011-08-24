@@ -6044,20 +6044,16 @@ function civicrm_views_add_fields( &$fields, &$data, &$skipFields, $tableName ) 
          }
 
         $type = CRM_Utils_Array::value( 'type', $value, 'String' );
-
+        $handler = civicrm_get_field_handler  ( $type );
+        $filter_handler = civicrm_get_filter_handler( $type );
         $data[$value['name']] = array(
                                       'title' => $value['title'],
                                       'help'  => $value['title'],
-                                      'field' => array( 
-                                                       'handler' => civicrm_get_field_handler  ( $type ),
-                                                       'click sortable' => true,
-                                                        ),
+                                      'field' => $handler,
                                       'sort'  => array(
                                                        'handler' => civicrm_get_sort_handler   ( $type ),
                                                        ),
-                                      'filter' => array(
-                                                        'handler' => civicrm_get_filter_handler( $type ),
-                                                        ),
+                                      'filter' => $filter_handler,
                                       'argument' => array(
                                                           'handler' => civicrm_get_argument_handler ( $type ),
                                                           ),                                      
