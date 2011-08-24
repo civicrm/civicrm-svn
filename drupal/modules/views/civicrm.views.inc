@@ -6211,17 +6211,19 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
 
             if ( in_array( $currentfield['html_type'],
                            $customHTMLTypes ) ) {
-                $handler = 'civicrm_handler_field_custom';
+                $handler = array('civicrm_handler_field_custom',
+                                 'click sortable' => TRUE,);
             } else if ( $currentfield['html_type'] == 'File' ) {
-                $handler = 'civicrm_handler_field_custom_file';
+                $handler = array('civicrm_handler_field_custom_file',
+                                 'click sortable' => TRUE,);
              }else {
                 $handler = civicrm_get_field_handler( $currentfield['data_type'] );
             }
             
             if ( !empty($currentfield['option_group_id']) && in_array($currentfield['html_type'], $customMultiValueHTMLTypes) ){
-                $filter_handler = 'civicrm_handler_filter_custom_option';
+                $filter_handler = array('handler' => 'civicrm_handler_filter_custom_option');
             } elseif ( !empty($currentfield['option_group_id']) ){
-                $filter_handler = 'civicrm_handler_filter_custom_single_option';  
+                $filter_handler = array('handler' => 'civicrm_handler_filter_custom_single_option');  
             } else {
                 $filter_handler = civicrm_get_filter_handler( $currentfield['data_type'] );
             }
@@ -6229,18 +6231,13 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
             $data[$currentgroup['table_name']][$currentfield['column_name']] = array(
                                                                                      'title' => $currentfield['label'],
                                                                                      'help' => $currentfield['help_post'],
-                                                                                     'field' => array(
-                                                                                                      'handler' => $handler,
-                                                                                                      'click sortable' => TRUE,
-                                                                                                      ),
+                                                                                     'field' => $handler,
 
                                                                                      'argument' => array(
                                                                                                          'handler' => civicrm_get_argument_handler($currentfield['data_type']),
                                                                                                          ),
 
-                                                                                     'filter' => array(
-                                                                                                       'handler' => $filter_handler
-                                                                                                       ),
+                                                                                     'filter' => $filter_handler,
 
                                                                                      'sort' => array(
                                                                                                      'handler' => civicrm_get_sort_handler($currentfield['data_type']),
@@ -6266,29 +6263,40 @@ function civicrm_get_field_handler($type) {
     switch ($type) {
     case "String":
     case "Memo":
-        return 'civicrm_handler_field_markup';
+        return array('handler' =>'civicrm_handler_field_markup',
+                     'click sortable' => TRUE,);
 
     case "Float":
     case "Int":
-        return 'views_handler_field_numeric';
+        return array('handler' =>'views_handler_field_numeric',
+                     'click sortable' => TRUE,);
 
     case "Date":
-        return 'civicrm_handler_field_datetime';
+        return array('handler' =>'civicrm_handler_field_datetime',
+                     'click sortable' => TRUE,);
 
     case "Boolean":
-        return 'views_handler_field_boolean';
+        return array('handler' =>'views_handler_field_boolean',
+                     'click sortable' => TRUE,);
 
     case "StateProvince":
-        return 'civicrm_handler_field_state';
+        return array('handler' =>'civicrm_handler_field_state',
+                     'click sortable' => TRUE,);
   
     case "Country":
-        return 'civicrm_handler_field_country';
+        return array('handler' =>'civicrm_handler_field_country',
+                     'click sortable' => TRUE,
+                    );
 
     case "County":
-        return 'civicrm_handler_field_county';
-    
+        return array('handler' =>'civicrm_handler_field_pseudo_constant',
+                     'click sortable' => TRUE,
+                     'pseudo class' => 'CRM_Core_PseudoConstant',
+                     'pseudo method' => 'county',
+                    );
     default:
-        return 'views_handler_field'; 
+        return array('views_handler_field',
+                     'click sortable' => TRUE,); 
     }
 }
 
@@ -6326,29 +6334,33 @@ function civicrm_get_filter_handler($type) {
     switch ($type) {
     case "String":
     case "Memo":
-        return 'views_handler_filter_string';
-
+        return array('handler' =>'views_handler_filter_string',
+                     'allow empty' => TRUE,);
     case "Float":
     case "Int":
-        return 'views_handler_filter_numeric';
+        return array('handler' =>'views_handler_filter_numeric');
 
     case "Date":
-        return 'civicrm_handler_filter_datetime';
+        return array('handler' =>'civicrm_handler_filter_datetime');
 
     case "Boolean":
-        return 'views_handler_filter_boolean_operator';
+        return array('handler' =>'views_handler_filter_boolean_operator');
 
     case "StateProvince":
-        return 'civicrm_handler_filter_state';
-  
+        return array('handler' =>'civicrm_handler_filter_pseudo_constant',
+                     'pseudo class' => 'CRM_Core_PseudoConstant',
+                     'pseudo method' => 'stateProvince',);  
     case "Country":
-        return 'civicrm_handler_filter_country';
-
+        return array('handler' =>'civicrm_handler_filter_pseudo_constant',
+                     'pseudo class' => 'CRM_Core_PseudoConstant',
+                     'pseudo method' => 'country',);
     case "County":
-        return 'civicrm_handler_filter_county';    
-    
+        return array('handler' =>'civicrm_handler_filter_pseudo_constant',
+                     'pseudo class' => 'CRM_Core_PseudoConstant',
+                     'pseudo method' => 'county',);    
     default:
-        return 'views_handler_filter_string';
+        return array('handler' =>'views_handler_filter_string',
+                     'allow empty' => TRUE,);
     }
 }
 
