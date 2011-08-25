@@ -773,26 +773,32 @@ LIMIT    0, {$limit}
                                     );
 
     $dao = CRM_Core_DAO::executeQuery( $query );
-    $contactList = null;
+    $contactList = array();
     $listCurrentEmployer = true;
     while ( $dao->fetch( ) ) {
-        echo $contactList = "$dao->data|$dao->id\n";
-
+        $contactList[] = array( 'name' => $dao->data,
+                                'id'   => $dao->id );
+        
         if ( CRM_Utils_Array::value( 'org', $params ) &&
             !empty($currEmpDetails) && 
             $dao->id == $currEmpDetails['id']) {
-                $listCurrentEmployer = false;
+            $listCurrentEmployer = false;
         }
     }
 
     //return organization name if doesn't exist in db
-    if ( !$contactList ) {
+    if ( empty( $contactList ) ) {
         if ( CRM_Utils_Array::value( 'org', $params ) ) {
             if ( $listCurrentEmployer && !empty($currEmpDetails) ) {
-                echo  "{$currEmpDetails['data']}|{$currEmpDetails['id']}\n";
+                $contactList = array( 'name' => $currEmpDetails['data'],
+                                      'id'   => $currEmpDetails['id']
+                                    );
             } else {
-                echo CRM_Utils_Array::value( 's', $params );
+                $contactList = array( 'name' => CRM_Utils_Array::value( 's', $params ),
+                                      'id'   => CRM_Utils_Array::value( 's', $params ) );
             }
         }
     }
+    
+    return $contactList;
 }

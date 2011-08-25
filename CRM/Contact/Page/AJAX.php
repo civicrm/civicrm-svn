@@ -93,7 +93,11 @@ class CRM_Contact_Page_AJAX
                        );
         
         $result = civicrm_api( 'Contact', 'quicksearch', $params );
-    
+
+        foreach( $result as $values ) {
+            echo $contactList = "{$values['name']}|{$values['id']}\n";
+        }
+
         CRM_Utils_System::civiExit( );
     } 
     
