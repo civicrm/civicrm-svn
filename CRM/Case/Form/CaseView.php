@@ -316,16 +316,18 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         $caseRelationships = CRM_Case_BAO_Case::getCaseRoles( $this->_contactID, $this->_caseID );
        
         //save special label because we unset it in the loop
-        $managerLabel = $caseRoles[$managerRoleId];
+        $managerLabel = empty( $managerRoleId ) ? '' : $caseRoles[$managerRoleId];
 
         //build reporter select
         $reporters = array( "" => ts(' - any reporter - ') );
         foreach( $caseRelationships as $key => &$value ) {
             $reporters[$value['cid']] = $value['name'] . " ( {$value['relation']} )";
 
-            if ( $managerRoleId == $value['relation_type'] ) {
-                $value['relation'] = $managerLabel;
-            } 
+	    if ( ! empty( $managerRoleId ) ) {
+                if ( $managerRoleId == $value['relation_type'] ) {
+                    $value['relation'] = $managerLabel;
+                } 
+	    }
 
             //calculate roles that don't have relationships
             if ( CRM_Utils_Array::value($value['relation_type'], $caseRoles) ) {
