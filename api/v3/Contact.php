@@ -621,6 +621,7 @@ function _civicrm_api3_greeting_format_params( $params )
  */
 function civicrm_api3_contact_quicksearch( $params )
 {
+  civicrm_api3_verify_mandatory($params,null,array('name'));
     require_once 'CRM/Core/BAO/Preferences.php';
     $name   = CRM_Utils_Array::value( 'name', $params );
 
@@ -654,10 +655,10 @@ function civicrm_api3_contact_quicksearch( $params )
         }
     }
     $config = CRM_Core_Config::singleton( );
-
+$as = $select;
     $select = implode( ', ', $select );
     $from   = implode( ' ' , $from   );
-    $limit = CRM_Utils_Array::value( 'limit', $params);
+    $limit = CRM_Utils_Array::value( 'limit', $params,10);
 
     // add acl clause here
     require_once 'CRM/Contact/BAO/Contact/Permission.php';
@@ -743,16 +744,16 @@ function civicrm_api3_contact_quicksearch( $params )
 
     //CRM-5954
     $query = "
-        SELECT DISTINCT(id), data 
+        SELECT DISTINCT(id), data, {$select}
         FROM   (
-            ( SELECT 0 as exactFirst, cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
+            ( SELECT 0 as exactFirst, cc.id as id, {$select},CONCAT_WS( ' :: ', {$select} ) as data
             FROM   civicrm_contact cc {$from}
     {$aclFrom}
     {$additionalFrom} {$includeEmailFrom}
     {$exactWhereClause}
     LIMIT 0, {$limit} )
     UNION
-    ( SELECT 1 as exactFirst, cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
+    ( SELECT 1 as exactFirst, cc.id as id, {$select}, CONCAT_WS( ' :: ', {$select} ) as data
     FROM   civicrm_contact cc {$from}
     {$aclFrom}
     {$additionalFrom} {$includeEmailFrom}
@@ -763,7 +764,6 @@ function civicrm_api3_contact_quicksearch( $params )
 ORDER BY exactFirst, sort_name
 LIMIT    0, {$limit}
     ";
-
     // send query to hook to be modified if needed
     require_once 'CRM/Utils/Hook.php';
     CRM_Utils_Hook::contactListQuery( $query,
@@ -776,9 +776,15 @@ LIMIT    0, {$limit}
     $contactList = array();
     $listCurrentEmployer = true;
     while ( $dao->fetch( ) ) {
-        $contactList[] = array( 'name' => $dao->data,
-                                'id'   => $dao->id );
-        
+      //$contactList[] = array( 'name' => $dao->data,                                'id'   => $dao->id );
+      $t = array('id'=>$dao->id);
+      foreach ($as as $k) {
+
+        $t[$k] = $dao->$k;
+
+      }
+      $t['data'] = $dao->data;
+      $contactList[] = $t;
         if ( CRM_Utils_Array::value( 'org', $params ) &&
             !empty($currEmpDetails) && 
             $dao->id == $currEmpDetails['id']) {
