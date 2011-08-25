@@ -52,7 +52,6 @@ class CRM_Admin_Form_Setting_Component extends  CRM_Admin_Form_Setting
     public function buildQuickForm( ) 
     {
         CRM_Utils_System::setTitle(ts('Settings - Enable Components'));
-
         $components = $this->_getComponentSelectValues( );        
         $include =& $this->addElement('advmultiselect', 'enableComponents', 
                                       ts('Components') . ' ', $components,
@@ -86,7 +85,7 @@ class CRM_Admin_Form_Setting_Component extends  CRM_Admin_Form_Setting
         
         if ( is_array( $fields['enableComponents'] ) ) {
             if ( in_array( 'CiviPledge', $fields['enableComponents'] ) &&
-	     ! in_array( 'CiviContribute', $fields['enableComponents'] ) ) {
+                 ! in_array( 'CiviContribute', $fields['enableComponents'] ) ) {
                 $errors['enableComponents'] = ts('You need to enable CiviContribute before enabling CiviPledge.');
             }
         }
@@ -110,12 +109,18 @@ class CRM_Admin_Form_Setting_Component extends  CRM_Admin_Form_Setting
     public function postProcess( ) {
         $params = $this->controller->exportValues($this->_name);
 
-
         $params['enableComponentIDs'] = array( );
         foreach ( $params['enableComponents'] as $name ) {
             $params['enableComponentIDs'][] = $this->_components[$name]->componentID;
         }
 
+        // if CiviCase is being enabled,
+        // load the case related sample data
+        if ( in_array( 'CiviCase', $params['enableComponents'] ) && 
+             !in_array( 'CiviCase', $this->_defaults['enableComponents'] ) ) {
+            $config = CRM_Core_Config::singleton();        
+            CRM_Admin_Form_Setting_Component::loadCaseSampleData($config->dsn, $config->sqlDir .'case_sample.mysql');
+        }
         parent::commonProcess( $params );
         
         // reset navigation when components are enabled / disabled
@@ -123,6 +128,55 @@ class CRM_Admin_Form_Setting_Component extends  CRM_Admin_Form_Setting
         CRM_Core_BAO_Navigation::resetNavigation( );
     }
 
+    public function loadCaseSampleData( $dsn, $fileName, $lineMode = false )
+    {        
+        global $crmPath;
+        require_once 'packages/DB.php';
+        
+        $db  =& DB::connect( $dsn );
+        if ( PEAR::isError( $db ) ) {
+            die( "Cannot open $dsn: " . $db->getMessage( ) );
+        }
+        
+        if ( ! $lineMode ) {
+            $string = file_get_contents( $fileName );
+            
+            // change \r\n to fix windows issues
+            $string = str_replace("\r\n", "\n", $string );
+            
+            //get rid of comments starting with # and --
+            
+            $string = preg_replace("/^#[^\n]*$/m",   "\n", $string );
+            $string = preg_replace("/^(--[^-]).*/m", "\n", $string );
+            
+            $queries  = preg_split('/;$/m', $string);
+            foreach ( $queries as $query ) {
+                $query = trim( $query );
+                if ( ! empty( $query ) ) {
+                    $res =& $db->query( $query );
+                    if ( PEAR::isError( $res ) ) {
+                        die( "Cannot execute $query: " . $res->getMessage( ) );
+                    }
+                }
+            }
+        } else {
+            $fd = fopen( $fileName, "r" );
+            while ( $string = fgets( $fd ) ) {
+                $string = preg_replace("/^#[^\n]*$/m",   "\n", $string );
+                $string = preg_replace("/^(--[^-]).*/m", "\n", $string );
+                
+                $string = trim( $string );
+                if ( ! empty( $string ) ) {
+                    $res =& $db->query( $string );
+                    if ( PEAR::isError( $res ) ) {
+                        die( "Cannot execute $string: " . $res->getMessage( ) );
+                    }
+                }
+            }
+        }
+        
+    }
+    
 }
 
 

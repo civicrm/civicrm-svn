@@ -62,7 +62,11 @@ class CRM_Core_Config_Defaults
         $this->templateDir =
             array( $civicrm_root . DIRECTORY_SEPARATOR .
                    'templates'   . DIRECTORY_SEPARATOR );
-            
+
+        $this->sqlDir =
+            $civicrm_root . DIRECTORY_SEPARATOR .
+            'sql'   . DIRECTORY_SEPARATOR ;
+
         $this->importDataSourceDir =
             $civicrm_root . DIRECTORY_SEPARATOR .
             'CRM'         . DIRECTORY_SEPARATOR .
