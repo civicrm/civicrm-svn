@@ -127,6 +127,12 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
         
         $case = self::add( $params );
 
+        if ( CRM_Utils_Array::value( 'custom', $params ) &&
+             is_array( $params['custom'] ) ) {
+            require_once 'CRM/Core/BAO/CustomValueTable.php';
+            CRM_Core_BAO_CustomValueTable::store( $params['custom'], 'civicrm_case', $case->id );
+        }
+
         if ( is_a( $case, 'CRM_Core_Error') ) {
             $transaction->rollback( );
             return $case;

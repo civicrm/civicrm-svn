@@ -29,6 +29,10 @@
 *}
 <div class="crm-block crm-form-block crm-case-form-block">
 
+{if $cdType }
+   {include file="CRM/Custom/Form/CustomData.tpl"}
+{else}
+
 {if $action neq 8 && $action neq 32768}
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 {/if}
@@ -123,13 +127,38 @@ cj("select[multiple]").crmasmSelect({
     </tr>
 {/if}
 
+<tr class="crm-case-form-block-custom_data">
+    <td colspan="2">
+        <div id="customData"></div>
+    </td>
+</tr>
+
 <tr class="crm-case-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl" tagsetType='case'}</td></tr>	     
 
 </table>
 {/if}	
 
+{if $action eq 1}
+    {*include custom data js file*}
+    {include file="CRM/common/customData.tpl"}
+    {literal}
+      <script type="text/javascript">
+      cj(document).ready(function() {
+		{/literal}
+                {if $customDataSubType}
+                    buildCustomData( '{$customDataType}', {$customDataSubType} );
+                {else}
+                    buildCustomData( '{$customDataType}' );
+                {/if}
+    		{literal}
+       });
+       </script>
+     {/literal}
+{/if}
+
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 
 {* include jscript to warn if unsaved form field changes *}
 {include file="CRM/common/formNavigate.tpl"}
+{/if}
 </div>
