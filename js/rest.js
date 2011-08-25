@@ -84,7 +84,6 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
 	    var contactUrl = defaults.ajaxURL + "?"+ $.param(params);
 	  
 	  //    contactUrl = contactUrl + "fnName=civicrm/contact/search&json=1&";
-	  console.log(contactUrl);
 	  //var contactUrl = "/civicrm/ajax/rest?fnName=civicrm/contact/search&json=1&return[sort_name]=1&return[email]&rowCount=25";
 	  
 	  return this.each(function() {
