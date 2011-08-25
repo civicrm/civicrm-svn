@@ -88,7 +88,7 @@ class civicrm_api3  {
    * $api->attr ('id',42) //set the id
    */
 
-  public function attr ($name,$value == null) {
+  public function attr ($name,$value = null) {
     if ($value === null) {
       return $this->lastResult->values[$name];
     } else {
