@@ -1044,16 +1044,15 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             break;
 
         case 'Select Date':
-            // remove time element display if time is not set
-            if ( !$option['attributes']['time_format'] ) {
-                $value = substr( $value, 0, 10 );
-            }
-           
             if ( is_array( $value ) ) {
                 foreach($value as $key => $val) {
                     $display[$key] = CRM_Utils_Date::customFormat( $val );
                 }
             } else {
+                // remove time element display if time is not set
+                if ( !$option['attributes']['time_format'] ) {
+                    $value = substr( $value, 0, 10 );
+                }
                 $display = CRM_Utils_Date::customFormat( $value );
             }
             break;
