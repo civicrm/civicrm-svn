@@ -1,6 +1,6 @@
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -58,14 +58,16 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
       };
 
       $.fn.crmAPI = function(entity,action,params,options) {
-    	  params ['fnName'] = "civicrm/"+entity+"/"+action;
+//    	  params ['fnName'] = "civicrm/"+entity+"/"+action;
+    	  params ['entity'] = entity;
+    	  params ['action'] = action;
     	  params ['json'] = 1;
     	  var settings = $.extend({}, defaults, options);
     	  $(settings.msgbox).removeClass('msgok').removeClass('msgnok').html("");
     	  $.getJSON(settings.ajaxURL,params,function(result){return settings.callBack(result,settings);});
       };
 
-      $.fn.crmAutocomplete = function (options) {
+      $.fn.crmAutocomplete = function (params,options) {
 	  var defaultsContact = {
 	        returnParam: ['sort_name','email'],
 	        params: {
