@@ -84,6 +84,9 @@ class CRM_Case_Form_Activity_ChangeCaseStartDate
 
     static function buildQuickForm( &$form ) 
     { 
+    	$form->removeElement('status_id');
+        $form->removeElement('priority_id');
+    	
         $currentStartDate = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case', $form->_caseId, 'start_date' );
         $form->assign('current_start_date',  $currentStartDate );
         $form->addDate( 'start_date', ts('New Start Date'), false, array( 'formatType' => 'activityDateTime' ) );   
@@ -152,6 +155,11 @@ WHERE civicrm_case.id=  %1";
         }
         
         $config = CRM_Core_Config::singleton();
+        
+        $params['status_id'] = CRM_Core_OptionGroup::getValue('activity_status', 'Completed', 'name' );
+        $activity->status_id = $params['status_id'];
+        $params['priority_id'] = CRM_Core_OptionGroup::getValue('priority', 'Normal', 'name' );
+        $activity->priority_id = $params['priority_id'];
         
         // 1. save activity subject with new start date
         $currentStartDate = CRM_Utils_Date::customFormat( CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case',
