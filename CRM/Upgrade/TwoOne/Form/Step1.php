@@ -64,7 +64,7 @@ class CRM_Upgrade_TwoOne_Form_Step1 extends CRM_Upgrade_Form {
                     $version = new JVersion;
                     $defaults['userFrameworkVersion'] = $version->getShortVersion();
                 }
-            } else if ( $config->userFramework == 'Drupal' ) {
+            } else if ( $config->userSystem->is_drupal ) {
                 $defaults['userFrameworkVersion'] = '6.3';
                 if ( defined('VERSION') ) {
                     $defaults['userFrameworkVersion'] = VERSION;

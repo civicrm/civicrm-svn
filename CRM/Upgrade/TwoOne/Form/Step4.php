@@ -92,7 +92,7 @@ class CRM_Upgrade_TwoOne_Form_Step4 extends CRM_Upgrade_Form {
     }
 
     function getTemplateMessage( ) {
-        if ( $this->_config->userFramework == 'Drupal' ) {
+        if ( $this->_config->userSystem->is_drupal ) {
             $upgradeDoc = 'http://wiki.civicrm.org/confluence/x/7IFH';
         } else {
             $upgradeDoc = 'http://wiki.civicrm.org/confluence/x/SoJH';

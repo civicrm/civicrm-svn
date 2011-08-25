@@ -42,10 +42,9 @@ class CRM_Upgrade_Incremental_php_ThreeThree {
     function upgrade_3_3_alpha1( $rev ) 
     {
         $config = CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Drupal' ) {
+        if ( $config->userSystem->is_drupal ) {
             // CRM-6426 - make civicrm profiles permissioned on drupal my account
-            require_once 'CRM/Utils/System/Drupal.php';
-            CRM_Utils_System_Drupal::updateCategories( );
+            $config->userSystem->updateCategories( );
         }
         
         // CRM-6846
