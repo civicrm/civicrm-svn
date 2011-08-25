@@ -139,7 +139,7 @@
 		<tr>
 			<td>&nbsp;</td>
 			<td class="description">
-			{if $config->userFramework EQ 'Drupal'}
+			{if $config->userSystem->is_drupal}
 				{ts}When this Event is active, create links to the Event Information page by copying and pasting the following URL:{/ts}<br />
 				<strong>{crmURL a=true p='civicrm/event/info' q="reset=1&id=`$eventID`"}</strong> 
 			{elseif $config->userFramework EQ 'Joomla'}
