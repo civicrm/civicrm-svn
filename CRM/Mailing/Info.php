@@ -63,7 +63,7 @@ class CRM_Mailing_Info extends CRM_Core_Component_Info
         $enableWorkflow = defined( 'CIVICRM_CIVIMAIL_WORKFLOW' ) ? (bool) CIVICRM_CIVIMAIL_WORKFLOW : false;
 
         return ( $enableWorkflow &&
-                 $config->userFramework == 'Drupal' &&
+                 $config->userSystem->is_drupal &&
                  module_exists( 'rules' ) ) ?
             true :
             false;
