@@ -319,9 +319,8 @@ SELECT module
                 $message .= '<p>';
             }
             
-            if ( function_exists( 'drupal_set_message' ) ) {
-                drupal_set_message( $message );
-            }
+            require_once 'CRM/Utils/System.php';
+            CRM_Utils_System::setUFMessage( $message );
             
             $message = urlencode( $message );
 
