@@ -74,10 +74,10 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
         rowCount:35,
         json:1,
         entity:'Contact',
-        action:'Get',
-        sequential:1,
-        'return':'sort_name,email'
+        action:'quicksearch',
+        sequential:1
       });
+        //'return':'sort_name,email'
 
       $().extend(options,  {
       });
@@ -92,19 +92,22 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
 		      $.fn.autocomplete = cj.fn.autocomplete;//to work around the fubar cj
 		      $(this).autocomplete( contactUrl, {
     			  dataType:"json",
-    			      extraParams:{sort_name:function () {
+    			      extraParams:{name:function () {
     				  return $(selector).val();}//how to fetch the val ?
     			  },
     			  formatItem: function(data,i,max,value,term){
-    			      if (data['email'])
-    				    return value + ' ('+ data['email'] + ")";
-    			      else 
-    				    return value;
+              var tmp = [];
+              for (attr in data) {
+                 tmp.push(data[attr]);
+                 }
+                 return  tmp.join(' :: '); 
     			  },    			
     			  parse: function(data){
     			     var acd = new Array();
     			     for(cid in data.values){
-    				     acd.push({ data:data.values[cid], value:data.values[cid].sort_name, result:data.values[cid].sort_name });
+                 delete data.values[cid]["id"];
+                 delete data.values[cid]["data"];
+    				     acd.push({ data:data.values[cid], value:data.values[cid].sort_name, result:data.values[cid].id });
     			     }
     			     return acd;
     			  },
