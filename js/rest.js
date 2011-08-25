@@ -67,29 +67,24 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
     	  $.getJSON(settings.ajaxURL,params,function(result){return settings.callBack(result,settings);});
       };
 
-      $.fn.crmAutocomplete = function (params,options) {
-	  var defaultsContact = {
-	        returnParam: ['sort_name','email'],
-	        params: {
-	            rowCount:35,
-		        json:1,
-		        fnName:'civicrm/contact/search'
-		    }
-	  };
-	  
-	  settings = $.extend(true,{},defaultsContact, options);
-	  
-	  var contactUrl = defaults.ajaxURL + "?";
-	  // How to loop on all the attributes ??
-	  for  (param in settings.params) {
-	      contactUrl = contactUrl + param +"="+ settings.params[param] + "&"; 
-	  }
+    $.fn.crmAutocomplete = function (params,options) {
+      if (typeof params == 'undefined') params = {};
+      if (typeof options == 'undefined') options = {};
+      $().extend(params, {
+        rowCount:35,
+        json:1,
+        entity:'Contact',
+        action:'Get',
+        sequential:1,
+        'return':'sort_name,email'
+      });
+
+      $().extend(options,  {
+      });
+	    var contactUrl = defaults.ajaxURL + "?"+ $.param(params);
 	  
 	  //    contactUrl = contactUrl + "fnName=civicrm/contact/search&json=1&";
-	  for (var i=0; i < settings.returnParam.length; i++) {
-	      contactUrl = contactUrl + 'return['+settings.returnParam[i] + "]&"; 
-	  }
-	  
+	  console.log(contactUrl);
 	  //var contactUrl = "/civicrm/ajax/rest?fnName=civicrm/contact/search&json=1&return[sort_name]=1&return[email]&rowCount=25";
 	  
 	  return this.each(function() {
@@ -109,8 +104,8 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
     			  },    			
     			  parse: function(data){
     			     var acd = new Array();
-    			     for(cid in data){
-    				     acd.push({ data:data[cid], value:data[cid].sort_name, result:data[cid].sort_name });
+    			     for(cid in data.values){
+    				     acd.push({ data:data.values[cid], value:data.values[cid].sort_name, result:data.values[cid].sort_name });
     			     }
     			     return acd;
     			  },
