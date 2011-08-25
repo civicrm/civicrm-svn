@@ -307,20 +307,20 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             }
     
             $participantRoles = CRM_Event_PseudoConstant::participantRole();
-            $roles = '';
+            
             if ( $participant->role_id ) {
                 $role = explode( CRM_Core_DAO::VALUE_SEPARATOR, $participant->role_id );
-                foreach ( $role as $roleKey => $roleValue ) {
-                    if ( isset( $roles ) ) {
-                        $roles .= ', ' . $participantRoles[$roleValue];
-                    } else {
-                        $roles = $participantRoles[$roleValue];
-                    }
-                }
+                
+                foreach ( $role as &$roleValue ) {
+                    if ( isset( $roleValue ) ) {
+                        $roleValue = $participantRoles[$roleValue];
+                    }                     
+                }                
+                $roles = implode( ', ', $role );
             }
             $eventTitle = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $participant->event_id, 'title' );
             $title = CRM_Contact_BAO_Contact::displayName( $participant->contact_id ) . ' (' . $roles . ' - ' . $eventTitle . ')' ;
-                        
+                                    
             // add the recently created Participant
             CRM_Utils_Recent::add( $title,
                                    $url,
