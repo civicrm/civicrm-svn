@@ -122,7 +122,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
         if ( CRM_Utils_Array::value( 'id', $params ) ) {
             CRM_Utils_Hook::pre( 'edit', 'Case', $params['id'], $params );
         } else {
-            CRM_Utils_Hook::pre( 'create', 'Case', $null, $params );
+            CRM_Utils_Hook::pre( 'create', 'Case', null, $params );
         }
         
         $case = self::add( $params );
