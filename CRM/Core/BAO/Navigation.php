@@ -576,7 +576,7 @@ ORDER BY parent_id, weight";
                 $homeLabel   = ts('Home');
             }
 
-            if ( ( $config->userFramework == 'Drupal' ) && 
+            if ( ( $config->userSystem->is_drupal ) && 
                  ( ( module_exists('toolbar') && user_access('access toolbar') ) ||
                    module_exists('admin_menu') && user_access('access administration menu') ) ) {
                 $prepandString = "<li class=\"menumain crm-link-home\">" . $homeLabel . "<ul id=\"civicrm-home\"><li><a href=\"{$homeURL}\">" . $homeLabel . "</a></li><li><a href=\"#\" onclick=\"cj.Menu.closeAll( );cj('#civicrm-menu').toggle( );\">" . ts('Drupal Menu') . "</a></li></ul></li>";

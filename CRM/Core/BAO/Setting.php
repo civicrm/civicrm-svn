@@ -548,7 +548,7 @@ WHERE  option_group_id = (
                                                           false,
                                                           false,
                                                           'REQUEST' );
-        if ( $config->userFramework == 'Drupal' &&
+        if ( $config->userSystem->is_drupal &&
              $resetSessionTable ) {
             db_query("DELETE FROM {sessions} WHERE 1");
             $moveStatus .= ts('Drupal session table cleared.') . '<br />';
