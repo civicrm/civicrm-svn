@@ -113,7 +113,7 @@
             {else} {* action = add *}
              </tr>
              <tr class="crm-relationship-form-block-rel_contact">
-               <td class="label">{$form.rel_contact.label}</td>
+               <td colspan="2">
                 {literal}
                   <script type="text/javascript">
                     var relType = 0;
@@ -123,8 +123,6 @@
                         relationshipType.change( function() { 
                             cj('#relationship-refresh-save').hide();
 			     cj('#saveButtons').hide();
-                            cj('#rel_contact').val('');
-                            cj("input[name='rel_contact_id']").val('');
                             createRelation( );
                             changeCustomData( 'Relationship' );
                             setPermissionStatus( cj(this).val( ) ); 
@@ -134,27 +132,25 @@
                     
                     function createRelation(  ) {
                         var relType    = cj('#relationship_type_id').val( );
-                        var relContact = cj('#rel_contact');
+                        var relContact = cj('#contact_1');
                         if ( relType ) {
                              relContact.unbind( 'click' );
-                             cj("input[name='rel_contact_id']").val('');
                              var dataUrl = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=relationship&rel="}'{literal} + relType;
                              relContact.autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
                              relContact.result(function( event, data ) {
-                               	cj("input[name='rel_contact_id']").val(data[1]);
                                 cj('#relationship-refresh-save').show( );
                                 buildRelationFields( relType );
                              });
                         } else { 
                             relContact.unautocomplete( );
-                            cj("input[name='rel_contact_id']").val('');
                             relContact.click( function() { alert( '{/literal}{ts}Please select a relationship type first.{/ts}{literal} ...' );});
                         }
                     }       
 				  </script>
                 {/literal}
-                <td>{$form.rel_contact.html}</td>
-              </tr>
+               </td>
+             </tr>
+             {include file="CRM/Contact/Form/NewContact.tpl"}
               </table>
                 <div class="crm-submit-buttons">
                     <span id="relationship-refresh" class="crm-button crm-button-type-refresh crm-button_qf_Relationship_refresh">{$form._qf_Relationship_refresh.html}</span>
@@ -225,7 +221,7 @@
                         {include file="CRM/common/info.tpl"}
                     {/if}
                 {else} {* no valid matches for name + contact_type *}
-                        {capture assign=infoMessage}{ts}No matching results for{/ts} <ul><li>{ts 1=$form.rel_contact.value}Name like: %1{/ts}</li><li>{ts}Contact Type{/ts}: {$contact_type_display}</li></ul>{ts}Check your spelling, or try fewer letters for the target contact name.{/ts}{/capture}
+                        {capture assign=infoMessage}{ts}No matching results for{/ts} <ul><li>{ts 1=$form.contact_1.value}Name like: %1{/ts}</li><li>{ts}Contact Type{/ts}: {$contact_type_display}</li></ul>{ts}Check your spelling, or try fewer letters for the target contact name.{/ts}{/capture}
                         {include file="CRM/common/info.tpl"}                
                 {/if} {* end if searchCount *}
               {else}

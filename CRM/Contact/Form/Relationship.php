@@ -336,8 +336,9 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         // add a ajax facility for searching contacts
 		$dataUrl = CRM_Utils_System::url( 'civicrm/ajax/search', 'reset=1', true, null, false );
 		$this->assign('dataUrl',$dataUrl );
-        $this->add('text', 'rel_contact', ts('Find Target Contact') );
-        $this->add('hidden', 'rel_contact_id' );
+        require_once 'CRM/Contact/Form/NewContact.php';
+        CRM_Contact_Form_NewContact::buildQuickForm( $this );
+        
         $this->addDate( 'start_date', ts('Start Date'), false, array( 'formatType' => 'searchDate' ) );
         $this->addDate( 'end_date'  , ts('End Date')  , false, array( 'formatType' => 'searchDate' ) );
         $this->addElement('checkbox', 'is_active', ts('Enabled?'), null, 'setChecked()');
@@ -463,9 +464,9 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         $this->set( 'searchDone', 0 );
         $this->set( 'callAjax', false );  
         if ( CRM_Utils_Array::value( '_qf_Relationship_refresh', $_POST ) || $quickSave ) {
-            if ( is_numeric( $params['rel_contact_id'] ) ) {
+            if ( is_numeric( $params['contact_select_id'][1] ) ) {
                 if ( $quickSave ) {
-                    $params['contact_check'] = array( $params['rel_contact_id'] => 1 );
+                    $params['contact_check'] = array( $params['contact_select_id'][1] => 1 );
                 } else {
                     $this->search( $params );
                     $quickSave = false;
@@ -473,7 +474,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
             } else {
                 $this->set( 'callAjax', true );  
                 $this->set( 'relType', $params['relationship_type_id'] );
-                $this->set( 'relContact', $params['rel_contact'] );
+                $this->set( 'relContact', $params['contact'][1] );
                 $quickSave = false;
             }
             $this->set( 'searchDone', 1 );
@@ -518,10 +519,10 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         } elseif ( $quickSave ) {
             if ( CRM_Utils_Array::value( 'add_current_employee', $params ) &&
                  $this->_allRelationshipNames[$relationshipTypeId]['name_a_b'] == 'Employee of' ) {
-                $params['employee_of'] = $params['rel_contact_id'];
+                $params['employee_of'] = $params['contact_select_id'][1];
             } elseif ( CRM_Utils_Array::value( 'add_current_employer', $params ) &&
                        $this->_allRelationshipNames[$relationshipTypeId]['name_b_a'] == 'Employer of' ) {
-                $params['employer_of'] = array( $params['rel_contact_id'] => 1 );
+                $params['employer_of'] = array( $params['contact_select_id'][1] => 1 );
             }
             if ( !$this->_rtype ) {
                 $this->_rtype = str_replace( $relationshipTypeId. '_', '', $params['relationship_type_id'] );
@@ -682,11 +683,11 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
     {
         //max records that will be listed
         $searchValues = array();
-        if ( CRM_Utils_Array::value( 'rel_contact', $params ) ) {
-            if ( is_numeric( $params['rel_contact_id'] ) ) {
-                $searchValues[] = array( 'contact_id', '=', $params['rel_contact_id'], 0, 1 );
+        if ( CRM_Utils_Array::value( 'contact', $params ) ) {
+            if ( is_numeric( $params['contact_select_id'][1] ) ) {
+                $searchValues[] = array( 'contact_id', '=', $params['contact_select_id'][1], 0, 1 );
             } else {
-                $searchValues[] = array( 'sort_name', 'LIKE', $params['rel_contact'], 0, 1 );
+                $searchValues[] = array( 'sort_name', 'LIKE', $params['contact'][1], 0, 1 );
             }
         }
         $contactTypeAdded = false;
