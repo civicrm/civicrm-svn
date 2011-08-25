@@ -154,3 +154,12 @@ function civicrm_api3_address_get(&$params)
 				
 }
 
+
+/*
+ * Set defaults used for 'create' action
+ * @return array $defaults array of default values
+*/
+
+function _civicrm_api3_address_create_defaults(){
+  return array('is_primary' => 1);
+}
