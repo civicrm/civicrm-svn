@@ -610,10 +610,6 @@ function _civicrm_api3_greeting_format_params( $params )
 /**
  * Contact quick search api 
  *
- * @param  mixed[]  (reference ) input parameters
- *
- * @return array (reference )        array of properties, if error an array with an error id and error message
- * @static void
  * @access public
  *
  * {@example ContactQuicksearch.php 0}
@@ -655,7 +651,7 @@ function civicrm_api3_contact_quicksearch( $params )
         }
     }
     $config = CRM_Core_Config::singleton( );
-$as = $select;
+    $as = $select;
     $select = implode( ', ', $select );
     $from   = implode( ' ' , $from   );
     $limit = CRM_Utils_Array::value( 'limit', $params,10);
@@ -806,5 +802,5 @@ LIMIT    0, {$limit}
         }
     }
     
-    return $contactList;
+    return civicrm_api3_create_success($contactList,$params);
 }
