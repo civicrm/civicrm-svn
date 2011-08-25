@@ -617,7 +617,8 @@ function _civicrm_api3_greeting_format_params( $params )
  */
 function civicrm_api3_contact_quicksearch( $params )
 {
-  civicrm_api3_verify_mandatory($params,null,array('name'));
+    civicrm_api3_verify_mandatory($params,null,array('name'));
+    
     require_once 'CRM/Core/BAO/Preferences.php';
     $name   = CRM_Utils_Array::value( 'name', $params );
 
@@ -650,6 +651,7 @@ function civicrm_api3_contact_quicksearch( $params )
             break;
         }
     }
+
     $config = CRM_Core_Config::singleton( );
     $as = $select;
     $select = implode( ', ', $select );
@@ -772,15 +774,12 @@ LIMIT    0, {$limit}
     $contactList = array();
     $listCurrentEmployer = true;
     while ( $dao->fetch( ) ) {
-      //$contactList[] = array( 'name' => $dao->data,                                'id'   => $dao->id );
-      $t = array('id'=>$dao->id);
-      foreach ($as as $k) {
-
-        $t[$k] = $dao->$k;
-
-      }
-      $t['data'] = $dao->data;
-      $contactList[] = $t;
+        $t = array('id'=>$dao->id);
+        foreach ($as as $k) {
+            $t[$k] = $dao->$k;
+        }
+        $t['data'] = $dao->data;
+        $contactList[] = $t;
         if ( CRM_Utils_Array::value( 'org', $params ) &&
             !empty($currEmpDetails) && 
             $dao->id == $currEmpDetails['id']) {
@@ -792,11 +791,11 @@ LIMIT    0, {$limit}
     if ( empty( $contactList ) ) {
         if ( CRM_Utils_Array::value( 'org', $params ) ) {
             if ( $listCurrentEmployer && !empty($currEmpDetails) ) {
-                $contactList = array( 'name' => $currEmpDetails['data'],
+                $contactList = array( 'data' => $currEmpDetails['data'],
                                       'id'   => $currEmpDetails['id']
                                     );
             } else {
-                $contactList = array( 'name' => CRM_Utils_Array::value( 's', $params ),
+                $contactList = array( 'data' => CRM_Utils_Array::value( 's', $params ),
                                       'id'   => CRM_Utils_Array::value( 's', $params ) );
             }
         }

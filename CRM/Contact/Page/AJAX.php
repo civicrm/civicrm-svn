@@ -89,13 +89,13 @@ class CRM_Contact_Page_AJAX
                          'orgId'       => $orgId,
                          'employee_id' => $employee_id,
                          'cid'         => $cid,
-                         'rel'         => $rel   
+                         'rel'         => $rel,
+                         'version'     => 3
                        );
         
         $result = civicrm_api( 'Contact', 'quicksearch', $params );
-
         foreach( $result as $values ) {
-            echo $contactList = "{$values['name']}|{$values['id']}\n";
+            echo $contactList = "{$values['data']}|{$values['id']}\n";
         }
 
         CRM_Utils_System::civiExit( );
