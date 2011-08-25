@@ -53,7 +53,11 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     $errorFnName = ( $version == 2 ) ? 'civicrm_create_error' : 'civicrm_api3_create_error';
     if ($version > 2) civicrm_api3_api_check_permission($entity, $action, $params);
     $function = civicrm_api_get_function_name($entity, $action,$version);
+    $defaultsFunction = '_' .$function. '_defaults';
     civicrm_api_include($entity,null,$version);
+    if(function_exists($defaultsFunction)){
+      $params = array_merge($defaultsFunction(),$params);
+    }
     if ( !function_exists ($function ) ) {
       switch (strtolower($action)){
         case "getfields":
