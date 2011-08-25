@@ -25,7 +25,7 @@
 *}
 {htxt id="id-pcp_intro_help"}
 {ts}When Personal Campaign Pages are enabled, constituents will see a link inviting them to create their own fundraising page after making a contribution.{/ts}
-{if $config->userFramework EQ 'Drupal' OR $config->userFramework EQ 'Standalone'}
+{if $config->userSystem->is_drupal OR $config->userFramework EQ 'Standalone'}
     {ts}You can also place additional links (or menu items) allowing constituents to create their own fundraising pages using the following URL:{/ts}<br /><br />
     <strong>{crmURL a=true p='civicrm/contribute/campaign' q="action=add&reset=1&pageId=`$pageId`"}</strong></dd>
 {elseif $config->userFramework EQ 'Joomla'}
@@ -60,7 +60,7 @@
 {ts}Text for the link inviting constituents to create a Personal Contribution Page. This link will appear on the Contribution Thank-you page as well as on each Personal Campaign Page.{/ts}
 
 <p>
-{if $config->userFramework EQ 'Drupal' OR $config->userFramework EQ 'Standalone'}
+{if $config->userSystem->is_drupal OR $config->userFramework EQ 'Standalone'}
     {ts}When Personal Campaign Pages are enabled, you can also place additional links (or menu items) inviting constituents to create personal fundraising pages using the following URL:{/ts}<br /><br />
     <strong>{crmURL a=true p='civicrm/contribute/campaign' q="action=add&reset=1&pageId=`$pageId`"}</strong></dd>
 {elseif $config->userFramework EQ 'Joomla'}
