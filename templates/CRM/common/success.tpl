@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* success.tpl: Display page for Upgrades. Provides complete HTML doc.*}
-{if $config->userFramework neq 'Drupal'}
+{if $config->userSystem->is_drupal neq '1'}
     <h2>{$pageTitle}</h2>
 {/if}
 {if !$upgraded}
