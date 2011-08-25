@@ -193,11 +193,7 @@ class CRM_Utils_System {
         }
 
         $config   = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
-        return eval( 'return ' .
-                     $config->userFrameworkClass .
-                     '::url( $path, $query, $absolute, $fragment, $htmlize, $frontend );' );
-
+        return $config->userSystem->url( $path, $query, $absolute, $fragment, $htmlize, $frontend );
     }
 
     function href( $text, $path = null, $query = null, $absolute = true,
@@ -208,14 +204,12 @@ class CRM_Utils_System {
 
     function permissionDenied( ) {
         $config   = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
-        return eval( "return {$config->userFrameworkClass}::permissionDenied( );" );
+        return $config->userSystem->permissionDenied( );
     }
 
     static function logout( ) {
         $config   = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
-        return eval( "return {$config->userFrameworkClass}::logout( );" );
+        return $config->userSystem->logout( );
     }
 
     // this is a very drupal specific function for now
@@ -271,8 +265,7 @@ class CRM_Utils_System {
      */
     function setTitle( $title, $pageTitle = null ) {
         $config   = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
-        return eval( $config->userFrameworkClass . '::setTitle( $title, $pageTitle );' );
+        return $config->userSystem->setTitle( $title, $pageTitle );
     }
 
     /**
@@ -353,8 +346,7 @@ class CRM_Utils_System {
      */
     static function appendBreadCrumb( $breadCrumbs ) {
         $config   = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
-        return eval( 'return ' . $config->userFrameworkClass . '::appendBreadCrumb( $breadCrumbs );' );
+        return $config->userSystem->appendBreadCrumb( $breadCrumbs );
     }
 
     /**
@@ -366,8 +358,7 @@ class CRM_Utils_System {
      */
     static function resetBreadCrumb( ) {
         $config   = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
-        return eval( 'return ' . $config->userFrameworkClass . '::resetBreadCrumb( );' );
+        return $config->userSystem->resetBreadCrumb( );
     }
 
     /**
@@ -381,8 +372,7 @@ class CRM_Utils_System {
      */
     static function addHTMLHead( $bc ) {
         $config   = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
-        return eval( 'return ' . $config->userFrameworkClass . '::addHTMLHead( $bc );' );
+        return $config->userSystem->addHTMLHead( $bc );
     }
 
     /**
@@ -396,8 +386,7 @@ class CRM_Utils_System {
      */
     static function postURL( $action ) {
         $config   = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
-        return eval( 'return ' . $config->userFrameworkClass . '::postURL( $action  ); ' );
+        return $config->userSystem->postURL( $action  );
     }
 
     /**
@@ -412,8 +401,7 @@ class CRM_Utils_System {
         $config->userFrameworkResourceURL = str_replace( 'http://', 'https://', 
                                                          $config->userFrameworkResourceURL );
         $config->resourceBase = $config->userFrameworkResourceURL;
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
-        return eval( 'return ' . $config->userFrameworkClass . '::mapConfigToSSL( ); ' );
+        return $config->userSystem->mapConfigToSSL( );
     }
 
     /**
@@ -522,10 +510,7 @@ class CRM_Utils_System {
      */ 
     static function authenticate( $name, $password, $loadCMSBootstrap = false ) {
         $config = CRM_Core_Config::singleton( ); 
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
-        return  
-            eval( 'return ' . $config->userFrameworkClass . '::authenticate($name, $password, $loadCMSBootstrap);' ); 
-
+        return $config->userSystem->authenticate($name, $password, $loadCMSBootstrap);
     }
 
     /**  
@@ -538,9 +523,7 @@ class CRM_Utils_System {
      */  
     static function setUFMessage( $message ) {
         $config = CRM_Core_Config::singleton( );  
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
-        return   
-            eval( 'return ' . $config->userFrameworkClass . '::setMessage( $message );' );
+        return $config->userSystem->setMessage($message);
     }
 
    
@@ -1025,8 +1008,7 @@ class CRM_Utils_System {
     static function getUFLocale()
     {
         $config = CRM_Core_Config::singleton();
-        require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
-        return eval("return {$config->userFrameworkClass}::getUFLocale();");
+        return $config->userSystem->getUFLocale();
     }
     
     /**
@@ -1136,8 +1118,7 @@ class CRM_Utils_System {
             $params = array( ); 
         }
         $config = CRM_Core_Config::singleton();
-        require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
-        return call_user_func("{$config->userFrameworkClass}::loadBootStrap", $params, $loadUser, $throwError);
+        return $config->userSystem->loadBootStrap($params, $loadUser, $throwError);
     }
     
     /**
@@ -1147,8 +1128,7 @@ class CRM_Utils_System {
      */
     public static function isUserLoggedIn( ) {
         $config = CRM_Core_Config::singleton();
-        require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
-        return eval('return '. $config->userFrameworkClass . '::isUserLoggedIn( );');
+        return $config->userSystem->isUserLoggedIn( );
     }
     
     /**
@@ -1158,8 +1138,7 @@ class CRM_Utils_System {
      */
     public static function getLoggedInUfID( ) {
         $config = CRM_Core_Config::singleton( );
-        require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
-        return eval('return '. $config->userFrameworkClass . '::getLoggedInUfID( );');
+        return $config->userSystem->getLoggedInUfID( );
     }
 
     static function baseCMSURL( ) {

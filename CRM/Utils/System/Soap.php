@@ -66,7 +66,7 @@ class CRM_Utils_System_Soap {
      * @static
      * @access public
      */
-    static function checkPermission( $str ) {
+    function checkPermission( $str ) {
         return true;
     }
 
@@ -78,9 +78,8 @@ class CRM_Utils_System_Soap {
      *
      * @return void
      * @access public
-     * @static
      */
-    static function appendBreadCrumb( $title, $url ) {
+    function appendBreadCrumb( $title, $url ) {
         return;
     }
 
@@ -91,9 +90,8 @@ class CRM_Utils_System_Soap {
      *
      * @return void
      * @access public
-     * @static
      */
-    static function addHTMLHead( $head ) {
+    function addHTMLHead( $head ) {
       return;
     }
  
@@ -151,9 +149,8 @@ class CRM_Utils_System_Soap {
      * @param string $pass      Login password
      * @return array            Result array
      * @access public
-     * @static
      */
-    static function &authenticate($name, $pass) {
+    function &authenticate($name, $pass) {
         if (isset(self::$ufClass)) {
             eval('$result =& ' . self::$ufClass . '::authenticate($name, $pass);');
             return $result;
@@ -167,9 +164,8 @@ class CRM_Utils_System_Soap {
      * Swap the current UF for soap
      *
      * @access public
-     * @static
      */
-    public static function swapUF() {
+    public function swapUF() {
         $config = CRM_Core_Config::singleton();
         
         self::$uf       = $config->userFramework;
@@ -183,7 +179,7 @@ class CRM_Utils_System_Soap {
      * Get the locale set in the hosting CMS
      * @return null  as the language is set elsewhere
      */
-    static function getUFLocale()
+    function getUFLocale()
     {
         return null;
     }

@@ -78,6 +78,13 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
     public $userFrameworkDSN            = null;
 
     /**
+     * The connector module for the CMS/UF
+     *
+     * @var CRM_Util_System_{$uf}
+     */
+    public $userSystem                  = null;
+
+    /**
      * The root directory where Smarty should store
      * compiled files
      * @var string
@@ -286,6 +293,10 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         if ( $userFramework == 'Drupal' && defined('VERSION') ) {
             $this->userFrameworkVersion = VERSION;
         }    
+        
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
+        $class = $config->userFrameworkClass;
+        $this->userSystem = new $class();
     }
 
 

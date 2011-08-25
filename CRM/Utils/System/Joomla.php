@@ -71,9 +71,8 @@ class CRM_Utils_System_Joomla {
      *
      * @return void
      * @access public
-     * @static
      */
-    static function appendBreadCrumb( $breadCrumbs ) {
+    function appendBreadCrumb( $breadCrumbs ) {
         $template = CRM_Core_Smarty::singleton( );
         $bc = $template->get_template_vars( 'breadcrumb' );
 
@@ -103,9 +102,8 @@ class CRM_Utils_System_Joomla {
      *
      * @return void
      * @access public
-     * @static
      */
-    static function resetBreadCrumb( ) {
+    function resetBreadCrumb( ) {
         return;
     }
 
@@ -116,9 +114,8 @@ class CRM_Utils_System_Joomla {
      *
      * @return void
      * @access public
-     * @static
      */
-    static function addHTMLHead( $string = null, $includeAll = false ) {
+    function addHTMLHead( $string = null, $includeAll = false ) {
         $document = JFactory::getDocument( );
 
         if ( $string ) {
@@ -228,9 +225,8 @@ class CRM_Utils_System_Joomla {
      * 
      * @return void 
      * access public  
-     * @static  
      */  
-    static function mapConfigToSSL( ) {
+    function mapConfigToSSL( ) {
         // dont need to do anything, let CMS handle their own switch to SSL
         return;
     }
@@ -242,14 +238,13 @@ class CRM_Utils_System_Joomla {
      *
      * @return string the url to post the form
      * @access public
-     * @static
      */
     function postURL( $action ) {
         if ( ! empty( $action ) ) {
             return $action;
         }
 
-        return self::url( CRM_Utils_Array::value( 'task', $_GET ),
+        return $this->url( CRM_Utils_Array::value( 'task', $_GET ),
                           null, true, null, false );
     }
 
@@ -278,9 +273,8 @@ class CRM_Utils_System_Joomla {
      * @return mixed false if no auth
      *               array( contactID, ufID, unique string ) if success
      * @access public
-     * @static
      */
-    static function authenticate( $name, $password, $loadCMSBootstrap = false ) {
+    function authenticate( $name, $password, $loadCMSBootstrap = false ) {
         require_once 'DB.php';
 
         $config = CRM_Core_Config::singleton( );
@@ -337,17 +331,16 @@ class CRM_Utils_System_Joomla {
      * @param string $message  the message to set  
      *    
      * @access public    
-     * @static    
      */    
-    static function setMessage( $message ) { 
+    function setMessage( $message ) { 
         return;
     }
 
-    static function permissionDenied( ) {
+    function permissionDenied( ) {
         CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
     }
 
-    static function logout( ) {
+    function logout( ) {
         session_destroy();
         header("Location:index.php");
     }
@@ -356,7 +349,7 @@ class CRM_Utils_System_Joomla {
      * Get the locale set in the hosting CMS
      * @return string  the used locale or null for none
      */
-    static function getUFLocale()
+    function getUFLocale()
     {
         if ( defined('_JEXEC') ) {
             $conf	= JFactory::getConfig();
@@ -373,7 +366,7 @@ class CRM_Utils_System_Joomla {
      * @param $loadUser boolean load cms user?
      * @param $throwError throw error on failure?
      */
-    static function loadBootStrap( $params = array( ), $loadUser = true, $throwError = true )
+    function loadBootStrap( $params = array( ), $loadUser = true, $throwError = true )
     {
         // load BootStrap here if needed
         return true;
@@ -384,7 +377,7 @@ class CRM_Utils_System_Joomla {
      *
      * @return boolean true/false.
      */
-    public static function isUserLoggedIn( ) {
+    public function isUserLoggedIn( ) {
         $user = JFactory::getUser();
         return ( $user->guest ) ? false : true; 
     }
@@ -394,7 +387,7 @@ class CRM_Utils_System_Joomla {
      *
      * @return int logged in user uf id.
      */
-    public static function getLoggedInUfID( ) {
+    public function getLoggedInUfID( ) {
         $user = JFactory::getUser( );
         return ( $user->guest ) ? null : $user->id;
     }
