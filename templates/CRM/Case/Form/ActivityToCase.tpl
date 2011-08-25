@@ -49,7 +49,10 @@
 </div>
 {literal}
 <script type="text/javascript">
-var target_contact = target_contact_id = selectedCaseId = contactId = '';
+var target_contact = '';
+var target_contact_id = '';
+var selectedCaseId = '';
+var contactId = '';
 
 var unclosedCaseUrl = {/literal}"{crmURL p='civicrm/case/ajax/unclosed' h=0 q='excludeCaseIds='}{$currentCaseId}"{literal};
 cj( "#unclosed_cases" ).autocomplete( unclosedCaseUrl, { width : 250, selectFirst : false, matchContains:true
