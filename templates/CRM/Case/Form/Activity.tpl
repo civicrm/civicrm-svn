@@ -276,14 +276,19 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
                 {$form.duration.html}
                  <span class="description">{ts}Total time spent on this activity (in minutes).{/ts}
               </td>
-           </tr> 
+           </tr>
+    {* Suppress activity status and priority for changes to status, case type and start date. PostProc will force status to completed. *}
+    {if $activityTypeFile NEQ 'ChangeCaseStatus'
+        && $activityTypeFile NEQ 'ChangeCaseType'
+        && $activityTypeFile NEQ 'ChangeCaseStartDate'} 
            <tr class="crm-case-activity-form-block-status_id">
               <td class="label">{$form.status_id.label}</td><td class="view-value">{$form.status_id.html}</td>
            </tr>
-	   <tr class="crm-case-activity-form-block-priority_id">
+	       <tr class="crm-case-activity-form-block-priority_id">
               <td class="label">{$form.priority_id.label}</td><td class="view-value">{$form.priority_id.html}</td>
            </tr>
-	   {if $form.tag.html}
+    {/if}
+	{if $form.tag.html}
              <tr class="crm-case-activity-form-block-tag">
                 <td class="label">{$form.tag.label}</td>
                 <td class="view-value"><div class="crm-select-container">{$form.tag.html}</div>
