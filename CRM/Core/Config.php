@@ -249,7 +249,11 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         $this->userFrameworkClass  = 'CRM_Utils_System_'    . $userFramework;
         $this->userHookClass       = 'CRM_Utils_Hook_'      . $userFramework;
         $this->userPermissionClass = 'CRM_Core_Permission_' . $userFramework;            
-
+        
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $this->userFrameworkClass ) . '.php' );
+        $class = $this->userFrameworkClass;
+        $userSystem = new $class(); // temp version; even if we assigned to $this->userSystem, it wouldn't get preserved
+        
         if ( $userFramework == 'Joomla' ) {
             $this->userFrameworkURLVar = 'task';
         }
@@ -277,23 +281,15 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         } else {
             $this->cleanURL = 0;
         }
+        
+        $this->userFrameworkVersion = $userSystem->getVersion();
 
         if ( $userFramework == 'Joomla' ) {
-            $this->userFrameworkVersion = 'Unknown';
-            if ( class_exists('JVersion') ) {
-                $version = new JVersion;
-                $this->userFrameworkVersion = $version->getShortVersion();
-            }
-
             global $mainframe;
             $dbprefix = $mainframe ? $mainframe->getCfg( 'dbprefix' ) : 'jos_';
             $this->userFrameworkUsersTableName = $dbprefix . 'users';
         }
 
-        if ( $userFramework == 'Drupal' && defined('VERSION') ) {
-            $this->userFrameworkVersion = VERSION;
-        }    
-        
     }
 
 

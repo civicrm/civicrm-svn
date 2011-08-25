@@ -363,6 +363,15 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
         return null;
     }
 
+    function getVersion() {
+        if ( class_exists('JVersion') ) {
+            $version = new JVersion;
+            return $version->getShortVersion();
+        } else {
+            return 'Unknown';
+        }
+    }
+    
     /* 
      * load joomla bootstrap
      *

@@ -301,6 +301,10 @@ class CRM_Utils_System_Drupal6 extends CRM_Utils_System_Base {
             return CRM_Core_I18n_PseudoConstant::longForShort(substr($language->language, 0, 2));
         }
     }
+    
+    function getVersion() {
+        return defined('VERSION') ? VERSION : 'Unknown';
+    }
 
     /**
      * load drupal bootstrap
