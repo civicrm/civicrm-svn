@@ -450,7 +450,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         $file_log->close( );
 
         if ($config->userFrameworkLogging) {
-            if ($config->userFramework == 'Drupal' and function_exists('watchdog')) {
+            if ($config->userSystem->is_drupal and function_exists('watchdog')) {
                 watchdog('civicrm', $message, NULL, WATCHDOG_DEBUG);
             }
         }
