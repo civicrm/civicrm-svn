@@ -797,8 +797,9 @@ WHERE id={$id}; ";
             $userFrameworkBaseURL = trim( str_replace( '/administrator/', '', $config->userFrameworkBaseURL ) );
             $customFileUploadDirectory = strstr( str_replace('\\', '/', $absolutePath), '/media' );
             $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;
-        } else if ( $config->userSystem->is_drupal == '1' ) { 
-            $rootPath = $config->usersystem->cmsRootPath();
+        } else if ( $config->userFramework == 'Drupal' ) {   
+            require_once 'CRM/Utils/System/Drupal.php';
+            $rootPath = CRM_Utils_System_Drupal::cmsRootPath( );
             $baseUrl = $config->userFrameworkBaseURL;
             
             //format url for language negotiation, CRM-7135
