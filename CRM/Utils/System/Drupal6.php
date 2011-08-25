@@ -67,9 +67,8 @@ class CRM_Utils_System_Drupal6 {
      *
      * @return void
      * @access public
-     * @static
      */
-    static function appendBreadCrumb( $breadCrumbs ) {
+    function appendBreadCrumb( $breadCrumbs ) {
         $breadCrumb = drupal_get_breadcrumb( );
 
         if ( is_array( $breadCrumbs ) ) {
@@ -95,9 +94,8 @@ class CRM_Utils_System_Drupal6 {
      *
      * @return void
      * @access public
-     * @static
      */
-    static function resetBreadCrumb( ) {
+    function resetBreadCrumb( ) {
         $bc = array( );
         drupal_set_breadcrumb( $bc );
     }
@@ -109,9 +107,8 @@ class CRM_Utils_System_Drupal6 {
      *
      * @return void
      * @access public
-     * @static
      */
-    static function addHTMLHead( $head ) {
+    function addHTMLHead( $head ) {
       drupal_set_html_head( $head );
     }
 
@@ -122,9 +119,8 @@ class CRM_Utils_System_Drupal6 {
      *
      * @return void 
      * @access public  
-     * @static  
      */  
-    static function mapConfigToSSL( ) {
+    function mapConfigToSSL( ) {
         global $base_url;
         $base_url = str_replace( 'http://', 'https://', $base_url );
     }
@@ -136,14 +132,14 @@ class CRM_Utils_System_Drupal6 {
      *
      * @return string the url to post the form
      * @access public
-     * @static
+
      */
-    static function postURL( $action ) {
+    function postURL( $action ) {
         if ( ! empty( $action ) ) {
             return $action;
         }
 
-        return self::url( $_GET['q'] );
+        return $this->url( $_GET['q'] );
     }
 
     /**
@@ -223,9 +219,8 @@ class CRM_Utils_System_Drupal6 {
      * @return mixed false if no auth
      *               array( contactID, ufID, unique string ) if success
      * @access public
-     * @static
      */
-    static function authenticate( $name, $password ) {
+    function authenticate( $name, $password ) {
         require_once 'DB.php';
 
         $config = CRM_Core_Config::singleton( );
@@ -262,22 +257,21 @@ class CRM_Utils_System_Drupal6 {
      * @param string $message the message to set 
      *   
      * @access public   
-     * @static   
      */   
-    static function setMessage( $message ) {
+    function setMessage( $message ) {
         drupal_set_message( $message );
     }
 
-    static function permissionDenied( ) {
+    function permissionDenied( ) {
         drupal_access_denied( );
     }
 
-    static function logout( ) {
+    function logout( ) {
         module_load_include( 'inc', 'user', 'user.pages' );
         return user_logout( );
     }
 
-    static function updateCategories( ) {
+    function updateCategories( ) {
         // copied this from profile.module. Seems a bit inefficient, but i dont know a better way
         // CRM-3600
         cache_clear_all();
@@ -288,7 +282,7 @@ class CRM_Utils_System_Drupal6 {
      * Get the locale set in the hosting CMS
      * @return string  with the locale or null for none
      */
-    static function getUFLocale()
+    function getUFLocale()
     {
         // return CiviCRM’s xx_YY locale that either matches Drupal’s Chinese locale
         // (for CRM-6281), Drupal’s xx_YY or is retrieved based on Drupal’s xx
@@ -309,10 +303,10 @@ class CRM_Utils_System_Drupal6 {
      * @param $name string  optional username for login
      * @param $pass string  optional password for login
      */
-    static function loadBootStrap($name = null, $pass = null, $uid = null )
+    function loadBootStrap($name = null, $pass = null, $uid = null )
     {
         //take the cms root path.
-        $cmsPath = self::cmsRootPath( );
+        $cmsPath = $this->cmsRootPath( );
         
         if ( !file_exists( "$cmsPath/includes/bootstrap.inc" ) ) {
             echo '<br />Sorry, could not able to locate bootstrap.inc.';
@@ -359,7 +353,7 @@ class CRM_Utils_System_Drupal6 {
         CRM_Utils_Hook::config( $config );
     }
     
-    static function cmsRootPath( ) 
+    function cmsRootPath( ) 
     {
         $cmsRoot = $valid = null;
         
@@ -403,7 +397,7 @@ class CRM_Utils_System_Drupal6 {
      *
      * @return boolean true/false.
      */
-    public static function isUserLoggedIn( ) {
+    public function isUserLoggedIn( ) {
         $isloggedIn = false;
         if ( function_exists( 'user_is_logged_in' ) ) {
             $isloggedIn = user_is_logged_in( );
@@ -417,7 +411,7 @@ class CRM_Utils_System_Drupal6 {
      *
      * @return int $userID logged in user uf id.
      */
-    public static function getLoggedInUfID( ) {
+    public function getLoggedInUfID( ) {
         $ufID = null;
         if ( function_exists( 'user_is_logged_in' ) && 
              user_is_logged_in( ) && 
