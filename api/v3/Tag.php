@@ -38,7 +38,7 @@
 /**
  * Include utility functions
  */
-require_once 'api/v3/utils.php';
+    require_once 'CRM/Core/BAO/Tag.php';
 
 /**
  *  Add a Tag. Tags are used to classify CRM entities (including Contacts, Groups and Actions).
@@ -93,7 +93,7 @@ function civicrm_api3_tag_delete( $params )
     civicrm_api3_verify_mandatory ($params,null,array ('tag_id'));
     $tagID = CRM_Utils_Array::value( 'tag_id', $params );
 
-    require_once 'CRM/Core/BAO/Tag.php';
+
     return CRM_Core_BAO_Tag::del( $tagID ) ? civicrm_api3_create_success(1,$params,'tag','delete' ) : civicrm_api3_create_error(  ts( 'Could not delete tag' )  );
 
 }
@@ -115,25 +115,6 @@ function civicrm_api3_tag_get($params)
 {   
 
     civicrm_api3_verify_mandatory($params);
-    require_once 'CRM/Core/BAO/Tag.php';
-    $tagBAO = new CRM_Core_BAO_Tag();
-    $fields = array_keys($tagBAO->fields());
-
-    foreach ( $fields as $name) {
-        if (array_key_exists($name, $params)) {
-            $tagBAO->$name = $params[$name];
-        }
-    }
-    
-    if ( $tagBAO->find() ) {
-      $tags = array();
-      while ( $tagBAO->fetch() ) {
-        _civicrm_api3_object_to_array( $tagBAO, $tag );
-        $tags[$tagBAO->id] = $tag;
-      }
-      return civicrm_api3_create_success($tags,$params,'tag','get',$tagBAO);
-    } else {
-      return civicrm_api3_create_success(array(),$params,'tag','get',$tagBAO);
-    }
+    return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 
 }
