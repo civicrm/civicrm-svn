@@ -34,10 +34,12 @@
  *
  */
 
+require_once 'CRM/Utils/System/Base.php';
+
 /**
  * Helper authentication class for unit tests
  */
-class CRM_Utils_System_UnitTests {
+class CRM_Utils_System_UnitTests extends CRM_Utils_System_Base {
 
     function setTitle( $title, $pageTitle = null ) {
         return;

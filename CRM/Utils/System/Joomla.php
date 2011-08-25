@@ -34,12 +34,16 @@
  *
  */
 
+require_once 'CRM/Utils/System/Base.php';
 
 /**
  * Joomla specific stuff goes here
  */
-class CRM_Utils_System_Joomla {
+class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
 
+    function __construct() {
+      $this->is_joomla = TRUE;
+    }
     /**
      * sets the title of the page
      *

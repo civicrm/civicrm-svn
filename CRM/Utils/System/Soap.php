@@ -33,10 +33,13 @@
  * $Id$
  *
  */
+ 
+require_once 'CRM/Utils/System/Base.php';
+
 /**
  * Soap specific stuff goes here
  */
-class CRM_Utils_System_Soap {
+class CRM_Utils_System_Soap extends CRM_Utils_System_Base {
 
     /** 
      * UF container variables

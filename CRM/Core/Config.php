@@ -294,9 +294,6 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             $this->userFrameworkVersion = VERSION;
         }    
         
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $this->userFrameworkClass ) . '.php' );
-        $class = $this->userFrameworkClass;
-        $this->userSystem = new $class();
     }
 
 
@@ -480,6 +477,10 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         if ( $this->mapProvider ) {
             $this->geocodeMethod = 'CRM_Utils_Geocode_'. $this->mapProvider ;
         }
+        
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $this->userFrameworkClass ) . '.php' );
+        $class = $this->userFrameworkClass;
+        $this->userSystem = new $class();
     }
 
     /**

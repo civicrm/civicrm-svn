@@ -34,11 +34,12 @@
  *
  */
 
+require_once 'CRM/Utils/System/Base.php';
 
 /**
  * WordPress specific stuff goes here
  */
-class CRM_Utils_System_WordPress {
+class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
 
     /**
      * sets the title of the page

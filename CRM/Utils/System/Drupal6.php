@@ -34,12 +34,17 @@
  *
  */
 
+require_once 'CRM/Utils/System/Base.php';
 
 /**
  * Drupal specific stuff goes here
  */
-class CRM_Utils_System_Drupal6 {
+class CRM_Utils_System_Drupal6 extends CRM_Utils_System_Base {
 
+    function __construct() {
+      $this->is_drupal = TRUE;
+    }
+    
     /**
      * sets the title of the page
      *
