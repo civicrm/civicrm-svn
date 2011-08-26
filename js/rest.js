@@ -79,8 +79,23 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
       });
         //'return':'sort_name,email'
 
-      $().extend(options,  {
-      });
+      options = $().extend({}, {
+          result: function(data){
+               console.log(data);
+          return false;
+        },
+        parse: function (data){
+    			     var acd = new Array();
+    			     for(cid in data.values){
+                 delete data.values[cid]["data"];// to be removed once quicksearch doesn't return data
+    				     acd.push({ data:data.values[cid], value:data.values[cid].sort_name, result:data.values[cid].id });
+    			     }
+    			     return acd;
+        },
+    	  delay:100,
+        minChars:1
+        },options
+      );
 	    var contactUrl = defaults.ajaxURL + "?"+ $.param(params);
 	  
 	  //    contactUrl = contactUrl + "fnName=civicrm/contact/search&json=1&";
@@ -93,31 +108,25 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
 		      $(this).autocomplete( contactUrl, {
     			  dataType:"json",
     			      extraParams:{name:function () {
-    				  return $(selector).val();}//how to fetch the val ?
+    				  return $(selector).val();}
     			  },
     			  formatItem: function(data,i,max,value,term){
               var tmp = [];
               for (attr in data) {
+                if (attr != "id")
                  tmp.push(data[attr]);
-                 }
-                 return  tmp.join(' :: '); 
+              }
+              return  tmp.join(' :: '); 
     			  },    			
-    			  parse: function(data){
-    			     var acd = new Array();
-    			     for(cid in data.values){
-                 delete data.values[cid]["id"];
-                 delete data.values[cid]["data"];
-    				     acd.push({ data:data.values[cid], value:data.values[cid].sort_name, result:data.values[cid].id });
-    			     }
-    			     return acd;
-    			  },
-    			  
+    			  parse: function(data){ return options.parse(data);},
     			  width: 250,
-    			  delay:100,
+    			  delay:options.delay,
     			  max:25,
-    			  minChars:0,
+    			  minChars:options.minChars,
     			  selectFirst: true
-    		 });
+    		 }).result(function(event, data, formatted) {
+              options.result(data);       
+          });    
        });
      }
 
