@@ -252,7 +252,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $this->userFrameworkClass ) . '.php' );
         $class = $this->userFrameworkClass;
-        $userSystem = new $class(); // temp version; even if we assigned to $this->userSystem, it wouldn't get preserved
+        $userSystem = $this->userSystem = new $class(); // redundant with _initVariables
         
         if ( $userFramework == 'Joomla' ) {
             $this->userFrameworkURLVar = 'task';
@@ -476,7 +476,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $this->userFrameworkClass ) . '.php' );
         $class = $this->userFrameworkClass;
-        $this->userSystem = new $class();
+        $this->userSystem = new $class(); // redundant with _setUserFrameworkConfig
     }
 
     /**

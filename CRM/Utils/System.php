@@ -215,9 +215,8 @@ class CRM_Utils_System {
     // this is a very drupal specific function for now
     static function updateCategories( ) {
         $config = CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Drupal' ) {
-            require_once 'CRM/Utils/System/Drupal.php';
-            CRM_Utils_System_Drupal::updateCategories( );
+        if ( $config->userSystem->is_drupal ) {
+            $config->userSystem->updateCategories( );
         }
     }
 
@@ -893,7 +892,7 @@ class CRM_Utils_System {
         $address = CRM_Utils_Array::value( 'REMOTE_ADDR', $_SERVER );
 
         $config   = CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Drupal' ) {
+        if ( $config->userSystem->is_drupal ) {
             //drupal function handles the server being behind a proxy securely
             return ip_address( );   
         }
@@ -1245,58 +1244,8 @@ class CRM_Utils_System {
                                             $addLanguagePart    = true, 
                                             $removeLanguagePart = false ) 
     {
-        if ( empty( $url ) ) return $url;
-        
-        //CRM-7803 -from d7 onward.
-        $config = CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Drupal' && 
-             function_exists( 'variable_get' ) && 
-             module_exists('locale') && 
-             function_exists( 'language_negotiation_get' ) ) {
-            global $language;
-            
-            //does user configuration allow language 
-            //support from the URL (Path prefix or domain)
-            if ( language_negotiation_get( 'language' ) == 'locale-url' ) {
-                $urlType = variable_get( 'locale_language_negotiation_url_part' );
-                
-                //url prefix
-                if ( $urlType == LOCALE_LANGUAGE_NEGOTIATION_URL_PREFIX ) {
-                    if ( isset( $language->prefix ) && $language->prefix ) {
-                        if ( $addLanguagePart ) {
-                            $url .=  $language->prefix . '/';
-                        }
-                        if ( $removeLanguagePart ) {
-                            $url = str_replace( "/{$language->prefix}/", '/', $url );
-                        }
-                    }
-                }
-                //domain
-                if ( $urlType == LOCALE_LANGUAGE_NEGOTIATION_URL_DOMAIN ) {
-                    if ( isset( $language->domain ) && $language->domain ) {
-                        if ( $addLanguagePart ) {
-                            $url = CRM_Utils_File::addTrailingSlash( $language->domain, '/' );
-                        }
-                        if ( $removeLanguagePart && defined( 'CIVICRM_UF_BASEURL' ) ) {
-                            $url = str_replace( '\\', '/', $url );
-                            $parseUrl = parse_url( $url );
-                            
-                            //kinda hackish but not sure how to do it right		
-                            //hope http_build_url() will help at some point.
-                            if ( is_array( $parseUrl ) && !empty( $parseUrl ) ) {
-                                $urlParts   = explode( '/', $url );
-                                $hostKey    = array_search( $parseUrl['host'], $urlParts );
-                                $ufUrlParts = parse_url( CIVICRM_UF_BASEURL );
-                                $urlParts[$hostKey] = $ufUrlParts['host'];
-                                $url = implode( '/', $urlParts );
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        return $url;
+        $config =& CRM_Core_Config::singleton( );
+        return $config->userSystem->languageNegotiationURL($url, $addLanguagePart, $removeLanguagePart);
     }
 
     /**
