@@ -71,6 +71,11 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
     private $tokens = null;
 
     /**
+     * An array that holds the tokens that are specifically found in our text and html bodies
+     */
+    private $flattenedTokens = null;
+
+    /**
      * The header associated with this mailing
      */
     private $header = null;
@@ -701,7 +706,7 @@ ORDER BY   i.contact_id, i.email_id
      **/
     public function &getTokens( ) 
     {
-        if (!$this->tokens) {
+        if (! $this->tokens) {
             
             $this->tokens = array( 'html' => array(), 'text' => array(), 'subject' => array() );
             
@@ -717,7 +722,28 @@ ORDER BY   i.contact_id, i.email_id
                 $this->_getTokens('subject');
             }
         }
+
         return $this->tokens;      
+    }
+
+    /**
+     * Returns the token set for all 3 parts as one set. This allows it to be sent to the
+     * hook in one call and standardizes it across other token workflows
+     *  
+     * @return array               reference to an assoc array
+     * @access public
+     * 
+     **/
+    public function &getFlattenedTokens( )
+    {
+        if ( ! $this->flattenedTokens ) {
+            $tokens = $this->getTokens( );
+
+            require_once 'CRM/Utils/Token.php';
+            $this->flattenedTokens = CRM_Utils_Token::flattenTokens( $tokens );
+        }
+
+        return $this->flattenedTokens;
     }
     
     /**
@@ -738,21 +764,16 @@ ORDER BY   i.contact_id, i.email_id
     private function _getTokens( $prop ) 
     {
         $templates = $this->getTemplates();
-        $matches = array();
-        preg_match_all( '/(?<!\{|\\\\)\{(\w+\.\w+)\}(?!\})/',
-                        $templates[$prop],
-                        $matches,
-                        PREG_PATTERN_ORDER);
         
-        if ( $matches[1] ) {
-            foreach ( $matches[1] as $token ) {
-                list($type,$name) = preg_split( '/\./', $token, 2 );
-                if ( $name ) {
-                    if ( ! isset( $this->tokens[$prop][$type] ) ) {
-                        $this->tokens[$prop][$type] = array( );
-                    }
-                    $this->tokens[$prop][$type][] = $name;
-                }
+        require_once 'CRM/Utils/Token.php';
+        $newTokens = CRM_Utils_Token::getTokens( $templates[$prop] );
+
+        foreach ( $newTokens as $type => $names ) {
+            if ( ! isset( $this->tokens[$prop][$type] ) ) {
+                $this->tokens[$prop][$type] = array( );
+            }
+            foreach ( $names as $key => $name ) {
+                $this->tokens[$prop][$type][] = $name;
             }
         }
     }
@@ -977,7 +998,11 @@ AND civicrm_contact.is_opt_out =0";
             $this->_domain = CRM_Core_BAO_Domain::getDomain( );
         }
 
-        list( $verp, $urls, $headers) = $this->getVerpAndUrlsAndHeaders($job_id, $event_queue_id, $hash, $email, $isForward );
+        list( $verp, $urls, $headers) = $this->getVerpAndUrlsAndHeaders($job_id,
+                                                                        $event_queue_id,
+                                                                        $hash,
+                                                                        $email,
+                                                                        $isForward );
         //set from email who is forwarding it and not original one.      
         if ( $fromEmail ) {
             unset( $headers['From'] );
@@ -1173,6 +1198,7 @@ AND civicrm_contact.is_opt_out =0";
     {
         require_once 'CRM/Core/BAO/Domain.php';
         $domain = CRM_Core_BAO_Domain::getDomain( );
+
         foreach ( array('text', 'html') as $type ) {
             require_once 'CRM/Utils/Token.php';
             $tokens = $mailing->getTokens();
@@ -2021,122 +2047,6 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
         return $returnProperties;
     }
     
-    /**
-     * gives required details of contacts 
-     *
-     * @param  array   $contactIds       of conatcts
-     * @param  array   $returnProperties of required properties
-     * @param  boolean $skipOnHold       don't return on_hold contact info also.
-     * @param  boolean $skipDeceased     don't return deceased contact info.
-     * @param  array   $extraParams      extra params
-     *
-     * @return array
-     * @access public
-     */
-    function getDetails($contactIDs,
-                        $returnProperties = null,
-                        $skipOnHold = true,
-                        $skipDeceased = true,
-                        $extraParams = null ) 
-    {
-        if ( empty( $contactIDs ) ) {
-            // putting a fatal here so we can trck if/when this happens
-            CRM_Core_Error::fatal( );
-        }
-
-        $params = array( );
-        foreach ( $contactIDs  as $key => $contactID ) {
-            $params[] = array( CRM_Core_Form::CB_PREFIX . $contactID,
-                               '=', 1, 0, 0);
-        }
-        
-        // fix for CRM-2613
-        if ( $skipDeceased ) {
-            $params[] = array( 'is_deceased', '=', 0, 0, 0 );
-        }
-        
-        //fix for CRM-3798
-        if ( $skipOnHold ) {
-            $params[] = array( 'on_hold', '=', 0, 0, 0 );
-        }
-        
-        if ( $extraParams ) {
-            $params = array_merge( $params, $extraParams );
-        }
-            
-        // if return properties are not passed then get all return properties
-        if ( empty( $returnProperties ) ) {
-            require_once 'CRM/Contact/BAO/Contact.php';
-            $fields = array_merge( array_keys(CRM_Contact_BAO_Contact::exportableFields( ) ),
-                                   array( 'display_name', 'checksum', 'contact_id'));
-            foreach( $fields as $key => $val) {
-                $returnProperties[$val] = 1;
-            }
-        }
-
-        $custom = array( );
-        foreach ( $returnProperties as $name => $dontCare ) {
-            $cfID = CRM_Core_BAO_CustomField::getKeyID( $name );
-            if ( $cfID ) {
-                $custom[] = $cfID;
-            }
-        }
-                
-        //get the total number of contacts to fetch from database.
-        $numberofContacts = count( $contactIDs );
-
-
-        require_once 'CRM/Contact/BAO/Query.php';
-        $query   = new CRM_Contact_BAO_Query( $params, $returnProperties );
-
-        $details = $query->apiQuery( $params, $returnProperties, NULL, NULL, 0, $numberofContacts );
-        
-        $contactDetails =& $details[0];
-                
-        foreach ( $contactIDs as $key => $contactID ) {
-            if ( array_key_exists( $contactID, $contactDetails ) ) {
-                
-                if ( CRM_Utils_Array::value( 'preferred_communication_method', $returnProperties ) == 1 
-                     && array_key_exists( 'preferred_communication_method', $contactDetails[$contactID] ) ) {
-                    require_once 'CRM/Core/PseudoConstant.php';
-                    $pcm = CRM_Core_PseudoConstant::pcm();
-                    
-                    // communication Prefferance
-                    require_once 'CRM/Core/BAO/CustomOption.php';
-                    $contactPcm = explode(CRM_Core_DAO::VALUE_SEPARATOR,
-                                          $contactDetails[$contactID]['preferred_communication_method']);
-                    $result = array( );
-                    foreach ( $contactPcm as $key => $val) {
-                        if ($val) {
-                            $result[$val] = $pcm[$val];
-                        } 
-                    }
-                    $contactDetails[$contactID]['preferred_communication_method'] = implode( ', ', $result );
-                }
-                
-                foreach ( $custom as $cfID ) {
-                    if ( isset ( $contactDetails[$contactID]["custom_{$cfID}"] ) ) {
-                        $contactDetails[$contactID]["custom_{$cfID}"] = 
-                            CRM_Core_BAO_CustomField::getDisplayValue( $contactDetails[$contactID]["custom_{$cfID}"],
-                                                                       $cfID, $details[1] );
-                    }
-                }
-                
-                //special case for greeting replacement
-                foreach ( array( 'email_greeting', 'postal_greeting', 'addressee' ) as $val ) {
-                    if ( CRM_Utils_Array::value( $val, $contactDetails[$contactID] ) ) {
-                        $contactDetails[$contactID][$val] = $contactDetails[$contactID]["{$val}_display"];
-                    }
-                }
-            }
-        }
-
-        // also call a hook and get token details
-        require_once 'CRM/Utils/Hook.php';
-        CRM_Utils_Hook::tokenValues( $details[0], $contactIDs );
-        return $details; 
-    }
-
     /**
      * Function to build the  compose mail form
      * @param   $form 

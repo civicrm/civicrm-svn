@@ -528,7 +528,13 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
             $params[] = $field['contact_id'];
         }
 
-        $details = $mailing->getDetails($params, $returnProperties);
+        require_once 'CRM/Utils/Token.php';
+        $details = CRM_Utils_Token::getTokenDetails( $params,
+                                                     $returnProperties,
+                                                     true, true, null,
+                                                     $mailing->getFlattenedTokens( ),
+                                                     get_class( $this )
+                                                     );
 
         foreach ( $fields as $key => $field ) {
             $contactID = $field['contact_id'];

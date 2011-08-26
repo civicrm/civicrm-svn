@@ -289,20 +289,29 @@ function civitest_civicrm_enableDisable( $recordBAO, $recordID, $isActive ) {
  }
 
 function civitest_civicrm_tokens( &$tokens ) {
-    $tokens['contribution'] = array( 'contribution.amount', 'contribution.date',
-        '{contribution.total_last_year}', '{contribution.date_of_first}',
-        '{contribution.largest_this_year}' => 'Largest this Year Contribution Amount',
-        '{contribution.date_of_largest_this_year}' => 'Largest this Year Contribution Date',
-        'contribution.average' => 'Average Contribution Amount', 'contribution.largest' => 'Largest Contribution' );
+    $tokens['contribution'] =
+        array( 
+              'contribution.amount'                    => 'Amount of contribution',
+              'contribution.date'                      => 'Date of contribution',
+              'contribution.total_last_year'           => 'Total amount contributed last year',
+              'contribution.date_of_first'             => 'Date of first contribution',
+              'contribution.largest_this_year'         => 'Largest this Year Contribution Amount',
+              'contribution.date_of_largest_this_year' => 'Largest this Year Contribution Date',
+              'contribution.average'                   => 'Average Contribution Amount',
+              'contribution.largest'                   => 'Largest Contribution' );
 }
 
-function civitest_civicrm_tokenValues( &$values, &$contactIDs ) {
+function civitest_civicrm_tokenValues( &$values,
+                                       &$contactIDs,
+                                       $dontCare,
+                                       $tokens,
+                                       $context ) {
+    
+    CRM_Core_Error::debug( $context, $tokens );
+    exit( );
+
     if ( is_array( $contactIDs ) ) {
         $contactIDString = implode( ',', array_values( $contactIDs ) );
-        $single = false;
-    } else {
-        $contactIDString = "( $contactIDs )";
-        $single = true;
     }
 
     $query = "
@@ -317,17 +326,11 @@ GROUP BY contact_id
 
     $dao = CRM_Core_DAO::executeQuery( $query );
     while ( $dao->fetch( ) ) {
-        if ( $single ) {
-            $value =& $values;
-        } else {
-            if ( ! array_key_exists( $dao->contact_id, $values ) ) {
-                $values[$dao->contact_id] = array( );
-            }
-            $value =& $values[$dao->contact_id];
+        if ( ! array_key_exists( $dao->contact_id, $values ) ) {
+            $values[$dao->contact_id] = array( );
         }
-
-        $value['contribution.amount'] = $dao->total_amount;
-        $value['contribution.date'  ] = $dao->receive_date;
+        $values[$dao->contact_id]['contribution.amount'] = $dao->total_amount;
+        $values[$dao->contact_id]['contribution.date'  ] = $dao->receive_date;
     }
 }
 

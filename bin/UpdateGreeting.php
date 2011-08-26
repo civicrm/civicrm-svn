@@ -154,11 +154,12 @@ SELECT DISTINCT id, $idFldName
             }
         }
         // retrieve only required contact information
-        require_once 'CRM/Mailing/BAO/Mailing.php';
+        require_once 'CRM/Utils/Token.php';
         $extraParams[] = array( 'contact_type', '=', $contactType, 0, 0 );
-        list($greetingDetails) = CRM_Mailing_BAO_Mailing::getDetails( array_keys( $filterContactFldIds ),
-                                                                      $greetingsReturnProperties, 
-                                                                      false, false, $extraParams );
+        // we do token replacement in the replaceGreetingTokens hook
+        list($greetingDetails) = CRM_Utils_Token::getTokenDetails( array_keys( $filterContactFldIds ),
+                                                                   $greetingsReturnProperties, 
+                                                                   false, false, $extraParams );
         // perform token replacement and build update SQL
         $contactIds = array( );
         $cacheFieldQuery = "UPDATE civicrm_contact SET {$greeting}_display = CASE id ";
@@ -189,7 +190,7 @@ SELECT DISTINCT id, $idFldName
                     $contactIds[] = $contactID;  
                 }
             }
-            CRM_Activity_BAO_Activity::replaceGreetingTokens($greetingString, $contactDetails, $contactID );
+            CRM_Utils_Token::replaceGreetingTokens($greetingString, $contactDetails, $contactID, 'CRM_UpdateGreeting' );
             $greetingString = CRM_Core_DAO::escapeString( $greetingString );
             $cacheFieldQuery .= " WHEN {$contactID} THEN '{$greetingString}' ";
             

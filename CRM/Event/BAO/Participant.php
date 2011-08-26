@@ -1251,8 +1251,10 @@ UPDATE  civicrm_participant
         //get all required contacts detail.
         if ( !empty( $contactIds ) ) {
             // get the contact details.
-            require_once 'CRM/Mailing/BAO/Mailing.php';
-            list( $currentContactDetails ) = CRM_Mailing_BAO_Mailing::getDetails( $contactIds, null, false, false );
+            list($currentContactDetails) = CRM_Utils_Token::getTokenDetails( $contactIds, null,
+                                                                             false, false, null,
+                                                                             array( ),
+                                                                             'CRM_Event_BAO_Participant' );
             foreach ( $currentContactDetails as $contactId => $contactValues ) {
                 $contactDetails[$contactId] = $contactValues;
             }

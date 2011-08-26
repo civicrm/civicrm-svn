@@ -357,13 +357,20 @@ class CRM_Utils_Hook {
      * This hook is called when sending an email / printing labels to get the values for all the 
      * tokens returned by the 'tokens' hook
      * 
-     * @param array       $details    - the array to store the token values indexed by contactIDs (unless it a single)
-     * @param int / array $contactIDs - an array of contactIDs, in some situations we also send a single contactID. 
+     * @param array  $details    - the array to store the token values indexed by contactIDs (unless it a single)
+     * @param array  $contactIDs - an array of contactIDs
+     * @param int    $jobID      - the jobID if this is associated with a CiviMail mailing
+     * @param array  $tokens     - the list of tokens associated with the content
+     * @param string $className  - the top level className from where the hook is invoked
      *  
      * @return null
      * @access public 
      */
-    static function tokenValues( &$details, &$contactIDs, $jobID = null ) {
+    static function tokenValues( &$details,
+                                 &$contactIDs,
+                                 $jobID = null,
+                                 $tokens = array( ),
+                                 $className = null ) {
         $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
@@ -371,7 +378,7 @@ class CRM_Utils_Hook {
         return   
             eval( 'return ' .
                   $config->userHookClass .
-                  '::invoke( 3, $details, $contactIDs, $jobID, $null, $null, \'civicrm_tokenValues\' );' );
+                  '::invoke( 5, $details, $contactIDs, $jobID, $tokens, $className, \'civicrm_tokenValues\' );' );
     }
 
     /** 

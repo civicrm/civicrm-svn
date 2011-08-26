@@ -566,14 +566,19 @@ WHERE  $whereCond
         
         //handle contact token values.
         require_once 'CRM/Contact/BAO/Contact.php';
-        require_once 'CRM/Mailing/BAO/Mailing.php';
         $ids = array( $params['contact_id'] );
         $fields = array_merge( array_keys(CRM_Contact_BAO_Contact::importableFields( ) ),
                                array( 'display_name', 'checksum', 'contact_id'));
         foreach( $fields as $key => $val) {
             $returnProperties[$val] = true;
         }
-        $details =  CRM_Mailing_BAO_Mailing::getDetails( $ids, $returnProperties );
+        require_once 'CRM/Utils/Token.php';
+        $details = CRM_Utils_Token::getTokenDetails( $params,
+                                                     $returnProperties,
+                                                     true, true, null,
+                                                     $tokens,
+                                                     get_class( $form )
+                                                     );
         $form->assign('contact', $details[0][$params['contact_id']] );
         
         //handle custom data.

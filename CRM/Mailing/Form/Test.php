@@ -153,7 +153,15 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
         $returnProperties = $mailing->getReturnProperties( );
         $userID = $session->get( 'userID' );
         $params = array( 'contact_id' => $userID );
-        $details = $mailing->getDetails( $params, $returnProperties );
+
+        require_once 'CRM/Utils/Token.php';
+        $details = CRM_Utils_Token::getTokenDetails( $params,
+                                                     $returnProperties,
+                                                     true, true, null,
+                                                     $mailing->getFlattenedTokens( ),
+                                                     get_class( $this )
+                                                     );
+
         $allDetails =& $mailing->compose( null, null, null, 
                                           $userID,
                                           $fromEmail,
