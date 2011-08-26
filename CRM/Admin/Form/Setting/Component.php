@@ -120,6 +120,7 @@ class CRM_Admin_Form_Setting_Component extends  CRM_Admin_Form_Setting
              !in_array( 'CiviCase', $this->_defaults['enableComponents'] ) ) {
             $config = CRM_Core_Config::singleton();        
             CRM_Admin_Form_Setting_Component::loadCaseSampleData($config->dsn, $config->sqlDir .'case_sample.mysql');
+            CRM_Admin_Form_Setting_Component::loadCaseSampleData($config->dsn, $config->sqlDir .'case_sample1.mysql');
         }
         parent::commonProcess( $params );
         
