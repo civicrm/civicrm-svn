@@ -58,7 +58,7 @@ class CRM_Core_BAO_CMSUser
         $config = CRM_Core_Config::singleton( );
 
         CRM_Core_Error::ignoreException( );
-        $db_uf =& self::dbHandle( $config );
+        $db_uf = self::dbHandle( $config );
 
         if ( $config->userFramework == 'Drupal' ) { 
             $id   = 'uid'; 
@@ -590,7 +590,7 @@ SELECT username, email
         }
 
         // Get an empty JUser instance.
-        $user =& JUser::getInstance( 0 );
+        $user = JUser::getInstance( 0 );
         $user->bind( $values );
 
         // Store the Joomla! user.
@@ -600,7 +600,7 @@ SELECT username, email
         }
         //since civicrm don't have own tokens to use in user
         //activation email. we have to use com_user tokens, CRM-5809
-        $lang =& JFactory::getLanguage();
+        $lang = JFactory::getLanguage();
         $lang->load( 'com_user' );
         require_once 'components/com_user/controller.php';
         UserController::_sendMail( $user, $user->password2 );
