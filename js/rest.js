@@ -88,7 +88,7 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
     			     var acd = new Array();
     			     for(cid in data.values){
                  delete data.values[cid]["data"];// to be removed once quicksearch doesn't return data
-    				     acd.push({ data:data.values[cid], value:data.values[cid].sort_name, result:data.values[cid].id });
+    				     acd.push({ data:data.values[cid], value:data.values[cid].sort_name, result:data.values[cid].sort_name });
     			     }
     			     return acd;
         },
