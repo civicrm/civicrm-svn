@@ -410,7 +410,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                             $_flagOption = 1; 
                         }
                     }
-                    if ( $form->_useForMember ) {
+                    if ( $form->_useForMember && $fields['html_type'] == 'CheckBox' ) {
                         if ( ! empty( $fields['membership_type_id'][$index] ) ) {
                             $duplicateType =  CRM_Utils_Array::key( $fields['membership_type_id'][$index],
                                                                     $fields['membership_type_id'] );

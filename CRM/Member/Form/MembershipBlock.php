@@ -225,7 +225,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             }
 
             if ( $contributionPageId ) {
-                require_once "CRM/Contribute/DAO/ContributionPage.php";
+                require_once 'CRM/Contribute/DAO/ContributionPage.php';
                 $amountBlock = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $contributionPageId, 'amount_block_is_active' );
                 
                 if ( !$amountBlock &&  CRM_Utils_Array::value( 'is_separate_payment', $params ) ) {
