@@ -362,7 +362,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         if (isset($params['case_id'])) {
             $activity->case_id = $params['case_id']; // CRM-8708, preserve case ID even though it's not part of the SQL model
         } elseif (is_numeric($activity->id)) {
-            require_once 'CRM/Activity/BAO/Activity.php';
+            require_once 'CRM/Case/BAO/Case.php';
             $activity->case_id = CRM_Case_BAO_Case::getCaseIdByActivityId($activity->id); // CRM-8708, preserve case ID even though it's not part of the SQL model
         }
 
