@@ -235,7 +235,7 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     public $gettextResourceDir = './l10n/';
 
     /**
-     * Default user framework
+     * Default user framework. This basically makes Drupal 7 the default
      */
     public $userFramework               = 'Drupal';
     public $userFrameworkVersion        = 'Unknown';
