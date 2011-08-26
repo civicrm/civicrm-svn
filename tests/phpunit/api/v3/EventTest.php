@@ -159,7 +159,7 @@ class api_v3_EventTest extends CiviUnitTestCase
     /*
      * Test 'is.Current' option. Existing event is 'old' so only current should be returned
      */
-    function testGetReturnIsFull( )
+    function testGetSingleReturnIsFull( )
     {  
         $contactID = $this->individualCreate();
         $params = array( 'id' => $this->_eventId,
@@ -180,7 +180,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         $participant = civicrm_api('Participant', 'create', array('version' => 3,'participant_status' => 1, 'role_id' => 1, 'contact_id' => $contactID,'event_id' => $this->_eventId));
         $currentEvent = civicrm_api('Event', 'getsingle', $getEventParams);
         
-        $this->documentMe($getEventParams ,$currentEvent,__FUNCTION__,__FILE__,$description,$subfile); 
+        $this->documentMe($getEventParams ,$currentEvent,__FUNCTION__,__FILE__,$description,$subfile,'getsingle'); 
         $this->assertEquals(1, $currentEvent['is_full'],' is full is set in line ' . __LINE__);
         $this->assertEquals(0, $currentEvent['available_places'], 'available places is set in line ' . __LINE__);        
         
