@@ -73,18 +73,18 @@ function civicrm_group_roles_user_login( &$edit, $account ) {
    
     $roles = array_diff( $all = user_roles(TRUE), array( 'anonymous user', 'authenticated user' ) );
     
-    require_once 'api/v2/Contact.php';
-    require_once 'api/v2/Group.php';
-    require_once 'api/v2/GroupContact.php';
-    require_once 'api/v2/UFGroup.php';
+    require_once 'api/api.php';
+    require_once 'CRM/Core/BAO/UFMatch.php';
     
     //find the contact record
-    $contact = civicrm_uf_match_id_get( $account->uid );
+    $contact = CRM_Core_BAO_UFMatch::getContactId( $account->uid );
     
-    $params  = array( 'contact_id' => $contact );
+    $params  = array( 'contact_id' => $contact,
+                      'version'    => 3 );
     //find the groups for contact
-    $groups  = civicrm_group_contact_get( $params );
-    
+    $groups  = civicrm_api( 'group_contact', 'get', $params );
+    $groups  = CRM_Utils_Array::value( 'values', $groups );
+        
     foreach ( $groups as $key ) {
         
         $query = db_select('civicrm_group_roles_rules', 'cgr');
@@ -104,8 +104,8 @@ function civicrm_group_roles_add_groups_oncreate( $account, $roles ) {
         return;
     } 
     
-    require_once 'api/v2/UFGroup.php';
-    $contactId = civicrm_uf_match_id_get(  $account->uid );
+    require_once 'CRM/Core/BAO/UFMatch.php';
+    $contactId = CRM_Core_BAO_UFMatch::getContactId(  $account->uid );
     
     if ( !$contactId ) return;
 
@@ -150,8 +150,8 @@ function civicrm_group_roles_form_alter(&$form, &$form_state, $form_id) {
          $form['#id'] == 'user-edit-form' ) {
     // make sure there is a civicrm record
     civicrm_initialize(true);
-    require_once 'api/v2/UFGroup.php';
-    $contact_id = civicrm_uf_match_id_get($form['#uid']);
+    require_once 'CRM/Core/BAO/UFMatch.php';
+    $contact_id = CRM_Core_BAO_UFMatch::getContactId($form['#uid']);
     if (!$contact_id) {
       return;
     }
@@ -210,8 +210,8 @@ function civicrm_group_roles_civicrm_post( $op, $objectName, $objectId, &$object
             }
             
             //Do we have a Drupal Account?
-            require_once 'api/v2/UFGroup.php';
-            $uid = civicrm_uf_id_get( $contact_id );
+            require_once 'CRM/Core/BAO/UFMatch.php';
+            $ufID = CRM_Core_BAO_UFMatch::getUFId( $contact_id );
             if (!$uid) { //make sure we have an actual user account
                 continue;
             }
@@ -280,10 +280,10 @@ function civicrm_role_granted_by_other_group($contact_id, $rid, $group_id)
   } 
   
   //get all the groups this contact belongs to
-  $params = array('version'=>'2', 'contact_id' => $contact_id);
+  $params = array( 'version'=> 3, 'contact_id' => $contact_id );
   $result = civicrm_api('group_contact', 'get', $params);
   
-  if ( civicrm_error($result ) ) {
+  if ( civicrm_api3_error($result ) ) {
       return true;
   } 
   else {
@@ -296,7 +296,7 @@ function civicrm_role_granted_by_other_group($contact_id, $rid, $group_id)
         // check if group has been added by api or not.
         $groupIds = array( );
         foreach ($result as $grpid => $grp) {
-            $groupIds[] = $grp['group_id'];
+            $groupIds[] = CRM_Utils_Array::value( 'group_id', $grp );
         }        
     }
     
@@ -387,18 +387,20 @@ function civicrm_group_roles_show_rules($action = NULL, $id = NULL)
     $roles = user_roles(TRUE);
     
     // get civicrm groups
-    $params = array('version'=>'2',);
-    $groups =& civicrm_api('group', 'get', $params);
-
+    $params = array( 'version'=> 3 );
+    $groups = civicrm_api( 'group', 'get', $params );
+    $groups = CRM_Utils_Array::value( 'values', $groups );
+    
     //Begin building main output table.
     $header = array( 'rid' => t('Rule ID'), 'name' => t('Rule Name (\'CiviCRM Group\' <--> \'Drupal Role\')'), 'op' => t('Operation'));
     $data = array( );
     
     $rules = db_query('SELECT * FROM {civicrm_group_roles_rules} ORDER BY id ASC')->fetchAll( );
     foreach ( $rules as $result) {
+        $gid = CRM_Utils_Array::value( $result->group_id, $groups );
         $data[] = array(
                         'rid'  => check_plain($result->id), 
-                        'name' => check_plain($groups[$result->group_id]['title'] . " <--> " . $roles[$result->role_id]),
+                        'name' => check_plain(CRM_Utils_Array::value( 'title', $gid ) . " <--> " . $roles[$result->role_id]),
                         'op'   => l(t('edit'), 'admin/config/civicrm/civicrm_group_roles/add_rule' . '/' . check_plain($result->id)) . '&nbsp;&nbsp;' . l(t('delete'), 'admin/config/civicrm/civicrm_group_roles/delete' . '/' . check_plain($result->id)),
                         );
     }
@@ -564,11 +566,11 @@ function civicrm_group_roles_add_remove_groups( $roles, $user, $op )
     if ( $roles ) { // make sure user has other roles other than authenticated
         
         //find the contact record
-        $params = array('version'=>'2', 'email' => $user->mail );
+        $params = array('version'=> 3, 'email' => $user->mail );
         $contact =& civicrm_api('contact', 'get', $params);
         $contact = array_pop( $contact );
         
-        $contact_id = $contact['contact_id'];
+        $contact_id = CRM_Utils_Array::value( 'contact_id', $contact );
         
         if ( !empty( $contact ) && isset( $contact['contact_id'] ) ) {
             
@@ -581,7 +583,7 @@ function civicrm_group_roles_add_remove_groups( $roles, $user, $op )
                     
                     //add the contact
                     $contacts = array( $contact );
-                    $gparams = array( 'version'=>'2','group_id' => $gid, 'contact_id' => $contact_id );
+                    $gparams = array( 'version'=> 3, 'group_id' => $groupId, 'contact_id' => $contact_id );
                     if ( $op == 'add' ) {
                         $result = civicrm_api('group_contact', 'add', $gparams);
                     } else {

@@ -185,7 +185,6 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
 
         $params =& $this->getActiveFieldParams( );
         
-        
         require_once 'CRM/Import/Parser/Contact.php';
         $errorMessage = null;
         
@@ -269,9 +268,8 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         }
         //date-Format part ends
         civicrm_api_include( 'utils', false, 3 );
-        require_once 'api/v2/utils.v2.php';
-        $formatError = _civicrm_activity_formatted_param( $params, $params, true );
-        
+        $formatError = _civicrm_api3_activity_formatted_param( $params, $params, true );
+                
         if ( $formatError ) {
             array_unshift( $values, $formatError['error_message'] );
             return CRM_Activity_Import_Parser::ERROR;
@@ -317,6 +315,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
                 require_once 'CRM/Dedupe/BAO/Rule.php';
                 $fieldsArray = CRM_Dedupe_BAO_Rule::dedupeRuleFields($ruleParams);
                 
+                $disp = null;
                 foreach ( $fieldsArray as $value) {
                     if(array_key_exists(trim($value),$params)) {
                         $paramValue = $params[trim($value)];

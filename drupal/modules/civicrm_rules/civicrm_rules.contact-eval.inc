@@ -97,10 +97,11 @@ function civicrm_rules_rules_action_remove_from_group( $contact, $settings ) {
 function civicrm_rules_rules_contact_create( $first_name, $last_name, $email ) {
     $params = array( 'first_name' => $first_name,
                      'last_name'  => $last_name ,
-                     'email'      => $email );
+                     'email'      => $email,
+                     'version'    => 3 );
     
-    require_once 'api/v2/Contact.php';
-    $contact = civicrm_contact_create( $params );
+    require_once 'api/api.php';
+    $contact = civicrm_api( 'contact', 'create', $params );
 
     if ( ! $contact['is_error'] ) {
         return array( 'contact' => _civicrm_rules_load_contact( $contact['id'] ) );

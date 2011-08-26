@@ -34,6 +34,8 @@
  *
  */
 
+require_once 'api/api.php';
+
 class CRM_Bridge_OG_Drupal {
 
     static function nodeapi( &$params, $op ) {
@@ -67,18 +69,17 @@ class CRM_Bridge_OG_Drupal {
 
     static function updateCiviGroup( &$params, $op, $groupType = null ) {
         $abort        = ( $op == 'delete' ) ? true : false;
+        $params['version'] = 3;
         $params['id'] = CRM_Bridge_OG_Utils::groupID( $params['source'], $params['title'], $abort );
 
         if ( $op == 'add' ) {
-            require_once 'api/v2/Group.php';
             if ( $groupType ) {
                 $params['group_type'] = $groupType;
             }
             
-
-            $group = civicrm_group_add( $params );
+            $group = civicrm_api( 'group', 'create', $params );
             if ( ! civicrm_api3_error( $group ) ) {
-                $params['group_id'] = $group['result']->id;
+                $params['group_id'] = $group['id'];
             }
         } else {
             // do this only if we have a valid id
@@ -198,15 +199,15 @@ SELECT v.id
                                                    null, true );
         
         $groupParams = array( 'contact_id' => $contactID,
-                              'group_id'   => $groupID  );
+                              'group_id'   => $groupID,
+                              'version'    => 3 );
 
-        require_once 'api/v2/GroupContact.php';
         if ( $op == 'add' ) {
             $groupParams['status'] = $params['is_active'] ? 'Added' : 'Pending';
-            civicrm_group_contact_add( $groupParams );
+            civicrm_api( 'GroupContact', 'Create', $groupParams );
         } else {
             $groupParams['status'] = 'Removed';
-            civicrm_group_contact_remove( $groupParams );
+            civicrm_api( 'GroupContact', 'Delete', $groupParams );
         }
 
         if ( CRM_Bridge_OG_Utils::aclEnabled( ) &&
@@ -217,12 +218,13 @@ SELECT v.id
             
             $groupParams = array( 'contact_id' => $contactID,
                                   'group_id'   => $groupID  ,
-                                  'status'     => $params['is_admin'] ? 'Added' : 'Removed' );
+                                  'status'     => $params['is_admin'] ? 'Added' : 'Removed',
+                                  'version'    => 3 );
             
             if ( $params['is_admin'] ) {
-                civicrm_group_contact_add( $groupParams );
+                civicrm_api( 'GroupContact', 'Create', $groupParams );
             } else {
-                civicrm_group_contact_remove( $groupParams );
+                civicrm_api( 'GroupContact', 'Delete', $groupParams ); 
             }
         }
     }
