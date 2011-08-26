@@ -416,8 +416,8 @@ AND    domain_id    = %4
         $ufmatch->uf_name = $ufName;
         $ufmatch->save( );
 
-        require_once 'CRM/Core/BAO/CMSUser.php';
-        CRM_Core_BAO_CMSUser::updateUFName( $ufmatch->uf_id, $ufName );
+       
+        $config->userSystem->updateCMSName( $ufmatch->uf_id, $ufName );
 
     }
     

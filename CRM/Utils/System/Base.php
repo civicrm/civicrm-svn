@@ -29,4 +29,12 @@ class CRM_Utils_System_Base {
     {
         return $url;
     }
+    
+    /*
+     * Currently this is just helping out the test class as defaults is calling it - maybe move fix to defaults
+     */
+    function cmsRootPath( ) 
+    {
+    
+    }
 }

@@ -44,6 +44,141 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
     function __construct() {
       $this->is_joomla = TRUE;
     }
+    
+    /**
+     * Function to create a user of Joomla.
+     *  
+     * @param array  $params associated array 
+     * @param string $mail email id for cms user
+     *
+     * @return uid if user exists, false otherwise
+     * 
+     * @access public
+     */
+    function createUser( &$params, $mail ) 
+    {
+        $userParams = JComponentHelper::getParams('com_users');
+
+        // get the default usertype
+        $userType = $userParams->get('new_usertype');
+        if ( ! $userType ) {
+            $userType = 'Registered';
+        }
+
+        $acl = JFactory::getACL();
+
+        // Prepare the values for a new Joomla! user.
+        $values                 = array();
+        $values['name']         = trim($params['cms_name']);
+        $values['username']     = trim($params['cms_name']);
+        $values['password']     = $params['cms_pass'];
+        $values['password2']    = $params['cms_confirm_pass'];
+        $values['email']        = trim($params[$mail]);
+        $values['gid']          = $acl->get_group_id( '', $userType);
+        $values['sendEmail']    = 0; 
+        
+        $useractivation = $userParams->get( 'useractivation' );
+        if ( $useractivation == 1 ) { 
+            jimport('joomla.user.helper');
+            // block the User
+            $values['block'] = 1; 
+            $values['activation'] =JUtility::getHash( JUserHelper::genRandomPassword() ); 
+        } else { 
+            // don't block the user
+            $values['block'] = 0; 
+        }
+
+        // Get an empty JUser instance.
+        $user = JUser::getInstance( 0 );
+        $user->bind( $values );
+
+        // Store the Joomla! user.
+        if ( ! $user->save( ) ) {
+            // Error can be accessed via $user->getError();
+            return false;
+        }
+        //since civicrm don't have own tokens to use in user
+        //activation email. we have to use com_user tokens, CRM-5809
+        $lang = JFactory::getLanguage();
+        $lang->load( 'com_user' );
+        require_once 'components/com_user/controller.php';
+        UserController::_sendMail( $user, $user->password2 );
+        return $user->get('id');
+    }
+    
+    /*
+     *  Change user name in host CMS
+     *  
+     *  @param integer $ufID User ID in CMS
+     *  @param string $ufName User name
+     */
+    function updateCMSName( $ufID, $ufName ) 
+    {
+        $config = CRM_Core_Config::singleton( );
+        require_once('CRM/Core/BAO/CMSUser.php');
+        $db_uf = CRM_Core_BAO_CMSUser::dbHandle( $config );
+        $ufID   = CRM_Utils_Type::escape( $ufID, 'Integer' );
+        $ufName = CRM_Utils_Type::escape( $ufName, 'String' );
+
+            $sql = "
+UPDATE {$config->userFrameworkUsersTableName}
+SET    email = '$ufName'
+WHERE  id    = $ufID";
+
+            $db_uf->query( $sql );
+            $db_uf->disconnect( );
+       
+    }
+    
+    /**
+     * Check if username and email exists in the Joomla! db
+     * 
+     * @params $params    array   array of name and mail values
+     * @params $errors    array   array of errors
+     * @params $emailName string  field label for the 'email'
+     *
+     * @return void
+     */
+    function checkUserNameEmailExists( &$params, &$errors, $emailName = 'email' )
+    {
+        $config  = CRM_Core_Config::singleton( );
+        
+        $dao = new CRM_Core_DAO( );
+        $name  = $dao->escape( CRM_Utils_Array::value( 'name', $params ) );
+        $email = $dao->escape( CRM_Utils_Array::value( 'mail', $params ) );
+        //don't allow the special characters and min. username length is two
+        //regex \\ to match a single backslash would become '/\\\\/' 
+        $isNotValid = (bool) preg_match('/[\<|\>|\"|\'|\%|\;|\(|\)|\&|\\\\|\/]/im', $name );
+        if ( $isNotValid || strlen( $name ) < 2 ) {
+                $errors['cms_name'] = ts('Your username contains invalid characters or is too short');
+        }
+        $sql = "
+SELECT username, email
+  FROM {$config->userFrameworkUsersTableName}
+ WHERE (LOWER(username) = LOWER('$name')) OR (LOWER(email) = LOWER('$email'))
+";
+             
+         $db_cms = DB::connect($config->userFrameworkDSN);
+         if ( DB::isError( $db_cms ) ) { 
+                die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) ); 
+         }
+            
+         $query = $db_cms->query( $sql );
+         $row = $query->fetchRow( );
+         if ( !empty( $row ) ) {
+                $dbName  = CRM_Utils_Array::value( 0, $row );
+                $dbEmail = CRM_Utils_Array::value( 1, $row );
+                if ( strtolower( $dbName ) == strtolower( $name ) ) {
+                    $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', 
+                                              array( 1 => $name ) );
+                }
+                if ( strtolower( $dbEmail ) == strtolower( $email ) ) {
+                    $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
+                                              array( 1 => $email) );
+                }
+          }      
+    }
+
     /**
      * sets the title of the page
      *

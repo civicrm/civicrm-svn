@@ -34,13 +34,16 @@
  *
  */
 
-require_once 'CRM/Utils/System/Base.php';
+require_once 'CRM/Utils/System/Drupal.php';
 
 /**
  * Helper authentication class for unit tests
  */
-class CRM_Utils_System_UnitTests extends CRM_Utils_System_Base {
-
+class CRM_Utils_System_UnitTests extends CRM_Utils_System_Drupal {
+    function __construct() {
+      $this->is_drupal = False;
+      $this->supports_form_extensions = False;
+    }
     function setTitle( $title, $pageTitle = null ) {
         return;
     }

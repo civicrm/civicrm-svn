@@ -47,6 +47,187 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
     }
 
     /**
+     * Function to create a user in Drupal.
+     *  
+     * @param array  $params associated array 
+     * @param string $mail email id for cms user
+     *
+     * @return uid if user exists, false otherwise
+     * 
+     * @access public
+     * 
+     */
+    function createUser( &$params, $mail )
+    {
+        $form_state = array( );
+        $form_state['input']  = array (
+                                    'name' => $params['cms_name'],
+                                    'mail' => $params[$mail],
+                                    'op'   => 'Create new account'
+                                    );
+        if ( !variable_get('user_email_verification', TRUE )) {
+            $form_state['input']['pass']['pass1'] = $params['cms_pass'];
+            $form_state['input']['pass']['pass2'] = $params['cms_pass'];
+        }
+       
+        
+        $form_state['rebuild']    = FALSE;
+        $form_state['programmed'] = TRUE;
+        $form_state['method']     = 'post';
+        $form_state['build_info']['args'] = array();
+
+        $config = CRM_Core_Config::singleton( );
+
+        // we also need to redirect b
+        $config->inCiviCRM = true;
+
+        $form = drupal_retrieve_form('user_register_form', $form_state);
+       
+        drupal_prepare_form('user_register_form', $form, $form_state);
+
+        // remove the captcha element from the form prior to processing
+        unset($form['captcha']);
+       
+        $form_state['process_input'] = 1;
+        $form_state['submitted'] = 1;
+       
+        drupal_process_form('user_register_form', $form, $form_state);
+       
+        $config->inCiviCRM = false;
+       
+        if ( form_get_errors( ) ) {
+            return false;
+        }
+
+        // looks like we created a drupal user, lets make another db call to get the user id!
+        $db_cms = DB::connect($config->userFrameworkDSN);
+        if ( DB::isError( $db_cms ) ) {
+            die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) );
+        }
+
+        //Fetch id of newly added user
+        $id_sql   = "SELECT uid FROM {$config->userFrameworkUsersTableName} where name = '{$params['cms_name']}'";
+        $id_query = $db_cms->query( $id_sql );
+        $id_row   = $id_query->fetchRow( DB_FETCHMODE_ASSOC ) ;
+        return $id_row['uid'];
+    }
+    
+    /*
+     *  Change user name in host CMS
+     *  
+     *  @param integer $ufID User ID in CMS
+     *  @param string $ufName User name
+     */
+    function updateCMSName( $ufID, $ufName ) 
+    {
+            if ( function_exists( 'user_load' ) ) { // CRM-5555
+                $user = user_load( array( 'uid' => $ufID ) );
+                if ($user->mail != $ufName) {
+                    user_save( $user, array( 'mail' => $ufName ) );
+                    $user = user_load( array( 'uid' => $ufID ) );
+                }
+            }
+        
+    }
+    
+    /**
+     * Check if username and email exists in the drupal db
+     * 
+     * @params $params    array   array of name and mail values
+     * @params $errors    array   array of errors
+     * @params $emailName string  field label for the 'email'
+     *
+     * @return void
+     */
+    function checkUserNameEmailExists( &$params, &$errors, $emailName = 'email' )
+    {
+        $config  = CRM_Core_Config::singleton( );
+       
+        $dao = new CRM_Core_DAO( );
+        $name  = $dao->escape( CRM_Utils_Array::value( 'name', $params ) );
+        $email = $dao->escape( CRM_Utils_Array::value( 'mail', $params ) );
+        $errors = form_get_errors( );
+        if ( $errors ) {
+                // unset drupal messages to avoid twice display of errors
+                unset( $_SESSION['messages'] );
+        }
+
+        if ( CRM_Utils_Array::value('name', $params) ) {
+                if ( $nameError = user_validate_name( $params['name'] ) ) {
+                    $errors['cms_name'] = $nameError;
+                } elseif ( (bool) db_select('users')->fields($config->userFrameworkUsersTableName, array('uid'))->condition('name', db_like($params['name']), 'LIKE')->range(0, 1)->execute()->fetchField() )  {
+                    $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', array( 1 => $params['name'] ) );
+                }
+         }
+
+         if ( CRM_Utils_Array::value( 'mail', $params ) ) {
+                if ( $emailError = user_validate_mail($params['mail']) ) {
+                    $errors[$emailName] = $emailError;
+                } elseif ( (bool) db_select('users')->fields($config->userFrameworkUsersTableName, array('uid'))->condition('mail', db_like($params['mail']), 'LIKE')->range(0, 1)->execute()->fetchField() ) {
+                    $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
+                                              array( 1 => $params['mail']) );
+                }
+         }
+        
+         $db_cms = DB::connect($config->userFrameworkDSN);
+         if ( DB::isError( $db_cms ) ) { 
+                die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) ); 
+         }
+            
+         $query = $db_cms->query( $sql );
+         $row = $query->fetchRow( );
+         if ( !empty( $row ) ) {
+                $dbName  = CRM_Utils_Array::value( 0, $row );
+                $dbEmail = CRM_Utils_Array::value( 1, $row );
+                if ( strtolower( $dbName ) == strtolower( $name ) ) {
+                    $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', 
+                                              array( 1 => $name ) );
+                }
+                if ( strtolower( $dbEmail ) == strtolower( $email ) ) {
+                    $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
+                                              array( 1 => $email) );
+                }
+         }
+ 
+    } 
+
+    /*
+     * Function to get the drupal destination string. When this is passed in the
+     * URL the user will be directed to it after filling in the drupal form
+     *
+     * @param object $form Form object representing the 'current' form - to which the user will be returned
+     * @return string $destination destination value for URL
+     *
+     */
+    function getLoginDestination( &$form ) {
+        require_once 'CRM/Utils/System.php';
+        $args = null;
+
+        $id = $form->get( 'id' );
+        if ( $id ) {
+            $args .= "&id=$id";
+        } else {
+            $gid =  $form->get( 'gid' );
+            if ( $gid ) {
+                $args .= "&gid=$gid";
+            } else {
+                // Setup Personal Campaign Page link uses pageId
+                $pageId =  $form->get( 'pageId' );
+                if ( $pageId ) {
+                    $args .= "&pageId=$pageId&action=add";
+                }
+            }
+        }
+    
+        $destination = null;
+        if ( $args ) {
+            // append destination so user is returned to form they came from after login
+            $destination = CRM_Utils_System::currentPath( ) . '?reset=1' . $args;
+        }
+        return $destination;
+    }
+    
+    /**
      * sets the title of the page
      *
      * @param string $title
