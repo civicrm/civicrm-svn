@@ -595,7 +595,7 @@ t_act.act_type_name as case_scheduled_activity_type_name,
 t_act.act_type AS case_scheduled_activity_type ";
                    
         } else if ( $type == 'recent' ) {
-        	$query = "
+        	$query .= "
 t_act.desired_date as case_recent_activity_date,
 t_act.id as case_recent_activity_id,
 t_act.act_type_name as case_recent_activity_type_name,
@@ -648,7 +648,7 @@ t_act.act_type AS case_recent_activity_type ";
         }
                
         $query .= "
-        ON min_act.case_id = civicrm_case.id
+        ON t_act.case_id = civicrm_case.id
 LEFT JOIN civicrm_phone ON (civicrm_phone.contact_id = civicrm_contact.id AND civicrm_phone.is_primary=1)
 LEFT JOIN civicrm_relationship case_relationship
  ON ( case_relationship.contact_id_a = civicrm_case_contact.contact_id AND case_relationship.contact_id_b = {$userID} 
