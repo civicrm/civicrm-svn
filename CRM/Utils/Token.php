@@ -365,7 +365,8 @@ class CRM_Utils_Token
             return $str;
         }
         
-        $str = preg_replace(self::tokenRegex($key),'self::getMailingTokenReplacement(\'\\1\',$mailing,$escapeSmarty)',$str);
+        $str = preg_replace( self::tokenRegex($key),
+                             'self::getMailingTokenReplacement(\'\\1\',$mailing,$escapeSmarty)', $str );
         return $str;
     }
 
@@ -411,7 +412,7 @@ class CRM_Utils_Token
         case 'html':
             require_once 'CRM/Mailing/Page/View.php';
             $page = new CRM_Mailing_Page_View( );
-            $value = $page->run( $mailing->id, false );
+            $value = $page->run( $mailing->id, null, false );
             break;
             
         case 'approvalStatus':
