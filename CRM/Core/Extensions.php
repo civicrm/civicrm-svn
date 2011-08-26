@@ -120,10 +120,10 @@ class CRM_Core_Extensions
             require_once 'CRM/Utils/File.php';
             if( is_writable( $this->_extDir ) ) {
                 if ( !file_exists( $tmp ) ) { 
-                    CRM_Utils_File::createDir( $tmp );
+                    CRM_Utils_File::createDir( $tmp ,false);
                 }
                 if ( !file_exists( $cache ) ) {
-                    CRM_Utils_File::createDir( $cache );
+                    CRM_Utils_File::createDir( $cache,false );
                 }
             } else {
                 $url = CRM_Utils_System::url( 'civicrm/admin/setting/path', 'reset=1&destination=/civicrm/admin/extensions?reset=1' );
