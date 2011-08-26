@@ -122,7 +122,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
         if ( CRM_Utils_Array::value( 'id', $params ) ) {
             CRM_Utils_Hook::pre( 'edit', 'Case', $params['id'], $params );
         } else {
-            CRM_Utils_Hook::pre( 'create', 'Case', $null, $params );
+            CRM_Utils_Hook::pre( 'create', 'Case', null, $params );
         }
         
         $case = self::add( $params );
@@ -454,6 +454,27 @@ INNER JOIN  civicrm_option_value ov ON ( ca.case_type_id=ov.value AND ov.option_
          
          return $contactArray;
      }
+     
+    /**
+     * Look up a case using an activity ID
+     *
+     * @param $activity_id
+     * @return int, case ID
+     */
+    static function getCaseIdByActivityId($activityId) {
+      $originalId = CRM_Core_DAO::singleValueQuery(
+          'SELECT original_id FROM civicrm_activity WHERE id = %1', 
+          array('1' => array($activityId, 'Integer'))
+      );
+      $caseId =  CRM_Core_DAO::singleValueQuery(
+          'SELECT case_id FROM civicrm_case_activity WHERE activity_id in (%1,%2)',
+          array(
+            '1' => array($activityId, 'Integer'),
+            '2' => array($originalId ? $originalId : $activityId, 'Integer')
+          )
+      );
+      return $caseId;
+    }
     
     /**
      * Retrieve contact names by caseId

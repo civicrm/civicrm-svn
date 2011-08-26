@@ -1453,6 +1453,10 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                     if ( $tableName == 'civicrm_email' ) {
                         $this->_emailField = true;
                     }
+                    if ( $tableName == 'civicrm_phone' ) {
+                        $this->_phoneField = true;
+                    }
+                    
                     if ( CRM_Utils_Array::value( 'required', $field ) ||
                          CRM_Utils_Array::value( $fieldName, $this->_params['fields'] ) ) {
 
@@ -1512,6 +1516,9 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                     }
                     if ( $tableName == 'civicrm_email' ) {
                         $this->_emailField = true;
+                    }
+                    if ( $tableName == 'civicrm_phone' ) {
+                        $this->_phoneField = true;
                     }
                     // 1. In many cases we want select clause to be built in slightly different way 
                     //    for a particular field of a particular type.
@@ -1994,7 +2001,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                                 $pair[$op] = (count($val) == 1) ? ( ($op == 'notin')? ts('Is Not'): ts('Is') ) : $pair[$op];
                                 $val       = implode( ', ', $val );
                                 $value     = "{$pair[$op]} " . $val;
-                            } else if ( !is_array( $val ) && !empty( $val ) && isset($field['options']) &&
+                            } else if ( !is_array( $val ) && ( !empty( $val ) || $val == '0' ) && isset($field['options']) &&
                                         is_array( $field['options'] ) && !empty( $field['options'] ) ) { 
                                 $value = "{$pair[$op]} " . CRM_Utils_Array::value( $val, $field['options'], $val );
                             } else if ( $val ) {
@@ -2450,7 +2457,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
             foreach( $prop['filters'] as $fieldAlias => $val ) {
                 foreach( array( 'value', 'min', 'max', 'relative' ,'from', 'to' ) as $attach ) {
                     if ( isset( $this->_params[$fieldAlias.'_'.$attach ] ) &&
-                         !empty( $this->_params[$fieldAlias.'_'.$attach ] ) ) {
+                         ( !empty( $this->_params[$fieldAlias.'_'.$attach ] ) || $this->_params[$fieldAlias.'_'.$attach ] == '0' ) ) {
                         return true;
                     } 
                 }
@@ -2568,94 +2575,110 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
      * @param bool $orderBy Add GroupBy? Not appropriate for detail report
      * @return array address fields for construct clause
      */
-    function addAddressFields($groupBy =1, $orderBy = FALSE){     
-      
+    function addAddressFields($groupBy = true, $orderBy = false, $filters = true, $defaults = array('country_id' => true ) ) {     
        $addressFields = array('civicrm_address' =>
-                  array( 'dao'      => 'CRM_Core_DAO_Address',
-                         'fields'   =>
-                         array( 'street_address'    => array('title' => ts( 'Street Address' ),),
-                          			'street_number'     => array( 'name'  => 'street_number',
-                                                                              'title' => ts( 'Street Number' ),
-                                                                              'type'  => 1 ),
-                               'street_name'       => array( 'name'  => 'street_name',
-                                                                              'title' => ts( 'Street Name' ),
-                                                                              'type'  => 1 ),
-                               'street_unit'       => array( 'name'  => 'street_unit',
-                                                                              'title' => ts( 'Street Unit' ),
-                                                                              'type'  => 1 ),'street_address'    => null,
-                                'city'              => array('title' => ts( 'City' ),),
-                                'postal_code'       => array('title' => ts( 'Postal Code' ),),
-                                'county_id'  =>
-                                array( 'title'      => ts( 'County' ),  
-                                       'default'    => false ),
-                                'state_province_id' => 
-                                array( 'title'      => ts( 'State/Province' ), ),
-                                'country_id'        => 
-                                array( 'title'      => ts( 'Country' ),  
-                                       'default'    => true ), 
- 
-                                ),
-
-                         'filters'   =>   array( 
-                         					'street_number'   => array( 'title'   => ts( 'Street Number' ),
-                                                                              'type'    => 1,
-                                                                              'name'    => 'street_number' ),
-                                  'street_name'     => array( 'title'    => ts( 'Street Name' ),
-                                                                              'name'     => 'street_name',
-                                                                              'operator' => 'like' ),
-                                  'postal_code'     => array( 'title'   => ts( 'Postal Code' ),
-                                                                              'type'    => 1,
-                                                                              'name'    => 'postal_code' ),
-                                  'city'            => array( 'title'   => ts( 'City' ),
-                                                                              'operator' => 'like',
-                                                                              'name'    => 'city' ),
-                                  'county_id' =>  array( 'name'  => 'county_id',
-                                                                               'title' => ts( 'County' ), 
-                                                         'type'         => CRM_Utils_Type::T_INT,
-                                                                                 'operatorType' => 
+                              array( 'dao'      => 'CRM_Core_DAO_Address',
+                                     'fields'   =>
+                                     array( 'street_address'    => 
+                                            array( 'title' => ts( 'Street Address' ),
+                                                   'default' => CRM_Utils_Array::value('street_address', $defaults, false) ),
+                                            'street_number'     => 
+                                            array( 'name'    => 'street_number',
+                                                   'title'   => ts( 'Street Number' ),
+                                                   'type'    => 1,
+                                                   'default' => CRM_Utils_Array::value('street_number', $defaults, false) ),
+                                            'street_name'       => 
+                                            array( 'name'    => 'street_name',
+                                                   'title'   => ts( 'Street Name' ),
+                                                   'type'    => 1,
+                                                   'default' => CRM_Utils_Array::value('street_name', $defaults, false) ),
+                                            'street_unit'       => 
+                                            array( 'name'    => 'street_unit',
+                                                   'title'   => ts( 'Street Unit' ),
+                                                   'type'    => 1,
+                                                   'default' => CRM_Utils_Array::value('street_unit', $defaults, false) ),
+                                            'city'              => 
+                                            array( 'title' => ts( 'City' ),
+                                                   'default'    => CRM_Utils_Array::value('city', $defaults, false) ),
+                                            'postal_code'       => 
+                                            array( 'title' => ts( 'Postal Code' ),
+                                                   'default'    => CRM_Utils_Array::value('postal_code', $defaults, false) ),
+                                            'county_id'  =>
+                                            array( 'title'      => ts( 'County' ),  
+                                                   'default'    => CRM_Utils_Array::value('county_id', $defaults, false) ),
+                                            'state_province_id' => 
+                                            array( 'title'      => ts( 'State/Province' ),
+                                                   'default'    => CRM_Utils_Array::value('state_province_id', $defaults, false) ),
+                                            'country_id'        => 
+                                            array( 'title'      => ts( 'Country' ),  
+                                                   'default'    => CRM_Utils_Array::value('country_id', $defaults, false) ), 
+                                            
+                                            ),
+                                     'grouping'  => 'location-fields',
+                                     ),
+                              );
+       
+       if ( $filters ) {
+           $addressFields['civicrm_address' ]['filters'] = 
+               array( 
+                     'street_number'   => array( 'title'   => ts( 'Street Number' ),
+                                                 'type'    => 1,
+                                                 'name'    => 'street_number' ),
+                     'street_name'     => array( 'title'    => ts( 'Street Name' ),
+                                                 'name'     => 'street_name',
+                                                 'operator' => 'like' ),
+                     'postal_code'     => array( 'title'   => ts( 'Postal Code' ),
+                                                 'type'    => 1,
+                                                 'name'    => 'postal_code' ),
+                     'city'            => array( 'title'   => ts( 'City' ),
+                                                 'operator' => 'like',
+                                                 'name'    => 'city' ),
+                     'county_id' =>  array( 'name'  => 'county_id',
+                                            'title' => ts( 'County' ), 
+                                            'type'         => CRM_Utils_Type::T_INT,
+                                            'operatorType' => 
+                                            CRM_Report_Form::OP_MULTISELECT,
+                                            'options'       => 
+                                            CRM_Core_PseudoConstant::county( ) ) ,
+                     'state_province_id' =>  array( 'name'  => 'state_province_id',
+                                                    'title' => ts( 'State/Province' ), 
+                                                    'type'         => CRM_Utils_Type::T_INT,
+                                                    'operatorType' => 
+                                                    CRM_Report_Form::OP_MULTISELECT,
+                                                    'options'       => 
+                                                    CRM_Core_PseudoConstant::stateProvince()), 
+                     'country_id'        =>  array( 'name'         => 'country_id',
+                                                    'title'        => ts( 'Country' ), 
+                                                    'type'         => CRM_Utils_Type::T_INT,
+                                                    'operatorType' => 
                                                                                  CRM_Report_Form::OP_MULTISELECT,
-                                                                                 'options'       => 
-                                                                                 CRM_Core_PseudoConstant::county( ) ) ,
-                                  'state_province_id' =>  array( 'name'  => 'state_province_id',
-                                                                                 'title' => ts( 'State/Province' ), 
-                                                                 'type'         => CRM_Utils_Type::T_INT,
-                                                                                 'operatorType' => 
-                                                                                 CRM_Report_Form::OP_MULTISELECT,
-                                                                                 'options'       => 
-                                                                                 CRM_Core_PseudoConstant::stateProvince()), 
-                                   'country_id'        =>  array( 'name'         => 'country_id',
-                                                                                 'title'        => ts( 'Country' ), 
-                                                                  'type'         => CRM_Utils_Type::T_INT,
-                                                                                 'operatorType' => 
-                                                                                 CRM_Report_Form::OP_MULTISELECT,
-                                                                                 'options'       => 
-                                                                                 CRM_Core_PseudoConstant::country( ) ) ),
-                          
-                          				'grouping'  => 'location-fields',
-                         ),
-                         
-    );
-      if($orderBy){
-        $addressFields['civicrm_address']['order_bys'] =
-                         array( 'street_name'       => array( 'title'   => ts( 'Street Name' ) ),
-                                'street_number'     => array( 'title'   => 'Odd / Even Street Number' ) 
-                               );
-      }
-      if ($groupBy){
-        $addressFields['civicrm_address']['group_bys'] =
-                            array( 'street_address'    => null,
-                                 'city'              => null,
-                                 'postal_code'       => null,
-                                 'state_province_id' => 
-                                 array( 'title'   => ts( 'State/Province' ), ),
-                                 'country_id'        => 
-                                 array( 'title'   => ts( 'Country' ), ),
-                                 'county_id'        => 
-                                 array( 'title'      => ts( 'County' ), ),
-                                 );
-      }
-    return $addressFields;
+                                                    'options'       => 
+                                                    CRM_Core_PseudoConstant::country( ) ) );              
+       }
+       
+       if ( $orderBy ) {
+           $addressFields['civicrm_address']['order_bys'] =
+               array( 'street_name'       => array( 'title'   => ts( 'Street Name' ) ),
+                      'street_number'     => array( 'title'   => 'Odd / Even Street Number' ) 
+                      );
+       }
+       
+       if ( $groupBy ) {
+           $addressFields['civicrm_address']['group_bys'] =
+               array( 'street_address'    => null,
+                      'city'              => null,
+                      'postal_code'       => null,
+                      'state_province_id' => 
+                      array( 'title'   => ts( 'State/Province' ), ),
+                      'country_id'        => 
+                      array( 'title'   => ts( 'Country' ), ),
+                      'county_id'        => 
+                      array( 'title'      => ts( 'County' ), ),
+                      );
+       }
+       return $addressFields;
     }
+
     /*
      * Do AlterDisplay processing on Address Fields
      */

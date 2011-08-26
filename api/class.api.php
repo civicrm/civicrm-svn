@@ -186,7 +186,10 @@ class civicrm_api3  {
   }
 
   public function values () {
-    return $this->lastResult->values;
+    if (is_array ($this->lastResult))
+      return $this->lastResult['values'];
+    else 
+      return $this->lastResult->values;
   }
 
   public function result () {

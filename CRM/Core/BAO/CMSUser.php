@@ -58,7 +58,7 @@ class CRM_Core_BAO_CMSUser
         $config = CRM_Core_Config::singleton( );
 
         CRM_Core_Error::ignoreException( );
-        $db_uf =& self::dbHandle( $config );
+        $db_uf = self::dbHandle( $config );
 
         if ( $config->userFramework == 'Drupal' ) { 
             $id   = 'uid'; 

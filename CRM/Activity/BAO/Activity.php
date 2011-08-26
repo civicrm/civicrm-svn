@@ -174,6 +174,9 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                 $activity    = new CRM_Activity_DAO_Activity( );
                 $activity->copyValues( $params );
                 $result = $activity->delete( );
+
+                require_once 'CRM/Activity/BAO/Activity.php';
+                $activity->case_id = CRM_Case_BAO_Case::getCaseIdByActivityId($activity->id); // CRM-8708
                 CRM_Utils_Hook::post( 'delete', 'Activity', $activity->id, $activity );
             }
         } else {
@@ -219,6 +222,8 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         
         $transaction->commit( );
         if ( isset( $activity ) ) {
+            require_once 'CRM/Activity/BAO/Activity.php';
+            $activity->case_id = CRM_Case_BAO_Case::getCaseIdByActivityId($activity->id); // CRM-8708
             CRM_Utils_Hook::post( 'delete','Activity', $activity->id, $activity );
         }
 
@@ -354,6 +359,12 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
 
 
         $activity->copyValues( $params );
+        if (isset($params['case_id'])) {
+            $activity->case_id = $params['case_id']; // CRM-8708, preserve case ID even though it's not part of the SQL model
+        } elseif (is_numeric($activity->id)) {
+            require_once 'CRM/Activity/BAO/Activity.php';
+            $activity->case_id = CRM_Case_BAO_Case::getCaseIdByActivityId($activity->id); // CRM-8708, preserve case ID even though it's not part of the SQL model
+        }
 
         // start transaction        
         require_once 'CRM/Core/Transaction.php';

@@ -50,7 +50,7 @@ function civicrm_html_head()
         require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton();
 
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $buffer = $template->fetch( 'CRM/common/jquery.files.tpl' );
         $lines  = preg_split( '/\s+/', $buffer );
         foreach ( $lines as $line ) {
@@ -171,7 +171,7 @@ function civicrm_permission()
     $config =& CRM_Core_Config::singleton();
 
     require_once 'CRM/Core/Permission.php';
-    $permissions =& CRM_Core_Permission::basicPermissions( );
+    $permissions = CRM_Core_Permission::basicPermissions( );
     $perms_array = array();
     foreach ($permissions as $perm => $title) {
       //order matters here, but we deal with that later
