@@ -71,6 +71,9 @@ require_once 'CRM/Case/PseudoConstant.php';
  */
 function civicrm_api3_case_create($params) {
 
+    require_once 'CRM/Core/Transaction.php';
+    $tx = new CRM_Core_Transaction();
+
         civicrm_api3_verify_mandatory($params);
         if (! CRM_Utils_Array::value('status_id', $params ))
             $params['status_id'] = 1; // ongoing
@@ -278,6 +281,10 @@ SELECT DISTINCT case_id
  *
  */
 function civicrm_api3_case_activity_create($params) {
+
+    require_once 'CRM/Core/Transaction.php';
+    $tx = new CRM_Core_Transaction();
+
         //check parameters
         $errors = _civicrm_api3_case_check_params ( $params, 'activity' );
 
@@ -316,6 +323,9 @@ function civicrm_api3_case_activity_create($params) {
  *
  */
 function civicrm_api3_case_update($params) {
+    
+    require_once 'CRM/Core/Transaction.php';
+    $tx = new CRM_Core_Transaction();
 
         civicrm_api3_verify_mandatory ( $params );
         $errors = array ();
@@ -392,6 +402,9 @@ function civicrm_api3_case_update($params) {
  * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
 function civicrm_api3_case_delete($params) {
+    
+    require_once 'CRM/Core/Transaction.php';
+    $tx = new CRM_Core_Transaction();
 
         //check parameters
         $errors = _civicrm_api3_case_check_params ( $params, 'delete' );
