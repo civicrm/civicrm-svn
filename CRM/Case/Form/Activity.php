@@ -206,7 +206,11 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
             }
         }
 
-        CRM_Utils_System::setTitle( $this->_activityTypeName );
+        if ( $this->_currentlyViewedContactId ) {
+            require_once 'CRM/Contact/Page/View.php';
+            CRM_Contact_Page_View::setTitle( $this->_currentlyViewedContactId );
+        }
+//        CRM_Utils_System::setTitle( $this->_activityTypeName );
 
         $session = CRM_Core_Session::singleton( );
         $session->pushUserContext( $url );

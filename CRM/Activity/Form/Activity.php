@@ -574,7 +574,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         }
         
         if ( $this->_action & ( CRM_Core_Action::DELETE | CRM_Core_Action::RENEW ) ) {
-            $this->assign( 'delName', $defaults['subject'] );
+            $this->assign( 'delName', CRM_Utils_Array::value( 'subject', $defaults ) );
         }
         
         if ( $this->_activityTypeFile ) {
