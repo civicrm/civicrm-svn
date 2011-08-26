@@ -735,7 +735,12 @@ as tbl ";
         $query = $query . $groupBy. $order;
 
         $dao = CRM_Core_DAO::executeQuery( $query, $params );
-        
+               
+        $notbulkActivityClause = '';
+        if ( $bulkActivityTypeID ) {
+            $notbulkActivityClause = " AND {$activityTempTable}.activity_type_id <> {$bulkActivityTypeID} ";
+        }
+
         // step 2: Get target and assignee contacts for above activities
         // create temp table for target contacts
         $activityTargetContactTempTable = "civicrm_temp_target_contact_{$randomNum}";
@@ -752,7 +757,7 @@ as tbl ";
                   c.sort_name
                   FROM civicrm_activity_target at
                   INNER JOIN {$activityTempTable} ON ( at.activity_id = {$activityTempTable}.activity_id 
-                    AND {$activityTempTable}.activity_type_id <> {$bulkActivityTypeID} )
+                             {$notbulkActivityClause} )
                   INNER JOIN civicrm_contact c ON c.id = at.target_contact_id
                   WHERE c.is_deleted = 0";
         
@@ -773,7 +778,7 @@ as tbl ";
                   c.sort_name
                   FROM civicrm_activity_assignment aa
                   INNER JOIN {$activityTempTable} ON ( aa.activity_id = {$activityTempTable}.activity_id
-                      AND {$activityTempTable}.activity_type_id <> {$bulkActivityTypeID} )
+                             {$notbulkActivityClause} )
                   INNER JOIN civicrm_contact c ON c.id = aa.assignee_contact_id
                   WHERE c.is_deleted = 0";
         
@@ -830,7 +835,7 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
                 $values[$activityID]['campaign'] = $allCampaigns[$dao->campaign_id];
             }
 
-            if ( $bulkActivityTypeID != $dao->activity_type_id ) {
+            if ( !$bulkActivityTypeID || ($bulkActivityTypeID != $dao->activity_type_id) ) {
                 // build array of target / assignee names
                 $values[$activityID]['target_contact_name'][$dao->target_contact_id]     = $dao->target_contact_name;
                 $values[$activityID]['assignee_contact_name'][$dao->assignee_contact_id] = $dao->assignee_contact_name;
