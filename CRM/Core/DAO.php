@@ -63,7 +63,7 @@ class CRM_Core_DAO extends DB_DataObject
         // special value for mail bulk inserts to avoid
         // potential duplication, assuming a smaller number reduces number of queries
         // by some factor, so some tradeoff. CRM-8678
-        BULK_MAL_INSERT_COUNT = 10;
+        BULK_MAIL_INSERT_COUNT = 10;
 
     /**
      * the factory class for this application
