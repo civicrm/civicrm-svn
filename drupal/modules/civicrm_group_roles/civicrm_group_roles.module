@@ -318,14 +318,14 @@ function civicrm_group_roles_menu( )
               'description' => t('Add/remove association rules and configure settings. Also perform manual synchronization.'),
               'page callback' => 'civicrm_group_roles_show_rules',
               'access callback' => 'user_access',
-              'access arguments' => array('access settings'),
+              'access arguments' => array('access civicrm group role setting'),
               'type' => MENU_NORMAL_ITEM,
               );      
     $items['admin/config/civicrm/civicrm_group_roles/show_rules'] = 
         array(
               'title' => t('List Association Rule(s)'),
               'access callback' => 'user_access',
-              'access arguments' => array('access settings'),
+              'access arguments' => array('access civicrm group role setting'),
               'weight' => -5,
               'type' => MENU_DEFAULT_LOCAL_TASK,
               );       
@@ -335,7 +335,7 @@ function civicrm_group_roles_menu( )
               'page callback' => 'drupal_get_form',
               'page arguments' => array('civicrm_group_roles_add_rule_form'),
               'access callback' => 'user_access',
-              'access arguments' => array('access settings'),
+              'access arguments' => array('access civicrm group role setting'),
               'type' => MENU_LOCAL_TASK,
               );
     $items['admin/config/civicrm/civicrm_group_roles/add_rule/%rule_id'] = 
@@ -344,7 +344,7 @@ function civicrm_group_roles_menu( )
               'page callback' => 'drupal_get_form',
               'page arguments' => array('civicrm_group_roles_add_rule_form', 1),
               'access callback' => 'user_access',
-              'access arguments' => array('access settings'),
+              'access arguments' => array('access civicrm group role setting'),
               'type' => MENU_LOCAL_TASK,
               );
  

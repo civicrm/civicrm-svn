@@ -1612,45 +1612,52 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * To turn this off (e.g. on the server) set 
      * define(DONT_DOCUMENT_TEST_CONFIG ,1);
      * in your settings file
+     * @param array $params array as passed to civicrm_api function
+     * @param array $result array as received from the civicrm_api function
+     * @param string $function calling function - generally __FUNCTION__
+     * @param string $filename called from file - generally __FILE__
+     * @param string $description descriptive text for the example file
+     * @param string $subfile name for subfile - if this is completed the example will be put in a subfolder (named by the entity)
+     * @param string $action - optional action - otherwise taken from function name
      */
-    function documentMe($params,$result,$function,$filename,$description = "", $subfile = null ){
+    function documentMe($params,$result,$function,$filename,$description = "", $subfile = null, $action = null ){
         if(DONT_DOCUMENT_TEST_CONFIG ==1){
           return;
         } 
         $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
         //todo - this is a bit cludgey
         if (strstr($function, 'Create')){
-            $action = 'create';
+            $action = empty($action)?'create': $action;
             $entityAction = 'Create';
         }elseif(strstr($function, 'GetSingle')){
-            $action = 'getsingle';
+            $action = empty($action)?'getsingle': $action;
             $entityAction = 'GetSingle';
         }elseif(strstr($function, 'GetValue')){
-            $action = 'getvalue';
+            $action = empty($action)?'getvalue': $action;
             $entityAction = 'GetValue';
         }elseif(strstr($function, 'GetCount')){
-            $action = 'getcount';
+            $action = empty($action)?'getcount': $action;
             $entityAction = 'GetCount';
         }elseif(strstr($function, 'Get')){
-            $action = 'get';
+            $action = empty($action)?'get': $action;
             $entityAction = 'Get';
         }elseif(strstr($function, 'Delete')){
-            $action = 'delete';
+            $action = empty($action)?'delete': $action;
             $entityAction = 'Delete';
         } elseif(strstr($function, 'Update')){
-            $action = 'update';
+            $action = empty($action)?'update': $action;
             $entityAction = 'Update';
         } elseif(strstr($function, 'Subscribe')){
-            $action = 'subscribe';
+            $action = empty($action)?'subscribe': $action;
             $entityAction = 'Subscribe';
         } elseif(strstr($function, 'Set')){
-            $action = 'set';
+            $action = empty($action)?'set': $action;
             $entityAction = 'Set';
         } elseif(strstr($function, 'Apply')){
-            $action = 'apply';
+            $action = empty($action)?'apply': $action;
             $entityAction = 'Apply';
         } elseif(strstr($function, 'Replace')){
-            $action = 'replace';
+            $action = empty($action)?'replace': $action;
             $entityAction = 'Replace';
         }
         

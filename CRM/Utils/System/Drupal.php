@@ -240,6 +240,9 @@ class CRM_Utils_System_Drupal {
             CRM_Core_Error::fatal( "Cannot connect to drupal db via $config->userFrameworkDSN, " . $dbDrupal->getMessage( ) ); 
         }                                                      
 
+        $account = $userUid = $userMail = null;
+        require_once 'CRM/Core/BAO/UFMatch.php';
+        
         if ( $loadCMSBootstrap ) {
             $bootStrapParams = array( );
             if ( $name && $password ) {
@@ -247,18 +250,51 @@ class CRM_Utils_System_Drupal {
                                           'pass' => $password ); 
             }
             CRM_Utils_System::loadBootStrap( $bootStrapParams );
-        }
 
-        global $user;
-        $account = null;
-        require_once 'CRM/Core/BAO/UFMatch.php';
-        if ( $user && $user->uid ) { 
-            CRM_Core_BAO_UFMatch::synchronizeUFMatch( $account, $user->uid , $user->mail, 'Drupal' );
-            $contactID = CRM_Core_BAO_UFMatch::getContactId( $user->uid );
+            global $user;
+            if ( $user ) {
+                $userUid = $user->uid;
+                $userMail = $user->mail;
+            }
+        } else {
+            // CRM-8638
+            // SOAP cannot load drupal bootstrap and hence we do it the old way
+            // Contact CiviSMTP folks if we run into issues with this :)
+            $cmsPath = self::cmsRootPath( );
+            require_once( "$cmsPath/includes/bootstrap.inc" );
+            require_once( "$cmsPath/includes/password.inc" );
+            
+            $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+            $name      = $dbDrupal->escapeSimple( $strtolower( $name ) );
+            $sql = "
+SELECT u.* 
+FROM   {$config->userFrameworkUsersTableName} u
+WHERE  LOWER(u.name) = '$name'
+AND    u.status = 1
+";
+            
+            $query = $dbDrupal->query( $sql );
+            $row = $query->fetchRow( DB_FETCHMODE_ASSOC );
+            
+            if ( $row ) {
+               $fakeDrupalAccount = drupal_anonymous_user();
+               $fakeDrupalAccount->name = $name;
+               $fakeDrupalAccount->pass = $row['pass'];
+               $passwordCheck = user_check_password($password, $fakeDrupalAccount);
+               if ( $passwordCheck ) {
+                   $userUid = $row['uid']; 
+                   $userMail = $row['mail'];
+               }
+            }
+        }
+        
+        if ( $userUid && $userMail ) { 
+            CRM_Core_BAO_UFMatch::synchronizeUFMatch( $account, $userUid , $userMail, 'Drupal' );
+            $contactID = CRM_Core_BAO_UFMatch::getContactId( $userUid );
             if ( ! $contactID ) {
                 return false;
             }
-            return array( $contactID, $user->uid, mt_rand() );
+            return array( $contactID, $userUid, mt_rand() );
         }
         return false;
     }
@@ -383,6 +419,15 @@ class CRM_Utils_System_Drupal {
             exit( );
         }
         
+        // CRM-6948: When using loadBootStrap, it's implicit that CiviCRM has already loaded its settings, which means that define(CIVICRM_CLEANURL) was correctly set.
+        // So we correct it
+        $config = CRM_Core_Config::singleton();
+        $config->cleanURL = (int)variable_get('clean_url', '0'); 
+        
+        // CRM-8655: Drupal wasn't available during bootstrap, so hook_civicrm_config never executes
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::config( $config );
+
         return false;
     }
     

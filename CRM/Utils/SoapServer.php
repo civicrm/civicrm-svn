@@ -122,7 +122,7 @@ class CRM_Utils_SoapServer
      * @access public
      * @static
      */
-    public function authenticate($name, $pass, $loadCMSBootstrap = true ) {
+    public function authenticate($name, $pass, $loadCMSBootstrap = false ) {
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $this->ufClass ) . '.php' );
         eval ('$result =& ' . $this->ufClass . '::authenticate($name, $pass, $loadCMSBootstrap );');
 

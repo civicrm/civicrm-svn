@@ -358,7 +358,7 @@ function enablePeriod ( ) {
     }
 }
 
-{/literal}{if $relatedOrganizationFound}{literal}
+{/literal}{if $relatedOrganizationFound and $reset}{literal}
    cj( "#is_for_organization" ).attr( 'checked', true );
    showOnBehalf( false );
 {/literal}{elseif $onBehalfRequired}{literal}

@@ -172,7 +172,7 @@ class Engage_Report_Form_List extends CRM_Report_Form {
         $this->_voterInfoTable = $dao->table_name;
 
         //  From Voter Info custom data group get Party Registration info
-        $query = "SELECT column_name, option_group_ID"
+        $query = "SELECT column_name, option_group_id"
             . " FROM civicrm_custom_field"
             . " WHERE custom_group_id={$voterInfoID}"
             . " AND column_name='". self::CF_PARTY_REG_NAME ."'";
@@ -189,7 +189,7 @@ class Engage_Report_Form_List extends CRM_Report_Form {
         }
 
         //  From Voter Info custom data group get Voter History info
-        $query = "SELECT column_name, option_group_ID"
+        $query = "SELECT column_name, option_group_id"
             . " FROM civicrm_custom_field"
             . " WHERE custom_group_id={$voterInfoID}"
             . " AND column_name='". self::CF_VOTER_HISTORY_NAME ."'";

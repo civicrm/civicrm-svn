@@ -409,7 +409,8 @@ WHERE     ct.id = cp.contribution_type_id AND
                              'active_on',
                              'expire_on',
                              'javascript',
-                             'visibility_id'
+                             'visibility_id',
+                             'is_required'
                              );
         if ( $required == true ) {
             $priceFields[] = 'is_required';   

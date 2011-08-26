@@ -144,19 +144,13 @@
     {/if}
     
     {if $onbehalfProfile}
-      {foreach from=$onbehalfProfile item=field key=cname}
-         {if $field.groupTitle}
-            {assign var=groupTitle  value=$field.groupTitle} 
-         {/if}
-      {/foreach}
       <div class="crm-group onBehalf_display-group">
-         <div class="header-dark">
-            {$groupTitle}
+         {include file="CRM/UF/Form/Block.tpl" fields=$onbehalfProfile}
+         <div class="crm-section organization_email-section">
+            <div class="label">{ts}Organization Email{/ts}</div>
+            <div class="content">{$onBehalfEmail}</div>
+            <div class="clear"></div>
          </div>
-         <fieldset class="label-left">
-            {include file="CRM/UF/Form/Block.tpl" fields=$onbehalfProfile}
-            <div class="label">Email &nbsp;&nbsp;{$onBehalfEmail}</div>
-         </fieldset>
       </div>
     {/if}
     

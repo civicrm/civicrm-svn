@@ -94,7 +94,27 @@ class api_v3_TagTest extends CiviUnitTestCase
         $this->assertEquals( $tag['values'][$tag['id']]['description'], $result['values'][$tag['id']]['description'], 'In line ' . __LINE__ );
         $this->assertEquals( $tag['values'][$tag['id']]['name'], $result['values'][$tag['id']]['name'], 'In line ' . __LINE__ ); 
     }  
-    
+      /**
+     * Test civicrm_tag_get - success expected.
+     */
+    public function testGetReturnArray()
+    {   
+        $description = "demonstrates use of Return as an array";
+        $subfile = "getReturnArray";
+        $tag = $this->tagCreate(null);
+        $this->assertEquals( 0, $tag['is_error'], 'In line ' . __LINE__ );
+        
+        $params = array( 'id' => $tag['id'],
+                         'name' => $tag['values'][$tag['id']]['name'],
+                         'version' => $this->_apiversion ,
+                         'return' => array('name'),
+         );
+        $result = civicrm_api('tag', 'get', $params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile); 
+        $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
+        $this->assertTrue( empty( $result['values'][$tag['id']]['description']), 'In line ' . __LINE__ );
+        $this->assertEquals( $tag['values'][$tag['id']]['name'], $result['values'][$tag['id']]['name'], 'In line ' . __LINE__ ); 
+    }   
 
 ///////////////// civicrm_tag_create methods
 

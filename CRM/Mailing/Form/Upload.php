@@ -128,6 +128,19 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
                     $defaults['from_email_address'] = $id;
                 }
             }
+
+            if ( CRM_Utils_Array::value( 'replyto_email', $defaults ) ) {
+                $replyToEmail = CRM_Core_OptionGroup::values( 'from_email_address' );
+                foreach ( $replyToEmail as $value ) {
+                    if ( strstr( $value, $defaults['replyto_email'] ) ) {
+                        $replyToEmailAddress = $value;
+                        break;
+                    }
+                }
+                $replyToEmailAddress  = explode( '<', $replyToEmailAddress );
+                $replyToEmailAddress  = $replyToEmailAddress[0] . '<' . $replyToEmailAddress[1];
+                $this->replytoAddress = $defaults['reply_to_address'] = array_search( $replyToEmailAddress, $replyToEmail );
+            }
         } 
         
         //fix for CRM-2873
@@ -190,7 +203,10 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
         $config  = CRM_Core_Config::singleton();
         $options = array( );
         $tempVar = false;
-        $session->getVars( $options, "CRM_Mailing_Controller_Send_{$this->controller->_key}");
+
+        // this seems so hacky, not sure what we are doing here and why. Need to investigate and fix
+        $session->getVars( $options,
+                           "CRM_Mailing_Controller_Send_{$this->controller->_key}" );
                                 
         require_once 'CRM/Core/PseudoConstant.php';
         $fromEmailAddress = CRM_Core_PseudoConstant::fromEmailAddress( 'from_email_address' );
@@ -209,9 +225,9 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
                     ts( 'From Email Address' ), array( '' => '- select -' ) + $fromEmailAddress, true );
         
         //Added code to add custom field as Reply-To on form when it is enabled from Mailer settings
-        if ( $config->replyTo && !CRM_Utils_Array::value( 'override_verp', $options ) ) {
+        if ( ! CRM_Utils_Array::value( 'override_verp', $options ) ) {
             $this->add( 'select', 'reply_to_address', ts( 'Reply-To' ), 
-                        array( '' => '- select -' ) + $fromEmailAddress, true );
+                        array( '' => '- select -' ) + $fromEmailAddress );
         } else if ( CRM_Utils_Array::value( 'override_verp', $options ) ) {
             $trackReplies = true;
             $this->assign( 'trackReplies', $trackReplies );
@@ -406,9 +422,8 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
 
         //Add Reply-To to headers
         if ( CRM_Utils_Array::value( 'reply_to_address', $formValues ) ) {
-            $replyToEmail = CRM_Utils_Array::value( $formValues['reply_to_address'],
-                                                    CRM_Core_PseudoConstant::fromEmailAddress( 'from_email_address' ) );
-            $params['replyto_email'] = CRM_Utils_Mail::pluckEmailFromHeader( $replyToEmail );
+            $replyToEmail = CRM_Core_PseudoConstant::fromEmailAddress( 'from_email_address' );
+            $params['replyto_email'] = CRM_Utils_Array::value( $formValues['reply_to_address'], $replyToEmail );
         }
         
         /* Build the mailing object */
