@@ -85,11 +85,11 @@ class CRM_Price_Form_Field extends CRM_Core_Form
     {
         require_once 'CRM/Price/BAO/Field.php';
         
-        $this->_sid = CRM_Utils_Request::retrieve('sid', 'Positive', $this);
-        $this->_fid = CRM_Utils_Request::retrieve('fid' , 'Positive', $this);
+        $this->_sid = CRM_Utils_Request::retrieve( 'sid', 'Positive', $this );
+        $this->_fid = CRM_Utils_Request::retrieve( 'fid' , 'Positive', $this );
         $url = CRM_Utils_System::url( 'civicrm/admin/price/field', "reset=1&action=browse&sid={$this->_sid}");
-        $breadCrumb     = array( array('title' => ts('Price Set Fields'),
-                                       'url'   => $url) );
+        $breadCrumb     = array( array( 'title' => ts('Price Set Fields'),
+                                        'url'   => $url) );
 
         $this->_extendComponentId = array( );
         $extendComponentId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_sid, 'extends', 'id' );
@@ -98,7 +98,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form
         }
 
         CRM_Utils_System::appendBreadCrumb( $breadCrumb );        
-        
     }
 
     /**
@@ -115,12 +114,12 @@ class CRM_Price_Form_Field extends CRM_Core_Form
         $defaults = array();
        
         // is it an edit operation ?
-        if (isset($this->_fid)) {
-            $params = array('id' => $this->_fid);
-            $this->assign('id',$this->_fid);
-            CRM_Price_BAO_Field::retrieve($params, $defaults);
+        if ( isset( $this->_fid ) ) {
+            $params = array( 'id' => $this->_fid );
+            $this->assign( 'id',$this->_fid );
+            CRM_Price_BAO_Field::retrieve( $params, $defaults );
             $this->_sid = $defaults['price_set_id'];
-
+            
             // if text, retrieve price
             if ( $defaults['html_type'] == 'Text' ) {
                 $valueParams = array( 'price_field_id' => $this->_fid );
@@ -150,10 +149,10 @@ class CRM_Price_Form_Field extends CRM_Core_Form
             }
         }
 
-        if ($this->_action & CRM_Core_Action::ADD) {
+        if ( $this->_action & CRM_Core_Action::ADD ) {
             require_once 'CRM/Utils/Weight.php';
-            $fieldValues = array('price_set_id' => $this->_sid);
-            $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Price_DAO_Field', $fieldValues);
+            $fieldValues = array( 'price_set_id' => $this->_sid );
+            $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight( 'CRM_Price_DAO_Field', $fieldValues );
             $defaults['options_per_line'] = 1;
             $defaults['is_display_amounts'] = 1;
         }
@@ -203,7 +202,9 @@ class CRM_Price_Form_Field extends CRM_Core_Form
             $this->assign( 'useForEvent', true );
         } else {
             if ( in_array( $memberComponentId, $this->_extendComponentId ) ) {
-                $this->assign( 'useForMember', true );
+                $this->_useForMember = 1;
+                $this->assign( 'useForMember', $this->_useForMember );
+
                 unset( $htmlTypes['Text'] );
             }
             $this->assign( 'useForEvent', false );
@@ -366,6 +367,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form
              $fields['html_type'] == 'Text' && $fields['price'] ==  NULL ) {
             $errors['price'] = ts( 'Price is a required field' );
         }
+       
         //avoid the same price field label in Within PriceSet
         $priceFieldLabel = new CRM_Price_DAO_Field();
         $priceFieldLabel->label        = $fields['label'] ;
@@ -379,7 +381,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form
         if ( $dupeLabel ) {
             $errors['label'] = ts('Name already exists in Database.');
         }
-        
         
         if ( ( is_numeric( CRM_Utils_Array::value( 'count', $fields ) ) && 
                CRM_Utils_Array::value( 'count', $fields ) == 0 ) && 
@@ -399,30 +400,39 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                     
                     $noLabel = $noAmount = $noWeight = 1;
                     if ( ! empty( $fields['option_label'][$index] ) ) {
-                        $noLabel    =  0;
-
-                        $duplicateIndex =  CRM_Utils_Array::key( $fields['option_label'][$index],
-                                                                 $fields['option_label'] );
+                        $noLabel =  0;
+                        $duplicateIndex = CRM_Utils_Array::key( $fields['option_label'][$index],
+                                                                $fields['option_label'] );
                         
                         if( ( ! ( $duplicateIndex === false ) ) && 
                             ( ! ( $duplicateIndex == $index ) ) ) {
                             $errors["option_label[{$index}]"] = ts( 'Duplicate label value' );
                             $_flagOption = 1; 
                         }
-
+                    }
+                    if ( $form->_useForMember ) {
+                        if ( ! empty( $fields['membership_type_id'][$index] ) ) {
+                            $duplicateType =  CRM_Utils_Array::key( $fields['membership_type_id'][$index],
+                                                                    $fields['membership_type_id'] );
+                            
+                            if( ( ! ( $duplicateType === false ) ) && 
+                                ( ! ( $duplicateType == $index ) ) ) {
+                                $errors["membership_type_id[{$index}]"] = ts( 'Duplicate Membership type' );
+                                $_flagOption = 1; 
+                            }
+                        }
                     }
 
                     // allow for 0 value.
                     if ( ! empty( $fields['option_amount'][$index] ) ||
                          strlen( $fields['option_amount'][$index] ) > 0 ) {
-                        $noAmount    =  0;
+                        $noAmount = 0;
                     }
                     
                     if ( ! empty( $fields['option_weight'][$index] ) ) {
-                        $noWeight    =  0;
-
-                        $duplicateIndex =  CRM_Utils_Array::key( $fields['option_weight'][$index],
-                                                             $fields['option_weight'] );
+                        $noWeight = 0;
+                        $duplicateIndex = CRM_Utils_Array::key( $fields['option_weight'][$index],
+                                                                $fields['option_weight'] );
                         
                         if( ( ! ( $duplicateIndex === false ) ) && 
                             ( ! ( $duplicateIndex == $index ) ) ) {
@@ -440,7 +450,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                         $errors["option_amount[{$index}]"] = ts( 'Amount cannot be empty.' );
                         $_flagOption = 1; 
                     }
-
+                    
                     if ( $noLabel && $noAmount ) {
                         $countemptyrows++; 
                         $_emptyRow = 1;
@@ -497,6 +507,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                 $fields['option_label'] = array( );
             }
             
+
         }
         
         return empty($errors) ? true : $errors;
