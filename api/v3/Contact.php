@@ -656,7 +656,7 @@ function civicrm_api3_contact_quicksearch( $params )
     $as = $select;
     $select = implode( ', ', $select );
     $from   = implode( ' ' , $from   );
-    $limit = CRM_Utils_Array::value( 'limit', $params,10);
+    $limit = CRM_Utils_Array::value( 'limit', $params, 10);
 
     // add acl clause here
     require_once 'CRM/Contact/BAO/Contact/Permission.php';
@@ -680,20 +680,20 @@ function civicrm_api3_contact_quicksearch( $params )
             if ( $currentEmployer = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
                 CRM_Utils_Array::value( 'employee_id', $params ),
                 'employer_id' ) ) {
-                    if ( $config->includeWildCardInName ) {
-                        $strSearch = "%$name%";
-                    } else {
-                        $strSearch = "$name%";
-                    }
-
-                    // get current employer details
-                    $dao = CRM_Core_DAO::executeQuery( "SELECT cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
-                        FROM civicrm_contact cc {$from} WHERE cc.contact_type = \"Organization\" AND cc.id = {$currentEmployer} AND cc.sort_name LIKE '$strSearch'" );
-                    if ( $dao->fetch( ) ) {
-                        $currEmpDetails = array( 'id'   => $dao->id,
-                            'data' => $dao->data );
-                    }
+                if ( $config->includeWildCardInName ) {
+                    $strSearch = "%$name%";
+                } else {
+                    $strSearch = "$name%";
                 }
+
+                // get current employer details
+                $dao = CRM_Core_DAO::executeQuery( "SELECT cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
+                    FROM civicrm_contact cc {$from} WHERE cc.contact_type = \"Organization\" AND cc.id = {$currentEmployer} AND cc.sort_name LIKE '$strSearch'" );
+                if ( $dao->fetch( ) ) {
+                    $currEmpDetails = array( 'id'   => $dao->id,
+                                             'data' => $dao->data );
+                }
+            }
         }
     }
 

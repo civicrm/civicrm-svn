@@ -94,7 +94,7 @@ class CRM_Contact_Page_AJAX
                        );
         
         $result = civicrm_api( 'Contact', 'quicksearch', $params );
-        foreach( $result as $values ) {
+        foreach( $result['values'] as $values ) {
             echo $contactList = "{$values['data']}|{$values['id']}\n";
         }
 
