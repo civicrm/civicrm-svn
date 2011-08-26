@@ -190,7 +190,10 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
         $config  = CRM_Core_Config::singleton();
         $options = array( );
         $tempVar = false;
-        $session->getVars( $options, "CRM_Mailing_Controller_Send_{$this->controller->_key}");
+
+        // this seems so hacky, not sure what we are doing here and why. Need to investigate and fix
+        $session->getVars( $options,
+                           "CRM_Mailing_Controller_Send_{$this->controller->_key}" );
                                 
         require_once 'CRM/Core/PseudoConstant.php';
         $fromEmailAddress = CRM_Core_PseudoConstant::fromEmailAddress( 'from_email_address' );
@@ -209,7 +212,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
                     ts( 'From Email Address' ), array( '' => '- select -' ) + $fromEmailAddress, true );
         
         //Added code to add custom field as Reply-To on form when it is enabled from Mailer settings
-        if ( $config->replyTo && !CRM_Utils_Array::value( 'override_verp', $options ) ) {
+        if ( ! CRM_Utils_Array::value( 'override_verp', $options ) ) {
             $this->add( 'select', 'reply_to_address', ts( 'Reply-To' ), 
                         array( '' => '- select -' ) + $fromEmailAddress, true );
         } else if ( CRM_Utils_Array::value( 'override_verp', $options ) ) {
