@@ -367,7 +367,7 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function tokenValues( &$details,
-                                 &$contactIDs,
+                                 $contactIDs,
                                  $jobID = null,
                                  $tokens = array( ),
                                  $className = null ) {
