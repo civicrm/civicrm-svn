@@ -138,7 +138,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                       $defaults['active_on_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['active_on'], 'activityDateTime' );
             }
 
-            if ( CRM_Utils_Array::value( 'expire_on' , $defaults ) ) {
+            if ( CRM_Utils_Array::value( 'expire_on', $defaults ) ) {
                 list( $defaults['expire_on'],
                       $defaults['expire_on_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['expire_on'], 'activityDateTime' );
             }
@@ -183,9 +183,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form
         require_once 'CRM/Price/BAO/Field.php';
         $htmlTypes = CRM_Price_BAO_Field::htmlTypes( );
         
-        $sel = $this->add('select', 'html_type', ts('Input Field Type'), 
-                          $htmlTypes, true, $javascript );
-        
         // Text box for Participant Count for a field
         require_once 'CRM/Core/Component.php';
 
@@ -207,9 +204,13 @@ class CRM_Price_Form_Field extends CRM_Core_Form
         } else {
             if ( in_array( $memberComponentId, $this->_extendComponentId ) ) {
                 $this->assign( 'useForMember', true );
+                unset( $htmlTypes['Text'] );
             }
             $this->assign( 'useForEvent', false );
         }
+
+        $sel = $this->add('select', 'html_type', ts('Input Field Type'), 
+                          $htmlTypes, true, $javascript );
         
         // price (for text inputs)
         $this->add( 'text', 'price', ts('Price') );
@@ -472,15 +473,15 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                 $_showHide->addToTemplate();    
             
                 if ( $countemptyrows == 11 ) {
-                    $errors["option_label[1]"] = 
-                        $errors["option_amount[1]"] = 
+                    $errors['option_label[1]'] = 
+                        $errors['option_amount[1]'] = 
                         ts( 'Label and value cannot be empty.' ); 
                     $_flagOption = 1; 
                 }
             } else if ( !empty($fields['max_value']) && 
                         !empty($fields['count']) && 
                         ( $fields['count'] > $fields['max_value'] ) ) {
-                $errors["max_value"] = ts( 'Participant count can not be greater than max participants.' );
+                $errors['max_value'] = ts( 'Participant count can not be greater than max participants.' );
             }
                 
             // do not process if no option rows were submitted
