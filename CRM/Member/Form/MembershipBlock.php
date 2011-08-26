@@ -76,8 +76,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             $this->assign('membershipBlockId', $defaults['id']);
         }
         require_once 'CRM/Price/BAO/Set.php';
-        $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $this->_id );
-        if ( $priceSetId ) {
+        if ( $this->_id && ($priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $this->_id )) ) {
             $defaults['price_set_id'] = $priceSetId;
         }
         return $defaults;
@@ -189,15 +188,19 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             
             // don't allow price set w/ membership signup, CRM-5095 
             require_once 'CRM/Price/BAO/Set.php';
-            if ( $contributionPageId && $setID = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $contributionPageId ) ) {
+            if ( $contributionPageId && ( $setID = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $contributionPageId ) ) ) {
 
                 $extends = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $setID, 'extends' );
                 if ( $extends != CRM_Core_Component::getComponentID( 'CiviMember' ) ) {
                     $errors['is_active'] = ts( 'You cannot enable both Membership Signup and Price Set on the same online contribution page.' );  
-                }
                     return $errors;
+                }
             }
             
+            if ( CRM_Utils_Array::value('price_set_id', $params) ) {
+                return $errors; 
+            }
+
             if ( !  isset ( $params['membership_type'] ) ||
                  ( ! is_array( $params['membership_type'] ) ) ) {
                 $errors['membership_type'] = ts( 'Please select at least one Membership Type to include in the Membership section of this page.' );
