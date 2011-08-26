@@ -571,101 +571,107 @@ WHERE cc.contact_id = %1
         $scheduledStatusId = $actStatus['Scheduled'];
         
         $query = "SELECT
-                  civicrm_case.id as case_id,
-                  civicrm_case.subject as case_subject,
-                  civicrm_contact.id as contact_id,
-                  civicrm_contact.sort_name as sort_name,
-                  civicrm_phone.phone as phone,
-                  civicrm_contact.contact_type as contact_type,
-                  civicrm_contact.contact_sub_type as contact_sub_type,
-                  civicrm_activity.activity_type_id,
-                  cov_type.label as case_type,
-                  cov_type.name as case_type_name,
-                  cov_status.label as case_status,
-                  cov_status.label as case_status_name,
-                  civicrm_activity.status_id,
-                  civicrm_case.start_date as case_start_date,
-                  case_relation_type.label_b_a as case_role, ";
+civicrm_case.id as case_id,
+civicrm_case.subject as case_subject,
+civicrm_contact.id as contact_id,
+civicrm_contact.sort_name as sort_name,
+civicrm_phone.phone as phone,
+civicrm_contact.contact_type as contact_type,
+civicrm_contact.contact_sub_type as contact_sub_type,
+t_act.activity_type_id,
+cov_type.label as case_type,
+cov_type.name as case_type_name,
+cov_status.label as case_status,
+cov_status.label as case_status_name,
+t_act.status_id,
+civicrm_case.start_date as case_start_date,
+case_relation_type.label_b_a as case_role, ";
+        
         if ( $type == 'upcoming' ) {
-            $query .=  " civicrm_activity.activity_date_time as case_scheduled_activity_date,
-                         civicrm_activity.id as case_scheduled_activity_id,
-                         aov.name as case_scheduled_activity_type_name,
-                         aov.label as case_scheduled_activity_type ";       
+            $query .=  "
+t_act.desired_date as case_scheduled_activity_date,
+t_act.id as case_scheduled_activity_id,
+t_act.act_type_name as case_scheduled_activity_type_name,
+t_act.act_type AS case_scheduled_activity_type ";
+                   
         } else if ( $type == 'recent' ) {
-            $query .=  " civicrm_activity.activity_date_time as case_recent_activity_date,
-                         civicrm_activity.id as case_recent_activity_id,
-                         aov.name as case_recent_activity_type_name,
-                         aov.label as case_recent_activity_type ";
+        	$query = "
+t_act.desired_date as case_recent_activity_date,
+t_act.id as case_recent_activity_id,
+t_act.act_type_name as case_recent_activity_type_name,
+t_act.act_type AS case_recent_activity_type ";
+
         } 
         
         $query .= 
             " FROM civicrm_case
-                  INNER JOIN civicrm_case_activity
-                        ON civicrm_case_activity.case_id = civicrm_case.id  
-            
-                  LEFT JOIN civicrm_case_contact ON civicrm_case.id = civicrm_case_contact.case_id
-                  LEFT JOIN civicrm_contact ON civicrm_case_contact.contact_id = civicrm_contact.id
-                  LEFT JOIN civicrm_phone ON (civicrm_phone.contact_id = civicrm_contact.id AND civicrm_phone.is_primary=1) ";
+                  INNER JOIN civicrm_case_contact ON civicrm_case.id = civicrm_case_contact.case_id
+                  INNER JOIN civicrm_contact ON civicrm_case_contact.contact_id = civicrm_contact.id ";
 
         if ( $type == 'upcoming' ) {
-            $query .= " LEFT JOIN civicrm_activity
-                             ON ( civicrm_case_activity.activity_id = civicrm_activity.id
-                                  AND civicrm_activity.is_current_revision = 1
-                                  AND civicrm_activity.status_id = $scheduledStatusId
-                                  AND civicrm_activity.activity_date_time <= DATE_ADD( NOW(), INTERVAL 14 DAY ) ) ";
+        	/* This gets the earliest activity per case that's scheduled within 14 days from now.
+        	 There may be duplicates but we use mysql's lenient approach to allowing non-aggregate select fields in a query containing group by to arbitrarily pick one,
+        	 because in this case we don't care which one it picks.
+            */
+        	
+        	$query .= " INNER JOIN
+(
+  SELECT ca.case_id, act_details.id, act_details.activity_type_id, act_details.status_id, act_details.name as act_type_name, act_details.label AS act_type,
+  MIN(act_details.activity_date_time) as desired_date FROM
+    (SELECT aov.name, aov.label, a.id, a.activity_date_time, a.activity_type_id, a.status_id
+     FROM civicrm_activity a LEFT JOIN civicrm_option_group aog ON aog.name = 'activity_type' 
+     LEFT JOIN civicrm_option_value aov ON ( a.activity_type_id = aov.value AND aog.id = aov.option_group_id )
+     WHERE a.is_deleted=0 AND a.is_current_revision=1 AND a.status_id = $scheduledStatusId
+    ) AS act_details
+  INNER JOIN civicrm_case_activity ca ON ca.activity_id=act_details.id WHERE
+  act_details.activity_date_time <= DATE_ADD( NOW(), INTERVAL 14 DAY )
+  group by ca.case_id
+) AS t_act ";
+        	
         } else if ( $type == 'recent' ) {
-            $query .= " LEFT JOIN civicrm_activity
-                             ON ( civicrm_case_activity.activity_id = civicrm_activity.id
-                                  AND civicrm_activity.is_current_revision = 1
-                                  AND civicrm_activity.status_id != $scheduledStatusId
-                                  AND civicrm_activity.activity_date_time <= NOW() 
-                                  AND civicrm_activity.activity_date_time >= DATE_SUB( NOW(), INTERVAL 14 DAY ) ) ";
+        	// Similarly, the most recent activity in the past 14 days, and exclude scheduled.
+            $query .= " INNER JOIN
+(
+  SELECT ca.case_id, act_details.id, act_details.activity_type_id, act_details.status_id, act_details.name as act_type_name, act_details.label AS act_type,
+  MAX(act_details.activity_date_time) as desired_date FROM
+    (SELECT aov.name, aov.label, a.id, a.activity_date_time, a.activity_type_id, a.status_id
+     FROM civicrm_activity a LEFT JOIN civicrm_option_group aog ON aog.name = 'activity_type' 
+     LEFT JOIN civicrm_option_value aov ON ( a.activity_type_id = aov.value AND aog.id = aov.option_group_id )
+     WHERE a.is_deleted=0 AND a.is_current_revision=1 AND a.status_id != $scheduledStatusId
+    ) AS act_details
+  INNER JOIN civicrm_case_activity ca ON ca.activity_id=act_details.id WHERE
+  act_details.activity_date_time <= NOW()
+  AND act_details.activity_date_time >= DATE_SUB( NOW(), INTERVAL 14 DAY )
+  group by ca.case_id
+) AS t_act ";
+
         }
                
         $query .= "
-                  LEFT JOIN civicrm_option_group aog  ON aog.name = 'activity_type'
-                  LEFT JOIN civicrm_option_value aov
-                        ON ( civicrm_activity.activity_type_id = aov.value
-                             AND aog.id = aov.option_group_id )         
+        ON min_act.case_id = civicrm_case.id
+LEFT JOIN civicrm_phone ON (civicrm_phone.contact_id = civicrm_contact.id AND civicrm_phone.is_primary=1)
+LEFT JOIN civicrm_relationship case_relationship
+ ON ( case_relationship.contact_id_a = civicrm_case_contact.contact_id AND case_relationship.contact_id_b = {$userID} 
+      AND case_relationship.case_id = civicrm_case.id ) 
 
-                  LEFT  JOIN  civicrm_relationship case_relationship 
-                        ON ( case_relationship.contact_id_a = civicrm_case_contact.contact_id 
-                             AND case_relationship.contact_id_b = {$userID}  
-                             AND case_relationship.case_id = civicrm_case.id )
-     
-                  LEFT  JOIN civicrm_relationship_type case_relation_type 
-                        ON ( case_relation_type.id = case_relationship.relationship_type_id 
-                             AND case_relation_type.id = case_relationship.relationship_type_id )
+LEFT JOIN civicrm_relationship_type case_relation_type
+ ON ( case_relation_type.id = case_relationship.relationship_type_id
+      AND case_relation_type.id = case_relationship.relationship_type_id )
+       
+LEFT JOIN civicrm_option_group cog_type
+ ON cog_type.name = 'case_type' 
 
-                  LEFT JOIN civicrm_option_group cog_type ON cog_type.name = 'case_type'
-                  LEFT JOIN civicrm_option_value cov_type
-                        ON ( civicrm_case.case_type_id = cov_type.value
-                             AND cog_type.id = cov_type.option_group_id )
+LEFT JOIN civicrm_option_value cov_type
+ ON ( civicrm_case.case_type_id = cov_type.value
+      AND cog_type.id = cov_type.option_group_id ) 
 
-                  LEFT JOIN civicrm_option_group cog_status ON cog_status.name = 'case_status'
-                  LEFT JOIN civicrm_option_value cov_status 
-                       ON ( civicrm_case.status_id = cov_status.value
-                            AND cog_status.id = cov_status.option_group_id ) ";
+LEFT JOIN civicrm_option_group cog_status
+ ON cog_status.name = 'case_status' 
 
-        $query .= "
-                  LEFT JOIN civicrm_activity ca2
-                             ON ( ca2.id IN ( SELECT cca.activity_id FROM civicrm_case_activity cca 
-                                              WHERE cca.case_id = civicrm_case.id )
-                                  AND ca2.is_current_revision = 1 
-                                  AND ca2.is_deleted = $isDeleted ";
-        
-        if ( $type == 'upcoming' ) {
-            $query .= "AND ca2.status_id = $scheduledStatusId
-                       AND ca2.activity_date_time <= DATE_ADD( NOW(), INTERVAL 14 DAY ) 
-                       AND civicrm_activity.activity_date_time > ca2.activity_date_time )";
-        } else if ( $type == 'recent' ) {
-            $query .= "AND ca2.status_id != $scheduledStatusId
-                       AND ca2.activity_date_time <= NOW() 
-                       AND ca2.activity_date_time >= DATE_SUB( NOW(), INTERVAL 14 DAY )
-                       AND civicrm_activity.activity_date_time < ca2.activity_date_time )";
-        }
-        
-        $query .= " WHERE ca2.id IS NULL";
+LEFT JOIN civicrm_option_value cov_status
+ ON ( civicrm_case.status_id = cov_status.value
+      AND cog_status.id = cov_status.option_group_id )
+";
 
         if ( $condition ) {
             $query .= $condition;
@@ -719,8 +725,7 @@ WHERE cc.contact_id = %1
             $condition = " AND case_relationship.contact_id_b = {$userID}";
         }
 
-        $condition .= " 
-AND civicrm_activity.is_deleted = 0
+        $condition .= "
 AND civicrm_case.is_deleted     = 0";
         
         if ( $type == 'upcoming' ) {
