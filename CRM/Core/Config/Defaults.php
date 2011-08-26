@@ -144,7 +144,7 @@ class CRM_Core_Config_Defaults
 
         // CRM-6216: Drupal’s $baseURL might have a trailing LANGUAGE_NEGOTIATION_PATH,
         // which needs to be stripped before we start basing ResourceURL on it
-        if ($config->userSystem->is_drupal == '1') {
+        if ($config->userSystem->is_drupal) {
             global $language;
             if (isset($language->prefix) and $language->prefix) {
                 if (substr($baseURL, -(strlen($language->prefix) + 1)) == $language->prefix . '/') {

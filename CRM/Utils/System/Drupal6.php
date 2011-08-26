@@ -45,6 +45,40 @@ class CRM_Utils_System_Drupal6 extends CRM_Utils_System_Base {
       $this->is_drupal = TRUE;
       $this->supports_form_extensions = TRUE;
     }
+
+    /**
+     * if we are using a theming system, invoke theme, else just print the
+     * content
+     *
+     * @param string  $type    name of theme object/file
+     * @param string  $content the content that will be themed
+     * @param array   $args    the args for the themeing function if any
+     * @param boolean $print   are we displaying to the screen or bypassing theming?
+     * @param boolean $ret     should we echo or return output
+     * @param boolean $maintenance  for maintenance mode
+     * 
+     * @return void           prints content on stdout
+     * @access public
+     */
+    function theme( $type, &$content, $args = null, $print = false, $ret = false, $maintenance = false ) {
+        // TODO: Simplify; this was copied verbatim from CiviCRM 3.4's multi-UF theming function, but that's more complex than necessary
+        if ( function_exists( 'theme' ) && ! $print ) {
+            if ( $maintenance ) {
+                drupal_set_breadcrumb( '' );
+                drupal_maintenance_theme();
+            }
+            $out = theme( $type, $content, $args );
+        } else {
+            $out = $content;
+        }
+        
+        if ( $ret ) {
+            return $out;
+        } else {
+            print $out;
+        }
+    }
+
     /**
      * Function to create a user in Drupal.
      *  

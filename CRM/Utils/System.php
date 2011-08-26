@@ -144,31 +144,8 @@ class CRM_Utils_System {
      * @access public
      */
     function theme( $type, &$content, $args = null, $print = false, $ret = false, $maintenance = false ) {
-        if ( function_exists( 'theme' ) &&
-             ! $print ) {
-            if ( $maintenance ) {
-                drupal_set_breadcrumb( '' );
-                drupal_maintenance_theme();
-                print theme('maintenance_page', array('content' => $content));
-                exit( );
-            }
-            $out = $content;
-            $ret = true;
-        } else {
-            $out = $content;
-        }
-
         $config =& CRM_Core_Config::singleton( );
-        if ( ! $print &&
-             $config->userFramework == 'WordPress' ) {
-            require_once(ABSPATH . 'wp-admin/admin-header.php');
-        }
-
-        if ( $ret ) {
-            return $out;
-        } else {
-            print $out;
-        }
+        return $config->userSystem->theme($type, $content, $args, $print, $ret, $maintenance);
     }
 
     /**

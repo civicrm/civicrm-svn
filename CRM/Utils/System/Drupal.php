@@ -508,6 +508,14 @@ AND    u.status = 1
     }
 
     /**
+     * Get the default location for CiviCRM blocks
+     * @return string
+     */
+    function getDefaultBlockLocation() {
+        return 'sidebar_first';
+    }
+    
+    /**
      * Get the locale set in the hosting CMS
      * @return string  with the locale or null for none
      */
