@@ -213,6 +213,8 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                                                                'type'       =>  CRM_Utils_Type::T_STRING  );
 
         }
+        $this->_groupFilter = true; 
+        $this->_tagFilter = true;
         parent::__construct( );
     }
 
