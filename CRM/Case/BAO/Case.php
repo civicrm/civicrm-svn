@@ -609,10 +609,7 @@ t_act.act_type AS case_recent_activity_type ";
                   INNER JOIN civicrm_contact ON civicrm_case_contact.contact_id = civicrm_contact.id ";
 
         if ( $type == 'upcoming' ) {
-        	/* This gets the earliest activity per case that's scheduled within 14 days from now.
-        	 There may be duplicates but we use mysql's lenient approach to allowing non-aggregate select fields in a query containing group by to arbitrarily pick one,
-        	 because in this case we don't care which one it picks.
-            */
+        	// This gets the earliest activity per case that's scheduled within 14 days from now.
         	
         	$query .= " INNER JOIN
 (
