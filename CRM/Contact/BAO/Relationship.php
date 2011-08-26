@@ -267,9 +267,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
      * Function to get get list of relationship type based on the contact type.
      *
      * @param int     $contactId      this is the contact id of the current contact.
-     * @param string  $strContact     it's  values are 'a or b' if value is 'a' then selected contact is the
-     *                                value of contac_id_a for the relationship and if value is 'b' 
-     *                                then selected contact is the value of contac_id_b for the relationship
+     * @param string  $strContact     this value is currently ignored, keeping it there for legacy reasons
      * @param string  $relationshipId the id of the existing relationship if any
      * @param string  $contactType    contact type
      * @param boolean $all            if true returns relationship types in both the direction
@@ -285,7 +283,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
      *
      * @return array - array reference of all relationship types with context to current contact.
      */
-    function getContactRelationshipType( $contactId = null, $contactSuffix, $relationshipId, 
+    function getContactRelationshipType( $contactId = null, $contactSuffix = null, $relationshipId = null, 
                                          $contactType = null, $all = false, $column = 'label', 
                                          $biDirectional = true, $contactSubType = null, $onlySubTypeRelationTypes = false )
     {
@@ -1191,6 +1189,12 @@ SELECT relationship_type_id, relationship_direction
                             $membershipValues['status_id']     = $deceasedStatusId;
                             $membershipValues['skipStatusCal'] = true;
                         }
+                        foreach ( array( 'join_date', 'start_date', 'end_date' ) as $dateField  ) {
+                            if ( CRM_Utils_Array::value($dateField, $membershipValues) ) {
+                                $membershipValues[$dateField] = CRM_Utils_Date::processDate($membershipValues[$dateField]);
+                            }
+                        }
+
                         if ( $action & CRM_Core_Action::UPDATE ) {
                             //delete the membership record for related
                             //contact before creating new membership record.
@@ -1313,5 +1317,27 @@ cc.sort_name LIKE '%$name%'";
 
         return $employers;
     }
-}
+    
+	static function getValidContactTypeList( $relType )
+	{
+		$rel_parts = explode('_', $relType); // string looks like 4_a_b
+	    $allRelationshipType = CRM_Core_PseudoConstant::relationshipType( 'label' );
+	    require_once "CRM/Core/BAO/UFGroup.php";
+	    $contactProfiles = CRM_Core_BAO_UFGroup::getReservedProfiles( 'Contact', null );
+	    
+	    if ($rel_parts[1] == 'a') {
+	       $leftType = $allRelationshipType[$rel_parts[0]]['contact_type_b'];
+	    } else {
+	       $leftType = $allRelationshipType[$rel_parts[0]]['contact_type_a'];
+	    }
 
+	    $contactTypes = array();
+	    foreach ($contactProfiles as $key => $value) {
+    		if (strpos($value, $leftType) !== FALSE) {
+                $contactTypes = array( $key => $value );
+	   	    }
+	    }
+	    
+	    return $contactTypes;
+	}
+}

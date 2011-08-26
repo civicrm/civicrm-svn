@@ -146,9 +146,12 @@ function civicrm_api3_relationship_delete( $params ) {
 function civicrm_api3_relationship_get($params) 
 {
 
-        civicrm_api3_verify_mandatory($params, null,array('contact_id'));
+        civicrm_api3_verify_mandatory($params);
  
         require_once 'CRM/Contact/BAO/Relationship.php';
+        if(CRM_Utils_Array::value('contact_id',$params)){
+             return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+         }
         $relationships= array();
         $contactID     = $params['contact_id'];
         $relationships = CRM_Contact_BAO_Relationship::getRelationship($contactID,

@@ -1357,7 +1357,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
   /*
    * test Single Entity format
    */
-  function testContactGetFormatsingle_entity_array(){
+  function testContactGetSingle_entity_array(){
     $this->createContactFromXML();
     $description = "This demonstrates use of the 'format.single_entity_array' param. 
     /* This param causes the only contact to be returned as an array without the other levels.

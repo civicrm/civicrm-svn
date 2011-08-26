@@ -112,15 +112,29 @@
              </table>  
             {else} {* action = add *}
              </tr>
+             {include file="CRM/Contact/Form/NewContact.tpl" newContactCallback="afterCreateNew()"}
              <tr class="crm-relationship-form-block-rel_contact">
                <td colspan="2">
                 {literal}
                   <script type="text/javascript">
                     var relType = 0;
                     cj( function( ) {
+                        cj('#profiles_1').attr('disabled', true);
+                        cj('#contact_1').removeClass('ac_input');
+                        cj('#contact_1').attr('disabled', true);
                         createRelation( );
                         var relationshipType = cj('#relationship_type_id'); 
-                        relationshipType.change( function() { 
+                        relationshipType.change( function() {
+                            if ( cj(this).val( ) ) {
+                              cj('#profiles_1').attr('disabled', false);
+                              cj('#contact_1').attr('disabled', false);
+                              cj('#contact_1').addClass('ac_input');
+                              buildCreateNewSelect( 'profiles_1', cj(this).val() );
+                            } else {
+                              cj('#profiles_1').attr('disabled', true);
+                              cj('#contact_1').removeClass('ac_input');
+                              cj('#contact_1').attr('disabled', true);
+                            }
                             cj('#relationship-refresh-save').hide();
 			     cj('#saveButtons').hide();
                             createRelation( );
@@ -129,7 +143,16 @@
                         });
                         setPermissionStatus( relationshipType.val( ) ); 
                     });
-                    
+
+                    function afterCreateNew() {
+                      var relType    = cj('#relationship_type_id').val( );
+                      var contactSelected = cj('#contact_1').val( );
+                      if ( relType && contactSelected ) {
+                        cj('#relationship-refresh-save').show( );
+                        buildRelationFields( relType );
+                      }
+                    }
+
                     function createRelation(  ) {
                         var relType    = cj('#relationship_type_id').val( );
                         var relContact = cj('#contact_1');
@@ -138,6 +161,7 @@
                              var dataUrl = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=relationship&rel="}'{literal} + relType;
                              relContact.autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
                              relContact.result(function( event, data ) {
+                                cj("input[name='contact_select_id[1]']").val(data[1]);
                                 cj('#relationship-refresh-save').show( );
                                 buildRelationFields( relType );
                              });
@@ -145,12 +169,27 @@
                             relContact.unautocomplete( );
                             relContact.click( function() { alert( '{/literal}{ts}Please select a relationship type first.{/ts}{literal} ...' );});
                         }
-                    }       
+                    }
+                    
+                    function buildCreateNewSelect( selectID, relType ) {
+                        var elementID = '#' + selectID;
+                        cj( elementID ).html('');
+                        var postUrl = "{/literal}{crmURL p='civicrm/ajax/relationshipContactTypeList' h=0}{literal}";
+                        cj.post( postUrl, { relType: relType },
+                            function ( response ) {
+                                cj( elementID ).get(0).add(new Option('{/literal}{ts}- create new contact -{/ts}{literal}', ''), document.all ? i : null);
+                                response = eval( response );
+                                for (i = 0; i < response.length; i++) {
+                                    cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
+                                }
+                            }
+                        );
+                    }
+           
 				  </script>
                 {/literal}
                </td>
              </tr>
-             {include file="CRM/Contact/Form/NewContact.tpl"}
               </table>
                 <div class="crm-submit-buttons">
                     <span id="relationship-refresh" class="crm-button crm-button-type-refresh crm-button_qf_Relationship_refresh">{$form._qf_Relationship_refresh.html}</span>

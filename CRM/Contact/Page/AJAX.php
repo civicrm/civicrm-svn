@@ -89,11 +89,15 @@ class CRM_Contact_Page_AJAX
                          'orgId'       => $orgId,
                          'employee_id' => $employee_id,
                          'cid'         => $cid,
-                         'rel'         => $rel   
+                         'rel'         => $rel,
+                         'version'     => 3
                        );
         
         $result = civicrm_api( 'Contact', 'quicksearch', $params );
-    
+        foreach( $result['values'] as $values ) {
+            echo $contactList = "{$values['data']}|{$values['id']}\n";
+        }
+
         CRM_Utils_System::civiExit( );
     } 
     
@@ -329,7 +333,7 @@ class CRM_Contact_Page_AJAX
     static function getPermissionedEmployer( ) 
     {
         $cid       = CRM_Utils_Type::escape( $_GET['cid'], 'Integer' );
-        $name      = trim(CRM_Utils_Type::escape( $_GET['name'], 'String')); 
+        $name      = trim(CRM_Utils_Type::escape( $_GET['s'], 'String')); 
         $name      = str_replace( '*', '%', $name );
 
         require_once 'CRM/Contact/BAO/Relationship.php';
@@ -659,8 +663,12 @@ WHERE sort_name LIKE '%$name%'";
                     $queryString = " ( cc.sort_name LIKE '%$name%' OR ce.email LIKE '%$name%' ) ";
                 }
             } elseif ( $cid = CRM_Utils_Array::value( 'cid', $_GET ) ) {
-                $cid = CRM_Utils_Type::escape( $cid, 'Integer' );
-				$queryString = " cc.id IN ( $cid )";
+                //check cid for interger
+                $contIDS = explode( ',', $cid );
+                foreach ( $contIDS as $contID ) {
+                    CRM_Utils_Type::escape( $contID, 'Integer' );
+                }
+                $queryString = " cc.id IN ( $cid )";
 			}
 
             if ( $queryString ) {
@@ -1047,4 +1055,20 @@ LIMIT {$offset}, {$rowCount}
         CRM_Utils_System::civiExit( );
     }
 
+    static function relationshipContactTypeList( ) {
+    	$relType = CRM_Utils_Array::value( 'relType', $_POST );
+
+        require_once "CRM/Contact/BAO/Relationship.php";
+    	$types = CRM_Contact_BAO_Relationship::getValidContactTypeList( $relType );
+    	
+    	$elements = array( );
+        foreach ( $types as $key => $label ) {
+            $elements[] = array( 'name'  => $label,
+                                 'value' => $key );
+        }
+
+        require_once "CRM/Utils/JSON.php";
+        echo json_encode( $elements );
+        CRM_Utils_System::civiExit( );
+    }
 }

@@ -218,7 +218,33 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $this->customFieldDelete($customField['id']);
         $this->customGroupDelete($customGroup['id']); 
     }
-    
+       /**
+     * check with data type - Country array
+     */
+    function testCustomContactRefFieldCreate( )
+    {
+        $subfile = "ContactRefField";
+        $description = "shows creation of contact reference field";
+        $customGroup = $this->customGroupCreate('Individual','Country_test_group',3);
+        $params = array('custom_group_id' => $customGroup['id'],
+                        'name'            => 'Worker_Lookup',
+                        'label'           => 'Worker Lookup',
+                        'html_type'       => 'Autocomplete-Select',
+                        'data_type'       => 'ContactReference',
+                        'weight'          => 4,
+                        'is_searchable'   => 1,
+                        'is_active'       => 1,
+                        'version'					=> $this->_apiversion,
+                        );
+               
+        $customField = civicrm_api('custom_field', 'create', $params);
+        $this->documentMe($params, $result, $function, $filename,$description, $subfile);
+        $this->assertEquals($customField['is_error'],0);
+        $this->getAndCheck($params, $customField['id'], 'CustomField');
+        $this->assertNotNull($customField['id']);
+        $this->customGroupDelete($customGroup['id']); 
+    }
+     
     /**
      * check with data type - Note array
      */

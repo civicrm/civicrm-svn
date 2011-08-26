@@ -173,9 +173,9 @@ AND    {$this->_componentClause}";
                                        'on_hold'      => 1
                                        );
             
-            require_once 'CRM/Mailing/BAO/Mailing.php';
+            require_once 'CRM/Utils/Token.php';
             list( $contactDetails ) = 
-                CRM_Mailing_BAO_Mailing::getDetails( $this->_contactIds, $returnProperties, false, false );
+                CRM_Utils_Token::getTokenDetails( $this->_contactIds, $returnProperties, false, false );
             $suppressedEmails = 0;
             foreach ( $contactDetails as $id => $values ) {
                 if ( empty( $values['email'] ) ||

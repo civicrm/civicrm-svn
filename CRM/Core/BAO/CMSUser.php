@@ -239,31 +239,11 @@ class CRM_Core_BAO_CMSUser
             $loginUrl .= 'index.php?option=com_users&view=login';
         } elseif ( $isDrupal ) {
             $loginUrl .= 'user';
-            // For Drupal we can redirect user to current page after login by passing it as destination.
-            require_once 'CRM/Utils/System.php';
-            $args = null;
-
-            $id = $form->get( 'id' );
-            if ( $id ) {
-                $args .= "&id=$id";
-            } else {
-                $gid =  $form->get( 'gid' );
-                if ( $gid ) {
-                    $args .= "&gid=$gid";
-                } else {
-                     // Setup Personal Campaign Page link uses pageId
-                     $pageId =  $form->get( 'pageId' );
-                    if ( $pageId ) {
-                        $args .= "&pageId=$pageId&action=add";
-                    }
-                }
-            }
-    
-            if ( $args ) {
-                // append destination so user is returned to form they came from after login
-                $destination = CRM_Utils_System::currentPath( ) . '?reset=1' . $args;
+            // append destination so user is returned to form they came from after login
+            $destination = self::getDrupalLoginDestination($form);
+            if ( ! empty( $destination ) ) {
                 $loginUrl .= '?destination=' . urlencode( $destination );
-             }
+            }
         }
         $form->assign( 'loginUrl', $loginUrl );
         $form->assign( 'showCMS', $showCMS ); 
@@ -470,7 +450,43 @@ SELECT username, email
         $db_uf->disconnect( );
         return $result;
     }
+
+    /*
+     * Function to get the drupal destination string. When this is passed in the
+     * URL the user will be directed to it after filling in the drupal form
+     *
+     * @param object $form Form object representing the 'current' form - to which the user will be returned
+     * @return string $destination destination value for URL
+     *
+     */
+    static function getDrupalLoginDestination( &$form ) {
+        require_once 'CRM/Utils/System.php';
+        $args = null;
+
+        $id = $form->get( 'id' );
+        if ( $id ) {
+            $args .= "&id=$id";
+        } else {
+            $gid =  $form->get( 'gid' );
+            if ( $gid ) {
+                $args .= "&gid=$gid";
+            } else {
+                // Setup Personal Campaign Page link uses pageId
+                $pageId =  $form->get( 'pageId' );
+                if ( $pageId ) {
+                    $args .= "&pageId=$pageId&action=add";
+                }
+            }
+        }
     
+        $destination = null;
+        if ( $args ) {
+            // append destination so user is returned to form they came from after login
+            $destination = CRM_Utils_System::currentPath( ) . '?reset=1' . $args;
+        }
+        return $destination;
+    }
+
     /**
      * Function to create a user in Drupal.
      *  
@@ -549,44 +565,35 @@ SELECT username, email
      * @static
      */
     static function createJoomlaUser( &$params, $mail ) 
-    {
-        $userParams = JComponentHelper::getParams( 'com_users' );
-        
-        $defaultUserGroup = $userParams->get( 'new_usertype', 2 );
-        
-        // Prepare the values for a new Joomla! user.
-        $values                 = array( );
-        $values['name']         = trim( $params['cms_name'] );
-        $values['username']     = trim( $params['cms_name'] );
-        $values['password']     = $params['cms_pass'];
-        $values['password2']    = $params['cms_confirm_pass'];
-        $values['email']        = trim( $params[$mail] );
-        $values['groups']       = array( $defaultUserGroup );
-        $values['usertype']     = 'deprecated';
-        $values['sendEmail']    = 0;
-        
-        $useractivation = $userParams->get( 'useractivation' );
-        if ( $useractivation == 1 ) { 
-            jimport('joomla.user.helper');
-            // block the User
-            $values['block'] = 1; 
-            $values['activation'] =JUtility::getHash( JUserHelper::genRandomPassword() ); 
-        } else { 
-            // don't block the user
-            $values['block'] = 0; 
-        }
-        
-        // Get an empty JUser instance.
-        $user = JUser::getInstance( 0 );
-        $user->bind( $values );
-        
-        // Store the Joomla! user.
-        if ( ! $user->save( ) ) {
-            // Error can be accessed via $user->getError();
-            return false;
-        }
-        
-        return $user->get('id');
+    {	
+		if ( isset($values['first_name']) && isset($values['last_name']) ) {
+			$fullname = trim( $values['first_name'].' '.$values['last_name'] );
+		} else {
+			$fullname = trim( $params['cms_name'] );
+		}
+		
+		$values              = array( );
+        $values['name']      = $fullname;
+        $values['username']  = trim( $params['cms_name'] );
+        $values['password1'] = $params['cms_pass'];
+        $values['email1']    = trim( $params[$mail] );
+
+		JLoader::import( 'joomla.application.component.model' );
+		JLoader::import( 'registration', JPATH_SITE . DS . 'components' . DS . 'com_users' . DS . 'models' );
+		
+		$lang   = JFactory::getLanguage();
+		$lang->load('com_users');
+
+		$model  = JModel::getInstance( 'registration', 'UsersModel' );
+		$return = $model->register($values);
+		
+		$uid = '';
+		if ($return !== false) {
+			$user = JFactory::getUser( $values['username'] );
+			$uid  = $user->id;
+		}
+		
+		return $uid;
     }
     
     static function updateUFName( $ufID, $ufName ) 

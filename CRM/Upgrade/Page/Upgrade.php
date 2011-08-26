@@ -81,13 +81,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         if ( $currentVer == '2.1.6' ) {
             $config = CRM_Core_Config::singleton( );
             // also cleanup the templates_c directory
-            $config->cleanup( 1 , false);
-            
-            if ( $config->userFramework !== 'Standalone' ) {
-                // clean the session
-                $session = CRM_Core_Session::singleton( );
-                $session->reset( 2 );
-            }
+            $config->cleanupCaches( );
         }
         // end of hack
         
@@ -247,22 +241,9 @@ SELECT  count( id ) as statusCount
                 $upgrade->setVersion( $latestVer );
                 $template->assign( 'upgraded', true );
                 
-                // also cleanup the templates_c directory
+                // cleanup caches CRM-8739
                 $config = CRM_Core_Config::singleton( );
-                $config->cleanup( 1 , false );
-
-                // clear db caching
-                $config->clearDBCache( );
-
-                // clear temporary tables
-                $config->clearTempTables( );
-
-                // clean the session. Note: In case of standalone this makes the user logout. 
-                // So skip this step for standalone. 
-                if ( $config->userFramework !== 'Standalone' ) {
-                    $session = CRM_Core_Session::singleton( );
-                    $session->reset( 2 );
-                }
+                $config->cleanupCaches( 1 , false );
             }
         }
         

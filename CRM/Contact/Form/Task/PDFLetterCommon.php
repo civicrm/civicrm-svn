@@ -241,8 +241,8 @@ class CRM_Contact_Form_Task_PDFLetterCommon
         //from particular letter line, CRM-6798 
         self::formatMessage( $html_message );
 
-        require_once 'CRM/Activity/BAO/Activity.php';
-		$messageToken = CRM_Activity_BAO_Activity::getTokens( $html_message );  
+        require_once 'CRM/Utils/Token.php';
+		$messageToken = CRM_Utils_Token::getTokens( $html_message );  
 
 		$returnProperties = array();
         if( isset( $messageToken['contact'] ) ) { 
@@ -252,8 +252,6 @@ class CRM_Contact_Form_Task_PDFLetterCommon
         }
                     
         require_once 'api/v2/utils.php';
-        require_once 'CRM/Mailing/BAO/Mailing.php';
-        $mailing = new CRM_Mailing_BAO_Mailing();
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
             require_once 'CRM/Core/Smarty/resources/String.php';
@@ -262,10 +260,18 @@ class CRM_Contact_Form_Task_PDFLetterCommon
 
         $skipOnHold   = isset( $form->skipOnHold ) ? $form->skipOnHold : false;
         $skipDeceased = isset( $form->skipDeceased ) ? $form->skipDeceased : true;
+
+        require_once 'CRM/Utils/Token.php';
         foreach ($form->_contactIds as $item => $contactId) {
             $params  = array( 'contact_id'  => $contactId );
             
-			list( $contact ) = $mailing->getDetails($params, $returnProperties, $skipOnHold, $skipDeceased );
+			list( $contact ) = CRM_Utils_Token::getTokenDetails($params,
+                                                                $returnProperties,
+                                                                $skipOnHold,
+                                                                $skipDeceased,
+                                                                null,
+                                                                $tokens,
+                                                                'CRM_Contact_Form_Task_PDFLetterCommon' );
             if ( civicrm_api3_error( $contact ) ) {
                 $notSent[] = $contactId;
                 continue;

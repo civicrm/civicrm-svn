@@ -62,11 +62,15 @@ class CRM_Case_Form_Activity_ChangeCaseStatus
         $defaults = array();
         // Retrieve current case status
         $defaults['case_status_id'] = $form->_defaultCaseStatus;
+         
         return $defaults;
     }
 
     static function buildQuickForm( &$form ) 
     { 
+    	$form->removeElement('status_id');
+        $form->removeElement('priority_id');
+        
         require_once 'CRM/Case/PseudoConstant.php';
         $form->_caseStatus        = CRM_Case_PseudoConstant::caseStatus( );
         $form->_defaultCaseStatus = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case', $form->_caseId, 'status_id' );
@@ -148,7 +152,11 @@ class CRM_Case_Form_Activity_ChangeCaseStatus
                 }
             }
         }
-
+        $params['status_id'] = CRM_Core_OptionGroup::getValue('activity_status', 'Completed', 'name' );
+        $activity->status_id = $params['status_id'];
+        $params['priority_id'] = CRM_Core_OptionGroup::getValue('priority', 'Normal', 'name' );
+        $activity->priority_id = $params['priority_id'];
+        
         if ($activity->subject == 'null'){
             $activity->subject = ts('Case status changed from %1 to %2', array(1 => CRM_Utils_Array::value( $form->_defaults['case_status_id'], $form->_caseStatus ),
                                                                                2 => CRM_Utils_Array::value( $params['case_status_id'], $form->_caseStatus )

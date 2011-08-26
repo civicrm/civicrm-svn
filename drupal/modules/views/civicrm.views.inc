@@ -2723,6 +2723,36 @@ function civicrm_views_data() {
                                                                      'handler' => 'views_handler_sort',
                                                                      ),
                                                      );
+    
+    //Numeric Contact ID of the Soft Credit recipient
+    $data['civicrm_contribution_soft']['contact_id'] = array(
+                                                             'title' => t('Contact ID'),
+                                                             'help' => t('Contact ID of the Soft Credit recipient'),
+                                                             'field' => array(
+                                                                              'handler' => 'views_handler_field_numeric',
+                                                                              'click sortable' => TRUE,
+                                                                              ),
+            
+                                                             'argument' => array(
+                                                                             'handler' => 'views_handler_argument_numeric',
+                                                                             'numeric' => TRUE,
+                                                                             ),
+
+                                                             'filter' => array(
+                                                                             'handler' => 'views_handler_filter_numeric',
+                                                                              ),
+
+                                                             'sort' => array(
+                                                                            'handler' => 'views_handler_sort',
+                                                                             ),
+
+                                                              'relationship' => array(
+                                                                                      'base' => 'civicrm_contact',
+                                                                                      'field' => 'id',
+                                                                                      'handler' => 'views_handler_relationship',
+                                                                                      'label' => t('Soft Contribution -> Contact Record'),
+                                                                                      ),
+                                                            );
     //Soft Credit Amount
     $data['civicrm_contribution_soft']['amount'] = array(
                                                          'title' => t('Amount'),

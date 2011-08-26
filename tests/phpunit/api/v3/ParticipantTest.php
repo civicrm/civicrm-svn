@@ -648,10 +648,46 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
       $this->assertEquals($participants['count'], 3);
       $params = array('version'=> 3, 'contact_id' => $this->_contactID2, 'api.participant.delete' => 1);
       $participants = civicrm_api('Participant', 'Get',$params );
-      $this->documentMe($params,$participants ,__FUNCTION__,__FILE__,$description,$subfile);
+      $this->documentMe($params,$participants ,__FUNCTION__,__FILE__,$description,$subfile, 'Get');
       $participants = civicrm_api('Participant', 'Get', array('version'=> 3));
       $this->assertEquals( 1,$participants['count'],"only one participant should be left. line " . __LINE__);    
     }
+    /*
+     * Test creation of a participant with an associated contribution
+     */
+    function testCreateParticipantWithPayment()
+    {
+      $this->_contributionTypeId = $this->contributionTypeCreate();
+      $description = "single function to create contact w partipation & contribution. Note that in the
+      case of 'contribution' the 'create' is implied (api.contribution.create)";
+      $subfile = "CreateParticipantPayment";
+      $params = array(
+         'contact_type' => 'Individual',
+         'display_name' => 'dlobo',
+         'version'       => $this->_apiversion,
+         'api.participant' => array(
+                        'event_id'      => $this->_eventID,
+                        'status_id'     => 1,
+                        'role_id'       => 1,
+      									'format.only_id' => 1
+                        ),
+         'api.contribution.create' => array(
+                        'contribution_type_id' => $this->_contributionTypeId,
+                        'total_amount'  => 100,
+                        'format.only_id' => 1 ),
+         'api.participant_payment.create' => array(
+         								'contribution_id' => '$value.api.contribution.create',
+         								'participant_id' => '$value.api.participant' )     
+      );
+      
+      $result = civicrm_api('contact', 'create', $params);
+      $this->documentMe($params, $result, __FUNCTION__, __FILE__,$description,$subfile);
+      
+      $this->assertEquals(1, $result['values'][$result['id']]['api.participant_payment.create']['count']); 
+      civicrm_api('contact', 'delete', array('id' => $result['id'], 'version' => $this->_apiversion));
+      $this->contributionTypeDelete();
+    }
+    
     ///////////////// civicrm_create_participant_formatted methods
     /**
      * Test civicrm_participant_formatted Empty  params type

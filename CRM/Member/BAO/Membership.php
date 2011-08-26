@@ -1423,6 +1423,7 @@ AND civicrm_membership.is_test = %2";
                     $ids['membership'] = $currentMembership['id'];
                 }
                 $memParams = $currentMembership;
+                $memParams['membership_type_id'] = $membershipTypeID;
                 
                 //set the log start date.
                 $memParams['log_start_date'] = CRM_Utils_Date::customFormat( $dates['log_start_date'], $format );

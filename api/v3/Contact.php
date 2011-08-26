@@ -610,10 +610,6 @@ function _civicrm_api3_greeting_format_params( $params )
 /**
  * Contact quick search api 
  *
- * @param  mixed[]  (reference ) input parameters
- *
- * @return array (reference )        array of properties, if error an array with an error id and error message
- * @static void
  * @access public
  *
  * {@example ContactQuicksearch.php 0}
@@ -621,6 +617,8 @@ function _civicrm_api3_greeting_format_params( $params )
  */
 function civicrm_api3_contact_quicksearch( $params )
 {
+    civicrm_api3_verify_mandatory($params,null,array('name'));
+    
     require_once 'CRM/Core/BAO/Preferences.php';
     $name   = CRM_Utils_Array::value( 'name', $params );
 
@@ -653,11 +651,12 @@ function civicrm_api3_contact_quicksearch( $params )
             break;
         }
     }
-    $config = CRM_Core_Config::singleton( );
 
+    $config = CRM_Core_Config::singleton( );
+    $as = $select;
     $select = implode( ', ', $select );
     $from   = implode( ' ' , $from   );
-    $limit = CRM_Utils_Array::value( 'limit', $params);
+    $limit = CRM_Utils_Array::value( 'limit', $params, 10);
 
     // add acl clause here
     require_once 'CRM/Contact/BAO/Contact/Permission.php';
@@ -681,20 +680,20 @@ function civicrm_api3_contact_quicksearch( $params )
             if ( $currentEmployer = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
                 CRM_Utils_Array::value( 'employee_id', $params ),
                 'employer_id' ) ) {
-                    if ( $config->includeWildCardInName ) {
-                        $strSearch = "%$name%";
-                    } else {
-                        $strSearch = "$name%";
-                    }
-
-                    // get current employer details
-                    $dao = CRM_Core_DAO::executeQuery( "SELECT cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
-                        FROM civicrm_contact cc {$from} WHERE cc.contact_type = \"Organization\" AND cc.id = {$currentEmployer} AND cc.sort_name LIKE '$strSearch'" );
-                    if ( $dao->fetch( ) ) {
-                        $currEmpDetails = array( 'id'   => $dao->id,
-                            'data' => $dao->data );
-                    }
+                if ( $config->includeWildCardInName ) {
+                    $strSearch = "%$name%";
+                } else {
+                    $strSearch = "$name%";
                 }
+
+                // get current employer details
+                $dao = CRM_Core_DAO::executeQuery( "SELECT cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
+                    FROM civicrm_contact cc {$from} WHERE cc.contact_type = \"Organization\" AND cc.id = {$currentEmployer} AND cc.sort_name LIKE '$strSearch'" );
+                if ( $dao->fetch( ) ) {
+                    $currEmpDetails = array( 'id'   => $dao->id,
+                                             'data' => $dao->data );
+                }
+            }
         }
     }
 
@@ -743,16 +742,16 @@ function civicrm_api3_contact_quicksearch( $params )
 
     //CRM-5954
     $query = "
-        SELECT DISTINCT(id), data 
+        SELECT DISTINCT(id), data, {$select}
         FROM   (
-            ( SELECT 0 as exactFirst, cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
+            ( SELECT 0 as exactFirst, cc.id as id, {$select},CONCAT_WS( ' :: ', {$select} ) as data
             FROM   civicrm_contact cc {$from}
     {$aclFrom}
     {$additionalFrom} {$includeEmailFrom}
     {$exactWhereClause}
     LIMIT 0, {$limit} )
     UNION
-    ( SELECT 1 as exactFirst, cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
+    ( SELECT 1 as exactFirst, cc.id as id, {$select}, CONCAT_WS( ' :: ', {$select} ) as data
     FROM   civicrm_contact cc {$from}
     {$aclFrom}
     {$additionalFrom} {$includeEmailFrom}
@@ -763,7 +762,6 @@ function civicrm_api3_contact_quicksearch( $params )
 ORDER BY exactFirst, sort_name
 LIMIT    0, {$limit}
     ";
-
     // send query to hook to be modified if needed
     require_once 'CRM/Utils/Hook.php';
     CRM_Utils_Hook::contactListQuery( $query,
@@ -773,26 +771,35 @@ LIMIT    0, {$limit}
                                     );
 
     $dao = CRM_Core_DAO::executeQuery( $query );
-    $contactList = null;
+    $contactList = array();
     $listCurrentEmployer = true;
     while ( $dao->fetch( ) ) {
-        echo $contactList = "$dao->data|$dao->id\n";
-
+        $t = array('id'=>$dao->id);
+        foreach ($as as $k) {
+            $t[$k] = $dao->$k;
+        }
+        $t['data'] = $dao->data;
+        $contactList[] = $t;
         if ( CRM_Utils_Array::value( 'org', $params ) &&
             !empty($currEmpDetails) && 
             $dao->id == $currEmpDetails['id']) {
-                $listCurrentEmployer = false;
+            $listCurrentEmployer = false;
         }
     }
 
     //return organization name if doesn't exist in db
-    if ( !$contactList ) {
+    if ( empty( $contactList ) ) {
         if ( CRM_Utils_Array::value( 'org', $params ) ) {
             if ( $listCurrentEmployer && !empty($currEmpDetails) ) {
-                echo  "{$currEmpDetails['data']}|{$currEmpDetails['id']}\n";
+                $contactList = array( 'data' => $currEmpDetails['data'],
+                                      'id'   => $currEmpDetails['id']
+                                    );
             } else {
-                echo CRM_Utils_Array::value( 's', $params );
+                $contactList = array( 'data' => CRM_Utils_Array::value( 's', $params ),
+                                      'id'   => CRM_Utils_Array::value( 's', $params ) );
             }
         }
     }
+    
+    return civicrm_api3_create_success($contactList,$params);
 }

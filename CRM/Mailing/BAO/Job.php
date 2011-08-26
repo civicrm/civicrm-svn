@@ -393,7 +393,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
                                    $recipients->email_id,
                                    $recipients->contact_id );
                 $count++;
-                if ( $count % CRM_Core_DAO::BULK_INSERT_COUNT == 0 ) {
+                if ( $count % CRM_Core_DAO::BULK_MAIL_INSERT_COUNT == 0 ) {
                     CRM_Mailing_Event_BAO_Queue::bulkCreate( $params, $now );
                     $count = 0;
                     $params = array( );
@@ -522,12 +522,19 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
         // get the return properties
         $returnProperties = $mailing->getReturnProperties( );
         $params = $targetParams = $deliveredParams = array( );
+        $count  = 0;
 
         foreach ( $fields as $key => $field ) {
             $params[] = $field['contact_id'];
         }
 
-        $details = $mailing->getDetails($params, $returnProperties);
+        require_once 'CRM/Utils/Token.php';
+        $details = CRM_Utils_Token::getTokenDetails( $params,
+                                                     $returnProperties,
+                                                     true, true, null,
+                                                     $mailing->getFlattenedTokens( ),
+                                                     get_class( $this )
+                                                     );
 
         foreach ( $fields as $key => $field ) {
             $contactID = $field['contact_id'];
@@ -587,6 +594,14 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
             } else {
                 /* Register the delivery event */
                 $deliveredParams[] = $field['id'];
+
+                $count++;
+                if ( $count % CRM_Core_DAO::BULK_MAIL_INSERT_COUNT == 0 ) {
+                    CRM_Mailing_Event_BAO_Delivered::bulkCreate( $deliveredParams );
+                    $count = 0;
+                    $deliveredParams = array( );
+                }
+
             }
             
             $targetParams[] = $field['contact_id'];

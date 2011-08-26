@@ -488,9 +488,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         
         $params = $this->_params;
         $params['custom_'.$ids['custom_field_id']]  =  "custom string";
- 
         $result = civicrm_api($this->_entity,'create', $params);
-        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__);
+        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__, $description,$subfile);
         $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
         $result = civicrm_api($this->_entity,'get',array('return.custom_'.$ids['custom_field_id'] => 1,         'version' =>3, 'id' => $result['id']));
         $this->assertEquals("custom string", $result['values'][$result['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
@@ -498,7 +497,45 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->customFieldDelete($ids['custom_field_id']);
         $this->customGroupDelete($ids['custom_group_id']);      
     }
+    /**
+     *  Test civicrm_activity_create() with valid parameters
+     *  and some custom data
+     */
+    function testActivityCreateCustomContactRefField( )
+    {    
 
+        civicrm_api('contact','create',array('version' => 3, 'id' => 17, 'sort_name' => 'Contact, Test'));
+        $subfile = 'ContactRefCustomField';
+        $description = "demonstrates create with Contact Reference Custom Field";
+        $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+        $params = array('custom_group_id' => $ids['custom_group_id'],
+                        'name'            => 'Worker_Lookup',
+                        'label'           => 'Worker Lookup',
+                        'html_type'       => 'Autocomplete-Select',
+                        'data_type'       => 'ContactReference',
+                        'weight'          => 4,
+                        'is_searchable'   => 1,
+                        'is_active'       => 1,
+                        'version'					=> $this->_apiversion,
+                        );
+               
+        $customField = civicrm_api('custom_field', 'create', $params);
+        $params = $this->_params;
+        $params['custom_'. $customField ['id']]  =  "17";
+ 
+        $result = civicrm_api($this->_entity,'create', $params);
+        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__,$description,$subfile);
+        $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
+        $result = civicrm_api($this->_entity,'get',array('return.custom_'.$customField => 1,         'version' =>3, 'id' => $result['id']));
+        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__,'Get with Contact Ref Custom Field','ContactRefCustomFieldGet');  
+   
+        $this->assertEquals('Contact, Test', $result['values'][$result['id']]['custom_' .$customField ['id'] ],' in line ' . __LINE__);
+        $this->assertEquals(17, $result['values'][$result['id']]['custom_' .$customField ['id'] . "_id"],' in line ' . __LINE__);
+        $this->assertEquals('Contact, Test', $result['values'][$result['id']]['custom_' .$customField ['id']. '_1' ],' in line ' . __LINE__);
+        $this->assertEquals(17, $result['values'][$result['id']]['custom_' .$customField ['id'] . "_1_id"],' in line ' . __LINE__);        
+        $this->customFieldDelete($ids['custom_field_id']);
+        $this->customGroupDelete($ids['custom_group_id']);      
+    }
     /**
      *  Test civicrm_activity_create() with an invalid text status_id
      */

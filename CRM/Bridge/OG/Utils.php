@@ -82,8 +82,8 @@ class CRM_Bridge_OG_Utils {
     }
 
     static function contactID( $ufID ) {
-        require_once 'api/v2/UFGroup.php';
-        $contactID = civicrm_uf_match_id_get( $ufID );
+        require_once 'CRM/Core/BAO/UFMatch.php';
+        $contactID = CRM_Core_BAO_UFMatch::getContactId( $ufID );
         if ( $contactID ) {
             return $contactID;
         }

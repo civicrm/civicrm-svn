@@ -2269,7 +2269,11 @@ UNION
          }
               
          if ( $emailGreetingString ) {
-             CRM_Activity_BAO_Activity::replaceGreetingTokens($emailGreetingString, $contactDetails, $contact->id );
+             require_once 'CRM/Utils/Token.php';
+             CRM_Utils_Token::replaceGreetingTokens( $emailGreetingString, 
+                                                     $contactDetails,
+                                                     $contact->id,
+                                                     'CRM_Contact_BAO_Contact' );
              $emailGreetingString = CRM_Core_DAO::escapeString( CRM_Utils_String::stripSpaces($emailGreetingString) );
              $updateQueryString[] = " email_greeting_display = '{$emailGreetingString}'";
          } 
@@ -2288,7 +2292,11 @@ UNION
          }
 
          if ( $postalGreetingString ) {
-             CRM_Activity_BAO_Activity::replaceGreetingTokens($postalGreetingString, $contactDetails, $contact->id );
+             require_once 'CRM/Utils/Token.php';
+             CRM_Utils_Token::replaceGreetingTokens( $postalGreetingString,
+                                                     $contactDetails,
+                                                     $contact->id,
+                                                     'CRM_Contact_BAO_Contact' );
              $postalGreetingString = CRM_Core_DAO::escapeString( CRM_Utils_String::stripSpaces($postalGreetingString) );
              $updateQueryString[]  = " postal_greeting_display = '{$postalGreetingString}'";
          }         
@@ -2308,7 +2316,11 @@ UNION
          }
 
          if ( $addresseeString ) {
-             CRM_Activity_BAO_Activity::replaceGreetingTokens($addresseeString, $contactDetails, $contact->id );
+             require_once 'CRM/Utils/Token.php';
+             CRM_Utils_Token::replaceGreetingTokens($addresseeString,
+                                                    $contactDetails,
+                                                    $contact->id,
+                                                    'CRM_Contact_BAO_Contact' );
              $addresseeString     = CRM_Core_DAO::escapeString( CRM_Utils_String::stripSpaces($addresseeString) );
              $updateQueryString[] = " addressee_display = '{$addresseeString}'";
          }
@@ -2345,7 +2357,7 @@ UNION
              
              // build the condition.
              if ( is_array( $criteria ) ) {
-                 eval( '$fields =& CRM_Core_DAO_' . $block . '::fields( );' ); 
+                 eval( '$fields = CRM_Core_DAO_' . $block . '::fields( );' ); 
                  $conditions = array( );
                  foreach( $criteria as $field => $value ) {
                      if ( array_key_exists( $field, $fields ) ) {

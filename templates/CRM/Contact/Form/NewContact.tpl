@@ -88,6 +88,11 @@
                  close: function(event, ui) {
                      cj('#contact-success-' + blockNo).fadeOut(5000);
         		     cj('#profiles-' + blockNo).val('');
+        		     {/literal}
+        		     {if $newContactCallback}
+                       eval({$newContactCallback});   
+        		     {/if}
+        		     {literal}
                  }
              });
          }

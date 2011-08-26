@@ -1,6 +1,6 @@
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -58,36 +58,47 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
       };
 
       $.fn.crmAPI = function(entity,action,params,options) {
-    	  params ['fnName'] = "civicrm/"+entity+"/"+action;
+//    	  params ['fnName'] = "civicrm/"+entity+"/"+action;
+    	  params ['entity'] = entity;
+    	  params ['action'] = action;
     	  params ['json'] = 1;
     	  var settings = $.extend({}, defaults, options);
     	  $(settings.msgbox).removeClass('msgok').removeClass('msgnok').html("");
     	  $.getJSON(settings.ajaxURL,params,function(result){return settings.callBack(result,settings);});
       };
 
-      $.fn.crmAutocomplete = function (options) {
-	  var defaultsContact = {
-	        returnParam: ['sort_name','email'],
-	        params: {
-	            rowCount:35,
-		        json:1,
-		        fnName:'civicrm/contact/search'
-		    }
-	  };
-	  
-	  settings = $.extend(true,{},defaultsContact, options);
-	  
-	  var contactUrl = defaults.ajaxURL + "?";
-	  // How to loop on all the attributes ??
-	  for  (param in settings.params) {
-	      contactUrl = contactUrl + param +"="+ settings.params[param] + "&"; 
-	  }
+    $.fn.crmAutocomplete = function (params,options) {
+      if (typeof params == 'undefined') params = {};
+      if (typeof options == 'undefined') options = {};
+      $().extend(params, {
+        rowCount:35,
+        json:1,
+        entity:'Contact',
+        action:'quicksearch',
+        sequential:1
+      });
+        //'return':'sort_name,email'
+
+      options = $().extend({}, {
+          result: function(data){
+               console.log(data);
+          return false;
+        },
+        parse: function (data){
+    			     var acd = new Array();
+    			     for(cid in data.values){
+                 delete data.values[cid]["data"];// to be removed once quicksearch doesn't return data
+    				     acd.push({ data:data.values[cid], value:data.values[cid].sort_name, result:data.values[cid].sort_name });
+    			     }
+    			     return acd;
+        },
+    	  delay:100,
+        minChars:1
+        },options
+      );
+	    var contactUrl = defaults.ajaxURL + "?"+ $.param(params);
 	  
 	  //    contactUrl = contactUrl + "fnName=civicrm/contact/search&json=1&";
-	  for (var i=0; i < settings.returnParam.length; i++) {
-	      contactUrl = contactUrl + 'return['+settings.returnParam[i] + "]&"; 
-	  }
-	  
 	  //var contactUrl = "/civicrm/ajax/rest?fnName=civicrm/contact/search&json=1&return[sort_name]=1&return[email]&rowCount=25";
 	  
 	  return this.each(function() {
@@ -96,29 +107,26 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
 		      $.fn.autocomplete = cj.fn.autocomplete;//to work around the fubar cj
 		      $(this).autocomplete( contactUrl, {
     			  dataType:"json",
-    			      extraParams:{sort_name:function () {
-    				  return $(selector).val();}//how to fetch the val ?
+    			      extraParams:{name:function () {
+    				  return $(selector).val();}
     			  },
     			  formatItem: function(data,i,max,value,term){
-    			      if (data['email'])
-    				    return value + ' ('+ data['email'] + ")";
-    			      else 
-    				    return value;
+              var tmp = [];
+              for (attr in data) {
+                if (attr != "id")
+                 tmp.push(data[attr]);
+              }
+              return  tmp.join(' :: '); 
     			  },    			
-    			  parse: function(data){
-    			     var acd = new Array();
-    			     for(cid in data){
-    				     acd.push({ data:data[cid], value:data[cid].sort_name, result:data[cid].sort_name });
-    			     }
-    			     return acd;
-    			  },
-    			  
+    			  parse: function(data){ return options.parse(data);},
     			  width: 250,
-    			  delay:100,
+    			  delay:options.delay,
     			  max:25,
-    			  minChars:0,
+    			  minChars:options.minChars,
     			  selectFirst: true
-    		 });
+    		 }).result(function(event, data, formatted) {
+              options.result(data);       
+          });    
        });
      }
 

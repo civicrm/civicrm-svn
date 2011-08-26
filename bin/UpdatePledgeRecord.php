@@ -171,10 +171,13 @@ SELECT  pledge.contact_id              as contact_id,
             $domainValues['email'] = $domainValue[1];
             
             // retrieve contact tokens
-            require_once 'CRM/Mailing/BAO/Mailing.php';
             
             // this function does NOT return Deceased contacts since we don't want to send them email
-            list( $contactDetails ) = CRM_Mailing_BAO_Mailing::getDetails( $contactIds );
+            require_once 'CRM/Utils/Token.php';
+            list( $contactDetails ) = CRM_Utils_Token::getTokenDetails( $contactIds,
+                                                                        null,
+                                                                        false, false, null,
+                                                                        $tokens, 'CRM_UpdatePledgeRecord' );
             
             // assign domain values to template
             $template = CRM_Core_Smarty::singleton( );

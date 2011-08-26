@@ -143,7 +143,8 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
         $mailing = new CRM_Mailing_BAO_Mailing( );
         $mailing->id = $options['mailing_id'];
         $mailing->find( true );
-        $fromEmail = $mailing->from_email;
+        $fromEmail    = $mailing->from_email;
+        $replyToEmail = $mailing->replyto_email;
         
         require_once 'CRM/Core/BAO/File.php';
         $attachments =& CRM_Core_BAO_File::getEntityFile( 'civicrm_mailing',
@@ -152,7 +153,15 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
         $returnProperties = $mailing->getReturnProperties( );
         $userID = $session->get( 'userID' );
         $params = array( 'contact_id' => $userID );
-        $details = $mailing->getDetails( $params, $returnProperties );
+
+        require_once 'CRM/Utils/Token.php';
+        $details = CRM_Utils_Token::getTokenDetails( $params,
+                                                     $returnProperties,
+                                                     true, true, null,
+                                                     $mailing->getFlattenedTokens( ),
+                                                     get_class( $this )
+                                                     );
+
         $allDetails =& $mailing->compose( null, null, null, 
                                           $userID,
                                           $fromEmail,

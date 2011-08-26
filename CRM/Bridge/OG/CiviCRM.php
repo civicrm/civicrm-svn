@@ -91,9 +91,9 @@ class CRM_Bridge_OG_CiviCRM {
             return;
         }
 
-        require_once 'api/v2/UFGroup.php';
+        require_once 'CRM/Core/BAO/UFMatch.php';
         foreach ( $contactIDs as $contactID ) {
-            $drupalID = civicrm_uf_id_get( $contactID );
+            $drupalID = CRM_Core_BAO_UFMatch::getUFId( $contactID );
             if ( $drupalID ) {
                 $crm_user = user_load($drupalID);
                 

@@ -595,7 +595,8 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                                'gid' => implode( ',', $this->_profileIds ) );
 
             if ( $this->_linkToUF ) {
-                $ufID = civicrm_uf_id_get( $result->contact_id );
+                require_once 'CRM/Core/BAO/UFMatch.php';
+                $ufID = CRM_Core_BAO_UFMatch::getUFId( $result->contact_id );
                 if ( ! $ufID ) {
                     unset( $newLinks[CRM_Core_Action::PROFILE] );
                 } else {

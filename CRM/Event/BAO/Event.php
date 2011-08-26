@@ -700,23 +700,20 @@ WHERE civicrm_address.geo_code_1 IS NOT NULL
             $startDate =  CRM_Utils_Type::escape( $start, 'Date' );
         } else {
             // get events with start date >= today
-            $startDate =  date("Ymd");
+            $startDate =  date("Y-m-d G:i:s");
         }
 
 
         if ( $end ){
             // also get events with end_date <= requested end
             $endDate =  CRM_Utils_Type::escape( $end, 'Date' );
-            $endCondition = " AND ( civicrm_event.end_date <= {$endDate} OR civicrm_event.end_date IS NULL ) ";
+            $endCondition = " AND ( civicrm_event.end_date <= '{$endDate}' OR civicrm_event.end_date IS NULL ) ";
         } else {
             // get events with end date >= today, not sure of this logic
             // but keeping this for backward compatibility as per issue CRM-5133
-            $endDate =  date("Ymd");
-            $endCondition = " OR civicrm_event.end_date <= {$endDate}";
+            $endDate =  date("Y-m-d G:i:s");
+            $endCondition = " AND ( civicrm_event.end_date >= '{$endDate}' OR civicrm_event.end_date IS NULL ) ";
         }
-
-        $dateCondition = "AND ( civicrm_event.start_date >= {$startDate} $endCondition )";
-        
         
         if ( $type ) {
             $typeCondition = " AND civicrm_event.event_type_id = " . CRM_Utils_Type::escape( $type, 'Integer' ); 
@@ -767,7 +764,7 @@ LEFT JOIN civicrm_option_value ON (
 WHERE civicrm_event.is_active = 1 
       AND civicrm_event.is_public = 1
       AND (is_template = 0 OR is_template IS NULL)
-      {$dateCondition}";
+      {$endCondition}";
       
         if( isset( $typeCondition ) ) {
             $query .= $typeCondition;

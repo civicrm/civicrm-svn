@@ -53,7 +53,11 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     $errorFnName = ( $version == 2 ) ? 'civicrm_create_error' : 'civicrm_api3_create_error';
     if ($version > 2) civicrm_api3_api_check_permission($entity, $action, $params);
     $function = civicrm_api_get_function_name($entity, $action,$version);
+    $defaultsFunction = '_' .$function. '_defaults';
     civicrm_api_include($entity,null,$version);
+    if(function_exists($defaultsFunction)){
+      $params = array_merge($defaultsFunction(),$params);
+    }
     if ( !function_exists ($function ) ) {
       switch (strtolower($action)){
         case "getfields":
@@ -253,6 +257,26 @@ function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
     
 }
 
+/**
+ * Check if the result is an error. Note that this function has been retained from 
+ * api v2 for convenience but the result is more standardised in v3 and param
+ * 'format.is_success' => 1
+ * will result in a boolean success /fail being returned if that is what you need.
+ *
+ * @param  array   $params           (reference ) input parameters
+ *
+ * @return boolean true if error, false otherwise
+ * @static void
+ * @access public
+ */
+function civicrm_error( $result ) 
+{
+    if ( is_array( $result ) ) {
+        return ( array_key_exists( 'is_error', $result ) &&
+                 $result['is_error'] ) ? true : false;
+    }
+    return false;
+}
 
 function civicrm_api_get_camel_name( $entity, $version = NULL ) 
 {
