@@ -54,7 +54,7 @@
                 <td class="html-adjust">{$form.uf_group_type.html}&nbsp;{$otherModuleString}</td>
             </tr>
             <tr class="crm-uf_group-form-block-weight" >
-                <td class="label">{$form.weight.label}{if $config->userFramework EQ 'Drupal'} {help id='id-profile_weight' file="CRM/UF/Form/Group.hlp"}{/if}</td>
+                <td class="label">{$form.weight.label}{if $config->userSystem->is_drupal EQ '1'} {help id='id-profile_weight' file="CRM/UF/Form/Group.hlp"}{/if}</td>
                 <td class="html-adjust">{$form.weight.html}</td>
             </tr>
             <tr class="crm-uf_group-form-block-help_pre" >
