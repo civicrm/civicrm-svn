@@ -67,7 +67,8 @@ if ( $installType == 'drupal' ) {
         'install' . DIRECTORY_SEPARATOR;
 }
 
-require_once $crmPath.'/CRM/Utils/System.php';
+set_include_path(get_include_path() . PATH_SEPARATOR . $crmPath);
+require_once 'CRM/Utils/System.php';
 
 $docLink = CRM_Utils_System::docURL2( 'Installation and Upgrades', false, 'Installation Guide' );
 
@@ -171,15 +172,19 @@ if ( $installType == 'drupal' ) {
     }
 
     define('DRUPAL_ROOT', $cmsPath);
-    $drupalVersionFile = implode(CIVICRM_DIRECTORY_SEPARATOR, array($cmsPath, 'includes', 'bootstrap.inc'));
-
-    if ( file_exists( $drupalVersionFile ) ) {
-        require_once $drupalVersionFile;
+    $drupalVersionFiles = array(
+        implode(CIVICRM_DIRECTORY_SEPARATOR, array($cmsPath, 'modules', 'system', 'system.module')), // D6
+        implode(CIVICRM_DIRECTORY_SEPARATOR, array($cmsPath, 'includes', 'bootstrap.inc')), // D7
+    );
+    foreach ($drupalVersionFiles as $drupalVersionFile) {
+        if ( file_exists( $drupalVersionFile ) ) {
+            require_once $drupalVersionFile;
+        }
     }
 
-    if ( !defined('VERSION') or version_compare(VERSION, '7.0-rc1') < 0 ) {
+    if ( !defined('VERSION') or version_compare(VERSION, '6.0') < 0 ) {
         $errorTitle = "Oops! Incorrect Drupal Version";
-        $errorMsg = "This version of CiviCRM can only be used with Drupal 7.x. Please ensure that '$drupalVersionFile' exists if you are running Drupal 7.0 and over. Refer to the online " . $docLink . " for information about installing CiviCRM.";
+        $errorMsg = "This version of CiviCRM can only be used with Drupal 6.x or 7.x. Please ensure that '".implode("' or '", $drupalVersionFiles)."' exists if you are running Drupal 7.0 and over. Refer to the online " . $docLink . " for information about installing CiviCRM.";
         errorDisplayPage( $errorTitle, $errorMsg );
     }
 } elseif ( $installType == 'wordpress' ) {
@@ -339,8 +344,8 @@ class InstallRequirements {
             $siteDir = getSiteDir( $cmsPath, $_SERVER['SCRIPT_FILENAME'] );
 
             // make sure that we can write to sites/default and files/
-            $writableDirectories = array( $cmsPath . 'sites' . CIVICRM_DIRECTORY_SEPARATOR . $siteDir . CIVICRM_DIRECTORY_SEPARATOR . 'files',
-                                          $cmsPath . 'sites' . CIVICRM_DIRECTORY_SEPARATOR . $siteDir );
+            $writableDirectories = array( $cmsPath . CIVICRM_DIRECTORY_SEPARATOR . 'sites' . CIVICRM_DIRECTORY_SEPARATOR . $siteDir . CIVICRM_DIRECTORY_SEPARATOR . 'files',
+                                          $cmsPath . CIVICRM_DIRECTORY_SEPARATOR . 'sites' . CIVICRM_DIRECTORY_SEPARATOR . $siteDir );
         } elseif ( $installType == 'wordpress' ) {
             // make sure that we can write to plugins/civicrm  and plugins/civicrm/files/
             $writableDirectories = array( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'files', $cmsPath );
@@ -827,7 +832,7 @@ class Installer extends InstallRequirements {
         if ( !$this->errors ) {
             global $installType;
 
-            if ( $installType == 'drupal' ) {
+            if ( $installType == 'drupal' && version_compare(VERSION, '7.0-rc1') >= 0 ) {
                 echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
                 echo '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">';
                 echo '<head>';
@@ -892,6 +897,53 @@ class Installer extends InstallRequirements {
                 echo '</div>';
                 echo '</body>';
                 echo '</html>';
+            } elseif ( $installType == 'drupal' && version_compare(VERSION, '6.0')  >= 0 ) {
+                echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+                echo '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">';
+                echo '<head>';
+                echo '<title>CiviCRM Installed</title>';
+                echo '<link rel="stylesheet" type="text/css" href="template.css" />';
+                echo '</head>';
+                echo '<body>';
+                echo '<div style="padding: 1em;"><p class="good">CiviCRM has been successfully installed</p>';
+                echo '<ul>';
+                $docLinkConfig = CRM_Utils_System::docURL2( 'Configuring a New Site', false, 'here' );
+                if (!function_exists('ts')) {
+                    $docLinkConfig = "<a href=\"{$docLinkConfig}\">here</a>";
+                }
+                $drupalURL     = civicrm_cms_base( );
+                $drupalPermissionsURL = "{$drupalURL}index.php?q=admin/user/permissions";
+                $drupalURL .= "index.php?q=civicrm/admin/configtask&reset=1";
+                $registerSiteURL = "http://civicrm.org/civicrm/profile/create?reset=1&gid=15";
+                
+                echo "<li>Drupal user permissions have been automatically set - giving anonymous and authenticated users access to public CiviCRM forms and features. We recommend that you <a target='_blank' href={$drupalPermissionsURL}>review these permissions</a> to ensure that they are appropriate for your requirements (<a target='_blank' href='http://wiki.civicrm.org/confluence/display/CRMDOC/Default+Permissions+and+Roles'>learn more...</a>)</li>
+                      <li>Use the <a target='_blank' href=\"$drupalURL\">Configuration Checklist</a> to review and configure settings for your new site</li>
+                      <li> Have you registered this site at CiviCRM.org? If not, please help strengthen the CiviCRM ecosystem by taking a few minutes to <a href='$registerSiteURL' target='_blank'>fill out the site registration form</a>. The information collected will help us prioritize improvements, target our communications and build the community. If you have a technical role for this site, be sure to check Keep in Touch to receive technical updates (a low volume  mailing list).</li>";
+                
+                // explicitly setting error reporting, since we cannot handle drupal related notices
+                error_reporting(1);
+                
+                // automatically enable CiviCRM module once it is installed successfully.
+                // so we need to Bootstrap Drupal, so that we can call drupal hooks.
+                global $cmsPath, $crmPath;
+
+                // relative / abosolute paths are not working for drupal, hence using chdir()
+                chdir( $cmsPath ); 
+
+                include_once "./includes/bootstrap.inc";
+                drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+
+                // rebuild modules, so that civicrm is added
+                module_rebuild_cache( );
+
+                // now enable civicrm module.
+                module_enable( array('civicrm') );
+
+                // clear block and page cache, to make sure civicrm link is present in navigation block
+                cache_clear_all();
+                
+                //add basic drupal permissions
+                db_query( 'UPDATE {permission} SET perm = CONCAT( perm, \', access CiviMail subscribe/unsubscribe pages, access all custom data, access uploaded files, make online contributions, profile create, profile edit, profile view, register for events, view event info\') WHERE rid IN (1, 2)' );
             } elseif ( $installType == 'wordpress' ) {
                 echo '<div>CiviCRM Installed</div>';
                 echo '<div style="padding: 1em;"><p class="good">CiviCRM has been successfully installed</p>';
