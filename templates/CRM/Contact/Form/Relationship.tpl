@@ -119,17 +119,21 @@
                   <script type="text/javascript">
                     var relType = 0;
                     cj( function( ) {
-                        cj('#contact_1').attr('disabled', true);
                         cj('#profiles_1').attr('disabled', true);
+                        cj('#contact_1').removeClass('ac_input');
+                        cj('#contact_1').attr('disabled', true);
                         createRelation( );
                         var relationshipType = cj('#relationship_type_id'); 
                         relationshipType.change( function() {
                             if ( cj(this).val( ) ) {
                               cj('#profiles_1').attr('disabled', false);
                               cj('#contact_1').attr('disabled', false);
+                              cj('#contact_1').addClass('ac_input');
+                              buildCreateNewSelect( 'profiles_1', cj(this).val() );
                             } else {
-                              cj('#contact_1').attr('disabled', true);
                               cj('#profiles_1').attr('disabled', true);
+                              cj('#contact_1').removeClass('ac_input');
+                              cj('#contact_1').attr('disabled', true);
                             }
                             cj('#relationship-refresh-save').hide();
 			     cj('#saveButtons').hide();
@@ -141,9 +145,10 @@
                     });
 
                     function afterCreateNew() {
-                      cj('#relationship-refresh-save').show( );
                       var relType    = cj('#relationship_type_id').val( );
-                      if ( relType ) {
+                      var contactSelected = cj('#contact_1').val( );
+                      if ( relType && contactSelected ) {
+                        cj('#relationship-refresh-save').show( );
                         buildRelationFields( relType );
                       }
                     }
@@ -164,7 +169,23 @@
                             relContact.unautocomplete( );
                             relContact.click( function() { alert( '{/literal}{ts}Please select a relationship type first.{/ts}{literal} ...' );});
                         }
-                    }       
+                    }
+                    
+                    function buildCreateNewSelect( selectID, relType ) {
+                        var elementID = '#' + selectID;
+                        cj( elementID ).html('');
+                        var postUrl = "{/literal}{crmURL p='civicrm/ajax/relationshipContactTypeList' h=0}{literal}";
+                        cj.post( postUrl, { relType: relType },
+                            function ( response ) {
+                                cj( elementID ).get(0).add(new Option('{/literal}{ts}- create new contact -{/ts}{literal}', ''), document.all ? i : null);
+                                response = eval( response );
+                                for (i = 0; i < response.length; i++) {
+                                    cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
+                                }
+                            }
+                        );
+                    }
+           
 				  </script>
                 {/literal}
                </td>

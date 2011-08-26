@@ -1057,4 +1057,20 @@ LIMIT {$offset}, {$rowCount}
         CRM_Utils_System::civiExit( );
     }
 
+    static function relationshipContactTypeList( ) {
+    	$relType = CRM_Utils_Array::value( 'relType', $_POST );
+
+        require_once "CRM/Contact/BAO/Relationship.php";
+    	$types = CRM_Contact_BAO_Relationship::getValidContactTypeList( $relType );
+    	
+    	$elements = array( );
+        foreach ( $types as $key => $label ) {
+            $elements[] = array( 'name'  => $label,
+                                 'value' => $key );
+        }
+
+        require_once "CRM/Utils/JSON.php";
+        echo json_encode( $elements );
+        CRM_Utils_System::civiExit( );
+    }
 }

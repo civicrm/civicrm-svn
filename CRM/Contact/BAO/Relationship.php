@@ -1317,5 +1317,27 @@ cc.sort_name LIKE '%$name%'";
 
         return $employers;
     }
-}
+    
+	static function getValidContactTypeList( $relType )
+	{
+		$rel_parts = explode('_', $relType); // string looks like 4_a_b
+	    $allRelationshipType = CRM_Core_PseudoConstant::relationshipType( 'label' );
+	    require_once "CRM/Core/BAO/UFGroup.php";
+	    $contactProfiles = CRM_Core_BAO_UFGroup::getReservedProfiles( 'Contact', null );
+	    
+	    if ($rel_parts[1] == 'a') {
+	       $leftType = $allRelationshipType[$rel_parts[0]]['contact_type_b'];
+	    } else {
+	       $leftType = $allRelationshipType[$rel_parts[0]]['contact_type_a'];
+	    }
 
+	    $contactTypes = array();
+	    foreach ($contactProfiles as $key => $value) {
+    		if (strpos($value, $leftType) !== FALSE) {
+                $contactTypes = array( $key => $value );
+	   	    }
+	    }
+	    
+	    return $contactTypes;
+	}
+}

@@ -373,4 +373,9 @@
      <page_callback>CRM_Contact_Page_AJAX::buildDedupeRules</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
 </item>
+<item>
+     <path>civicrm/ajax/relationshipContactTypeList</path>
+     <page_callback>CRM_Contact_Page_AJAX::relationshipContactTypeList</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+</item>
 </menu>
