@@ -445,15 +445,10 @@ class CRM_Utils_Hook {
     static function invoke( $numParams,
                             &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
                             $fnSuffix, $fnPrefix ) {
-        static $included = false;
+        static $included    = false;
+        static $civiModules = array( );
 
-        $result = array( );
-        $fnName = "{$fnPrefix}_{$fnSuffix}";
-        if ( ! function_exists( $fnName ) ) {
-            if ( $included ) {
-                return;
-            }
-
+        if ( ! $included ) {
             // include external file
             $included = true;
 
@@ -463,26 +458,55 @@ class CRM_Utils_Hook {
                 @include_once( "civicrmHooks.php" );
             }
 
-            if ( ! function_exists( $fnName ) ) {
-                return;
+            if ( ! empty( $fnPrefix ) ) {
+                $civiModules[$fnPrefix] = $fnPrefix;
             }
+
+            self::requireCiviModules( $civiModules );
         }
 
-        if ( $numParams == 1 ) {
-            $result = $fnName( $arg1 );
-        } else if ( $numParams == 2 ) {
-            $result = $fnName( $arg1, $arg2 );
-        } else if ( $numParams == 3 ) {
-            $result = $fnName( $arg1, $arg2, $arg3 );
-        } else if ( $numParams == 4 ) {
-            $result = $fnName( $arg1, $arg2, $arg3, $arg4 );
-        } else if ( $numParams == 5 ) {
-            $result = $fnName( $arg1, $arg2, $arg3, $arg4, $arg5 );
+        return self::runHooks( $civiModules );
+    }
+
+    static function runHooks( &$civiModules ) {
+        $result = array( );
+        foreach ( $civiModules as $module) { 
+            $fnName = "{$module}_{$fnSuffix}";
+            if ( function_exists( $fnName ) ) {
+                if ( $numParams == 1 ) {
+                    $fResult = $fnName( $arg1 );
+                } else if ( $numParams == 2 ) {
+                    $fResult = $fnName( $arg1, $arg2 );
+                } else if ( $numParams == 3 ) {
+                    $fResult = $fnName( $arg1, $arg2, $arg3 );
+                } else if ( $numParams == 4 ) {
+                    $fResult = $fnName( $arg1, $arg2, $arg3, $arg4 );
+                } else if ( $numParams == 5 ) {
+                    $fResult = $fnName( $arg1, $arg2, $arg3, $arg4, $arg5 );
+                }
+
+                if ( is_array( $fResult ) ) {
+                    $result = array_merge( $result, $fResult );
+                }
+
+            }
         }
 
         return empty( $result ) ? true : $result;
     }
 
+    static function requireCiviModules( &$moduleList ) {
+        $config = CRM_Core_Config::singleton( );
+        if ( isset( $config->extensionsDir ) &&
+             ! empty( $config->civiModules ) ) {
+            foreach ( $config->civiModules as $moduleName => $modulePath ) {
+                include_once(
+                             $config->extensionsDir . DIRECTORY_SEPARATOR . 
+                             $modulePath );
+                $moduleList[$moduleName] = $moduleName;
+            }
+        }
+    }
     static function customFieldOptions( $customFieldID, &$options, $detailedFormat = false ) {
         $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
