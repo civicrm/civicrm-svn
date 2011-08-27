@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Core</base>
+  <class>Job</class>
+  <name>civicrm_job</name>
+  <comment>Scheduled job.</comment>
+  <add>4.1</add>
+  <log>false</log>
+  <field>
+      <name>id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>Job Id</comment>
+       <add>4.1</add>
+  </field>
+  <primaryKey>
+       <name>id</name>
+       <autoincrement>true</autoincrement>
+  </primaryKey>
+  <field>
+      <name>domain_id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>Which Domain is this scheduled job for</comment>
+      <add>4.1</add>
+  </field>
+  <foreignKey>
+       <name>domain_id</name>
+       <table>civicrm_domain</table>
+       <key>id</key>
+       <add>4.1</add>
+  </foreignKey>  
+  <field>
+       <name>cron_string</name>
+       <type>varchar</type>
+       <length>255</length>
+       <comment>Cron string for this job</comment>
+       <add>4.1</add>
+  </field>
+  <field>
+       <name>last_run</name>
+       <type>datetime</type>
+       <default>NULL</default>
+       <comment>When was this cron entry last run</comment>
+       <add>4.1</add>
+  </field>
+  <field>
+       <name>name</name>
+       <type>varchar</type>
+       <length>255</length>
+       <comment>Title of the job</comment>
+       <add>4.1</add>
+  </field>
+  <field>
+       <name>description</name>
+       <type>varchar</type>
+       <length>255</length>
+       <comment>Description of the job</comment>
+       <add>4.1</add>
+  </field>  
+  <field>
+       <name>script</name>
+       <type>varchar</type>
+       <length>255</length>
+       <comment>Full path to file containing job script</comment>
+       <add>4.1</add>
+  </field>
+  <field>
+       <name>is_active</name>
+       <type>boolean</type>
+       <comment>Is this job active?</comment>
+       <add>4.1</add>
+  </field>
+</table>

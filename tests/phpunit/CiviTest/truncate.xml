@@ -13,6 +13,10 @@
 
   <civicrm_financial_trxn />
 
+  <civicrm_job />
+
+  <civicrm_job_log />
+
   <civicrm_location_type />
 
   <civicrm_mail_settings />

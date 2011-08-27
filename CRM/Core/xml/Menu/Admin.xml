@@ -270,7 +270,7 @@
   </item>
   <item>
      <path>civicrm/admin/scheduleReminders</path>
-     <title>Schedule Reminders</title>
+     <title>Schedule Reminders</title>[A
      <desc>Schedule Reminders.</desc>
      <page_callback>CRM_Admin_Page_ScheduleReminders</page_callback>
      <adminGroup>Configure</adminGroup>
@@ -389,6 +389,24 @@
      <icon>admin/small/13.png</icon>
      <weight>360</weight>
   </item>
+  <item>
+     <path>civicrm/admin/job</path>
+     <title>Scheduled Jobs</title>
+     <desc>Managing periodially running tasks.</desc>
+     <page_callback>CRM_Admin_Page_Job</page_callback>
+     <adminGroup>Manage</adminGroup>
+     <icon>admin/small/13.png</icon>
+     <weight>1370</weight>
+  </item>  
+  <item>
+     <path>civicrm/admin/joblog</path>
+     <title>Scheduled Jobs Log</title>
+     <desc>Browsing the log of periodially running tasks.</desc>
+     <page_callback>CRM_Admin_Page_JobLog</page_callback>
+     <adminGroup>Manage</adminGroup>
+     <icon>admin/small/13.png</icon>
+     <weight>1380</weight>
+  </item>    
   <item>
      <path>civicrm/admin/reltype</path>
      <title>Relationship Types</title>
