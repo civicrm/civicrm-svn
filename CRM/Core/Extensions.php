@@ -261,27 +261,29 @@ class CRM_Core_Extensions
 
         // now check for upgrades - rolling over installed, since
         // those that we care to upgrade
-        foreach( $installed as $dc => $i ) {
-            $key = $i->key;
-            foreach( $remote as $dc => $r ) {
-                if( $key == $r->key ) {
-                    $installedVersion = explode('.', $i->version);
-                    $remoteVersion = explode('.', $r->version);
+        if ( is_array( $remote ) ) {
+            foreach( $installed as $dc => $i ) {
+                $key = $i->key;
+                foreach( $remote as $dc => $r ) {
+                    if( $key == $r->key ) {
+                        $installedVersion = explode('.', $i->version);
+                        $remoteVersion = explode('.', $r->version);
 
-                    for ($y = 0; $y < 2; $y++) {
-                        if( CRM_Utils_Array::value( $y, $installedVersion ) == CRM_Utils_Array::value( $y,$remoteVersion ) ) {
-                            $outdated = false;
-                        } elseif( CRM_Utils_Array::value( $y, $installedVersion ) > CRM_Utils_Array::value( $y,$remoteVersion ) ) {
-                            $outdated = false;
-                        } elseif( CRM_Utils_Array::value($y,$installedVersion) < CRM_Utils_Array::value($y,$remoteVersion) ) {
-                            $outdated = true;
+                        for ($y = 0; $y < 2; $y++) {
+                            if( CRM_Utils_Array::value( $y, $installedVersion ) == CRM_Utils_Array::value( $y,$remoteVersion ) ) {
+                                $outdated = false;
+                            } elseif( CRM_Utils_Array::value( $y, $installedVersion ) > CRM_Utils_Array::value( $y,$remoteVersion ) ) {
+                                $outdated = false;
+                            } elseif( CRM_Utils_Array::value($y,$installedVersion) < CRM_Utils_Array::value($y,$remoteVersion) ) {
+                                $outdated = true;
+                            }
                         }
-                    }
-                    $upg = $exts[$key];
+                        $upg = $exts[$key];
                     
 
                     
-                    if( $outdated ) { $upg->setUpgradable(); $upg->setUpgradeVersion( $r->version ); }
+                        if( $outdated ) { $upg->setUpgradable(); $upg->setUpgradeVersion( $r->version ); }
+                    }
                 }
             }
         }
@@ -626,7 +628,7 @@ class CRM_Core_Extensions
         }
 
         $extdir = file_get_contents( self::PUBLIC_EXTENSIONS_REPOSITORY );
-
+        var_dump( $extdir );
         if( $extdir === FALSE ) {
             CRM_Core_Error::fatal('Public directory down or too slow - please contact CiviCRM team on forums.');
         }
