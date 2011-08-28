@@ -1333,7 +1333,7 @@ SELECT contact_id
         return $tableName;
    }
 
-    static function checkTriggerViewPermission( $view = true ) {
+    static function checkTriggerViewPermission( $view = true, $trigger = true ) {
         // test for create view and trigger permissions and if allowed, add the option to go multilingual
         // and logging
         CRM_Core_Error::ignoreException();
@@ -1346,25 +1346,27 @@ SELECT contact_id
             }
         }
 
-        $dao->query('CREATE TRIGGER civicrm_domain_trigger BEFORE INSERT ON civicrm_domain FOR EACH ROW BEGIN END');
-
-        if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
-            CRM_Core_Error::setCallback();
-            if ( $view ) {
-                $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
-            }
-            return false;
+        if ( $trigger) {
+	        $dao->query('CREATE TRIGGER civicrm_domain_trigger BEFORE INSERT ON civicrm_domain FOR EACH ROW BEGIN END');
+	
+	        if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
+	            CRM_Core_Error::setCallback();
+	            if ( $view ) {
+	                $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
+	            }
+	            return false;
+	        }
+	
+	        $dao->query('DROP TRIGGER IF EXISTS civicrm_domain_trigger');
+	        if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
+	            CRM_Core_Error::setCallback();
+	            if ( $view ) {
+	                $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
+	            }
+	            return false;
+	        }
         }
-
-        $dao->query('DROP TRIGGER IF EXISTS civicrm_domain_trigger');
-        if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
-            CRM_Core_Error::setCallback();
-            if ( $view ) {
-                $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
-            }
-            return false;
-        }
-
+        
         if ( $view ) {
             $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
             if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {

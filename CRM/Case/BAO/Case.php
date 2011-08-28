@@ -616,11 +616,11 @@ t_act.act_type AS case_recent_activity_type ";
 (
 SELECT act3.case_id, act3.minid AS id, act_details.activity_date_time AS desired_date, act_details.activity_type_id, 
 act_details.status_id, aov.name AS act_type_name, aov.label AS act_type
-FROM smaller_act_upcoming act_details INNER JOIN
+FROM civicrm_view_case_activity_upcoming act_details INNER JOIN
 (
-  SELECT t.case_id, MIN(act2.id) as minid FROM smaller_act_upcoming act2 INNER JOIN
-    (SELECT smaller_act_upcoming.case_id, MIN(smaller_act_upcoming.activity_date_time) AS mindate FROM smaller_act_upcoming
-     GROUP BY smaller_act_upcoming.case_id ORDER BY NULL
+  SELECT t.case_id, MIN(act2.id) as minid FROM civicrm_view_case_activity_upcoming act2 INNER JOIN
+    (SELECT vu.case_id, MIN(vu.activity_date_time) AS mindate FROM civicrm_view_case_activity_upcoming vu
+     GROUP BY vu.case_id ORDER BY NULL
     ) AS t
   ON act2.activity_date_time = t.mindate
   GROUP BY t.case_id ORDER BY NULL
@@ -632,30 +632,16 @@ LEFT JOIN civicrm_option_value aov ON (aov.option_group_id = aog.id AND aov.valu
   
         } else if ( $type == 'recent' ) {
         	// Similarly, the most recent activity in the past 14 days, and exclude scheduled.
-/*            $query .= " INNER JOIN
-(
-  SELECT ca.case_id, act_details.id, act_details.activity_type_id, act_details.status_id, act_details.name as act_type_name, act_details.label AS act_type,
-  MAX(act_details.activity_date_time) as desired_date FROM
-    (SELECT aov.name, aov.label, a.id, a.activity_date_time, a.activity_type_id, a.status_id
-     FROM civicrm_activity a LEFT JOIN civicrm_option_group aog ON aog.name = 'activity_type' 
-     LEFT JOIN civicrm_option_value aov ON ( a.activity_type_id = aov.value AND aog.id = aov.option_group_id )
-     WHERE a.is_deleted=0 AND a.is_current_revision=1 AND a.status_id != $scheduledStatusId
-    ) AS act_details
-  INNER JOIN civicrm_case_activity ca ON ca.activity_id=act_details.id WHERE
-  act_details.activity_date_time <= NOW()
-  AND act_details.activity_date_time >= DATE_SUB( NOW(), INTERVAL 14 DAY )
-  group by ca.case_id
-) AS t_act ";*/
 
             $query .= " INNER JOIN
 (
 SELECT act3.case_id, act3.minid AS id, act_details.activity_date_time AS desired_date, act_details.activity_type_id, 
 act_details.status_id, aov.name AS act_type_name, aov.label AS act_type
-FROM smaller_act_recent act_details INNER JOIN
+FROM civicrm_view_case_activity_recent act_details INNER JOIN
 (
-  SELECT t.case_id, MIN(act2.id) as minid FROM smaller_act_recent act2 INNER JOIN
-    (SELECT smaller_act_recent.case_id, MIN(smaller_act_recent.activity_date_time) AS mindate FROM smaller_act_recent
-     GROUP BY smaller_act_recent.case_id ORDER BY NULL
+  SELECT t.case_id, MIN(act2.id) as minid FROM civicrm_view_case_activity_recent act2 INNER JOIN
+    (SELECT vr.case_id, MAX(vr.activity_date_time) AS mindate FROM civicrm_view_case_activity_recent vr
+     GROUP BY vr.case_id ORDER BY NULL
     ) AS t
   ON act2.activity_date_time = t.mindate
   GROUP BY t.case_id ORDER BY NULL
@@ -741,12 +727,12 @@ LEFT JOIN civicrm_option_value cov_status
             $allCases = false;
         }
         
-        if ( !$allCases ) {
-            $condition = " AND case_relationship.contact_id_b = {$userID}";
-        }
 
-        $condition .= "
-AND civicrm_case.is_deleted     = 0";
+        $condition = " civicrm_case.is_deleted = 0 ";
+        
+        if ( !$allCases ) {
+            $condition .= " AND case_relationship.contact_id_b = {$userID} ";
+        }
         
         if ( $type == 'upcoming' ) {
             require_once 'CRM/Core/OptionGroup.php';
