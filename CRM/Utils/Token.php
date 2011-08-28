@@ -365,7 +365,8 @@ class CRM_Utils_Token
             return $str;
         }
         
-        $str = preg_replace(self::tokenRegex($key),'self::getMailingTokenReplacement(\'\\1\',$mailing,$escapeSmarty)',$str);
+        $str = preg_replace( self::tokenRegex($key),
+                             'self::getMailingTokenReplacement(\'\\1\',$mailing,$escapeSmarty)', $str );
         return $str;
     }
 

@@ -256,7 +256,20 @@ INSERT INTO civicrm_location_type ( name, description, is_reserved, is_active )
             $dao->save( );
             $dao->free( );
         }
+
+        $bulkEmailActivityType = CRM_Core_DAO::singleValueQuery("
+SELECT v.id
+FROM   civicrm_option_value v, 
+       civicrm_option_group g 
+WHERE  v.option_group_id = g.id 
+  AND  g.name      = %1 
+  AND  g.is_active = 1  
+  AND  v.name      = %2", array( 1 => array('activity_type', 'String'),
+                                 2 => array('Bulk Email', 'String') ) );
+
         $upgrade = new CRM_Upgrade_Form( );
+        $upgrade->assign('bulkEmailActivityType', $bulkEmailActivityType);
+
         $upgrade->processSQL( $rev );
     }
   }
