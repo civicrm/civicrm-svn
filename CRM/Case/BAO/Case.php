@@ -680,7 +680,7 @@ LEFT JOIN civicrm_option_value cov_status
 ";
 
         if ( $condition ) {
-            $query .= " WHERE $condition ";
+            $query .= " WHERE 1 $condition ";
         }
 
         if ( $type == 'upcoming' ) {
@@ -728,7 +728,7 @@ LEFT JOIN civicrm_option_value cov_status
         }
         
 
-        $condition = " civicrm_case.is_deleted = 0 ";
+        $condition = " AND civicrm_case.is_deleted = 0 ";
         
         if ( !$allCases ) {
             $condition .= " AND case_relationship.contact_id_b = {$userID} ";
@@ -1587,7 +1587,6 @@ AND        ca.is_deleted = 0"
         $condition = "
 AND civicrm_case_contact.contact_id IN( {$contactID} ) 
 AND civicrm_case.id IN( {$caseID})
-AND civicrm_activity.is_deleted = {$cases['case_deleted']}
 AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
 
         $query = self::getCaseActivityQuery( $type, $userID, $condition, $cases['case_deleted'] );
