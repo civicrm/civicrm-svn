@@ -131,7 +131,7 @@ class CRM_Case_Form_Activity_OpenCase
         }
         
         require_once 'CRM/Case/PseudoConstant.php';
-        $caseType = CRM_Case_PseudoConstant::caseType( );
+        $caseType = array( '' => '-select-' ) + CRM_Case_PseudoConstant::caseType( );
         $form->add('select', 'case_type_id',  ts( 'Case Type' ),  
                    $caseType , true, array('onchange' => 
                                            "buildCustomData( 'Case', this.value );"));

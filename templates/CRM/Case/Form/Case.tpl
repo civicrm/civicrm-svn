@@ -144,13 +144,12 @@ cj("select[multiple]").crmasmSelect({
     {literal}
       <script type="text/javascript">
       cj(document).ready(function() {
-		{/literal}
-                {if $customDataSubType}
-                    buildCustomData( '{$customDataType}', {$customDataSubType} );
-                {else}
-                    buildCustomData( '{$customDataType}' );
-                {/if}
-    		{literal}
+           var customDataSubType = cj('#case_type_id').val();
+           if ( customDataSubType ) {
+              buildCustomData( {/literal}'{$customDataType}'{literal}, customDataSubType );
+           } else {
+              buildCustomData( {/literal}'{$customDataType}'{literal} );
+           } 
        });
        </script>
      {/literal}

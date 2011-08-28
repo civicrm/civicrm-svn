@@ -246,9 +246,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form
             return CRM_Custom_Form_CustomData::buildQuickForm( $this );
         }
         //need to assign custom data type and subtype to the template
-        $this->assign('customDataType',     'Case');
-/*         $this->assign('customDataSubType',  $this->_activityTypeId ); */
-/*         $this->assign('entityID',           $this->_activityId ); */
+        $this->assign('customDataType', 'Case');
         
         CRM_Custom_Form_Customdata::buildQuickForm( $this );
         // we don't want to show button on top of custom form
