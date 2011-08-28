@@ -200,7 +200,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
      */
     function &add($type, $name, $label = '',
                   $attributes = '', $required = false, $javascript = null ) {
-        $element =& $this->addElement($type, $name, $label, $attributes, $javascript );
+        $element = $this->addElement($type, $name, $label, $attributes, $javascript );
         if (HTML_QuickForm::isError($element)) {
             CRM_Core_Error::fatal(HTML_QuickForm::errorMessage($element));
         }
@@ -340,7 +340,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         
         $this->buildQuickForm();
 
-        $defaults =& $this->setDefaultValues( );
+        $defaults = $this->setDefaultValues( );
         unset( $defaults['qfKey'] );
         
         if ( ! empty( $defaults ) ) {
@@ -388,7 +388,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
             }
 
             if ( $button['type'] === 'reset' ) {
-                $prevnext[] =& $this->createElement( $button['type'], 'reset', $button['name'], $attrs );
+                $prevnext[] = $this->createElement( $button['type'], 'reset', $button['name'], $attrs );
             } else {
                 if ( CRM_Utils_Array::value( 'subName', $button ) ) {
                     $buttonName = $this->getButtonName( $button['type'], $button['subName'] );
@@ -399,7 +399,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
                 if ( in_array( $button['type'], array( 'next', 'upload' ) ) && $button['name'] === 'Save' ) {
                     $attrs = array_merge( $attrs , ( array ( 'accesskey' => 'S' ) ) );
                 }                
-                $prevnext[] =& $this->createElement( 'submit', $buttonName, $button['name'], $attrs );
+                $prevnext[] = $this->createElement( 'submit', $buttonName, $button['name'], $attrs );
             }
             if ( CRM_Utils_Array::value( 'isDefault', $button ) ) {
                 $this->setDefaultAction( $button['type'] );
@@ -530,7 +530,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
      * @access public
      */  
     function toSmarty() {
-        $renderer =& $this->getRenderer();
+        $renderer = $this->getRenderer();
         $this->accept($renderer);
         $content = $renderer->toArray();
         $content['formName'] = $this->getName();
@@ -670,7 +670,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         foreach ( $values as $key => $var ) {
             $options[] = HTML_QuickForm::createElement('radio', null, null, $var, $key, $attributes);
         }
-        $group =& $this->addGroup($options, $name, $title, $separator);
+        $group = $this->addGroup($options, $name, $title, $separator);
         if ($required) {
             $this->addRule($name, ts('%1 is a required field.', array(1 => $title)), 'required');
         }           
@@ -679,12 +679,12 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
 
     function addYesNo( $id, $title, $dontKnow = null ,$required = null, $attribute = null) {
         $choice   = array( );
-        $choice[] =& $this->createElement( 'radio', null, '11', ts( 'Yes' ), '1', $attribute );
-        $choice[] =& $this->createElement( 'radio', null, '11', ts( 'No' ) , '0', $attribute );
+        $choice[] = $this->createElement( 'radio', null, '11', ts( 'Yes' ), '1', $attribute );
+        $choice[] = $this->createElement( 'radio', null, '11', ts( 'No' ) , '0', $attribute );
         if ( $dontKnow ) {
-            $choice[] =& $this->createElement( 'radio', null, '22', ts( "Don't Know" ), '2', $attribute );
+            $choice[] = $this->createElement( 'radio', null, '22', ts( "Don't Know" ), '2', $attribute );
         }
-        $group =& $this->addGroup( $choice, $id, $title );
+        $group = $this->addGroup( $choice, $id, $title );
 
         if ( $required ) {
             $this->addRule($id,  ts('%1 is a required field.', array(1 => $title)),'required');
@@ -729,7 +729,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
     }
                           
     function resetValues( ) {
-        $data =& $this->controller->container( );
+        $data = $this->controller->container( );
         $data['values'][$this->_name] = array( );
     }
 

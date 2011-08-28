@@ -44,7 +44,7 @@
 
       <div class="messages help">
         <p>{ts 1=$adminURL}CiviCRM extensions allow you to install additional features for your site. They can provide new functionality in three areas: Custom Searches, Report Templates and Payment Processors. In order to install an extension, you need to upload it manually to your <a href="%1">Extensions Directory</a>, reload this page and click Install. Once installed, extensions become available under the Custom Searches, Report Templates or Payment Processor Types administrative screens.{/ts}</p>
-        <strong>{ts 1="http://forum.civicrm.org"}Please note that extensions are in a testing period during the 3.3 release cycle. Get in touch with the CiviCRM core team on the <a href="%1">community forum</a> if you've developed an extension which you want to share with the community.{/ts}</strong>
+        <strong>{ts 1="http://forum.civicrm.org"}Please note that extensions are in a testing period during the 4.1 release cycle. Get in touch with the CiviCRM core team on the <a href="%1">community forum</a> if you've developed an extension which you want to share with the community.{/ts}</strong>
       </div>
 
       {include file="CRM/common/enableDisable.tpl"}

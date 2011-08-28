@@ -28,10 +28,19 @@
 {if $cdType }
    {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}
+<h3>{if $action eq 1 or $action eq 1024}
+        {ts 1=$activityTypeName}New %1{/ts}
+    {elseif $action eq 8}{ts 1=$activityTypeName}Delete %1{/ts}
+    {elseif $action eq 32768}{ts 1=$activityTypeName}Restore %1{/ts}
+    {else}{ts 1=$activityTypeName}Edit %1{/ts}{/if}
+</h3> 
 <div class="crm-block crm-form-block crm-case-activity-form-block">
-    {if $action neq 8 and $action  neq 32768 }
 
-{* added onload javascript for source contact*}
+{if $action neq 8 and $action  neq 32768 }
+    {* Include form buttons on top for new and edit modes. *}
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+
+    {* added onload javascript for source contact*}
 {literal}
 <script type="text/javascript">
 var target_contact = assignee_contact = target_contact_id = '';
@@ -88,15 +97,6 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
 
     {/if}
 
-        <legend>
-           {if $action eq 8}
-              {ts}Delete{/ts}
-           {elseif $action eq 4}
-              {ts}View{/ts}
-           {elseif $action eq 32768}
-              {ts}Restore{/ts}
-           {/if}
-        </legend>
         {if $action eq 8 or $action eq 32768 }
             <div class="messages status"> 
               <div class="icon inform-icon"></div> &nbsp;

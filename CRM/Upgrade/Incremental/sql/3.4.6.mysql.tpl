@@ -27,3 +27,18 @@ INSERT INTO civicrm_option_value
   (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight,{localize field='description'}description{/localize}, is_optgroup,is_reserved, is_active, component_id, visibility_id ) 
 VALUES
     (@ogrID  , {localize}'{ts escape="sql"}Contribution History By Relationship Report{/ts}'{/localize}, 'contribute/history', 'CRM_Report_Form_Contribute_History', NULL, 0, 0,  @max_weight+1, {localize}'{ts escape="sql"}List contact\'s donation history, grouped by year, along with contributions attributed to any of the contact\'s related contacts.{/ts}'{/localize}, 0, 0, 1, @contributeCompId, NULL);
+
+-- CRM-8728
+SELECT @option_group_id_activity_type := max(id) from civicrm_option_group where name = 'activity_type';
+{if $bulkEmailActivityType}
+  -- make sure Bulk Email is active and resereved
+  UPDATE civicrm_option_value SET is_reserved = 1, is_active = 1 WHERE option_group_id=@option_group_id_activity_type AND name='Bulk Email'; 
+{else}
+  -- insert activity type Bulk Email
+  SELECT @max_val := MAX(ROUND(op.value)) FROM civicrm_option_value op WHERE op.option_group_id  = @option_group_id_activity_type;
+  SELECT @max_wt  := max(weight) from civicrm_option_value where option_group_id=@option_group_id_activity_type;
+  INSERT INTO civicrm_option_value
+        (option_group_id, {localize field='label'}label{/localize}, {localize field='description'}description{/localize}, value, name, weight, filter, is_reserved, component_id)
+  VALUES
+    (@option_group_id_activity_type, {localize}'Bulk Email'{/localize}, {localize}'Bulk Email Sent.'{/localize}, (@max_val+1), 'Bulk Email', (SELECT @max_wt := @max_wt+1), 1, 1, NULL);
+{/if}
