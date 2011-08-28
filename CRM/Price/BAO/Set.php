@@ -516,8 +516,6 @@ WHERE  id = %1";
             
             //get the price set fields participant count.
             if ( $entityTable == 'civicrm_event' ) {
-                require_once "CRM/Price/BAO/Set.php";
-                
                 //get option count info.
                 $form->_priceSet['optionsCountTotal'] = self::getPricesetCount( $priceSetId );
                 if ( $form->_priceSet['optionsCountTotal'] ) {
@@ -831,6 +829,22 @@ INNER JOIN  civicrm_price_set pset    ON ( pset.id = field.price_set_id )
         }
         
         return $pricesetFieldCount[$sid];
+    }
+
+    public static function getMembershipCount( $ids )
+    {
+        $queryString = "
+SELECT   count( id ) AS count, id
+FROM     civicrm_price_field_value
+WHERE    id IN ( $ids )
+GROUP BY membership_type_id";
+        $crmDAO = CRM_Core_DAO::executeQuery( $queryString );
+        $count = array();
+
+        while ( $crmDAO->fetch() ) {
+            $count[$crmDAO->id] = $crmDAO->count;
+        }
+        return $count;
     }
 }
 
