@@ -52,7 +52,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       // Go directly to the URL of the screen that you will be testing (New Individual).
       $this->WebtestAddGroup( );
-      $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual");
+      $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
 
       //contact details section
       //select prefix
@@ -179,7 +179,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->webtestLogin( );
       
       // Go directly to the URL of the screen that you will be testing (New Household).
-      $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Household");
+      $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Household");
       
       //contact details section
       //fill in Household name
@@ -290,7 +290,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->webtestLogin( );
       
       // Go directly to the URL of the screen that you will be testing (New Organization).
-      $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Organization");
+      $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Organization");
       
       
       //contact details section
@@ -393,7 +393,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->webtestLogin( );
 
       // Go directly to the URL of the screen that you will be testing (New Individual).
-      $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual");
+      $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
 
       //contact details section
       //select prefix
