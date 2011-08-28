@@ -465,10 +465,10 @@ class CRM_Utils_Hook {
             self::requireCiviModules( $civiModules );
         }
 
-        return self::runHooks( $civiModules );
+        return self::runHooks( $civiModules, $fnSuffix );
     }
 
-    static function runHooks( &$civiModules ) {
+    static function runHooks( &$civiModules, $fnSuffix ) {
         $result = array( );
         foreach ( $civiModules as $module) { 
             $fnName = "{$module}_{$fnSuffix}";
