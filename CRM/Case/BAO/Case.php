@@ -680,7 +680,8 @@ LEFT JOIN civicrm_option_value cov_status
 ";
 
         if ( $condition ) {
-            $query .= " WHERE 1 $condition ";
+        	// CRM-8749 backwards compatibility - callers of this function expect to start $condition with "AND"
+            $query .= " WHERE (1) $condition ";
         }
 
         if ( $type == 'upcoming' ) {
