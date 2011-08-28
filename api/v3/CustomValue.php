@@ -41,6 +41,7 @@
  */
 require_once 'api/v3/utils.php';
 require_once 'CRM/Core/BAO/CustomField.php';
+require_once 'CRM/Core/BAO/CustomGroup.php';
 require_once 'CRM/Core/BAO/CustomValueTable.php';
 
 
@@ -152,7 +153,9 @@ function civicrm_api3_custom_value_get($params) {
       $getParams['custom_' . $id] = 1;
     }
   }
+
   $result = CRM_Core_BAO_CustomValueTable::getValues($getParams);
+  
   if ($result['is_error']) {
     return civicrm_api3_create_error($result['error_message']);
   } else {
@@ -173,7 +176,9 @@ function civicrm_api3_custom_value_get($params) {
       if (!$n) {
         $n = 0;
       }
-      $values[$info['group_name']][$n][$info['field_name']] = $value;
+      $values[$i. "-" . $n]['entity_id'] =  $getParams['entityID'];
+      $values[$i. "-" . $n]['entity_table'] =  $getParams['entityType'];
+      $values[$i. "-" . $n][$info['field_name']] = $value;
     }
     return civicrm_api3_create_success($values, $params);
   }
