@@ -122,6 +122,8 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         $returnProperties = array( 'case_type_id', 'subject', 'status_id', 'start_date' );
         CRM_Core_DAO::commonRetrieve('CRM_Case_BAO_Case', $params, $values, $returnProperties );
                 
+        $values['case_type_id'] = trim( CRM_Utils_Array::value( 'case_type_id' , $values ), 
+                                        CRM_Core_DAO::VALUE_SEPARATOR );
         $values['case_type_id'] = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                            CRM_Utils_Array::value( 'case_type_id' , $values ) );
 
@@ -194,6 +196,15 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             $this->set( 'relatedCases', $relatedCases );
         }
         $this->assign( 'hasRelatedCases', $relatedCases );
+
+        $entitySubType = !empty($values['case_type_id']) ? $values['case_type_id'][0] : null;
+        $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Case',
+                                                         $this,
+                                                         $this->_caseID,
+                                                         null,
+                                                         $entitySubType );
+        CRM_Core_BAO_CustomGroup::buildCustomDataView( $this,
+                                                       $groupTree );
     }
 
     /**

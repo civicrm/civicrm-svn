@@ -154,6 +154,9 @@
      <div id="related-cases-content"></div>
 </div>
 
+<div class="clear"></div>
+{include file="CRM/Case/Page/CustomDataView.tpl"}            
+
 <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed crm-case-roles-block">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
