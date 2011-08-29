@@ -1236,7 +1236,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         // for user account
         $config = CRM_Core_Config::singleton( );
         if ( $menuRebuild &&
-             $config->userFramework == 'Drupal' ) {
+             $config->userSystem->is_drupal  ) {
             menu_rebuild( );
         }
     }

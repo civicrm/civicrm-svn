@@ -94,7 +94,7 @@
         <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/paymentProcessor" q="action=add&reset=1&pp=PayPal&destination=`$destination`"}" title="{$linkTitle}">{ts}Payment Processors{/ts}</a></td>
         <td>{ts}Select and configure one or more payment processing services for online contributions, events and / or membership fees.{/ts}</td>
     </tr>  
-    {if $config->userFramework EQ 'Drupal'}
+    {if $config->userSystem->is_drupal EQ '1'}
         <tr class="even">
             <td class="tasklist"><a href="{$config->userFrameworkBaseURL}?q=admin/people/permissions&destination=civicrm/admin/configtask">{ts}Permissions for Anonymous Users{/ts}</a></td>
             <td>{ts}You will also need to change Drupal permissions so anonymous users can make contributions, register for events and / or use profiles to enter contact information.{/ts} {docURL page="Default Permissions and Roles"}</li>

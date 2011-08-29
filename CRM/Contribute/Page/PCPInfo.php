@@ -95,6 +95,7 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
                 break;
                 
             case 'Drupal' :
+            case 'Drupal6' :
                 $loginUrl .= 'user';
                 break;
             }           

@@ -34,9 +34,7 @@
  *
  */
 
-require_once 'api/api.php';
-
-class CRM_Bridge_OG_Drupal {
+class CRM_Bridge_OG_Drupal {//d6 compatible
 
     static function nodeapi( &$params, $op ) {
         require_once 'CRM/Bridge/OG/Utils.php';

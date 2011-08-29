@@ -40,7 +40,7 @@
      </tr>
      <tr class="crm-acl-form-block-description">
     <td class="{$form.object_type.name}">&nbsp;</dt><td class="description">{ts}Select the type of data this ACL operates on.{/ts}<br />
-    {if $config->userFramework EQ 'Drupal'}
+    {if $config->userSystem->is_drupal EQ '1'}
        <span class="description">{ts}IMPORTANT: The Drupal permissions for 'access all custom data' and 'profile listings and forms' override and disable specific ACL settings for custom field groups and profiles respectively. Do not enable those Drupal permissions for a Drupal role if you want to use CiviCRM ACL's to control access.{/ts}</td>
     {/if}
      </tr>
@@ -87,7 +87,7 @@
      </tr>
    </table>
     <div class="status message">{ts}NOTE: For Event ACLs, the 'View' operation allows access to the event information screen. "Edit" allows users to register for the event if online registration is enabled.{/ts}<br /> 
-    {if $config->userFramework EQ 'Drupal'}
+    {if $config->userSystem->is_drupal EQ '1'}
     {ts}Please remember that Drupal's "register for events" permission overrides CiviCRM's control over event information access.{/ts}
     {/if}
     </div>

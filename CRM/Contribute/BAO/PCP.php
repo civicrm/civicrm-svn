@@ -435,6 +435,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
             break;
             
         case 'Drupal' :
+        case 'Drupal6' :         
             $loginUrl .= 'user';
             break;
         }

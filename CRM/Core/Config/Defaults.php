@@ -144,7 +144,7 @@ class CRM_Core_Config_Defaults
 
         // CRM-6216: Drupal’s $baseURL might have a trailing LANGUAGE_NEGOTIATION_PATH,
         // which needs to be stripped before we start basing ResourceURL on it
-        if ($config->userFramework == 'Drupal') {
+        if ($config->userSystem->is_drupal) {
             global $language;
             if (isset($language->prefix) and $language->prefix) {
                 if (substr($baseURL, -(strlen($language->prefix) + 1)) == $language->prefix . '/') {
@@ -174,8 +174,7 @@ class CRM_Core_Config_Defaults
                 // the system for a loop on lobo's macosx box
                 // or in modules
                 global $civicrm_root;
-                require_once "CRM/Utils/System/Drupal.php";
-                $cmsPath = CRM_Utils_System_Drupal::cmsRootPath( );
+                $cmsPath = $config->userSystem->cmsRootPath( );
                 $defaults['userFrameworkResourceURL'] = $baseURL . str_replace( "$cmsPath/", '',  
                                                                                 str_replace('\\', '/', $civicrm_root ) );
                 

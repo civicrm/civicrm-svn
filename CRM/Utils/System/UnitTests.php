@@ -34,38 +34,43 @@
  *
  */
 
+require_once 'CRM/Utils/System/Drupal.php';
+
 /**
  * Helper authentication class for unit tests
  */
-class CRM_Utils_System_UnitTests {
-
+class CRM_Utils_System_UnitTests extends CRM_Utils_System_Drupal {
+    function __construct() {
+      $this->is_drupal = False;
+      $this->supports_form_extensions = False;
+    }
     function setTitle( $title, $pageTitle = null ) {
         return;
     }
     
-    static function authenticate( $name, $password ) {
+    function authenticate( $name, $password ) {
         $retVal = array( 1, 1, 12345 );
         return $retVal;
     }
 
-    static function appendBreadCrumb( $breadCrumbs ) {
+    function appendBreadCrumb( $breadCrumbs ) {
         return;
     }
 
-    static function resetBreadCrumb( ) {
+    function resetBreadCrumb( ) {
         return;
     }
 
-    static function addHTMLHead( $head ) {
+    function addHTMLHead( $head ) {
         return;
     }
 
-    static function mapConfigToSSL( ) {
+    function mapConfigToSSL( ) {
         global $base_url;
         $base_url = str_replace( 'http://', 'https://', $base_url );
     }
 
-    static function postURL( $action ) {
+    function postURL( $action ) {
         return;
     }
 
@@ -116,7 +121,7 @@ class CRM_Utils_System_UnitTests {
         }
     }
 
-    static function getUserID( $user ) {
+    function getUserID( $user ) {
         //FIXME: look here a bit closer when testing UFMatch
         require_once 'CRM/Core/BAO/UFMatch.php';
       
@@ -125,24 +130,24 @@ class CRM_Utils_System_UnitTests {
         CRM_Core_BAO_UFMatch::synchronize( $user, true, 'Standalone', 'Individual' );
     }
 
-    static function getAllowedToLogin( $user ) {
+    function getAllowedToLogin( $user ) {
         return true;
     }
 
-    static function setMessage( $message ) {
+    function setMessage( $message ) {
     	return;
     }
 
-    static function permissionDenied( ) {
+    function permissionDenied( ) {
         CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
     }
 
-    static function logout( ) {
+    function logout( ) {
         session_destroy();
         header("Location:index.php");
     }
 
-    static function getUFLocale()
+    function getUFLocale()
     {
         return null;
     }

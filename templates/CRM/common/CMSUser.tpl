@@ -108,7 +108,7 @@
 
       var spchar = "\<|\>|\"|\'|\%|\;|\(|\)|\&|\\\\|\/";
 
-      {/literal}{if $config->userFramework == "Drupal"}{literal}
+      {/literal}{if $config->userSystem->is_drupal == "1"}{literal}
 	 spchar = spchar + "|\~|\`|\:|\@|\!|\=|\#|\$|\^|\*|\{|\}|\\[|\\]|\+|\?|\,"; 
       {/literal}{/if}{literal}	
       var r = new RegExp( "["+spchar+"]", "i");

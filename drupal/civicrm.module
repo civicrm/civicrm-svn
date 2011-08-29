@@ -639,7 +639,10 @@ function civicrm_user_form_validate($form, &$form_state) {
 * Disable the drupal cache for all civicrm pages which should not be cached
 */
 function civicrm_cache_disable( ) {
+  if(function_exists('drupal_page_is_cacheable')){
+  //this is a Drupal 7 function only - using 'easy option' of checking function
     drupal_page_is_cacheable( false );
+  }
 }
 
 /**

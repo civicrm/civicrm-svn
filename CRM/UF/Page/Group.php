@@ -228,7 +228,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page
 
         // not sure how to circumvent our own navigation system to generate the right form url
         $urlReplaceWith = 'civicrm/profile/create&amp;gid='.$gid.'&amp;reset=1';
-        if ( $config->userFramework == 'Drupal' && $config->cleanURL ) {
+        if ( $config->userSystem->is_drupal && $config->cleanURL ) {
             $urlReplaceWith = 'civicrm/profile/create?gid='.$gid.'&amp;reset=1';
         }
         $profile = str_replace( 'civicrm/admin/uf/group', $urlReplaceWith, $profile );

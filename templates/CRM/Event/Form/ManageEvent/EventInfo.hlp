@@ -43,7 +43,7 @@
 {htxt id="id-listing"}
     {ts}To allow users to see a listing of participants, set this field to 'Name' (list names only), 'Name and Email', or 'Name, Status and Register Date'.{/ts}
     {if ! $isTemplate}
-        {if $config->userFramework EQ 'Drupal'}
+        {if $config->userSystem->is_drupal}
             {ts}You will need to set Drupal Access Control permissions to include 'view event participants' for any Roles you want to access this listing.{/ts}
             {if $action eq 2 AND $entityId}
                 {ts}Create links to the listing page by copying the following URL, and adding it to the Event Description below and / or as a menu item or links elsewhere on your site:{/ts}<br />

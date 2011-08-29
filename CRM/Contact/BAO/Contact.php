@@ -784,7 +784,8 @@ WHERE id={$id}; ";
     }
  	
     /**
-     * function to return relative path
+     * function to return relative path 
+     * @todo make this a method of $config->userSystem (i.e. UF classes) rather than a static function
      *
      * @param String $absPath absolute path
      * @return String $relativePath Relative url of uploaded image
@@ -797,9 +798,9 @@ WHERE id={$id}; ";
             $userFrameworkBaseURL = trim( str_replace( '/administrator/', '', $config->userFrameworkBaseURL ) );
             $customFileUploadDirectory = strstr( str_replace('\\', '/', $absolutePath), '/media' );
             $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;
-        } else if ( $config->userFramework == 'Drupal' ) {   
-            require_once 'CRM/Utils/System/Drupal.php';
-            $rootPath = CRM_Utils_System_Drupal::cmsRootPath( );
+        } else if ( $config->userSystem->is_drupal == '1' ) {  
+          //ideally we would do a bigger re-factoring & move the getRelativePath onto the UF class 
+            $rootPath = $config->userSystem->cmsRootPath( );
             $baseUrl = $config->userFrameworkBaseURL;
             
             //format url for language negotiation, CRM-7135

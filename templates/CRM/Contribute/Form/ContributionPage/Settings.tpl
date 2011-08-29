@@ -119,7 +119,7 @@
 		<tr class="crm-contribution-contributionpage-settings-form-block-is_active"><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>{$form.is_active.html} {$form.is_active.label}<br />
 	{if $contributionPageID}
     		<span class="description">
-        	{if $config->userFramework EQ 'Drupal'}
+        	{if $config->userSystem->is_drupal EQ '1'}
             	{ts}When your page is active, you can link people to the page by copying and pasting the following URL:{/ts}<br />
             	<strong>{crmURL a=true p='civicrm/contribute/transact' q="reset=1&id=`$contributionPageID`"}</strong>
         	{elseif $config->userFramework EQ 'Joomla'}

@@ -191,8 +191,9 @@ INNER JOIN civicrm_contribution       con ON ( con.id = mp.contribution_id )
             $session = CRM_Core_Session::singleton( );
             if ( $session->get( 'userID' ) ) {
                 CRM_Core_Session::setStatus( $status );
-            } else if ( function_exists( 'drupal_set_message' ) ) {
-                drupal_set_message( $status );
+            } else {
+                require_once 'CRM/Utils/System.php';
+                CRM_Utils_System::setUFMessage( $message );
             }
         }
     }

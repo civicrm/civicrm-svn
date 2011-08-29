@@ -55,7 +55,7 @@ class CRM_Dedupe_Merger
         static $relTables;
         
         $config = CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Drupal' ) {
+        if ( $config->userSystem->is_drupal ) {
             $userRecordUrl = CRM_Utils_System::url( 'user/$ufid' );
             $title = ts('%1 User: %2; user id: %3', array(1 => $config->userFramework, 2 => '$ufname', 3 => '$ufid'));
         } else if ( $config->userFramework == 'Joomla' ) {

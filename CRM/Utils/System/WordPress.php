@@ -34,11 +34,12 @@
  *
  */
 
+require_once 'CRM/Utils/System/Base.php';
 
 /**
  * WordPress specific stuff goes here
  */
-class CRM_Utils_System_WordPress {
+class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
 
     /**
      * sets the title of the page
@@ -69,7 +70,7 @@ class CRM_Utils_System_WordPress {
      * @access public
      * @static
      */
-    static function appendBreadCrumb( $breadCrumbs ) {
+    function appendBreadCrumb( $breadCrumbs ) {
         $breadCrumb = drupal_get_breadcrumb( );
 
         if ( is_array( $breadCrumbs ) ) {
@@ -97,7 +98,7 @@ class CRM_Utils_System_WordPress {
      * @access public
      * @static
      */
-    static function resetBreadCrumb( ) {
+    function resetBreadCrumb( ) {
         $bc = array( );
         drupal_set_breadcrumb( $bc );
     }
@@ -111,7 +112,7 @@ class CRM_Utils_System_WordPress {
      * @access public
      * @static
      */
-    static function addHTMLHead( $head ) {
+    function addHTMLHead( $head ) {
       drupal_set_html_head( $head );
     }
 
@@ -124,7 +125,7 @@ class CRM_Utils_System_WordPress {
      * @access public  
      * @static  
      */  
-    static function mapConfigToSSL( ) {
+    function mapConfigToSSL( ) {
         global $base_url;
         $base_url = str_replace( 'http://', 'https://', $base_url );
     }
@@ -138,12 +139,12 @@ class CRM_Utils_System_WordPress {
      * @access public
      * @static
      */
-    static function postURL( $action ) {
+    function postURL( $action ) {
         if ( ! empty( $action ) ) {
             return $action;
         }
 
-        return self::url( $_GET['q'], null, true, null, false );
+        return $this->url( $_GET['q'], null, true, null, false );
     }
 
     /**
@@ -226,7 +227,7 @@ class CRM_Utils_System_WordPress {
      * @access public
      * @static
      */
-    static function authenticate( $name, $password ) {
+    function authenticate( $name, $password ) {
         require_once 'DB.php';
 
         $config = CRM_Core_Config::singleton( );
@@ -265,13 +266,13 @@ class CRM_Utils_System_WordPress {
      * @access public   
      * @static   
      */   
-    static function setMessage( $message ) {
+    function setMessage( $message ) {
     }
 
-    static function permissionDenied( ) {
+    function permissionDenied( ) {
     }
 
-    static function logout( ) {
+    function logout( ) {
         // destroy session
         if ( session_id( ) ) {
             session_destroy();
@@ -280,14 +281,14 @@ class CRM_Utils_System_WordPress {
         wp_redirect( wp_login_url() );
     }
 
-    static function updateCategories( ) {
+    function updateCategories( ) {
     }
 
     /**
      * Get the locale set in the hosting CMS
      * @return string  with the locale or null for none
      */
-    static function getUFLocale()
+    function getUFLocale()
     {
         return null;
     }
@@ -298,11 +299,11 @@ class CRM_Utils_System_WordPress {
      * @param $name string  optional username for login
      * @param $pass string  optional password for login
      */
-    static function loadBootStrap($name = null, $pass = null)
+    function loadBootStrap($name = null, $pass = null)
     {
     }
     
-    static function cmsRootPath( ) 
+    function cmsRootPath( ) 
     {
         $cmsRoot  = $valid = null;
         $pathVars = explode( '/', str_replace( '\\', '/', $_SERVER['SCRIPT_FILENAME'] ) );
@@ -331,7 +332,7 @@ class CRM_Utils_System_WordPress {
      *
      * @return boolean true/false.
      */
-    public static function isUserLoggedIn( ) {
+    public function isUserLoggedIn( ) {
         $isloggedIn = false;
         if ( function_exists( 'user_is_logged_in' ) ) {
             $isloggedIn = user_is_logged_in( );
@@ -345,7 +346,7 @@ class CRM_Utils_System_WordPress {
      *
      * @return int $userID logged in user uf id.
      */
-    public static function getLoggedInUfID( ) {
+    public function getLoggedInUfID( ) {
         $ufID = null;
         if ( function_exists( 'user_is_logged_in' ) && 
              user_is_logged_in( ) && 

@@ -89,6 +89,7 @@ class CRM_Core_Block {
         }
         
         if (!(self::$_properties)) {
+            $config = CRM_Core_Config::singleton();
             self::$_properties = array(
             // set status item to 0 to disable block by default (at install)
                                        self::CREATE_NEW   => array( 'template'   => 'CreateNew.tpl',
@@ -100,7 +101,7 @@ class CRM_Core_Block {
                                                                    'weight'     => -100,
                                                                    'status'     => 1,
                                                                    'pages'      => 'civicrm*',
-                                                                   'region'     => 'sidebar_first' ),
+                                                                   'region'     => $config->userSystem->getDefaultBlockLocation() ),
                                        self::RECENTLY_VIEWED => array(  'template'   => 'RecentlyViewed.tpl',
                                                                          'info'       => ts('CiviCRM Recent Items'),
                                                                          'subject'    => ts('Recent Items'),
@@ -110,7 +111,7 @@ class CRM_Core_Block {
                                                                          'weight'     => -99,
                                                                          'status'     => 1,
                                                                          'pages'      => 'civicrm*',
-                                                                         'region'     => 'sidebar_first' ),                
+                                                                         'region'     => $config->userSystem->getDefaultBlockLocation() ),                
                                        self::DASHBOARD   => array( 'template'   => 'Dashboard.tpl',
                                                                    'info'       => ts('CiviCRM Contact Dashboard'),
                                                                    'subject'    => '',
@@ -120,7 +121,7 @@ class CRM_Core_Block {
                                                                    'weight'     => -98,
                                                                    'status'     => 1,
                                                                    'pages'      => 'civicrm*',
-                                                                   'region'     => 'sidebar_first' ),
+                                                                   'region'     => $config->userSystem->getDefaultBlockLocation() ),
                                        self::ADD         => array( 'template'   => 'Add.tpl',
                                                                    'info'       => ts('CiviCRM Quick Add'),
                                                                    'subject'    => ts('New Individual'),
@@ -130,7 +131,7 @@ class CRM_Core_Block {
                                                                    'weight'     => -97,
                                                                    'status'     => 1,
                                                                    'pages'      => 'civicrm*',
-                                                                   'region'     => 'sidebar_first' ),
+                                                                   'region'     => $config->userSystem->getDefaultBlockLocation() ),
                                        self::LANGSWITCH  => array( 'template'   => 'LangSwitch.tpl',
                                                                    'info'       => ts('CiviCRM Language Switcher'),
                                                                    'subject'    => '',
@@ -141,7 +142,7 @@ class CRM_Core_Block {
                                                                    'weight'     => -96,
                                                                    'status'     => 1,
                                                                    'pages'      => 'civicrm*',
-                                                                   'region'     => 'sidebar_first' ),
+                                                                   'region'     => $config->userSystem->getDefaultBlockLocation() ),
                                        self::EVENT      => array( 'template'   => 'Event.tpl',
                                                                    'info'       => ts('CiviCRM Upcoming Events'),
                                                                    'subject'    => ts('Upcoming Events'),
@@ -152,7 +153,7 @@ class CRM_Core_Block {
                                                                    'weight'     => -95,
                                                                    'status'     => 0,
                                                                    'pages'      => 'civicrm*',
-                                                                   'region'     => 'sidebar_first' ),
+                                                                   'region'     => $config->userSystem->getDefaultBlockLocation() ),
                                        self::FULLTEXT_SEARCH => array(  'template'   => 'FullTextSearch.tpl',
                                                                         'info'       => ts('CiviCRM Full-text Search'),
                                                                         'subject'    => ts('Full-text Search'),
@@ -162,7 +163,7 @@ class CRM_Core_Block {
                                                                         'weight'     => -94,
                                                                         'status'     => 0,
                                                                         'pages'      => 'civicrm*',
-                                                                        'region'     => 'sidebar_first' )
+                                                                        'region'     => $config->userSystem->getDefaultBlockLocation() )
                                        );
         
             ksort(self::$_properties);

@@ -44,7 +44,7 @@ class CRM_Upgrade_Incremental_php_ThreeTwo {
         //CRM-5666 -if user already have 'access CiviCase'
         //give all new permissions and drop access CiviCase.
         $config = CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Drupal' ) {
+        if ( $config->userSystem->is_drupal ) {
             
             // CRM-7896
             $roles = user_roles(false, 'access CiviCase');

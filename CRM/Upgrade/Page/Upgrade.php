@@ -462,7 +462,7 @@ SELECT  count( id ) as statusCount
         // upgrade all roles who have 'access CiviEvent' permission, to also have 
         // newly added permission 'edit_all_events', CRM-5472
         $config = CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Drupal' ) {
+        if ( $config->userSystem->is_drupal ) {
             $roles = user_roles(false, 'access CiviEvent');
             if ( !empty($roles) ) {
                 // CRM-7896

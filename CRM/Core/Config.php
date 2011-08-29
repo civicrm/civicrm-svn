@@ -78,6 +78,13 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
     public $userFrameworkDSN            = null;
 
     /**
+     * The connector module for the CMS/UF
+     *
+     * @var CRM_Util_System_{$uf}
+     */
+    public $userSystem                  = null;
+
+    /**
      * The root directory where Smarty should store
      * compiled files
      * @var string
@@ -242,7 +249,11 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         $this->userFrameworkClass  = 'CRM_Utils_System_'    . $userFramework;
         $this->userHookClass       = 'CRM_Utils_Hook_'      . $userFramework;
         $this->userPermissionClass = 'CRM_Core_Permission_' . $userFramework;            
-
+        
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $this->userFrameworkClass ) . '.php' );
+        $class = $this->userFrameworkClass;
+        $userSystem = $this->userSystem = new $class(); // redundant with _initVariables
+        
         if ( $userFramework == 'Joomla' ) {
             $this->userFrameworkURLVar = 'task';
         }
@@ -270,22 +281,15 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         } else {
             $this->cleanURL = 0;
         }
+        
+        $this->userFrameworkVersion = $userSystem->getVersion();
 
         if ( $userFramework == 'Joomla' ) {
-            $this->userFrameworkVersion = 'Unknown';
-            if ( class_exists('JVersion') ) {
-                $version = new JVersion;
-                $this->userFrameworkVersion = $version->getShortVersion();
-            }
-
             global $mainframe;
             $dbprefix = $mainframe ? $mainframe->getCfg( 'dbprefix' ) : 'jos_';
             $this->userFrameworkUsersTableName = $dbprefix . 'users';
         }
 
-        if ( $userFramework == 'Drupal' && defined('VERSION') ) {
-            $this->userFrameworkVersion = VERSION;
-        }    
     }
 
 
@@ -469,6 +473,10 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         if ( $this->mapProvider ) {
             $this->geocodeMethod = 'CRM_Utils_Geocode_'. $this->mapProvider ;
         }
+        
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $this->userFrameworkClass ) . '.php' );
+        $class = $this->userFrameworkClass;
+        $this->userSystem = new $class(); // redundant with _setUserFrameworkConfig
     }
 
     /**

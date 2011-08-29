@@ -55,13 +55,14 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
      * @static
      */
     static function synchronize( &$user, $update, $uf, $ctype, $isLogin = false ) {
+        $config = CRM_Core_Config::singleton( );
         $session = CRM_Core_Session::singleton( );
         if ( ! is_object( $session ) ) {
             CRM_Core_Error::fatal( 'wow, session is not an object?' );
             return;
         }
         
-        if ( $uf == 'Drupal' ) {
+        if ( $config->userSystem->is_drupal ) {
             $key   = 'uid';
             $login = 'name';
             $mail  = 'mail';
@@ -212,6 +213,7 @@ WHERE     openid = %1";
      */
     static function &synchronizeUFMatch( &$user, $userKey, $uniqId, $uf, $status = null, $ctype = null, $isLogin = false ) 
     {
+        $config = CRM_Core_Config::singleton( );
         // validate that uniqId is a valid url. it will either be
         // an OpenID (which should always be a valid url) or a
         // http://uf_username/ construction (so that it can
@@ -278,7 +280,7 @@ WHERE     openid = %1";
                 $ufmatch->contact_id     = $dao->contact_id;
                 $ufmatch->uf_name        = $uniqId;
             } else {
-                if ( $uf == 'Drupal' ) {
+                if ( $config->userSystem->is_drupal ) {
                     $mail = 'mail';
                 } elseif ( $uf = 'WordPress' ) {
                     $mail = 'user_email';
@@ -414,8 +416,8 @@ AND    domain_id    = %4
         $ufmatch->uf_name = $ufName;
         $ufmatch->save( );
 
-        require_once 'CRM/Core/BAO/CMSUser.php';
-        CRM_Core_BAO_CMSUser::updateUFName( $ufmatch->uf_id, $ufName );
+       
+        $config->userSystem->updateCMSName( $ufmatch->uf_id, $ufName );
 
     }
     

@@ -108,7 +108,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $mainUfId = CRM_Core_BAO_UFMatch::getUFId( $cid );
         $mainUser = null;
         if ( $mainUfId ) {
-            if ( $config->userFramework == 'Drupal' ) {
+            if ( $config->userSystem->is_drupal == '1' ) {//d6 compatible
                 $mainUser = user_load( $mainUfId );
             } else if ( $config->userFramework == 'Joomla' ) {
                 $mainUser = JFactory::getUser( $mainUfId );
@@ -149,7 +149,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $otherUser = null;
 
         if ( $otherUfId ) {
-            if ( $config->userFramework == 'Drupal' ) {
+            if ( $config->userSystem->is_drupal == '1' ) {//d6 compatible
                 $otherUser = user_load( $otherUfId );
             } else if ( $config->userFramework == 'Joomla' ) {
                 $otherUser = JFactory::getUser( $otherUfId );

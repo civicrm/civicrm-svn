@@ -302,7 +302,7 @@ class CRM_Core_SelectValues
                                   'Search Profile'    => ts('Search Results'),
                                   );
             $config = CRM_Core_Config::singleton( );
-            if ( $config->userFramework == 'Drupal' ) {
+            if ( $config->userSystem->supports_form_extensions ) {
                 $ufGroupType += array(
                                       'User Registration' => ts('Drupal User Registration'),
                                       'User Account'      => ts('View/Edit Drupal User Account') );

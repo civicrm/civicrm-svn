@@ -74,7 +74,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
             $defaults['sort_name_format'] = $this->_config->sort_name_format;
         }
 
-        if ( $config->userFramework == 'Drupal' && module_exists("wysiwyg")) {
+        if ( $config->userSystem->is_drupal == '1' && module_exists("wysiwyg")) {
             $defaults['wysiwyg_input_format'] = variable_get('civicrm_wysiwyg_input_format', 0);
         }
  
@@ -101,7 +101,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
         }
 
         $drupal_wysiwyg = false;
-        if ( $config->userFramework != 'Drupal' || !module_exists("wysiwyg")) {
+        if ( $config->userSystem->is_drupal == '1' || !module_exists("wysiwyg")) {
             unset( $wysiwyg_options[4] );
         } else {
             $extra['onchange'] = 'if (this.value==4) { cj("#crm-preferences-display-form-block-wysiwyg_input_format").show(); } else {  cj("#crm-preferences-display-form-block-wysiwyg_input_format").hide() }';
@@ -161,7 +161,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
             CRM_Core_BAO_OptionValue::updateOptionWeights( $opGroupId, array_flip($preferenceWeights) );
         }
 
-        if ( $config->userFramework == 'Drupal' && module_exists("wysiwyg")) {
+        if ( $config->userSystem->is_drupal == '1' && module_exists("wysiwyg")) {
             variable_set('civicrm_wysiwyg_input_format', $this->_params['wysiwyg_input_format']);
         }
         
