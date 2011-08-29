@@ -147,33 +147,38 @@ class CRM_Activity_Form_Task_FileOnCase extends CRM_Activity_Form_Task {
             $targetContactValues = $defaults = array( );
             $params = array( 'id' => $id );
             CRM_Activity_BAO_Activity::retrieve( $params, $defaults );
-            if ( !CRM_Utils_Array::crmIsEmptyArray( $defaults['target_contact'] ) ) {
-                $targetContactValues = array_combine( array_unique( $defaults['target_contact'] ),
-                                                  explode(';', trim($defaults['target_contact_value'] ) ) );
-                $targetContactValues = implode( ',', array_keys( $targetContactValues) ); 
+            require_once 'CRM/Case/BAO/Case.php';
+            if ( CRM_Case_BAO_Case::checkPermission( $id, 'File On Case', $defaults['activity_type_id'] ) ) {
+            
+	            if ( !CRM_Utils_Array::crmIsEmptyArray( $defaults['target_contact'] ) ) {
+	                $targetContactValues = array_combine( array_unique( $defaults['target_contact'] ),
+	                                                  explode(';', trim($defaults['target_contact_value'] ) ) );
+	                $targetContactValues = implode( ',', array_keys( $targetContactValues) ); 
+	            }
+	
+	            $params = array( 'caseID' => $caseId,
+	        	                 'activityID' => $id,
+	                             'newSubject' => empty( $defaults['subject'] ) ? '' : $defaults['subject'],
+	                             'targetContactIds' => $targetContactValues,
+	                             'mode' => 'file'
+	                           );
+	            	
+	         	$error_msg = CRM_Activity_Page_AJAX::_convertToCaseActivity( $params );
+	          	if ( empty( $error_msg['error_msg'] ) ) {
+	                $filedActivities++;
+	           	} else {
+	          		$errors[] = $error_msg['error_msg'];
+	           	}
+            } else {
+            	$errors[] = ts( 'Not permitted to file activity %1 %2.', array( 1 => empty($defaults['subject']) ? '' : $defaults['subject'],
+            	                                                                2 => $defaults['activity_date_time'] ) );
             }
-
-            $params = array( 'caseID' => $caseId,
-        	                 'activityID' => $id,
-                             'newSubject' => empty( $defaults['subject'] ) ? '' : $defaults['subject'],
-                             'targetContactIds' => $targetContactValues,
-                             'mode' => 'file'
-                           );
-            	
-         	$error_msg = CRM_Activity_Page_AJAX::_convertToCaseActivity( $params );
-          	if ( empty( $error_msg['error_msg'] ) ) {
-                $filedActivities++;
-           	} else {
-          		$errors[] = $error_msg['error_msg'];
-           	}
         }
         
-        $status = $errors + array(
-                        ts( 'Filed Activities: %1', array( 1 => $filedActivities ) ),
-                        ts( 'Total Selected Activities: %1', array( 1 => count( $this->_activityHolderIds ) ) ),
-                        );
-        
+        $status = $errors;
+        $status[] = ts( 'Filed Activities: %1', array( 1 => $filedActivities ) );
+        $status[] = ts( 'Total Selected Activities: %1', array( 1 => count( $this->_activityHolderIds ) ) );
+
         CRM_Core_Session::setStatus( $status );
-        
     }
 }
