@@ -832,7 +832,8 @@ class CRM_Utils_Hook {
      * However, if you use the same number of columns, you can overwrite the existing columns with the values that
      * you want displayed. This is a hackish, but avoids template modification.
      *
-     * @param string $objectName the compoent name that we are doing the search on (Contact, Contribute, Event, Member, Activity, Case)
+     * @param string $objectName the component name that we are doing the search
+     *                           activity, campaign, case, contact, contribution, event, grant, membership, and pledge
      * @param array  &$headers   the list of column headers, an associative array with keys: ( name, sort, order )
      * @param array  &$rows      the list of values, an associate array with fields that are displayed for that component
      * @param array  &$seletor   the selector object. Allows you access to the context of the search
