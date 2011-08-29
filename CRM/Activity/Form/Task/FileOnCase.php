@@ -155,7 +155,7 @@ class CRM_Activity_Form_Task_FileOnCase extends CRM_Activity_Form_Task {
 
             $params = array( 'caseID' => $caseId,
         	                 'activityID' => $id,
-                             'newSubject' => $defaults['subject'],
+                             'newSubject' => empty( $defaults['subject'] ) ? '' : $defaults['subject'],
                              'targetContactIds' => $targetContactValues,
                              'mode' => 'file'
                            );
