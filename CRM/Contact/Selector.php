@@ -338,7 +338,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
      */
     function &getColumnHeaders($action = null, $output = null) 
     {
-
+        $headers = null;
         if ( $output == CRM_Core_Selector_Controller::EXPORT ) {
             $csvHeaders = array( ts('Contact Id'), ts('Contact Type') );
             foreach ( $this->getColHeads($action, $output) as $column ) {
@@ -346,7 +346,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     $csvHeaders[] = $column['name'];
                 }
             }
-            return $csvHeaders;
+            $headers = $csvHeaders;
         } else if ( $output == CRM_Core_Selector_Controller::SCREEN ) {
             $csvHeaders = array( ts('Name') );
             foreach ( $this->getColHeads($action, $output) as $column ) {
@@ -356,7 +356,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     $csvHeaders[] = $column['name'];
                 }
             }
-            return $csvHeaders;
+            $headers = $csvHeaders;
         } else if ( $this->_ufGroupID ) {
             // we dont use the cached value of column headers
             // since it potentially changed because of the profile selected
@@ -418,7 +418,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     self::$_columnHeaders[] = array('desc' => ts('Actions'), 'name' => ts('Action') );
                 }
             }
-            return self::$_columnHeaders;
+            $headers = self::$_columnHeaders;
         } else if ( ! empty( $this->_returnProperties ) ) { 
 
             self::$_columnHeaders = array( array( 'name' => '' ),
@@ -449,10 +449,12 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                 self::$_columnHeaders[] = array( 'name' => $title, 'sort' => $prop );
             }
             self::$_columnHeaders[] = array('name' => ts('Actions'));
-            return self::$_columnHeaders;
+            $headers = self::$_columnHeaders;
         } else {
-            return $this->getColHeads($action, $output);
+            $headers = $this->getColHeads($action, $output);
         }
+
+        return $headers;
     }
 
 
@@ -748,7 +750,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             }
         }
 
-        //CRM_Core_Error::debug( '$rows', $rows );
         return $rows;
     }
    
