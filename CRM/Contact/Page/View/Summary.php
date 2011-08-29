@@ -56,7 +56,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         parent::preProcess( );
 		
 		// actions buttom contextMenu
-		$menuItems = CRM_Contact_BAO_Contact::contextMenu( );
+		$menuItems = CRM_Contact_BAO_Contact::contextMenu( $this->_contactId );
 		
 		$this->assign('actionsMenuList',$menuItems);
 		

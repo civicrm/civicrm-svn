@@ -865,5 +865,20 @@ class CRM_Utils_Hook {
                   $config->userHookClass .
                   '::invoke( 1, $dao, $null, $null, $null, $null, $null, $hookName );' );
     }
+    
+     /**
+     * This hook allows user to customize context menu Actions on contact summary page.
+     *
+     * @param array $actions       Array of all Actions in contextmenu.
+     * @param int   $contactID     ContactID for the summary page
+     */
+    static function summaryActions( &$actions, $contactID ) {
+        $config = CRM_Core_Config::singleton( );
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
+        return   
+            eval( 'return ' .
+                  $config->userHookClass .
+                  '::invoke( 2, $actions, $contactID, $null, $null, $null, \'civicrm_summaryActions\' );' ); 
+    }
 
 }

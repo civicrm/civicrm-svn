@@ -2391,7 +2391,7 @@ UNION
       * @return array of context menu for logged in user.
       * @static
       */
-     static function contextMenu( ) 
+     static function contextMenu( $contactId  ) 
      {
          $menu = array( 
                        'view'         => array( 'title'        =>  ts( 'View Contact' ),
@@ -2510,6 +2510,7 @@ UNION
                                                 'permissions'  =>  array( 'edit all contacts' ) )
                        );
          
+         CRM_Utils_Hook::summaryActions( $menu, $contactId );
          //1. check for component is active.
          //2. check for user permissions.
          //3. check for acls.

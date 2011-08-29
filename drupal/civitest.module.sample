@@ -1407,3 +1407,17 @@ function civitest_civicrm_alterAPIPermissions($entity, $action, &$params, &$perm
         $params['check_permissions'] = false;
     }
 }
+
+/**
+*This hook allows User to customize the actions on contact summary page .
+*where contribution,note,and rel are some key to action in $actions array.
+*/ 
+
+function civitest_civicrm_summaryActions( &$actions, $contactID ) {
+    $removeActions = array('contribution', 'note', 'rel');
+    foreach( $actions as $key => $value ) {
+        if( ( in_array( $key, $removeActions ) ) {
+            unset( $actions[$key] );
+        }	     
+    }
+}
