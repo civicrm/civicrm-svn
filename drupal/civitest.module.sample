@@ -1410,7 +1410,7 @@ function civitest_civicrm_alterAPIPermissions($entity, $action, &$params, &$perm
  * this work, you will need to also modify the template for the values to be displayed.
  * Ahh, alternatively you can cheat and overwrite the values of the existing columns
  */
-function civitest_civicrm_searchValues( $objectName, &$headers,  &$values, &$selector ) {
+function civitest_civicrm_searchColumns( $objectName, &$headers,  &$values, &$selector ) {
 
     if ( $objectName == 'Contact' ) {
 

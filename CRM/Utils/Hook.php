@@ -839,11 +839,11 @@ class CRM_Utils_Hook {
      *
      * @return void  modify the header and values object to pass the data u need
      */
-    static function searchValues( $objectName, &$headers, &$rows, &$selector ) {
+    static function searchColumns( $objectName, &$headers, &$rows, &$selector ) {
         $config = CRM_Core_Config::singleton();
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userHookClass) . '.php');
         $null =& CRM_Core_DAO::$_nullObject;
-        return eval("return {$config->userHookClass}::invoke(4, \$objectName, \$headers, \$rows, \$selector, \$null, 'civicrm_searchValues');");
+        return eval("return {$config->userHookClass}::invoke(4, \$objectName, \$headers, \$rows, \$selector, \$null, 'civicrm_searchColumns');");
     }
 
 }
