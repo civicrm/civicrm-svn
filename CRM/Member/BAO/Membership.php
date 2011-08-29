@@ -1075,6 +1075,7 @@ AND civicrm_membership.is_test = %2";
         
         $membershipTypeID = $membershipParams['selectMembership'];
         $membershipDetails = self::buildMembershipTypeValues( $form, $membershipTypeID );
+
         $form->assign( 'membership_name', $membershipDetails['name'] );
 
         $minimumFee = CRM_Utils_Array::value( 'minimum_fee', $membershipDetails );
@@ -1192,24 +1193,49 @@ AND civicrm_membership.is_test = %2";
             if ( CRM_Utils_Array::value( 'member_campaign_id', $membershipParams['onbehalf'] ) ) {
                 $form->_params['campaign_id'] = $membershipParams['onbehalf']['member_campaign_id'];
             }
-            $membership = self::renewMembership( $contactID, $membershipTypeID, 
-                                                 $isTest, $form, null,
-                                                 CRM_Utils_Array::value( 'cms_contactID', $membershipParams ),
-                                                 $customFieldsFormatted );
-            if ( isset( $contribution[$index] ) ) {
-                //insert payment record
-                require_once 'CRM/Member/DAO/MembershipPayment.php';
-                $dao = new CRM_Member_DAO_MembershipPayment();    
-                $dao->membership_id   = $membership->id;
-                $dao->contribution_id = $contribution[$index]->id;
-                //Fixed for avoiding duplicate entry error when user goes
-                //back and forward during payment mode is notify
-                if ( !$dao->find(true) ) {
-                    CRM_Utils_Hook::pre( 'create', 'MembershipPayment', null, $dao );
-                    $dao->save();
-                    CRM_Utils_Hook::post( 'create', 'MembershipPayment', $dao->id, $dao );
+            if (is_array($membershipTypeID)) {
+                foreach($membershipTypeID as $memType) {
+                    $membership = self::renewMembership( $contactID, $memType, 
+                                                         $isTest, $form, null,
+                                                         CRM_Utils_Array::value( 'cms_contactID', $membershipParams ),
+                                                         $customFieldsFormatted );
+
+                    if ( isset( $contribution[$index] ) ) {
+                        //insert payment record
+                        require_once 'CRM/Member/DAO/MembershipPayment.php';
+                        $dao = new CRM_Member_DAO_MembershipPayment();    
+                        $dao->membership_id   = $membership->id;
+                        $dao->contribution_id = $contribution[$index]->id;
+                        //Fixed for avoiding duplicate entry error when user goes
+                        //back and forward during payment mode is notify
+                        if ( !$dao->find(true) ) {
+                            CRM_Utils_Hook::pre( 'create', 'MembershipPayment', null, $dao );
+                            $dao->save();
+                            CRM_Utils_Hook::post( 'create', 'MembershipPayment', $dao->id, $dao );
+                        }
+                    }
+                }
+            } else {
+                $membership = self::renewMembership( $contactID, $membershipTypeID, 
+                                                     $isTest, $form, null,
+                                                     CRM_Utils_Array::value( 'cms_contactID', $membershipParams ),
+                                                     $customFieldsFormatted );
+                if ( isset( $contribution[$index] ) ) {
+                    //insert payment record
+                    require_once 'CRM/Member/DAO/MembershipPayment.php';
+                    $dao = new CRM_Member_DAO_MembershipPayment();    
+                    $dao->membership_id   = $membership->id;
+                    $dao->contribution_id = $contribution[$index]->id;
+                    //Fixed for avoiding duplicate entry error when user goes
+                    //back and forward during payment mode is notify
+                    if ( !$dao->find(true) ) {
+                        CRM_Utils_Hook::pre( 'create', 'MembershipPayment', null, $dao );
+                        $dao->save();
+                        CRM_Utils_Hook::post( 'create', 'MembershipPayment', $dao->id, $dao );
+                    }
                 }
             }
+           
         }
         
         if ( ! empty( $errors ) ) {
@@ -1878,6 +1904,7 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
 
     static function &buildMembershipTypeValues( &$form, $membershipTypeID = null ) {
         $whereClause = null;
+
         if ( is_array( $membershipTypeID ) ) {
             $allIDs = implode( ',', $membershipTypeID );
             $whereClause = "WHERE id IN ( $allIDs )";

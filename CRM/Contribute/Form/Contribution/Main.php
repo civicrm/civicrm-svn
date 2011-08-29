@@ -53,6 +53,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     protected $_defaults;
 
     public $_membershipTypeValues;
+    
+    public $_useForMember;
+    
     /** 
      * Function to set variables up before form is built 
      *                                                           
@@ -326,7 +329,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
                 
         //build pledge block.
-
+        $this->_useForMember = 0;
         //don't build membership block when pledge_id is passed
         if ( ! CRM_Utils_Array::value( 'pledge_id', $this->_values ) ) {
             $this->_separateMembershipPayment = false;
@@ -343,6 +346,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                                                                      $isTest, $this->_membershipContactID );
                 if ( $this->_priceSetId ) {
                     $this->_useForMember = 1;
+                    $this->set( 'useForMember', $this->_useForMember );
                 }
             }
             $this->set( 'separateMembershipPayment', $this->_separateMembershipPayment );
@@ -739,6 +743,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 }
                 
                 $ids = implode (',', $priceFieldIDS);
+                $self->set( 'memberPriceFieldIDS', $priceFieldIDS );
                 $count = CRM_Price_BAO_Set::getMembershipCount($ids);
                 foreach( $count as $id => $occurance ) {
                     if ($occurance > 1) {
