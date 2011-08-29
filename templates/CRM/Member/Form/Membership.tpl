@@ -33,6 +33,8 @@
 <div class="spacer"></div>
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
+{elseif $priceSetId}
+  {include file="CRM/Price/Form/PriceSet.tpl" context="standalone" extends="Membership"}
 {else}
 {if $membershipMode == 'test' }
     {assign var=registerMode value="TEST"}
@@ -77,9 +79,25 @@
     {if $membershipMode}
 	    <tr><td class="label">{$form.payment_processor_id.label}</td><td>{$form.payment_processor_id.html}</td></tr>
 	{/if}
- 	<tr class="crm-membership-form-block-membership_type_id"><td class="label">{$form.membership_type_id.label}</td><td>{$form.membership_type_id.html}
-    {if $member_is_test} {ts}(test){/ts}{/if}<br />
-        <span class="description">{ts}Select Membership Organization and then Membership Type.{/ts}</span></td></tr>	
+        {if $action eq 2 and $lineItem}
+	    <tr>
+               <td class="label">{ts}Membership Amount{/ts}</td>
+               <td>{include file="CRM/Price/Page/LineItem.tpl" context="Membership"}</td>
+            </tr>
+	{else}
+ 	    <tr class="crm-membership-form-block-membership_type_id">
+               <td class="label">{$form.membership_type_id.label}</td>
+               <td><span id='mem_type_id'>{$form.membership_type_id.html}</span>
+                 {if hasPriceSets}
+                    <span id='totalAmountORPriceSet'> {ts}OR{/ts}</span>
+        	    <span id='selectPriceSet'>{$form.price_set_id.html}</span>
+                    <div id="priceset" class="hiddenElement"></div>
+                 {/if}
+                 {if $member_is_test} {ts}(test){/ts}{/if}<br />
+                    <span class="description">{ts}Select Membership Organization and then Membership Type.{/ts}</span>
+                    </td>
+            </tr>	
+         {/if}
     <tr class="crm-membership-form-block-source"><td class="label">{$form.source.label}</td><td>&nbsp;{$form.source.html}<br />
         <span class="description">{ts}Source of this membership. This value is searchable.{/ts}</span></td></tr>
 		
@@ -463,6 +481,39 @@ function buildReceiptANDNotice( ) {
      }
    }
 }
+
+// load form during form rule.
+{/literal}{if $buildPriceSet}{literal}buildAmount( );{/literal}{/if}{literal}
+
+function buildAmount( priceSetId ) {
+  if ( !priceSetId ) priceSetId = cj("#price_set_id").val( );
+  
+  var fname = '#priceset';
+  if ( !priceSetId ) {
+      // hide price set fields.
+      cj( fname ).hide( );
+
+      // show/hide price set amount and total amount.
+      cj( "#mem_type_id").show( );
+      cj( "#totalAmountORPriceSet" ).show( );
+      return;
+  }
+
+  var dataUrl = {/literal}"{crmURL h=0 q='snippet=4'}"{literal} + '&priceSetId=' + priceSetId;
+  
+  var response = cj.ajax({
+		         url: dataUrl,
+                         async: false
+                 }).responseText;
+  
+  cj( fname ).show( ).html( response );
+  // freeze total amount text field.
+  cj( "#total_amount" ).val( '' );
+ 
+  cj( "#totalAmountORPriceSet" ).hide( );
+  cj( "#mem_type_id" ).hide( );
+}
+
 </script>
 {/literal}
 {/if} {* closing of delete check if *} 

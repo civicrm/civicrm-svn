@@ -63,6 +63,11 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             return CRM_Custom_Form_CustomData::preProcess( $this );
         }
         
+        // get price set id.
+        $this->_priceSetId  = CRM_Utils_Array::value( 'priceSetId', $_GET );
+        $this->set( 'priceSetId',  $this->_priceSetId );
+        $this->assign( 'priceSetId', $this->_priceSetId );
+
         // action
         $this->_action    = CRM_Utils_Request::retrieve( 'action', 'String',
                                                          $this, false, 'add' );
@@ -160,6 +165,16 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
 
         require_once "CRM/Core/BAO/Email.php";
         $this->_fromEmails = CRM_Core_BAO_Email::getFromEmail( );
+
+        require_once 'CRM/Price/BAO/Set.php';
+        $this->_lineItems = array( );
+        if ( $this->_id  && 
+             $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_membership', $this->_id ) ) {
+            $this->_priceSetId = $priceSetId;
+            require_once 'CRM/Price/BAO/LineItem.php';
+            $this->_lineItems[] = CRM_Price_BAO_LineItem::getLineItems( $this->_id, 'membership' );
+        }
+        $this->assign( 'lineItem', empty( $this->_lineItems ) ? false : $this->_lineItems );
         
         parent::preProcess( );
     }
@@ -337,6 +352,44 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             return CRM_Custom_Form_CustomData::buildQuickForm( $this );
         }
         
+        // build price set form.
+        $buildPriceSet = false;
+        if ( empty( $this->_lineItems ) && 
+             ( $this->_priceSetId || CRM_Utils_Array::value( 'price_set_id', $_POST ) ) ) {
+            $buildPriceSet = true;
+            $getOnlyPriceSetElements = true;
+            if ( !$this->_priceSetId ) { 
+                $this->_priceSetId = $_POST['price_set_id'];
+                $getOnlyPriceSetElements = false;
+            }
+            
+            $this->set( 'priceSetId', $this->_priceSetId );
+            require_once 'CRM/Price/BAO/Set.php';
+            CRM_Price_BAO_Set::buildPriceSet( $this );
+            
+            // get only price set form elements.
+            if ( $getOnlyPriceSetElements ) return;
+        }
+
+        // use to build form during form rule.
+        $this->assign( 'buildPriceSet', $buildPriceSet );
+
+        if ( empty( $this->_lineItems ) ) {
+            $buildPriceSet = false;
+            require_once 'CRM/Price/BAO/Set.php';
+            $priceSets = CRM_Price_BAO_Set::getAssoc( false, 'CiviMember' );
+            if ( !empty( $priceSets ) ) {
+                $buildPriceSet = true;
+            }
+
+            if ( $buildPriceSet ) {
+                $this->add( 'select', 'price_set_id', ts( 'Choose price set' ),
+                            array( '' => ts( 'Choose price set' )) + $priceSets,
+                            null, array('onchange' => "buildAmount( this.value );" ) );
+            }
+            $this->assign( 'hasPriceSets', $buildPriceSet );
+        }
+
         //need to assign custom data type and subtype to the template
         $this->assign('customDataType', 'Membership');
         $this->assign('customDataSubType',  $this->_memType );
@@ -599,8 +652,13 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $errors['contact[1]'] = ts('Please select a contact or create new contact');
         }
         
-        if ( !CRM_Utils_Array::value( 1, $params['membership_type_id'] ) ) {
-            $errors['membership_type_id'] = ts('Please select a membership type.');
+        if ( !CRM_Utils_Array::value( 1, $params['membership_type_id'] ) && empty( $self->_lineItems ) ) {
+            if ( $priceSetId = CRM_Utils_Array::value( 'price_set_id', $params ) ) {
+                require_once 'CRM/Price/BAO/Field.php';
+                CRM_Price_BAO_Field::priceSetValidation( $priceSetId, $params, $errors );
+            } else {
+                $errors['membership_type_id'] = ts('Please select a membership type.');
+            }
         }
         if ( CRM_Utils_Array::value( 1, $params['membership_type_id'] ) && 
              CRM_Utils_Array::value( 'payment_processor_id', $params ) ) {
@@ -744,6 +802,17 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         $config = CRM_Core_Config::singleton(); 
         // get the submitted form values.  
         $this->_params = $formValues = $this->controller->exportValues( $this->_name );
+                        
+        if ( !CRM_Utils_Array::value( 1, $formValues['membership_type_id'] ) ) {
+            if ( $this->_id ) {
+                $formValues['membership_type_id'] = $this->_defaultValues['membership_type_id'];
+            } else {
+                $formValues['membership_type_id'][1] = 
+                    CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_FieldValue',
+                                                 $formValues["price_{$formValues['price_set_id']}"],
+                                                 'membership_type_id' );
+            }
+        }
         
         $params = $ids = array( );
         
@@ -763,6 +832,21 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             // unset send-receipt option, since receipt will be sent when ipn is received.
             unset( $this->_params['send_receipt'], $formValues['send_receipt'] );
         }
+        
+        // process price set and get total amount and line items.
+        $lineItem = array( );
+        $priceSetId = null;
+        if ( $priceSetId = CRM_Utils_Array::value( 'price_set_id', $this->_params ) ) {
+            require_once 'CRM/Price/BAO/Set.php';
+            CRM_Price_BAO_Set::processAmount( $this->_priceSet['fields'], 
+                                              $this->_params, $lineItem[$priceSetId] );
+            $params['total_amount'] = CRM_Utils_Array::value( 'amount', $this->_params );
+        }
+        if ( !CRM_Utils_Array::value( 'total_amount', $this->_params ) ) {
+            $params['total_amount'] = $this->_values['total_amount']; 
+        }
+        $this->assign( 'lineItem', !empty( $lineItem ) ? $lineItem : false );
+        
         
         // set the contact, when contact is selected
         require_once 'CRM/Contact/BAO/Contact/Location.php';
@@ -1100,6 +1184,11 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             } else {
                 $membership =& CRM_Member_BAO_Membership::create( $params, $ids );
             }
+        }
+
+        // process line items, until no previous line items.
+        if ( empty( $this->_lineItems )  && $membership->id && !empty( $lineItem ) ) {
+            CRM_Member_BAO_Membership::processPriceSet( $membership->id, $lineItem );
         }
 
         $receiptSend = false;

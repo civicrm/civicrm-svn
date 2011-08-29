@@ -2097,4 +2097,30 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id AND 
         
         return (int)$memberCount;
     }
+
+    /** 
+     * Function to process price set and line items. 
+     * 
+     * @access public 
+     * @return None 
+     */ 
+    function processPriceSet( $membershipId, $lineItem )
+    {
+        if ( !$membershipId || !is_array( $lineItem )
+             || CRM_Utils_system::isNull( $lineItem ) ) {
+            return;
+        }
+        
+        require_once 'CRM/Price/BAO/Set.php';
+        require_once 'CRM/Price/BAO/LineItem.php';
+        foreach ( $lineItem as $priceSetId => $values ) {
+            if ( !$priceSetId ) continue;
+            foreach( $values as $line ) {
+                $line['entity_table'] = 'civicrm_membership';
+                $line['entity_id'] = $membershipId;
+                CRM_Price_BAO_LineItem::create( $line );
+            }
+            CRM_Price_BAO_Set::addTo( 'civicrm_membership', $membershipId, $priceSetId );
+        }
+    }
 }
