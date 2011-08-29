@@ -79,20 +79,28 @@ class CRM_Activity_Page_AJAX
     {
         $params = array( 'caseID', 'activityID', 'contactID', 'newSubject', 'targetContactIds', 'mode' );
         foreach ( $params as $param ) {
-            $$param = CRM_Utils_Array::value( $param, $_POST );
+            $vals[$param] = CRM_Utils_Array::value( $param, $_POST );
         }
-        
-        if ( !$activityID || !$caseID ) {
-            echo json_encode( array('error_msg' => 'required params missing.' ) );
-            CRM_Utils_System::civiExit( );
+
+        $retval = self::_convertToCaseActivity( $vals );
+    	
+    	echo json_encode( $retval );
+        CRM_Utils_System::civiExit( );      	
+    }
+    
+    static function _convertToCaseActivity( $params )
+    {   
+//    	watchdog('dave', print_r($params, true));                
+    	
+        if ( !$params['activityID'] || !$params['caseID'] ) {
+            return( array('error_msg' => 'required params missing.' ) );
         }
-        
+    	
         require_once "CRM/Activity/DAO/Activity.php";
         $otherActivity = new CRM_Activity_DAO_Activity();
-        $otherActivity->id = $activityID;
+        $otherActivity->id = $params['activityID'];
         if ( !$otherActivity->find( true ) ) {
-            echo json_encode( array('error_msg' => 'activity record is missing.' ) );
-            CRM_Utils_System::civiExit( );  
+            return ( array('error_msg' => 'activity record is missing.' ) );
         }
         $actDateTime = CRM_Utils_Date::isoToMysql( $otherActivity->activity_date_time );
         
@@ -102,7 +110,7 @@ class CRM_Activity_Page_AJAX
         CRM_Core_DAO::storeValues( $otherActivity, $mainActVals );
         
         //get new activity subject.
-        if ( !empty( $newSubject ) ) $mainActVals['subject'] = $newSubject;
+        if ( !empty( $params['newSubject'] ) ) $mainActVals['subject'] = $params['newSubject'];
         
         $mainActivity->copyValues( $mainActVals );
         $mainActivity->id = null;
@@ -119,7 +127,7 @@ class CRM_Activity_Page_AJAX
         $mainActivity->free( );
         
         //mark previous activity as deleted.
-        if ( in_array( $mode, array( 'move', 'file' ) ) ) {
+        if ( in_array( $params['mode'], array( 'move', 'file' ) ) ) {
             $otherActivity->activity_date_time = $actDateTime;
             $otherActivity->is_deleted = 1;
             $otherActivity->save( );
@@ -128,19 +136,19 @@ class CRM_Activity_Page_AJAX
         
         require_once "CRM/Activity/BAO/Activity.php";
         $targetContacts = array( );
-        if ( !empty( $targetContactIds ) ) {
-            $targetContacts = array_unique( explode( ',', $targetContactIds ) );
+        if ( !empty( $params['targetContactIds'] ) ) {
+            $targetContacts = array_unique( explode( ',', $params['targetContactIds'] ) );
         }
         foreach ( $targetContacts as $key => $value ) { 
-            $params = array( 'activity_id' => $mainActivityId, 
+            $targ_params = array( 'activity_id' => $mainActivityId, 
                              'target_contact_id' => $value );
-            CRM_Activity_BAO_Activity::createActivityTarget( $params );
+            CRM_Activity_BAO_Activity::createActivityTarget( $targ_params );
         }
         
         //attach newly created activity to case.
         require_once "CRM/Case/DAO/CaseActivity.php";
         $caseActivity = new CRM_Case_DAO_CaseActivity( );
-        $caseActivity->case_id     = $caseID;
+        $caseActivity->case_id     = $params['caseID'];
         $caseActivity->activity_id = $mainActivityId;
         $caseActivity->save( );
         $error_msg = $caseActivity->_lastError;
@@ -150,36 +158,37 @@ class CRM_Activity_Page_AJAX
         require_once 'CRM/Core/BAO/CustomValueTable.php';
         require_once 'CRM/Core/BAO/File.php';
         $customParams = $htmlType = array( );
-        $customValues = CRM_Core_BAO_CustomValueTable::getEntityValues( $activityID, 'Activity' );
+        $customValues = CRM_Core_BAO_CustomValueTable::getEntityValues( $params['activityID'], 'Activity' );
 
-        $fieldIds = implode( ', ', array_keys( $customValues ) );
-        $sql      = "SELECT id FROM civicrm_custom_field WHERE html_type = 'File' AND id IN ( {$fieldIds} )";
-        $result   = CRM_Core_DAO::executeQuery( $sql );
-        
-        while ( $result->fetch( ) ) {
-            $htmlType[] = $result->id;
+        if ( ! empty( $customValues ) ) {
+	        $fieldIds = implode( ', ', array_keys( $customValues ) );
+	        $sql      = "SELECT id FROM civicrm_custom_field WHERE html_type = 'File' AND id IN ( {$fieldIds} )";
+	        $result   = CRM_Core_DAO::executeQuery( $sql );
+	        
+	        while ( $result->fetch( ) ) {
+	            $htmlType[] = $result->id;
+	        }
+	                
+	        foreach ( $customValues as $key => $value ) {
+	            if ( $value ) {
+	                if ( in_array( $key, $htmlType ) ) {
+	                    $fileValues = CRM_Core_BAO_File::path( $value, $params['activityID'] );
+	                    $customParams["custom_{$key}_-1"] = array( 'name' => $fileValues[0],
+	                                                               'path' => $fileValues[1] );
+	                } else {
+	                    $customParams["custom_{$key}_-1"] = $value;
+	                }
+	            }
+	        }
+	        CRM_Core_BAO_CustomValueTable::postProcess( $customParams, CRM_Core_DAO::$_nullArray, 'civicrm_activity',
+	                                                    $mainActivityId, 'Activity' );
         }
-                
-        foreach ( $customValues as $key => $value ) {
-            if ( $value ) {
-                if ( in_array( $key, $htmlType ) ) {
-                    $fileValues = CRM_Core_BAO_File::path( $value, $activityID );
-                    $customParams["custom_{$key}_-1"] = array( 'name' => $fileValues[0],
-                                                               'path' => $fileValues[1] );
-                } else {
-                    $customParams["custom_{$key}_-1"] = $value;
-                }
-            }
-        }
-        CRM_Core_BAO_CustomValueTable::postProcess( $customParams, CRM_Core_DAO::$_nullArray, 'civicrm_activity',
-                                                    $mainActivityId, 'Activity' );
-        
+
         // copy activity attachments ( if any )
         require_once "CRM/Core/BAO/File.php";
-        CRM_Core_BAO_File::copyEntityFile( 'civicrm_activity', $activityID, 'civicrm_activity', $mainActivityId );
+        CRM_Core_BAO_File::copyEntityFile( 'civicrm_activity', $params['activityID'], 'civicrm_activity', $mainActivityId );
             
-        echo json_encode(array('error_msg' => $error_msg));
-        CRM_Utils_System::civiExit( );
+        return (array('error_msg' => $error_msg));
     }
     
     static function getContactActivity( ) 
