@@ -2677,6 +2677,9 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
             //allow edit operation.
             $allowEditNames = array( 'Open Case' );
             
+            // do not allow File on Case
+            $doNotFileNames = array( 'Open Case', 'Change Case Type', 'Change Case Status', 'Change Case Start Date' );
+            
             if ( in_array( $actTypeName, $singletonNames ) ) {
                 $allow = false;
                 if ( in_array( $operation, $actionOperations ) ) {
@@ -2692,6 +2695,11 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
                  in_array( $actTypeName, $doNotDeleteNames ) ) {
                 $allow = false;
             }
+            
+            if ( $allow && ($operation == 'File On Case') &&
+                in_array( $actTypeName, $doNotFileNames ) ) {
+            	$allow = false;
+            }  
             
             //check settings file for masking actions
             //on the basis the activity types
@@ -2709,6 +2717,7 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
                     $allow = false;
                 }
             }
+            
         }
         
         return $allow;
