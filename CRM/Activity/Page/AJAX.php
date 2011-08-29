@@ -124,11 +124,23 @@ class CRM_Activity_Page_AJAX
         CRM_Activity_BAO_Activity::logActivityAction( $mainActivity );
         $mainActivity->free( );
         
-        //mark previous activity as deleted.
+        /* Mark previous activity as deleted. If it was a non-case activity
+         * then just change the subject.
+         */
         if ( in_array( $params['mode'], array( 'move', 'file' ) ) ) {
+        	require_once "CRM/Case/DAO/CaseActivity.php";
+            $caseActivity = new CRM_Case_DAO_CaseActivity( );
+            $caseActivity->case_id     = $params['caseID'];
+            $caseActivity->activity_id = $otherActivity->id;
+            if ( $params['mode'] == 'move' || $caseActivity->find( true ) ) {            
+	            $otherActivity->is_deleted = 1;
+            } else {
+            	$otherActivity->subject = ts('(Filed on case %1) ', array( 1 => $params['caseID'] ) ) . $otherActivity->subject;
+            }
             $otherActivity->activity_date_time = $actDateTime;
-            $otherActivity->is_deleted = 1;
             $otherActivity->save( );
+            
+            $caseActivity->free( );
         }
         $otherActivity->free( ); 
         
