@@ -89,9 +89,7 @@ class CRM_Activity_Page_AJAX
     }
     
     static function _convertToCaseActivity( $params )
-    {   
-//    	watchdog('dave', print_r($params, true));                
-    	
+    {       	
         if ( !$params['activityID'] || !$params['caseID'] ) {
             return( array('error_msg' => 'required params missing.' ) );
         }
