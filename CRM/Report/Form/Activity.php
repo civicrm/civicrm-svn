@@ -45,6 +45,9 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
     function __construct( ) {
         $config = CRM_Core_Config::singleton( );
         $campaignEnabled = in_array( "CiviCampaign", $config->enableComponents );
+        $this->activityTypes = CRM_Core_PseudoConstant::activityType( true, false, false, 'label', true );
+        asort( $this->activityTypes );
+        
         $this->_columns = array(  
                                 'civicrm_contact'      =>
                                 array( 'dao'     => 'CRM_Contact_DAO_Contact',
@@ -153,7 +156,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                               'activity_type_id'    => 
                                               array( 'title'        => ts( 'Activity Type' ),
                                                      'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                                     'options'      => CRM_Core_PseudoConstant::activityType( true, false, false, 'label', true ), ), 
+                                                     'options'      => $this->activityTypes, ), 
                                               'status_id'           => 
                                               array( 'title'        => ts( 'Activity Status' ),
                                                      'operatorType' => CRM_Report_Form::OP_MULTISELECT,
