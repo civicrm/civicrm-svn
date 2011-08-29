@@ -1440,6 +1440,8 @@ function civitest_civicrm_searchColumns( $objectName, &$headers,  &$values, &$se
             $values[$id]['source'] = $result['contact_source'];
             $values[$id]['job_title'] = $result['job_title'];
         }
+
+        // remember to modify CRM/Contact/Form/Selector.tpl to see the changes
     }
 
     if ( $objectName == 'Contribute' ) {
