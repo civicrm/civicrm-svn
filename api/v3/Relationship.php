@@ -146,11 +146,9 @@ function civicrm_api3_relationship_delete( $params ) {
 function civicrm_api3_relationship_get($params) 
 {
 
-        civicrm_api3_verify_mandatory($params);
- 
-        require_once 'CRM/Contact/BAO/Relationship.php';
-        if(CRM_Utils_Array::value('contact_id',$params)){
-             return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params,FALSE);
+        civicrm_api3_verify_mandatory($params); 
+        if(!CRM_Utils_Array::value('contact_id',$params)){
+           $relationships = _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params,FALSE);
         }else{
              $relationships= array();
              $relationships = CRM_Contact_BAO_Relationship::getRelationship($params['contact_id'],
@@ -162,12 +160,9 @@ function civicrm_api3_relationship_get($params)
      
     
         }
-
         foreach ( $relationships as $relationshipId => $values ) {
- 
                _civicrm_api3_custom_data_get($relationships[$relationshipId],'Relationship',$relationshipId);
-  
-        }
+         }
     
         
         return civicrm_api3_create_success( $relationships ,$params);
