@@ -59,12 +59,16 @@
 				</tr>
 			    </table>
 			{/foreach}
+			    <a href="#" class="button" style="margin-left: 6px;" onclick="updateCaseCustom({$cvID}, {$customGroupId}); return false;"><span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span></a><br/>
+
 			</div>
 			<div class="clear"></div>
 		    </div>
 
     {/foreach}
 {/foreach}
+<div id="case_custom_edit"></div>
+
     {literal}
 	<script type="text/javascript">
 	cj(function() {
@@ -98,6 +102,35 @@
 			  cj(element).html(cj(element).attr('title') + ' ('+ html+') ');
           }
         });
+    }
+    {/literal}
+</script>
+{else}
+<script type="text/javascript">
+    {literal}
+    function updateCaseCustom( entityID, groupID ) {
+      var dataURL = {/literal}"{crmURL p="civicrm/contact/view/cd/edit" q="snippet=4&type=Case&cgcount=1&action=update&reset=1" h=0}"{literal};
+      dataURL = dataURL + '&entityID=' + entityID + '&groupID=' + groupID;
+
+      cj.ajax({
+         url: dataURL,
+         success: function( content ) {
+             cj( '#case_custom_edit' ).show( ).html( content ).dialog({
+         	    	title: "Create New Contact",
+             		modal: true,
+             		width: 680, 
+             		overlay: { 
+             			opacity: 0.5, 
+             			background: "black" 
+             		},
+
+                 close: function(event, ui) {
+                        cj('#case_custom_edit').fadeOut(5000);
+                 }
+             });
+         }
+      });
+
     }
     {/literal}
 </script>
