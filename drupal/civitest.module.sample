@@ -1416,7 +1416,7 @@ function civitest_civicrm_alterAPIPermissions($entity, $action, &$params, &$perm
 function civitest_civicrm_summaryActions( &$actions, $contactID ) {
     $customizeActions = array('contribution', 'note', 'rel');
     foreach( $actions as $key => $value ) {
-        if( ( in_array( $key, $customizeActions ) ) {
+        if ( in_array( $key, $customizeActions ) ) {
             unset( $actions[$key] );
         }	     
     }
