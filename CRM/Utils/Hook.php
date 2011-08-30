@@ -465,11 +465,12 @@ class CRM_Utils_Hook {
             self::requireCiviModules( $civiModules );
         }
 
-        return self::runHooks( $civiModules, $fnSuffix );
+        return self::runHooks( $civiModules, $fnSuffix, $numParams );
     }
 
-    static function runHooks( &$civiModules, $fnSuffix ) {
-        $result = array( );
+    static function runHooks( &$civiModules, $fnSuffix, $numParams = null ) {
+        $result = $fResult = array( );
+        
         foreach ( $civiModules as $module) { 
             $fnName = "{$module}_{$fnSuffix}";
             if ( function_exists( $fnName ) ) {
@@ -485,7 +486,7 @@ class CRM_Utils_Hook {
                     $fResult = $fnName( $arg1, $arg2, $arg3, $arg4, $arg5 );
                 }
 
-                if ( is_array( $fResult ) ) {
+                if ( !empty( $fResult ) ) {
                     $result = array_merge( $result, $fResult );
                 }
 
