@@ -6064,6 +6064,8 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
     case "Individual":
     case "Household":
     case "Organization":
+    case "Address":
+    case "Group":
         $jointable = 'civicrm_contact';
         break;
     case "Event":
@@ -6087,7 +6089,12 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
     case "Grant":
         $jointable = 'civicrm_grant';
         break;
+    case "Campaign":
+    case "Survey":
+        $jointable = 'civicrm_campaign';
+        break;
     }
+
 
     foreach ($tree as $groupkey => $currentgroup) {
         if ($groupkey == 'info') { return $data; } // dodges an invalid argument call after all the groups go through // have a look at what $tree outputs to to see why.
