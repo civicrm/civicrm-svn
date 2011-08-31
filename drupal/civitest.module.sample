@@ -1430,6 +1430,9 @@ function civitest_civicrm_searchColumns( $objectName, &$headers,  &$values, &$se
         unset( $headers[8]['sort'] );
 
         foreach ( $values as $id => $value ) {
+            // the below is not a good solution from a performance perspective
+            // you might want to consider using the GET on all the contact IDs
+            // and then looping on the result set
             $result = civicrm_api( 'Contact', 'GetSingle',
                                    array( 'version' => 3,
                                           'id' => $value['contact_id'],
@@ -1453,6 +1456,12 @@ function civitest_civicrm_searchColumns( $objectName, &$headers,  &$values, &$se
             }
         }
 
+        // the below structure is not very optimal from a performance perspective
+        // you are doing 'n' queries, one for each contact_id
+        // a better query would be to group all the contact ids and do
+        // SELECT SUM(total_amount), contact_id FROM   civicrm_contribution WHERE contact_id
+        //  IN ( CONTACT_ID_LIST ) GROUP BY contact_id
+        // and then loop around the result set
         foreach ( $values as $id => $value ) {
             $sql = "
 SELECT SUM(total_amount)
