@@ -1203,7 +1203,7 @@ INNER JOIN  civicrm_contact ON civicrm_relationship.contact_id_b = civicrm_conta
             //check for view activity.
             $subject = (empty($dao->subject)) ? '(' . ts('no subject') . ')'  : $dao->subject;
             if ( $allowView ) {
-                $subject = '<a href="javascript:'. $type .'viewActivity('. $dao->id .','. $contactID . ',' .'\''. $type . '\' );" title=' .$viewTitle .'>' .$subject .'</a>'; 
+                $subject = '<a href="javascript:'. $type .'viewActivity('. $dao->id .','. $contactID . ',' .'\''. $type . '\' );" title=\'' .$viewTitle .'\'>' .$subject .'</a>'; 
             }
             $values[$dao->id]['subject'] = $subject;
             
@@ -2885,6 +2885,55 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
         
         return $configured;
     }
-    
+
+    /*
+     * Used during case component enablement and during ugprade
+     */
+    static function createCaseViews() {
+        $scheduled_id = CRM_Core_OptionGroup::getValue('activity_status', 'Scheduled', 'name' );
+
+        $sql = "CREATE OR REPLACE VIEW `civicrm_view_case_activity_upcoming`
+ AS SELECT ca.case_id, a.id, a.activity_date_time, a.status_id, a.activity_type_id
+ FROM civicrm_case_activity ca
+ INNER JOIN civicrm_activity a ON ca.activity_id=a.id
+ WHERE a.activity_date_time <= DATE_ADD( NOW(), INTERVAL 14 DAY )
+ AND a.is_current_revision = 1 AND a.is_deleted=0 AND a.status_id = $scheduled_id";
+        CRM_Core_Error::ignoreException();
+        $dao = new CRM_Core_DAO( );
+        $dao->query( $sql );
+        if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
+            CRM_Core_Error::setCallback();
+            return false;
+        }
+        
+        // Above error doesn't get caught?
+        $doublecheck = $dao->singleValueQuery( "SELECT count(id) FROM civicrm_view_case_activity_upcoming" );
+        if ( is_null($doublecheck) ) {
+            return false;
+        }
+
+              
+        $sql = "CREATE OR REPLACE VIEW `civicrm_view_case_activity_recent`
+ AS SELECT ca.case_id, a.id, a.activity_date_time, a.status_id, a.activity_type_id
+ FROM civicrm_case_activity ca
+ INNER JOIN civicrm_activity a ON ca.activity_id=a.id
+ WHERE a.activity_date_time <= NOW()
+ AND a.activity_date_time >= DATE_SUB( NOW(), INTERVAL 14 DAY )
+ AND a.is_current_revision = 1 AND a.is_deleted=0 AND a.status_id <> $scheduled_id";        
+        CRM_Core_Error::ignoreException();
+        $dao->query( $sql );
+        if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
+            CRM_Core_Error::setCallback();
+            return false;
+        }
+
+        // Above error doesn't get caught?
+        $doublecheck = $dao->singleValueQuery( "SELECT count(id) FROM civicrm_view_case_activity_recent" );
+        if ( is_null($doublecheck) ) {
+            return false;
+        }
+        
+        return true;
+    }
 }
 
