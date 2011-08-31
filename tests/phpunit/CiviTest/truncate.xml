@@ -161,6 +161,8 @@
 
   <civicrm_website />
 
+  <civicrm_setting />
+
   <civicrm_acl_cache />
 
   <civicrm_dashboard_contact />

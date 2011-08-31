@@ -57,4 +57,5 @@
 <xi:include href="ActionMapping.xml"        parse="xml" />
 <xi:include href="ActionSchedule.xml"       parse="xml" />
 <xi:include href="ActionLog.xml"            parse="xml" />
+<xi:include href="Setting.xml"              parse="xml" />
 </tables>

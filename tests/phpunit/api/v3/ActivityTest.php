@@ -355,8 +355,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         // force reload of config object
         $config = CRM_Core_Config::singleton( true, true );
 
-        require_once 'CRM/Core/BAO/Setting.php';
-        CRM_Core_BAO_Setting::enableComponent( 'CiviCampaign' );
+        require_once 'CRM/Core/BAO/ConfigSetting.php';
+        CRM_Core_BAO_ConfigSetting::enableComponent( 'CiviCampaign' );
         //flush cache by calling with reset
         $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name', true );
         

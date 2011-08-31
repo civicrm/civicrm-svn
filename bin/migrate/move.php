@@ -37,8 +37,8 @@ function run( ) {
     // this does not return on failure
     CRM_Utils_System::authenticateScript( true );
 
-    require_once 'CRM/Core/BAO/Setting.php';
-    $moveStatus = CRM_Core_BAO_Setting::doSiteMove( );
+    require_once 'CRM/Core/BAO/ConfigSetting.php';
+    $moveStatus = CRM_Core_BAO_ConfigSetting::doSiteMove( );
 
     echo $moveStatus . '<br />';
     echo ts("If no errors are displayed above, the site move steps have completed successfully. Please visit <a href=\"{$config->userFrameworkBaseURL}\">your moved site</a> and test the move.");

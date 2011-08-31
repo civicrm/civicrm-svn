@@ -26,7 +26,7 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Core/BAO/Setting.php';
+require_once 'CRM/Core/BAO/ConfigSetting.php';
 
 class CRM_Core_BAO_SettingTest extends CiviUnitTestCase 
 {
@@ -47,7 +47,7 @@ class CRM_Core_BAO_SettingTest extends CiviUnitTestCase
     function testEnableComponentValid( ) {
         $config = CRM_Core_Config::singleton( true, true );
 
-        $result = CRM_Core_BAO_Setting::enableComponent( 'CiviCampaign' );
+        $result = CRM_Core_BAO_ConfigSetting::enableComponent( 'CiviCampaign' );
 
         $this->assertTrue( $result );
     }
@@ -55,8 +55,8 @@ class CRM_Core_BAO_SettingTest extends CiviUnitTestCase
     function testEnableComponentAlreadyPresent( ) {
         $config = CRM_Core_Config::singleton( true, true );
 
-        $result = CRM_Core_BAO_Setting::enableComponent( 'CiviCampaign' );
-        $result = CRM_Core_BAO_Setting::enableComponent( 'CiviCampaign' );
+        $result = CRM_Core_BAO_ConfigSetting::enableComponent( 'CiviCampaign' );
+        $result = CRM_Core_BAO_ConfigSetting::enableComponent( 'CiviCampaign' );
 
         $this->assertTrue( $result );
     }
@@ -65,7 +65,7 @@ class CRM_Core_BAO_SettingTest extends CiviUnitTestCase
     function testEnableComponentInvalid( ) {
         $config = CRM_Core_Config::singleton( true, true );
 
-        $result = CRM_Core_BAO_Setting::enableComponent( 'CiviFake' );
+        $result = CRM_Core_BAO_ConfigSetting::enableComponent( 'CiviFake' );
 
         $this->assertFalse( $result );
     }

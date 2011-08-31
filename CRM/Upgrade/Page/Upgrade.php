@@ -417,8 +417,8 @@ SELECT  count( id ) as statusCount
                     $defaults['enableComponents'][]   = 'CiviReport';
                     $defaults['enableComponentIDs'][] = $compId;
 
-                    require_once "CRM/Core/BAO/Setting.php";
-                    CRM_Core_BAO_Setting::add($defaults);            
+                    require_once "CRM/Core/BAO/ConfigSetting.php";
+                    CRM_Core_BAO_ConfigSetting::add($defaults);            
                 }
             }
         }

@@ -39,7 +39,7 @@
  * file contains functions used in civicrm configuration
  * 
  */
-class CRM_Core_BAO_Setting 
+class CRM_Core_BAO_ConfigSetting 
 {
     /**
      * Function to add civicrm settings
@@ -51,7 +51,7 @@ class CRM_Core_BAO_Setting
      */
     static function add(&$params) 
     {
-        CRM_Core_BAO_Setting::fixParams($params);
+        self::fixParams($params);
 
         // also set a template url so js files can use this
         // CRM-6194
@@ -66,7 +66,7 @@ class CRM_Core_BAO_Setting
         $domain->find(true);
         if ($domain->config_backend) {
             $values = unserialize($domain->config_backend);
-            CRM_Core_BAO_Setting::formatParams($params, $values);
+            self::formatParams($params, $values);
         }
 
         // CRM-6151

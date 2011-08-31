@@ -3496,9 +3496,13 @@ WHERE  id IN ( $groupIDs )
                 // ok here is a first hack at an optimization, lets get all the contact ids
                 // that are restricted and we'll then do the final clause with it
                 // CRM-5954
-                $limitSelect = ( $this->_useDistinct ) ?
-                    'SELECT DISTINCT(contact_a.id) as id' :
-                    'SELECT contact_a.id as id';
+                if ( isset( $this->_distinctComponentClause ) ) {
+                    $limitSelect = "SELECT {$this->_distinctComponentClause}";
+                } else {
+                    $limitSelect = ( $this->_useDistinct ) ?
+                        'SELECT DISTINCT(contact_a.id) as id' :
+                        'SELECT contact_a.id as id';
+                }
 
                 $doOpt = true;
                 // hack for order clause
@@ -3555,10 +3559,12 @@ WHERE  id IN ( $groupIDs )
                     if ( empty( $limitIDs ) ) {
                         $limitClause = ' AND ( 0 ) ';
                     } else {
-                        $limitClause = 
-                            ' AND contact_a.id IN ( ' .
-                            implode( ',', $limitIDs ) .
-                            ' ) ';
+                        if ( isset( $this->_distinctComponentClause ) ) {
+                            $limitClause = " AND {$this->_distinctComponentClause} IN ( ";
+                        } else {
+                            $limitClause = ' AND contact_a.id IN ( ';
+                        }
+                        $limitClause .=  implode( ',', $limitIDs ) . ' ) ';
                     }
                     $where .= $limitClause;
                     // reset limit clause since we already restrict what records we want

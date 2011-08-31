@@ -170,8 +170,8 @@ class CRM_Upgrade_ThreeOne_ThreeOne extends CRM_Upgrade_Form {
 
             unset($defaults['dateformatQfDate']);
             unset($defaults['dateformatTime']);
-            require_once "CRM/Core/BAO/Setting.php";
-            CRM_Core_BAO_Setting::add($defaults);                            
+            require_once "CRM/Core/BAO/ConfigSetting.php";
+            CRM_Core_BAO_ConfigSetting::add($defaults);                            
         }
         
         $sql     = "SELECT id, form_values FROM civicrm_report_instance";

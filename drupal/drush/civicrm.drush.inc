@@ -428,8 +428,8 @@ function civicrm_config_update() {
     }
 
     require_once 'CRM/Core/I18n.php';
-    require_once 'CRM/Core/BAO/Setting.php';
-    $result = CRM_Core_BAO_Setting::doSiteMove( $defaultValues );
+    require_once 'CRM/Core/BAO/ConfigSetting.php';
+    $result = CRM_Core_BAO_ConfigSetting::doSiteMove( $defaultValues );
 
     if ( $result )
         drush_log(dt('Config successfully updated.'), 'completed');
