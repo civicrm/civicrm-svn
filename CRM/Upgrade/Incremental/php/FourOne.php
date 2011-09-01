@@ -51,7 +51,17 @@ class CRM_Upgrade_Incremental_php_FourOne {
     	$config = CRM_Core_Config::singleton( );
         if ( in_array( 'CiviCase', $config->enableComponents ) ) {
         	if ( ! CRM_Case_BAO_Case::createCaseViews( ) ) {
-            	// TODO: how to display error to user?
+                $template = CRM_Core_Smarty::singleton( );
+                $afterUpgradeMessage = '';
+		        if ( $afterUpgradeMessage = $template->get_template_vars('afterUpgradeMessage') ) {
+		        	$afterUpgradeMessage .= "<br/><br/>";
+		        }
+		        $afterUpgradeMessage .= '<div class="crm-upgrade-case-views-error">' . ts( "Error while creating CiviCase database views. Please create the following views manually before using CiviCase:" );
+		        $afterUpgradeMessage .= '<div class="crm-upgrade-case-views-query"><div>'
+		            . CRM_Case_BAO_Case::createCaseViewsQuery( 'upcoming' ) . '</div><div>'
+		            . CRM_Case_BAO_Case::createCaseViewsQuery( 'recent' ) . '</div>'
+		            . '</div></div>';
+		        $template->assign('afterUpgradeMessage', $afterUpgradeMessage);
         	}
         }
     }

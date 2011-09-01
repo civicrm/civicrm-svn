@@ -2890,14 +2890,7 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
      * Used during case component enablement and during ugprade
      */
     static function createCaseViews() {
-        $scheduled_id = CRM_Core_OptionGroup::getValue('activity_status', 'Scheduled', 'name' );
-
-        $sql = "CREATE OR REPLACE VIEW `civicrm_view_case_activity_upcoming`
- AS SELECT ca.case_id, a.id, a.activity_date_time, a.status_id, a.activity_type_id
- FROM civicrm_case_activity ca
- INNER JOIN civicrm_activity a ON ca.activity_id=a.id
- WHERE a.activity_date_time <= DATE_ADD( NOW(), INTERVAL 14 DAY )
- AND a.is_current_revision = 1 AND a.is_deleted=0 AND a.status_id = $scheduled_id";
+        $sql = self::createCaseViewsQuery( 'upcoming' );
         CRM_Core_Error::ignoreException();
         $dao = new CRM_Core_DAO( );
         $dao->query( $sql );
@@ -2909,17 +2902,10 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
         // Above error doesn't get caught?
         $doublecheck = $dao->singleValueQuery( "SELECT count(id) FROM civicrm_view_case_activity_upcoming" );
         if ( is_null($doublecheck) ) {
-            return false;
+        	return false;
         }
-
               
-        $sql = "CREATE OR REPLACE VIEW `civicrm_view_case_activity_recent`
- AS SELECT ca.case_id, a.id, a.activity_date_time, a.status_id, a.activity_type_id
- FROM civicrm_case_activity ca
- INNER JOIN civicrm_activity a ON ca.activity_id=a.id
- WHERE a.activity_date_time <= NOW()
- AND a.activity_date_time >= DATE_SUB( NOW(), INTERVAL 14 DAY )
- AND a.is_current_revision = 1 AND a.is_deleted=0 AND a.status_id <> $scheduled_id";        
+        $sql = self::createCaseViewsQuery( 'recent' );      
         CRM_Core_Error::ignoreException();
         $dao->query( $sql );
         if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
@@ -2934,6 +2920,37 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
         }
         
         return true;
+    }
+    
+    /*
+     * helper function, also used by the upgrade in case of error
+     */
+    static function createCaseViewsQuery( $section = 'upcoming' )
+    {
+    	$sql = "";
+    	$scheduled_id = CRM_Core_OptionGroup::getValue('activity_status', 'Scheduled', 'name' );
+    	switch( $section ) {
+    		case 'upcoming':
+    			$sql = "CREATE OR REPLACE VIEW `civicrm_view_case_activity_upcoming`
+ AS SELECT ca.case_id, a.id, a.activity_date_time, a.status_id, a.activity_type_id
+ FROM civicrm_case_activity ca
+ INNER JOIN civicrm_activity a ON ca.activity_id=a.id
+ WHERE a.activity_date_time <= DATE_ADD( NOW(), INTERVAL 14 DAY )
+ AND a.is_current_revision = 1 AND a.is_deleted=0 AND a.status_id = $scheduled_id";
+    			break;
+    			
+    		case 'recent':
+    			$sql = "CREATE OR REPLACE VIEW `civicrm_view_case_activity_recent`
+ AS SELECT ca.case_id, a.id, a.activity_date_time, a.status_id, a.activity_type_id
+ FROM civicrm_case_activity ca
+ INNER JOIN civicrm_activity a ON ca.activity_id=a.id
+ WHERE a.activity_date_time <= NOW()
+ AND a.activity_date_time >= DATE_SUB( NOW(), INTERVAL 14 DAY )
+ AND a.is_current_revision = 1 AND a.is_deleted=0 AND a.status_id <> $scheduled_id";
+    			break;
+    	}
+    	
+    	return $sql;
     }
 }
 
