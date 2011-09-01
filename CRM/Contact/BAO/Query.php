@@ -2930,20 +2930,41 @@ WHERE  id IN ( $groupIDs )
             $value = array( $value );
         }
 
-        $stateClause = 
-            'civicrm_state_province.id IN (' . 
-            implode( ',', $value ) .
-            ')';
+        // check if the values are ids OR names of the states
+        $inputFormat = 'id';
+        foreach ( $value as $v ) {
+            if ( ! is_numeric( $v ) ) {
+                $inputFormat = 'name';
+                break;
+            }
+        }
+        
+        $names = array( );
+        if ( $inputFormat == 'id' ) {
+            $stateClause = 
+                'civicrm_state_province.id IN (' . 
+                implode( ',', $value ) .
+                ')';
+
+            $stateProvince = CRM_Core_PseudoConstant::stateProvince();
+            foreach ( $value as $id ) {
+                $names[] = $stateProvince[$id];
+            }
+        } else {
+            $inputClause = array( );
+            foreach ( $value as $name ) {
+                $name = trim($name);
+                $inputClause[] = "'$name'";
+            }
+            $stateClause = 
+                'civicrm_state_province.name IN (' . 
+                implode( ',', $inputClause ) .
+                ')';
+            $names = $value;
+        }
 
         $this->_tables['civicrm_state_province'] = 1;
         $this->_whereTables['civicrm_state_province'] = 1;
-            
-        $stateProvince =& CRM_Core_PseudoConstant::stateProvince();
-        $names = array( );
-        foreach ( $value as $id ) {
-            $names[] = $stateProvince[$id];
-        }
-            
 
         $countryValues = $this->getWhereValues( 'country', $grouping );
         list( $countryClause, $countryQill ) = $this->country( $countryValues, true );
