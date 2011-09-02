@@ -3463,7 +3463,8 @@ WHERE  id IN ( $groupIDs )
 
         if ( ! $count ) {
             $config = CRM_Core_Config::singleton( );
-            if ( $config->includeOrderByClause ) {
+            if ( $config->includeOrderByClause ||
+                 isset( $this->_distinctComponentClause ) ) {
                 if ($sort) {
                     if ( is_string( $sort ) ) {
                         $orderBy = $sort;
@@ -3506,6 +3507,9 @@ WHERE  id IN ( $groupIDs )
 
                 $doOpt = true;
                 // hack for order clause
+                // i have no idea what the below code does and how -- Lobo
+                // seems like the explode wont work nicely in many a case
+                // if we are the orderBy variable having the "ORDER BY" string
                 if ( $orderBy ) {
                     $fieldOrder = explode( ' ', $orderBy );
                     $field = $fieldOrder[0];
@@ -3560,7 +3564,13 @@ WHERE  id IN ( $groupIDs )
                         $limitClause = ' AND ( 0 ) ';
                     } else {
                         if ( isset( $this->_distinctComponentClause ) ) {
-                            $limitClause = " AND {$this->_distinctComponentClause} IN ( ";
+                            // hack to get rid of DISTINCT
+                            // CRM-8766
+                            // should consider getting rid of DISTINCT in component clauses
+                            $fixClause = str_replace( 'DISTINCT',
+                                                      '',
+                                                      $this->_distinctComponentClause );
+                            $limitClause = " AND {$fixClause} IN ( ";
                         } else {
                             $limitClause = ' AND contact_a.id IN ( ';
                         }
