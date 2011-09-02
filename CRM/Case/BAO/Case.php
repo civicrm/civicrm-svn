@@ -1124,6 +1124,7 @@ INNER JOIN  civicrm_contact ON civicrm_relationship.contact_id_b = civicrm_conta
         $deleteUrl  = "{$url}&action=delete{$contextUrl}";
         $restoreUrl = "{$url}&action=renew{$contextUrl}";
         $viewTitle  = ts('View this activity.');
+        $statusTitle = ts('Edit status');
 
         require_once 'CRM/Core/OptionGroup.php';
         $emailActivityTypeIDs = array('Email' => CRM_Core_OptionGroup::getValue( 'activity_type', 
@@ -1266,6 +1267,10 @@ INNER JOIN  civicrm_contact ON civicrm_relationship.contact_id_b = civicrm_conta
                 } else {
                     $values[$dao->id]['class'] = $values[$dao->id]['class']." status-scheduled";    
                 } 
+            }
+            
+            if ( $allowEdit ) {
+                $values[$dao->id]['status'] = '<a class="crm-activity-status crm-activity-status-'. $dao->id . ' ' . $values[$dao->id]['class'] . '" href="javascript:changeActivityStatus('. $dao->id .','. $contactID . ',' . $dao->status . ');" title=\'' .$statusTitle .'\'>' .$values[$dao->id]['status'] .'</a>';
             }
         }
         $dao->free( );

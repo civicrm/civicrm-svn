@@ -1486,24 +1486,38 @@ table.campaign td,
 
 }
 
-#crm-container table.nestedActivitySelector tr.priority-urgent {         
+#crm-container table.nestedActivitySelector tr.priority-urgent,
+#crm-container table.nestedActivitySelector tr a.priority-urgent
+{         
     background-color: #FFDDDD;
 }
 
-#crm-container table.nestedActivitySelector tr.priority-low {
+#crm-container table.nestedActivitySelector tr.priority-low,
+#crm-container table.nestedActivitySelector tr a.priority-low
+{
     background-color: #DDFFDD;
 }
 
-#crm-container table.nestedActivitySelector tr.status-scheduled {
+#crm-container table.nestedActivitySelector tr.status-scheduled,
+#crm-container table.nestedActivitySelector tr a.status-scheduled
+{
     color: #006633;   
 }
 
-#crm-container table.nestedActivitySelector tr.status-completed {
+#crm-container table.nestedActivitySelector tr.status-completed,
+#crm-container table.nestedActivitySelector tr a.status-completed
+{
     color: #333333; 
 }
 
-#crm-container table.nestedActivitySelector tr.status-overdue {
+#crm-container table.nestedActivitySelector tr.status-overdue,
+#crm-container table.nestedActivitySelector tr a.status-overdue
+{
     color: #FF0000;
+}
+
+#crm-container table.nestedActivitySelector tr a.crm-activity-status {
+	cursor: pointer;
 }
 
 #crm-container table.nestedActivitySelector tr a {
