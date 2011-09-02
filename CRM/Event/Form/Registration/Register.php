@@ -1068,7 +1068,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 $participantCount[$participantNum] = 'participant';
             }
         }
-        
+
+        $registerByID = null;
         foreach ( $params as $key => $value ) {
             if ( $value != 'skip') {
                 $fields = null;

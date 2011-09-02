@@ -1600,7 +1600,9 @@ SELECT  display_name
             }
             
             require_once 'CRM/Member/DAO/MembershipStatus.php';
-            $subject .= " - Status: " . CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipStatus', $activity->status_id );
+            $subject .= 
+                " - Status: " . 
+                CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipStatus', $activity->status_id );
 			// CRM-72097 changed from start date to today
             $date = date('YmdHis');
             $component = 'Membership';
