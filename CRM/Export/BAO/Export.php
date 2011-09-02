@@ -74,13 +74,14 @@ class CRM_Export_BAO_Export
                                       $componentTable  = null,
                                       $mergeSameAddress = false,
                                       $mergeSameHousehold = false,
-                                      $exportParams = array() )
+                                      $exportParams = array(),
+                                      $queryOperator = 'AND' )
     {
         $headerRows = $returnProperties = array();
         $primary    = $paymentFields    = false;
         $origFields = $fields;
         $queryMode  = null; 
-        
+
         $allCampaigns = array( );
         $exportCampaign = false;
         
@@ -356,10 +357,12 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
             }
         }
 
-        $query = new CRM_Contact_BAO_Query( null, $returnProperties, null, false, false, $queryMode );
+        $query = new CRM_Contact_BAO_Query( null, $returnProperties, null,
+                                            false, false, $queryMode,
+                                            false, true, true, null, $queryOperator );
 
         list( $select, $from, $where, $having ) = $query->query( );
-        
+
         if ( $mergeSameHousehold == 1 ) {
             if ( !$returnProperties['id'] ) {
                 $returnProperties['id'] = 1;

@@ -279,7 +279,7 @@ FROM   {$this->_componentTable}
             $mergeSameHousehold = true;
         }
         $this->set('mergeSameHousehold', $mergeSameHousehold );
-        
+
         if ( $exportOption == self::EXPORT_ALL ) {
             require_once 'CRM/Export/BAO/Export.php';
             CRM_Export_BAO_Export::exportComponents( $this->_selectAll,
@@ -293,7 +293,8 @@ FROM   {$this->_componentTable}
                                                      $this->_componentTable,
                                                      $mergeSameAddress,
                                                      $mergeSameHousehold,
-                                                     $exportParams
+                                                     $exportParams,
+                                                     $this->get( 'queryOperator' )
                                                      );
         }
         
