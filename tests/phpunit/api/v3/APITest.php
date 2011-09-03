@@ -95,7 +95,7 @@ class api_v3_APITest extends CiviUnitTestCase {
    
     $result =  civicrm_api('RandomFile','get', array('version' => 3));
     $this->assertEquals($result['is_error'], 1 );
-    $this->assertEquals($result['error_message'], 'API (RandomFile,get) does not exist (join the API team and implement civicrm_api3_random_file_get' );
+    $this->assertEquals($result['error_message'], 'API (RandomFile,get) does not exist (join the API team and implement it!)' );
    }
    
    function testAPIWrapperCamelCaseFunction(){
@@ -105,5 +105,25 @@ class api_v3_APITest extends CiviUnitTestCase {
    function testAPIWrapperLcaseFunction(){
      $result = civicrm_api('OptionGroup', 'get', array('version' => 3,));
      $this->assertEquals(0, $result['is_error']);
+   }
+   
+   function testAPIResolver() {
+     $oldpath = get_include_path();
+     set_include_path($oldpath . PATH_SEPARATOR . dirname(__FILE__) . '/dataset/resolver');
+     
+     $result = civicrm_api('contact', 'testaction1', array(
+       'version' => 3,
+     ));
+     $this->assertEquals($result['values'][0], 'civicrm_api3_generic_testaction1 is ok');
+     $result = civicrm_api('contact', 'testaction2', array(
+       'version' => 3,
+     ));
+     $this->assertEquals($result['values'][0], 'civicrm_api3_contact_testaction2 is ok');
+     $result = civicrm_api('test_entity', 'testaction3', array(
+       'version' => 3,
+     ));
+     $this->assertEquals($result['values'][0], 'civicrm_api3_test_entity_testaction3 is ok');
+     
+     set_include_path($oldpath);
    }
 }

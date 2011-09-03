@@ -47,126 +47,144 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     require_once ('api/v3/utils.php');
     require_once 'CRM/Utils/String.php';
     _civicrm_api3_initialize(true );
-    $entity = CRM_Utils_String::munge($entity);
-    $action = CRM_Utils_String::munge($action);
-    $version = civicrm_get_api_version($params);
-    $errorFnName = ( $version == 2 ) ? 'civicrm_create_error' : 'civicrm_api3_create_error';
-    if ($version > 2) civicrm_api3_api_check_permission($entity, $action, $params);
-    $function = civicrm_api_get_function_name($entity, $action,$version);
-    $defaultsFunction = '_' .$function. '_defaults';
-    civicrm_api_include($entity,null,$version);
-    if(function_exists($defaultsFunction)){
-      $params = array_merge($defaultsFunction(),$params);
+    if ( ! is_array( $params ) ) {
+        throw new Exception ('Input variable `params` is not an array');
     }
-    if ( !function_exists ($function ) ) {
-      switch (strtolower($action)){
-        case "getfields":
-            $version = 3;
-            return civicrm_api3_create_success(_civicrm_api_get_fields($entity));
-            break;
-        case "getcount":
-          $result=civicrm_api ($entity,'get',$params);
-          $result = $result['count'];
-          break;
-        case "getsingle":
-          $params['sequential'] =1;//so the first entity is always result['values'][0]
-          $result = civicrm_api ($entity,'get',$params);
-          if ($result['is_error'] !== 0) 
-            break;
-          if ($result['count'] === 1) {
-            $result=$result['values'][0];
-            break;
-          }
-          if ($result['count'] !== 1) {
-            $result = civicrm_api3_create_error("Expected one $entity but found " .$result['count'], array ('count'=>$result['count']));
-            break;
-          }
-          break;
-        case "getvalue":
-          $params['sequential'] =1;
-          $result=civicrm_api ($entity,'get',$params);
-          if ($result['is_error'] !== 0) 
-            break;
-          if ($result['count'] !== 1) {
-            $result = civicrm_api3_create_error("Expected one $entity but found " .$result['count'], array ('count'=>$result['count']));
-            break;
-          }
+    
+    $apiRequest = array();
+    $apiRequest['entity'] = CRM_Utils_String::munge($entity);
+    $apiRequest['action'] = CRM_Utils_String::munge($action);
+    $apiRequest['version'] = civicrm_get_api_version($params);
+    $apiRequest['params'] = $params;
+    $apiRequest['extra'] = $extra;
+    $apiRequest += _civicrm_api_resolve($apiRequest);    // look up function, file, is_generic
+    
+    $errorFnName = ( $apiRequest['version'] == 2 ) ? 'civicrm_create_error' : 'civicrm_api3_create_error';
+    if ($apiRequest['version'] > 2) civicrm_api3_api_check_permission($apiRequest['entity'], $apiRequest['action'], $apiRequest['params']);
 
-          // we only take "return=" as valid options
-          if (CRM_Utils_Array::value('return',$params) ){
-            if (!isset ($result['values'][0][$params['return']])) {
-              $result = civicrm_api3_create_error("field ".$params['return']. " unset or not existing", array ('invalid_field'=>$params['return']));
-              break;
-            }
-
-            $result = $result['values'][0][$params['return']];
-            break;
-          }
-
-          $result = civicrm_api3_create_error("missing param return=field you want to read the value of",array('error_type'=>'mandatory_missing','missing_param'=>'return'));
-          break;
-       
-        case "update":
-            //$key_id = strtolower ($entity)."_id";
-            $key_id = "id";
-            if (!array_key_exists ($key_id,$params)) {
-                return $errorFnName( "Mandatory parameter missing $key_id" );
-            }
-            $seek = array ($key_id => $params[$key_id], 'version' => $version);
-            $existing = civicrm_api ($entity, 'get',$seek);
-            if ($existing['is_error'])
-                return $existing;
-            if ($existing['count'] > 1)
-                return $errorFnName( "More than one $entity with id ".$params[$key_id] );
-            if ($existing['count'] == 0)
-                return $errorFnName( "No $entity with id ".$params[$key_id] );
-       
-            $existing= array_pop($existing['values'] ); 
-            $p = array_merge ( $existing,$params );
-            return civicrm_api ($entity, 'create',$p);
-            break;
-            
-        case "replace":
-            $result = _civicrm_api3_generic_replace($entity, $params);
-            break;
-        
-        default:
-            return $errorFnName( "API ($entity,$action) does not exist (join the API team and implement $function" );
-        }
-     }else{
-       _civicrm_api3_validate_fields($entity,$action,$params);
-       $result = isset($extra) ? $function($params, $extra) : $function($params);
-     }
-     if(CRM_Utils_Array::value('format.is_success', $params) == 1){
-       if($result['is_error'] === 0){
+    $function = $apiRequest['function'];
+    $defaultsFunction = '_' .$function. '_defaults';
+    if(function_exists($defaultsFunction)){
+      $apiRequest['params'] = array_merge($defaultsFunction(),$apiRequest['params']);
+    }
+    
+    if ($apiRequest['function'] && $apiRequest['is_generic']) {
+      // Unlike normal API implementations, generic implementations require explicit
+      // knowledge of the entity and action (as well as $params). Bundle up these bits
+      // into a convenient data structure.
+      $result = $function($apiRequest);
+    } elseif ($apiRequest['function'] && !$apiRequest['is_generic']) {
+      _civicrm_api3_validate_fields($apiRequest['entity'],$apiRequest['action'],$apiRequest['params']);
+      $result = isset($extra) ? $function($apiRequest['params'], $extra) : $function($apiRequest['params']);
+    } else {
+      return $errorFnName( "API (".$apiRequest['entity'].",".$apiRequest['action'].") does not exist (join the API team and implement it!)" );
+    }
+    
+    if(CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1) {
+      if($result['is_error'] === 0) {
          return 1;
-       }else {
-         return 0;
-       }
-     }
-     if(CRM_Utils_Array::value('format.only_id', $params) && isset($result['id'])){
+      } else {
+        return 0;
+      }
+    }
+    if(CRM_Utils_Array::value('format.only_id', $apiRequest['params']) && isset($result['id'])){
       return $result['id'];
     }
     if (CRM_Utils_Array::value( 'is_error', $result, 0 ) == 0) {
-        _civicrm_api_call_nested_api($params, $result, $action,$entity,$version);
+        _civicrm_api_call_nested_api($apiRequest['params'], $result, $apiRequest['action'],$apiRequest['entity'],$apiRequest['version']);
     }
-     if(CRM_Utils_Array::value('format.smarty', $params) || CRM_Utils_Array::value('format_smarty', $params) ){
-     // return _civicrm_api_parse_result_through_smarty($result,$params);
+     if(CRM_Utils_Array::value('format.smarty', $apiRequest['params']) || CRM_Utils_Array::value('format_smarty', $apiRequest['params']) ){
+     // return _civicrm_api_parse_result_through_smarty($result,$apiRequest['params']);
     }
     return $result;
   } catch (PEAR_Exception $e) {
-    if(CRM_Utils_Array::value('format.is_success', $params) == 1){
+    if(CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1){
       return 0;
     }
-    return civicrm_api3_create_error( $e->getMessage(),null,$params );
+    return civicrm_api3_create_error( $e->getMessage(),null,$apiRequest['params'] );
   } catch (Exception $e) {
-    if(CRM_Utils_Array::value('format.is_success', $params) == 1){
+    if(CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1){
       return 0;
     }
-    return civicrm_api3_create_error( $e->getMessage(),null,$params );
+    return civicrm_api3_create_error( $e->getMessage(),null,$apiRequest['params'] );
   }
 }
 
+/**
+ * Look up the implementation for a given API request
+ *
+ * @param $apiRequest array with keys:
+ *  - entity: string, required
+ *  - action: string, required
+ *  - params: array
+ *  - version: scalar, required
+ * @return array with keys
+ *  - function: callback (mixed)
+ *  - is_generic: boolean
+ */
+function _civicrm_api_resolve($apiRequest) {
+  static $cache;
+  $cachekey = strtolower($apiRequest['entity']) . ':' . strtolower($apiRequest['action']) . ':' . $apiRequest['version'];
+  if (isset($cache[$cachekey])) {
+    return $cache[$cachekey];
+  }
+  
+  $camelName = civicrm_api_get_camel_name($apiRequest['entity'], $apiRequest['version']);
+  $actionName = strtolower($actionName);
+    
+  // Determine if there is an entity-specific implementation of the action
+  $stdFunction = civicrm_api_get_function_name($apiRequest['entity'], $apiRequest['action'],$apiRequest['version']);
+  if (function_exists($stdFunction)) {
+    // someone already loaded the appropriate file
+    // FIXME: This has the affect of masking bugs in load order; this is included to provide bug-compatibility
+    $cache[$cachekey] = array('function' => $stdFunction, 'is_generic' => FALSE);
+    return $cache[$cachekey];
+  }
+  
+  $stdFiles = array(
+    // By convention, the $camelName.php is more likely to contain the function, so test it first
+   'api/v'. $apiRequest['version'] .'/'. $camelName .'.php',
+   'api/v'. $apiRequest['version'] .'/'. $camelName .'/' . $apiRequest['action'].'.php',
+  );
+  foreach ($stdFiles as $stdFile) {
+    require_once 'CRM/Utils/File.php';
+    if (CRM_Utils_File::isIncludable($stdFile)) {
+      require_once $stdFile;
+      if (function_exists($stdFunction)) {
+        $cache[$cachekey] = array('function' => $stdFunction, 'is_generic' => FALSE);
+        return $cache[$cachekey];
+      }
+    }
+  }
+
+  // Determine if there is a generic implementation of the action
+  require_once 'api/v3/Generic.php';
+  # $genericFunction = 'civicrm_api3_generic_' . $apiRequest['action'];
+  $genericFunction = civicrm_api_get_function_name('generic', $apiRequest['action'],$apiRequest['version']);
+  $genericFiles = array(
+    // By convention, the Generic.php is more likely to contain the function, so test it first
+   'api/v'. $apiRequest['version'] .'/Generic.php',
+   'api/v'. $apiRequest['version'] .'/Generic/' . $apiRequest['action'].'.php',
+  );
+  foreach ($genericFiles as $genericFile) {
+    require_once 'CRM/Utils/File.php';
+    if (CRM_Utils_File::isIncludable($genericFile)) {
+      require_once $genericFile;
+      if (function_exists($genericFunction)) {
+        $cache[$cachekey] = array('function' => $genericFunction, 'is_generic' => TRUE);
+        return $cache[$cachekey];
+      }
+    }
+  }
+  
+  $cache[$cachekey] = array('function' => FALSE, 'is_generic' => FALSE);
+  return $cache[$cachekey];
+}
+
+/**
+ *
+ * @deprecated
+ */
 function civicrm_api_get_function_name( $entity, $action, $version = NULL ) 
 {
     static $_map = null;
@@ -235,6 +253,7 @@ function civicrm_get_api_version($desired_version = NULL) {
 /**
  * @param $entity
  * @param $rest_interface : boolean
+ * @deprecated
  *   In case of TRUE, we need to set the base path explicitly.
  */
 function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
