@@ -67,19 +67,25 @@ function changeActivityStatus( activityID, contactId, current_status_id ) {
                 }
 
                 var dataUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 }"{literal};
-                var data = 'json=1&version=3&entity=Activity&action=update&id=' + activityID + '&status_id=' + status_id;
+                var data = 'json=1&version=3&entity=Activity&action=update&id=' + activityID + '&status_id=' + status_id + '&case_id=' + {/literal}{$caseId}{literal};
                 cj.ajax({   type     : "POST",
                             dataType : "json", 
                             url      : dataUrl,
                             data     : data,
                             success  : function( values ) {
-                                if ( values.error_msg ) {
-                                    alert( "{/literal}{ts escape='js'}Unable to change status{/ts}{literal}.\n\n" + values.error_msg );
+                                if ( values.is_error ) {
+                                    // seems to be some discrepancy as to which spelling it should be
+                                    err_msg = values.error_msg ? values.error_msg : values.error_message;
+                                    alert( "{/literal}{ts escape='js'}Unable to change status{/ts}{literal}.\n\n" + err_msg );
                                     return false;
                                 } else {
-                                    cj( "a.crm-activity-status-" + activityID ).html(
-                                        cj("#activity_change_status option[value='" + status_id + "']").text()
-                                    );
+                                    // Hmm, actually several links inside the row have to change to use the new activity id
+                                    // and also the row class might change with the new status. So either we duplicate code here,
+                                    // do a reload which defeats the purpose of ajax, or rewrite the way this table works.
+                                    //cj( "a.crm-activity-status-" + activityID ).html(
+                                    //    cj("#activity_change_status option[value='" + status_id + "']").text()
+                                    //);
+                                    window.location.reload();
                                 }
                             },
                             error    : function( jqXHR, textStatus, errorThrown ) {
