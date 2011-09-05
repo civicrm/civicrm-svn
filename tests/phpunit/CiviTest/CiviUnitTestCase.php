@@ -1811,9 +1811,10 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
    * @param int  $id id of the entity concerned
    * @param string $entity name of entity concerned (e.g. membership)
    * @param bool $delete should the entity be deleted as part of this check
+   * @param string $errorText text to print on error
    * 
    */
-  function getAndCheck($params,$id,$entity,$delete = 1){
+  function getAndCheck($params,$id,$entity,$delete = 1, $errorText = ''){
 
         $result = civicrm_api($entity,'GetSingle', array( 'id' => $id ,
                                    
@@ -1833,7 +1834,7 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
         }
         foreach($params as $key => $value){
           if($key == 'version' )continue;
-          $this->assertEquals($value, $result[$key],$key . " value: $value doesn't match " . print_r($result,true) . 'in line' . __LINE__);        
+          $this->assertEquals($value, $result[$key],$key . "GetandCheck function determines that value: $value doesn't match " . print_r($result,true) . $errorText);        
           
         } 
     }

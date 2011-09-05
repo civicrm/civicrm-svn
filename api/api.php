@@ -45,8 +45,11 @@ function civicrm_api_legacy($function, $class, $params) {
 function civicrm_api($entity, $action, $params, $extra = NULL) {
   try {
     require_once ('api/v3/utils.php');
-    require_once 'CRM/Utils/String.php';
+    if ( ! is_array( $params ) ) {
+        throw new Exception ('Input variable `params` is not an array');
+    }
     _civicrm_api3_initialize(true );
+    require_once 'CRM/Utils/String.php';
     if ( ! is_array( $params ) ) {
         throw new Exception ('Input variable `params` is not an array');
     }
@@ -64,7 +67,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
 
     $function = $apiRequest['function'];
     $defaultsFunction = '_' .$function. '_defaults';
-    if(function_exists($defaultsFunction)){
+    if(!CRM_Utils_Array::value('id',$params) && function_exists($defaultsFunction)){
       $apiRequest['params'] = array_merge($defaultsFunction(),$apiRequest['params']);
     }
     

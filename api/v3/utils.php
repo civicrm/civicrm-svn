@@ -134,7 +134,8 @@ function _civicrm_api3_get_BAO ($name) {
  */
 
 function civicrm_api3_verify_mandatory ($params, $daoName = null, $keys = array(), $verifyDAO = TRUE ) {
-    if ( ! is_array( $params ) ) {
+  // moving this to civicrm_api - remove the check for array pending testing
+   if ( ! is_array( $params ) ) {
         throw new Exception ('Input variable `params` is not an array');
     }
 
