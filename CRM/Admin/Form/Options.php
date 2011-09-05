@@ -168,15 +168,17 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
         $required = false;
         if ( $this->_gName == 'custom_search' ) {
             $required = true;
-        } elseif ( $this->_gName == 'redaction_rule' ) {
+        } elseif ( $this->_gName == 'redaction_rule' || $this->_gName == 'engagement_index' ) {
             $this->add( 'text', 
                         'value', 
                         ts('Value'), 
                         CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue', 'value' ),
                         true );
-            $this->add( 'checkbox', 
-                        'filter', 
-                        ts('Regular Expression?'));
+            if ( $this->_gName == 'redaction_rule' ) {
+                $this->add( 'checkbox', 
+                            'filter', 
+                            ts('Regular Expression?'));
+            }
         }
         if ( $this->_gName == 'participant_listing' ) {
             $this->add('text', 
