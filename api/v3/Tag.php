@@ -72,6 +72,9 @@ function civicrm_api3_tag_create( $params )
     }
 
 }
+/*
+ * returns defaults for create function
+ */
 function _civicrm_api3_tag_create_defaults(){
   return array('used_for' =>   "civicrm_contact");
 }
