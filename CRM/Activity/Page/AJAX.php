@@ -198,7 +198,7 @@ class CRM_Activity_Page_AJAX
         require_once "CRM/Core/BAO/File.php";
         CRM_Core_BAO_File::copyEntityFile( 'civicrm_activity', $params['activityID'], 'civicrm_activity', $mainActivityId );
             
-        return (array('error_msg' => $error_msg));
+        return (array('error_msg' => $error_msg, 'newId' => $mainActivity->id));
     }
     
     static function getContactActivity( ) 

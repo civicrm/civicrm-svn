@@ -99,7 +99,32 @@ function civicrm_api3_activity_create( $params ) {
     if ( CRM_Utils_Array::value('activity_id', $params) ) {
         $params['id'] = $params['activity_id'];
     }
-    
+
+    // If this is a case activity, see if there is an existing activity
+    // and set it as an old revision. Also retrieve details we'll need.
+    $case_id = '';
+    $createRevision = false;
+    $oldActivityValues = array();
+    if ( CRM_Utils_Array::value('case_id', $params) ) {
+    	$case_id = $params['case_id'];
+        if ( CRM_Utils_Array::value('id', $params) ) {	            
+            $oldActivityParams = array( 'id' => $params['id'] );
+            CRM_Activity_BAO_Activity::retrieve( $oldActivityParams, $oldActivityValues );
+            if ( empty( $oldActivityValues ) ) {	
+            	return civicrm_api3_create_error( ts("Unable to locate existing activity."), null, CRM_Core_DAO::$_nullObject );
+            } else {   
+                require_once 'CRM/Activity/DAO/Activity.php';
+                $activityDAO = new CRM_Activity_DAO_Activity( );
+            	$activityDAO->id = $params['id'];
+            	$activityDAO->is_current_revision = 0;
+		        if ( ! $activityDAO->save( ) ) {
+		        	return civicrm_api3_create_error( ts("Unable to revision existing case activity."), null, $activityDAO );
+		        }
+                $createRevision = true;
+	        }
+        }
+    }
+
     $deleteActivityAssignment = false;
     if ( isset($params['assignee_contact_id']) ) {
         $deleteActivityAssignment = true;
@@ -113,22 +138,46 @@ function civicrm_api3_activity_create( $params ) {
     $params['deleteActivityAssignment'] = CRM_Utils_Array::value( 'deleteActivityAssignment', $params, $deleteActivityAssignment );
     $params['deleteActivityTarget'] = CRM_Utils_Array::value( 'deleteActivityTarget', $params, $deleteActivityTarget );
 
-    // create activity
-    $activityBAO = CRM_Activity_BAO_Activity::create( $params );
-
-    if ( isset( $activityBAO->id ) ) {
-      if (array_key_exists ('case_id',$params)) {
-        require_once 'CRM/Case/DAO/CaseActivity.php';
-        $caseActivityDAO = new CRM_Case_DAO_CaseActivity();
-        $caseActivityDAO->activity_id = $activityBAO->id ;
-        $caseActivityDAO->case_id = $params['case_id'];
-        $caseActivityDAO->find( true );
-        $caseActivityDAO->save();
-      }
-      _civicrm_api3_object_to_array( $activityBAO, $activityArray[$activityBAO->id]);
-      return civicrm_api3_create_success($activityArray,$params,'activity','get',$activityBAO);
+    if ( $case_id && $createRevision ) {
+    	// This is very similar to the copy-to-case action.
+        if ( !CRM_Utils_Array::crmIsEmptyArray( $oldActivityValues['target_contact'] ) ) {
+            $targetContactValues = implode( ',', array_unique( $oldActivityValues['target_contact'] ) );
+        }
+        watchdog('dave', "targs\n" . print_r($targetContactValues, true));  
+        $oldActivityValues['mode'] = 'copy';
+        $oldActivityValues['caseID'] = $case_id;
+        $oldActivityValues['activityID'] = $oldActivityValues['id'];
+        $oldActivityValues['contactID'] = $oldActivityValues['source_contact_id'];
+        if ( $targetContactValues ) {
+            $oldActivityValues['targetContactIds'] = $targetContactValues;
+        }
+        require_once 'CRM/Activity/Page/AJAX.php';
+        $copyToCase = CRM_Activity_Page_AJAX::_convertToCaseActivity( $oldActivityValues );
+        if ( empty( $copyToCase['error_msg'] ) ) {
+        	// now fix some things that are different from copy-to-case
+        	// then fall through to the create below to update with the passed in params
+        	$params['id'] = $copyToCase['newId'];
+	        $params['is_auto'] = 0;
+	        $params['original_id'] = empty( $oldActivityValues['original_id'] ) ? $oldActivityValues['id'] : $oldActivityValues['original_id'] ;
+        } else {
+            return civicrm_api3_create_error( ts("Unable to create new revision of case activity."), null, CRM_Core_DAO::$_nullObject );
+        }  
     }
 
+    // create activity
+    $activityBAO = CRM_Activity_BAO_Activity::create( $params );
+    
+    if ( isset( $activityBAO->id ) ) {
+    	if ( $case_id && ! $createRevision) {
+    		// If this is a brand new case activity we need to add this
+            $caseActivityParams = array ('activity_id' => $activityBAO->id, 'case_id' => $case_id );
+            require_once 'CRM/Case/BAO/Case.php';
+            CRM_Case_BAO_Case::processCaseActivity ( $caseActivityParams );      
+    	}
+
+        _civicrm_api3_object_to_array( $activityBAO, $activityArray[$activityBAO->id]);
+        return civicrm_api3_create_success($activityArray,$params,'activity','get',$activityBAO);
+    }
 }
 
 /*
