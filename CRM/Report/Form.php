@@ -625,7 +625,7 @@ class CRM_Report_Form extends CRM_Core_Form {
                         }
                         $select = $this->addElement('select', "{$fieldName}_value", null, 
                                                     $field['options'], array( 'size' => 4, 
-                                                                              'style' => 'width:200px'));
+                                                                              'style' => 'width:250px'));
                         $select->setMultiple( true );
                     }
                     break;

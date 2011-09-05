@@ -45,7 +45,15 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
     function __construct( ) {
         $config = CRM_Core_Config::singleton( );
         $campaignEnabled = in_array( "CiviCampaign", $config->enableComponents );
-        $this->activityTypes = CRM_Core_PseudoConstant::activityType( true, false, false, 'label', true );
+        if ( $campaignEnabled ){
+            require_once 'CRM/Campaign/BAO/Campaign.php';
+            require_once 'CRM/Campaign/PseudoConstant.php';
+            $getCampaigns = CRM_Campaign_BAO_Campaign::getPermissionedCampaigns( null, null, true, false, true );
+            $this->activeCampaigns = $getCampaigns['campaigns'];
+            asort( $this->activeCampaigns );
+            $this->engagementLevels = CRM_Campaign_PseudoConstant::engagementLevel();
+        }
+        $this->activityTypes = CRM_Core_PseudoConstant::activityType( true, false, false, 'label', true );        
         asort( $this->activityTypes );
         
         $this->_columns = array(  
@@ -208,13 +216,27 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                   ) + $this->addAddressFields();
         
         if ( $campaignEnabled ) {
-            // Add display column and filter for Survey Results if CiviCampaign is enabled
+            // Add display column and filter for Survey Results, Campaign and Engagement Index if CiviCampaign is enabled
+            
             $this->_columns['civicrm_activity']['fields']['result']   = array('title' => 'Survey Result',
                                                                               'default' => 'false');
             $this->_columns['civicrm_activity']['filters']['result']  = array( 'title'        => ts( 'Survey Result' ),
                                                                                'operator'     => 'like',
                                                                                'type'       =>  CRM_Utils_Type::T_STRING  );
-
+            if ( !empty( $this->activeCampaigns ) ){
+                $this->_columns['civicrm_activity']['fields']['campaign_id']  = array( 'title' => 'Campaign',
+                                                                                       'default' => 'false' );
+                $this->_columns['civicrm_activity']['filters']['campaign_id'] = array( 'title'        => ts( 'Campaign' ),
+                                                                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                                                                       'options'     => $this->activeCampaigns  );
+            }
+            if ( !empty( $this->engagementLevels ) ) {
+                $this->_columns['civicrm_activity']['fields']['engagement_level']  = array( 'title' => 'Engagement Index',
+                                                                                            'default' => 'false' );
+                $this->_columns['civicrm_activity']['filters']['engagement_level'] = array( 'title'        => ts( 'Engagement Index' ),
+                                                                                            'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                                                                            'options'     => $this->engagementLevels  );                
+            }
         }
         $this->_groupFilter = true; 
         $this->_tagFilter = true;
@@ -487,15 +509,24 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                 if ( $value = $row['civicrm_activity_activity_type_id'] ) {
                     $rows[$rowNum]['civicrm_activity_activity_type_id'] = $activityType[$value];
                     if ( $viewLinks ) {
+                        // Check for target contact id(s) and use the first contact id in that list for view activity link if found,
+                        // else use source contact id
+                        if ( !empty( $rows[$rowNum]['civicrm_activity_target_target_contact_id'] ) ) {
+                            $targets = explode( $seperator, $rows[$rowNum]['civicrm_activity_target_target_contact_id']);
+                            $cid = $targets[0];
+                        } else {
+                            $cid = $rows[$rowNum]['civicrm_activity_source_contact_id'];
+                        }
+
                         // case activities get a special view link
                         if ( $rows[$rowNum]['civicrm_case_activity_case_id'] ) {
                             $url = CRM_Utils_System::url( "civicrm/case/activity/view"  , 
-                                                          'reset=1&cid=' . $rows[$rowNum]['civicrm_activity_source_contact_id'] .
+                                                          'reset=1&cid=' . $cid .
                                                           '&aid=' . $rows[$rowNum]['civicrm_activity_id'] . '&caseID=' . $rows[$rowNum]['civicrm_case_activity_case_id'] . '&context=' . $context,
                                                           $this->_absoluteUrl );
                         } else {
                             $url = CRM_Utils_System::url( "civicrm/contact/view/activity"  , 
-                                                          'action=view&reset=1&cid=' . $rows[$rowNum]['civicrm_activity_source_contact_id'] .
+                                                          'action=view&reset=1&cid=' . $cid .
                                                           '&id=' . $rows[$rowNum]['civicrm_activity_id'] . '&atype=' . $value . '&context=' . $context ,
                                                           $this->_absoluteUrl );
                         }
@@ -512,6 +543,21 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                     $entryFound = true;
                 }
             }
+            
+            if ( array_key_exists('civicrm_activity_campaign_id', $row ) ) {
+                if ( $value = $row['civicrm_activity_campaign_id'] ) {
+                    $rows[$rowNum]['civicrm_activity_campaign_id'] = $this->activeCampaigns[$value];
+                    $entryFound = true;
+                }
+            }
+
+            if ( array_key_exists('civicrm_activity_engagement_level', $row ) ) {
+                if ( $value = $row['civicrm_activity_engagement_level'] ) {
+                    $rows[$rowNum]['civicrm_activity_engagement_level'] = $this->engagementLevels[$value];
+                    $entryFound = true;
+                }
+            }
+
             $entryFound =  $this->alterDisplayAddressFields($row,$rows,$rowNum,'activity','List all activities for this ')?true:$entryFound;
  
             if ( !$entryFound ) {
