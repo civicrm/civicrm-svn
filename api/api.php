@@ -50,10 +50,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     }
     _civicrm_api3_initialize(true );
     require_once 'CRM/Utils/String.php';
-    if ( ! is_array( $params ) ) {
-        throw new Exception ('Input variable `params` is not an array');
-    }
-    
+  
     $apiRequest = array();
     $apiRequest['entity'] = CRM_Utils_String::munge($entity);
     $apiRequest['action'] = CRM_Utils_String::munge($action);
