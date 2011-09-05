@@ -155,6 +155,17 @@ class CRM_Activity_Page_AJAX
             CRM_Activity_BAO_Activity::createActivityTarget( $targ_params );
         }
         
+        // typically this will be empty, since assignees on another case may be completely different
+        $assigneeContacts = array( );
+        if ( !empty( $params['assigneeContactIds'] ) ) {
+            $assigneeContacts = array_unique( explode( ',', $params['assigneeContactIds'] ) );
+        }
+        foreach ( $assigneeContacts as $key => $value ) { 
+            $assigneeParams = array( 'activity_id' => $mainActivityId, 
+                             'assignee_contact_id' => $value );
+            CRM_Activity_BAO_Activity::createActivityAssignment( $assigneeParams );
+        }
+        
         //attach newly created activity to case.
         require_once "CRM/Case/DAO/CaseActivity.php";
         $caseActivity = new CRM_Case_DAO_CaseActivity( );
