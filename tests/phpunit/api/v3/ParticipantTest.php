@@ -586,6 +586,16 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
 
     ///////////////// civicrm_participant_delete methods
 
+    /**
+     * Test civicrm_participant_delete with wrong params type
+     */
+    function testDeleteWrongParamsType()
+    {
+        $params = 'a string';
+        $result = & civicrm_api('participant','delete', $params);
+
+        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+    }
 
     /**
      * Test civicrm_participant_delete with empty params
@@ -620,7 +630,6 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
      */
     function testParticipantDeleteMissingID()
     {
-      echo "dd";
         $params = array(
                         'event_id'      => $this->_eventID,
                         'version'							=> $this->_apiversion,
@@ -648,7 +657,6 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
      */
     function testCreateParticipantWithPayment()
     {
-      echo "here";
       $this->_contributionTypeId = $this->contributionTypeCreate();
       $description = "single function to create contact w partipation & contribution. Note that in the
       case of 'contribution' the 'create' is implied (api.contribution.create)";
@@ -677,9 +685,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
       
       $this->assertEquals(1, $result['values'][$result['id']]['api.participant_payment.create']['count']); 
       civicrm_api('contact', 'delete', array('id' => $result['id'], 'version' => $this->_apiversion));
-      echo "before";
       $this->contributionTypeDelete();
-       echo "af";
     }
     
     ///////////////// civicrm_create_participant_formatted methods
@@ -688,7 +694,6 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
      */
     function testParticipantFormattedEmptyParams()
     {
-      echo "here";
         $params = array();
         $onDuplicate = array();
         $participant = & _civicrm_api3_create_participant_formatted($params,$onDuplicate );
