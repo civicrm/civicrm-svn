@@ -1257,21 +1257,10 @@ function _civicrm_api3_custom_data_get(&$returnArray,$entity,$entity_id ,$groupI
  * all variables are the same as per civicrm_api
  */
 function _civicrm_api3_validate_fields($entity, $action, &$params) {
-    //entities without a functional getFields will spit the dummy :-)
-    $testedEntities = array('relationship' => 1, 
-                            'membership' => 1, 
-                            'event' => 1, 
-                            'contribution' => 1,
-                            'activity' => 1,
-                            'campaign' => 1,
-                            'pledge'   => 1,
-                            'tag'      => 1,
-                            );
-    if(!array_key_exists(strtolower($entity), $testedEntities)){
-        return;
-    }
-	if (strtolower ( $action ) == 'getfields') {
-		return;
+  //skip any entities without working getfields functions
+  $skippedEntities = array('entity', 'mailinggroup', 'customvalue', 'custom_value', 'mailing_group');
+  if (in_array(strtolower($entity), $skippedEntities) || strtolower ( $action ) == 'getfields'){
+			return;
 	}
 	$fields = civicrm_api ( $entity, 'getfields', array ('version' => 3 ) );
 	$fields = $fields['values'];
