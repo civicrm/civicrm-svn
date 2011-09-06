@@ -83,7 +83,7 @@ class CRM_ParticipantProcessor
      FROM  civicrm_participant participant
 LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
     WHERE  participant.status_id IN {$statusIds}
-     AND   event.end_date > now() OR event.end_date IS NULL
+     AND   (event.end_date > now() OR event.end_date IS NULL)
      AND   event.is_active = 1 
  ORDER BY  participant.register_date, participant.id 
 ";
