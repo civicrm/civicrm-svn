@@ -566,8 +566,12 @@ SELECT username, email
      */
     static function createJoomlaUser( &$params, $mail ) 
     {	
-		if ( isset($values['first_name']) && isset($values['last_name']) ) {
-			$fullname = trim( $values['first_name'].' '.$values['last_name'] );
+        // CRM-8634
+        if ( isset( $params['first_name'] ) &&
+             isset( $params['last_name']  ) ) {
+            $fullname = trim( $params['first_name'] . ' ' . $params['last_name'] );
+        } elseif ( isset($params['name']) ) {
+            $fullname = trim( $params['name'] );
 		} else {
 			$fullname = trim( $params['cms_name'] );
 		}
