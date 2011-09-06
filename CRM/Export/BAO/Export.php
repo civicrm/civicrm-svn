@@ -1286,40 +1286,18 @@ ORDER BY  r1.id
 
         $processed = array( );
         foreach ( $merge as $masterID => $values ) {
-            if ( isset( $processed[$masterID] ) ) {
-                CRM_Core_Error::fatal( );
-            }
-            $processed[$masterID] = 1;
-            if ( $values['addressee'] ) {
-                $masterAddressee = array( trim ( $values['addressee'] ) );
-            }
-            $deleteIDs = array( );
-            foreach ( $values['copy'] as $copyID => $copyAddressee ) {
-                if ( isset( $processed[$copyID] ) ) {
-                    CRM_Core_Error::fatal( );
-                }
-                $processed[$copyID] = 1;
-                if ( $copyAddressee ) {
-                    $masterAddressee[] = trim ( $copyAddressee );
-                }
-                $deleteIDs[] = $copyID;
-            }
-            
-            $addresseeString = implode( ', ', $masterAddressee );
-            if ( array_key_exists('mergeLastName', $values) ) {
-                $addresseeString = str_replace( " {$values['mergeLastName']},", ",", $addresseeString );
-            }
-            
             $sql = "
 UPDATE $tableName
-SET    addressee = %1
-WHERE  id = %2
+SET    addressee = %1, postal_greeting = %2
+WHERE  id = %3
 ";
-            $params = array( 1 => array( $addresseeString, 'String'  ),
-                             2 => array( $masterID       , 'Integer' ) );
+            $params = array( 1 => array( $values['addressee'],      'String'  ),
+                             2 => array( $values['postalGreeting'], 'String'  ),
+                             3 => array( $masterID,                 'Integer' ) );
             CRM_Core_DAO::executeQuery( $sql, $params );
             
             // delete all copies
+            $deleteIDs      = array_keys( $values['copy'] );
             $deleteIDString = implode( ',', $deleteIDs );
             $sql = "
 DELETE FROM $tableName
@@ -1347,7 +1325,7 @@ DROP  $drop";
 
     static function _buildMasterCopyArray( $sql ) {
         $mergeLastName = true;
-        $merge = $parents = $masterAddressee = array( );
+        $merge = $parents = array( );
 
         $dao = CRM_Core_DAO::executeQuery( $sql );
 
@@ -1372,15 +1350,27 @@ DROP  $drop";
                 if ( isset( $parents[$masterID] ) ) {
                     $masterID = $parents[$masterID];
                 } else {
-                    $merge[$masterID] = array( 'addressee' => $dao->master_addressee,
+                    $merge[$masterID] = array( 'addressee' => trim( $dao->master_addressee ),
                                                'copy'      => array( ),
                                                'postalGreeting' => $postalGreeting );
                 }
             }
             $parents[$copyID] = $masterID;
+
+            if ( !array_key_exists($copyID, $merge[$masterID]['copy']) ) {
+                if ( $copyLastName ) {
+                    $merge[$masterID]['postalGreeting'] = "{$merge[$masterID]['postalGreeting']}, {$copyLastName}";
+                    // if there happens to be a duplicate, remove it
+                    $merge[$masterID]['postalGreeting'] = str_replace( " {$copyLastName},", "", 
+                                                                       $merge[$masterID]['postalGreeting'] );
+                }
+                $merge[$masterID]['addressee'] = "{$merge[$masterID]['addressee']}, " . trim($dao->copy_addressee);
+            }
             $merge[$masterID]['copy'][$copyID] = $dao->copy_addressee;
+
             if ( $mergeLastName ) {
-                $merge[$masterID]['mergeLastName'] = $lastName;
+                $merge[$masterID]['addressee']  = 
+                    str_replace( " {$lastName},", "", $merge[$masterID]['addressee'] );
             }
         }
 
