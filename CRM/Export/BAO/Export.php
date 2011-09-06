@@ -1225,12 +1225,32 @@ CREATE TABLE {$exportTempTable} (
 
     static function mergeSameAddress( $tableName, &$headerRows, &$sqlColumns, $drop = false)
     {
-        // find all the records that have the same street address BUT not in a household
-		//  require match on city and state as well
+        // check if any records are present based on if they have used shared address feature,
+        // and not based on if city / state .. matches.
         $sql = "
-SELECT    r1.id as master_id,
+SELECT    r1.id        as copy_id,
+          r1.sort_name as copy_sort_name,
+          r1.last_name as copy_last_name,
+          r1.addressee as copy_addressee,
+          r2.id        as master_id,
+          r1.sort_name as master_sort_name,
+          r2.last_name as master_last_name,
+          r2.addressee as master_addressee,
+          r2.postal_greeting as master_postal_greeting
+FROM      $tableName r1
+INNER JOIN civicrm_address adr ON r1.master_id   = adr.id
+INNER JOIN $tableName      r2  ON adr.contact_id = r2.civicrm_primary_id
+WHERE     r2.id > r1.id
+ORDER BY  r1.id";
+        $linkedMerge = self::_buildMasterCopyArray( $sql );
+
+        // find all the records that have the same street address BUT not in a household
+		// require match on city and state as well
+        $sql = "
+SELECT    r1.id        as master_id,
           r1.last_name as last_name,
           r1.addressee as master_addressee,
+          r1.postal_greeting as master_postal_greeting,
           r2.id as copy_id,
           r2.last_name as copy_last_name,
           r2.addressee as copy_addressee
@@ -1244,37 +1264,25 @@ AND       ( r1.street_address != '' )
 AND       r2.id > r1.id
 ORDER BY  r1.id
 ";
+        $merge = self::_buildMasterCopyArray( $sql );
 
-        $dao = CRM_Core_DAO::executeQuery( $sql );
-        $mergeLastName = true;
-        $merge = $parents = $masterAddressee = array( );
-        while ( $dao->fetch( ) ) {
-            $masterID = $dao->master_id;
-            $copyID   = $dao->copy_id;
-            $lastName = $dao->last_name;
-            $copyLastName = $dao->copy_last_name;
-
-            // merge last names only when same
-            if ( $lastName != $copyLastName ) {
-                $mergeLastName = false;
-            }
-
-            if ( ! isset( $merge[$masterID] ) ) {
-                // check if this is an intermediate child
-                // this happens if there are 3 or more matches a,b, c
-                // the above query will return a, b / a, c / b, c
-                // we might be doing a bit more work, but for now its ok, unless someone
-                // knows how to fix the query above
-                if ( isset( $parents[$masterID] ) ) {
-                    $masterID = $parents[$masterID];
+        // unset ids from $merge already present in $linkedMerge
+        foreach ( $linkedMerge as $masterID => $values ) {
+            $keys = array( $masterID );
+            $keys = array_merge( $keys, array_keys( $values['copy'] ) );
+            foreach ( $merge as $mid => $vals ) {
+                if ( in_array( $mid, $keys ) ) {
+                    unset($merge[$mid]);
                 } else {
-                    $merge[$masterID] = array( 'addressee' => $dao->master_addressee,
-                                               'copy'      => array( ) );
+                    foreach ( $values['copy'] as $copyId ) {
+                        if ( in_array( $copyId, $keys ) ) {
+                            unset( $merge[$mid]['copy'][$copyId] );
+                        }
+                    }
                 }
             }
-            $parents[$copyID] = $masterID;
-            $merge[$masterID]['copy'][$copyID] = $dao->copy_addressee;
         }
+        $merge = $merge + $linkedMerge;
 
         $processed = array( );
         foreach ( $merge as $masterID => $values ) {
@@ -1298,8 +1306,8 @@ ORDER BY  r1.id
             }
             
             $addresseeString = implode( ', ', $masterAddressee );
-            if ( $mergeLastName ) {
-                $addresseeString = str_replace( " ".$lastName.",", ",", $addresseeString );
+            if ( array_key_exists('mergeLastName', $values) ) {
+                $addresseeString = str_replace( " {$values['mergeLastName']},", ",", $addresseeString );
             }
             
             $sql = "
@@ -1335,6 +1343,48 @@ DROP  $drop";
             }
             unset( $sqlColumns[$drop] );
         }
+    }
+
+    static function _buildMasterCopyArray( $sql ) {
+        $mergeLastName = true;
+        $merge = $parents = $masterAddressee = array( );
+
+        $dao = CRM_Core_DAO::executeQuery( $sql );
+
+        while ( $dao->fetch( ) ) {
+            $masterID = $dao->master_id;
+            $copyID   = $dao->copy_id;
+            $lastName = $dao->last_name;
+            $copyLastName = $dao->copy_last_name;
+            $postalGreeting = $dao->master_postal_greeting;
+
+            // merge last names only when same
+            if ( $lastName != $copyLastName ) {
+                $mergeLastName = false;
+            }
+
+            if ( ! isset( $merge[$masterID] ) ) {
+                // check if this is an intermediate child
+                // this happens if there are 3 or more matches a,b, c
+                // the above query will return a, b / a, c / b, c
+                // we might be doing a bit more work, but for now its ok, unless someone
+                // knows how to fix the query above
+                if ( isset( $parents[$masterID] ) ) {
+                    $masterID = $parents[$masterID];
+                } else {
+                    $merge[$masterID] = array( 'addressee' => $dao->master_addressee,
+                                               'copy'      => array( ),
+                                               'postalGreeting' => $postalGreeting );
+                }
+            }
+            $parents[$copyID] = $masterID;
+            $merge[$masterID]['copy'][$copyID] = $dao->copy_addressee;
+            if ( $mergeLastName ) {
+                $merge[$masterID]['mergeLastName'] = $lastName;
+            }
+        }
+
+        return $merge;
     }
     
     /**
