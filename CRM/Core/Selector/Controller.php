@@ -309,7 +309,7 @@ class CRM_Core_Selector_Controller {
         // fix contribute and member
         if ( $contextName == 'contribute' ) {
             $contextName = 'contribution';
-        } else if ( $contextName = 'member' ) {
+        } else if ( $contextName == 'member' ) {
             $contextName = 'membership';
         }
 
