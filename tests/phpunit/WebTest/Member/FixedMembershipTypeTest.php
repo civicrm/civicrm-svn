@@ -234,7 +234,7 @@ SELECT end_event_adjust_interval
         
         $this->select( 'contribution_type_id', 'value=2' );
         
-        $this->type( 'duration_interval', 1 );
+        $this->type( 'duration_interval', 2 );
         $this->select( 'duration_unit', "label=year" );
         
         $this->select( 'period_type', "label=fixed" );
@@ -299,7 +299,7 @@ SELECT end_event_adjust_interval
         $previousYear = $currentYear - 1;
         $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 1, 15, $currentYear ) ); 
         $startDate    = date('Y-m-d', mktime( 0, 0, 0, 9, 1,  $previousYear  ) );
-        $endDate      = date('Y-m-d', mktime( 0, 0, 0, 8, 31, $currentYear ) );
+        $endDate      = date('Y-m-d', mktime( 0, 0, 0, 8, 31, $currentYear + 1 ) );
         $configVars   = new CRM_Core_Config_Variables( );        
         foreach ( array( 'joinDate', 'startDate', 'endDate' ) as $date ) {
             $$date = CRM_Utils_Date::customFormat( $$date, $configVars->dateformatFull ); 
@@ -388,7 +388,7 @@ SELECT end_event_adjust_interval
         
         $this->select( 'contribution_type_id', 'value=2' );
         
-        $this->type( 'duration_interval', 1 );
+        $this->type( 'duration_interval', 3 );
         $this->select( 'duration_unit', "label=year" );
         
         $this->select( 'period_type', "label=fixed" );
@@ -452,7 +452,7 @@ SELECT end_event_adjust_interval
         $currentYear  = date( 'Y' );
         $currentMonth = date( 'm' );
         $previousYear = $currentYear - 1;
-        $nextYear     = $currentYear + 1;
+        $nextYear     = $currentYear + 2;
         $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 1, 5,  $currentYear ) ); 
         $startDate    = date('Y-m-d', mktime( 0, 0, 0, 6, 1,  $previousYear  ) );
         $endDate      = date('Y-m-d', mktime( 0, 0, 0, 5, 31, $nextYear ) );
