@@ -93,3 +93,25 @@
     </div>
 {/if}
  
+
+{literal}
+<script type="text/javascript">
+    cj( function( ) {
+    	showHideContribution();
+    	cj("#extends\\[3\\]").click(function(){
+    	showHideContribution();	
+	});
+
+    });
+
+    function showHideContribution() {
+	if(cj("#extends\\[3\\]").attr('checked')) {
+	      cj("#contribution_type_id").show();
+	} else {
+	      cj("#contribution_type_id").hide();
+	}
+
+}
+{/literal}
+
+</script>
