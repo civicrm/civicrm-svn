@@ -392,7 +392,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
                 $year  = $year + $membershipTypeDetails['duration_interval'];
                 //extend membership date by duration interval.
                 if ( $fixed_period_rollover ) {
-                    $year += $membershipTypeDetails['duration_interval'];
+                    $year += 1;
                 }
                 
                 break;
