@@ -410,6 +410,7 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
       foreach ($params['return'] as $returnValue ) {
         $dao->selectAdd( $returnValue); 
       }
+      $dao->selectAdd( 'id');
     }
 }
 
