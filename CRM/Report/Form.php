@@ -330,8 +330,6 @@ class CRM_Report_Form extends CRM_Core_Form {
 
     function preProcess( ) {
 
-        $this->preProcessOrderBy($this->_submitValues);
-
         self::preProcessCommon( );
         if ( !$this->_id ) {
             self::addBreadCrumb();
@@ -514,14 +512,15 @@ class CRM_Report_Form extends CRM_Core_Form {
                 }
             }
 
-            if ( array_key_exists( 'order_bys', $table ) && is_array( $table['order_bys'] ) ) {
-                if ( ! is_array( $this->_defaults['order_bys'] ) ) {
-                    $this->_defaults['order_bys'] = array();
-                }
+            if ( array_key_exists( 'order_bys', $table ) && 
+                 is_array( $table['order_bys'] ) &&
+                 !array_key_exists('order_bys', $this->_defaults) ) {
+
+                $this->_defaults['order_bys'] = array();
                 foreach ( $table['order_bys'] as $fieldName => $field ) {
                     if ( $field['default'] ) {
                         $order_by = array(
-                            'column'  => $fieldName,
+                                          'column'  => $fieldName,
                             'order'   => ( $field['default_order'] ? $field['default_order'] : 'ASC' ),
                             'section' => $field['default_is_section'] ? 1 : 0
                         );
@@ -533,7 +532,6 @@ class CRM_Report_Form extends CRM_Core_Form {
                         }
                     }
                 }
-                $this->preProcessOrderBy($this->_defaults);
             }
 
             foreach ( $this->_options as $fieldName => $field ) {
@@ -541,6 +539,12 @@ class CRM_Report_Form extends CRM_Core_Form {
                     $this->_defaults['options'][$fieldName] = $field['default'];
                 }
             }
+        }
+
+        if ( !empty($this->_submitValues) ) {
+            $this->preProcessOrderBy($this->_submitValues);
+        } else {
+            $this->preProcessOrderBy($this->_defaults);
         }
 
         // lets finish freezing task here itself
@@ -2475,9 +2479,6 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
      * template to hide them.
      */
     function preProcessOrderBy( &$formValues ) {
-        if ( empty($formValues['order_bys']) ) {
-            return;
-        }
         // Object to show/hide form elements
         require_once('CRM/Core/ShowHideBlocks.php');
         $_showHide =& new CRM_Core_ShowHideBlocks( '', '' );
@@ -2486,11 +2487,14 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
         
         // Cycle through order_by options; skip any empty ones, and hide them as well        
         $n = 1;
-        foreach ( $formValues['order_bys'] as $order_by  ) {
-            if ( $order_by['column'] && $order_by['column'] != '-' ) {
-                $_showHide->addShow('optionField_'. $n);
-                $orderBys[$n] = $order_by;
-                $n++;
+
+        if ( ! empty($formValues['order_bys']) ) {
+            foreach ( $formValues['order_bys'] as $order_by  ) {
+                if ( $order_by['column'] && $order_by['column'] != '-' ) {
+                    $_showHide->addShow('optionField_'. $n);
+                    $orderBys[$n] = $order_by;
+                    $n++;
+                }
             }
         }
         for ( $i = $n; $i <= 5; $i++ ) {
@@ -2508,7 +2512,6 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
         
         // assign show/hide data to template
         $_showHide->addToTemplate();
-        
     }
 
     /**
