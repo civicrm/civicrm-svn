@@ -118,6 +118,23 @@ class CRM_Export_Form_Select extends CRM_Core_Form
             }
         } 
 
+        $count = 0;
+        $this->_matchingContacts = false;
+        if ( CRM_Utils_Array::value( 'radio_ts', $values ) == 'ts_sel' ) {
+            foreach ( $values as $key => $value ) {
+                if ( strstr( $key, 'mark_x' ) ) {
+                    $count++;
+                }
+                if ( $count > 2 ) { 
+                    $this->_matchingContacts = true;
+                    break;
+                }
+            }
+            
+            if ( $this->_matchingContacts ) {
+                $this->assign( 'matchingContacts', $this->_matchingContacts );
+            }
+        }
 
         $componentMode = $this->get( 'component_mode' );
         switch ( $componentMode ) {
@@ -209,7 +226,8 @@ FROM   {$this->_componentTable}
         $mergeAddress[] = HTML_QuickForm::createElement( 'advcheckbox', 
                                                          'merge_same_address', 
                                                          null, 
-                                                         ts('Merge Contacts with the Same Address'));
+                                                         ts('Merge Contacts with the Same Address'),
+                                                         array( 'onclick' => 'showGreetingOptions( );' ) );
         $mergeHousehold[] = HTML_QuickForm::createElement( 'advcheckbox', 
                                                            'merge_same_household', 
                                                            null, 
@@ -220,6 +238,31 @@ FROM   {$this->_componentTable}
                                                            null);
         
         $this->addGroup( $exportOptions, 'exportOption', ts('Export Type'), '<br/>' );
+
+        if ( $this->_matchingContacts ) {
+            $label     = array( );
+            $greetings = array( 'postal_greeting' => 'postal_other',
+                                'addressee'       => 'addressee_other' );
+            $params    = array( 'filter'          => 4 );
+
+            foreach ( $greetings as $key => $value ) {
+                $optionGroupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $key, 'id', 'name' );
+                
+                $params['option_group_id'] = $optionGroupId;
+                CRM_Core_DAO::commonRetrieve( 'CRM_Core_DAO_OptionValue', $params, $label, array( 'label' ) );
+
+                $options = array( 1 => ts( 'List of names' ),
+                                  2 => ts( $label['label'] ),
+                                  3 => ts( 'Other' ) );
+
+                $fieldLabel = ts( '%1 (merging > 2 contacts)', array( 1 => ucwords( str_replace( '_', ' ', $key ) ) ) );
+                $js         = "show" . str_replace( ' ', '', ucwords( str_replace( '_', ' ', $value ) ) );
+                            
+                $this->addElement( 'select', $key, $fieldLabel,
+                                   $options, array( 'onchange' => "{$js}( );" ) );
+                $this->addElement( 'text', $value, ts('Other') );
+            }
+        }
 
         if ( $this->_exportMode == self::CONTACT_EXPORT ) {
             $this->addGroup( $mergeAddress, 'merge_same_address', ts('Merge Same Address'), '<br/>');
@@ -243,6 +286,37 @@ FROM   {$this->_componentTable}
                                          'name'      => ts('Cancel') ),
                                  )
                            );
+
+        $this->addFormRule( array( 'CRM_Export_Form_Select', 'formRule' ), $this );
+    }
+
+    /**
+     * Function for validation
+     *
+     * @param array $params (ref.) an assoc array of name/value pairs
+     *
+     * @return mixed true or array of errors
+     * @access public
+     * @static
+     */
+    public function formRule( $params, $files, $self ) 
+    {
+        $errors = array( );
+        
+        if ( $self->_matchingContacts ) {
+            $greetings = array( 'postal_greeting' => 'postal_other',
+                                'addressee'       => 'addressee_other' );
+
+            foreach ( $greetings as $key => $value ) {
+                if ( ( CRM_Utils_Array::value( $key, $params ) == 3 ) &&
+                     !CRM_Utils_Array::value( $value, $params ) ) {
+                    $label = ucwords( str_replace( '_', ' ', $key ) );
+                    $errors[$value] = ts( 'Please enter a value for %1 (merging > 2 contacts), or select a pre-configured option from the list.', array( 1 => $label ) );
+                }
+            }
+        }
+
+        return empty($errors) ? true : $errors;
     }
 
     /**

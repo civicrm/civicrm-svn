@@ -62,6 +62,29 @@
     <div class="content crm-content-mergeSameAddress">
         &nbsp;{$form.merge_same_address.html}
     </div>
+    <div id='greetings' class="content crm-content-greetings class='hiddenElement'">
+      <table class="form-layout-compressed">
+        <tr>
+           <td>{$form.postal_greeting.label}</td>
+           <td>{$form.postal_greeting.html}</td>
+        </tr>
+        <tr id='postal_other' class='hiddenElement'>
+           <td>{$form.postal_other.label}</td>
+           <td>{$form.postal_other.html}</td>
+        </tr>
+        <tr><td></td><td></td></tr>
+        <tr>
+           <td>{$form.addressee.label}</td>
+           <td>{$form.addressee.html}</td>
+        </tr>
+        <tr id='addressee_other' class='hiddenElement'>
+           <td>{$form.addressee_other.label}</td>
+           <td>{$form.addressee_other.html}</td>
+        </tr>
+      </table>
+      <div class="clear">&nbsp;</div>
+    </div>
+
     <div class="content crm-content-mergeSameHousehold">
         &nbsp;{$form.merge_same_household.html}
     </div>
@@ -96,6 +119,48 @@
 	  hide('map');
 	}
      } 
-   showMappingOption( );
+     showMappingOption( );
+
+     var matchingContacts = '';
+     {/literal}{if $matchingContacts}{literal}
+       matchingContacts = {/literal}'{$matchingContacts}'{literal};
+     {/literal}{/if}{literal}
+
+     function showGreetingOptions( )
+     {
+        var mergeAddress = cj( "input:checkbox[name='merge_same_address[merge_same_address]']:checked" ).val( );
+	
+        if ( matchingContacts && mergeAddress ) {
+            cj( "#greetings" ).show( );
+        } else {
+            cj( "#greetings" ).hide( );
+	}
+     }
+
+     function showPostalOther( ) 
+     {
+        var otherVal = cj( "#postal_greeting option:selected").text( );
+        
+        if ( matchingContacts && ( otherVal == 'Other' ) ) {
+            cj( "#postal_other" ).show( );
+        } else {
+            cj( "#postal_other" ).hide( );
+        }
+     }
+
+     function showAddresseeOther(  ) 
+     {
+        var otherVal = cj( "#addressee option:selected").text( );
+        
+        if ( matchingContacts && ( otherVal == 'Other' ) ) {
+            cj( "#addressee_other" ).show( );
+        } else {
+            cj( "#addressee_other" ).hide( );
+        }
+     }
+
+     showGreetingOptions( );
+     showPostalOther( );
+     showAddresseeOther( );
   </script>
 {/literal}
