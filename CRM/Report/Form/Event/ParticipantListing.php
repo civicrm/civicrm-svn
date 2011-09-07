@@ -173,8 +173,11 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                                  
                                  'blank_column_end'   => array( 'title'   => ts('Blank column at the End'),
                                                                 'type'    => 'select',
-                                                                'options' => array( '' => '-select-' , 1 => 'One', 
-                                                                                    2 => 'Two', 3 => 'Three' ) ),
+                                                                'options'=> array('' => '-select-',
+                                                                                  1	 => ts( 'One' ),
+                                                                                  2	 => ts( 'Two' ),
+                                                                                  3	 => ts( 'Three' ),
+                                                                                  ), ),
                                  );
         parent::__construct( );
     }
