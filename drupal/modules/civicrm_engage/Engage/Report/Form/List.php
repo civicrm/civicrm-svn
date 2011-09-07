@@ -383,7 +383,7 @@ ORDER BY ov.label
         }
     }
 
-    function whereGroupClause( $clause ) {
+    function engageWhereGroupClause( $clause ) {
         $smartGroupQuery = ""; 
         require_once 'CRM/Contact/DAO/Group.php';
         require_once 'CRM/Contact/BAO/SavedSearch.php';
