@@ -3564,13 +3564,7 @@ WHERE  id IN ( $groupIDs )
                         $limitClause = ' AND ( 0 ) ';
                     } else {
                         if ( isset( $this->_distinctComponentClause ) ) {
-                            // hack to get rid of DISTINCT
-                            // CRM-8766
-                            // should consider getting rid of DISTINCT in component clauses
-                            $fixClause = str_replace( 'DISTINCT',
-                                                      '',
-                                                      $this->_distinctComponentClause );
-                            $limitClause = " AND {$fixClause} IN ( ";
+                            $limitClause = " AND {$this->_distinctComponentClause} IN ( ";
                         } else {
                             $limitClause = ' AND contact_a.id IN ( ';
                         }
