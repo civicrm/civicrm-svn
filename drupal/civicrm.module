@@ -909,3 +909,55 @@ function civicrm_drupal_wysiwyg_update_value($element, $caller) {
     }
   } 
 }
+
+/**
+ * Implementation of hook_filter_tips
+ */
+function civicrm_filter_info() {
+  $filters = array();
+  $filters['civicrm_smarty'] = array(
+    'title' => t('CiviCRM-Smarty filter'),
+    'description' => t('Evaluate Smarty and CiviCRM API codes with CiviCRM\'s embedded Smarty engine'),
+    'cache' => FALSE,
+    'process callback' => '_civicrm_filter_process',
+    'tips callback' => '_civicrm_filter_tips',
+    'weight' => 10,
+  );
+  return $filters;
+}
+
+/**
+ * Implementation of hook_filter_FILTER_tips
+ */
+function _civicrm_filter_tips($filter, $format, $long = false) {
+  return
+    t('Evaluate <a target="_blank" href="@smarty">Smarty</a> and <a target="_blank" href="@civiapi">CiviCRM API</a> codes', array(
+      '@smarty' => 'http://www.smarty.net/docsv2/en/',
+      '@civiapi' => 'http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs'
+    ));
+}
+   
+/**
+ * Implementation of hook_filter_FILTER_process
+ */
+function _civicrm_filter_process($text, $filter, $format, $langcode, $cache, $cache_id) {
+  civicrm_initialize();
+  $config = CRM_Core_Config::singleton();
+  $smarty = CRM_Core_Smarty::singleton();
+  require_once 'CRM/Core/Smarty/resources/String.php';
+  civicrm_smarty_register_string_resource( );
+
+  $was_secure= $smarty->security;
+  $smarty->security = true;
+  $text = $smarty->fetch("string:${text}");
+  $smarty->security = $was_secure;
+      
+  // In the use-case of embedding Smarty codes inside a Drupal page, one is likely
+  // to load data using 'pull MVC' instead of 'push MVC', so the interesting
+  // data isn't loaded until after processing the main content. Therefore, we
+  // evaluate debug codes after the main content.
+  if ($config->debug) {
+    $text .= $smarty->fetch('CRM/common/debug.tpl');
+  }
+  return $text;
+}
