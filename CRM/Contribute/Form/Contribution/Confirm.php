@@ -730,14 +730,19 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 $fieldTypes = array( 'Contact', 'Organization', 'Membership' );
             }
             
-            $membershipTypeIds = $this->get( 'memberPriceFieldIDS' );
+            $priceFieldIds = $this->get( 'memberPriceFieldIDS' );
+            foreach ($priceFieldIds as $priceFieldId) {
+                if($id = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_FieldValue', $priceFieldId, 'membership_type_id' )){
+                    $membershipTypeIds[] = $id;
+                }                
+            }
             require_once 'CRM/Member/BAO/Membership.php';
-            //foreach ($membershipTypeIds as $membershipTypeId) {
-                $membershipParams['selectMembership'] = $membershipTypeIds;
-                CRM_Member_BAO_Membership::postProcessMembership( $membershipParams, $contactID,
-                                                                  $this, $premiumParams, $customFieldsFormatted, 
-                                                                  $fieldTypes );  
-                //   }
+            
+            $membershipParams['selectMembership'] = $membershipTypeIds;
+            CRM_Member_BAO_Membership::postProcessMembership( $membershipParams, $contactID,
+                                                              $this, $premiumParams, $customFieldsFormatted, 
+                                                              $fieldTypes );  
+            
         } else {
             // at this point we've created a contact and stored its address etc
             // all the payment processors expect the name and address to be in the 
