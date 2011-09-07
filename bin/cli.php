@@ -24,108 +24,159 @@
  +--------------------------------------------------------------------+
 */
 
-/**
- * A PHP shell script
+$cli = new civicrm_Cli( );
+$cli->initialize( ) || die(  );
+$cli->callApi( ) || die(  );
 
-On drupal if you have a symlink to your civi module, don't forget to create a new file - settings_location.php
-Enter the following code (substitute the actual location of your <drupal root>/sites directory)
-<?php
-define( 'CIVICRM_CONFDIR', '/var/www/drupal.6/sites' );
-?>
 
- */
-$include_path = "packages/:" . get_include_path( );
-set_include_path( $include_path );
+class civicrm_Cli {
+    // required values that must be passed
+    // via the command line
+    var $_entity = null;
+    var $_action = null;
+    var $_output = false;
+    var $_config;
 
-class civicrm_CLI {
-    /**
-     * constructor
-     */
-    function __construct($authenticate = true ) {
-        if (!$authenticate) {
-            $this->setEnv();
-            return;
-        }
-     
-        require_once 'Console/Getopt.php';
-        $shortOptions = "s:u:p:";
-        $longOptions  = array( 'site=','user','pass'  );
+    // optional arguments
+    var $_site = 'localhost';
+    var $_user = null;
 
-        $getopt  = new Console_Getopt( );
-        $args = $getopt->readPHPArgv( );
-        array_shift( $args );
-        list( $valid, $this->args ) = $getopt->getopt2( $args, $shortOptions, $longOptions );
+    // all other arguments populate the parameters
+    // array that is passed to civicrm_api
+    var $_params = array( 'version' => 3 );
+ 
+    var $_errors = array();
 
-        $vars = array(
-                      'user' => 'u',
-                      'pass' => 'p',
-                      'site' => 's'
-                      );
-
-        foreach ( $vars as $var => $short ) {
-            $$var = null;
-            foreach ( $valid as $v ) {
-                if ( $v[0] == $short || $v[0] == "--$var" ) {
-                    $$var = $v[1];
-                    break;
-                }
-            }
-            if ( ! $$var ) {
-                $a = explode('/', $_SERVER["SCRIPT_NAME"]);
-                $file = $a[count($a) - 1]; 
-                die ("\nUsage: \$cd /your/civicrm/root; \$php5 bin/". $file." -u user -p password -s yoursite.org (or default)\n");
-            }
-            $_SERVER["SCRIPT_NAME"] = "/index.php"; // workaround drupal f** magic bootstrap
-        }
-        $this->site=$site;
-        $this->setEnv();
-        $this->authenticate($user,$pass);
+    public function initialize( ) {
+        if( !$this->_parseOptions( ) ) return false; 
+        if( !$this->_bootstrap( ) ) return false;
+        if( !$this->_validateOptions( ) ) return false;
+        return true;
     }
 
-    function authenticate ($user,$pass) {
-        session_start( );                               
-        require_once 'CRM/Core/Config.php'; 
-    
-        $config = CRM_Core_Config::singleton(); 
-
-        $_SERVER['SERVER_SOFTWARE'] = null;
-        
-        // bootstrap CMS environment
-        global $civicrm_root;
-        $_SERVER['SCRIPT_FILENAME'] = "$civicrm_root/bin/cli.php";
-        
-        // this does not return on failure
-        // require_once 'CRM/Utils/System.php';
-        CRM_Utils_System::authenticateScript( true,$user,$pass );
-       
+    public function callApi( ) {
+        require_once 'api/api.php';
+        $result = civicrm_api($this->_entity, $this->_action, $this->_params);
+        if($result['is_error'] != 0) {
+            $this->_log( $result['error_message'] );
+            return false;
+        } elseif ($this->_output) {
+          print_r($result['values']);
+        }
     }
 
-    function setEnv() {
-        global $civicrm_root;
+    private function _parseOptions() {
+      $args = $_SERVER['argv'];
+      // remove the first argument, which is the name
+      // of this script
+      array_shift($args);
+      
+      while(list($k,$arg) = each($args)) {
+        // sanitize all user input
+        $arg = $this->_sanitize($arg);
+
+        // if we're not parsing an option signifier
+        // continue to the next one
+        if(!preg_match('/^-/',$arg)) continue;
+
+        // find the value of this arg
+        if(preg_match('/=/',$arg)) {
+            $parts = explode('=',$arg);
+            $arg = $parts[0];
+            $value = $parts[1];
+        } else {
+            $next_arg = $this->_sanitize($args[$k + 1]);
+            // if the next argument is not another option
+            // it's the value for this argument
+            if(!preg_match('/^-/',$next_arg)) {
+                $value = $next_arg;
+            }
+        }
+
+        // parse the special args first
+        if($arg == '-e' || $arg == '--entity') {
+          $this->_entity = $value;
+        } elseif($arg == '-a' || $arg == '--action' ) {
+          $this->_action = $value;
+        } elseif ($arg == '-s' || $arg == '--site') {
+          $this->_site = $value;
+        } elseif ($arg == '-u' || $arg == '--user') {
+          $this->_user = $value;
+        } elseif ($arg == '-o' || $arg == '--output') {
+          $this->_output = true;
+        } else {
+          // all other arguments are parameters
+          $key = ltrim($arg,'--');
+          $this->_params[$key] = $value;
+        }
+      }
+      return true;
+    }
+
+    private function _bootstrap() {
         // so the configuration works with php-cli
         $_SERVER['PHP_SELF' ] ="/index.php";
-        $_SERVER['HTTP_HOST']= $this->site;
+        $_SERVER['HTTP_HOST'] = $this->_site;
         $_SERVER['REMOTE_ADDR'] = "127.0.0.1";
+        // SCRIPT_FILENAME needed by CRM_Utils_System::cmsRootPath
+        $_SERVER['SCRIPT_FILENAME'] = __FILE__;
 
-        if (! function_exists( 'drush_get_context' ) ) {
-            require_once ("./civicrm.config.php");
-        }
+        $civicrm_root = dirname(__DIR__);
+        chdir( $civicrm_root );
+        require_once('civicrm.config.php');
 
-        require_once ("CRM/Core/Error.php");
-        $this->key= defined( 'CIVICRM_SITE_KEY' ) ? CIVICRM_SITE_KEY : null;
-        $_REQUEST['key']= $this->key;
-        $_SERVER['SCRIPT_FILENAME' ] = $civicrm_root . "/bin/cli.php";
-        if ( defined( 'CIVICRM_CONFDIR' ) ) {
-            $_SERVER['SCRIPT_FILENAME' ] = CIVICRM_CONFDIR . "/sites/all/modules/civicrm/bin/cli.php";
-        } else {
-            die("\nUsage: Please define CIVICRM_CONFDIR in settings_location.php at the top level civicrm directory");
+        require_once ('CRM/Core/Config.php');
+        $this->_config = CRM_Core_Config::singleton( );
+
+        $class = 'CRM_Utils_system_' . $this->_config->userFramework;
+        $cms = new $class();
+        if( !$cms->loadBootstrap( array(), false, false )) {
+            $this->_log( ts("Failed to bootstrap CMS"));
+            return false;
         }
-        
-        CRM_Core_Error::setCallback( array( 'civicrm_CLI', 'fatal' ) );
+        if(!empty($this->_user)) {
+          if( !$cms->loadUser( $this->_user ) ) {
+            $this->_log( ts("Failed to login as %1", array('1' => $this->_user )));
+            return false;
+          }
+        }
+        return true;
     }
 
-    static function fatal( $pearError ) {
-        return civicrm_api3_create_error($pearError->getMessage(),$pearError->getDebugInfo());
+    private function _validateOptions( ) {
+        $required = array('action','entity');
+        while(list(,$var) = each($required)) {
+          $index = '_' . $var;
+          if(empty($this->$index)) {
+              $missing_arg = '--' . $var;
+              $this->_log ( ts("The %1 argument is required", array( 1 => $missing_arg) ));
+              $this->_log ( $this->_getUsage( ) );
+              return false;
+          }
+        }
+        return true;
     }
 
+    private function _sanitize($value) {
+      // restrict user input - we should not be needing anything
+      // other than normal alpha numeric plus - and _.
+      return trim(preg_replace('/^[^a-zA-Z0-9\-_=]$/','',$value));
+    }
+
+    private function _getUsage( ) {
+        $out = "Usage: cli.php -e entity -a action [-u user] [-s site] [--output] [PARAMS]\n";
+        $out .= "  entity is the name of the entity, e.g. Contact, Event, etc.\n";
+        $out .= "  action is the name of the action e.g. Get, Create, etc.\n";
+        $out .= "  user is an optional username to run the script as\n";
+        $out .= "  site is the domain name of the web site (for Drupal multi site installs)\n";
+        $out .= "  --output will print the result from the api call\n";
+        $out .= "  PARAMS is one or more --param=value combinations to pass to the api\n";
+        return ts ( $out );
+    }
+
+    private function _log( $error ) {
+        // fixme, this should call some CRM_Core_Error:: function
+        // that properly logs
+        print "$error\n"; 
+    }
 }

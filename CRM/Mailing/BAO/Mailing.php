@@ -2287,6 +2287,56 @@ WHERE  civicrm_mailing_job.id = %1
         return $_cache[$jobID];
     }
 
+    static function processQueue( ) 
+    {
+        CRM_Core_Error::debug_log_message( 'Beginning processQueue run' );
+        require_once 'CRM/Core/Config.php';
+        require_once 'CRM/Core/BAO/MailSettings.php';
+        $config =& CRM_Core_Config::singleton();
+        if (CRM_Core_BAO_MailSettings::defaultDomain() == "FIXME.ORG") {
+          CRM_Core_Error::fatal( ts( 'The <a href="%1">default mailbox</a> has not been configured. You will find <a href="%2">more info in our book</a>', array( 1 => CRM_Utils_System::url('civicrm/admin/mailSettings', 'reset=1'), 2=> "http://en.flossmanuals.net/civicrm/ch042_system-configuration/")));
+        }
+
+        // check if we are enforcing number of parallel cron jobs
+        // CRM-8460
+        $gotCronLock  = false;
+        if ( $config->mailerJobsMax &&
+             $config->mailerJobsMax > 1 ) {
+            require_once 'CRM/Core/Lock.php';
+
+            $lockArray = range( 1, $config->mailerJobsMax );
+            shuffle( $lockArray );
+            foreach ( $lockArray as $lockID ) {
+                $cronLock = new CRM_Core_Lock( "civimail.cronjob.{$lockID}" );
+                if ( $cronLock->isAcquired( ) ) {
+                    $gotCronLock = true;
+                    break;
+                }
+            }
+
+            // exit here since we have enuf cronjobs running
+            if ( ! $gotCronLock ) {
+                CRM_Core_Error::debug_log_message( 'Returning early, since max number of cronjobs running' );
+                return true;
+            }
+        }
+
+        // load bootstrap to call hooks
+        require_once 'CRM/Mailing/BAO/Job.php';
+
+        // Split up the parent jobs into multiple child jobs
+        CRM_Mailing_BAO_Job::runJobs_pre($config->mailerJobSize);
+        CRM_Mailing_BAO_Job::runJobs();
+        CRM_Mailing_BAO_Job::runJobs_post();
+
+        // lets release the global cron lock if we do have one
+        if ( $gotCronLock ) {
+            $cronLock->release( );
+        }
+
+        CRM_Core_Error::debug_log_message( 'Ending processQueue run' );
+        return true;
+    }
 }
 
 

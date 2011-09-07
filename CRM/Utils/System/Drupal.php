@@ -480,6 +480,28 @@ AND    u.status = 1
         return false;
     }
 
+    static function loadUser( $username ) {
+        global $user;
+        // fixme: this should be broken out into the appropriate d6, d7 framework
+        if(function_exists('user_load_by_name')) {
+            // >= d7 approach
+            $user = user_load_by_name($username);
+        } else {
+            // < d7 approach
+            $user = user_load(array('name' => $username));
+        }
+        if(empty($user->uid)) return false;
+
+        require_once('CRM/Core/BAO/UFMatch.php');
+        $contact_id = CRM_Core_BAO_UFMatch::getContactId( $uid );
+
+        // lets store contact id and user id in session
+        $session = CRM_Core_Session::singleton( );
+        $session->set( 'ufID'  , $uid );
+        $session->set( 'userID', $contact_id );
+        return true;
+    }
+
     /**   
      * Set a message in the UF to display to a user 
      *   

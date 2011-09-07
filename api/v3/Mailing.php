@@ -208,3 +208,22 @@ function civicrm_api3_mailing_event_open($params)
         return civicrm_api3_create_success( $params );
 
 }
+
+/**
+ * Process mail queue 
+ *
+ * @param array $params
+ * @return array
+ */
+
+function civicrm_api3_mailing_process( $params ) 
+{
+    require_once 'CRM/Mailing/BAO/Mailing.php';
+    if( !CRM_Mailing_BAO_Mailing::processQueue() ) { 
+		 return civicrm_api3_create_error( "Process Queue failed");
+	 } else {
+		 $values = array( );
+		 return civicrm_api3_create_success($values, $params,'mailing','process');
+	 }
+
+}

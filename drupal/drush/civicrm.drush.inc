@@ -169,12 +169,12 @@ function civicrm_drush_command() {
         array('callback'    => 'civicrm_sql_cli',
               'description' => "Open a SQL command-line interface using CiviCRM's credentials.",
               );
-    $items['civicrm-civimail'] = 
-        array('callback'    => 'drush_civicrm_civimail_cron',
-              'description' => "Run the CiviMail cron.",
+    $items['civicrm-process-mail-queue'] = 
+        array('callback'    => 'drush_civicrm_process_mail_queue',
+              'description' => "Process pending CiviMail mailing jobs.",
               'examples'    => 
-              array('drush --uri=http://example.com civicrm-civimail -u admin -p admin -s 12345678912345678912345678' => 
-                    'Run CiviMail cron with admin credentials and site key.',
+              array('drush civicrm-process-mail-queue -u admin' => 
+                    'Process CiviMail queue with admin credentials.',
                     ),
               );
     $items['civicrm-member-records'] = 
@@ -642,9 +642,7 @@ function civicrm_restore() {
 }
 
 function drush_civicrm_civimail_cron() {
-    $_GET['q'] = 'civicrm/mailing/queue';
-    $_GET['reset'] = '1';
-    menu_execute_active_handler();
+    civicrm_api('Mailing','Process',array('version' => 3));
 }
 
 function drush_civicrm_updatemembershiprecord_cron() {
