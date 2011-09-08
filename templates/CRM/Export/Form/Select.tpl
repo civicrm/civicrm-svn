@@ -68,9 +68,9 @@
            <td>{$form.postal_greeting.label}</td>
            <td>{$form.postal_greeting.html}</td>
         </tr>
-        <tr id='postal_other' class='hiddenElement'>
-           <td>{$form.postal_other.label}</td>
-           <td>{$form.postal_other.html}</td>
+        <tr id='postal_greeting_other' class='hiddenElement'>
+           <td>{$form.postal_greeting_other.label}</td>
+           <td>{$form.postal_greeting_other.html}</td>
         </tr>
         <tr><td></td><td></td></tr>
         <tr>
@@ -137,30 +137,32 @@
 	}
      }
 
-     function showPostalOther( ) 
+     function showOther( selectField ) 
      {
-        var otherVal = cj( "#postal_greeting option:selected").text( );
-        
-        if ( matchingContacts && ( otherVal == 'Other' ) ) {
-            cj( "#postal_other" ).show( );
-        } else {
-            cj( "#postal_other" ).hide( );
+        if ( matchingContacts ) {
+	    if ( !selectField ) {
+                cj( "div#greetings table tr td select" ).each( function( ) {
+                   selectField = cj( this ).attr( 'name' );
+		   displayOther( selectField );
+                });
+            } else {
+                displayOther( selectField );
+            }
         }
      }
 
-     function showAddresseeOther(  ) 
+     function displayOther( selectField ) 
      {
-        var otherVal = cj( "#addressee option:selected").text( );
-        
-        if ( matchingContacts && ( otherVal == 'Other' ) ) {
-            cj( "#addressee_other" ).show( );
+        var otherVal = cj( "#" + selectField + " option:selected" ).text( );
+
+        if ( otherVal == 'Other' ) {
+            cj( "#" + selectField + "_other" ).show( );
         } else {
-            cj( "#addressee_other" ).hide( );
-        }
+            cj( "#" + selectField + "_other" ).hide( );
+        }      
      }
 
      showGreetingOptions( );
-     showPostalOther( );
-     showAddresseeOther( );
+     showOther( );
   </script>
 {/literal}
