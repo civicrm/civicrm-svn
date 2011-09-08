@@ -102,7 +102,8 @@ class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
 			'dao' => 'CRM_Mailing_DAO_Mailing',
 			'fields' => array( 'mailing_name' => array(
                                                        'name' => 'name',
-                                                       'title' => ts('Mailing Name'),
+                                                       'title' => ts('Mailing'),
+                                                       'default' => true
                                                        ),
                                'mailing_name_alias' => array(
                                                        'name' => 'name',
@@ -123,7 +124,7 @@ class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
             'order_bys'  =>
             array( 'mailing_name' =>
                    array( 'name' => 'name',
-                          'title' => ts( 'Mailing Name') ) ),
+                          'title' => ts( 'Mailing' ) ) ),
             'grouping' => 'mailing-fields' 
 		);
 		
@@ -294,52 +295,6 @@ class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
                    ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND 
                       {$this->_aliases['civicrm_phone']}.is_primary = 1 ";
         }
-    }
-	
-    function where( ) {
-        $clauses = array( );
-        foreach ( $this->_columns as $tableName => $table ) {
-            if ( array_key_exists('filters', $table) ) {
-                foreach ( $table['filters'] as $fieldName => $field ) {
-                    $clause = null;
-                    if ( CRM_Utils_Array::value( 'type', $field ) & CRM_Utils_Type::T_DATE ) {
-                        $relative = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params );
-                        $from     = CRM_Utils_Array::value( "{$fieldName}_from"    , $this->_params );
-                        $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );
-                        
-                        $clause = $this->dateClause( $field['name'], $relative, $from, $to, $field['type'] );
-                    } else {
-                        $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
-                        if ( $op ) {
-                            if( $fieldName == 'relationship_type_id' ) {
-                                $clause =  "{$this->_aliases['civicrm_relationship']}.relationship_type_id=".$this->relationshipId;
-                            } else {
-                            $clause = 
-                                $this->whereClause( $field,
-                                                    $op,
-                                                    CRM_Utils_Array::value( "{$fieldName}_value", $this->_params ),
-                                                    CRM_Utils_Array::value( "{$fieldName}_min", $this->_params ),
-                                                    CRM_Utils_Array::value( "{$fieldName}_max", $this->_params ) );
-                            }
-                        }
-                    }
-                    
-                    if ( ! empty( $clause ) ) {
-                        $clauses[] = $clause;
-                    }
-                }
-            }
-        }
-
-        if ( empty( $clauses ) ) {
-            $this->_where = "WHERE ( 1 )";
-        } else {
-            $this->_where = "WHERE "  . implode( ' AND ', $clauses );
-        }
-
-        if ( $this->_aclWhere ) {
-            $this->_where .= " AND {$this->_aclWhere} ";
-        } 
     }
 
     function groupBy( ) {
