@@ -311,20 +311,26 @@ class CRM_Export_BAO_Export
         }
         
         if ( $mergeSameAddress ) {
-            $drop = false;
-            
             //make sure the addressee fields are selected
             //while using merge same address feature
-            $returnProperties['addressee'     ] = 1;
-            $returnProperties['street_name'   ] = 1;
-            if ( !CRM_Utils_Array::value( 'last_name', $returnProperties ) ) {
-                $returnProperties['last_name' ] = 1;
-                $drop = 'last_name';
+            $returnProperties['addressee'     ]  = 1;
+            $returnProperties['postal_greeting'] = 1;
+            $returnProperties['street_name'   ]  = 1;
+            $returnProperties['household_name']  = 1;
+            $returnProperties['street_address']  = 1;
+			$returnProperties['city']            = 1;
+			$returnProperties['state_province']  = 1;
+
+            // some columns are required for assistance incase they are not already present
+            $exportParams['merge_same_address']['temp_columns'] = array( );
+            $tempColumns = array( 'id', 'last_name', 'sort_name', 'master_id', 'state_province_id' );
+            foreach ( $tempColumns as $column ) {
+                if ( ! array_key_exists( $column, $returnProperties ) ) {
+                    $returnProperties[$column] = 1;
+                    $column = $column == 'id' ? 'civicrm_primary_id' : $column;
+                    $exportParams['merge_same_address']['temp_columns'][$column] = 1;
+                }
             }
-            $returnProperties['household_name']    = 1;
-            $returnProperties['street_address']    = 1;
-			$returnProperties['city']              = 1;
-			$returnProperties['state_province_id'] = 1;
         }
         
         if ( $componentTable && 
@@ -898,7 +904,7 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
             
             // do merge same address and merge same household processing
             if ( $mergeSameAddress ) {
-                self::mergeSameAddress( $exportTempTable, $headerRows, $sqlColumns, $drop );
+                self::mergeSameAddress( $exportTempTable, $headerRows, $sqlColumns, $exportParams );
             }
             
             // merge the records if they have corresponding households
@@ -1223,7 +1229,7 @@ CREATE TABLE {$exportTempTable} (
         return $exportTempTable;
     }
 
-    static function mergeSameAddress( $tableName, &$headerRows, &$sqlColumns, $drop = false)
+    static function mergeSameAddress( $tableName, &$headerRows, &$sqlColumns, $exportParams )
     {
         // check if any records are present based on if they have used shared address feature,
         // and not based on if city / state .. matches.
@@ -1306,20 +1312,14 @@ WHERE  id IN ( $deleteIDString )
             CRM_Core_DAO::executeQuery( $sql );
         }
 
-        // drop the table columns for last name
-        // if added for addressee calculation
-        if ( $drop ) {
-            $dropQuery = "
-ALTER TABLE $tableName
-DROP  $drop";
-            
-            CRM_Core_DAO::executeQuery( $dropQuery );
-            $allKeys = array_keys( $sqlColumns );
-
-            if ( $key = CRM_Utils_Array::key( $drop, $allKeys ) ) {
-                unset( $headerRows[$key] );
+        // unset temporary columns that were added for postal mailing format
+        if ( ! empty($exportParams['merge_same_address']['temp_columns']) ) {
+            $unsetKeys = array_keys( $sqlColumns );
+            foreach ( $unsetKeys as $headerKey => $sqlColKey ) {
+                if ( array_key_exists($sqlColKey, $exportParams['merge_same_address']['temp_columns']) ) {
+                    unset($sqlColumns[$sqlColKey], $headerRows[$headerKey]);
+                }
             }
-            unset( $sqlColumns[$drop] );
         }
     }
 
