@@ -358,7 +358,7 @@ function civicrm_invoke( )
         CRM_Core_BAO_UFMatch::synchronize( $user, false, 'Drupal',
                                            civicrm_get_ctype( 'Individual' ) );
     }
-      
+
     require_once 'CRM/Core/Invoke.php';
     return CRM_Core_Invoke::invoke( $args );
 }
@@ -972,14 +972,15 @@ function civicrm_drupal_wysiwyg_update_value($element, $caller) {
  * This is a D6 hook; for D7, see hook_filter_info
  */
 function civicrm_filter_tips($delta, $format, $long = false) {
-  switch ($delta) {
+    switch ($delta) {
     case 0:
-      return
-        t('Evaluate <a target="_blank" href="@smarty">Smarty</a> and <a target="_blank" href="@civiapi">CiviCRM API</a> codes', array(
-          '@smarty' => 'http://www.smarty.net/docsv2/en/',
-          '@civiapi' => 'http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs'
-        ));
-  }
+        return
+            t('Evaluate <a target="_blank" href="@smarty">Smarty</a> and <a target="_blank" href="@civiapi">CiviCRM API</a> codes',
+              array(
+                    '@smarty' => 'http://www.smarty.net/docsv2/en/',
+                    '@civiapi' => 'http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs'
+                    ));
+    }
 }
    
 /**
@@ -988,36 +989,41 @@ function civicrm_filter_tips($delta, $format, $long = false) {
  * This is a D6 hook; for D7, see hook_filter_info
  */
 function civicrm_filter($op, $delta = 0, $format = -1, $text = "") {
-  switch ($op) {
+    switch ($op) {
     case 'list':
-      return array(0 => t('CiviCRM-Smarty filter'));
+        return array(0 => t('CiviCRM-Smarty filter'));
+
     case 'no cache':
-      return TRUE;
+        return TRUE;
+
     case 'description':
-      return t('Evaluate Smarty and CiviCRM API codes with CiviCRM\'s embedded Smarty engine');
+        return t('Evaluate Smarty and CiviCRM API codes with CiviCRM\'s embedded Smarty engine');
+
     case 'settings':
-      #$form['civicrm_filter'] = array('#type' => 'fieldset', '#title' => t('CiviCRM-Smarty filter'), ...
-      return $form;
+        return $form;
+
     case 'process':
-      civicrm_initialize();
-      $config = CRM_Core_Config::singleton();
-      $smarty = CRM_Core_Smarty::singleton();
-      require_once 'CRM/Core/Smarty/resources/String.php';
-      civicrm_smarty_register_string_resource( );
-      $was_secure= $smarty->security;
-      $smarty->security = true;
-      $text = $smarty->fetch("string:${text}");
-      $smarty->security = $was_secure;
-      
-      // In the use-case of embedding Smarty codes inside a Drupal page, one is likely
-      // to load data using 'pull MVC' instead of 'push MVC', so the interesting
-      // data isn't loaded until after processing the main content. Therefore, we
-      // evaluate debug codes after the main content.
-      if ($config->debug) {
-        $text .= $smarty->fetch('CRM/common/debug.tpl');
-      }
-      return $text;
+        civicrm_initialize();
+        $config = CRM_Core_Config::singleton();
+        $smarty = CRM_Core_Smarty::singleton();
+        require_once 'CRM/Core/Smarty/resources/String.php';
+        civicrm_smarty_register_string_resource( );
+        $was_secure= $smarty->security;
+        $smarty->security = true;
+        $text = $smarty->fetch("string:${text}");
+        $smarty->security = $was_secure;
+        
+        // In the use-case of embedding Smarty codes inside a Drupal page, one is likely
+        // to load data using 'pull MVC' instead of 'push MVC', so the interesting
+        // data isn't loaded until after processing the main content. Therefore, we
+        // evaluate debug codes after the main content.
+        if ($config->debug) {
+            $text .= $smarty->fetch('CRM/common/debug.tpl');
+        }
+        return $text;
     default:
-      return $text;
-  }
+        return $text;
+    }
+    
 }
+
