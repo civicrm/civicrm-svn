@@ -82,6 +82,11 @@ class CRM_Report_Form_Contact_Detail extends CRM_Report_Form {
                                  'state_province_id' => 
                                  array( 'title'   => ts( 'State/Province' ), ),
                                  ),
+                          'order_bys'   =>
+                          array( 'state_province_id' => array( 'title' => 'State/Province'),
+                                 'city' => array( 'title' => 'City'),
+                                 'postal_code' => array( 'title' => 'Postal Code'),
+                                 ),
                           ),
 
                    'civicrm_country' =>

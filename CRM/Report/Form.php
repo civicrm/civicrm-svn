@@ -2667,7 +2667,10 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
        if ( $orderBy ) {
            $addressFields['civicrm_address']['order_bys'] =
                array( 'street_name'       => array( 'title'   => ts( 'Street Name' ) ),
-                      'street_number'     => array( 'title'   => 'Odd / Even Street Number' ) 
+                      'street_number'     => array( 'title'   => 'Odd / Even Street Number' ),
+                      'street_address'    => null,
+                      'city'              => null,
+                      'postal_code'       => null,
                       );
        }
        
@@ -2747,7 +2750,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
     
     function addAddressFromClause(){
        // include address field if address column is to be included
-        if ( $this->_addressField ) {  
+        if ( $this->_addressField || $this->isTableSelected('civicrm_address') ) {  
             $this->_from .= "
                  LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} 
                            ON ({$this->_aliases['civicrm_contact']}.id = 
