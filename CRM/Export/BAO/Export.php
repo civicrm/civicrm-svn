@@ -34,6 +34,9 @@
  *
  */
 
+require_once 'api/api.php';
+require_once 'CRM/Utils/Token.php';
+
 /**
  * This class contains the funtions for Component export
  *
@@ -823,9 +826,23 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                             CRM_Core_OptionGroup::lookupValues( $paramsNew, $name, false );
                             $row[$field] = $paramsNew[$field];
                         } else if ( in_array( $field, array( 'email_greeting', 'postal_greeting', 'addressee' ) ) ) {
-                            //special case for greeting replacement
-                            $fldValue    = "{$field}_display";
-                            $row[$field] = $dao->$fldValue;
+                            if ( CRM_Utils_Array::value( $field, $exportParams ) ) {
+                                $greetingFld = $exportParams[$field];
+                                                                
+                                $values  = array( 'id'      => $dao->contact_id,
+                                                  'version' => 3 );
+
+                                $contact = civicrm_api( 'contact', 'get', $values );
+                                $contact = $contact['values'][$contact['id']];
+                                
+                                $tokens['contact'] = $greetingFld;
+                                $row[$field]       = CRM_Utils_Token::replaceContactTokens( $greetingFld, $contact, 
+                                                                                            null, $tokens );
+                            } else {
+                                //special case for greeting replacement
+                                $fldValue    = "{$field}_display";
+                                $row[$field] = $dao->$fldValue;
+                            }
                         } else {
                             //normal fields with a touch of CRM-3157
                             switch ($field) {

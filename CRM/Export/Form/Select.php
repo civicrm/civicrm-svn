@@ -130,11 +130,7 @@ class CRM_Export_Form_Select extends CRM_Core_Form
                     break;
                 }
             }
-            
-            if ( $this->_matchingContacts ) {
-                $this->assign( 'matchingContacts', $this->_matchingContacts );
-            }
-        }
+        } 
 
         $componentMode = $this->get( 'component_mode' );
         switch ( $componentMode ) {
@@ -191,9 +187,14 @@ FROM   {$this->_componentTable}
         // all records actions = save a search 
         if (($values['radio_ts'] == 'ts_all') || ($this->_task == CRM_Contact_Task::SAVE_SEARCH)) { 
             $this->_selectAll = true;
-            $this->assign( 'totalSelectedRecords', $this->get( 'rowCount' ) );
+            $rowCount = $this->get( 'rowCount' );
+            if ( $rowCount > 2 ) {
+                $this->_matchingContacts = true;
+            }
+            $this->assign( 'totalSelectedRecords', $rowCount );
         }
-
+        
+        $this->assign( 'matchingContacts', $this->_matchingContacts );
         $this->set( 'componentIds', $this->_componentIds );
         $this->set( 'selectAll' , $this->_selectAll  );
         $this->set( 'exportMode' , $this->_exportMode );
@@ -263,7 +264,7 @@ FROM   {$this->_componentTable}
                 $fieldLabel = ts( '%1 (merging > 2 contacts)', array( 1 => ucwords( str_replace( '_', ' ', $key ) ) ) );
                 $this->addElement( 'select', $key, $fieldLabel,
                                    $this->_options[$key], array( 'onchange' => "showOther( this.name );" ) );
-                $this->addElement( 'text', $value, ts('Other') );
+                $this->addElement( 'text', $value, '' );
             }
         }
 
@@ -341,7 +342,17 @@ FROM   {$this->_componentTable}
         // will send $exportParams as another argument, which is an array and suppose to contain 
         // all submitted options or any other argument
         $exportParams = $this->controller->exportValues( $this->_name );
-
+        
+        foreach ( $this->_options as $key => $value ) {
+            if ( $option = CRM_Utils_Array::value( $key, $exportParams ) ) {
+                if ( $this->_options[$key][$option] == 'Other' ) {
+                    $exportParams[$key] = $exportParams["{$key}_other"];
+                } else {
+                    $exportParams[$key] = $this->_options[$key][$option];
+                }
+            }
+        }
+        
         $mappingId = $this->controller->exportValue( $this->_name, 'mapping' ); 
         if ( $mappingId ) {
             $this->set('mappingId', $mappingId);
