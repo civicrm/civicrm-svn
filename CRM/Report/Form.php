@@ -182,6 +182,7 @@ class CRM_Report_Form extends CRM_Core_Form {
     protected $_having             = null;
     protected $_rowsFound          = null;
     protected $_select             = null;        
+    protected $_selectAliases      = array();
     protected $_rollup             = null;
     protected $_limit              = null;
     protected $_orderBy            = null;
@@ -1477,35 +1478,41 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                         // include statistics columns only if set
                         if ( CRM_Utils_Array::value('statistics', $field) ) {
                             foreach ( $field['statistics'] as $stat => $label ) {
+                                $alias = "{$tableName}_{$fieldName}_{$stat}";
                                 switch (strtolower($stat)) {
                                 case 'max':
                                 case 'sum':
-                                    $select[] = "$stat({$field['dbAlias']}) as {$tableName}_{$fieldName}_{$stat}";
+                                    $select[] = "$stat({$field['dbAlias']}) as $alias";
                                     $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['title'] = $label;
                                     $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['type']  = 
                                         $field['type'];
-                                    $this->_statFields[] = "{$tableName}_{$fieldName}_{$stat}";
+                                    $this->_statFields[] = $alias;
+                                    $this->_selectAliases[] = $alias;
                                     break;
                                 case 'count':
-                                    $select[] = "COUNT({$field['dbAlias']}) as {$tableName}_{$fieldName}_{$stat}";
+                                    $select[] = "COUNT({$field['dbAlias']}) as $alias";
                                     $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['title'] = $label;
                                     $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['type']  = 
                                         CRM_Utils_Type::T_INT;
-                                    $this->_statFields[] = "{$tableName}_{$fieldName}_{$stat}";
+                                    $this->_statFields[] = $alias;
+                                    $this->_selectAliases[] = $alias;
                                     break;
                                 case 'avg':
-                                    $select[] = "ROUND(AVG({$field['dbAlias']}),2) as {$tableName}_{$fieldName}_{$stat}";
+                                    $select[] = "ROUND(AVG({$field['dbAlias']}),2) as $alias";
                                     $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['title'] = $label;
                                     $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['type']  =  
                                         $field['type'];
-                                    $this->_statFields[] = "{$tableName}_{$fieldName}_{$stat}";
+                                    $this->_statFields[] = $alias;
+                                    $this->_selectAliases[] = $alias;
                                     break;
                                 }
                             }   
                         } else {
-                            $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
+                            $alias = "{$tableName}_{$fieldName}";
+                            $select[] = "{$field['dbAlias']} as $alias";
                             $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = CRM_Utils_Array::value('title',$field);
                             $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
+                            $this->_selectAliases[] = $alias;
                         }
                     }
                 }
@@ -1849,15 +1856,22 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
      * plugin {sectionTotal}
      */
     function sectionTotals( ) {
-        if ( ! empty( $this->_sections ) ) {
 
+        // Reports using order_bys with sections must populate $this->_selectAliases in select() method.
+        if ( empty( $this->_selectAliases ) ) {
+          return;
+        }
+
+        if ( ! empty( $this->_sections ) ) {
             // build the query with no LIMIT clause
             $select = str_ireplace( 'SELECT SQL_CALC_FOUND_ROWS ', 'SELECT ', $this->_select );
             $sql = "{$select} {$this->_from} {$this->_where} {$this->_groupBy} {$this->_having} {$this->_orderBy}";
 
-            // pull column aliases out of $this->_sections
-            $aliases = array_keys( $this->_sections );
-            foreach ( $aliases as $alias ) {
+            // pull section aliases out of $this->_sections
+            $sectionAliases = array_keys($this->_sections);
+
+            $ifnulls = array();
+            foreach ( array_merge($sectionAliases, $this->_selectAliases) as $alias ) {
                 $ifnulls[] = "ifnull($alias, '') as $alias";
             }
 
@@ -1867,7 +1881,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
              */
             $query = "select "
             . implode(", ", $ifnulls)
-            .", count(*) as ct from ($sql) as subquery group by ".  implode(", ", $aliases);
+            .", count(*) as ct from ($sql) as subquery group by ".  implode(", ", $sectionAliases);
 
             // initialize array of total counts
             $totals = array();
@@ -1875,17 +1889,15 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
             while ($dao->fetch()) {
 
                 // let $this->_alterDisplay translate any integer ids to human-readable values.
-                foreach ($aliases as $alias) {
-                    $rows[0][$alias] = $dao->$alias;
-                }
+                $rows[0] = $dao->toArray();
                 $this->alterDisplay($rows);
                 $row = $rows[0];
 
                 // add totals for all permutations of section values
                 $values = array();
                 $i = 1;
-                $aliasCount = count($aliases);
-                foreach ($aliases as $alias) {
+                $aliasCount = count($sectionAliases);
+                foreach ($sectionAliases as $alias) {
                     $values[] = $row[$alias];
                     $key = implode(CRM_Core_DAO::VALUE_SEPARATOR, $values);
                     if ( $i == $aliasCount ) {

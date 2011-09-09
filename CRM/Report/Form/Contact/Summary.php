@@ -179,9 +179,11 @@ class CRM_Report_Form_Contact_Summary extends CRM_Report_Form {
                             $this->_countryField = true;
                         }
 
-                        $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
+                        $alias = "{$tableName}_{$fieldName}";
+                        $select[] = "{$field['dbAlias']} as {$alias}";
                         $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
                         $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
+                        $this->_selectAliases[] = $alias;
                     }
                 }
             }
