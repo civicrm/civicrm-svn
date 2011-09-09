@@ -1888,6 +1888,35 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
             $unformattedArray['values'] = $formattedArray;
         }
     } 
+
+    /*
+     * Helper to enable/disable custom directory support
+     *
+     * @param array $customDirs with members:
+     *   'php_path' Set to TRUE to use the default, FALSE or "" to disable support, or a string path to use another path
+     *   'template_path' Set to TRUE to use the default, FALSE or "" to disable support, or a string path to use another path
+     */
+    function customDirectories( $customDirs ) {
+        require_once 'CRM/Core/Config.php';
+        $config = CRM_Core_Config::singleton();
+
+        if ( empty( $customDirs['php_path'] ) || $customDirs['php_path'] === FALSE ) {
+            unset( $config->customPHPPathDir );
+        } elseif ( $customDirs['php_path'] === TRUE ) {
+            $config->customPHPPathDir = dirname( dirname( __FILE__ ) ) . '/custom_directories/php/';
+        } else {
+            $config->customPHPPathDir = $php_path;
+        }
+
+        if ( empty( $customDirs['template_path'] ) || $customDirs['template_path'] === FALSE ) {
+            unset( $config->customTemplateDir );
+        } elseif ( $customDirs['template_path'] === TRUE ) {
+            $config->customTemplateDir = dirname( dirname( __FILE__ ) ) . '/custom_directories/templates/';
+        } else {
+            $config->customTemplateDir = $template_path;
+        }
+
+    }
 }
 
 function CiviUnitTestCase_fatalErrorHandler( $message ) {

@@ -106,7 +106,7 @@ class api_v3_CaseTest extends CiviUnitTestCase
         //  case_type
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
+                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
                                                                          dirname(__FILE__)
                                                                          . '/dataset/option_group_case.xml') );
 
@@ -197,6 +197,9 @@ class api_v3_CaseTest extends CiviUnitTestCase
                                );
         $this->relationshipTypeCreate( $relTypeParams );  
  
+        // enable the default custom templates for the case type xml files
+        $this->customDirectories( array( 'template_path' => TRUE ) );
+
         $this->_params = array( 
                 'case_type_id' => 1,
                 'subject' => 'Test case',
@@ -248,7 +251,7 @@ class api_v3_CaseTest extends CiviUnitTestCase
     {
         $params = array(
                         'subject'             => 'this case should fail',
-                        'case_type_id' => 1),
+                        'case_type_id' => 1,
                         'version' => $this->_apiversion
                         );
         
@@ -269,9 +272,12 @@ class api_v3_CaseTest extends CiviUnitTestCase
 
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) .' in line ' . __LINE__ );
+
+
         $result =& civicrm_api('case','get', $params );
-        $this->assertEquals( $result['values'][$result['id']]['source_contact_id'], 17,'in line ' . __LINE__);
-        print_r("case_create_result\n" . $result);
+// TODO: There's more things we could check
+        $this->assertEquals( $result['values'][$result['id']]['id'], 1,'in line ' . __LINE__);
+        $this->assertEquals( $result['values'][$result['id']]['case_type_id'], $params['case_type_id'],'in line ' . __LINE__);
     }
 
     /*
