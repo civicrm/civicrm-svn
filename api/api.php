@@ -50,7 +50,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     }
     _civicrm_api3_initialize(true );
     require_once 'CRM/Utils/String.php';
-  
+    require_once 'CRM/Utils/Array.php';
     $apiRequest = array();
     $apiRequest['entity'] = CRM_Utils_String::munge($entity);
     $apiRequest['action'] = CRM_Utils_String::munge($action);
