@@ -826,7 +826,10 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                             CRM_Core_OptionGroup::lookupValues( $paramsNew, $name, false );
                             $row[$field] = $paramsNew[$field];
                         } else if ( in_array( $field, array( 'email_greeting', 'postal_greeting', 'addressee' ) ) ) {
-                            if ( CRM_Utils_Array::value( $field, $exportParams ) ) {
+                            //special case for greeting replacement
+                            $fldValue    = "{$field}_display";
+                            $row[$field] = $dao->$fldValue;
+                            if ( $mergeSameAddress && CRM_Utils_Array::value( $field, $exportParams ) ) {
                                 $greetingFld = $exportParams[$field];
                                                                 
                                 $values  = array( 'id'      => $dao->contact_id,
@@ -836,12 +839,8 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                                 $contact = $contact['values'][$contact['id']];
                                 
                                 $tokens['contact'] = $greetingFld;
-                                $row[$field]       = CRM_Utils_Token::replaceContactTokens( $greetingFld, $contact, 
-                                                                                            null, $tokens );
-                            } else {
-                                //special case for greeting replacement
-                                $fldValue    = "{$field}_display";
-                                $row[$field] = $dao->$fldValue;
+                                $row[$field . '_additional' ] = CRM_Utils_Token::replaceContactTokens( $greetingFld, $contact, null, $tokens );
+                                $sqlColumns[$field . '_additional'] = $field . '_additional varchar(255)';
                             }
                         } else {
                             //normal fields with a touch of CRM-3157
@@ -1250,16 +1249,27 @@ CREATE TABLE {$exportTempTable} (
     {
         // check if any records are present based on if they have used shared address feature,
         // and not based on if city / state .. matches.
+
+        // use additional columns for greeting if any
+        $greetingCols =  array('addressee', 'postal_greeting' );
+        foreach($greetingCols as $greetingCol) {
+            $$greetingCol = $greetingCol;
+            if ( isset($sqlColumns[$greetingCol . '_additional']) ) {
+                unset($sqlColumns[$greetingCol . '_additional']);
+                $$greetingCol = $greetingCol . '_additional';
+            }
+        }
+
         $sql = "
 SELECT    r1.id        as copy_id,
           r1.sort_name as copy_sort_name,
           r1.last_name as copy_last_name,
-          r1.addressee as copy_addressee,
+          r1.{$addressee} as copy_addressee,
           r2.id        as master_id,
           r1.sort_name as master_sort_name,
           r2.last_name as master_last_name,
-          r2.addressee as master_addressee,
-          r2.postal_greeting as master_postal_greeting
+          r2.{$addressee} as master_addressee,
+          r2.{$postal_greeting} as master_postal_greeting
 FROM      $tableName r1
 INNER JOIN civicrm_address adr ON r1.master_id   = adr.id
 INNER JOIN $tableName      r2  ON adr.contact_id = r2.civicrm_primary_id
@@ -1272,11 +1282,11 @@ ORDER BY  r1.id";
         $sql = "
 SELECT    r1.id        as master_id,
           r1.last_name as last_name,
-          r1.addressee as master_addressee,
-          r1.postal_greeting as master_postal_greeting,
+          r1.{$addressee} as master_addressee,
+          r1.{$postal_greeting} as master_postal_greeting,
           r2.id as copy_id,
           r2.last_name as copy_last_name,
-          r2.addressee as copy_addressee
+          r2.{$addressee} as copy_addressee
 FROM      $tableName r1
 LEFT JOIN $tableName r2 ON ( r1.street_address = r2.street_address AND
 							 r1.city = r2.city AND
