@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--  $Id: option_value_case_activity.xml 36085 2011-09-09 13:15:49Z daved $  -->
+<dataset>
+  <table name="civicrm_option_value">
+    <column>id</column>
+    <column>option_group_id</column>
+    <column>label</column>
+    <column>value</column>
+    <column>name</column>
+    <column>grouping</column>
+    <column>filter</column>
+    <column>is_default</column>
+    <column>weight</column>
+    <column>description</column>
+    <column>is_optgroup</column>
+    <column>is_reserved</column>
+    <column>is_active</column>
+    <column>component_id</column>
+    <row>
+      <null />
+      <value>2</value>
+      <value>Medical evaluation</value>
+      <value>33</value>
+      <value>Medical evaluation</value>
+      <null />
+      <value>0</value>
+      <null />
+      <value>34</value>
+      <null />
+      <value>0</value>
+      <value>0</value>
+      <value>1</value>
+      <value>7</value>
+    </row>
+    <row>
+      <null />
+      <value>2</value>
+      <value>Mental health evaluation</value>
+      <value>35</value>
+      <value>Mental health evaluation</value>
+      <null />
+      <value>0</value>
+      <null />
+      <value>36</value>
+      <null />
+      <value>0</value>
+      <value>0</value>
+      <value>1</value>
+      <value>7</value>
+    </row>
+    <row>
+      <null />
+      <value>2</value>
+      <value>Secure temporary housing</value>
+      <value>36</value>
+      <value>Secure temporary housing</value>
+      <null />
+      <value>0</value>
+      <null />
+      <value>37</value>
+      <null />
+      <value>0</value>
+      <value>0</value>
+      <value>1</value>
+      <value>7</value>
+    </row>
+    <row>
+      <null />
+      <value>2</value>
+      <value>Income and benefits stabilization</value>
+      <value>38</value>
+      <value>Income and benefits stabilization</value>
+      <null />
+      <value>0</value>
+      <null />
+      <value>39</value>
+      <null />
+      <value>0</value>
+      <value>0</value>
+      <value>1</value>
+      <value>7</value>
+    </row>
+    <row>
+      <null />
+      <value>2</value>
+      <value>Long-term housing plan</value>
+      <value>40</value>
+      <value>Long-term housing plan</value>
+      <null />
+      <value>0</value>
+      <null />
+      <value>41</value>
+      <null />
+      <value>0</value>
+      <value>0</value>
+      <value>1</value>
+      <value>7</value>
+    </row>
+    <row>
+      <null />
+      <value>2</value>
+      <value>ADC referral</value>
+      <value>42</value>
+      <value>ADC referral</value>
+      <null />
+      <value>0</value>
+      <null />
+      <value>43</value>
+      <null />
+      <value>0</value>
+      <value>0</value>
+      <value>1</value>
+      <value>7</value>
+    </row>
+  </table>
+</dataset>
