@@ -119,7 +119,7 @@ class CRM_ACL_API {
         }
 
         require_once 'CRM/ACL/BAO/ACL.php';
-        return CRM_ACL_BAO_ACL::whereClause( $type, $tables, $whereTables, $contactID ) . $deleteClause ;
+        return implode(' AND ',array(CRM_ACL_BAO_ACL::whereClause( $type, $tables, $whereTables, $contactID ), $deleteClause))  ;
     }
 
     /**
