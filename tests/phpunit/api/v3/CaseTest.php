@@ -200,6 +200,11 @@ class api_v3_CaseTest extends CiviUnitTestCase
         // enable the default custom templates for the case type xml files
         $this->customDirectories( array( 'template_path' => TRUE ) );
 
+        // case is not enabled by default
+        require_once 'CRM/Core/BAO/ConfigSetting.php';
+        $enableResult = CRM_Core_BAO_ConfigSetting::enableComponent( 'CiviCase' );
+        $this->assertTrue( $enableResult, 'Cannot enable CiviCase in line ' . __LINE__);
+
         $this->_params = array( 
                 'case_type_id' => 1,
                 'subject' => 'Test case',
@@ -230,6 +235,8 @@ class api_v3_CaseTest extends CiviUnitTestCase
                                    'civicrm_relationship_type',
                                    );
         $this->quickCleanup( $tablesToTruncate, true );
+
+        $this->customDirectories( array( 'template_path' => FALSE ) );
     }
 
     
@@ -280,17 +287,77 @@ class api_v3_CaseTest extends CiviUnitTestCase
         $this->assertEquals( $result['values'][$result['id']]['case_type_id'], $params['case_type_id'],'in line ' . __LINE__);
     }
 
-    /*
-    function testActivityCreateExample( )
-    {
-        /**
-         *  Test civicrm_activity_create() using example code
-        require_once 'api/v3/examples/ActivityCreate.php';
-        $result = activity_create_example();
-        $expectedResult = activity_create_expectedresult();
-        $this->assertEquals($result,$expectedResult);
-    }
+    /**
+     *  Test activity api create for case activities
      */
+    function testCaseActivityCreate( )
+    {
+        // Create a case first
+        $params = $this->_params;
+        $result =& civicrm_api('case','create', $params );
+        
+        $params = array( 'case_id' => 1,
+                         'activity_type_id' => 14, // follow up
+                         'subject' => 'Test followup',
+                         'target_contact_id' => $this->_params['contact_id'],
+                         'version' => $this->_apiversion,
+                       );
+        $result =& civicrm_api('activity','create', $params );
+
+        $this->assertEquals( $result['is_error'], 0,
+                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) .' in line ' . __LINE__ );
+        $this->assertEquals( $result['values'][$result['id']]['activity_type_id'], $params['activity_type_id'],'in line ' . __LINE__);
+
+        // might need this for other tests that piggyback on this one
+        $this->_caseActivityId = $result['values'][$result['id']]['id'];
+
+        // Check other DB tables populated properly - is there a better way to do this? assertDBState() requires that we know the id already.
+        require_once 'CRM/Case/DAO/CaseActivity.php';
+        $dao = new CRM_Case_DAO_CaseActivity( );
+        $dao->case_id = 1;
+        $dao->activity_id = $this->_caseActivityId;
+        $this->assertEquals( $dao->find( ), 1, 'case_activity table not populated correctly in line ' . __LINE__) ;
+
+        require_once 'CRM/Activity/DAO/ActivityTarget.php';
+        $dao = new CRM_Activity_DAO_ActivityTarget( );
+        $dao->activity_id = $this->_caseActivityId;
+        $dao->target_contact_id = $this->_params['contact_id'];
+        $this->assertEquals( $dao->find( ), 1, 'activity_target table not populated correctly in line ' . __LINE__) ;
+
+// TODO: There's more things we could check
+
+    }
+
+    /**
+     *  Test activity api update for case activities
+     */
+    function testCaseActivityUpdate( )
+    {
+        // Need to create the case and activity before we can update it
+        $this->testCaseActivityCreate( );
+
+        $params = array( 'activity_id' => $this->_caseActivityId,
+                         'case_id' => 1,
+                         'activity_type_id' => 14,
+                         'subject' => 'New subject',
+                         'version' => $this->_apiversion,
+                       );
+        $result =& civicrm_api('activity','create', $params );
+
+        $this->assertEquals( $result['is_error'], 0,
+                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) .' in line ' . __LINE__ );
+        $this->assertEquals( $result['values'][$result['id']]['subject'], $params['subject'],'in line ' . __LINE__);
+        
+        // id should be one greater, since this is a new revision
+        $this->assertEquals( $result['values'][$result['id']]['id'],
+                             $this->_caseActivityId + 1,
+                             'in line ' . __LINE__);
+        $this->assertEquals( $result['values'][$result['id']]['original_id'],
+                             $this->_caseActivityId,
+                             'in line ' . __LINE__);
+
+//TODO: check old revision is as expected, and some more things
+    }
 }
 // -- set Emacs parameters --
 // Local variables:
