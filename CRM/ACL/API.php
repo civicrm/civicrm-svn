@@ -90,13 +90,8 @@ class CRM_ACL_API {
      * @access public
      */
     public static function whereClause( $type, &$tables, &$whereTables, $contactID = null, $onlyDeleted = false, $skipDeleteClause = false ) {
-        // first see if the contact has edit / view all contacts
-        if ( CRM_Core_Permission::check( 'edit all contacts' ) ||
-             ( $type == self::VIEW &&
-               CRM_Core_Permission::check( 'view all contacts' ) ) ) {
-            $deleteClause = ' ( 1 ) ';
 
-            if ( !$skipDeleteClause ) {
+          if ( !$skipDeleteClause ) {
                 if (CRM_Core_Permission::check('access deleted contacts') and $onlyDeleted) {
                     $deleteClause = '(contact_a.is_deleted)';
                 } else {
@@ -104,6 +99,13 @@ class CRM_ACL_API {
                     $deleteClause = '(contact_a.is_deleted = 0)';
                 }
             }
+      // first see if the contact has edit / view all contacts
+        if ( CRM_Core_Permission::check( 'edit all contacts' ) ||
+             ( $type == self::VIEW &&
+               CRM_Core_Permission::check( 'view all contacts' ) ) ) {
+            $deleteClause = ' ( 1 ) ';
+
+
             return $deleteClause;            
         }
 
@@ -117,7 +119,7 @@ class CRM_ACL_API {
         }
 
         require_once 'CRM/ACL/BAO/ACL.php';
-        return CRM_ACL_BAO_ACL::whereClause( $type, $tables, $whereTables, $contactID );
+        return CRM_ACL_BAO_ACL::whereClause( $type, $tables, $whereTables, $contactID ) . $deleteClause ;
     }
 
     /**
