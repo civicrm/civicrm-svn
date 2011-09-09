@@ -192,7 +192,7 @@ INSERT INTO civicrm_location_type ( name, description, is_reserved, is_active )
             
             // replace display_name fields by sort_name
             if ( !isset($formValues['membership_start_date_relative']) &&
-                 !iseet($formValues['membership_end_date_relative']) ) {
+                 !isset($formValues['membership_end_date_relative']) ) {
                 $formValues['membership_start_date_relative'] = '0';
                 $formValues['membership_start_date_from']     = '';
                 $formValues['membership_start_date_to']       = '';
@@ -238,7 +238,7 @@ INSERT INTO civicrm_location_type ( name, description, is_reserved, is_active )
     function upgrade_3_4_6( $rev ) 
     {
         require_once 'CRM/Report/DAO/Instance.php';
-        $modifiedReportIds = array( 'event/summary', 'activity', 'Mailing/bounce'. 'Mailing/summary', 'Mailing/opened' );
+        $modifiedReportIds = array( 'event/summary', 'activity', 'Mailing/bounce', 'Mailing/clicks', 'Mailing/opened' );
         
         $instances = CRM_Core_DAO::executeQuery("SELECT id, form_values, report_id FROM civicrm_report_instance WHERE report_id IN ('". implode("','", $modifiedReportIds )."')");
         while( $instances->fetch( ) ) {
@@ -266,7 +266,7 @@ INSERT INTO civicrm_location_type ( name, description, is_reserved, is_active )
                                                         'order'  => 'ASC' );
                         }
                         if ( !empty($orderBy) ) {
-                            $formValues['group_bys'] = $orderBy;
+                            $formValues['order_bys'] = $orderBy;
                         }
                     }
                     unset($formValues['group_bys']);               
@@ -274,7 +274,7 @@ INSERT INTO civicrm_location_type ( name, description, is_reserved, is_active )
                 break;
                 
             case 'Mailing/bounce':
-            case 'Mailing/summary':
+            case 'Mailing/clicks':
             case 'Mailing/opened':
                 $formValues['fields']['mailing_name'] = 1;
                 break;            
