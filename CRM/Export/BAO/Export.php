@@ -80,7 +80,7 @@ class CRM_Export_BAO_Export
                                       $exportParams = array(),
                                       $queryOperator = 'AND' )
     {
-        $headerRows = $returnProperties = array();
+        $headerRows = $returnProperties = $greetingFieldMerge = array();
         $primary    = $paymentFields    = false;
         $origFields = $fields;
         $queryMode  = null; 
@@ -326,7 +326,7 @@ class CRM_Export_BAO_Export
 
             // some columns are required for assistance incase they are not already present
             $exportParams['merge_same_address']['temp_columns'] = array( );
-            $tempColumns = array( 'id', 'last_name', 'sort_name', 'master_id', 'state_province_id' );
+            $tempColumns = array( 'id', 'master_id', 'state_province_id', 'postal_greeting_id', 'addressee_id' );
             foreach ( $tempColumns as $column ) {
                 if ( ! array_key_exists( $column, $returnProperties ) ) {
                     $returnProperties[$column] = 1;
@@ -830,17 +830,8 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                             $fldValue    = "{$field}_display";
                             $row[$field] = $dao->$fldValue;
                             if ( $mergeSameAddress && CRM_Utils_Array::value( $field, $exportParams ) ) {
+                                $greetingFieldMerge[$field] = $exportParams[$field];
                                 $greetingFld = $exportParams[$field];
-                                                                
-                                $values  = array( 'id'      => $dao->contact_id,
-                                                  'version' => 3 );
-
-                                $contact = civicrm_api( 'contact', 'get', $values );
-                                $contact = $contact['values'][$contact['id']];
-                                
-                                $tokens['contact'] = $greetingFld;
-                                $row[$field . '_additional' ] = CRM_Utils_Token::replaceContactTokens( $greetingFld, $contact, null, $tokens );
-                                $sqlColumns[$field . '_additional'] = $field . '_additional varchar(255)';
                             }
                         } else {
                             //normal fields with a touch of CRM-3157
@@ -920,9 +911,9 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
             
             // do merge same address and merge same household processing
             if ( $mergeSameAddress ) {
-                self::mergeSameAddress( $exportTempTable, $headerRows, $sqlColumns, $exportParams );
+                self::mergeSameAddress( $exportTempTable, $headerRows, $sqlColumns, $exportParams, $greetingFieldMerge);
             }
-            
+            // exit;
             // merge the records if they have corresponding households
             if ( $mergeSameHousehold ) {
                 self::mergeSameHousehold( $exportTempTable, $headerRows, $sqlColumns, $relationKey );
@@ -1245,48 +1236,46 @@ CREATE TABLE {$exportTempTable} (
         return $exportTempTable;
     }
 
-    static function mergeSameAddress( $tableName, &$headerRows, &$sqlColumns, $exportParams )
+    static function mergeSameAddress( $tableName, &$headerRows, &$sqlColumns, $exportParams, $greetingFieldMerge )
     {
         // check if any records are present based on if they have used shared address feature,
         // and not based on if city / state .. matches.
 
-        // use additional columns for greeting if any
-        $greetingCols =  array('addressee', 'postal_greeting' );
-        foreach($greetingCols as $greetingCol) {
-            $$greetingCol = $greetingCol;
-            if ( isset($sqlColumns[$greetingCol . '_additional']) ) {
-                unset($sqlColumns[$greetingCol . '_additional']);
-                $$greetingCol = $greetingCol . '_additional';
-            }
-        }
-
         $sql = "
-SELECT    r1.id        as copy_id,
-          r1.sort_name as copy_sort_name,
-          r1.last_name as copy_last_name,
-          r1.{$addressee} as copy_addressee,
-          r2.id        as master_id,
-          r1.sort_name as master_sort_name,
-          r2.last_name as master_last_name,
-          r2.{$addressee} as master_addressee,
-          r2.{$postal_greeting} as master_postal_greeting
+SELECT    r1.id as copy_id,
+          r1.postal_greeting_id as copy_postal_greeting_id, 
+          r1.addressee_id as copy_addressee_id,
+          r1.civicrm_primary_id as copy_contact_id,
+          r1.addressee as copy_addressee,
+          r1.postal_greeting as copy_postal_greeting,
+          r2.id as master_id,
+          r2.civicrm_primary_id as master_contact_id,
+          r2.addressee as master_addressee,
+          r2.postal_greeting as master_postal_greeting,
+          r2.postal_greeting_id as master_postal_greeting_id, 
+          r2.addressee_id as master_addressee_id
 FROM      $tableName r1
 INNER JOIN civicrm_address adr ON r1.master_id   = adr.id
 INNER JOIN $tableName      r2  ON adr.contact_id = r2.civicrm_primary_id
 WHERE     r2.id > r1.id
 ORDER BY  r1.id";
-        $linkedMerge = self::_buildMasterCopyArray( $sql );
+        $linkedMerge = self::_buildMasterCopyArray( $sql, $greetingFieldMerge );
 
         // find all the records that have the same street address BUT not in a household
 		// require match on city and state as well
         $sql = "
-SELECT    r1.id        as master_id,
-          r1.last_name as last_name,
-          r1.{$addressee} as master_addressee,
-          r1.{$postal_greeting} as master_postal_greeting,
+SELECT    r1.id as master_id,
+          r1.civicrm_primary_id as master_contact_id,
+          r1.addressee as master_addressee,
+          r1.postal_greeting as master_postal_greeting,
+          r1.postal_greeting_id as master_postal_greeting_id, 
+          r1.addressee_id as master_addressee_id,
           r2.id as copy_id,
-          r2.last_name as copy_last_name,
-          r2.{$addressee} as copy_addressee
+          r2.civicrm_primary_id as copy_contact_id,
+          r2.postal_greeting as copy_postal_greeting,
+          r2.addressee as copy_addressee,
+          r2.postal_greeting_id as copy_postal_greeting_id, 
+          r2.addressee_id as copy_addressee_id
 FROM      $tableName r1
 LEFT JOIN $tableName r2 ON ( r1.street_address = r2.street_address AND
 							 r1.city = r2.city AND
@@ -1297,7 +1286,7 @@ AND       ( r1.street_address != '' )
 AND       r2.id > r1.id
 ORDER BY  r1.id
 ";
-        $merge = self::_buildMasterCopyArray( $sql );
+        $merge = self::_buildMasterCopyArray( $sql, $greetingFieldMerge );
 
         // unset ids from $merge already present in $linkedMerge
         foreach ( $linkedMerge as $masterID => $values ) {
@@ -1350,23 +1339,55 @@ WHERE  id IN ( $deleteIDString )
         }
     }
 
-    static function _buildMasterCopyArray( $sql ) {
-        $mergeLastName = true;
-        $merge = $parents = array( );
+    static function _calculateGreetingTokens( $contactId, $greetingFields ) {
+        $greetings = array( );
+        if ( empty($greetingFields) ) {
+            return $greetings;
+        }
+        $values  = array( 'id'      => $contactId,
+                          'version' => 3 );
+        $contact = civicrm_api( 'contact', 'get', $values );
 
+        if ( CRM_Utils_Array::value('is_error', $contact) ) {
+            return $greetings;
+        }
+
+        $contact = $contact['values'][$contact['id']];
+
+        foreach($greetingFields as $greetingField => $greetingLabel) {
+            $tokens['contact'] = $greetingLabel;
+            $greetings[$greetingField] = CRM_Utils_Token::replaceContactTokens($greetingLabel, $contact, null, $tokens );
+        }
+        return $greetings;
+    }
+
+    static function _buildMasterCopyArray( $sql, $greetingFieldMerge ) {
+        static $_contactGreetingTokens = array();
+        
+        require_once 'CRM/Core/OptionGroup.php';
+        $addresseeOptions = CRM_Core_OptionGroup::values('addressee');
+        $postalOptions = CRM_Core_OptionGroup::values('postal_greeting');        
+        
+        $merge = $parents = array( );
         $dao = CRM_Core_DAO::executeQuery( $sql );
 
         while ( $dao->fetch( ) ) {
             $masterID = $dao->master_id;
             $copyID   = $dao->copy_id;
-            $lastName = $dao->last_name;
-            $copyLastName = $dao->copy_last_name;
-            $postalGreeting = $dao->master_postal_greeting;
-
-            // merge last names only when same
-            if ( $lastName != $copyLastName ) {
-                $mergeLastName = false;
+                        
+            if ( !isset($_contactGreetingTokens[$dao->master_contact_id]) ) {
+                $_contactGreetingTokens[$dao->master_contact_id] = self::_calculateGreetingTokens($dao->master_contact_id, $greetingFieldMerge);
             }
+
+            if ( !isset($_contactGreetingTokens[$dao->copy_contact_id]) ) {
+                $_contactGreetingTokens[$dao->copy_contact_id] = self::_calculateGreetingTokens($dao->copy_contact_id, $greetingFieldMerge);
+            }
+            
+            $masterPostalGreeting = CRM_Utils_Array::value('postal_greeting', $_contactGreetingTokens[$dao->master_contact_id], $dao->master_postal_greeting);
+            $masterAddressee      = CRM_Utils_Array::value('addressee', $_contactGreetingTokens[$dao->master_contact_id], $dao->master_addressee);
+
+            $copyPostalGreeting = CRM_Utils_Array::value('postal_greeting', $_contactGreetingTokens[$dao->copy_contact_id], $dao->copy_postal_greeting);
+            $copyAddressee      = CRM_Utils_Array::value('addressee', $_contactGreetingTokens[$dao->copy_contact_id], $dao->copy_addressee);
 
             if ( ! isset( $merge[$masterID] ) ) {
                 // check if this is an intermediate child
@@ -1377,28 +1398,32 @@ WHERE  id IN ( $deleteIDString )
                 if ( isset( $parents[$masterID] ) ) {
                     $masterID = $parents[$masterID];
                 } else {
-                    $merge[$masterID] = array( 'addressee' => trim( $dao->master_addressee ),
+                    $merge[$masterID] = array( 'addressee' => $masterAddressee,
                                                'copy'      => array( ),
-                                               'postalGreeting' => $postalGreeting );
+                                               'postalGreeting' => $masterPostalGreeting );
                 }
             }
-            $parents[$copyID] = $masterID;
+            $parents[$copyID] = $masterID; 
 
             if ( !array_key_exists($copyID, $merge[$masterID]['copy']) ) {
-                if ( $copyLastName ) {
-                    $merge[$masterID]['postalGreeting'] = "{$merge[$masterID]['postalGreeting']}, {$copyLastName}";
-                    // if there happens to be a duplicate, remove it
-                    $merge[$masterID]['postalGreeting'] = str_replace( " {$copyLastName},", "", 
-                                                                       $merge[$masterID]['postalGreeting'] );
-                }
-                $merge[$masterID]['addressee'] = "{$merge[$masterID]['addressee']}, " . trim($dao->copy_addressee);
-            }
-            $merge[$masterID]['copy'][$copyID] = $dao->copy_addressee;
+                if ( $copyPostalGreeting ) {
+                    // FIX ME: define tripContactTokens
+                    // self::_tripContactTokens($copyPostalGreeting, $postalOptions[$dao->copy_postal_greeting_id] );
 
-            if ( $mergeLastName ) {
-                $merge[$masterID]['addressee']  = 
-                    str_replace( " {$lastName},", "", $merge[$masterID]['addressee'] );
+                    $merge[$masterID]['postalGreeting'] = "{$merge[$masterID]['postalGreeting']}, {$copyPostalGreeting}";
+                    // // if there happens to be a duplicate, remove it
+                    // $merge[$masterID]['postalGreeting'] = str_replace( " {$copyLastName},", "", 
+                    //                                                    $merge[$masterID]['postalGreeting'] );
+                }
+                
+                if ( $copyAddressee ) {
+                    // FIX ME: define tripContactTokens
+                    // self::_tripContactTokens($copyAddressee, $addresseeOptions[$dao->copy_addressee_id] );
+
+                    $merge[$masterID]['addressee'] = "{$merge[$masterID]['addressee']}, " . trim($copyAddressee);
+                }
             }
+            $merge[$masterID]['copy'][$copyID] = $copyAddressee;
         }
 
         return $merge;
