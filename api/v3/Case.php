@@ -257,6 +257,8 @@ SELECT DISTINCT case_id
 /**
  * Create new activity for a case
  *
+ * @deprecated as of 4.1. Use activity api instead.
+ *
  * @param array( //REQUIRED:
  * 'case_id'                     => int
  * 'activity_type_id'            => int

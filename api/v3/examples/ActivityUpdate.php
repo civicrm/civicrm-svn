@@ -12,7 +12,7 @@ $params = array(
   'subject' => 'Make-it-Happen Meeting',
   'status_id' => 1,
   'activity_name' => 'Test activity type',
-  'activity_date_time' => '20110810',
+  'activity_date_time' => '20110907',
   'custom_1' => 'Updated my test data',
   'version' => 3,
 );
@@ -40,7 +40,7 @@ function activity_update_expectedresult(){
           'source_record_id' => '',
           'activity_type_id' => 1,
           'subject' => 'Make-it-Happen Meeting',
-          'activity_date_time' => '20110810000000',
+          'activity_date_time' => '20110907000000',
           'duration' => '',
           'location' => '',
           'phone_id' => '',
@@ -73,7 +73,7 @@ function activity_update_expectedresult(){
 * This example has been generated from the API test suite. The test that created it is called
 * 
 * testActivityUpdateCustom and can be found in 
-* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3ActivityTest.php
+* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/ActivityTest.php
 * 
 * You can see the outcome of the API tests at 
 * http://tests.dev.civicrm.org/trunk/results-api_v3

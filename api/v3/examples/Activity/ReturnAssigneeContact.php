@@ -52,8 +52,8 @@ function activity_get_expectedresult(){
                   '0' => array( 
                       'contact_id' => '18',
                       'contact_type' => 'Individual',
-                      'sort_name' => 'User 449921007, Logged In',
-                      'display_name' => 'Logged In User 449921007',
+                      'sort_name' => 'User 12552, Logged In',
+                      'display_name' => 'Logged In User 12552',
                       'do_not_email' => 0,
                       'do_not_phone' => 0,
                       'do_not_mail' => 0,
@@ -62,7 +62,7 @@ function activity_get_expectedresult(){
                       'is_opt_out' => 0,
                       'preferred_mail_format' => 'Both',
                       'first_name' => 'Logged In',
-                      'last_name' => 'User 449921007',
+                      'last_name' => 'User 12552',
                       'is_deceased' => 0,
                       'contact_is_deleted' => 0,
                       'id' => '18',
@@ -83,7 +83,7 @@ function activity_get_expectedresult(){
 * This example has been generated from the API test suite. The test that created it is called
 * 
 * testActivityGetGoodID1 and can be found in 
-* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3ActivityTest.php
+* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/ActivityTest.php
 * 
 * You can see the outcome of the API tests at 
 * http://tests.dev.civicrm.org/trunk/results-api_v3
