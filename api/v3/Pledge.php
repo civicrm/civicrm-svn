@@ -70,15 +70,9 @@ function civicrm_api3_pledge_create( $params ) {
         return $error;
     } 
 
-    $pledge = CRM_Pledge_BAO_Pledge::create( $values );
-   if ( is_a( $pledge, 'CRM_Core_Error' ) ) {
-        return civicrm_api3_create_error(  $pledge->_errors[0]['message'] );
-    }else{
-         _civicrm_api3_object_to_array($pledge, $pledgeArray[$pledge->id]);
+   return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $values);
+    
 
-    }
-
-    return civicrm_api3_create_success($pledgeArray,$params,'pledge','create',$pledge);
 
 }
 
