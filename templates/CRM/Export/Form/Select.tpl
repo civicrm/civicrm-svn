@@ -137,32 +137,16 @@
 	}
      }
 
-     function showOther( selectField ) 
+     function showOther( ele, otherOpValue ) 
      {
-        if ( matchingContacts ) {
-	    if ( !selectField ) {
-                cj( "div#greetings table tr td select" ).each( function( ) {
-                   selectField = cj( this ).attr( 'name' );
-		   displayOther( selectField );
-                });
-            } else {
-                displayOther( selectField );
-            }
-        }
-     }
-
-     function displayOther( selectField ) 
-     {
-        var otherVal = cj( "#" + selectField + " option:selected" ).text( );
-
-        if ( otherVal == 'Other' ) {
-            cj( "#" + selectField + "_other" ).show( );
+        var selectedOpValue = cj(ele).val( );
+        if ( selectedOpValue && (selectedOpValue == otherOpValue) ) {
+	   cj('#' + cj(ele).attr('id') + '_other').show( );  
         } else {
-            cj( "#" + selectField + "_other" ).hide( );
-        }      
+	  cj('#' + cj(ele).attr('id') + '_other').hide( ); 
+	}
      }
 
      showGreetingOptions( );
-     showOther( );
   </script>
 {/literal}

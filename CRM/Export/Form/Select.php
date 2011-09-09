@@ -251,19 +251,20 @@ FROM   {$this->_componentTable}
                 CRM_Core_DAO::commonRetrieveAll( 'CRM_Core_DAO_OptionValue', 'option_group_id', $optionGroupId, 
                                                  $params, array( 'label', 'filter' ) );
                 
-                $this->_options[$key] = array( 1 => ts( 'List of names' ) );
+                $this->_options[$key] = array( '' => ts( 'List of names' ) );
 
+                $greetingCount = 1;
                 foreach ( $params as $id => $field ) {
                     if ( CRM_Utils_Array::value( 'filter', $field ) == 4 ) {
-                        $this->_options[$key][] = ts( $field['label'] );
+                        $this->_options[$key][$greetingCount++] = ts( $field['label'] );
                     }
                 }
 
-                $this->_options[$key][] = ts( 'Other' );
+                $this->_options[$key][$greetingCount] = ts( 'Other' );
                                 
                 $fieldLabel = ts( '%1 (merging > 2 contacts)', array( 1 => ucwords( str_replace( '_', ' ', $key ) ) ) );
                 $this->addElement( 'select', $key, $fieldLabel,
-                                   $this->_options[$key], array( 'onchange' => "showOther( this.name );" ) );
+                                   $this->_options[$key], array( 'onchange' => "showOther( this, {$greetingCount} );" ) );
                 $this->addElement( 'text', $value, '' );
             }
         }
