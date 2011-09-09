@@ -69,7 +69,8 @@ function civicrm_api3_pledge_create( $params ) {
     if ( civicrm_api3_error( $error ) ) {
         return $error;
     } 
-
+    //format the custom fields
+    _civicrm_api3_custom_format_params( $params, $values, 'Pledge' );
    return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $values);
     
 
@@ -197,6 +198,7 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
   // even though they are 'generally' what is returned in the GET - implying they should
   $fields =& CRM_Pledge_DAO_Pledge::fields( );
   _civicrm_api3_store_values( $fields, $params, $values );
+  $values['sequential'] =  CRM_Utils_Array::value('sequential', $params,0);
 
 
   //add back the fields we know of that got dropped by the previous function
@@ -327,11 +329,7 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
     }
   }
 
-  //format the parameters
-  _civicrm_api3_custom_format_params( $params, $values, 'Pledge' );
-
-
-  return array();
+   return array();
 }
 
 
