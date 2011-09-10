@@ -2759,7 +2759,19 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
     /*
      * Add Address into From Table if required
      */
-    
+
+    /*
+     *  Adjusts dates passed in to YEAR() for fiscal year.
+     */
+    function fiscalYearOffset( $fieldName ) {
+        $config = CRM_Core_Config::singleton();
+        $fy = $config->fiscalYearStart;
+        if ( $this->_params['yid_op'] == 'calendar' || ($fy['d'] == 1 && $fy['M'] == 1) ) {
+            return "YEAR( $fieldName )";
+        }
+        return "YEAR( $fieldName - INTERVAL " . ($fy['M'] - 1) . " MONTH" 
+        . ($fy['d'] > 1 ? (" - INTERVAL " . ($fy['d'] - 1) . " DAY") : '') . " )";
+    }
     function addAddressFromClause(){
        // include address field if address column is to be included
         if ( $this->_addressField || $this->isTableSelected('civicrm_address') ) {  
