@@ -49,7 +49,7 @@ function contact_get_expectedresult(){
           'last_name' => 'xyz3',
           'is_deceased' => 0,
           'contact_is_deleted' => 0,
-          'email_id' => '2',
+          'email_id' => '1',
           'email' => 'man3@yahoo.com',
           'on_hold' => 0,
           'id' => '1',
@@ -60,52 +60,52 @@ function contact_get_expectedresult(){
               'version' => 3,
               'count' => 10,
               'values' => array( 
-                  '1-0' => array( 
+                  '12-0' => array( 
                       'entity_id' => '1',
                       'entity_table' => 'Contact',
                       'testGetIndividualWithChainedArraysAndMultipleCustom' => 'value 4',
                     ),
-                  '2-1' => array( 
+                  '13-1' => array( 
                       'entity_id' => '1',
                       'entity_table' => 'Contact',
                       'Cust_Field' => 'value 2',
                     ),
-                  '3-1' => array( 
+                  '14-1' => array( 
                       'entity_id' => '1',
                       'entity_table' => 'Contact',
                       'field_2' => 'warm beer',
                     ),
-                  '4-1' => array( 
+                  '15-1' => array( 
                       'entity_id' => '1',
                       'entity_table' => 'Contact',
                       'field_3' => '',
                     ),
-                  '2-2' => array( 
+                  '13-2' => array( 
                       'entity_id' => '1',
                       'entity_table' => 'Contact',
                       'Cust_Field' => 'value 3',
                     ),
-                  '3-2' => array( 
+                  '14-2' => array( 
                       'entity_id' => '1',
                       'entity_table' => 'Contact',
                       'field_2' => '',
                     ),
-                  '4-2' => array( 
+                  '15-2' => array( 
                       'entity_id' => '1',
                       'entity_table' => 'Contact',
                       'field_3' => '',
                     ),
-                  '5-1' => array( 
+                  '16-1' => array( 
                       'entity_id' => '1',
                       'entity_table' => 'Contact',
                       'Cust_Field' => '',
                     ),
-                  '6-1' => array( 
+                  '17-1' => array( 
                       'entity_id' => '1',
                       'entity_table' => 'Contact',
                       'field_2' => 'vegemite',
                     ),
-                  '7-1' => array( 
+                  '18-1' => array( 
                       'entity_id' => '1',
                       'entity_table' => 'Contact',
                       'field_3' => '',
