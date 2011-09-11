@@ -1335,7 +1335,7 @@ WHERE  id IN ( $deleteIDString )
         }
     }
 
-    static function _calculateGreetingTokens( $contactId, $exportParams ) {
+    static function _replaceMergeTokens( $contactId, $exportParams ) {
         $greetings = array( );
         $contact   = null;
 
@@ -1366,19 +1366,30 @@ WHERE  id IN ( $deleteIDString )
         return $greetings;
     }
 
-    static function _tripContactTokens( $parsedString, $greeting ) {
-        $greetingFields = array( 'postal_greeting', 'addressee' );
-        foreach( $greetingFields as $greetingType ) {
-            $greetingLabel = null;
-            if ( CRM_Utils_Array::value($greetingType,$exportParams) ) {
-                $greetingLabel = $exportParams[$greetingType];
-            } else if ( CRM_Utils_Array::value("{$greetingType}_other", $exportParams) ) {
-                $greetingLabel = $exportParams[$greetingType];
-            }
-            $greetingLabel = empty($greetingLabel) ? $greeting : $greetingLabel;
+    /*
+     * The function unsets static part of the string, if token is the dynamic part.
+     * Example: 'Hello {contact.first_name}' => converted to => '{contact.first_name}' 
+     * i.e 'Hello Alan' => converted to => 'Alan' 
+     *
+     */
+    static function _trimNonTokens( &$parsedString, $defaultGreeting, 
+                                    $addressMergeGreetings, $greetingType = 'postal_greeting' ) {
+        $greetingLabel = null;
+        if ( CRM_Utils_Array::value($greetingType,$addressMergeGreetings) ) {
+            $greetingLabel = $addressMergeGreetings[$greetingType];
+        } else if ( CRM_Utils_Array::value("{$greetingType}_other", $addressMergeGreetings) ) {
+            $greetingLabel = $addressMergeGreetings[$greetingType];
         }
+        $greetingLabel = empty($greetingLabel) ? $defaultGreeting : $greetingLabel;
+        
+        $stringsToBeReplaced = preg_replace('/(\{[a-zA-Z._ ]+\})/', ';;', $greetingLabel);
+        $stringsToBeReplaced = explode( ';;', $stringsToBeReplaced );
+        foreach ( $stringsToBeReplaced as $key => $string ) {
+            $stringsToBeReplaced[$key] = ltrim($string); // to keep one space
+        }
+        $parsedString        = str_replace($stringsToBeReplaced, "", $parsedString);
 
-        return $postalGreeting;
+        return $parsedString;
     }
 
     static function _buildMasterCopyArray( $sql, $exportParams ) {
@@ -1394,24 +1405,13 @@ WHERE  id IN ( $deleteIDString )
         while ( $dao->fetch( ) ) {
             $masterID = $dao->master_id;
             $copyID   = $dao->copy_id;
+            $masterPostalGreeting = $dao->master_postal_greeting;
+            $masterAddressee      = $dao->master_addressee;
                         
-            if ( !isset($contactGreetingTokens[$dao->master_contact_id]) ) {
-                $contactGreetingTokens[$dao->master_contact_id] = 
-                    self::_calculateGreetingTokens($dao->master_contact_id, $exportParams);
-            }
-
             if ( !isset($contactGreetingTokens[$dao->copy_contact_id]) ) {
                 $contactGreetingTokens[$dao->copy_contact_id] = 
-                    self::_calculateGreetingTokens($dao->copy_contact_id, $exportParams);
+                    self::_replaceMergeTokens($dao->copy_contact_id, $exportParams);
             }
-            
-            $masterPostalGreeting = 
-                CRM_Utils_Array::value('postal_greeting', 
-                                       $contactGreetingTokens[$dao->master_contact_id], $dao->master_postal_greeting);
-            $masterAddressee      = 
-                CRM_Utils_Array::value('addressee', 
-                                       $contactGreetingTokens[$dao->master_contact_id], $dao->master_addressee);
-
             $copyPostalGreeting   = 
                 CRM_Utils_Array::value('postal_greeting', 
                                        $contactGreetingTokens[$dao->copy_contact_id], $dao->copy_postal_greeting);
@@ -1437,22 +1437,20 @@ WHERE  id IN ( $deleteIDString )
 
             if ( !array_key_exists($copyID, $merge[$masterID]['copy']) ) {
                 if ( $copyPostalGreeting ) {
-                    // FIX ME: define tripContactTokens
-                    $copyPostalGreeting = self::_tripContactTokens( $copyPostalGreeting, 
-                                                                    $postalOptions[$dao->copy_postal_greeting_id],
-                                                                    $exportParams );
-                    $merge[$masterID]['postalGreeting'] = "{$merge[$masterID]['postalGreeting']}, {$copyPostalGreeting}";
-                    // // if there happens to be a duplicate, remove it
-                    // $merge[$masterID]['postalGreeting'] = str_replace( " {$copyLastName},", "", 
-                    //                                                    $merge[$masterID]['postalGreeting'] );
+                    self::_trimNonTokens( $copyPostalGreeting, 
+                                          $postalOptions[$dao->copy_postal_greeting_id],
+                                          $exportParams );
+                    $merge[$masterID]['postalGreeting'] = 
+                        "{$merge[$masterID]['postalGreeting']}, {$copyPostalGreeting}";
+                    // if there happens to be a duplicate, remove it
+                    $merge[$masterID]['postalGreeting'] = str_replace( " {$copyLastName},", "", 
+                                                                       $merge[$masterID]['postalGreeting'] );
                 }
                 
                 if ( $copyAddressee ) {
-                    // FIX ME: define tripContactTokens
-                    $copyAddressee = self::_tripContactTokens( $copyAddressee, 
-                                                               $addresseeOptions[$dao->copy_addressee_id],
-                                                               $exportParams );
-
+                    self::_trimNonTokens( $copyAddressee, 
+                                          $addresseeOptions[$dao->copy_addressee_id],
+                                          $exportParams, 'addressee' );
                     $merge[$masterID]['addressee'] = "{$merge[$masterID]['addressee']}, " . trim($copyAddressee);
                 }
             }
