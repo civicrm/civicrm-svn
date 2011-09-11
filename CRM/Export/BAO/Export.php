@@ -1236,7 +1236,6 @@ CREATE TABLE {$exportTempTable} (
     {
         // check if any records are present based on if they have used shared address feature,
         // and not based on if city / state .. matches.
-
         $sql = "
 SELECT    r1.id                 as copy_id,
           r1.civicrm_primary_id as copy_contact_id,
@@ -1253,9 +1252,8 @@ SELECT    r1.id                 as copy_id,
 FROM      $tableName r1
 INNER JOIN civicrm_address adr ON r1.master_id   = adr.id
 INNER JOIN $tableName      r2  ON adr.contact_id = r2.civicrm_primary_id
-WHERE     r2.id > r1.id
 ORDER BY  r1.id";
-        $linkedMerge = self::_buildMasterCopyArray( $sql, $exportParams );
+        $linkedMerge = self::_buildMasterCopyArray( $sql, $exportParams, true );
 
         // find all the records that have the same street address BUT not in a household
 		// require match on city and state as well
@@ -1341,13 +1339,8 @@ WHERE  id IN ( $deleteIDString )
 
         $greetingFields = array( 'postal_greeting', 'addressee' );
         foreach( $greetingFields as $greeting ) {
-            $greetingLabel = null;
             if ( CRM_Utils_Array::value($greeting,$exportParams) ) {
                 $greetingLabel = $exportParams[$greeting];
-            } else if ( CRM_Utils_Array::value("{$greeting}_other", $exportParams) ) {
-                $greetingLabel = $exportParams[$greeting];
-            }
-            if ( $greetingLabel ) {
                 if ( empty($contact) ) {
                     $values  = array( 'id'      => $contactId,
                                       'version' => 3 );
@@ -1374,10 +1367,7 @@ WHERE  id IN ( $deleteIDString )
      */
     static function _trimNonTokens( &$parsedString, $defaultGreeting, 
                                     $addressMergeGreetings, $greetingType = 'postal_greeting' ) {
-        $greetingLabel = null;
         if ( CRM_Utils_Array::value($greetingType,$addressMergeGreetings) ) {
-            $greetingLabel = $addressMergeGreetings[$greetingType];
-        } else if ( CRM_Utils_Array::value("{$greetingType}_other", $addressMergeGreetings) ) {
             $greetingLabel = $addressMergeGreetings[$greetingType];
         }
         $greetingLabel = empty($greetingLabel) ? $defaultGreeting : $greetingLabel;
@@ -1387,12 +1377,12 @@ WHERE  id IN ( $deleteIDString )
         foreach ( $stringsToBeReplaced as $key => $string ) {
             $stringsToBeReplaced[$key] = ltrim($string); // to keep one space
         }
-        $parsedString        = str_replace($stringsToBeReplaced, "", $parsedString);
+        $parsedString = str_replace($stringsToBeReplaced, "", $parsedString);
 
         return $parsedString;
     }
 
-    static function _buildMasterCopyArray( $sql, $exportParams ) {
+    static function _buildMasterCopyArray( $sql, $exportParams, $sharedAddress = false ) {
         static $contactGreetingTokens = array();
         
         require_once 'CRM/Core/OptionGroup.php';
@@ -1407,17 +1397,20 @@ WHERE  id IN ( $deleteIDString )
             $copyID   = $dao->copy_id;
             $masterPostalGreeting = $dao->master_postal_greeting;
             $masterAddressee      = $dao->master_addressee;
-                        
-            if ( !isset($contactGreetingTokens[$dao->copy_contact_id]) ) {
-                $contactGreetingTokens[$dao->copy_contact_id] = 
-                    self::_replaceMergeTokens($dao->copy_contact_id, $exportParams);
+            $copyAddressee        = $dao->copy_addressee;
+
+            if ( !$sharedAddress ) { 
+                if ( !isset($contactGreetingTokens[$dao->copy_contact_id]) ) {
+                    $contactGreetingTokens[$dao->copy_contact_id] = 
+                        self::_replaceMergeTokens($dao->copy_contact_id, $exportParams);
+                }
+                $copyPostalGreeting   = 
+                    CRM_Utils_Array::value('postal_greeting', 
+                                           $contactGreetingTokens[$dao->copy_contact_id], $dao->copy_postal_greeting);
+                $copyAddressee        = 
+                    CRM_Utils_Array::value('addressee', 
+                                           $contactGreetingTokens[$dao->copy_contact_id], $dao->copy_addressee);
             }
-            $copyPostalGreeting   = 
-                CRM_Utils_Array::value('postal_greeting', 
-                                       $contactGreetingTokens[$dao->copy_contact_id], $dao->copy_postal_greeting);
-            $copyAddressee        = 
-                CRM_Utils_Array::value('addressee', 
-                                       $contactGreetingTokens[$dao->copy_contact_id], $dao->copy_addressee);
 
             if ( ! isset( $merge[$masterID] ) ) {
                 // check if this is an intermediate child
@@ -1435,19 +1428,28 @@ WHERE  id IN ( $deleteIDString )
             }
             $parents[$copyID] = $masterID; 
 
-            if ( !array_key_exists($copyID, $merge[$masterID]['copy']) ) {
-                if ( $copyPostalGreeting ) {
+            if ( !$sharedAddress && !array_key_exists($copyID, $merge[$masterID]['copy']) ) {
+
+                if ( CRM_Utils_Array::value( 'postal_greeting_other', $exportParams ) && 
+                     count($merge[$masterID]['copy']) >= 1 ) {
+                    // use static greetings specified if no of contacts > 2
+                    $merge[$masterID]['postalGreeting'] = $exportParams['postal_greeting_other'];
+                } else if ( $copyPostalGreeting ) {
                     self::_trimNonTokens( $copyPostalGreeting, 
                                           $postalOptions[$dao->copy_postal_greeting_id],
                                           $exportParams );
                     $merge[$masterID]['postalGreeting'] = 
                         "{$merge[$masterID]['postalGreeting']}, {$copyPostalGreeting}";
                     // if there happens to be a duplicate, remove it
-                    $merge[$masterID]['postalGreeting'] = str_replace( " {$copyLastName},", "", 
+                    $merge[$masterID]['postalGreeting'] = str_replace( " {$copyPostalGreeting},", "", 
                                                                        $merge[$masterID]['postalGreeting'] );
                 }
                 
-                if ( $copyAddressee ) {
+                if ( CRM_Utils_Array::value( 'addressee_other', $exportParams ) && 
+                     count($merge[$masterID]['copy']) >= 1 ) {
+                    // use static greetings specified if no of contacts > 2
+                    $merge[$masterID]['addressee'] = $exportParams['addressee_other'];
+                } else if ( $copyAddressee ) {
                     self::_trimNonTokens( $copyAddressee, 
                                           $addresseeOptions[$dao->copy_addressee_id],
                                           $exportParams, 'addressee' );
