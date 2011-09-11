@@ -347,7 +347,7 @@ FROM   {$this->_componentTable}
         foreach ( $this->_options as $key => $value ) {
             if ( $option = CRM_Utils_Array::value( $key, $exportParams ) ) {
                 if ( $this->_options[$key][$option] == 'Other' ) {
-                    $exportParams[$key] = $exportParams["{$key}_other"];
+                    $exportParams[$key] = '';
                 } else {
                     $exportParams[$key] = $this->_options[$key][$option];
                 }
