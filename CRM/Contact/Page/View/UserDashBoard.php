@@ -130,7 +130,7 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
         $this->_userOptions  = CRM_Core_BAO_Preferences::valueOptions( 'user_dashboard_options' );
 
         $components = CRM_Core_Component::getEnabledComponents();
-
+        $this->assign('contactId',$this->_contactId);
         foreach( $components as $name => $component ) {
             $elem = $component->getUserDashboardElement();
             if ( ! $elem ) {
