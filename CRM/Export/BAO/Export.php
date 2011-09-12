@@ -1400,6 +1400,17 @@ WHERE  id IN ( $deleteIDString )
             $copyAddressee        = $dao->copy_addressee;
 
             if ( !$sharedAddress ) { 
+                if ( !isset($contactGreetingTokens[$dao->master_contact_id]) ) {
+                    $contactGreetingTokens[$dao->master_contact_id] = 
+                        self::_replaceMergeTokens($dao->master_contact_id, $exportParams);
+                }
+                $masterPostalGreeting = 
+                    CRM_Utils_Array::value('postal_greeting', 
+                                           $contactGreetingTokens[$dao->master_contact_id], $dao->master_postal_greeting);
+                $masterAddressee      = 
+                    CRM_Utils_Array::value('addressee', 
+                                           $contactGreetingTokens[$dao->master_contact_id], $dao->master_addressee);
+                
                 if ( !isset($contactGreetingTokens[$dao->copy_contact_id]) ) {
                     $contactGreetingTokens[$dao->copy_contact_id] = 
                         self::_replaceMergeTokens($dao->copy_contact_id, $exportParams);
