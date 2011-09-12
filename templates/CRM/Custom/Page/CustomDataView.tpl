@@ -126,7 +126,7 @@
           success: function(html){
               cj( '#' + elementID ).hide( );
               var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
-              var successMsg = '{/literal}{ts}The selected record has been deleted.{/ts}{literal} &nbsp;&nbsp;<a href="javascript:hideStatus( ' + valueID + ',' + groupID + ');"><img title="{/literal}{ts}close{/ts}{literal}" src="' +resourceBase+'i/close.png"/></a>';
+              var successMsg = '{/literal}{ts escape="js"}The selected record has been deleted.{/ts}{literal} &nbsp;&nbsp;<a href="javascript:hideStatus( ' + valueID + ',' + groupID + ');"><img title="{/literal}{ts}close{/ts}{literal}" src="' +resourceBase+'i/close.png"/></a>';
               cj( 'tr#statusmessg_'  + groupID + '_' + valueID ).show( ).children().find('span').html( successMsg );
 			  var element = cj( '.ui-tabs-nav #tab_custom_' + groupID + ' a' );
 			  cj(element).html(cj(element).attr('title') + ' ('+ html+') ');
