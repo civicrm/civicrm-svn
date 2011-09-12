@@ -307,8 +307,9 @@ FROM   {$this->_componentTable}
     public function formRule( $params, $files, $self ) 
     {
         $errors = array( );
-        
-        if ( $self->_matchingContacts ) {
+                
+        if ( CRM_Utils_Array::value( 'merge_same_address', $params['merge_same_address'] ) && 
+             $self->_matchingContacts ) {
             $greetings = array( 'postal_greeting' => 'postal_greeting_other',
                                 'addressee'       => 'addressee_other' );
 
