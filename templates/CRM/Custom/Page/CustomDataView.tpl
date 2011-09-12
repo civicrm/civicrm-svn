@@ -75,7 +75,15 @@
 						<td class="html-adjust"><a href="{$element.field_value.fileURL}">{$element.field_value.fileName}</a></td>
 					    {/if}
 					{else}
-					    <td class="html-adjust">{$element.field_value}</td>
+					    <td class="html-adjust">
+                        {if $element.contact_ref_id}
+                            <a href='/civicrm/contact/view?reset=1&cid={$element.contact_ref_id}'>
+                        {/if}
+                        {$element.field_value}
+                        {if $element.contact_ref_id}
+                            </a>
+                        {/if}
+                        </td>
 					{/if}
 				    {/if}
 				</tr>
