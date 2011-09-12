@@ -742,12 +742,16 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     }
                 }
                 
-                $ids = implode (',', $priceFieldIDS);
-                $self->set( 'memberPriceFieldIDS', $priceFieldIDS );
-                $count = CRM_Price_BAO_Set::getMembershipCount($ids);
-                foreach( $count as $id => $occurance ) {
-                    if ($occurance > 1) {
-                         $errors['_qf_default'] = ts( 'Select at most one option from each Membership Type.' );
+                if ( empty($priceFieldIDS) ) {
+                    $errors['_qf_default'] = ts( 'Please select at least one Membership fee.' );
+                } else {
+                    $ids = implode (',', $priceFieldIDS);
+                    $self->set( 'memberPriceFieldIDS', $priceFieldIDS );
+                    $count = CRM_Price_BAO_Set::getMembershipCount($ids);
+                    foreach( $count as $id => $occurance ) {
+                        if ($occurance > 1) {
+                            $errors['_qf_default'] = ts( 'Select at most one option from each Membership Type.' );
+                        }
                     }
                 }
             }

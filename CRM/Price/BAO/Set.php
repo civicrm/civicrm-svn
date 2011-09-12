@@ -188,6 +188,7 @@ WHERE     ct.id = cp.contribution_type_id AND
                 break;
 
             case 'civicrm_contribution':
+            case 'civicrm_membership':
                 $usedBy[$table] = 1;
                 break;
                 
@@ -678,7 +679,8 @@ WHERE  id = %1";
         
           
         $validFieldsOnly = true;
-        if ( CRM_Utils_System::getClassName($form) == 'CRM_Contribute_Form_Contribution' ) {
+        $className = CRM_Utils_System::getClassName( $form );
+        if ( in_array($className, array('CRM_Contribute_Form_Contribution', 'CRM_Member_Form_Membership') ) ) {
             $validFieldsOnly = false;
         }
 
@@ -686,21 +688,28 @@ WHERE  id = %1";
         $form->_priceSet = CRM_Utils_Array::value( $priceSetId, $priceSet );
         $form->assign( 'priceSet',  $form->_priceSet );
         require_once 'CRM/Core/PseudoConstant.php';
-        $className = CRM_Utils_System::getClassName( $form );
         
+        $component = 'contribution';
+        if ( $className == 'CRM_Member_Form_Membership') {
+            $component = 'membership';
+        }
+
         if ( $className == 'CRM_Contribute_Form_Contribution_Main' ) {
             $feeBlock =& $form->_values['fee'];
+            if ( !empty($form->_useForMember) ) {
+                $component = 'membership';
+            }
         } else {
             $feeBlock =& $form->_priceSet['fields'];
         }
         
         // call the hook.
         require_once 'CRM/Utils/Hook.php';
-        CRM_Utils_Hook::buildAmount( 'contribution', $form, $feeBlock );
+        CRM_Utils_Hook::buildAmount( $component, $form, $feeBlock );
         
         foreach ( $feeBlock as $field ) {
             if ( CRM_Utils_Array::value( 'visibility', $field ) == 'public' || 
-                 $className == 'CRM_Contribute_Form_Contribution' ) {
+                 !$validFieldsOnly ) {
                 
                 $options = CRM_Utils_Array::value( 'options', $field );
                 if ( !is_array( $options ) ) continue; 
