@@ -264,7 +264,7 @@ FROM   {$this->_componentTable}
                                 
                 $fieldLabel = ts( '%1 (merging > 2 contacts)', array( 1 => ucwords( str_replace( '_', ' ', $key ) ) ) );
                 $this->addElement( 'select', $key, $fieldLabel,
-                                   $this->_options[$key], array( 'onchange' => "showOther( this, {$greetingCount} );" ) );
+                                   $this->_options[$key], array( 'onchange' => "showOther(this);" ) );
                 $this->addElement( 'text', $value, '' );
             }
         }

@@ -68,7 +68,7 @@
            <td>{$form.postal_greeting.label}</td>
            <td>{$form.postal_greeting.html}</td>
         </tr>
-        <tr id='postal_greeting_other' class='hiddenElement'>
+        <tr id='postal_greeting_other_wrapper' class='hiddenElement'>
            <td>{$form.postal_greeting_other.label}</td>
            <td>{$form.postal_greeting_other.html}</td>
         </tr>
@@ -77,7 +77,7 @@
            <td>{$form.addressee.label}</td>
            <td>{$form.addressee.html}</td>
         </tr>
-        <tr id='addressee_other' class='hiddenElement'>
+        <tr id='addressee_other_wrapper' class='hiddenElement'>
            <td>{$form.addressee_other.label}</td>
            <td>{$form.addressee_other.html}</td>
         </tr>
@@ -137,16 +137,18 @@
 	}
      }
 
-     function showOther( ele, otherOpValue ) 
+     function showOther( ele ) 
      {
-        var selectedOpValue = cj(ele).val( );
-        if ( selectedOpValue && (selectedOpValue == otherOpValue) ) {
-	   cj('#' + cj(ele).attr('id') + '_other').show( );  
-        } else {
-	  cj('#' + cj(ele).attr('id') + '_other').hide( ); 
+        if ( cj('option:selected', ele).text( ) == '{/literal}{ts}Other{/ts}{literal}' ) {
+	   cj('#' + cj(ele).attr('id') + '_other_wrapper').show( );  
+        } else {	
+          cj('#' + cj(ele).attr('id') + '_other').val('');
+	  cj('#' + cj(ele).attr('id') + '_other_wrapper').hide( );
 	}
      }
 
      showGreetingOptions( );
+     showOther(cj('#postal_greeting'));
+     showOther(cj('#addressee'));
   </script>
 {/literal}
