@@ -406,7 +406,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         require_once('Google/library/googleresponse.php');
         require_once('Google/library/googlemerchantcalculations.php');
         require_once('Google/library/googleresult.php');
-        require_once('Google/library/xml-processing/xmlparser.php');
+        require_once('Google/library/xml-processing/gc_xmlparser.php');
         
         $config = CRM_Core_Config::singleton();
                
@@ -423,7 +423,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         }
         
         // Retrieve the root and data from the xml response
-        $xmlParser = new XmlParser($xml_response);
+        $xmlParser = new gc_XmlParser($xml_response);
         $root      = $xmlParser->GetRoot();
         $data      = $xmlParser->GetData();
         
@@ -447,8 +447,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $merchant_key = $paymentProcessor['password'];
         $server_type  = ($mode == 'test') ? "sandbox" : '';
         
-        $response = new GoogleResponse($merchant_id, $merchant_key,
-                                       $xml_response, $server_type);
+        $response = new GoogleResponse($merchant_id, $merchant_key);
         if ( GOOGLE_DEBUG_PP ) {
             CRM_Core_Error::debug_var( 'RESPONSE-ROOT', $response->root, true, true, 'Google' );
         }
