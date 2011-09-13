@@ -750,6 +750,19 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             }
         }
 
+        // lets fill up the prev next cache here, so view can scroll thru
+        $dao = $this->_query->searchQuery( 0, 0, null,
+                                           false, false, false,
+                                           false, false );
+        CRM_Core_Error::debug( $dao );
+        exit( );
+
+        $data = '';
+        $cacheKeyString = "civicrm search {$this->_key}";
+        while ( $dao->fetch( ) ) {
+            $values[] = " ( 'civicrm_contact', {$dao->contact_id}, {$dao->contact_id}, '$cacheKeyString', '$data' ) ";
+        }
+
         return $rows;
     }
    
