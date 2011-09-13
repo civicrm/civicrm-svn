@@ -324,8 +324,13 @@ function showHideMemberStatus() {
 {literal}
 function setPaymentBlock( mode ) {
     var memType = cj('#membership_type_id\\[1\\]').val( );
+    var isPriceSet = 0;
+
+    if ( cj('#price_set_id').length > 0 && cj('#price_set_id').val() ) {
+        isPriceSet = 1;
+    }  	
     
-    if ( !memType ) {
+    if ( !memType || isPriceSet ) {
         return;
     }
     
@@ -496,8 +501,10 @@ function buildAmount( priceSetId ) {
       // show/hide price set amount and total amount.
       cj( "#mem_type_id").show( );
       cj( "#totalAmountORPriceSet" ).show( );
+      cj('#total_amount').removeAttr("readonly"); 
       return;
   }
+  cj('#total_amount').attr("readonly", true);
 
   var dataUrl = {/literal}"{crmURL h=0 q='snippet=4'}"{literal} + '&priceSetId=' + priceSetId;
   

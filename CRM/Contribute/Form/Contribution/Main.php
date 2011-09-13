@@ -730,28 +730,28 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             }
 
             require_once 'CRM/Price/BAO/Set.php';
-            if ( $self->_useForMember == 1 ) {
+            if ( $self->_useForMember == 1 && !empty($check) ) {
                 $priceFieldIDS = array();
                 foreach ($self->_priceSet['fields'] as $priceIds => $dontCare ) {
                     if (!empty($fields['price_'.$priceIds])){
                         if (is_array($fields['price_'.$priceIds])) {
-                            $priceFieldIDS += array_keys($fields['price_'.$priceIds]);
+                            foreach( $fields['price_'.$priceIds] as $priceFldVal => $isSet ) {
+                                if ($isSet) {
+                                    $priceFieldIDS[] = $priceFldVal;
+                                }
+                            }
                         } else {
                             $priceFieldIDS[] = $fields['price_'.$priceIds];
                         }
                     }
                 }
-                
-                if ( empty($priceFieldIDS) ) {
-                    $errors['_qf_default'] = ts( 'Please select at least one Membership fee.' );
-                } else {
-                    $ids = implode (',', $priceFieldIDS);
-                    $self->set( 'memberPriceFieldIDS', $priceFieldIDS );
-                    $count = CRM_Price_BAO_Set::getMembershipCount($ids);
-                    foreach( $count as $id => $occurance ) {
-                        if ($occurance > 1) {
-                            $errors['_qf_default'] = ts( 'Select at most one option from each Membership Type.' );
-                        }
+
+                $ids = implode (',', $priceFieldIDS);
+                $self->set( 'memberPriceFieldIDS', $priceFieldIDS );
+                $count = CRM_Price_BAO_Set::getMembershipCount($ids);
+                foreach( $count as $id => $occurance ) {
+                    if ($occurance > 1) {
+                        $errors['_qf_default'] = ts( 'Select at most one option from each Membership Type.' );
                     }
                 }
             }
