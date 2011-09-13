@@ -684,6 +684,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         if ( CRM_Utils_Array::value( 'selectMembership', $membershipParams ) &&
              $membershipParams['selectMembership'] != 'no_thanks' ) {
             $processMembership = true;
+            //
             $this->assign( 'membership_assign' , true );
             $this->set('membershipTypeID' , $this->_params['selectMembership']);
 
@@ -694,8 +695,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 $membershipParams['is_pay_later'] = 1;
             }
         }
-        
-        $processMembership = $this->_useForMember = $this->get('useForMember');
+
+        if ($processMembership == false ) {
+            $processMembership = $this->_useForMember = $this->get('useForMember');
+        }
 
         if ( $processMembership ) {
             require_once 'CRM/Core/Payment/Form.php';
@@ -731,14 +734,16 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             }
             
             $priceFieldIds = $this->get( 'memberPriceFieldIDS' );
-            foreach ($priceFieldIds as $priceFieldId) {
-                if($id = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_FieldValue', $priceFieldId, 'membership_type_id' )){
-                    $membershipTypeIds[] = $id;
-                }                
+            if (!empty($priceFieldIds)) {
+                foreach ($priceFieldIds as $priceFieldId) {
+                    if($id = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_FieldValue', $priceFieldId, 'membership_type_id' )){
+                        $membershipTypeIds[] = $id;
+                    }                
+                    
+                    $membershipParams['selectMembership'] = $membershipTypeIds;
+                }
             }
             require_once 'CRM/Member/BAO/Membership.php';
-            
-            $membershipParams['selectMembership'] = $membershipTypeIds;
             CRM_Member_BAO_Membership::postProcessMembership( $membershipParams, $contactID,
                                                               $this, $premiumParams, $customFieldsFormatted, 
                                                               $fieldTypes );  
