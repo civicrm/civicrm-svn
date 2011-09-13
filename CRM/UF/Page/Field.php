@@ -123,7 +123,11 @@ class CRM_UF_Page_Field extends CRM_Core_Page
         $ufFieldBAO->uf_group_id = $this->_gid;
         $ufFieldBAO->orderBy( 'weight', 'field_name' );
         $ufFieldBAO->find();
-
+        
+        require_once 'CRM/Core/BAO/UFGroup.php';
+        $otherModules =  CRM_Core_BAO_UFGroup::getUFJoinRecord( $this->_gid );
+        $this->assign( 'otherModules', $otherModules ); 
+        
         $isGroupReserved = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'is_reserved' );
         $this->assign( 'isGroupReserved', $isGroupReserved );
         
@@ -238,6 +242,7 @@ class CRM_UF_Page_Field extends CRM_Core_Page
         // get the group id
         $this->_gid = CRM_Utils_Request::retrieve( 'gid', 'Positive',
                                                    $this, false, 0 );
+
         if ( $this->_gid ) {
             require_once 'CRM/Core/BAO/UFGroup.php';
             $groupTitle = CRM_Core_BAO_UFGroup::getTitle( $this->_gid );

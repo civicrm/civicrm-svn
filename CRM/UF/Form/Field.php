@@ -38,7 +38,7 @@ require_once 'CRM/Core/Form.php';
 require_once 'CRM/Contact/BAO/Contact.php';
 require_once 'CRM/Activity/BAO/Activity.php';
 require_once 'CRM/Core/BAO/UFField.php';
-
+require_once 'CRM/Core/BAO/UFGroup.php';
 /**
  * form to process actions on the field aspect of Custom
  */
@@ -235,12 +235,15 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         } else {
             $defaults['is_active'] = 1;
         }
-
+        
+        $otherModules = array( );
         if ( $this->_action & CRM_Core_Action::ADD ) {
+            $otherModules = array_values( CRM_Core_BAO_UFGroup::getUFJoinRecord( $this->_gid ) );
+            $this->assign( 'otherModules', $otherModules );
             $fieldValues = array('uf_group_id' => $this->_gid);
             $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_UFField', $fieldValues);
         }
-        
+    
         // lets trim all the whitespace
         $this->applyFilter('__ALL__', 'trim');
 
@@ -545,13 +548,20 @@ class CRM_UF_Form_Field extends CRM_Core_Form
 
         $sel->setOptions( array( $sel1, $sel2, $sel3, $sel4 ) );
         
+        $visibleValues = array();
+        if(in_array( 'Search Profile', $otherModules ) ) {
+            $visibleValues['Public Pages and Listings'] = 'Public Pages and Listings';
+        } else { 
+            $visibleValues = CRM_Core_SelectValues::ufVisibility( );
+        }
+        
         $js .= "</script>\n";
         $this->assign( 'initHideBoxes', $js );
         
         $this->add( 'select', 
                     'visibility', 
                     ts('Visibility'),
-                    CRM_Core_SelectValues::ufVisibility( ), 
+                    $visibleValues, 
                     true,
                     array( 'onChange' => "showHideSeletorSearch(this.value);" ) );
         

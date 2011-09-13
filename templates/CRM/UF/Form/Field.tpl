@@ -53,11 +53,11 @@
             <td>{$form.is_view.html}<br />
             <span class="description">&nbsp;{ts}If checked, users can view but not edit this field.{/ts}<br />&nbsp;{ts}NOTE: View Only fields can not be included in Profile Search forms.{/ts}</span></td>
         </tr>
-        <tr class="crm-uf-field-form-block-visibility">
+        <tr  id="profile_visibility" class="crm-uf-field-form-block-visibility">
             <td class="label">{$form.visibility.label}</td>
             <td>{$form.visibility.html}<br />
             <span class="description">&nbsp;{ts}Is this field hidden from other users ('User and User Admin Only'), or is it visible to others and potentially searchable in the Profile Search form ('Public Pages' or 'Public Pages and Listings')? When visibility is 'Public Pages and Listings', users can also click the field value when viewing a contact in order to locate other contacts with the same value(s) (i.e. other contacts who live in Poland).{/ts}</span></td>
-        </tr>                                                     
+        </tr>
         <tr class="crm-uf-field-form-block-is_searchable">
             <td class="label"><div id="is_search_label">{$form.is_searchable.label}</div></td>
             <td><div id="is_search_html">{$form.is_searchable.html}<br />
@@ -67,7 +67,7 @@
             <td class="label"><div id="in_selector_label">{$form.in_selector.label}</div></td>
             <td><div id="in_selector_html">{$form.in_selector.html}<br />         
             <span id="in_selector_desSpan" class="description">{ts}Is this field included as a column in the search results table? This setting applies only to fields with 'Public Pages' or 'Public Pages and Listings' visibility.{/ts}</span></div></td>
-        </tr>
+        </tr>     
         <tr class="crm-uf-field-form-block-help_pre">
             <td class="label">{$form.help_pre.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_field' field='help_pre' id=$fieldId}{/if}</td>
             <td>{$form.help_pre.html|crmReplace:class:huge}<br /> 
@@ -96,6 +96,20 @@
 
 {literal}
 <script type="text/javascript">
+var otherModule = new Array( );
+{/literal}{foreach from=$otherModules item="mval" key="mkey"}{literal}
+      otherModule[{/literal}{$mkey}{literal}] = '{/literal}{$mval}{literal}';
+    {/literal}{/foreach}{literal}
+
+ window.onload = function(){  
+        if( jQuery.inArray( "Profile", otherModule ) > -1 && jQuery.inArray( "Search Profile", otherModule ) == -1 ){       
+        cj('#profile_visibility').hide();
+          } else if( jQuery.inArray( "Search Profile", otherModule ) > -1 ){
+          cj('#profile_visibility').show();
+          cj("#in_selector").attr('checked',true);
+          }                            
+}
+
 function showLabel( ) {
     var labelValue = '';
     /* Code to set the Field Label */		
