@@ -173,6 +173,14 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
             $this->assign( 'pcpInfo', $pcpInfo );
         }
 
+        // Add Activities
+        $dashboardElements[] = array( 'templatePath' => 'CRM/Activity/Page/UserDashboard.tpl',
+                                      'sectionTitle' => ts( 'Your Activities' ),
+                                      'weight'       => 5 );
+        require_once 'CRM/Activity/Page/UserDashboard.php';
+        $userDashboard = new CRM_Activity_Page_UserDashboard;
+        $userDashboard->run();
+
         require_once 'CRM/Utils/Sort.php';
         usort( $dashboardElements, array( 'CRM_Utils_Sort', 'cmpFunc' ) );
         $this->assign ( 'dashboardElements', $dashboardElements );
