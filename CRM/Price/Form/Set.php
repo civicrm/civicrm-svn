@@ -96,9 +96,16 @@ class CRM_Price_Form_Set extends CRM_Core_Form
     {
         $errors = array( );
         $count = count($fields['extends']);
-        if ( array_key_exists( CRM_Core_Component::getComponentID( 'CiviMember' ), $fields['extends'] ) &&
-             $count > 1  ) {
-            $errors['extends'] = ts('If you plan on using this price set for membership signup and renewal, you can not also use it for Events or Contributions. However, a membership price set may include additional fields for non-membership options that requires an additional fee (e.g. magazine subscription).');
+        //price sets configured for membership
+        if ( array_key_exists( CRM_Core_Component::getComponentID( 'CiviMember' ), $fields['extends'] ) ) {
+            if ( $count > 1 ) {
+                $errors['extends'] = ts('If you plan on using this price set for membership signup and renewal, you can not also use it for Events or Contributions. However, a membership price set may include additional fields for non-membership options that requires an additional fee (e.g. magazine subscription).');
+            }
+
+            if ( CRM_Utils_System::isNull( $fields['contribution_type_id'] ) ) {
+                $errors['contribution_type_id'] = ts('Contribution Type (Membership Fees) is a required field.');
+            }            
+            
         }
         //checks the given price set doesnot start with digit
         $title = $fields['title']; 
@@ -178,8 +185,7 @@ class CRM_Price_Form_Set extends CRM_Core_Form
         require_once 'CRM/Contribute/PseudoConstant.php';
         $this->add( 'select', 'contribution_type_id', 
                     ts( 'Contribution Type (Membership Fees)' ), 
-                    array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionType( ),
-                    true);
+                    array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionType( ) );
         
         // help text
         $this->add( 'textarea', 'help_pre', ts('Pre-form Help'), 
