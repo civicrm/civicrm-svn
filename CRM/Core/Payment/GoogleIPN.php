@@ -168,7 +168,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
                 $contribution->trxn_id =
                     $ids['event']       . CRM_Core_DAO::VALUE_SEPARATOR .
                     $ids['participant'] ;
-            } else {
+            } else if ( $ids['membership'] ) {
                 $contribution->trxn_id = 
                     $ids['membership'] . CRM_Core_DAO::VALUE_SEPARATOR .
                     $ids['related_contact'] . CRM_Core_DAO::VALUE_SEPARATOR .
@@ -442,7 +442,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $merchant_key = $paymentProcessor['password'];
         $response->SetMerchantAuthentication($merchant_id, $merchant_key);
 
-        $ipn =& self::singleton( $mode, $module, $paymentProcessor );
+        $ipn = self::singleton( $mode, $module, $paymentProcessor );
 
         if ( GOOGLE_DEBUG_PP ) {
             CRM_Core_Error::debug_var( 'RESPONSE-ROOT', $response->root, true, true, 'Google' );
@@ -461,13 +461,12 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             break;
 
         case "new-order-notification": {
-            $response->SendAck($serial);
             $ipn->newOrderNotify($data[$root], $privateData, $module);
+            $response->SendAck($serial);
             break;
         }
 
         case "order-state-change-notification": {
-            $response->SendAck($serial);
             $new_financial_state = $data[$root]['new-financial-order-state']['VALUE'];
             $new_fulfillment_order = $data[$root]['new-fulfillment-order-state']['VALUE'];
             
@@ -475,12 +474,10 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
 
             case 'CHARGEABLE':
                 $amount = $ipn->getAmount($orderNo);
-                if ($amount) {
-                    $response->SendChargeOrder($data[$root]['google-order-number']['VALUE'], 
-                                               $amount, $message_log);
-                    $response->SendProcessOrder($data[$root]['google-order-number']['VALUE'], 
-                                                $message_log);
-                }
+/*                 if ($amount) { */
+/*                     $Grequest->SendProcessOrder($data[$root]['google-order-number']['VALUE']); */
+/*                     $Grequest->SendChargeOrder($data[$root]['google-order-number']['VALUE'],''); */
+/*                 } */
                 break;
 
             case 'CHARGED':
