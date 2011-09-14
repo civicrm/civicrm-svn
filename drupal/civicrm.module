@@ -961,3 +961,13 @@ function _civicrm_filter_process($text, $filter, $format, $langcode, $cache, $ca
   }
   return $text;
 }
+
+function civicrm_civicrm_postProcess ( $formName, $form ) {
+  // Reset Views Cache when CiviCRM components page is saved
+  if ( $form instanceof CRM_Admin_Form_Setting_Component ) {
+    $modules = module_list();
+    if (isset($modules['views'])) {
+      views_invalidate_cache();
+    }
+  }    
+}
