@@ -700,7 +700,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         $insertSQL = "INSERT INTO {$activityTempTable} (". implode( ',', $insertValueSQL ) ." ) ";
         
         $order = $limit = $groupBy = '';
-        $groupBy = " GROUP BY tbl.activity_id";
+        //$groupBy = " GROUP BY tbl.activity_id";
 
         if ( ! empty( $input['sort'] ) ) {
             if ( is_a( $input['sort'], 'CRM_Utils_Sort' ) ) {
