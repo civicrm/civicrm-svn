@@ -736,13 +736,18 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             }
             
             $priceFieldIds = $this->get( 'memberPriceFieldIDS' );
+            
             if (!empty($priceFieldIds)) {
+                $contributionTypeID = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $priceFieldIds['id'], 'contribution_type_id' );
+                unset($priceFieldIds['priceSetId']);
+                   
                 foreach ($priceFieldIds as $priceFieldId) {
                     if($id = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_FieldValue', $priceFieldId, 'membership_type_id' )){
                         $membershipTypeIds[] = $id;
                     }                
                     
                     $membershipParams['selectMembership'] = $membershipTypeIds;
+                    $membershipParams['contribution_type_id'] = $contributionTypeID;
                 }
             }
             require_once 'CRM/Member/BAO/Membership.php';

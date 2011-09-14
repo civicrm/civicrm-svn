@@ -1075,7 +1075,7 @@ AND civicrm_membership.is_test = %2";
         
         $membershipTypeID = $membershipParams['selectMembership'];
         $membershipDetails = self::buildMembershipTypeValues( $form, $membershipTypeID );
-
+        
         $form->assign( 'membership_name', $membershipDetails['name'] );
 
         $minimumFee = CRM_Utils_Array::value( 'minimum_fee', $membershipDetails );
@@ -1087,7 +1087,10 @@ AND civicrm_membership.is_test = %2";
         } else {
             $paymentDone  = true ;
             $params['amount'] = $minimumFee;
-            $contributionTypeId = $membershipDetails['contribution_type_id']; 
+            $contributionTypeId = $membershipDetails['contribution_type_id'];
+            if (!$contributionTypeId) {
+                $contributionTypeId = $membershipParams['contribution_type_id'];
+            }
         }
 
         //amount must be greater than zero for 

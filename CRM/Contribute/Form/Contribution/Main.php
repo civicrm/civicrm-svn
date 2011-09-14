@@ -749,6 +749,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 }
 
                 $ids = implode (',', $priceFieldIDS);
+                $priceFieldIDS['id'] = $fields['priceSetId'];
                 $self->set( 'memberPriceFieldIDS', $priceFieldIDS );
                 $count = CRM_Price_BAO_Set::getMembershipCount($ids);
                 foreach( $count as $id => $occurance ) {
