@@ -216,7 +216,7 @@ function civicrm_views_add_date_arguments(&$data,$value){
 
 }
 
-function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType, $style) {
+function civicrm_views_custom_data_cache(&$data, $entity_type, $groupID, $subType, $style) {
     //Feels a bit hacky this next 10 lines but it was the only way I could get getTree to play nice with the data
     $config = CRM_Core_Config::singleton( );
 
