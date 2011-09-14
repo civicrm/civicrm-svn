@@ -125,50 +125,28 @@ function civicrm_api3_pledge_get( $params ) {
       $params['pledge_id'] = $params['id'];
       unset ($params['id']);
     }
-    $inputParams      = array( );
-    $returnProperties = array( );
-    $otherVars = array( 'sort', 'offset', 'rowCount' );
-
-    $sort     = null;
-    $offset   = 0;
-    $rowCount = 25;
-    foreach ( $params as $n => $v ) {
-      if ( substr( $n, 0, 7 ) == 'return.' ) {
-        $returnProperties[ substr( $n, 7 ) ] = $v;
-      } elseif ( in_array( $n, $otherVars ) ) {
-        $$n = $v;
-      } else {
-        $inputParams[$n] = $v;
-      }
-    }
-
-    // add is_test to the clause if not present
-    if ( ! array_key_exists( 'pledge_test', $inputParams ) ) {
-      $inputParams['pledge_test'] = 0;
-    }
+    $options = _civicrm_api3_get_options_from_params(&$params);
 
     require_once 'CRM/Pledge/BAO/Query.php';
     require_once 'CRM/Contact/BAO/Query.php';
-    if ( empty( $returnProperties ) ) {
-      $returnProperties = CRM_Pledge_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_PLEDGE );
+    if ( empty($options['return'] ) ) {
+      $options['return'] = CRM_Pledge_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_PLEDGE );
     }else{
-      $returnProperties['pledge_id']=1;
+      $options['return']['pledge_id']=1;
     }
+    $newParams = CRM_Contact_BAO_Query::convertFormValues( $options['input_params'] );
 
-    $newParams =& CRM_Contact_BAO_Query::convertFormValues( $inputParams );
-
-    $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null,
+    $query = new CRM_Contact_BAO_Query( $newParams, $options['return'], null,
                                         false, false, CRM_Contact_BAO_Query::MODE_PLEDGE );
     list( $select, $from, $where ) = $query->query( );
+    $sql 
+    = "$select $from $where";
 
-    $sql = "$select $from $where";
-
-    if ( ! empty( $sort ) ) {
-      $sql .= " ORDER BY $sort ";
+    if ( ! empty( $options['sort'] ) ) {
+      $sql .= " ORDER BY ". $options['sort'];
     }
-    $sql .= " LIMIT $offset, $rowCount ";
-    $dao =& CRM_Core_DAO::executeQuery( $sql );
-
+    $sql .= " LIMIT " . $options['offset'] . " , " . $options['limit'];
+    $dao = CRM_Core_DAO::executeQuery( $sql );
     $pledge = array( );
     while ( $dao->fetch( ) ) {
         $pledge[$dao->pledge_id] = $query->store( $dao );
@@ -178,6 +156,12 @@ function civicrm_api3_pledge_get( $params ) {
 
 }
 
+/*
+ * Set default to not return test params
+ */
+function _civicrm_api3_pledge_get_defaults(){
+  return array('pledge_test' => 0);
+}
 /**
  * take the input parameter list as specified in the data model and
  * convert it into the same format that we use in QF and BAO object
