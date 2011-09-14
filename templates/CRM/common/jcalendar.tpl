@@ -48,9 +48,7 @@
 
 {assign var='displayDate' value=$elementId|cat:"_display"}
 
-{if $action neq 4 && $action neq 1028}
-    <input type="text" name="{$displayDate}" id="{$displayDate}" class="dateplugin" autocomplete="off"/>
-{/if}
+<input type="text" name="{$displayDate}" id="{$displayDate}" class="dateplugin" autocomplete="off"/>
 
 {if $timeElement AND !$tElement}
     &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;{$form.$timeElement.html|crmReplace:class:six}
@@ -58,6 +56,7 @@
 
 {if $action neq 4 && $action neq 1028}
     <span class="crm-clear-link">(<a href="javascript:clearDateTime( '{$elementId}' );">{ts}clear{/ts}</a>)</span>
+{/if}
 
 <script type="text/javascript">
     {literal}
@@ -137,5 +136,4 @@
     }
     {/literal}
 </script>
-{/if}
 {/strip}
