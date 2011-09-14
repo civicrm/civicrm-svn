@@ -82,6 +82,39 @@
          </td>
         </tr>
        {/if}
+
+       {if $lineItem}
+       {foreach from=$lineItem item=value key=priceset}
+         <tr>
+          <td colspan="2" {$valueStyle}>
+           <table> {* FIXME: style this table so that it looks like the text version (justification, etc.) *}
+            <tr>
+             <th>{ts}Item{/ts}</th>
+             <th>{ts}Qty{/ts}</th>
+             <th>{ts}Each{/ts}</th>
+             <th>{ts}Total{/ts}</th>
+            </tr>
+            {foreach from=$value item=line}
+             <tr>
+              <td>
+	      {if $line.html_type eq 'Text'}{$line.label}{else}{$line.field_title} - {$line.label}{/if} {if $line.description}<div>{$line.description|truncate:30:"..."}</div>{/if}	
+              </td>
+              <td>
+               {$line.qty}
+              </td>
+              <td>
+               {$line.unit_price|crmMoney}
+              </td>
+              <td>
+               {$line.line_total|crmMoney}
+              </td>
+             </tr>
+            {/foreach}
+           </table>
+          </td>
+         </tr>
+       {/foreach}
+      {/if}
        <tr>
         <td {$labelStyle}>
          {ts}Amount{/ts}

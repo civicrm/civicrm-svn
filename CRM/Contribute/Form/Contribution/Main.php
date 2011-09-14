@@ -352,6 +352,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $this->set( 'separateMembershipPayment', $this->_separateMembershipPayment );
         }
         
+        $this->assign('useForMember', $this->_useForMember);
+
         // If we configured price set for contribution page
         // we are not allow membership signup as well as any
         // other contribution amount field, CRM-5095

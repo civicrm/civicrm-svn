@@ -65,7 +65,7 @@ function clearAmountOther() {
         {$intro_text}
     </div>
 
-{if $priceSet}
+{if $priceSet && empty($useForMember)}
     <div id="priceset">
         <fieldset>
             <legend>{ts}Contribution{/ts}</legend>
@@ -73,7 +73,7 @@ function clearAmountOther() {
         </fieldset>
     </div>
 {else}
-    {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="makeContribution"}
+        {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="makeContribution"}
 
 	{if $form.amount}
 	    <div class="crm-section {$form.amount.name}-section">
