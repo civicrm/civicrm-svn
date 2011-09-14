@@ -64,6 +64,9 @@ class CRM_Upgrade_Incremental_php_FourOne {
 		        $template->assign('afterUpgradeMessage', $afterUpgradeMessage);
         	}
         }
+
+        $upgrade = new CRM_Upgrade_Form( );
+        $upgrade->processSQL( $rev );
     }
     
   }
