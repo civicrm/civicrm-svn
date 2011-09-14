@@ -111,19 +111,54 @@ class api_v3_APITest extends CiviUnitTestCase {
      $oldpath = get_include_path();
      set_include_path($oldpath . PATH_SEPARATOR . dirname(__FILE__) . '/dataset/resolver');
      
-     $result = civicrm_api('contact', 'testaction1', array(
+     $result = civicrm_api('contact', 'example_action1', array(
        'version' => 3,
      ));
-     $this->assertEquals($result['values'][0], 'civicrm_api3_generic_testaction1 is ok');
-     $result = civicrm_api('contact', 'testaction2', array(
+     $this->assertEquals($result['values'][0], 'civicrm_api3_generic_example_action1 is ok');
+     $result = civicrm_api('contact', 'example_action2', array(
        'version' => 3,
      ));
-     $this->assertEquals($result['values'][0], 'civicrm_api3_contact_testaction2 is ok');
-     $result = civicrm_api('test_entity', 'testaction3', array(
+     $this->assertEquals($result['values'][0], 'civicrm_api3_contact_example_action2 is ok');
+     $result = civicrm_api('test_entity', 'example_action3', array(
        'version' => 3,
      ));
-     $this->assertEquals($result['values'][0], 'civicrm_api3_test_entity_testaction3 is ok');
+     $this->assertEquals($result['values'][0], 'civicrm_api3_test_entity_example_action3 is ok');
      
      set_include_path($oldpath);
    }
+   
+   function testFromCamel() {
+     $cases = array(
+       'Contribution' => 'contribution', 
+       'contribution' => 'contribution', 
+       'OptionValue' => 'option_value',
+       'optionValue' => 'option_value',
+       'option_value' => 'option_value',
+       'UFJoin' => 'uf_join',
+       'ufJoin' => 'uf_join',
+       'uf_join' => 'uf_join',
+     );
+     foreach ($cases as $input => $expected) {
+       $actual = _civicrm_api_get_entity_name_from_camel($input);
+       $this->assertEquals($expected, $actual, sprintf('input=%s expected=%s actual=%s', $input, $expected, $actual));
+     }
+   }
+   
+   function testToCamel() {
+     $cases = array(
+       'Contribution' => 'Contribution', 
+       'contribution' => 'Contribution', 
+       'OptionValue' => 'OptionValue',
+       'optionValue' => 'OptionValue',
+       'option_value' => 'OptionValue',
+       'UFJoin' => 'UFJoin',
+       // dommage 'ufJoin' => 'UFJoin',
+       'uf_join' => 'UFJoin',
+     );
+     foreach ($cases as $input => $expected) {
+       $actual = civicrm_api_get_camel_name($input);
+       $this->assertEquals($expected, $actual, sprintf('input=%s expected=%s actual=%s', $input, $expected, $actual));
+     }
+   }
+   
 }

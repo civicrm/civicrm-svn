@@ -1,10 +1,10 @@
 <?php
 
-function civicrm_api3_test_entity_testaction3($params) {
+function civicrm_api3_test_entity_example_action3($params) {
   return civicrm_api3_create_success(
-    array('0' => 'civicrm_api3_test_entity_testaction3 is ok'),
+    array('0' => 'civicrm_api3_test_entity_example_action3 is ok'),
     $params,
-    'test_entityt',
-    'testaction3'
+    'test_entity',
+    'example_action3'
   );
 }

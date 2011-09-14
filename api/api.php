@@ -130,7 +130,7 @@ function _civicrm_api_resolve($apiRequest) {
   }
   
   $camelName = civicrm_api_get_camel_name($apiRequest['entity'], $apiRequest['version']);
-  $actionName = strtolower($actionName);
+  $actionCamelName = civicrm_api_get_camel_name($apiRequest['action']);
     
   // Determine if there is an entity-specific implementation of the action
   $stdFunction = civicrm_api_get_function_name($apiRequest['entity'], $apiRequest['action'],$apiRequest['version']);
@@ -144,7 +144,7 @@ function _civicrm_api_resolve($apiRequest) {
   $stdFiles = array(
     // By convention, the $camelName.php is more likely to contain the function, so test it first
    'api/v'. $apiRequest['version'] .'/'. $camelName .'.php',
-   'api/v'. $apiRequest['version'] .'/'. $camelName .'/' . $apiRequest['action'].'.php',
+   'api/v'. $apiRequest['version'] .'/'. $camelName .'/' . $actionCamelName.'.php',
   );
   foreach ($stdFiles as $stdFile) {
     require_once 'CRM/Utils/File.php';
@@ -164,7 +164,7 @@ function _civicrm_api_resolve($apiRequest) {
   $genericFiles = array(
     // By convention, the Generic.php is more likely to contain the function, so test it first
    'api/v'. $apiRequest['version'] .'/Generic.php',
-   'api/v'. $apiRequest['version'] .'/Generic/' . $apiRequest['action'].'.php',
+   'api/v'. $apiRequest['version'] .'/Generic/' . $actionCamelName.'.php',
   );
   foreach ($genericFiles as $genericFile) {
     require_once 'CRM/Utils/File.php';
@@ -213,6 +213,7 @@ function civicrm_api_get_function_name( $entity, $action, $version = NULL )
         }
     }
     $entity = _civicrm_api_get_entity_name_from_camel($entity);
+    // $action = _civicrm_api_get_entity_name_from_camel($action);
     if ( $version === 2 ) {
         return 'civicrm' . '_' .$entity  . '_' . $action;
     } else {
@@ -452,6 +453,7 @@ function _civicrm_api_replace_variables($entity,$action,&$params, &$parentResult
 
 /*
  * Convert possibly camel name to underscore separated entity name
+ *
  * @param string $entity entity name in various formats e.g. Contribution, contribution, OptionValue, option_value, UFJoin, uf_join
  * @return string $entity entity name in underscore separated format
  */
@@ -459,10 +461,10 @@ function _civicrm_api_get_entity_name_from_camel($entity){
     if ( $entity == strtolower( $entity ) ) {
       $entity =  $entity;
     } else {
-      $entity = substr(strtolower( str_replace( 'U_F',
+      $entity = ltrim(strtolower( str_replace( 'U_F',
                                            'uf', 
                                            // That's CamelCase, beside an odd UFCamel that is expected as uf_camel
-                                           preg_replace( '/(?=[A-Z])/', '_$0', $entity ) ) ),1);
+                                           preg_replace( '/(?=[A-Z])/', '_$0', $entity ) ) ), '_');
     }
     return $entity;
 }
