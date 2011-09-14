@@ -49,7 +49,7 @@ class CRM_Event_Form_Task_ParticipantStatus extends CRM_Event_Form_Task_Batch
         $this->set('ufGroupId', $dao->id);
 
         require_once 'CRM/Event/PseudoConstant.php';
-        $statuses = CRM_Event_PseudoConstant::participantStatus();
+        $statuses = CRM_Event_PseudoConstant::participantStatus(null, null, 'label');
         asort($statuses, SORT_STRING);
         $this->add('select', 'status_change', ts('Change All Statuses'),  
                    array( '' => ts('- select status -')) + $statuses, null,
@@ -58,7 +58,7 @@ class CRM_Event_Form_Task_ParticipantStatus extends CRM_Event_Form_Task_Batch
 
         # CRM-4321: display info on users being notified if any of the below statuses is enabled
         require_once 'CRM/Event/PseudoConstant.php';
-        $notifyingStatuses = array(ts('Pending from waitlist'), ts('Pending from approval'), ts('Expired'), ts('Cancelled'));
+        $notifyingStatuses = array('Pending from waitlist', 'Pending from approval', 'Expired', 'Cancelled');
         $notifyingStatuses = array_intersect($notifyingStatuses, CRM_Event_PseudoConstant::participantStatus());
         $this->assign('notifyingStatuses', implode(', ', $notifyingStatuses));
 
