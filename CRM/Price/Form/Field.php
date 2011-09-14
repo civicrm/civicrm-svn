@@ -117,7 +117,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form
         // is it an edit operation ?
         if (isset($this->_fid)) {
             $params = array('id' => $this->_fid);
-            $this->assign('id',$this->_fid);
+            $this->assign('fid',$this->_fid);
             CRM_Price_BAO_Field::retrieve($params, $defaults);
             $this->_sid = $defaults['price_set_id'];
 
