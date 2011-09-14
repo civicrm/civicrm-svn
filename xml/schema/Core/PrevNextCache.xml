@@ -50,4 +50,11 @@
     <comment>cached snapshot of the serialized data</comment>
     <add>3.4</add>
   </field>
+  <index>
+     <name>index_all</name>
+     <fieldName>cacheKey</fieldName>
+     <fieldName>entity_id1</fieldName>
+     <fieldName>entity_id2</fieldName>
+     <fieldName>entity_table</fieldName>
+  </index>
 </table>

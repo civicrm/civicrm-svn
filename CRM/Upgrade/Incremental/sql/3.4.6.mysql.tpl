@@ -42,3 +42,7 @@ SELECT @option_group_id_activity_type := max(id) from civicrm_option_group where
   VALUES
     (@option_group_id_activity_type, {localize}'Bulk Email'{/localize}, {localize}'Bulk Email Sent.'{/localize}, (@max_val+1), 'Bulk Email', (SELECT @max_wt := @max_wt+1), 1, 1, NULL);
 {/if}
+
+-- CRM-8859
+ALTER TABLE `civicrm_prevnext_cache`
+  ADD INDEX index_all ( cacheKey, entity_id1, entity_id2, entity_table );

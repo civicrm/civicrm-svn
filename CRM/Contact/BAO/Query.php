@@ -1067,21 +1067,17 @@ class CRM_Contact_BAO_Query
             if ( isset( $this->_distinctComponentClause ) ) {
                 $select = "SELECT count( {$this->_distinctComponentClause} )";
             } else {
-                $select = ( $this->_useDistinct ) ?	
-                    'SELECT count(DISTINCT contact_a.id)' :
-                    'SELECT count(*)';
+                $select = 'SELECT count(*)';
             }
             $from = $this->_simpleFromClause;
+            if ( $this->_useDistinct ) {
+                $this->_useGroupBy = true;
+            }
         } else if ( $sortByChar ) {  
             $select = 'SELECT DISTINCT UPPER(LEFT(contact_a.sort_name, 1)) as sort_name';
             $from = $this->_simpleFromClause;
         } else if ( $groupContacts ) { 
-            // CRM-5954 - changing SELECT DISTINCT( contact_a.id ) -> SELECT ... GROUP BY contact_a.id
-            // but need to measure performance
-            $select = ( $this->_useDistinct ) ?
-                'SELECT DISTINCT(contact_a.id) as id' :
-                'SELECT contact_a.id as id'; 
-            
+            $select = 'SELECT contact_a.id as id'; 
             if ( $this->_useDistinct ) {
                 $this->_useGroupBy = true;
             }

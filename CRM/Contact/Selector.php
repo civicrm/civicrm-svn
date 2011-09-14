@@ -750,7 +750,39 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             }
         }
 
+        $this->fillupPrevNextCache( $sort );
+
         return $rows;
+    }
+
+    function fillupPrevNextCache( $sort ) {
+        // lets fill up the prev next cache here, so view can scroll thru
+        $sql = $this->_query->searchQuery( 0, 0, $sort,
+                                           false, false, 
+                                           false, true, true, null );
+
+        
+        $cacheKeyString = "civicrm search {$this->_key}";
+
+        $cacheKey = "civicrm search {$this->_key}";
+        $insertSQL = "
+INSERT INTO civicrm_prevnext_cache ( entity_table, entity_id1, entity_id2, cacheKey, data )
+SELECT 'civicrm_contact', contact_a.id, contact_a.id, '$cacheKey', contact_a.display_name
+";
+        $replaceSQL = "SELECT contact_a.id as id";
+
+        $sql = str_replace( $replaceSQL, $insertSQL, $sql );
+
+        require_once 'CRM/Core/BAO/PrevNextCache.php';
+        CRM_Core_BAO_PrevNextCache::deleteItem( null, $cacheKeyString, 'civicrm_contact' );
+
+        CRM_Core_DAO::executeQuery( $sql );
+
+        // also record an entry in the cache key table, so we can delete it periodically
+        require_once 'CRM/Core/BAO/Cache.php';
+        CRM_Core_BAO_Cache::setItem( $cacheKeyString,
+                                     'CiviCRM Search PrevNextCache',
+                                     $cacheKeyString );
     }
    
     /**
