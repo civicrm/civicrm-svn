@@ -88,7 +88,7 @@
                            {assign var='viewParams' value=$urlParams|cat:"&cid=$prevContactID"}
                            <li>
                              <a href="{crmURL p='civicrm/contact/view' q=$viewParams}" class="view button" title="{ts}Previous Contact{/ts}">
-                             <span title="{$prevContactName}"><div class="icon edit-icon"></div>{ts}Previous Contact{/ts}</span>
+                             <span title="{$prevContactName}"><div class="icon previous-icon"></div>{ts}Previous Contact{/ts}</span>
                              </a>
                            </li>
                         {/if}
@@ -97,7 +97,7 @@
                            {assign var='viewParams' value=$urlParams|cat:"&cid=$nextContactID"}
                            <li>
                              <a href="{crmURL p='civicrm/contact/view' q=$viewParams}" class="view button" title="{ts}Next Contact{/ts}">
-                             <span title="{$nextContactName}"><div class="icon edit-icon"></div>{ts}Next Contact{/ts}</span>
+                             <span title="{$nextContactName}"><div class="icon next-icon"></div>{ts}Next Contact{/ts}</span>
                              </a>
                            </li>
                         {/if}

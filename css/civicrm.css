@@ -2306,7 +2306,8 @@ span.icon {
 .red-icon {background-image:url("../i/icons/jquery-ui-8A1F11.png")}
 
 .edit-icon { background-position: -66px -114px;}
-
+.previous-icon { background-position: -82px -161px;}
+.next-icon { background-position: -66px -161px;}
 .add-icon { background-position: -2px -193px;}
 .back-icon { background-position: -2px -65px;}
 .delete-icon { background-position: -179px -99px;}
