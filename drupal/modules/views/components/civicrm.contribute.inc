@@ -1220,6 +1220,340 @@ function _civicrm_contribute_data (&$data, $enabled) {
                                                                'handler' => 'views_handler_sort',
                                                                ),
                                                );
+    //------------------------------------------------------
+    // CiviCRM Personal Campaign Pages tables
+    //------------------------------------------------------
+    
+    $data['civicrm_pcp']['table']['group']  = t('CiviCRM Personal Campaign Pages');
+    
+    $data['civicrm_pcp']['table']['base'] = array(
+                                                    'field' => 'id',
+                                                    'title' => t('CiviCRM Personal Campaign Pages'),
+                                                    'help' => t("View displays CiviCRM Personal Campaign Pages, with connection to contacts."),
+                                                    );
+    
+    $data['civicrm_pcp']['table']['join'] = array(
+                                                    // Makes PCP fields available to Contact views.
+                                                    'civicrm_contact' => array(
+                                                      'left_field'    => 'id',
+                                                      'field'         => 'contact_id',
+                                                    )
+    );
+    
+    // PCP FIELDS
+    
+    // Numeric PCP ID
+    $data['civicrm_pcp']['id'] = array(
+                                      'title'     => t('PCP ID'),
+                                      'help'      => t('The numeric ID of the Personal Campaign Page.'),
+                                      'field'     => array(
+                                                          'handler' => 'views_handler_field_numeric',
+                                                          'click sortable' => TRUE,
+                                                          ),
+    
+                                      'argument' => array(
+                                                         'handler' => 'views_handler_argument_numeric',
+                                                         'numeric' => TRUE,
+                                                         ),
+      
+                                      'filter' => array(
+                                                        'handler' => 'views_handler_filter_numeric',
+                                                        ),
+    
+                                      'sort' => array(
+                                                        'handler' => 'views_handler_sort',
+                                                      ),
+                                      );
+    
+    // PCP Text Link
+    $data['civicrm_pcp']['url'] = array(
+                                       'title' => t('URL'),
+                                       'help' => t('Generates URLs for various PCP actions.'),
+                                       'field' => array(
+                                                    'handler' => 'civicrm_handler_field_link_pcp',
+                                                      ),
+                                        );
+    
+    // PCP status
+    $data['civicrm_pcp']['status'] = array(
+                                          'title' => t('Page Status'),
+                                          'real field' => 'status_id',
+                                          'help' => t('The Status of this Personal Contribution Page'),
+                                          'field' => array(
+                                                            'handler' => 'civicrm_handler_field_pseudo_constant',
+                                                            'click sortable' => TRUE,
+                                                            'pseudo class' => 'CRM_Contribute_PseudoConstant',
+                                                            'pseudo method' => 'pcpStatus',
+                                                            ),
+                                          'argument' => array(
+                                                              'handler' => 'views_handler_argument',
+                                                              ),
+                                          'filter' => array(
+                                                            'handler' => 'civicrm_handler_filter_pseudo_constant',
+                                                            'allow empty' => TRUE,
+                                                            'pseudo class' => 'CRM_Contribute_PseudoConstant',
+                                                            'pseudo method' => 'pcpStatus',
+                                                            ),
+                                          'sort' => array(
+                                                          'handler' => 'views_handler_sort',
+                                                          ),
+                                          );
+    
+    // PCP title
+    $data['civicrm_pcp']['title'] = array(
+                                        'title'   => t('Title'),
+                                        'help'    => t('The title of this Personal Contribution Page'),
+                                        'field' => array(
+                                                          'handler' => 'views_handler_field',
+                                                          'click sortable' => TRUE,
+                                                        ),
+                                        'argument' => array(
+                                                              'handler' => 'views_handler_argument',
+                                                            ),
+                                        'filter' => array(
+                                                          'handler' => 'views_handler_filter_string',
+                                                          'allow empty' => TRUE,
+                                                        ),
+                                        'sort' => array(
+                                                          'handler' => 'views_handler_sort',
+                                                        ),
+                                        );
+    
+    // introductory text
+    $data['civicrm_pcp']['intro_text'] = array(
+                                                'title'   => t('Intro text'),
+                                                'help'    => t('Introductory welcome text'),
+                                                'field' => array(
+                                                                  'handler' => 'views_handler_field',
+                                                                  'click sortable' => TRUE,
+                                                                ),
+                                                'argument' => array(
+                                                                      'handler' => 'views_handler_argument',
+                                                                    ),
+                                                'filter' => array(
+                                                                      'handler' => 'views_handler_filter_string',
+                                                                      'allow empty' => TRUE,
+                                                                ),
+                                                'sort' => array(
+                                                                  'handler' => 'views_handler_sort',
+                                                                ),
+                                              );
+    
+    // page text
+    $data['civicrm_pcp']['page_text'] = array(
+                                            'title'   => t('Page text'),
+                                            'help'    => t('Page text (your message)'),
+                                            'field' => array(
+                                                              'handler' => 'views_handler_field',
+                                                              'click sortable' => TRUE,
+                                                            ),
+                                            'argument' => array(
+                                                              'handler' => 'views_handler_argument',
+                                                            ),
+                                            'filter' => array(
+                                                              'handler' => 'views_handler_filter_string',
+                                                              'allow empty' => TRUE,
+                                                            ),
+                                            'sort' => array(
+                                                              'handler' => 'views_handler_sort',
+                                                            ),
+                                          );
+    
+    // text for donate link
+    $data['civicrm_pcp']['donate_link_text'] = array(
+                                                    'title'   => t('Text for donate link'),
+                                                    'help'    => t('Text for donate link'),
+                                                    'field' => array(
+                                                                      'handler' => 'views_handler_field',
+                                                                      'click sortable' => TRUE,
+                                                                    ),
+                                                    'argument' => array(
+                                                                          'handler' => 'views_handler_argument',
+                                                                        ),
+                                                    'filter' => array(
+                                                                      'handler' => 'views_handler_filter_string',
+                                                                      'allow empty' => TRUE,
+                                                                      ),
+                                                    'sort' => array(
+                                                                      'handler' => 'views_handler_sort',
+                                                                    ),
+                                                  );
+    
+    // contribution page
+    $data['civicrm_pcp']['contribution_page'] = array(
+                                                        'title'     => t('Contribution Page'),
+                                                        'real field' => 'contribution_page_id',
+                                                        'help'      => t('The Contribution Page with which this Personal Campaign Page is associated.'),
+                                                        'field' => array(
+                                                                          'handler' => 'civicrm_handler_field_pseudo_constant',
+                                                                          'click sortable' => TRUE,
+                                                                          'pseudo class' => 'CRM_Contribute_PseudoConstant',
+                                                                          'pseudo method' => 'contributionPage',
+                                                                          ),
+                                                        'argument' => array(
+                                                                              'handler' => 'views_handler_argument',
+                                                                              'numeric' => TRUE,
+                                                                            ),
+                                                        'filter' => array(
+                                                                          'handler' => 'civicrm_handler_filter_pseudo_constant',
+                                                                          'allow empty' => TRUE,
+                                                                          'pseudo class' => 'CRM_Contribute_PseudoConstant',
+                                                                          'pseudo method' => 'contributionPage',
+                                                                          ),
+                                                        'sort' => array(
+                                                                        'handler' => 'views_handler_sort',
+                                                                      ),
+                                                      );
+    
+    //BOOLEAN : IS Thermometer
+    $data['civicrm_pcp']['is_thermometer'] = array(
+                                                    'title' => t('Is Thermometer'),
+                                                    'help' => t('Does the page use a progress indicator?'),
+                                                    'field' => array(
+                                                                      'handler' => 'views_handler_field_boolean',
+                                                                      'click sortable' => TRUE,
+                                                                    ),
+                                                    'argument' => array(
+                                                                        'handler' => 'views_handler_argument',
+                                                                      ),
+                                                    'filter' => array(
+                                                                      'handler' => 'views_handler_filter_boolean_operator',
+                                                                      ),
+                                                    'sort' => array(
+                                                                    'handler' => 'views_handler_sort',
+                                                                    ),
+                                                );
+    
+    //BOOLEAN : Is Honor Roll
+    $data['civicrm_pcp']['is_honor_roll'] = array(
+                                                  'title' => t('Is Honor Roll'),
+                                                  'help' => t('Does the page use an Honor Roll?'),
+                                                  'field' => array(
+                                                                   'handler' => 'views_handler_field_boolean',
+                                                                   'click sortable' => TRUE,
+                                                                   ),
+                                                  'argument' => array(
+                                                                      'handler' => 'views_handler_argument',
+                                                                     ),
+                                                  'filter' => array(
+                                                                     'handler' => 'views_handler_filter_boolean_operator',
+                                                                   ),
+                                                  'sort' => array(
+                                                                    'handler' => 'views_handler_sort',
+                                                                  ),
+                                              );
+    
+    // fundraising goal
+    $data['civicrm_pcp']['goal_amount'] = array(
+                                                'title' => t('Goal Amount'),
+                                                'help' => t('Goal Amount.'),
+                                                'field' => array(
+                                                                'handler' => 'views_handler_field_numeric',
+                                                                'click sortable' => TRUE,
+                                                                ),
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument_numeric',
+                                                                    'numeric' => TRUE,
+                                                                    ),
+                                                'filter' => array(
+                                                                  'handler' => 'views_handler_filter_numeric',
+                                                                  'allow empty' => TRUE,
+                                                                 ),
+                                                 'sort' => array(
+                                                                 'handler' => 'views_handler_sort',
+                                                                 ),
+                                                );
+    
+    // amount raised
+    $data['civicrm_pcp']['raised_amount'] = array(
+                                                  'title' => t('Amount Raised'),
+                                                  'help' => t('Amount raised through this Personal Campaign Page'),
+                                                  'real field' => id,
+                                                  'field' => array(
+                                                                    'handler' => 'civicrm_handler_field_pcp_raised_amount',
+                                                                    'click sortable' => TRUE,
+                                                                    ),
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument_numeric',
+                                                                    'numeric' => TRUE,
+                                                                    ),
+                                                'filter' => array(
+                                                                  'handler' => 'views_handler_filter_numeric',
+                                                                  'allow empty' => TRUE,
+                                                                 ),
+                                                 'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),      
+                                             );
+    
+    // referer (not really sure what this is, but...)
+    $data['civicrm_pcp']['referer'] = array(
+                                            'title'   => t('Referer'),
+                                            'help'    => t('Referer'),
+                                            'field' => array(
+                                                             'handler' => 'views_handler_field',
+                                                             'click sortable' => TRUE,
+                                            ),
+                                            'argument' => array(
+                                                              'handler' => 'views_handler_argument',
+                                                                ),
+                                            'filter' => array(
+                                                              'handler' => 'views_handler_filter_string',
+                                                              'allow empty' => TRUE,
+                                            ),
+                                            'sort' => array(
+                                                              'handler' => 'views_handler_sort',
+                                            ),
+                                          );
+    
+    //BOOLEAN : Is Active
+    $data['civicrm_pcp']['is_active'] = array(
+                                        'title' => t('Is Active'),
+                                        'help' => t('Is this page active?'),
+                                        'field' => array(
+                                                        'handler' => 'views_handler_field_boolean',
+                                                        'click sortable' => TRUE,
+                                                        ),
+                                        'argument' => array(
+                                                            'handler' => 'views_handler_argument',
+                                                           ),
+                                        'filter' => array(
+                                                          'handler' => 'views_handler_filter_boolean_operator',
+                                                         ),
+                                        'sort' => array(
+                                                          'handler' => 'views_handler_sort',
+                                                        ),
+                                      );
+    
+    // currency
+    $data['civicrm_pcp']['currency'] = array(
+                                            'title'   => t('Currency'),
+                                            'help'    => t('Currency'),
+                                            'field' => array(
+                                                            'handler' => 'views_handler_field',
+                                                            'click sortable' => TRUE,
+                                                            ),
+                                            'argument' => array(
+                                                               'handler' => 'views_handler_argument',
+                                                               ),
+                                            'filter' => array(
+                                                              'handler' => 'views_handler_filter_string',
+                                                              'allow empty' => TRUE,
+                                                             ),
+                                            'sort' => array(
+                                                            'handler' => 'views_handler_sort',
+                                                           ),
+                                          );
+    
+    $data['civicrm_pcp']['image_url'] = array(
+                                            'title'       => t('Image URL'),
+                                            'real field' => id,
+                                            'help'        => t('URL for the image the user uploaded when creating this page'),
+                                            'field'       => array(
+                                                                  'handler'     => 'civicrm_handler_field_file',
+                                                                ),
+                                            );
+
     //Contribution Text Link
     $data['civicrm_contribution']['text_link'] = array(
                                                        'field' => array(
