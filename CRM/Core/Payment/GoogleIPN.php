@@ -423,31 +423,27 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         }
         
         // Retrieve the root and data from the xml response
-        $xmlParser = new gc_XmlParser($xml_response);
-        $root      = $xmlParser->GetRoot();
-        $data      = $xmlParser->GetData();
-        
-        $orderNo   = $data[$root]['google-order-number']['VALUE'];
-        
-        // lets retrieve the private-data
+        $response = new GoogleResponse( );
+        list($root, $data) = $response->GetParsedXML($xml_response);
+
+        // lets retrieve the private-data & order-no
         $privateData = $data[$root]['shopping-cart']['merchant-private-data']['VALUE'];
         $privateData = $privateData ? self::stringToArray($privateData) : '';
+        $orderNo     = $data[$root]['google-order-number']['VALUE'];
+        $serial      = $data[$root]['serial-number'];
         
         list( $mode, $module, $paymentProcessorID ) = self::getContext($xml_response, $privateData, $orderNo, $root);
-        $mode   = $mode ? 'test' : 'live';
+        $mode = $mode ? 'test' : 'live';
 
         require_once 'CRM/Core/BAO/PaymentProcessor.php';
         $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $paymentProcessorID,
                                                                        $mode );
-        
-        $ipn    =& self::singleton( $mode, $module, $paymentProcessor );
-        
-        // Create new response object
         $merchant_id  = $paymentProcessor['user_name'];
         $merchant_key = $paymentProcessor['password'];
-        $server_type  = ($mode == 'test') ? "sandbox" : '';
-        
-        $response = new GoogleResponse($merchant_id, $merchant_key);
+        $response->SetMerchantAuthentication($merchant_id, $merchant_key);
+
+        $ipn =& self::singleton( $mode, $module, $paymentProcessor );
+
         if ( GOOGLE_DEBUG_PP ) {
             CRM_Core_Error::debug_var( 'RESPONSE-ROOT', $response->root, true, true, 'Google' );
         }
@@ -465,13 +461,13 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             break;
 
         case "new-order-notification": {
-            $response->SendAck();
+            $response->SendAck($serial);
             $ipn->newOrderNotify($data[$root], $privateData, $module);
             break;
         }
 
         case "order-state-change-notification": {
-            $response->SendAck();
+            $response->SendAck($serial);
             $new_financial_state = $data[$root]['new-financial-order-state']['VALUE'];
             $new_fulfillment_order = $data[$root]['new-fulfillment-order-state']['VALUE'];
             
@@ -507,7 +503,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         case "chargeback-amount-notification":
         case "refund-amount-notification":
         case "risk-information-notification":
-            $response->SendAck();
+            $response->SendAck($serial);
             break;
 
         default:
