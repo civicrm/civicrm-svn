@@ -71,9 +71,6 @@ function civicrm_html_head()
         // add Common.js
         drupal_add_js( drupal_get_path('module', 'civicrm' ) . '/../js/Common.js' );
 
-        // add the final assignment
-        drupal_add_js( 'var cj = jQuery.noConflict(); $ = cj;',
-                       'inline' );
     }
     if ( isset( $config->customCSSURL ) && ! empty( $config->customCSSURL ) ) {
         $head  = "<style type=\"text/css\">@import url({$config->customCSSURL});</style>\n";
@@ -904,6 +901,34 @@ function civicrm_preprocess_page(&$variables) {
   			$variables['styles'] = drupal_get_css( $variables['css'] ); 
   		} 
   	}
+
+    if ( in_array( arg(0), array('civicrm', 'user') ) ) { 
+        // Move the CiviCRM jquery and jQuery UI libraries above Drupal's core jQuery
+        // and relatively gracefully handle noConflict.
+        $path = drupal_get_path('module', 'civicrm');
+        $scripts = drupal_add_js();
+        $val = array(
+          'cache' => TRUE,
+          'defer' => FALSE,
+          'preprocess' => TRUE,
+          );
+          
+        unset($scripts['module'][$path . '/../packages/jquery/jquery.js']);
+        $core = array(
+          $path . '/../packages/jquery/jquery.js' => $val,
+        );
+        
+        foreach ($scripts['module'] as $script => $val) {
+          if (strpos($script, $path) === 0) {
+            $core[$script] = $scripts['module'][$script];
+            unset($scripts['module'][$script]);
+          }
+        }
+        
+        $core[$path . '/../js/noconflict.js'] = $val;
+        $scripts['core'] = $core + $scripts['core'];
+        $variables['scripts'] = drupal_get_js('header', $scripts);
+    }
 }
 
 
