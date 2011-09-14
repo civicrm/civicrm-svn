@@ -2240,13 +2240,36 @@ function _civicrm_core_data (&$data, $enabled) {
                                                                      'left_field' => 'tag_id',
                                                                      'field' => 'id',
                                                                      );
-
+    $data['civicrm_tag']['table']['join']['civicrm_activity'] = array(
+                                                                     'left_table' => 'civicrm_entity_tag',
+                                                                     'left_field' => 'tag_id',
+                                                                     'field' => 'id',
+                                                                     );
+    
     $data['civicrm_entity_tag']['table']['join']['civicrm_contact'] = array(
                                                                             // Directly links to tag table
                                                                             'left_field' => 'id',
                                                                             'field' => 'entity_id',
+                                                                            'extra' => array(
+                                                                                            array(
+                                                                                                 'field' => 'entity_table',
+                                                                                                 'value' => 'civicrm_contact',
+                                                                                                 'numeric' => FALSE,
+                                                                                                 ),
+                                                                                            ),
                                                                             );
-
+    $data['civicrm_entity_tag']['table']['join']['civicrm_activity'] = array(
+                                                                            // Directly links to tag table
+                                                                            'left_field' => 'id',
+                                                                            'field' => 'entity_id',
+                                                                            'extra' => array(
+                                                                                            array(
+                                                                                                 'field' => 'entity_table',
+                                                                                                 'value' => 'civicrm_activity',
+                                                                                                 'numeric' => FALSE,
+                                                                                                 ),
+                                                                                            ),
+                                                                            );
     //CiviCRM Groups - FIELDS
 
     //Numeric Group ID
