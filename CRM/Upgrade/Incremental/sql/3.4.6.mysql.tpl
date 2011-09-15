@@ -32,7 +32,7 @@ VALUES
 SELECT @option_group_id_activity_type := max(id) from civicrm_option_group where name = 'activity_type';
 {if $bulkEmailActivityType}
   -- make sure Bulk Email is active and resereved
-  UPDATE civicrm_option_value SET is_reserved = 1, is_active = 1 WHERE option_group_id=@option_group_id_activity_type AND name='Bulk Email'; 
+  UPDATE civicrm_option_value SET is_reserved = 1, is_active = 1 WHERE option_group_id=@option_group_id_activity_type AND name='Bulk Email';
 {else}
   -- insert activity type Bulk Email
   SELECT @max_val := MAX(ROUND(op.value)) FROM civicrm_option_value op WHERE op.option_group_id  = @option_group_id_activity_type;
@@ -46,3 +46,21 @@ SELECT @option_group_id_activity_type := max(id) from civicrm_option_group where
 -- CRM-8859
 ALTER TABLE `civicrm_prevnext_cache`
   ADD INDEX index_all ( cacheKey, entity_id1, entity_id2, entity_table );
+
+
+-- CRM-8626
+UPDATE civicrm_payment_processor_type
+SET url_recur_default      = 'https://checkout.google.com/',
+    url_recur_test_default = 'https://sandbox.google.com/checkout/',
+    is_recur               = 1
+WHERE name = 'Google_Checkout';
+
+UPDATE  civicrm_payment_processor
+   SET  is_recur  = 1,
+        url_recur = 'https://checkout.google.com/'
+ WHERE  payment_processor_type = 'Google_Checkout' AND is_test = 0;
+
+UPDATE  civicrm_payment_processor
+   SET  is_recur  = 1,
+        url_recur = 'https://sandbox.google.com/checkout/'
+ WHERE  payment_processor_type = 'Google_Checkout' AND is_test = 1;
