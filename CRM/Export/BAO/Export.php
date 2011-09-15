@@ -318,6 +318,7 @@ class CRM_Export_BAO_Export
             //while using merge same address feature
             $returnProperties['addressee'     ]  = 1;
             $returnProperties['postal_greeting'] = 1;
+            $returnProperties['email_greeting']  = 1;
             $returnProperties['street_name'   ]  = 1;
             $returnProperties['household_name']  = 1;
             $returnProperties['street_address']  = 1;
@@ -1304,12 +1305,13 @@ ORDER BY  r1.id
         foreach ( $merge as $masterID => $values ) {
             $sql = "
 UPDATE $tableName
-SET    addressee = %1, postal_greeting = %2
-WHERE  id = %3
+SET    addressee = %1, postal_greeting = %2, email_greeting = %3
+WHERE  id = %4
 ";
             $params = array( 1 => array( $values['addressee'],      'String'  ),
                              2 => array( $values['postalGreeting'], 'String'  ),
-                             3 => array( $masterID,                 'Integer' ) );
+                             3 => array( $values['emailGreeting'],  'String'  ),
+                             4 => array( $masterID,                 'Integer' ) );
             CRM_Core_DAO::executeQuery( $sql, $params );
             
             // delete all copies
@@ -1407,7 +1409,7 @@ WHERE  id IN ( $deleteIDString )
                 $masterPostalGreeting = 
                     CRM_Utils_Array::value('postal_greeting', 
                                            $contactGreetingTokens[$dao->master_contact_id], $dao->master_postal_greeting);
-                $masterAddressee      = 
+				$masterAddressee      = 
                     CRM_Utils_Array::value('addressee', 
                                            $contactGreetingTokens[$dao->master_contact_id], $dao->master_addressee);
                 
@@ -1418,7 +1420,7 @@ WHERE  id IN ( $deleteIDString )
                 $copyPostalGreeting   = 
                     CRM_Utils_Array::value('postal_greeting', 
                                            $contactGreetingTokens[$dao->copy_contact_id], $dao->copy_postal_greeting);
-                $copyAddressee        = 
+				$copyAddressee        = 
                     CRM_Utils_Array::value('addressee', 
                                            $contactGreetingTokens[$dao->copy_contact_id], $dao->copy_addressee);
             }
@@ -1435,6 +1437,7 @@ WHERE  id IN ( $deleteIDString )
                     $merge[$masterID] = array( 'addressee' => $masterAddressee,
                                                'copy'      => array( ),
                                                'postalGreeting' => $masterPostalGreeting );
+                    $merge[$masterID]['emailGreeting'] = &$merge[$masterID]['postalGreeting'];
                 }
             }
             $parents[$copyID] = $masterID; 
@@ -1452,8 +1455,8 @@ WHERE  id IN ( $deleteIDString )
                     $merge[$masterID]['postalGreeting'] = 
                         "{$merge[$masterID]['postalGreeting']}, {$copyPostalGreeting}";
                     // if there happens to be a duplicate, remove it
-                    $merge[$masterID]['postalGreeting'] = str_replace( " {$copyPostalGreeting},", "", 
-                                                                       $merge[$masterID]['postalGreeting'] );
+                    $merge[$masterID]['postalGreeting'] = 
+					    str_replace( " {$copyPostalGreeting},", "", $merge[$masterID]['postalGreeting'] );
                 }
                 
                 if ( CRM_Utils_Array::value( 'addressee_other', $exportParams ) && 
