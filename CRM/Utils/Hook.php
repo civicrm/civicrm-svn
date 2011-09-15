@@ -315,6 +315,24 @@ class CRM_Utils_Hook {
                   $config->userHookClass .
                   '::invoke( 3, $pageType, $form, $amount, $null, $null, \'civicrm_buildAmount\' );' );
     }
+    
+    /** 
+     * This hook is called when building the state list for a particular country.
+     * 
+     * @param array  $countryID - the country id whose states are being selected.
+     *  
+     * @return null
+     * @access public 
+     */
+    static function buildStateProvinceForCountry( $countryID, &$states ) {
+        $config = CRM_Core_Config::singleton( );
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
+        $null =& CRM_Core_DAO::$_nullObject;
+        return   
+            eval( 'return ' .
+                  $config->userHookClass .
+                  '::invoke( 2, $countryID, $states, $null, $null, $null, \'civicrm_buildStateProvinceForCountry\' );' );
+    }
 
     /** 
      * This hook is called when rendering the tabs for a contact (q=civicrm/contact/view)c

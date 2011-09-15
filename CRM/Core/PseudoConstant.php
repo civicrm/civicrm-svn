@@ -1535,6 +1535,11 @@ ORDER BY name";
                 $result[$dao->id] = $dao->name;
             }
         }
+        
+        // first build the radio boxes
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::buildStateProvinceForCountry( $countryID, $result );
+        
         return $result;
     }
 
