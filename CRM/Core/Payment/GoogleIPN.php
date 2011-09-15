@@ -404,6 +404,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
     static function main( $xml_response ) 
     {
         require_once('Google/library/googleresponse.php');
+        require_once('Google/library/googlerequest.php');
         require_once('Google/library/googlemerchantcalculations.php');
         require_once('Google/library/googleresult.php');
         require_once('Google/library/xml-processing/gc_xmlparser.php');
@@ -442,6 +443,9 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $merchant_key = $paymentProcessor['password'];
         $response->SetMerchantAuthentication($merchant_id, $merchant_key);
 
+        $server_type = ( $mode == 'test' ) ? 'sandbox' : 'production';
+        $request = new GoogleRequest($merchant_id, $merchant_key, $server_type);
+
         $ipn = self::singleton( $mode, $module, $paymentProcessor );
 
         if ( GOOGLE_DEBUG_PP ) {
@@ -473,11 +477,6 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             switch($new_financial_state) {
 
             case 'CHARGEABLE':
-                $amount = $ipn->getAmount($orderNo);
-/*                 if ($amount) { */
-/*                     $Grequest->SendProcessOrder($data[$root]['google-order-number']['VALUE']); */
-/*                     $Grequest->SendChargeOrder($data[$root]['google-order-number']['VALUE'],''); */
-/*                 } */
                 break;
 
             case 'CHARGED':
@@ -494,8 +493,37 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             default:
                 break;
             }
+            $response->SendAck($serial);
+            break;
         }
 
+        case "authorization-amount-notification": {
+            $new_financial_state = $data[$root]['order-summary']['financial-order-state']['VALUE'];
+            $new_fulfillment_order = $data[$root]['order-summary']['fulfillment-order-state']['VALUE'];
+            
+            switch($new_financial_state) {
+
+            case 'CHARGEABLE':
+                $request->SendProcessOrder($data[$root]['google-order-number']['VALUE']);
+                $request->SendChargeOrder($data[$root]['google-order-number']['VALUE'],'');
+                break;
+
+            case 'CHARGED':
+            case 'PAYMENT_DECLINED':
+            case 'CANCELLED':
+                break;
+
+            case 'REVIEWING':
+            case 'CHARGING':
+            case 'CANCELLED_BY_GOOGLE':
+                break;
+
+            default:
+                break;
+            }
+            $response->SendAck($serial);
+            break;
+        }
         case "charge-amount-notification":
         case "chargeback-amount-notification":
         case "refund-amount-notification":
