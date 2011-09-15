@@ -143,6 +143,7 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
         while (($file = readdir($handle))!==false) {
             if ( strstr($file,".php")  &&
                  $file != 'Entity.php' &&
+                 $file != 'Generic.php' &&
                  $file !='utils.php' ){
                  $files[]=$file;
             } 
@@ -172,6 +173,9 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
         $functions =  preg_grep($this->_regexForGettingAPIStdFunctions, $functionlist['user']);
         foreach ($functions as $key =>$function ){
           if (stristr($function,'getfields')){
+            unset($functions[$key]);
+          }
+          if (stristr($function,'_generic_')){
             unset($functions[$key]);
           }
          

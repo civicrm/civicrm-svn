@@ -245,14 +245,15 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
         
         // Now we're filling the "Assigned To" field.
         // Typing contact's name into the field (using typeKeys(), not type()!)...
-        $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", $firstName);
+        $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName);
         
         // ...waiting for drop down with results to show up...
-        $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
-        
-        // ...clicking first result (which is a li element), selenium picks first matching element so we don't need to specify that...
-        $this->click("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
-        
+        $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
+        $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
+
+        //..need to use mouseDownAt on first result (which is a li element), click does not work
+        $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
+
         // ...again, waiting for the box with contact name to show up...
         $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
         

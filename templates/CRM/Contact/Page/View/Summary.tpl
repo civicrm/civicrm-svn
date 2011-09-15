@@ -62,26 +62,46 @@
                         </li>
                         {/if}
                     
+			{assign var='urlParams' value="reset=1"}
+		        {if $searchKey}
+		            {assign var='urlParams' value=$urlParams|cat:"&key=$searchKey"}
+ 		        {/if}
+			{if $context}
+			    {assign var='urlParams' value=$urlParams|cat:"&context=$context"}
+			{/if}
+
                     	{* Include the Actions button with dropdown if session has 'edit' permission *}
                         {if $permission EQ 'edit' and !$isDeleted}
                         <li class="crm-contact-activity">
                             {include file="CRM/Contact/Form/ActionsButton.tpl"}
                         </li>
                         <li>
-			{assign var='urlParams' value="reset=1&action=update&cid=$contactId"}
-		        {if $searchKey}
-		            {assign var='urlParams' value="reset=1&action=update&cid=$contactId&key=$searchKey"}
- 		        {/if}
-			{if $context}
-			    {assign var='urlParams' value=$urlParams|cat:"&context=$context"}
-			{/if}
+			{assign var='editParams' value=$urlParams|cat:"&action=update&cid=$contactId"}
 			
-                        <a href="{crmURL p='civicrm/contact/add' q=$urlParams}" class="edit button" title="{ts}Edit{/ts}">
+                        <a href="{crmURL p='civicrm/contact/add' q=$editParams}" class="edit button" title="{ts}Edit{/ts}">
                         <span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span>
                         </a>
                         </li>
                         {/if}
-                        
+
+                        {if $prevContactID}
+                           {assign var='viewParams' value=$urlParams|cat:"&cid=$prevContactID"}
+                           <li>
+                             <a href="{crmURL p='civicrm/contact/view' q=$viewParams}" class="view button" title="{ts}Previous Contact{/ts}">
+                             <span title="{$prevContactName}"><div class="icon previous-icon"></div>{ts}Previous Contact{/ts}</span>
+                             </a>
+                           </li>
+                        {/if}
+
+                        {if $nextContactID}
+                           {assign var='viewParams' value=$urlParams|cat:"&cid=$nextContactID"}
+                           <li>
+                             <a href="{crmURL p='civicrm/contact/view' q=$viewParams}" class="view button" title="{ts}Next Contact{/ts}">
+                             <span title="{$nextContactName}"><div class="icon next-icon"></div>{ts}Next Contact{/ts}</span>
+                             </a>
+                           </li>
+                        {/if}
+
                         {if !empty($groupOrganizationUrl)}
                         <li class="crm-contact-associated-groups">
                         <a href="{$groupOrganizationUrl}" class="associated-groups button" title="{ts}Associated Multi-Org Group{/ts}">

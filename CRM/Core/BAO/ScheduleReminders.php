@@ -70,7 +70,8 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         $participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
         $activityStatus = CRM_Core_PseudoConstant::activityStatus();
         $event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
-        $activityType = CRM_Core_PseudoConstant::activityType(false);
+        $activityType = CRM_Core_PseudoConstant::activityType(false) + CRM_Core_PseudoConstant::activityType(false, true);
+        asort($activityType);
         $eventType = CRM_Event_PseudoConstant::eventType();
         $activityContacts = CRM_Core_PseudoConstant::activityContacts();
         $sel1 = $sel2 = $sel3 = $sel4 = $sel5 = array();
@@ -229,7 +230,8 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         require_once 'CRM/Core/PseudoConstant.php';
         require_once 'CRM/Event/PseudoConstant.php';
 
-        $activity_type = CRM_Core_PseudoConstant::activityType(false);
+        $activity_type = CRM_Core_PseudoConstant::activityType(false) + CRM_Core_PseudoConstant::activityType(false, true);
+        asort($activity_type);
         $activity_status = CRM_Core_PseudoConstant::activityStatus();
         $event_type = CRM_Event_PseudoConstant::eventType();
         $civicrm_event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
@@ -292,13 +294,13 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
         return $list;
     }
 
-    static function sendReminder( $contactId, $email, $mappingID, $from, $tokenParams ) {
+    static function sendReminder( $contactId, $email, $scheduleID, $from, $tokenParams ) {
         require_once 'CRM/Core/BAO/Domain.php';
         require_once 'CRM/Utils/String.php';
         require_once 'CRM/Utils/Token.php';
 
         $schedule = new CRM_Core_DAO_ActionSchedule( );
-        $schedule->mapping_id = $mappingID;
+        $schedule->id = $scheduleID;
 
         $domain = CRM_Core_BAO_Domain::getDomain( );
         $result = null;
@@ -354,6 +356,13 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
             require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
             $smarty =& CRM_Core_Smarty::singleton( );
+
+            // $tokenParams is flat (i.e. keys include dots); these are hard to access in Smarty
+            require_once 'CRM/Utils/Array.php';
+            foreach (CRM_Utils_Array::unflatten('.', $tokenParams) as $key => $value) {
+                $smarty->assign($key, $value);
+            }
+            
             foreach( array( 'text', 'html') as $elem) {
                 $$elem = $smarty->fetch("string:{$$elem}");
             }

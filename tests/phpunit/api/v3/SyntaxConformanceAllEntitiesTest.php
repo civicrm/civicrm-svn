@@ -24,7 +24,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
        $this->toBeImplemented['create'] = array ('SurveyRespondant','OptionGroup','UFMatch','LocationType');
        $this->toBeImplemented['delete'] = array ('MembershipPayment','OptionGroup','SurveyRespondant','UFJoin','UFMatch','LocationType');
        $this->onlyIDNonZeroCount['get'] = array( 'ActivityType', 'Entity', 'Domain' );
-       $this->deprecatedAPI = array('Location', 'ActivityType');
+       $this->deprecatedAPI = array('Location', 'ActivityType', 'SurveyRespondant');
     }
 
     function tearDown()    {

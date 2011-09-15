@@ -123,7 +123,12 @@ function civicrm_api3_contribution_delete($params) {
 function civicrm_api3_contribution_get($params) {
 
 		civicrm_api3_verify_mandatory ( $params );
-		
+		if(CRM_Utils_Array::value('id', $params) ){
+    //api supports 'id' but BAO supports 'contribution_id. Change it here
+		  $params['contribution_id'] = CRM_Utils_Array::value('contribution_id', $params,$params['id']);
+		  unset ($params['id']);
+		}
+
 		$inputParams = array ();
 		$returnProperties = array ();
 		$otherVars = array ('sort', 'offset', 'rowCount' );
@@ -175,7 +180,29 @@ function civicrm_api3_contribution_get($params) {
 		return civicrm_api3_create_success ( $contribution, $params, 'contribution',$dao);
 
 }
+/*
+ * Return valid fields for API. In general these are the fields accepted by the 'Create' operation
+ * The format of these fields is as per the $dao->fields function which is called by _civicrm_api_get_fields
+ * The getfields function is used by the API explorer and by field validation functions
+ * 
+ * @param array $params array of parameters
+ * @return array values accepted by api
+ */
+function civicrm_api3_contribution_getfields( $params ) {
+    $fields =  _civicrm_api_get_fields('contribution') ;
+    $fields['note'] = array('name' => 'note',
+                                           'title' => 'note',
+                                           'type' => 2,
+                                           'description' => 'Associated Note in the notes table');
+    $fields['soft_credit_to'] = array('name' => 'soft_credit_to',
+                                           'title' => 'Soft Credit contact ID',
+                                           'type' => 1,
+                                           'description' => 'ID of Contact to be Soft credited to',
+                                           'FKClassName' => 'CRM_Contact_DAO_Contact');
 
+
+    return civicrm_api3_create_success($fields );
+}
 /**
  * This function ensures that we have the right input contribution parameters
  *

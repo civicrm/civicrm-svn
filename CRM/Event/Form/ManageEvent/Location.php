@@ -248,7 +248,7 @@ class CRM_Event_Form_ManageEvent_Location extends CRM_Event_Form_ManageEvent
         $deleteOldBlock = false;
 
         // if 'use existing location' option is selected -
-        if ( ( $params['location_option'] == 2 ) &&
+        if ( CRM_Utils_Array::value( 'location_option',$params) == 2  &&
              CRM_Utils_Array::value('loc_event_id', $params) && 
              ( $params['loc_event_id'] != $this->_oldLocBlockId ) ) {
             // if new selected loc is different from old loc, update the loc_block_id 

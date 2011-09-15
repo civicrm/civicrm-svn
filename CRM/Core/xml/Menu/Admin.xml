@@ -575,7 +575,7 @@
   <item>
      <path>civicrm/ajax/mergeTags</path>
      <page_callback>CRM_Admin_Page_AJAX::mergeTags</page_callback>
-     <access_arguments>access CiviCRM,administer reserved tags</access_arguments>
+     <access_arguments>access CiviCRM</access_arguments>
   </item>
   <item>
      <path>civicrm/admin/price</path>
@@ -624,7 +624,7 @@
   <item>
        <path>civicrm/ajax/mergeTagList</path>
        <page_callback>CRM_Admin_Page_AJAX::mergeTagList</page_callback>
-       <access_arguments>access CiviCRM,administer reserved tags</access_arguments>
+       <access_arguments>access CiviCRM</access_arguments>
   </item>
   <item>
        <path>civicrm/ajax/processTags</path>

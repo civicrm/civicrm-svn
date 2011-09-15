@@ -149,7 +149,7 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
     {
 
         $this->assign('extEnabled', FALSE );
-        if( self::$_extensions ) {
+        if ( self::$_extensions ) {
             $this->assign('extEnabled', TRUE );
         } else {
             return;
@@ -166,7 +166,7 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
             // installed (they have option_value table id)
             // It's totally unlikely, that installed extensions will
             // have ids below 50.
-            if( $obj->id ) {
+            if ( isset( $obj->id ) ) {
                 $id = $obj->id;
             } else {
                 $id = $fid++;

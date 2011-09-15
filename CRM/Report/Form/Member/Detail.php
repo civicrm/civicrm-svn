@@ -167,20 +167,9 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
                          array( 'phone' => null),
                          'grouping'=> 'contact-fields',
                          ),
-
-                   'civicrm_group' => 
-                   array( 'dao'    => 'CRM_Contact_DAO_GroupContact',
-                          'alias'  => 'cgroup',
-                          'filters'=>             
-                          array( 'gid' => 
-                                 array( 'name'         => 'group_id',
-                                        'title'        => ts( 'Group' ),
-                                        'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                        'group'        => true,
-                                        'options'      => CRM_Core_PseudoConstant::group( ) ), ), ),
-                   
+                  
                    );
-        
+        $this->_groupFilter = true; 
         $this->_tagFilter = true;
         parent::__construct( );
     }

@@ -1059,7 +1059,7 @@ class CRM_GCD {
             $groupContact = new CRM_Contact_DAO_GroupContact();
             $groupContact->group_id = 2;                                                     // newsletter subscribers
             $groupContact->contact_id = $this->individual[$i];
-            $groupContact->status = $this->_getRandomElement($this->groupMembershipStatus);  // membership status
+            $groupContact->status = 'Added'; // always add members
 
 
             $subscriptionHistory = new CRM_Contact_DAO_SubscriptionHistory();
@@ -1080,7 +1080,7 @@ class CRM_GCD {
             $groupContact = new CRM_Contact_DAO_GroupContact();
             $groupContact->group_id = 3; // Volunteers
             $groupContact->contact_id = $this->individual[$i+60];
-            $groupContact->status = $this->_getRandomElement($this->groupMembershipStatus);  // membership status
+            $groupContact->status = 'Added'; // membership status
 
             $subscriptionHistory = new CRM_Contact_DAO_SubscriptionHistory();
             $subscriptionHistory->contact_id = $groupContact->contact_id;
@@ -1100,7 +1100,7 @@ class CRM_GCD {
             $groupContact = new CRM_Contact_DAO_GroupContact();
             $groupContact->group_id = 4; // advisory board group
             $groupContact->contact_id = $this->individual[$i*7];
-            $groupContact->status = $this->_getRandomElement($this->groupMembershipStatus);  // membership status
+            $groupContact->status = 'Added'; // membership status  
 
             $subscriptionHistory = new CRM_Contact_DAO_SubscriptionHistory();
             $subscriptionHistory->contact_id = $groupContact->contact_id;

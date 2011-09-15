@@ -31,10 +31,6 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
  
 class WebTest_Generic_CheckActivityTest extends CiviSeleniumTestCase {
 
-  protected $captureScreenshotOnFailure = TRUE;
-  protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
-  protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
-    
   protected function setUp()
   {
       parent::setUp();
@@ -65,20 +61,31 @@ class WebTest_Generic_CheckActivityTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_Activity_upload");
       $this->select("activity_type_id", "label=Meeting");
       
-      //select 'With Contact'
-      $this->click("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/ul/li/input");
-      $this->typeKeys("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/ul/li/input", $contactFirstName1);
-      $this->waitForElementPresent("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li");
-      $this->click("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li");
-      $this->assertTrue($this->isTextPresent("Devis"));
+      $this->typeKeys("css=tr.crm-activity-form-block-target_contact_id input#token-input-target_contact_id", "$contactFirstName1");
       
-      //select 'Assigned To'
-      $this->click("//form[@id='Activity']/div[2]/table/tbody/tr[4]/td[2]/ul/li/input");
-      $this->typeKeys("//form[@id='Activity']/div[2]/table/tbody/tr[4]/td[2]/ul/li/input", "Anderson");
-      $this->waitForElementPresent("//form[@id='Activity']/div[2]/table/tbody/tr[4]/td[2]/div/ul/li");
-      $this->click("//form[@id='Activity']/div[2]/table/tbody/tr[4]/td[2]/div/ul/li");
-      $this->assertTrue($this->isTextPresent("Anderson"));
-  }
+      // ...waiting for drop down with results to show up...
+      $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
+      $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
+      
+      // ...need to use mouseDownAt on first result (which is a li element), click does not work
+      $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
 
+      // ...again, waiting for the box with contact name to show up (span with delete token class indicates that it's present)...
+      $this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td ul li span.token-input-delete-token-facebook");
+      
+      // Now we're doing the same for "Assigned To" field.
+      // Typing contact's name into the field (using typeKeys(), not type()!)...
+      $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", "$contactFirstName2");
+
+      // ...waiting for drop down with results to show up...
+      $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
+      $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
+
+      //..need to use mouseDownAt on first result (which is a li element), click does not work
+      $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
+
+      // ...again, waiting for the box with contact name to show up...
+      $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
+  }
 }
 ?>

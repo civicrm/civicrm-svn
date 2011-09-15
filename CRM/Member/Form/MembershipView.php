@@ -166,7 +166,7 @@ END AS 'relType'
             $this->assign( 'lineItem', empty( $lineItems ) ? false : $lineItems );
         }
         
-        if ( $values['is_test'] ) {
+        if ( CRM_Utils_Array::value('is_test', $values ) )  {
             $values['membership_type'] .= ' (test) ';
         }
 

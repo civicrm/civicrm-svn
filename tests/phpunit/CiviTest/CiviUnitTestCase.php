@@ -533,6 +533,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
         $params['id'] = $contactID;
         $params['version'] = API_LATEST_VERSION;
+        $params['skip_undelete'] = 1;
         $result = civicrm_api('Contact','delete',$params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Could not delete contact, with message: ' . CRM_Utils_Array::value( 'error_message', $result ) );
@@ -1353,7 +1354,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * @param string $className
      * @param string $title  name of custom group
      */
-    function customGroupCreate( $extends, $title = 'title' ) {
+    function customGroupCreate( $extends = 'Contact', $title = 'title' ) {
 
         if (CRM_Utils_Array::value('title',$extends)){
             $params = $extends;
@@ -1472,6 +1473,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     
     function entityCustomGroupWithSingleFieldCreate( $function,$filename){
         $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
+        if(empty($entity)){
+          $entity = 'Contact';
+        }
         $customGroup = $this->CustomGroupCreate($entity,$function);
       
         $customField = $this->customFieldCreate( $customGroup['id'], $function ) ;
@@ -1593,45 +1597,52 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * To turn this off (e.g. on the server) set 
      * define(DONT_DOCUMENT_TEST_CONFIG ,1);
      * in your settings file
+     * @param array $params array as passed to civicrm_api function
+     * @param array $result array as received from the civicrm_api function
+     * @param string $function calling function - generally __FUNCTION__
+     * @param string $filename called from file - generally __FILE__
+     * @param string $description descriptive text for the example file
+     * @param string $subfile name for subfile - if this is completed the example will be put in a subfolder (named by the entity)
+     * @param string $action - optional action - otherwise taken from function name
      */
-    function documentMe($params,$result,$function,$filename,$description = "", $subfile = null ){
+    function documentMe($params,$result,$function,$filename,$description = "", $subfile = null, $action = null ){
         if(DONT_DOCUMENT_TEST_CONFIG ==1){
           return;
         } 
         $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
         //todo - this is a bit cludgey
         if (strstr($function, 'Create')){
-            $action = 'create';
+            $action = empty($action)?'create': $action;
             $entityAction = 'Create';
         }elseif(strstr($function, 'GetSingle')){
-            $action = 'getsingle';
+            $action = empty($action)?'getsingle': $action;
             $entityAction = 'GetSingle';
         }elseif(strstr($function, 'GetValue')){
-            $action = 'getvalue';
+            $action = empty($action)?'getvalue': $action;
             $entityAction = 'GetValue';
         }elseif(strstr($function, 'GetCount')){
-            $action = 'getcount';
+            $action = empty($action)?'getcount': $action;
             $entityAction = 'GetCount';
         }elseif(strstr($function, 'Get')){
-            $action = 'get';
+            $action = empty($action)?'get': $action;
             $entityAction = 'Get';
         }elseif(strstr($function, 'Delete')){
-            $action = 'delete';
+            $action = empty($action)?'delete': $action;
             $entityAction = 'Delete';
         } elseif(strstr($function, 'Update')){
-            $action = 'update';
+            $action = empty($action)?'update': $action;
             $entityAction = 'Update';
         } elseif(strstr($function, 'Subscribe')){
-            $action = 'subscribe';
+            $action = empty($action)?'subscribe': $action;
             $entityAction = 'Subscribe';
         } elseif(strstr($function, 'Set')){
-            $action = 'set';
+            $action = empty($action)?'set': $action;
             $entityAction = 'Set';
         } elseif(strstr($function, 'Apply')){
-            $action = 'apply';
+            $action = empty($action)?'apply': $action;
             $entityAction = 'Apply';
         } elseif(strstr($function, 'Replace')){
-            $action = 'replace';
+            $action = empty($action)?'replace': $action;
             $entityAction = 'Replace';
         }
         
@@ -1650,13 +1661,17 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }else{
             $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)[A-Z]/','_$0', $entity)); 
         }   
+        require_once 'CRM/Core/Smarty.php';
+        $smarty =& CRM_Core_Smarty::singleton();
+        $smarty->assign('testfunction',$function);
         $function = $fnPrefix . "_" .strtolower($action);
         require_once 'CRM/Core/Smarty.php';
         $smarty =& CRM_Core_Smarty::singleton();
         $smarty->assign('function',$function);
         $smarty->assign('fnPrefix',$fnPrefix);
         $smarty->assign('params',$params);   
-        $smarty->assign('entity',$entity);   
+        $smarty->assign('entity',$entity);  
+        $smarty->assign('filename',basename($filename)); 
         $smarty->assign('description',$description);         
         $smarty->assign('result',$result); 
        // $smarty->registerPlugin("modifier","print_array", "print_array");
@@ -1796,9 +1811,10 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
    * @param int  $id id of the entity concerned
    * @param string $entity name of entity concerned (e.g. membership)
    * @param bool $delete should the entity be deleted as part of this check
+   * @param string $errorText text to print on error
    * 
    */
-  function getAndCheck($params,$id,$entity,$delete = 1){
+  function getAndCheck($params,$id,$entity,$delete = 1, $errorText = ''){
 
         $result = civicrm_api($entity,'GetSingle', array( 'id' => $id ,
                                    
@@ -1818,10 +1834,46 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
         }
         foreach($params as $key => $value){
           if($key == 'version' )continue;
-          $this->assertEquals($value, $result[$key],$key . " value: $value doesn't match " . print_r($result,true) . 'in line' . __LINE__);        
+          $this->assertEquals($value, $result[$key],$key . "GetandCheck function determines that value: $value doesn't match " . print_r($result,true) . $errorText);        
           
         } 
     }
+  /* 
+   *Function to get formatted values in  the actual and expected result
+   *@param array $actual actual calculated values
+   *@param array $expected expected values
+   *
+   */
+    function checkArrayEquals( &$actual, &$expected ) 
+    {
+        self::unsetId( $actual );
+        self::unsetId( $expected );
+        $this->assertEquals( $actual, $expected );
+    }
+    
+    /*
+     *Function to unset the key 'id' from the array
+     *@param array $unformattedArray The array from which the 'id' has to be unset
+     *
+     */
+    static function unsetId( &$unformattedArray ) 
+    {
+        $formattedArray = array( );
+        if ( array_key_exists( 'id', $unformattedArray ) ) unset( $unformattedArray['id'] );
+        if ( CRM_Utils_Array::value( 'values', $unformattedArray ) && is_array( $unformattedArray['values'] ) ) {
+            foreach ( $unformattedArray['values'] as $key => $value ) {
+                if ( is_Array( $value ) ) {
+                    foreach( $value as $k => $v ) {
+                        if ( $k == 'id' ) unset( $value[$k] );
+                    }
+                } else if ( $key == 'id' ) {
+                    $unformattedArray[$key];
+                }
+                $formattedArray = array( $value );
+            }
+            $unformattedArray['values'] = $formattedArray;
+        }
+    } 
 }
 
 function CiviUnitTestCase_fatalErrorHandler( $message ) {

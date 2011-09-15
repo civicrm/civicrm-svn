@@ -185,15 +185,17 @@ class CRM_Report_Form_Instance {
         $params['header']    = $params['report_header'];
         $params['footer']    = $params['report_footer'];
         $params['domain_id'] = CRM_Core_Config::domainID( );
+
+        $form->_navigation['permission'] = array( );
+        $form->_navigation['label']      = $params['title'];
+        $form->_navigation['name']       = $params['title'];
+
         //navigation parameters
         if ( CRM_Utils_Array::value( 'is_navigation', $params ) ) {
-            $form->_navigation['permission'] = array( );
             $permission = CRM_Utils_Array::value( 'permission', $params );
             
             $form->_navigation['current_parent_id']  = CRM_Utils_Array::value( 'parent_id', $form->_navigation );
             $form->_navigation['parent_id']          = CRM_Utils_Array::value( 'parent_id', $params );
-            $form->_navigation['label']              = $params['title'];
-            $form->_navigation['name']               = $params['title'];
             $form->_navigation['is_active']          = 1;
             
             if ( $permission ) {
@@ -209,8 +211,7 @@ class CRM_Report_Form_Instance {
         $dashletParams = array( );
         if ( CRM_Utils_Array::value( 'addToDashboard', $params ) ) {
             $dashletParams = array( 'label'     =>  $params['title'],
-                                    'is_active' => 1,
-                                    'content'   => 'NULL');
+                                    'is_active' => 1 );
                                 
             $permission = CRM_Utils_Array::value( 'permission', $params );
             if ( $permission ) {
@@ -253,8 +254,13 @@ class CRM_Report_Form_Instance {
                 $form->_navigation['url'] = "civicrm/report/instance/{$dao->id}&reset=1";
                 $navigation = CRM_Core_BAO_Navigation::add( $form->_navigation );
 
-                //set the navigation id in report instance table
-                CRM_Core_DAO::setFieldValue( 'CRM_Report_DAO_Instance', $dao->id, 'navigation_id', $navigation->id );
+                if ( CRM_Utils_Array::value('is_active', $form->_navigation) ) {
+                    //set the navigation id in report instance table
+                    CRM_Core_DAO::setFieldValue( 'CRM_Report_DAO_Instance', $dao->id, 'navigation_id', $navigation->id );
+                } else {
+                    // has been removed from the navigation bar
+                    CRM_Core_DAO::setFieldValue( 'CRM_Report_DAO_Instance', $dao->id, 'navigation_id', 'NULL'); 
+                }
 
                 //reset navigation
                 CRM_Core_BAO_Navigation::resetNavigation( );
@@ -272,7 +278,7 @@ class CRM_Report_Form_Instance {
                     $chart = "&charts=". $params['charts'];
                 }
 
-                $dashletParams['url'           ] = "civicrm/report/instance/{$dao->id}&reset=1&section={$section}&snippet=4{$chart}";
+                $dashletParams['url'           ] = "civicrm/report/instance/{$dao->id}&reset=1&section={$section}&snippet=4{$chart}&context=dashlet";
                 $dashletParams['fullscreen_url'] = "civicrm/report/instance/{$dao->id}&reset=1&section={$section}&snippet=4{$chart}&context=dashletFullscreen";
                 $dashletParams['instanceURL'   ] = "civicrm/report/instance/{$dao->id}";
                 require_once 'CRM/Core/BAO/Dashboard.php';

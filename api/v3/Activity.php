@@ -55,7 +55,7 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  * @param string $activity_type Which class of contact is being created.
  *            Valid values = 'SMS', 'Meeting', 'Event', 'PhoneCall'.
  * {@schema Activity/Activity.xml}
- *
+ * {@getfields activity}
  * @return CRM_Activity|CRM_Error Newly created Activity object
  *
  * @todo Eileen 2 Feb - custom data fields per test are non std
@@ -249,36 +249,32 @@ function civicrm_api3_activity_delete( $params )
 function _civicrm_api3_activity_check_params ( & $params)
 {
 
+   $contactIDFields = array_intersect_key($params, array('source_contact_id' => 1,'assignee_contact_id' => 1, 'target_contact_id' => 1));
+   if(!empty($contactIDFields)){
+   $contactIds = array();
+   foreach ($contactIDFields as $fieldname => $contactfield) {
+     if(empty($contactfield))break;
+     if(is_array($contactfield)) {
+       foreach ($contactfield as $contactkey => $contactvalue) {
+         $contactIds[$contactvalue] = $contactvalue;
+       }
+     }else{
+       $contactIds[$contactfield] = $contactfield;
+     }
+   }
 
-    $contactIds = array( 'source'   => CRM_Utils_Array::value( 'source_contact_id', $params ),
-                         'assignee' => CRM_Utils_Array::value( 'assignee_contact_id', $params ),
-                         'target'   => CRM_Utils_Array::value( 'target_contact_id', $params )
-                         );
-
-    foreach ( $contactIds as $key => $value ) {
-        if ( empty( $value ) ) {
-            continue;
-        }
-        $valueIds = array( $value );
-        if ( is_array( $value ) ) {
-            $valueIds = array( );
-            foreach ( $value as $id ) {
-                if ( $id ) $valueIds[$id] = $id;
-            }
-        }
-        if ( empty( $valueIds ) ) {
-            continue;
-        }
 
         $sql = '
 SELECT  count(*)
   FROM  civicrm_contact
- WHERE  id IN (' . implode( ', ', $valueIds ) . ' )';
-        if ( count( $valueIds ) !=  CRM_Core_DAO::singleValueQuery( $sql ) ) {
+ WHERE  id IN (' . implode( ', ', $contactIds ) . ' )';
+        if ( count( $contactIds ) !=  CRM_Core_DAO::singleValueQuery( $sql ) ) {
             return civicrm_api3_create_error( 'Invalid '. ucfirst($key) .' Contact Id' );
         }
-    }
 
+   }
+   
+   
     $activityIds = array( 'activity' => CRM_Utils_Array::value( 'id', $params ),
                           'parent'   => CRM_Utils_Array::value( 'parent_id', $params ),
                           'original' => CRM_Utils_Array::value( 'original_id', $params )
@@ -293,8 +289,7 @@ SELECT  count(*)
 
 
     require_once 'CRM/Core/PseudoConstant.php';
-    $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name', true );
-
+    $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'name', true );
     $activityName   = CRM_Utils_Array::value( 'activity_name', $params );
     $activityTypeId = CRM_Utils_Array::value( 'activity_type_id', $params );
 

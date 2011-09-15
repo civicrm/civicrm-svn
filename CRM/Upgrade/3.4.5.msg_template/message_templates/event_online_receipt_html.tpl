@@ -11,7 +11,7 @@
 {capture assign=valueStyle }style="padding: 4px; border-bottom: 1px solid #999;"{/capture}
 
 <center>
- <table width="620" border="0" cellpadding="0" cellspacing="0" id="crm-event_receipt" style="font-family: Arial, Verdana, sans-serif; text-align: left;">
+ <table width="500" border="0" cellpadding="0" cellspacing="0" id="crm-event_receipt" style="font-family: Arial, Verdana, sans-serif; text-align: left;">
 
   <!-- BEGIN HEADER -->
   <!-- You can add table row(s) here with logo or other header elements -->
@@ -47,9 +47,8 @@ registration process.{/ts}</p>
 
    </td>
   </tr>
-  <tr>
-   <td>
-    <table style="border: 1px solid #999; margin: 1em 0em 1em; border-collapse: collapse; width:100%;">
+ </table>
+    <table width="500" style="border: 1px solid #999; margin: 1em 0em 1em; border-collapse: collapse;">
      <tr>
       <th {$headerStyle}>
        {ts}Event Information and Location{/ts}
@@ -381,7 +380,7 @@ registration process.{/ts}</p>
 
 {if $customProfile}
 {foreach from=$customProfile.profile item=eachParticipant key=participantID}
-     <tr><th {$headerStyle}>{ts 1=$participantID+1}Participant Information - Participant %1{/ts} </th></tr>
+     <tr><th {$headerStyle}>{ts 1=$participantID+2}Participant Information - Participant %1{/ts} </th></tr>
      {foreach from=$eachParticipant item=eachProfile key=pid}
      <tr><th {$headerStyle}>{$customProfile.title.$pid}</th></tr>
      {foreach from=$eachProfile item=val key=field}
@@ -415,11 +414,7 @@ registration process.{/ts}</p>
       {/foreach}
      {/if}
 
-    </table>
-   </td>
-  </tr>
-
- </table>
+  </table>
 </center>
 
 </body>

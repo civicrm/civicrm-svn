@@ -45,9 +45,6 @@ packages/jquery/plugins/jquery.chainedSelects.js
 packages/jquery/plugins/jquery.contextMenu.js
 packages/jquery/plugins/jquery.tableHeader.js
 
-{*allow select/unselect checkboxes functionality only for search*}
-packages/jquery/plugins/checkboxselect.js
-
 packages/jquery/plugins/jquery.textarearesizer.js
 
 packages/jquery/plugins/jquery.form.js
@@ -71,6 +68,8 @@ packages/jquery/plugins/jquery.FormNavigate.js
 packages/jquery/plugins/jquery.validate.js
 packages/jquery/plugins/jquery.civicrm-validate.js
 packages/jquery/plugins/jquery.ui.datepicker.validation.pack.js
+
+packages/jquery/plugins/jquery-fieldselection.js
 
 js/rest.js
 

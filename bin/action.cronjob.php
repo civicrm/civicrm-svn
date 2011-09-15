@@ -92,13 +92,15 @@ class CRM_Cron_Action {
         $mapping->find( true );
 
         $actionSchedule = new CRM_Core_DAO_ActionSchedule( );
-        $actionSchedule->id = $mappingID;
+        $actionSchedule->mapping_id = $mappingID;
+        $actionSchedule->is_active = 1;
+        $actionSchedule->find( false );
 
         $tokenFields = array( );
         $session = & CRM_Core_Session::singleton();
 
-        if ( $actionSchedule->find( true ) ) {
-            $extraSelect = $extraJoin = '';
+        while ( $actionSchedule->fetch( ) ) {
+            $extraSelect = $extraJoin = $extraWhere = '';
 
             if ( $actionSchedule->record_activity ) {
                 $activityTypeID   = CRM_Core_OptionGroup::getValue( 'activity_type', 
@@ -112,6 +114,7 @@ class CRM_Cron_Action {
                 $extraSelect = ", ov.label as activity_type, e.id as activity_id";
                 $extraJoin   = "INNER JOIN civicrm_option_group og ON og.name = 'activity_type'
 INNER JOIN civicrm_option_value ov ON e.activity_type_id = ov.value AND ov.option_group_id = og.id";
+                $extraWhere = "AND e.is_current_revision = 1 AND e.is_deleted = 0";
             }
 
             $query = "
@@ -119,7 +122,8 @@ SELECT reminder.id as reminderID, reminder.*, e.id as entityID, e.* {$extraSelec
 FROM  civicrm_action_log reminder
 INNER JOIN {$mapping->entity} e ON e.id = reminder.entity_id
 {$extraJoin}
-WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL";
+WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
+{$extraWhere}";
             $dao   = CRM_Core_DAO::executeQuery( $query,
                                                  array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
             
@@ -134,7 +138,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL";
                 if ( $toEmail ) {
                     $result = CRM_Core_BAO_ScheduleReminders::sendReminder( $dao->contact_id,
                                                                             $toEmail,
-                                                                            $mappingID,
+                                                                            $actionSchedule->id,
                                                                             $fromEmailAddress,
                                                                             $entityTokenParams );
                     if ( ! $result || is_a( $result, 'PEAR_Error' ) ) {
@@ -175,9 +179,11 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL";
     
     public function buildRecipientContacts( $mappingID ) {
         $actionSchedule = new CRM_Core_DAO_ActionSchedule( );
-        $actionSchedule->id = $mappingID;
+        $actionSchedule->mapping_id = $mappingID;
+        $actionSchedule->is_active = 1;
+        $actionSchedule->find( );
 
-        if ( $actionSchedule->find( true ) ) {
+        while ( $actionSchedule->fetch( ) ) {
             require_once 'CRM/Core/DAO/ActionMapping.php';
             $mapping = new CRM_Core_DAO_ActionMapping( );
             $mapping->id = $mappingID;
@@ -228,6 +234,11 @@ reminder.action_schedule_id = %1";
                 if ( !empty($status) ) {
                     $where[]  = "e.status_id IN ({$status})";
                 }
+                $where[] = " e.is_current_revision = 1 ";
+                $where[] = " e.is_deleted = 0 ";
+                
+                $join[] = "INNER JOIN civicrm_contact c ON c.id = {$contactField}";
+                $where[] = "c.is_deleted = 0";
 
                 $startEvent = ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
                     "(e.activity_date_time, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";

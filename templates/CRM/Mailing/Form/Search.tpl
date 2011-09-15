@@ -41,7 +41,7 @@
             {$form.sort_name.html|crmReplace:class:big} {help id="id-create_sort_name"}
         </td>
         <td colspan="2"><label>{ts}Mailing Status{/ts}</label><br />
-        <div class="listing-box" style="width: auto; height: 120px">
+        <div class="listing-box" style="width: auto; height: 60px">
             {foreach from=$form.mailing_status item="mailing_status_val"}
             <div class="{cycle values="odd-row,even-row"}">
                 {$mailing_status_val.html}

@@ -83,6 +83,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     function webtestLogin( $admin = false ) {
         $password = $admin ? $this->settings->adminPassword : $this->settings->password;
         $username = $admin ? $this->settings->adminUsername : $this->settings->username;
+        // Make sure login form is available
+        $this->waitForElementPresent('edit-submit');
         $this->type('edit-name', $username);
         $this->type('edit-pass', $password);
         $this->click('edit-submit');
@@ -928,18 +930,20 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         // Select the activity type from the activity dropdown
         $this->select("other_activity", "label=Meeting");
+        
         $this->waitForElementPresent("_qf_Activity_upload");
 
         $this->assertTrue($this->isTextPresent("Anderson, " . $firstName2), "Contact not found in line " . __LINE__ );
 
         // Typing contact's name into the field (using typeKeys(), not type()!)...
-        $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", $firstName1);
+        $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
 
         // ...waiting for drop down with results to show up...
-        $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
+        $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
+        $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
 
-        // ...clicking first result (which is a li element), selenium picks first matching element so we don't need to specify that...
-        $this->click("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
+        //.need to use mouseDownAt on first result (which is a li element), click does not work
+        $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
 
         // ...again, waiting for the box with contact name to show up...
         $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");

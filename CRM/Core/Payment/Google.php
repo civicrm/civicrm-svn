@@ -136,8 +136,8 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
         $merchant_key = $this->_paymentProcessor['password'];    // Merchant Key
         $server_type  = ( $this->_mode == 'test' ) ? 'sandbox' : '';
         
-        $cart  = new GoogleCart($merchant_id, $merchant_key, $server_type); 
-        $item1 = new GoogleItem($params['item_name'],'', 1, $params['amount'], $params['currencyID']);
+        $cart  = new GoogleCart($merchant_id, $merchant_key, $server_type, $params['currencyID']); 
+        $item1 = new GoogleItem($params['item_name'],'', 1, $params['amount']);
         $cart->AddItem($item1);
 
         if ( $component == "event" ) {
@@ -293,8 +293,8 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
     }
     
     static function getArrayFromXML( $xmlData ) {
-        require_once 'Google/library/xml-processing/xmlparser.php';
-        $xmlParser = new XmlParser($xmlData);
+        require_once 'Google/library/xml-processing/gc_xmlparser.php';
+        $xmlParser = new gc_XmlParser($xmlData);
         $root      = $xmlParser->GetRoot();
         $data      = $xmlParser->GetData();
         

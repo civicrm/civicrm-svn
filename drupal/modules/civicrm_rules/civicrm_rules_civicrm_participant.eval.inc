@@ -26,15 +26,6 @@
  +--------------------------------------------------------------------+
 */
 
-/**
- * Returns conditions available for CiviCRM Rules
- */
-function civicrm_rules_entities_conditions( $label, $type = 'contact' ) {
-
-    $default = array($type   => array('type'  => $type,'label' => $label ));
-   
-  return $default;
-}
 
 
 

@@ -161,6 +161,8 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         if ( array_key_exists( 'participant_campaign_id', $this->_fields ) ) {
             $defaults['participant_campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values['event'] );
         }
+        require_once 'CRM/Core/BAO/Address.php';
+        CRM_Core_BAO_Address::fixAllStateSelects( $this, $this->_defaults );   
         
         return $defaults;
     }  
@@ -642,6 +644,10 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                         $this->_lineItem[] = $lineItem;
                     }
                 }
+            }
+
+            if ( array_key_exists('participant_role', $params ) ) {
+                $params['participant_role_id'] = $params['participant_role'];
             }
             
             if ( ! CRM_Utils_Array::value( 'participant_role_id', $params ) && $this->_values['event']['default_role_id'] ) {

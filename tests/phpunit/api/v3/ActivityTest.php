@@ -114,8 +114,6 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     {
         $tablesToTruncate = array( 'civicrm_contact', 
                                    'civicrm_activity',
-                                   'civicrm_option_group',
-                                   'civicrm_option_value'
                                    );
         $this->quickCleanup( $tablesToTruncate, true );
     }
@@ -334,7 +332,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         );
         
         $result =& civicrm_api('activity','create', $params );
-        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) .' in line ' . __LINE__ );
         $result =& civicrm_api('activity','get', $params );
@@ -357,7 +355,9 @@ class api_v3_ActivityTest extends CiviUnitTestCase
 
         require_once 'CRM/Core/BAO/Setting.php';
         CRM_Core_BAO_Setting::enableComponent( 'CiviCampaign' );
-      
+        //flush cache by calling with reset
+        $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name', true );
+        
         $defaults = array();
 
         $params = array(
@@ -486,9 +486,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         
         $params = $this->_params;
         $params['custom_'.$ids['custom_field_id']]  =  "custom string";
- 
         $result = civicrm_api($this->_entity,'create', $params);
-        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__);
+        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__, $description,$subfile);
         $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
         $result = civicrm_api($this->_entity,'get',array('return.custom_'.$ids['custom_field_id'] => 1,         'version' =>3, 'id' => $result['id']));
         $this->assertEquals("custom string", $result['values'][$result['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
@@ -496,7 +495,45 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->customFieldDelete($ids['custom_field_id']);
         $this->customGroupDelete($ids['custom_group_id']);      
     }
+    /**
+     *  Test civicrm_activity_create() with valid parameters
+     *  and some custom data
+     */
+    function testActivityCreateCustomContactRefField( )
+    {    
 
+        civicrm_api('contact','create',array('version' => 3, 'id' => 17, 'sort_name' => 'Contact, Test'));
+        $subfile = 'ContactRefCustomField';
+        $description = "demonstrates create with Contact Reference Custom Field";
+        $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+        $params = array('custom_group_id' => $ids['custom_group_id'],
+                        'name'            => 'Worker_Lookup',
+                        'label'           => 'Worker Lookup',
+                        'html_type'       => 'Autocomplete-Select',
+                        'data_type'       => 'ContactReference',
+                        'weight'          => 4,
+                        'is_searchable'   => 1,
+                        'is_active'       => 1,
+                        'version'					=> $this->_apiversion,
+                        );
+               
+        $customField = civicrm_api('custom_field', 'create', $params);
+        $params = $this->_params;
+        $params['custom_'. $customField ['id']]  =  "17";
+ 
+        $result = civicrm_api($this->_entity,'create', $params);
+        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__,$description,$subfile);
+        $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
+        $result = civicrm_api($this->_entity,'get',array('return.custom_'.$customField => 1,         'version' =>3, 'id' => $result['id']));
+        $this->documentMe($params,$result  ,__FUNCTION__,__FILE__,'Get with Contact Ref Custom Field','ContactRefCustomFieldGet');  
+   
+        $this->assertEquals('Contact, Test', $result['values'][$result['id']]['custom_' .$customField ['id'] ],' in line ' . __LINE__);
+        $this->assertEquals(17, $result['values'][$result['id']]['custom_' .$customField ['id'] . "_id"],' in line ' . __LINE__);
+        $this->assertEquals('Contact, Test', $result['values'][$result['id']]['custom_' .$customField ['id']. '_1' ],' in line ' . __LINE__);
+        $this->assertEquals(17, $result['values'][$result['id']]['custom_' .$customField ['id'] . "_1_id"],' in line ' . __LINE__);        
+        $this->customFieldDelete($ids['custom_field_id']);
+        $this->customGroupDelete($ids['custom_group_id']);      
+    }
     /**
      *  Test civicrm_activity_create() with an invalid text status_id
      */
@@ -619,7 +656,10 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                                                                          dirname(__FILE__)
                                                                          . '/dataset/activity_4_13.xml') );
 
-        $contact = civicrm_api('Contact','Create',array('display_name' => "The Rock", 'contact_type' => 'Individual', 'version' => 3, 'api.activity.create' => array('id' => 13, 'assignee_contact_id' => '$value.id',)));                                                            
+        $contact = civicrm_api('Contact','Create',array('display_name' => "The Rock", 
+        																								'contact_type' => 'Individual', 
+        																								'version' => 3, 
+        																								'api.activity.create' => array('id' => 13, 'assignee_contact_id' => '$value.id',)));                                                            
         $params = array( 'activity_id' => 13,
                          'version'			=> $this->_apiversion,
                          'sequential'  =>1,
@@ -627,10 +667,9 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         								 'api.contact.get' => array('id' => '$value.source_contact_id', ));
      
         $result = civicrm_api( 'Activity','Get',$params );
-            $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile);     
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile);     
         
-        $this->assertEquals( 0, $result['is_error'],
-                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+        $this->assertAPISuccess($result);
         $this->assertEquals( 13, $result['id'],  'In line ' . __LINE__ );
         $this->assertEquals( 17, $result['values'][0]['source_contact_id'], 'In line ' . __LINE__ );
 
@@ -664,7 +703,57 @@ class api_v3_ActivityTest extends CiviUnitTestCase
       civicrm_api('Activity','Delete',array('version' => 3, 'id' => $result['id']));
       
     }
-
+    /*
+     * test that get functioning does filtering
+     */
+    function testGetFilterMaxDate(){
+      $params = array(
+                        'source_contact_id'   => 17,
+                        'subject'             => 'Make-it-Happen Meeting',
+                        'activity_date_time'  => '20110101',
+                        'duration'            => 120,
+                        'location'            => 'Pensulvania',
+                        'details'             => 'a test activity',
+                        'status_id'           => 1,
+                        'activity_name'       => 'Test activity type',
+                        'version'             => $this->_apiversion,
+                        'priority_id'         => 1,
+                        );
+      $activityOne = civicrm_api('Activity','Create', $params    );     
+      $params['activity_date_time'] = 20120216;
+      $activityTwo = civicrm_api('Activity','Create', $params    );     
+      $result = civicrm_api('Activity','Get', array(
+      																				'version' => 3,
+      																				));
+      $description = "demonstrates _low filter (at time of writing doesn't work if contact_id is set";
+      $subfile = "DateTimeLow";
+      $this->assertEquals(2, $result['count']);
+      $params =  array(
+      																				'version' => 3,
+                                              'filter.activity_date_time_low' => '20120101000000',
+                                              'sequential' => 1,
+      																				);
+      $result = civicrm_api('Activity','Get',$params);
+      $this->documentMe($params, $result, __FUNCTION__,__FILE__,$description,$subfile);
+      $this->assertEquals(1, $result['count'], 'in line ' . __LINE__);
+      $description = "demonstrates _high filter (at time of writing doesn't work if contact_id is set";
+      $subfile = "DateTimeHigh";
+      $this->assertEquals( '2012-02-16 00:00:00',$result['values'][0]['activity_date_time'],'in line ' . __LINE__); 
+      $params =  array(
+                                              'source_contact_id' => 17,
+      																				'version' => 3,
+                                              'filter.activity_date_time_high' => '20120101000000',
+                                              'sequential' => 1,
+      																				);
+      $result = civicrm_api('Activity','Get',$params);
+      $this->documentMe($params, $result, __FUNCTION__,__FILE__,$description,$subfile);
+  
+      $this->assertEquals(1, $result['count']);
+      $this->assertEquals('2011-01-01 00:00:00',$result['values'][0]['activity_date_time'], 'in line ' . __LINE__); 
+  
+      civicrm_api('Activity','Delete',array('version' => 3, 'id' => $activityOne['id']));
+      civicrm_api('Activity','Delete',array('version' => 3, 'id' => $activityTwo['id']));      
+    }
     /**
      *  Test civicrm_activity_get() with a good activity ID which
      *  has associated custom data
@@ -692,6 +781,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->assertEquals( 17, $result['values'][0]['source_contact_id'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['values'][0]['activity_type_id'], 'In line ' . __LINE__ );
         $this->assertEquals( 'test activity type id', $result['values'][0]['subject'],'In line ' . __LINE__ );
+        $this->customFieldDelete($ids['custom_field_id']);
+        $this->customGroupDelete($ids['custom_group_id']);
     }
     /**
      *  Test civicrm_activity_get() with a good activity ID which
@@ -790,8 +881,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         
         $result =& civicrm_api('activity','delete',$params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        $this->assertEquals( $result['is_error'], 0,
-                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+        $this->assertAPISuccess($result);
     }
 
 
@@ -996,20 +1086,19 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         
         $contact2 = $this->individualCreate( $contact2Params );
 
-        $params['assignee_contact_id'] = array( $contact1 => $contact1 );
-        $params['target_contact_id']   = array( $contact2 => $contact2 );
+        $params['assignee_contact_id'] = array( $contact1 ,$contact2  );
+        $params['target_contact_id']   = array(  $contact2 => $contact2 );
         $result = civicrm_api('Activity','Create', $params );
 
         $result = civicrm_api('activity', 'create' ,  $params );
         $activityId = $result['id'];
-        $this->assertEquals( 0, $result['is_error'],
-                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+        $this->assertAPISuccess($result);
         $result = civicrm_api($this->_entity,'get',array('return.assignee_contact_id' => 1, 'return.target_contact_id' => 1, 'version' =>3, 'id' => $result['id']));
         
         $assignee = $result['values'][$result['id']]['assignee_contact_id'];
         $target   = $result['values'][$result['id']]['target_contact_id'];
 
-        $this->assertEquals( 1, count($assignee), ' in line ' . __LINE__);
+        $this->assertEquals( 2, count($assignee), ' in line ' . __LINE__);
         $this->assertEquals( 1, count($target), ' in line ' . __LINE__);
         $this->assertEquals( true, in_array($contact1, $assignee), ' in line ' . __LINE__);
         $this->assertEquals( true, in_array($contact2, $target), ' in line ' . __LINE__);

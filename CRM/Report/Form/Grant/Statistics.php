@@ -326,8 +326,30 @@ WHERE {$this->_aliases['civicrm_grant']}.amount_total IS NOT NULL
         } 
     }
 
+    function postProcess( ) {
+        // get ready with post process params
+        $this->beginPostProcess( );
+
+        // build query, do not apply limit
+        $sql = $this->buildQuery( false );
+
+        // build array of result based on column headers. This method also allows 
+        // modifying column headers before using it to build result set i.e $rows.
+        $this->buildRows ( $sql, $rows );
+
+        // format result set. 
+        $this->formatDisplay( $rows );
+
+        // assign variables to templates
+        $this->doTemplateAssignment( $rows );
+
+        // do print / pdf / instance stuff if needed
+        $this->endPostProcess( $rows );
+    }
+
     function alterDisplay( &$rows ) 
     {
+        $totalStatistics = $grantStatistics = array( );
         $totalStatistics = parent::statistics( $rows );
         $awardedGrantsAmount = $grantsReceived = $totalAmount = $awardedGrants = $grantReportsReceived = 0;
         $grantStatistics = array( );
@@ -336,28 +358,41 @@ WHERE {$this->_aliases['civicrm_grant']}.amount_total IS NOT NULL
         $countries       = CRM_Core_PseudoConstant::country( );
         $gender          = CRM_Core_PseudoConstant::gender( );
 
-        $query = $sql = "
+        $grantAmountTotal = "
 SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count , 
          SUM({$this->_aliases['civicrm_grant']}.amount_total) as totalAmount 
   {$this->_from} ";
         
-        if ( isset($this->_whereClause) ) {
-            $query .= " {$this->_whereClause}";
+        if ( !empty($this->_whereClause) ) { 
+            $grantAmountTotal .= " {$this->_whereClause}";
         }
-        
-        $result = CRM_Core_DAO::executeQuery( $query );
+
+        $result = CRM_Core_DAO::executeQuery( $grantAmountTotal );
         while ( $result->fetch( ) ) {
             $grantsReceived = $result->count;
             $totalAmount    = $result->totalAmount;
         }
         
-        $sql   .= " {$this->_where}";
-        $values = CRM_Core_DAO::executeQuery( $sql );
+        if ( !$grantsReceived ) {
+            return;
+        }
+
+        $grantAmountAwarded = "
+SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count , 
+         SUM({$this->_aliases['civicrm_grant']}.amount_granted) as grantedAmount,
+         SUM({$this->_aliases['civicrm_grant']}.amount_total) as totalAmount
+  {$this->_from} ";
+        
+        if ( !empty($this->_where) ) {
+            $grantAmountAwarded .= " {$this->_where}";
+        }
+        $values = CRM_Core_DAO::executeQuery( $grantAmountAwarded );
         while ( $values->fetch( ) ) {
             $awardedGrants       = $values->count;
             $awardedGrantsAmount = $values->totalAmount;
+            $amountGranted       = $values->grantedAmount;
         }
-        
+
         foreach ( $rows as $key => $values ) {
             if ( CRM_Utils_Array::value( 'civicrm_grant_grant_report_received', $values ) ) {
                 $grantReportsReceived ++;
@@ -416,13 +451,13 @@ SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count ,
         }
         
         $totalStatistics['total_statistics'] = 
-            array( 'grants_received'        => array( 'title'  => 'Grant Requests Received',
+            array( 'grants_received'        => array( 'title'  => ts('Grant Requests Received'),
                                                       'count'  => $grantsReceived,
                                                       'amount' => $totalAmount ),
-                   'grants_awarded'         => array( 'title'  => 'Grants Awarded',
+                   'grants_awarded'         => array( 'title'  => ts('Grants Awarded'),
                                                       'count'  => $awardedGrants,
-                                                      'amount' => $awardedGrantsAmount ),
-                   'grants_report_received' => array( 'title'  => 'Grant Reports Received',
+                                                      'amount' => $amountGranted ),
+                   'grants_report_received' => array( 'title'  => ts('Grant Reports Received'),
                                                       'count'  => $grantReportsReceived ), );
         
         $this->assign( 'totalStatistics', $totalStatistics );
@@ -430,32 +465,34 @@ SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count ,
         
         if ( $this->_outputMode == 'csv' || 
              $this->_outputMode == 'pdf' ) {
-            $this->_columnHeaders = array( 'civicrm_grant_total_grants' => array( 'title' => 'Summary', ),
-                                           'civicrm_grant_count'        => array( 'title' => 'Count', ),
-                                           'civicrm_grant_amount'       => array( 'title' => 'Amount', ),
+            $row = array( );
+            $this->_columnHeaders = array( 'civicrm_grant_total_grants' => array( 'title' => ts('Summary') ),
+                                           'civicrm_grant_count'        => array( 'title' => ts('Count') ),
+                                           'civicrm_grant_amount'       => array( 'title' => ts('Amount') ),
                                            );
             foreach ( $totalStatistics['total_statistics'] as $title => $value ) {
                 $row[]= array( 'civicrm_grant_total_grants' => $value['title'],
                                'civicrm_grant_count'        => $value['count'],
                                'civicrm_grant_amount'       => $value['amount'] );
             }
-            $row[] = $totalAmount = array( );
-            foreach ( $grantStatistics as $key => $value ) {
-                $row[] = array( 'civicrm_grant_total_grants' => $value['title'],
-                                'civicrm_grant_count'        => 'Number of Grants (%)',
-                                'civicrm_grant_amount'       => 'Total Amount (%)' );
-                
-                foreach ( $value['value'] as $field => $values ) {
-                    foreach ( $values['currency'] as $currency => $amount ) {
-                        $totalAmount[$currency] = $currency . $amount['value'] . "({$values['percentage']}%)";
+            
+            if ( !empty($grantStatistics) ) { 
+                foreach ( $grantStatistics as $key => $value ) {
+                    $row[] = array( 'civicrm_grant_total_grants' => $value['title'],
+                                    'civicrm_grant_count'        => ts('Number of Grants') . ' (%)',
+                                    'civicrm_grant_amount'       => ts('Total Amount') . ' (%)' );
+                    
+                    foreach ( $value['value'] as $field => $values ) {
+                        foreach ( $values['currency'] as $currency => $amount ) {
+                            $totalAmount[$currency] = $currency . $amount['value'] . "({$values['percentage']}%)";
+                        }
+                        $totalAmt = implode( ', ', $totalAmount );
+                        $count = (boolean)CRM_Utils_Array::value('count', $values, 0) ? $values['count'] . " ({$values['percentage']}%)" : '';
+                        $row[] = array( 'civicrm_grant_total_grants' => $field,
+                                        'civicrm_grant_count'        => $count,
+                                        'civicrm_grant_amount'       => $totalAmt );
                     }
-                    $totalAmt = implode( ', ', $totalAmount );
-                    $count = $values['count'] . " ({$values['percentage']}%)";
-                    $row[] = array( 'civicrm_grant_total_grants' => $field,
-                                    'civicrm_grant_count'        => $count,
-                                    'civicrm_grant_amount'       => $totalAmt );
                 }
-                $row[] = array( );
             }
             $rows = $row;
         }
@@ -464,6 +501,10 @@ SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count ,
     static function getStatistics( &$grantStatistics, $fieldValue, $values, 
                                    $awardedGrants, $awardedGrantsAmount, $customData = false )
     {
+        if ( !$awardedGrantsAmount ) {
+            return;
+        }
+
         $currencies = CRM_Core_PseudoConstant::currencySymbols( 'symbol', 'name' );
         $currency   = $currencies[$values['civicrm_grant_currency']];
         

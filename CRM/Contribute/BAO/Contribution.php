@@ -1490,7 +1490,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
                 return $updateResult;
             } else if ( !$previousContriStatusId && 
                         $contribution->contribution_status_id != array_search( 'Pending', $contributionStatuses ) ) { 
-                // this is case when we will going to process contribution object.
+                // this is case when we are going to process contribution object later.
                 return $updateResult;
             }
             
@@ -1502,6 +1502,21 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
                 $currentMembership =  CRM_Member_BAO_Membership::getContactMembership( $membership->contact_id,
                                                                                        $membership->membership_type_id, 
                                                                                        $membership->is_test, $membership->id );
+                
+                // CRM-8141 update the membership type with the value recorded in log when membership created/renewed
+                // this picks up membership type changes during renewals
+                $sql = "SELECT membership_type_id FROM civicrm_membership_log WHERE membership_id=$membership->id ORDER BY id DESC LIMIT 1;";
+                require_once 'CRM/Core/DAO.php';
+                $dao = new CRM_Core_DAO;
+                $dao->query( $sql );
+                if ( $dao->fetch( ) ) {
+                	if ( ! empty( $dao->membership_type_id ) ) {
+                    	$membership->membership_type_id = $dao->membership_type_id;
+	                	$membership->save( );
+                	} // else fall back to using current membership type
+                } // else fall back to using current membership type
+                $dao->free();
+                
                 if ( $currentMembership ) {
                     CRM_Member_BAO_Membership::fixMembershipStatusBeforeRenew( $currentMembership, 
                                                                                $changeToday = null  );
@@ -1526,7 +1541,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
                                          'start_date'    => CRM_Utils_Date::customFormat( $dates['start_date'],    $format ),
                                          'end_date'      => CRM_Utils_Date::customFormat( $dates['end_date'],      $format ),
                                          'reminder_date' => CRM_Utils_Date::customFormat( $dates['reminder_date'], $format ) );
-                
+                                                                                    
                 $membership->copyValues( $formatedParams );
                 $membership->save( );
                 

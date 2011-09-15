@@ -95,7 +95,7 @@ class api_v3_APITest extends CiviUnitTestCase {
    
     $result =  civicrm_api('RandomFile','get', array('version' => 3));
     $this->assertEquals($result['is_error'], 1 );
-    $this->assertEquals($result['error_message'], 'API (RandomFile,get) does not exist (join the API team and implement civicrm_api3_random_file_get' );
+    $this->assertEquals($result['error_message'], 'API (RandomFile,get) does not exist (join the API team and implement it!)' );
    }
    
    function testAPIWrapperCamelCaseFunction(){
@@ -106,4 +106,59 @@ class api_v3_APITest extends CiviUnitTestCase {
      $result = civicrm_api('OptionGroup', 'get', array('version' => 3,));
      $this->assertEquals(0, $result['is_error']);
    }
+   
+   function testAPIResolver() {
+     $oldpath = get_include_path();
+     set_include_path($oldpath . PATH_SEPARATOR . dirname(__FILE__) . '/dataset/resolver');
+     
+     $result = civicrm_api('contact', 'example_action1', array(
+       'version' => 3,
+     ));
+     $this->assertEquals($result['values'][0], 'civicrm_api3_generic_example_action1 is ok');
+     $result = civicrm_api('contact', 'example_action2', array(
+       'version' => 3,
+     ));
+     $this->assertEquals($result['values'][0], 'civicrm_api3_contact_example_action2 is ok');
+     $result = civicrm_api('test_entity', 'example_action3', array(
+       'version' => 3,
+     ));
+     $this->assertEquals($result['values'][0], 'civicrm_api3_test_entity_example_action3 is ok');
+     
+     set_include_path($oldpath);
+   }
+   
+   function testFromCamel() {
+     $cases = array(
+       'Contribution' => 'contribution', 
+       'contribution' => 'contribution', 
+       'OptionValue' => 'option_value',
+       'optionValue' => 'option_value',
+       'option_value' => 'option_value',
+       'UFJoin' => 'uf_join',
+       'ufJoin' => 'uf_join',
+       'uf_join' => 'uf_join',
+     );
+     foreach ($cases as $input => $expected) {
+       $actual = _civicrm_api_get_entity_name_from_camel($input);
+       $this->assertEquals($expected, $actual, sprintf('input=%s expected=%s actual=%s', $input, $expected, $actual));
+     }
+   }
+   
+   function testToCamel() {
+     $cases = array(
+       'Contribution' => 'Contribution', 
+       'contribution' => 'Contribution', 
+       'OptionValue' => 'OptionValue',
+       'optionValue' => 'OptionValue',
+       'option_value' => 'OptionValue',
+       'UFJoin' => 'UFJoin',
+       // dommage 'ufJoin' => 'UFJoin',
+       'uf_join' => 'UFJoin',
+     );
+     foreach ($cases as $input => $expected) {
+       $actual = civicrm_api_get_camel_name($input);
+       $this->assertEquals($expected, $actual, sprintf('input=%s expected=%s actual=%s', $input, $expected, $actual));
+     }
+   }
+   
 }

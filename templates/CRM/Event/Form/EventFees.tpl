@@ -199,7 +199,7 @@
 }
 {/if}
 
-{if ($action eq 1 or ( $action eq 2 and !$hasPayment) ) and !$participantMode} 
+{if $paid and ($action eq 1 or ( $action eq 2 and !$hasPayment) ) and !$participantMode} 
 {include file="CRM/common/showHideByFieldValue.tpl" 
     trigger_field_id    ="payment_instrument_id"
     trigger_value       = '4'
@@ -264,9 +264,7 @@ function checkEmail( ) {
        cj("#send_confirmation_receipt").hide( );
 
        // set receive data to null.
-       document.getElementById("receive_date[M]").value = null;
-       document.getElementById("receive_date[d]").value = null;
-       document.getElementById("receive_date[Y]").value = null;
+       clearDateTime( 'receive_date' );
     } else {
        cj("#send_confirmation_receipt").show( );
     }	

@@ -112,23 +112,24 @@ class CRM_Core_Extensions
         if( isset( $config->extensionsDir ) ) {
             $this->_extDir = $config->extensionsDir;
         }
-        if( ! empty( $this->_extDir ) ) {
+
+        if ( ! empty( $this->_extDir ) ) {
             $this->enabled = TRUE;
             $tmp = $this->_extDir . DIRECTORY_SEPARATOR . 'tmp';
             $cache = $this->_extDir . DIRECTORY_SEPARATOR . 'cache';
             require_once 'CRM/Utils/File.php';
             if( is_writable( $this->_extDir ) ) {
                 if ( !file_exists( $tmp ) ) { 
-                    CRM_Utils_File::createDir( $tmp );
+                    CRM_Utils_File::createDir( $tmp ,false);
                 }
                 if ( !file_exists( $cache ) ) {
-                    CRM_Utils_File::createDir( $cache );
+                    CRM_Utils_File::createDir( $cache,false );
                 }
             } else {
-                $url = CRM_Utils_System::url( 'civicrm/admin/setting/path', 'reset=1' );
-                CRM_Core_Session::setStatus( 'Your extensions directory: %1 is not web server writable. Please go to the <a href="%2">path setting page</a> and correct it.',
+                $url = CRM_Utils_System::url( 'civicrm/admin/setting/path', 'reset=1&civicrmDestination=/civicrm/admin/extensions?reset=1' );
+                CRM_Core_Session::setStatus( ts('Your extensions directory: %1 is not web server writable. Please go to the <a href="%2">path setting page</a> and correct it.',
                                              array( 1 => $this->_extDir,
-                                                    2 => $url ) );
+                                                    2 => $url ) ) );
                 $this->_extDir = null;
             }
         }
@@ -245,9 +246,11 @@ class CRM_Core_Extensions
 
         // now those which are available on public directory
         $remote = $this->_discoverRemote();
-        
-        foreach( $remote as $dc => $e ) {
-            $exts[$e->key] = $e;
+
+        if ( is_array( $remote ) ) { 
+            foreach( $remote as $dc => $e ) {
+                $exts[$e->key] = $e;
+            }
         }
         
         // get installed extensions at the end, they overwrite everything
@@ -330,7 +333,7 @@ class CRM_Core_Extensions
         $tsPath = $config->extensionsDir . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'timestamp.txt';
         $timestamp = false;
 
-        if( file_exists( $tsPath ) ) {
+        if ( file_exists( $tsPath ) ) {
             $timestamp =  file_get_contents( $tsPath );
         }
 
@@ -345,17 +348,20 @@ class CRM_Core_Extensions
             $cached = true;
         }
 
-            require_once 'CRM/Core/Extensions/Extension.php';
-            foreach( $remoties as $id => $rext ) {
-                $ext = new CRM_Core_Extensions_Extension( $rext['key'] );
-                $ext->setRemote();
-                $xml = $this->grabRemoteInfoFile( $rext['key'], $cached );
-                if( $xml != false ) {
-                    $ext->readXMLInfo( $xml );
-                    $this->_remotesDiscovered[] = $ext;
-                }
+        require_once 'CRM/Core/Extensions/Extension.php';
+        foreach( $remoties as $id => $rext ) {
+            $ext = new CRM_Core_Extensions_Extension( $rext['key'] );
+            $ext->setRemote();
+            $xml = $this->grabRemoteInfoFile( $rext['key'], $cached );
+            if( $xml != false ) {
+                $ext->readXMLInfo( $xml );
+                $this->_remotesDiscovered[] = $ext;
             }
+        }
+
+        if ( file_exists( $tsPath ) ) {
             file_put_contents( $tsPath, (string) time() );
+        }
 
         return $this->_remotesDiscovered;
     }
@@ -372,15 +378,17 @@ class CRM_Core_Extensions
     private function _discoverAvailable() {
         require_once 'CRM/Core/Extensions/Extension.php';
         $result = array();
-        $e = scandir( $this->_extDir );
-        foreach( $e as $dc => $name ) {
-            $dir = $this->_extDir . DIRECTORY_SEPARATOR . $name;
-            $infoFile = $dir . DIRECTORY_SEPARATOR . self::EXT_INFO_FILENAME;
-            if( is_dir( $dir ) && file_exists( $infoFile ) ) {
-                $ext = new CRM_Core_Extensions_Extension( $name );
-                $ext->setLocal();
-                $ext->readXMLInfo();
-                $result[] = $ext;
+        if ( $this->_extDir ) {
+            $e = scandir( $this->_extDir );
+            foreach( $e as $dc => $name ) {
+                $dir = $this->_extDir . DIRECTORY_SEPARATOR . $name;
+                $infoFile = $dir . DIRECTORY_SEPARATOR . self::EXT_INFO_FILENAME;
+                if( is_dir( $dir ) && file_exists( $infoFile ) ) {
+                    $ext = new CRM_Core_Extensions_Extension( $name );
+                    $ext->setLocal();
+                    $ext->readXMLInfo();
+                    $result[] = $ext;
+                }
             }
         }
         return $result;
@@ -655,23 +663,26 @@ class CRM_Core_Extensions
         $filename = $path . DIRECTORY_SEPARATOR . $key . '.xml';
         $url = self::PUBLIC_EXTENSIONS_REPOSITORY . '/' . $key . '.xml';
 
-        if( ! $cached ) {
-            file_put_contents( $filename, file_get_contents( $url ) );
-        }
 
-        $contents = file_get_contents( $filename );
-
-        //parse just in case
-        $check = simplexml_load_string( $contents );
-
-        if (!$check) {
-            foreach(libxml_get_errors() as $error) {
-                CRM_Core_Error::debug( 'xmlError', $error );
+        if ( file_exists( $filename ) ) {
+            if ( !$cached ) {
+                file_put_contents( $filename, file_get_contents( $url ) );
             }
-            return;
+
+            $contents = file_get_contents( $filename );
+
+            //parse just in case
+            $check = simplexml_load_string( $contents );
+
+            if (!$check) {
+                foreach(libxml_get_errors() as $error) {
+                    CRM_Core_Error::debug( 'xmlError', $error );
+                }
+                return;
+            }
+
+            return $contents;
         }
-        
-        return $contents;
     }
 
 }

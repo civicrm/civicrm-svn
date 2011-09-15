@@ -60,10 +60,6 @@ function civicrm_api3_pledge_create( $params ) {
     }
      $required =  array('contact_id', 'amount', array('pledge_contribution_type_id','contribution_type_id') , 'installments','start_date');
     
-    if(CRM_Utils_Array::value('id',$params)){
-      //todo move this into civicrm_api3_verify mandatory in some way - or civicrm_api
-      $required =  array('id');
-    }
    civicrm_api3_verify_mandatory ($params,null,$required);
      
     $values  = array( );
@@ -73,16 +69,11 @@ function civicrm_api3_pledge_create( $params ) {
     if ( civicrm_api3_error( $error ) ) {
         return $error;
     } 
+    //format the custom fields
+    _civicrm_api3_custom_format_params( $params, $values, 'Pledge' );
+   return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $values);
+    
 
-    $pledge = CRM_Pledge_BAO_Pledge::create( $values );
-   if ( is_a( $pledge, 'CRM_Core_Error' ) ) {
-        return civicrm_api3_create_error(  $pledge->_errors[0]['message'] );
-    }else{
-         _civicrm_api3_object_to_array($pledge, $pledgeArray[$pledge->id]);
-
-    }
-
-    return civicrm_api3_create_success($pledgeArray,$params,'pledge','create',$pledge);
 
 }
 
@@ -134,50 +125,28 @@ function civicrm_api3_pledge_get( $params ) {
       $params['pledge_id'] = $params['id'];
       unset ($params['id']);
     }
-    $inputParams      = array( );
-    $returnProperties = array( );
-    $otherVars = array( 'sort', 'offset', 'rowCount' );
-
-    $sort     = null;
-    $offset   = 0;
-    $rowCount = 25;
-    foreach ( $params as $n => $v ) {
-      if ( substr( $n, 0, 7 ) == 'return.' ) {
-        $returnProperties[ substr( $n, 7 ) ] = $v;
-      } elseif ( in_array( $n, $otherVars ) ) {
-        $$n = $v;
-      } else {
-        $inputParams[$n] = $v;
-      }
-    }
-
-    // add is_test to the clause if not present
-    if ( ! array_key_exists( 'pledge_test', $inputParams ) ) {
-      $inputParams['pledge_test'] = 0;
-    }
+    $options = _civicrm_api3_get_options_from_params($params);
 
     require_once 'CRM/Pledge/BAO/Query.php';
     require_once 'CRM/Contact/BAO/Query.php';
-    if ( empty( $returnProperties ) ) {
-      $returnProperties = CRM_Pledge_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_PLEDGE );
+    if ( empty($options['return'] ) ) {
+      $options['return'] = CRM_Pledge_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_PLEDGE );
     }else{
-      $returnProperties['pledge_id']=1;
+      $options['return']['pledge_id']=1;
     }
+    $newParams = CRM_Contact_BAO_Query::convertFormValues( $options['input_params'] );
 
-    $newParams =& CRM_Contact_BAO_Query::convertFormValues( $inputParams );
-
-    $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null,
+    $query = new CRM_Contact_BAO_Query( $newParams, $options['return'], null,
                                         false, false, CRM_Contact_BAO_Query::MODE_PLEDGE );
     list( $select, $from, $where ) = $query->query( );
+    $sql 
+    = "$select $from $where";
 
-    $sql = "$select $from $where";
-
-    if ( ! empty( $sort ) ) {
-      $sql .= " ORDER BY $sort ";
+    if ( ! empty( $options['sort'] ) ) {
+      $sql .= " ORDER BY ". $options['sort'];
     }
-    $sql .= " LIMIT $offset, $rowCount ";
-    $dao =& CRM_Core_DAO::executeQuery( $sql );
-
+    $sql .= " LIMIT " . $options['offset'] . " , " . $options['limit'];
+    $dao = CRM_Core_DAO::executeQuery( $sql );
     $pledge = array( );
     while ( $dao->fetch( ) ) {
         $pledge[$dao->pledge_id] = $query->store( $dao );
@@ -187,6 +156,12 @@ function civicrm_api3_pledge_get( $params ) {
 
 }
 
+/*
+ * Set default to not return test params
+ */
+function _civicrm_api3_pledge_get_defaults(){
+  return array('pledge_test' => 0);
+}
 /**
  * take the input parameter list as specified in the data model and
  * convert it into the same format that we use in QF and BAO object
@@ -207,6 +182,7 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
   // even though they are 'generally' what is returned in the GET - implying they should
   $fields =& CRM_Pledge_DAO_Pledge::fields( );
   _civicrm_api3_store_values( $fields, $params, $values );
+  $values['sequential'] =  CRM_Utils_Array::value('sequential', $params,0);
 
 
   //add back the fields we know of that got dropped by the previous function
@@ -267,6 +243,15 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
     //at this point both should be the same so unset both if not set - passing in empty
     //value causes crash rather creating new - do it before next section as null values ignored in 'switch'
     unset($values['id']);
+    
+    //if you have a single installment when creating & you don't set the pledge status (not a required field) then 
+    //status id is left null for pledge payments in BAO
+    // so we are hacking in the addition of the pledge_status_id to pending here
+    if(empty($values['status_id']) && $params['installments'] ==1){
+      require_once 'CRM/Contribute/PseudoConstant.php';
+      $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
+      $values['status_id'] = array_search( 'Pending', $contributionStatus);
+    }
   }
   if ( !empty( $params['scheduled_date']) ){
     //scheduled date is required to set next payment date - defaults to start date
@@ -328,11 +313,7 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
     }
   }
 
-  //format the parameters
-  _civicrm_api3_custom_format_params( $params, $values, 'Pledge' );
-
-
-  return array();
+   return array();
 }
 
 

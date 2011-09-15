@@ -393,7 +393,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
                                    $recipients->email_id,
                                    $recipients->contact_id );
                 $count++;
-                if ( $count % CRM_Core_DAO::BULK_INSERT_COUNT == 0 ) {
+                if ( $count % CRM_Core_DAO::BULK_MAIL_INSERT_COUNT == 0 ) {
                     CRM_Mailing_Event_BAO_Queue::bulkCreate( $params, $now );
                     $count = 0;
                     $params = array( );
@@ -522,6 +522,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
         // get the return properties
         $returnProperties = $mailing->getReturnProperties( );
         $params = $targetParams = $deliveredParams = array( );
+        $count  = 0;
 
         foreach ( $fields as $key => $field ) {
             $params[] = $field['contact_id'];
@@ -532,10 +533,16 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
         foreach ( $fields as $key => $field ) {
             $contactID = $field['contact_id'];
             /* Compose the mailing */
-            $recipient = null;
+            $recipient    = $replyToEmail = null;
+            $replyValue   = strcmp( $mailing->replyto_email, $mailing->from_email );
+            if ( $replyValue ) {
+                $replyToEmail = $mailing->replyto_email;
+            }
+
             $message =& $mailing->compose( $this->id, $field['id'], $field['hash'],
                                            $field['contact_id'], $field['email'],
-                                           $recipient, false, $details[0][$contactID], $attachments );
+                                           $recipient, false, $details[0][$contactID], $attachments, 
+                                           false, null, $replyToEmail );
             
             /* Send the mailing */
             $body    =& $message->get();
@@ -581,6 +588,14 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
             } else {
                 /* Register the delivery event */
                 $deliveredParams[] = $field['id'];
+
+                $count++;
+                if ( $count % CRM_Core_DAO::BULK_MAIL_INSERT_COUNT == 0 ) {
+                    CRM_Mailing_Event_BAO_Delivered::bulkCreate( $deliveredParams );
+                    $count = 0;
+                    $deliveredParams = array( );
+                }
+
             }
             
             $targetParams[] = $field['contact_id'];

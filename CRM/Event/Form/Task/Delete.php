@@ -88,8 +88,7 @@ class CRM_Event_Form_Task_Delete extends CRM_Event_Form_Task
         
         $this->addRadio( 'delete_participant', null, $deleteParticipants, null, '<br />');
         $this->setDefaults( array( 'delete_participant' => 1 ) );
-        $this->assign( "additionalParticipant", $additionalParticipant );
-        
+      
         $this->addDefaultButtons( ts( 'Delete Participations' ), 'done' );
     }
     
@@ -111,7 +110,7 @@ class CRM_Event_Form_Task_Delete extends CRM_Event_Form_Task
                 $participantLinks = (CRM_Event_BAO_Participant::getAdditionalParticipantUrl( $additionalId ));
             }
         }
-        $deletedParticipants = 0;
+        $deletedParticipants = $additionalCount = 0;
         foreach( $this->_participantIds as $participantId ) {
             if( CRM_Utils_Array::value( 'delete_participant', $params ) == 1 ){ 
                 if( CRM_Event_BAO_Participant::isPrimaryParticipant( $participantId ) ){

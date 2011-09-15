@@ -350,7 +350,7 @@ class CRM_Core_Payment_BaseIPN {
             if ( CRM_Utils_Array::value( 'is_email_receipt', $values ) ) {
                 $contribution->receipt_date = self::$_now;
             }
-            
+
             if ( $membership ) {
                 $format       = '%Y%m%d';
                 require_once 'CRM/Member/BAO/MembershipType.php';  
@@ -358,6 +358,21 @@ class CRM_Core_Payment_BaseIPN {
                 $currentMembership =  CRM_Member_BAO_Membership::getContactMembership( $membership->contact_id, 
                                                                                        $membership->membership_type_id, 
                                                                                        $membership->is_test, $membership->id );
+            	                                                                       
+                // CRM-8141 update the membership type with the value recorded in log when membership created/renewed
+                // this picks up membership type changes during renewals
+                $sql = "SELECT membership_type_id FROM civicrm_membership_log WHERE membership_id=$membership->id ORDER BY id DESC LIMIT 1;";
+                require_once 'CRM/Core/DAO.php';
+                $dao = new CRM_Core_DAO;
+                $dao->query( $sql );
+                if ( $dao->fetch( ) ) {
+                	if ( ! empty( $dao->membership_type_id ) ) {
+                        $membership->membership_type_id = $dao->membership_type_id;
+                        $membership->save( );
+                    } // else fall back to using current membership type
+                } // esle fall back to using current membership type
+                $dao->free();
+                
                 if ( $currentMembership ) {
                     /*
                      * Fixed FOR CRM-4433
@@ -368,9 +383,7 @@ class CRM_Core_Payment_BaseIPN {
                     
                     $dates = CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType( $membership->id , 
                                                                                               $changeToday );
-                    
                     $dates['join_date'] =  CRM_Utils_Date::customFormat($currentMembership['join_date'], $format );
-                    
                 } else {
                     $dates = CRM_Member_BAO_MembershipType::getDatesForMembershipType($membership->membership_type_id);
                 }
@@ -391,7 +404,6 @@ class CRM_Core_Payment_BaseIPN {
                 //we might be renewing membership, 
                 //so make status override false.  
                 $formatedParams['is_override'] = false;
-
                 $membership->copyValues( $formatedParams );
                 $membership->save( );
 
