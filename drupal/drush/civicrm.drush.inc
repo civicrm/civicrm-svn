@@ -76,6 +76,10 @@ function civicrm_drush_command() {
                       '--dbname'      => 'MySQL database name of your Drupal/CiviCRM database.',
                       '--tarfile'     => 'Path to your CiviCRM tar.gz file.',
                       '--destination' => 'Destination modules path to extract CiviCRM (eg : sites/all/modules ).',
+                      '--lang'        => 'Default language to use for installation.',
+                      '--langtarfile' => 'Path to your l10n tar.gz file.',
+                      '--site_url'     => 'Base Url for your drupal/CiviCRM website without http (e.g. mysite.com)',
+                      '--ssl'         => 'Using ssl for your drupal/CiviCRM website if set to on (e.g. --ssl=on)'
                       ),
               );
     $items['civicrm-upgrade-db']  = 
@@ -201,6 +205,7 @@ function civicrm_pkg_install( ) {
     $crmpath = _civicrm_get_crmpath( );
     $drupalRoot = drush_get_context('DRUSH_DRUPAL_ROOT');
     $modPath    = "$drupalRoot/$crmpath";
+    $lang = drush_get_option('lang', '');
     
     if ( !is_dir( "$modPath/civicrm" ) ) {
         // extract tarfile at right place
@@ -212,12 +217,16 @@ function civicrm_pkg_install( ) {
             drush_die(dt("Tarfile could not be unpacked OR CiviCRM installer helper file is missing."));
         }
         drush_log(dt("Tarfile unpacked."), 'ok');
+
+        if ($lang != '') {
+            _civicrm_extract_tarfile( $modPath, "langtarfile");
+        }
         
         // setup all required files/civicrm/* directories
         _civicrm_create_files_dirs( $civicrmInstallerHelper, $modPath );
         
         // install database
-        _civicrm_install_db( $dbuser, $dbpass, $dbhost, $dbname, $modPath );
+        _civicrm_install_db( $dbuser, $dbpass, $dbhost, $dbname, $modPath, $lang );
         
         // generate civicrm.settings.php file
         _civicrm_generate_settings_file( $dbuser, $dbpass, $dbhost, $dbname, $modPath );
@@ -241,7 +250,8 @@ function _civicrm_extract_tarfile( $destinationPath, $option = 'tarfile' ) {
     drush_shell_exec("tar -xf $tarpath -C \"$destinationPath\"");
 }
 
-function _civicrm_install_db( $dbuser, $dbpass, $dbhost, $dbname, $modPath ) {
+function _civicrm_install_db( $dbuser, $dbpass, $dbhost, $dbname, 
+                                                 $modPath, $lang) {
     $drupalRoot = drush_get_context('DRUSH_DRUPAL_ROOT');
     $siteRoot   = drush_get_context('DRUSH_DRUPAL_SITE_ROOT', FALSE);
     
@@ -257,8 +267,23 @@ function _civicrm_install_db( $dbuser, $dbpass, $dbhost, $dbname, $modPath ) {
     drush_print(dt("Loading CiviCRM database structure .."));
     civicrm_source($dsn, $sqlPath . '/civicrm.mysql'   );
     drush_print(dt("Loading CiviCRM database with required data .."));
-    civicrm_source($dsn, $sqlPath . '/civicrm_data.mysql');
-    civicrm_source($dsn, $sqlPath . '/civicrm_acl.mysql' );
+    // testing the translated sql files availability
+    $data_file = $sqlPath . '/civicrm_data.mysql';
+    $acl_file = $sqlPath . '/civicrm_acl.mysql';
+    if ($lang != ''){
+        if (file_exists($sqlPath . '/civicrm_data.' . $lang . '.mysql')
+            and file_exists($sqlPath . '/civicrm_acl.' . $lang . '.mysql')
+            and $lang != ''){
+                $data_file = $sqlPath . '/civicrm_data.' . $lang . '.mysql';
+                $acl_file = $sqlPath . '/civicrm_acl.'. $lang . '.mysql';
+        }else{
+            drush_print(dt("No sql files could be retrieved for \"" . $lang . 
+                                              "\", using default language."));
+        }
+    }
+    civicrm_source($dsn, $data_file);
+    civicrm_source($dsn, $acl_file);
+
     drush_log(dt("CiviCRM database loaded successfully."), 'ok');
 }
 
@@ -290,8 +315,16 @@ function _civicrm_generate_settings_file( $dbuser, $dbpass, $dbhost, $dbname, $m
     }
 
     drush_print(dt("Generating civicrm settings file .."));
-    $baseUrl = drush_get_option('site_url', false);
-    $baseUrl = !$baseUrl ? ($GLOBALS['base_url']) : ('http://' . $baseUrl);
+    if ( $baseUrl = drush_get_option('site_url', false )){
+        $ssl = drush_get_option('ssl', false);
+        if ($ssl == 'on'){
+            $protocol = 'https';
+        }else{
+            $protocol = 'http';
+        }
+    }
+
+    $baseUrl = !$baseUrl ? ($GLOBALS['base_url']) : ($protocol . '://' . $baseUrl);
     
     $db_spec = _drush_sql_get_db_spec();
     $params  = array(
