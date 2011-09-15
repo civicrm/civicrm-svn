@@ -159,7 +159,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         // check if contribution is already completed, if so we ignore this ipn
         if ( $contribution->contribution_status_id == 1 ) {
             CRM_Core_Error::debug_log_message( "returning since contribution has already been handled" );
-            echo "Success: Contribution has already been handled<p>";
+            return;
         } else {
             /* Since trxn_id hasn't got any use here, 
              * lets make use of it by passing the eventID/membershipTypeID to next level.
@@ -212,7 +212,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         // So to make sure, code is not executed again.
         if ( $contribution->contribution_status_id == 1 ) {
             CRM_Core_Error::debug_log_message( "Contribution already handled (ContributionID = $contribution)." );
-            exit( );
+            return;
         }
         
         $objects['contribution'] =& $contribution;
@@ -344,7 +344,8 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
 
         if ($contribution->contribution_status_id == 1) {
             //contribution already handled.
-            exit( );
+            CRM_Core_Error::debug_log_message( "Contribution already handled (ContributionID = {$contribution->id})." );
+            return;
         }
 
         if ( $module == 'Contribute' ) {
@@ -434,6 +435,10 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $serial      = $data[$root]['serial-number'];
         
         list( $mode, $module, $paymentProcessorID ) = self::getContext($xml_response, $privateData, $orderNo, $root);
+        if ( ! $paymentProcessorID ) {
+            // if we didn't die and processor is not detected, payment is already complete or sth wrong.
+            $response->SendAck($serial);
+        }
         $mode = $mode ? 'test' : 'live';
 
         require_once 'CRM/Core/BAO/PaymentProcessor.php';
@@ -465,12 +470,13 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             break;
 
         case "new-order-notification": {
+            $response->SendAck($serial, false);
             $ipn->newOrderNotify($data[$root], $privateData, $module);
-            $response->SendAck($serial);
             break;
         }
 
         case "order-state-change-notification": {
+            $response->SendAck($serial, false);
             $new_financial_state = $data[$root]['new-financial-order-state']['VALUE'];
             $new_fulfillment_order = $data[$root]['new-fulfillment-order-state']['VALUE'];
             
@@ -482,22 +488,22 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             case 'CHARGED':
             case 'PAYMENT_DECLINED':
             case 'CANCELLED':
+            case 'CANCELLED_BY_GOOGLE':
                 $ipn->orderStateChange($new_financial_state, $data[$root], $module);
                 break;
 
             case 'REVIEWING':
             case 'CHARGING':
-            case 'CANCELLED_BY_GOOGLE':
                 break;
 
             default:
                 break;
             }
-            $response->SendAck($serial);
             break;
         }
 
         case "authorization-amount-notification": {
+            $response->SendAck($serial, false);
             $new_financial_state = $data[$root]['order-summary']['financial-order-state']['VALUE'];
             $new_fulfillment_order = $data[$root]['order-summary']['fulfillment-order-state']['VALUE'];
             
@@ -521,9 +527,9 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             default:
                 break;
             }
-            $response->SendAck($serial);
             break;
         }
+
         case "charge-amount-notification":
         case "chargeback-amount-notification":
         case "refund-amount-notification":
