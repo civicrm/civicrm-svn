@@ -37,6 +37,7 @@
 require_once 'CRM/Core/Payment.php';
 require_once 'Google/library/googlecart.php';
 require_once 'Google/library/googleitem.php';
+require_once 'Google/library/googlesubscription.php';
 
 class CRM_Core_Payment_Google extends CRM_Core_Payment { 
     /**
@@ -128,6 +129,11 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
     function doTransferCheckout( &$params, $component ) {
         $component = strtolower( $component );
         
+        if ( CRM_Utils_Array::value( 'is_recur', $params ) &&
+             $params['contributionRecurID'] ) {
+            return $this->doRecurCheckout( $params, $component );
+        }
+
         $url = rtrim( $this->_paymentProcessor['url_site'], '/' ) . '/cws/v2/Merchant/' . 
             $this->_paymentProcessor['user_name'] . '/checkout';
 
@@ -177,6 +183,49 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
         }
 
         $cart->SetContinueShoppingUrl( $returnURL );
+
+        $cartVal      = base64_encode($cart->GetXML());
+        $signatureVal = base64_encode($cart->CalcHmacSha1($cart->GetXML()));
+        
+        $googleParams = array('cart'      => $cartVal,
+                              'signature' => $signatureVal );
+        
+        require_once 'HTTP/Request.php';
+        $params = array( 'method' => HTTP_REQUEST_METHOD_POST,
+                         'allowRedirects' => false );
+        $request = new HTTP_Request( $url, $params );
+        foreach ( $googleParams as $key => $value ) {
+            $request->addPostData($key, $value);
+        }
+
+        $result = $request->sendRequest( );
+
+        if ( PEAR::isError( $result ) ) {
+            CRM_Core_Error::fatal( $result->getMessage( ) );
+        }
+        
+        if ( $request->getResponseCode( ) != 302 ) {
+            CRM_Core_Error::fatal( ts( 'Invalid response code received from Google Checkout: %1', 
+                                       array(1 => $request->getResponseCode())) );
+        }
+        CRM_Utils_System::redirect( $request->getResponseHeader( 'location' ) );
+        CRM_Utils_System::civiExit( );
+    }
+
+    function doRecurCheckout( &$params, $component ) {
+        $url = rtrim( $this->_paymentProcessor['url_site'], '/' ) . '/cws/v2/Merchant/' . 
+            $this->_paymentProcessor['user_name'] . '/checkout';
+
+        $merchant_id  = $this->_paymentProcessor['user_name'];   // Merchant ID
+        $merchant_key = $this->_paymentProcessor['password'];    // Merchant Key
+        $server_type  = ( $this->_mode == 'test' ) ? 'sandbox' : '';
+        
+        $cart = new GoogleCart($merchant_id, $merchant_key, $server_type, $params['currencyID']); 
+        $item = new GoogleItem("fee", "sign up fee", 1, 12.00);
+        $subscription_item = new GoogleSubscription("merchant", "DAILY", 30.00);
+        
+        $item->SetSubscription($subscription_item);
+        $cart->AddItem($item);
 
         $cartVal      = base64_encode($cart->GetXML());
         $signatureVal = base64_encode($cart->CalcHmacSha1($cart->GetXML()));
