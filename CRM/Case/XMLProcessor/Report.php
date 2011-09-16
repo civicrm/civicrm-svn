@@ -313,7 +313,7 @@ WHERE      a.id = %1
                                            'type'  => 'String' );
         }
         
-        if ( $activityDAO->targetID ) {
+        if ( !empty( $activityDAO->targetID ) ) {
             // Re-lookup the target ID since the DAO only has the first recipient if there are multiple.
         	// Maybe not the best solution.
         	require_once 'CRM/Activity/BAO/ActivityTarget.php';
@@ -396,7 +396,7 @@ WHERE      a.id = %1
                                        'value' => $this->redact( $reporter ),
                                        'type'  => 'String' );
         
-        if ( $activityDAO->assigneeID ) {
+        if ( !empty( $activityDAO->assigneeID ) ) {
             //allow multiple assignee contacts.CRM-4503.
             require_once 'CRM/Activity/BAO/ActivityAssignment.php';
             $assignee_contact_names = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $activityDAO->id, true );
