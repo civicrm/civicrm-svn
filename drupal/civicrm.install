@@ -53,3 +53,21 @@ function civicrm_uninstall( ) {
     require_once 'CRM/Core/DAO.php';
     CRM_Core_DAO::dropAllTables( );
 }
+
+function civicrm_requirements($phase) {
+    $settings = glob('sites/*/civicrm.settings.php');
+    $problems = array( );
+    if ( empty($settings) && 
+         $phase == 'install' ) {
+        $problems[] = array(
+                            'title' => t('CiviCRM settings does not extist'),
+                            'description' => t('CiviCRM settings file does not extist. It should be created by CiviCRM <a href="!link">install</a>', array('!link' => substr(dirname(dirname(__FILE__)), strlen(getcwd())).'/install/index.php')),
+                            'severity' => REQUIREMENT_ERROR,
+                            );
+    }
+
+    if ( ! empty($problems) ) {
+        return $problems;
+    }
+}
+
