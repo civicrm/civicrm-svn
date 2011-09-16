@@ -183,7 +183,6 @@ class CRM_Export_BAO_Export
 
                 $contactType = CRM_Utils_Array::value( 0, $value );
                 $locTypeId   = CRM_Utils_Array::value( 2, $value );
-                $phoneTypeId = CRM_Utils_Array::value( 3, $value );
                 
                 if ( $relationField ) {
                     if ( in_array ( $relationField, $locationTypeFields ) && is_numeric( $relLocTypeId )  ) {
@@ -201,9 +200,6 @@ class CRM_Export_BAO_Export
                 } else if ( is_numeric( $locTypeId ) ) {
                     if ( $phoneTypeId ) {
                         $returnProperties['location'][$locationTypes[$locTypeId]]['phone-' .$phoneTypeId] = 1;
-                    } else if ( isset( $imProviderId ) ) { 
-                        //build returnProperties for IM service provider
-                        $returnProperties['location'][$locationTypes[$locTypeId]]['im-' .$imProviderId] = 1;
                     } else {
                         $returnProperties['location'][$locationTypes[$locTypeId]][$fieldName] = 1;
                     }
@@ -673,14 +669,18 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                             self::sqlColumnDefn( $query, $sqlColumns, $field );
                         }
                     }
-
+                    
+                    // add im_provider to $dao object
+                    if ( $field == 'im_provider' && property_exists( $dao, 'provider_id' ) )  {
+                        $dao->im_provider = $dao->provider_id;
+                    }
                     //build row values (data)
                     if ( property_exists( $dao, $field ) ) {
                         $fieldValue = $dao->$field;
                         // to get phone type from phone type id
                         if ( $field == 'phone_type_id' && isset( $phoneTypes[$fieldValue] ) ) {
                             $fieldValue = $phoneTypes[$fieldValue];
-                        } else if ( $field == 'provider_id' ) {
+                        } else if ( $field == 'provider_id' || $field == 'im_provider' ) {
                             $fieldValue = CRM_Utils_Array::value( $fieldValue, $imProviders );  
                         } else if ( $field == 'participant_role_id' ) {
                             require_once 'CRM/Event/PseudoConstant.php';
@@ -728,6 +728,11 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                                     break;
                                 case 'state_province':
                                     $row[$fldValue] = $i18n->crm_translate($dao->$fldValue, array('context' => 'province'));
+                                    break;
+                                case 'im_provider':  
+                                    $imFieldvalue = $fldValue . "-provider_id";
+                                    $imScreenIdName = CRM_Utils_Array::value( $dao->$imFieldvalue , $imProviders );
+                                    $row[$fldValue] = $imScreenIdName;
                                     break;
                                 default:
                                     $row[$fldValue] = $dao->$fldValue;
