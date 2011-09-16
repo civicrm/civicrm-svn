@@ -75,7 +75,11 @@
 						<td class="html-adjust"><a href="{$element.field_value.fileURL}">{$element.field_value.fileName}</a></td>
 					    {/if}
 					{else}
-					    <td class="html-adjust">{$element.field_value}</td>
+                                            {if $element.field_data_type == 'Money'}
+                                                <td class="html-adjust">{$element.field_value|crmNumberFormat}</td>
+                                            {else}
+                                                <td class="html-adjust">{$element.field_value}</td>
+                                            {/if}
 					{/if}
 				    {/if}
 				</tr>
