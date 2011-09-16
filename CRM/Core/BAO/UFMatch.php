@@ -214,16 +214,9 @@ WHERE     openid = %1";
     static function &synchronizeUFMatch( &$user, $userKey, $uniqId, $uf, $status = null, $ctype = null, $isLogin = false ) 
     {
         $config = CRM_Core_Config::singleton( );
-        // validate that uniqId is a valid url. it will either be
-        // an OpenID (which should always be a valid url) or a
-        // http://uf_username/ construction (so that it can
-        // be used as an OpenID in the future)
+
         require_once 'CRM/Utils/Rule.php';
-        if ( $uf == 'Standalone' ) {
-            if ( ! CRM_Utils_Rule::url( $uniqId ) ) {
-                return $status ? null : false;
-            }
-        } else if ( ! CRM_Utils_Rule::email( $uniqId ) ) {
+        if ( ! CRM_Utils_Rule::email( $uniqId ) ) {
             return $status ? null : false;
         }
         
@@ -231,12 +224,9 @@ WHERE     openid = %1";
 
         // make sure that a contact id exists for this user id
         $ufmatch = new CRM_Core_DAO_UFMatch( );
-        if ( CRM_Core_DAO::checkFieldExists('civicrm_uf_match', 'domain_id') ) {
-            // FIXME: if() condition check was required especially for upgrade cases (2.2.x -> 3.0.x), 
-            // where folks if happen to logout, would encounter a column not found fatal error  
-            $ufmatch->domain_id = CRM_Core_Config::domainID( );
-        }
+        $ufmatch->domain_id = CRM_Core_Config::domainID( );
         $ufmatch->uf_id = $userKey;
+
         if ( ! $ufmatch->find( true ) ) {
             require_once 'CRM/Core/Transaction.php';
             $transaction = new CRM_Core_Transaction( );
