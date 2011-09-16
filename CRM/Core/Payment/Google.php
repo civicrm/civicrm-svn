@@ -227,6 +227,47 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
         $item->SetSubscription($subscription_item);
         $cart->AddItem($item);
 
+        if ( $component == "event" ) {
+            $privateData = "contactID={$params['contactID']},contributionID={$params['contributionID']},contributionTypeID={$params['contributionTypeID']},eventID={$params['eventID']},participantID={$params['participantID']},invoiceID={$params['invoiceID']}";
+        } elseif ( $component == "contribute" ) {
+            $privateData = "contactID={$params['contactID']},contributionID={$params['contributionID']},contributionTypeID={$params['contributionTypeID']},invoiceID={$params['invoiceID']}";
+
+            $contributionRecurID = CRM_Utils_Array::value( 'contributionRecurID', $params );
+            if ( $contributionRecurID ) {
+                $privateData .= ",contributionRecurID=$contributionRecurID";
+            }
+
+            $membershipID = CRM_Utils_Array::value( 'membershipID', $params );
+            if ( $membershipID ) {
+                $privateData .= ",membershipID=$membershipID";
+            }
+
+            $relatedContactID = CRM_Utils_Array::value( 'related_contact', $params );
+            if ( $relatedContactID ) {
+                $privateData .= ",relatedContactID=$relatedContactID";
+
+                $onBehalfDupeAlert = CRM_Utils_Array::value( 'onbehalf_dupe_alert', $params );
+                if ( $onBehalfDupeAlert ) {
+                    $privateData .= ",onBehalfDupeAlert=$onBehalfDupeAlert";
+                }
+            }
+        }
+        // Allow further manipulation of the arguments via custom hooks ..
+        CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $privateData );
+
+        $cart->SetMerchantPrivateData($privateData);
+        
+        if ( $component == "event" ) {
+            $returnURL = CRM_Utils_System::url( 'civicrm/event/register',
+                                                "_qf_ThankYou_display=1&qfKey={$params['qfKey']}", 
+                                                true, null, false );
+        } elseif ( $component == "contribute" ) {
+            $returnURL = CRM_Utils_System::url( 'civicrm/contribute/transact',
+                                                "_qf_ThankYou_display=1&qfKey={$params['qfKey']}",
+                                                true, null, false );
+        }
+        $cart->SetContinueShoppingUrl( $returnURL );
+
         $cartVal      = base64_encode($cart->GetXML());
         $signatureVal = base64_encode($cart->CalcHmacSha1($cart->GetXML()));
         
