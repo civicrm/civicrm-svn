@@ -43,7 +43,7 @@
        {$sidebarLeft}
     </td>
 {/if}
-    <td valign="top">
+    <td id="content-right" valign="top">
     {if $breadcrumb}
     <div class="breadcrumb">
       {foreach from=$breadcrumb item=crumb key=key}
