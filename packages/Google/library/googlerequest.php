@@ -716,7 +716,7 @@
       try {
         $b_e = new SimpleXMLElement($body_xml);
         if ($b_e and !empty($b_e->{'error-message'})) {
-          $body = implode(",\n", $b_e->{'error-message'}->getChildren());
+          $body = $b_e->{'error-message'};
         }
       } catch (Exception $e) {
         //$body = htmlentities($b_x);
