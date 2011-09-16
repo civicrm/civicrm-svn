@@ -276,7 +276,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                                                                 'membership_id' );
         }
         //record contribution for this membership
-        if ( CRM_Utils_Array::value( 'contribution_status_id', $params ) ) {
+        if ( CRM_Utils_Array::value( 'contribution_status_id', $params ) && !CRM_Utils_Array::value( 'relate_contribution_id', $params) ) {
             $contributionParams = array( );
             $config = CRM_Core_Config::singleton();
             $contributionParams['currency'  ] = $config->defaultCurrency;
@@ -310,6 +310,18 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             }
         }
         
+        if ( CRM_Utils_Array::value( 'relate_contribution_id', $params) ) {
+             require_once 'CRM/Member/DAO/MembershipPayment.php';
+             $mpDAO = new CRM_Member_DAO_MembershipPayment();    
+             $mpDAO->membership_id   = $membership->id;
+             $mpDAO->contribution_id = $params['relate_contribution_id'];
+             if ( !($mpDAO->find(true)) ) {
+                 CRM_Utils_Hook::pre( 'create', 'MembershipPayment', null, $mpDAO );
+                 $mpDAO->save();
+                 CRM_Utils_Hook::post( 'create', 'MembershipPayment', $mpDAO->id, $mpDAO );  
+             }              
+        }
+
         // add activity record only during create mode and renew mode
         // also add activity if status changed CRM-3984 and CRM-2521
         if ( !CRM_Utils_Array::value( 'membership', $ids ) || 
@@ -2174,5 +2186,23 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id AND 
             }
             CRM_Price_BAO_Set::addTo( 'civicrm_membership', $membershipId, $priceSetId );
         }
+    }
+    
+    /**                          
+     * retrieve the contribution record for the associated Membership id
+     * 
+     * @param  int  $membershipId  membsership id. 
+     * 
+     * @return contribution id
+     * @access public 
+     */ 
+    static function getMembershipContributionId( $membershipId ) 
+    {
+        $membesrshipPayment = new CRM_Member_DAO_MembershipPayment( );
+        $membesrshipPayment->membership_id  = $membershipId;
+        if ( $membesrshipPayment->find(true) ) {
+            return $membesrshipPayment->contribution_id;
+        }
+        return null;
     }
 }
