@@ -98,6 +98,10 @@
 <script type="text/javascript">
     cj( function( ) {
     	showHideContribution();
+	var showContribution = {/literal}"{$showContribution}"{literal};
+	if (showContribution) {
+	    cj("#contribution_type_id").show();
+	}
     	cj("#extends\\[3\\]").click(function(){
     	showHideContribution();	
 	});
@@ -105,7 +109,7 @@
     });
 
     function showHideContribution() {
-	if(cj("#extends\\[3\\]").attr('checked')) {
+	if(cj("#extends\\[3\\]").attr('checked') ) {
 	      cj("#contribution_type_id").show();
 	} else {
 	      cj("#contribution_type_id").hide();

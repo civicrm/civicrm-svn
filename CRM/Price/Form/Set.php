@@ -143,6 +143,7 @@ class CRM_Price_Form_Set extends CRM_Core_Form
         require_once 'CRM/Core/Config.php';
         require_once 'CRM/Core/Component.php';
         $config = CRM_Core_Config::singleton( );
+        $showContribution = false;
         $components = array( 'CiviEvent'      => array( 'title'  => ts( 'Event' ),  
                                                         'extend' => CRM_Core_Component::getComponentID( 'CiviEvent' ),
                                                         'tables' => array( 'civicrm_event', 
@@ -164,15 +165,20 @@ class CRM_Price_Form_Set extends CRM_Core_Form
             //if price set is used than freeze it.
             if ( !empty( $priceSetUsedTables ) ) {
                 foreach ( $compValues['tables'] as $table ) {
+
                     if ( in_array( $table, $priceSetUsedTables ) ) {
                         $option->freeze( );
+                        if ($compValues['title'] == 'Membership') {
+                            $showContribution = true;
+                        }
                         break;
                     }
                 }
             }
             $extends[] = $option;
         }
-
+        $this->assign( 'showContribution', $showContribution );
+        
         if ( CRM_Utils_System::isNull( $extends ) ) {
             $this->assign( 'extends', false );
         } else {
