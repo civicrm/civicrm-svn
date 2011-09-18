@@ -519,7 +519,7 @@ function _civicrm_api3_build_fields_array(&$dao, $unique = TRUE){
  */
 function _civicrm_api3_dao_to_array ($dao, $params = null,$uniqueFields = TRUE) {
     $result = array();
-    if ( !$dao->find() ) {
+    if (empty($dao) || !$dao->find() ) {
         return array();
     }
 
