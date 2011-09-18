@@ -34,7 +34,7 @@
 
 require_once 'CRM/Core/Payment/BaseIPN.php';
 
-define( 'GOOGLE_DEBUG_PP', 0 );
+define( 'GOOGLE_DEBUG_PP', 1 );
 
 class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
 
@@ -107,6 +107,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $ids['contact']          = self::retrieve( 'contactID'     , 'Integer', $privateData, true );
         $ids['contribution']     = self::retrieve( 'contributionID', 'Integer', $privateData, true );
 
+        $ids['contributionRecur'] = $ids['contributionPage'] = null;
         if ( $input['component'] == "event" ) {
             $ids['event']       = self::retrieve( 'eventID'      , 'Integer', $privateData, true );
             $ids['participant'] = self::retrieve( 'participantID', 'Integer', $privateData, true );
@@ -115,17 +116,55 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             $ids['membership']          = self::retrieve( 'membershipID'  , 'Integer', $privateData, false );
             $ids['related_contact']     = self::retrieve( 'relatedContactID'  , 'Integer', $privateData, false );
             $ids['onbehalf_dupe_alert'] = self::retrieve( 'onBehalfDupeAlert'  , 'Integer', $privateData, false );
+            $ids['contributionRecur']   = self::retrieve( 'contributionRecurID', 'Integer', $privateData, false );
         }
-        $ids['contributionRecur'] = $ids['contributionPage'] = null;
 
         if ( ! $this->validateData( $input, $ids, $objects ) ) {
             return false;
+        }
+
+        if ( $ids['contributionRecur'] ) {
+            if ( $objects['contributionRecur']->invoice_id == $dataRoot['serial-number'] ) {
+                CRM_Core_Error::debug_log_message( "This recurring payment has already been handled." );
+                return;
+            } else {
+                CRM_Core_Error::debug_log_message( "Recurring payment initiated." );
+                $recur =& $objects['contributionRecur'];
+                
+                // fix dates that already exist
+                $dates = array( 'create', 'start', 'end', 'cancel', 'modified' );
+                foreach ( $dates as $date ) {
+                    $name = "{$date}_date";
+                    if ( $recur->$name ) {
+                        $recur->$name = CRM_Utils_Date::isoToMysql( $recur->$name );
+                    }
+                }
+                $recur->invoice_id = $dataRoot['serial-number'];
+                $recur->save( );
+
+                if ( $objects['contribution']->contribution_status_id == 1 ) {
+                    // create a contribution and then get it processed
+                    $contribution = new CRM_Contribute_DAO_Contribution( );
+                    $contribution->contact_id            = $ids['contact'];
+                    $contribution->contribution_type_id  = $objects['contributionType']->id;
+                    $contribution->contribution_page_id  = $ids['contributionPage'];
+                    $contribution->contribution_recur_id = $ids['contributionRecur'];
+                    $contribution->receive_date          = date( 'YmdHis' );
+                    $contribution->currency              = $objects['contribution']->currency;
+                    $contribution->payment_instrument_id = $objects['contribution']->payment_instrument_id;
+                    $contribution->amount_level          = $objects['contribution']->amount_level;
+                    $contribution->address_id            = $objects['contribution']->address_id;
+                    $contribution->invoice_id            = $input['invoice'];
+                    $objects['contribution'] = $contribution;
+                }
+            }
         }
 
         // make sure the invoice is valid and matches what we have in the contribution record
         $input['invoice']    =  $privateData['invoiceID'];
         $input['newInvoice'] =  $dataRoot['google-order-number']['VALUE'];
         $contribution        =& $objects['contribution'];
+
         if ( $contribution->invoice_id != $input['invoice'] ) {
             CRM_Core_Error::debug_log_message( "Invoice values dont match between database and IPN request" );
             echo "Failure: Invoice values dont match between database and IPN request<p>";
@@ -179,6 +218,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         // CRM_Core_Error::debug_var( 'c', $contribution );
         $contribution->save( );
         $transaction->commit( );
+
         return true;
     }
     
@@ -258,6 +298,33 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $input['is_test']    = $contribution->is_test;
 
         $this->completeTransaction( $input, $ids, $objects, $transaction );
+
+        if ( $ids['contributionRecur'] ) {
+            $recur =& $objects['contributionRecur'];
+            $contributionCount = CRM_Core_DAO::singleValueQuery( "SELECT count(*) FROM civicrm_contribution WHERE contribution_recur_id = {$ids['contributionRecur']}" );
+            if ( $contributionCount >= $recur->installments ) {
+                require_once 'CRM/Contribute/PseudoConstant.php';
+                $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
+
+                $recur->end_date               = $now;
+                $recur->modified_date          = $now;
+                $recur->contribution_status_id = array_search( 'Completed', $contributionStatus );
+                $recur->save( );
+
+                $autoRenewMembership = false;
+                if ( $recur->id && 
+                     isset( $ids['membership'] ) && $ids['membership'] ) {
+                    $autoRenewMembership = true;
+                }
+                
+                //send recurring Notification email for user
+                CRM_Contribute_BAO_ContributionPage::recurringNofify( CRM_Core_Payment::RECURRING_PAYMENT_END, 
+                                                                      $ids['contact'], 
+                                                                      $ids['contributionPage'], 
+                                                                      $recur,
+                                                                      $autoRenewMembership );
+            }
+        }
     }
 
     /**  
