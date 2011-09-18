@@ -60,55 +60,59 @@ function contact_get_expectedresult(){
               'version' => 3,
               'count' => 10,
               'values' => array( 
-                  '12-0' => array( 
+                  '0' => array( 
                       'entity_id' => '1',
-                      'entity_table' => 'Contact',
-                      'testGetIndividualWithChainedArraysAndMultipleCustom' => 'value 4',
+                      'latest' => 'value 4',
+                      'id' => '12',
+                      '0' => 'value 4',
                     ),
-                  '13-1' => array( 
-                      'entity_id' => '1',
+                  '1' => array( 
                       'entity_table' => 'Contact',
-                      'Cust_Field' => 'value 2',
                     ),
-                  '14-1' => array( 
+                  '2' => array( 
                       'entity_id' => '1',
-                      'entity_table' => 'Contact',
-                      'field_2' => 'warm beer',
+                      'latest' => 'value 3',
+                      'id' => '13',
+                      '1' => 'value 2',
+                      '2' => 'value 3',
                     ),
-                  '15-1' => array( 
-                      'entity_id' => '1',
+                  '3' => array( 
                       'entity_table' => 'Contact',
-                      'field_3' => '',
                     ),
-                  '13-2' => array( 
+                  '4' => array( 
                       'entity_id' => '1',
-                      'entity_table' => 'Contact',
-                      'Cust_Field' => 'value 3',
+                      'latest' => '',
+                      'id' => '14',
+                      '1' => 'warm beer',
+                      '2' => '',
                     ),
-                  '14-2' => array( 
+                  '5' => array( 
                       'entity_id' => '1',
-                      'entity_table' => 'Contact',
-                      'field_2' => '',
+                      'latest' => '',
+                      'id' => '15',
+                      '1' => '',
+                      '2' => '',
                     ),
-                  '15-2' => array( 
-                      'entity_id' => '1',
+                  '6' => array( 
                       'entity_table' => 'Contact',
-                      'field_3' => '',
                     ),
-                  '16-1' => array( 
+                  '7' => array( 
                       'entity_id' => '1',
-                      'entity_table' => 'Contact',
-                      'Cust_Field' => '',
+                      'latest' => '',
+                      'id' => '16',
+                      '1' => '',
                     ),
-                  '17-1' => array( 
+                  '8' => array( 
                       'entity_id' => '1',
-                      'entity_table' => 'Contact',
-                      'field_2' => 'vegemite',
+                      'latest' => 'vegemite',
+                      'id' => '17',
+                      '1' => 'vegemite',
                     ),
-                  '18-1' => array( 
+                  '9' => array( 
                       'entity_id' => '1',
-                      'entity_table' => 'Contact',
-                      'field_3' => '',
+                      'latest' => '',
+                      'id' => '18',
+                      '1' => '',
                     ),
                 ),
             ),

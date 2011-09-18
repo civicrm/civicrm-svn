@@ -7,7 +7,7 @@ class api_v3_CustomValueTest extends CiviUnitTestCase
     protected $_apiversion;
     protected $individual;
     protected $params;
-    protected $id;
+    protected $ids;
     public $DBResetRequired = false;  
     function setUp() 
     {
@@ -18,7 +18,7 @@ class api_v3_CustomValueTest extends CiviUnitTestCase
         											'entity_id' => $this->individual);
         $this->ids['single'] = $this->entityCustomGroupWithSingleFieldCreate( 'mySingleField','Contacts');
         $this->ids['multi'] = $this->CustomGroupMultipleCreateWithFields();
-
+        $this->ids['multi2'] = $this->CustomGroupMultipleCreateWithFields(array('title' => 'group2'));
     }
 
     function tearDown() 
@@ -29,6 +29,9 @@ class api_v3_CustomValueTest extends CiviUnitTestCase
         $this->customFieldDelete($this->ids['multi']['custom_field_id'][0]);
         $this->customFieldDelete($this->ids['multi']['custom_field_id'][1]);
         $this->customGroupDelete($this->ids['multi']['custom_group_id']); 
+        $this->customFieldDelete($this->ids['multi2']['custom_field_id'][0]);
+        $this->customFieldDelete($this->ids['multi2']['custom_field_id'][1]);
+        $this->customGroupDelete($this->ids['multi2']['custom_group_id']); 
     }
 
    public function testCreateCustomValue () {
@@ -39,18 +42,64 @@ class api_v3_CustomValueTest extends CiviUnitTestCase
         $this->assertAPISuccess($result, 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
         $result = civicrm_api('custom_value','get',$params);
-    }
-/*
-   public function testGetCustomValue () {
-     
-        $result = civicrm_api('custom_value','get',$this->params);
-        $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
-        $this->assertAPISuccess($result, 'In line ' . __LINE__ );
-        $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
-        $this->assertNotNull( $result['values'][$result['id']]['id'], 'In line ' . __LINE__ );           
-        $this->id = $result['id']; 
+        
     }
 
+   public function testGetMultipleCustomValues () {
+
+    $description = "/*this demonstrates the use of CustomValue get";
+
+    $params = array(
+                        'first_name'   => 'abc3',
+                        'last_name'    => 'xyz3',
+                        'contact_type' => 'Individual',
+                        'email'        => 'man3@yahoo.com',
+                        'version'			=>  $this->_apiversion,
+
+                         'custom_' . $this->ids['single']['custom_field_id'] => "value 1",
+                         'custom_' . $this->ids['multi']['custom_field_id'][0] => "value 2",    
+                         'custom_' . $this->ids['multi']['custom_field_id'][1] => "warm beer",
+                         'custom_' . $this->ids['multi']['custom_field_id'][2] => "fl* w*",
+                         'custom_' . $this->ids['multi2']['custom_field_id'][2]  => "vegemite",
+                             );
+ 
+
+    $result = civicrm_api('Contact','create',$params);
+    $contact_id = $result['id'];
+    $result = civicrm_api('Contact','create',
+                            array('contact_type' => 'Individual',
+                             'id' => $contact_id, 
+                             'version' => 3, 
+                             'custom_' . $this->ids['multi']['custom_field_id'][0] => "value 3",
+                             'custom_' . $this->ids['multi2']['custom_field_id'][0] => "coffee",
+                            'custom_' . $this->ids['multi2']['custom_field_id'][1] => "value 4",));
+
+    $params = array('id' => $result['id'], 'version' => 3, 
+    												'entity_id' => $result['id'],
+                      );
+                    
+    $result = civicrm_api('CustomValue','Get',$params);
+
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description); 
+    $params['format.field_names'] = 1;
+    $resultformatted = civicrm_api('CustomValue','Get',$params);
+    $this->documentMe($params,$resultformatted,__FUNCTION__,__FILE__,"utilises field names",'formatFieldName'); 
+    // delete the contact
+    civicrm_api('contact', 'delete' ,array('version' => 1, 'id' => $contact_id) );
+
+    $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
+    . " error message: " . CRM_Utils_Array::value('error_message', $result) );
+    $this->assertEquals('coffee',$result['values'][$this->ids['multi2']['custom_field_id'][0]]['2'], "In line " . __LINE__);
+    $this->assertEquals('coffee',$result['values'][$this->ids['multi2']['custom_field_id'][0]]['latest'], "In line " . __LINE__);
+    $this->assertEquals($this->ids['multi2']['custom_field_id'][0],$result['values'][$this->ids['multi2']['custom_field_id'][0]]['id'], "In line " . __LINE__);    
+    $this->assertEquals('',$result['values'][$this->ids['multi2']['custom_field_id'][0]]['1'], "In line " . __LINE__);  
+    $this->assertEquals($contact_id,$result['values'][$this->ids['multi2']['custom_field_id'][0]]['entity_id'], "In line " . __LINE__);  
+    $this->assertEquals('value 1',$result['values'][$this->ids['single']['custom_field_id']]['0'], "In line " . __LINE__);  
+    $this->assertEquals('value 1',$result['values'][$this->ids['single']['custom_field_id']]['latest'], "In line " . __LINE__);  
+    $this->assertEquals('value 1',$resultformatted['values']['mySingleField']['latest'], "In line " . __LINE__);      
+
+    }
+/*
    public function testDeleteCustomValue () {
         $entity = civicrm_api('custom_value','get',$this->params);   
         $result = civicrm_api('custom_value','delete',array('version' =>3,'id' => $entity['id']));

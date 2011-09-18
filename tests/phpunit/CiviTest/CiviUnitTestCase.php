@@ -1477,7 +1477,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
           $entity = 'Contact';
         }
         $customGroup = $this->CustomGroupCreate($entity,$function);
-      
         $customField = $this->customFieldCreate( $customGroup['id'], $function ) ;
         CRM_Core_PseudoConstant::flush ( 'customGroup' );
         CRM_Core_BAO_CustomField::getTableColumnGroup ( $customField['id'], True );
