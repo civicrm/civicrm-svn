@@ -122,7 +122,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
      * @dataProvider entities
      */
     public function testGetFields($Entity){
-      if(in_array($Entity , $this->deprecatedAPI) || $Entity == 'Entity'){
+      if(in_array($Entity , $this->deprecatedAPI) || $Entity == 'Entity' || $Entity == 'CustomValue' || $Entity == 'MailingGroup'){
         return;
       }
       
