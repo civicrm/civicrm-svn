@@ -1,4 +1,5 @@
-<?
+<?php
+
 /**
  * Retrieve one or more phones 
  *
@@ -22,4 +23,4 @@ function civicrm_api3_phone_get($params)
 
 
 }
-?>
+
