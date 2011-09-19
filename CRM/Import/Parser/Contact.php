@@ -824,7 +824,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     }
                     
                     //fixed for CRM-4148
-                    if ( $params[$key]['id'] ) {
+                    if ( CRM_Utils_Array::value( 'id', $params[$key] ) ) {
                         $contact           = array( 'contact_id' => $params[$key]['id'] );
                         $defaults          = array( );
                         $relatedNewContact = CRM_Contact_BAO_Contact::retrieve( $contact, $defaults );
