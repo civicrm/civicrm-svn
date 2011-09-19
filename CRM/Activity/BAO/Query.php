@@ -325,20 +325,6 @@ class CRM_Activity_BAO_Query
                                      'civicrm_activity', 'activity_date', 'activity_date_time', ts('Activity Date') );
 
             break;
-        case 'activity_taglist':
-            $taglist = $value;
-            $value = array( );
-            foreach( $taglist as $val ) {
-                if ( $val ) {
-                    $val = explode(',', $val );
-                    foreach( $val as $tId ) {
-                        if ( is_numeric( $tId ) ) {
-                            $value[$tId] = 1;
-                        }
-                    }
-                }
-            } 
-
         case 'activity_id':
             if ( empty($value) ) {
                 break;
@@ -355,6 +341,20 @@ class CRM_Activity_BAO_Query
             $query->_where[$grouping][] = "civicrm_activity.id IN (". implode( ",", $value) .")";
             $query->_qill[$grouping ][] = ts( 'Activity Id(s)  %1', array(1 => implode($value) ) );             
             break;
+
+        case 'activity_taglist':
+            $taglist = $value;
+            $value = array( );
+            foreach( $taglist as $val ) {
+                if ( $val ) {
+                    $val = explode(',', $val );
+                    foreach( $val as $tId ) {
+                        if ( is_numeric( $tId ) ) {
+                            $value[$tId] = 1;
+                        }
+                    }
+                }
+            } 
             
         case 'activity_tags':
             require_once'CRM/Core/BAO/Tag.php';
