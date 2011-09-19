@@ -536,24 +536,10 @@ function _civicrm_core_data (&$data, $enabled) {
     $objType = 'Individual';
     $fields = CRM_Contact_BAO_Contact::exportableFields( $objType );
 
-    $skipFields = array( 'id'                => 1,
-                         'sort_name'         => 1,
-                         'display_name'      => 1,
-                         'gender'            => 1,
-                         'first_name'        => 1,
-                         'middle_name'       => 1,
-                         'last_name'         => 1,
-                         'is_deceased'       => 1,
-                         'do_not_email'      => 1,
-                         'do_not_phone'      => 1,
-                         'do_not_mail'       => 1,
-                         'do_not_trade'      => 1,
-                         'is_opt_out'        => 1,
-                         'contact_type'      => 1,
-                         'contact_sub_type'  => 1,
-                         'current_employer'  => 1,
+    $skipFields = array( 'contact_is_deleted'  => 1,
+                         'current_employer_id'  => 1,
                          );
-    civicrm_views_add_fields( $fields, $data['civicrm_contact'], $skipFields, 'civicrm_contact' );
+    civicrm_views_add_fields( $fields, $data['civicrm_contact'], 'civicrm_contact', $skipFields );
 
 
     // CHILLING OUT AT THE CIVICRM_ADDRESS TABLE

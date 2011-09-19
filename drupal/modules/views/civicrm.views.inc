@@ -123,23 +123,24 @@ function civicrm_views_href( $text, $path, $query ) {
 }
 
 // Creates new View fields from CiviCRM fields
-function civicrm_views_add_fields( &$fields, &$data, &$skipFields, $tableName ) {
+function civicrm_views_add_fields( &$fields, &$data, $tableName, &$skipFields = NULL ) {
     foreach ( $fields as $name => $value ) {
+        // Only add fields not in $data or $skipFields 
         if ( isset($value['custom_field_id']) ||
              CRM_Utils_Array::value( $name, $skipFields ) ||
+             CRM_Utils_Array::value( $name, $data ) ||
               ( isset($value['where']) &&
                 substr( $value['where'], 0, strlen( $tableName ) + 1 ) != "{$tableName}." )
             ){
              continue;
-         }
-
+        }
         $type = CRM_Utils_Array::value( 'type', $value, 'String' );
-        $handler = civicrm_get_field_handler  ( $type );
+        $field_handler = civicrm_get_field_handler  ( $type );
         $filter_handler = civicrm_get_filter_handler( $type );
         $data[$value['name']] = array(
                                       'title' => $value['title'],
                                       'help'  => $value['title'],
-                                      'field' => $handler,
+                                      'field' => $field_handler,
                                       'sort'  => array(
                                                        'handler' => civicrm_get_sort_handler   ( $type ),
                                                        ),
