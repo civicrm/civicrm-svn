@@ -67,6 +67,7 @@ class CRM_Event_Page_ICalendar extends CRM_Core_Page
         require_once "CRM/Event/BAO/Event.php";
         $info = CRM_Event_BAO_Event::getCompleteInfo( $start, $type, $id, $end );
         $this->assign( 'events', $info );
+		$this->assign( 'timezone', @date_default_timezone_get() );
         
         // Send data to the correct template for formatting (iCal vs. gData)
         $template = CRM_Core_Smarty::singleton( );
@@ -81,6 +82,7 @@ class CRM_Event_Page_ICalendar extends CRM_Core_Page
             return parent::run( );
         } else {
             $calendar = $template->fetch( 'CRM/Core/Calendar/ICal.tpl' );
+			$calendar = preg_replace('/(?<!\r)\n/',"\r\n",$calendar);
         }
 
         // Push output for feed or download

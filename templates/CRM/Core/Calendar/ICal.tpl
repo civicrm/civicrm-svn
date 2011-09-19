@@ -26,6 +26,7 @@
 BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//CiviCRM//NONSGML CiviEvent iCal//EN
+X-WR-TIMEZONE:{$timezone}
 METHOD:PUBLISH
 {foreach from=$events key=uid item=event}
 BEGIN:VEVENT

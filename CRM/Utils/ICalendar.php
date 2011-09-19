@@ -59,7 +59,7 @@ class CRM_Utils_ICalendar
         $text = str_replace("\\", "\\\\", $text);
         $text = str_replace(",", "\,", $text);
         $text = str_replace(";", "\;", $text);
-        $text = str_replace("\n", "\\n ", $text);
+        $text = str_replace(array("\r\n","\n","\r"), "\\n ", $text);
         $text = implode("\n ", str_split($text, 50));
         return $text;
     }
@@ -119,6 +119,9 @@ class CRM_Utils_ICalendar
         if ( $content_type == 'text/calendar') {
             header('Content-Length: ' . strlen($calendar));
             header("Content-Disposition: $disposition; filename=\"$fileName\"");
+			header("Pragma: no-cache");
+			header("Expires: 0");
+			header("Cache-Control: no-cache, must-revalidate");
         }
         
         echo $calendar;
