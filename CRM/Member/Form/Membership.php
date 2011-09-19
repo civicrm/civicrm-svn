@@ -171,8 +171,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         require_once 'CRM/Price/BAO/Set.php';
         $this->_lineItems = array( );
         if ( $this->_id  && 
-             $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_membership', $this->_id ) ) {
-            $this->_priceSetId = $priceSetId;
+             CRM_Price_BAO_Set::getFor( 'civicrm_membership', $this->_id ) ) {
             require_once 'CRM/Price/BAO/LineItem.php';
             $this->_lineItems[] = CRM_Price_BAO_LineItem::getLineItems( $this->_id, 'membership' );
         }
@@ -195,6 +194,10 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         }
         
         $defaults = array( );
+        if ( $this->_priceSetId ) {
+            return $defaults;
+        }
+
         $defaults =& parent::setDefaultValues( );
         
         //setting default join date and receive date
@@ -707,8 +710,10 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $self->_memTypeSelected[] = $params['membership_type_id'][1];                       
         }
 
-        // FIX ME 
         // Return error if empty $self->_memTypeSelected
+        if ( $priceSetId && empty($errors) && empty($self->_memTypeSelected) ) {
+            $errors['_qf_default'] = ts( 'Select at least one option associate with Membership Type.' );  
+        }
 
         //check if contact is selected in standalone mode
         if ( isset( $params['contact_select_id'][1] ) && !$params['contact_select_id'][1] ) {
@@ -942,7 +947,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         if ( !CRM_Utils_Array::value( 'is_override', $params ) ) {
             $params['exclude_is_admin'] = true;
         }
-        $params['membership_type_id'] = $formValues['membership_type_id'][1];
         
         // process date params to mysql date format.
         $dateTypes = array( 'join_date'  => 'joinDate',
@@ -1038,7 +1042,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
 
         $createdMemberships =  array( );
         if ( $this->_mode ) {
-            // FIX ME: memprice need to check/fix for $this->_mode
 
             if( empty( $formValues['total_amount'] ) ) { 
                 // if total amount not provided minimum for membership type is used
@@ -1048,9 +1051,17 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             } else {
                 $params['total_amount'] = $formValues['total_amount']  ;
             }
-            $params['contribution_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
-                                                                           $params['membership_type_id'],
-                                                                           'contribution_type_id' );
+            
+            if ( $priceSetId ) {
+                $params['contribution_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set',
+                                                                               $priceSetId,
+                                                                               'contribution_type_id' );
+            } else {
+                $params['contribution_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
+                                                                               current($this->_memTypeSelected),
+                                                                               'contribution_type_id' );
+            }
+
             require_once 'CRM/Core/BAO/PaymentProcessor.php';
             $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $formValues['payment_processor_id'],
                                                                                   $this->_mode );
@@ -1158,7 +1169,13 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $memberDates = array( 'join_date'  => 'joinDate',
                                       'start_date' => 'startDate',
                                       'end_date'   => 'endDate' );
-                foreach ( $memberDates as $dp => $dv ) $params[$dp] = $$dv = null;
+                
+                foreach ($memberDates as $dp => $dv) {
+                    $$dv = null;
+                    foreach( $this->_memTypeSelected as $memType ) {  
+                        $membershipTypeValues[$memType][$dv] = null;
+                    }
+                }
             }
             
             $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
@@ -1211,7 +1228,19 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $params['action'] = $this->_action;
 
             //create membership record.
-            $membership =& CRM_Member_BAO_Membership::create( $params, $ids );
+            $count = 0;
+            foreach( $this->_memTypeSelected as $memType ) {
+                if ( $count && 
+                     ($relateContribution = CRM_Member_BAO_Membership::getMembershipContributionId($membership->id)) ) {
+                    $membershipTypeValues[$memType]['relate_contribution_id'] = $relateContribution;
+                }
+
+                $membershipParams = array_merge($params, $membershipTypeValues[$memType]);
+                $membership = CRM_Member_BAO_Membership::create($membershipParams, $ids);
+
+                $createdMemberships[$memType] = $membership;
+                $count++;
+            }
             
             if ( !CRM_Utils_Array::value( 'is_recur', $params ) ) {
                 $contribution = new CRM_Contribute_BAO_Contribution();
@@ -1286,7 +1315,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                         $membershipTypeValues[$memType]['relate_contribution_id'] = $relateContribution;
                     }
                     $membershipParams = array_merge($params, $membershipTypeValues[$memType]);
-                    $membership =& CRM_Member_BAO_Membership::create($membershipParams, $ids);
+                    $membership = CRM_Member_BAO_Membership::create($membershipParams, $ids);
                     $createdMemberships[$memType] = $membership;
                     $count++;
                 }

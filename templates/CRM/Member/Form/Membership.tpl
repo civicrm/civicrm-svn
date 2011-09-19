@@ -107,7 +107,7 @@
                     <span id='totalAmountORPriceSet'> {ts}OR{/ts}</span>
         	    <span id='selectPriceSet'>{$form.price_set_id.html}</span>
                     {if $buildPriceSet && $priceSet}
-                      <div id="priceset">{include file="CRM/Price/Form/PriceSet.tpl" extends="Membership"}</div>
+                      <div id="priceset"><br/>{include file="CRM/Price/Form/PriceSet.tpl" extends="Membership"}</div>
                     {else}
                       <div id="priceset" class="hiddenElement"></div>
                     {/if}
