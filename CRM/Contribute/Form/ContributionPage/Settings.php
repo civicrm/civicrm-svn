@@ -232,11 +232,12 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
 
         require_once 'CRM/Contribute/BAO/ContributionPage.php';
         $dao =& CRM_Contribute_BAO_ContributionPage::create( $params );
-
+        
+        // make entry in UF join table for onbehalf of org profile
         $ufJoinParams = array( 'is_active'    => 1, 
                                'module'       => 'OnBehalf',
                                'entity_table' => 'civicrm_contribution_page', 
-                               'entity_id'    => $this->_id );
+                               'entity_id'    => $dao->id );
 
         require_once 'CRM/Core/BAO/UFJoin.php';
         // first delete all past entries
