@@ -2306,8 +2306,8 @@ span.icon {
     color:#333;
 }
 
-.light-icon, .ui-widget-content .light-icon {background-image:url("../packages/jquery/jquery-ui-1.8.11/css/custom-theme/images/ui-icons_3e3e3e_256x240.png")}
-.dark-icon {background-image:url("../packages/jquery/jquery-ui-1.8.11/css/custom-theme/images/ui-icons_222222_256x240.png")}
+.light-icon, .ui-widget-content .light-icon {background-image:url("../packages/jquery/jquery-ui-1.8.11/css/smoothness/images/ui-icons_454545_256x240.png")}
+.dark-icon {background-image:url("../packages/jquery/jquery-ui-1.8.11/css/smoothness/images/ui-icons_888888_256x240.png")}
 .red-icon {background-image:url("../i/icons/jquery-ui-8A1F11.png")}
 
 .edit-icon { background-position: -66px -114px;}
@@ -2318,7 +2318,7 @@ span.icon {
 .delete-icon { background-position: -179px -99px;}
 .details-icon { background-position: -129px -112px;}
 .button:hover .delete-icon {
-    background-image:url("../packages/jquery/jquery-ui-1.8.11/css/custom-theme/images/ui-icons_8d2c27_256x240.png")!important;
+    background-image:url("../packages/jquery/jquery-ui-1.8.11/css/smoothness/images/ui-icons_cd0a0a_256x240.png")!important;
 }
 
 .restore-icon { background-position:0px -66px;background-image:url("../i/icons/jquery-ui-91CE00.png"); }
