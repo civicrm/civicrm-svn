@@ -412,14 +412,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                     }
                     if ( $form->_useForMember && $fields['html_type'] == 'CheckBox' ) {
                         if ( ! empty( $fields['membership_type_id'][$index] ) ) {
-                            $duplicateType =  CRM_Utils_Array::key( $fields['membership_type_id'][$index],
-                                                                    $fields['membership_type_id'] );
-                            
-                            if( ( ! ( $duplicateType === false ) ) && 
-                                ( ! ( $duplicateType == $index ) ) ) {
-                                $errors["membership_type_id[{$index}]"] = ts( 'Duplicate Membership type' );
-                                $_flagOption = 1; 
-                            }
+                            $memTypesIDS[] = $fields['membership_type_id'][$index];
                         }
                     }
 
@@ -479,6 +472,15 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                     
                     $_flagOption = $_emptyRow = 0;
                    
+                }
+                if( !empty( $memTypesIDS )){
+                    $ids = implode(',', $memTypesIDS);
+                    $count = CRM_Price_BAO_Set::getMembershipCount($ids);
+                    foreach( $count as $id => $occurance ) {
+                        if ($occurance > 1) {
+                            $errors['_qf_default'] = ts( 'Select at most one option from each Membership Type.' );
+                        }
+                    }
                 }
                 $_showHide->addToTemplate();    
             
