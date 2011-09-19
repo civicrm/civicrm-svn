@@ -123,6 +123,9 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             return false;
         }
 
+        $input['invoice']    =  $privateData['invoiceID'];
+        $input['newInvoice'] =  $dataRoot['google-order-number']['VALUE'];
+
         if ( $ids['contributionRecur'] ) {
             if ( $objects['contributionRecur']->invoice_id == $dataRoot['serial-number'] ) {
                 CRM_Core_Error::debug_log_message( "This recurring payment has already been handled." );
@@ -130,7 +133,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             } else {
                 CRM_Core_Error::debug_log_message( "Recurring payment initiated." );
                 $recur =& $objects['contributionRecur'];
-                
+
                 // fix dates that already exist
                 $dates = array( 'create', 'start', 'end', 'cancel', 'modified' );
                 foreach ( $dates as $date ) {
@@ -147,7 +150,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
                     $contribution = new CRM_Contribute_DAO_Contribution( );
                     $contribution->contact_id            = $ids['contact'];
                     $contribution->contribution_type_id  = $objects['contributionType']->id;
-                    $contribution->contribution_page_id  = $ids['contributionPage'];
+                    $contribution->contribution_page_id  = $objects['contribution']->contribution_page_id;
                     $contribution->contribution_recur_id = $ids['contributionRecur'];
                     $contribution->receive_date          = date( 'YmdHis' );
                     $contribution->currency              = $objects['contribution']->currency;
@@ -155,15 +158,15 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
                     $contribution->amount_level          = $objects['contribution']->amount_level;
                     $contribution->address_id            = $objects['contribution']->address_id;
                     $contribution->invoice_id            = $input['invoice'];
+                    $contribution->total_amount          = $dataRoot['order-total']['VALUE'];
                     $objects['contribution'] = $contribution;
+                    $input['newInvoice']     = $dataRoot['serial-number'];
                 }
             }
         }
 
         // make sure the invoice is valid and matches what we have in the contribution record
-        $input['invoice']    =  $privateData['invoiceID'];
-        $input['newInvoice'] =  $dataRoot['google-order-number']['VALUE'];
-        $contribution        =& $objects['contribution'];
+        $contribution =& $objects['contribution'];
 
         if ( $contribution->invoice_id != $input['invoice'] ) {
             CRM_Core_Error::debug_log_message( "Invoice values dont match between database and IPN request" );
@@ -250,9 +253,15 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
 
         // Google sends the charged notification twice.
         // So to make sure, code is not executed again.
-        if ( $contribution->contribution_status_id == 1 ) {
+        if ( !$contribution->contribution_recur_id && $contribution->contribution_status_id == 1 ) {
             CRM_Core_Error::debug_log_message( "Contribution already handled (ContributionID = $contribution)." );
             return;
+        }
+        if ( $contribution->contribution_recur_id ) {
+            $contribution = new CRM_Contribute_DAO_Contribution( );
+            $contribution->invoice_id = $dataRoot['serial-number'];
+            $contribution->find( true );
+            $orderNo = $dataRoot['serial-number'];
         }
         
         $objects['contribution'] =& $contribution;
@@ -409,9 +418,8 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             $isTest = $contribution->is_test;
         }
 
-        if ($contribution->contribution_status_id == 1) {
+        if ( !$privateData['contributionRecurID'] && $contribution->contribution_status_id == 1 ) {
             //contribution already handled.
-            CRM_Core_Error::debug_log_message( "Contribution already handled (ContributionID = {$contribution->id})." );
             return;
         }
 
@@ -497,6 +505,9 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
 
         // lets retrieve the private-data & order-no
         $privateData = $data[$root]['shopping-cart']['merchant-private-data']['VALUE'];
+        if ( !$privateData ) {
+            $privateData = $data[$root]['order-summary']['shopping-cart']['merchant-private-data']['VALUE'];
+        }
         $privateData = $privateData ? self::stringToArray($privateData) : '';
         $orderNo     = $data[$root]['google-order-number']['VALUE'];
         $serial      = $data[$root]['serial-number'];
