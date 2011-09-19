@@ -79,7 +79,7 @@ class CRM_Core_Permission_Drupal {
             self::$_viewPermissionedGroups = self::$_editPermissionedGroups = array( );
         }
 
-        $groupKey = $groupType ? $groupType : 'null';
+        $groupKey = $groupType ? $groupType : 'all';
 
         if ( ! isset( self::$_viewPermissionedGroups[$groupKey] ) ) {
             self::$_viewPermissionedGroups[$groupKey] = self::$_editPermissionedGroups[$groupKey] = array( );
@@ -134,24 +134,27 @@ class CRM_Core_Permission_Drupal {
      */
     public static function groupClause( $type, &$tables, &$whereTables ) {
         if ( ! isset( self::$_viewPermissionedGroups ) ) {
-            self::group($type );
+            self::group( );
         }
 
+        $groupKey = 'all'; // we basically get all the groups here
         if ( $type == CRM_Core_Permission::EDIT ) {
             if ( self::$_editAdminUser ) {
                 $clause = ' ( 1 ) ';
-            } else if ( empty( self::$_editPermissionedGroups ) ) {
+            } else if ( empty( self::$_editPermissionedGroups[$groupKey] ) ) {
                 $clause = ' ( 0 ) ';
             } else {
                 $clauses = array( );
-                $groups = implode( ', ', self::$_editPermissionedGroups );
-                $clauses[] = ' ( civicrm_group_contact.group_id IN ( ' . implode( ', ', array_keys( self::$_editPermissionedGroups ) ) .
+                $groups = implode( ', ', self::$_editPermissionedGroups[$groupKey] );
+                $clauses[] = 
+                    ' ( civicrm_group_contact.group_id IN ( ' .
+                    implode( ', ', array_keys( self::$_editPermissionedGroups[$groupKey] ) ) .
                     " ) AND civicrm_group_contact.status = 'Added' ) ";
                 $tables['civicrm_group_contact'] = 1;
                 $whereTables['civicrm_group_contact'] = 1;
                 
                 // foreach group that is potentially a saved search, add the saved search clause
-                foreach ( array_keys( self::$_editPermissionedGroups ) as $id ) {
+                foreach ( array_keys( self::$_editPermissionedGroups[$groupKey] ) as $id ) {
                     $group     = new CRM_Contact_DAO_Group( );
                     $group->id = $id;
                     if ( $group->find( true ) && $group->saved_search_id ) {
@@ -169,21 +172,21 @@ class CRM_Core_Permission_Drupal {
         } else {
             if ( self::$_viewAdminUser ) {
                 $clause = ' ( 1 ) ';
-            } else if ( empty( self::$_viewPermissionedGroups ) ) {
+            } else if ( empty( self::$_viewPermissionedGroups[$groupKey] ) ) {
                 $clause = ' ( 0 ) ';
             } else {
                 $clauses = array( );
-                $groups = implode( ', ', self::$_viewPermissionedGroups );
+                $groups = implode( ', ', self::$_viewPermissionedGroups[$groupKey] );
                 $clauses[] = 
                     ' ( civicrm_group_contact.group_id IN (' .
-                    implode( ', ', array_keys( self::$_viewPermissionedGroups ) ) .
+                    implode( ', ', array_keys( self::$_viewPermissionedGroups[$groupKey] ) ) .
                     " ) AND civicrm_group_contact.status = 'Added' ) ";
                 $tables['civicrm_group_contact'] = 1;
                 $whereTables['civicrm_group_contact'] = 1;
 
         
                 // foreach group that is potentially a saved search, add the saved search clause
-                foreach ( array_keys( self::$_viewPermissionedGroups ) as $id ) {
+                foreach ( array_keys( self::$_viewPermissionedGroups[$groupKey] ) as $id ) {
                     $group     = new CRM_Contact_DAO_Group( );
                     $group->id = $id;
                     if ( $group->find( true ) && $group->saved_search_id ) {
