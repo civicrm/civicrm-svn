@@ -503,6 +503,11 @@ function &civicrm_contact_search( &$params )
         }
     }
 
+    // explicitly suppress all deleted contacts
+    // this is fixed in api v3
+    // CRM-8809
+    $inputParams['contact_is_deleted'] = 0;
+
     if ( empty( $returnProperties ) ) {
         $returnProperties = null;
     }
