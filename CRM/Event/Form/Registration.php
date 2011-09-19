@@ -64,7 +64,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
      * @var int
      * @protected
      */
-    protected $_participantIDS;
+    protected $_participantIDS = null;
     
     /**
      * the id of the participant we are proceessing
@@ -215,7 +215,8 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         if ( !is_array( $this->_lineItemParticipantsCount ) ) $this->_lineItemParticipantsCount = array( );
         $this->_availableRegistrations = $this->get( 'availableRegistrations' );
         $this->_totalParticipantCount  = $this->get( 'totalParticipantcount' );
-        
+        $this->_participantIDS         = $this->get( 'participantIDs' );
+
         //check if participant allow to walk registration wizard.
         $this->_allowConfirmation = $this->get( 'allowConfirmation' );
         
@@ -591,7 +592,11 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             $this->assign( 'pay_later_text'   , $this->_values['event']['pay_later_text']    );
             $this->assign( 'pay_later_receipt', $this->_values['event']['pay_later_receipt'] );
         }
-        
+
+        // also assign all participantIDs to the template
+        // useful in generating confirmation numbers if needed
+        $this->assign( 'participantIDs',
+                       $this->_participantIDS );
     }
 
     /**  
@@ -767,6 +772,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             $this->set( 'registerByID', $participant->id );
             $this->set( 'primaryContactId', $contactID );
         }
+
         require_once 'CRM/Core/BAO/CustomValueTable.php';
         CRM_Core_BAO_CustomValueTable::postProcess( $this->_params,
                                                     CRM_Core_DAO::$_nullArray,
@@ -776,9 +782,10 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
 
         $createPayment = ( $this->_params['amount'] != 0 ) ? true : false;
         // force to create zero amount payment, CRM-5095
-        if ( !$createPayment && $contribution->id
-             && ($this->_params['amount'] == 0) 
-             && $this->_priceSetId && $this->_lineItem ) {
+        if ( ! $createPayment &&
+             $contribution->id &&
+             ($this->_params['amount'] == 0) 
+             $this->_priceSetId && $this->_lineItem ) {
             $createPayment = true;
         }
         

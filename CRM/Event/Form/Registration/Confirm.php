@@ -457,6 +457,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         }
                 
         $payment = $registerByID = $primaryCurrencyID = $contribution = null;
+        $this->participantIDS = array( );
+
         foreach ( $params as $key => $value ) {
             $this->fixLocationFields( $value, $fields );
             //unset the billing parameters if it is pay later mode
@@ -633,20 +635,25 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             
             $this->confirmPostProcess( $contactID, $contribution, $payment );
         }
+
         //handle if no additional participant.
-        if ( !$registerByID ) {
+        if ( ! $registerByID ) {
             $registerByID = $this->get('registerByID');
         }
-        
+
+        $this->set( 'participantIDs', $this->_participantIDS );
+
         // create line items, CRM-5313 
-        if ( $this->_priceSetId && !empty( $this->_lineItem ) ) {
+        if ( $this->_priceSetId &&
+             ! empty( $this->_lineItem ) ) {
             require_once 'CRM/Price/BAO/LineItem.php';
             
             // take all processed participant ids.
             $allParticipantIds = $this->_participantIDS;
             
             // when participant re-walk wizard.
-            if ( $this->_allowConfirmation && !empty( $this->_additionalParticipantIds ) ) {
+            if ( $this->_allowConfirmation &&
+                 ! empty( $this->_additionalParticipantIds ) ) {
                 $allParticipantIds = array_merge( array( $registerByID ), $this->_additionalParticipantIds );
             }
 

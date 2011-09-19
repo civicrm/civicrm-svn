@@ -234,7 +234,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         // add this event's default participant role to defaults array 
         // (for cases where participant_role field is included in form via profile)
         if( $this->_values['event']['default_role_id'] ) {
-            $this->_defaults['participant_role_id'] = $this->_values['event']['default_role_id'];
+            $this->_defaults['participant_role'] = $this->_defaults['participant_role_id'] = $this->_values['event']['default_role_id'];
         }
         if ( $this->_priceSetId ) {
             foreach( $this->_feeBlock as $key => $val ) {
@@ -899,7 +899,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         if ( array_key_exists('participant_role_id', $params ) ) {
             $params['defaultRole'] = 0;
         }
-        if ( ! CRM_Utils_Array::value( 'participant_role_id', $params ) && $this->_values['event']['default_role_id'] ) {
+        if ( ! CRM_Utils_Array::value( 'participant_role_id', $params ) &&
+             $this->_values['event']['default_role_id'] ) {
             $params['participant_role_id'] = $this->_values['event']['default_role_id'];
         }
 
@@ -948,12 +949,14 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             // default mode is direct
             $this->set( 'contributeMode', 'direct' ); 
                       
-            if ( isset( $params["state_province_id-{$this->_bltID}"] ) && $params["state_province_id-{$this->_bltID}"] ) {
+            if ( isset( $params["state_province_id-{$this->_bltID}"] ) &&
+                 $params["state_province_id-{$this->_bltID}"] ) {
                 $params["state_province-{$this->_bltID}"] =
                     CRM_Core_PseudoConstant::stateProvinceAbbreviation( $params["state_province_id-{$this->_bltID}"] ); 
             }
             
-            if ( isset( $params["country_id-{$this->_bltID}"] ) && $params["country_id-{$this->_bltID}"] ) {
+            if ( isset( $params["country_id-{$this->_bltID}"] ) &&
+                 $params["country_id-{$this->_bltID}"] ) {
                 $params["country-{$this->_bltID}"]        =
                     CRM_Core_PseudoConstant::countryIsoCode( $params["country_id-{$this->_bltID}"] ); 
             }
@@ -976,9 +979,12 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 //get the button name  
                 $buttonName = $this->controller->getButtonName( );  
                 if ( in_array( $buttonName, 
-                               array( $this->_expressButtonName, $this->_expressButtonName. '_x', $this->_expressButtonName. '_y' ) ) && 
+                               array( $this->_expressButtonName,
+                                      $this->_expressButtonName. '_x',
+                                      $this->_expressButtonName. '_y' ) ) && 
                      ! isset( $params['is_pay_later'] ) &&
-                     !$this->_allowWaitlist && !$this->_requireApproval ) { 
+                     ! $this->_allowWaitlist &&
+                     ! $this->_requireApproval ) { 
                     $this->set( 'contributeMode', 'express' ); 
                     
                     // Send Event Name & Id in Params
@@ -1171,7 +1177,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                         unset( $participantCount[$participantNum] );
                     }
                 }
-                if ( $participantNum === null ) break;
+
+                if ( $participantNum === null ) {
+                    break;
+                }
                 
                 //carry the participant submitted values.
                 $this->_values['params'][$participantID] = $params[$participantNum];
