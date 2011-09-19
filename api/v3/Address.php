@@ -87,7 +87,7 @@ function civicrm_api3_address_create( &$params )
 	 unset ($params['contact_id']);
 	 $paramsBAO['address'][0] = $params;
 	 $addressBAO = CRM_Core_BAO_Address::create($paramsBAO, true);
-	 if ( is_a( $addressBAO, 'CRM_Core_Error' )) {
+	 if (empty( $addressBAO)) {
 		 return civicrm_api3_create_error( "Address is not created or updated ");
 	 } else {
 		 $values = array( );
