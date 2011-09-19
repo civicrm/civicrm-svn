@@ -211,7 +211,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
         }
         
         //Check for SoftCredit
-        $this->verifyText( "xpath=id('PCPView')//div[@class='crm-accordion-body']/table/tbody/tr[1]/td[2]/a", preg_quote( $pcpTitle ) ); 
-        $this->verifyText( "xpath=id('PCPView')//div[@class='crm-accordion-body']/table/tbody/tr[2]/td[2]/a", preg_quote( "{$firstName} {$lastName}" ) ); 
+        $this->verifyText( "xpath=id('PCPView')//div[@class='crm-accordion-body']/table/tbody/tr[1]/td[2]/a[text()]", preg_quote( $pcpTitle ) ); 
+        $this->verifyText( "xpath=id('PCPView')//div[@class='crm-accordion-body']/table/tbody/tr[2]/td[2]/a[text()]", preg_quote( "{$firstName} {$lastName}" ) ); 
     }
 }
