@@ -74,7 +74,9 @@ class CRM_Mailing_Event_BAO_Bounce extends CRM_Mailing_Event_DAO_Bounce {
         // with the connection or smtp server etc
         if ( empty( $params['bounce_type_id'] ) ) {
             $params['bounce_type_id'] = 11;
-            $params['bounce_reason'] = ts( 'Unknown bounce type: Could not parse bounce email' );
+            if (empty($params['bounce_reason'])) {
+                $params['bounce_reason'] = ts( 'Unknown bounce type: Could not parse bounce email' );
+            }
         }
              
         $bounce->copyValues($params);

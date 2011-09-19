@@ -95,7 +95,7 @@ class CRM_Mailing_BAO_BouncePattern extends CRM_Mailing_DAO_BouncePattern {
             if (preg_match($re, $message, $matches)) {
                 $bounce = array(
                                 'bounce_type_id' => $type,
-                                'bounce_reason' => $matches[0]
+                                'bounce_reason' => $message,
                                 );
                 
                 return $bounce;
@@ -106,7 +106,7 @@ class CRM_Mailing_BAO_BouncePattern extends CRM_Mailing_DAO_BouncePattern {
 
         $bounce = array( 
                         'bounce_type_id' => null, 
-                        'bounce_reason' => null 
+                        'bounce_reason' => $message,
                          );
         
         return $bounce;
