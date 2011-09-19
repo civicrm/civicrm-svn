@@ -1059,7 +1059,7 @@ AND civicrm_membership.is_test = %2";
     {
         require_once 'CRM/Member/DAO/MembershipStatus.php';
         $membership = new CRM_Member_DAO_MembershipStatus( );
-        $membership->whereAdd('1');
+        $membership->whereAdd('is_active=1');
         $count = $membership->count();
         
         if(!$count){
