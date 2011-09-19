@@ -1558,12 +1558,19 @@ ORDER BY name";
      */
 	public static function greeting( $filter, $columnName = 'label' )
     { 
-		$index = $filter['greeting_type'] .'_'.$columnName;
-		$filterCondition = null;
+		$index = $filter['greeting_type']  . '_' . $columnName;
+
+        // also add contactType to the array
+        $contactType = CRM_Utils_Array::value( 'contact_type', $filter );
+        if ( $contactType ) {
+            $index .= '_' . $contactType;
+        }
+
 	    if ( ! CRM_Utils_Array::value( $index, self::$greeting ) ) {
-			if ( CRM_Utils_Array::value( 'contact_type', $filter ) ) {
+            $filterCondition = null;
+			if ( $contactType ) {
 				$filterVal = 'v.filter =';
-				switch( $filter['contact_type'] ) {
+				switch( $contactType ) {
 				case 'Individual': 
 					$filterVal .= "1";
 					break;
@@ -1575,12 +1582,13 @@ ORDER BY name";
 					break;
 				}			
 				$filterCondition .= "AND (v.filter = 0 OR {$filterVal}) "; 
-			}	 
-			   
+			} 
+            
             require_once 'CRM/Core/OptionGroup.php';
             self::$greeting[$index] = CRM_Core_OptionGroup::values( $filter['greeting_type'], null, null, null, 
 																	$filterCondition, $columnName );
         }
+
         return self::$greeting[$index];
     }
 
