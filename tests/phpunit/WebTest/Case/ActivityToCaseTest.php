@@ -237,7 +237,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
 
         $this->waitForElementPresent( '_qf_CaseView_cancel-bottom' );
         $this->waitForElementPresent( "xpath=//div[@id='activities']//table[@id='activities-selector']/tbody/tr[1]/td[2]" );
-        exit;
+        
         $this->click( "xpath=//div[@id='activities']//table[@id='activities-selector']//a[text()='{$subject}']" );
 
         $this->waitForElementPresent( 'view-activity' );
