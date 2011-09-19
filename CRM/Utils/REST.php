@@ -1,29 +1,29 @@
 <?php
 
 /*
- +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
- +--------------------------------------------------------------------+
- | This file is a part of CiviCRM.                                    |
- |                                                                    |
- | CiviCRM is free software; you can copy, modify, and distribute it  |
- | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
- |                                                                    |
- | CiviCRM is distributed in the hope that it will be useful, but     |
- | WITHOUT ANY WARRANTY; without even the implied warranty of         |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
- | See the GNU Affero General Public License for more details.        |
- |                                                                    |
- | You should have received a copy of the GNU Affero General Public   |
- | License and the CiviCRM Licensing Exception along                  |
- | with this program; if not, contact CiviCRM LLC                     |
- | at info[AT]civicrm[DOT]org. If you have questions about the        |
- | GNU Affero General Public License or the licensing of CiviCRM,     |
- | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +--------------------------------------------------------------------+
+   +--------------------------------------------------------------------+
+   | CiviCRM version 3.4                                                |
+   +--------------------------------------------------------------------+
+   | Copyright CiviCRM LLC (c) 2004-2011                                |
+   +--------------------------------------------------------------------+
+   | This file is a part of CiviCRM.                                    |
+   |                                                                    |
+   | CiviCRM is free software; you can copy, modify, and distribute it  |
+   | under the terms of the GNU Affero General Public License           |
+   | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+   |                                                                    |
+   | CiviCRM is distributed in the hope that it will be useful, but     |
+   | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+   | See the GNU Affero General Public License for more details.        |
+   |                                                                    |
+   | You should have received a copy of the GNU Affero General Public   |
+   | License and the CiviCRM Licensing Exception along                  |
+   | with this program; if not, contact CiviCRM LLC                     |
+   | at info[AT]civicrm[DOT]org. If you have questions about the        |
+   | GNU Affero General Public License or the licensing of CiviCRM,     |
+   | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+   +--------------------------------------------------------------------+
  */
 
 /**
@@ -251,7 +251,11 @@ class CRM_Utils_REST
   function handle( ) {
     // Get the function name being called from the q parameter in the query string
     $q = CRM_Utils_array::value( 'q', $_REQUEST );
-
+    // or for the rest interface, from fnName
+    $r = CRM_Utils_array::value( 'fnName', $_REQUEST );
+    if (!empty ($r)) {
+      $q=$r;
+    }
     if (!empty($q)) {
       $args = explode( '/', $q );
       // If the function isn't in the civicrm namespace, reject the request.
@@ -276,7 +280,7 @@ class CRM_Utils_REST
         return self::ping();
       }
     } else {
-      // or the new format (entity+avtion
+      // or the new format (entity+action)
       $args[1] = CRM_Utils_array::value( 'entity', $_REQUEST );
       $args[2] = CRM_Utils_array::value( 'action', $_REQUEST );
     }
@@ -327,7 +331,7 @@ class CRM_Utils_REST
 
     // If we didn't find a valid user either way, then die.
     if ( empty($valid_user) ) {
-      return self::error("Valid session, or user api_key required");
+      return self::error("Invalid session or user api_key invalid");
     }
 
     return self::process( $args );
@@ -335,6 +339,7 @@ class CRM_Utils_REST
 
   function process( &$args, $restInterface = true ) {
     $params =& self::buildParamList( );
+    
     $params['check_permissions'] = true;
     $fnName = $apiFile = null;
     require_once 'CRM/Utils/String.php';
@@ -510,6 +515,7 @@ class CRM_Utils_REST
       count( $args ) != 3 ) && !$className ) {
         return self::error( 'Unknown function invocation.' );
       }
+    
 
     $result = self::process( $args, false );
 
@@ -527,17 +533,22 @@ class CRM_Utils_REST
     if ( empty($args) || 
       $args[0] != 'civicrm' ||
       ( ( count( $args ) != 3 ) && ( $args[1] != 'login' ) && ( $args[1] != 'ping') ) ||
-      $args[1] == 'login' ||
       $args[1] == 'ping' ) {
         return;
       }
 
-    $uid     = null;
-    $session = CRM_Core_Session::singleton( );
-
     if ( !CRM_Utils_System::authenticateKey( false ) ) {
       return;
     }
+
+    require_once 'CRM/Core/DAO.php';
+    if ( $args[1] == 'login' ) {
+      CRM_Utils_System::loadBootStrap( CRM_Core_DAO::$_nullArray, true, false );
+      return;
+    }
+
+    $uid     = null;
+    $session = CRM_Core_Session::singleton( );
 
     if ( $session->get('PHPSESSID') &&
       $session->get('cms_user_id') ) {
@@ -545,14 +556,10 @@ class CRM_Utils_REST
       }
 
     if ( !$uid ) {
-      require_once 'CRM/Core/DAO.php';
       require_once 'CRM/Utils/Request.php';
 
       $store      = null;
       $api_key    = CRM_Utils_Request::retrieve( 'api_key', 'String', $store, false, null, 'REQUEST' );
-      if (!$api_key) {
-        return ("FATAL:mandatory param 'api_key' (user key) missing");
-      }
       $contact_id = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $api_key, 'id', 'api_key');
       if ( $contact_id ) {
         require_once 'CRM/Core/BAO/UFMatch.php';
@@ -561,8 +568,9 @@ class CRM_Utils_REST
     }
 
     if ( $uid ) {
-      CRM_Utils_System::loadBootStrap( null, null, $uid );
+      CRM_Utils_System::loadBootStrap( array( 'uid' => $uid ), true, false );
     }
+
   }
 
 }
