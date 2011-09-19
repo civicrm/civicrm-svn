@@ -304,22 +304,22 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       // page was loaded
       $this->waitForTextPresent( $sourceText );
       
-      $this->waitForElementPresent( "xpath=//div[@id='Memberships']//table/tbody/tr/td[7]/span/a[text()='View']" );
+      $this->waitForElementPresent( "xpath=//div[@id='Memberships']//div[@id='inactive-memberships']//table/tbody/tr/td[7]/span/a[text()='View']" );
       
       // click through to the membership view screen
-      $this->click( "xpath=//div[@id='Memberships']//table/tbody/tr/td[7]/span/a[text()='View']" );
+      $this->click( "xpath=//div[@id='Memberships']//div[@id='inactive-memberships']//table/tbody/tr/td[7]/span/a[text()='View']" );
 
       $this->waitForElementPresent( '_qf_MembershipView_cancel-bottom' );
       
       $joinDate  = date( 'F jS, Y', strtotime( "-2 year" ) );
-      $startDate = date( 'F jS, Y', strtotime( "0 year" ) );
-      $endDate   = date( 'F jS, Y', strtotime( "+1 year -1 day" ) );
+      $startDate = date( 'F jS, Y', strtotime( "-2 year" ) );
+      $endDate   = date( 'F jS, Y', strtotime( "-1 year -1 day" ) );
       
       // verify membership renewed and the membership type is changed
       $verifyMembershipData =  array(
                                      'Member'          => $contactName,
                                      'Membership Type' => $membershipTypes['membership_type'],
-                                     'Status'          => 'Current',
+                                     'Status'          => 'Expired',
                                      'Source'          => $sourceText,
                                      'Member Since'    => $joinDate,
                                      'Start date'      => $startDate,
