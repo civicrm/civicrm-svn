@@ -36,6 +36,7 @@
   <tr>
    <td>
     <table style="border: 1px solid #999; margin: 1em 0em 1em; border-collapse: collapse; width:100%;">
+     {if !$lineItem}
      <tr>
       <th {$headerStyle}>
        {ts}Membership Information{/ts}
@@ -49,7 +50,9 @@
        {$membership_name}
       </td>
      </tr>
+     {/if}
      {if ! $cancelled}
+     {if !$lineItem}
       <tr>
        <td {$labelStyle}>
         {ts}Membership Start Date{/ts}
@@ -66,6 +69,7 @@
         {$mem_end_date}
        </td>
       </tr>
+      {/if}
       {if $formValues.total_amount}
        <tr>
         <th {$headerStyle}>
@@ -93,6 +97,8 @@
              <th>{ts}Qty{/ts}</th>
              <th>{ts}Each{/ts}</th>
              <th>{ts}Total{/ts}</th>
+	     <th>{ts}Membership Start Date{/ts}</th>
+	     <th>{ts}Membership End Date{/ts}</th>
             </tr>
             {foreach from=$value item=line}
              <tr>
@@ -107,6 +113,12 @@
               </td>
               <td>
                {$line.line_total|crmMoney}
+              </td>
+              <td>
+               {$line.start_date}
+              </td>
+	      <td>
+               {$line.end_date}
               </td>
              </tr>
             {/foreach}

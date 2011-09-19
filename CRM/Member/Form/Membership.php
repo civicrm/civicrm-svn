@@ -715,6 +715,17 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $errors['_qf_default'] = ts( 'Select at least one option associate with Membership Type.' );  
         }
 
+        if ( !empty($errors) && (count($self->_memTypeSelected) > 1) ) {
+            require_once 'CRM/Member/BAO/MembershipType.php';
+            $memberOfContacts = CRM_Member_BAO_MembershipType::getMemberOfContactByMemTypes( $self->_memTypeSelected );
+            $duplicateMemberOfContacts = array_count_values($memberOfContacts);
+            foreach( $duplicateMemberOfContacts as $countDuplicate ) {
+                if ($countDuplicate > 1) {
+                    $errors['_qf_default'] = ts( 'Please do not select more than one Membership types of same member of organization.' ); 
+                }
+            }
+        }
+
         //check if contact is selected in standalone mode
         if ( isset( $params['contact_select_id'][1] ) && !$params['contact_select_id'][1] ) {
             $errors['contact[1]'] = ts('Please select a contact or create new contact');
@@ -917,9 +928,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         }
         if ( !CRM_Utils_Array::value( 'total_amount', $this->_params ) ) {
             $params['total_amount'] = $this->_values['total_amount']; 
-        }
-        $this->assign( 'lineItem', !empty( $lineItem ) ? $lineItem : false );
-        
+        }        
         
         // set the contact, when contact is selected
         require_once 'CRM/Contact/BAO/Contact/Location.php';
@@ -1329,6 +1338,16 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             }
         }
 
+        if ( !empty($lineItem) ) {
+            foreach($lineItem[$priceSetId] as &$priceFieldOp) {
+                $priceFieldOp['start_date'] = CRM_Utils_Array::value('membership_type_id', $priceFieldOp) ?
+                    CRM_Utils_Date::customFormat($membershipTypeValues[$priceFieldOp['membership_type_id']]['start_date']) : '-';
+                $priceFieldOp['end_date'] = CRM_Utils_Array::value('membership_type_id', $priceFieldOp) ?
+                    CRM_Utils_Date::customFormat($membershipTypeValues[$priceFieldOp['membership_type_id']]['end_date']) : '-';
+            }
+        }
+        $this->assign( 'lineItem', !empty( $lineItem ) ? $lineItem : false );
+
         $receiptSend = false;
         if ( CRM_Utils_Array::value( 'send_receipt', $formValues ) ) {
             $receiptSend = true;
@@ -1407,11 +1426,12 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $this->assign( 'receive_date', $params['receive_date'] );            
             $this->assign( 'formValues', $formValues );
 
-            // FIX ME: fix dates
-            $this->assign( 'mem_start_date', CRM_Utils_Date::customFormat($calcDates['start_date']) );
-            $this->assign( 'mem_end_date', CRM_Utils_Date::customFormat($calcDates['end_date']) );
-            
-            $this->assign( 'membership_name', $membershipType );
+            if ( empty($lineItem) ) {
+                $this->assign( 'mem_start_date', CRM_Utils_Date::customFormat($calcDates[$membership->membership_type_id]['start_date']) );
+                $this->assign( 'mem_end_date', CRM_Utils_Date::customFormat($calcDates[$membership->membership_type_id]['end_date']) );
+                $this->assign( 'membership_name', $membershipType );
+            }
+
             $this->assign( 'customValues', $customValues );
 
             require_once 'CRM/Core/BAO/MessageTemplates.php';
