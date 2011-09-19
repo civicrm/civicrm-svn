@@ -253,6 +253,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         //Go to online membership signup page
         $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id=2" );
         $this->waitForElementPresent( "_qf_Main_upload-bottom" );
+        $this->click( "CIVICRM_QFID_1_2");
         
         //Type first name and last name
         $this->type( "first_name", $firstName );
@@ -304,7 +305,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         //View Membership Record
         $verifyMembershipData =  array(
                                        'Member'         => $firstName.' '.$lastName,
-                                       'Membership Type'=> 'Student',
+                                       'Membership Type'=> 'General',
                                        'Status'         => 'New',
                                        'Source'         => 'Online Contribution: Member Signup and Renewal',
                                        );
@@ -480,6 +481,8 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->click('link=Title'); 
         $this->waitForElementPresent('_qf_Settings_cancel-bottom');
         $this->click('is_organization');
+        $this->select( 'onbehalf_profile_id', "value=9" );
+        $this->type('for_organization', "On behalf $hash");
         $this->click('_qf_Settings_next-bottom');
         $this->waitForPageToLoad('30000');
         
