@@ -128,7 +128,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
 
         if ( $ids['contributionRecur'] ) {
             if ( $objects['contributionRecur']->invoice_id == $dataRoot['serial-number'] ) {
-                CRM_Core_Error::debug_log_message( "This recurring payment has already been handled." );
+                CRM_Core_Error::debug_log_message( "This new order notification has already been handled." );
                 return;
             } else {
                 CRM_Core_Error::debug_log_message( "Recurring payment initiated." );
@@ -159,6 +159,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
                     $contribution->address_id            = $objects['contribution']->address_id;
                     $contribution->invoice_id            = $input['invoice'];
                     $contribution->total_amount          = $dataRoot['order-total']['VALUE'];
+                    $contribution->contribution_status_id = 2;
                     $objects['contribution'] = $contribution;
                     $input['newInvoice']     = $dataRoot['serial-number'];
                 }
@@ -234,17 +235,21 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
      * @return void  
      *  
      */  
-    function orderStateChange( $status, $dataRoot, $component ) {
+    function orderStateChange( $status, $dataRoot, $privateData, $component ) {
         $input = $objects = $ids = array( );
 
         $input['component'] = strtolower($component);
-
-        // CRM_Core_Error::debug_var( "$status, $component", $dataRoot );
-        $orderNo   = $dataRoot['google-order-number']['VALUE'];
+        $orderNo = $dataRoot['google-order-number']['VALUE'];
         
+        $ids['contributionRecur'] = self::retrieve( 'contributionRecurID', 'Integer', $privateData, false );
+        if ( $ids['contributionRecur'] ) {
+            $orderNo = $dataRoot['serial-number'];
+        }
+
         require_once 'CRM/Contribute/DAO/Contribution.php';
         $contribution = new CRM_Contribute_DAO_Contribution( );
         $contribution->invoice_id = $orderNo;
+
         if ( ! $contribution->find( true ) ) {
             CRM_Core_Error::debug_log_message( "Could not find contribution record with invoice id: $orderNo" );
             echo "Failure: Could not find contribution record with invoice id: $orderNo <p>";
@@ -253,15 +258,9 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
 
         // Google sends the charged notification twice.
         // So to make sure, code is not executed again.
-        if ( !$contribution->contribution_recur_id && $contribution->contribution_status_id == 1 ) {
-            CRM_Core_Error::debug_log_message( "Contribution already handled (ContributionID = $contribution)." );
+        if ( $contribution->contribution_status_id == 1 ) {
+            CRM_Core_Error::debug_log_message( "Contribution already handled (ContributionID = {$contribution->id})." );
             return;
-        }
-        if ( $contribution->contribution_recur_id ) {
-            $contribution = new CRM_Contribute_DAO_Contribution( );
-            $contribution->invoice_id = $dataRoot['serial-number'];
-            $contribution->find( true );
-            $orderNo = $dataRoot['serial-number'];
         }
         
         $objects['contribution'] =& $contribution;
@@ -269,7 +268,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $ids['contact']          =  $contribution->contact_id;
 
         $ids['event'] = $ids['participant'] = $ids['membership'] = null;
-        $ids['contributionRecur'] = $ids['contributionPage'] = null;
+        $ids['contributionPage'] = null;
 
         if ( $input['component'] == "event" ) {
             list( $ids['event'], $ids['participant'] ) =
@@ -312,12 +311,22 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             $recur =& $objects['contributionRecur'];
             $contributionCount = CRM_Core_DAO::singleValueQuery( "SELECT count(*) FROM civicrm_contribution WHERE contribution_recur_id = {$ids['contributionRecur']}" );
             if ( $contributionCount >= $recur->installments ) {
+                require_once 'CRM/Core/Payment.php';
                 require_once 'CRM/Contribute/PseudoConstant.php';
                 $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
 
-                $recur->end_date               = $now;
-                $recur->modified_date          = $now;
+                // fix dates that already exist
+                $dates = array( 'create', 'start', 'cancel' );
+                foreach ( $dates as $date ) {
+                    $name = "{$date}_date";
+                    if ( $recur->$name ) {
+                        $recur->$name = CRM_Utils_Date::isoToMysql( $recur->$name );
+                    }
+                }
+                $recur->end_date               = date( 'YmdHis' );
+                $recur->modified_date          = date( 'YmdHis' );
                 $recur->contribution_status_id = array_search( 'Completed', $contributionStatus );
+                $recur->trnx_id                = $dataRoot['google-order-number']['VALUE'];
                 $recur->save( );
 
                 $autoRenewMembership = false;
@@ -505,7 +514,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
 
         // lets retrieve the private-data & order-no
         $privateData = $data[$root]['shopping-cart']['merchant-private-data']['VALUE'];
-        if ( !$privateData ) {
+        if ( empty($privateData) ) {
             $privateData = $data[$root]['order-summary']['shopping-cart']['merchant-private-data']['VALUE'];
         }
         $privateData = $privateData ? self::stringToArray($privateData) : '';
@@ -567,7 +576,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             case 'PAYMENT_DECLINED':
             case 'CANCELLED':
             case 'CANCELLED_BY_GOOGLE':
-                $ipn->orderStateChange($new_financial_state, $data[$root], $module);
+                $ipn->orderStateChange($new_financial_state, $data[$root], $privateData, $module);
                 break;
 
             case 'REVIEWING':
