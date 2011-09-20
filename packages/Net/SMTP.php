@@ -371,7 +371,7 @@ class Net_SMTP
         }
 
         // CRM-8744
-        $errorMessage = 'Invalid response code received from SMTP (outbound mail) server while attempting to send email.  This is often caused by a misconfiguration in the CiviCRM Outbound Email settings. Please verify the settings at Administer CiviCRM >> Global Settings >> Outbound Email (SMTP).';
+        $errorMessage = 'Invalid response code received from SMTP server while sending email.  This is often caused by a misconfiguration in Outbound Email settings. Please verify the settings at Administer CiviCRM >> Global Settings >> Outbound Email (SMTP).';
         return PEAR::raiseError($errorMessage,
                                 $this->_code, PEAR_ERROR_RETURN);
     }
