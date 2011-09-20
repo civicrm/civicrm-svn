@@ -55,7 +55,8 @@ class CRM_Utils_Hook_Drupal extends CRM_Utils_Hook {
             parent::requireCiviModules( $allModules );
         }
 
-        return parent::runHooks( $allModules, $fnSuffix );
+        return parent::runHooks( $allModules, $fnSuffix,
+                                 $numParams, $arg1, $arg2, $arg3, $arg4, $arg5 );
    }
 
 }
