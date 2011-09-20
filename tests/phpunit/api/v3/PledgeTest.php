@@ -146,6 +146,25 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $this->assertEquals('Donation',$pledge['pledge_contribution_type']);
     
     }
+    
+    function testPledgeGetReturnFilters(){
+        $oldPledge = civicrm_api('pledge','create',$this->_params);
+      
+        $overdueParams = array('scheduled_date' => 'first saturday of march last year',
+                               'start_date'   => 'first saturday of march last year');           
+        $oldPledge = civicrm_api('pledge','create',array_merge($this->_params,$overdueParams));
+
+        $pledgeGetParams = array('version' => 3);
+        $allPledges = civicrm_api('pledge', 'getcount', $pledgeGetParams);
+
+        $this->assertEquals(2, $allPledges,'Check we have 2 pledges to place with in line ' . __LINE__);
+        $pledgeGetParams['pledge_start_date_high'] = date('YmdHis',strtotime('2 days ago'));
+        $earlyPledge = civicrm_api('pledge', 'get', $pledgeGetParams);  
+        $this->documentMe($pledgeGetParams, $earlyPledge,__FUNCTION__,__FILE__, "demonstrates high date filter", "GetFilterHighDate");
+        $this->assertEquals(1, $earlyPledge['count'], ' check only one returned with start date filter in line ' . __LINE__);          
+        $this->assertEquals($oldPledge['id'], $earlyPledge['id'], ' check correct pledge returned ' . __LINE__);          
+        
+    }
   /*
    * create 2 pledges - see if we can get by status id
    */
