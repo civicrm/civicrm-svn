@@ -38,6 +38,7 @@ require_once 'CRM/Core/Payment.php';
 require_once 'Google/library/googlecart.php';
 require_once 'Google/library/googleitem.php';
 require_once 'Google/library/googlesubscription.php';
+require_once 'Google/library/googlerequest.php';
 
 class CRM_Core_Payment_Google extends CRM_Core_Payment { 
     /**
@@ -357,5 +358,59 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
         $data      = $xmlParser->GetData();
         
         return array( $root, $data );
+    }
+
+    /**
+     * Set a field to the specified value.  Value must be a scalar (int,
+     * float, string, or boolean)
+     *
+     * @param string $field
+     * @param mixed $value
+     * @return bool false if value is not a scalar, true if successful
+     */ 
+    function _setParam( $field, $value ) {
+        if ( ! is_scalar($value) ) {
+            return false;
+        } else {
+            $this->_params[$field] = $value;
+        }
+    }
+
+    /**
+     * Get the value of a field if set
+     *
+     * @param string $field the field
+     * @return mixed value of the field, or empty string if the field is
+     * not set
+     */
+    function _getParam( $field ) {
+        return CRM_Utils_Array::value( $field, $this->_params, '' );
+    }
+
+    function cancelSubscriptionURL( $entityID = null, $entity = null ) 
+    {
+        if ( $entityID && $entity == 'membership' ) {
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
+            $contactID = CRM_Core_DAO::getFieldValue( "CRM_Member_DAO_Membership", $entityID, "contact_id" );
+            $checksumValue = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contactID, null, 'inf' );
+
+            return CRM_Utils_System::url( 'civicrm/contribute/unsubscribe', 
+                                          "reset=1&mid={$entityID}&cs={$checksumValue}", true, null, false, false );
+        }
+
+        return ( $this->_mode == 'test' ) ?
+            'https://sandbox.google.com/checkout/' : 'https://checkout.google.com/';
+    }
+
+    function cancelSubscription( ) 
+    {
+        $orderNo = $this->_getParam( 'subscriptionId' );
+
+        $merchant_id  = $this->_paymentProcessor['user_name'];
+        $merchant_key = $this->_paymentProcessor['password'];
+        $server_type  = ( $this->_mode == 'test' ) ? 'sandbox' : '';
+        
+        $googleRequest = new GoogleRequest( $merchant_id, $merchant_key, $server_type );
+        return $googleRequest->SendCancelOrder( $orderNo, 'Cancelled by admin', $comment );
     }
 }
