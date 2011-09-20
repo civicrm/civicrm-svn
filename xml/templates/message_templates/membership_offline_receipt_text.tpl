@@ -34,6 +34,8 @@
 {capture assign=ts_qty}{ts}Qty{/ts}{/capture}
 {capture assign=ts_each}{ts}Each{/ts}{/capture}
 {capture assign=ts_total}{ts}Total{/ts}{/capture}
+{capture assign=ts_start_date}{ts}Membership Start Date{/ts}{/capture}
+{capture assign=ts_end_date}{ts}Membership End Date{/ts}{/capture}
 {$ts_item|string_format:"%-30s"} {$ts_qty|string_format:"%5s"} {$ts_each|string_format:"%10s"} {$ts_total|string_format:"%10s"} {$ts_start_date|string_format:"%20s"} {$ts_end_date|string_format:"%20s"}
 -----------------------------------------------------------------------------
 
