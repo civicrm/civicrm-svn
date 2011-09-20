@@ -189,7 +189,8 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
         
         $this->waitForElementPresent( "contribution_date_low" );
         
-        $this->type( "sort_name", "$firstName $lastName" );
+        $this->select( 'contribution_pcp_made_through_id',  "label={$pcpTitle}" );
+ 
         $this->click( "_qf_Search_refresh" );
         
         $this->waitForPageToLoad( '30000' );
