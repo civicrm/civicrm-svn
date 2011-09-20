@@ -478,7 +478,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                     $count = CRM_Price_BAO_Set::getMembershipCount($ids);
                     foreach( $count as $id => $occurance ) {
                         if ($occurance > 1) {
-                            $errors['_qf_default'] = ts( 'Select at most one option from each Membership Type.' );
+                            $errors['_qf_default'] = ts( 'Select at most one option from the Membership Types belonging to the same Membership Organization.' );
                         }
                     }
                 }

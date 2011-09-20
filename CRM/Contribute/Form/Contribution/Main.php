@@ -760,7 +760,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 $count = CRM_Price_BAO_Set::getMembershipCount($ids);
                 foreach( $count as $id => $occurance ) {
                     if ($occurance > 1) {
-                        $errors['_qf_default'] = ts( 'Select at most one option from each Membership Type.' );
+                        $errors['_qf_default'] = ts( 'Select at most one option from the Membership Types belonging to the same Membership Organization.' );
                     }
                 }
             }
