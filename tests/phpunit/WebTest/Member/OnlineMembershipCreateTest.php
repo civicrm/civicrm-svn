@@ -181,7 +181,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $verifyData = array(
                             'From'=> $firstName.' '.$lastName,
                             'Contribution Type' => 'Donation',
-                            'Total Amount'=> '$ 50.00',
+                            'Total Amount'=> '$ 2.22',
                             );
         foreach ( $verifyData as $label => $value ) {
             $this->verifyText( "xpath=//form[@id='ContributionView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 

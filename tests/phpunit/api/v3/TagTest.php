@@ -167,8 +167,31 @@ class api_v3_TagTest extends CiviUnitTestCase
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__);
         $this->assertNotNull( $result['id'], 'In line ' . __LINE__ );
+        $params['used_for'] = 'civicrm_contact';
+        $this->getAndCheck($params, $result['id'], 'tag');
     }
 
+    /**
+     * Test civicrm_tag_create contribution tag- success expected. Test checks that used_for is set
+     * and not over-written by default on update
+     */    
+    function testCreateContributionTag()
+    {
+        $params = array( 'name'        => 'New Tag4',
+                         'description' => 'This is description for New Cont tag' ,
+                         'version'    => $this->_apiversion,
+                         'used_for'   => 'civicrm_contribution');
+        
+        $result = civicrm_api('tag', 'create', $params);
+        $this->getAndCheck($params, $result['id'], 'tag',__FUNCTION__ . ' tag first created');
+        unset ($params['used_for']);
+        $this->assertAPISuccess($result, 'tag created');
+        $params['id'] = $result['id'];
+        $result = civicrm_api('tag', 'create', $params);
+        $this->assertAPISuccess($result);
+        $params['used_for'] = 'civicrm_contribution';
+        $this->getAndCheck($params, $result['id'], 'tag');
+    }
 ///////////////// civicrm_tag_delete methods
 
     /**

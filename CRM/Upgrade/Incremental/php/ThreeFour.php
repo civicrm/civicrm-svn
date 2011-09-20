@@ -192,7 +192,7 @@ INSERT INTO civicrm_location_type ( name, description, is_reserved, is_active )
             
             // replace display_name fields by sort_name
             if ( !isset($formValues['membership_start_date_relative']) &&
-                 !iseet($formValues['membership_end_date_relative']) ) {
+                 !isset($formValues['membership_end_date_relative']) ) {
                 $formValues['membership_start_date_relative'] = '0';
                 $formValues['membership_start_date_from']     = '';
                 $formValues['membership_start_date_to']       = '';
@@ -238,17 +238,48 @@ INSERT INTO civicrm_location_type ( name, description, is_reserved, is_active )
     function upgrade_3_4_6( $rev ) 
     {
         require_once 'CRM/Report/DAO/Instance.php';
-        $modifiedReportIds = array( 'event/summary' );
+        $modifiedReportIds = array( 'event/summary', 'activity', 'Mailing/bounce', 'Mailing/clicks', 'Mailing/opened' );
         
         $instances = CRM_Core_DAO::executeQuery("SELECT id, form_values, report_id FROM civicrm_report_instance WHERE report_id IN ('". implode("','", $modifiedReportIds )."')");
-        $eventDates = array( 'event_start_date_from', 'event_start_date_to', 'event_end_date_from', 'event_end_date_to');
         while( $instances->fetch( ) ) {
             $formValues = unserialize( $instances->form_values );
-            foreach ( $eventDates as $date ) {
-                if ( isset( $formValues[$date] ) && $formValues[$date] == ' ' ) {
-                    $formValues[$date] = '';
+            
+            switch( $instances->report_id ) {
+            case 'event/summary':
+                $eventDates = array( 'event_start_date_from', 'event_start_date_to', 'event_end_date_from', 'event_end_date_to');
+                foreach ( $eventDates as $date ) {
+                    if ( isset( $formValues[$date] ) && $formValues[$date] == ' ' ) {
+                        $formValues[$date] = '';
+                    }
                 }
+                break;
+                
+            case 'activity':
+                if ( isset($formValues['group_bys']) ) {
+                    if ( is_array($formValues['group_bys']) ) {
+                        $orderBy = array( );
+                        $count = 0;
+                        foreach( $formValues['group_bys'] as $col => $isSet ) {
+                            if ( !$isSet ) continue;
+
+                            $orderBy[++$count] = array( 'column' => $col,
+                                                        'order'  => 'ASC' );
+                        }
+                        if ( !empty($orderBy) ) {
+                            $formValues['order_bys'] = $orderBy;
+                        }
+                    }
+                    unset($formValues['group_bys']);               
+                }
+                break;
+                
+            case 'Mailing/bounce':
+            case 'Mailing/clicks':
+            case 'Mailing/opened':
+                $formValues['fields']['mailing_name'] = 1;
+                break;            
             }
+   
             // save updated instance criteria
             $dao = new CRM_Report_DAO_Instance( );
             $dao->id = $instances->id;

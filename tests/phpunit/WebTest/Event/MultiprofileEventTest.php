@@ -357,13 +357,13 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         
         // get id of custom fields
         $this->open( $this->sboxPath . "civicrm/admin/custom/group/field?reset=1&action=browse&gid=" .$customGrpId1 );
-        $custom1 = explode( '&id=', $this->getAttribute( "xpath=//div[@id='option11_wrapper']/table/tbody/tr[1]/td[7]/span/a@href" ) );
+        $custom1 = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']//table/tbody//tr[1]/td[8]/span/a[text()='Edit Field']/@href" ) );
         $custom1 = $custom1[1];
         array_push($customId , $custom1);
-        $custom2 = explode( '&id=', $this->getAttribute( "xpath=//div[@id='option11_wrapper']/table/tbody/tr[2]/td[7]/span/a@href" ) );
+        $custom2 = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']//table/tbody//tr[2]/td[8]/span/a[text()='Edit Field']/@href" ) );
         $custom2 = $custom2[1];
         array_push($customId , $custom2);
-        $custom3 = explode( '&id=', $this->getAttribute( "xpath=//div[@id='option11_wrapper']/table/tbody/tr[3]/td[7]/span/a@href" ) );
+        $custom3 = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']//table/tbody//tr[3]/td[8]/span/a[text()='Edit Field']/@href" ) );
         $custom3 = $custom3[1];
         array_push($customId , $custom3);
         

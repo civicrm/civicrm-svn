@@ -113,7 +113,7 @@ SELECT id
         $this->add( 'select', 'payment_processor_id', ts( 'Payment Processor' ),
                     array(''=>ts( '- select -' )) + $paymentProcessor, null, array( 'onchange' => "showRecurring( this.value );" ) );
         
-        require_once "CRM/Contribute/BAO/ContributionPage.php";
+        require_once 'CRM/Contribute/BAO/ContributionPage.php';
         
         //check if selected payment processor supports recurring payment
         if ( !empty( $recurringPaymentProcessor ) ) {
@@ -156,7 +156,7 @@ SELECT id
             $this->addElement( 'checkbox', 'is_pledge_active', ts('Pledges') , 
                                null, array('onclick' => "showHideAmountBlock( this, 'is_pledge_active' ); return showHideByValue('is_pledge_active',true,'pledgeFields','table-row','radio',false);") );
             $this->addCheckBox( 'pledge_frequency_unit', ts( 'Supported pledge frequencies' ), 
-                                CRM_Core_OptionGroup::values( "recur_frequency_units", false, false, false, null, 'name' ),
+                                CRM_Core_OptionGroup::values( 'recur_frequency_units', false, false, false, null, 'name' ),
                                 null, null, null, null,
                                 array( '&nbsp;&nbsp;', '&nbsp;&nbsp;', '&nbsp;&nbsp;', '<br/>' ));
             $this->addElement( 'checkbox', 'is_pledge_interval', ts('Allow frequency intervals') );

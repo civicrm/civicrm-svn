@@ -80,7 +80,7 @@ class CRM_Utils_Migrate_Import {
             if ( isset( $xml->$keyName ) ) {
                 $dao->$keyName = (string ) $xml->$keyName;
                 if ( $dao->find( true ) ) {
-                    echo "Found $keyName, {$dao->$keyName}, {$dao->__table}<p>";
+                    CRM_Core_Session::setStatus(ts("Found $keyName, {$dao->$keyName}, {$dao->__table}<p>"));
                     return false;
                 }
             }
@@ -343,8 +343,7 @@ AND        f.column_name = %2
                                      2 => array( $columnName, 'String' ) );
                     $cfID = CRM_Core_DAO::singleValueQuery( $sql, $params );
                     if ( ! $cfID ) {
-                        echo "Could not find custom field for {$profileField->field_name}, $tableName, $columnName<p>";
-                        exit( );
+                      CRM_Core_Error::fatal(ts("Could not find custom field for {$profileField->field_name}, $tableName, $columnName<p>"));
                     }
                     $profileField->field_name = "custom_{$cfID}";
                 }

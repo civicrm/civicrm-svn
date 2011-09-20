@@ -423,6 +423,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             }
         }
 
+        $this->assign('useForMember', $this->get('useForMember'));
+
         // now fix all state country selectors
         require_once 'CRM/Core/BAO/Address.php';
         CRM_Core_BAO_Address::fixAllStateSelects( $this, $defaults );
@@ -693,8 +695,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         if ( CRM_Utils_Array::value( 'selectMembership', $membershipParams ) &&
              $membershipParams['selectMembership'] != 'no_thanks' ) {
             $processMembership = true;
+            //
             $this->assign( 'membership_assign' , true );
             $this->set('membershipTypeID' , $this->_params['selectMembership']);
+
             if( $this->_action & CRM_Core_Action::PREVIEW ) {
                 $membershipParams['is_test'] = 1;
             }
@@ -703,7 +707,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             }
         }
 
-   
+        if ($processMembership == false ) {
+            $processMembership = $this->_useForMember = $this->get('useForMember');
+        }
+
         if ( $processMembership ) {
             require_once 'CRM/Core/Payment/Form.php';
             CRM_Core_Payment_Form::mapParams( $this->_bltID, $this->_params, $membershipParams, true );
@@ -737,10 +744,26 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 $fieldTypes = array( 'Contact', 'Organization', 'Membership' );
             }
             
+            $priceFieldIds = $this->get( 'memberPriceFieldIDS' );
+            
+            if (!empty($priceFieldIds)) {
+                $contributionTypeID = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $priceFieldIds['id'], 'contribution_type_id' );
+                unset($priceFieldIds['priceSetId']);
+                   
+                foreach ($priceFieldIds as $priceFieldId) {
+                    if($id = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_FieldValue', $priceFieldId, 'membership_type_id' )){
+                        $membershipTypeIds[] = $id;
+                    }                
+                    
+                    $membershipParams['selectMembership'] = $membershipTypeIds;
+                    $membershipParams['contribution_type_id'] = $contributionTypeID;
+                }
+            }
             require_once 'CRM/Member/BAO/Membership.php';
             CRM_Member_BAO_Membership::postProcessMembership( $membershipParams, $contactID,
                                                               $this, $premiumParams, $customFieldsFormatted, 
                                                               $fieldTypes );  
+            
         } else {
             // at this point we've created a contact and stored its address etc
             // all the payment processors expect the name and address to be in the 
@@ -892,7 +915,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     {
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
-        
         $className = get_class( $form );
         $honorCId = $recurringContributionID = null;
 

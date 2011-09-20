@@ -6436,6 +6436,7 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
         break;
     }
 
+
     foreach ($tree as $groupkey => $currentgroup) {
         if ($groupkey == 'info') { return $data; } // dodges an invalid argument call after all the groups go through // have a look at what $tree outputs to to see why.
 

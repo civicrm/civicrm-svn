@@ -85,7 +85,26 @@ class api_v3_AddressTest extends CiviUnitTestCase
         $this->assertEquals( 1,$result['values'][$result['id']]['is_primary'], 'In line ' . __LINE__ );
         $this->getAndCheck($this->params, $result['id'], 'address');
 
-    }  
+    }
+
+        /*
+     * is_primary shoule be set as a default. ie. create the address, unset the params & recreate. 
+     * is_primary should be 0 before & after the update
+     */
+    public function testCreateAddressTestDefaultWithID() {
+        $params = $this->params;
+        $params['is_primary'] = 0;
+        $result = civicrm_api('address','create',$params);
+        unset($params['is_primary']);
+        $params['id'] = $result['id'];
+        $result = civicrm_api('address','create',$params);
+       
+        $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
+        $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
+        $this->assertEquals( 0,$result['values'][$result['id']]['is_primary'], 'In line ' . __LINE__ );
+        $this->getAndCheck($params, $result['id'], 'address', __FUNCTION__);
+
+    } 
     public function testDeleteAddress() {
  
          //check there are no addresss to start with

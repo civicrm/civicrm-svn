@@ -139,7 +139,7 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
         
         //Below code gives list of all Membership Types associated
         //with an Organization(CRM-2016)
-        include_once 'CRM/Member/BAO/MembershipType.php';
+        require_once 'CRM/Member/BAO/MembershipType.php';
         $membershipTypes = CRM_Member_BAO_MembershipType::getMembershipTypesByOrg( $this->_contactId );        
         foreach ( $membershipTypes as $key => $value ) {   
             $membershipTypes[$key]['action'] = CRM_Core_Action::formLink( self::membershipTypeslinks(),

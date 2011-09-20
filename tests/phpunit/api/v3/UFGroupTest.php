@@ -173,10 +173,12 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
 
         $this->assertEquals($result['values'][$result['id']]['add_to_group_id'],         $this->params['add_contact_to_group'],'in line ' . __LINE__);
         $this->assertEquals($result['values'][$result['id']]['limit_listings_group_id'], $this->params['group'],'in line ' . __LINE__);
+        $this->params['created_date'] = date('YmdHis', strtotime($this->params['created_date']));
         foreach ($this->params as $key => $value) {
             if ($key == 'add_contact_to_group' or $key == 'group' or $key == 'version') continue;
-            $this->assertEquals($result['values'][$result['id']][$key], $this->params[$key]);
+            $this->assertEquals($result['values'][$result['id']][$key], $this->params[$key], $key . " does not equal ".$result['values'][$result['id']][$key] . 'in line ' . __LINE__ );
         }
+
     
     }
 
@@ -222,6 +224,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
         );
         $result = civicrm_api('uf_group', 'create', $params);
         unset($params['version']);
+        $params['created_date'] = date('YmdHis', strtotime($params['created_date']));
         foreach ($params as $key => $value) {
             if ($key == 'add_contact_to_group' or $key == 'group') continue;
             $this->assertEquals($result['values'][$result['id']][$key], $params[$key],$key . " doesn't match  " . $value);

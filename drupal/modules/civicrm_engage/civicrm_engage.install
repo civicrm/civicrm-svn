@@ -106,7 +106,7 @@ function civicrm_engage_add_contact_subtypes() {
   }
   $contact_type = new CRM_Contact_BAO_ContactType();
   while(list($k,$v) = each($create)) {
-    drupal_set_message(dt("Creating %c",array('%c' => $k)));
+    drupal_set_message(t("Creating %c",array('%c' => $k)));
     $contact_type->add($v);
   }
 }

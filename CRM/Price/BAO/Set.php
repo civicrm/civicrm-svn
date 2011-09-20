@@ -188,6 +188,7 @@ WHERE     ct.id = cp.contribution_type_id AND
                 break;
 
             case 'civicrm_contribution':
+            case 'civicrm_membership':
                 $usedBy[$table] = 1;
                 break;
                 
@@ -517,8 +518,6 @@ WHERE  id = %1";
             
             //get the price set fields participant count.
             if ( $entityTable == 'civicrm_event' ) {
-                require_once "CRM/Price/BAO/Set.php";
-                
                 //get option count info.
                 $form->_priceSet['optionsCountTotal'] = self::getPricesetCount( $priceSetId );
                 if ( $form->_priceSet['optionsCountTotal'] ) {
@@ -681,7 +680,8 @@ WHERE  id = %1";
         
           
         $validFieldsOnly = true;
-        if ( CRM_Utils_System::getClassName($form) == 'CRM_Contribute_Form_Contribution' ) {
+        $className = CRM_Utils_System::getClassName( $form );
+        if ( in_array($className, array('CRM_Contribute_Form_Contribution', 'CRM_Member_Form_Membership') ) ) {
             $validFieldsOnly = false;
         }
 
@@ -689,21 +689,28 @@ WHERE  id = %1";
         $form->_priceSet = CRM_Utils_Array::value( $priceSetId, $priceSet );
         $form->assign( 'priceSet',  $form->_priceSet );
         require_once 'CRM/Core/PseudoConstant.php';
-        $className = CRM_Utils_System::getClassName( $form );
         
+        $component = 'contribution';
+        if ( $className == 'CRM_Member_Form_Membership') {
+            $component = 'membership';
+        }
+
         if ( $className == 'CRM_Contribute_Form_Contribution_Main' ) {
             $feeBlock =& $form->_values['fee'];
+            if ( !empty($form->_useForMember) ) {
+                $component = 'membership';
+            }
         } else {
             $feeBlock =& $form->_priceSet['fields'];
         }
         
         // call the hook.
         require_once 'CRM/Utils/Hook.php';
-        CRM_Utils_Hook::buildAmount( 'contribution', $form, $feeBlock );
+        CRM_Utils_Hook::buildAmount( $component, $form, $feeBlock );
         
         foreach ( $feeBlock as $field ) {
             if ( CRM_Utils_Array::value( 'visibility', $field ) == 'public' || 
-                 $className == 'CRM_Contribute_Form_Contribution' ) {
+                 !$validFieldsOnly ) {
                 
                 $options = CRM_Utils_Array::value( 'options', $field );
                 if ( !is_array( $options ) ) continue; 
@@ -832,6 +839,26 @@ INNER JOIN  civicrm_price_set pset    ON ( pset.id = field.price_set_id )
         }
         
         return $pricesetFieldCount[$sid];
+    }
+
+    public static function getMembershipCount( $ids )
+    {
+        $queryString = "
+SELECT       count( pfv.id ) AS count, pfv.id AS id
+FROM         civicrm_price_field_value pfv
+INNER JOIN    civicrm_membership_type mt ON mt.id = pfv.membership_type_id
+WHERE        pfv.id IN ( $ids )
+GROUP BY     mt.member_of_contact_id";
+
+        $crmDAO = CRM_Core_DAO::executeQuery( $queryString );
+        $count = array();
+
+        while ( $crmDAO->fetch() ) {
+            $count[$crmDAO->id] = $crmDAO->count;
+        }
+
+        return $count;
+
     }
 }
 

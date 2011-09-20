@@ -256,7 +256,7 @@ class Engage_Report_Form_WalkList extends Engage_Report_Form_List {
                     //var_dump($clause);
                     if ( ! empty( $clause ) ) {
                         if ( CRM_Utils_Array::value( 'group', $field ) ) {
-                            $clauses[] = $this->whereGroupClause( $clause );
+                            $clauses[] = $this->engageWhereGroupClause( $clause );
                         } else {
                             $clauses[] = $clause;
                         }

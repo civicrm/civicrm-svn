@@ -48,8 +48,7 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
 	  include_once('WebTest/Contact/AddTest.php');
 	  $emailString =  substr(sha1(rand()), 0, 7) .'@example.com_';
 	  $cids = array( );
-	  for ( $i = 0; $i < 2; $i++ )
-	  {
+	  for ( $i = 0; $i < 2; $i++ ) {
 	      // logout before calling included test, to avoid impossible repeated login
           $this->open( $this->sboxPath . "civicrm/logout&reset=1" );
 
@@ -61,9 +60,9 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
           $cids[] = $queryParams['queryString']['cid'];
 
           // update email of new contact
-		  $this->click("//ul[@id='actions']/li[3]/a/span/div");
+		  $this->click("//ul[@id='actions']/li/a/span[text()='Edit']");
 		  $this->waitForPageToLoad("30000");
- 		  $this->type("email_1_email", $emailString . $i);
+          $this->type("email_1_email", $emailString . $i);
 		  $this->click("_qf_Contact_upload_view");
 		  $this->waitForPageToLoad("30000");
       }
@@ -112,7 +111,9 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
 
 	  // Verify those two contacts (and only those two) are in the group
-	  if (! $this->isTextPresent( "2 Contacts" )) { die("nothing found for group $newGroupName"); }
+      if ( !$this->isTextPresent( "2 Contacts" ) ) { 
+          die("nothing found for group $newGroupName");
+      }
 
 	  $this->assertTrue( $this->isTextPresent( "2 Contacts" ), 'Looking for 2 results belonging to group: ' . $newGroupName );
       foreach ( $cids as $cid ) {
