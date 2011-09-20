@@ -230,6 +230,11 @@ WHERE civicrm_case.id=  %1";
                 
                 require_once "CRM/Case/BAO/Case.php";
                 CRM_Case_BAO_Case::processCaseActivity( $caseActivityParams );
+
+                $caseActivityParams = array( 'activityID' => $form->openCaseActivityId,
+                                             'mainActivityId' => $newActivity->id,
+                                            );
+                CRM_Activity_BAO_Activity::copyExtendedActivityData( $caseActivityParams );
             }
         }
                                

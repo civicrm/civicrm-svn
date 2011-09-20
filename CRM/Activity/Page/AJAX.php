@@ -175,40 +175,9 @@ class CRM_Activity_Page_AJAX
         $error_msg = $caseActivity->_lastError;
         $caseActivity->free( ); 
 
-        // attach custom data to the new activity
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
-        require_once 'CRM/Core/BAO/File.php';
-        $customParams = $htmlType = array( );
-        $customValues = CRM_Core_BAO_CustomValueTable::getEntityValues( $params['activityID'], 'Activity' );
-
-        if ( ! empty( $customValues ) ) {
-	        $fieldIds = implode( ', ', array_keys( $customValues ) );
-	        $sql      = "SELECT id FROM civicrm_custom_field WHERE html_type = 'File' AND id IN ( {$fieldIds} )";
-	        $result   = CRM_Core_DAO::executeQuery( $sql );
-	        
-	        while ( $result->fetch( ) ) {
-	            $htmlType[] = $result->id;
-	        }
-	                
-	        foreach ( $customValues as $key => $value ) {
-	            if ( $value ) {
-	                if ( in_array( $key, $htmlType ) ) {
-	                    $fileValues = CRM_Core_BAO_File::path( $value, $params['activityID'] );
-	                    $customParams["custom_{$key}_-1"] = array( 'name' => $fileValues[0],
-	                                                               'path' => $fileValues[1] );
-	                } else {
-	                    $customParams["custom_{$key}_-1"] = $value;
-	                }
-	            }
-	        }
-	        CRM_Core_BAO_CustomValueTable::postProcess( $customParams, CRM_Core_DAO::$_nullArray, 'civicrm_activity',
-	                                                    $mainActivityId, 'Activity' );
-        }
-
-        // copy activity attachments ( if any )
-        require_once "CRM/Core/BAO/File.php";
-        CRM_Core_BAO_File::copyEntityFile( 'civicrm_activity', $params['activityID'], 'civicrm_activity', $mainActivityId );
-            
+        $params['mainActivityId'] = $mainActivityId;
+        CRM_Activity_BAO_Activity::copyExtendedActivityData( $params );
+        
         return (array('error_msg' => $error_msg, 'newId' => $mainActivity->id));
     }
     
