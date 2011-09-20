@@ -252,7 +252,7 @@ SET    version = '$version'
                            array(dirname(__FILE__), 'Incremental', 'sql') );
         $sqlFiles = scandir($sqlDir);
 
-        $sqlFilePattern = '/^((\d{1,2}\.\d{1,2})\.(\d{1,2}|\w{4,7}))\.(my)?sql(\.tpl)?$/i';
+        $sqlFilePattern = '/^(\d{1,2}\.\d{1,2}\.(\d{1,2}\.)?(\d{1,2}|\w{4,7}))\.(my)?sql(\.tpl)?$/i';
         foreach ($sqlFiles as $file) {
             if ( preg_match($sqlFilePattern, $file, $matches) ) {
                 if ( $matches[2] == '4.0' ) {

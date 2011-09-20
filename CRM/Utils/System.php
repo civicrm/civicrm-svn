@@ -763,7 +763,7 @@ class CRM_Utils_System {
     }
 
     static function isVersionFormatValid( $version ) {
-        return preg_match("/^(\d{1,2}\.){2}(\d{1,2}|(alpha|beta)\d{1,2})(\.upgrade)?$/", $version );
+        return preg_match("/^(\d{1,2}\.){2,3}(\d{1,2}|(alpha|beta)\d{1,2})(\.upgrade)?$/", $version );
     }
 
     static function getAllHeaders( ) {
