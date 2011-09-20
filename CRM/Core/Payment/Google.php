@@ -360,6 +360,16 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
         return array( $root, $data );
     }
 
+    function &error( $errorCode = null, $errorMessage = null ) {
+        $e =& CRM_Core_Error::singleton( );
+        if ( $errorCode ) {
+            $e->push( $errorCode, 0, null, $errorMessage );
+        } else {
+            $e->push( 9001, 0, null, 'Unknown System Error.' );
+        }
+        return $e;
+    }
+
     /**
      * Set a field to the specified value.  Value must be a scalar (int,
      * float, string, or boolean)
@@ -411,6 +421,11 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
         $server_type  = ( $this->_mode == 'test' ) ? 'sandbox' : '';
         
         $googleRequest = new GoogleRequest( $merchant_id, $merchant_key, $server_type );
-        return $googleRequest->SendCancelOrder( $orderNo, 'Cancelled by admin', $comment );
+        $result = $googleRequest->SendCancelItems($orderNo, array(), 'Cancelled by admin', '');
+
+        if ( $result[0] != 200 ) {
+            return self::error($result[0], $result[1]);
+        }
+        return true;
     }
 }
