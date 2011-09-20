@@ -128,10 +128,13 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
 
         if ( $ids['contributionRecur'] ) {
             if ( $objects['contributionRecur']->invoice_id == $dataRoot['serial-number'] ) {
-                CRM_Core_Error::debug_log_message( "This new order notification has already been handled." );
+                CRM_Core_Error::debug_log_message( "The new order notification already handled: {$dataRoot['serial-number']}." );
                 return;
             } else {
-                CRM_Core_Error::debug_log_message( "Recurring payment initiated." );
+                require_once 'CRM/Core/Transaction.php';
+                $transaction = new CRM_Core_Transaction( );
+
+                CRM_Core_Error::debug_log_message( "New order for an installment received." );
                 $recur =& $objects['contributionRecur'];
 
                 // fix dates that already exist
@@ -142,7 +145,8 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
                         $recur->$name = CRM_Utils_Date::isoToMysql( $recur->$name );
                     }
                 }
-                $recur->invoice_id = $dataRoot['serial-number'];
+                $recur->invoice_id   = $dataRoot['serial-number'];
+                $recur->processor_id = $input['newInvoice'];
                 $recur->save( );
 
                 if ( $objects['contribution']->contribution_status_id == 1 ) {
@@ -161,8 +165,8 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
                     $contribution->total_amount          = $dataRoot['order-total']['VALUE'];
                     $contribution->contribution_status_id = 2;
                     $objects['contribution'] = $contribution;
-                    $input['newInvoice']     = $dataRoot['serial-number'];
                 }
+                $transaction->commit( );
             }
         }
 
@@ -194,11 +198,6 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         
-        // fix for CRM-2842
-        // if ( ! $this->createContact( $input, $ids, $objects ) ) {
-        //     return false;
-        // }
-
         // check if contribution is already completed, if so we ignore this ipn
         if ( $contribution->contribution_status_id == 1 ) {
             CRM_Core_Error::debug_log_message( "returning since contribution has already been handled" );
@@ -237,23 +236,19 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
      */  
     function orderStateChange( $status, $dataRoot, $privateData, $component ) {
         $input = $objects = $ids = array( );
-
         $input['component'] = strtolower($component);
-        $orderNo = $dataRoot['google-order-number']['VALUE'];
         
         $ids['contributionRecur'] = self::retrieve( 'contributionRecurID', 'Integer', $privateData, false );
-        if ( $ids['contributionRecur'] ) {
-            $orderNo = $dataRoot['serial-number'];
-        }
+        $serial  = $dataRoot['serial-number'];
+        $orderNo = $dataRoot['google-order-number']['VALUE'];
 
         require_once 'CRM/Contribute/DAO/Contribution.php';
         $contribution = new CRM_Contribute_DAO_Contribution( );
         $contribution->invoice_id = $orderNo;
 
         if ( ! $contribution->find( true ) ) {
-            CRM_Core_Error::debug_log_message( "Could not find contribution record with invoice id: $orderNo" );
-            echo "Failure: Could not find contribution record with invoice id: $orderNo <p>";
-            exit( );
+            CRM_Core_Error::debug_log_message( "orderStateChange: Could not find contribution record with invoice id: $serial" );
+            return;
         }
 
         // Google sends the charged notification twice.
@@ -263,6 +258,9 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             return;
         }
         
+        // make sure invoice is set to serial no for recurring payments, to avoid violating uniqueness
+        $contribution->invoice_id = $ids['contributionRecur'] ? $serial : $orderNo;
+
         $objects['contribution'] =& $contribution;
         $ids['contribution']     =  $contribution->id;
         $ids['contact']          =  $contribution->contact_id;
@@ -274,7 +272,6 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             list( $ids['event'], $ids['participant'] ) =
                 explode( CRM_Core_DAO::VALUE_SEPARATOR,
                          $contribution->trxn_id );
-            
         } else {
             list( $ids['membership'], $ids['related_contact'], $ids['onbehalf_dupe_alert'] ) = 
                 explode( CRM_Core_DAO::VALUE_SEPARATOR,
@@ -302,27 +299,26 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $input['amount']     = $contribution->total_amount;
         $input['fee_amount'] = null;
         $input['net_amount'] = null;
-        $input['trxn_id']    = $orderNo;
+        $input['trxn_id']    = $ids['contributionRecur'] ? $serial : $dataRoot['google-order-number']['VALUE'];
         $input['is_test']    = $contribution->is_test;
 
         $this->completeTransaction( $input, $ids, $objects, $transaction );
 
+        $this->completeRecur( $input, $ids, $objects );
+    }
+
+    function completeRecur( $input, $ids, $objects ) {
         if ( $ids['contributionRecur'] ) {
             $recur =& $objects['contributionRecur'];
             $contributionCount = CRM_Core_DAO::singleValueQuery( "SELECT count(*) FROM civicrm_contribution WHERE contribution_recur_id = {$ids['contributionRecur']}" );
-            if ( $contributionCount >= $recur->installments ) {
+            if ( $recur->installments && ( $contributionCount >= $recur->installments ) ) {
                 require_once 'CRM/Core/Payment.php';
                 require_once 'CRM/Contribute/PseudoConstant.php';
                 $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
 
-                // fix dates that already exist
-                $dates = array( 'create', 'start', 'cancel' );
-                foreach ( $dates as $date ) {
-                    $name = "{$date}_date";
-                    if ( $recur->$name ) {
-                        $recur->$name = CRM_Utils_Date::isoToMysql( $recur->$name );
-                    }
-                }
+                $recur->create_date = CRM_Utils_Date::isoToMysql( $recur->create_date );
+                $recur->start_date  = CRM_Utils_Date::isoToMysql( $recur->start_date  );
+                $recur->cancel_date = CRM_Utils_Date::isoToMysql( $recur->cancel_date );
                 $recur->end_date               = date( 'YmdHis' );
                 $recur->modified_date          = date( 'YmdHis' );
                 $recur->contribution_status_id = array_search( 'Completed', $contributionStatus );
@@ -373,7 +369,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $contribution = new CRM_Contribute_DAO_Contribution( );
         $contribution->invoice_id = $orderNo;
         if ( ! $contribution->find( true ) ) {
-            CRM_Core_Error::debug_log_message( "Could not find contribution record with invoice id: $orderNo" );
+            CRM_Core_Error::debug_log_message( "getAmount: Could not find contribution record with invoice id: $orderNo" );
             echo "Failure: Could not find contribution record with invoice id: $orderNo <p>";
             exit( );
         }
@@ -391,94 +387,62 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
      * @return array context of this call (test, module, payment processor id)
      * @static  
      */  
-    static function getContext($xml_response, $privateData, $orderNo, $root) {
+    function getContext($privateData, $orderNo, $root, $response) {
         require_once 'CRM/Contribute/DAO/Contribution.php';
 
-        $isTest = null;
-        $module = null;
-        if ($root == 'new-order-notification') {
-            $contributionID   = $privateData['contributionID'];
-            $contribution     = new CRM_Contribute_DAO_Contribution( );
+        $contributionID   = $privateData['contributionID'];
+        $contribution     = new CRM_Contribute_DAO_Contribution( );
+        if ( $root == 'new-order-notification' ) {
             $contribution->id = $contributionID;
-            if ( ! $contribution->find( true ) ) {
-                CRM_Core_Error::debug_log_message( "Could not find contribution record: $contributionID" );
-                echo "Failure: Could not find contribution record for $contributionID<p>";
-                exit( );
-            }
-            if (stristr($contribution->source, ts('Online Contribution'))) {
-                $module = 'Contribute';
-            } elseif (stristr($contribution->source, ts('Online Event Registration'))) {
-                $module = 'Event';
-            }
-            $isTest = $contribution->is_test;
         } else {
-            $contribution = new CRM_Contribute_DAO_Contribution( );
             $contribution->invoice_id = $orderNo;
-            if ( ! $contribution->find( true ) ) {
-                CRM_Core_Error::debug_log_message( "Could not find contribution record with invoice id: $orderNo" );
-                echo "Failure: Could not find contribution record with invoice id: $orderNo <p>";
-                exit( );
-            }
-            if (stristr($contribution->source, ts('Online Contribution'))) {
-                $module = 'Contribute';
-            } elseif (stristr($contribution->source, ts('Online Event Registration'))) {
-                $module = 'Event';
-            }
-            $isTest = $contribution->is_test;
         }
-
-        if ( !$privateData['contributionRecurID'] && $contribution->contribution_status_id == 1 ) {
-            //contribution already handled.
+        if ( ! $contribution->find( true ) ) {
+            CRM_Core_Error::debug_log_message( "getContext: Could not find contribution record with invoice id: $orderNo" );
+            $response->SendAck($serial);
             return;
         }
 
-        if ( $module == 'Contribute' ) {
-            if ( ! $contribution->contribution_page_id ) {
-                CRM_Core_Error::debug_log_message( "Could not find contribution page for contribution record: $contributionID" );
-                echo "Failure: Could not find contribution page for contribution record: $contributionID<p>";
-                exit( );
-            }
+        $module = 'Contribute';
+        if (stristr($contribution->source, ts('Online Contribution'))) {
+            $module = 'Contribute';
+        } elseif (stristr($contribution->source, ts('Online Event Registration'))) {
+            $module = 'Event';
+        }
+        $isTest = $contribution->is_test;
 
-            // get the payment processor id from contribution page
-            $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage',
-                                                               $contribution->contribution_page_id,
-                                                               'payment_processor_id' );
-        } else {
+        $ids = $input = $objects  = array( );
+        $objects['contribution']  =& $contribution;
+        $ids['contributionRecur'] = self::retrieve( 'contributionRecurID', 'Integer', $privateData, false );
+        $input['component']       = strtolower($module);
+
+        if ( !$ids['contributionRecur'] && $contribution->contribution_status_id == 1 ) {
+            CRM_Core_Error::debug_log_message( "Contribution already handled (ContributionID = {$contribution->id})." );
+            // There is no point in going further. Return ack so we don't receive the same ipn.
+            $response->SendAck($serial);
+            return;
+        }
+
+        if ( $input['component'] == 'event' ) {
             if ($root == 'new-order-notification') {
-                $eventID = $privateData['eventID'];
+                $ids['event'] = $privateData['eventID'];
             } else {
-                list( $eventID, $participantID ) =
+                list( $ids['event'], $ids['participant'] ) =
                     explode( CRM_Core_DAO::VALUE_SEPARATOR,
                              $contribution->trxn_id );
             }
-            if ( !$eventID ) {
-                CRM_Core_Error::debug_log_message( "Could not find event ID" );
-                echo "Failure: Could not find eventID<p>";
-                exit( );
-            }
-
-            // we are in event mode
-            // make sure event exists and is valid
-            require_once 'CRM/Event/DAO/Event.php';
-            $event = new CRM_Event_DAO_Event( );
-            $event->id = $eventID;
-            if ( ! $event->find( true ) ) {
-                CRM_Core_Error::debug_log_message( "Could not find event: $eventID" );
-                echo "Failure: Could not find event: $eventID<p>";
-                exit( );
-            }
-            
-            // get the payment processor id from contribution page
-            $paymentProcessorID = $event->payment_processor_id;
         }
 
-        if ( ! $paymentProcessorID ) {
-            CRM_Core_Error::debug_log_message( "Could not find payment processor for contribution record: $contributionID" );
-            echo "Failure: Could not find payment processor for contribution record: $contributionID<p>";
-            exit( );
+        $this->loadObjects( $input, $ids, $objects, false );
+
+        if ( !$ids['paymentProcessor'] ) {
+            CRM_Core_Error::debug_log_message( "Payment processor could not be retrieved." );
+            // There is no point in going further. Return ack so we don't receive the same ipn.
+            $response->SendAck($serial);
+            return;
         }
 
-        return array( $isTest, $module, $paymentProcessorID );
+        return array( $isTest, $input['component'], $ids['paymentProcessor'] );
     }
 
     /**
@@ -521,11 +485,10 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $orderNo     = $data[$root]['google-order-number']['VALUE'];
         $serial      = $data[$root]['serial-number'];
         
-        list( $mode, $module, $paymentProcessorID ) = self::getContext($xml_response, $privateData, $orderNo, $root);
-        if ( ! $paymentProcessorID ) {
-            // if we didn't die and processor is not detected, payment is already complete or sth wrong.
-            $response->SendAck($serial);
-        }
+        // a dummy object to call get context and a parent function inside it.
+        $ipn = new CRM_Core_Payment_GoogleIPN( $mode, $dummyProcessor );
+        CRM_Core_Error::debug_var( '$ipn', $ipn );
+        list( $mode, $module, $paymentProcessorID ) = $ipn->getContext($privateData, $orderNo, $root, $response);
         $mode = $mode ? 'test' : 'live';
 
         require_once 'CRM/Core/BAO/PaymentProcessor.php';
