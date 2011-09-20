@@ -918,15 +918,17 @@ function civicrm_preprocess_page(&$variables) {
           $path . '/../packages/jquery/jquery.js' => $val,
         );
         
-        foreach ($scripts['module'] as $script => $val) {
-          if (strpos($script, $path) === 0) {
-            $core[$script] = $scripts['module'][$script];
-            unset($scripts['module'][$script]);
+        if (is_array($scripts['module'])) {
+          foreach ($scripts['module'] as $script => $val) {
+            if (strpos($script, $path) === 0) {
+              $core[$script] = $scripts['module'][$script];
+              unset($scripts['module'][$script]);
+            }
           }
         }
         
         $core[$path . '/../js/noconflict.js'] = $val;
-        $scripts['core'] = $core + $scripts['core'];
+        $scripts['core'] = $core + (is_array($scripts['core']) ? $scripts['core'] : array());
         $variables['scripts'] = drupal_get_js('header', $scripts);
     }
 }
