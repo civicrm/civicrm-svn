@@ -380,7 +380,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                     continue;                    
                 }
                 foreach( $pField['options'] as $opId => $opValues ) {
-                    $optionsMembershipTypes[$opId] = CRM_Utils_Array::value('membership_type_id', $opValues);
+                    $optionsMembershipTypes[$opId] = CRM_Utils_Array::value('membership_type_id', $opValues, 0);
                 }
             }
             

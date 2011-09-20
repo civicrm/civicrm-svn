@@ -573,8 +573,9 @@ function buildCustomDataFromPriceset( membershipValues, reload ) {
 	         if ( cj(this).attr('checked') ) {
                      eval( 'var option = ' + cj(this).attr('price') ) ;
                      ele = option[0];
-		     if ( cj.inArray(optionsMembershipTypes[ele], currentMembershipType) == -1 ) {
-		       currentMembershipType[count] = optionsMembershipTypes[ele];
+		     var memTypeId = optionsMembershipTypes[ele];
+		     if ( memTypeId && cj.inArray(optionsMembershipTypes[ele], currentMembershipType) == -1 ) {
+		       currentMembershipType[count] = memTypeId;
 		       count++;
 		     }
                  }
@@ -603,7 +604,7 @@ function buildCustomDataFromPriceset( membershipValues, reload ) {
                case 'select-one':
 	         if ( cj(this).val( ) ) {
                    var memTypeId = optionsMembershipTypes[cj(this).val()];
-                   if ( cj.inArray(memTypeId, currentMembershipType) == -1 ) {
+                   if ( memTypeId && cj.inArray(memTypeId, currentMembershipType) == -1 ) {
                        currentMembershipType[count] = memTypeId;
 		       count++;
 		   }

@@ -846,7 +846,7 @@ INNER JOIN  civicrm_price_set pset    ON ( pset.id = field.price_set_id )
         $queryString = "
 SELECT       count( pfv.id ) AS count, pfv.id AS id
 FROM         civicrm_price_field_value pfv
-LEFT JOIN    civicrm_membership_type mt ON mt.id = pfv.membership_type_id
+INNER JOIN    civicrm_membership_type mt ON mt.id = pfv.membership_type_id
 WHERE        pfv.id IN ( $ids )
 GROUP BY     mt.member_of_contact_id";
 
