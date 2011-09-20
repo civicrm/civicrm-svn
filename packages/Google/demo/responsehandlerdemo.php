@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2007 Google Inc.
+ * Copyright (C) 2006 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,48 +36,53 @@
   require_once('library/googleresponse.php');
   require_once('library/googlemerchantcalculations.php');
   require_once('library/googleresult.php');
-  require_once('library/googlerequest.php');
 
-  define('RESPONSE_HANDLER_ERROR_LOG_FILE', 'googleerror.log');
   define('RESPONSE_HANDLER_LOG_FILE', 'googlemessage.log');
 
-  $merchant_id = "778068064150108";  // Your Merchant ID
-  $merchant_key = "rFQNe6TbiBeO44y9S9o8Dw";  // Your Merchant Key
-  $server_type = "sandbox";  // change this to go live
-  $currency = 'USD';  // set to GBP if in the UK
-
-  $Gresponse = new GoogleResponse($merchant_id, $merchant_key);
-
-  $Grequest = new GoogleRequest($merchant_id, $merchant_key, $server_type, $currency);
-
   //Setup the log file
-  $Gresponse->SetLogFiles(RESPONSE_HANDLER_ERROR_LOG_FILE, 
-                                        RESPONSE_HANDLER_LOG_FILE, L_ALL);
+  if (!$message_log = fopen(RESPONSE_HANDLER_LOG_FILE, "a")) {
+    error_func("Cannot open " . RESPONSE_HANDLER_LOG_FILE . " file.\n", 0);
+    exit(1);
+  }
 
   // Retrieve the XML sent in the HTTP POST request to the ResponseHandler
-  $xml_response = isset($HTTP_RAW_POST_DATA)?
-                    $HTTP_RAW_POST_DATA:file_get_contents("php://input");
+  $xml_response = $HTTP_RAW_POST_DATA;
   if (get_magic_quotes_gpc()) {
     $xml_response = stripslashes($xml_response);
   }
-  list($root, $data) = $Gresponse->GetParsedXML($xml_response);
-  $Gresponse->SetMerchantAuthentication($merchant_id, $merchant_key);
+  $headers = getallheaders();
+  fwrite($message_log, sprintf("\n\r%s:- %s\n",date("D M j G:i:s T Y"),
+      $xml_response));
 
-  /*$status = $Gresponse->HttpAuthentication();
-  if(! $status) {
-    die('authentication failed');
-  }*/
+  // Create new response object
+  $merchant_id = "";  //Your Merchant ID
+  $merchant_key = "";  //Your Merchant Key
+  $server_type = "sandbox";
+
+  $response = new GoogleResponse($merchant_id, $merchant_key,
+      $xml_response, $server_type);
+  $root = $response->root;
+  $data = $response->data;
+  fwrite($message_log, sprintf("\n\r%s:- %s\n",date("D M j G:i:s T Y"),
+      $response->root));
+
+  //Use the following two lines to log the associative array storing the XML data
+  //$result = print_r($data,true);
+  //fwrite($message_log, sprintf("\n\r%s:- %s\n",date("D M j G:i:s T Y"),$result));
+
+  //Check status and take appropriate action
+  $status = $response->HttpAuthentication($headers);
 
   /* Commands to send the various order processing APIs
-   * Send charge order : $Grequest->SendChargeOrder($data[$root]
-   *    ['google-order-number']['VALUE'], <amount>);
-   * Send process order : $Grequest->SendProcessOrder($data[$root]
-   *    ['google-order-number']['VALUE']);
-   * Send deliver order: $Grequest->SendDeliverOrder($data[$root]
+   * Send charge order : $response->SendChargeOrder($data[$root]
+   *    ['google-order-number']['VALUE'], <amount>, $message_log);
+   * Send proces order : $response->SendProcessOrder($data[$root]
+   *    ['google-order-number']['VALUE'], $message_log);
+   * Send deliver order: $response->SendDeliverOrder($data[$root]
    *    ['google-order-number']['VALUE'], <carrier>, <tracking-number>,
-   *    <send_mail>);
-   * Send archive order: $Grequest->SendArchiveOrder($data[$root]
-   *    ['google-order-number']['VALUE']);
+   *    <send_mail>, $message_log);
+   * Send archive order: $response->SendArchiveOrder($data[$root]
+   *    ['google-order-number']['VALUE'], $message_log);
    *
    */
 
@@ -96,7 +101,7 @@
     }
     case "merchant-calculation-callback": {
       // Create the results and send it
-      $merchant_calc = new GoogleMerchantCalculations($currency);
+      $merchant_calc = new GoogleMerchantCalculations();
 
       // Loop through the list of address ids from the callback
       $addresses = get_arr_result($data[$root]['calculate']['addresses']['anonymous-address']);
@@ -105,7 +110,7 @@
         $country = $curr_address['country-code']['VALUE'];
         $city = $curr_address['city']['VALUE'];
         $region = $curr_address['region']['VALUE'];
-        $postal_code = $curr_address['postal-code']['VALUE'];
+        $postal_code = $curr_address['region']['VALUE'];
 
         // Loop through each shipping method if merchant-calculated shipping
         // support is to be provided
@@ -114,65 +119,67 @@
           foreach($shipping as $curr_ship) {
             $name = $curr_ship['name'];
             //Compute the price for this shipping method and address id
-            $price = 12; // Modify this to get the actual price
+            $price = 10; // Modify this to get the actual price
             $shippable = "true"; // Modify this as required
             $merchant_result = new GoogleResult($curr_id);
-            $merchant_result->SetShippingDetails($name, $price, $shippable);
+            $merchant_result->SetShippingDetails($name, $price, "USD",
+                $shippable);
 
             if($data[$root]['calculate']['tax']['VALUE'] == "true") {
               //Compute tax for this address id and shipping type
               $amount = 15; // Modify this to the actual tax value
-              $merchant_result->SetTaxDetails($amount);
+              $merchant_result->SetTaxDetails($amount, "USD");
             }
 
-            if(isset($data[$root]['calculate']['merchant-code-strings']
-                ['merchant-code-string'])) {
-              $codes = get_arr_result($data[$root]['calculate']['merchant-code-strings']
-                  ['merchant-code-string']);
-              foreach($codes as $curr_code) {
-                //Update this data as required to set whether the coupon is valid, the code and the amount
-                $coupons = new GoogleGiftcerts("true", $curr_code['code'], 10, "debugtest");
-                $merchant_result->AddGiftCertificates($coupons);
-              }
-             }
-             $merchant_calc->AddResult($merchant_result);
+            $codes = get_arr_result($data[$root]['calculate']['merchant-code-strings']
+                ['merchant-code-string']);
+            foreach($codes as $curr_code) {
+              //Update this data as required to set whether the coupon is valid, the code and the amount
+              $coupons = new GoogleCoupons("true", $curr_code['code'], 5, "USD", "test2");
+              $merchant_result->AddCoupons($coupons);
+            }
+            $merchant_calc->AddResult($merchant_result);
           }
         } else {
           $merchant_result = new GoogleResult($curr_id);
           if($data[$root]['calculate']['tax']['VALUE'] == "true") {
             //Compute tax for this address id and shipping type
             $amount = 15; // Modify this to the actual tax value
-            $merchant_result->SetTaxDetails($amount);
+            $merchant_result->SetTaxDetails($amount, "USD");
           }
           $codes = get_arr_result($data[$root]['calculate']['merchant-code-strings']
               ['merchant-code-string']);
           foreach($codes as $curr_code) {
             //Update this data as required to set whether the coupon is valid, the code and the amount
-            $coupons = new GoogleGiftcerts("true", $curr_code['code'], 10, "debugtest");
-            $merchant_result->AddGiftCertificates($coupons);
+            $coupons = new GoogleCoupons("true", $curr_code['code'], 5, "USD", "test2");
+            $merchant_result->AddCoupons($coupons);
           }
           $merchant_calc->AddResult($merchant_result);
         }
       }
-      $Gresponse->ProcessMerchantCalculations($merchant_calc);
+      fwrite($message_log, sprintf("\n\r%s:- %s\n",date("D M j G:i:s T Y"),
+          $merchant_calc->GetXML()));
+      $response->ProcessMerchantCalculations($merchant_calc);
       break;
     }
     case "new-order-notification": {
-      $Gresponse->SendAck();
+      $response->SendAck();
       break;
     }
     case "order-state-change-notification": {
-      $Gresponse->SendAck();
+      $response->SendAck();
       $new_financial_state = $data[$root]['new-financial-order-state']['VALUE'];
       $new_fulfillment_order = $data[$root]['new-fulfillment-order-state']['VALUE'];
 
       switch($new_financial_state) {
         case 'REVIEWING': {
           break;
-        }
+       }
         case 'CHARGEABLE': {
-          //$Grequest->SendProcessOrder($data[$root]['google-order-number']['VALUE']);
-          //$Grequest->SendChargeOrder($data[$root]['google-order-number']['VALUE'],'');
+          //$response->SendProcessOrder($data[$root]['google-order-number']['VALUE'], 
+		  //    $message_log);
+	      //$response->SendChargeOrder($data[$root]['google-order-number']['VALUE'], 
+		  //    '', $message_log);
           break;
         }
         case 'CHARGING': {
@@ -188,8 +195,8 @@
           break;
         }
         case 'CANCELLED_BY_GOOGLE': {
-          //$Grequest->SendBuyerMessage($data[$root]['google-order-number']['VALUE'],
-          //    "Sorry, your order is cancelled by Google", true);
+          //$response->SendBuyerMessage($data[$root]['google-order-number']['VALUE'],
+		  //    "Sorry, your order is cancelled by Google", true, $message_log);
           break;
         }
         default:
@@ -212,30 +219,30 @@
         default:
           break;
       }
-      break;
     }
     case "charge-amount-notification": {
-      //$Grequest->SendDeliverOrder($data[$root]['google-order-number']['VALUE'],
-      //    <carrier>, <tracking-number>, <send-email>);
-      //$Grequest->SendArchiveOrder($data[$root]['google-order-number']['VALUE'] );
-      $Gresponse->SendAck();
+      $response->SendAck();
+	  //$response->SendDeliverOrder($data[$root]['google-order-number']['VALUE'], 
+	  //    <carrier>, <tracking-number>, <send-email>, $message_log);
+      //$response->SendArchiveOrder($data[$root]['google-order-number']['VALUE'], 
+	  //    $message_log);
       break;
     }
     case "chargeback-amount-notification": {
-      $Gresponse->SendAck();
+      $response->SendAck();
       break;
     }
     case "refund-amount-notification": {
-      $Gresponse->SendAck();
+      $response->SendAck();
       break;
     }
     case "risk-information-notification": {
-      $Gresponse->SendAck();
+      $response->SendAck();
       break;
     }
-    default:
-      $Gresponse->SendBadRequestStatus("Invalid or not supported Message");
+    default: {
       break;
+    }
   }
   /* In case the XML API contains multiple open tags
      with the same value, then invoke this function and

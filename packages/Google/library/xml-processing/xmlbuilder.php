@@ -17,20 +17,17 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-/**
- * Classes used to generate XML data
+/*
+ * Class used to generate XML data
  * Based on sample code available at http://simon.incutio.com/code/php/XmlWriter.class.php.txt 
  */
 
-  /**
-   * Generates xml data
-   */
-  class gc_XmlBuilder {
+  class XmlBuilder {
     var $xml;
     var $indent;
     var $stack = array();
 
-    function gc_XmlBuilder($indent = '  ') {
+    function XmlBuilder($indent = '  ') {
       $this->indent = $indent;
       $this->xml = '<?xml version="1.0" encoding="utf-8"?>'."\n";
     }
@@ -47,8 +44,7 @@
       $this->_indent();
       $this->xml .= '<'.$element;
       foreach ($attributes as $key => $value) {
-        if(!empty($value))
-          $this->xml .= ' '.$key.'="'.htmlentities($value).'"';
+        $this->xml .= ' '.$key.'="'.htmlentities($value).'"';
       }
       $this->xml .= ">\n";
       $this->stack[] = $element;

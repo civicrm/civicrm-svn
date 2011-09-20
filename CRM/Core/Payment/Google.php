@@ -37,7 +37,6 @@
 require_once 'CRM/Core/Payment.php';
 require_once 'Google/library/googlecart.php';
 require_once 'Google/library/googleitem.php';
-require_once 'Google/library/googlesubscription.php';
 
 class CRM_Core_Payment_Google extends CRM_Core_Payment { 
     /**
@@ -129,80 +128,22 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
     function doTransferCheckout( &$params, $component ) {
         $component = strtolower( $component );
         
-        if ( CRM_Utils_Array::value( 'is_recur', $params ) &&
-             $params['contributionRecurID'] ) {
-            return $this->doRecurCheckout( $params, $component );
-        }
+        $url = rtrim( $this->_paymentProcessor['url_site'], '/' ) . '/cws/v2/Merchant/' . 
+            $this->_paymentProcessor['user_name'] . '/checkout';
 
         //Create a new shopping cart object
         $merchant_id  = $this->_paymentProcessor['user_name'];   // Merchant ID
         $merchant_key = $this->_paymentProcessor['password'];    // Merchant Key
         $server_type  = ( $this->_mode == 'test' ) ? 'sandbox' : '';
         
-        $cart  = new GoogleCart($merchant_id, $merchant_key, $server_type, $params['currencyID']); 
-        $item1 = new GoogleItem($params['item_name'],'', 1, $params['amount']);
+        $cart  = new GoogleCart($merchant_id, $merchant_key, $server_type); 
+        $item1 = new GoogleItem($params['item_name'],'', 1, $params['amount'], $params['currencyID']);
         $cart->AddItem($item1);
-
-        $this->submitPostParams( $params, $component, $cart );
-    }
-
-    function doRecurCheckout( &$params, $component ) {
-        $intervalUnit   = CRM_Utils_Array::value( 'frequency_unit', $params );
-        if ( $intervalUnit == 'week' ) {
-            $intervalUnit = 'WEEKLY';
-        } else if ( $intervalUnit == 'year' ) {
-            $intervalUnit = 'YEARLY';
-        } else if ( $intervalUnit == 'day' ) {
-            $intervalUnit = 'DAILY';
-        } else if ( $intervalUnit == 'month' ) {
-            $intervalUnit = 'MONTHLY';
-        }
-
-        $merchant_id  = $this->_paymentProcessor['user_name'];   // Merchant ID
-        $merchant_key = $this->_paymentProcessor['password'];    // Merchant Key
-        $server_type  = ( $this->_mode == 'test' ) ? 'sandbox' : '';
-
-        $itemName     = CRM_Utils_Array::value( 'item_name', $params );
-        $description  = CRM_Utils_Array::value( 'description', $params );
-        $amount       = CRM_Utils_Array::value( 'amount', $params );
-        $installments = CRM_Utils_Array::value( 'installments', $params );
-                        
-        $cart = new GoogleCart($merchant_id, $merchant_key, $server_type, $params['currencyID']); 
-        $item = new GoogleItem($itemName, $description, 1, $amount);
-        $subscription_item = new GoogleSubscription("merchant", $intervalUnit, $amount, $installments);
-                
-        $item->SetSubscription($subscription_item);
-        $cart->AddItem($item);
-
-        $this->submitPostParams( $params, $component, $cart ); 
-
-    }
-
-    /**  
-     * Builds appropriate parameters for checking out to google and submits the post params
-     *  
-     * @param array  $params    name value pair of contribution data
-     * @param string $component event/contribution
-     * @param object $cart      object of googel cart
-     *  
-     * @return void  
-     * @access public 
-     *  
-     */  
-    function submitPostParams( $params, $component, $cart )
-    {
-        $url = rtrim( $this->_paymentProcessor['url_site'], '/' ) . '/cws/v2/Merchant/' . 
-            $this->_paymentProcessor['user_name'] . '/checkout';
 
         if ( $component == "event" ) {
             $privateData = "contactID={$params['contactID']},contributionID={$params['contributionID']},contributionTypeID={$params['contributionTypeID']},eventID={$params['eventID']},participantID={$params['participantID']},invoiceID={$params['invoiceID']}";
-        } else if ( $component == "contribute" ) {
+        } elseif ( $component == "contribute" ) {
             $privateData = "contactID={$params['contactID']},contributionID={$params['contributionID']},contributionTypeID={$params['contributionTypeID']},invoiceID={$params['invoiceID']}";
-
-            $contributionRecurID = CRM_Utils_Array::value( 'contributionRecurID', $params );
-            if ( $contributionRecurID ) {
-                $privateData .= ",contributionRecurID=$contributionRecurID";
-            }
 
             $membershipID = CRM_Utils_Array::value( 'membershipID', $params );
             if ( $membershipID ) {
@@ -219,7 +160,7 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
                 }
             }
         }
-
+        
         // Allow further manipulation of the arguments via custom hooks ..
         CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $privateData );
 
@@ -234,6 +175,7 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
                                                 "_qf_ThankYou_display=1&qfKey={$params['qfKey']}",
                                                 true, null, false );
         }
+
         $cart->SetContinueShoppingUrl( $returnURL );
 
         $cartVal      = base64_encode($cart->GetXML());
@@ -351,8 +293,8 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
     }
     
     static function getArrayFromXML( $xmlData ) {
-        require_once 'Google/library/xml-processing/gc_xmlparser.php';
-        $xmlParser = new gc_XmlParser($xmlData);
+        require_once 'Google/library/xml-processing/xmlparser.php';
+        $xmlParser = new XmlParser($xmlData);
         $root      = $xmlParser->GetRoot();
         $data      = $xmlParser->GetData();
         
