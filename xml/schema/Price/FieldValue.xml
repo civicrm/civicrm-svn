@@ -90,6 +90,27 @@
       <add>3.3</add>
   </field>
   <field>
+      <name>membership_type_id</name>
+      <type>int unsigned</type>
+      <default>NULL</default>
+      <comment>FK to Membership Type</comment>
+      <add>3.4</add>
+  </field>
+  <foreignKey> 
+      <name>membership_type_id</name> 
+      <table>civicrm_membership_type</table> 
+      <key>id</key>
+      <add>3.4</add>
+      <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+      <name>auto_renew</name>
+      <type>boolean</type>
+      <comment>Is this membership price set field auto-renewable?</comment>
+      <default>NULL</default>
+      <add>3.4</add>
+  </field>
+  <field>
       <name>is_default</name>
       <type>boolean</type>
       <comment>Is this default price field option</comment>

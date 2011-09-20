@@ -99,6 +99,8 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
         
         $this->assign( 'lineItem', $this->_lineItem );
         $this->assign( 'priceSetID', $this->_priceSetId );
+        $this->assign(  'useForMember', $this->get('useForMember'));
+
         $params = $this->_params;
      
         $honor_block_is_active = $this->get( 'honor_block_is_active'); 

@@ -53,10 +53,13 @@
 
     {if $amount GT 0 OR $minimum_fee GT 0 OR ( $priceSetID and $lineItem ) }
     <div class="crm-group amount_display-group">
+        {if !$useForMember}
         <div class="header-dark">
             {if !$membershipBlock AND $amount OR ( $priceSetID and $lineItem ) }{ts}Contribution Amount{/ts}{else}{ts}Membership Fee{/ts} {/if}
         </div>
+        {/if}
         <div class="display-block">
+            {if !$useForMember}
             {if $lineItem and $priceSetID}
             {if !$amount}{assign var="amount" value=0}{/if}
             {assign var="totalAmount" value=$amount}
@@ -79,6 +82,8 @@
                     {$membership_name} {ts}Membership{/ts}: <strong>{$minimum_fee|crmMoney}</strong>
                 {/if}
             {/if}
+            {/if}
+
             {if $is_recur}
                 {if $membershipBlock} {* Auto-renew membership confirmation *}
                     <br />

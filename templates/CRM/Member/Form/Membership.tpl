@@ -33,6 +33,19 @@
 <div class="spacer"></div>
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
+{elseif $priceSetId}
+  {include file="CRM/Price/Form/PriceSet.tpl" context="standalone" extends="Membership"}
+  {literal}
+  <script type="text/javascript">
+    cj( function() {
+        var membershipValues = new Array;
+        {/literal}{foreach from=$optionsMembershipTypes item=memType key=opId}{literal}
+                  membershipValues[{/literal}{$opId}{literal}] = {/literal}{$memType}{literal};
+        {/literal}{/foreach}{literal}
+        buildCustomDataFromPriceset(membershipValues, 1);
+    });
+  </script>
+  {/literal}
 {else}
 {if $membershipMode == 'test' }
     {assign var=registerMode value="TEST"}
@@ -77,9 +90,33 @@
     {if $membershipMode}
 	    <tr><td class="label">{$form.payment_processor_id.label}</td><td>{$form.payment_processor_id.html}</td></tr>
 	{/if}
- 	<tr class="crm-membership-form-block-membership_type_id"><td class="label">{$form.membership_type_id.label}</td><td>{$form.membership_type_id.html}
-    {if $member_is_test} {ts}(test){/ts}{/if}<br />
-        <span class="description">{ts}Select Membership Organization and then Membership Type.{/ts}</span></td></tr>	
+        {if $action eq 2 and $lineItem}
+            <tr class="crm-membership-form-block-membership_type_id">
+               <td class="label">{$form.membership_type_id.label}</td>
+               <td><span id='mem_type_id'>{$form.membership_type_id.html}</span>
+            </tr>
+	    <tr>
+               <td class="label">{ts}Membership Amount{/ts}</td>
+               <td>{include file="CRM/Price/Page/LineItem.tpl" context="Membership"}</td>
+            </tr>
+	{else}
+ 	    <tr class="crm-membership-form-block-membership_type_id">
+               <td class="label">{$form.membership_type_id.label}</td>
+               <td><span id='mem_type_id'>{$form.membership_type_id.html}</span>
+                 {if $hasPriceSets}
+                    <span id='totalAmountORPriceSet'> {ts}OR{/ts}</span>
+        	    <span id='selectPriceSet'>{$form.price_set_id.html}</span>
+                    {if $buildPriceSet && $priceSet}
+                      <div id="priceset"><br/>{include file="CRM/Price/Form/PriceSet.tpl" extends="Membership"}</div>
+                    {else}
+                      <div id="priceset" class="hiddenElement"></div>
+                    {/if}
+                 {/if}
+                 {if $member_is_test} {ts}(test){/ts}{/if}<br />
+                    <span class="description">{ts}Select Membership Organization and then Membership Type.{/ts}</span>
+                    </td>
+            </tr>	
+         {/if}
     <tr class="crm-membership-form-block-source"><td class="label">{$form.source.label}</td><td>&nbsp;{$form.source.html}<br />
         <span class="description">{ts}Source of this membership. This value is searchable.{/ts}</span></td></tr>
 		
@@ -306,8 +343,13 @@ function showHideMemberStatus() {
 {literal}
 function setPaymentBlock( mode ) {
     var memType = cj('#membership_type_id\\[1\\]').val( );
+    var isPriceSet = 0;
+
+    if ( cj('#price_set_id').length > 0 && cj('#price_set_id').val() ) {
+        isPriceSet = 1;
+    }  	
     
-    if ( !memType ) {
+    if ( !memType || isPriceSet ) {
         return;
     }
     
@@ -463,6 +505,150 @@ function buildReceiptANDNotice( ) {
      }
    }
 }
+
+var customDataType = '{/literal}{$customDataType}{literal}';
+
+// load form during form rule.
+{/literal}{if $buildPriceSet}{literal}
+    cj( "#totalAmountORPriceSet" ).hide( );
+    cj( "#mem_type_id" ).hide( );
+    cj('#total_amount').attr("readonly", true);
+{/literal}{/if}{literal}
+
+function buildAmount( priceSetId ) {
+  if ( !priceSetId ) priceSetId = cj("#price_set_id").val( );
+  
+  var fname = '#priceset';
+  if ( !priceSetId ) {
+      cj('#membership_type_id\\[1\\]').val(0);
+      buildCustomData(customDataType, 'null' );
+
+      // hide price set fields.
+      cj( fname ).hide( );
+
+      // show/hide price set amount and total amount.
+      cj( "#mem_type_id").show( );
+      cj( "#totalAmountORPriceSet" ).show( );
+      cj('#total_amount').removeAttr("readonly"); 
+      return;
+  }
+  
+  cj('#total_amount').attr("readonly", true);
+
+  var dataUrl = {/literal}"{crmURL h=0 q='snippet=4'}"{literal} + '&priceSetId=' + priceSetId;
+  
+  var response = cj.ajax({
+		         url: dataUrl,
+                         async: false
+                 }).responseText;
+  
+  cj( fname ).show( ).html( response );
+  // freeze total amount text field.
+  cj( "#total_amount" ).val( '' );
+ 
+  cj( "#totalAmountORPriceSet" ).hide( );
+  cj( "#mem_type_id" ).hide( );
+}
+
+var lastMembershipTypes = new Array;
+var optionsMembershipTypes = new Array;
+
+// function to load custom data for selected membership types through priceset
+function buildCustomDataFromPriceset( membershipValues, reload ) {
+    var currentMembershipType = new Array;
+    var count = 0;
+    var loadCustomData = 0;
+    if ( membershipValues ) {
+        optionsMembershipTypes = membershipValues;
+    }
+    if ( reload ) {
+        lastMembershipTypes = new Array;
+    }
+
+    cj("input,#priceset select,#priceset").each(function () {
+           if ( cj(this).attr('price') ) {
+             switch( cj(this).attr('type') ) {
+
+               case 'checkbox':
+	         if ( cj(this).attr('checked') ) {
+                     eval( 'var option = ' + cj(this).attr('price') ) ;
+                     ele = option[0];
+		     var memTypeId = optionsMembershipTypes[ele];
+		     if ( memTypeId && cj.inArray(optionsMembershipTypes[ele], currentMembershipType) == -1 ) {
+		       currentMembershipType[count] = memTypeId;
+		       count++;
+		     }
+                 }
+		 if ( reload ) { 
+		   cj(this).click( function( ) {
+		     buildCustomDataFromPriceset();
+		   });
+		 }  
+               break;
+
+               case 'radio':
+                 if ( cj(this).attr('checked') && cj(this).val() ) {
+		   var memTypeId = optionsMembershipTypes[cj(this).val()];
+                   if ( memTypeId && cj.inArray(memTypeId, currentMembershipType) == -1 ) {
+                       currentMembershipType[count] = memTypeId;
+		       count++;
+		   }
+                 }
+                 if ( reload ) { 
+		   cj(this).click( function( ) {
+		     buildCustomDataFromPriceset();
+		   });
+		 }
+               break;
+
+               case 'select-one':
+	         if ( cj(this).val( ) ) {
+                   var memTypeId = optionsMembershipTypes[cj(this).val()];
+                   if ( memTypeId && cj.inArray(memTypeId, currentMembershipType) == -1 ) {
+                       currentMembershipType[count] = memTypeId;
+		       count++;
+		   }
+                 } 
+                 if ( reload ) { 
+		   cj(this).change( function( ) {
+		     buildCustomDataFromPriceset();
+		   });
+		 }
+	       break;
+	     }
+	   }
+    });
+ 
+    for( i in currentMembershipType ) {
+        if ( cj.inArray(currentMembershipType[i], lastMembershipTypes) == -1 ) {
+            loadCustomData = 1;
+            break;
+        }
+    }
+
+    if ( !loadCustomData ) {
+        for( i in lastMembershipTypes) { 
+            if ( cj.inArray(lastMembershipTypes[i], currentMembershipType) == -1 ) {
+                loadCustomData = 1;
+                break;
+            }
+        }  
+    }
+    lastMembershipTypes = currentMembershipType;
+
+    // load custom data only if change in membership type selection
+    if ( !loadCustomData ) {
+        return;   
+    }    
+
+    subTypeNames = currentMembershipType.join(',');
+    if ( subTypeNames.length < 1 ) {
+        subTypeNames = 'null';
+    }
+
+    buildCustomData( customDataType, subTypeNames );
+}
+
 </script>
 {/literal}
 {/if} {* closing of delete check if *} 

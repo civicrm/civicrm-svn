@@ -578,6 +578,28 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
         } 
         return $membershipTypes;
     }
+
+    /**
+     * Function to retrieve all Membership Types with Member of Contact id
+     * 
+     * @param array membership types
+     *
+     * @return Array array of the details of membership types with Member of Contact id
+     * @static
+     */    
+    static function getMemberOfContactByMemTypes( $membershipTypes ) {
+        $memTypeOrgs = array( );
+        if ( empty($membershipTypes) ) {
+            return $memTypeOrgs;
+        }
+
+        $result = CRM_Core_DAO::executeQuery("SELECT id, member_of_contact_id FROM civicrm_membership_type WHERE id IN (". implode(',', $membershipTypes) .")");
+        while( $result->fetch( ) ) {
+            $memTypeOrgs[$result->id] = $result->member_of_contact_id;
+        }
+        
+        return $memTypeOrgs;
+    }
 }
 
 

@@ -200,7 +200,8 @@ VALUES
    ('paper_size'                    , '{ts escape="sql"}Paper Size{/ts}'                         , 0, 1),
    ('pdf_format'                    , '{ts escape="sql"}PDF Page Format{/ts}'                    , 0, 1),
    ('label_format'                  , '{ts escape="sql"}Mailing Label Format{/ts}'               , 0, 1),
-   ('activity_contacts'             , '{ts escape="sql"}Activity Contacts{/ts}'                  , 0, 1);
+   ('activity_contacts'             , '{ts escape="sql"}Activity Contacts{/ts}'                  , 0, 1),
+   ('auto_renew_options'            , '{ts escape="sql"}Auto Renew Options{/ts}'                 , 0, 1);
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
@@ -263,6 +264,7 @@ SELECT @option_group_id_cgeo           := max(id) from civicrm_option_group wher
 SELECT @option_group_id_paperSize      := max(id) from civicrm_option_group where name = 'paper_size';
 SELECT @option_group_id_label          := max(id) from civicrm_option_group where name = 'label_format';
 SELECT @option_group_id_aco            := max(id) from civicrm_option_group where name = 'activity_contacts';
+SELECT @option_group_id_aro            := max(id) from civicrm_option_group where name = 'auto_renew_options';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -757,6 +759,11 @@ VALUES
    (@option_group_id_aco, '{ts escape="sql"}Activity Assignees{/ts}', 1, 'Activity Assignees', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_aco, '{ts escape="sql"}Activity Source{/ts}', 2, 'Activity Source', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_aco, '{ts escape="sql"}Activity Targets{/ts}', 3, 'Activity Targets', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
+
+-- auto_renew_options
+   (@option_group_id_aro, '{ts escape="sql"}No auto-renew option{/ts}', 0, 'No auto-renew option', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_aro, '{ts escape="sql"}Give option, but not required{/ts}', 1, 'Give option, but not required', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_aro, '{ts escape="sql"}Auto-renew required{/ts}', 2, 'Auto-renew required', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
 
 -- Label Formats
   (@option_group_id_label, '{ts escape="sql"}Avery 3475{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":10,"font-style":"","metric":"mm","lMargin":0,"tMargin":5,"NX":3,"NY":8,"SpaceX":0,"SpaceY":0,"width":70,"height":36,"lPadding":5.08,"tPadding":5.08}{/literal}',                   '3475',  'Avery', NULL, 0, 1,  NULL, 0, 1, 1, NULL, NULL), 
