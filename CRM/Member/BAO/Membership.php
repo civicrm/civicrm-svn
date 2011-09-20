@@ -1252,12 +1252,12 @@ AND civicrm_membership.is_test = %2";
                              isset($createdMemberships[$priceFieldOp['membership_type_id']]) ) {
                             $membershipOb = $createdMemberships[$priceFieldOp['membership_type_id']];
                             $priceFieldOp['start_date'] = $membershipOb->start_date ?
-                                CRM_Utils_Date::customFormat($membershipOb->start_date) : '-';
+                                CRM_Utils_Date::customFormat($membershipOb->start_date, '%d%f %b, %Y') : '-';
                             $priceFieldOp['end_date'] = $membershipOb->end_date ?
-                                CRM_Utils_Date::customFormat($membershipOb->end_date) : '-';
+                                CRM_Utils_Date::customFormat($membershipOb->end_date, '%d%f %b, %Y') : '-';
                         }
                     }
-                    $form->_values['lineItem'] = $form->_lineItem;               
+                    $form->_values['lineItem'] = $form->_lineItem;
                     $form->assign( 'lineItem', $form->_lineItem );
                 }
             } else {
