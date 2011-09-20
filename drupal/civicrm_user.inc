@@ -90,9 +90,11 @@ function civicrm_user_update( &$edit, &$user, $category )
     if ( ! civicrm_initialize( ) ) {
         return;
     }
-    // this always comes in via user hook, so udpate email only if it has changed
+
+    // this always comes in via user hook
+    // in D7 we dont know if the email has changed, so we go ahead and update
     if ( isset( $edit['mail'] ) &&
-         trim( $edit['mail'] ) != trim( $user->mail ) ) {
+         ! empty( $edit['mail'] ) ) {
         require_once 'CRM/Core/BAO/UFMatch.php';
         $contactID = CRM_Core_BAO_UFMatch::getContactId( $user->uid );
 
@@ -103,6 +105,7 @@ function civicrm_user_update( &$edit, &$user, $category )
         CRM_Core_BAO_UFMatch::updateContactEmail( $contactID,
                                                   trim( $edit['mail'] ) );
     }
+
 }
 
 /**

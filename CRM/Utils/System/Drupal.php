@@ -121,10 +121,10 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
     function updateCMSName( $ufID, $ufName ) 
     {
             if ( function_exists( 'user_load' ) ) { // CRM-5555
-                $user = user_load( array( 'uid' => $ufID ) );
+                $user = user_load( $ufID );
                 if ($user->mail != $ufName) {
                     user_save( $user, array( 'mail' => $ufName ) );
-                    $user = user_load( array( 'uid' => $ufID ) );
+                    $user = user_load( $ufID );
                 }
             }
         
@@ -486,9 +486,6 @@ AND    u.status = 1
         if(function_exists('user_load_by_name')) {
             // >= d7 approach
             $user = user_load_by_name($username);
-        } else {
-            // < d7 approach
-            $user = user_load(array('name' => $username));
         }
         if(empty($user->uid)) return false;
 

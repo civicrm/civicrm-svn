@@ -89,7 +89,7 @@ class CRM_Bridge_OG_Utils {
         }
 
         // else create a contact for this user
-        $user = user_load( array( 'uid' => $ufID ) );
+        $user = user_load( $ufID );
         $params = array(
             'contact_type' => 'Individual',
             'email'        => $user->mail,
