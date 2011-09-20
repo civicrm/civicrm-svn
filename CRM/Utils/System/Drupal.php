@@ -595,12 +595,17 @@ AND    u.status = 1
         }
         
         // seems like we've bootstrapped drupal
+        $config = CRM_Core_Config::singleton( );
+
+        // lets also fix the clean url setting
+        // CRM-6948
+        $config->cleanURL = (int) variable_get('clean_url', '0');
+
         // we need to call the config hook again, since we now know
         // all the modules that are listening on it, does not apply
         // to J! and WP as yet
         // CRM-8655
         require_once 'CRM/Utils/Hook.php';
-        $config = CRM_Core_Config::singleton( );
         CRM_Utils_Hook::config( $config );
 
         if ( ! $loadUser ) {
