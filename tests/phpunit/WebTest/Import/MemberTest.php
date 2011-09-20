@@ -184,7 +184,7 @@ class WebTest_Import_MemberTest extends ImportCiviSeleniumTestCase {
         $year  = date( 'Y' ) - 1;
         $startDate2 = date( 'Y-m-d', mktime( 0, 0, 0, 12, 31, $year ) );
         
-        $headers = array( 'organization_name'     => 'Household Name',
+        $headers = array( 'organization_name'     => 'Organization Name',
                           'membership_type_id'    => 'Membership Type',
                           'membership_start_date' => 'Membership Start Date',
                           );
