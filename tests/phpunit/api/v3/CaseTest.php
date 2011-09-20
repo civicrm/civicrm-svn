@@ -317,12 +317,14 @@ class api_v3_CaseTest extends CiviUnitTestCase
         $dao->case_id = 1;
         $dao->activity_id = $this->_caseActivityId;
         $this->assertEquals( $dao->find( ), 1, 'case_activity table not populated correctly in line ' . __LINE__) ;
+        $dao->free();
 
         require_once 'CRM/Activity/DAO/ActivityTarget.php';
         $dao = new CRM_Activity_DAO_ActivityTarget( );
         $dao->activity_id = $this->_caseActivityId;
         $dao->target_contact_id = $this->_params['contact_id'];
         $this->assertEquals( $dao->find( ), 1, 'activity_target table not populated correctly in line ' . __LINE__) ;
+        $dao->free();
 
 // TODO: There's more things we could check
 
@@ -356,7 +358,71 @@ class api_v3_CaseTest extends CiviUnitTestCase
                              $this->_caseActivityId,
                              'in line ' . __LINE__);
 
-//TODO: check old revision is as expected, and some more things
+        // Check revision is as expected
+        $revParams = array( 'activity_id' => $this->_caseActivityId,
+                            'version' => $this->_apiversion,
+                          );
+        $revActivity =& civicrm_api( 'activity', 'get', $revParams );
+        $this->assertEquals( $revActivity['values'][$this->_caseActivityId]['is_current_revision'],
+                             0, 
+                             'in line ' . __LINE__);
+        $this->assertEquals( $revActivity['values'][$this->_caseActivityId]['is_deleted'],
+                             0, 
+                             'in line ' . __LINE__);
+        
+//TODO: check some more things
+    }
+    
+    function testCaseActivityUpdateCustom() {
+        // Create a case first
+        $params = $this->_params;
+        $result =& civicrm_api('case','create', $params );
+
+        // Create custom field group
+        // Note the second parameter is Activity on purpose, not Case.
+        $custom_ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__, 'ActivityTest.php');
+        
+        // create activity
+        $params = array( 'case_id' => 1,
+                         'activity_type_id' => 14, // follow up
+                         'subject' => 'Test followup',
+                         'target_contact_id' => $this->_params['contact_id'],
+                         'custom_'.$custom_ids['custom_field_id'] => "custom string",
+                         'version' => $this->_apiversion,
+                       );
+        $result =& civicrm_api('activity','create', $params );  
+
+        $this->assertEquals( $result['is_error'], 0,
+                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) .' in line ' . __LINE__ );
+
+        $aid = $result['values'][$result['id']]['id'];
+        
+        // Update activity
+        $params = array( 'activity_id' => $aid,
+                         'case_id' => 1,
+                         'activity_type_id' => 14,
+                         'subject' => 'New subject',
+                         'version' => $this->_apiversion,
+                       );
+        $revAct =& civicrm_api('activity','create', $params );
+
+        $this->assertEquals( $revAct['is_error'], 0,
+                             "Error message: " . CRM_Utils_Array::value( 'error_message', $revAct ) .' in line ' . __LINE__ );
+
+        // Retrieve revision and check custom fields got copied
+        $revParams = array( 'activity_id' => $aid + 1,
+                            'version' => $this->_apiversion,
+                            'return.custom_'.$custom_ids['custom_field_id'] => 1,
+                          );
+        $revAct =& civicrm_api( 'activity', 'get', $revParams );
+
+        $this->assertEquals( $revAct['is_error'], 0,
+                             "Error message: " . CRM_Utils_Array::value( 'error_message', $revAct ) .' in line ' . __LINE__ );
+        $this->assertEquals( $revAct['values'][$aid + 1]['custom_'.$custom_ids['custom_field_id']], "custom string",
+                             "Error message: " . CRM_Utils_Array::value( 'error_message', $revAct ) .' in line ' . __LINE__ );
+
+        $this->customFieldDelete($custom_ids['custom_field_id']);
+        $this->customGroupDelete($custom_ids['custom_group_id']);  
     }
 }
 // -- set Emacs parameters --
