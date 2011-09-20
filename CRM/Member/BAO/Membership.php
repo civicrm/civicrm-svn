@@ -1224,12 +1224,13 @@ AND civicrm_membership.is_test = %2";
                 $form->_params['campaign_id'] = $membershipParams['onbehalf']['member_campaign_id'];
             }
             if (is_array($membershipTypeID)) {
+                $createdMemberships = array( );
                 foreach($membershipTypeID as $memType) {
                     $membership = self::renewMembership( $contactID, $memType, 
                                                          $isTest, $form, null,
                                                          CRM_Utils_Array::value( 'cms_contactID', $membershipParams ),
                                                          $customFieldsFormatted );
-
+                    $createdMemberships[$memType] = $membership;
                     if ( isset( $contribution[$index] ) ) {
                         //insert payment record
                         require_once 'CRM/Member/DAO/MembershipPayment.php';
@@ -1244,6 +1245,20 @@ AND civicrm_membership.is_test = %2";
                             CRM_Utils_Hook::post( 'create', 'MembershipPayment', $dao->id, $dao );
                         }
                     }
+                }
+                if ( $form->_priceSetId && !empty($form->_useForMember) && !empty($form->_lineItem) ) {
+                    foreach($form->_lineItem[$form->_priceSetId] as &$priceFieldOp) {
+                        if ( CRM_Utils_Array::value('membership_type_id', $priceFieldOp) &&
+                             isset($createdMemberships[$priceFieldOp['membership_type_id']]) ) {
+                            $membershipOb = $createdMemberships[$priceFieldOp['membership_type_id']];
+                            $priceFieldOp['start_date'] = $membershipOb->start_date ?
+                                CRM_Utils_Date::customFormat($membershipOb->start_date) : '-';
+                            $priceFieldOp['end_date'] = $membershipOb->end_date ?
+                                CRM_Utils_Date::customFormat($membershipOb->end_date) : '-';
+                        }
+                    }
+                    $form->_values['lineItem'] = $form->_lineItem;               
+                    $form->assign( 'lineItem', $form->_lineItem );
                 }
             } else {
                 $membership = self::renewMembership( $contactID, $membershipTypeID, 

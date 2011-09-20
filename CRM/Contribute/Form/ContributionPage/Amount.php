@@ -251,6 +251,33 @@ SELECT id
     {  
         $errors = array( );
 
+        //as for separate membership payment we has to have
+        //contribution amount section enabled, hence to disable it need to
+        //check if separate membership payment enabled, 
+        //if so disable first separate membership payment option  
+        //then disable contribution amount section. CRM-3801,
+        
+        require_once 'CRM/Member/DAO/MembershipBlock.php';
+        $membershipBlock = new CRM_Member_DAO_MembershipBlock( );
+        $membershipBlock->entity_table = 'civicrm_contribution_page';
+        $membershipBlock->entity_id = $self->_id;
+        $membershipBlock->is_active = 1;
+        $hasMembershipBlk = false;
+        if ( $membershipBlock->find( true ) ) {
+            if ( CRM_Utils_Array::value('amount_block_is_active', $fields) &&
+                 ($setID = CRM_Price_BAO_Set::getFor('civicrm_contribution_page',  $self->_id)) ) {
+                $extends = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $setID, 'extends' );
+                if ( $extends && $extends == CRM_Core_Component::getComponentID( 'CiviMember' ) ) {
+                    $errors['amount_block_is_active'] = ts( 'You cannot use Membership Price Set with Contribution Amounts section.' );
+                    return $errors;
+                }
+            }
+            $hasMembershipBlk = true;
+            if ( $membershipBlock->is_separate_payment && !$fields['amount_block_is_active'] ) {
+                $errors['amount_block_is_active'] = ts( 'To disable Contribution Amounts section you need to first disable Separate Membership Payment option from Membership Settings.' );
+            }
+        }
+
         $minAmount = CRM_Utils_Array::value( 'min_amount', $fields );
         $maxAmount = CRM_Utils_Array::value( 'max_amount', $fields );
         if ( ! empty( $minAmount) && ! empty( $maxAmount ) ) {
@@ -268,26 +295,7 @@ SELECT id
             if ( empty( $fields['pay_later_receipt'] ) ) {
                 $errors['pay_later_receipt'] = ts( 'Please enter the instructions to be sent to the contributor when they choose to \'pay later\'.' );
             }
-        }
-        
-        //as for separate membership payment we has to have
-        //contribution amount section enabled, hence to disable it need to
-        //check if separate membership payment enabled, 
-        //if so disable first separate membership payment option  
-        //then disable contribution amount section. CRM-3801,
-        
-        require_once 'CRM/Member/DAO/MembershipBlock.php';
-        $membershipBlock = new CRM_Member_DAO_MembershipBlock( );
-        $membershipBlock->entity_table = 'civicrm_contribution_page';
-        $membershipBlock->entity_id = $self->_id;
-        $membershipBlock->is_active = 1;
-        $hasMembershipBlk = false;
-        if ( $membershipBlock->find( true ) ) {
-            $hasMembershipBlk = true;
-            if ( $membershipBlock->is_separate_payment && !$fields['amount_block_is_active'] ) {
-                $errors['amount_block_is_active'] = ts( 'To disable Contribution Amounts section you need to first disable Separate Membership Payment option from Membership Settings.' );
-            }
-        }
+        }      
         
         // don't allow price set w/ membership signup, CRM-5095
         if ( $priceSetId = CRM_Utils_Array::value( 'price_set_id', $fields ) ) {

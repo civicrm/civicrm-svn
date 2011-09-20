@@ -41,8 +41,8 @@
 {capture assign=ts_item}{if $line.html_type eq 'Text'}{$line.label}{else}{$line.field_title} - {$line.label}{/if} {if $line.description} {$line.description}{/if}{/capture}{$ts_item|truncate:30:"..."|string_format:"%-30s"} {$line.qty|string_format:"%5s"} {$line.unit_price|crmMoney|string_format:"%10s"} {$line.line_total|crmMoney|string_format:"%10s"} {$line.start_date} {$line.end_date}
 {/foreach}
 {/foreach}
+-----------------------------------------------------------------------------
 {/if}
-
 {ts}Amount{/ts}: {$formValues.total_amount|crmMoney}
 {if $receive_date}
 {ts}Received Date{/ts}: {$receive_date|truncate:10:''|crmDate}

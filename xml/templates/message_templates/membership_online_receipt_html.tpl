@@ -37,7 +37,7 @@
   </table>
   <table width="500" style="border: 1px solid #999; margin: 1em 0em 1em; border-collapse: collapse;">
 
-     {if $membership_assign}
+     {if $membership_assign && !$useForMember}
       <tr>
        <th {$headerStyle}>
         {ts}Membership Information{/ts}
@@ -83,7 +83,7 @@
        </th>
       </tr>
 
-      {if $membership_amount}
+      {if !$useForMember && $membership_amount}
 
        <tr>
         <td {$labelStyle}>
@@ -123,7 +123,7 @@
         </td>
        </tr>
 
-      {elseif $lineItem and $priceSetID}
+      {elseif !$useForMember && $lineItem and $priceSetID}
 
        {foreach from=$lineItem item=value key=priceset}
         <tr>
@@ -165,7 +165,46 @@
        </tr>
 
       {else}
-
+       {if $useForMember && $lineItem}
+       {foreach from=$lineItem item=value key=priceset}
+        <tr>
+         <td colspan="2" {$valueStyle}>
+          <table> {* FIXME: style this table so that it looks like the text version (justification, etc.) *}
+           <tr>
+            <th>{ts}Item{/ts}</th>
+            <th>{ts}Qty{/ts}</th>
+            <th>{ts}Each{/ts}</th>
+            <th>{ts}Total{/ts}</th>
+	    <th>{ts}Membership Start Date{/ts}</th>
+	    <th>{ts}Membership End Date{/ts}</th>
+           </tr>
+           {foreach from=$value item=line}
+            <tr>
+             <td>
+              {$line.description|truncate:30:"..."}
+             </td>
+             <td>
+              {$line.qty}
+             </td>
+             <td>
+              {$line.unit_price|crmMoney}
+             </td>
+             <td>
+              {$line.line_total|crmMoney}
+             </td>
+             <td>
+              {$line.start_date}
+             </td>
+	     <td>
+              {$line.end_date}
+             </td>
+            </tr>
+           {/foreach}
+          </table>
+         </td>
+        </tr>
+       {/foreach}
+       {/if}
        <tr>
         <td {$labelStyle}>
          {ts}Amount{/ts}

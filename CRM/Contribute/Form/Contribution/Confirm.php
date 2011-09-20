@@ -703,8 +703,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             }
         }
 
+        $this->_useForMember = $this->get('useForMember');
         if ($processMembership == false ) {
-            $processMembership = $this->_useForMember = $this->get('useForMember');
+            $processMembership = $this->_useForMember;
         }
 
         if ( $processMembership ) {
@@ -749,11 +750,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 foreach ($priceFieldIds as $priceFieldId) {
                     if($id = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_FieldValue', $priceFieldId, 'membership_type_id' )){
                         $membershipTypeIds[] = $id;
-                    }                
-                    
-                    $membershipParams['selectMembership'] = $membershipTypeIds;
-                    $membershipParams['contribution_type_id'] = $contributionTypeID;
+                    }                                    
                 }
+                $membershipParams['selectMembership'] = $membershipTypeIds;
+                $membershipParams['contribution_type_id'] = $contributionTypeID;
             }
             require_once 'CRM/Member/BAO/Membership.php';
             CRM_Member_BAO_Membership::postProcessMembership( $membershipParams, $contactID,

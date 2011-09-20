@@ -197,6 +197,10 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
                 }
             }
             
+            if ( $contributionPageId && CRM_Utils_Array::value('price_set_id', $params) && CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage', $contributionPageId, 'amount_block_is_active') ) {
+                $errors['price_set_id'] = ts( 'You cannot use Membership Price Set with Contribution Amounts section.' );
+            }
+            
             if ( CRM_Utils_Array::value('price_set_id', $params) ) {
                 return $errors; 
             }
