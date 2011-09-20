@@ -594,7 +594,16 @@ AND    u.status = 1
             return false;
         }
         
-        if ( !$loadUser ) {
+        // seems like we've bootstrapped drupal
+        // we need to call the config hook again, since we now know
+        // all the modules that are listening on it, does not apply
+        // to J! and WP as yet
+        // CRM-8655
+        require_once 'CRM/Utils/Hook.php';
+        $config = CRM_Core_Config::singleton( );
+        CRM_Utils_Hook::config( $config );
+
+        if ( ! $loadUser ) {
             return true;
         }
       
