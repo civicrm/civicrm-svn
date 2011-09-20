@@ -287,7 +287,8 @@ AND    u.status = 1
                }
             }
         }
-        
+
+
         if ( $userUid && $userMail ) { 
             CRM_Core_BAO_UFMatch::synchronizeUFMatch( $account, $userUid , $userMail, 'Drupal' );
             $contactID = CRM_Core_BAO_UFMatch::getContactId( $userUid );
@@ -382,8 +383,17 @@ AND    u.status = 1
             } 
             return false;
         }
+
+        // seems like we've bootstrapped drupal
+        // we need to call the config hook again, since we now know
+        // all the modules that are listening on it, does not apply
+        // to J! and WP as yet
+        // CRM-8655
+        require_once 'CRM/Utils/Hook.php';
+        $config = CRM_Core_Config::singleton( );
+        CRM_Utils_Hook::config( $config );
         
-        if ( !$loadUser ) {
+        if ( ! $loadUser ) {
             return true;
         }
       
