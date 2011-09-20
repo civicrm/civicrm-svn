@@ -202,18 +202,18 @@ SELECT DISTINCT id, $idFldName
                               END;"; 
             if ( !empty( $contactIds ) ) {
                 // need to update greeting _id field.
-            $queryString = "
+                $queryString = "
 UPDATE civicrm_contact 
    SET {$greeting}_id = {$valueID} 
  WHERE id IN (" . implode( ',', $contactIds ) . ")";
-            CRM_Core_DAO::executeQuery( $queryString );
+                CRM_Core_DAO::executeQuery( $queryString );
             }
             
             // now update cache field
             CRM_Core_DAO::executeQuery( $cacheFieldQuery );
         }
     }
-  }
+}
 
 $obj = new CRM_UpdateGreeting( );
 $obj->updateGreeting( );
