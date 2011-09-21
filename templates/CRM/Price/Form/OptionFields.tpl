@@ -31,20 +31,20 @@
 	<table id='optionField'>
 	<tr>
         <th>&nbsp;</th>
-	<th>{ts}Default{/ts}</th>
+	    <th>{ts}Default{/ts}</th>
 	{if $useForMember}
-	    <th>{ts}Membership Type{/ts}</th>
+	    <th>{ts}Membership Type{/ts} {help id="id-membership-type"}</th>
 	    <th>{ts}Auto-renew{/ts}</th>
 	{/if}
         <th>{ts}Label{/ts}</th>
         <th>{ts}Amount{/ts} {help id="id-negative-options"}</th>
-        {if $useForEvent}
-	    <th>{ts}Participant Count{/ts}</th>
+    {if $useForEvent}
+	    <th>{ts}Participant Count{/ts} {help id="id-participant-count"}</th>
 	    <th>{ts}Max Participant{/ts}</th>
 	{/if}
         <th>{ts}Weight{/ts}</th>
-	<th>{ts}Active?{/ts}</th>
-        </tr>
+	    <th>{ts}Active?{/ts}</th>
+    </tr>
 	
 	{section name=rowLoop start=1 loop=12}
 	{assign var=index value=$smarty.section.rowLoop.index}

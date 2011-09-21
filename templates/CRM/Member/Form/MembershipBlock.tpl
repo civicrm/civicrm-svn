@@ -59,12 +59,13 @@
               <span class="description">{ts}Membership section introductory text - displayed to renewing members.{/ts}</span><br /></td>
           </tr>
 
-	  <tr class="crm-member-membershipblock-form-block-price_set_id">
-              <td class="label">{$form.price_set_id.label}</td>
-	      <td>{$form.price_set_id.html}</td>
-	  </tr>   
+    	  <tr class="crm-member-membershipblock-form-block-price_set_id">
+                  <td class="label">{$form.price_set_id.label}</td>
+    	      <td>{$form.price_set_id.html}</td>
+    	  </tr>   
+
           <tr id="priceSet" class="crm-member-membershipblock-form-block-membership_type">
-              <td>{$form.membership_type.label}</td> 
+              <td class="label">{$form.membership_type.label}</td> 
               <td>
                 {assign var="count" value="1"}
                 {strip}
