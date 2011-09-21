@@ -52,24 +52,31 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
 
       $this->click("auto_renew");
       
-      $this->webtestAddCreditCardDetails( );
-      
-      list( $firstName, $middleName, $lastName ) = $this->webtestAddBillingDetails( );
-      
+      $firstName = 'John';
+      $lastName  = 'Smith_' . substr(sha1(rand()), 0, 7);
       $this->type( 'email-5', "{$lastName}@example.com" );
       
       $this->click("_qf_Main_upload-bottom");
       $this->waitForPageToLoad("30000");
-      $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
+      $this->waitForElementPresent( "_qf_Confirm_next_checkout" );
       
       $text = 'I want this membership to be renewed automatically every 1 year(s).';
       $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
       
-      $this->click("_qf_Confirm_next-bottom");
+      $this->click("_qf_Confirm_next_checkout");
       $this->waitForPageToLoad("30000");
       
-      $text = 'This membership will be renewed automatically every 1 year(s).';
-      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+      $this->selectFrame('login');
+
+      $this->waitForElementPresent( "Email" );
+      $this->type("Email","custdeepak");
+      $this->type("Passwd","deepak123");
+
+      $this->click("xpath=//input[@value='Sign in and continue']");
+      $this->waitForElementPresent( "bottomBuyButton" );
+
+      $this->click("bottomBuyButton");
+      $this->waitForPageToLoad("30000");
   }
   
   function testOnlineAutoRenewMembershipAuthenticated( )
@@ -89,57 +96,32 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
       $this->click("CIVICRM_QFID_2_4");
       
       $this->click("auto_renew");
-      
-      $this->webtestAddCreditCardDetails( );
-      
-      list( $firstName, $middleName, $lastName ) = $this->webtestAddBillingDetails( );
-      
+
+      $firstName = 'John';
+      $lastName  = 'Smith_' . substr(sha1(rand()), 0, 7);
       $this->type( 'email-5', "{$lastName}@example.com" );
       
       $this->click("_qf_Main_upload-bottom");
       $this->waitForPageToLoad("30000");
-      $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
+      $this->waitForElementPresent( "_qf_Confirm_next_checkout" );
       
       $text = 'I want this membership to be renewed automatically every 1 year(s).';
       $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
       
-      $this->click("_qf_Confirm_next-bottom");
+      $this->click("_qf_Confirm_next_checkout");
       $this->waitForPageToLoad("30000");
       
-      $text = 'This membership will be renewed automatically every 1 year(s).';
-      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
-  }
-  
-  function testOnlinePendingAutoRenewMembershipAnonymous( )
-  {
-      //configure membership signup page.
-      $pageId = $this->_configureMembershipPage( );
-      
-      //now do the test membership signup.
-      $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&action=preview&id={$pageId}" );
-      $this->waitForPageToLoad( "3000" );
-      $this->waitForElementPresent("_qf_Main_upload-bottom");
-      
-      $this->click("CIVICRM_QFID_2_4");
-      
-      $this->click("auto_renew");
-      
-      $this->webtestAddCreditCardDetails( );
-      list( $firstName, $middleName, $lastName ) = $this->webtestAddBillingDetails( );
-      $this->type( 'email-5', "{$lastName}@example.com" );
-      
-      $this->click("_qf_Main_upload-bottom");
+      $this->selectFrame('login');
+
+      $this->waitForElementPresent( "Email" );
+      $this->type("Email","custdeepak");
+      $this->type("Passwd","deepak123");
+
+      $this->click("xpath=//input[@value='Sign in and continue']");
+      $this->waitForElementPresent( "bottomBuyButton" );
+
+      $this->click("bottomBuyButton");
       $this->waitForPageToLoad("30000");
-      $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
-      
-      $text = 'I want this membership to be renewed automatically every 1 year(s).';
-      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
-      
-      $this->click("_qf_Confirm_next-bottom");
-      $this->waitForPageToLoad("30000");
-      
-      $text = 'This membership will be renewed automatically every 1 year(s).';
-      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
   }
   
   function _configureMembershipPage( ) {
