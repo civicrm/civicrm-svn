@@ -1986,7 +1986,9 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                         if ( $from || $to ) {
                             $statistics['filters'][] = 
                                 array( 'title' => $field['title'],
-                                       'value' => "Between {$from} and {$to}" );
+                                       'value' => ts( "Between %1 and %2",
+                                                      array( 1 => $from,
+                                                             2 => $to ) );
                         } elseif ( in_array( $rel = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params ), 
                                             array_keys( $this->getOperationPair( CRM_Report_FORM::OP_DATE ) ) ) ) {
                             $pair = $this->getOperationPair( CRM_Report_FORM::OP_DATE );
@@ -2173,7 +2175,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
             $this->_rowsFound = CRM_Core_DAO::singleValueQuery( $sql );
             $params = array( 'total'        => $this->_rowsFound,
                              'rowCount'     => $rowCount,
-                             'status'       => ts( 'Records %%StatusMessage%%' ),
+                             'status'       => ts( 'Records' ) . ' %%StatusMessage%%',
                              'buttonBottom' => 'PagerBottomButton',
                              'buttonTop'    => 'PagerTopButton',
                              'pageID'       => $this->get( CRM_Utils_Pager::PAGE_ID ) );
@@ -2307,7 +2309,9 @@ ORDER BY cg.weight, cf.weight";
             case 'Boolean':
                 $curFilters[$fieldName]['operatorType'] = CRM_Report_Form::OP_SELECT;
                 $curFilters[$fieldName]['options']      = 
-                    array('' => ts('- select -'), 1 => ts('Yes'), 0 => ts('No'), );
+                    array('' => ts('- select -'),
+                          1  => ts('Yes'),
+                          0  => ts('No'), );
                 $curFilters[$fieldName]['type']         = CRM_Utils_Type::T_INT;
                 break;
 
