@@ -875,6 +875,41 @@ GROUP BY     mt.member_of_contact_id";
         return $count;
 
     }
+
+    /**
+     * Function to check if auto renew option should be shown
+     * 
+     * @param int $priceSetId price set id
+     * 
+     * @return int $autoRenewOption ( 0:hide, 1:optional 2:required )
+     */
+    public static function checkAutoRenewForPriceSet( $priceSetId ) {
+        // auto-renew option should be visible if membership types associated with all the fields has
+        // been set for auto-renew option
+        // Auto renew checkbox should be frozen if for all the membership type auto renew is required
+
+        // get the membership type auto renew option and check if required or optional
+
+        $query = 'SELECT mt.auto_renew
+            FROM civicrm_price_field_value pfv 
+            INNER JOIN civicrm_membership_type mt ON pfv.membership_type_id = mt.id
+            INNER JOIN civicrm_price_field pf ON pfv.price_field_id = pf.id
+            WHERE pf.price_set_id = %1';
+        
+        $params = array( 1 => array( $priceSetId, 'Integer') );
+        
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
+        $autoRenewOption = 2;
+        
+        while ( $dao->fetch( ) ) {
+            if ( !$dao->auto_renew ) {
+                $autoRenewOption = 0;
+                break;
+            }
+            if ( $dao->auto_renew == 1 ) {
+                $autoRenewOption = 1;
+            }
+        }
+        return $autoRenewOption;
+    }
 }
-
-

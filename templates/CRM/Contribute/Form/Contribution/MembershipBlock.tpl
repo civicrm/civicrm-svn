@@ -30,6 +30,15 @@
         <fieldset>
             <legend>{ts}Membership Fee{/ts}</legend>
             {include file="CRM/Price/Form/PriceSet.tpl" extends="Membership"}
+          	<div id="allow_auto_renew">    
+	            <div class='crm-section auto-renew'>
+                    <div class='label'></div>
+	                <div class ='content'>
+	                    {$form.auto_renew.html}&nbsp;{$form.auto_renew.label}
+                        <span class="description crm-auto-renew-cancel-info">({ts}Your initial membership fee will be processed once you complete the confirmation step. You will be able to cancel automatic renewals at any time by logging in to your account or contacting us.{/ts})</span>
+	                </div>
+                </div>
+             </div>
         </fieldset>
     </div>
 {elseif $lineItem and $priceSetID}
@@ -42,7 +51,23 @@
   </div>
 {/if}
 </div>
-
+{literal}
+<script type="text/javascript">
+cj(function(){
+    //if price set is set we use below below code to show for showing auto renew
+    var autoRenewOption =  {/literal}'{$autoRenewOption}'{literal};
+    cj('#allow_auto_renew').hide();
+    if ( autoRenewOption == 1 ) {
+        cj('#allow_auto_renew').show();
+    } else if ( autoRenewOption == 2 ) {
+        var autoRenew = cj("#auto_renew");
+        autoRenew.attr( 'disabled', true );
+        autoRenew.attr( 'checked',  true );
+        cj('#allow_auto_renew').show();
+    }
+});
+</script>
+{/literal}
 {elseif $membershipBlock}
 <div id="membership" class="crm-group membership-group">
   {if $context EQ "makeContribution"}
@@ -150,7 +175,7 @@
 {literal}
 <script type="text/javascript">
 cj(function(){
-   showHideAutoRenew( null );	
+    showHideAutoRenew( null );
 });
 function showHideAutoRenew( memTypeId ) 
 {
@@ -194,7 +219,7 @@ function showHideAutoRenew( memTypeId )
   //which implies it should be checked.	 
   if ( readOnly && funName == 'show();' ) isChecked = true; 
 
-  autoRenew.attr( 'readonly', readOnly );
+  autoRenew.attr( 'disabled', readOnly );
   autoRenew.attr( 'checked',  isChecked );
   eval( "cj('#allow_auto_renew')." + funName );
 }

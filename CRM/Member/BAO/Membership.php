@@ -771,9 +771,13 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
                 }
                 if ( !$form->_priceSetId ) {
                     $form->addRule('selectMembership',ts('Please select one of the memberships.'),'required');
+                } else {
+                    require_once 'CRM/Price/BAO/Set.php';
+                    $autoRenewOption = CRM_Price_BAO_Set::checkAutoRenewForPriceSet( $form->_priceSetId );
+                    $form->assign( 'autoRenewOption', $autoRenewOption );
                 }
                 
-                if ( $allowAutoRenewMembership ) {
+                if ( $allowAutoRenewMembership || $autoRenewOption ) {
                     $form->addElement( 'checkbox', 'auto_renew', ts( 'Please renew my membership automatically.' ) );
                 }
             }
