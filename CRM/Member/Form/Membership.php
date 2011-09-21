@@ -417,7 +417,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         // use to build form during form rule.
         $this->assign( 'buildPriceSet', $buildPriceSet );
 
-        if ( empty( $this->_lineItems ) ) {
+        if ( empty( $this->_lineItems ) && ($this->_action & CRM_Core_Action::ADD) ) {
             $buildPriceSet = false;
             require_once 'CRM/Price/BAO/Set.php';
             $priceSets = CRM_Price_BAO_Set::getAssoc( false, 'CiviMember' );
