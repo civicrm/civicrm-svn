@@ -26,6 +26,10 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
+require_once 'CiviTest/AuthorizeNet.php';
+require_once 'CiviTest/Contact.php';
+require_once 'CRM/Contribute/BAO/Contribution.php';
+require_once 'CRM/Contribute/BAO/ContributionRecur.php';
 
 class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase 
 {
@@ -43,14 +47,22 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase
         parent::setUp();
         require_once 'CRM/Core/Payment/AuthorizeNet.php';
         require_once 'CRM/Core/BAO/PaymentProcessorType.php';
-        $paymentProcessor = array('user_name' => '5Z3f4eZ3v',
-                                  'password' => '8CM3DVfy4z67vG4y',
-                                  'signature' => 'signature',
-                                  'url_recur' => 'https://apitest.authorize.net/xml/v1/request.api');      
-        
-        $values = array('is_active' => 1);
-        $this->processor = new CRM_Core_Payment_AuthorizeNet( 'Contribute', $paymentProcessor ) ;                               
+        $this->paymentProcessor  = new AuthorizeNet( );
+        $this->processorParams   = $this->paymentProcessor->create( );
 
+        $paymentProcessor = array( 'user_name' => $this->processorParams->user_name,
+                                   'password'  => $this->processorParams->password,
+                                   'url_recur' => $this->processorParams->url_recur );  
+        
+        $this->processor = new CRM_Core_Payment_AuthorizeNet( 'Contribute', $paymentProcessor );
+        $this->_contributionTypeId = $this->contributionTypeCreate( );
+    }
+
+    function tearDown( )
+    {
+        $this->processorParams->delete( );
+        $tablesToTruncate = array( 'civicrm_contribution_type', 'civicrm_contribution', 'civicrm_contribution_recur' );
+        $this->quickCleanup( $tablesToTruncate );
     }
     
     /**
@@ -60,6 +72,36 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase
      */
     function testCreateSingleNowDated( )
     {
+        $contactId = Contact::createIndividual( );
+        $ids       = array( 'contribution' => null );
+        
+        $contributionRecurParams = array( 'contact_id'             => $contactId,
+                                          'amount'                 => 150.00,
+                                          'currency'               => 'USD',
+                                          'frequency_unit'         => 'week',
+                                          'frequency_interval'     => 1,
+                                          'installments'           => 2,
+                                          'start_date'             => date( 'Ymd' ),
+                                          'create_date'            => date( 'Ymd' ),
+                                          'invoice_id'             => 'c8acb91e080ad7bd8a2adc119c192885',
+                                          'contribution_status_id' => 2,
+                                          'is_test'                => 1,
+                                          'payment_processor_id'   => $this->processorParams->id );
+        
+        $recur = CRM_Contribute_BAO_ContributionRecur::add( $contributionRecurParams, $ids );
+                                          
+        $contributionParams = array( 'contact_id'             => $contactId,
+                                     'contribution_type_id'   => $this->_contributionTypeId,
+                                     'recieve_date'           => date( 'Ymd' ),
+                                     'total_amount'           => 150.00,
+                                     'invoice_id'             => 'c8acb91e080ad7bd8a2adc119c192885',
+                                     'currency'               => 'USD',
+                                     'contribution_recur_id'  => $recur->id,
+                                     'is_test'                => 1,
+                                     'contribution_status_id' => 2,
+                                     );
+        $contribution = CRM_Contribute_BAO_Contribution::add( $contributionParams, $ids );
+        
         $params = array(     
                         'qfKey' => '08ed21c7ca00a1f7d32fff2488596ef7_4454',
                         'hidden_CreditCard' => 1,
@@ -81,16 +123,16 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase
                         'credit_card_type' => 'Visa',
                         'is_recur' => 1,
                         'frequency_interval' => 1,
-                        'frequency_unit' => 'month',
-                        'installments' => 1,
-                        'contribution_type_id' => $this->ids['contribution_type'],
+                        'frequency_unit' => 'week',
+                        'installments' => 2,
+                        'contribution_type_id' => $this->_contributionTypeId,
                         'is_email_receipt' => 1,
                         'from_email_address' => 'gandalf',
-                        'receive_date_time' => '11:57PM',
+                        'receive_date' => date( 'Ymd' ),
                         'receipt_date_time' => '',
-                        'payment_processor_id' => $this->ids['payment_processor'],
+                        'payment_processor_id' => $this->processorParams->id,
                         'price_set_id' => '',
-                        'total_amount' => 7,
+                        'total_amount' => 150.00,
                         'currency' => 'USD',
                         'source' => "Mordor",
                         'soft_credit_to' => '', 
@@ -111,11 +153,11 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase
                         'non_deductible_amount' => "",
                         'fee_amount' => "",
                         'net_amount' => "",
-                        'invoice_id'  => "",
+                        'invoiceID'  => "c8acb91e080ad7bd8a2adc119c192885",
                         'contribution_page_id'  => "",
                         'thankyou_date' => null,
                         'honor_contact_id' => null,
-                        'invoiceID' => 'c79064eb79bd9147c2466c19886ac8ff',
+                        'invoiceID' => '',
                         'first_name' => 'Frodo',
                         'middle_name' => 'bob',
                         'last_name' => 'Baggins',
@@ -127,17 +169,19 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase
                         'contributionType_name' => 'My precious',
                         'contributionType_accounting_code' => '',
                         'contributionPageID' => '',
-                        'email' => 'enroute@tomordor.com',
-                        'contactID' => 1,
-                        'contributionID' => 1,
-                        'contributionTypeID' => 1,
-                        'contributionRecurID' => 1,
+                        'email' => 'john@doe.com',
+                        'contactID' => $contactId,
+                        'contributionID' => $contribution->id,
+                        'contributionTypeID' => $this->_contributionTypeId,
+                        'contributionRecurID' => $recur->id,
                              );
+
         $result = $this->processor->doDirectPayment($params);
         
-        $this->assertNotType('CRM_Core_Error', $result,"In line " . __LINE__ . " " .$result->_errors[0]['message']);
+        $this->assertNotType('CRM_Core_Error', $result, "In line " . __LINE__ . " " .$result->_errors[0]['message']);
         //cancel it or the transaction will be rejected by A.net if the test is re-run
         $this->processor->cancelSubscription( ) ;
+        Contact::delete( $contactId );
     }  
         
     /**
@@ -146,6 +190,37 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase
     function testCreateSinglePostDated( )
     {
         $start_date = date('Ymd',strtotime("+ 1 week") );
+        
+        $contactId = Contact::createIndividual( );
+        $ids       = array( 'contribution' => null );
+        
+        $contributionRecurParams = array( 'contact_id'             => $contactId,
+                                          'amount'                 => 100.00,
+                                          'currency'               => 'USD',
+                                          'frequency_unit'         => 'month',
+                                          'frequency_interval'     => 1,
+                                          'installments'           => 3,
+                                          'start_date'             => $start_date,
+                                          'create_date'            => date( 'Ymd' ),
+                                          'invoice_id'             => 'f72ee3de0a877bfdc03ca1daf4a1d757',
+                                          'contribution_status_id' => 2,
+                                          'is_test'                => 1,
+                                          'payment_processor_id'   => $this->processorParams->id );
+        
+        $recur = CRM_Contribute_BAO_ContributionRecur::add( $contributionRecurParams, $ids );
+                                          
+        $contributionParams = array( 'contact_id'             => $contactId,
+                                     'contribution_type_id'   => $this->_contributionTypeId,
+                                     'recieve_date'           => $start_date,
+                                     'total_amount'           => 100.00,
+                                     'invoice_id'             => 'f72ee3de0a877bfdc03ca1daf4a1d757',
+                                     'currency'               => 'USD',
+                                     'contribution_recur_id'  => $recur->id,
+                                     'is_test'                => 1,
+                                     'contribution_status_id' => 2,
+                                     );
+        $contribution = CRM_Contribute_BAO_Contribution::add( $contributionParams, $ids );
+
         $params = array(     
                         'qfKey' => '00ed21c7ca00a1f7d555555596ef7_4454',
                         'hidden_CreditCard' => 1,
@@ -168,16 +243,15 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase
                         'is_recur' => 1,
                         'frequency_interval' => 1,
                         'frequency_unit' => 'month',
-                        'installments' => 1,
-                        'contribution_type_id' => $this->ids['contribution_type'],
+                        'installments' => 3,
+                        'contribution_type_id' => $this->_contributionTypeId,
                         'is_email_receipt' => 1,
                         'from_email_address' => 'gandalf',
-                        'receive_date_time' => '11:57PM',
                         'receive_date' => $start_date,
                         'receipt_date_time' => '',
-                        'payment_processor_id' => $this->ids['payment_processor'],
+                        'payment_processor_id' => $this->processorParams->id,
                         'price_set_id' => '',
-                        'total_amount' => 7,
+                        'total_amount' => 100.00,
                         'currency' => 'USD',
                         'source' => "Mordor",
                         'soft_credit_to' => '', 
@@ -202,7 +276,7 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase
                         'contribution_page_id'  => "",
                         'thankyou_date' => null,
                         'honor_contact_id' => null,
-                        'invoiceID' => '99999977777777',
+                        'invoiceID' => 'f72ee3de0a877bfdc03ca1daf4a1d757',
                         'first_name' => 'Frodowina',
                         'middle_name' => 'bob',
                         'last_name' => 'Baggins',
@@ -215,16 +289,18 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase
                         'contributionType_accounting_code' => '',
                         'contributionPageID' => '',
                         'email' => 'backhome@frommordor.com',
-                        'contactID' => 1,
-                        'contributionID' => 1,
-                        'contributionTypeID' => 1,
-                        'contributionRecurID' => 1,
+                        'contactID' => $contactId,
+                        'contributionID' => $contribution->id,
+                        'contributionTypeID' => $this->_contributionTypeId,
+                        'contributionRecurID' => $recur->id,
                              );
-        $result = $this->processor->doDirectPayment($params);
+
+        $result = $this->processor->doDirectPayment( $params );
         
         $this->assertNotType('CRM_Core_Error', $result,"In line " . __LINE__ . " " .$result->_errors[0]['message']);
         //cancel it or the transaction will be rejected by A.net if the test is re-run
         $this->processor->cancelSubscription( ) ;
+        Contact::delete( $contactId );
     }  
 }
  ?>
