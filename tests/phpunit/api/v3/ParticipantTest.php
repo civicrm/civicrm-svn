@@ -685,7 +685,6 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
       
       $this->assertEquals(1, $result['values'][$result['id']]['api.participant_payment.create']['count']); 
       civicrm_api('contact', 'delete', array('id' => $result['id'], 'version' => $this->_apiversion));
-      $this->contributionTypeDelete();
     }
     
     ///////////////// civicrm_create_participant_formatted methods
