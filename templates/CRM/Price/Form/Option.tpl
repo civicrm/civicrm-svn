@@ -34,11 +34,12 @@
 <h3>{if $action eq 8 }{ts}Selection Options{/ts}{else}{ts}Selection Options{/ts}{/if}</h3>
       {if $action neq 8}
 	<table class="form-layout">
-            <tr class="crm-price-option-form-block-membership_type_id">
-               <td class="label">{$form.membership_type_id.label}</td>
-               <td>{$form.membership_type_id.html}<br />
-	           <span class="description">{ts}If a membership type is selected, a membership will be created or renewed when users select this option. Leave this blank if you are using this for non-membership options (e.g. magazine subscription).{/ts}</span></td>
+	    {if $showMember}
+            	<tr class="crm-price-option-form-block-membership_type_id">
+               	    <td class="label">{$form.membership_type_id.label}</td>
+               	    <td>{$form.membership_type_id.html}<br /> <span class="description">{ts}If a membership type is selected, a membership will be created or renewed when users select this option. Leave this blank if you are using this for non-membership options (e.g. magazine subscription).{/ts}</span></td>
             </tr>
+	    {/if}
 	    <tr class="crm-price-option-form-block-label">
                <td class="label">{$form.label.label}</td>
                <td>{$form.label.html}</td>

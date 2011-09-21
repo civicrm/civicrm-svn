@@ -156,7 +156,9 @@ class CRM_Price_Form_Option extends CRM_Core_Form
             }
 
             $extendComponentId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_sid, 'extends', 'id' );
+            $this->assign( 'showMember', false );
             if ( $memberComponentId == $extendComponentId ) {
+                $this->assign( 'showMember', true );
                 require_once 'CRM/Member/PseudoConstant.php';
                 $membershipTypes = CRM_Member_PseudoConstant::membershipType();
                 $this->add( 'select', 'membership_type_id', ts('Membership Type'), array('' => ' ') + $membershipTypes, false,
