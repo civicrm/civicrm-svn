@@ -397,7 +397,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             $this->set( 'priceSetId', $this->_priceSetId );
             require_once 'CRM/Price/BAO/Set.php';
             CRM_Price_BAO_Set::buildPriceSet( $this );
-            
+
             $optionsMembershipTypes = array( );
             foreach( $this->_priceSet['fields'] as $pField ) {
                 if ( empty($pField['options']) ) {
@@ -409,6 +409,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             }
             
             $this->assign( 'optionsMembershipTypes', $optionsMembershipTypes);
+            $this->assign( 'contributionType', CRM_Utils_Array::value('contribution_type_id', $this->_priceSet) );
 
             // get only price set form elements.
             if ( $getOnlyPriceSetElements ) return;
@@ -759,6 +760,10 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             return $errors;
         }
 
+        if ( $priceSetId && !$self->_mode && !CRM_Utils_Array::value('record_contribution', $params) ) {
+            $errors['record_contribution'] = ts('Record Membership Payment is required when you using price set.'); 
+        }
+        
         if ( CRM_Utils_Array::value( 'payment_processor_id', $params ) ) {
             // make sure that credit card number and cvv are valid
             require_once 'CRM/Utils/Rule.php';
@@ -1073,6 +1078,12 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                                                                 $formValues['contribution_type_id'] );
         }
 
+        // process line items, until no previous line items.
+        if ( empty( $this->_lineItems ) && !empty( $lineItem ) ) {
+            $params['lineItems'] = $lineItem;
+            $params['processPriceSet'] = true;
+        }
+        
         $createdMemberships =  array( );
         if ( $this->_mode ) {
 
@@ -1197,6 +1208,12 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $params['contribution_recur_id']      = $paymentParams['contributionRecurID'];
                 $params['status_id']                  = array_search( 'Pending', $allStatus );
                 $params['skipStatusCal']              = true;
+                
+                if ( CRM_Util_Array::value('processPriceSet', $params) &&
+                     !empty($params['lineItems']) ) {
+                    require_once 'CRM/Contribute/Form/AdditionalInfo.php';
+                    CRM_Contribute_Form_AdditionalInfo::processPriceSet( $contribution->id, $params['lineItems'] );   
+                }
                 
                 //as membership is pending set dates to null.
                 $memberDates = array( 'join_date'  => 'joinDate',
@@ -1355,13 +1372,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             }
         }
         
-        // process line items, until no previous line items.
-        if ( empty( $this->_lineItems ) && !empty( $lineItem ) ) {
-            foreach( $createdMemberships as $membership ) {
-                CRM_Member_BAO_Membership::processPriceSet( $membership->id, $lineItem );
-            }
-        }
-
         if ( !empty($lineItem) ) {
             foreach($lineItem[$priceSetId] as &$priceFieldOp) {
                 $priceFieldOp['start_date'] = CRM_Utils_Array::value('membership_type_id', $priceFieldOp) ?

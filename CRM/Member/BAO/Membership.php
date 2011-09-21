@@ -293,6 +293,12 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             require_once 'CRM/Contribute/BAO/Contribution.php';
             $contribution =& CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
             
+            if ( CRM_Utils_Array::value('processPriceSet', $params) &&
+                 !empty($params['lineItems']) ) {
+                require_once 'CRM/Contribute/Form/AdditionalInfo.php';
+                CRM_Contribute_Form_AdditionalInfo::processPriceSet( $contribution->id, $params['lineItems'] );   
+            }
+
             //insert payment record for this membership
             if( !CRM_Utils_Array::value( 'contribution', $ids ) ||
                 CRM_Utils_Array::value( 'is_recur', $params ) ) {

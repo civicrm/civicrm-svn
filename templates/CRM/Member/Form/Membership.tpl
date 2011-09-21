@@ -43,6 +43,9 @@
                   membershipValues[{/literal}{$opId}{literal}] = {/literal}{$memType}{literal};
         {/literal}{/foreach}{literal}
         buildCustomDataFromPriceset(membershipValues, 1);
+	{/literal}{if !$membershipMode}{literal}
+	  enableAmountSection({/literal}{$contributionType}{literal});
+	{/literal}{/if}{literal}
     });
   </script>
   {/literal}
@@ -649,6 +652,15 @@ function buildCustomDataFromPriceset( membershipValues, reload ) {
     buildCustomData( customDataType, subTypeNames );
 }
 
+function enableAmountSection( setContributionType ) {
+  if ( !cj('#record_contribution').attr('checked') ) {
+    cj('#record_contribution').click( );
+    cj('#recordContribution').show( );
+  }
+  if ( setContributionType ) {
+    cj('#contribution_type_id').val(setContributionType);
+  }
+}	 
 </script>
 {/literal}
 {/if} {* closing of delete check if *} 
