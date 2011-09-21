@@ -150,17 +150,17 @@ class CRM_Price_Form_Option extends CRM_Core_Form
             $memberComponentId = CRM_Core_Component::getComponentID( 'CiviMember' );
             if ( $this->_action == CRM_Core_Action::UPDATE ) {
                 $this->_sid = CRM_Utils_Request::retrieve('sid', 'Positive', $this);
-            } elseif ( $this->_action == CRM_Core_Action::ADD ) {
+            } elseif ( $this->_action == CRM_Core_Action::ADD ||
+                       $this->_action == CRM_Core_Action::VIEW ) {
                 $this->_sid= CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $this->_fid, 'price_set_id', 'id' );
             }
+
             $extendComponentId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_sid, 'extends', 'id' );
-            
             if ( $memberComponentId == $extendComponentId ) {
                 require_once 'CRM/Member/PseudoConstant.php';
                 $membershipTypes = CRM_Member_PseudoConstant::membershipType();
                 $this->add( 'select', 'membership_type_id', ts('Membership Type'), array('' => ' ') + $membershipTypes, false,
                             array( 'onClick' => "calculateRowValues( );")   );
-                
                 
                 $this->add('text','auto_renew', ts('Auto Renew?'), 
                            array('size'=> 25, 'style'=> "background-color:#EBECE4", 'READONLY'));
