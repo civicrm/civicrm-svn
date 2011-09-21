@@ -630,7 +630,7 @@ class CRM_Core_Extensions
         $extdir = file_get_contents( self::PUBLIC_EXTENSIONS_REPOSITORY );
         var_dump( $extdir );
         if( $extdir === FALSE ) {
-            CRM_Core_Error::fatal('Public directory down or too slow - please contact CiviCRM team on forums.');
+            CRM_Core_Session::setStatus( ts('The CiviCRM public extensions directory at %1 could not be contacted - please check your webserver can make external HTTP requests or contact CiviCRM team on <a href="http://forum.civicrm.org/">CiviCRM forum</a>.<br />', array( 1 => self::PUBLIC_EXTENSIONS_REPOSITORY ) ) );
         }
 
         $lines = explode( "\n", $extdir );
@@ -646,7 +646,10 @@ class CRM_Core_Extensions
         }
 
         if( empty( $exts ) ) {
-            CRM_Core_Error::fatal('Malformed extensions list on public directory - please contact CiviCRM team on forums.');
+            if ( $extdir !== FALSE ) {
+                CRM_Core_Session::setStatus( ts('Could not retrieve a list of extensions from the CiviCRM public directory at %1 - please contact CiviCRM team on <a href="http://forum.civicrm.org/">CiviCRM forum</a>.<br />', array( 1 => self::PUBLIC_EXTENSIONS_REPOSITORY ) ) );
+            }
+            $exts = array();
         }
 
         ini_restore('allow_url_fopen');
