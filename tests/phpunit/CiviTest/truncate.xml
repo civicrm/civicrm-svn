@@ -201,10 +201,6 @@
 
   <civicrm_price_field />
 
-  <civicrm_price_field_value />
-
-  <civicrm_line_item />
-
   <civicrm_county />
 
   <civicrm_entity_tag />
@@ -258,6 +254,10 @@
   <civicrm_membership_block />
 
   <civicrm_membership_log />
+
+  <civicrm_price_field_value />
+
+  <civicrm_line_item />
 
   <civicrm_address />
 

@@ -134,7 +134,8 @@ function _civicrm_api3_get_BAO ($name) {
  */
 
 function civicrm_api3_verify_mandatory ($params, $daoName = null, $keys = array(), $verifyDAO = TRUE ) {
-    if ( ! is_array( $params ) ) {
+  // moving this to civicrm_api - remove the check for array pending testing
+   if ( ! is_array( $params ) ) {
         throw new Exception ('Input variable `params` is not an array');
     }
 
@@ -279,7 +280,7 @@ function civicrm_api3_create_success( $values = 1,$params=array(), $entity = nul
 
     if ( is_array($values) && isset( $params['sequential'] ) && 
          $params['sequential'] ==1 ) {
-        $result['values'] =  array_merge($values);
+        $result['values'] =  array_values($values);
     } else {
         $result['values'] =  $values;
     }
@@ -409,6 +410,7 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
       foreach ($params['return'] as $returnValue ) {
         $dao->selectAdd( $returnValue); 
       }
+      $dao->selectAdd( 'id');
     }
 }
 
@@ -428,7 +430,38 @@ function   _civicrm_api3_apply_filters_to_dao($filterField,$filterValue, &$dao )
         $dao->whereAdd( "($fieldName >= $filterValue )" );        
     }
 }
+/*
+ * @param array $params params array as passed into civicrm_api
+ * @return array $options options extracted from params
+ */
 
+function _civicrm_api3_get_options_from_params(&$params){
+  
+  $options = array();
+  $inputParams      = array( );
+  $returnProperties = array( );
+  $otherVars = array( 'sort', 'offset', 'rowCount' );
+
+  $sort     = null;
+  $offset   = 0;
+  $rowCount = 25;
+  foreach ( $params as $n => $v ) {
+      if ( substr( $n, 0, 7 ) == 'return.' ) {
+        $returnProperties[ substr( $n, 7 ) ] = $v;
+      } elseif ( in_array( $n, $otherVars ) ) {
+        $$n = $v;
+      } else {
+        $inputParams[$n] = $v;
+      }
+    }
+  $options['sort'] = $sort;
+  $options['limit'] = $rowCount;
+  $options['offset'] = $offset;
+  $options['return'] = $returnProperties;
+  $options['input_params'] = $inputParams;
+  return $options;
+  
+}
 /*
  * Apply options (e.g. sort, limit, order by) to DAO object (prior to find)
  * @param array $params params array as passed into civicrm_api
@@ -486,7 +519,7 @@ function _civicrm_api3_build_fields_array(&$dao, $unique = TRUE){
  */
 function _civicrm_api3_dao_to_array ($dao, $params = null,$uniqueFields = TRUE) {
     $result = array();
-    if ( !$dao->find() ) {
+    if (empty($dao) || !$dao->find() ) {
         return array();
     }
 
@@ -1772,7 +1805,7 @@ function _civicrm_api3_basic_create($bao_name, &$params){
     } else {
         $values = array();
         _civicrm_api3_object_to_array($bao, $values[ $bao->id]);
-        return civicrm_api3_create_success($values,$params,$bao );
+        return civicrm_api3_create_success($values,$params,$bao,'create' );
     }
 }
 
@@ -1838,21 +1871,10 @@ function _civicrm_api3_custom_data_get(&$returnArray,$entity,$entity_id ,$groupI
  * all variables are the same as per civicrm_api
  */
 function _civicrm_api3_validate_fields($entity, $action, &$params) {
-    //entities without a functional getFields will spit the dummy :-)
-    $testedEntities = array('relationship' => 1, 
-                            'membership' => 1, 
-                            'event' => 1, 
-                            'contribution' => 1,
-                            'activity' => 1,
-                            'campaign' => 1,
-                            'pledge'   => 1,
-                            'tag'      => 1,
-                            );
-    if(!array_key_exists(strtolower($entity), $testedEntities)){
-        return;
-    }
-	if (strtolower ( $action ) == 'getfields') {
-		return;
+  //skip any entities without working getfields functions
+  $skippedEntities = array('entity', 'mailinggroup', 'customvalue', 'custom_value', 'mailing_group');
+  if (in_array(strtolower($entity), $skippedEntities) || strtolower ( $action ) == 'getfields'){
+			return;
 	}
 	$fields = civicrm_api ( $entity, 'getfields', array ('version' => 3 ) );
 	$fields = $fields['values'];

@@ -1125,7 +1125,7 @@ WHERE  contribution_id = {$this->_id}
         //Credit Card Contribution.
         if ( $this->_mode ) {
             $unsetParams = array( 'trxn_id', 'payment_instrument_id', 'contribution_status_id',
-                                   'cancel_date', 'cancel_reason' );
+                                  'cancel_date', 'cancel_reason' );
             foreach ( $unsetParams as $key ) {
                 if ( isset( $submittedValues[$key] ) ) {
                     unset( $submittedValues[$key] );

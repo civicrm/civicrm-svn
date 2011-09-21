@@ -392,7 +392,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
                 $year  = $year + $membershipTypeDetails['duration_interval'];
                 //extend membership date by duration interval.
                 if ( $fixed_period_rollover ) {
-                    $year += $membershipTypeDetails['duration_interval'];
+                    $year += 1;
                 }
                 
                 break;
@@ -577,6 +577,28 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             CRM_Core_DAO::storeValues( $dao, $membershipTypes[$dao->id] ); 
         } 
         return $membershipTypes;
+    }
+
+    /**
+     * Function to retrieve all Membership Types with Member of Contact id
+     * 
+     * @param array membership types
+     *
+     * @return Array array of the details of membership types with Member of Contact id
+     * @static
+     */    
+    static function getMemberOfContactByMemTypes( $membershipTypes ) {
+        $memTypeOrgs = array( );
+        if ( empty($membershipTypes) ) {
+            return $memTypeOrgs;
+        }
+
+        $result = CRM_Core_DAO::executeQuery("SELECT id, member_of_contact_id FROM civicrm_membership_type WHERE id IN (". implode(',', $membershipTypes) .")");
+        while( $result->fetch( ) ) {
+            $memTypeOrgs[$result->id] = $result->member_of_contact_id;
+        }
+        
+        return $memTypeOrgs;
     }
 }
 

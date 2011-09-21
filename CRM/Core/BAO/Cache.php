@@ -227,6 +227,11 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache
         $cacheTimeIntervalDays  = 2;
 
         if ( mt_rand( 1, 100000 ) % 1396 == 0 ) {
+
+            // delete all PrevNext caches
+            require_once 'CRM/Core/BAO/PrevNextCache.php';
+            CRM_Core_BAO_PrevNextCache::cleanupCache( );
+
             $sql = "
 DELETE FROM civicrm_cache
 WHERE       group_name = 'CiviCRM Session'

@@ -434,13 +434,16 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
                     FROM        $eqTable
                     INNER JOIN  $emailTable
                             ON  $eqTable.email_id = $emailTable.id
+                    INNER JOIN  $contactTable
+                            ON  $contactTable.id = $emailTable.contact_id
                     LEFT JOIN   $edTable
                             ON  $eqTable.id = $edTable.event_queue_id
                     LEFT JOIN   $ebTable
                             ON  $eqTable.id = $ebTable.event_queue_id
                     WHERE       $eqTable.job_id = " . $this->id . "
                         AND     $edTable.id IS null
-                        AND     $ebTable.id IS null";
+                        AND     $ebTable.id IS null
+                        AND		$contactTable.is_opt_out = 0";
                     
         $eq->query($query);
 

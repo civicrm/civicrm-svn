@@ -32,7 +32,7 @@
           &nbsp;<span class='profile_bottom_add_link_remove'><a href="javascript:removeProfileAdd('{$profileBottomNum}')">{ts}remove profile{/ts}</a></span>&nbsp;&nbsp;<span class='profile_bottom_add_link'>&nbsp;<a href="javascript:addProfileBottomAdd()">{ts}add profile{/ts}</a></span>
       </td>
     </tr>
-  </table
+  </table>
   {/if}
   {if $addProfileBottom}
    <table id="custom_post_id_multiple_{$profileBottomNum}_wrapper" class="form-layout-compressed">
@@ -42,7 +42,7 @@
            &nbsp;<span class='profile_bottom_link_remove'><a href="javascript:removeProfile('{$profileBottomNum}')">{ts}remove profile{/ts}</a></span>&nbsp;&nbsp;<span class='profile_bottom_link'><a href="javascript:addProfileBottom()">{ts}add profile{/ts}</a></span>
        </td>
      </tr>
-   </table
+   </table>
   {/if}
 {else}
 {assign var=eventID value=$id}

@@ -122,7 +122,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
      * @dataProvider entities
      */
     public function testGetFields($Entity){
-      if(in_array($Entity , $this->deprecatedAPI) || $Entity == 'Entity'){
+      if(in_array($Entity , $this->deprecatedAPI) || $Entity == 'Entity' || $Entity == 'CustomValue' || $Entity == 'MailingGroup'){
         return;
       }
       
@@ -146,14 +146,6 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
         $this->assertContains ("Mandatory key(s) missing from params array", $result['error_message']);
     }
 
-    /**
-     * @dataProvider entities
-     */
-    public function testGetWrongTypeParamTag_get () {
-        $result = civicrm_api ("Tag",'Get','this is not a string');
-        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-        $this->assertEquals ("Input variable `params` is not an array",$result['error_message']);
-    }
 
     /**
      * @dataProvider entities_get

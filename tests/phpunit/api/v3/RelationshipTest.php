@@ -44,7 +44,8 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
     protected $_ids  = array( );
     protected $_customGroupId = null;
     protected $_customFieldId = null;
-    
+    protected $_params;  
+    protected $_entity;     
     function get_info( )
     {
         return array(
@@ -60,7 +61,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $this->_apiversion = 3;      
         $this->_cId_a  = $this->individualCreate(null);
         $this->_cId_b  = $this->organizationCreate(null );
-
+        $this->_entity = 'relationship';
         //Create a relationship type
         $relTypeParams = array(
                                'name_a_b'       => 'Relation 1 for delete',
@@ -72,7 +73,14 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                                'is_active'      => 1,
                                'version'				=>$this->_apiversion,
                                );
-        $this->_relTypeID = $this->relationshipTypeCreate($relTypeParams );        
+        $this->_relTypeID = $this->relationshipTypeCreate($relTypeParams );
+        $this->_params =  array( 'contact_id_a'         => $this->_cId_a,
+                         'contact_id_b'         => $this->_cId_b,
+                         'relationship_type_id' => $this->_relTypeID,
+                         'start_date'           => '2008-12-20',
+                         'is_active'            => 1,
+                          'version'							=> $this->_apiversion,
+                         );        
     }
 
     function tearDown() 
@@ -323,7 +331,32 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $result = & civicrm_api('relationship','delete',$params );
         $this->relationshipTypeDelete( $this->_relTypeID ); 
     }
+      /**
+     * check with complete array + custom field 
+     * Note that the test is written on purpose without any
+     * variables specific to participant so it can be replicated into other entities
+     * and / or moved to the automated test suite
+     */
+    function testGetWithCustom()
+    {
+        $ids = $this->entityCustomGroupWithSingleFieldCreate( __FUNCTION__,__FILE__);
+        
+        $params = $this->_params;
+        $params['custom_'.$ids['custom_field_id']]  =  "custom string";
+ 
+        $result = civicrm_api($this->_entity,'create', $params);
+        $this->assertEquals($result['id'],$result['values'][$result['id']]['id']);
 
+        $this->assertNotEquals( $result['is_error'],1 ,$result['error_message'] . ' in line ' . __LINE__);
+        $getParams = array('version' =>3, 'id' => $result['id']);
+        $check = civicrm_api($this->_entity,'get',$getParams);
+        $this->documentMe($getParams, $check, __FUNCTION__, __FILE__);
+        $this->assertEquals("custom string", $check['values'][$check['id']]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
+   
+        $this->customFieldDelete($ids['custom_field_id']);
+        $this->customGroupDelete($ids['custom_group_id']);      
+
+    }
     function createCustomGroup( )
     {
         $params = array(
@@ -612,8 +645,8 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         //get relationship
         $params = array( 'contact_id' => $this->_cId_b ,
                           'version'     => $this->_apiversion);
-        $result =& civicrm_api('relationship','get',$params );
-        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $result = civicrm_api('relationship','get',$params );
+ 
         $this->assertEquals( $result['is_error'], 0,'in line ' .__LINE__ );
     }
     /**
@@ -637,8 +670,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         //get relationship
         $params = array( 'contact_id_b' => $this->_cId_b ,
                           'version'     => $this->_apiversion);
-        $result =& civicrm_api('relationship','get',$params );
-        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $result = civicrm_api('relationship','get',$params );
         $this->assertEquals( $result['is_error'], 0,'in line ' .__LINE__ );
     }
    ///////////////// civicrm_relationship_type_add methods

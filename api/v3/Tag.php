@@ -53,11 +53,6 @@ function civicrm_api3_tag_create( $params )
 {
 
     civicrm_api3_verify_mandatory ($params,null,array ('name'));
-
-    if ( !array_key_exists ('used_for', $params)) {
-      $params ['used_for'] = "civicrm_contact";
-    }
-    
     require_once 'CRM/Core/BAO/Tag.php';
     $ids = array( 'tag' => CRM_Utils_Array::value( 'tag', $params ) );
     if ( CRM_Utils_Array::value( 'tag', $params ) ) {
@@ -77,7 +72,12 @@ function civicrm_api3_tag_create( $params )
     }
 
 }
-
+/*
+ * returns defaults for create function
+ */
+function _civicrm_api3_tag_create_defaults(){
+  return array('used_for' =>   "civicrm_contact");
+}
 /**
  * Deletes an existing Tag
  *

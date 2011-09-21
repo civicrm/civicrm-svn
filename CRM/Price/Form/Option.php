@@ -72,7 +72,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form
                                                    $this);
         $this->_oid  = CRM_Utils_Request::retrieve('oid' , 'Positive',
                                                    $this);
-        
+                
      }
 
     /**
@@ -107,9 +107,13 @@ class CRM_Price_Form_Option extends CRM_Core_Form
             $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Price_DAO_FieldValue', $fieldValues);
             $defaults['is_active'] = 1;
         }
-
+        
+        if ( !CRM_Utils_System::isNull( $defaults['auto_renew'] ) ) {
+            require_once 'CRM/Core/PseudoConstant.php';
+            $options = CRM_Core_PseudoConstant::autoRenew();
+            $defaults['auto_renew'] = $options[$defaults['auto_renew']];
+        }
         return $defaults;
-       
     }
     
     /**
@@ -143,7 +147,26 @@ class CRM_Price_Form_Option extends CRM_Core_Form
             
             // label
             $this->add('text', 'label', ts('Option Label'),null, true);
+            $memberComponentId = CRM_Core_Component::getComponentID( 'CiviMember' );
+            if ( $this->_action == CRM_Core_Action::UPDATE ) {
+                $this->_sid = CRM_Utils_Request::retrieve('sid', 'Positive', $this);
+            } elseif ( $this->_action == CRM_Core_Action::ADD ) {
+                $this->_sid= CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $this->_fid, 'price_set_id', 'id' );
+            }
+            $extendComponentId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_sid, 'extends', 'id' );
             
+            if ( $memberComponentId == $extendComponentId ) {
+                require_once 'CRM/Member/PseudoConstant.php';
+                $membershipTypes = CRM_Member_PseudoConstant::membershipType();
+                $this->add( 'select', 'membership_type_id', ts('Membership Type'), array('' => ' ') + $membershipTypes, false,
+                            array( 'onClick' => "calculateRowValues( );")   );
+                
+                
+                $this->add('text','auto_renew', ts('Auto Renew?'), 
+                           array('size'=> 25, 'style'=> "background-color:#EBECE4", 'READONLY'));
+            }
+            
+            //CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $this->_fid, 'weight', 'id' );
             // FIX ME: duplicate rule?
             /*
             $this->addRule( 'label',

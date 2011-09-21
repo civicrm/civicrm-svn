@@ -1030,7 +1030,9 @@ class CRM_Profile_Form extends CRM_Core_Form
         //mailing type group
         if ( ! empty ( $mailingType ) ) {
             require_once 'CRM/Mailing/Event/BAO/Subscribe.php';
-            CRM_Mailing_Event_BAO_Subscribe::commonSubscribe( $mailingType, $result,null, 'profile' );
+            // we send in the contactID so we match the same groups and are exact, rather than relying on email
+            // CRM-8710
+            CRM_Mailing_Event_BAO_Subscribe::commonSubscribe( $mailingType, $result, $this->_id, 'profile' );
         }
 
         require_once 'CRM/Core/BAO/UFGroup.php'; 

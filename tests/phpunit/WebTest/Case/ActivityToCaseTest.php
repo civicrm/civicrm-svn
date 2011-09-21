@@ -168,7 +168,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         $this->assertTrue( $this->isTextPresent( "A copy of this activity will be emailed to each Assignee" ) );
         
         // Putting the contents into subject field - assigning the text to variable, it'll come in handy later
-         $subject = "This is subject of test activity being added through activity tab of contact summary screen.";
+        $subject = "This is subject of test activity being added through activity tab of contact summary screen.";
         // For simple input fields we can use field id as selector
         $this->type("subject", $subject);
         $this->type("location", "Some location needs to be put in this field.");
@@ -237,7 +237,8 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
 
         $this->waitForElementPresent( '_qf_CaseView_cancel-bottom' );
         $this->waitForElementPresent( "xpath=//div[@id='activities']//table[@id='activities-selector']/tbody/tr[1]/td[2]" );
-        $this->click( "xpath=//div[@id='activities']//table[@id='activities-selector']/tbody/tr[1]/td[2]/a[text()='{$subject}']" );
+        
+        $this->click( "xpath=//div[@id='activities']//table[@id='activities-selector']//a[text()='{$subject}']" );
 
         $this->waitForElementPresent( 'view-activity' );
         $this->waitForElementPresent( "css=table#crm-activity-view-table tr.crm-case-activityview-form-block-groupTitle" );
@@ -327,7 +328,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         
         //Is custom field created
         $this->assertTrue( $this->isTextPresent( "Your custom field '$textFieldLabel' has been saved." ) );
-        $textFieldId = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']//table/tbody//tr/td[text()='$textFieldLabel']/../td[7]/span/a@href" ) );
+        $textFieldId = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']//table/tbody//tr/td[text()='$textFieldLabel']/../td[8]/span/a[text()='Edit Field']/@href" ) );
         $textFieldId = $textFieldId[1];
 
         return array( $radioOptionLabel1, "custom_{$textFieldId}_-1" );

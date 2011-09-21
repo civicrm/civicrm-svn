@@ -23,7 +23,27 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $membershipBlock}
+{if !empty($useForMember)}
+<div id="membership" class="crm-group membership-group">
+{if $context EQ "makeContribution"}
+    <div id="priceset">
+        <fieldset>
+            <legend>{ts}Membership Fee{/ts}</legend>
+            {include file="CRM/Price/Form/PriceSet.tpl" extends="Membership"}
+        </fieldset>
+    </div>
+{elseif $lineItem and $priceSetID}
+  {assign var="totalAmount" value=$amount}
+  <div class="header-dark">
+  {ts}Membership Fee{/ts}
+  </div>
+  <div class="display-block">
+    {include file="CRM/Price/Page/LineItem.tpl" context="Membership"}
+  </div>
+{/if}
+</div>
+
+{elseif $membershipBlock}
 <div id="membership" class="crm-group membership-group">
   {if $context EQ "makeContribution"}
   <fieldset>    

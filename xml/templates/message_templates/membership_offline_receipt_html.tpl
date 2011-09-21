@@ -36,6 +36,7 @@
   <tr>
    <td>
     <table style="border: 1px solid #999; margin: 1em 0em 1em; border-collapse: collapse; width:100%;">
+     {if !$lineItem}
      <tr>
       <th {$headerStyle}>
        {ts}Membership Information{/ts}
@@ -49,7 +50,9 @@
        {$membership_name}
       </td>
      </tr>
+     {/if}
      {if ! $cancelled}
+     {if !$lineItem}
       <tr>
        <td {$labelStyle}>
         {ts}Membership Start Date{/ts}
@@ -66,6 +69,7 @@
         {$mem_end_date}
        </td>
       </tr>
+      {/if}
       {if $formValues.total_amount}
        <tr>
         <th {$headerStyle}>
@@ -82,6 +86,47 @@
          </td>
         </tr>
        {/if}
+
+       {if $lineItem}
+       {foreach from=$lineItem item=value key=priceset}
+         <tr>
+          <td colspan="2" {$valueStyle}>
+           <table> {* FIXME: style this table so that it looks like the text version (justification, etc.) *}
+            <tr>
+             <th>{ts}Item{/ts}</th>
+             <th>{ts}Qty{/ts}</th>
+             <th>{ts}Each{/ts}</th>
+             <th>{ts}Total{/ts}</th>
+	     <th>{ts}Membership Start Date{/ts}</th>
+	     <th>{ts}Membership End Date{/ts}</th>
+            </tr>
+            {foreach from=$value item=line}
+             <tr>
+              <td>
+	      {if $line.html_type eq 'Text'}{$line.label}{else}{$line.field_title} - {$line.label}{/if} {if $line.description}<div>{$line.description|truncate:30:"..."}</div>{/if}	
+              </td>
+              <td>
+               {$line.qty}
+              </td>
+              <td>
+               {$line.unit_price|crmMoney}
+              </td>
+              <td>
+               {$line.line_total|crmMoney}
+              </td>
+              <td>
+               {$line.start_date}
+              </td>
+	      <td>
+               {$line.end_date}
+              </td>
+             </tr>
+            {/foreach}
+           </table>
+          </td>
+         </tr>
+       {/foreach}
+      {/if}
        <tr>
         <td {$labelStyle}>
          {ts}Amount{/ts}

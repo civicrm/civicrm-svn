@@ -104,7 +104,9 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
      * test checks that all v3 API return a standardised error message when 
      * the $params passed in is not an array.
      */
-   
+   /*I have commented this out as the check for is_array has been moved to civicrm_api. But keeping in place as
+    * this test, in contrast to the standards test, tests all existing API rather than just CRUD ones
+    * so want to keep code for re-use
     function testParamsNotArray() {
         $files = $this->getAllFilesinAPIDir();
         $this->assertGreaterThan(1, count($files),"something has gone wrong listing the files in line " . __LINE__);
@@ -131,7 +133,7 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
                                 "$function does not return correct error when a non-array is submitted in line " . __LINE__ );      
         }
     }
-    
+    */
     /*
      * Get all the files in the API directory for the relevant version which contain API functions
      * @return array $files array of php files in the directory excluding helper files
@@ -143,6 +145,7 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
         while (($file = readdir($handle))!==false) {
             if ( strstr($file,".php")  &&
                  $file != 'Entity.php' &&
+                 $file != 'Generic.php' &&
                  $file !='utils.php' ){
                  $files[]=$file;
             } 
@@ -172,6 +175,9 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
         $functions =  preg_grep($this->_regexForGettingAPIStdFunctions, $functionlist['user']);
         foreach ($functions as $key =>$function ){
           if (stristr($function,'getfields')){
+            unset($functions[$key]);
+          }
+          if (stristr($function,'_generic_')){
             unset($functions[$key]);
           }
          

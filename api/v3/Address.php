@@ -50,17 +50,8 @@ require_once 'CRM/Core/BAO/Address.php';
 function civicrm_api3_address_create( &$params ) 
 {
 
-    civicrm_api3_verify_one_mandatory ($params, null, 
-    array ('contact_id', 'id'));
-    civicrm_api3_verify_mandatory ($params, null, array('location_type_id'));
+   civicrm_api3_verify_mandatory ($params, null, array('location_type_id', 'contact_id'));
 
-	/*
-	 * if is_primary is not set in params, set default = 0
-	 */
-	if ( !array_key_exists('is_primary', $params )) {
-		$params['is_primary'] = 0; 
-	}	
-	
 	/*
 	 * if street_parsing, street_address has to be parsed into
 	 * separate parts
@@ -96,7 +87,7 @@ function civicrm_api3_address_create( &$params )
 	 unset ($params['contact_id']);
 	 $paramsBAO['address'][0] = $params;
 	 $addressBAO = CRM_Core_BAO_Address::create($paramsBAO, true);
-	 if ( is_a( $addressBAO, 'CRM_Core_Error' )) {
+	 if (empty( $addressBAO)) {
 		 return civicrm_api3_create_error( "Address is not created or updated ");
 	 } else {
 		 $values = array( );

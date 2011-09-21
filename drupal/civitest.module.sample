@@ -1480,3 +1480,24 @@ function civitest_civicrm_searchColumns( $objectName, &$headers,  &$values, &$se
     }
 
 }
+
+/*
+ * Implements hook_civicrm_buildStateProvinceForCountry().
+ *
+ * Reorder the dublin states so that Dublin is at the top and dublin sub
+ * states are ordered nicely.
+ */
+function civitest_civicrm_buildStateProvinceForCountry( $countryID, &$states ) {
+    // First separate out the Dublin options.
+    $topStates = array();
+    foreach ($states as $key => $value) {
+        if (preg_match('/Dublin/', $value)) {
+            $topStates[$key] = $value;
+        } else {
+            $otherStates[$key] = $value;
+        }
+    }
+    ksort($topStates);
+    $states = $topStates + $otherStates;
+}
+
