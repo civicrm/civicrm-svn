@@ -273,8 +273,8 @@ class CRM_Price_Form_Option extends CRM_Core_Form
         require_once 'CRM/Price/BAO/FieldValue.php';
         if ( $this->_action == CRM_Core_Action::DELETE ) {
             $fieldValues = array( 'price_field_id' => $this->_fid );
-            $wt    = CRM_Utils_Weight::delWeight('CRM_Price_DAO_FieldValue', $this->_oid, $fieldValues);
-            $label = CRM_Core_DAO::getFieldValue( "CRM_Price_DAO_FieldValue",
+            $wt    = CRM_Utils_Weight::delWeight( 'CRM_Price_DAO_FieldValue', $this->_oid, $fieldValues );
+            $label = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_FieldValue',
                                                   $this->_oid,
                                                   'label', 'id' );
    
@@ -290,6 +290,15 @@ class CRM_Price_Form_Option extends CRM_Core_Form
             $params['amount']         = CRM_Utils_Rule::cleanMoney( trim($params['amount']) );
             $params['price_field_id'] = $this->_fid;
             $params['is_default']     = CRM_Utils_Array::value( 'is_default', $params, false );
+
+            if ( CRM_Utils_Array::value( 'membership_type_id', $params ) ) {
+                require_once 'CRM/Core/PseudoConstant.php';
+                $autoRenewOptions = CRM_Core_PseudoConstant::autoRenew();
+                $key = CRM_Utils_Array::key( $params['auto_renew'], $autoRenewOptions );
+                if (isset($key)) {
+                    $params['auto_renew'] = $key;
+                }   
+            }
 
             $ids = array( );
             if ( $this->_oid ) {
