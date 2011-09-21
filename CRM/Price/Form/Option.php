@@ -164,6 +164,17 @@ class CRM_Price_Form_Option extends CRM_Core_Form
                 
                 $this->add('text','auto_renew', ts('Auto Renew?'), 
                            array('size'=> 25, 'style'=> "background-color:#EBECE4", 'READONLY'));
+            } else {
+                $allComponents = explode(CRM_Core_DAO::VALUE_SEPARATOR, $extendComponentId);
+                $eventComponentId = CRM_Core_Component::getComponentID( 'CiviEvent' );
+                if ( in_array( $eventComponentId, $allComponents ) ) {
+                    // count
+                    $this->add('text', 'count', ts('Participants Count') );
+                    $this->addRule('count' , ts('Please enter a valid Max Participants.'), 'positiveInteger');
+                    
+                    $this->add('text', 'max_value', ts('Max Participants') );
+                    $this->addRule('max_value' , ts('Please enter a valid Max Participants.'), 'positiveInteger');
+                }
             }
             
             //CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $this->_fid, 'weight', 'id' );
@@ -185,13 +196,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form
 
             $this->add( 'textarea', 'description', ts('Description') );
  
-            // count
-            $this->add('text', 'count', ts('Participants Count') );
-            $this->addRule('count' , ts('Please enter a valid Max Participants.'), 'positiveInteger');
-
-            $this->add('text', 'max_value', ts('Max Participants') );
-            $this->addRule('max_value' , ts('Please enter a valid Max Participants.'), 'positiveInteger');
-
+          
             // weight
             $this->add('text', 'weight', ts('Order'), null, true);
             $this->addRule('weight', ts('is a numeric field') , 'numeric');
