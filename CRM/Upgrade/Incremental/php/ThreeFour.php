@@ -298,6 +298,10 @@ WHERE  v.option_group_id = g.id
   AND  v.name      = %2", array( 1 => array('activity_type', 'String'),
                                  2 => array('Bulk Email', 'String') ) );
 
+        // CRM-8852, reset contact field cache
+        require_once 'CRM/Core/BAO/Cache.php';
+        CRM_Core_BAO_Cache::deleteGroup( 'contact fields' );
+
         $upgrade = new CRM_Upgrade_Form( );
         $upgrade->assign('bulkEmailActivityType', $bulkEmailActivityType);
 
