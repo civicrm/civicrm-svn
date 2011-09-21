@@ -288,21 +288,34 @@ WHERE     ct.id = cp.contribution_type_id AND
     }
 
     /**
-     * Find a price_set_id associatied with the given table and id
+     * Find a price_set_id associatied with the given table, id and usedFor
+     * Used For value for events:1, contribution:2, membership:3
      *
      * @param string $entityTable
-     * @param integer $entityId
+     * @param int    $entityId
+     * @param int    $usedFor ( price set that extends/used for particular component )
+     *
      * @return integer|false price_set_id, or false if none found
      */
-    public static function getFor( $entityTable, $entityId ) 
+    public static function getFor( $entityTable, $entityId, $usedFor = null )
     {
         if ( !$entityTable || !$entityId ) return false;  
-        
-        require_once 'CRM/Price/DAO/SetEntity.php';
-        $dao = new CRM_Price_DAO_SetEntity( );
-        $dao->entity_table = $entityTable;
-        $dao->entity_id    = $entityId;
-        $dao->find( true );
+
+        $sql = 'SELECT ps.id as price_set_id 
+                FROM civicrm_price_set ps
+                INNER JOIN civicrm_price_set_entity pse ON ps.id = pse.price_set_id
+                WHERE pse.entity_table = %1 AND pse.entity_id = %2';
+
+        $params = array( 1 => array( $entityTable, 'String' ),
+                         2 => array( $entityId, 'Integer' ) );
+        if ( $usedFor ) {
+            $sql .= ' AND ps.extends = %3 ';
+            $params[3] = array( $usedFor, 'Integer' );
+        }
+
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
+        $dao->fetch();
+
         return (isset($dao->price_set_id)) ? $dao->price_set_id : false; 
     }
 
