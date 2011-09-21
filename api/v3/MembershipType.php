@@ -102,7 +102,7 @@ function civicrm_api3_membership_type_delete( $params ) {
     civicrm_api3_verify_mandatory($params,null,array('id'));
 
     require_once 'CRM/Member/BAO/MembershipType.php';
-    $memberDelete = CRM_Member_BAO_MembershipType::del( $params['id'] );
+    $memberDelete = CRM_Member_BAO_MembershipType::del( $params['id'] , 1);
     return $memberDelete ?
     civicrm_api3_create_success(  $memberDelete ) :
     civicrm_api3_create_error('Error while deleting membership type. id : ' . $params['id']);
