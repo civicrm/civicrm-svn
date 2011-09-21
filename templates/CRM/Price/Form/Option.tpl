@@ -44,10 +44,6 @@
                <td class="label">{$form.label.label}</td>
                <td>{$form.label.html}</td>
             </tr>
-	    <tr  id="autoRenew" class="crm-price-option-form-block-auto_renew">
-               <td class="label">{$form.auto_renew.label}</td>
-               <td>{$form.auto_renew.html}</td>
-            </tr>
             <tr class="crm-price-option-form-block-amount">
                 <td class="label">{$form.amount.label}</td>
                 <td>{$form.amount.html}</td>
@@ -99,19 +95,11 @@
       var mtype = cj("#membership_type_id").val();
       var postUrl = "{/literal}{crmURL p='civicrm/ajax/memType' h=0}{literal}";
       cj.post( postUrl, {mtype: mtype}, function( data ) {
-      	       if( data.auto_renew  == '' ) {
-		   cj("#autoRenew").hide( );
-	       } else {
-	       	   cj("#auto_renew").val( data.auto_renew );   
-		   cj("#autoRenew").show( );
-	       }
-
-       	       cj("#amount").val( data.total_amount );   
-	       cj("#label").val( data.name );   
+              cj("#amount").val( data.total_amount );   
+              cj("#label").val( data.name );   
       
-      }, 'json');  
+              }, 'json');  
      }
-
     {/literal}
 </script>
 

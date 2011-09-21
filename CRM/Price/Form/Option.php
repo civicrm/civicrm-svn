@@ -163,9 +163,6 @@ class CRM_Price_Form_Option extends CRM_Core_Form
                 $membershipTypes = CRM_Member_PseudoConstant::membershipType();
                 $this->add( 'select', 'membership_type_id', ts('Membership Type'), array('' => ' ') + $membershipTypes, false,
                             array( 'onClick' => "calculateRowValues( );")   );
-                
-                $this->add('text','auto_renew', ts('Auto Renew?'), 
-                           array('size'=> 25, 'style'=> "background-color:#EBECE4", 'READONLY'));
             } else {
                 $allComponents = explode(CRM_Core_DAO::VALUE_SEPARATOR, $extendComponentId);
                 $eventComponentId = CRM_Core_Component::getComponentID( 'CiviEvent' );
