@@ -766,12 +766,19 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     {
         require_once 'CRM/Contribute/BAO/ContributionType.php';
         if( $contributionTypeID === null ) {
+            civicrm_api('Contribution', 'get',array('version' => 3, 'contribution_type_id' => 10, 'api.contribution.delete' => 1 ));  
+            civicrm_api('Contribution', 'get',array('version' => 3, 'contribution_type_id' => 11, 'api.contribution.delete' => 1));                  
             // we know those were loaded from /dataset/contribution_types.xml
-            $del= CRM_Contribute_BAO_ContributionType::del(10);
-            $del= CRM_Contribute_BAO_ContributionType::del(11);
+            $del= CRM_Contribute_BAO_ContributionType::del(10,1);
+            $del= CRM_Contribute_BAO_ContributionType::del(11,1);
         } else {
-            $del= CRM_Contribute_BAO_ContributionType::del($contributionTypeID);
+            civicrm_api('Contribution', 'get',array('version' => 3, 'contribution_type_id' => $contributionTypeID,  'api.contribution.delete' => 1));            
+            $del= CRM_Contribute_BAO_ContributionType::del($contributionTypeID,1 );
         }
+        if (is_array($del) ){
+          $this->assertEquals(0, CRM_Utils_Array::value('is_error', $del), $del['error_message']);
+        }
+
     }
     
     /** 
