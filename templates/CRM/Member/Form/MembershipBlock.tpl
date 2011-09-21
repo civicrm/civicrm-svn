@@ -59,13 +59,15 @@
               <span class="description">{ts}Membership section introductory text - displayed to renewing members.{/ts}</span><br /></td>
           </tr>
     	  <tr class="crm-member-membershipblock-form-block-member_price_set_id">
-                  <td class="label">{$form.member_price_set_id.label}</td>
-		  <td>{if $price eq false}
-	    	          <div class="status message">{ts 1=$adminPriceSets}No Membership Price Sets have been configured / enabled for your site. Price sets allow you to configure more complex membership signup and renewal options, including allowing constituents to sign up for multiple memberships at the same time. Click <a href='%1'>here</a> if you want to configure price sets for your site.{/ts}</div>
-	    	      {else}
+              <td class="label">{$form.member_price_set_id.label}</td>
+              <td>
+              {if $price eq false}
+                {capture assign=adminPriceSetsURL}{crmURL p="civicrm/admin/price" q="reset=1"}{/capture}
+	    	    <div class="status message">{ts 1=$adminPriceSetsURL}No Membership Price Sets have been configured / enabled for your site. Price sets allow you to configure more complex membership signup and renewal options, including allowing constituents to sign up for multiple memberships at the same time. Click <a href='%1'>here</a> if you want to configure price sets for your site.{/ts}</div>
+	    	  {else}
 		          {$form.member_price_set_id.html}
 		      {/if}
-		  </td>
+		      </td>
     	  </tr>   
           <tr id="membership_type-block" class="crm-member-membershipblock-form-block-membership_type">
               <td class="label">{$form.membership_type.label}</td> 
