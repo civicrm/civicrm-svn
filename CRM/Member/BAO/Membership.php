@@ -2219,6 +2219,8 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id AND 
      */ 
     static function getMembershipContributionId( $membershipId ) 
     {
+        require_once 'CRM/Member/DAO/MembershipPayment.php';
+
         $membesrshipPayment = new CRM_Member_DAO_MembershipPayment( );
         $membesrshipPayment->membership_id  = $membershipId;
         if ( $membesrshipPayment->find(true) ) {

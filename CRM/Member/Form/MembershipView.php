@@ -159,9 +159,12 @@ END AS 'relType'
 
             require_once 'CRM/Price/BAO/Set.php';
             $lineItems = array( );
-            if ( $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_membership', $id ) ) {
+
+            $relatedContributionId = CRM_Member_BAO_Membership::getMembershipContributionId($id);
+            if ( $relatedContributionId &&
+                 ( $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $relatedContributionId, CRM_Core_Component::getComponentID( 'CiviMember' ) ) ) ) {
                 require_once 'CRM/Price/BAO/LineItem.php';
-                $lineItems[] = CRM_Price_BAO_LineItem::getLineItems( $id, 'membership' );
+                $lineItems[] = CRM_Price_BAO_LineItem::getLineItems( $relatedContributionId , 'contribution' );
             }
             $this->assign( 'lineItem', empty( $lineItems ) ? false : $lineItems );
         }
