@@ -228,7 +228,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form
                 $this->freeze();
                 $this->addButtons(array(
                                         array ('type'      => 'cancel',
-                                               'name'      => ts('Done with Preview'),
+                                               'name'      => ts('Done'),
                                                'isDefault' => true),
                                         )
                                   );
