@@ -254,7 +254,10 @@ class CRM_Core_Payment_BaseIPN {
 
     function failed( &$objects, &$transaction ) {
         $contribution =& $objects['contribution'];
-        $membership   =& $objects['membership']  ;
+        $memberships   =& $objects['membership']  ;
+        if ( is_numeric( $memberships ) ) {
+            $memberships = array( $objects['membership'] );     
+        }
         $participant  =& $objects['participant'] ;
 
         require_once 'CRM/Contribute/PseudoConstant.php';
@@ -262,17 +265,17 @@ class CRM_Core_Payment_BaseIPN {
         
         $contribution->contribution_status_id = array_search( 'Failed', $contributionStatus );
         $contribution->save( );
-
-        if ( $membership ) {
-            $membership->status_id = 4;
-            $membership->save( );
-            
-            //update related Memberships.
-            require_once 'CRM/Member/BAO/Membership.php';
-            $params = array( 'status_id' => 4 );
-            CRM_Member_BAO_Membership::updateRelatedMemberships( $membership->id, $params );
+        foreach ($memberships as $membership) {
+            if ( $membership ) {
+                $membership->status_id = 4;
+                $membership->save( );
+                
+                //update related Memberships.
+                require_once 'CRM/Member/BAO/Membership.php';
+                $params = array( 'status_id' => 4 );
+                CRM_Member_BAO_Membership::updateRelatedMemberships( $membership->id, $params );
+            }
         }
-
         if ( $participant ) {
             $participant->status_id = 4;
             $participant->save( );
@@ -293,7 +296,11 @@ class CRM_Core_Payment_BaseIPN {
 
     function cancelled( &$objects, &$transaction ) {
         $contribution =& $objects['contribution'];
-        $membership   =& $objects['membership']  ;
+        $memberships   =& $objects['membership']  ;
+        if ( is_numeric( $memberships ) ) {
+            $memberships = array( $objects['membership'] );     
+        }
+        
         $participant  =& $objects['participant'] ;
 
         $contribution->contribution_status_id = 3;
@@ -301,14 +308,16 @@ class CRM_Core_Payment_BaseIPN {
         $contribution->cancel_reason = CRM_Utils_Array::value( 'reasonCode', $input );
         $contribution->save( );
 
-        if ( $membership ) {
-            $membership->status_id = 6;
-            $membership->save( );
-            
-            //update related Memberships.
-            require_once 'CRM/Member/BAO/Membership.php';
-            $params = array( 'status_id' => 6 );
-            CRM_Member_BAO_Membership::updateRelatedMemberships( $membership->id, $params );
+        foreach ($memberships as $membership) {
+            if ( $membership ) {
+                $membership->status_id = 6;
+                $membership->save( );
+                
+                //update related Memberships.
+                require_once 'CRM/Member/BAO/Membership.php';
+                $params = array( 'status_id' => 6 );
+                CRM_Member_BAO_Membership::updateRelatedMemberships( $membership->id, $params );
+            }
         }
         
         if ( $participant ) {
