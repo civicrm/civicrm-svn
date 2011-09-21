@@ -154,10 +154,12 @@
             cj('#membership_type-block').hide();
             cj('#requiredSignup').hide();
             cj('#displayFee').hide();
+            cj('#separatePayment').hide();
         } else {
             cj('#membership_type-block').show();
             cj('#requiredSignup').show();
             cj('#displayFee').show();
+            cj('#separatePayment').show();
         }
     }
 </script>
