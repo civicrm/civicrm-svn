@@ -42,7 +42,11 @@
         {/literal}{foreach from=$optionsMembershipTypes item=memType key=opId}{literal}
                   membershipValues[{/literal}{$opId}{literal}] = {/literal}{$memType}{literal};
         {/literal}{/foreach}{literal}
-        buildCustomDataFromPriceset(membershipValues, 1);
+	var renewValues = new Array;
+        {/literal}{foreach from=$optionsAutoNews item=isRenew key=opId}{literal}
+                  renewValues[{/literal}{$opId}{literal}] = {/literal}{$isRenew}{literal};
+        {/literal}{/foreach}{literal}
+        processMembershipPriceset(membershipValues, renewValues, 1);
 	{/literal}{if !$membershipMode}{literal}
 	  enableAmountSection({/literal}{$contributionType}{literal});
 	{/literal}{/if}{literal}
@@ -555,19 +559,25 @@ function buildAmount( priceSetId ) {
 
 var lastMembershipTypes = new Array;
 var optionsMembershipTypes = new Array;
+var optionsRenewValues = new Array;
 
 // function to load custom data for selected membership types through priceset
-function buildCustomDataFromPriceset( membershipValues, reload ) {
+function processMembershipPriceset( membershipValues, renewValues, reload ) {
     var currentMembershipType = new Array;
     var count = 0;
+    var opCount = 0;
+    var selectedOp = new Array;
     var loadCustomData = 0;
     if ( membershipValues ) {
         optionsMembershipTypes = membershipValues;
     }
+    if ( renewValues ) {
+        optionsRenewValues = renewValues;
+    }
     if ( reload ) {
         lastMembershipTypes = new Array;
     }
-
+    
     cj("input,#priceset select,#priceset").each(function () {
            if ( cj(this).attr('price') ) {
              switch( cj(this).attr('type') ) {
@@ -575,7 +585,8 @@ function buildCustomDataFromPriceset( membershipValues, reload ) {
                case 'checkbox':
 	         if ( cj(this).attr('checked') ) {
                      eval( 'var option = ' + cj(this).attr('price') ) ;
-                     ele = option[0];
+                     var ele = option[0];
+		     selectedOp[opCount++] = ele;
 		     var memTypeId = optionsMembershipTypes[ele];
 		     if ( memTypeId && cj.inArray(optionsMembershipTypes[ele], currentMembershipType) == -1 ) {
 		       currentMembershipType[count] = memTypeId;
@@ -584,7 +595,7 @@ function buildCustomDataFromPriceset( membershipValues, reload ) {
                  }
 		 if ( reload ) { 
 		   cj(this).click( function( ) {
-		     buildCustomDataFromPriceset();
+		     processMembershipPriceset();
 		   });
 		 }  
                break;
@@ -592,6 +603,7 @@ function buildCustomDataFromPriceset( membershipValues, reload ) {
                case 'radio':
                  if ( cj(this).attr('checked') && cj(this).val() ) {
 		   var memTypeId = optionsMembershipTypes[cj(this).val()];
+		   selectedOp[opCount++] = cj(this).val();
                    if ( memTypeId && cj.inArray(memTypeId, currentMembershipType) == -1 ) {
                        currentMembershipType[count] = memTypeId;
 		       count++;
@@ -599,7 +611,7 @@ function buildCustomDataFromPriceset( membershipValues, reload ) {
                  }
                  if ( reload ) { 
 		   cj(this).click( function( ) {
-		     buildCustomDataFromPriceset();
+		     processMembershipPriceset();
 		   });
 		 }
                break;
@@ -607,6 +619,7 @@ function buildCustomDataFromPriceset( membershipValues, reload ) {
                case 'select-one':
 	         if ( cj(this).val( ) ) {
                    var memTypeId = optionsMembershipTypes[cj(this).val()];
+		   selectedOp[opCount++] = cj(this).val();
                    if ( memTypeId && cj.inArray(memTypeId, currentMembershipType) == -1 ) {
                        currentMembershipType[count] = memTypeId;
 		       count++;
@@ -614,14 +627,29 @@ function buildCustomDataFromPriceset( membershipValues, reload ) {
                  } 
                  if ( reload ) { 
 		   cj(this).change( function( ) {
-		     buildCustomDataFromPriceset();
+		     processMembershipPriceset();
 		   });
 		 }
 	       break;
 	     }
 	   }
     });
- 
+
+    {/literal}{if $allowAutoRenew }{literal};   
+    var loadAutoNew = 0;	
+    for( i in selectedOp ) {
+        if ( optionsRenewValues[selectedOp[i]] ) {
+	    loadAutoNew = 1;
+	    break;
+        } 
+    }
+    if ( loadAutoNew ) {
+       buildAutoRenew(optionsRenewValues[selectedOp[i]]);
+    } else {
+      buildAutoRenew(null);
+    }
+    {/literal}{/if}{literal};
+
     for( i in currentMembershipType ) {
         if ( cj.inArray(currentMembershipType[i], lastMembershipTypes) == -1 ) {
             loadCustomData = 1;

@@ -398,17 +398,19 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             require_once 'CRM/Price/BAO/Set.php';
             CRM_Price_BAO_Set::buildPriceSet( $this );
 
-            $optionsMembershipTypes = array( );
+            $optionsMembershipTypes = $optionsAutoNews = array( );
             foreach( $this->_priceSet['fields'] as $pField ) {
                 if ( empty($pField['options']) ) {
                     continue;                    
                 }
                 foreach( $pField['options'] as $opId => $opValues ) {
                     $optionsMembershipTypes[$opId] = CRM_Utils_Array::value('membership_type_id', $opValues, 0);
+                    $optionsAutoNews[$opId] = CRM_Utils_Array::value('auto_renew', $opValues, 0);
                 }
             }
             
             $this->assign( 'optionsMembershipTypes', $optionsMembershipTypes);
+            $this->assign( 'optionsAutoNews', $optionsAutoNews);
             $this->assign( 'contributionType', CRM_Utils_Array::value('contribution_type_id', $this->_priceSet) );
 
             // get only price set form elements.
@@ -1208,13 +1210,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $params['contribution_recur_id']      = $paymentParams['contributionRecurID'];
                 $params['status_id']                  = array_search( 'Pending', $allStatus );
                 $params['skipStatusCal']              = true;
-                
-                if ( CRM_Util_Array::value('processPriceSet', $params) &&
-                     !empty($params['lineItems']) ) {
-                    require_once 'CRM/Contribute/Form/AdditionalInfo.php';
-                    CRM_Contribute_Form_AdditionalInfo::processPriceSet( $contribution->id, $params['lineItems'] );   
-                }
-                
+               
                 //as membership is pending set dates to null.
                 $memberDates = array( 'join_date'  => 'joinDate',
                                       'start_date' => 'startDate',
