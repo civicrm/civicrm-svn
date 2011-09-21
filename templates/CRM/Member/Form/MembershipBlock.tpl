@@ -58,12 +58,15 @@
               <td>{$form.renewal_text.html}<br />
               <span class="description">{ts}Membership section introductory text - displayed to renewing members.{/ts}</span><br /></td>
           </tr>
-
     	  <tr class="crm-member-membershipblock-form-block-price_set_id">
                   <td class="label">{$form.price_set_id.label}</td>
-    	      <td>{$form.price_set_id.html}</td>
+		  <td>{if $price eq false}
+	    	          <div class="status message">{ts 1=$adminPriceSets}No Membership Price Sets have been configured / enabled for your site. Price sets allow you to configure more complex membership signup and renewal options, including allowing constituents to sign up for multiple memberships at the same time. Click <a href='%1'>here</a> if you want to configure price sets for your site.{/ts}</div>
+	    	      {else}
+		          {$form.price_set_id.html}
+		      {/if}
+		  </td>
     	  </tr>   
-
           <tr id="priceSet" class="crm-member-membershipblock-form-block-membership_type">
               <td class="label">{$form.membership_type.label}</td> 
               <td>
