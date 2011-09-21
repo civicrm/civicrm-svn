@@ -268,7 +268,7 @@ SELECT id
                  ($setID = CRM_Price_BAO_Set::getFor('civicrm_contribution_page',  $self->_id)) ) {
                 $extends = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $setID, 'extends' );
                 if ( $extends && $extends == CRM_Core_Component::getComponentID( 'CiviMember' ) ) {
-                    $errors['amount_block_is_active'] = ts( 'You cannot use Membership Price Set with Contribution Amounts section.' );
+                    $errors['amount_block_is_active'] = ts( 'You cannot use a Membership Price Set when the Contribution Amounts section is enabled. Click the Memberships tab above, and select your Membership Price Set on that form. Membership Price Sets may include additional fields for non-membership options that require an additional fee (e.g. magazine subscription) or an additional voluntary contribution.' );
                     return $errors;
                 }
             }
@@ -301,7 +301,7 @@ SELECT id
         if ( $priceSetId = CRM_Utils_Array::value( 'price_set_id', $fields ) ) {
             // don't allow price set w/ membership.
             if ( $hasMembershipBlk ) {
-                $errors['price_set_id'] = ts( 'You cannot enable both Price Set and Membership Signup on the same online contribution page.' );  
+                $errors['price_set_id'] = ts( 'You cannot enable both a Contribution Price Set and Membership Signup on the same online contribution page.' );  
             }
         } else {
             if ( isset( $fields['is_recur'] ) ) {

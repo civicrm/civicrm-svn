@@ -192,13 +192,13 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
 
                 $extends = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $setID, 'extends' );
                 if ( $extends != CRM_Core_Component::getComponentID( 'CiviMember' ) ) {
-                    $errors['member_is_active'] = ts( 'You cannot enable both Membership Signup and Price Set on the same online contribution page.' );  
+                    $errors['member_is_active'] = ts( 'You cannot enable both Membership Signup and a Contribution Price Set on the same online contribution page.' );  
                     return $errors;
                 }
             }
             
             if ( $contributionPageId && CRM_Utils_Array::value('member_price_set_id', $params) && CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage', $contributionPageId, 'amount_block_is_active') ) {
-                $errors['member_price_set_id'] = ts( 'You cannot use Membership Price Set with Contribution Amounts section.' );
+                $errors['member_price_set_id'] = ts( 'You cannot use Membership Price Sets with the Contribution Amounts section. However, a membership price set may include additional fields for non-membership options that requires an additional fee (e.g. magazine subscription) or an additional voluntary contribution.' );
             }
             
             if ( CRM_Utils_Array::value('member_price_set_id', $params) ) {
