@@ -487,7 +487,6 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         
         // a dummy object to call get context and a parent function inside it.
         $ipn = new CRM_Core_Payment_GoogleIPN( $mode, $dummyProcessor );
-        CRM_Core_Error::debug_var( '$ipn', $ipn );
         list( $mode, $module, $paymentProcessorID ) = $ipn->getContext($privateData, $orderNo, $root, $response);
         $mode = $mode ? 'test' : 'live';
 
