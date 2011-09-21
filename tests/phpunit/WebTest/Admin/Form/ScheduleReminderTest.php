@@ -62,7 +62,7 @@ class WebTest_Admin_Form_ScheduleReminderTest extends CiviSeleniumTestCase {
       
       // Fill Entity Details
       $this->click( 'entity[0]' );
-      $this->click( "//option[@value='1']" );
+      $this->select( 'entity[0]', 'value=1' );
       $this->addSelection( 'entity[1]', 'value=1' );
       $this->addSelection( 'entity[2]', 'value=2' );
       $this->select( 'start_action_offset', 'label=1' );
