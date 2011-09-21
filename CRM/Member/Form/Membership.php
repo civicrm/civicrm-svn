@@ -1091,7 +1091,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                                                                'contribution_type_id' );
             } else {
                 $params['contribution_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
-                                                                               current($this->_memTypeSelected),
+                                                                               end($this->_memTypeSelected),
                                                                                'contribution_type_id' );
             }
 

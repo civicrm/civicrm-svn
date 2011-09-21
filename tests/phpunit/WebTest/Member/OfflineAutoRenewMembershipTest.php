@@ -92,6 +92,7 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
 
       // since country is not pre-selected for offline mode
       $this->select("billing_country_id-5", "label=United States");
+      $this->click('billing_state_province_id-5');
       $this->webtestAddBillingDetails( $firstName, null, $lastName );
 
       $this->click("_qf_Membership_upload-bottom");

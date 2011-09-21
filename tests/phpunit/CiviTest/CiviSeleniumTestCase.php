@@ -385,6 +385,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         $this->type('billing_street_address-5', '234 Lincoln Ave');
         $this->type('billing_city-5', 'San Bernadino');
+        $this->click('billing_state_province_id-5');
         $this->select('billing_state_province_id-5', 'label=California');
         $this->type('billing_postal_code-5', '93245');
 
