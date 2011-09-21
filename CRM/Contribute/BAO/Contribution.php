@@ -1242,22 +1242,32 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
      */ 
     static function deleteAddress( $contributionId = null, $contactId = null ) 
     {
-        $contributionCond = $contactCond = 'null';
+        $clauses     = array( );
+        $contactJoin = null;
+
         if ( $contributionId ) {
-            $contributionCond = "cc.id = {$contributionId}";
+            $clauses[] = "cc.id = {$contributionId}";
         }
+
         if ( $contactId ) {
-            $contactCond = "cco.id = {$contactId}";
+            $clauses[]   = "cco.id = {$contactId}";
+            $contactJoin = "INNER JOIN civicrm_contact cco ON cc.contact_id = cco.id";
         }
- 
+
+        if ( empty( $clauses ) ) {
+            CRM_Core_Error::fatal( );
+        }
+
+        $condition = implode( ' OR ', $clauses );
+
         $query = "
-SELECT ca.id FROM 
-civicrm_address ca 
-LEFT JOIN civicrm_contribution cc ON cc.address_id = ca.id 
-LEFT JOIN civicrm_contact cco ON cc.contact_id = cco.id 
-WHERE ( $contributionCond  OR $contactCond )";
-        
-        $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+SELECT     ca.id 
+FROM       civicrm_address ca 
+INNER JOIN civicrm_contribution cc ON cc.address_id = ca.id 
+           $contactJoin
+WHERE      $condition
+";
+        $dao = CRM_Core_DAO::executeQuery( $query );
         
         while( $dao->fetch( ) ) {
             require_once 'CRM/Core/BAO/Block.php';
