@@ -1399,7 +1399,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
         $ids['pledge_payment']    = CRM_Utils_Array::value( 'pledge_payment', $componentDetails );
         $ids['contributionRecur'] = null;
         $ids['contributionPage']  = null;
-        
+
         if ( ! $baseIPN->validateData( $input, $ids, $objects, false ) ) {
             CRM_Core_Error::fatal( );
         }
@@ -1643,14 +1643,15 @@ LEFT JOIN civicrm_pledge_payment      pgp  ON pgp.contribution_id  = c.id
 WHERE     c.id = $contributionId";
         
         $dao = CRM_Core_DAO::executeQuery( $query );
+        $componentDetails = array();
+
         while ( $dao->fetch( ) ) {
-            $componentDetails = array( 'component'       => $dao->participant_id ? 'event' : 'contribute',
-                                       'contact_id'      => $dao->contact_id,
-                                       'event'           => $dao->event_id,
-                                       'participant'     => $dao->participant_id,
-                                       'membership'      => $dao->membership_id,
-                                       'membership_type' => $dao->membership_type_id,
-                                       );
+            $componentDetails['component']    = $dao->participant_id ? 'event' : 'contribute';
+            $componentDetails['contact_id']   = $dao->contact_id;
+            $componentDetails['event']        = $dao->event_id;
+            $componentDetails['participant']  = $dao->participant_id;
+            $componentDetails['membership'][] = $dao->membership_id;
+            $componentDetails['membership_type'][] = $dao->membership_type_id;
             if ( $dao->pledge_payment_id ) {
                 $pledgePayment[] = $dao->pledge_payment_id;
             }
