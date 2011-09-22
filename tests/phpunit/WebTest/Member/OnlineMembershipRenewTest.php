@@ -488,7 +488,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         
         $this->click('link=Memberships'); 
         $this->waitForElementPresent('_qf_MembershipBlock_cancel-bottom');            
-        $this->click('is_active');
+        $this->click('member_is_active');
         $this->type('new_title',     "Title - New Membership $hash");
         $this->type('renewal_title', "Title - Renewals $hash");
         $this->click("membership_type[{$membershipTypeId}]");
