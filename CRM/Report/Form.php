@@ -2776,9 +2776,12 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
         return "YEAR( $fieldName - INTERVAL " . ($fy['M'] - 1) . " MONTH" 
         . ($fy['d'] > 1 ? (" - INTERVAL " . ($fy['d'] - 1) . " DAY") : '') . " )";
     }
+
     function addAddressFromClause(){
        // include address field if address column is to be included
-        if ( $this->_addressField || $this->isTableSelected('civicrm_address') ) {  
+        if ( ( isset( $this->_addressField ) && 
+               $this->_addressField ) ||
+             $this->isTableSelected('civicrm_address') ) {
             $this->_from .= "
                  LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} 
                            ON ({$this->_aliases['civicrm_contact']}.id = 
