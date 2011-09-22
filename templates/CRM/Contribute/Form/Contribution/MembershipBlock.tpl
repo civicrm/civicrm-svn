@@ -29,6 +29,19 @@
     <div id="priceset">
         <fieldset>
             <legend>{ts}Membership Fee{/ts}</legend>
+            {if !empty($membershipTypes)}
+	        {foreach from=$membershipTypes item=row}
+                    {if $row.current_membership}
+                    {if $row.current_membership|date_format:"%Y%m%d" LT $smarty.now|date_format:"%Y%m%d"}
+                        <em>{ts 1=$row.current_membership|crmDate 2=$row.name}Your <strong>%2</strong> membership expired on %1.{/ts}</em><br />
+                    {else}
+                        <em>{ts 1=$row.current_membership|crmDate 2=$row.name}Your <strong>%2</strong> membership expires on %1.{/ts}</em><br />
+                    {/if}
+                    {/if}
+                 {/foreach}
+            <br/>
+            {/if}
+
             {include file="CRM/Price/Form/PriceSet.tpl" extends="Membership"}
           	<div id="allow_auto_renew">    
 	            <div class='crm-section auto-renew'>

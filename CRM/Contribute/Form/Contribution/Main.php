@@ -344,16 +344,19 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 if ( $this->_action & CRM_Core_Action::PREVIEW ) {
                     $isTest = 1;
                 }
+                
+                if ( $this->_priceSetId &&
+                     (CRM_Core_Component::getComponentID( 'CiviMember' ) == CRM_Utils_Array::value('extends', $this->_priceSet) ) ) {
+                    $this->_useForMember = 1;
+                    $this->set( 'useForMember', $this->_useForMember );
+                }
+
                 require_once 'CRM/Member/BAO/Membership.php';
                 $this->_separateMembershipPayment = 
                     CRM_Member_BAO_Membership::buildMembershipBlock( $this , 
                                                                      $this->_id , 
-                                                                     true, null, false, 
+                                                                     $this->_useForMember ? false : true, null, false, 
                                                                      $isTest, $this->_membershipContactID );
-                if ( $this->_priceSetId ) {
-                    $this->_useForMember = 1;
-                    $this->set( 'useForMember', $this->_useForMember );
-                }
             }
             $this->set( 'separateMembershipPayment', $this->_separateMembershipPayment );
         }

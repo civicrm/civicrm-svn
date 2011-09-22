@@ -669,18 +669,32 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
             $membershipTypeIds = array( );
             $membershipTypes   = array( ); 
             $radio             = array( ); 
+            $membershipPriceset = (!empty($form->_priceSetId) && $form->_useForMember) ? true : false;
 
             $allowAutoRenewMembership = false;
             $autoRenewMembershipTypeOptions = array( );
             
             $separateMembershipPayment = CRM_Utils_Array::value( 'is_separate_payment', $membershipBlock );
-            if ( $membershipBlock['membership_types'] ) {
+            
+            if ( $membershipPriceset ) {
+                foreach( $form->_priceSet['fields'] as $pField ) {
+                    if ( empty($pField['options']) ) {
+                        continue;                    
+                    }
+                    foreach( $pField['options'] as $opId => $opValues ) {
+                        if ( !CRM_Utils_Array::value('membership_type_id', $opValues) ) {
+                            continue;
+                        }
+                        $membershipTypeIds[$opValues['membership_type_id']] = $opValues['membership_type_id'];
+                    }
+                }
+            } else if ( CRM_Utils_Array::value('membership_types', $membershipBlock) && is_array($membershipBlock['membership_types']) ) {
                 $membershipTypeIds = explode( ',', $membershipBlock['membership_types'] );
             }
 
             if (! empty( $membershipTypeIds ) ) {
                 //set status message if wrong membershipType is included in membershipBlock
-                if ( isset( $form->_mid ) ) {
+                if ( isset( $form->_mid ) && !$membershipPriceset ) {
                     $membershipTypeID = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership',
                                                                      $form->_mid,
                                                                      'membership_type_id' );
