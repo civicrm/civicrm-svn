@@ -19,8 +19,8 @@
 {if !$lineItem}
 {ts}Membership Start Date{/ts}: {$mem_start_date}
 {ts}Membership End Date{/ts}: {$mem_end_date}
-{if $formValues.total_amount}
 {/if}
+{if $formValues.total_amount}
 ===========================================================
 {ts}Membership Fee{/ts}
 
@@ -28,8 +28,8 @@
 {if $formValues.contributionType_name}
 {ts}Contribution Type{/ts}: {$formValues.contributionType_name}
 {/if}
-
-{if $lineItem}{foreach from=$lineItem item=value key=priceset}
+{if $lineItem}
+{foreach from=$lineItem item=value key=priceset}
 {capture assign=ts_item}{ts}Item{/ts}{/capture}
 {capture assign=ts_qty}{ts}Qty{/ts}{/capture}
 {capture assign=ts_each}{ts}Each{/ts}{/capture}
@@ -37,14 +37,15 @@
 {capture assign=ts_start_date}{ts}Membership Start Date{/ts}{/capture}
 {capture assign=ts_end_date}{ts}Membership End Date{/ts}{/capture}
 {$ts_item|string_format:"%-30s"} {$ts_qty|string_format:"%5s"} {$ts_each|string_format:"%10s"} {$ts_total|string_format:"%10s"} {$ts_start_date|string_format:"%20s"} {$ts_end_date|string_format:"%20s"}
------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 
 {foreach from=$value item=line}
-{capture assign=ts_item}{if $line.html_type eq 'Text'}{$line.label}{else}{$line.field_title} - {$line.label}{/if} {if $line.description} {$line.description}{/if}{/capture}{$ts_item|truncate:30:"..."|string_format:"%-30s"} {$line.qty|string_format:"%5s"} {$line.unit_price|crmMoney|string_format:"%10s"} {$line.line_total|crmMoney|string_format:"%10s"} {$line.start_date} {$line.end_date}
+{capture assign=ts_item}{if $line.html_type eq 'Text'}{$line.label}{else}{$line.field_title} - {$line.label}{/if} {if $line.description} {$line.description}{/if}{/capture}{$ts_item|truncate:30:"..."|string_format:"%-30s"} {$line.qty|string_format:"%5s"} {$line.unit_price|crmMoney|string_format:"%10s"} {$line.line_total|crmMoney|string_format:"%10s"} {$line.start_date|string_format:"%20s"} {$line.end_date|string_format:"%20s"}
 {/foreach}
 {/foreach}
------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 {/if}
+
 {ts}Amount{/ts}: {$formValues.total_amount|crmMoney}
 {if $receive_date}
 {ts}Received Date{/ts}: {$receive_date|truncate:10:''|crmDate}

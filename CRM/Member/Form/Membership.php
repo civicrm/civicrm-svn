@@ -1361,9 +1361,9 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         if ( !empty($lineItem) ) {
             foreach($lineItem[$priceSetId] as &$priceFieldOp) {
                 $priceFieldOp['start_date'] = CRM_Utils_Array::value('membership_type_id', $priceFieldOp) ?
-                    CRM_Utils_Date::customFormat($membershipTypeValues[$priceFieldOp['membership_type_id']]['start_date']) : '-';
+                    CRM_Utils_Date::customFormat($membershipTypeValues[$priceFieldOp['membership_type_id']]['start_date'], '%d%f %b, %Y') : '-';
                 $priceFieldOp['end_date'] = CRM_Utils_Array::value('membership_type_id', $priceFieldOp) ?
-                    CRM_Utils_Date::customFormat($membershipTypeValues[$priceFieldOp['membership_type_id']]['end_date']) : '-';
+                    CRM_Utils_Date::customFormat($membershipTypeValues[$priceFieldOp['membership_type_id']]['end_date'], '%d%f %b, %Y') : '-';
             }
         }
         $this->assign( 'lineItem', !empty( $lineItem ) ? $lineItem : false );
