@@ -125,8 +125,20 @@ class CRM_Core_Payment_BaseIPN {
             // CRM-6056
             if ( isset( $ids['membership'] ) ) {
                 require_once 'CRM/Member/DAO/Membership.php';
-                if (is_numeric($ids['membership'])){
-                    $ids['membership'] = array($ids['membership']);
+                if ( is_numeric($ids['membership']) ){
+                    // see if there are any other memberships to be considered for same contribution.
+                    $query = "
+SELECT membership_id 
+FROM   civicrm_membership_payment 
+WHERE  contribution_id = %1 AND membership_id != %2";
+                    $dao   = CRM_Core_DAO::executeQuery( $query, 
+                                                         array( 1 => array( $contribution->id, 'Integer' ),
+                                                                2 => array( $ids['membership'], 'Integer' ) ) );
+                    
+                    $ids['membership'] = array( $ids['membership'] );
+                    while ( $dao->fetch() ) {
+                        $ids['membership'][] = $dao->membership_id;
+                    }
                 }
 
                 if (is_array($ids['membership'])) {
@@ -604,9 +616,15 @@ LIMIT 1;";
 
     function sendMail( &$input, &$ids, &$objects, &$values, $recur = false, $returnMessageText = false ) {
         $contribution =& $objects['contribution'];
-        $membership   =& $objects['membership']  ;
         $participant  =& $objects['participant'] ;
         $event        =& $objects['event']       ;
+
+        $memberships  =& $objects['membership']  ;
+        if ( is_numeric( $memberships ) ) {
+            $memberships = array( $objects['membership'] );     
+        }
+        // single or first membership
+        $membership   =& $memberships[0]; 
 
         if ( empty( $values ) ) {
             $values = array( );
