@@ -907,6 +907,7 @@ GROUP BY     mt.member_of_contact_id";
             }
             if ( $dao->auto_renew == 1 ) {
                 $autoRenewOption = 1;
+                break;
             }
         }
         return $autoRenewOption;
