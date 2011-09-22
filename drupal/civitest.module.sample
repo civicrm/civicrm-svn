@@ -1501,3 +1501,39 @@ function civitest_civicrm_buildStateProvinceForCountry( $countryID, &$states ) {
     $states = $topStates + $otherStates;
 }
 
+function civitest_civicrm_dupeQuery( $obj, $type, &$query ) {
+    //don't run these during user account/contact creation
+    if( $obj->noRules || $type != 'table')
+        return;
+
+    if ( $obj->name=='My Dedupe Rule Group Name' ) {
+        //first unset existing queries
+        $query = array();
+
+        //now set threshold to match our revised rule
+        $obj->threshold = 5;
+
+        if ( empty($obj->params) ) {
+            //set new query when doing an internal dedupe (finding duplicate contacts)
+            $query['civicrm_contact.last_name.5'] = "
+SELECT t1.id id1, t2.id id2, 5 weight
+FROM   civicrm_contact t1
+INNER JOIN civicrm_contact t2 ON ( t1.first_name = t2.first_name AND
+                                   t1.last_name = t2.last_name AND
+	                               IFNULL(t1.middle_name,0) = IFNULL(t2.middle_name,0) AND
+	                               IFNULL(t1.suffix_id,0) = IFNULL(t2.suffix_id,0) )
+INNER JOIN civicrm_address a1 on t1.id=a1.contact_id
+INNER JOIN civicrm_address a2 on t2.id=a2.contact_id AND
+                                 a1.postal_code = a2.postal_code AND
+                                 a1.street_address = a2.street_address
+WHERE t1.contact_type = 'Individual'
+  AND t2.contact_type = 'Individual'
+  AND t1.id < t2.id
+  AND t1.last_name IS NOT NULL
+  AND t1.first_name IS NOT NULL
+  AND a1.postal_code IS NOT NULL
+  AND a1.street_address IS NOT NULL
+";
+        }
+    }
+}
