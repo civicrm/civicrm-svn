@@ -616,7 +616,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->click('link=Memberships');        
             $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');            
             // fill in step 3 (Memberships)
-            $this->click('is_active');
+            $this->click('member_is_active');
             $this->type('new_title',     "Title - New Membership $hash");
             $this->type('renewal_title', "Title - Renewals $hash");
 
