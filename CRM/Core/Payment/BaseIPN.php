@@ -618,13 +618,7 @@ LIMIT 1;";
         $contribution =& $objects['contribution'];
         $participant  =& $objects['participant'] ;
         $event        =& $objects['event']       ;
-
         $memberships  =& $objects['membership']  ;
-        if ( is_numeric( $memberships ) ) {
-            $memberships = array( $objects['membership'] );     
-        }
-        // single or first membership
-        $membership   =& $memberships[0]; 
 
         if ( empty( $values ) ) {
             $values = array( );
@@ -813,11 +807,7 @@ LIMIT 1;";
             require_once 'CRM/Core/Payment.php';
             $paymentObject =& CRM_Core_Payment::singleton( $contribution->is_test ? 'test' : 'live', 
                                                            $objects['paymentProcessor'] );
-            if ( ! empty($membership) && $membership->id ) {
-                $url = $paymentObject->cancelSubscriptionURL( $membership->id, 'membership' );
-            } else {
-                $url = $paymentObject->cancelSubscriptionURL( );
-            }
+            $url = $paymentObject->cancelSubscriptionURL( );
             $template->assign( 'cancelSubscriptionUrl', $url );
             if ( $objects['paymentProcessor']['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM ) {
                 //direct mode showing billing block, so use directIPN for temporary
@@ -905,22 +895,6 @@ LIMIT 1;";
             return CRM_Event_BAO_Event::sendMail( $ids['contact'], $values, $participant->id, $isTest, $returnMessageText );
             
         } else {
-            if ( $membership ) {
-                $values['membership_id'] = $membership->id;
-
-                // need to set the membership values here
-                $template->assign( 'membership_assign', 1 );
-                require_once 'CRM/Member/PseudoConstant.php';
-                $template->assign( 'membership_name',
-                                   CRM_Member_PseudoConstant::membershipType( $membership->membership_type_id ) );
-                $template->assign( 'mem_start_date', $membership->start_date );
-                $template->assign( 'mem_end_date'  , $membership->end_date );
-
-                // if separate payment there are two contributions recorded and the 
-                // admin will need to send a receipt for each of them separately.
-                // we dont link the two in the db (but can potentially infer it if needed)
-                $template->assign( 'is_separate_payment', 0);
-            }
             $values['contribution_id']     = $contribution->id;
             if ( CRM_Utils_Array::value( 'related_contact', $ids ) ) {
                 $values['related_contact'] = $ids['related_contact'];
@@ -943,7 +917,35 @@ LIMIT 1;";
             // CRM_Core_Error::debug('val',$values);
 
             require_once 'CRM/Contribute/BAO/ContributionPage.php';
-            return CRM_Contribute_BAO_ContributionPage::sendMail( $ids['contact'], $values, $isTest, $returnMessageText );
+
+            if ( !empty( $memberships ) ) {
+                foreach ( $memberships as $membership ) {
+                    if ( $membership->id ) {
+                        $values['membership_id'] = $membership->id;
+                        
+                        // need to set the membership values here
+                        $template->assign( 'membership_assign', 1 );
+                        require_once 'CRM/Member/PseudoConstant.php';
+                        $template->assign( 'membership_name',
+                                           CRM_Member_PseudoConstant::membershipType( $membership->membership_type_id ) );
+                        $template->assign( 'mem_start_date', $membership->start_date );
+                        $template->assign( 'mem_end_date'  , $membership->end_date );
+                        
+                        // if separate payment there are two contributions recorded and the 
+                        // admin will need to send a receipt for each of them separately.
+                        // we dont link the two in the db (but can potentially infer it if needed)
+                        $template->assign( 'is_separate_payment', 0);
+                        
+                        if ( $recur && $paymentObject ) {
+                            $url = $paymentObject->cancelSubscriptionURL( $membership->id, 'membership' );
+                            $template->assign( 'cancelSubscriptionUrl', $url );
+                        }
+                        CRM_Contribute_BAO_ContributionPage::sendMail( $ids['contact'], $values, $isTest, $returnMessageText );
+                    }
+                }
+            } else {
+                return CRM_Contribute_BAO_ContributionPage::sendMail( $ids['contact'], $values, $isTest, $returnMessageText );
+            }
         }
     }
     
