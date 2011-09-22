@@ -344,6 +344,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $processorSettings = array( 'test_user_name' => '5ULu56ex',
                                         'test_password'  => '7ARxW575w736eF5p',
                                         );
+        } elseif ( $processorType == 'Google_Checkout' ) {
+            // FIXME: we 'll need to make a new separate account for testing
+            $processorSettings = array( 'test_user_name' => '559999327053114',
+                                        'test_password'  => 'R2zv2g60-A7GXKJYl0nR0g',
+                                        );
         } elseif ( empty( $processorSettings ) ) {
             $this->fail("webTestAddPaymentProcessor requires $processorSettings array if processorType is not Dummy.");
         }
