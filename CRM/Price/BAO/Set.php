@@ -889,7 +889,6 @@ GROUP BY     mt.member_of_contact_id";
         // Auto renew checkbox should be frozen if for all the membership type auto renew is required
 
         // get the membership type auto renew option and check if required or optional
-
         $query = 'SELECT mt.auto_renew
             FROM civicrm_price_field_value pfv 
             INNER JOIN civicrm_membership_type mt ON pfv.membership_type_id = mt.id
@@ -912,4 +911,26 @@ GROUP BY     mt.member_of_contact_id";
         }
         return $autoRenewOption;
     }
+    
+    /**
+     * Function to retrieve auto renew frequency and interval
+     *   
+     * @param int $priceSetId price set id
+     *
+     * @return array associate array of frequency interval and unit
+     * @static
+     * @access public
+     */
+    public static function getRecurDetails ( $priceSetId ) {
+        $query = 'SELECT mt.duration_interval, mt.duration_unit
+            FROM civicrm_price_field_value pfv 
+            INNER JOIN civicrm_membership_type mt ON pfv.membership_type_id = mt.id
+            INNER JOIN civicrm_price_field pf ON pfv.price_field_id = pf.id
+            WHERE pf.price_set_id = %1 ORDER BY mt.duration_unit DESC, mt.duration_interval ASC LIMIT 1';
+        
+        $params = array( 1 => array( $priceSetId, 'Integer') );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params ); 
+        $dao->fetch();
+        return array( $dao->duration_interval, $dao->duration_unit );
+    }   
 }
