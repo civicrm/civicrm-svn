@@ -729,7 +729,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
 
         // Return error if empty $self->_memTypeSelected
         if ( $priceSetId && empty($errors) && empty($self->_memTypeSelected) ) {
-            $errors['_qf_default'] = ts( 'Select at least one option associate with Membership Type.' );  
+            $errors['_qf_default'] = ts( 'Select at least one option associated with the membership.' );  
         }
 
         if ( !empty($errors) && (count($self->_memTypeSelected) > 1) ) {

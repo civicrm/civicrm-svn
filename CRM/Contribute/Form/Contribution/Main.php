@@ -743,20 +743,29 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             require_once 'CRM/Price/BAO/Set.php';
             if ( $self->_useForMember == 1 && !empty($check) ) {
                 $priceFieldIDS = array();
-                foreach ($self->_priceSet['fields'] as $priceIds => $dontCare ) {
-                    if (!empty($fields['price_'.$priceIds])){
-                        if (is_array($fields['price_'.$priceIds])) {
-                            foreach( $fields['price_'.$priceIds] as $priceFldVal => $isSet ) {
-                                if ($isSet) {
+                $priceFieldMemTypes = array();
+                foreach ($self->_priceSet['fields'] as $priceId => $value ) {
+                    if (!empty($fields['price_'.$priceId])){
+                        if (is_array($fields['price_'.$priceId])) {
+                            foreach( $fields['price_'.$priceId] as $priceFldVal => $isSet ) {
+                                if ( $isSet ) {
                                     $priceFieldIDS[] = $priceFldVal;
                                 }
                             }
                         } else {
-                            $priceFieldIDS[] = $fields['price_'.$priceIds];
+                            $priceFieldIDS[] = $fields['price_'.$priceId];
                         }
+                        
+                        if ( CRM_Utils_Array::value( 'options', $value ) ) {
+                            foreach ( $value['options'] as $val ) {
+                                if ( CRM_Utils_Array::value( 'membership_type_id', $val ) ) {
+                                    $priceFieldMemTypes[] = $val['membership_type_id'];
+                                }
+                            }
+                        }     
                     }
                 }
-
+                
                 $ids = implode (',', $priceFieldIDS);
                 $priceFieldIDS['id'] = $fields['priceSetId'];
                 $self->set( 'memberPriceFieldIDS', $priceFieldIDS );
@@ -765,6 +774,10 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     if ($occurance > 1) {
                         $errors['_qf_default'] = ts( 'Select at most one option from the Membership Types belonging to the same Membership Organization.' );
                     }
+                }
+                
+                if ( empty( $priceFieldMemTypes ) ) {
+                    $errors['_qf_default'] = ts('Select at least one option associated with the membership.');
                 }
             }
 
