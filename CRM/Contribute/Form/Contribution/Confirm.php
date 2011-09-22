@@ -41,6 +41,14 @@ require_once 'CRM/Contribute/Form/ContributionBase.php';
  */
 class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_ContributionBase 
 {
+    /**
+     * the id of the contact associated with this contribution
+     *
+     * @var int
+     * @public
+     */
+    public $_contactID;
+  
 
     /**
      * Function to set variables up before form is built
@@ -647,7 +655,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                                                          null,
                                                                          null,
                                                                          true );
-            $this->set( 'contactID', $contactID );
         } else {
             $ctype = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $contactID, 'contact_type');
             $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params,
@@ -658,6 +665,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                                                          $ctype,
                                                                          true );
         }
+
+        // Make the contact ID associated with the contribution available at the Class level.
+        // Also make available to the session.
+        $this->set( 'contactID', $contactID );
+        $this->_contactID = $contactID;
 
         //get email primary first if exist
         $subscribtionEmail =  array ( 'email' => CRM_Utils_Array::value( 'email-Primary', $params ) ) ;
@@ -1290,7 +1302,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             CRM_Core_Error::displaySessionError( $result );
             $urlString = 'civicrm/contribute/transact';
             $urlParams = '_qf_Main_display=true'; 
-            if ( $className == 'CRM_Contributet_Form_Contribution' ) {
+            if ( $className == 'CRM_Contribute_Form_Contribution' ) {
                 $urlString = 'civicrm/contact/view/contribution';
                 $urlParams = "action=add&cid={$form->_contactID}";
                 if ( $form->_mode ) $urlParams .= "&mode={$form->_mode}"; 
