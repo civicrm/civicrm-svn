@@ -65,6 +65,7 @@ class api_v3_CustomValueTest extends CiviUnitTestCase
  
 
     $result = civicrm_api('Contact','create',$params);
+    $this->assertAPISuccess($result, __LINE__);
     $contact_id = $result['id'];
     $result = civicrm_api('Contact','create',
                             array('contact_type' => 'Individual',
