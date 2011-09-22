@@ -1988,7 +1988,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                                 array( 'title' => $field['title'],
                                        'value' => ts( "Between %1 and %2",
                                                       array( 1 => $from,
-                                                             2 => $to ) );
+                                                             2 => $to ) ) );
                         } elseif ( in_array( $rel = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params ), 
                                             array_keys( $this->getOperationPair( CRM_Report_FORM::OP_DATE ) ) ) ) {
                             $pair = $this->getOperationPair( CRM_Report_FORM::OP_DATE );
