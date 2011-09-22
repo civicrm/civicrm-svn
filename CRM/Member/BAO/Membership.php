@@ -792,7 +792,8 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
                     $form->assign( 'autoRenewOption', $autoRenewOption );
                 }
                 
-                if ( $allowAutoRenewMembership || $autoRenewOption ) {
+                if ( CRM_Utils_Array::value( 'is_recur', $form->_paymentProcessor ) && 
+                     ( $allowAutoRenewMembership || $autoRenewOption ) ) {
                     $form->addElement( 'checkbox', 'auto_renew', ts( 'Please renew my membership automatically.' ) );
                 }
             }
