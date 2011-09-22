@@ -156,17 +156,6 @@ END AS 'relType'
             $isRecur = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership' , $id, 'contribution_recur_id' );
             
             $autoRenew = $isRecur ? true : false;
-
-            require_once 'CRM/Price/BAO/Set.php';
-            $lineItems = array( );
-
-            $relatedContributionId = CRM_Member_BAO_Membership::getMembershipContributionId($id);
-            if ( $relatedContributionId &&
-                 ( $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $relatedContributionId, CRM_Core_Component::getComponentID( 'CiviMember' ) ) ) ) {
-                require_once 'CRM/Price/BAO/LineItem.php';
-                $lineItems[] = CRM_Price_BAO_LineItem::getLineItems( $relatedContributionId , 'contribution' );
-            }
-            $this->assign( 'lineItem', empty( $lineItems ) ? false : $lineItems );
         }
         
         if ( CRM_Utils_Array::value('is_test', $values ) )  {
