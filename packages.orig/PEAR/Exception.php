@@ -94,10 +94,6 @@
  * @since      Class available since Release 1.3.3
  *
  */
-
-// CRM-8921
-if ( ! class_exists( 'PEAR_Exception' ) ) {
-
 class PEAR_Exception extends Exception
 {
     const OBSERVER_PRINT = -2;
@@ -390,8 +386,6 @@ class PEAR_Exception extends Exception
         }
         return $causeMsg . $this->getTraceAsString();
     }
-}
-
 }
 
 ?>
