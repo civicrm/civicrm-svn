@@ -205,8 +205,6 @@
       cj.post( postUrl, {mtype: mtype}, function( data ) {
        	       cj("#option_amount_"+ row).val( data.total_amount );   
 	       cj("#option_label_"+ row).val( data.name );   
-	       cj("#auto_renew_"+ row).val( data.auto_renew );   
-      
       }, 'json');  
      }
 

@@ -34,7 +34,6 @@
 	    <th>{ts}Default{/ts}</th>
 	{if $useForMember}
 	    <th>{ts}Membership Type{/ts} {help id="id-membership-type"}</th>
-	    <th>{ts}Auto-renew{/ts}</th>
 	{/if}
         <th>{ts}Label{/ts}</th>
         <th>{ts}Amount{/ts} {help id="id-negative-options"}</th>
@@ -64,7 +63,6 @@
 	    </td>
 	    {if $useForMember}
 	      	<td>{$form.membership_type_id.$index.html}</td>
-	      	<td>{$form.auto_renew.$index.html}</td>
 	    {/if} 
 	    <td> {$form.option_label.$index.html}</td>
 	    
