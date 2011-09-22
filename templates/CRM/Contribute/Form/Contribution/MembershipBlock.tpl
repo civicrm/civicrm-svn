@@ -61,8 +61,8 @@ cj(function(){
         cj('#allow_auto_renew').show();
     } else if ( autoRenewOption == 2 ) {
         var autoRenew = cj("#auto_renew");
-        autoRenew.attr( 'disabled', true );
         autoRenew.attr( 'checked',  true );
+        autoRenew.attr( 'readonly', true );
         cj('#allow_auto_renew').show();
     }
 });
@@ -219,7 +219,7 @@ function showHideAutoRenew( memTypeId )
   //which implies it should be checked.	 
   if ( readOnly && funName == 'show();' ) isChecked = true; 
 
-  autoRenew.attr( 'disabled', readOnly );
+  autoRenew.attr( 'readonly', readOnly );
   autoRenew.attr( 'checked',  isChecked );
   eval( "cj('#allow_auto_renew')." + funName );
 }
