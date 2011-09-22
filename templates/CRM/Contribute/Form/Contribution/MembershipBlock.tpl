@@ -28,33 +28,51 @@
 {if $context EQ "makeContribution"}
     <div id="priceset">
         <fieldset>
-            <legend>{ts}Membership Fee{/ts}</legend>
-            {if !empty($membershipTypes)}
-	            <div id='help'>
-                {foreach from=$membershipTypes item=row}
-                    {if $row.current_membership}
-                        {if $row.current_membership|date_format:"%Y%m%d" LT $smarty.now|date_format:"%Y%m%d"}
-                            {ts 1=$row.current_membership|crmDate 2=$row.name}Your <strong>%2</strong> membership expired on %1.{/ts}<br />
-                        {else}
-                            {ts 1=$row.current_membership|crmDate 2=$row.name}Your <strong>%2</strong> membership expires on %1.{/ts}<br />
-                        {/if}
-                    {/if}
-                {/foreach}
-                </div>
+        {if $renewal_mode}
+            {if $membershipBlock.renewal_title}
+                <legend>{$membershipBlock.renewal_title}</legend>
             {/if}
-
-            {include file="CRM/Price/Form/PriceSet.tpl" extends="Membership"}
-          	<div id="allow_auto_renew">    
-	            <div class='crm-section auto-renew'>
-                    <div class='label'></div>
-	                <div class ='content'>
-	                    {if isset($form.auto_renew) }
-                            {$form.auto_renew.html}&nbsp;{$form.auto_renew.label}
-                            <span class="description crm-auto-renew-cancel-info">({ts}Your initial membership fee will be processed once you complete the confirmation step. You will be able to cancel automatic renewals at any time by logging in to your account or contacting us.{/ts})</span>
-	                    {/if}
+            {if $membershipBlock.renewal_text}
+                <div id="membership-intro" class="crm-section membership_renewal_intro-section">
+                    {$membershipBlock.renewal_text}
+                </div> 
+            {/if}
+        {else}  
+          {if $membershipBlock.new_title}
+              <legend>{$membershipBlock.new_title}</legend>
+          {/if}
+          {if $membershipBlock.new_text}
+              <div id="membership-intro" class="crm-section membership_new_intro-section">
+                 {$membershipBlock.new_text}
+              </div> 
+          {/if}
+        {/if}
+        {if !empty($membershipTypes)}
+            {foreach from=$membershipTypes item=row}
+                {if $row.current_membership}
+                    <div id='help'>
+                    {if $row.current_membership|date_format:"%Y%m%d" LT $smarty.now|date_format:"%Y%m%d"}
+                        {ts 1=$row.current_membership|crmDate 2=$row.name}Your <strong>%2</strong> membership expired on %1.{/ts}<br />
+                    {else}
+                        {ts 1=$row.current_membership|crmDate 2=$row.name}Your <strong>%2</strong> membership expires on %1.{/ts}<br />
+                    {/if}
                     </div>
+                {/if}
+            {/foreach}
+        {/if}
+
+        {include file="CRM/Price/Form/PriceSet.tpl" extends="Membership"}
+      	<div id="allow_auto_renew">    
+            <div class='crm-section auto-renew'>
+                <div class='label'></div>
+                <div class ='content'>
+                    {if isset($form.auto_renew) }
+                        {$form.auto_renew.html}&nbsp;{$form.auto_renew.label}
+                        <span class="description crm-auto-renew-cancel-info">({ts}Your initial membership fee will be processed once you complete the confirmation step. You will be able to cancel automatic renewals at any time by logging in to your account or contacting us.{/ts})</span>
+                    {/if}
                 </div>
-             </div>
+            </div>
+         </div>
         </fieldset>
     </div>
 {elseif $lineItem and $priceSetID}
