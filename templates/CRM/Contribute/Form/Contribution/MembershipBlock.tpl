@@ -166,13 +166,15 @@ cj(function(){
         </tr>
 	
         {/foreach}
-	<tr id="allow_auto_renew">    
-	     <td style="width: auto;">{$form.auto_renew.html}</td>
-	     <td style="width: auto;">
-	        {$form.auto_renew.label}
-            <div class="description crm-auto-renew-cancel-info">({ts}Your initial membership fee will be processed once you complete the confirmation step. You will be able to cancel automatic renewals at any time by logging in to your account or contacting us.{/ts})</div>
-	     </td>
-	</tr>
+	    {if isset($form.auto_renew) }
+	        <tr id="allow_auto_renew">    
+	        <td style="width: auto;">{$form.auto_renew.html}</td>
+	        <td style="width: auto;">
+	            {$form.auto_renew.label}
+                <div class="description crm-auto-renew-cancel-info">({ts}Your initial membership fee will be processed once you complete the confirmation step. You will be able to cancel automatic renewals at any time by logging in to your account or contacting us.{/ts})</div>
+	        </td>
+    	    </tr>
+        {/if}
         {if $showRadio}
             {if $showRadioNoThanks } {* Provide no-thanks option when Membership signup is not required - per membership block configuration. *}
             <tr class="odd-row">
