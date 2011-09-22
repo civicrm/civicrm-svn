@@ -181,7 +181,7 @@
            {foreach from=$value item=line}
             <tr>
              <td>
-              {$line.description|truncate:30:"..."}
+             {if $line.html_type eq 'Text'}{$line.label}{else}{$line.field_title} - {$line.label}{/if} {if $line.description}<div>{$line.description|truncate:30:"..."}</div>{/if}
              </td>
              <td>
               {$line.qty}
