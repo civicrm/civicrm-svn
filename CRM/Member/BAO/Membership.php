@@ -688,7 +688,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
                         $membershipTypeIds[$opValues['membership_type_id']] = $opValues['membership_type_id'];
                     }
                 }
-            } else if ( CRM_Utils_Array::value('membership_types', $membershipBlock) && is_array($membershipBlock['membership_types']) ) {
+            } else if ( CRM_Utils_Array::value('membership_types', $membershipBlock) ) {
                 $membershipTypeIds = explode( ',', $membershipBlock['membership_types'] );
             }
 
