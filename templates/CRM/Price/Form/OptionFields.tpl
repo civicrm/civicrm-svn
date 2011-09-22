@@ -70,11 +70,11 @@
 	    {/if} 
 	    <td> {$form.option_label.$index.html}</td>
 	    
+	    <td> {$form.option_amount.$index.html|crmReplace:class:eight}</td>
 	    {if $useForEvent}
 	      	<td>{$form.option_count.$index.html}</td>
 	        <td>{$form.option_max_value.$index.html}</td>
 	    {/if} 
-	    <td> {$form.option_amount.$index.html|crmReplace:class:eight}</td>
 	    <td> {$form.option_weight.$index.html}</td>
  	    <td> {$form.option_status.$index.html}</td>
 	</tr>
