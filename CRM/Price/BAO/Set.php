@@ -889,7 +889,7 @@ GROUP BY     mt.member_of_contact_id";
         // Auto renew checkbox should be frozen if for all the membership type auto renew is required
 
         // get the membership type auto renew option and check if required or optional
-        $query = 'SELECT mt.auto_renew
+        $query = 'SELECT mt.auto_renew, mt.duration_interval, mt.duration_unit
             FROM civicrm_price_field_value pfv 
             INNER JOIN civicrm_membership_type mt ON pfv.membership_type_id = mt.id
             INNER JOIN civicrm_price_field pf ON pfv.price_field_id = pf.id
@@ -899,7 +899,7 @@ GROUP BY     mt.member_of_contact_id";
         
         $dao = CRM_Core_DAO::executeQuery( $query, $params );
         $autoRenewOption = 2;
-        
+        $interval = $unit = array();
         while ( $dao->fetch( ) ) {
             if ( !$dao->auto_renew ) {
                 $autoRenewOption = 0;
@@ -907,10 +907,17 @@ GROUP BY     mt.member_of_contact_id";
             }
             if ( $dao->auto_renew == 1 ) {
                 $autoRenewOption = 1;
-                break;
             }
+
+            $interval[$dao->duration_interval] = $dao->duration_interval;
+            $unit[$dao->duration_unit        ] = $dao->duration_unit;
         }
-        return $autoRenewOption;
+        
+        if ( count($interval) == 1 && count($unit) == 1 && $autoRenewOption > 0 ) {
+            return $autoRenewOption;
+        } else {
+            return 0;
+        }
     }
     
     /**
@@ -927,7 +934,7 @@ GROUP BY     mt.member_of_contact_id";
             FROM civicrm_price_field_value pfv 
             INNER JOIN civicrm_membership_type mt ON pfv.membership_type_id = mt.id
             INNER JOIN civicrm_price_field pf ON pfv.price_field_id = pf.id
-            WHERE pf.price_set_id = %1 ORDER BY mt.duration_unit DESC, mt.duration_interval ASC LIMIT 1';
+            WHERE pf.price_set_id = %1 LIMIT 1';
         
         $params = array( 1 => array( $priceSetId, 'Integer') );
         $dao = CRM_Core_DAO::executeQuery( $query, $params ); 
