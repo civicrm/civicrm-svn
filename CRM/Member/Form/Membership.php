@@ -191,15 +191,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
 
         require_once "CRM/Core/BAO/Email.php";
         $this->_fromEmails = CRM_Core_BAO_Email::getFromEmail( );
-
-        require_once 'CRM/Price/BAO/Set.php';
-        $this->_lineItems = array( );
-        if ( $this->_id  && 
-             CRM_Price_BAO_Set::getFor( 'civicrm_membership', $this->_id ) ) {
-            require_once 'CRM/Price/BAO/LineItem.php';
-            $this->_lineItems[] = CRM_Price_BAO_LineItem::getLineItems( $this->_id, 'membership' );
-        }
-        $this->assign( 'lineItem', empty( $this->_lineItems ) ? false : $this->_lineItems );
         
         parent::preProcess( );
     }
@@ -383,8 +374,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         
         // build price set form.
         $buildPriceSet = false;
-        if ( empty( $this->_lineItems ) && 
-             ( $this->_priceSetId || CRM_Utils_Array::value( 'price_set_id', $_POST ) ) ) {
+        if ( $this->_priceSetId || CRM_Utils_Array::value( 'price_set_id', $_POST ) ) {
             if ( CRM_Utils_Array::value( 'price_set_id', $_POST ) ) {
                 $buildPriceSet = true;
             }
@@ -398,19 +388,19 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             require_once 'CRM/Price/BAO/Set.php';
             CRM_Price_BAO_Set::buildPriceSet( $this );
 
-            $optionsMembershipTypes = $optionsAutoNews = array( );
+            $optionsMembershipTypes = array( );
             foreach( $this->_priceSet['fields'] as $pField ) {
                 if ( empty($pField['options']) ) {
                     continue;                    
                 }
                 foreach( $pField['options'] as $opId => $opValues ) {
                     $optionsMembershipTypes[$opId] = CRM_Utils_Array::value('membership_type_id', $opValues, 0);
-                    $optionsAutoNews[$opId] = CRM_Utils_Array::value('auto_renew', $opValues, 0);
                 }
             }
             
+            $this->assign( 'autoRenewOption', CRM_Price_BAO_Set::checkAutoRenewForPriceSet( $this->_priceSetId ) );
+
             $this->assign( 'optionsMembershipTypes', $optionsMembershipTypes);
-            $this->assign( 'optionsAutoNews', $optionsAutoNews);
             $this->assign( 'contributionType', CRM_Utils_Array::value('contribution_type_id', $this->_priceSet) );
 
             // get only price set form elements.
@@ -420,7 +410,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         // use to build form during form rule.
         $this->assign( 'buildPriceSet', $buildPriceSet );
 
-        if ( empty( $this->_lineItems ) && ($this->_action & CRM_Core_Action::ADD) ) {
+        if ( $this->_action & CRM_Core_Action::ADD ) {
             $buildPriceSet = false;
             require_once 'CRM/Price/BAO/Set.php';
             $priceSets = CRM_Price_BAO_Set::getAssoc( false, 'CiviMember' );
@@ -1081,7 +1071,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         }
 
         // process line items, until no previous line items.
-        if ( empty( $this->_lineItems ) && !empty( $lineItem ) ) {
+        if ( !empty( $lineItem ) ) {
             $params['lineItems'] = $lineItem;
             $params['processPriceSet'] = true;
         }

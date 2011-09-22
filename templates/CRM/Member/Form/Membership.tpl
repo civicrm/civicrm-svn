@@ -42,11 +42,7 @@
         {/literal}{foreach from=$optionsMembershipTypes item=memType key=opId}{literal}
                   membershipValues[{/literal}{$opId}{literal}] = {/literal}{$memType}{literal};
         {/literal}{/foreach}{literal}
-	var renewValues = new Array;
-        {/literal}{foreach from=$optionsAutoNews item=isRenew key=opId}{literal}
-                  renewValues[{/literal}{$opId}{literal}] = {/literal}{$isRenew}{literal};
-        {/literal}{/foreach}{literal}
-        processMembershipPriceset(membershipValues, renewValues, 1);
+        processMembershipPriceset(membershipValues, {/literal}{$autoRenewOption}{literal}, 1);
 	{/literal}{if !$membershipMode}{literal}
 	  enableAmountSection({/literal}{$contributionType}{literal});
 	{/literal}{/if}{literal}
@@ -97,19 +93,9 @@
     {if $membershipMode}
 	    <tr><td class="label">{$form.payment_processor_id.label}</td><td>{$form.payment_processor_id.html}</td></tr>
 	{/if}
-        {if $action eq 2 and $lineItem}
-            <tr class="crm-membership-form-block-membership_type_id">
-               <td class="label">{$form.membership_type_id.label}</td>
-               <td><span id='mem_type_id'>{$form.membership_type_id.html}</span>
-            </tr>
-	    <tr>
-               <td class="label">{ts}Membership Amount{/ts}</td>
-               <td>{include file="CRM/Price/Page/LineItem.tpl" context="Membership"}</td>
-            </tr>
-	{else}
- 	    <tr class="crm-membership-form-block-membership_type_id">
-               <td class="label">{$form.membership_type_id.label}</td>
-               <td><span id='mem_type_id'>{$form.membership_type_id.html}</span>
+ 	<tr class="crm-membership-form-block-membership_type_id">
+            <td class="label">{$form.membership_type_id.label}</td>
+            <td><span id='mem_type_id'>{$form.membership_type_id.html}</span>
                  {if $hasPriceSets}
                     <span id='totalAmountORPriceSet'> {ts}OR{/ts}</span>
         	    <span id='selectPriceSet'>{$form.price_set_id.html}</span>
@@ -121,9 +107,8 @@
                  {/if}
                  {if $member_is_test} {ts}(test){/ts}{/if}<br />
                     <span class="description">{ts}Select Membership Organization and then Membership Type.{/ts}</span>
-                    </td>
-            </tr>	
-         {/if}
+            </td>
+        </tr>	
     <tr class="crm-membership-form-block-source"><td class="label">{$form.source.label}</td><td>&nbsp;{$form.source.html}<br />
         <span class="description">{ts}Source of this membership. This value is searchable.{/ts}</span></td></tr>
 		
@@ -537,6 +522,13 @@ function buildAmount( priceSetId ) {
       cj( "#mem_type_id").show( );
       cj( "#totalAmountORPriceSet" ).show( );
       cj('#total_amount').removeAttr("readonly"); 
+
+      {/literal}{if $allowAutoRenew}{literal}   
+          cj('#autoRenew').hide();
+          var autoRenew = cj("#auto_renew");
+          autoRenew.removeAttr( 'readOnly' );
+          autoRenew.removeAttr( 'checked' );
+       {/literal}{/if}{literal}
       return;
   }
   
@@ -559,23 +551,31 @@ function buildAmount( priceSetId ) {
 
 var lastMembershipTypes = new Array;
 var optionsMembershipTypes = new Array;
-var optionsRenewValues = new Array;
 
 // function to load custom data for selected membership types through priceset
-function processMembershipPriceset( membershipValues, renewValues, reload ) {
+function processMembershipPriceset( membershipValues, autoRenewOption, reload ) {
     var currentMembershipType = new Array;
     var count = 0;
-    var opCount = 0;
-    var selectedOp = new Array;
     var loadCustomData = 0;
     if ( membershipValues ) {
         optionsMembershipTypes = membershipValues;
     }
-    if ( renewValues ) {
-        optionsRenewValues = renewValues;
-    }
+
     if ( reload ) {
         lastMembershipTypes = new Array;
+        {/literal}{if $allowAutoRenew}{literal}   
+        cj('#autoRenew').hide();
+        var autoRenew = cj("#auto_renew");
+        autoRenew.removeAttr( 'readOnly' );
+        autoRenew.removeAttr( 'checked' );
+        if ( autoRenewOption == 1 ) {
+            cj('#autoRenew').show();
+        } else if ( autoRenewOption == 2 ) {
+            autoRenew.attr( 'readOnly', true );
+            autoRenew.attr( 'checked',  true );
+            cj('#autoRenew').show();
+        }
+        {/literal}{/if}{literal}
     }
     
     cj("input,#priceset select,#priceset").each(function () {
@@ -586,7 +586,6 @@ function processMembershipPriceset( membershipValues, renewValues, reload ) {
 	         if ( cj(this).attr('checked') ) {
                      eval( 'var option = ' + cj(this).attr('price') ) ;
                      var ele = option[0];
-		     selectedOp[opCount++] = ele;
 		     var memTypeId = optionsMembershipTypes[ele];
 		     if ( memTypeId && cj.inArray(optionsMembershipTypes[ele], currentMembershipType) == -1 ) {
 		       currentMembershipType[count] = memTypeId;
@@ -603,7 +602,6 @@ function processMembershipPriceset( membershipValues, renewValues, reload ) {
                case 'radio':
                  if ( cj(this).attr('checked') && cj(this).val() ) {
 		   var memTypeId = optionsMembershipTypes[cj(this).val()];
-		   selectedOp[opCount++] = cj(this).val();
                    if ( memTypeId && cj.inArray(memTypeId, currentMembershipType) == -1 ) {
                        currentMembershipType[count] = memTypeId;
 		       count++;
@@ -619,7 +617,6 @@ function processMembershipPriceset( membershipValues, renewValues, reload ) {
                case 'select-one':
 	         if ( cj(this).val( ) ) {
                    var memTypeId = optionsMembershipTypes[cj(this).val()];
-		   selectedOp[opCount++] = cj(this).val();
                    if ( memTypeId && cj.inArray(memTypeId, currentMembershipType) == -1 ) {
                        currentMembershipType[count] = memTypeId;
 		       count++;
@@ -634,21 +631,6 @@ function processMembershipPriceset( membershipValues, renewValues, reload ) {
 	     }
 	   }
     });
-
-    {/literal}{if $allowAutoRenew }{literal};   
-    var loadAutoNew = 0;	
-    for( i in selectedOp ) {
-        if ( optionsRenewValues[selectedOp[i]] ) {
-	    loadAutoNew = 1;
-	    break;
-        } 
-    }
-    if ( loadAutoNew ) {
-       buildAutoRenew(optionsRenewValues[selectedOp[i]]);
-    } else {
-      buildAutoRenew(null);
-    }
-    {/literal}{/if}{literal};
 
     for( i in currentMembershipType ) {
         if ( cj.inArray(currentMembershipType[i], lastMembershipTypes) == -1 ) {
