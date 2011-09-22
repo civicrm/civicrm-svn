@@ -355,7 +355,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 $this->_separateMembershipPayment = 
                     CRM_Member_BAO_Membership::buildMembershipBlock( $this , 
                                                                      $this->_id , 
-                                                                     $this->_useForMember ? false : true, null, false, 
+                                                                     true, null, false, 
                                                                      $isTest, $this->_membershipContactID );
             }
             $this->set( 'separateMembershipPayment', $this->_separateMembershipPayment );

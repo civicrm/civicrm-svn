@@ -671,7 +671,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
             $radio             = array( ); 
             $membershipPriceset = (!empty($form->_priceSetId) && $form->_useForMember) ? true : false;
 
-            $allowAutoRenewMembership = false;
+            $allowAutoRenewMembership = $autoRenewOption = false;
             $autoRenewMembershipTypeOptions = array( );
             
             $separateMembershipPayment = CRM_Utils_Array::value( 'is_separate_payment', $membershipBlock );
@@ -771,19 +771,20 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
 
             $form->assign( 'showRadio',$formItems );
             if ( $formItems ) {
-                if ( ! $membershipBlock['is_required'] ) {
-                    $form->assign( 'showRadioNoThanks', true );
-                    $radio[''] = $form->createElement('radio',null,null,null,'no_thanks', null);
-                    $form->addGroup($radio,'selectMembership',null);
-                } else if( $membershipBlock['is_required']  && count( $radio ) == 1 ) {
-                    $temp = array_keys( $radio ) ;
-                    $form->add( 'hidden', 'selectMembership', $temp[0], array( 'id' => 'selectMembership') );
-                    $form->assign('singleMembership' , true );
-                    $form->assign( 'showRadio', false );
-                } else {
-                    $form->addGroup($radio,'selectMembership',null);
-                }
-                if ( !$form->_priceSetId ) {
+                if ( !$membershipPriceset ) {
+                    if ( ! $membershipBlock['is_required'] ) {
+                        $form->assign( 'showRadioNoThanks', true );
+                        $radio[''] = $form->createElement('radio',null,null,null,'no_thanks', null);
+                        $form->addGroup($radio,'selectMembership',null);
+                    } else if( $membershipBlock['is_required']  && count( $radio ) == 1 ) {
+                        $temp = array_keys( $radio ) ;
+                        $form->add( 'hidden', 'selectMembership', $temp[0], array( 'id' => 'selectMembership') );
+                        $form->assign('singleMembership' , true );
+                        $form->assign( 'showRadio', false );
+                    } else {
+                        $form->addGroup($radio,'selectMembership',null);
+                    }
+                
                     $form->addRule('selectMembership',ts('Please select one of the memberships.'),'required');
                 } else {
                     require_once 'CRM/Price/BAO/Set.php';
