@@ -191,15 +191,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
 
         require_once "CRM/Core/BAO/Email.php";
         $this->_fromEmails = CRM_Core_BAO_Email::getFromEmail( );
-
-        require_once 'CRM/Price/BAO/Set.php';
-        $this->_lineItems = array( );
-        if ( $this->_id  && 
-             CRM_Price_BAO_Set::getFor( 'civicrm_membership', $this->_id ) ) {
-            require_once 'CRM/Price/BAO/LineItem.php';
-            $this->_lineItems[] = CRM_Price_BAO_LineItem::getLineItems( $this->_id, 'membership' );
-        }
-        $this->assign( 'lineItem', empty( $this->_lineItems ) ? false : $this->_lineItems );
         
         parent::preProcess( );
     }
@@ -219,7 +210,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         
         $defaults = array( );
         if ( $this->_priceSetId ) {
-            return $defaults;
+            return CRM_Price_BAO_Set::setDefaultPriceSet($this, $defaults);
         }
 
         $defaults =& parent::setDefaultValues( );
@@ -383,8 +374,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         
         // build price set form.
         $buildPriceSet = false;
-        if ( empty( $this->_lineItems ) && 
-             ( $this->_priceSetId || CRM_Utils_Array::value( 'price_set_id', $_POST ) ) ) {
+        if ( $this->_priceSetId || CRM_Utils_Array::value( 'price_set_id', $_POST ) ) {
             if ( CRM_Utils_Array::value( 'price_set_id', $_POST ) ) {
                 $buildPriceSet = true;
             }
@@ -397,7 +387,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             $this->set( 'priceSetId', $this->_priceSetId );
             require_once 'CRM/Price/BAO/Set.php';
             CRM_Price_BAO_Set::buildPriceSet( $this );
-            
+
             $optionsMembershipTypes = array( );
             foreach( $this->_priceSet['fields'] as $pField ) {
                 if ( empty($pField['options']) ) {
@@ -408,7 +398,10 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                 }
             }
             
+            $this->assign( 'autoRenewOption', CRM_Price_BAO_Set::checkAutoRenewForPriceSet( $this->_priceSetId ) );
+
             $this->assign( 'optionsMembershipTypes', $optionsMembershipTypes);
+            $this->assign( 'contributionType', CRM_Utils_Array::value('contribution_type_id', $this->_priceSet) );
 
             // get only price set form elements.
             if ( $getOnlyPriceSetElements ) return;
@@ -417,7 +410,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         // use to build form during form rule.
         $this->assign( 'buildPriceSet', $buildPriceSet );
 
-        if ( empty( $this->_lineItems ) ) {
+        if ( $this->_action & CRM_Core_Action::ADD ) {
             $buildPriceSet = false;
             require_once 'CRM/Price/BAO/Set.php';
             $priceSets = CRM_Price_BAO_Set::getAssoc( false, 'CiviMember' );
@@ -736,7 +729,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
 
         // Return error if empty $self->_memTypeSelected
         if ( $priceSetId && empty($errors) && empty($self->_memTypeSelected) ) {
-            $errors['_qf_default'] = ts( 'Select at least one option associate with Membership Type.' );  
+            $errors['_qf_default'] = ts( 'Select at least one option associated with the membership.' );  
         }
 
         if ( !empty($errors) && (count($self->_memTypeSelected) > 1) ) {
@@ -759,6 +752,10 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             return $errors;
         }
 
+        if ( $priceSetId && !$self->_mode && !CRM_Utils_Array::value('record_contribution', $params) ) {
+            $errors['record_contribution'] = ts('Record Membership Payment is required when you using price set.'); 
+        }
+        
         if ( CRM_Utils_Array::value( 'payment_processor_id', $params ) ) {
             // make sure that credit card number and cvv are valid
             require_once 'CRM/Utils/Rule.php';
@@ -1073,6 +1070,12 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                                                                 $formValues['contribution_type_id'] );
         }
 
+        // process line items, until no previous line items.
+        if ( !empty( $lineItem ) ) {
+            $params['lineItems'] = $lineItem;
+            $params['processPriceSet'] = true;
+        }
+        
         $createdMemberships =  array( );
         if ( $this->_mode ) {
 
@@ -1091,7 +1094,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                                                                'contribution_type_id' );
             } else {
                 $params['contribution_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
-                                                                               current($this->_memTypeSelected),
+                                                                               end($this->_memTypeSelected),
                                                                                'contribution_type_id' );
             }
 
@@ -1197,7 +1200,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $params['contribution_recur_id']      = $paymentParams['contributionRecurID'];
                 $params['status_id']                  = array_search( 'Pending', $allStatus );
                 $params['skipStatusCal']              = true;
-                
+               
                 //as membership is pending set dates to null.
                 $memberDates = array( 'join_date'  => 'joinDate',
                                       'start_date' => 'startDate',
@@ -1355,19 +1358,12 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             }
         }
         
-        // process line items, until no previous line items.
-        if ( empty( $this->_lineItems ) && !empty( $lineItem ) ) {
-            foreach( $createdMemberships as $membership ) {
-                CRM_Member_BAO_Membership::processPriceSet( $membership->id, $lineItem );
-            }
-        }
-
         if ( !empty($lineItem) ) {
             foreach($lineItem[$priceSetId] as &$priceFieldOp) {
                 $priceFieldOp['start_date'] = CRM_Utils_Array::value('membership_type_id', $priceFieldOp) ?
-                    CRM_Utils_Date::customFormat($membershipTypeValues[$priceFieldOp['membership_type_id']]['start_date']) : '-';
+                    CRM_Utils_Date::customFormat($membershipTypeValues[$priceFieldOp['membership_type_id']]['start_date'], '%d%f %b, %Y') : '-';
                 $priceFieldOp['end_date'] = CRM_Utils_Array::value('membership_type_id', $priceFieldOp) ?
-                    CRM_Utils_Date::customFormat($membershipTypeValues[$priceFieldOp['membership_type_id']]['end_date']) : '-';
+                    CRM_Utils_Date::customFormat($membershipTypeValues[$priceFieldOp['membership_type_id']]['end_date'], '%d%f %b, %Y') : '-';
             }
         }
         $this->assign( 'lineItem', !empty( $lineItem ) ? $lineItem : false );

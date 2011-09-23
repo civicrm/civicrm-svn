@@ -85,8 +85,8 @@ class CRM_Price_Form_Field extends CRM_Core_Form
     {
         require_once 'CRM/Price/BAO/Field.php';
         
-        $this->_sid = CRM_Utils_Request::retrieve( 'sid', 'Positive', $this );
-        $this->_fid = CRM_Utils_Request::retrieve( 'fid' , 'Positive', $this );
+        $this->_sid = CRM_Utils_Request::retrieve( 'sid', 'Positive', $this, false, null, 'REQUEST' );
+        $this->_fid = CRM_Utils_Request::retrieve( 'fid' , 'Positive', $this, false, null, 'REQUEST' );
         $url = CRM_Utils_System::url( 'civicrm/admin/price/field', "reset=1&action=browse&sid={$this->_sid}");
         $breadCrumb     = array( array( 'title' => ts('Price Set Fields'),
                                         'url'   => $url) );
@@ -173,6 +173,11 @@ class CRM_Price_Form_Field extends CRM_Core_Form
         // lets trim all the whitespace
         $this->applyFilter('__ALL__', 'trim');
         
+        // add a hidden field to remember the price set id
+        // this get around the browser tab issue
+        $this->add( 'hidden', 'sid', $this->_sid );
+        $this->add( 'hidden', 'fid', $this->_fid );
+
         // label
         $this->add('text', 'label', ts('Field Label'), CRM_Core_DAO::getAttribute('CRM_Price_DAO_Field', 'label'), true);
         
@@ -262,8 +267,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                 
                 $this->add( 'select', 'membership_type_id['.$i.']', ts('Membership Type'),  
                             array('' => ' ') + $membershipTypes, false, $js);
-                $this->add('text','auto_renew['.$i.']', ts('Auto Renew?'), 
-                           array('size'=> 25, 'style'=> "background-color:#EBECE4", 'READONLY'));
             }
             
             // weight
@@ -593,6 +596,8 @@ class CRM_Price_Form_Field extends CRM_Core_Form
         if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
             CRM_Core_Session::setStatus(ts(' You can add another price set field.'));
             $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/price/field', 'reset=1&action=add&sid=' . $this->_sid));
+        } else {
+            $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/price/field', 'reset=1&action=browse&sid=' . $this->_sid));
         }
     }
 }

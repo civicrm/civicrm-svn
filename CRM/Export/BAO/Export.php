@@ -200,6 +200,8 @@ class CRM_Export_BAO_Export
                 } else if ( is_numeric( $locTypeId ) ) {
                     if ( $phoneTypeId ) {
                         $returnProperties['location'][$locationTypes[$locTypeId]]['phone-' .$phoneTypeId] = 1;
+                    } else if ( $imProviderId ) { 
+                        $returnProperties['location'][$locationTypes[$locTypeId]]['im-' .$imProviderId] = 1;
                     } else {
                         $returnProperties['location'][$locationTypes[$locTypeId]][$fieldName] = 1;
                     }
@@ -732,8 +734,7 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                                     break;
                                 case 'im_provider':  
                                     $imFieldvalue = $fldValue . "-provider_id";
-                                    $imScreenIdName = CRM_Utils_Array::value( $dao->$imFieldvalue , $imProviders );
-                                    $row[$fldValue] = $imScreenIdName;
+                                    $row[$fldValue] = CRM_Utils_Array::value( $dao->$imFieldvalue , $imProviders );
                                     break;
                                 default:
                                     $row[$fldValue] = $dao->$fldValue;

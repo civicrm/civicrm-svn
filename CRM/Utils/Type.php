@@ -257,7 +257,17 @@ class CRM_Utils_Type
                 return $data;
             }
             break;
-            
+        case 'ContactReference':
+            // null is valid
+            if ( strlen( trim( $data ) ) == 0 ) {
+                return trim( $data );
+            }
+
+            if ( CRM_Utils_Rule::validContact( $data ) ) { 
+                return $data;
+            } 
+            break;
+
         default:
             CRM_Core_Error::fatal( "Cannot recognize $type for $data" );
             break;

@@ -23,28 +23,31 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<fieldset><legend>{ts}Price Field Options{/ts}</legend>
+<fieldset><legend>{if $useForMember}{ts}Membership Options{/ts}{else}{ts}Price Field Options{/ts}{/if}</legend>
     <div class="description">
-        {ts}Enter up to ten (10) multiple choice options in this table (click 'another choice' for each additional choice). If you need more than ten options, you can create an unlimited number of additional choices using the Edit Price Options link after saving this new field. Enter a description of the option in the 'Label' column, and the associated price in the 'Amount' column. Click the 'Default' radio button to the left of an option if you want that to be selected by default.{/ts}
+        {if $useForMember}
+            {ts}Fill in a row for each membership type you want to offer as an option (click 'another choice' for each additional choice). Click the help icon for more info on membership price sets.{/ts} {help id="id-member-price-options"}
+        {else}
+            {ts}Enter up to ten (10) multiple choice options in this table (click 'another choice' for each additional choice). If you need more than ten options, you can create an unlimited number of additional choices using the Edit Price Options link after saving this new field. Enter a description of the option in the 'Label' column, and the associated price in the 'Amount' column. Click the 'Default' radio button to the left of an option if you want that to be selected by default.{/ts}
+        {/if}
     </div>
 	{strip}
 	<table id='optionField'>
 	<tr>
         <th>&nbsp;</th>
-	<th>{ts}Default{/ts}</th>
+	    <th>{ts}Default{/ts}</th>
 	{if $useForMember}
-	    <th>{ts}Membership Type{/ts}</th>
-	    <th>{ts}Auto-renew{/ts}</th>
+	    <th>{ts}Membership Type{/ts} {help id="id-membership-type"}</th>
 	{/if}
         <th>{ts}Label{/ts}</th>
-        <th>{ts}Amount{/ts} {help id="id-negative-options"}</th>
-        {if $useForEvent}
-	    <th>{ts}Participant Count{/ts}</th>
+        <th>{ts}Amount{/ts} {if $useForEvent}{help id="id-negative-options"}{/if}</th>
+    {if $useForEvent}
+	    <th>{ts}Participant Count{/ts} {help id="id-participant-count"}</th>
 	    <th>{ts}Max Participant{/ts}</th>
 	{/if}
         <th>{ts}Weight{/ts}</th>
-	<th>{ts}Active?{/ts}</th>
-        </tr>
+	    <th>{ts}Active?{/ts}</th>
+    </tr>
 	
 	{section name=rowLoop start=1 loop=12}
 	{assign var=index value=$smarty.section.rowLoop.index}
@@ -64,15 +67,14 @@
 	    </td>
 	    {if $useForMember}
 	      	<td>{$form.membership_type_id.$index.html}</td>
-	      	<td>{$form.auto_renew.$index.html}</td>
 	    {/if} 
 	    <td> {$form.option_label.$index.html}</td>
 	    
+	    <td> {$form.option_amount.$index.html|crmReplace:class:eight}</td>
 	    {if $useForEvent}
 	      	<td>{$form.option_count.$index.html}</td>
 	        <td>{$form.option_max_value.$index.html}</td>
 	    {/if} 
-	    <td> {$form.option_amount.$index.html|crmReplace:class:eight}</td>
 	    <td> {$form.option_weight.$index.html}</td>
  	    <td> {$form.option_status.$index.html}</td>
 	</tr>

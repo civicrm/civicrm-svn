@@ -885,10 +885,6 @@ class CRM_Contact_BAO_Query
                 }
                 
                 if ( $field && isset( $field['where'] ) ) {
-                    // change the table name for im_provider field.
-                    if( $field['name'] == 'im_provider' ) {
-                        $field['where'] = 'civicrm_im.name';
-                    }
                     list( $tableName, $fieldName ) = explode( '.', $field['where'], 2 );  
                     $tName = $name . '-' . substr( $tableName, 8 ) . $elementType;
                     $fieldName = $fieldName;

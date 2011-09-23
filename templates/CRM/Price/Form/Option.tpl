@@ -30,22 +30,20 @@
          
       </div>
      {/if}
+<h3>{if $action eq 8 }{ts}Delete Option{/ts}{elseif $action eq 1}{ts}New Option{/ts}{elseif $action eq 2}{ts}Edit Option{/ts}{/if}</h3>
 <div class="crm-form-block">
-<h3>{if $action eq 8 }{ts}Selection Options{/ts}{else}{ts}Selection Options{/ts}{/if}</h3>
-      {if $action neq 8}
+     {if $action neq 8}
 	<table class="form-layout">
+	    {if $showMember}
             <tr class="crm-price-option-form-block-membership_type_id">
-               <td class="label">{$form.membership_type_id.label}</td>
-               <td>{$form.membership_type_id.html}<br />
-	           <span class="description">{ts}If a membership type is selected, a membership will be created or renewed when users select this option. Leave this blank if you are using this for non-membership options (e.g. magazine subscription).{/ts}</span></td>
+               	<td class="label">{$form.membership_type_id.label}</td>
+               	<td>{$form.membership_type_id.html}
+               	<br /> <span class="description">{ts}If a membership type is selected, a membership will be created or renewed when users select this option. Leave this blank if you are using this for non-membership options (e.g. magazine subscription).{/ts} {help id="id-member-price-options" file="CRM/Price/Page/Field.hlp"}</span></td>
             </tr>
+	    {/if}
 	    <tr class="crm-price-option-form-block-label">
                <td class="label">{$form.label.label}</td>
                <td>{$form.label.html}</td>
-            </tr>
-	    <tr  id="autoRenew" class="crm-price-option-form-block-auto_renew">
-               <td class="label">{$form.auto_renew.label}</td>
-               <td>{$form.auto_renew.html}</td>
             </tr>
             <tr class="crm-price-option-form-block-amount">
                 <td class="label">{$form.amount.label}</td>
@@ -98,19 +96,11 @@
       var mtype = cj("#membership_type_id").val();
       var postUrl = "{/literal}{crmURL p='civicrm/ajax/memType' h=0}{literal}";
       cj.post( postUrl, {mtype: mtype}, function( data ) {
-      	       if( data.auto_renew  == '' ) {
-		   cj("#autoRenew").hide( );
-	       } else {
-	       	   cj("#auto_renew").val( data.auto_renew );   
-		   cj("#autoRenew").show( );
-	       }
-
-       	       cj("#amount").val( data.total_amount );   
-	       cj("#label").val( data.name );   
+              cj("#amount").val( data.total_amount );   
+              cj("#label").val( data.name );   
       
-      }, 'json');  
+              }, 'json');  
      }
-
     {/literal}
 </script>
 

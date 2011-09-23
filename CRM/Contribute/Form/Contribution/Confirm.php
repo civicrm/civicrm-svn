@@ -218,19 +218,27 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
 
         // if auto renew checkbox is set, initiate a open-ended recurring membership 
-        if ( CRM_Utils_Array::value( 'selectMembership', $this->_params )           &&
-             CRM_utils_Array::value( 'is_recur',         $this->_paymentProcessor ) &&
+        if ( ( CRM_Utils_Array::value( 'selectMembership', $this->_params ) ||
+               CRM_Utils_Array::value ( 'priceSetId', $this->_params ) )            &&
+             CRM_Utils_Array::value( 'is_recur',         $this->_paymentProcessor ) &&
              CRM_Utils_Array::value( 'auto_renew',       $this->_params )           &&
-             !CRM_utils_Array::value( 'is_recur',        $this->_params )           &&
+             !CRM_Utils_Array::value( 'is_recur',        $this->_params )           &&
              !CRM_Utils_Array::value( 'frequency_interval', $this->_params ) ) {
-            // FIXME: set interval and unit based on selected membership type
-            $this->_params['is_recur']           = $this->_values['is_recur'] = 1;
-            $this->_params['frequency_interval'] = 
-                CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType',
+
+            $this->_params['is_recur'] = $this->_values['is_recur'] = 1;
+            if ( CRM_Utils_Array::value ( 'priceSetId', $this->_params ) ) {
+                require_once 'CRM/Price/BAO/Set.php';
+                list( $this->_params['frequency_interval'], $this->_params['frequency_unit'] ) =
+                CRM_Price_BAO_Set::getRecurDetails( $this->_params['priceSetId'] );            
+            } else {
+                // FIXME: set interval and unit based on selected membership type
+                $this->_params['frequency_interval'] = 
+                    CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType',
                                              $this->_params['selectMembership'], 'duration_interval' );
-            $this->_params['frequency_unit']     = 
-                CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType',
+                $this->_params['frequency_unit']     = 
+                    CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType',
                                              $this->_params['selectMembership'], 'duration_unit' );
+            }    
         }
         
         if ( $this->_pcpId ) { 
@@ -707,8 +715,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             }
         }
 
+        $this->_useForMember = $this->get('useForMember');
         if ($processMembership == false ) {
-            $processMembership = $this->_useForMember = $this->get('useForMember');
+            $processMembership = $this->_useForMember;
         }
 
         if ( $processMembership ) {
@@ -748,16 +757,15 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             
             if (!empty($priceFieldIds)) {
                 $contributionTypeID = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $priceFieldIds['id'], 'contribution_type_id' );
-                unset($priceFieldIds['priceSetId']);
+                unset($priceFieldIds['id']);
                    
                 foreach ($priceFieldIds as $priceFieldId) {
                     if($id = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_FieldValue', $priceFieldId, 'membership_type_id' )){
                         $membershipTypeIds[] = $id;
-                    }                
-                    
-                    $membershipParams['selectMembership'] = $membershipTypeIds;
-                    $membershipParams['contribution_type_id'] = $contributionTypeID;
+                    }                                    
                 }
+                $membershipParams['selectMembership'] = $membershipTypeIds;
+                $membershipParams['contribution_type_id'] = $contributionTypeID;
             }
             require_once 'CRM/Member/BAO/Membership.php';
             CRM_Member_BAO_Membership::postProcessMembership( $membershipParams, $contactID,
@@ -976,7 +984,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                'contact_id'            => $contactID,
                                'contribution_type_id'  => $contributionType->id,
                                'contribution_page_id'  => $contributionPageId,
-                               'receive_date'          => isset( $params['receive_date'] ) ? CRM_Utils_Date::processDate( $params['receive_date'] ) : date( 'YmdHis' ),
+                               'receive_date'          => isset( $params['receive_date'] ) ? CRM_Utils_Date::processDate( $params['receive_date'], $params['receive_date_time'] ) : date( 'YmdHis' ),
                                'non_deductible_amount' => $nonDeductibleAmount,
                                'total_amount'          => $params['amount'],
                                'amount_level'          => CRM_Utils_Array::value( 'amount_level', $params ),
@@ -1265,14 +1273,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
              ( isset( $form->_mode ) && ( $form->_mode == 'test' ) ) ) {
             $recurParams['is_test'] = 1;
         }
-        $now = date( 'YmdHis' );
-        if(CRM_Utils_Array::value('receive_date',$params)){
-          $startdate = CRM_Utils_Date::processDate( $params['receive_date'] );
-        }
-
-        $recurParams['start_date'] = $recurParams['create_date'] = $recurParams['modified_date'] = $now;
-        if(CRM_Utils_Array::value('receive_date',$params)){
-          $recurParams['start_date'] = CRM_Utils_Date::processDate( $params['receive_date'] );
+        
+        $recurParams['start_date'] = $recurParams['create_date'] = $recurParams['modified_date'] = date( 'YmdHis' );
+        if( CRM_Utils_Array::value( 'receive_date',$params ) ){
+            $recurParams['start_date'] = CRM_Utils_Date::processDate( $params['receive_date'], 
+                                                                      $params['receive_date_time'] );
         }
         $recurParams['invoice_id'] = $params['invoiceID'];
         $recurParams['contribution_status_id'] = 2;

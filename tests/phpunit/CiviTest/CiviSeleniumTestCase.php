@@ -250,6 +250,9 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         foreach ( $options as $oIndex => $oValue ) {
             $validateStrings[] = $oValue['label'];
             $validateStrings[] = $oValue['amount'];
+            if ( $oValue['membership_type_id'] ) {
+                $this->select( "membership_type_id_{$oIndex}", "value={$oValue['membership_type_id']}" );
+            }
             $this->type("option_label_{$oIndex}", $oValue['label'] ); 
             $this->type("option_amount_{$oIndex}" , $oValue['amount']  ); 
             $this->click('link=another choice');
@@ -344,6 +347,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $processorSettings = array( 'test_user_name' => '5ULu56ex',
                                         'test_password'  => '7ARxW575w736eF5p',
                                         );
+        } elseif ( $processorType == 'Google_Checkout' ) {
+            // FIXME: we 'll need to make a new separate account for testing
+            $processorSettings = array( 'test_user_name' => '559999327053114',
+                                        'test_password'  => 'R2zv2g60-A7GXKJYl0nR0g',
+                                        );
         } elseif ( empty( $processorSettings ) ) {
             $this->fail("webTestAddPaymentProcessor requires $processorSettings array if processorType is not Dummy.");
         }
@@ -385,6 +393,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         $this->type('billing_street_address-5', '234 Lincoln Ave');
         $this->type('billing_city-5', 'San Bernadino');
+        $this->click('billing_state_province_id-5');
         $this->select('billing_state_province_id-5', 'label=California');
         $this->type('billing_postal_code-5', '93245');
 
@@ -500,6 +509,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                                          $pledges       = true, 
                                          $recurring     = false, 
                                          $membershipTypes = true, 
+                                         $memPriceSetId = null,
                                          $friend        = true, 
                                          $profilePreId  = 1, 
                                          $profilePostId = 7, 
@@ -568,7 +578,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->select('payment_processor_id',  "label={$processorName}");
         }
 
-        if ( $amountSection ) {
+        if ( $amountSection && !$memPriceSetId ) {
             if ( $payLater ) {
                 $this->click('is_pay_later');
                 $this->type('pay_later_text',    "Pay later label $hash");
@@ -608,34 +618,39 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
 
         if ( $membershipTypes === true ) {
-            $membershipTypes = array( array( 'id' => 2 ) );
-        }
-        if ( is_array($membershipTypes) && !empty($membershipTypes) ) {
             // go to step 3 (memberships)
             $this->click('link=Memberships');        
-            $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');            
+            $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');   
+         
             // fill in step 3 (Memberships)
-            $this->click('is_active');
+            $this->click('member_is_active');
+            $this->waitForElementPresent( 'displayFee' );
             $this->type('new_title',     "Title - New Membership $hash");
             $this->type('renewal_title', "Title - Renewals $hash");
 
-            // FIXME: handle Introductory Message - New Memberships/Renewals
-            foreach ( $membershipTypes as $mType ) {
-                $this->click("membership_type[{$mType['id']}]");
-                if ( array_key_exists('default', $mType) ) {
-                    // FIXME:
+            if ( $memPriceSetId ) {
+                $this->click( 'member_price_set_id' );
+                $this->select( 'member_price_set_id', "value={$memPriceSetId}" );
+            } else {
+                $membershipTypes = array( array( 'id' => 2 ) );
+                               
+                // FIXME: handle Introductory Message - New Memberships/Renewals
+                foreach ( $membershipTypes as $mType ) {
+                    $this->click("membership_type[{$mType['id']}]");
+                    if ( array_key_exists('default', $mType) ) {
+                        // FIXME:
+                    }
+                    if ( array_key_exists('auto_renew', $mType) ) {
+                        $this->select("auto_renew_{$mType['id']}", "label=Give option");
+                    }
                 }
-                if ( array_key_exists('auto_renew', $mType) ) {
-                    $this->select("auto_renew_{$mType['id']}", "label=Give option");
+                
+                $this->click('is_required');
+                
+                if( $isSeparatePayment ){
+                    $this->click('is_separate_payment');
                 }
             }
-
-            $this->click('is_required');
-            
-            if( $isSeparatePayment ){
-                $this->click('is_separate_payment');
-            }
-            
             $this->click('_qf_MembershipBlock_next');
             $this->waitForPageToLoad('30000');
             $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');

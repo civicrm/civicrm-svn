@@ -440,6 +440,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $pledges       = false; 
         $recurring     = false;
         $memberships   = false;
+        $memPriceSetId = null;
         $friend        = false; 
         $profilePreId  = 1;
         $profilePostId = null;
@@ -459,6 +460,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
                                                      $pledges      , 
                                                      $recurring    ,
                                                      $memberships  ,
+                                                     $memPriceSetId,
                                                      $friend       , 
                                                      $profilePreId ,
                                                      $profilePostId,
@@ -488,7 +490,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         
         $this->click('link=Memberships'); 
         $this->waitForElementPresent('_qf_MembershipBlock_cancel-bottom');            
-        $this->click('is_active');
+        $this->click('member_is_active');
         $this->type('new_title',     "Title - New Membership $hash");
         $this->type('renewal_title', "Title - Renewals $hash");
         $this->click("membership_type[{$membershipTypeId}]");

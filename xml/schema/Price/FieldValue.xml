@@ -104,13 +104,6 @@
       <onDelete>SET NULL</onDelete>
   </foreignKey>
   <field>
-      <name>auto_renew</name>
-      <type>boolean</type>
-      <comment>Is this membership price set field auto-renewable?</comment>
-      <default>NULL</default>
-      <add>3.4</add>
-  </field>
-  <field>
       <name>is_default</name>
       <type>boolean</type>
       <comment>Is this default price field option</comment>

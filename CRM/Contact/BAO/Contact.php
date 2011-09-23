@@ -1189,7 +1189,7 @@ WHERE id={$id}; ";
                                                                  'title' => ts('Location Type') ) );
 
                 $IMProvider   = array( 'im_provider'   => array ('name' => 'im_provider',
-                                                                 'where' => 'im_provider.name',
+                                                                 'where' => 'civicrm_im.provider_id',
                                                                  'title' => ts('IM Provider') ) );
             
                 $locationFields = array_merge(  $locationType,
@@ -1765,7 +1765,11 @@ ORDER BY civicrm_email.is_primary DESC";
                     if ( isset( $params[$key . '-provider_id'] ) ) {
                        $data['im'][$loc]['provider_id'] = $params[$key . '-provider_id'];
                     }
-                    $data['im'][$loc]['name']  = $value;  
+                    if ( strpos($key, '-provider_id') !== false ) {
+                        $data['im'][$loc]['provider_id'] = $params[$key];
+                    } else {
+                        $data['im'][$loc]['name']  = $value;
+                    }
                 } else if ($fieldName == 'openid') {
                     $data['openid'][$loc]['openid']     = $value;
                 } else {
