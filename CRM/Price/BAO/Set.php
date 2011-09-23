@@ -741,6 +741,31 @@ WHERE  id = %1";
         }
     }
     
+    /** 
+     * Function to set daefult the price set fields.
+     * 
+     * @return array $defaults 
+     * @access public 
+     */ 
+    static function setDefaultPriceSet( &$form, &$defaults ) {
+        if ( !isset($form->_priceSet) || empty($form->_priceSet['fields']) ) {
+            return $defaults;
+        }
+        
+        foreach( $form->_priceSet['fields'] as $key => $val ) {
+            foreach ( $val['options'] as $keys => $values ) {
+                if ( $values['is_default'] ) {
+                    if ( $val['html_type'] == 'CheckBox') {
+                        $defaults["price_{$key}"][$keys] = 1;
+                    } else {
+                        $defaults["price_{$key}"] = $keys;
+                    }
+                }
+            }
+        }
+        return $defaults;
+    }
+    
     /**
      * Get field ids of a price set
      *

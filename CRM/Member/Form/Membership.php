@@ -210,7 +210,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         
         $defaults = array( );
         if ( $this->_priceSetId ) {
-            return $defaults;
+            return CRM_Price_BAO_Set::setDefaultPriceSet($this, $defaults);
         }
 
         $defaults =& parent::setDefaultValues( );

@@ -531,7 +531,8 @@ function buildAmount( priceSetId ) {
        {/literal}{/if}{literal}
       return;
   }
-  
+
+  cj( "#total_amount" ).val( '' );
   cj('#total_amount').attr("readonly", true);
 
   var dataUrl = {/literal}"{crmURL h=0 q='snippet=4'}"{literal} + '&priceSetId=' + priceSetId;
@@ -543,7 +544,6 @@ function buildAmount( priceSetId ) {
   
   cj( fname ).show( ).html( response );
   // freeze total amount text field.
-  cj( "#total_amount" ).val( '' );
  
   cj( "#totalAmountORPriceSet" ).hide( );
   cj( "#mem_type_id" ).hide( );
