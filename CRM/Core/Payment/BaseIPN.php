@@ -383,92 +383,93 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             if ( CRM_Utils_Array::value( 'is_email_receipt', $values ) ) {
                 $contribution->receipt_date = self::$_now;
             }
-            foreach ($memberships as $membership) {
-                if ( $membership ) {
-                    $format       = '%Y%m%d';
-                    
-                    require_once 'CRM/Member/BAO/MembershipType.php';  
-                    require_once 'CRM/Member/BAO/Membership.php';
-                    $currentMembership =  CRM_Member_BAO_Membership::getContactMembership( $membership->contact_id, 
-                                                                                           $membership->membership_type_id, 
-                                                                                           $membership->is_test, $membership->id );
-                    
-                    // CRM-8141 update the membership type with the value recorded in log when membership created/renewed
-                    // this picks up membership type changes during renewals
-                    $sql = "
+            if ( !empty( $memberships ) ) {
+                foreach ($memberships as $membership) {
+                    if ( $membership ) {
+                        $format       = '%Y%m%d';
+                        
+                        require_once 'CRM/Member/BAO/MembershipType.php';  
+                        require_once 'CRM/Member/BAO/Membership.php';
+                        $currentMembership =  CRM_Member_BAO_Membership::getContactMembership( $membership->contact_id, 
+                                                                                               $membership->membership_type_id, 
+                                                                                               $membership->is_test, $membership->id );
+                        
+                        // CRM-8141 update the membership type with the value recorded in log when membership created/renewed
+                        // this picks up membership type changes during renewals
+                        $sql = "
 SELECT    membership_type_id 
 FROM      civicrm_membership_log 
 WHERE     membership_id=$membership->id 
 ORDER BY  id DESC 
 LIMIT 1;";
-                    require_once 'CRM/Core/DAO.php';
-                    $dao = new CRM_Core_DAO;
-                    $dao->query( $sql );
-                    if ( $dao->fetch( ) ) {
-                        if ( ! empty( $dao->membership_type_id ) ) {
-                            $membership->membership_type_id = $dao->membership_type_id;
-                            $membership->save( );
+                        require_once 'CRM/Core/DAO.php';
+                        $dao = new CRM_Core_DAO;
+                        $dao->query( $sql );
+                        if ( $dao->fetch( ) ) {
+                            if ( ! empty( $dao->membership_type_id ) ) {
+                                $membership->membership_type_id = $dao->membership_type_id;
+                                $membership->save( );
+                            } // else fall back to using current membership type
                         } // else fall back to using current membership type
-                    } // else fall back to using current membership type
-                    $dao->free();
-                    
-                    if ( $currentMembership ) {
-                        /*
-                         * Fixed FOR CRM-4433
-                         * In BAO/Membership.php(renewMembership function), we skip the extend membership date and status 
-                         * when Contribution mode is notify and membership is for renewal ) 
-                         */
-                        CRM_Member_BAO_Membership::fixMembershipStatusBeforeRenew( $currentMembership, $changeToday );
+                        $dao->free();
                         
-                        $dates = CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType( $membership->id , 
-                                                                                                  $changeToday );
-                        $dates['join_date'] =  CRM_Utils_Date::customFormat($currentMembership['join_date'], $format );
-                    } else {
-                        $dates = CRM_Member_BAO_MembershipType::getDatesForMembershipType($membership->membership_type_id);
+                        if ( $currentMembership ) {
+                            /*
+                             * Fixed FOR CRM-4433
+                             * In BAO/Membership.php(renewMembership function), we skip the extend membership date and status 
+                             * when Contribution mode is notify and membership is for renewal ) 
+                             */
+                            CRM_Member_BAO_Membership::fixMembershipStatusBeforeRenew( $currentMembership, $changeToday );
+                            
+                            $dates = CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType( $membership->id , 
+                                                                                                      $changeToday );
+                            $dates['join_date'] =  CRM_Utils_Date::customFormat($currentMembership['join_date'], $format );
+                        } else {
+                            $dates = CRM_Member_BAO_MembershipType::getDatesForMembershipType($membership->membership_type_id);
+                        }
+                        
+                        //get the status for membership.
+                        require_once 'CRM/Member/BAO/MembershipStatus.php';
+                        $calcStatus = CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate( $dates['start_date'], 
+                                                                                                  $dates['end_date'], 
+                                                                                                  $dates['join_date'],
+                                                                                                  'today', 
+                                                                                                  true );
+                        
+                        $formatedParams = array( 'status_id'     => CRM_Utils_Array::value( 'id', $calcStatus, 2 ),
+                                                 'join_date'     => CRM_Utils_Date::customFormat( $dates['join_date'],     $format ),
+                                                 'start_date'    => CRM_Utils_Date::customFormat( $dates['start_date'],    $format ),
+                                                 'end_date'      => CRM_Utils_Date::customFormat( $dates['end_date'],      $format ),
+                                                 'reminder_date' => CRM_Utils_Date::customFormat( $dates['reminder_date'], $format ) );
+                        //we might be renewing membership, 
+                        //so make status override false.  
+                        $formatedParams['is_override'] = false;
+                        $membership->copyValues( $formatedParams );
+                        $membership->save( );
+                        
+                        //updating the membership log
+                        $membershipLog = array();
+                        $membershipLog = $formatedParams;
+                        
+                        $logStartDate  = $formatedParams['start_date'];
+                        if ( CRM_Utils_Array::value( 'log_start_date', $dates ) ) {
+                            $logStartDate = CRM_Utils_Date::customFormat( $dates['log_start_date'], $format ); 
+                            $logStartDate = CRM_Utils_Date::isoToMysql( $logStartDate );
+                        }
+                        
+                        $membershipLog['start_date']    = $logStartDate;
+                        $membershipLog['membership_id'] = $membership->id;
+                        $membershipLog['modified_id']   = $membership->contact_id;
+                        $membershipLog['modified_date'] = date('Ymd');
+                        $membershipLog['membership_type_id'] = $membership->membership_type_id;
+                        
+                        require_once 'CRM/Member/BAO/MembershipLog.php';
+                        CRM_Member_BAO_MembershipLog::add( $membershipLog, CRM_Core_DAO::$_nullArray);
+                        
+                        //update related Memberships.              
+                        CRM_Member_BAO_Membership::updateRelatedMemberships( $membership->id, $formatedParams );
                     }
-                    
-                    //get the status for membership.
-                    require_once 'CRM/Member/BAO/MembershipStatus.php';
-                    $calcStatus = CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate( $dates['start_date'], 
-                                                                                              $dates['end_date'], 
-                                                                                              $dates['join_date'],
-                                                                                              'today', 
-                                                                                              true );
-                    
-                    $formatedParams = array( 'status_id'     => CRM_Utils_Array::value( 'id', $calcStatus, 2 ),
-                                             'join_date'     => CRM_Utils_Date::customFormat( $dates['join_date'],     $format ),
-                                             'start_date'    => CRM_Utils_Date::customFormat( $dates['start_date'],    $format ),
-                                             'end_date'      => CRM_Utils_Date::customFormat( $dates['end_date'],      $format ),
-                                             'reminder_date' => CRM_Utils_Date::customFormat( $dates['reminder_date'], $format ) );
-                    //we might be renewing membership, 
-                    //so make status override false.  
-                    $formatedParams['is_override'] = false;
-                    $membership->copyValues( $formatedParams );
-                    $membership->save( );
-                    
-                    //updating the membership log
-                    $membershipLog = array();
-                    $membershipLog = $formatedParams;
-                    
-                    $logStartDate  = $formatedParams['start_date'];
-                    if ( CRM_Utils_Array::value( 'log_start_date', $dates ) ) {
-                        $logStartDate = CRM_Utils_Date::customFormat( $dates['log_start_date'], $format ); 
-                        $logStartDate = CRM_Utils_Date::isoToMysql( $logStartDate );
-                    }
-                    
-                    $membershipLog['start_date']    = $logStartDate;
-                    $membershipLog['membership_id'] = $membership->id;
-                    $membershipLog['modified_id']   = $membership->contact_id;
-                    $membershipLog['modified_date'] = date('Ymd');
-                    $membershipLog['membership_type_id'] = $membership->membership_type_id;
-                    
-                    require_once 'CRM/Member/BAO/MembershipLog.php';
-                    CRM_Member_BAO_MembershipLog::add( $membershipLog, CRM_Core_DAO::$_nullArray);
-                    
-                    //update related Memberships.              
-                    CRM_Member_BAO_Membership::updateRelatedMemberships( $membership->id, $formatedParams );
                 }
-                
             }
         } else {
             // event
