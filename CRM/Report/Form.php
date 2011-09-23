@@ -519,14 +519,14 @@ class CRM_Report_Form extends CRM_Core_Form {
 
                 $this->_defaults['order_bys'] = array();
                 foreach ( $table['order_bys'] as $fieldName => $field ) {
-                    if ( $field['default'] ) {
+                    if ( CRM_Utils_Array::value( 'default', $field ) ) {
                         $order_by = array(
                                           'column'  => $fieldName,
-                            'order'   => ( $field['default_order'] ? $field['default_order'] : 'ASC' ),
-                            'section' => $field['default_is_section'] ? 1 : 0
-                        );
+                                          'order'   => CRM_Utils_Array::value( 'default_order', $field, 'ASC' );
+                                          'section' => CRM_Utils_Array::value( 'default_is_section', $field, 0 );
+                                          );
 
-                        if ( $field['default_weight'] ) {
+                        if ( CRM_Utils_Array::value( 'default_weight', $field ) ) {
                             $this->_defaults['order_bys'][ (int) $field['default_weight']] = $order_by;
                         } else {
                             array_unshift( $this->_defaults['order_bys'], $order_by);
@@ -2570,7 +2570,6 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                 if ( array_key_exists('order_bys', $table) ) {
                     foreach ( $table['order_bys'] as $orderByName => $orderBy ) {
                         if ( in_array( $orderByName, $orderByColumns )) {
-
                             $this->_selectedTables[] = $tableName;
                             break;
 
@@ -2579,8 +2578,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                 }
                 if ( array_key_exists('filters', $table) ) {
                     foreach ( $table['filters'] as $filterName => $filter ) {
-                        if ( $this->_params["{$filterName}_value"] ) {
-
+                        if ( CRM_Utils_Array::value( "{$filterName}_value", $this->_params ) ) {
                             $this->_selectedTables[] = $tableName;
                             break;
 
