@@ -296,7 +296,25 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         CRM_Core_BAO_Address::fixAllStateSelects( $this, $this->_defaults );
 
         if ( $this->_priceSetId ) {
-            CRM_Price_BAO_Set::setDefaultPriceSet($this, $this->_defaults);
+            if ( $this->_useForMember && !empty($this->_currentMemberships) ) {
+                $selectedCurrentMemTypes = array( );
+                foreach( $this->_priceSet['fields'] as $key => $val ) {
+                    foreach ( $val['options'] as $keys => $values ) {
+                        if ( CRM_Utils_Array::value('membership_type_id', $values) &&
+                             in_array($values['membership_type_id'], $this->_currentMemberships) &&
+                             !in_array($values['membership_type_id'], $selectedCurrentMemTypes) ) {
+                            if ( $val['html_type'] == 'CheckBox') {
+                                $this->_defaults["price_{$key}"][$keys] = 1;
+                            } else {
+                                $this->_defaults["price_{$key}"] = $keys;
+                            }
+                            $selectedCurrentMemTypes[] = $values['membership_type_id'];
+                        }
+                    }
+                }
+            } else {
+                CRM_Price_BAO_Set::setDefaultPriceSet($this, $this->_defaults);
+            }
         }
 
         return $this->_defaults;
