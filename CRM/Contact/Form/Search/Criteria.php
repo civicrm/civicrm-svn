@@ -404,7 +404,9 @@ class CRM_Contact_Form_Search_Criteria {
         $genderOptions = array( );
         $gender =CRM_Core_PseudoConstant::gender();
         foreach ($gender as $key => $var) {
-            $genderOptions[$key] = HTML_QuickForm::createElement('radio', null, ts('Gender'), $var, $key);
+            $genderOptions[$key] = HTML_QuickForm::createElement('radio', null,
+                                                                 ts('Gender'), $var, $key,
+                                                                 array( 'id' => "civicrm_gender_{$var}_{$key}" ) );
         }
         $form->addGroup($genderOptions, 'gender', ts('Gender'));
          
