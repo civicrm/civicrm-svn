@@ -893,7 +893,9 @@ GROUP BY     mt.member_of_contact_id";
             FROM civicrm_price_field_value pfv 
             INNER JOIN civicrm_membership_type mt ON pfv.membership_type_id = mt.id
             INNER JOIN civicrm_price_field pf ON pfv.price_field_id = pf.id
-            WHERE pf.price_set_id = %1';
+            WHERE pf.price_set_id = %1
+            AND   pf.is_active = 1
+            AND   pfv.is_active = 1';
         
         $params = array( 1 => array( $priceSetId, 'Integer') );
         
