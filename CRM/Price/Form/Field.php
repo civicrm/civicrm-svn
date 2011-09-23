@@ -72,7 +72,13 @@ class CRM_Price_Form_Field extends CRM_Core_Form
      * @access protected
      */
     protected $_extendComponentId;
-    
+
+    /**
+     * variable is set if price set is used for membership 
+     * @access protected
+     */
+    protected $_useForMember;
+
     /**
      * Function to set variables up before form is built
      * 
@@ -574,7 +580,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form
             $params['option_amount']       = array( 1 => $params['price'] );
             $params['option_label']        = array( 1 => $params['label'] );
             $params['option_count']        = array( 1 => $params['count'] );
-            $params['option_max_value']    = array( 1 => $params['max_value'] );
+            $params['option_max_value']    = array( 1 =>  CRM_Utils_Array::value( 'max_value', $params ) );
             //$params['option_description']  = array( 1 => $params['description'] );
             $params['option_weight']       = array( 1 => $params['weight'] );
             $params['is_active']           = array( 1 => 1 );
