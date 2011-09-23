@@ -74,6 +74,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
         $pledges = false;
         $recurring = false;
         $memberships = false;
+        $memPriceSetId = null;
         $friend = false;
         $profilePreId  = null;
         $profilePostId = null;
@@ -95,6 +96,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
                                                      $pledges, 
                                                      $recurring, 
                                                      $memberships, 
+                                                     $memPriceSetId,
                                                      $friend, 
                                                      $profilePreId,
                                                      $profilePostId,

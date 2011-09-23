@@ -64,6 +64,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $pledges = false;
         $recurring = false;
         $memberships = false;
+        $memPriceSetId = null;
         $friend = true;
         $profilePreId  = null;
         $profilePostId = null;
@@ -88,6 +89,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
                                                      $pledges, 
                                                      $recurring, 
                                                      $memberships, 
+                                                     $memPriceSetId,
                                                      $friend, 
                                                      $profilePreId,
                                                      $profilePostId,
@@ -414,6 +416,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $pledges = false;
         $recurring = false;
         $memberships = false;
+        $memPriceSetId = null;
         $friend = true;
         $profilePreId  = null;
         $profilePostId = null;
@@ -437,6 +440,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
                                                      $pledges, 
                                                      $recurring, 
                                                      $memberships, 
+                                                     $memPriceSetId,
                                                      $friend, 
                                                      $profilePreId,
                                                      $profilePostId,
@@ -860,6 +864,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $pledges = false;
         $recurring = false;
         $memberships = true;
+        $memPriceSetId = null;
         $friend = true;
         $profilePreId  = null;
         $profilePostId = null;
@@ -883,6 +888,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
                                                      $pledges, 
                                                      $recurring, 
                                                      $memberships, 
+                                                     $memPriceSetId,
                                                      $friend, 
                                                      $profilePreId,
                                                      $profilePostId,

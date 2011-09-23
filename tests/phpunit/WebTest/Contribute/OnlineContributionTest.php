@@ -72,7 +72,7 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
       $premiums = false;
       $widget = false;
       $pcp = false;
-      
+      $memPriceSetId = null;
       
       // create a new online contribution page
       // create contribution page with randomized title and default params
@@ -87,6 +87,7 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
                                                    $pledges, 
                                                    $recurring, 
                                                    $memberships, 
+                                                   $memPriceSetId,
                                                    $friend, 
                                                    $profilePreId,
                                                    $profilePostId,

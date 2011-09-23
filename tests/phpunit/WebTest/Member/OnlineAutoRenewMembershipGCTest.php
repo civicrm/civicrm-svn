@@ -171,6 +171,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
           $recurring     = true;
           $membershipTypes = array( array( 'id' => 1, 'auto_renew' => 1 ),
                                     array( 'id' => 2, 'auto_renew' => 1 ) );
+          $memPriceSetId = null;
           $friend        = true; 
           $profilePreId  = null;
           $profilePostId = null;
@@ -190,6 +191,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
                                                        $pledges      , 
                                                        $recurring    ,
                                                        $membershipTypes,
+                                                       $memPriceSetId,
                                                        $friend       , 
                                                        $profilePreId ,
                                                        $profilePostId,

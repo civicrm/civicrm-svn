@@ -67,6 +67,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $pledges       = false; 
         $recurring     = false;
         $memberships   = true;
+        $memPriceSetId = null;
         $friend        = true; 
         $profilePreId  = 1;
         $profilePostId = null;
@@ -86,6 +87,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
                                                      $pledges      , 
                                                      $recurring    ,
                                                      $memberships  ,
+                                                     $memPriceSetId,
                                                      $friend       , 
                                                      $profilePreId ,
                                                      $profilePostId,
