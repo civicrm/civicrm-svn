@@ -1458,6 +1458,16 @@ AND civicrm_membership.is_test = %2";
 	            require_once 'CRM/Member/BAO/MembershipLog.php';
 	            CRM_Member_BAO_MembershipLog::add( $logParams, CRM_Core_DAO::$_nullArray );
 	            
+                if ( CRM_Utils_Array::value( 'contributionRecurID', $form->_params ) ) {
+                    // just set contribution_recur_id, rest remains same.
+                    $membership->join_date     = CRM_Utils_Date::isoToMysql( $membership->join_date      );
+                    $membership->start_date    = CRM_Utils_Date::isoToMysql( $membership->start_date     );
+                    $membership->end_date      = CRM_Utils_Date::isoToMysql( $membership->end_date       );
+                    $membership->reminder_date = CRM_Utils_Date::isoToMysql( $membership->reminder_date  );
+                    $membership->contribution_recur_id = $form->_params['contributionRecurID'];
+                    $membership->save();
+                }
+
                 return $membership;
             }
             
@@ -1591,7 +1601,7 @@ AND civicrm_membership.is_test = %2";
             $memParams['is_test']       = $is_test;
             $memParams['is_pay_later']  = $form->_params['is_pay_later'];
         }
-        
+
         //CRM-4555
         //if we decided status here and want to skip status
         //calculation in create( ); then need to pass 'skipStatusCal'.
