@@ -108,11 +108,6 @@ class CRM_Price_Form_Option extends CRM_Core_Form
             $defaults['is_active'] = 1;
         }
         
-        if ( !CRM_Utils_System::isNull( $defaults['auto_renew'] ) ) {
-            require_once 'CRM/Core/PseudoConstant.php';
-            $options = CRM_Core_PseudoConstant::autoRenew();
-            $defaults['auto_renew'] = $options[$defaults['auto_renew']];
-        }
         return $defaults;
     }
     
@@ -289,15 +284,6 @@ class CRM_Price_Form_Option extends CRM_Core_Form
             $params['amount']         = CRM_Utils_Rule::cleanMoney( trim($params['amount']) );
             $params['price_field_id'] = $this->_fid;
             $params['is_default']     = CRM_Utils_Array::value( 'is_default', $params, false );
-
-            if ( CRM_Utils_Array::value( 'membership_type_id', $params ) ) {
-                require_once 'CRM/Core/PseudoConstant.php';
-                $autoRenewOptions = CRM_Core_PseudoConstant::autoRenew();
-                $key = CRM_Utils_Array::key( $params['auto_renew'], $autoRenewOptions );
-                if (isset($key)) {
-                    $params['auto_renew'] = $key;
-                }   
-            }
 
             $ids = array( );
             if ( $this->_oid ) {

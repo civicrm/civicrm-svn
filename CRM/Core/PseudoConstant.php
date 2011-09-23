@@ -1649,14 +1649,6 @@ ORDER BY name";
         return self::$activityContacts;
     }
 
-    public static function &autoRenew( )
-    {
-        if ( ! self::$autoRenew ) {
-            require_once 'CRM/Core/OptionGroup.php';
-            self::$autoRenew = CRM_Core_OptionGroup::values('auto_renew_options');
-        }
-        return self::$autoRenew;
-    }
 }
 
 

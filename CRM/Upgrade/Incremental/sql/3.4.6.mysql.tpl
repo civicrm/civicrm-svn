@@ -1,3 +1,6 @@
+-- CRM-8483
+{include file='../CRM/Upgrade/3.4.6.msg_template/civicrm_msg_template.tpl'}
+
 -- CRM-8619
 
 SELECT @option_group_id_languages := MAX( id ) FROM civicrm_option_group WHERE name = 'languages';
@@ -52,11 +55,6 @@ ALTER TABLE `civicrm_prevnext_cache`
 ALTER TABLE `civicrm_price_set`
    ADD `contribution_type_id` int(10) unsigned default NULL COMMENT 'Conditional foreign key to civicrm_contribution_type.id.',
    ADD CONSTRAINT `FK_civicrm_price_set_contribution_type_id` FOREIGN KEY (`contribution_type_id`) REFERENCES `civicrm_contribution_type` (`id`) ON DELETE SET NULL;
-
-INSERT INTO civicrm_option_group
-      (name, {localize field='label'}label{/localize}, {localize field='description'}description{/localize}, is_reserved, is_active)
-VALUES
-      ('auto_renew_options', {localize}'{ts escape="sql"}NULL{/ts}'{/localize}, {localize}'{ts escape="sql"}Auto Renew Options{/ts}'{/localize}, 0, 1);
   
 ALTER TABLE `civicrm_price_field_value`
    ADD `membership_type_id` int(10) unsigned default NULL COMMENT 'Conditional foreign key to civicrm_membership_type.id.',
