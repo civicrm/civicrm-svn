@@ -41,8 +41,9 @@ class CRM_Utils_Hook_WordPress extends CRM_Utils_Hook {
    static function invoke( $numParams,
                            &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
                            $fnSuffix ) {
-       return parent::invoke( $numParams, $arg1, $arg2, $arg3, $arg4, $arg5,
-                              $fnSuffix, 'wordpress' );
+       return $this->commonInvoke( $numParams,
+                                   $arg1, $arg2, $arg3, $arg4, $arg5,
+                                   $fnSuffix, 'wordpress' );
    }
 
 }

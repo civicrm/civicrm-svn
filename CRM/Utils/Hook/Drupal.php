@@ -38,9 +38,9 @@ require_once 'CRM/Utils/Hook.php';
 
 class CRM_Utils_Hook_Drupal extends CRM_Utils_Hook {
 
-    static function invoke( $numParams,
-                            &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
-                            $fnSuffix ) {
+    function invoke( $numParams,
+                     &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
+                     $fnSuffix ) {
         static $first = false;
         static $allModules = array( );
 
@@ -52,11 +52,11 @@ class CRM_Utils_Hook_Drupal extends CRM_Utils_Hook {
                 $allModules =  module_list();
             }
             
-            parent::requireCiviModules( $allModules );
+            $this->requireCiviModules( $allModules );
         }
 
-        return parent::runHooks( $allModules, $fnSuffix,
-                                 $numParams, $arg1, $arg2, $arg3, $arg4, $arg5 );
+        return $this->runHooks( $allModules, $fnSuffix,
+                                $numParams, $arg1, $arg2, $arg3, $arg4, $arg5 );
    }
 
 }
