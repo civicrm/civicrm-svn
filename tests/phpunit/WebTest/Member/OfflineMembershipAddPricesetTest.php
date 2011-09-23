@@ -27,7 +27,7 @@
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
  
-class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCase
+class WebTest_Member_OfflineMembershipAddPricesetTest extends CiviSeleniumTestCase
 {
 
   protected function setUp()
@@ -45,14 +45,6 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
       // Log in using webtestLogin() method
       $this->webtestLogin();
 
-      // add the required Drupal permission
-      $this->open("{$this->sboxPath}admin/user/permissions");
-      $this->waitForElementPresent('edit-submit');
-      $this->check('edit-1-make-online-contributions');
-      $this->click('edit-submit');
-      $this->waitForPageToLoad();
-      $this->assertTrue($this->isTextPresent('The changes have been saved.'));
-      
       $title            = substr(sha1(rand()), 0, 7);
       $setTitle         = "Membership Fees - $title";
       $usedFor          = 'Membership';
@@ -75,25 +67,21 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
       // load the Price Set Preview and check for expected values
       $this->_testVerifyPriceSet( $validateStrings, $sid );
 
-      $contributionPageTitle = "Contribution Page $title";
-      $paymentProcessor      = "Webtest Dummy $title";
-      $this->webtestAddContributionPage( null, null, $contributionPageTitle, 'Dummy', $paymentProcessor, 
-                                         true, false, false, false, false, true, $sid, false, 1, null );
-
       // Sign up for membership
-      $registerUrl = $this->_testVerifyRegisterPage( $contributionPageTitle );
-
-      $firstName = 'John_' . substr(sha1(rand()), 0, 7);
-      $lastName  = 'Anderson_' . substr(sha1(rand()), 0, 7);
-      $email     = "{$firstName}.{$lastName}@example.com";
-
+      $firstName     = 'John_' . substr(sha1(rand()), 0, 7);
+      $lastName      = 'Anderson_' . substr(sha1(rand()), 0, 7);
+      $email         = "{$firstName}.{$lastName}@example.com";
       $contactParams = array( 'first_name' => $firstName,
                               'last_name'  => $lastName,
                               'email-5'    => $email );
-      $this->_testSignUpOrRenewMembership( $registerUrl, $contactParams, $memTypeTitle1, $memTypeTitle2 );
 
+      // Add a contact from the quick add block
+      $this->webtestAddContact( $firstName, $lastName, $email );
+
+      $this->_testSignUpOrRenewMembership( $sid, $contactParams, $memTypeTitle1, $memTypeTitle2 );
+      
       // Renew this membership
-      $this->_testSignUpOrRenewMembership( $registerUrl, $contactParams, $memTypeTitle1, $memTypeTitle2, $renew = true );
+      $this->_testSignUpOrRenewMembership( $sid, $contactParams, $memTypeTitle1, $memTypeTitle2, $renew = true );
   }
 
   function _testAddSet( $setTitle, $usedFor, $contributionType = null, $setHelp )
@@ -196,27 +184,8 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
       $this->assertStringsPresent( $validateStrings );
   }
   
-  function _testVerifyRegisterPage( $contributionPageTitle )
+  function _testSignUpOrRenewMembership( $sid, $contactParams, $memTypeTitle1, $memTypeTitle2, $renew = false )
   {
-      $this->open( $this->sboxPath . 'civicrm/admin/contribute?reset=1' );
-      $this->waitForElementPresent( '_qf_SearchContribution_refresh' );
-      $this->type( 'title', $contributionPageTitle );
-      $this->click( '_qf_SearchContribution_refresh' );
-      $this->waitForPageToLoad( '50000' );
-      $id = $this->getAttribute("//div[@id='configure_contribution_page']//div[@class='dataTables_wrapper']/table/tbody/tr@id");
-      $id = explode( '_', $id );
-      $registerUrl = "civicrm/contribute/transact?reset=1&id=$id[1]";
-      return $registerUrl;
-  }
-
-  function _testSignUpOrRenewMembership( $registerUrl, $contactParams, $memTypeTitle1, $memTypeTitle2, $renew = false )
-  {
-      $this->open( $this->sboxPath . 'civicrm/logout?reset=1' );
-      $this->waitForPageToLoad( '30000' );
-
-      $this->open( $this->sboxPath . $registerUrl );
-      $this->waitForElementPresent( '_qf_Main_upload-bottom' );
-
       //build the membership dates.
       require_once 'CRM/Core/Config.php';
       require_once 'CRM/Utils/Array.php';
@@ -233,64 +202,39 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
           $$date = CRM_Utils_Date::customFormat( $$date, $configVars->dateformatFull ); 
       }
       
-      $this->click( "xpath=//div[@id='priceset']/div[2]/div[2]/div/span/input" );
-      $this->click( "xpath=//div[@id='priceset']/div[3]/div[2]/div[2]/span/input" );
+      if ( !$renew ) {
+          // Go directly to the URL of the screen that you will be testing (Activity Tab).
+          $this->click( 'css=li#tab_member a' );
+          $this->waitForElementPresent( 'link=Add Membership' );
+          
+          $this->click( 'link=Add Membership' );
+          $this->waitForElementPresent( '_qf_Membership_cancel-bottom' );
+          
+          $this->select( 'price_set_id', "value={$sid}" );
+          $this->waitForElementPresent( 'pricesetTotal' );
+          
+          $this->click( "xpath=//div[@id='priceset']/div[2]/div[2]/div/span/input" );
+          $this->click( "xpath=//div[@id='priceset']/div[3]/div[2]/div[2]/span/input" );
+          
+          $this->type( 'source', 'Offline membership Sign Up Test Text' );
+          $this->click( '_qf_Membership_upload-bottom' );
+      } else {
+          $this->click( "xpath=//div[@id='memberships']/div/table/tbody//tr/td[text()='{$memTypeTitle1}']/../td[7]/span[2][text()='more ']/ul/li/a[text()='Renew']" );
+          $this->waitForElementPresent( '_qf_MembershipRenewal_cancel-bottom' );
+          $this->click( '_qf_MembershipRenewal_upload-bottom' );
 
-      $this->type( 'email-5', $contactParams['email-5'] );
-      $this->type( 'first_name', $contactParams['first_name'] );
-      $this->type( 'last_name', $contactParams['last_name'] );
-
-      $streetAddress = "100 Main Street";
-      $this->type("street_address-1", $streetAddress);
-      $this->type("city-1", "San Francisco");
-      $this->type("postal_code-1", "94117");
-      $this->select("country-1", "value=1228");
-      $this->select("state_province-1", "value=1001");
-        
-      //Credit Card Info
-      $this->select("credit_card_type", "value=Visa");
-      $this->type("credit_card_number", "4111111111111111");
-      $this->type("cvv2", "000");
-      $this->select("credit_card_exp_date[M]", "value=1");
-      $this->select("credit_card_exp_date[Y]", "value=2020");
+          $this->waitForElementPresent( "xpath=//div[@id='memberships']/div/table/tbody/tr");
+          $this->click( "xpath=//div[@id='memberships']/div/table/tbody//tr/td[text()='{$memTypeTitle2}']/../td[7]/span[2][text()='more ']/ul/li/a[text()='Renew']" );
+          $this->waitForElementPresent( '_qf_MembershipRenewal_cancel-bottom' );
+          $this->click( '_qf_MembershipRenewal_upload-bottom' );
+      }
       
-      //Billing Info
-      $this->type("billing_first_name", $contactParams['first_name'] . "billing");
-      $this->type("billing_last_name", $contactParams['last_name'] . "billing" );
-      $this->type("billing_street_address-5", "15 Main St.");
-      $this->type(" billing_city-5", "San Jose");
-      $this->select("billing_country_id-5", "value=1228");
-      $this->select("billing_state_province_id-5", "value=1004");
-      $this->type("billing_postal_code-5", "94129");  
-      $this->click("_qf_Main_upload-bottom");
-      
-      $this->waitForPageToLoad('30000');
-      $this->waitForElementPresent("_qf_Confirm_next-bottom");
-      
-      $this->click("_qf_Confirm_next-bottom");
-      $this->waitForPageToLoad('30000');
-
-      //login to check membership
-      $this->open( $this->sboxPath );
-        
-      // Log in using webtestLogin() method
-      $this->webtestLogin();
-
-      $this->open($this->sboxPath . "civicrm/member/search&reset=1");
-      $this->waitForElementPresent("member_end_date_high");
-        
-      $this->type("sort_name", "{$contactParams['first_name']} {$contactParams['last_name']}" );
-      $this->click("_qf_Search_refresh");
-        
-      $this->waitForPageToLoad('30000');
-      $this->assertTrue( $this->isTextPresent( "2 Results " ) );
-        
-      $this->waitForElementPresent( "xpath=//div[@id='memberSearch']/table/tbody/tr" );
-      $this->click( "xpath=//div[@id='memberSearch']/table/tbody//tr/td[4][text()='{$memTypeTitle1}']/../td[11]/span/a[text()='View']" );
+      $this->waitForElementPresent( "xpath=//div[@id='memberships']/div/table/tbody/tr");
+      $this->click( "xpath=//div[@id='memberships']/div/table/tbody//tr/td[text()='{$memTypeTitle1}']/../td[7]/span/a[text()='View']" );
       $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
 
       //View Membership Record
-      $verifyData = array( 'Membership Type' => "$memTypeTitle1",
+      $verifyData = array( 'Membership Type' => "{$memTypeTitle1}",
                            'Status'          => 'New',
                            'Member Since'    => $joinDate,
                            'Start date'      => $startDate,
@@ -302,12 +246,12 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
       }
 
       $this->click( '_qf_MembershipView_cancel-bottom' );
-      $this->waitForElementPresent( "xpath=//div[@id='memberSearch']/table/tbody/tr[2]" );
-      $this->click( "xpath=//div[@id='memberSearch']/table/tbody//tr/td[4][text()='{$memTypeTitle2}']/../td[11]/span/a[text()='View']" );
+      $this->waitForElementPresent( "xpath=//div[@id='memberships']/div/table/tbody/tr");
+      $this->click( "xpath=//div[@id='memberships']/div/table/tbody//tr/td[text()='{$memTypeTitle2}']/../td[7]/span/a[text()='View']" );
       $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
 
       //View Membership Record
-      $verifyData = array( 'Membership Type' => "$memTypeTitle2",
+      $verifyData = array( 'Membership Type' => "{$memTypeTitle2}",
                            'Status'          => 'New',
                            'Member Since'    => $joinDate,
                            'Start date'      => $startDate,
@@ -317,5 +261,7 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
           $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
                              preg_quote( $value ) );
       }
+      $this->click( "_qf_MembershipView_cancel-bottom" );
+      $this->waitForElementPresent( "xpath=//div[@id='memberships']/div/table/tbody/tr");
   }
 }
