@@ -126,6 +126,10 @@ class CRM_Utils_Type
             break;
 
         case 'Positive':
+            // the below 2 are for custom fields of this type
+            // CRM-8925
+        case 'Country':
+        case 'StateProvince':
             if (CRM_Utils_Rule::positiveInteger($data)) {
                 return $data;
             }
