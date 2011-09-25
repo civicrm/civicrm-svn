@@ -782,12 +782,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 $count = CRM_Price_BAO_Set::getMembershipCount($ids);
                 foreach( $count as $id => $occurance ) {
                     if ($occurance > 1) {
-                        $errors['_qf_default'] = ts( 'Select at most one option from the Membership Types belonging to the same Membership Organization.' );
+                        $errors['_qf_default'] = ts( 'You have selected multiple memberships for the same organization or entity. Please review your selections and choose only one membership per entity. Contact the site administrator if you need assistance.' );
                     }
                 }
                 
                 if ( empty( $priceFieldMemTypes ) ) {
-                    $errors['_qf_default'] = ts('Select at least one option associated with the membership.');
+                    $errors['_qf_default'] = ts('Please select at least one membership option.');
                 }
             }
 

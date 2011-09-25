@@ -66,7 +66,8 @@ SELECT @extensionsWeight := MAX(weight)+1 FROM civicrm_navigation where parent_i
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES            
-    ( {$domainID}, 'civicrm/admin/price&reset=1&action=add',        '{ts escape="sql" skip="true"}New Price Set{/ts}', 'New Price Set', 'access CiviMember,administer CiviCRM', '', @customizeID, '1', NULL, @extensionsWeight );
+    ( {$domainID}, 'civicrm/admin/price&reset=1&action=add', '{ts escape="sql" skip="true"}New Price Set{/ts}', 'New Price Set', 'access CiviMember,administer CiviCRM', '', @customizeID, '1', NULL, @extensionsWeight ),
+    ( {$domainID}, 'civicrm/admin/price&reset=1',            '{ts escape="sql" skip="true"}Manage Price Sets{/ts}', 'Manage Price Sets', 'access CiviMember,administer CiviCRM', '', @customizeID, '1', NULL, @extensionsWeight+1 );
 
 SELECT @customizeID      := MAX(id) FROM civicrm_navigation where name = 'CiviMember';
 SELECT @extensionsWeight := MAX(weight)+1 FROM civicrm_navigation where parent_id = @customizeID;
@@ -74,7 +75,8 @@ SELECT @extensionsWeight := MAX(weight)+1 FROM civicrm_navigation where parent_i
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES            
-    ( {$domainID}, 'civicrm/admin/price&reset=1&action=add',        '{ts escape="sql" skip="true"}New Price Set{/ts}', 'New Price Set', 'access CiviMember,administer CiviCRM', '', @customizeID, '1', NULL, @extensionsWeight );
+    ( {$domainID}, 'civicrm/admin/price&reset=1&action=add', '{ts escape="sql" skip="true"}New Price Set{/ts}', 'New Price Set', 'access CiviMember,administer CiviCRM', '', @customizeID, '1', NULL, @extensionsWeight ),
+    ( {$domainID}, 'civicrm/admin/price&reset=1',            '{ts escape="sql" skip="true"}Manage Price Sets{/ts}', 'Manage Price Sets', 'access CiviMember,administer CiviCRM', '', @customizeID, '1', NULL, @extensionsWeight+1 );
    
 
 -- CRM-8626

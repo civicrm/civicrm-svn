@@ -697,15 +697,20 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         } else {
             $session->set( 'transaction.userID', null );
         }
+
+        $this->_useForMember = $this->get('useForMember');
         
         // store the fact that this is a membership and membership type is selected
         $processMembership = false;
-        if ( CRM_Utils_Array::value( 'selectMembership', $membershipParams ) &&
-             $membershipParams['selectMembership'] != 'no_thanks' ) {
+        if ( ( CRM_Utils_Array::value( 'selectMembership', $membershipParams ) &&
+               $membershipParams['selectMembership'] != 'no_thanks' ) ||
+             $this->_useForMember ) {
             $processMembership = true;
-            //
-            $this->assign( 'membership_assign' , true );
-            $this->set('membershipTypeID' , $this->_params['selectMembership']);
+            
+            if ( !$this->_useForMember ) {
+                $this->assign( 'membership_assign' , true );
+                $this->set('membershipTypeID' , $this->_params['selectMembership']);
+            }
 
             if( $this->_action & CRM_Core_Action::PREVIEW ) {
                 $membershipParams['is_test'] = 1;
@@ -713,11 +718,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             if ( $this->_params['is_pay_later'] ) {
                 $membershipParams['is_pay_later'] = 1;
             }
-        }
-
-        $this->_useForMember = $this->get('useForMember');
-        if ($processMembership == false ) {
-            $processMembership = $this->_useForMember;
         }
 
         if ( $processMembership ) {

@@ -711,7 +711,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $count = CRM_Price_BAO_Set::getMembershipCount($ids);
                 foreach( $count as $id => $occurance ) {
                     if ($occurance > 1) {
-                        $errors['_qf_default'] = ts( 'Select at most one option from each Membership Type.' );
+                        $errors['_qf_default'] = ts( 'Select at most one option associated with the same membership type.' );
                     }
                 }
                 
@@ -729,7 +729,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
 
         // Return error if empty $self->_memTypeSelected
         if ( $priceSetId && empty($errors) && empty($self->_memTypeSelected) ) {
-            $errors['_qf_default'] = ts( 'Select at least one option associated with the membership.' );  
+            $errors['_qf_default'] = ts( 'Select at least one membership option.' );  
         }
 
         if ( !empty($errors) && (count($self->_memTypeSelected) > 1) ) {
@@ -738,7 +738,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $duplicateMemberOfContacts = array_count_values($memberOfContacts);
             foreach( $duplicateMemberOfContacts as $countDuplicate ) {
                 if ($countDuplicate > 1) {
-                    $errors['_qf_default'] = ts( 'Please do not select more than one Membership types of same member of organization.' ); 
+                    $errors['_qf_default'] = ts( 'Please do not select more than one membership associated with the same organization.' ); 
                 }
             }
         }

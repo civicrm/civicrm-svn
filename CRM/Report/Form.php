@@ -522,11 +522,11 @@ class CRM_Report_Form extends CRM_Core_Form {
                     if ( CRM_Utils_Array::value( 'default', $field ) ) {
                         $order_by = array(
                                           'column'  => $fieldName,
-                            'order'   => ( $field['default_order'] ? $field['default_order'] : 'ASC' ),
-                            'section' => $field['default_is_section'] ? 1 : 0
-                        );
+                                          'order'   => CRM_Utils_Array::value( 'default_order', $field, 'ASC' );
+                                          'section' => CRM_Utils_Array::value( 'default_is_section', $field, 0 );
+                                          );
 
-                        if ( $field['default_weight'] ) {
+                        if ( CRM_Utils_Array::value( 'default_weight', $field ) ) {
                             $this->_defaults['order_bys'][ (int) $field['default_weight']] = $order_by;
                         } else {
                             array_unshift( $this->_defaults['order_bys'], $order_by);

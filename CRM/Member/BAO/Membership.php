@@ -1459,13 +1459,8 @@ AND civicrm_membership.is_test = %2";
 	            CRM_Member_BAO_MembershipLog::add( $logParams, CRM_Core_DAO::$_nullArray );
 	            
                 if ( CRM_Utils_Array::value( 'contributionRecurID', $form->_params ) ) {
-                    // just set contribution_recur_id, rest remains same.
-                    $membership->join_date     = CRM_Utils_Date::isoToMysql( $membership->join_date      );
-                    $membership->start_date    = CRM_Utils_Date::isoToMysql( $membership->start_date     );
-                    $membership->end_date      = CRM_Utils_Date::isoToMysql( $membership->end_date       );
-                    $membership->reminder_date = CRM_Utils_Date::isoToMysql( $membership->reminder_date  );
-                    $membership->contribution_recur_id = $form->_params['contributionRecurID'];
-                    $membership->save();
+                    CRM_Core_DAO::setFieldValue( 'CRM_Member_DAO_Membership', $membership->id, 
+                                                 'contribution_recur_id', $form->_params['contributionRecurID'] );
                 }
 
                 return $membership;
