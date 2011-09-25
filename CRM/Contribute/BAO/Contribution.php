@@ -132,11 +132,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
         $contribution->copyValues($params);
         
         $contribution->id        = CRM_Utils_Array::value( 'contribution', $ids );
-
-        // also add financial_trxn details as part of fix for CRM-4724
-        $contribution->trxn_result_code  = CRM_Utils_Array::value('trxn_result_code',  $params );
-        $contribution->payment_processor = CRM_Utils_Array::value('payment_processor', $params );
-                                    
+        
         require_once 'CRM/Utils/Rule.php';
         if (!CRM_Utils_Rule::currencyCode($contribution->currency)) {
             require_once 'CRM/Core/Config.php';
@@ -146,6 +142,13 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
 
         $result = $contribution->save();
 
+        // Add financial_trxn details as part of fix for CRM-4724
+        $contribution->trxn_result_code  = CRM_Utils_Array::value('trxn_result_code',  $params );
+        $contribution->payment_processor = CRM_Utils_Array::value('payment_processor', $params );
+
+        // Add soft_contribution details as part of fix for CRM-8908
+        $contribution->soft_credit_to  = CRM_Utils_Array::value('soft_credit_to',  $params );
+        
         // reset the group contact cache for this group
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::remove( );

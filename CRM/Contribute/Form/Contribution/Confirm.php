@@ -1053,11 +1053,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 $contribParams['id'] = $contribID;
             }
         }
-        foreach ( array ('pcp_display_in_roll', 'pcp_roll_nickname', 'pcp_personal_note' ) as $val ) {
-            if ( CRM_Utils_Array::value( $val, $params ) ) {
-                $contribSoftParams[$val] = $params[$val];
-            }
-        }
         
         require_once 'CRM/Contribute/BAO/Contribution.php';
         
@@ -1071,22 +1066,17 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $contribParams['non_deductible_amount'] = trim(CRM_Utils_Money::format($contribParams['non_deductible_amount'], ' '));
         $contribParams['total_amount']          = trim(CRM_Utils_Money::format($contribParams['total_amount'], ' '));
 
-        //add contribution record
-        $contribution = CRM_Contribute_BAO_Contribution::add( $contribParams, $ids );
-        
-        // process price set, CRM-5095
-        if ( $contribution->id && $form->_priceSetId ) {
-            require_once 'CRM/Contribute/Form/AdditionalInfo.php';
-            CRM_Contribute_Form_AdditionalInfo::processPriceSet( $contribution->id, $form->_lineItem );
-        }
-        
-        //add soft contribution due to pcp or Submit Credit / Debit Card Contribution by admin.
-        if ( CRM_Utils_Array::value( 'pcp_made_through_id', $params ) || CRM_Utils_Array::value( 'soft_credit_to', $params ) ) { 
-            $contribSoftParams['contribution_id'] = $contribution->id;
-                       
-            $contribSoftParams['amount']          = $params['amount'];
+        // Prepare soft contribution due to pcp or Submit Credit / Debit Card Contribution by admin.
+        if ( CRM_Utils_Array::value( 'pcp_made_through_id', $params ) ||
+             CRM_Utils_Array::value( 'soft_credit_to', $params ) ) { 
+            $contribSoftParams = array();
+            foreach ( array ('pcp_display_in_roll', 'pcp_roll_nickname', 'pcp_personal_note', 'amount') as $val ) {
+                if ( CRM_Utils_Array::value( $val, $params ) ) {
+                    $contribSoftParams[$val] = $params[$val];
+                }
+            }
 
-            //if its due to pcp
+            // if its due to pcp
             if ( CRM_Utils_Array::value( 'pcp_made_through_id', $params ) ) {
                 $contribSoftParams['pcp_id']          = $params['pcp_made_through_id'];
                 $contribSoftParams['contact_id']      = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP', 
@@ -1095,12 +1085,29 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             } else {
                 $contribSoftParams['contact_id'] = CRM_Utils_Array::value( 'soft_credit_to', $params );
             }
-            
+
+            // Pass these details onto with the contribution to make them
+            // available at hook_post_process, CRM-8908
+            $contribParams['soft_credit_to'] = $contribSoftParams['contact_id'];
+        }
+        
+        //add contribution record
+        $contribution =& CRM_Contribute_BAO_Contribution::add( $contribParams, $ids );
+        
+        // process price set, CRM-5095
+        if ( $contribution->id && $form->_priceSetId ) {
+            require_once 'CRM/Contribute/Form/AdditionalInfo.php';
+            CRM_Contribute_Form_AdditionalInfo::processPriceSet( $contribution->id, $form->_lineItem );
+        }
+        
+        // Add soft contribution due to pcp or Submit Credit / Debit Card Contribution by admin.
+        if ( $contribSoftParams ) { 
+            $contribSoftParams['contribution_id'] = $contribution->id;
             $softContribution = CRM_Contribute_BAO_Contribution::addSoftContribution( $contribSoftParams );
         }
 
         //handle pledge stuff.
-        if ( !CRM_Utils_Array::value( 'separate_membership_payment', $form->_params ) &&
+        if ( ! CRM_Utils_Array::value( 'separate_membership_payment', $form->_params ) &&
              CRM_Utils_Array::value('pledge_block_id', $form->_values ) && 
              ( CRM_Utils_Array::value('is_pledge', $form->_params ) ||
                CRM_Utils_Array::value('pledge_id', $form->_values ) ) ) {
