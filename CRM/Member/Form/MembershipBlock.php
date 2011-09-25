@@ -44,6 +44,11 @@ require_once 'CRM/Member/BAO/Membership.php';
 class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPage 
 {
     /**
+     * store membership price set id
+     */
+    protected $_memPriceSetId = null;
+    
+    /**
      * This function sets the default values for the form. Note that in edit/view mode
      * the default values are retrieved from the database
      *
@@ -78,8 +83,10 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             $this->assign('membershipBlockId', $defaults['id']);
         }
         require_once 'CRM/Price/BAO/Set.php';
-        if ( $this->_id && ($priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $this->_id )) ) {
-            $defaults['member_price_set_id'] = $priceSetId;
+        if ( $this->_id &&
+           ( $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $this->_id, 3 )) ) {
+           $defaults['member_price_set_id'] = $priceSetId;
+           $this->_memPriceSetId = $priceSetId; 
         }
 
         return $defaults;
@@ -251,7 +258,6 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
     {
         // get the submitted form values.
         $params = $this->controller->exportValues( $this->_name );
-
         if ( $params['membership_type'] ) {
             // we do this in case the user has hit the forward/back button
             require_once 'CRM/Member/DAO/MembershipBlock.php';
@@ -294,10 +300,12 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             $dao->copyValues($params);
             $dao->save();            
            
-            if ( $priceSetID ) {
+            if ( $priceSetID && $params['is_active'] ) {
                 CRM_Price_BAO_Set::addTo( 'civicrm_contribution_page', $this->_id, $priceSetID );
             } else {
-                CRM_Price_BAO_Set::removeFrom( 'civicrm_contribution_page', $this->_id );
+                if ( $this->_memPriceSetId ) {
+                    CRM_Price_BAO_Set::removeFrom( 'civicrm_contribution_page', $this->_id );
+                }
             }
 
         }
