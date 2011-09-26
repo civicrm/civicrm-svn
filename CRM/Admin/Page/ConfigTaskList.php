@@ -51,7 +51,7 @@ class CRM_Admin_Page_ConfigTaskList extends CRM_Core_Page {
                                               false, null, false );
 
         $destination = urlencode( $destination );
-        $this->assign( 'civicrmDestination', $destination );
+        $this->assign( 'destination', $destination );
 
         require_once 'CRM/Core/OptionValue.php';
         CRM_Core_OptionValue::getValues( array( 'name' => 'from_email_address'), $optionValue );
