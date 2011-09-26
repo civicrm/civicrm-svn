@@ -1134,7 +1134,7 @@ AND civicrm_membership.is_test = %2";
         $membershipTypeID = $membershipParams['selectMembership'];
         $membershipDetails = self::buildMembershipTypeValues( $form, $membershipTypeID );
         
-        $form->assign( 'membership_name', $membershipDetails['name'] );
+        $form->assign( 'membership_name', CRM_Utils_Array::value( 'name', $membershipDetails ) );
 
         $minimumFee = CRM_Utils_Array::value( 'minimum_fee', $membershipDetails );
         
@@ -1145,7 +1145,7 @@ AND civicrm_membership.is_test = %2";
         } else {
             $paymentDone  = true ;
             $params['amount'] = $minimumFee;
-            $contributionTypeId = $membershipDetails['contribution_type_id'];
+            $contributionTypeId = CRM_Utils_Array::value( 'contribution_type_id', $membershipDetails );
             if (!$contributionTypeId) {
                 $contributionTypeId = $membershipParams['contribution_type_id'];
             }
@@ -1177,7 +1177,7 @@ AND civicrm_membership.is_test = %2";
         
         
         $memBlockDetails    = CRM_Member_BAO_Membership::getMembershipBlock( $form->_id );
-        if ( $memBlockDetails['is_separate_payment']  && ! $paymentDone ) {
+        if ( CRM_Utils_Array::value( 'is_separate_payment', $memBlockDetails )  && ! $paymentDone ) {
             require_once 'CRM/Contribute/DAO/ContributionType.php';
             $contributionType = new CRM_Contribute_DAO_ContributionType( );
             $contributionType->id = $membershipDetails['contribution_type_id']; 
@@ -1248,7 +1248,7 @@ AND civicrm_membership.is_test = %2";
             }
         }
         
-        $index = $memBlockDetails['is_separate_payment'] ? 2 : 1;
+        $index = CRM_Utils_Array::value( 'is_separate_payment', $memBlockDetails ) ? 2 : 1;
 
         if ( ! CRM_Utils_Array::value( $index, $errors ) ) {
             if ( CRM_Utils_Array::value( 'member_campaign_id', $membershipParams['onbehalf'] ) ) {

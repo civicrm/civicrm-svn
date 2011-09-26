@@ -40,6 +40,11 @@ require_once 'CRM/Contribute/Form/ContributionBase.php';
  * form for thank-you / success page - 3rd step of online contribution process
  */
 class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_ContributionBase {
+    /**
+     * membership price set status
+     *
+     */
+    public $_useForMember;
 
     /**
      * Function to set variables up before form is built

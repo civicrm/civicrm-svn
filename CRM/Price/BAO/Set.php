@@ -583,7 +583,8 @@ WHERE  id = %1";
 
         require_once 'CRM/Price/BAO/LineItem.php';
         foreach ( $fields as $id => $field ) {
-            if ( empty( $params["price_{$id}"] ) && $params["price_{$id}"] == null ) {
+            if ( !CRM_Utils_Array::value( "price_{$id}", $params ) || 
+                 ( empty( $params["price_{$id}"] ) && $params["price_{$id}"] == null ) ) {
                 // skip if nothing was submitted for this field
                 continue;
             }
