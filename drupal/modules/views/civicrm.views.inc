@@ -1643,11 +1643,17 @@ function civicrm_views_data() {
 
                                                  'filter' => array(
                                                                    'handler' => 'civicrm_handler_filter_datetime',
+                                                                   'is date' => TRUE,
                                                                    ),
 
                                                  'sort' => array(
                                                                  'handler' => 'civicrm_handler_sort_date',
                                                                  ),
+                                                 'argument' => array (
+                                                                     'handler' => 'date_views_argument_handler',
+                                                                     'empty field name' => t('Undated'),
+                                                                     'is date' => TRUE,
+                                                                     ),
                                                  );
 
     civicrm_views_add_date_arguments($data['civicrm_event'],array('title' =>'Start Date',
@@ -1663,11 +1669,17 @@ function civicrm_views_data() {
 
                                                'filter' => array(
                                                                  'handler' => 'civicrm_handler_filter_datetime',
+                                                                 'is date' => TRUE,
                                                                  ),
 
                                                'sort' => array(
                                                                'handler' => 'civicrm_handler_sort_date',
                                                                ),
+                                               'argument' => array (
+                                                                     'handler' => 'date_views_argument_handler',
+                                                                     'empty field name' => t('Undated'),
+                                                                     'is date' => TRUE,
+                                                                     ),
                                                );
 
     civicrm_views_add_date_arguments($data['civicrm_event'],array('title' =>'End Date',
@@ -1701,11 +1713,17 @@ function civicrm_views_data() {
 
                                                               'filter' => array(
                                                                                 'handler' => 'civicrm_handler_filter_datetime',
+                                                                                'is date' => TRUE,
                                                                                 ),
 
                                                               'sort' => array(
                                                                               'handler' => 'civicrm_handler_sort_date',
                                                                               ),
+                                                              'argument' => array (
+                                                                                  'handler' => 'date_views_argument_handler',
+                                                                                  'empty field name' => t('Undated'),
+                                                                                  'is date' => TRUE,
+                                                                                  ),
                                                               );
 
     civicrm_views_add_date_arguments($data['civicrm_event'],array('title' =>'Registration Start Date',
@@ -1721,11 +1739,17 @@ function civicrm_views_data() {
 
                                                             'filter' => array(
                                                                               'handler' => 'civicrm_handler_filter_datetime',
+                                                                              'is date' => TRUE,
                                                                               ),
 
                                                             'sort' => array(
                                                                             'handler' => 'civicrm_handler_sort_date',
                                                                             ),
+                                                            'argument' => array (
+                                                                                 'handler' => 'date_views_argument_handler',
+                                                                                 'empty field name' => t('Undated'),
+                                                                                 'is date' => TRUE,
+                                                                                 ),
                                                             );
 
     civicrm_views_add_date_arguments($data['civicrm_event'],array('title' =>'Registration End Date',
@@ -1961,11 +1985,17 @@ function civicrm_views_data() {
 
                                                           'filter' => array(
                                                                             'handler' => 'civicrm_handler_filter_datetime',
+                                                                            'is date' => TRUE,
                                                                             ),
 
                                                           'sort' => array(
                                                                           'handler' => 'civicrm_handler_sort_date',
                                                                           ),
+                                                          'argument' => array (
+                                                                                 'handler' => 'date_views_argument_handler',
+                                                                                 'empty field name' => t('Undated'),
+                                                                                 'is date' => TRUE,
+                                                                                 ),
                                                           );
     civicrm_views_add_date_arguments($data['civicrm_participant'],array('title' =>'Register Date',
                                                                         'name' => 'register_date'));
@@ -2253,11 +2283,17 @@ function civicrm_views_data() {
 
                                                           'filter' => array(
                                                                             'handler' => 'civicrm_handler_filter_datetime',
+                                                                            'is date' => TRUE,
                                                                             ),
 
                                                           'sort' => array(
                                                                           'handler' => 'civicrm_handler_sort_date',
                                                                           ),
+                                                          'argument' => array (
+                                                                                 'handler' => 'date_views_argument_handler',
+                                                                                 'empty field name' => t('Undated'),
+                                                                                 'is date' => TRUE,
+                                                                                 ),
                                                           );
 
     civicrm_views_add_date_arguments($data['civicrm_contribution'],array('title' =>'Receive Date',
@@ -2436,11 +2472,17 @@ function civicrm_views_data() {
 
                                                          'filter' => array(
                                                                            'handler' => 'civicrm_handler_filter_datetime',
+                                                                           'is date' => TRUE,
                                                                            ),
 
                                                          'sort' => array(
                                                                          'handler' => 'civicrm_handler_sort_date',
                                                                          ),
+                                                         'argument' => array (
+                                                                              'handler' => 'date_views_argument_handler',
+                                                                              'empty field name' => t('Undated'),
+                                                                              'is date' => TRUE,
+                                                                              ),
                                                          );
     civicrm_views_add_date_arguments($data['civicrm_contribution'],array('title' =>'Cancel Date',
                                                                          'name' => 'cancel_date'));
@@ -2479,11 +2521,17 @@ function civicrm_views_data() {
 
                                                           'filter' => array(
                                                                             'handler' => 'civicrm_handler_filter_datetime',
+                                                                            'is date' => TRUE,
                                                                             ),
 
                                                           'sort' => array(
                                                                           'handler' => 'civicrm_handler_sort_date',
                                                                           ),
+                                                          'argument' => array (
+                                                                              'handler' => 'date_views_argument_handler',
+                                                                              'empty field name' => t('Undated'),
+                                                                              'is date' => TRUE,
+                                                                              ),
                                                           );
     civicrm_views_add_date_arguments($data['civicrm_contribution'],array('title' =>'Receipt Date',
                                                                          'name' => 'receipt_date'));
@@ -2499,11 +2547,17 @@ function civicrm_views_data() {
 
                                                            'filter' => array(
                                                                              'handler' => 'civicrm_handler_filter_datetime',
+                                                                             'is date' => TRUE,
                                                                              ),
 
                                                            'sort' => array(
                                                                            'handler' => 'civicrm_handler_sort_date',
                                                                            ),
+                                                           'argument' => array (
+                                                                               'handler' => 'date_views_argument_handler',
+                                                                               'empty field name' => t('Undated'),
+                                                                               'is date' => TRUE,
+                                                                               ),
                                                            );
     civicrm_views_add_date_arguments($data['civicrm_contribution'],array('title' =>'Thank You Date',
                                                                          'name' => 'thankyou_date'));
@@ -2941,10 +2995,16 @@ function civicrm_views_data() {
 
                                                               'filter' => array(
                                                                                 'handler' => 'civicrm_handler_filter_datetime',
+                                                                                'is date' => TRUE,
                                                                                 ),
 
                                                               'sort' => array(
                                                                               'handler' => 'civicrm_handler_sort_date',
+                                                                              ),
+                                                              'argument' => array (
+                                                                              'handler' => 'date_views_argument_handler',
+                                                                              'empty field name' => t('Undated'),
+                                                                              'is date' => TRUE,
                                                                               ),
                                                               );
     civicrm_views_add_date_arguments($data['civicrm_contribution_recur'],array('title' =>'Recurring Contribution Start Date',
@@ -2960,11 +3020,17 @@ function civicrm_views_data() {
 
                                                                'filter' => array(
                                                                                  'handler' => 'civicrm_handler_filter_datetime',
+                                                                                 'is date' => TRUE,
                                                                                  ),
 
                                                                'sort' => array(
                                                                                'handler' => 'civicrm_handler_sort_date',
                                                                                ),
+                                                               'argument' => array (
+                                                                                   'handler' => 'date_views_argument_handler',
+                                                                                   'empty field name' => t('Undated'),
+                                                                                   'is date' => TRUE,
+                                                                                   ),
                                                                );
     civicrm_views_add_date_arguments($data['civicrm_contribution_recur'],array('title' =>'Recurring Contribution Create Date',
                                                                                'name' => 'create_date'));
@@ -2979,11 +3045,17 @@ function civicrm_views_data() {
 
                                                                  'filter' => array(
                                                                                    'handler' => 'civicrm_handler_filter_datetime',
+                                                                                   'is date' => TRUE,
                                                                                    ),
 
                                                                  'sort' => array(
                                                                                  'handler' => 'civicrm_handler_sort_date',
                                                                                  ),
+                                                                 'argument' => array (
+                                                                                   'handler' => 'date_views_argument_handler',
+                                                                                   'empty field name' => t('Undated'),
+                                                                                   'is date' => TRUE,
+                                                                                   ),
                                                                  );
     civicrm_views_add_date_arguments($data['civicrm_contribution_recur'],array('title' =>'Recurring Contribution Modified Date',
                                                                                'name' => 'modified_date'));
@@ -2998,11 +3070,17 @@ function civicrm_views_data() {
 
                                                                'filter' => array(
                                                                                  'handler' => 'civicrm_handler_filter_datetime',
+                                                                                 'is date' => TRUE,
                                                                                  ),
 
                                                                'sort' => array(
                                                                                'handler' => 'civicrm_handler_sort_date',
                                                                                ),
+                                                               'argument' => array (
+                                                                                   'handler' => 'date_views_argument_handler',
+                                                                                   'empty field name' => t('Undated'),
+                                                                                   'is date' => TRUE,
+                                                                                   ),
                                                                );
     civicrm_views_add_date_arguments($data['civicrm_contribution_recur'],array('title' =>'Recurring Contribution Cancel Date',
                                                                                'name' => 'cancel_date'));
@@ -3017,11 +3095,17 @@ function civicrm_views_data() {
 
                                                             'filter' => array(
                                                                               'handler' => 'civicrm_handler_filter_datetime',
+                                                                              'is date' => TRUE,
                                                                               ),
 
                                                             'sort' => array(
                                                                             'handler' => 'civicrm_handler_sort_date',
                                                                             ),
+                                                            'argument' => array (
+                                                                                   'handler' => 'date_views_argument_handler',
+                                                                                   'empty field name' => t('Undated'),
+                                                                                   'is date' => TRUE,
+                                                                                   ),
                                                             );
     civicrm_views_add_date_arguments($data['civicrm_contribution_recur'],array('title' =>'Recurring Contribution End Date',
                                                                                'name' => 'end_date'));
@@ -3149,11 +3233,17 @@ function civicrm_views_data() {
 
                                                                            'filter' => array(
                                                                                              'handler' => 'civicrm_handler_filter_datetime',
+                                                                                             'is date' => TRUE,
                                                                                              ),
 
                                                                            'sort' => array(
                                                                                            'handler' => 'civicrm_handler_sort_date',
                                                                                            ),
+                                                                            'argument' => array (
+                                                                                                 'handler' => 'date_views_argument_handler',
+                                                                                                 'empty field name' => t('Undated'),
+                                                                                                 'is date' => TRUE,
+                                                                                                 ),
                                                                            );
     civicrm_views_add_date_arguments($data['civicrm_contribution_recur'],array('title' =>'Recurring Contribution Next Date',
                                                                                'name' => 'next_sched_contribution'));
@@ -3191,11 +3281,17 @@ function civicrm_views_data() {
 
                                                                       'filter' => array(
                                                                                         'handler' => 'civicrm_handler_filter_datetime',
+                                                                                        'is date' => TRUE,
                                                                                         ),
 
                                                                       'sort' => array(
                                                                                       'handler' => 'civicrm_handler_sort_date',
                                                                                       ),
+                                                                      'argument' => array (
+                                                                                           'handler' => 'date_views_argument_handler',
+                                                                                           'empty field name' => t('Undated'),
+                                                                                           'is date' => TRUE,
+                                                                                           ),
                                                                       );
     civicrm_views_add_date_arguments($data['civicrm_contribution_recur'],array('title' =>'Recurring Contribution Failure Retry Date',
                                                                                'name' => 'failure_retry_date'));
@@ -3466,11 +3562,17 @@ function civicrm_views_data() {
 
                                                             'filter' => array(
                                                                               'handler' => 'civicrm_handler_filter_datetime',
+                                                                              'is date' => TRUE,
                                                                               ),
 
                                                             'sort' => array(
                                                                             'handler' => 'civicrm_handler_sort_date',
                                                                             ),
+                                                            'argument' => array (
+                                                                                 'handler' => 'date_views_argument_handler',
+                                                                                 'empty field name' => t('Undated'),
+                                                                                 'is date' => TRUE,
+                                                                                 ),
                                                             );
     civicrm_views_add_date_arguments($data['civicrm_activity'],array('title' =>'Scheduled Activity Date',
                                                                      'name' => 'activity_date_time'));
@@ -3896,11 +3998,17 @@ function civicrm_views_data() {
 
                                                         'filter' => array(
                                                                           'handler' => 'civicrm_handler_filter_datetime',
+                                                                          'is date' => TRUE,
                                                                           ),
 
                                                         'sort' => array(
                                                                         'handler' => 'civicrm_handler_sort_date',
                                                                         ),
+                                                        'argument' => array (
+                                                                             'handler' => 'date_views_argument_handler',
+                                                                             'empty field name' => t('Undated'),
+                                                                             'is date' => TRUE,
+                                                                             ),
                                                         );
 
     civicrm_views_add_date_arguments($data['civicrm_relationship'],array('title' =>'Start Date',
@@ -3917,14 +4025,20 @@ function civicrm_views_data() {
 
                                                       'filter' => array(
                                                                         'handler' => 'civicrm_handler_filter_datetime',
+                                                                        'is date' => TRUE,
                                                                         ),
 
                                                       'sort' => array(
                                                                       'handler' => 'civicrm_handler_sort_date',
                                                                       ),
+                                                      'argument' => array (
+                                                                           'handler' => 'date_views_argument_handler',
+                                                                           'empty field name' => t('Undated'),
+                                                                           'is date' => TRUE,
+                                                                           ),
                                                       );
 
-    civicrm_views_add_date_arguments($data['civicrm_replationship'],array('title' =>'AEnd Date',
+    civicrm_views_add_date_arguments($data['civicrm_replationship'],array('title' =>'End Date',
                                                                           'name' => 'end_date'));
     //BOOLEAN : IS RELATIONSHIP ACTIVE
     $data['civicrm_relationship']['is_active'] = array(
@@ -4037,11 +4151,17 @@ function civicrm_views_data() {
                                                                       ),
                                                      'filter' => array(
                                                                        'handler' => 'civicrm_handler_filter_datetime',
+                                                                       'is date' => TRUE,
                                                                        ),
 
                                                      'sort' => array(
                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                      ),
+                                                     'argument' => array (
+                                                                           'handler' => 'date_views_argument_handler',
+                                                                           'empty field name' => t('Undated'),
+                                                                           'is date' => TRUE,
+                                                                           ),
                                                      );
 
     civicrm_views_add_date_arguments($data['civicrm_membership'],array('title' =>'Join Date',
@@ -4058,11 +4178,17 @@ function civicrm_views_data() {
 
                                                       'filter' => array(
                                                                         'handler' => 'civicrm_handler_filter_datetime',
+                                                                        'is date' => TRUE,
                                                                         ),
 
                                                       'sort' => array(
                                                                       'handler' => 'civicrm_handler_sort_date',
                                                                       ),
+                                                      'argument' => array (
+                                                                           'handler' => 'date_views_argument_handler',
+                                                                           'empty field name' => t('Undated'),
+                                                                           'is date' => TRUE,
+                                                                           ),
                                                       );
 
     civicrm_views_add_date_arguments($data['civicrm_membership'],array('title' =>'Start Date',
@@ -4080,11 +4206,17 @@ function civicrm_views_data() {
 
                                                     'filter' => array(
                                                                       'handler' => 'civicrm_handler_filter_datetime',
+                                                                      'is date' => TRUE,
                                                                       ),
 
                                                     'sort' => array(
                                                                     'handler' => 'civicrm_handler_sort_date',
                                                                     ),
+                                                    'argument' => array (
+                                                                         'handler' => 'date_views_argument_handler',
+                                                                         'empty field name' => t('Undated'),
+                                                                         'is date' => TRUE,
+                                                                         ),
                                                     );
 
     civicrm_views_add_date_arguments($data['civicrm_membership'],array('title' =>'End Date',
@@ -4173,10 +4305,16 @@ function civicrm_views_data() {
 
                                                          'filter' => array(
                                                                            'handler' => 'civicrm_handler_filter_datetime',
+                                                                           'is date' => TRUE,
                                                                            ),
 
                                                          'sort' => array(
                                                                          'handler' => 'civicrm_handler_sort_date',
+                                                                         ),
+                                                         'argument' => array (
+                                                                         'handler' => 'date_views_argument_handler',
+                                                                         'empty field name' => t('Undated'),
+                                                                         'is date' => TRUE,
                                                                          ),
                                                          );
 
@@ -5138,6 +5276,7 @@ function civicrm_views_data() {
 
                                                            'argument' => array(
                                                                                'handler' => 'views_handler_argument_date',
+                                                                               'is date' => TRUE,
                                                                                ),
 
                                                            'filter' => array(
@@ -5147,6 +5286,11 @@ function civicrm_views_data() {
                                                            'sort' => array(
                                                                            'handler' => 'civicrm_handler_sort_date',
                                                                            ),
+                                                           'argument' => array (
+                                                                                'handler' => 'date_views_argument_handler',
+                                                                                'empty field name' => t('Undated'),
+                                                                                'is date' => TRUE,
+                                                                                ),
                                                            );
 
     civicrm_views_add_date_arguments($data['civicrm_mailing_job'],array('title' =>'Scheduled Date',
@@ -5166,11 +5310,17 @@ function civicrm_views_data() {
 
                                                        'filter' => array(
                                                                          'handler' => 'civicrm_handler_filter_datetime',
+                                                                         'is date' => TRUE,
                                                                          ),
 
                                                        'sort' => array(
                                                                        'handler' => 'civicrm_handler_sort_date',
                                                                        ),
+                                                       'argument' => array (
+                                                                            'handler' => 'date_views_argument_handler',
+                                                                            'empty field name' => t('Undated'),
+                                                                            'is date' => TRUE,
+                                                                            ),
                                                        );
 
     civicrm_views_add_date_arguments($data['civicrm_mailing_job'],array('title' =>'Start Date',
@@ -5190,11 +5340,17 @@ function civicrm_views_data() {
 
                                                      'filter' => array(
                                                                        'handler' => 'civicrm_handler_filter_datetime',
+                                                                       'is date' => TRUE,
                                                                        ),
 
                                                      'sort' => array(
                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                      ),
+                                                     'argument' => array (
+                                                                          'handler' => 'date_views_argument_handler',
+                                                                          'empty field name' => t('Undated'),
+                                                                          'is date' => TRUE,
+                                                                          ),
                                                      );
 
     civicrm_views_add_date_arguments($data['civicrm_mailing_job'],array('title' =>'End Date',
@@ -5743,11 +5899,17 @@ function civicrm_views_data() {
 
                                                     'filter' => array(
                                                                       'handler' => 'civicrm_handler_filter_datetime',
+                                                                      'is date' => TRUE,
                                                                       ),
 
                                                     'sort' => array(
                                                                     'handler' => 'civicrm_handler_sort_date',
                                                                     ),
+                                                    'argument' => array (
+                                                                         'handler' => 'date_views_argument_handler',
+                                                                         'empty field name' => t('Undated'),
+                                                                         'is date' => TRUE,
+                                                                         ),
                                                     );
 
     civicrm_views_add_date_arguments($data['civicrm_campaign'],array('title' =>'Campaign Start Date',
@@ -5768,11 +5930,17 @@ function civicrm_views_data() {
 
                                                   'filter' => array(
                                                                     'handler' => 'civicrm_handler_filter_datetime',
+                                                                    'is date' => TRUE,
                                                                     ),
 
                                                   'sort' => array(
                                                                   'handler' => 'civicrm_handler_sort_date',
                                                                   ),
+                                                  'argument' => array (
+                                                                       'handler' => 'date_views_argument_handler',
+                                                                       'empty field name' => t('Undated'),
+                                                                       'is date' => TRUE,
+                                                                       ),
                                                   );
    
     civicrm_views_add_date_arguments($data['civicrm_campaign'],array('title' =>'Campaign End Date',
@@ -6024,10 +6192,16 @@ function civicrm_views_data() {
                                                                                  ),
                                                                 'filter' => array(
                                                                                   'handler' => 'civicrm_handler_filter_datetime',
+                                                                                  'is date' => TRUE,
                                                                                   ),
                                                                 'sort' => array(
                                                                                 'handler' => 'civicrm_handler_sort_date',
                                                                                 ),
+                                                                'argument' => array (
+                                                                                     'handler' => 'date_views_argument_handler',
+                                                                                     'empty field name' => t('Undated'),
+                                                                                     'is date' => TRUE,
+                                                                                    ),
                                                                 );
 	civicrm_views_add_date_arguments($data['civicrm_grant'], array('title' => 'Application Received Date', 'name' => 'application_received_date'));
 
@@ -6041,10 +6215,16 @@ function civicrm_views_data() {
                                                                      ),
                                                     'filter' => array(
                                                                       'handler' => 'civicrm_handler_filter_datetime',
+                                                                      'is date' => TRUE,
                                                                       ),
                                                     'sort' => array(
                                                                     'handler' => 'civicrm_handler_sort_date',
                                                                     ),
+                                                    'argument' => array (
+                                                                         'handler' => 'date_views_argument_handler',
+                                                                         'empty field name' => t('Undated'),
+                                                                         'is date' => TRUE,
+                                                                         ),
                                                     );
 	civicrm_views_add_date_arguments($data['civicrm_grant'], array('title' => 'Decision Date', 'name' => 'decision_date'));
 
@@ -6058,10 +6238,16 @@ function civicrm_views_data() {
                                                                            ),
                                                           'filter' => array(
                                                                             'handler' => 'civicrm_handler_filter_datetime',
+                                                                            'is date' => TRUE,
                                                                             ),
                                                           'sort' => array(
                                                                           'handler' => 'civicrm_handler_sort_date',
                                                                           ),
+                                                          'argument' => array (
+                                                                               'handler' => 'date_views_argument_handler',
+                                                                               'empty field name' => t('Undated'),
+                                                                               'is date' => TRUE,
+                                                                              ),
                                                           );
 	civicrm_views_add_date_arguments($data['civicrm_grant'], array('title' => 'Money Transfer Date', 'name' => 'money_transfer_date'));
 
@@ -6075,10 +6261,16 @@ function civicrm_views_data() {
                                                                       ),
                                                      'filter' => array(
                                                                        'handler' => 'civicrm_handler_filter_datetime',
+                                                                       'is date' => TRUE,
                                                                        ),
                                                      'sort' => array(
                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                      ),
+                                                     'argument' => array (
+                                                                          'handler' => 'date_views_argument_handler',
+                                                                          'empty field name' => t('Undated'),
+                                                                          'is date' => TRUE,
+                                                                         ),
                                                      );
 	civicrm_views_add_date_arguments($data['civicrm_grant'], array('title' => 'Report Due Date', 'name' => 'grant_due_date'));
 
@@ -6092,10 +6284,16 @@ function civicrm_views_data() {
                                                                       ),
                                                      'filter' => array(
                                                                        'handler' => 'civicrm_handler_filter_datetime',
+                                                                       'is date' => TRUE,
                                                                        ),
                                                      'sort' => array(
                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                      ),
+                                                     'argument' => array (
+                                                                          'handler' => 'date_views_argument_handler',
+                                                                          'empty field name' => t('Undated'),
+                                                                          'is date' => TRUE,
+                                                                         ),
                                                      );
 	civicrm_views_add_date_arguments($data['civicrm_grant'], array('title' => 'Report Due Date', 'name' => 'grant_due_date'));
 
