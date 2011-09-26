@@ -986,8 +986,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $$dateVariable = CRM_Utils_Date::processDate( $formValues[$dateField] );
         }
 
-        $calcDates = CRM_Member_BAO_MembershipType::getDatesForMembershipType($params['membership_type_id'],
-                                                                              $joinDate, $startDate, $endDate);
         $dates = array( 'join_date',
                         'start_date',
                         'end_date',
@@ -1062,7 +1060,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             }
             
             if ( CRM_Utils_Array::value( 'send_receipt', $formValues ) ) {
-                $params['receipt_date'] = $params['receive_date'];
+                $params['receipt_date'] = CRM_Utils_Array::value('receive_date',  $params);
             }
             
             //insert contribution type name in receipt.
@@ -1440,10 +1438,10 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             }
             $this->assign( 'module', 'Membership' );
             $this->assign( 'contactID', $this->_contactID );
-            $this->assign( 'membershipID', $params['membership_id'] );
+            $this->assign( 'membershipID', CRM_Utils_Array::value('membership_id', $params) );
             $this->assign( 'contributionID', isset($contribution)? $contribution->id : null );
             $this->assign('receiptType', 'membership signup');
-            $this->assign( 'receive_date', $params['receive_date'] );            
+            $this->assign( 'receive_date', CRM_Utils_Array::value('receive_date', $params) );            
             $this->assign( 'formValues', $formValues );
 
             if ( empty($lineItem) ) {
