@@ -74,13 +74,13 @@ function civicrm_views_data() {
     require_once 'CRM/Contact/BAO/Contact.php';
     require_once 'CRM/Event/BAO/Query.php';
     require_once 'components/civicrm.core.inc';
+
+    // Get list of enabled CiviCRM components
+    $enabled = CRM_Core_Component::getEnabledComponents();
     
     $data = array();
     // Load Core CiviCRM data
     _civicrm_core_data ($data, $enabled);
-
-    // Get list of enabled CiviCRM components
-    $enabled = CRM_Core_Component::getEnabledComponents();
     
     // Load enabled optional components
     if( isset($enabled['CiviCampaign']) ) {
