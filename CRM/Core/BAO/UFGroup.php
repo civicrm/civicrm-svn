@@ -1410,6 +1410,10 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $ufGroups[$dao->id]['is_reserved'] = $dao->is_reserved;
         }
 
+        // Allow other modules to alter/override the UFGroups.
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::buildUFGroupsForModule( $moduleName, $ufGroups );
+        
         return $ufGroups;
     }
     

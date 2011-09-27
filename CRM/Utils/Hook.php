@@ -753,4 +753,19 @@ abstract class CRM_Utils_Hook {
                                            'civicrm_searchColumns' );
     }
 
+    /** 
+     * This hook is called when uf groups are being built for a module.
+     * 
+     * @param string $moduleName module name.
+     * @param array $ufGroups array of ufgroups for a module.
+     *  
+     * @return null
+     * @access public 
+     */
+    static function buildUFGroupsForModule( $moduleName, &$ufGroups ) {
+        return self::singleton( )->::invoke( 2, $moduleName, $ufGroups,
+                                             self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                             'civicrm_buildUFGroupsForModule' );
+    }
+    
 }
