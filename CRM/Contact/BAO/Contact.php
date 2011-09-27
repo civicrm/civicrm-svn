@@ -2177,11 +2177,13 @@ UNION
 
         case 'rel':
             require_once 'CRM/Contact/BAO/Relationship.php';
-            return count( CRM_Contact_BAO_Relationship::getRelationship( $contactId ) );
+            return  CRM_Contact_BAO_Relationship::getRelationship( $contactId,
+                                                                   CRM_Contact_BAO_Relationship::CURRENT,
+                                                                   0, 1 );
             
         case 'group':
             require_once 'CRM/Contact/BAO/GroupContact.php';
-            return CRM_Contact_BAO_GroupContact::getContactGroup( $contactId, null, null, true );
+            return CRM_Contact_BAO_GroupContact::getContactGroup( $contactId, "Added", null, true );
             
         case 'log' :
             require_once 'CRM/Core/BAO/Log.php';
@@ -2200,7 +2202,7 @@ UNION
             
         case 'membership' :
             require_once 'CRM/Member/BAO/Membership.php';
-            return CRM_Member_BAO_Membership::getContactMembershipCount( $contactId );
+            return CRM_Member_BAO_Membership::getContactMembershipCount( $contactId, true );
             
         case 'participant' :
             require_once 'CRM/Event/BAO/Participant.php';

@@ -2011,13 +2011,18 @@ FROM   civicrm_membership_type
      * Function to get membership record count for a Contact
      *
      * @param int $contactId Contact ID
-     * 
+     * @param boolean $activeOnly 
      * @return int count of membership records
      * @access public
      * @static
      */
-    static function getContactMembershipCount( $contactID ) {
+    static function getContactMembershipCount( $contactID, $activeOnly = false ) {
         $query = "SELECT count(*) FROM civicrm_membership WHERE civicrm_membership.contact_id = {$contactID} AND civicrm_membership.is_test = 0 ";
+
+        // CRM-6627, all status below 3 (active, pending, grace) are considered active
+        if ( $activeOnly ) {
+            $query .= " and status_id <= 3";
+        }
         return CRM_Core_DAO::singleValueQuery( $query );
     }
    
