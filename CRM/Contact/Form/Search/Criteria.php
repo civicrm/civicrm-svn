@@ -377,6 +377,12 @@ class CRM_Contact_Form_Search_Criteria {
         $relStatusOption  = array( ts('Active '), ts('Inactive '), ts('All') );
         $form->addRadio( 'relation_status', ts( 'Relationship Status' ), $relStatusOption);
         $form->setDefaults(array('relation_status' => 0));
+
+        //add the target group
+        if ( $form->_group ) {
+            $form->add( 'select', 'relation_target_group',  ts( 'Target Contact in Group' ), $form->_group, false, 
+                array( 'id' => 'relation_target_group',  'multiple'=> 'multiple', 'title' => ts('- select -') ) );
+        }
         
         // add all the custom  searchable fields
         require_once 'CRM/Core/BAO/CustomGroup.php';

@@ -2409,11 +2409,15 @@ class CRM_Contact_BAO_Query
     function savedSearch( &$values ) 
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
+        return $this->addGroupContactCache( array_keys($value) );
         
+    }
+
+    function addGroupContactCache( $groups, $tableAlias = "civicrm_group_contact_cache", $joinTable = "contact_a" ) {
         $config = CRM_Core_Config::singleton( );
 
         // find all the groups that are part of a saved search
-        $groupIDs = implode( ',', array_keys( $value ) );
+        $groupIDs = implode( ',', $groups );
         $sql = "
 SELECT id, cache_date, saved_search_id, children
 FROM   civicrm_group
@@ -2432,13 +2436,12 @@ WHERE  id IN ( $groupIDs )
                 CRM_Contact_BAO_GroupContactCache::load( $group );
             }
             
-            $gcTable = "`civicrm_group_contact_cache_{$group->id}`";
-            $this->_tables[$gcTable] = $this->_whereTables[$gcTable] =
-                " LEFT JOIN civicrm_group_contact_cache {$gcTable} ON contact_a.id = {$gcTable}.contact_id ";
-            $ssWhere[] = "{$gcTable}.group_id = {$group->id}";
+            $ssWhere[] = "{$tableAlias}.group_id = {$group->id}";
         }
         
         if ( ! empty( $ssWhere ) ) {
+            $this->_tables[$tableAlias] = $this->_whereTables[$tableAlias] =
+                " LEFT JOIN civicrm_group_contact_cache {$tableAlias} ON {$joinTable}.id = {$tableAlias}.contact_id ";
             return implode(' OR ', $ssWhere);
         }
         return null;
@@ -3157,7 +3160,8 @@ WHERE  id IN ( $groupIDs )
         // for relatinship search we always do wildcard
         $targetName = $this->getWhereValues( 'relation_target_name', $grouping );
         $relStatus  = $this->getWhereValues( 'relation_status', $grouping );
-        
+        $targetGroup = $this->getWhereValues( 'relation_target_group', $grouping );
+
         $nameClause = $name = null;
         if ( $targetName ) {
             $name = trim( $targetName[2] );
@@ -3199,8 +3203,39 @@ WHERE  id IN ( $groupIDs )
         $allRelationshipType =array();
         $allRelationshipType = array_merge(  $relTypeInd , $relTypeOrg);
         $allRelationshipType = array_merge( $allRelationshipType, $relTypeHou);
-        $this->_qill[$grouping][]  = "$allRelationshipType[$value]  $name";
+
+        if($nameClause || !$targetGroup) {
+          $this->_qill[$grouping][]  = "$allRelationshipType[$value]  $name";
+        }
         
+
+        //check to see if the target contact is in specified group
+        if( $targetGroup ) {
+            //add contacts from static groups
+            $this->_tables['civicrm_relationship_group_contact'] = $this->_whereTables['civicrm_relationship_group_contact'] = " LEFT JOIN civicrm_group_contact civicrm_relationship_group_contact ON civicrm_relationship_group_contact.contact_id = contact_b.id";
+            $groupWhere[] = "( civicrm_relationship_group_contact.group_id IN  (" . implode(",", $targetGroup[2]) . ") )";
+
+            //add contacts from saved searches
+            $ssWhere = $this->addGroupContactCache( $targetGroup[2], "civicrm_relationship_group_contact_cache", "contact_b");
+
+            //set the group where clause
+            if( $ssWhere ) {
+              $groupWhere[] = "( " . $ssWhere . " )";
+            }
+            $this->_where[$grouping][] = "( " . implode(" OR ", $groupWhere) . " )";
+            
+            //Get the names of the target groups for the qill
+            $groupNames =& CRM_Core_PseudoConstant::group();
+            $qillNames = array( );
+            foreach ( $targetGroup[2] as $groupId ) {
+                if ( array_key_exists( $groupId, $groupNames )  ) {
+                    $qillNames[] = $groupNames[$groupId];
+                }
+            }
+            $this->_qill[$grouping][]  = "$allRelationshipType[$value]  ( " . implode(", ", $qillNames ) ." )";
+        } 
+
+
         //check for active, inactive and all relation status
         $today = date( 'Ymd' );
         if ( $relStatus[2] == 0 ) {

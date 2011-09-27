@@ -36,7 +36,21 @@
                 <div class="description font-italic">
                     {ts}Complete OR partial contact name.{/ts}
                 </div>
-            </td>    
+              <br/>
+              {$form.relation_target_group.label}<br />
+              {$form.relation_target_group.html|crmReplace:class:huge}
+              {literal}
+                <script type="text/javascript">
+                cj("#relation_target_group").crmasmSelect({
+                    addItemTarget: 'bottom',
+                    animate: false,
+                    highlight: true,
+                    sortable: true,
+                    respectParents: true
+                });
+                </script>
+              {/literal}
+            </td>
             <td>
                {$form.relation_status.label}<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('relation_status', 'Advanced'); return false;" >{ts}clear{/ts}</a>)</span><br />
                {$form.relation_status.html}
@@ -44,7 +58,7 @@
          </tr>
          {if $relationshipGroupTree}
          <tr>
-	        <td colspan="3">
+	        <td colspan="4">
 	        {include file="CRM/Custom/Form/Search.tpl" groupTree=$relationshipGroupTree showHideLinks=false}
             </td>
          </tr>
