@@ -722,7 +722,7 @@ abstract class CRM_Utils_Hook {
      * @param array $actions       Array of all Actions in contextmenu.
      * @param int   $contactID     ContactID for the summary page
      */
-    static function summaryActions( &$actions, $contactID ) {
+    static function summaryActions( &$actions, $contactID = NULL ) {
         return self::singleton( )->invoke( 2, $actions, $contactID,
                                            self::$_nullObject, self::$_nullObject, self::$_nullObject,
                                            'civicrm_summaryActions' );

@@ -2391,7 +2391,7 @@ UNION
       * @return array of context menu for logged in user.
       * @static
       */
-     static function contextMenu( $contactId  ) 
+     static function contextMenu( $contactId = NULL  ) 
      {
          $menu = array( 
                        'view'         => array( 'title'        =>  ts( 'View Contact' ),
