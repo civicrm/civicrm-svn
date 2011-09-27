@@ -102,6 +102,8 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                                  'contribution_type_id' => array( 'title'   => ts('Contribution Type'),
                                                                   'default' => true,
                                                                 ),
+                                'contribution_status_id' => array( 'title'   => ts('Contribution Status'),
+                                                                   ),
                                 'payment_instrument_id' => array( 'title'   => ts('Payment Type'),
                                                                             ),
                                  'trxn_id'              => null,
@@ -304,6 +306,7 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
         $entryFound = false;
         $display_flag = $prev_cid = $cid =  0;
         $contributionTypes = CRM_Contribute_PseudoConstant::contributionType( );
+        $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
         $paymentInstruments = CRM_Contribute_PseudoConstant::paymentInstrument( );        
         foreach ( $rows as $rowNum => $row ) {
             if ( !empty($this->_noRepeats) && $this->_outputMode != 'csv' ) {
@@ -349,6 +352,10 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
             }
             if ( $value = CRM_Utils_Array::value( 'civicrm_contribution_contribution_type_id', $row ) ) {
                 $rows[$rowNum]['civicrm_contribution_contribution_type_id'] = $contributionTypes[$value];
+                $entryFound = true;
+            }
+            if ( $value = CRM_Utils_Array::value( 'civicrm_contribution_contribution_status_id', $row ) ) {
+                $rows[$rowNum]['civicrm_contribution_contribution_status_id'] = $contributionStatus[$value];
                 $entryFound = true;
             }
             if ( $value = CRM_Utils_Array::value( 'civicrm_contribution_payment_instrument_id', $row ) ) {
