@@ -214,7 +214,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon
                 CRM_Core_BAO_MessageTemplates::add( $messageTemplate );
             }
         }
-        else if ( $formValues['template'] > 0 ) {
+        else if ( CRM_Utils_Array::value( 'template', $formValues ) > 0 ) {
             if ( CRM_Utils_Array::value( 'bind_format', $formValues ) && $formValues['format_id'] > 0 ) {
                 $query = "UPDATE civicrm_msg_template SET pdf_format_id = {$formValues['format_id']} WHERE id = {$formValues['template']}";
             } else {
@@ -250,8 +250,8 @@ class CRM_Contact_Form_Task_PDFLetterCommon
                 $returnProperties[$value] = 1; 
             }
         }
-                    
-        require_once 'api/v2/utils.php';
+           
+        civicrm_api_include( 'utils', false, 3 );
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
             require_once 'CRM/Core/Smarty/resources/String.php';

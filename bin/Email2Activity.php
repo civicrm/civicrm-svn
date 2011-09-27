@@ -108,9 +108,9 @@ class bin_Email2Activity {
 
     function process( $file ) {
         if ( $this->_context == 'activity' ) {
-            require 'api/v2/Activity.php';
-            $result = civicrm_activity_process_email( $this->_mailDir . DIRECTORY_SEPARATOR . $file,
-                                                      EMAIL_ACTIVITY_TYPE_ID );
+            civicrm_api_include( 'activity', false, 3 );
+            $result = civicrm_api3_activity_process_email( $this->_mailDir . DIRECTORY_SEPARATOR . $file,
+                                                           EMAIL_ACTIVITY_TYPE_ID );
         } elseif ( $this->_context == 'case' ) {
             require_once 'CRM/Case/BAO/Case.php';
             $result = CRM_Case_BAO_Case::recordActivityViaEmail( $this->_mailDir . DIRECTORY_SEPARATOR . $file );

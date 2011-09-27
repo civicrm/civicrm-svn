@@ -123,12 +123,12 @@ class EmailProcessor {
         }
     }
 
-    static function _process ($civiMail,$dao) {
+    static function _process ($civiMail,$dao) 
+    {
+        // 0 = activities; 1 = bounce;
+        $usedfor = $dao->is_default;
         
-		// 0 = activities; 1 = bounce;
-		$usedfor = $dao->is_default;
-		
-		require_once 'CRM/Core/OptionGroup.php';
+        require_once 'CRM/Core/OptionGroup.php';
         $emailActivityTypeId = 
             ( defined('EMAIL_ACTIVITY_TYPE_ID') && EMAIL_ACTIVITY_TYPE_ID )  ? 
             EMAIL_ACTIVITY_TYPE_ID : CRM_Core_OptionGroup::getValue( 'activity_type', 
@@ -165,7 +165,8 @@ class EmailProcessor {
             CRM_Core_Error::fatal( $message );
         }
 
-        civicrm_api_include('mailer', false, 2);
+        civicrm_api_include( 'Mailing', false, 3 );
+        civicrm_api_include( 'MailingGroup', false, 3 );
         require_once 'CRM/Utils/Hook.php';
 
         // process fifty at a time, CRM-4002
@@ -269,7 +270,7 @@ class EmailProcessor {
                                           'hash'           => $hash,
                                           'body'           => $text
                                           );
-                        $result = civicrm_mailer_event_bounce( $params );
+                        $result = civicrm_api3_mailing_event_bounce( $params );
                         break;
 
                     case 'c':
@@ -279,7 +280,7 @@ class EmailProcessor {
                                           'subscribe_id'   => $queue,
                                           'hash'           => $hash
                                           );
-                        civicrm_mailer_event_confirm( $params );
+                        civicrm_api3_mailing_event_confirm( $params );
                         break;
 
                     case 'o':
@@ -288,7 +289,7 @@ class EmailProcessor {
                                           'event_queue_id' => $queue,
                                           'hash'           => $hash
                                           );
-                        $result = civicrm_mailer_event_domain_unsubscribe( $params );
+                        $result = civicrm_api3_mailing_group_event_domain_unsubscribe( $params );
                         break;
 
                     case 'r':
@@ -302,7 +303,7 @@ class EmailProcessor {
                                           'bodyHTML'       => null,
                                           'fullEmail'      => $mail->generate()
                                           );
-                        $result = civicrm_mailer_event_reply( $params );
+                        $result = civicrm_api3_mailing_event_reply( $params );
                         break;
 
                     case 'e':
@@ -312,7 +313,7 @@ class EmailProcessor {
                                           'event_queue_id' => $queue,
                                           'hash'           => $hash
                                           );
-                        $result = civicrm_mailer_event_resubscribe( $params );
+                        $result = civicrm_api3_mailing_group_event_resubscribe( $params );
                         break;
 
                     case 's':
@@ -320,12 +321,12 @@ class EmailProcessor {
                         $params = array ( 'email'          => $mail->from->email,
                                           'group_id'       => $job
                                           );
-                        $result = civicrm_mailer_event_subscribe( $params );
+                        $result = civicrm_api3_mailing_group_event_subscribe( $params );
                         break;
 
                     case 'u':
                     case 'unsubscribe':
-                        $result = civicrm_mailer_event_unsubscribe($job, $queue, $hash);
+                        $result = civicrm_api3_mailing_group_event_unsubscribe($job, $queue, $hash);
                         break;
                     }
 

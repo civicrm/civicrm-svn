@@ -211,7 +211,7 @@ function civicrm_group_roles_civicrm_post( $op, $objectName, $objectId, &$object
             
             //Do we have a Drupal Account?
             require_once 'CRM/Core/BAO/UFMatch.php';
-            $ufID = CRM_Core_BAO_UFMatch::getUFId( $contact_id );
+            $uid = CRM_Core_BAO_UFMatch::getUFId( $contact_id );
             if (!$uid) { //make sure we have an actual user account
                 continue;
             }
