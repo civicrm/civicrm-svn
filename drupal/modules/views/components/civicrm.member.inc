@@ -121,6 +121,7 @@ function _civicrm_member_data (&$data, $enabled) {
                                                                       ),
                                                      'filter' => array(
                                                                        'handler' => 'civicrm_handler_filter_datetime',
+                                                                       'is date' => TRUE,
                                                                        ),
 
                                                      'sort' => array(
@@ -142,6 +143,7 @@ function _civicrm_member_data (&$data, $enabled) {
 
                                                       'filter' => array(
                                                                         'handler' => 'civicrm_handler_filter_datetime',
+                                                                        'is date' => TRUE,
                                                                         ),
 
                                                       'sort' => array(
@@ -164,6 +166,7 @@ function _civicrm_member_data (&$data, $enabled) {
 
                                                     'filter' => array(
                                                                       'handler' => 'civicrm_handler_filter_datetime',
+                                                                      'is date' => TRUE,
                                                                       ),
 
                                                     'sort' => array(
@@ -255,12 +258,9 @@ function _civicrm_member_data (&$data, $enabled) {
                                                                           'click sortable' => TRUE,
                                                                           ),
 
-                                                         'argument' => array(
-                                                                             'handler' => 'views_handler_argument_date',
-                                                                             ),
-
                                                          'filter' => array(
                                                                            'handler' => 'civicrm_handler_filter_datetime',
+                                                                           'is date' => TRUE,
                                                                            ),
 
                                                          'sort' => array(

@@ -116,6 +116,7 @@ function _civicrm_grant_data (&$data, $enabled) {
                                                                                  ),
                                                                 'filter' => array(
                                                                                   'handler' => 'civicrm_handler_filter_datetime',
+										  'is date' => TRUE,
                                                                                   ),
                                                                 'sort' => array(
                                                                                 'handler' => 'civicrm_handler_sort_date',
@@ -133,6 +134,7 @@ function _civicrm_grant_data (&$data, $enabled) {
                                                                      ),
                                                     'filter' => array(
                                                                       'handler' => 'civicrm_handler_filter_datetime',
+								      'is date' => TRUE,
                                                                       ),
                                                     'sort' => array(
                                                                     'handler' => 'civicrm_handler_sort_date',
@@ -150,6 +152,7 @@ function _civicrm_grant_data (&$data, $enabled) {
                                                                            ),
                                                           'filter' => array(
                                                                             'handler' => 'civicrm_handler_filter_datetime',
+									    'is date' => TRUE,
                                                                             ),
                                                           'sort' => array(
                                                                           'handler' => 'civicrm_handler_sort_date',
@@ -167,6 +170,7 @@ function _civicrm_grant_data (&$data, $enabled) {
                                                                       ),
                                                      'filter' => array(
                                                                        'handler' => 'civicrm_handler_filter_datetime',
+								       'is date' => TRUE,
                                                                        ),
                                                      'sort' => array(
                                                                      'handler' => 'civicrm_handler_sort_date',
@@ -184,6 +188,7 @@ function _civicrm_grant_data (&$data, $enabled) {
                                                                       ),
                                                      'filter' => array(
                                                                        'handler' => 'civicrm_handler_filter_datetime',
+								       'is date' => TRUE,
                                                                        ),
                                                      'sort' => array(
                                                                      'handler' => 'civicrm_handler_sort_date',

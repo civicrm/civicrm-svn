@@ -942,6 +942,10 @@ function _civicrm_core_data (&$data, $enabled) {
                                                              ),
                                              );
 
+    $fields = CRM_Core_DAO_Address::fields( );
+
+    civicrm_views_add_fields( $fields, $data['civicrm_address'], 'civicrm_address');
+
     // CHILLING OUT AT THE CIVICRM_EMAIL TABLE
 
     $data['civicrm_email']['table']['group']  = t('CiviCRM Email');
@@ -1606,6 +1610,7 @@ function _civicrm_core_data (&$data, $enabled) {
 
                                                             'filter' => array(
                                                                               'handler' => 'civicrm_handler_filter_datetime',
+                                                                              'is date' => TRUE,
                                                                               ),
 
                                                             'sort' => array(
@@ -2014,6 +2019,7 @@ function _civicrm_core_data (&$data, $enabled) {
 
                                                         'filter' => array(
                                                                           'handler' => 'civicrm_handler_filter_datetime',
+                                                                          'is date' => TRUE,
                                                                           ),
 
                                                         'sort' => array(
@@ -2035,6 +2041,7 @@ function _civicrm_core_data (&$data, $enabled) {
 
                                                       'filter' => array(
                                                                         'handler' => 'civicrm_handler_filter_datetime',
+                                                                        'is date' => TRUE,
                                                                         ),
 
                                                       'sort' => array(
@@ -2042,7 +2049,7 @@ function _civicrm_core_data (&$data, $enabled) {
                                                                       ),
                                                       );
 
-    civicrm_views_add_date_arguments($data['civicrm_replationship'],array('title' =>'AEnd Date',
+    civicrm_views_add_date_arguments($data['civicrm_replationship'],array('title' =>'End Date',
                                                                           'name' => 'end_date'));
     //BOOLEAN : IS RELATIONSHIP ACTIVE
     $data['civicrm_relationship']['is_active'] = array(

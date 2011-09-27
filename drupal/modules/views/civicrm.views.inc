@@ -200,6 +200,11 @@ function civicrm_views_add_fields( &$fields, &$data, $tableName, &$skipFields = 
  */
 function civicrm_views_add_date_arguments(&$data,$value){
 
+    $data[$value['name']]['argument'] = array(
+                                             'handler' => 'date_views_argument_handler',
+                                             'empty field name' => t('Undated'),
+                                             'is date' => TRUE,
+                                            );
     $data[$value['name'].'_full'] = array(
                                           'title' => $value['title'],
                                           'help' => t('In the form of CCYYMMDD.'),
@@ -248,8 +253,6 @@ function civicrm_views_add_date_arguments(&$data,$value){
                                                               'handler' => 'views_handler_argument_civicrm_week',
                                                               ),
                                           );
-
-
 }
 
 /**
