@@ -57,11 +57,10 @@
    *     Tells Views which fields to expose as Date API fields
    */
    
-  /**
-   * Implementation of hook_views_data()
-   *
-   * Run hook_views_data for active CiviCRM components
-   */
+/**
+ * Implements of hook_views_data().
+ * Run hook_views_data for active CiviCRM components
+ */
 function civicrm_views_data() {
     
     if ( ! civicrm_initialize( ) ) {
@@ -115,24 +114,55 @@ function civicrm_views_data() {
     return $data;
 }
 
-// RETURNS A LINK TO A CIVICRM PATH
+/**
+ * Return link to CiviCRM path
+ *
+ * @param $text
+ *
+ * @param $path
+ *
+ * @param $query
+ *
+ * @return String path to CiviCRM
+ */
 function civicrm_views_href( $text, $path, $query ) {
     civicrm_initialize( );
     require_once 'CRM/Utils/System.php';
     return CRM_Utils_System::href( $text, $path, $query );
 }
 
-// Creates new View fields from CiviCRM fields
+/**
+ * Creates new View fields from CiviCRM fields
+ *
+ * @param $fields
+ *   Array of fields in a table obtained from a DAO fields method for $tableName
+ *
+ * @param $data
+ *   Array returned to hook_views_data
+ *
+ * @param $tableName
+ *   String tabled nam of field whose DAO is returned in $fields
+ *
+ * @param $skipFields
+ *   (optional) Array of fields not to add form the $fields table
+ */
 function civicrm_views_add_fields( &$fields, &$data, $tableName, &$skipFields = NULL ) {
     foreach ( $fields as $name => $value ) {
-        // Only add fields not in $data or $skipFields 
+        // Only add fields not in $data or $skipFields and has a ['title']
         if ( isset($value['custom_field_id']) ||
              CRM_Utils_Array::value( $name, $skipFields ) ||
              CRM_Utils_Array::value( $name, $data ) ||
+             !isset($value['title']) ||
               ( isset($value['where']) &&
                 substr( $value['where'], 0, strlen( $tableName ) + 1 ) != "{$tableName}." )
             ){
              continue;
+        }
+        // Ensure the field isn't alredy defined in $data using $data[$xyz]['real field'] where $xyz is a field name passed in $data
+        foreach($data as $field => $current) {
+            if (isset($current['real field']) and $current['real field'] == $name) {
+                continue 2;
+            }
         }
         $type = CRM_Utils_Array::value( 'type', $value, 'String' );
         $field_handler = civicrm_get_field_handler  ( $type );
@@ -156,12 +186,17 @@ function civicrm_views_add_fields( &$fields, &$data, $tableName, &$skipFields = 
             civicrm_views_add_date_arguments($data,$value);
         }
     }
-
 }
 
-/*
+/**
  * Function adds 6 date arguments to a date field
  *
+ * @param $data
+ *   Array passed back to hook_views_data()
+ *
+ * @param $value
+ *   Array contains meta data about field from DAO fields function
+ *  
  */
 function civicrm_views_add_date_arguments(&$data,$value){
 
@@ -217,11 +252,32 @@ function civicrm_views_add_date_arguments(&$data,$value){
 
 }
 
+/**
+ * Add Custom Fields to $data array
+ *
+ * @param $data
+ *   Array of fields passed to hook_views_data()
+ *   
+ * @param $entity_type
+ *   String CivicRM entity Type ie "Contact"
+ *
+ * @param $groupID
+ *   Integer Id of the Custom Field Group
+ *
+ * @param $subType
+ *   (optional) Integer Id of the Sub-Type, ie Contact Sub Type
+ *
+ * @param  $style
+ *  unknown
+ *  
+ * @return $data
+ *   Array with the new custom field appended
+ */
 function civicrm_views_custom_data_cache(&$data, $entity_type, $groupID, $subType, $style) {
-    //Feels a bit hacky this next 10 lines but it was the only way I could get getTree to play nice with the data
+    // Feels a bit hacky this next 10 lines but it was the only way I could get getTree to play nice with the data.
     $config = CRM_Core_Config::singleton( );
 
-    // from http://forum.civicrm.org/index.php/topic,17658.msg73901.html#msg73901, CRM-7860
+    // From http://forum.civicrm.org/index.php/topic,17658.msg73901.html#msg73901, CRM-7860.
     $tree = CRM_Core_BAO_CustomGroup::getTree( $entity_type, CRM_Core_DAO::$_nullObject, null, $groupID, $subType, null );
 
     $jointable = null;
@@ -267,7 +323,7 @@ function civicrm_views_custom_data_cache(&$data, $entity_type, $groupID, $subTyp
 
         $data[$currentgroup['table_name']]['table']['group']  = t('CiviCRM Custom: ') . $currentgroup['title'];
 
-        // Join this table to Contacts
+        // Join this table to Contacts.
         $data[$currentgroup['table_name']]['table']['join'] =
             array(
                   // Directly links to join table.
@@ -282,10 +338,9 @@ function civicrm_views_custom_data_cache(&$data, $entity_type, $groupID, $subTyp
         if($jointable != 'civicrm_event' && $jointable != 'civicrm_activity' && $jointable != 'civicrm_contribution'){
           $data[$currentgroup['table_name']]['table']['join']['users'] = 
             array(
-                              'left_table' => $jointable,
-															'left_field' => 'id',
-  														'field' => 'entity_id',
-
+                  'left_table' => $jointable,
+		  'left_field' => 'id',
+  		  'field' => 'entity_id',
                   );
         }
         $currentgroupfields = $currentgroup['fields'];
@@ -298,7 +353,7 @@ function civicrm_views_custom_data_cache(&$data, $entity_type, $groupID, $subTyp
         foreach ($currentgroupfields as $key => $currentfield) {
             if (empty($currentfield['help_post'])) { 
                 $currentfield['help_post'] = t('Custom Data Field');
-            } // Populates help text so there isn't miles of error: Missing Help
+            } // Populates help text so there aren't     miles of error: Missing Help
 
 
             if ( in_array( $currentfield['html_type'],
@@ -349,8 +404,15 @@ function civicrm_views_custom_data_cache(&$data, $entity_type, $groupID, $subTyp
 }
 
 
-//Getting the proper handlers by checking against the field's data_type
-
+/**
+ * Acquire the proper field handler by checking against the field's data_type as defined by CRM_Utils_Type.
+ *
+ * @param $type
+ *   A String containing the field type
+ *
+ * @return
+ *   An array containing the handler name and any extra settings
+ */
 function civicrm_get_field_handler($type) {
     switch ($type) {
     case "String":
@@ -392,6 +454,16 @@ function civicrm_get_field_handler($type) {
     }
 }
 
+
+/**
+ * Acquire the proper argument handler by checking against the field's data_type as defined by CRM_Utils_Type.
+ *
+ * @param $type
+ *   A String containing the field type
+ *
+ * @return
+ *   An array containing the handler name and any extra settings
+ */
 function civicrm_get_argument_handler($type) {
     switch ($type) {
     case "String":
@@ -422,6 +494,16 @@ function civicrm_get_argument_handler($type) {
     }
 }
 
+
+/**
+ * Acquire the proper filter handler by checking against the field's data_type as defined by CRM_Utils_Type.
+ *
+ * @param $type
+ *   A String containing the field type
+ *
+ * @return
+ *   An array containing the handler name and any extra settings
+ */
 function civicrm_get_filter_handler($type) {
     switch ($type) {
     case "String":
@@ -459,6 +541,16 @@ function civicrm_get_filter_handler($type) {
     }
 }
 
+
+/**
+ * Acquire the proper sort handler by checking against the field's data_type as defined by CRM_Utils_Type.
+ *
+ * @param $type
+ *   A String containing the field type
+ *
+ * @return
+ *   An array containing the handler name and any extra settings
+ */
 function civicrm_get_sort_handler($type) {
     switch ($type) {
     case "String":
@@ -487,7 +579,9 @@ function civicrm_get_sort_handler($type) {
     }
 }
 
-//Implementation of hook_date_views_fields().
+/**
+ * Implements hook_date_views_fields().
+ */
 function civicrm_date_views_fields($field) {
     $values = array(
                     // The type of date: DATE_UNIX, DATE_ISO, DATE_DATETIME.
@@ -522,7 +616,7 @@ function civicrm_date_views_fields($field) {
 
 
 /**
- * Implement hook_date_api_tables().
+ * Implements hook_date_api_tables().
  */
 function civicrm_date_views_tables() {
     return array('civicrm_mailing_job',
