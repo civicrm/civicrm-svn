@@ -1,8 +1,5 @@
 <?php
 /**
- * @version		$Id: acl.php 19526 2010-11-17 13:56:39Z chdemko $
- * @package		Joomla
- * @subpackage	JFramework
  * @copyright	Copyright (C) 2005 - 2011 CiviCRM LLC All rights reserved.
  * @license		GNU Affero General Public License version 2 or later
  */
@@ -13,13 +10,13 @@ defined('_JEXEC') or die;
 jimport('joomla.plugin.plugin');
 
 /**
- * CiviCRM ACL Plugin
+ * CiviCRM User Management Plugin
  *
  * @package		Joomla
  * @subpackage	JFramework
  * @since		1.6
  */
-class plgCiviCRMUser extends JPlugin
+class plgUserCivicrm extends JPlugin
 {
 
 	/* resetNavigation after user is saved
@@ -57,20 +54,6 @@ class plgCiviCRMUser extends JPlugin
 		
 	}
 	
-	// Reset CiviCRM user/contact navigation cache
-	public function civicrmResetNavigation() {
-	
-		// Instantiate CiviCRM
-		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
-		require_once 'CRM/Core/Config.php';
-		$civiConfig = CRM_Core_Config::singleton( );
-		
-		// Reset Navigation
-		require_once 'CRM/Core/BAO/Navigation.php';
-        CRM_Core_BAO_Navigation::resetNavigation( );
-		
-	}
-	
 	/* delete uf_match record after user is deleted
 	 * Method is called after user is deleted from the database
 	 *
@@ -93,10 +76,19 @@ class plgCiviCRMUser extends JPlugin
 		
 		// Reset Navigation
 		require_once 'CRM/Core/BAO/UFMatch.php';
-        CRM_Core_BAO_UFMatch::deleteUser( $user['id'] );
-		
+        CRM_Core_BAO_UFMatch::deleteUser( $user['id'] );		
 	}
 
-}
+	// Reset CiviCRM user/contact navigation cache
+    public function civicrmResetNavigation() {
+        // Instantiate CiviCRM
+        require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
+        require_once 'CRM/Core/Config.php';
+        $config =& CRM_Core_Config::singleton( );
 
-?>
+        // Reset Navigation
+        require_once 'CRM/Core/BAO/Navigation.php';
+        CRM_Core_BAO_Navigation::resetNavigation( );
+    }
+
+}

@@ -84,6 +84,35 @@ class Com_CiviCRMInstallerScript {
   </table>
   </center>';
         }
+        
+        //install and enable plugins
+        $manifest  = $parent->get("manifest");
+        $parent    = $parent->getParent();
+        $source    = $parent->getPath("source");
+        $installer = new JInstaller();
+		$plgArray  = array();
+        
+        foreach($manifest->plugins->plugin as $plugin) {		
+            $attributes = $plugin->attributes();
+            $plg        = $source . DS . $attributes['folder'].DS.$attributes['plugin'];
+            $installer->install($plg);
+            $plgArray[] = "'".$attributes['plugin']."'";
+        }
+		
+        $db              = JFactory::getDbo();
+        $tableExtensions = $db->nameQuote("#__extensions");
+        $columnElement   = $db->nameQuote("element");
+        $columnType      = $db->nameQuote("type");
+        $columnEnabled   = $db->nameQuote("enabled");
+        $plgList         = implode( ',', $plgArray );
+
+        // Enable plugins
+        $db->setQuery( "UPDATE $tableExtensions
+                        SET $columnEnabled = 1
+                        WHERE $columnElement IN ($plgList)
+                        AND $columnType = 'plugin'"
+                      );
+        $db->query();
     
         echo $content;
     }

@@ -14,8 +14,6 @@
 	  <folder>views</folder>
 	  <folder>elements</folder>
   </files>
-  <files folder="elements">
-  </files>
   <install>
     <queries>
     </queries>
@@ -46,4 +44,7 @@
       <language tag="en-GB">language/en-GB/en-GB.com_civicrm.sys.ini</language>
     </languages>
   </administration>
+  <plugins>
+      <plugin folder="admin/civicrm/joomla/plugins" plugin="civicrm" name="CiviCRM User Management" group="user" />
+  </plugins>
 </extension>
