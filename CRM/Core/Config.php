@@ -613,7 +613,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         $this->cleanup( 1 , false );
 
         // clear db caching
-        $config->clearDBCache( );
+        $this->clearDBCache( );
 
         $session = CRM_Core_Session::singleton( );
         $session->reset( 2 );

@@ -50,13 +50,14 @@ class CRM_Upgrade_Incremental_php_FourOne {
     function upgrade_4_1_alpha1( $rev ) {
     	$config = CRM_Core_Config::singleton( );
         if ( in_array( 'CiviCase', $config->enableComponents ) ) {
+            require_once 'CRM/Case/BAO/Case.php';
         	if ( ! CRM_Case_BAO_Case::createCaseViews( ) ) {
                 $template = CRM_Core_Smarty::singleton( );
                 $afterUpgradeMessage = '';
 		        if ( $afterUpgradeMessage = $template->get_template_vars('afterUpgradeMessage') ) {
 		        	$afterUpgradeMessage .= "<br/><br/>";
 		        }
-		        $afterUpgradeMessage .= '<div class="crm-upgrade-case-views-error">' . ts( "Error while creating CiviCase database views. Please create the following views manually before using CiviCase:" );
+		        $afterUpgradeMessage .= '<div class="crm-upgrade-case-views-error" style="background-color: #E43D2B; padding: 10px;">' . ts( "There was a problem creating CiviCase database views. Please create the following views manually before using CiviCase:" );
 		        $afterUpgradeMessage .= '<div class="crm-upgrade-case-views-query"><div>'
 		            . CRM_Case_BAO_Case::createCaseViewsQuery( 'upcoming' ) . '</div><div>'
 		            . CRM_Case_BAO_Case::createCaseViewsQuery( 'recent' ) . '</div>'

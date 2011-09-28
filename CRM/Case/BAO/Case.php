@@ -2939,6 +2939,7 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
     static function createCaseViewsQuery( $section = 'upcoming' )
     {
     	$sql = "";
+        require_once 'CRM/Core/OptionGroup.php';
     	$scheduled_id = CRM_Core_OptionGroup::getValue('activity_status', 'Scheduled', 'name' );
     	switch( $section ) {
     		case 'upcoming':
