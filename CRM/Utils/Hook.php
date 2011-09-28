@@ -763,9 +763,9 @@ abstract class CRM_Utils_Hook {
      * @access public 
      */
     static function buildUFGroupsForModule( $moduleName, &$ufGroups ) {
-        return self::singleton( )->::invoke( 2, $moduleName, $ufGroups,
-                                             self::$_nullObject, self::$_nullObject, self::$_nullObject,
-                                             'civicrm_buildUFGroupsForModule' );
+        return self::singleton( )->invoke( 2, $moduleName, $ufGroups,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_buildUFGroupsForModule' );
     }
     
 }
