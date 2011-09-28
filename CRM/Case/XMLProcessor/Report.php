@@ -474,7 +474,7 @@ WHERE      a.id = %1
                     $value = CRM_Core_BAO_CustomField::getDisplayValue( $dao->$columnName,
                                                                         $typeValue['fieldID'],
                                                                         $options );
-                    
+                    if( $value ){
                     // Note: this is already taken care in getDisplayValue above, but sometimes 
                     // strings like '^A^A' creates problem. So to fix this special case -
                     if ( strstr($value, CRM_Core_DAO::VALUE_SEPARATOR) ) {
@@ -490,7 +490,7 @@ WHERE      a.id = %1
                     } else if ( CRM_Utils_Array::value( 'type', $typeValue ) == 'Link' ) {
                         $value = CRM_Utils_System::formatWikiURL( $value );
                     }
-
+                    }
                     //$typeValue
                     $customGroup[] = array( 'label'  => $typeValue['label'],
                                             'value'  => $value,
