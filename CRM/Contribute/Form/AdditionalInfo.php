@@ -331,19 +331,23 @@ class CRM_Contribute_Form_AdditionalInfo
         // retrieve premium product name and assigned fulfilled
         // date to template
         if ( CRM_Utils_Array::value( 'hidden_Premium', $params ) ) {
-            if (  CRM_Utils_Array::value( $params['product_name'][0], $form->_options ) ) {
-                $params['product_option'] = $form->_options[$params['product_name'][0]][$params['product_name'][1]];
-            }
-            //fix for crm-4584
-            if(!empty($params['product_name'])){
+            if ( isset( $params['product_name'] ) && is_array( $params['product_name'] ) &&
+                 ! empty( $params['product_name'] ) ) {
                 require_once 'CRM/Contribute/DAO/Product.php';
                 $productDAO = new CRM_Contribute_DAO_Product();
                 $productDAO->id = $params['product_name'][0];
                 $productDAO->find(true);
                 $params['product_name'] = $productDAO->name;
                 $params['product_sku']  = $productDAO->sku;
+                     
+                if ( CRM_Utils_Array::value( $params['product_name'][0], $form->_options ) ) {
+                    $params['product_option'] = $form->_options[$params['product_name'][0]][$params['product_name'][1]];
+                }
             }
-            $this->assign('fulfilled_date', CRM_Utils_Date::processDate( $params['fulfilled_date'] ) );
+            
+            if ( CRM_Utils_Array::value( 'fulfilled_date', $params ) ) {
+                $this->assign('fulfilled_date', CRM_Utils_Date::processDate( $params['fulfilled_date'] ) );
+            }
         }
         
         $this->assign( 'ccContribution', $ccContribution );
