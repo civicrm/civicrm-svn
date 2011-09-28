@@ -81,7 +81,7 @@
     <div class="crm-block crm-form-block crm-relationship-form-block">
             {if $action eq 1}
                 <div class="description">
-                {ts}Select the relationship type. Then locate target contact(s) for this relationship by entering a complete or partial name and clicking 'Search'.{/ts}
+                    {ts}Select the relationship type. Then locate target contact(s) for this relationship by entering a partial name and selecting from the dropdown, or clicking 'Search'. If the target contact does not exist, you can create a new contact.{/ts}
                 </div>
             {/if}
             <table class="form-layout-compressed">
