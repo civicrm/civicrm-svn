@@ -138,6 +138,7 @@ class CRM_Report_Form_Instance {
         $defaults['report_header'] = $report_header = "<html>
   <head>
     <title>CiviCRM Report</title>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
     <style type=\"text/css\">@import url({$config->userFrameworkResourceURL}css/print.css);</style>
   </head>
   <body><div id=\"crm-container\">";
