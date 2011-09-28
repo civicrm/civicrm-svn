@@ -205,9 +205,9 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         }
         foreach ($expected as $label => $value) {
             if ( $xpathPrefix ) {
-                $this->verifyText("xpath=//x:table{$tableLocator}/x:tbody/tr/td{$xpathPrefix}[text()='{$label}']/../following-sibling::td", preg_quote( $value ) );
+                $this->verifyText("xpath=//table{$tableLocator}/tbody/tr/td{$xpathPrefix}[text()='{$label}']/../following-sibling::td", preg_quote( $value ) );
             } else {
-                $this->verifyText("xpath=//x:table{$tableLocator}/x:tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote($value));
+                $this->verifyText("xpath=//table{$tableLocator}/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote($value));
             }
         }
     }
@@ -896,11 +896,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     function WebtestAddGroup( ) 
     {
-        $this->open($this->sboxPath . 'civicrm/group/add&reset=1');
+        $this->open($this->sboxPath . 'civicrm/group/add?reset=1');
       
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
-        $this->waitForElementPresent('_qf_Edit_upload');
+        $this->waitForElementPresent('_qf_Edit_upload-bottom');
       
         // Create new group
         $title = substr(sha1(rand()), 0, 7);
@@ -922,7 +922,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->select('visibility', 'value=Public Pages');
       
         // Clicking save.
-        $this->click('_qf_Edit_upload');
+        $this->click('_qf_Edit_upload-bottom');
         $this->waitForPageToLoad('30000');
       
         // Is status message correct?
@@ -1103,4 +1103,13 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         return CiviDBAssert::assertAttributesEquals( $expectedValues, $actualValues );
     }
+    
+    function changeAdminLinks( ){
+        $version = 7;
+        if( $version == 7 ) {
+            $this->open("{$this->sboxPath}admin/people/permissions");
+        } else {
+            $this->open("{$this->sboxPath}admin/user/permissions"); 
+        }   
+    } 
 }

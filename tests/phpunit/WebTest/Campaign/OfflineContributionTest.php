@@ -99,9 +99,9 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         }
         
         // add the required Drupal permission
-        $this->open("{$this->sboxPath}admin/user/permissions");
+        $this->changeAdminLinks();
         $this->waitForElementPresent('edit-submit');
-        $this->check('edit-2-administer-CiviCampaign');
+        $this->check('edit-2-administer-civicampaign');
         $this->click('edit-submit');
         $this->waitForPageToLoad();
         $this->assertTrue($this->isTextPresent('The changes have been saved.'));
@@ -116,7 +116,7 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         }
         
         // Go directly to the URL of the screen that you will be testing
-        $this->open($this->sboxPath . "civicrm/campaign/add&reset=1");
+        $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
 
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
@@ -284,7 +284,7 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
     function pastCampaignsTest( $groupName )
     {
         // Go directly to the URL of the screen that you will be testing
-        $this->open($this->sboxPath . "civicrm/campaign/add&reset=1");
+        $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
         
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
@@ -321,7 +321,14 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         
         $this->assertTrue($this->isTextPresent("Campaign $pastCampaignTitle has been saved."), 
                           "Status message didn't show up after saving campaign!");
-
+        
+        $this->waitForElementPresent( "link=Add Campaign" );
+        
+        $this->waitForElementPresent( "Campaigns" );
+        $this->click( "campaignsSearch" );
+        $this->type( "campaign_title", $pastCampaignTitle );
+        $this->click( "xpath=//div[@class='crm-accordion-body']/table/tbody/tr[4]/td/a[text()='Search']" );
+        
         $this->waitForElementPresent("xpath=//div[@id='campaignList']/div[@id='campaigns_wrapper']/table[@id='campaigns']/tbody//tr/td[text()='$pastCampaignTitle']");
         $url =  explode( 'id=', $this->getAttribute("xpath=//div[@id='campaignList']/div[@id='campaigns_wrapper']/table[@id='campaigns']/tbody//tr/td[text()='$pastCampaignTitle']/../td[13]/span/a[text()='Edit']@href") );
         $campaignId = $url[1];

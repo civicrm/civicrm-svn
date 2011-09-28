@@ -97,9 +97,9 @@ class WebTest_Campaign_OfflineEventRegistrationTest extends CiviSeleniumTestCase
         }
         
         // add the required Drupal permission
-        $this->open("{$this->sboxPath}admin/user/permissions");
+        $this->changeAdminLinks( );
         $this->waitForElementPresent('edit-submit');
-        $this->check('edit-2-administer-CiviCampaign');
+        $this->check('edit-2-administer-civicampaign');
         $this->click('edit-submit');
         $this->waitForPageToLoad();
         $this->assertTrue($this->isTextPresent('The changes have been saved.'));
@@ -114,7 +114,7 @@ class WebTest_Campaign_OfflineEventRegistrationTest extends CiviSeleniumTestCase
         }
         
         // Go directly to the URL of the screen that you will be testing
-        $this->open($this->sboxPath . "civicrm/campaign/add&reset=1");
+        $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
         
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
@@ -267,7 +267,7 @@ class WebTest_Campaign_OfflineEventRegistrationTest extends CiviSeleniumTestCase
     {
         $this->open( $this->sboxPath . 'civicrm/event/manage?reset=1' );
         $this->waitForPageToLoad("30000");
-        $eventId = explode( '_', $this->getAttribute("//div[@id='event_status_id']/div[@class='dataTables_wrapper']/table/tbody/tr@id") );
+        $eventId = explode( '_', $this->getAttribute("//div[@id='event_status_id']/table/tbody/tr@id") );
         return $eventId[1];
     }
   

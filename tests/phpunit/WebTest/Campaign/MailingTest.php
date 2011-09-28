@@ -65,19 +65,12 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
         }
         
         // add the required Drupal permission
-        $this->open("{$this->sboxPath}admin/user/permissions");
+        $this->changeAdminLinks( );
         $this->waitForElementPresent('edit-submit');
-        $this->check('edit-2-administer-CiviCampaign');
+        $this->check('edit-2-administer-civicampaign');
         $this->click('edit-submit');
         $this->waitForPageToLoad();
         $this->assertTrue($this->isTextPresent('The changes have been saved.'));
-        
-        $this->open($this->sboxPath . "civicrm/logout&reset=1");
-        $this->waitForPageToLoad('30000');          
-
-        // Log in as demo user
-        $this->open( $this->sboxPath );
-        $this->webtestLogin( );
         
         // Create new group
         $title = substr(sha1(rand()), 0, 7);
@@ -99,7 +92,7 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad("30000");
         
         // Go directly to the URL of the screen that you will be testing
-        $this->open($this->sboxPath . "civicrm/campaign/add&reset=1");
+        $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
         
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
@@ -161,7 +154,7 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad("30000");
 
         // Go directly to Schedule and Send Mailing form
-        $this->open($this->sboxPath . "civicrm/mailing/send&reset=1");
+        $this->open($this->sboxPath . "civicrm/mailing/send?reset=1");
         $this->waitForElementPresent("_qf_Group_cancel");
               
         //-------select recipients----------
@@ -280,7 +273,7 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
         $this->assertTrue($this->isTextPresent("Members of $groupName"));
         
         // directly send schedule mailing -- not working right now
-        $this->open($this->sboxPath . "civicrm/mailing/queue&reset=1");
+        $this->open($this->sboxPath . "civicrm/mailing/queue?reset=1");
         $this->waitForPageToLoad("300000");
         
         //click report link of created mailing
