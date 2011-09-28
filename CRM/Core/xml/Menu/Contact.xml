@@ -378,4 +378,10 @@
      <page_callback>CRM_Contact_Page_AJAX::relationshipContactTypeList</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
 </item>
+<item>
+    <path>civicrm/contact/view/useradd</path>
+    <path_arguments>cid=%%cid%%</path_arguments>
+    <title>Add User</title>
+    <page_callback>CRM_Contact_Page_View_Useradd</page_callback>
+</item>
 </menu>

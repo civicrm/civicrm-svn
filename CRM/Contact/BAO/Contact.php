@@ -587,7 +587,6 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
      * @param array   $params   (reference ) an assoc array of name/value pairs
      * @param array   $defaults (reference ) an assoc array to hold the name / value pairs
      *                        in a hierarchical manner
-     * @param array   $ids      (reference) the array that holds all the db ids
      * @param boolean $microformat  for location in microformat
      *
      * @return object CRM_Contact_BAO_Contact object

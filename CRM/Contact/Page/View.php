@@ -237,8 +237,14 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
             }
             $this->assign( 'userRecordUrl', $userRecordUrl );
             $this->assign( 'userRecordId' , $uid );
+        } else if ( $config->userFramework == 'Drupal' ||
+                    ( $config->userFramework == 'Joomla' &&
+                      JFactory::getUser()->authorise('core.create', 'com_users') ) ) {
+            $userAddUrl = CRM_Utils_System::url('civicrm/contact/view/useradd',
+                                                'reset=1&action=add&cid=' . $this->_contactId );
+            $this->assign( 'userAddUrl', $userAddUrl );
         }
-    
+
         if ( CRM_Core_Permission::check( 'access Contact Dashboard' ) ) {
             $dashboardURL = CRM_Utils_System::url( 'civicrm/user',
                                                    "reset=1&id={$this->_contactId}" );
