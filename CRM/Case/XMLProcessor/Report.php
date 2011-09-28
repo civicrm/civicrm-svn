@@ -474,22 +474,22 @@ WHERE      a.id = %1
                     $value = CRM_Core_BAO_CustomField::getDisplayValue( $dao->$columnName,
                                                                         $typeValue['fieldID'],
                                                                         $options );
-                    if( $value ){
-                    // Note: this is already taken care in getDisplayValue above, but sometimes 
-                    // strings like '^A^A' creates problem. So to fix this special case -
-                    if ( strstr($value, CRM_Core_DAO::VALUE_SEPARATOR) ) {
-                        $value = trim($value, CRM_Core_DAO::VALUE_SEPARATOR);
-                    }
-                    if ( CRM_Utils_Array::value('type', $typeValue) == 'String' ||
-                         CRM_Utils_Array::value('type', $typeValue) == 'Memo' ) {
-                        $value = $this->redact($value );
-                    } else if ( CRM_Utils_Array::value( 'type', $typeValue ) == 'File' ) {
-                        require_once 'CRM/Core/BAO/File.php';
-                        $tableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_EntityFile', $typeValue, 'entity_table' );
-                        $value     = CRM_Core_BAO_File::attachmentInfo( $tableName, $activityDAO->id );
-                    } else if ( CRM_Utils_Array::value( 'type', $typeValue ) == 'Link' ) {
-                        $value = CRM_Utils_System::formatWikiURL( $value );
-                    }
+                    if ( $value ) {
+                        // Note: this is already taken care in getDisplayValue above, but sometimes 
+                        // strings like '^A^A' creates problem. So to fix this special case -
+                        if ( strstr($value, CRM_Core_DAO::VALUE_SEPARATOR) ) {
+                            $value = trim($value, CRM_Core_DAO::VALUE_SEPARATOR);
+                        }
+                        if ( CRM_Utils_Array::value('type', $typeValue) == 'String' ||
+                            CRM_Utils_Array::value('type', $typeValue) == 'Memo' ) {
+                            $value = $this->redact($value );
+                        } else if ( CRM_Utils_Array::value( 'type', $typeValue ) == 'File' ) {
+                            require_once 'CRM/Core/BAO/File.php';
+                            $tableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_EntityFile', $typeValue, 'entity_table' );
+                            $value     = CRM_Core_BAO_File::attachmentInfo( $tableName, $activityDAO->id );
+                        } else if ( CRM_Utils_Array::value( 'type', $typeValue ) == 'Link' ) {
+                            $value = CRM_Utils_System::formatWikiURL( $value );
+                        }
                     }
                     //$typeValue
                     $customGroup[] = array( 'label'  => $typeValue['label'],
