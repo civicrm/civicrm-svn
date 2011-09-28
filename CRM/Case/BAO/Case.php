@@ -1372,13 +1372,17 @@ GROUP BY cc.id';
             }
         }
         $session = CRM_Core_Session::singleton( );
+        // CRM-8926 If user is not logged in, use the activity creator as userID
+        if ( !( $userID = $session->get( 'userID' ) ) ) {
+            $userID = CRM_Core_DAO::getFieldValue('CRM_Activity_DAO_Activity', $activityId, 'source_contact_id');
+        }
         
         //also create activities simultaneously of this copy.
         require_once "CRM/Activity/BAO/Activity.php";
         $activityParams = array( );
         
         $activityParams['source_record_id']   = $activityId; 
-        $activityParams['source_contact_id']  = $session->get( 'userID' ); 
+        $activityParams['source_contact_id']  = $userID; 
         $activityParams['activity_type_id']   = CRM_Core_OptionGroup::getValue( 'activity_type', 'Email', 'name' );
         $activityParams['activity_date_time'] = date('YmdHis');
         $activityParams['status_id']          = CRM_Core_OptionGroup::getValue( 'activity_status', 'Completed', 'name' );
@@ -1394,7 +1398,7 @@ GROUP BY cc.id';
         } 
         
         $result = array();
-        list ($name, $address) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $session->get( 'userID' ) );
+        list ($name, $address) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $userID );
         
         $receiptFrom = "$name <$address>";   
         

@@ -1783,6 +1783,15 @@ div.grippie {
     clear:both;
 }
 
+#crm-container div#contactTopBar {
+	float: left;
+	clear: none;
+}
+#crm-container div#crm-contact-thumbnail {
+	padding: 4px;
+	float: right;
+}
+
 #crm-container div.contact_panel, 
 #crm-container div#contactTopBar {
     display:block;

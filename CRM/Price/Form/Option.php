@@ -108,11 +108,6 @@ class CRM_Price_Form_Option extends CRM_Core_Form
             $defaults['is_active'] = 1;
         }
         
-        if ( !CRM_Utils_System::isNull( $defaults['auto_renew'] ) ) {
-            require_once 'CRM/Core/PseudoConstant.php';
-            $options = CRM_Core_PseudoConstant::autoRenew();
-            $defaults['auto_renew'] = $options[$defaults['auto_renew']];
-        }
         return $defaults;
     }
     
@@ -150,20 +145,30 @@ class CRM_Price_Form_Option extends CRM_Core_Form
             $memberComponentId = CRM_Core_Component::getComponentID( 'CiviMember' );
             if ( $this->_action == CRM_Core_Action::UPDATE ) {
                 $this->_sid = CRM_Utils_Request::retrieve('sid', 'Positive', $this);
-            } elseif ( $this->_action == CRM_Core_Action::ADD ) {
+            } elseif ( $this->_action == CRM_Core_Action::ADD ||
+                       $this->_action == CRM_Core_Action::VIEW ) {
                 $this->_sid= CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $this->_fid, 'price_set_id', 'id' );
             }
+
             $extendComponentId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_sid, 'extends', 'id' );
-            
+            $this->assign( 'showMember', false );
             if ( $memberComponentId == $extendComponentId ) {
+                $this->assign( 'showMember', true );
                 require_once 'CRM/Member/PseudoConstant.php';
                 $membershipTypes = CRM_Member_PseudoConstant::membershipType();
                 $this->add( 'select', 'membership_type_id', ts('Membership Type'), array('' => ' ') + $membershipTypes, false,
                             array( 'onClick' => "calculateRowValues( );")   );
-                
-                
-                $this->add('text','auto_renew', ts('Auto Renew?'), 
-                           array('size'=> 25, 'style'=> "background-color:#EBECE4", 'READONLY'));
+            } else {
+                $allComponents = explode(CRM_Core_DAO::VALUE_SEPARATOR, $extendComponentId);
+                $eventComponentId = CRM_Core_Component::getComponentID( 'CiviEvent' );
+                if ( in_array( $eventComponentId, $allComponents ) ) {
+                    // count
+                    $this->add('text', 'count', ts('Participants Count') );
+                    $this->addRule('count' , ts('Please enter a valid Max Participants.'), 'positiveInteger');
+                    
+                    $this->add('text', 'max_value', ts('Max Participants') );
+                    $this->addRule('max_value' , ts('Please enter a valid Max Participants.'), 'positiveInteger');
+                }
             }
             
             //CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $this->_fid, 'weight', 'id' );
@@ -185,13 +190,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form
 
             $this->add( 'textarea', 'description', ts('Description') );
  
-            // count
-            $this->add('text', 'count', ts('Participants Count') );
-            $this->addRule('count' , ts('Please enter a valid Max Participants.'), 'positiveInteger');
-
-            $this->add('text', 'max_value', ts('Max Participants') );
-            $this->addRule('max_value' , ts('Please enter a valid Max Participants.'), 'positiveInteger');
-
+          
             // weight
             $this->add('text', 'weight', ts('Order'), null, true);
             $this->addRule('weight', ts('is a numeric field') , 'numeric');
@@ -224,7 +223,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form
                 $this->freeze();
                 $this->addButtons(array(
                                         array ('type'      => 'cancel',
-                                               'name'      => ts('Done with Preview'),
+                                               'name'      => ts('Done'),
                                                'isDefault' => true),
                                         )
                                   );
@@ -268,8 +267,8 @@ class CRM_Price_Form_Option extends CRM_Core_Form
         require_once 'CRM/Price/BAO/FieldValue.php';
         if ( $this->_action == CRM_Core_Action::DELETE ) {
             $fieldValues = array( 'price_field_id' => $this->_fid );
-            $wt    = CRM_Utils_Weight::delWeight('CRM_Price_DAO_FieldValue', $this->_oid, $fieldValues);
-            $label = CRM_Core_DAO::getFieldValue( "CRM_Price_DAO_FieldValue",
+            $wt    = CRM_Utils_Weight::delWeight( 'CRM_Price_DAO_FieldValue', $this->_oid, $fieldValues );
+            $label = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_FieldValue',
                                                   $this->_oid,
                                                   'label', 'id' );
    

@@ -72,7 +72,13 @@ class CRM_Price_Form_Field extends CRM_Core_Form
      * @access protected
      */
     protected $_extendComponentId;
-    
+
+    /**
+     * variable is set if price set is used for membership 
+     * @access protected
+     */
+    protected $_useForMember;
+
     /**
      * Function to set variables up before form is built
      * 
@@ -85,8 +91,8 @@ class CRM_Price_Form_Field extends CRM_Core_Form
     {
         require_once 'CRM/Price/BAO/Field.php';
         
-        $this->_sid = CRM_Utils_Request::retrieve( 'sid', 'Positive', $this );
-        $this->_fid = CRM_Utils_Request::retrieve( 'fid' , 'Positive', $this );
+        $this->_sid = CRM_Utils_Request::retrieve( 'sid', 'Positive', $this, false, null, 'REQUEST' );
+        $this->_fid = CRM_Utils_Request::retrieve( 'fid' , 'Positive', $this, false, null, 'REQUEST' );
         $url = CRM_Utils_System::url( 'civicrm/admin/price/field', "reset=1&action=browse&sid={$this->_sid}");
         $breadCrumb     = array( array( 'title' => ts('Price Set Fields'),
                                         'url'   => $url) );
@@ -173,6 +179,11 @@ class CRM_Price_Form_Field extends CRM_Core_Form
         // lets trim all the whitespace
         $this->applyFilter('__ALL__', 'trim');
         
+        // add a hidden field to remember the price set id
+        // this get around the browser tab issue
+        $this->add( 'hidden', 'sid', $this->_sid );
+        $this->add( 'hidden', 'fid', $this->_fid );
+
         // label
         $this->add('text', 'label', ts('Field Label'), CRM_Core_DAO::getAttribute('CRM_Price_DAO_Field', 'label'), true);
         
@@ -262,8 +273,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                 
                 $this->add( 'select', 'membership_type_id['.$i.']', ts('Membership Type'),  
                             array('' => ' ') + $membershipTypes, false, $js);
-                $this->add('text','auto_renew['.$i.']', ts('Auto Renew?'), 
-                           array('size'=> 25, 'style'=> "background-color:#EBECE4", 'READONLY'));
             }
             
             // weight
@@ -478,7 +487,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                     $count = CRM_Price_BAO_Set::getMembershipCount($ids);
                     foreach( $count as $id => $occurance ) {
                         if ($occurance > 1) {
-                            $errors['_qf_default'] = ts( 'Select at most one option from the Membership Types belonging to the same Membership Organization.' );
+                            $errors['_qf_default'] = ts( 'You have selected multiple memberships for the same organization or entity. Please review your selections and choose only one membership per entity.' );
                         }
                     }
                 }
@@ -571,7 +580,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form
             $params['option_amount']       = array( 1 => $params['price'] );
             $params['option_label']        = array( 1 => $params['label'] );
             $params['option_count']        = array( 1 => $params['count'] );
-            $params['option_max_value']    = array( 1 => $params['max_value'] );
+            $params['option_max_value']    = array( 1 =>  CRM_Utils_Array::value( 'max_value', $params ) );
             //$params['option_description']  = array( 1 => $params['description'] );
             $params['option_weight']       = array( 1 => $params['weight'] );
             $params['is_active']           = array( 1 => 1 );
@@ -593,6 +602,8 @@ class CRM_Price_Form_Field extends CRM_Core_Form
         if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
             CRM_Core_Session::setStatus(ts(' You can add another price set field.'));
             $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/price/field', 'reset=1&action=add&sid=' . $this->_sid));
+        } else {
+            $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/price/field', 'reset=1&action=browse&sid=' . $this->_sid));
         }
     }
 }

@@ -58,11 +58,6 @@
         <tr><td class="label">{ts}End date{/ts}</td><td>{$end_date|crmDate}</td></tr>
         <tr><td class="label">{ts}Auto-renew{/ts}</td><td>{$auto_renew}</td></tr>
         <tr><td class="label">{ts}Reminder date{/ts}</td><td>{$reminder_date|crmDate}</td></tr>
-        {if $lineItem}
-          <tr>
-              <td class="label">{ts}Membership Fee{/ts}</td><td>{include file="CRM/Price/Page/LineItem.tpl" context="Membership"}</td>
-          </tr>
-        {/if}
     </table>
 
     {include file="CRM/Custom/Page/CustomDataView.tpl"}

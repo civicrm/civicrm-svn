@@ -54,6 +54,7 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
       $pledges = false;
       $recurring = true;
       $memberships = false;
+      $memPriceSetId = null;
       $friend = true;
       $profilePreId  = null;
       $profilePostId = null;
@@ -78,6 +79,7 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
                                                    $pledges, 
                                                    $recurring, 
                                                    $memberships, 
+                                                   $memPriceSetId,
                                                    $friend, 
                                                    $profilePreId,
                                                    $profilePostId,

@@ -226,7 +226,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
             $processors = CRM_Core_PseudoConstant::paymentProcessor( false, false, "billing_mode IN ( 1, 3 )" );
             // at this stage only Authorize.net has been tested to support future start dates so if it's enabled let the template know 
             // to show receive date
-            $processorsSupportingFutureStartDate = array('Authorize.net');   
+            $processorsSupportingFutureStartDate = array('Authorize');   
             $processorsSupportingFutureStartDate  = array_intersect($processors,$processorsSupportingFutureStartDate);
             if (!empty($processorsSupportingFutureStartDate )){
                 $this->assign( 'processorSupportsFutureStartDate', true );                 

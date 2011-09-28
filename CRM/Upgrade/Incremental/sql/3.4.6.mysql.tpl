@@ -1,3 +1,6 @@
+-- CRM-8483
+{include file='../CRM/Upgrade/3.4.6.msg_template/civicrm_msg_template.tpl'}
+
 -- CRM-8619
 
 SELECT @option_group_id_languages := MAX( id ) FROM civicrm_option_group WHERE name = 'languages';
@@ -32,7 +35,7 @@ VALUES
 SELECT @option_group_id_activity_type := max(id) from civicrm_option_group where name = 'activity_type';
 {if $bulkEmailActivityType}
   -- make sure Bulk Email is active and resereved
-  UPDATE civicrm_option_value SET is_reserved = 1, is_active = 1 WHERE option_group_id=@option_group_id_activity_type AND name='Bulk Email'; 
+  UPDATE civicrm_option_value SET is_reserved = 1, is_active = 1 WHERE option_group_id=@option_group_id_activity_type AND name='Bulk Email';
 {else}
   -- insert activity type Bulk Email
   SELECT @max_val := MAX(ROUND(op.value)) FROM civicrm_option_value op WHERE op.option_group_id  = @option_group_id_activity_type;
@@ -52,18 +55,10 @@ ALTER TABLE `civicrm_prevnext_cache`
 ALTER TABLE `civicrm_price_set`
    ADD `contribution_type_id` int(10) unsigned default NULL COMMENT 'Conditional foreign key to civicrm_contribution_type.id.',
    ADD CONSTRAINT `FK_civicrm_price_set_contribution_type_id` FOREIGN KEY (`contribution_type_id`) REFERENCES `civicrm_contribution_type` (`id`) ON DELETE SET NULL;
-
-INSERT INTO civicrm_option_group
-      (name, {localize field='label'}label{/localize}, {localize field='description'}description{/localize}, is_reserved, is_active)
-VALUES
-      ('auto_renew_options', {localize}'{ts escape="sql"}NULL{/ts}'{/localize}, {localize}'{ts escape="sql"}Auto Renew Options{/ts}'{/localize}, 0, 1);
   
 ALTER TABLE `civicrm_price_field_value`
    ADD `membership_type_id` int(10) unsigned default NULL COMMENT 'Conditional foreign key to civicrm_membership_type.id.',
    ADD CONSTRAINT `FK_civicrm_price_field_value_membership_type_id` FOREIGN KEY (`membership_type_id`) REFERENCES `civicrm_membership_type` (`id`) ON DELETE SET NULL;
-
-ALTER TABLE `civicrm_price_field_value`
-   ADD `auto_renew` tinyint(4) default NULL;
 
 SELECT @customizeID      := MAX(id) FROM civicrm_navigation where name = 'Memberships';
 SELECT @extensionsWeight := MAX(weight)+1 FROM civicrm_navigation where parent_id = @customizeID;
@@ -71,7 +66,8 @@ SELECT @extensionsWeight := MAX(weight)+1 FROM civicrm_navigation where parent_i
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES            
-    ( {$domainID}, 'civicrm/admin/price&reset=1&action=add',        '{ts escape="sql" skip="true"}New Price Set{/ts}', 'New Price Set', 'access CiviMember,administer CiviCRM', '', @customizeID, '1', NULL, @extensionsWeight );
+    ( {$domainID}, 'civicrm/admin/price&reset=1&action=add', '{ts escape="sql" skip="true"}New Price Set{/ts}', 'New Price Set', 'access CiviMember,administer CiviCRM', '', @customizeID, '1', NULL, @extensionsWeight ),
+    ( {$domainID}, 'civicrm/admin/price&reset=1',            '{ts escape="sql" skip="true"}Manage Price Sets{/ts}', 'Manage Price Sets', 'access CiviMember,administer CiviCRM', '', @customizeID, '1', NULL, @extensionsWeight+1 );
 
 SELECT @customizeID      := MAX(id) FROM civicrm_navigation where name = 'CiviMember';
 SELECT @extensionsWeight := MAX(weight)+1 FROM civicrm_navigation where parent_id = @customizeID;
@@ -79,5 +75,23 @@ SELECT @extensionsWeight := MAX(weight)+1 FROM civicrm_navigation where parent_i
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES            
-    ( {$domainID}, 'civicrm/admin/price&reset=1&action=add',        '{ts escape="sql" skip="true"}New Price Set{/ts}', 'New Price Set', 'access CiviMember,administer CiviCRM', '', @customizeID, '1', NULL, @extensionsWeight );
+    ( {$domainID}, 'civicrm/admin/price&reset=1&action=add', '{ts escape="sql" skip="true"}New Price Set{/ts}', 'New Price Set', 'access CiviMember,administer CiviCRM', '', @customizeID, '1', NULL, @extensionsWeight ),
+    ( {$domainID}, 'civicrm/admin/price&reset=1',            '{ts escape="sql" skip="true"}Manage Price Sets{/ts}', 'Manage Price Sets', 'access CiviMember,administer CiviCRM', '', @customizeID, '1', NULL, @extensionsWeight+1 );
    
+
+-- CRM-8626
+UPDATE civicrm_payment_processor_type
+SET url_recur_default      = 'https://checkout.google.com/',
+    url_recur_test_default = 'https://sandbox.google.com/checkout/',
+    is_recur               = 1
+WHERE name = 'Google_Checkout';
+
+UPDATE  civicrm_payment_processor
+   SET  is_recur  = 1,
+        url_recur = 'https://checkout.google.com/'
+ WHERE  payment_processor_type = 'Google_Checkout' AND is_test = 0;
+
+UPDATE  civicrm_payment_processor
+   SET  is_recur  = 1,
+        url_recur = 'https://sandbox.google.com/checkout/'
+ WHERE  payment_processor_type = 'Google_Checkout' AND is_test = 1;

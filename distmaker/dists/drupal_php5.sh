@@ -67,6 +67,8 @@ fi
 cp $SRC/agpl-3.0.txt $TRG
 cp $SRC/gpl.txt $TRG 
 cp $SRC/README.txt $TRG
+cp $SRC/Sponsors.txt $TRG
+cp $SRC/agpl-3.0.exception.txt $TRG
 cp $SRC/drupal/civicrm.config.php.drupal $TRG/civicrm.config.php
 
 # final touch

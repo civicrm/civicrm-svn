@@ -298,16 +298,24 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         CRM_Core_BAO_Address::fixAllStateSelects( $this, $this->_defaults );
 
         if ( $this->_priceSetId ) {
-            foreach( $this->_priceSet['fields'] as $key => $val ) {
-                foreach ( $val['options'] as $keys => $values ) {
-                    if ( $values['is_default'] ) {
-                        if ( $val['html_type'] == 'CheckBox') {
-                            $this->_defaults["price_{$key}"][$keys] = 1;
-                        } else {
-                            $this->_defaults["price_{$key}"] = $keys;
+            if ( $this->_useForMember && !empty($this->_currentMemberships) ) {
+                $selectedCurrentMemTypes = array( );
+                foreach( $this->_priceSet['fields'] as $key => $val ) {
+                    foreach ( $val['options'] as $keys => $values ) {
+                        if ( CRM_Utils_Array::value('membership_type_id', $values) &&
+                             in_array($values['membership_type_id'], $this->_currentMemberships) &&
+                             !in_array($values['membership_type_id'], $selectedCurrentMemTypes) ) {
+                            if ( $val['html_type'] == 'CheckBox') {
+                                $this->_defaults["price_{$key}"][$keys] = 1;
+                            } else {
+                                $this->_defaults["price_{$key}"] = $keys;
+                            }
+                            $selectedCurrentMemTypes[] = $values['membership_type_id'];
                         }
                     }
                 }
+            } else {
+                CRM_Price_BAO_Set::setDefaultPriceSet($this, $this->_defaults);
             }
         }
 
@@ -346,16 +354,19 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 if ( $this->_action & CRM_Core_Action::PREVIEW ) {
                     $isTest = 1;
                 }
+                
+                if ( $this->_priceSetId &&
+                     (CRM_Core_Component::getComponentID( 'CiviMember' ) == CRM_Utils_Array::value('extends', $this->_priceSet) ) ) {
+                    $this->_useForMember = 1;
+                    $this->set( 'useForMember', $this->_useForMember );
+                }
+
                 require_once 'CRM/Member/BAO/Membership.php';
                 $this->_separateMembershipPayment = 
                     CRM_Member_BAO_Membership::buildMembershipBlock( $this , 
                                                                      $this->_id , 
                                                                      true, null, false, 
                                                                      $isTest, $this->_membershipContactID );
-                if ( $this->_priceSetId ) {
-                    $this->_useForMember = 1;
-                    $this->set( 'useForMember', $this->_useForMember );
-                }
             }
             $this->set( 'separateMembershipPayment', $this->_separateMembershipPayment );
         }
@@ -742,28 +753,41 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             require_once 'CRM/Price/BAO/Set.php';
             if ( $self->_useForMember == 1 && !empty($check) ) {
                 $priceFieldIDS = array();
-                foreach ($self->_priceSet['fields'] as $priceIds => $dontCare ) {
-                    if (!empty($fields['price_'.$priceIds])){
-                        if (is_array($fields['price_'.$priceIds])) {
-                            foreach( $fields['price_'.$priceIds] as $priceFldVal => $isSet ) {
-                                if ($isSet) {
+                $priceFieldMemTypes = array();
+                foreach ($self->_priceSet['fields'] as $priceId => $value ) {
+                    if (!empty($fields['price_'.$priceId])){
+                        if (is_array($fields['price_'.$priceId])) {
+                            foreach( $fields['price_'.$priceId] as $priceFldVal => $isSet ) {
+                                if ( $isSet ) {
                                     $priceFieldIDS[] = $priceFldVal;
                                 }
                             }
                         } else {
-                            $priceFieldIDS[] = $fields['price_'.$priceIds];
+                            $priceFieldIDS[] = $fields['price_'.$priceId];
                         }
+                        
+                        if ( CRM_Utils_Array::value( 'options', $value ) ) {
+                            foreach ( $value['options'] as $val ) {
+                                if ( CRM_Utils_Array::value( 'membership_type_id', $val ) ) {
+                                    $priceFieldMemTypes[] = $val['membership_type_id'];
+                                }
+                            }
+                        }     
                     }
                 }
-
+                
                 $ids = implode (',', $priceFieldIDS);
                 $priceFieldIDS['id'] = $fields['priceSetId'];
                 $self->set( 'memberPriceFieldIDS', $priceFieldIDS );
                 $count = CRM_Price_BAO_Set::getMembershipCount($ids);
                 foreach( $count as $id => $occurance ) {
                     if ($occurance > 1) {
-                        $errors['_qf_default'] = ts( 'Select at most one option from the Membership Types belonging to the same Membership Organization.' );
+                        $errors['_qf_default'] = ts( 'You have selected multiple memberships for the same organization or entity. Please review your selections and choose only one membership per entity. Contact the site administrator if you need assistance.' );
                     }
+                }
+                
+                if ( empty( $priceFieldMemTypes ) ) {
+                    $errors['_qf_default'] = ts('Please select at least one membership option.');
                 }
             }
 

@@ -779,12 +779,19 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     {
         require_once 'CRM/Contribute/BAO/ContributionType.php';
         if( $contributionTypeID === null ) {
+            civicrm_api('Contribution', 'get',array('version' => 3, 'contribution_type_id' => 10, 'api.contribution.delete' => 1 ));  
+            civicrm_api('Contribution', 'get',array('version' => 3, 'contribution_type_id' => 11, 'api.contribution.delete' => 1));                  
             // we know those were loaded from /dataset/contribution_types.xml
-            $del= CRM_Contribute_BAO_ContributionType::del(10);
-            $del= CRM_Contribute_BAO_ContributionType::del(11);
+            $del= CRM_Contribute_BAO_ContributionType::del(10,1);
+            $del= CRM_Contribute_BAO_ContributionType::del(11,1);
         } else {
-            $del= CRM_Contribute_BAO_ContributionType::del($contributionTypeID);
+            civicrm_api('Contribution', 'get',array('version' => 3, 'contribution_type_id' => $contributionTypeID,  'api.contribution.delete' => 1));            
+            $del= CRM_Contribute_BAO_ContributionType::del($contributionTypeID,1 );
         }
+        if (is_array($del) ){
+          $this->assertEquals(0, CRM_Utils_Array::value('is_error', $del), $del['error_message']);
+        }
+
     }
     
     /** 
@@ -1381,11 +1388,14 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                             );
  
         }
-        $result = civicrm_api( 'custom_group','create',$params );
+        //have a crack @ deleting it first in the hope this will prevent derailing our tests
+        $check =  civicrm_api('custom_group','get',array_merge($params, array('api.custom_group.delete' => 1)) );
 
+        $result = civicrm_api( 'custom_group','create',$params );
+      
         if ( CRM_Utils_Array::value( 'is_error', $result ) ||
              ! CRM_Utils_Array::value( 'id', $result) ) {
-            throw new Exception( 'Could not create Custom Group ' . $result['error_message']);
+            throw new Exception( 'Could not create Custom Group ' . print_r($params) . $result['error_message']);
         }
         return $result;    
     }
@@ -1491,7 +1501,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $customGroup = $this->CustomGroupCreate($entity,$function);
         $customField = $this->customFieldCreate( $customGroup['id'], $function ) ;
         CRM_Core_PseudoConstant::flush ( 'customGroup' );
-        CRM_Core_BAO_CustomField::getTableColumnGroup ( $customField['id'], True );
+
        return array('custom_group_id' =>$customGroup['id'], 'custom_field_id' =>$customField['id'] );   
     }
     
@@ -1542,14 +1552,16 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $result = civicrm_api( 'custom_field','create',$params );
 
         if ($result['is_error'] ==0 && isset($result['id'])){
-            return $result;          
+          CRM_Core_BAO_CustomField::getTableColumnGroup($result['id'],1);
+          CRM_Core_Component::getEnabledComponents(1);// force reset of enabled components to help grab custom fields
+          return $result;          
         }
 
         if ( civicrm_api3_error( $result ) 
              || !( CRM_Utils_Array::value( 'customFieldId' , $result['result'] ) ) ) {
             throw new Exception( 'Could not create Custom Field'  );
         }
-        return $result;    
+        
     }
     
     /**

@@ -114,8 +114,9 @@ class WebTest_Report_DonarReportTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("Is greater than or equal to 10"), "Criteria is not selected");
       
       //click on next link
-      $this->click( "xpath=id('Detail')/div[3]/div[2]/div/span[2]/a[1]" );
-      
+      $this->click( "_qf_Detail_submit_print" );
+      $this->waitForPageToLoad("30000");
+       
       // check if criteria still exits
       $this->assertTrue($this->isTextPresent("Is greater than or equal to 10"), "Criteria is not selected");
 
