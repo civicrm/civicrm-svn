@@ -999,7 +999,7 @@ function getSiteDir( $cmsPath, $str ) {
     $sites   = CIVICRM_DIRECTORY_SEPARATOR . 'sites'   . CIVICRM_DIRECTORY_SEPARATOR;
     $modules = CIVICRM_DIRECTORY_SEPARATOR . 'modules' . CIVICRM_DIRECTORY_SEPARATOR;
     preg_match( "/" . preg_quote($sites, CIVICRM_DIRECTORY_SEPARATOR) . 
-                "([a-zA-Z0-9_.]+)" . 
+                "([\-a-zA-Z0-9_.]+)" . 
                 preg_quote($modules, CIVICRM_DIRECTORY_SEPARATOR) . "/",
                 $_SERVER['SCRIPT_FILENAME'], $matches );
     $siteDir = isset($matches[1]) ? $matches[1] : 'default';
