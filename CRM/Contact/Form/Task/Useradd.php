@@ -68,13 +68,17 @@ class CRM_Contact_Form_Task_Useradd extends CRM_Core_Form
      */
     function setDefaultValues( ) {
         $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+        $defaults = $params = $results = array( );
         $params['id'] = $params['contact_id'] = $this->_contactId;
-        $contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults );
+        $contact = CRM_Contact_BAO_Contact::retrieve( $params, $results );
+
         
         $defaults['contactID'] = $this->_contactId;
         $defaults['name'] = $contact->display_name;
-        $defaults['email'] = $contact->email[1]['email'];
-        
+        if ( ! empty( $contact->email ) ) {
+            $defaults['email'] = $contact->email[1]['email'];
+        }
+
         return $defaults;
     }
 
@@ -118,8 +122,7 @@ class CRM_Contact_Form_Task_Useradd extends CRM_Core_Form
     {
         // store the submitted values in an array
         $params = $this->exportValues();
-        //print_r($params);
-        $session = CRM_Core_Session::singleton( );
+
         
         CRM_Core_BAO_CMSUser::create($params, 'email');
         CRM_Core_Session::setStatus( ts('User has been added.') );

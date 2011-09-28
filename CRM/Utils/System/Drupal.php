@@ -65,11 +65,11 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
                                     'mail' => $params[$mail],
                                     'op'   => 'Create new account'
                                     );
-        if ( !variable_get('user_email_verification', TRUE )) {
-            $form_state['input']['pass']['pass1'] = $params['cms_pass'];
-            $form_state['input']['pass']['pass2'] = $params['cms_pass'];
+
+        $admin = user_access('administer users');
+        if ( ! variable_get('user_email_verification', TRUE ) || $admin ) {
+            $form_state['input']['pass'] = $params['cms_pass'];
         }
-       
         
         $form_state['rebuild']    = FALSE;
         $form_state['programmed'] = TRUE;
