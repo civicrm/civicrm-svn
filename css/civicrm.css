@@ -1374,7 +1374,6 @@ table.campaign td,
 }
 
 #crm-container .thermometer-pointer {
-    background:transparent url(images/thermometer-pointer.gif) no-repeat scroll 130px 3px;
     padding-left:45px; /* width of thermometer + a little actual padding */
     position:absolute;
     top:-10px; /* vertically center text on percentage raised */
