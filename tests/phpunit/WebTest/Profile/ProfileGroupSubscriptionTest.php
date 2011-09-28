@@ -144,8 +144,8 @@ class WebTest_Profile_ProfileGroupSubscriptionTest extends CiviSeleniumTestCase 
     
     function _testdeleteProfile( $profileTitle )
     {
-        $this->waitForElementPresent( "//div[@id='uf_profile']/div[2]/table/tbody//tr/td[1][text() = '$profileTitle']/following-sibling::td[6]/span[2][text()='more ']/ul/li[4]/a[text()='Delete']" );
-        $this->click( "//div[@id='uf_profile']/div[2]/table/tbody//tr/td[1][text() = '$profileTitle']/following-sibling::td[6]/span[2][text()='more ']/ul/li[4]/a[text()='Delete']" );
+        $this->waitForElementPresent( "//div[@id='user-profiles']/div/table/tbody//tr/td[1][text() = '$profileTitle']/following-sibling::td[4]/span[2][text()='more ']/ul/li[4]/a[text()='Delete']" );
+        $this->click( "//div[@id='user-profiles']/div/table/tbody//tr/td[1][text() = '$profileTitle']/following-sibling::td[4]/span[2][text()='more ']/ul/li[4]/a[text()='Delete']" );
         
         $this->waitForElementPresent( '_qf_Group_next-bottom' );
         $this->click( '_qf_Group_next-bottom' );

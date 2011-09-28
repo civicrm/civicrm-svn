@@ -48,7 +48,7 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
          $this->webtestLogin( );  
 
          // Go directly to the URL of the screen that you will beadding New Individual.
-         $this->open( $this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual" );
+         $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual" );
          
          $firstName = "John" . substr(sha1(rand()), 0, 7);
          $lastName  = "Smith" . substr(sha1(rand()), 0, 7);
@@ -69,7 +69,7 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
          $this->assertTrue( $this->isTextPresent( "Your Individual contact record has been saved." ) );
 
          // lets give profile related permision to anonymous user.
-         $this->open( $this->sboxPath ."admin/user/permissions");
+         $this->changeAdminLinks();
          $this->waitForElementPresent("edit-submit");
 
          $this->check( "edit-1-profile-create" );
@@ -114,7 +114,7 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
          $this->waitForPageToLoad( "30000" );
 
          // logout and sign as anonymous.
-         $this->open( $this->sboxPath ."civicrm/logout&reset=1" );
+         $this->open( $this->sboxPath ."civicrm/logout?reset=1" );
 
          // submit dupe using profile/create as anonymous
          $this->open( $this->sboxPath . "civicrm/profile/create?gid=4&reset=1" );
@@ -156,7 +156,7 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
          $this->webtestLogin( );  
 
          // Go directly to the URL of the screen that you will beadding New Individual.
-         $this->open( $this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual" );
+         $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual" );
          
          $firstName = "John" . substr(sha1(rand()), 0, 7);
          $lastName  = "Smith" . substr(sha1(rand()), 0, 7);
@@ -195,7 +195,7 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
          $this->waitForPageToLoad( "30000" );
 
          // logout and sign as anonymous.
-         $this->open( $this->sboxPath ."civicrm/logout&reset=1" );
+         $this->open( $this->sboxPath ."civicrm/logout?reset=1" );
 
          // submit dupe using profile/create as anonymous
          $this->open( $this->sboxPath . "civicrm/profile/create?gid=4&reset=1" );
