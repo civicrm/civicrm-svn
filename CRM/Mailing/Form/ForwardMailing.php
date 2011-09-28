@@ -35,7 +35,7 @@
  */
 
 require_once 'CRM/Core/Form.php';
-civicrm_api_include('mailer', false, 2);
+civicrm_api_include( 'Mailing', false, 3 );
 
 class CRM_Mailing_Form_ForwardMailing extends CRM_Core_Form
 {
@@ -147,7 +147,7 @@ class CRM_Mailing_Form_ForwardMailing extends CRM_Core_Form
                               'fromEmail'      => $this->_fromEmail,
                               'params'         => $params
                               );
-            $result = civicrm_mailer_event_forward( $params );
+            $result = civicrm_api3_mailing_event_forward( $params );
             if ( !civicrm_api3_error($result) ) {
                 $forwarded++;
             }

@@ -1356,30 +1356,29 @@ function civitest_civicrm_import( $object, $usage, &$objectRef, $params ) {
     
 	if ( $taglist ) {
         
-		require_once 'api/v2/Tag.php';
-		require_once 'api/v2/EntityTag.php';
+		require_once 'api/api.php';
 		require_once 'CRM/Core/BAO/EntityTag.php';
         
 		$keywords = array();
 		$keywords = explode( '|', $taglist );
         
 		foreach ( $keywords as $keyword ) {
-			$params = array( 'name' => $keyword, 'parent_id' => '296' ); //import tags to tagset with id 296
+			$params = array( 'name' => $keyword, 'parent_id' => '296', 'version' => 3 ); //import tags to tagset with id 296
             
 			//lookup tag; create new if nonexist
-			$tag = civicrm_tag_get($params);
-			if ( $tag['is_error'] ) {
-				$tag = civicrm_tag_create($params);
-				$tagid = $tag['tag_id'];
+			$tag = civicrm_api( 'Tag', 'get', $params );
+			if ( civicrm_api3_error( $tag ) ) {
+			    $tag = civicrm_api( 'Tag', 'create', $params );
+			    $tagid = $tag['id'];
 			} else {
-				$tagid = $tag['id'];
+			    $tagid = $tag['id'];
 			}
             
 			//only add tag to contact if not already present
 			$entityTags = CRM_Core_BAO_EntityTag::getTag($contactID);
 			if ( !in_array($tagid, $entityTags) ) {
-				$entityParams = array('tag_id' => $tagid, 'contact_id' => $contactID );
-				$entityTag = civicrm_entity_tag_add( $entityParams );
+			    $entityParams = array( 'tag_id' => $tagid, 'contact_id' => $contactID, 'version' => 3 );
+			    $entityTag = civicrm_api( 'EntityTag', 'create', $entityParams );
 			}
 		}
 	}

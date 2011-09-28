@@ -43,9 +43,6 @@ require_once 'PHPUnit/Extensions/Database/DataSet/XmlDataSet.php';
 require_once 'PHPUnit/Extensions/Database/DataSet/QueryDataSet.php';
 require_once 'tests/phpunit/Utils.php';
 require_once 'api/api.php';
-require_once 'api/v2/MembershipType.php';
-require_once 'api/v2/MembershipStatus.php';
-require_once 'api/v2/Membership.php';
 define ('API_LATEST_VERSION',3);
 /**
  *  Base class for CiviCRM unit tests

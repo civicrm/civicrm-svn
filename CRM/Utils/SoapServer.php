@@ -43,8 +43,8 @@
  * $Id$
  *
  */
-
-require_once 'api/v2/Mailer.php';
+civicrm_api_include( 'Mailing', false, 3 );
+civicrm_api_include( 'MailingGroup', false, 3 );
 class CRM_Utils_SoapServer
 {
     /**
@@ -145,7 +145,7 @@ class CRM_Utils_SoapServer
                            'hash'           => $hash,
                            'body'           => $body
                            );
-         return civicrm_mailer_event_bounce( $params );
+         return civicrm_api3_mailing_event_bounce( $params );
     }
     
     public function mailer_event_unsubscribe($key, $job, $queue, $hash) {
@@ -154,7 +154,7 @@ class CRM_Utils_SoapServer
                           'event_queue_id' => $queue,
                           'hash'           => $hash
                           );
-        return civicrm_mailer_event_unsubscribe( $params );
+        return civicrm_api3_mailing_group_event_unsubscribe( $params );
     }
 
     public function mailer_event_domain_unsubscribe($key, $job, $queue, $hash) {
@@ -163,7 +163,7 @@ class CRM_Utils_SoapServer
                           'event_queue_id' => $queue,
                           'hash'           => $hash
                           );
-        return civicrm_mailer_event_domain_unsubscribe( $params );
+        return civicrm_api3_mailing_group_event_domain_unsubscribe( $params );
     }
 
     public function mailer_event_resubscribe($key, $job, $queue, $hash) {
@@ -172,7 +172,7 @@ class CRM_Utils_SoapServer
                           'event_queue_id' => $queue,
                           'hash'           => $hash
                           );
-        return civicrm_mailer_event_resubscribe( $params );
+        return civicrm_api3_mailing_group_event_resubscribe( $params );
     }
 
     public function mailer_event_subscribe($key, $email, $domain, $group) {
@@ -180,7 +180,7 @@ class CRM_Utils_SoapServer
         $params = array ( 'email'          => $email,
                           'group_id'       => $group
                           );
-        return civicrm_mailer_event_subscribe( $params );
+        return civicrm_api3_mailing_group_event_subscribe( $params );
     }
     
     public function mailer_event_confirm($key, $contact, $subscribe, $hash) {
@@ -189,7 +189,7 @@ class CRM_Utils_SoapServer
                           'subscribe_id' => $subscribe,
                           'hash'         => $hash
                           );
-        return civicrm_mailer_event_confirm( $params );
+        return civicrm_api3_mailing_event_confirm( $params );
     }
     
     public function mailer_event_reply($key, $job, $queue, $hash, $bodyTxt, $rt, $bodyHTML = null, $fullEmail = null) {
@@ -202,7 +202,7 @@ class CRM_Utils_SoapServer
                           'bodyHTML'       => $bodyHTML,
                           'fullEmail'      => $fullEmail
                           );
-        return civicrm_mailer_event_reply( $params );
+        return civicrm_api3_mailing_event_reply( $params );
     }
     
     public function mailer_event_forward($key, $job, $queue, $hash, $email) {
@@ -212,13 +212,13 @@ class CRM_Utils_SoapServer
                           'hash'           => $hash,
                           'email'          => $email
                           );
-        return civicrm_mailer_event_forward( $params );
+        return civicrm_api3_mailing_event_forward( $params );
     }
     
     public function get_contact($key, $params) { 
         $this->verify($key);
         $params['version'] = 3;
-        return civicrm_api('contact', 'get', $params);
+        return civicrm_api( 'contact', 'get', $params );
     }
 
 }
