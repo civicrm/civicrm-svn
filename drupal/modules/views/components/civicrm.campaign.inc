@@ -344,14 +344,14 @@ function _civicrm_campaign_data (&$data, $enabled) {
                                                             ),
                                             );
     // Campaign ID
-     $data['civicrm_surveyy']['campaign_id'] = array(
+     $data['civicrm_survey']['campaign_id'] = array(
                                                      'title' => t('Campaign'),
                                                      'help' => t('Event -> Campaign'),
                                                      'relationship' => array(
                                                                             'base' => 'civicrm_campaign',
                                                                             'field' => 'id',
                                                                             'handler' => 'views_handler_relationship',
-                                                                            'label' => t('Event -> Campaign'),
+                                                                            'label' => t('Survey -> Campaign'),
                                                                             ),
                                                      );
 
