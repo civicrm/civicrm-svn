@@ -90,7 +90,8 @@
    </div>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
-<div id='customData'></div>  
+<div id='customData'></div> 
+<script type="text/javascript">var showTab = Array( );</script> 
     {foreach from = $editOptions item = "title" key="name"}
         {include file="CRM/Contact/Form/Edit/$name.tpl"}
     {/foreach}
