@@ -470,7 +470,10 @@ AND        a.is_deleted = 0
      */      
     function getAllowMultipleCaseClients(  ) {
         $xml = $this->retrieve( "Settings" );
-        return ( string ) $xml->AllowMultipleCaseClients ? 1 : 0;
+        if ( $xml ) {
+            return ( string ) $xml->AllowMultipleCaseClients ? 1 : 0;
+        }
+        return 0;
     }
     
 
