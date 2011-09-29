@@ -77,11 +77,11 @@ class CRM_UpdateMembershipRecord {
         require_once 'CRM/Member/BAO/MembershipType.php';
         require_once 'CRM/Utils/Date.php';
         require_once 'CRM/Utils/System.php';
-        civicrm_api_include('membership', false, 2);
         require_once 'CRM/Member/PseudoConstant.php';
         require_once 'CRM/Contact/BAO/Contact.php';
         require_once 'CRM/Activity/BAO/Activity.php';
         require_once 'CRM/Contribute/PseudoConstant.php';
+        require_once 'api/api.php';
 
         //get all active statuses of membership, CRM-3984
         $allStatus     = CRM_Member_PseudoConstant::membershipStatus( );
@@ -197,7 +197,7 @@ WHERE      civicrm_membership.is_test = 0";
                 // CRM-7248: added excludeIsAdmin param to the following fn call to prevent moving to admin statuses
                 //get the membership status as per id.
                 $newStatus = civicrm_api( 'membership_status', 'calc',
-                                          array( 'membership_id' => $dao->membership_id ), true );
+                                          array( 'membership_id' => $dao->membership_id, 'version' => 3 ), true );
                 $statusId  = CRM_Utils_Array::value( 'id', $newStatus );
                 
                 //process only when status change.
