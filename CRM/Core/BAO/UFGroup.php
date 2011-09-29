@@ -870,7 +870,11 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                             if ( $cfID = CRM_Core_BAO_CustomField::getKeyID( $name ) ) {
                                 $htmlType  = $field['html_type'];
                                 $dataType  = $field['data_type'];
-                                $fieldType = $field['field_type'];
+
+                                // field_type is only set when we are retrieving profile values
+                                // when sending email, we call the same function to get custom field
+                                // values etc, i.e. emulating a profile
+                                $fieldType = CRM_Utils_Array::value( 'field_type', $field );
 
                                 if ( $htmlType == 'File') {
                                     $entityId = $cid;
