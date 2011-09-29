@@ -103,11 +103,13 @@ var otherModule = new Array( );
 
  window.onload = function(){  
         if( jQuery.inArray( "Profile", otherModule ) > -1 && jQuery.inArray( "Search Profile", otherModule ) == -1 ){       
-        cj('#profile_visibility').hide();
+        cj('#profile_visibility').show();
           } else if( jQuery.inArray( "Search Profile", otherModule ) > -1 ){
           cj('#profile_visibility').show();
           cj("#in_selector").attr('checked',true);
-          }                            
+          } else if( jQuery.inArray( "Profile", otherModule ) == -1 && jQuery.inArray( "Search Profile", otherModule ) == -1 ){
+            cj('#profile_visibility').hide();
+          }                         
 }
 
 function showLabel( ) {
