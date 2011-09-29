@@ -17,3 +17,7 @@ INSERT INTO civicrm_state_province
   (`name`, `abbreviation`, `country_id`)
 VALUES
   ('Metropolitan Manila' , 'MNL', '1170');
+  
+-- CRM-8902
+    UPDATE civicrm_navigation SET permission ='add cases,access all cases and activities', permission_operator = 'OR'
+    WHERE civicrm_navigation.name= 'New Case';

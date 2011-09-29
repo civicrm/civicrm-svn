@@ -235,7 +235,7 @@ INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES    
     ( @domainID, 'civicrm/case&reset=1',        '{ts escape="sql" skip="true"}Dashboard{/ts}', 'Dashboard', 'access my cases and activities,access all cases and activities', 'OR',       @caselastID, '1', NULL, 1 ), 
-    ( @domainID, 'civicrm/case/add&reset=1&action=add&atype=13&context=standalone', '{ts escape="sql" skip="true"}New Case{/ts}', 'New Case', 'add contacts,access all cases and activities', 'AND', @caselastID, '1', NULL, 2 ), 
+    ( @domainID, 'civicrm/case/add&reset=1&action=add&atype=13&context=standalone', '{ts escape="sql" skip="true"}New Case{/ts}', 'New Case', 'add cases,access all cases and activities', 'OR', @caselastID, '1', NULL, 2 ), 
     ( @domainID, 'civicrm/case/search&reset=1', '{ts escape="sql" skip="true"}Find Cases{/ts}', 'Find Cases', 'access my cases and activities,access all cases and activities', 'OR',     @caselastID, '1', 1, 3 );
     
 INSERT INTO civicrm_navigation

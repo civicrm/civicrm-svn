@@ -2469,7 +2469,7 @@ UNION
                                                 'component'    =>  'CiviCase',
                                                 'href'		   => CRM_Utils_System::url('civicrm/contact/view/case',
                                                                                         'reset=1&action=add&context=case'),
-					 							'permissions'  =>  array( 'access all cases and activities')
+					 							'permissions'  =>  array( 'add cases')
 					 							), 
                        'grant'   	  => array( 'title'        =>  ts( 'Add Grant' ),
                                                 'weight'	   => 26, 
