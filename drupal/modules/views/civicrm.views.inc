@@ -152,12 +152,13 @@ function civicrm_views_add_fields( &$fields, &$data, $tableName, &$skipFields = 
         if ( isset($value['custom_field_id']) ||
              CRM_Utils_Array::value( $name, $skipFields ) ||
              CRM_Utils_Array::value( $name, $data ) ||
-             !isset($name['title']) ||
+             !isset($value['title']) ||
               ( isset($value['where']) &&
                 substr( $value['where'], 0, strlen( $tableName ) + 1 ) != "{$tableName}." )
             ){
              continue;
         }
+
         // Ensure the field isn't alredy defined in $data using $data[$xyz]['real field'] where $xyz is a field name passed in $data
         foreach($data as $field => $current) {
             if (isset($current['real field']) and $current['real field'] == $name) {
