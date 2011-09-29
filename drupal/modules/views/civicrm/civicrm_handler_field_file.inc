@@ -37,7 +37,7 @@ class civicrm_handler_field_file extends views_handler_field {
     }
 
     require_once 'CRM/Core/DAO/EntityFile.php';
-    require_once 'api/v2/File.php';
+    require_once 'api/api.php';
   }
 
   function query() {
@@ -49,18 +49,19 @@ class civicrm_handler_field_file extends views_handler_field {
     $id = $values->{$this->field_alias};
     if ( $file_id = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_EntityFile', $id , 'file_id', 'entity_id') ) {
       $params = array(
-        'id' => $file_id,
-        'file_type_id' => NULL,
-      );
-      $file = civicrm_file_get($params);
+                      'id'           => $file_id,
+                      'file_type_id' => NULL,
+                      'version'      => 3
+                      );
+      $file = civicrm_api( 'File', 'get', $params );
 
-      if ( !array_key_exists('is_error', $file) ) {
-        $filepath = file_directory_path() . '/civicrm/custom/' . $file[$file_id]['uri'];
-        $v = clone $values; // Prevent affecting the original
-        $v->{$this->field_alias} = $filepath;
-        return parent::render($v);
+      if ( !civicrm_api3_error( $file ) ) {
+          $filepath = file_directory_path() . '/civicrm/custom/' . $file['values'][$file_id]['uri'];
+          $v = clone $values; // Prevent affecting the original
+          $v->{$this->field_alias} = $filepath;
+          return parent::render($v);
       } else {
-        return NULL;
+          return NULL;
       }
 
     } else {

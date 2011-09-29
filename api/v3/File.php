@@ -45,6 +45,7 @@
  */
 require_once 'api/v3/utils.php';
 require_once 'CRM/Core/DAO/File.php';
+require_once 'CRM/Core/BAO/File.php';
 /**
  * Create a file
  *
@@ -96,10 +97,8 @@ function civicrm_api3_file_create( $params )
  */
 function civicrm_api3_file_get($params)
 {
-
     civicrm_api3_verify_one_mandatory($params);
-    return _civicrm_api3_basic_get('CRM_Contact_DAO_GroupOrganization', $params);
-
+    return _civicrm_api3_basic_get( _civicrm_api3_get_BAO( __FUNCTION__ ), $params );
 }
 
 /**
