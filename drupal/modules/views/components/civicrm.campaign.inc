@@ -244,7 +244,7 @@ function _civicrm_campaign_data (&$data, $enabled) {
                                                                    'handler' => 'views_handler_sort',
                                                                    ),
                                                    );
-    //BOOLEAN : IS Deceased
+    //BOOLEAN : IS Active
     $data['civicrm_campaign']['is_active'] = array(
                                                    'title' => t('Is Active'),
                                                    'help' => t('Is the campaign active ?'),
@@ -310,5 +310,126 @@ function _civicrm_campaign_data (&$data, $enabled) {
                                                                       'handler' => 'views_handler_sort',
                                                                       ),
                                                       );
+    
+     // Add Support of Survey Fields.
+     $data['civicrm_survey']['table']['group']  = t('CiviCRM Surveys');
+
+
+     $data['civicrm_survey']['table']['base'] = array(
+                                                       'field' => 'id', // Governs the whole mozilla
+                                                       'title' => t('CiviCRM Surveys'),
+                                                       'help' => t("View displays CiviCRM Survey Data"),
+                                                       );
+    // Survey ID
+    $data['civicrm_survey']['id'] = array(
+                                            'title' => t('Survey ID'),
+                                            'help' => t('The numeric ID of the survey'),
+                                            'field' => array(
+                                                             'handler' => 'views_handler_field_numeric',
+                                                             'click sortable' => TRUE,
+                                                             ),
+
+                                            'argument' => array(
+                                                                'handler' => 'views_handler_argument_numeric',
+                                                                'numeric' => TRUE,
+                                                                ),
+
+                                            'filter' => array(
+                                                              'handler' => 'views_handler_filter_numeric',
+                                                              'allow empty' => TRUE,
+                                                              ),
+
+                                            'sort' => array(
+                                                            'handler' => 'views_handler_sort',
+                                                            ),
+                                            );
+    // Campaign ID
+     $data['civicrm_surveyy']['campaign_id'] = array(
+                                                     'title' => t('Campaign'),
+                                                     'help' => t('Event -> Campaign'),
+                                                     'relationship' => array(
+                                                                            'base' => 'civicrm_campaign',
+                                                                            'field' => 'id',
+                                                                            'handler' => 'views_handler_relationship',
+                                                                            'label' => t('Event -> Campaign'),
+                                                                            ),
+                                                     );
+
+
+
+     //Activity Type
+     $data['civicrm_survey']['activity_type'] = array(
+                                                       'title' => t('Activity Type'),
+                                                       'real field' => 'activity_type_id',
+                                                       'help' => t('The Type of activity, ie Survey, Canvass, Phone Bank etc'),
+                                                       'field' => array(
+                                                                        'handler' => 'civicrm_handler_field_pseudo_constant',
+                                                                        'click sortable' => TRUE,
+                                                                        'pseudo class' => 'CRM_Campaign_PseudoConstant',
+                                                                        'pseudo method' => 'activityType',                                                                        
+                                                                        ),
+
+                                                       'argument' => array(
+                                                                           'handler' => 'views_handler_argument',
+                                                                           ),
+
+                                                       'filter' => array(
+                                                                         'handler' => 'civicrm_handler_filter_pseudo_constant',
+                                                                         'allow empty' => TRUE,
+                                                                         'pseudo class' => 'CRM_Campaign_PseudoConstant',
+                                                                         'pseudo method' => 'activityType',                                                                        
+                                                                         ),
+
+                                                       'sort' => array(
+                                                                       'handler' => 'views_handler_sort',
+                                                                       ),
+                                                       );
+    //BOOLEAN : IS Active
+    $data['civicrm_survey']['is_active'] = array(
+                                                   'title' => t('Is Active'),
+                                                   'help' => t('Is the survey active?'),
+                                                   'field' => array(
+                                                                    'handler' => 'views_handler_field_boolean',
+                                                                    'click sortable' => TRUE,
+                                                                    ),
+
+                                                   'argument' => array(
+                                                                       'handler' => 'views_handler_argument',
+                                                                       ),
+
+                                                   'filter' => array(
+                                                                     'handler' => 'views_handler_filter_boolean_operator',
+                                                                     ),
+
+                                                   'sort' => array(
+                                                                   'handler' => 'views_handler_sort',
+                                                                   ),
+                                                   );
+    //BOOLEAN : IS Default
+    $data['civicrm_survey']['is_default'] = array(
+                                                   'title' => t('Is Default'),
+                                                   'help' => t('Is the survey the default?'),
+                                                   'field' => array(
+                                                                    'handler' => 'views_handler_field_boolean',
+                                                                    'click sortable' => TRUE,
+                                                                    ),
+
+                                                   'argument' => array(
+                                                                       'handler' => 'views_handler_argument',
+                                                                       ),
+
+                                                   'filter' => array(
+                                                                     'handler' => 'views_handler_filter_boolean_operator',
+                                                                     ),
+
+                                                   'sort' => array(
+                                                                   'handler' => 'views_handler_sort',
+                                                                   ),
+                                                   );     
+     require_once 'CRM/Campaign/DAO/Survey.php';
+     $fields = CRM_Campaign_DAO_Survey::fields( );
+     //$skipFields = array( );
+     civicrm_views_add_fields( $fields, $data['civicrm_survey'], 'civicrm_survey' );
+     
 
 }
