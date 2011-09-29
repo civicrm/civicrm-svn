@@ -110,7 +110,8 @@ class CRM_Activity_Form_Task extends CRM_Core_Form
             $queryParams =  $form->get( 'queryParams' );
             $query       = new CRM_Contact_BAO_Query( $queryParams, null, null, false, false, 
                                                        CRM_Contact_BAO_Query::MODE_ACTIVITY);
-            $query->_distinctComponentClause = 'DISTINCT ( civicrm_activity.id )';
+            $query->_distinctComponentClause = '( civicrm_activity.id )';
+            $query->_groupByComponentClause  = " GROUP BY civicrm_activity.id ";
             $result = $query->searchQuery(0, 0, null);
 
             while ($result->fetch()) {

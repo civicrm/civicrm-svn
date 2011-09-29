@@ -174,7 +174,8 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
         $this->_action = $action;
         $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
                                                     CRM_Contact_BAO_Query::MODE_MEMBER );
-        $this->_query->_distinctComponentClause = " DISTINCT(civicrm_membership.id)";
+        $this->_query->_distinctComponentClause = " civicrm_membership.id";
+        $this->_query->_groupByComponentClause  = " GROUP BY civicrm_membership.id ";
     }//end of constructor
 
 

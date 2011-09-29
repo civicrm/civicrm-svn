@@ -512,7 +512,8 @@ INNER JOIN  civicrm_option_value ov ON ( ca.case_type_id=ov.value AND ov.option_
  LEFT JOIN  civicrm_phone cp ON ( cp.contact_id = contact_a.id AND cp.is_primary = 1)
      WHERE  civicrm_case_contact.case_id = %1";
         
-        $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $caseId, 'Integer' ) ) );
+        $dao = CRM_Core_DAO::executeQuery( $query,
+                                           array( 1 => array( $caseId, 'Integer' ) ) );
         while ( $dao->fetch() ) {
             $contactNames[$dao->cid]['contact_id']   =  $dao->cid;
             $contactNames[$dao->cid]['sort_name']    =  $dao->name;
@@ -745,7 +746,8 @@ AND civicrm_case.status_id != $closedId";
         $query = self::getCaseActivityQuery( $type, $userID, $condition );
         
         $queryParams = array();
-        $result = CRM_Core_DAO::executeQuery( $query, $queryParams );
+        $result = CRM_Core_DAO::executeQuery( $query,
+                                              $queryParams );
 
         require_once 'CRM/Core/OptionGroup.php';
         $caseStatus = CRM_Core_OptionGroup::values( 'case_status', false, false, false, " AND v.name = 'Urgent' " );

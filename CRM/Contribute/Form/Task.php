@@ -111,7 +111,9 @@ class CRM_Contribute_Form_Task extends CRM_Core_Form
             $queryParams =  $form->get( 'queryParams' );
             $query       = new CRM_Contact_BAO_Query( $queryParams, null, null, false, false, 
                                                        CRM_Contact_BAO_Query::MODE_CONTRIBUTE);
-            $query->_distinctComponentClause = " DISTINCT(civicrm_contribution.id)";
+            $query->_distinctComponentClause = " civicrm_contribution.id";
+            $query->_groupByComponentClause  = " GROUP BY civicrm_contribution.id ";
+            
             $result = $query->searchQuery(0, 0, null);
             while ($result->fetch()) {
                 $ids[] = $result->contribution_id;

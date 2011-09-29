@@ -104,7 +104,7 @@ class CRM_Case_Form_Task extends CRM_Core_Form
             $queryParams =  $form->get( 'queryParams' );
             $query       = new CRM_Contact_BAO_Query( $queryParams, null, null, false, false, 
                                                        CRM_Contact_BAO_Query::MODE_CASE );
-            $query->_distinctComponentClause = " DISTINCT ( civicrm_case.id )";
+            $query->_distinctComponentClause = " ( civicrm_case.id )";
             $query->_groupByComponentClause  = " GROUP BY civicrm_case.id ";
             $result = $query->searchQuery(0, 0, null);
             while ($result->fetch()) {

@@ -172,7 +172,7 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
         $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
                                                     CRM_Contact_BAO_Query::MODE_CASE);
 
-        $this->_query->_distinctComponentClause = " DISTINCT ( civicrm_case.id )";
+        $this->_query->_distinctComponentClause = " civicrm_case.id ";
 		$this->_query->_groupByComponentClause  = " GROUP BY civicrm_case.id ";
     }//end of constructor
 
