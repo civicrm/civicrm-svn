@@ -94,13 +94,14 @@ class CRM_Bridge_OG_CiviCRM {
         require_once 'CRM/Core/BAO/UFMatch.php';
         foreach ( $contactIDs as $contactID ) {
             $drupalID = CRM_Core_BAO_UFMatch::getUFId( $contactID );
-            if ( $drupalID ) {
-                $crm_user = user_load($drupalID);
-                
+            if ( $drupalID ) {                
                 if ( $op == 'add' ) {
-                    og_group( $ogID, 'user', $crm_user );
+                    og_membership_create( $ogID, 'user', $drupalID, array( 'is_active' => 1 ) );
                 } else {
-                    og_ungroup( $ogID, 'user', $crm_user );
+                    $membership = og_get_group_membership( $ogID, 'user', $drupalID );
+                    if ($membership) {
+                        og_membership_delete($membership->id);
+                    }
                 }
             }
         }
