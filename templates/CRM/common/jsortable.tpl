@@ -60,7 +60,7 @@ eval('tableId =[' + tableId + ']');
     var id = -1; var count = 0; var columns=''; var sortColumn = '';
     //build columns array for sorting or not sorting
     cj(tabId + ' th').each( function( ) {
-        var option = cj(this).attr('id').split("_");
+        var option = cj(this).prop('id').split("_");
         option  = ( option.length > 1 ) ? option[1] : option[0];
         stype   = 'numeric';
         switch( option ) { 
