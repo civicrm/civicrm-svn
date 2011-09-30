@@ -101,15 +101,15 @@ class WebTest_Campaign_MembershipTest extends CiviSeleniumTestCase {
       }
 
       // add the required Drupal permission
-      $this->open("{$this->sboxPath}admin/user/permissions");
+      $this->changeAdminLinks();
       $this->waitForElementPresent('edit-submit');
-      $this->check('edit-2-administer-CiviCampaign');
+      $this->check('edit-2-administer-civicampaign');
       $this->click('edit-submit');
       $this->waitForPageToLoad();
       $this->assertTrue($this->isTextPresent('The changes have been saved.'));
 
       // Go directly to the URL of the screen that you will be testing
-      $this->open($this->sboxPath . "civicrm/campaign/add&reset=1");
+      $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
 
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
       // button at the end of this page to show up, to make sure it's fully loaded.

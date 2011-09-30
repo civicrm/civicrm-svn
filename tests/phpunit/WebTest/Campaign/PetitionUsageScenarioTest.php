@@ -71,9 +71,9 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       // handle permissions early
 
       // let's give permission 'sign CiviCRM Petition' to anonymous user.
-      $this->open( $this->sboxPath ."admin/user/permissions");
+      $this->changeAdminLinks();
       $this->waitForElementPresent("edit-submit");
-      $this->check("edit-1-sign-CiviCRM-Petition");
+      $this->check("edit-1-sign-civicrm-petition");
       // give profile related permision
       $this->check("edit-1-profile-create");
       $this->check("edit-1-profile-edit");
@@ -81,13 +81,13 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       $this->check("edit-1-profile-view");
 
       // now give full permissions to CiviPetition to registered user
-      $this->check("edit-2-administer-CiviCampaign");
+      $this->check("edit-2-administer-civicampaign");
       $this->check("edit-2-manage-campaign");
       $this->check("edit-2-gotv-campaign-contacts");
       $this->check("edit-2-interview-campaign-contacts");
       $this->check("edit-2-release-campaign-contacts");
       $this->check("edit-2-reserve-campaign-contacts");
-      $this->check("edit-2-sign-CiviCRM-Petition");
+      $this->check("edit-2-sign-civicrm-petition");
       
       // save permission
       $this->click("edit-submit");
@@ -97,7 +97,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       /////////////// Create Campaign ///////////////////////////////
       
       // Go directly to the URL of the screen that you will be add campaign
-      $this->open($this->sboxPath . "civicrm/campaign/add&reset=1");
+      $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
 
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
       // button at the end of this page to show up, to make sure it's fully loaded.
@@ -133,7 +133,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       ////////////// Create petition using New Individual profile //////////////////////
       
       // Go directly to the URL of the screen that you will be add petition
-      $this->open( $this->sboxPath . "civicrm/petition/add&reset=1" );
+      $this->open( $this->sboxPath . "civicrm/petition/add?reset=1" );
       
       // button at the end of this page to show up, to make sure it's fully loaded.
       $this->waitForElementPresent("_qf_Petition_next-bottom");
@@ -199,7 +199,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       $this->open( $this->sboxPath );
       $this->webtestLogin();
 
-      $this->open($this->sboxPath . "civicrm/campaign&reset=1&subPage=petition");
+      $this->open($this->sboxPath . "civicrm/campaign?reset=1&subPage=petition");
       $this->waitForPageToLoad("30000");
       $this->waitForElementPresent("link=Add Petition");
 
