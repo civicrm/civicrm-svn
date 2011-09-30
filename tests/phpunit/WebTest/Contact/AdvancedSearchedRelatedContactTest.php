@@ -102,7 +102,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
         $this->waitForPageToLoad("300000"); 
         $this->waitForElementPresent("xpath=//form[@id='Basic']/div[3]/div/div[2]/table/tbody/tr/");
         
-        // click through to the Contribution view screen
+        // click through to the Relationship view screen
         $this->click("xpath=//form[@id='Basic']/div[3]/div/div[2]/table/tbody/tr/td[11]/span/a[text()='View']");
         $this->waitForPageToLoad("300000"); 
         $this->click("css=li#tab_participant a");
@@ -114,7 +114,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
         $this->select("event_id", "value={$eventId}" );
         $this->click("_qf_Participant_upload-bottom" );
         $this->waitForPageToLoad("300000"); 
-
+        
         $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
         $this->waitForPageToLoad('30000');        
         
@@ -148,6 +148,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
         $this->assertTrue( $this->isTextPresent( "Added Contact(s) to $groupName" ) );
         $this->assertTrue( $this->isTextPresent( 'Total Selected Contact(s): 2' ) );
         $this->assertTrue( $this->isTextPresent( 'Total Contact(s) added to group: 2' ) );
+        $this->_testSearchResult( $relType );
         
     }
     
@@ -284,5 +285,21 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
                                               )
                                         );
         $this->assertTrue( $this->isTextPresent( $relType ) );
+    }
+    
+    function _testSearchResult( $relType ) {
+        
+        //search related contact using Advanced Search
+        $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1" );
+        $this->waitForPageToLoad("300000");
+        $this->waitForElementPresent( "_qf_Advanced_refresh" ); 
+        $this->select("component_mode", "label=Related Contacts");
+        $this->select("display_relationship_type", "label={$relType}");
+        $this->click("CiviEvent");
+        $this->waitForElementPresent( "event_type" ); 
+        $this->type("event_type", "Conference");
+        $this->click("_qf_Advanced_refresh");
+        $this->waitForPageToLoad("300000");
+        $this->assertTrue( $this->isTextPresent( '2 Contacts' ) ); 
     }
 }
