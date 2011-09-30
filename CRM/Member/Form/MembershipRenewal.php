@@ -210,6 +210,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
         
                                                                  
         $defaults['record_contribution'] = 0;        
+        $defaults['num_terms'] = 1;
         $defaults['send_receipt'] = 0; 
         
         $renewalDate = CRM_Utils_Date::processDate( CRM_Utils_Array::value( 'renewal_date', $defaults ), 
@@ -375,6 +376,8 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             
             $this->add('text', 'total_amount', ts('Amount'));
             $this->addRule('total_amount', ts('Please enter a valid amount.'), 'money');
+            $this->add('text', 'num_terms', ts('Renew for how many periods?'), array('onchange' =>"setPaymentBlock();"), true );
+            $this->addRule('num_terms', ts('Please enter a whole number for how many periods to renew.'), 'integer');
             
             $this->add('select', 'payment_instrument_id', ts( 'Paid By' ), 
                        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::paymentInstrument( ),
@@ -610,9 +613,17 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                                                    'Membership' );
         // check for test membership.
         $isTestMembership = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $this->_membershipId, 'is_test' );
+
+        // chk for renewal for multiple terms CRM-8750
+        $numRenewTerms = 1;
+        if ( is_numeric( $formValues['num_terms'] ) ) {
+            $numRenewTerms = $formValues['num_terms'];
+        }
+
         $renewMembership = CRM_Member_BAO_Membership::renewMembership( $this->_contactID, 
                                                                        $formValues['membership_type_id'][1],
-                                                                       $isTestMembership, $this, null, null, $customFieldsFormatted );
+                                                                       $isTestMembership, $this, null, null,
+                                                                       $customFieldsFormatted, $numRenewTerms );
         
         $endDate = CRM_Utils_Date::processDate( $renewMembership->end_date );
         
@@ -689,9 +700,10 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                   $this->_contributorEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contactID );
             $receiptFrom = $formValues['from_email_address'];
             
-            $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
-            $formValues['paidBy'] = $paymentInstrument[$formValues['payment_instrument_id']];
-            
+            if ( CRM_Utils_Array::value( 'payment_instrument_id', $formValues ) ) {
+                $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
+                $formValues['paidBy'] = $paymentInstrument[$formValues['payment_instrument_id']];
+            }
             //get the group Tree
             $this->_groupTree = CRM_Core_BAO_CustomGroup::getTree( 'Membership', $this, $this->_id, false,$this->_memType);
             

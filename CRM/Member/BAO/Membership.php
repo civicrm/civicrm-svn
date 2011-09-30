@@ -1375,6 +1375,7 @@ AND civicrm_membership.is_test = %2";
      * @param object  $form                form object  
      * @param array   $ipnParams           array of name value pairs, to be used (for e.g source) when $form not present
      * @param int     $modifiedID          individual contact id in case of On Behalf signup (CRM-4027 ) 
+     * @param int     $numRenewTerms       how many membership terms are being added to end date (default is 1)
      *
      * @return object $membership          object of membership
      * 
@@ -1383,7 +1384,8 @@ AND civicrm_membership.is_test = %2";
      * 
      **/
     static function renewMembership( $contactID, $membershipTypeID, $is_test,
-                                     &$form, $changeToday = null, $modifiedID = null, $customFieldsFormatted = null )
+                                     &$form, $changeToday = null, $modifiedID = null,
+                                     $customFieldsFormatted = null, $numRenewTerms = 1 )
     {
         require_once 'CRM/Utils/Hook.php';
         $statusFormat = '%Y-%m-%d';
@@ -1399,8 +1401,8 @@ AND civicrm_membership.is_test = %2";
         // check is it pending. - CRM-4555
         $pending = false;
         if ( CRM_Utils_Array::value( 'minimum_fee', $membershipTypeDetails ) > 0.0 ) {
-            if ( ( $form->_contributeMode == 'notify' || 
-                   $form->_params['is_pay_later']     || 
+            if ( ( ( isset( $form->_contributeMode ) && $form->_contributeMode == 'notify' ) || 
+                   CRM_Utils_Array::value( 'is_pay_later',$form->_params )     || 
                    ( CRM_Utils_Array::value( 'is_recur', $form->_params ) 
                      && $form->_contributeMode == 'direct' ) ) &&
                  ( ( $form->_values['is_monetary'] && $form->_amount > 0.0 ) ||
@@ -1488,7 +1490,8 @@ AND civicrm_membership.is_test = %2";
 				$dates =
                     CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType( $currentMembership['id'],
                                                                                      $changeToday,
-                                                                                     $membershipTypeID );
+                                                                                     $membershipTypeID,
+                                                                                     $numRenewTerms );
                 
                 $currentMembership['join_date']     = 
                     CRM_Utils_Date::customFormat($currentMembership['join_date'], $format );
@@ -1525,7 +1528,8 @@ AND civicrm_membership.is_test = %2";
 				// CRM-7297 Membership Upsell - calculate dates based on new membership type
                 $dates = CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType( $membership->id , 
                                                                                           $changeToday, 
-                                                                                          $membershipTypeID );
+                                                                                          $membershipTypeID,
+                                                                                          $numRenewTerms );
                 
                 // Insert renewed dates for CURRENT membership
                 $memParams                  = array( );
@@ -1620,7 +1624,7 @@ AND civicrm_membership.is_test = %2";
         }
 
         //inherit campaign from contrib page.
-        if ( is_array( $form->_values ) && !empty( $form->_values )  ) {
+        if ( isset( $form->_values ) && is_array( $form->_values ) && !empty( $form->_values )  ) {
             $campaignId = CRM_Utils_Array::value( 'campaign_id', $form->_params );
             if ( !array_key_exists( 'campaign_id', $form->_params ) ) {
                 $campaignId = CRM_Utils_Array::value( 'campaign_id', $form->_values );
