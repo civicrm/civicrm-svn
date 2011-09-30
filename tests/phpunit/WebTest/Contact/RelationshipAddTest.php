@@ -151,6 +151,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
       $this->waitForPageToLoad("30000");
       
       $label = "HouseholdSubtype" . substr(sha1(rand()), 0, 4); 
+      $householdSubtypeName = $label;
       $this->click("label");
       $this->type("label", $label);
       $this->select("parent_id", "label=Household");
@@ -212,6 +213,109 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
                                       );
       
       $this->assertTrue( $this->isTextPresent( $params['label_b_a'] ) );
+      
+      //test for individual contact and household subtype contact
+      //relationship
+      $typeb ="Household" . CRM_Core_DAO::VALUE_SEPARATOR . $householdSubtypeName;
+      
+      //create a relationship type between different contact types
+      $params = array( 'label_a_b'       => 'Owner of '.rand( ),
+                       'label_b_a'       => 'Belongs to '.rand( ),
+                       'contact_type_a'  => 'Individual',
+                       'contact_type_b'  => $typeb,
+                       'description'     => 'The company belongs to this individual' );
+    
+      
+      
+      //create relationship type
+      $this->open( $this->sboxPath . 'civicrm/admin/reltype?reset=1&action=add' );
+      $this->type( 'label_a_b', $params['label_a_b'] );
+      $this->type( 'label_b_a', $params['label_b_a'] );
+      $this->select( 'contact_types_a', "value={$params['contact_type_a']}" );
+      $this->select( 'contact_types_b', "value={$params['contact_type_b']}" );
+      $this->type( 'description', $params['description'] );
+      
+      $params['contact_type_b'] = preg_replace('/' . CRM_Core_DAO::VALUE_SEPARATOR . '/',' - ',$params['contact_type_b']);
+      
+      //save the data.
+      $this->click( '_qf_RelationshipType_next-bottom' );
+      $this->waitForPageToLoad( '30000' );
+      
+      //does data saved.
+      $this->assertTrue( $this->isTextPresent( 'The Relationship Type has been saved.' ), 
+                         "Status message didn't show up after saving!" );
+      
+      $this->open( $this->sboxPath . 'civicrm/admin/reltype?reset=1' );
+      $this->waitForPageToLoad( '30000' );
+      
+      //validate data on selector.
+      $data = $params;
+      if ( isset( $data['description'] ) ) {
+          unset( $data['description'] );
+      }
+      $this->assertStringsPresent( $data );
+      
+      //create a New Individual
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName, "Anderson", "$firstName@anderson.name" );
+      $sortName    = "Anderson, $firstName";
+      $displayName = "$firstName Anderson";
+      
+      //create a new contact of household subtype
+      $this->open( $this->sboxPath . "civicrm/contact/add?ct=Household&cst=".$householdSubtypeName."&reset=1" );
+      $this->waitForElementPresent( '_qf_Contact_upload_view' );
+      
+      //fill in Household name
+      $householdName = substr(sha1(rand()), 0, 4) . 'home';
+      $this->click( "household_name" );
+      $this->type( "household_name", $householdName );
+      $displayName = $householdName;
+      
+      // Clicking save.
+      $this->click( "_qf_Contact_upload_view" );
+      $this->waitForPageToLoad( "30000" );
+      
+      //choose the created relationship type 
+      $this->click( 'css=li#tab_rel a' );
+      
+      // wait for add Relationship link
+      $this->waitForElementPresent( 'link=Add Relationship' );
+      $this->click( 'link=Add Relationship' );
+      $this->waitForElementPresent( "relationship_type_id" );
+      $this->select( 'relationship_type_id', "label={$params['label_b_a']}" );
+      
+      //fill in the individual
+      $this->typeKeys( 'rel_contact', $sortName );
+      $this->fireEvent( "rel_contact", "focus" );
+      
+      $this->waitForElementPresent( "css=div.ac_results-inner li" );
+      $this->click( "css=div.ac_results-inner li" );
+      
+      $this->waitForElementPresent( "quick-save" );
+      
+      //fill in the relationship start date
+      $this->webtestFillDate( 'start_date', '-2 year' );
+      
+      $description = "Well here is some description !!!!";
+      $this->type( "description", $description );
+      
+      //save the relationship
+      $this->click( "quick-save" );
+      $this->waitForElementPresent( "current-relationships" );
+      
+      $this->waitForElementPresent( "xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']" );
+      $this->click( "xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']" );
+      
+      $this->waitForPageToLoad( "300000" ); 
+      $this->webtestVerifyTabularData(
+                                      array(
+                                            'Description' => $description,
+                                            'Status'      => 'Enabled'
+                                            )
+                                      );
+      
+      $this->assertTrue( $this->isTextPresent( $params['label_b_a'] ) );
+     
   }  
 }
 ?>
