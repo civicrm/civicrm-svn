@@ -376,7 +376,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             
             $this->add('text', 'total_amount', ts('Amount'));
             $this->addRule('total_amount', ts('Please enter a valid amount.'), 'money');
-            $this->add('text', 'num_terms', ts('Renew for how many periods?'), array('onchange' =>"setPaymentBlock();"), true );
+            $this->add('text', 'num_terms', ts('Extend Membership by'), array('onchange' =>"setPaymentBlock();"), true );
             $this->addRule('num_terms', ts('Please enter a whole number for how many periods to renew.'), 'integer');
             
             $this->add('select', 'payment_instrument_id', ts( 'Paid By' ), 

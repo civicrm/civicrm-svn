@@ -1500,9 +1500,9 @@ AND civicrm_membership.is_test = %2";
                 $currentMembership['reminder_date'] = CRM_Utils_Array::value( 'reminder_date', $dates );
                 $currentMembership['is_test']       = $is_test;
                 
-                if ( $form->_params['membership_source'] ) {
+                if ( CRM_Utils_Array::value( 'membership_source',$form->_params ) ) {
                     $currentMembership['source'] = $form->_params['membership_source'];
-                } else if ( $form->_values['title'] ) {
+                } else if ( isset( $form->_values['title'] ) && !empty( $form->_values['title'] ) ) {
                     $currentMembership['source'] = ts( 'Online Contribution:' ) . ' ' . $form->_values['title'];
                 } else {
                     $currentMembership['source'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', 
