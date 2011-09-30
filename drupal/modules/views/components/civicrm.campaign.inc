@@ -27,6 +27,7 @@
  * Includes the following tables
  * civicrm_campaign
  */
+require_once 'CRM/Campaign/PseudoConstant.php';
 function _civicrm_campaign_data (&$data, $enabled) {
      /**
      *CiviCRM Campaign Base Table
@@ -320,6 +321,19 @@ function _civicrm_campaign_data (&$data, $enabled) {
                                                        'title' => t('CiviCRM Surveys'),
                                                        'help' => t("View displays CiviCRM Survey Data"),
                                                        );
+     // Link to activites table for Results
+     $data['civicrm_activity']['table']['join']['civicrm_survey'] = array(
+                                                                            // Directly links to tag table
+                                                                            'left_field' => 'id',
+                                                                            'field' => 'source_record_id',
+                                                                            'extra' => array(
+                                                                                            array(
+                                                                                                 'field' => 'activity_type_id',
+                                                                                                 'value' => CRM_Campaign_PseudoConstant::activityType('value'),
+                                                                                                 'numeric' => FALSE,
+                                                                                                 ),
+                                                                                            ),
+                                                                            );
     // Survey ID
     $data['civicrm_survey']['id'] = array(
                                             'title' => t('Survey ID'),

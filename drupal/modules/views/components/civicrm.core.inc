@@ -1757,6 +1757,22 @@ function _civicrm_core_data (&$data, $enabled) {
                                                                  'handler' => 'views_handler_sort',
                                                                  ),
                                                  );
+    // Result
+    // TODO: Add in Filter handler that can be narrowed down to spefics record_source_id and Activity Type
+    $data['civicrm_activity']['result'] = array(
+                                                 'title' => t('Result'),
+                                                 'help' => t('Survey or Petition Result'),
+                                                 'field' => array(
+                                                                  'handler' => 'views_handler_field',
+                                                                  'click sortable' => TRUE,
+                                                                  ),
+                                                 'argument' => array(
+                                                                     'handler' => 'views_handler_argument',
+                                                                     ),
+                                                 'sort' => array(
+                                                                 'handler' => 'views_handler_sort',
+                                                                 ),
+                                                 );
     // Link to Campaign Table
     if( isset($enabled['CiviCampaign']) ) {
         $data['civicrm_activity']['campaign_id'] = array(
@@ -1774,18 +1790,22 @@ function _civicrm_core_data (&$data, $enabled) {
                                                           'title' => t('Engagement level'),
                                                           'help' => t('The Engagement Level of this Activity for this contact'),
                                                           'field' => array(
-                                                                           'handler' => 'views_handler_field_numeric',
-                                                                           'click sortable' => TRUE,
-                                                                           ),
+                                                                          'handler' => 'civicrm_handler_field_pseudo_constant',
+                                                                          'click sortable' => TRUE,
+                                                                          'pseudo class' => 'CRM_Campaign_PseudoConstant',
+                                                                          'pseudo method' => 'engagementLevel',                                                                        
+                                                                          ),
 
                                                           'argument' => array(
                                                                               'handler' => 'views_handler_argument',
                                                                               ),
 
                                                           'filter' => array(
-                                                                            'handler' => 'views_handler_filter_numeric',
-                                                                            'allow empty' => TRUE,
-                                                                            ),
+                                                                           'handler' => 'civicrm_handler_filter_pseudo_constant',
+                                                                           'allow empty' => TRUE,
+                                                                           'pseudo class' => 'CRM_Campaign_PseudoConstant',
+                                                                           'pseudo method' => 'engagementLevel',                                                                        
+                                                                           ),
 
                                                           'sort' => array(
                                                                           'handler' => 'views_handler_sort',
