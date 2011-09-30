@@ -114,6 +114,40 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
         $this->select("event_id", "value={$eventId}" );
         $this->click("_qf_Participant_upload-bottom" );
         $this->waitForPageToLoad("300000"); 
+
+        $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
+        $this->waitForPageToLoad('30000');        
+        
+        $this->type("sort_name", $sortName);
+        $this->click('_qf_Advanced_refresh');
+        $this->waitForPageToLoad('60000');
+        
+        $this->assertTrue( $this->isTextPresent( '1 Contact' ) );
+
+        $this->click('css=div.crm-advanced_search_form-accordion div.crm-accordion-header');
+        $this->select("component_mode", "label=Related Contacts" );
+        $this->select("display_relationship_type", $relType);
+        $this->click('_qf_Advanced_refresh');
+        $this->waitForPageToLoad('60000');
+
+        $this->assertTrue( $this->isTextPresent( '2 Contacts' ) ); 
+
+        $this->select("task", "label=Add Contacts to Group");
+
+        $this->click('Go');
+        $this->waitForPageToLoad('30000');
+        
+        $this->click('CIVICRM_QFID_1_4');
+        
+        $groupName = "Group " . substr(sha1(rand()), 0, 7);
+        $this->type('title', $groupName);
+        
+        $this->click("_qf_AddToGroup_next-bottom");
+        $this->waitForPageToLoad('30000');
+
+        $this->assertTrue( $this->isTextPresent( "Added Contact(s) to $groupName" ) );
+        $this->assertTrue( $this->isTextPresent( 'Total Selected Contact(s): 2' ) );
+        $this->assertTrue( $this->isTextPresent( 'Total Contact(s) added to group: 2' ) );
         
     }
     
