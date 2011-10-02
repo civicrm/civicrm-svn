@@ -94,7 +94,8 @@
 			</ul> 
         	    </span>
         	    </div>
-        	    <div class=crm-event-participants>
+
+                <div class=crm-event-participants>
         	    <span id="event-participants-{$row.id}" class="btn-slide">{ts}Participants{/ts}
         	    	<ul class="panel" id="panel_participants_{$row.id}">
         		    {if $findParticipants.statusCounted}
@@ -112,7 +113,8 @@
                         </ul> 
         	    </span>
         	    </div> 
-        	    <div class="crm-event-links">
+        	    
+                <div class="crm-event-links">
         	    <span id="event-links-{$row.id}" class="btn-slide">{ts}Event Links{/ts}
         	    	<ul class="panel" id="panel_links_{$row.id}">
         		    <li><a title="Register Participant" class="action-item" href="{crmURL p='civicrm/participant/add' q="reset=1&action=add&context=standalone&eid=`$row.id`"}">{ts}Register Participant{/ts}</a></li>

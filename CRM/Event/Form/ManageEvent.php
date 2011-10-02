@@ -158,14 +158,17 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
             }
             $this->assign( 'title', $title );
         }
-        
-        require_once 'CRM/Event/PseudoConstant.php';
-        $statusTypes        = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 1', 'label' );
-        $statusTypesPending = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 0', 'label' );
-        $findParticipants['statusCounted'] = implode( ', ', array_values( $statusTypes ) );
-        $findParticipants['statusNotCounted'] = implode( ', ', array_values( $statusTypesPending ) );
-        $this->assign('findParticipants', $findParticipants);
-                
+
+        if ( CRM_Core_Permission::check( 'view event participants' ) &&
+             CRM_Core_Permission::check( 'view all contacts' ) ) {  
+            require_once 'CRM/Event/PseudoConstant.php';
+            $statusTypes        = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 1', 'label' );
+            $statusTypesPending = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 0', 'label' );
+            $findParticipants['statusCounted'] = implode( ', ', array_values( $statusTypes ) );
+            $findParticipants['statusNotCounted'] = implode( ', ', array_values( $statusTypesPending ) );
+            $this->assign('findParticipants', $findParticipants);
+        }
+
         $this->_templateId = (int) CRM_Utils_Request::retrieve('template_id', 'Integer', $this);
 
         // also set up tabs

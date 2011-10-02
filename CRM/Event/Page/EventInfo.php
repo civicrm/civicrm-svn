@@ -212,6 +212,25 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
             $this->assign( 'skipLocationType', true );
             $this->assign( 'mapURL', $mapURL );
         }
+        
+        if ( CRM_Core_Permission::check( 'view event participants' ) &&
+             CRM_Core_Permission::check( 'view all contacts' ) ) {  
+            require_once 'CRM/Event/PseudoConstant.php';
+            $statusTypes        = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 1');
+            $statusTypesPending = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 0');
+            $findParticipants['statusCounted'] = implode( ', ', array_values( $statusTypes ) );
+            $findParticipants['statusNotCounted'] = implode( ', ', array_values( $statusTypesPending ) );
+            $this->assign('findParticipants', $findParticipants);
+        }
+        
+        $participantListingID = CRM_Utils_Array::value( 'participant_listing_id', $values['event'] );
+        if ( $participantListingID ) {
+            $participantListingURL = CRM_Utils_System::url( 'civicrm/event/participant',
+                                                                "reset=1&id={$this->_id}",
+                                                                true, null, true, true );
+            $this->assign( 'participantListingURL', $participantListingURL );
+        }
+ 
         require_once 'CRM/Event/BAO/Participant.php';
         $eventFullMessage = CRM_Event_BAO_Participant::eventFull( $this->_id );
         $hasWaitingList   = CRM_Utils_Array::value( 'has_waitlist', $values['event'] );

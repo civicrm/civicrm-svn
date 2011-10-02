@@ -32,6 +32,49 @@
      &nbsp;{ts}Registration is closed for this event{/ts}
   </div>
 {/if}
+<div class="crm-actions-ribbon crm-event-manage-tab-actions-ribbon">
+	<ul id="actions">
+{if call_user_func(array('CRM_Core_Permission','check'), 'edit all events')} 
+
+	<li><div id="crm-event-links-wrapper">
+	      <div id="crm-event-links-link"><span><div class="icon dropdown-icon"></div>{ts}Edit Event{/ts}</span></div>
+	      <div class="ac_results" id="crm-event-links-list">
+	      	   <div class="crm-event-links-list-inner">
+	      	   	<ul>
+        		    <li><a title="Info and Settings" href="{crmURL p='civicrm/event/manage/eventInfo' q="reset=1&action=update&id=`$event.id`"}">{ts}Info and Settings{/ts}</a></li>
+        		    <li><a title="Location" href="{crmURL p='civicrm/event/manage/location' q="reset=1&action=update&id=`$event.id`"}">{ts}Location{/ts}</a></li>
+        		    <li><a title="Fees" href="{crmURL p='civicrm/event/manage/fee' q="reset=1&action=update&id=`$event.id`"}">{ts}Fees{/ts}</a></li>
+        		    <li><a title="Online Registration" href="{crmURL p='civicrm/event/manage/registration' q="reset=1&action=update&id=`$event.id`"}">{ts}Online Registration{/ts}</a></li>
+        		    <li><a title="Tell a Friend" href="{crmURL p='civicrm/event/manage/friend' q="reset=1&action=update&id=`$event.id`"}">{ts}Tell a Friend{/ts}</a></li>
+		        </ul>
+	           </div>
+	      </div>
+    </div></li>
+
+{/if}
+<li><div id="crm-participant-wrapper">
+	      <div id="crm-participant-link"><span><div class="icon dropdown-icon"></div>{ts}Find Participants{/ts}</span></div>
+	      <div class="ac_results" id="crm-participant-list">
+	      	   <div class="crm-participant-list-inner">
+	      	   	<ul>
+                    {if $findParticipants.statusCounted}
+			    	    <li><a class="crm-participant-counted" href="{crmURL p='civicrm/event/search' q="reset=1&force=1&event=`$event.id`&status=true"}">{$findParticipants.statusCounted|replace:'/':', '}</a></li>
+			        {/if}
+			
+		            {if $findParticipants.statusNotCounted}
+			    	<li><a class="crm-participant-not-counted" href="{crmURL p='civicrm/event/search' q="reset=1&force=1&event=`$event.id`&status=false"}">{$findParticipants.statusNotCounted|replace:'/':', '}</a>
+				    </li>
+			        {/if}
+		            {if $participantListingURL}
+			    	    <li><a class="crm-participant-listing" href="{$participantListingURL}">{ts}Public Participant Listing{/ts}</a></li>
+			        {/if}
+		        </ul>
+	           </div>
+	      </div>
+    	</div></li>
+	</ul>
+	<div class="clear"></div>
+</div>
 <div class="vevent crm-block crm-event-info-form-block">
 	<div class="event-info">
 	
@@ -153,3 +196,25 @@
     
     </div>
 </div>
+{literal}
+<script type="text/javascript">
+
+cj('body').click(function() {
+    cj('#crm-event-links-list').hide();
+    cj('#crm-participant-list').hide();
+});
+
+cj('#crm-event-links-link').click(function(event) {
+    cj('#crm-event-links-list').toggle();
+    cj('#crm-participant-list').hide();
+    event.stopPropagation();
+});
+
+cj('#crm-participant-link').click(function(event) {
+    cj('#crm-participant-list').toggle();
+    cj('#crm-event-links-list').hide();
+    event.stopPropagation();
+});
+
+</script>
+{/literal}
