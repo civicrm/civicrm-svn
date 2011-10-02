@@ -198,6 +198,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         $this->assign( 'hasRelatedCases', $relatedCases );
 
         $entitySubType = !empty($values['case_type_id']) ? $values['case_type_id'][0] : null;
+        $this->assign( 'caseTypeID', $entitySubType );
         $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Case',
                                                          $this,
                                                          $this->_caseID,

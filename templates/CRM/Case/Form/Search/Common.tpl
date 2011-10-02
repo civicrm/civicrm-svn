@@ -64,6 +64,14 @@
 
 <tr><td colspan="3">{include file="CRM/common/Tag.tpl" tagsetType='case'}</td></tr>
 
+{if $caseGroupTree }
+<tr>
+    <td colspan="4">
+       {include file="CRM/Custom/Form/Search.tpl" groupTree=$caseGroupTree showHideLinks=false}
+    </td>
+</tr>
+{/if}
+
 {literal}
 <script type="text/javascript">
     var verifyCaseInput = new Array();

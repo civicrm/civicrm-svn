@@ -122,6 +122,7 @@ class CRM_Core_BAO_CustomQuery
                                'Group'        => 'civicrm_group',
                                'Relationship' => 'civicrm_relationship',
                                'Event'        => 'civicrm_event',
+                               'Case'         => 'civicrm_case',
                                'Activity'     => 'civicrm_activity',
                                'Pledge'       => 'civicrm_pledge',
                                'Grant'        => 'civicrm_grant',
@@ -282,6 +283,8 @@ SELECT label, value
                 $joinTable = 'civicrm_grant';
             } else  if ( $field['extends'] == 'civicrm_address' ) {
                 $joinTable = 'civicrm_address';
+            } else  if ( $field['extends'] == 'civicrm_case' ) {
+                $joinTable = 'civicrm_case';
             }
             
             if ( $joinTable ) {

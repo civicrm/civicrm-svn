@@ -59,7 +59,7 @@
 				</tr>
 			    </table>
 			{/foreach}
-			    <a href="#" class="button" style="margin-left: 6px;" onclick="updateCaseCustom({$cvID}, {$customGroupId}); return false;"><span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span></a><br/>
+			    <a href="#" class="button" style="margin-left: 6px;" onclick="updateCaseCustom({$caseID}, {$customGroupId}, {$contactID}, {$caseTypeID}); return false;"><span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span></a><br/>
 
 			</div>
 			<div class="clear"></div>
@@ -108,9 +108,9 @@
 {else}
 <script type="text/javascript">
     {literal}
-    function updateCaseCustom( entityID, groupID ) {
-      var dataURL = {/literal}"{crmURL p="civicrm/contact/view/cd/edit" q="snippet=4&type=Case&cgcount=1&action=update&reset=1" h=0}"{literal};
-      dataURL = dataURL + '&entityID=' + entityID + '&groupID=' + groupID;
+    function updateCaseCustom( entityID, groupID, contactID, subType ) {
+      var dataURL = {/literal}"{crmURL p="civicrm/case/cd/edit" q="snippet=4&cgcount=1&action=update&reset=1" h=0}"{literal};
+      dataURL = dataURL + '&entityID=' + entityID + '&groupID=' + groupID + '&cid=' + contactID + ( subType ? '&subType=' + subType  : '');
 
       cj.ajax({
          url: dataURL,
