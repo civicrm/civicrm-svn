@@ -109,7 +109,7 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
      * @access public
      *
      */
-    public function actionLinks( $activityTypeId, 
+    public static function actionLinks( $activityTypeId, 
                                  $sourceRecordId = null, 
                                  $accessMailingReport = false, 
                                  $activityId = null, 
