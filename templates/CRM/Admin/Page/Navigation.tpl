@@ -52,7 +52,7 @@
                    dataType : "json",
                    async : true, 
                    url : {/literal}"{crmURL p='civicrm/ajax/menu' h=0 q='key='}{crmKey name='civicrm/ajax/menu'}"{literal}
-                     }
+                 }
             },
              rules : {
                 droppable : [ "tree-drop" ],
@@ -60,19 +60,19 @@
                 deletable : "all",
                 draggable : "all"
             },
-	    crrm  :  {
+	        crrm  :  {
                 move: {
                         check_move: function(m) {
-		            if( cj( m.r[0] ).attr('id').replace("node_","") == {/literal}{$homeMenuId}{literal} || 
+		                    if ( cj( m.r[0] ).attr('id').replace("node_","") == {/literal}{$homeMenuId}{literal} || 
                                 cj( m.o[0] ).attr('id').replace("node_","") == {/literal}{$homeMenuId}{literal} ) { 
                                     return false; 
                             } else { 
                                     return true; 
                             } 
-		         } 
+		                } 
                       }
             },
-             contextmenu	:{ 
+             contextmenu : { 
                 items: {
                         create : false,
                         ccp : {   
@@ -80,32 +80,30 @@
                                    visible : function (node, obj) { if(node.length != 1) return false; 
                                                   return obj.check("renameable", node); }, 
                                    action  : function (node, obj) { 
-                                             var nid = cj(node).attr('id');
+                                             var nid = cj(node).prop('id');
                                              var nodeID = nid.substr( 5 );
                                              var editURL = {/literal}"{crmURL p='civicrm/admin/menu' h=0 q='action=update&reset=1&id='}"{literal} + nodeID;
-                                      location.href =  editURL;  
+                                             location.href =  editURL;  
                                        },
-				   submenu : false
-                                }       
+				                   submenu : false
+                            }       
+                      }
+           }                
       
-                
-            }}                
- 
- }).bind("rename.jstree", function ( e,node ) {
-
-      var nodeID  = node.rslt.obj.attr('id').replace("node_","");
-      var newName = node.rslt.new_name;
-      var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 q='key='}{crmKey name='civicrm/ajax/menutree'}"{literal};
-          cj.get( postURL + '&type=rename&id=' + nodeID + '&data=' + newName, 
-                          function (data) {
-              			    cj("#reset-menu").show( );
-            	 	    }
-            	 );
- }). bind("remove.jstree", function ( e,node ) {
-      var menuName  = node.rslt.obj.find('a').first( ).text( );
-      var deleteMsg = {/literal}"Are you sure you want to delete this menu item: "{literal} + menuName + {/literal}" ? This action can not be undone."{literal};
+      }).bind("rename.jstree", function ( e,node ) {
+        var nodeID  = node.rslt.obj.attr('id').replace("node_","");
+        var newName = node.rslt.new_name;
+        var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 q='key='}{crmKey name='civicrm/ajax/menutree'}"{literal};
+              cj.get( postURL + '&type=rename&id=' + nodeID + '&data=' + newName, 
+                function (data) {
+                    cj("#reset-menu").show( );
+                });
+       
+       }). bind("remove.jstree", function ( e,node ) {
+            var menuName  = node.rslt.obj.find('a').first( ).text( );
+            var deleteMsg = {/literal}"Are you sure you want to delete this menu item: "{literal} + menuName + {/literal}" ? This action can not be undone."{literal};
       var isDelete  = confirm( deleteMsg );
-          if( isDelete ) {
+          if ( isDelete ) {
               var nodeID  = node.rslt.obj.attr('id').replace("node_","");
               var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 q='key='}{crmKey name='civicrm/ajax/menutree'}"{literal};
               cj.get( postURL + '&type=delete&id=' + nodeID,
@@ -115,22 +113,21 @@
                } else { 
  	         cj("#navigation-tree").jstree('refresh');
     	  }                 
-            
- }). bind("move_node.jstree", function ( e,node ) {
+       
+       }). bind("move_node.jstree", function ( e,node ) {
           node.rslt.o.each(function (i) {
                var nodeID = node.rslt.o.attr('id').replace("node_","");
                var refID  = node.rslt.np.attr('id').replace("node_","");
 	        if (isNaN( refID ) ){ refID =''; }
-	        var ps = node.rslt.cp+i;
+	             var ps = node.rslt.cp+i;
                var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 q='key='}{crmKey name='civicrm/ajax/menutree'}"{literal};
                cj.get( postURL + '&type=move&id=' +  nodeID + '&ref_id=' + refID + '&ps='+ps, 
                function (data) {
              		cj("#reset-menu").show( );
-             	    }
-           	);}); 
+               });
+         }); 
     });
 });
     </script>
     {/literal}
-
 {/if}
