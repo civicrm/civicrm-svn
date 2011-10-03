@@ -1211,7 +1211,8 @@ WHERE  contribution_id = {$this->_id}
                                                                        $this->_params,
                                                                        $config->defaultCurrency );
             $this->_params['payment_action'] = 'Sale';
-                       
+            $this->_params['receive_date'] = CRM_Utils_Date::processDate( $this->_params['receive_date'], $this->_params['receive_date_time'] );
+                                   
             if ( CRM_Utils_Array::value('soft_credit_to', $params) ) {
                 $this->_params['soft_credit_to'] = $params['soft_credit_to'];
                 $this->_params['pcp_made_through_id'] = $params['pcp_made_through_id'];
@@ -1314,8 +1315,7 @@ WHERE  contribution_id = {$this->_id}
             
             $this->set( 'params', $this->_params );
             $this->assign( 'trxn_id', $result['trxn_id'] );
-            $this->assign( 'receive_date', CRM_Utils_Date::processDate( $this->_params['receive_date'],
-                                                                        $this->_params['receive_date_time']) );
+            $this->assign( 'receive_date', $this->_params['receive_date'] );
             
             // result has all the stuff we need
             // lets archive it to a financial transaction

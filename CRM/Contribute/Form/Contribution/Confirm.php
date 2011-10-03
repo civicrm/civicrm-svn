@@ -996,7 +996,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                'contact_id'            => $contactID,
                                'contribution_type_id'  => $contributionType->id,
                                'contribution_page_id'  => $contributionPageId,
-                               'receive_date'          => ( CRM_Utils_Array::value( 'receive_date',  $params ) ) ? CRM_Utils_Date::processDate( $params['receive_date'], CRM_Utils_Array::value( 'receive_date_time', $params ) ) : date( 'YmdHis' ),
+                               'receive_date'          => ( CRM_Utils_Array::value( 'receive_date',  $params ) ) ? CRM_Utils_Date::processDate( $params['receive_date'] ) : date( 'YmdHis' ),
                                'non_deductible_amount' => $nonDeductibleAmount,
                                'total_amount'          => $params['amount'],
                                'amount_level'          => CRM_Utils_Array::value( 'amount_level', $params ),
@@ -1074,10 +1074,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $contribParams['non_deductible_amount'] = trim(CRM_Utils_Money::format($contribParams['non_deductible_amount'], ' '));
         $contribParams['total_amount']          = trim(CRM_Utils_Money::format($contribParams['total_amount'], ' '));
 
+        $contribSoftParams = array();
         // Prepare soft contribution due to pcp or Submit Credit / Debit Card Contribution by admin.
         if ( CRM_Utils_Array::value( 'pcp_made_through_id', $params ) ||
              CRM_Utils_Array::value( 'soft_credit_to', $params ) ) { 
-            $contribSoftParams = array();
             foreach ( array ('pcp_display_in_roll', 'pcp_roll_nickname', 'pcp_personal_note', 'amount') as $val ) {
                 if ( CRM_Utils_Array::value( $val, $params ) ) {
                     $contribSoftParams[$val] = $params[$val];
