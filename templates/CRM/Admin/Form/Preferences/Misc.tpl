@@ -28,7 +28,7 @@
     <h3>{ts}Mailing Preferences{/ts}</h3>
         <table class="form-layout">
     		<tr class="crm-preferences-misc-form-block-profile-double-optin">
-    		    <td>{$form.profile_double_optin.html}</td>
+    		    <td width="10%">{$form.profile_double_optin.html}</td>
     		    <td class="label">{$form.profile_double_optin.label}</td>
     		</tr>
     		<tr class="crm-preferences-misc-form-block-profile-add-to-group-double-optin">
@@ -56,12 +56,16 @@
                 <td class="label">{$form.contact_ajax_check_similar.label}
              </tr>
              <tr class="crm-preferences-other-form-block-tag-unconfirmed">
-                <td class="label">{$form.tag_unconfirmed.label}
-                <td>{$form.tag_unconfirmed.html}</td>
+                <td class="label">{$form.tag_unconfirmed.label}</td>
+                <td>{$form.tag_unconfirmed.html}<br/>
+                    <span class="description">{ts}Tag to assign to contacts that are created when a petition is signed{/ts}</span>
+                </td>
              </tr>
              <tr class="crm-preferences-other-form-block-petition-contacts">
-                <td class="label">{$form.petition_contacts.label}
-                <td>{$form.petition_contacts.html}</td>
+                <td class="label">{$form.petition_contacts.label}</td>
+                <td>{$form.petition_contacts.html}<br/>
+                    <span class="description">{ts}Group to assign all contacts that have signed a petition{/ts}</span>
+                </td>
 	     </tr>
         </table>
 

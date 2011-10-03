@@ -55,8 +55,8 @@ class CRM_Admin_Form_Preferences_Misc extends CRM_Admin_Form_Preferences
                                  );
 
         $this->_text = array(
-                             'tag_unconfirmed'   => ts( 'Tag to assign to contacts that are created when a petition is signed' ),
-                             'petition_contacts' => ts( 'Group to assign all contacts that have signed a petition' )
+                             'tag_unconfirmed'   => ts( 'Tag Name' ),
+                             'petition_contacts' => ts( 'Group Name' ),
                              );
         
         $this->_varNames = array( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME => array( 
@@ -127,30 +127,6 @@ class CRM_Admin_Form_Preferences_Misc extends CRM_Admin_Form_Preferences
         }
 
         $this->_params = $this->controller->exportValues( $this->_name );
-        
-        if ( CRM_Utils_Array::value( 'contact_edit_preferences', $this->_params ) ) {
-            $preferenceWeights = explode( ',' , $this->_params['contact_edit_preferences'] );
-            foreach( $preferenceWeights as $key => $val ) {
-                if ( !$val ) {
-                    unset($preferenceWeights[$key]);
-                }
-            }
-            require_once 'CRM/Core/BAO/OptionValue.php';
-            $opGroupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup' , 'contact_edit_options', 'id', 'name' );
-            CRM_Core_BAO_OptionValue::updateOptionWeights( $opGroupId, array_flip($preferenceWeights) );
-        }
-
-        if ( $config->userSystem->is_drupal == '1' && module_exists("wysiwyg")) {
-            variable_set('civicrm_wysiwyg_input_format', $this->_params['wysiwyg_input_format']);
-        }
-        
-        $this->_config->editor_id = $this->_params['editor_id'];
-        $this->_config->display_name_format = $this->_params['display_name_format'];
-        $this->_config->sort_name_format    = $this->_params['sort_name_format'];
-
-        // set default editor to session if changed
-        $session = CRM_Core_Session::singleton();
-        $session->set( 'defaultWysiwygEditor', $this->_params['editor_id'] );
         
         parent::postProcess( );
     }//end of function

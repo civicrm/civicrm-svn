@@ -186,16 +186,30 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
      */
     public function postProcess() 
     {
-        foreach ( $this->_cbs as $name => $title ) {
-            if ( CRM_Utils_Array::value( $name, $this->_params ) &&
-                 is_array( $this->_params[$name] ) ) {
-                $this->_config->$name = 
-                    CRM_Core_DAO::VALUE_SEPARATOR .
-                    implode( CRM_Core_DAO::VALUE_SEPARATOR,
-                             array_keys( $this->_params[$name] ) ) .
-                    CRM_Core_DAO::VALUE_SEPARATOR;
-            } else {
-                $this->_config->$name = null;
+        if ( ! empty( $this->_cbs ) ) {
+            foreach ( $this->_cbs as $name => $title ) {
+                if ( CRM_Utils_Array::value( $name, $this->_params ) &&
+                     is_array( $this->_params[$name] ) ) {
+                    $this->_config->$name = 
+                        CRM_Core_DAO::VALUE_SEPARATOR .
+                        implode( CRM_Core_DAO::VALUE_SEPARATOR,
+                                 array_keys( $this->_params[$name] ) ) .
+                        CRM_Core_DAO::VALUE_SEPARATOR;
+                } else {
+                    $this->_config->$name = null;
+                }
+            }
+        }
+
+        if ( ! empty( $this->_checkbox ) ) {
+            foreach ( $this->_checkbox as $name => $title ) {
+                $this->_config->$name = CRM_Utils_Array::value( $name, $this->_params ) ? 1 : 0;
+            }
+        }
+ 
+        if ( ! empty( $this->_text ) ) {
+            foreach ( $this->_text as $name => $title ) {
+                $this->_config->$name = CRM_Utils_Array::value( $name, $this->_params );
             }
         }
 
