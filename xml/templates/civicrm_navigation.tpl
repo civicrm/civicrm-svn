@@ -51,11 +51,20 @@ VALUES
   ( @domainID, NULL, 1, 'CiviCRM Preferences', 'display_name_format', '{serialize}{literal}{contact.individual_prefix}{ }{contact.first_name}{ }{contact.last_name}{ }{contact.individual_suffix}{/literal}{/serialize}' ),
   ( @domainID, NULL, 1, 'CiviCRM Preferences', 'sort_name_format', '{serialize}{literal}{contact.last_name}{, }{contact.first_name}{/literal}{/serialize}' ),
   ( @domainID, NULL, 1, 'CiviCRM Preferences', 'editor_id', '{serialize}2{/serialize}' ),
-  ( @domainID, NULL, 1, 'CiviCRM Preferences', 'mailing_backend', {literal}'a:1:{s:15:"outBound_option";s:1:"3";}'{/literal} ),
+  ( @domainID, NULL, 1, 'Mailing Preferences', 'mailing_backend', {literal}'a:1:{s:15:"outBound_option";s:1:"3";}'{/literal} ),
   ( @domainID, NULL, 1, 'CiviCRM Preferences', 'contact_autocomplete_options', '{serialize}12{/serialize}' ),
   ( @domainID, NULL, 1, 'Address Standardization Preferences', 'address_standardization_provider', NULL ),
   ( @domainID, NULL, 1, 'Address Standardization Preferences', 'address_standardization_userid', NULL ),
-  ( @domainID, NULL, 1, 'Address Standardization Preferences', 'address_standardization_url', NULL );
+  ( @domainID, NULL, 1, 'Address Standardization Preferences', 'address_standardization_url', NULL ),
+  ( @domainID, NULL, 1, 'Configuration Preferences', 'contact_ajax_check_similar', '{serialize}1{/serialize}' ),
+  ( @domainID, NULL, 1, 'Configuration Preferences', 'tag_unconfirmed', '{serialize}Unconfirmed{/serialize}' ),
+  ( @domainID, NULL, 1, 'Configuration Preferences', 'petition_contacts', '{serialize}Petition Contacts{/serialize}' ),
+  ( @domainID, NULL, 1, 'Mailing Preferences', 'profile_double_optin', '{serialize}1{/serialize}' ),
+  ( @domainID, NULL, 1, 'Mailing Preferences', 'profile_add_to_group_double_optin', '{serialize}0{/serialize}' ),
+  ( @domainID, NULL, 1, 'Mailing Preferences', 'track_civimail_replies', '{serialize}0{/serialize}' ),
+  ( @domainID, NULL, 1, 'Mailing Preferences', 'activity_assignee_notification', '{serialize}1{/serialize}' ),
+  ( @domainID, NULL, 1, 'Mailing Preferences', 'civimail_workflow', '{serialize}0{/serialize}' );
+
 -- mail settings 
 
 INSERT INTO civicrm_mail_settings (domain_id, name, is_default, domain) VALUES (@domainID, 'default', true, 'FIXME.ORG');

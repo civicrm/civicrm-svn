@@ -93,7 +93,11 @@ class CRM_Contact_Form_Edit_Individual {
         $form->addElement('hidden', 'current_employer_id', '', array( 'id' => 'current_employer_id') );
         $form->addElement('text', 'contact_source', ts('Source'));
 
-        $checkSimilar = defined( 'CIVICRM_CONTACT_AJAX_CHECK_SIMILAR' ) ? CIVICRM_CONTACT_AJAX_CHECK_SIMILAR : true;
+        require_once 'CRM/Core/BAO/Setting.php';
+        $checkSimilar = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CONFIGURATION_PREFERENCES_NAME,
+                                                       'contact_ajax_check_similar',
+                                                       null,
+                                                       true );
         $form->assign('checkSimilar',$checkSimilar );
  
 

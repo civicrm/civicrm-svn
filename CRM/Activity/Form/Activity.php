@@ -1076,9 +1076,11 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
 
         // send copy to assignee contacts.CRM-4509
         $mailStatus = '';
-        $config   = CRM_Core_Config::singleton( );
-        
-        if ( !CRM_Utils_Array::crmIsEmptyArray($params['assignee_contact_id']) && $config->activityAssigneeNotification ) {
+        require_once 'CRM/Core/BAO/Setting.php';
+
+        if ( ! CRM_Utils_Array::crmIsEmptyArray($params['assignee_contact_id']) &&
+             CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+                                            'activity_assignee_notification' ) ) {
             $mailToContacts = array( );
             $assigneeContacts = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $activity->id, true, false );
            

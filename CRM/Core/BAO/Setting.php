@@ -51,10 +51,11 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
      * various predefined settings that have been migrated to the setting table
      */
     const 
-        SYSTEM_PREFERENCES_NAME                  = 'CiviCRM Preferences',
         ADDRESS_STANDARDIZATION_PREFERENCES_NAME = 'Address Standardization Preferences',
+        CONFIGURATION_PREFERENCES_NAME           = 'Configuration Preferences',
         MAILING_PREFERENCES_NAME                 = 'Mailing Preferences',
-        NAVIGATION_NAME                          = 'Navigation Menu';
+        NAVIGATION_NAME                          = 'Navigation Menu',
+        SYSTEM_PREFERENCES_NAME                  = 'CiviCRM Preferences';
 
     static $_cache = null;
 

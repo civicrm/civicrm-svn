@@ -150,7 +150,7 @@ class CRM_Profile_Form extends CRM_Core_Form
      * @var string
      */
     protected $_activityId = null;
-    
+
     /** 
      * pre processing work done here. 
      * 
@@ -226,7 +226,7 @@ class CRM_Profile_Form extends CRM_Core_Form
         } else {
             $gids = $this->_profileIds; 
         }
-       
+
         // if we dont have a gid use the default, else just use that specific gid
         if ( ( $this->_mode == self::MODE_REGISTER || $this->_mode == self::MODE_CREATE ) && ! $this->_gid ) {
             $this->_ctype  = CRM_Utils_Request::retrieve( 'ctype', 'String', $this, false, 'Individual', 'REQUEST' );
@@ -247,11 +247,9 @@ class CRM_Profile_Form extends CRM_Core_Form
                                                                null,
                                                                ( $this->_action == CRM_Core_Action::ADD ) ? CRM_Core_Permission::CREATE : CRM_Core_Permission::EDIT );
             
-            ///is profile double-opt process configurablem, key
-            ///should be present in civicrm.settting.php file
-            $config = CRM_Core_Config::singleton( );
-            if ( $config->profileDoubleOptIn &&
-                 CRM_Utils_Array::value( 'group', $this->_fields ) ) {
+            // is profile double-opt in?
+            if ( CRM_Utils_Array::value( 'group', $this->_fields ) &&
+                 CRM_Core_BAO_UFGroup::isProfileDoubleOptin( ) ) {
                 $emailField = false;
                 foreach ( $this->_fields as $name => $values ) {
                     if ( substr( $name, 0, 6 ) == 'email-' ) {
@@ -909,7 +907,8 @@ class CRM_Profile_Form extends CRM_Core_Form
 
         //array of group id, subscribed by contact
         $contactGroup = array( );
-        if ( $config->profileDoubleOptIn && CRM_Utils_Array::value( 'group', $params ) ) {
+        if ( CRM_Utils_Array::value( 'group', $params ) &&
+             CRM_Core_BAO_UFGroup::isProfileDoubleOptin( ) ) {
            $groupSubscribed = array( );
             if ( CRM_Utils_Array::value( 'email' , $result ) ) {
                 require_once 'CRM/Contact/DAO/Group.php';
@@ -956,7 +955,9 @@ class CRM_Profile_Form extends CRM_Core_Form
             $groupType = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                                   substr( $groupTypes, 1, -1 ) );
             //filter group of mailing type and unset it from params
-            if ( in_array( 2, $groupType ) && $config->profileAddToGroupDoubleOptIn && CRM_Utils_Array::value( 'email' , $result ) ) {
+            if ( in_array( 2, $groupType ) && 
+                 CRM_Utils_Array::value( 'email' , $result ) && 
+                 CRM_Core_BAO_UFGroup::isProfileAddToGroupDoubleOptin( ) ) {
                 if ( !count($contactGroup) ) {
                     require_once 'CRM/Contact/DAO/Group.php';
                     //array of group id, subscribed by contact

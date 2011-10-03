@@ -327,16 +327,20 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
      */
     public function postProcess() 
     {		
+        require_once 'CRM/Core/BAO/Setting.php';
+        $tag_name = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CONFIGURATION_PREFERENCES_NAME,
+                                                   'tag_unconfirmed' );
+
        
-		if (defined('CIVICRM_TAG_UNCONFIRMED')) {
+		if ( $tag_name ) {
 			// Check if contact 'email confirmed' tag exists, else create one
 			// This should be in the petition module initialise code to create a default tag for this
-			$tag_params['name'] = CIVICRM_TAG_UNCONFIRMED;
+			$tag_params['name'] = $tag_name;
 			$tag_params['version'] = 3;
 			$tag = civicrm_api('tag','get',$tag_params); 
 			if ($tag['count'] == 0) {				
 				//create tag
-				$tag_params['description'] = CIVICRM_TAG_UNCONFIRMED;
+				$tag_params['description'] = $tag_name;
 				$tag_params['is_reserved'] = 1;
 				$tag_params['used_for'] = 'civicrm_contact';
 				$tag = civicrm_api('tag', 'create', $tag_params); 
@@ -407,7 +411,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				$this->redirectIfSigned($params);
 				
 				// dedupe matched single contact, check for 'unconfirmed' tag				
-				if (defined('CIVICRM_TAG_UNCONFIRMED')) {
+				if ( $tag_name ) {
 					require_once 'CRM/Core/DAO/EntityTag.php';
 					$tag = new CRM_Core_DAO_EntityTag( );
 					$tag->entity_id  = $this->_contactId;
@@ -433,7 +437,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				
 				// check if user has already signed this petition - redirects to Thank You if true
 				$this->redirectIfSigned($params);
-				if (defined('CIVICRM_TAG_UNCONFIRMED')) {
+				if ( $tag_name ) {
 					require_once 'CRM/Core/DAO/EntityTag.php';
 					$tag = new CRM_Core_DAO_EntityTag( );
 					$tag->entity_id  = $this->_contactId;
@@ -502,7 +506,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				
 				case self::EMAIL_CONFIRM:
 					// set 'Unconfirmed' tag for this new contact
-					if (defined('CIVICRM_TAG_UNCONFIRMED')) {
+					if ( $tag_name ) {
 						unset($tag_params);
 						$tag_params['contact_id'] = $this->_contactId;
 						$tag_params['tag_id'] = $this->_tagId;

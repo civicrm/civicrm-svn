@@ -142,6 +142,11 @@
      <page_callback>CRM_Admin_Form_Preferences_Address</page_callback>
   </item>
   <item>
+     <path>civicrm/admin/setting/preferences/misc</path>
+     <title>Other CiviCRM Settings</title>
+     <page_callback>CRM_Admin_Form_Preferences_Misc</page_callback>
+  </item>
+  <item>
      <path>civicrm/admin/setting/preferences/date</path>
      <title>View Date Prefences</title>
      <page_callback>CRM_Admin_Page_PreferencesDate</page_callback>

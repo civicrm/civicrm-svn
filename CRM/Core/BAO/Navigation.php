@@ -529,11 +529,6 @@ ORDER BY parent_id, weight";
      */
     static function createNavigation( $contactID ) 
     {
-        if ( !$contactID || 
-             !CRM_Core_DAO::checkFieldExists( 'civicrm_preferences', 'navigation' ) ) {
-            return;
-        }
-
         $config = CRM_Core_Config::singleton();
         // For Joomla front end user, there is no need to create
         // navigation menu items, CRM-5349

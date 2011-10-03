@@ -2838,10 +2838,10 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton( );
         $subscribeGroupIds = array( );
-        
+
         // process further only if profileDoubleOptIn enabled and if groups exist
-        if ( !$config->profileDoubleOptIn || 
-             !array_key_exists( 'group', $params ) || 
+        if ( ! array_key_exists( 'group', $params ) || 
+             ! self::isProfileDoubleOptin( ) ||
              CRM_Utils_System::isNull( $params['group'] ) ) {
             return $subscribeGroupIds;	
         }
@@ -3022,5 +3022,28 @@ SELECT  group_id
         
         return $groupTypeValue;
     }
+
+    static function isProfileDoubleOptin( ) {
+        // check for double optin
+        $config = CRM_Core_Config::singleton( );
+        if ( in_array( 'CiviMail', $config->enableComponents ) ) {
+            require_once 'CRM/Core/BAO/Setting.php';
+            return CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+                                                  'profile_double_optin', null, false );
+        }
+        return false;
+    }
+
+    static function isProfileAddToGroupDoubleOptin( ) {
+        // check for add to group double optin
+        $config = CRM_Core_Config::singleton( );
+        if ( in_array( 'CiviMail', $config->enableComponents ) ) {
+            require_once 'CRM/Core/BAO/Setting.php';
+            return CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+                                                  'profile_add_to_group_double_optin', null, false );
+        }
+        return false;
+    }
+
 
 }

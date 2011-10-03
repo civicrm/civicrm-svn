@@ -48,6 +48,8 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
 
     protected $_cbs       = null;
 
+    protected $_checkbox  = null;
+
     protected $_varNames  = null;
 
     protected $_config    = null;
@@ -98,6 +100,10 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
     }
 
     function cbsDefaultValues( &$defaults ) {
+        if ( empty( $this->_cbs ) ) {
+            return;
+        }
+
         require_once 'CRM/Core/BAO/CustomOption.php';
         foreach ( $this->_cbs as $name => $title ) {
             if ( isset( $this->_config->$name ) &&
@@ -125,16 +131,36 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
         parent::buildQuickForm( );
 
         require_once 'CRM/Core/OptionGroup.php';
-        foreach ( $this->_cbs as $name => $title ) {
-            $options = array_flip( CRM_Core_OptionGroup::values( $name, false, false, true ) );
-            $newOptions = array( );
-            foreach ( $options as $key => $val ) {
-                $newOptions[ $key ] = $val;
+        if ( ! empty( $this->_cbs ) ) {
+            foreach ( $this->_cbs as $name => $title ) {
+                $options = array_flip( CRM_Core_OptionGroup::values( $name, false, false, true ) );
+                $newOptions = array( );
+                foreach ( $options as $key => $val ) {
+                    $newOptions[ $key ] = $val;
+                }
+                $this->addCheckBox( $name, $title, 
+                                    $newOptions,
+                                    null, null, null, null,
+                                    array( '&nbsp;&nbsp;', '&nbsp;&nbsp;', '<br/>' ) );
             }
-            $this->addCheckBox( $name, $title, 
-                                $newOptions,
-                                null, null, null, null,
-                                array( '&nbsp;&nbsp;', '&nbsp;&nbsp;', '<br/>' ) );
+        }
+
+        if ( ! empty( $this->_checkbox ) ) {
+            foreach ( $this->_checkbox as $name => $title ) {
+                $this->addElement( 'checkbox',
+                                   $name,
+                                   $title );
+            }
+        }
+
+        if ( ! empty( $this->_text ) ) {
+            foreach ( $this->_text as $name => $title ) {
+                $this->addElement( 'text',
+                                   $name,
+                                   $title,
+                                   array( 'maxlength' => 64,
+                                          'size'      => 32 ) );
+            }
         }
 
         $this->addButtons( array(

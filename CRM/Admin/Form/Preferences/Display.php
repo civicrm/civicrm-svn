@@ -69,7 +69,6 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
 
     function setDefaultValues( ) {
         $defaults = array( );
-        $config = CRM_Core_Config::singleton();
 
         parent::cbsDefaultValues( $defaults );
         if ( $this->_config->editor_id ) {
@@ -87,6 +86,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
             $defaults['sort_name_format'] = $this->_config->sort_name_format;
         }
 
+        $config = CRM_Core_Config::singleton();
         if ( $config->userSystem->is_drupal == '1' && module_exists("wysiwyg")) {
             $defaults['wysiwyg_input_format'] = variable_get('civicrm_wysiwyg_input_format', 0);
         }
@@ -155,7 +155,6 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
      */
     public function postProcess() 
     {
-        $config = CRM_Core_Config::singleton();
         if ( $this->_action == CRM_Core_Action::VIEW ) {
             return;
         }
@@ -174,7 +173,9 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
             CRM_Core_BAO_OptionValue::updateOptionWeights( $opGroupId, array_flip($preferenceWeights) );
         }
 
-        if ( $config->userSystem->is_drupal == '1' && module_exists("wysiwyg")) {
+        $config = CRM_Core_Config::singleton();
+        if ( $config->userSystem->is_drupal == '1' &&
+             module_exists("wysiwyg")) {
             variable_set('civicrm_wysiwyg_input_format', $this->_params['wysiwyg_input_format']);
         }
         

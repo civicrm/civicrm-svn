@@ -77,9 +77,6 @@ class CRM_Core_Config_Defaults
             $civicrm_root . DIRECTORY_SEPARATOR .
             'l10n'        . DIRECTORY_SEPARATOR ;
 
-        // This should be moved to database config.
-        $this->sunlight = defined( 'CIVICRM_SUNLIGHT' ) ? true : false;
-
         // show tree widget
         $this->groupTree = defined( 'CIVICRM_GROUPTREE' ) ? true : false;
 
@@ -87,23 +84,6 @@ class CRM_Core_Config_Defaults
         //$this->revampPages = array( 'CRM/Admin/Form/Setting/Url.tpl', 'CRM/Admin/Form/Preferences/Address.tpl' );
         $this->revampPages = array( );
         
-        $this->profileDoubleOptIn = false;
-        // enable profile double Opt-In if Civimail enabled
-        if ( in_array( 'CiviMail', $this->enableComponents ) ) {
-            // set defined value for Profile double Opt-In from civicrm settings file else true 
-            $this->profileDoubleOptIn = defined( 'CIVICRM_PROFILE_DOUBLE_OPTIN' ) ? (bool) CIVICRM_PROFILE_DOUBLE_OPTIN : true;
-        }
-
-        $this->profileAddToGroupDoubleOptIn = false;
-        // enable profile add to group double Opt-In if Civimail enabled
-        if ( in_array( 'CiviMail', $this->enableComponents ) ) {
-            // set defined value for Profile add to group double Opt-In from civicrm settings file else true 
-            $this->profileAddToGroupDoubleOptIn = defined( 'CIVICRM_PROFILE_ADD_TO_GROUP_DOUBLE_OPTIN' ) ? (bool) CIVICRM_PROFILE_ADD_TO_GROUP_DOUBLE_OPTIN : false;
-        }
-
-       //email notifications to activity Assignees
-        $this->activityAssigneeNotification = defined( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' ) ? (bool) CIVICRM_ACTIVITY_ASSIGNEE_MAIL : true;
-
         // IDS enablement
         $this->useIDS = defined( 'CIVICRM_IDS_ENABLE' ) ? (bool) CIVICRM_IDS_ENABLE : true;
         

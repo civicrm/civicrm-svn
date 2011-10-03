@@ -162,6 +162,19 @@ define( 'CIVICRM_SITE_KEY', '%%siteKey%%' );
 define( 'CIVICRM_IDS_ENABLE', 1);
 
 /**
+ * Enable this constant, if you want to send your email through the smarty
+ * templating engine(allows you to do conditional and more complex logic)
+ *
+ */
+define( 'CIVICRM_MAIL_SMARTY', 0 );
+
+/**
+ * This setting logs all emails to a file. Useful for debugging any mail (or civimail) issues.
+ * This will not send any email, so ensure this is commented out in production
+ */
+// define( 'CIVICRM_MAIL_LOG', '%%templateCompileDir%%/mail.log' );
+
+/**
  * Multi org / Multi site settings:
  *
  */
@@ -201,12 +214,6 @@ define( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID', 0 );
  * If set, makes CiviMail default to tracking replies (i.e., using VERP-ed Reply-To:)
  */
 define('CIVICRM_TRACK_CIVIMAIL_REPLIES', false);
-
-/**
- * This setting logs all emails to a file. Useful for debugging any mail (or civimail) issues.
- * This will not send any email, so ensure this is commented out in production
- */
-// define( 'CIVICRM_MAIL_LOG', '%%templateCompileDir%%/mail.log' );
 
 /**
  * For use with CiviCampaign Petitions
@@ -270,12 +277,6 @@ define( 'CIVICRM_MEMCACHE_TIMEOUT', 3600 );
  */
 define( 'CIVICRM_MEMCACHE_PREFIX', '' );
 
-/**
- * Enable this constant, if you want to send your email through the smarty
- * templating engine(allows you to do conditional and more complex logic)
- *
- */
-define( 'CIVICRM_MAIL_SMARTY', 0 );
 
 /**
  *
