@@ -96,7 +96,8 @@ class CRM_Bridge_OG_CiviCRM {
             $drupalID = CRM_Core_BAO_UFMatch::getUFId( $contactID );
             if ( $drupalID ) {                
                 if ( $op == 'add' ) {
-                    og_membership_create( $ogID, 'user', $drupalID, array( 'is_active' => 1 ) );
+                     $group_membership = og_membership_create( $ogID, 'user', $drupalID, array( 'is_active' => 1 ) );
+                     $group_membership->save( );
                 } else {
                     $membership = og_get_group_membership( $ogID, 'user', $drupalID );
                     if ($membership) {

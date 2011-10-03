@@ -81,62 +81,13 @@ function civicrm_og_sync_node_delete( $node ) {
         
         _civicrm_og_sync_skip_process_request(true);
         
-        $params = array( 'name'        => $title,
-                         'title'       => $title,
+        $params = array( 'name'        => $node->title,
+                         'title'       => $node->title,
                          'og_id'       => $group->gid );
         
         CRM_Bridge_OG_Drupal::nodeapi( $params, 'delete' );
     }
 }
-
-// FIX ME: REMOVE ME
-/*
-function civicrm_og_sync_og( $op, $nid, $uid, $args = array( ) ) {
-    
-    //User actions need to call hook_og, or hook_civicrm_post, but
-    //not both.  So this should be processed only if Drupal sees
-    //the user event first.
-    if ( ! _civicrm_og_sync_set_context( 'drupal' ) ) {
-        return;
-    }
-    
-    // check if civicrm is present
-    if ( ! function_exists( 'civicrm_initialize' ) ||
-         empty( $nid ) ||
-         empty( $uid ) ) {
-        return;
-    }
-    
-    if ( ! civicrm_initialize( ) ) {
-        return;
-    }
-    
-    // create the CiviCRM groups if they dont exist
-    _civicrm_og_sync_create_group ( $nid, $uid );
-    
-    $params = array( 'og_id'     => $nid,
-                     'uf_id'     => $uid,
-                     'is_active' => isset( $args['is_active'] ) ? $args['is_active'] : null,
-                     'is_admin'  => isset( $args['is_admin' ] ) ? $args['is_admin' ] : null,
-                     );
-    
-    switch ( $op ) {
-        
-    case 'user insert':
-    case 'user update':
-        CRM_Bridge_OG_Drupal::og( $params, 'add' );
-        break;
-
-    case 'user delete':
-        CRM_Bridge_OG_Drupal::og( $params, 'delete' );
-        break;
-        
-    }
-    
-    //We can release the context here
-    _civicrm_og_sync_clear_context();
-}
-*/
 
 function civicrm_og_sync_og_membership_insert($membership){
     _civicrm_og_sync_group_action($membership, 'add');
@@ -224,19 +175,17 @@ function civicrm_og_sync_civicrm_post( $op, $objectName, $objectID, $objectRef )
  * Implemenation of hook_enable.  Use to synchronise with pre-existing groups
  * @return
  */
-function civicrm_og_sync_enable()
-{
+function civicrm_og_sync_enable() {
     if ( ! civicrm_initialize( ) ) {
         return;
     }
+          
+    $ogGroupIds  =  og_get_group_ids('node');
     
-    //set the context, to prevent loops from the CiviCRM side.
-    
-    
-    // get OG content types
-    
-    $ogGroupIds =  og_get_group_ids('node');
-    $subscribers = og_get_group_ids('user');
+    // FIX ME
+    $subscribers = array( ); 
+    // $subscribers = og_get_group_ids('user');
+
     foreach( $ogGroupIds as $nid => $gid ) {
         $node = node_load( $nid );
         $title  = trim( $node->title );
@@ -245,6 +194,8 @@ function civicrm_og_sync_enable()
                          'is_active'   => 1,
                          'og_id'       => $gid );
         
+        _civicrm_og_sync_skip_process_request( true );
+
         // add the group
         require_once 'CRM/Bridge/OG/Drupal.php';
         CRM_Bridge_OG_Drupal::nodeapi( $params, 'add' );
@@ -253,7 +204,15 @@ function civicrm_og_sync_enable()
         foreach($subscribers as $uid ) {
             $is_admin = false;
             if ( $uid == $node->uid ) $is_admin = true;
-            civicrm_og_sync_og( 'user update', $node->nid, $uid, array( 'is_admin' => $is_admin, 'is_active' => 1 ) );
+
+            $addToGroupParams = array( 'og_id'     => $gid,
+                                       'uf_id'     => $uid,
+                                       'is_active' => 1,
+                                       'is_admin'  => $is_admin,
+                                       );
+            
+            // add contact in group
+            CRM_Bridge_OG_Drupal::og( $addToGroupParams, 'add' );
         }
     }
 }
