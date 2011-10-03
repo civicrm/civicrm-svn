@@ -65,7 +65,7 @@ class CRM_Price_BAO_Set extends CRM_Price_DAO_Set
     {
         $priceSetBAO = new CRM_Price_BAO_Set( );
         $priceSetBAO->copyValues( $params );
-        if ( defined( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID' ) && CIVICRM_EVENT_PRICE_SET_DOMAIN_ID ) {
+        if ( self::eventPriceSetDomainID( ) ) {
             $priceSetBAO->domain_id = CRM_Core_Config::domainID( );
         }
         return $priceSetBAO->save( );
@@ -375,7 +375,7 @@ WHERE     ct.id = cp.contribution_type_id AND
             $query .= " AND civicrm_price_set.is_active = 1 ";
         }
         
-        if ( defined( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID' ) && CIVICRM_EVENT_PRICE_SET_DOMAIN_ID ) {
+        if ( self::eventPriceSetDomainID( ) ) {
             $query .= " AND civicrm_price_set.domain_id = " . CRM_Core_Config::domainID( );
         }
 
@@ -839,7 +839,8 @@ WHERE  id = %1";
      * @param int $sid the price set id 
      */
     function checkPermission( $sid ) {
-        if ( $sid && defined( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID' ) && CIVICRM_EVENT_PRICE_SET_DOMAIN_ID ) {
+        if ( $sid &&
+             self::eventPriceSetDomainID( ) ) {
             $domain_id = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $sid, 'domain_id',  'id' ) ;
             if ( CRM_Core_Config::domainID( ) != $domain_id ) {
                 CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) ); 
@@ -969,4 +970,11 @@ GROUP BY     mt.member_of_contact_id";
         $dao->fetch();
         return array( $dao->duration_interval, $dao->duration_unit );
     }   
+
+    static function eventPriceSetDomainID( ) {
+        require_once 'CRM/Core/BAO/Setting.php';
+        return CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CONFIGURATION_PREFERENCES_NAME,
+                                              'event_price_set_domain_id',
+                                              null, false );
+    }
 }

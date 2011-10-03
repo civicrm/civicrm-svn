@@ -52,6 +52,10 @@ class CRM_Admin_Form_Preferences_Misc extends CRM_Admin_Form_Preferences
                                  'civimail_workflow'                  => ts( 'Enable workflow support for CiviMail' ),
                                  'activity_assignee_notification'     => ts( 'Enable email notifications to Activity Assignees' ),
                                  'contact_ajax_check_similar'         => ts( 'Enable ajax check if similar contacts exist when creating a new contact' ),
+                                 'is_enabled'                         => ts( 'Enable Multi Site' ),
+                                 'uniq_email_per_site'                => ts( 'Ensure multi sites have a unique email per site' ),
+                                 'domain_group_id'                    => ts( 'The parent group for this domain' ),
+                                 'event_price_set_domain_id'          => ts( 'Should events respect domain' ),
                                  );
 
         $this->_text = array(

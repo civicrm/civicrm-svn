@@ -251,10 +251,11 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
             $this->assign( 'dashboardURL', $dashboardURL );
         }
         
-        if ( defined( 'CIVICRM_MULTISITE' ) && 
-             CIVICRM_MULTISITE              && 
-             $contactType == 'Organization' &&
-             CRM_Core_Permission::check( 'administer Multiple Organizations' ) ) {
+        require_once 'CRM/Core/BAO/Setting.php';
+        if ( $contactType == 'Organization' &&
+             CRM_Core_Permission::check( 'administer Multiple Organizations' ) &&
+             CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
+                                            'is_enabled' ) ) {
             require_once 'CRM/Contact/BAO/GroupOrganization.php';
             //check is any relationship between the organization and groups
             $groupOrg = CRM_Contact_BAO_GroupOrganization::hasGroupAssociated( $this->_contactId );

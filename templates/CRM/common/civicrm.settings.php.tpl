@@ -174,70 +174,20 @@ define( 'CIVICRM_MAIL_SMARTY', 0 );
  */
 // define( 'CIVICRM_MAIL_LOG', '%%templateCompileDir%%/mail.log' );
 
+define( 'CIVICRM_DOMAIN_ID'      , 1 );
+
 /**
  * Multi org / Multi site settings:
  *
  */
 // define( 'CIVICRM_MULTISITE'           , null );
-// define( 'CIVICRM_UNIQ_EMAIL_PER_SITE' , null );
-define( 'CIVICRM_DOMAIN_ID'      , 1 );
-define( 'CIVICRM_DOMAIN_GROUP_ID', null );
-define( 'CIVICRM_DOMAIN_ORG_ID'  , null );
-
-define( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID', 0 );
-
-/**
- * Setting to disable email notifications to activity assignees
- *
- */
- define( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' , 1 );
-
-/**
- * Setting to disable ajax check if similar contacts exist when creating a new contact
- *
- */
- define( 'CIVICRM_CONTACT_AJAX_CHECK_SIMILAR' , 1 );
-
-/**
- * Setting to disable or enable profile double optin.
- * This is enable by default and functions only if Civimail is enabled.
- */
- define( 'CIVICRM_PROFILE_DOUBLE_OPTIN', 1 );
-
-/**
- * Setting to disable or enable profile double optini for add to group in profile
- * This is disabled by default and functions only if Civimail is enabled.
- */
- define( 'CIVICRM_PROFILE_ADD_TO_GROUP_DOUBLE_OPTIN', 0 );
-
-/**
- * If set, makes CiviMail default to tracking replies (i.e., using VERP-ed Reply-To:)
- */
-define('CIVICRM_TRACK_CIVIMAIL_REPLIES', false);
-
-/**
- * For use with CiviCampaign Petitions
- * If set, contacts that are created when signing a petition are tagged with the
- * defined tag name (default below is 'Unconfirmed')
- */
-define('CIVICRM_TAG_UNCONFIRMED', 'Unconfirmed');
-
-/**
- * Defines the group name containing all contacts that have signed a CiviCampaign petition.
- * Do not unset - required for email verification. Group will be created if it does not exist.
- */
-define('CIVICRM_PETITION_CONTACTS','Petition Contacts');
-
-/**
- * Enables or disables workflow support for CiviMail. Also requires
- * Drupal AND rules module being enabled
- */
-define('CIVICRM_CIVIMAIL_WORKFLOW', 0 );
 
 /**
  * Settings to enable external caching using a Memcache server.  This is an
  * advanced features, and you should read and understand the documentation
- * before you turn it on.
+ * before you turn it on. We cannot store these settings in the DB since the
+ * config could potentially also be cached and we need to avoid an infinite
+ * recursion scenario.
  *
  * @see http://civicrm.org/node/126
  */

@@ -54,6 +54,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
         ADDRESS_STANDARDIZATION_PREFERENCES_NAME = 'Address Standardization Preferences',
         CONFIGURATION_PREFERENCES_NAME           = 'Configuration Preferences',
         MAILING_PREFERENCES_NAME                 = 'Mailing Preferences',
+        MULTISITE_PREFERENCES_NAME               = 'Multi Site Preferences',
         NAVIGATION_NAME                          = 'Navigation Menu',
         SYSTEM_PREFERENCES_NAME                  = 'CiviCRM Preferences';
 

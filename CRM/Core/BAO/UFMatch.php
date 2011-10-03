@@ -232,7 +232,8 @@ WHERE     openid = %1";
             $transaction = new CRM_Core_Transaction( );
 
             $dao = null;
-            if ( ! empty( $_POST ) && ! $isLogin ) {
+            if ( ! empty( $_POST ) &&
+                 ! $isLogin ) {
                 $params = $_POST;
                 $params['email'] = $uniqId;
 
@@ -241,7 +242,10 @@ WHERE     openid = %1";
                 $dedupeParams['check_permission'] = false;
                 $ids          = CRM_Dedupe_Finder::dupesByParams( $dedupeParams, 'Individual' );
                 
-                if ( ! empty( $ids ) && defined( 'CIVICRM_UNIQ_EMAIL_PER_SITE' ) && CIVICRM_UNIQ_EMAIL_PER_SITE ) {
+                require_once 'CRM/Core/BAO/Setting.php';
+                if ( ! empty( $ids ) && 
+                     CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
+                                                    'uniq_email_per_site' ) ) {
                     // restrict dupeIds to ones that belong to current domain/site.
                     require_once 'CRM/Core/BAO/Domain.php';
                     $siteContacts = CRM_Core_BAO_Domain::getContactList();

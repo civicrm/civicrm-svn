@@ -265,10 +265,12 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
                         'CiviContribute' => ts( 'Contribution' ),
                         'CiviMember'     => ts( 'Membership' ) );
         
+        require_once 'CRM/Price/BAO/Set.php';
         $dao = new CRM_Price_DAO_Set();
-        if ( defined( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID' ) && CIVICRM_EVENT_PRICE_SET_DOMAIN_ID ) {
+        if ( CRM_Price_BAO_Set::eventPriceSetDomainID( ) ) {
             $dao->domain_id = CRM_Core_Config::domainID( );
         }
+
         $dao->find();
         while ($dao->fetch()) {
             $priceSet[$dao->id] = array();
