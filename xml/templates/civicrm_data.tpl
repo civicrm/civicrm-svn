@@ -312,6 +312,7 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}Link Cases{/ts}',                         25, 'Link Cases', NULL, 0,  NULL, 25, '', 0, 1, 1, @caseCompId, NULL ),
    (@option_group_id_act, '{ts escape="sql"}Change Case Tags{/ts}',                   26, 'Change Case Tags', NULL,0, 0, 26, '', 0, 1, 1, @caseCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}Add Client To Case{/ts}',                 27, 'Add Client To Case', NULL,0, 0, 26, '', 0, 1, 1, @caseCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Change Custom Data{/ts}',                 28, 'Change Custom Data', NULL,0, 0, 27, '', 0, 1, 1, @caseCompId, NULL),
 
 -- Activity Types for CiviCampaign
    (@option_group_id_act, '{ts escape="sql"}Survey{/ts}',                             28, 'Survey', NULL,0, 0, 27, '', 0, 1, 1, @campaignCompId, NULL),

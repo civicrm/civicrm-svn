@@ -594,7 +594,7 @@ case_relation_type.id = case_relationship.relationship_type_id )";
                                 // 'case_scheduled_activity_type'=>      1
                                 );
 
-            // also get all the custom participant properties
+            // also get all the custom case properties
             require_once "CRM/Core/BAO/CustomField.php";
             $fields = CRM_Core_BAO_CustomField::getFieldsForImport('Case');
             if ( ! empty( $fields ) ) {

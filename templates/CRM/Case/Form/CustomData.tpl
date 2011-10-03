@@ -23,29 +23,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* this template is used for building tabbed custom data *} 
-{if $cdType }
+
+<form action="{crmURL p='civicrm/case/cd/edit' q="cgcount=1&action=update&reset=1&entityID=`$entityID`&groupID=`$groupID`&cid=`$contactID`&subType=`$subType`"}" method="post" id="id_case_custom_dailog" >
     {include file="CRM/Custom/Form/CustomData.tpl"}
-{else}
-    <form action="{crmURL p='civicrm/case/cd/edit' q="cgcount=1&action=update&reset=1&entityID=`$entityID`&groupID=`$groupID`&cid=`$contactID`&subType=`$subType`"}" method="post" id="id_case_custom_dailog" >
-        <div id="customData"></div>
-        <div class="html-adjust">{$form.buttons.html}</div>  
-
-        {*include custom data js file*}
-        {include file="CRM/common/customData.tpl"}
-    </form>
-
-	{if $customValueCount }
-		{literal}
-		<script type="text/javascript">
-			var customValueCount = {/literal}"{$customValueCount}"{literal}
-			var groupID = {/literal}"{$groupID}"{literal}
-			var subtype = 1;
-			buildCustomData( 'Case', subtype );
-			for ( var i = 1; i < customValueCount; i++ ) {
-				buildCustomData( 'Case', subtype, null, i, groupID, true );
-			}
-		</script>
-		{/literal}
-	{/if}
-{/if}
+    <div class="html-adjust">{$form.buttons.html}</div>  
+</form>

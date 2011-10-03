@@ -83,24 +83,33 @@ class CRM_Case_Form_CustomData extends CRM_Core_Form
      */
     function preProcess()
     {
-        $this->_cdType = CRM_Utils_Array::value( 'type', $_GET );
-        
-        $this->assign('cdType', false);
-        if ( $this->_cdType ) {
-            $this->assign('cdType', true);
-            return CRM_Custom_Form_CustomData::preProcess( $this );
-        }
-
 		$this->_groupID   = CRM_Utils_Request::retrieve( 'groupID',  'Positive', $this, true );
 		$this->_entityID  = CRM_Utils_Request::retrieve( 'entityID', 'Positive', $this, true );
 		$this->_subTypeID = CRM_Utils_Request::retrieve( 'subType',  'Positive', $this, true );
 		$this->_contactID = CRM_Utils_Request::retrieve( 'cid',      'Positive', $this, true );
-	
-        // when custom data is included in this page
-        if ( CRM_Utils_Array::value( 'hidden_custom', $_POST ) ) {
-            $session = CRM_Core_Session::singleton( );
-            $session->pushUserContext( CRM_Utils_System::url( 'civicrm/contact/view/case', "reset=1&id={$this->_entityID}&cid={$this->_contactID}&action=view" ) );
+
+        $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Case',
+                                                         $this,
+                                                         $this->_entityID,
+                                                         $this->_groupID,
+                                                         $this->_subTypeID );
+        // simplified formatted groupTree
+        $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, $this );
+        foreach ( $groupTree as $groupValues )  {
+            $this->_customTitle = $groupValues['title'];
         }
+
+        $this->_defaults = array( );
+        CRM_Core_BAO_CustomGroup::setDefaults( $groupTree, $this->_defaults );
+        $this->setDefaults( $this->_defaults );
+            
+        CRM_Core_BAO_CustomGroup::buildQuickForm( $this, $groupTree, false, 1 );
+	
+        //need to assign custom data type and subtype to the template
+        $this->assign('entityID',   $this->_entityID );
+		$this->assign('groupID',    $this->_groupID );
+		$this->assign('subType',    $this->_subTypeID );
+		$this->assign('contactID',  $this->_contactID );
     }
     
     /**
@@ -111,16 +120,6 @@ class CRM_Case_Form_CustomData extends CRM_Core_Form
      */
     public function buildQuickForm()
     {
-        if ( $this->_cdType ) {
-            return CRM_Custom_Form_CustomData::buildQuickForm( $this );
-        }
-
-        //need to assign custom data type and subtype to the template
-        $this->assign('entityID',   $this->_entityID );
-		$this->assign('groupID',    $this->_groupID );
-		$this->assign('subType',    $this->_subTypeID );
-		$this->assign('contactID',  $this->_contactID );
-
         // make this form an upload since we dont know if the custom data injected dynamically
         // is of type file etc
         $this->addButtons(array(
@@ -134,30 +133,6 @@ class CRM_Case_Form_CustomData extends CRM_Core_Form
     }
     
     /**
-     * Set the default form values
-     *
-     * @access protected
-     * @return array the default array reference
-     */
-    function &setDefaultValues()
-    { 
-        if ( $this->_cdType ) {
-            $customDefaultValue = CRM_Custom_Form_CustomData::setDefaultValues( $this );
-            return $customDefaultValue;
-        }
-
-        if ( !CRM_Utils_Array::value( 'hidden_custom_group_count', $_POST ) ) { 
-            $customValueCount = 1;
-        } else {
-            $customValueCount = $_POST['hidden_custom_group_count'][$this->_groupID];
-        }
-        $this->assign('customValueCount', $customValueCount );
-	    
-        $defaults = array();
-        return $defaults;
-    }
-    
-    /**
      * Process the user submitted custom data values.
      *
      * @access public
@@ -165,12 +140,38 @@ class CRM_Case_Form_CustomData extends CRM_Core_Form
      */
     public function postProcess() 
     {
+        $params = $this->controller->exportValues( $this->_name );
         $fields = array();
+        
+        require_once 'CRM/Core/Transaction.php';
+        $transaction = new CRM_Core_Transaction( );
+
         require_once 'CRM/Core/BAO/CustomValueTable.php';
-        CRM_Core_BAO_CustomValueTable::postProcess( $_POST,
+        CRM_Core_BAO_CustomValueTable::postProcess( $params,
                                                     $fields,
                                                     'civicrm_case',
                                                     $this->_entityID,
                                                     'Case' );
+        
+        $session = CRM_Core_Session::singleton( );
+        $session->pushUserContext( CRM_Utils_System::url( 'civicrm/contact/view/case', "reset=1&id={$this->_entityID}&cid={$this->_contactID}&action=view" ) );
+        
+        $session = CRM_Core_Session::singleton();
+        $activityTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'Change Custom Data', 'name' );
+        $activityParams = array( 'activity_type_id'    => $activityTypeID,
+                                 'source_contact_id'   => $session->get( 'userID' ),
+                                 'is_auto'             => true,
+                                 'subject'             => $this->_customTitle . " : change data" ,
+                                 'status_id'           => CRM_Core_OptionGroup::getValue( 'activity_status',
+                                                                                          'Completed',
+                                                                                          'name' ),
+                                 'target_contact_id'   => $this->_contactID,
+                                 'details'             => json_encode( $this->_defaults ),
+                                 'activity_date_time'  => date('YmdHis'),
+                                 );
+        require_once 'CRM/Activity/BAO/Activity.php';
+        CRM_Activity_BAO_Activity::create( $activityParams );
+
+        $transaction->commit( );
     }
 }

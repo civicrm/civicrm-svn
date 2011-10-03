@@ -110,7 +110,7 @@
     {literal}
     function updateCaseCustom( entityID, groupID, contactID, subType ) {
       var dataURL = {/literal}"{crmURL p="civicrm/case/cd/edit" q="snippet=4&cgcount=1&action=update&reset=1" h=0}"{literal};
-      dataURL = dataURL + '&entityID=' + entityID + '&groupID=' + groupID + '&cid=' + contactID + ( subType ? '&subType=' + subType  : '');
+      dataURL = dataURL + '&type=Case&entityID=' + entityID + '&groupID=' + groupID + '&cid=' + contactID + ( subType ? '&subType=' + subType  : '');
 
       cj.ajax({
          url: dataURL,
