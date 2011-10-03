@@ -107,9 +107,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         }
 
         //get the log start date.
-        //it is set during renewal of membership.
+        //it is set during renewal of membership.        
         $logStartDate = CRM_Utils_array::value( 'log_start_date', $params );
-        $logStartDate = ( $logStartDate ) ? CRM_Utils_Date::isoToMysql( $logStartDate ) : $membership->start_date;
+        $logStartDate = ( $logStartDate ) ? CRM_Utils_Date::isoToMysql( $logStartDate ) : CRM_Utils_Date::isoToMysql( $membership->start_date );
         $values = self::getStatusANDTypeValues( $membership->id );
         
         $membershipLog = array('membership_id' => $membership->id,
