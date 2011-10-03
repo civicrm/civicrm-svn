@@ -34,8 +34,8 @@ packages/jquery/jquery-ui-1.8.16/css/smoothness/jquery-ui-1.8.16.custom.css
 packages/jquery/plugins/jquery.autocomplete.js
 packages/jquery/css/jquery.autocomplete.css
 
-packages/jquery/plugins/jsTree.v.1.0rc2/jquery.jstree.min.js
-packages/jquery/plugins/jsTree.v.1.0rc2/themes/default/jstree.css
+packages/jquery/plugins/jstree/jquery.jstree.js
+packages/jquery/plugins/jstree/themes/default/style.css
 
 packages/jquery/plugins/jquery.menu.pack.js
 packages/jquery/css/menu.css
