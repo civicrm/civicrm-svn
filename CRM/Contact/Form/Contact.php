@@ -223,10 +223,11 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
         
         // parse street address, CRM-5450
-        require_once 'CRM/Core/BAO/Preferences.php';
+        require_once 'CRM/Core/BAO/Setting.php';
         $this->_parseStreetAddress = $this->get( 'parseStreetAddress' );
         if ( !isset( $this->_parseStreetAddress ) ) { 
-            $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options' );
+            $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                  'address_options' );
             $this->_parseStreetAddress = false;
             if ( CRM_Utils_Array::value( 'street_address', $addressOptions ) &&
                  CRM_Utils_Array::value( 'street_address_parsing', $addressOptions ) ) {
@@ -238,8 +239,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         
         $this->_editOptions = $this->get( 'contactEditOptions' ); 
         if ( CRM_Utils_System::isNull( $this->_editOptions ) ) {
-            $this->_editOptions  = CRM_Core_BAO_Preferences::valueOptions( 'contact_edit_options', true, null, 
-                                                                           false, 'name', true, 'AND v.filter = 0' );
+            $this->_editOptions  = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                       'contact_edit_options', true, null, 
+                                                                       false, 'name', true, 'AND v.filter = 0' );
             $this->set( 'contactEditOptions', $this->_editOptions );
         }
         
@@ -268,8 +270,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         // get the location blocks.
         $this->_blocks = $this->get( 'blocks' );
         if ( CRM_Utils_System::isNull( $this->_blocks ) ) {
-            $this->_blocks = CRM_Core_BAO_Preferences::valueOptions( 'contact_edit_options', true, null, 
-                                                                     false, 'name', true, 'AND v.filter = 1' );
+            $this->_blocks = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                 'contact_edit_options', true, null, 
+                                                                 false, 'name', true, 'AND v.filter = 1' );
             $this->set( 'blocks', $this->_blocks );
         }
         $this->assign( 'blocks', $this->_blocks );
@@ -597,11 +600,13 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         //5. also get primaryID from email or open id block.
         
         // take the location blocks.
-        $blocks = CRM_Core_BAO_Preferences::valueOptions( 'contact_edit_options', true, null, 
-                                                          false, 'name', true, 'AND v.filter = 1' );
+        $blocks = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                      'contact_edit_options', true, null, 
+                                                      false, 'name', true, 'AND v.filter = 1' );
                                                                   
-        $otherEditOptions = CRM_Core_BAO_Preferences::valueOptions( 'contact_edit_options', true, null,
-                                                                    false, 'name', true, 'AND v.filter = 0');
+        $otherEditOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                'contact_edit_options', true, null,
+                                                                false, 'name', true, 'AND v.filter = 0');
         //get address block inside.
         if ( array_key_exists( 'Address', $otherEditOptions ) ) {
             $blocks['Address'] = $otherEditOptions['Address'];
@@ -675,7 +680,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         
         // street number should be digit + suffix, CRM-5450
         $parseStreetAddress = CRM_Utils_Array::value( 'street_address_parsing', 
-                                                      CRM_Core_BAO_Preferences::valueOptions( 'address_options' ) );
+                                                      CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                                          'address_options' ) );
         if ( $parseStreetAddress ) {
             if ( is_array( $fields['address'] ) ) {  
                 $invalidStreetNumbers = array( );

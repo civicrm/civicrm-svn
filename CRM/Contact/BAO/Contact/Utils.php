@@ -225,10 +225,6 @@ WHERE  id IN ( $idString )
      */
     static function maxLocations( $contactId )
     {
-        // find the system config related location blocks
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $locationCount = CRM_Core_BAO_Preferences::value( 'location_count' );
-        
         $contactLocations = array( );
 
         // find number of location blocks for this contact and adjust value accordinly
@@ -243,12 +239,7 @@ UNION
 ( SELECT location_type_id FROM civicrm_address WHERE contact_id = {$contactId} )
 ";
         $dao      = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
-        $locCount = $dao->N;
-        if ( $locCount &&  $locationCount < $locCount ) {
-            $locationCount = $locCount;
-        }
-
-        return $locationCount;
+        return $dao->N;
     }
 
     /**
@@ -706,8 +697,9 @@ LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
         }
         
         if ( empty( $returnProperties ) ) {
-            require_once 'CRM/Core/BAO/Preferences.php';
-            $autocompleteContactSearch = CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options' );
+            require_once 'CRM/Core/BAO/Setting.php';
+            $autocompleteContactSearch = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                             'contact_autocomplete_options' );
             $returnProperties = array_fill_keys( array_merge( array( 'sort_name'), 
                                                               array_keys( $autocompleteContactSearch ) ), 1 );
         }

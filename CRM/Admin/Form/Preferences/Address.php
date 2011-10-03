@@ -42,7 +42,6 @@ require_once 'CRM/Admin/Form/Preferences.php';
 class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
 {
     function preProcess( ) {
-        parent::preProcess( );
 
         CRM_Utils_System::setTitle(ts('Settings - Addresses'));
 
@@ -50,6 +49,22 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
         $this->_cbs = array(
                             'address_options'    => ts( 'Address Fields'   ),
                             );
+
+        require_once 'CRM/Core/BAO/Setting.php';
+
+        $this->_varNames = array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME => array( 
+                                                                                           'address_options',
+                                                                                           'address_format',
+                                                                                           'mailing_format',
+                                                                                            ),
+                                    CRM_Core_BAO_Setting::ADDRESS_STANDARDIZATION_PREFERENCES_NAME => array(
+                                                                                                            'address_standardization_provider',
+                                                                                                            'address_standardization_userid',
+                                                                                                            'address_standardization_url',
+                                                                                                            ),
+                                  );
+
+        parent::preProcess( );
     }
 
     function setDefaultValues( ) {
@@ -154,10 +169,10 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
         // trim the format and unify line endings to LF
         $format = array( 'address_format', 'mailing_format' );
         foreach ( $format as $f ) {
-          if ( ! empty( $this->_params[$f] ) ) {
-            $this->_params[$f] = trim( $this->_params[$f] );
-            $this->_params[$f] = str_replace(array("\r\n", "\r"), "\n", $this->_params[$f] );
-          }
+            if ( ! empty( $this->_params[$f] ) ) {
+                $this->_params[$f] = trim( $this->_params[$f] );
+                $this->_params[$f] = str_replace(array("\r\n", "\r"), "\n", $this->_params[$f] );
+            }
         }
 
         

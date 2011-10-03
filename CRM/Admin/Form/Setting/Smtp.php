@@ -36,7 +36,7 @@
 
 require_once 'CRM/Admin/Form/Setting.php';
 require_once 'CRM/Utils/Mail.php';
-require_once "CRM/Core/BAO/Preferences.php";
+
 /**
  * This class generates form components for Smtp Server
  * 
@@ -162,13 +162,12 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
                 }
             }
         } 
-        $mailingDomain = new CRM_Core_DAO_Preferences();
-        $mailingDomain->domain_id  = CRM_Core_Config::domainID( );
-        $mailingDomain->is_domain  = true;
-        $mailingDomain->find(true);
-        if ( $mailingDomain->mailing_backend ) {
-            $values = unserialize( $mailingDomain->mailing_backend );
-            CRM_Core_BAO_ConfigSetting::formatParams( $formValues, $values );
+        
+        require_once 'CRM/Core/BAO/Setting.php';
+        $mailingBackend = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+                                                         'mailing_backend' );
+        if ( ! empty( $mailingBackend ) ) {
+            CRM_Core_BAO_ConfigSetting::formatParams( $formValues, $mailingBackend );
         }
         
         // if password is present, encrypt it
@@ -176,9 +175,10 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
             require_once 'CRM/Utils/Crypt.php';
             $formValues['smtpPassword'] = CRM_Utils_Crypt::encrypt( $formValues['smtpPassword'] );
         }
-        
-        $mailingDomain->mailing_backend = serialize( $formValues );
-        $mailingDomain->save();
+
+        CRM_Core_BAO_Setting::setItem( $formValues,
+                                       CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+                                       'mailing_backend' );
     }
     
     /**
@@ -232,11 +232,10 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
         if ( ! $this->_defaults ) {
             $this->_defaults = array( );
 
-            require_once "CRM/Core/DAO/Preferences.php";
-            $mailingDomain = new CRM_Core_DAO_Preferences();
-            $mailingDomain->find(true);
-            if ( $mailingDomain->mailing_backend ) {
-                $this->_defaults = unserialize( $mailingDomain->mailing_backend );
+            $mailingBackend = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+                                                             'mailing_backend' );
+            if ( ! empty( $mailingBackend ) ) {
+                $this->_defaults = $mailingBackend;
 
                 if ( ! empty( $this->_defaults['smtpPassword'] ) ) {
                     require_once 'CRM/Utils/Crypt.php';

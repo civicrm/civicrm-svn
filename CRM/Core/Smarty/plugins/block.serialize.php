@@ -1,8 +1,10 @@
-{*
+<?php
+
+/*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -22,13 +24,31 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-{htxt id="id-editor_id"}
-<p>{ts}Select the HTML WYSIWYG Editor provided for fields that allow HTML formatting. Select 'Textarea' if you don't want to provide a WYSIWYG Editor (users will type text and / or HTML code into plain text fields).{/ts}</p>
-<p>{ts}<strong>Spell-checking:</strong> ckEditor includes a Spell-check button by default. There is also an optional plugin which does spell-checking automatically (as you type). However, this plugin is not enabled by default since it sends user input to a 3rd party service (spellchecker.net) without informing the user - and this may pose privacy issues for some sites.{/ts}
-<p>{ts}To enable auto spell check, in packages/ckeditor/config.js - change this value to true:{/ts}<br />
-config.scayt_autoStartup = false;
-<p>{ts}To remove the Spell Check button, in packages/ckeditor/config.js - remove this item in the config.toolbar_Full list:{/ts}<br />
-'SpellChecker'
-<p>{ts}<strong>NOTE:</strong> If you are modifying config.js you should first have configured a Custom PHP Path under Global Settings > Directories, and place your modified version in the custom path.{/ts}</p>
-{/htxt}
+*/
+
+/**
+ * CiviCRM's Smarty gettext plugin
+ *
+ * @package CRM
+ * @author Donald Lobo <lobo@civicrm.org>
+ * @copyright CiviCRM LLC (c) 2004-2011
+ * $Id$
+ */
+
+/** 
+ * Smarty block function providing serialization support
+ *
+ * See CRM_Core_I18n class documentation for details.
+ *
+ * @param array $params   template call's parameters
+ * @param string $text    {serialize} block contents from the template
+ * @param object $smarty  the Smarty object
+ *
+ * @return string  the string, translated by gettext
+ */
+function smarty_block_serialize($params, $text, &$smarty)
+{
+    return serialize( $text );
+}
+
+

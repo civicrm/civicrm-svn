@@ -43,7 +43,6 @@ require_once 'CRM/Admin/Form/Preferences.php';
 class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
 {
     function preProcess( ) {
-        parent::preProcess( );
         CRM_Utils_System::setTitle(ts('Settings - Site Preferences'));
         // add all the checkboxes
         $this->_cbs = array(
@@ -52,6 +51,20 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
                             'advanced_search_options' => ts( 'Contact Search'    ),
                             'user_dashboard_options'  => ts( 'Contact Dashboard' )
                             );
+
+        $this->_varNames = array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME => array( 
+                                                                                         'contact_view_options',
+                                                                                         'contact_edit_options',
+                                                                                         'advanced_search_options',
+                                                                                         'user_dashboard_options',
+                                                                                         'display_name_format',
+                                                                                         'sort_name_format',
+                                                                                         'editor_id',
+                                                                                          ),
+                                  );
+
+
+        parent::preProcess( );
     }
 
     function setDefaultValues( ) {
@@ -60,7 +73,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
 
         parent::cbsDefaultValues( $defaults );
         if ( $this->_config->editor_id ) {
-            $defaults['wysiwyg_editor'] = $this->_config->editor_id ;
+            $defaults['editor_id'] = $this->_config->editor_id ;
         }
         if ( empty( $this->_config->display_name_format ) ) {
             $defaults['display_name_format'] = "{contact.individual_prefix}{ }{contact.first_name}{ }{contact.last_name}{ }{contact.individual_suffix}";
@@ -112,7 +125,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
             }
             $drupal_wysiwyg = true;
         }
-        $this->addElement( 'select', 'wysiwyg_editor', ts('WYSIWYG Editor'), $wysiwyg_options, $extra);
+        $this->addElement( 'select', 'editor_id', ts('WYSIWYG Editor'), $wysiwyg_options, $extra);
         
         if ($drupal_wysiwyg) {
           $this->addElement( 'select', 'wysiwyg_input_format', ts('Input Format'), $format_options, null);
@@ -128,7 +141,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
         $contactBlocks = CRM_Core_OptionGroup::values( 'contact_edit_options', false, false, false, 'AND v.filter = 1' );
         $this->assign( 'contactBlocks', $contactBlocks );
 
-        $this->addElement('hidden','contact_edit_prefences', null, array('id'=> 'contact_edit_prefences') );
+        $this->addElement('hidden','contact_edit_preferences', null, array('id'=> 'contact_edit_preferences') );
 
         parent::buildQuickForm( );
     }
@@ -149,8 +162,8 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
 
         $this->_params = $this->controller->exportValues( $this->_name );
         
-        if ( CRM_Utils_Array::value( 'contact_edit_prefences', $this->_params ) ) {
-            $preferenceWeights = explode( ',' , $this->_params['contact_edit_prefences'] );
+        if ( CRM_Utils_Array::value( 'contact_edit_preferences', $this->_params ) ) {
+            $preferenceWeights = explode( ',' , $this->_params['contact_edit_preferences'] );
             foreach( $preferenceWeights as $key => $val ) {
                 if ( !$val ) {
                     unset($preferenceWeights[$key]);
@@ -165,13 +178,13 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
             variable_set('civicrm_wysiwyg_input_format', $this->_params['wysiwyg_input_format']);
         }
         
-        $this->_config->editor_id = $this->_params['wysiwyg_editor'];
+        $this->_config->editor_id = $this->_params['editor_id'];
         $this->_config->display_name_format = $this->_params['display_name_format'];
         $this->_config->sort_name_format    = $this->_params['sort_name_format'];
 
         // set default editor to session if changed
         $session = CRM_Core_Session::singleton();
-        $session->set( 'defaultWysiwygEditor', $this->_params['wysiwyg_editor'] );
+        $session->set( 'defaultWysiwygEditor', $this->_params['editor_id'] );
         
         parent::postProcess( );
     }//end of function

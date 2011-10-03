@@ -823,8 +823,9 @@ SELECT 'civicrm_contact', contact_a.id, contact_a.id, '$cacheKey', contact_a.dis
     {
         if ( ! isset( self::$_columnHeaders ) )
         { 
-            require_once 'CRM/Core/BAO/Preferences.php';
-            $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+            require_once 'CRM/Core/BAO/Setting.php';
+            $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                  'address_options', true, null, true );
             
             self::$_columnHeaders = array( 'contact_type' => array('desc' => ts('Contact Type') ),
                                            'sort_name'    => array(

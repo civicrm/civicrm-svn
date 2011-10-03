@@ -37,7 +37,6 @@
 require_once "CRM/Core/Form.php";
 require_once "CRM/Core/BAO/CustomGroup.php";
 require_once 'CRM/Core/BAO/File.php';
-require_once 'CRM/Core/BAO/Preferences.php';
 require_once "CRM/Contact/Form/Task.php";
 require_once "CRM/Activity/BAO/Activity.php";
 require_once "CRM/Custom/Form/CustomData.php";

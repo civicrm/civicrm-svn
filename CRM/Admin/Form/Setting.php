@@ -72,8 +72,9 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
             $list = array_flip( CRM_Core_OptionGroup::values( 'contact_autocomplete_options', 
                                                               false, false, true, null, 'name' ) );
 
-            require_once "CRM/Core/BAO/Preferences.php";
-            $listEnabled = CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options' );
+            require_once "CRM/Core/BAO/Setting.php";
+            $listEnabled = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                               'contact_autocomplete_options' );
 
             $autoSearchFields = array();
             if ( !empty( $list ) && !empty( $listEnabled ) ) { 
@@ -128,15 +129,16 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
 
         // save autocomplete search options
         if ( CRM_Utils_Array::value( 'autocompleteContactSearch', $params ) ) {
-            $config = new CRM_Core_DAO_Preferences( );
-            $config->domain_id  = CRM_Core_Config::domainID( );
-            $config->find(true);
-            $config->contact_autocomplete_options = 
+            $value = 
                 CRM_Core_DAO::VALUE_SEPARATOR .
                 implode( CRM_Core_DAO::VALUE_SEPARATOR,
                          array_keys( $params['autocompleteContactSearch'] ) ) .
                 CRM_Core_DAO::VALUE_SEPARATOR;
-            $config->save();
+
+            require_once 'CRM/Core/BAO/Setting.php';
+            CRM_Core_BAO_Setting::setItem( $value,
+                                           CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                           'contact_autocomplete_options' );
         }
         
         // update time for date formats when global time is changed

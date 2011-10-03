@@ -59,15 +59,17 @@ class CRM_Utils_Address
                            $tokenFields = null )
     {
         static $config = null;
-        require_once 'CRM/Core/BAO/Preferences.php';
+        require_once 'CRM/Core/BAO/Setting.php';
         
         if ( ! $format ) {
-            $format = CRM_Core_BAO_Preferences::value( 'address_format' );
+            $format = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                     'address_format' );
             $format = str_replace('contact.',"",$format);
         }
 
         if ( $mailing ) {
-            $format = CRM_Core_BAO_Preferences::value( 'mailing_format' );
+            $format = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                     'mailing_format' );
             $format = str_replace('contact.',"",$format);
         }
 
@@ -257,6 +259,35 @@ class CRM_Utils_Address
             }
         }
         return $finalFormatted;
+    }
+
+    static function sequence( $format ) {
+        // also compute and store the address sequence
+        $addressSequence = array('address_name',
+                                 'street_address',
+                                 'supplemental_address_1',
+                                 'supplemental_address_2',
+                                 'city',
+                                 'county',
+                                 'state_province',
+                                 'postal_code',
+                                 'country');
+        
+        // get the field sequence from the format
+        $newSequence = array();
+        foreach($addressSequence as $field) {
+            if (substr_count($format, $field)) {
+                $newSequence[strpos($format, $field)] = $field;
+            }
+        }
+        ksort($newSequence);
+        
+        // add the addressSequence fields that are missing in the addressFormat
+        // to the end of the list, so that (for example) if state_province is not
+        // specified in the addressFormat it's still in the address-editing form
+        $newSequence = array_merge($newSequence, $addressSequence);
+        $newSequence = array_unique($newSequence);
+        return $newSequence;
     }
 
 }

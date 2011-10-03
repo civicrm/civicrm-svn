@@ -26,13 +26,36 @@
 SELECT @domainID := id FROM civicrm_domain where name = 'Default Domain Name';
 
 -- Initial default state of system preferences
-{literal}
-INSERT INTO 
-     civicrm_preferences(domain_id, contact_id, is_domain, contact_view_options, contact_edit_options, advanced_search_options, user_dashboard_options, address_options, address_format, mailing_format, display_name_format, sort_name_format, address_standardization_provider, address_standardization_userid, address_standardization_url, editor_id, mailing_backend, contact_autocomplete_options )
-VALUES 
-     (@domainID,NULL,1,'123456789101113','1234567891011','123456789101112131516171819','1234578','123456891011','{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}','{contact.addressee}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}','{contact.individual_prefix}{ }{contact.first_name}{ }{contact.last_name}{ }{contact.individual_suffix}','{contact.last_name}{, }{contact.first_name}',NULL,NULL,NULL,2,'a:1:{s:15:"outBound_option";s:1:"3";}','12');
-{/literal}
 
+-- Initial default state of system settings
+INSERT INTO civicrm_setting
+  ( domain_id, contact_id, is_domain, group_name, name, value )
+VALUES
+  ( @domainID, NULL, 1, 'CiviCRM Preferences', 'contact_view_options', '{serialize}123456789101113{/serialize}' ),
+  ( @domainID, NULL, 1, 'CiviCRM Preferences', 'contact_edit_options', '{serialize}1234567891011{/serialize}' ),
+  ( @domainID, NULL, 1, 'CiviCRM Preferences', 'advanced_search_options', '{serialize}123456789101112131516171819{/serialize}' ),
+  ( @domainID, NULL, 1, 'CiviCRM Preferences', 'user_dashboard_options', '{serialize}1234578{/serialize}' ),
+  ( @domainID, NULL, 1, 'CiviCRM Preferences', 'address_options', '{serialize}123456891011{/serialize}' ),
+  ( @domainID, NULL, 1, 'CiviCRM Preferences', 'address_format', '{serialize}{literal}{contact.address_name}
+{contact.street_address}
+{contact.supplemental_address_1}
+{contact.supplemental_address_2}
+{contact.city}{, }{contact.state_province}{ }{contact.postal_code}
+{contact.country}{/literal}{/serialize}' ),
+  ( @domainID, NULL, 1, 'CiviCRM Preferences', 'mailing_format', '{serialize}{literal}{contact.addressee}
+{contact.street_address}
+{contact.supplemental_address_1}
+{contact.supplemental_address_2}
+{contact.city}{, }{contact.state_province}{ }{contact.postal_code}
+{contact.country}{/literal}{/serialize}' ),
+  ( @domainID, NULL, 1, 'CiviCRM Preferences', 'display_name_format', '{serialize}{literal}{contact.individual_prefix}{ }{contact.first_name}{ }{contact.last_name}{ }{contact.individual_suffix}{/literal}{/serialize}' ),
+  ( @domainID, NULL, 1, 'CiviCRM Preferences', 'sort_name_format', '{serialize}{literal}{contact.last_name}{, }{contact.first_name}{/literal}{/serialize}' ),
+  ( @domainID, NULL, 1, 'CiviCRM Preferences', 'editor_id', '{serialize}2{/serialize}' ),
+  ( @domainID, NULL, 1, 'CiviCRM Preferences', 'mailing_backend', {literal}'a:1:{s:15:"outBound_option";s:1:"3";}'{/literal} ),
+  ( @domainID, NULL, 1, 'CiviCRM Preferences', 'contact_autocomplete_options', '{serialize}12{/serialize}' ),
+  ( @domainID, NULL, 1, 'Address Standardization Preferences', 'address_standardization_provider', NULL ),
+  ( @domainID, NULL, 1, 'Address Standardization Preferences', 'address_standardization_userid', NULL ),
+  ( @domainID, NULL, 1, 'Address Standardization Preferences', 'address_standardization_url', NULL );
 -- mail settings 
 
 INSERT INTO civicrm_mail_settings (domain_id, name, is_default, domain) VALUES (@domainID, 'default', true, 'FIXME.ORG');

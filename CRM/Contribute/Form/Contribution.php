@@ -999,8 +999,9 @@ WHERE  contribution_id = {$this->_id}
             $js = array( 'onclick' => "return verify( );" );    
         }
         
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $mailingInfo = CRM_Core_BAO_Preferences::mailingPreferences();
+        require_once 'CRM/Core/BAO/Setting.php';
+        $mailingInfo = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+                                                      'mailing_backend' );
         $this->assign( 'outBound_option', $mailingInfo['outBound_option'] );
         
         $this->addButtons(array( 

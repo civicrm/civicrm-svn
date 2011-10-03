@@ -126,8 +126,9 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
         $dashboardElements = array( );
         $config = CRM_Core_Config::singleton( );
 
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $this->_userOptions  = CRM_Core_BAO_Preferences::valueOptions( 'user_dashboard_options' );
+        require_once 'CRM/Core/BAO/Setting.php';
+        $this->_userOptions  = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                   'user_dashboard_options' );
 
         $components = CRM_Core_Component::getEnabledComponents();
         $this->assign('contactId',$this->_contactId);

@@ -276,8 +276,9 @@ class CRM_Core_Page_AJAX_Location
         }
 
         $result = array( );
-		require_once 'CRM/Core/BAO/Preferences.php';
-        $addressOptions  = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+		require_once 'CRM/Core/BAO/Setting.php';
+        $addressOptions  = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                               'address_options', true, null, true );
         // lets output only required fields.
         foreach ( $addressOptions as $element => $isSet ) {
             if ( $isSet && (! in_array($element, array('im', 'openid'))) ) {

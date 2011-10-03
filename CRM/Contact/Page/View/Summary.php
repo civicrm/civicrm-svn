@@ -202,8 +202,9 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         $defaults['privacy_values'] = CRM_Core_SelectValues::privacy();
         
         //Show blocks only if they are visible in edit form
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $this->_editOptions  = CRM_Core_BAO_Preferences::valueOptions( 'contact_edit_options' );
+        require_once 'CRM/Core/BAO/Setting.php';
+        $this->_editOptions  = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                   'contact_edit_options' );
         $configItems = array( 'CommBlock'     => 'Communication Preferences',
                               'Demographics'  => 'Demographics',
                               'TagsAndGroups' => 'Tags and Groups',
@@ -248,7 +249,8 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         $allTabs  = array( );
         $weight = 10;        
         
-        $this->_viewOptions = CRM_Core_BAO_Preferences::valueOptions( 'contact_view_options', true );
+        $this->_viewOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                  'contact_view_options', true );
         $changeLog = $this->_viewOptions['log'];
         $this->assign_by_ref( 'changeLog' , $changeLog );
         require_once 'CRM/Core/Component.php';

@@ -60,8 +60,9 @@ class CRM_Contact_Form_Search_Custom_Basic
         $returnProperties = array( );
         $returnProperties['contact_sub_type'] = 1;
 
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+        require_once 'CRM/Core/BAO/Setting.php';
+        $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                              'address_options', true, null, true );
 
         foreach ( $this->_columns as $name => $field ) {
             if ( in_array($field, array('street_address', 'city', 'state_province', 'postal_code', 'country') ) &&

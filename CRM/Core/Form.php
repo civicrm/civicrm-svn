@@ -792,8 +792,10 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
     {
         // 1. Get configuration option for editor (tinymce, ckeditor, pure textarea)
         // 2. Based on the option, initialise proper editor
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $editor = strtolower( CRM_Utils_Array::value( CRM_Core_BAO_Preferences::value( 'editor_id' ),
+        require_once 'CRM/Core/BAO/Setting.php';
+        $editorID = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                   'editor_id' );
+        $editor = strtolower( CRM_Utils_Array::value( $editorID,
                                                       CRM_Core_PseudoConstant::wysiwygEditor( )) );
         if ( !$editor || $forceTextarea ) {
             $editor = 'textarea';

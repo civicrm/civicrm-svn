@@ -440,8 +440,9 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         $ele = $this->add('select', 'contribution_page_id', ts( 'Self-service Payments Page' ), 
                           array( '' => ts( '- select -' ) ) + $pledgePages );
 
-        require_once "CRM/Core/BAO/Preferences.php";
-        $mailingInfo = CRM_Core_BAO_Preferences::mailingPreferences();
+        require_once 'CRM/Core/BAO/Setting.php';
+        $mailingInfo = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+                                                      'mailing_backend' );
         $this->assign( 'outBound_option', $mailingInfo['outBound_option'] );
 
         //build custom data

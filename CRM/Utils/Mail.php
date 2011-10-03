@@ -247,8 +247,9 @@ class CRM_Utils_Mail
      * @static
      */
     static function validOutBoundMail() {
-        require_once "CRM/Core/BAO/Preferences.php";
-        $mailingInfo = CRM_Core_BAO_Preferences::mailingPreferences();
+        require_once 'CRM/Core/BAO/Setting.php';
+        $mailingInfo = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+                                                      'mailing_backend' );
         if ( $mailingInfo['outBound_option'] == 3 ) {
            return true;
         } else  if ( $mailingInfo['outBound_option'] == 0 ) {

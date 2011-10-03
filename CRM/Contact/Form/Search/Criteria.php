@@ -207,8 +207,9 @@ class CRM_Contact_Form_Search_Criteria {
     static function location( &$form ) {
         $form->addElement( 'hidden', 'hidden_location', 1 );
         
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+        require_once 'CRM/Core/BAO/Setting.php';
+        $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                              'address_options', true, null, true );
         
         $attributes = CRM_Core_DAO::getAttribute('CRM_Core_DAO_Address');
         

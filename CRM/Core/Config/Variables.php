@@ -440,8 +440,12 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
      * @return string
      */
     public function addressSequence( ) {
-        require_once 'CRM/Core/BAO/Preferences.php';
-        return CRM_Core_BAO_Preferences::value( 'address_sequence' );
+        require_once 'CRM/Core/BAO/Setting.php';
+        $addressFormat = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                        'address_format' );
+        
+        require_once 'CRM/Utils/Address.php';
+        return CRM_Utils_Address::sequence( $addressFormat );
     }
 
     /**

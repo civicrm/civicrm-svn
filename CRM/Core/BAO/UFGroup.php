@@ -1530,8 +1530,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->assign('deleteURL', $deleteURL);
             
         }
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+        require_once 'CRM/Core/BAO/Setting.php';
+        $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                              'address_options', true, null, true );
         
         if ( substr($fieldName,0,14) === 'state_province' ) {
             $form->add('select', $name, $title,

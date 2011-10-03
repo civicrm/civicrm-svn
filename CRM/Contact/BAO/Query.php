@@ -893,8 +893,9 @@ class CRM_Contact_BAO_Query
                         $this->_element["{$tName}_id"]                  = 1;
                         if ( substr( $tName, -15 ) == '-state_province' ) {
                             // FIXME: hack to fix CRM-1900
-                            require_once 'CRM/Core/BAO/Preferences.php';
-                            $a = CRM_Core_BAO_Preferences::value( 'address_format' );
+                            require_once 'CRM/Core/BAO/Setting.php';
+                            $a = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                'address_format' );
 
                             if ( substr_count( $a, 'state_province_name' ) > 0 ) {
                                 $this->_select["{$name}-{$elementFullName}"]  = "`$tName`.name as `{$name}-{$elementFullName}`";                            

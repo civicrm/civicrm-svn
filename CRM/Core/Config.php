@@ -489,9 +489,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
     static function &getMailer() 
     {
         if ( ! isset( self::$_mail ) ) {
-            require_once "CRM/Core/BAO/Preferences.php";
-            $mailingInfo = CRM_Core_BAO_Preferences::mailingPreferences();;
-                        
+            require_once "CRM/Core/BAO/Setting.php";
+            $mailingInfo = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+                                                          'mailing_backend' );
             if ( defined( 'CIVICRM_MAILER_SPOOL' ) &&
                  CIVICRM_MAILER_SPOOL ) {
                 require_once 'CRM/Mailing/BAO/Spool.php';

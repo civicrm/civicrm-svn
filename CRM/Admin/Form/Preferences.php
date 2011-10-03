@@ -48,6 +48,8 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
 
     protected $_cbs       = null;
 
+    protected $_varNames  = null;
+
     protected $_config    = null;
 
     protected $_params    = null;
@@ -65,9 +67,7 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
 
         $session = CRM_Core_Session::singleton( );
 
-        require_once 'CRM/Core/DAO/Preferences.php';
-        $this->_config = new CRM_Core_DAO_Preferences( );
-        $this->_config->domain_id = CRM_Core_Config::domainID( );
+        $this->_config = new CRM_Core_DAO( );
 
         if ( $this->_system ) {
             if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) {
@@ -75,7 +75,6 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
             } else {
                 CRM_Utils_System::fatal( 'You do not have permission to edit preferences' );
             }
-            $this->_config->is_domain  = 1;
             $this->_config->contact_id = null;
         } else {
             if ( ! $this->_contactID ) {
@@ -85,11 +84,16 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
                 }
                 $this->set( 'cid', $this->_contactID );
             }
-            $this->_config->is_domain  = 0;
             $this->_config->contact_id = $this->_contactID;
         }
 
-        $this->_config->find( true );
+        require_once 'CRM/Core/BAO/Setting.php';
+        foreach ( $this->_varNames as $groupName => $settingNames ) {
+            $values = CRM_Core_BAO_Setting::getItem( $groupName );
+            foreach ( $values as $name => $value ) {
+                $this->_config->$name = $value;
+            }
+        }
         $session->pushUserContext( CRM_Utils_System::url('civicrm/admin/setting', 'reset=1') );
     }
 
@@ -165,11 +169,18 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
                              array_keys( $this->_params[$name] ) ) .
                     CRM_Core_DAO::VALUE_SEPARATOR;
             } else {
-                $this->_config->$name = 'NULL';
+                $this->_config->$name = null;
             }
         }
 
-        $this->_config->save( );
+        foreach ( $this->_varNames as $groupName => $settingNames ) {
+            foreach ( $settingNames as $settingName ) {
+                $settingValue = isset( $this->_config->$settingName ) ? $this->_config->$settingName : null;
+                CRM_Core_BAO_Setting::setItem( $settingValue,
+                                               $groupName,
+                                               $settingName );
+            }
+        }
     }//end of function
 
 }

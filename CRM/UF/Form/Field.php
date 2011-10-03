@@ -262,8 +262,9 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $fields['Individual']['current_employer'] = array( 'name'  => 'organization_name',
                                                            'title' => ts('Current Employer') );
         
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+        require_once 'CRM/Core/BAO/Setting.php';
+        $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                              'address_options', true, null, true );
         
         if ( !$addressOptions['county'] ) {
             unset( $fields['Individual'  ]['county']);

@@ -323,7 +323,7 @@ ORDER BY parent_id, weight";
         
         //skip children menu item if user don't have access to parent menu item
         $skipMenuItems = array( );
-        foreach( $navigations as $key => $value ) { 
+        foreach( $navigations as $key => $value ) {
             if ( $json ) {
                 if ( $navigationString ) {
                     $navigationString .= '},';
@@ -542,20 +542,18 @@ ORDER BY parent_id, weight";
         }
 
         $navParams = array( 'contact_id' => $contactID );
-        if ( CRM_Core_DAO::checkFieldExists('civicrm_preferences', 'domain_id') ) {
-            // FIXME: if() condition check was required especially for upgrade 
-            // cases (2.2.x -> 3.0.x), CRM-5203
-            $navParams['domain_id'] = CRM_Core_Config::domainID( );
-        }
 
-        CRM_Core_DAO::commonRetrieve( 'CRM_Core_DAO_Preferences', $navParams, $navParams );
-        $navigation = array_key_exists('navigation', $navParams) ? $navParams['navigation'] : false;
+        require_once 'CRM/Core/BAO/Setting.php';
+        $navigation = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::NAVIGATION_NAME,
+                                                     'navigation',
+                                                     null,
+                                                     null,
+                                                     $contactID );
 
         // FIXME: hack for CRM-5027: we need to prepend the navigation string with
         // (HTML-commented-out) locale info so that we rebuild menu on locale changes
         if (!$navigation or substr($navigation, 0, 14) != "<!-- $config->lcMessages -->") {
             //retrieve navigation if it's not cached.       
-            require_once 'CRM/Core/BAO/Navigation.php';
             $navigation = self::buildNavigation( );
             
             //add additional navigation items
@@ -593,14 +591,12 @@ ORDER BY parent_id, weight";
             $contact = new CRM_Contact_DAO_Contact( );
             $contact->id = $contactID;
             if ( $contact->find(true ) ) {
-                // save in preference table for this particular user
-                require_once 'CRM/Core/DAO/Preferences.php';
-                $preference = new CRM_Core_DAO_Preferences();
-                $preference->contact_id = $contactID;
-                $preference->domain_id  = CRM_Core_Config::domainID( );
-                $preference->find(true);
-                $preference->navigation = $navigation;
-                $preference->save();
+                CRM_Core_BAO_Setting::setItem( $navigation,
+                                               CRM_Core_BAO_Setting::NAVIGATION_NAME,
+                                               'navigation',
+                                               null,
+                                               $contactID,
+                                               $contactID );
             }
         }
         return $navigation;

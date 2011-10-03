@@ -49,10 +49,13 @@ class CRM_Utils_Address_USPS {
             return false;
         }
         
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $userID = CRM_Core_BAO_Preferences::value( 'address_standardization_userid' );
-        $url    = CRM_Core_BAO_Preferences::value( 'address_standardization_url'    );
 
+        require_once 'CRM/Core/BAO/Setting.php';
+        $userID = CRM_Core_BAO_Setting::getItem(  CRM_Core_BAO_Setting::ADDRESS_STANDARDIZATION_PREFERENCES_NAME,
+                                                  'address_standardization_userid' );
+        $url    = CRM_Core_BAO_Setting::getItem(  CRM_Core_BAO_Setting::ADDRESS_STANDARDIZATION_PREFERENCES_NAME,
+                                                  'address_standardization_url'    );
+        
         if ( empty( $userID ) ||
              empty( $url ) ) {
             return false;
