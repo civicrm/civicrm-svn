@@ -74,7 +74,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $profileId = $this->_testGetProfileId( $customId );
         
         // Go directly to the URL of the screen that you will be testing (New Event).
-        $this->open($this->sboxPath . "civicrm/event/add&reset=1&action=add");
+        $this->open($this->sboxPath . "civicrm/event/add?reset=1&action=add");
         
         $eventTitle = 'My Conference - '.substr(sha1(rand()), 0, 7);
         $eventDescription = "Here is a description for this conference.";
@@ -159,7 +159,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->webtestLogin();
         
         // add the required Drupal permission
-        $this->open("{$this->sboxPath}admin/user/permissions");
+        $this->changeAdminLinks( );
         $this->waitForElementPresent('edit-submit');
         $this->check('edit-1-access-all-custom-data');
         $this->click('edit-submit');
@@ -202,7 +202,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $profileId =$this->_testGetProfileId( $customId );
         
         // Go directly to the URL of the screen that you will be testing (New Event).
-        $this->open($this->sboxPath . "civicrm/event/add&reset=1&action=add");
+        $this->open($this->sboxPath . "civicrm/event/add?reset=1&action=add");
         
         $eventTitle = 'My Conference - '.substr(sha1(rand()), 0, 7);
         $eventDescription = "Here is a description for this conference.";
@@ -596,48 +596,48 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->select("custom_pre_id", "value=1");
         $this->select("custom_post_id", "value=" . $profileId[3] );
         
-        $this->waitForElementPresent( "xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
-        $this->click( "xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
+        $this->waitForElementPresent( "xpath=//div[@id='registration_screen']/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
+        $this->click( "xpath=//div[@id='registration_screen']/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
         $this->waitForElementPresent( "custom_post_id_multiple_1" );
         $this->select("custom_post_id_multiple_1", "value=". $profileId[2] );
         
-        $this->waitForElementPresent( "xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
-        $this->click( "xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
+        $this->waitForElementPresent( "xpath=//div[@id='registration_screen']/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
+        $this->click( "xpath=//div[@id='registration_screen']/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
         $this->waitForElementPresent( "custom_post_id_multiple_2" );
         $this->select("custom_post_id_multiple_2", "value=". $profileId[1] );
         
-        $this->waitForElementPresent( "xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
-        $this->click( "xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
+        $this->waitForElementPresent( "xpath=//div[@id='registration_screen']/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
+        $this->click( "xpath=//div[@id='registration_screen']/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
         $this->waitForElementPresent( "custom_post_id_multiple_3" );
         $this->select("custom_post_id_multiple_3", "value=". $profileId[4] );
         
-        $this->waitForElementPresent( "xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
-        $this->click( "xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
+        $this->waitForElementPresent( "xpath=//div[@id='registration_screen']/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
+        $this->click( "xpath=//div[@id='registration_screen']/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
         $this->waitForElementPresent( "custom_post_id_multiple_4" );
         $this->select("custom_post_id_multiple_4", "value=". $profileId[5] );
         
-        $this->waitForElementPresent( "xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
-        $this->click( "xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
+        $this->waitForElementPresent( "xpath=//div[@id='registration_screen']/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
+        $this->click( "xpath=//div[@id='registration_screen']/table//tbody/tr[4]/td[2]/span/a[text()='add profile']" );
         $this->waitForElementPresent( "custom_post_id_multiple_5" );
         $this->select("custom_post_id_multiple_5", "value=". $profileId[6] );
         
-        $this->waitForElementPresent("xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
-        $this->click( "xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
+        $this->waitForElementPresent("xpath=//div[@id='registration_screen']/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
+        $this->click( "xpath=//div[@id='registration_screen']/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
         $this->waitForElementPresent( "additional_custom_post_id_multiple_1" );
         $this->select("additional_custom_post_id_multiple_1", "value=" . $profileId[5] );
         
-        $this->waitForElementPresent("xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
-        $this->click( "xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
+        $this->waitForElementPresent("xpath=//div[@id='registration_screen']/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
+        $this->click( "xpath=//div[@id='registration_screen']/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
         $this->waitForElementPresent( "additional_custom_post_id_multiple_2" );
         $this->select("additional_custom_post_id_multiple_2", "value=" . $profileId[1] );
         
-        $this->waitForElementPresent("xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
-        $this->click( "xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
+        $this->waitForElementPresent("xpath=//div[@id='registration_screen']/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
+        $this->click( "xpath=//div[@id='registration_screen']/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
         $this->waitForElementPresent( "additional_custom_post_id_multiple_3" );
         $this->select("additional_custom_post_id_multiple_3", "value=" . $profileId[2] );
         
-        $this->waitForElementPresent("xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
-        $this->click( "xpath=//div[@id='registration_screen']/fieldset/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
+        $this->waitForElementPresent("xpath=//div[@id='registration_screen']/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
+        $this->click( "xpath=//div[@id='registration_screen']/table//tbody/tr[7]/td[2]/span/a[text()='add profile']" );
         $this->waitForElementPresent( "additional_custom_post_id_multiple_4" );
         $this->select("additional_custom_post_id_multiple_4", "value=" . $profileId[3] );
         

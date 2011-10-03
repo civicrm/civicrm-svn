@@ -95,15 +95,15 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       }
 
       // add the required Drupal permission
-      $this->open("{$this->sboxPath}admin/user/permissions");
+      $this->changeAdminLinks();
       $this->waitForElementPresent('edit-submit');
-      $this->check('edit-2-administer-CiviCampaign');
+      $this->check('edit-2-administer-civicampaign');
       $this->click('edit-submit');
       $this->waitForPageToLoad();
       $this->assertTrue($this->isTextPresent('The changes have been saved.'));
 
       // Go directly to the URL of the screen that you will be testing
-      $this->open($this->sboxPath . "civicrm/campaign/add&reset=1");
+      $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
 
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
       // button at the end of this page to show up, to make sure it's fully loaded.
@@ -199,7 +199,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field 'Field $title' has been saved to 'Profile $title'."), "Status message didn't show up after saving profile field!");
 
       // create a survey
-      $this->open($this->sboxPath . "civicrm/survey/add&reset=1");
+      $this->open($this->sboxPath . "civicrm/survey/add?reset=1");
 
       $this->waitForElementPresent("_qf_Survey_next-bottom");
 
@@ -237,7 +237,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
                         "Status message didn't show up after saving survey!");
 
       // Reserve Respondents
-      $this->open($this->sboxPath . "civicrm/survey/search&reset=1&op=reserve");
+      $this->open($this->sboxPath . "civicrm/survey/search?reset=1&op=reserve");
 
       $this->waitForElementPresent("_qf_Search_refresh");
 
@@ -257,7 +257,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
                         "Status message didn't show up after adding reservation for 2 contacts!");
 
       // Interview Respondents
-      $this->open($this->sboxPath . "civicrm/survey/search&reset=1&op=interview");
+      $this->open($this->sboxPath . "civicrm/survey/search?reset=1&op=interview");
 
       $this->waitForElementPresent("_qf_Search_refresh");
 
@@ -301,7 +301,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
 
       // Reserve Respondents
-      $this->open($this->sboxPath . "civicrm/survey/search&reset=1&op=reserve");
+      $this->open($this->sboxPath . "civicrm/survey/search?reset=1&op=reserve");
 
       $this->waitForElementPresent("_qf_Search_refresh");
 
@@ -321,7 +321,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
                         "Status message didn't show up after adding reservation for 3 contacts!");
       
       // Release Respondents
-      $this->open($this->sboxPath . "civicrm/survey/search&reset=1&op=release");
+      $this->open($this->sboxPath . "civicrm/survey/search?reset=1&op=release");
       
       $this->waitForElementPresent("_qf_Search_refresh");
 
@@ -346,7 +346,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
                         "Status message didn't show up after releasing respondents!");
 
       // check whether contact is available for reserving again
-      $this->open($this->sboxPath . "civicrm/survey/search&reset=1&op=reserve");
+      $this->open($this->sboxPath . "civicrm/survey/search?reset=1&op=reserve");
 
       $this->waitForElementPresent("_qf_Search_refresh");
 
@@ -501,15 +501,15 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       }
 
       // add the required Drupal permission
-      $this->open("{$this->sboxPath}admin/user/permissions");
+      $this->changeAdminLinks();
       $this->waitForElementPresent('edit-submit');
-      $this->check('edit-2-administer-CiviCampaign');
+      $this->check('edit-2-administer-civicampaign');
       $this->click('edit-submit');
       $this->waitForPageToLoad();
       $this->assertTrue($this->isTextPresent('The changes have been saved.'));
       
       // Create a survey
-      $this->open($this->sboxPath . "civicrm/survey/add&reset=1");
+      $this->open($this->sboxPath . "civicrm/survey/add?reset=1");
       $this->waitForElementPresent("_qf_Survey_next-bottom");
       
       // fill in a unique title for the survey
@@ -537,7 +537,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
                          "Status message didn't show up after saving survey!" );
 
       // Reserve Respondents
-      $this->open( $this->sboxPath . "civicrm/survey/search&reset=1&op=reserve" );
+      $this->open( $this->sboxPath . "civicrm/survey/search?reset=1&op=reserve" );
       $this->waitForElementPresent( '_qf_Search_refresh' );
 
       // search for the respondents
@@ -580,7 +580,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->assertTrue( $this->isTextPresent( "$value1 | $value2 | $value3" ) );
 
       // Interview Respondents
-      $this->open( $this->sboxPath . "civicrm/survey/search&reset=1&op=interview" );
+      $this->open( $this->sboxPath . "civicrm/survey/search?reset=1&op=interview" );
       $this->waitForElementPresent( '_qf_Search_refresh' );
 
       // search for the respondents
