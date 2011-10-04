@@ -225,13 +225,13 @@ class CRM_Logging_Differ
                 break;
             case 'String':
                 $values[$cfDao->column_name] = array();
-                if($cfDao->option_group_id) {
-                  $params[3] = array($cfDao->option_group_id, 'Integer');
-                  $sql = "SELECT label, value FROM `{$this->db}`.log_civicrm_option_value WHERE log_date <= %2 AND option_group_id = %3 ORDER BY log_date";
-                  $ovDao = CRM_Core_DAO::executeQuery($sql, $params);
-                  while ($ovDao->fetch()) {
-                      $values[$cfDao->column_name][$ovDao->value] = $ovDao->label;
-                  } 
+                if ( $cfDao->option_group_id ) {
+                    $params[3] = array($cfDao->option_group_id, 'Integer');
+                    $sql = "SELECT label, value FROM `{$this->db}`.log_civicrm_option_value WHERE log_date <= %2 AND option_group_id = %3 ORDER BY log_date";
+                    $ovDao = CRM_Core_DAO::executeQuery($sql, $params);
+                    while ($ovDao->fetch()) {
+                        $values[$cfDao->column_name][$ovDao->value] = $ovDao->label;
+                    } 
                 } 
                 break;
             }
