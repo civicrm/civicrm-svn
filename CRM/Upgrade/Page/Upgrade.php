@@ -233,7 +233,7 @@ SELECT  count( id ) as statusCount
                                     CRM_Core_Error::fatal( $error );
                                 }
                             }
-                            
+
                             if ( is_callable(array($versionObject, $phpFunctionName)) ) {
                                 $versionObject->$phpFunctionName( $rev );
                             } else {
@@ -266,7 +266,7 @@ SELECT  count( id ) as statusCount
                 }
             }
         }
-        
+
         $template->assign( 'preUpgradeMessage', $preUpgradeMessage );
         $template->assign( 'message', $message );
         $content = $template->fetch( 'CRM/common/success.tpl' );
