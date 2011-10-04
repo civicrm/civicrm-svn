@@ -200,7 +200,8 @@ VALUES
    ('paper_size'                    , '{ts escape="sql"}Paper Size{/ts}'                         , 0, 1),
    ('pdf_format'                    , '{ts escape="sql"}PDF Page Format{/ts}'                    , 0, 1),
    ('label_format'                  , '{ts escape="sql"}Mailing Label Format{/ts}'               , 0, 1),
-   ('activity_contacts'             , '{ts escape="sql"}Activity Contacts{/ts}'                  , 0, 1);
+   ('activity_contacts'             , '{ts escape="sql"}Activity Contacts{/ts}'                  , 0, 1),
+   ('event_recipients '             , '{ts escape="sql"}Event Recipients{/ts}'                   , 0, 1);
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
@@ -263,6 +264,7 @@ SELECT @option_group_id_cgeo           := max(id) from civicrm_option_group wher
 SELECT @option_group_id_paperSize      := max(id) from civicrm_option_group where name = 'paper_size';
 SELECT @option_group_id_label          := max(id) from civicrm_option_group where name = 'label_format';
 SELECT @option_group_id_aco            := max(id) from civicrm_option_group where name = 'activity_contacts';
+SELECT @option_group_id_ere            := max(id) from civicrm_option_group where name = 'event_recipients';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -759,6 +761,10 @@ VALUES
    (@option_group_id_aco, '{ts escape="sql"}Activity Source{/ts}', 2, 'Activity Source', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_aco, '{ts escape="sql"}Activity Targets{/ts}', 3, 'Activity Targets', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
 
+-- event_recipients 
+   (@option_group_id_ere, '{ts escape="sql"}Participant Status{/ts}', 1, 'civicrm_participant_status_type', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_ere, '{ts escape="sql"}Participant Role{/ts}', 2, 'participant_role', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+
 -- Label Formats
   (@option_group_id_label, '{ts escape="sql"}Avery 3475{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":10,"font-style":"","metric":"mm","lMargin":0,"tMargin":5,"NX":3,"NY":8,"SpaceX":0,"SpaceY":0,"width":70,"height":36,"lPadding":5.08,"tPadding":5.08}{/literal}',                   '3475',  'Avery', NULL, 0, 1,  NULL, 0, 1, 1, NULL, NULL), 
   (@option_group_id_label, '{ts escape="sql"}Avery 5160{/ts}', '{literal}{"paper-size":"letter","orientation":"portrait","font-name":"helvetica","font-size":8,"font-style":"","metric":"in","lMargin":0.21975,"tMargin":0.5,"NX":3,"NY":10,"SpaceX":0.14,"SpaceY":0,"width":2.5935,"height":1,"lPadding":0.20,"tPadding":0.20}{/literal}', '5160',  'Avery', NULL, 0, 2,  NULL, 0, 1, 1, NULL, NULL), 
@@ -1242,8 +1248,9 @@ INSERT INTO civicrm_participant_status_type
 INSERT INTO civicrm_action_mapping
 (entity, entity_value, entity_value_label, entity_status, entity_status_label, entity_date_start, entity_date_end, entity_recipient) 
 VALUES
-( 'civicrm_activity', 'activity_type', 'Activity Type', 'activity_status', 'Activity Status', 'activity_date_time', NULL, 'activity_contacts');
-
+( 'civicrm_activity', 'activity_type', 'Activity Type', 'activity_status', 'Activity Status', 'activity_date_time', NULL, 'activity_contacts'),
+( 'civicrm_participant', 'event_type', 'Event Type', 'civicrm_participant_status_type', 'Participant Status', 'event_start_date', 'event_end_date', 'event_contacts'),
+( 'civicrm_participant', 'civicrm_event', 'Event Name', 'civicrm_participant_status_type', 'Participant Status', 'event_start_date', 'event_end_date', 'event_contacts');
 
 INSERT INTO `civicrm_contact_type`
   (`id`, `name`, `label`,`image_URL`, `parent_id`, `is_active`,`is_reserved`)

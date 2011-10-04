@@ -203,4 +203,10 @@
 	  <key>id</key>
 	  <onDelete>SET NULL</onDelete>
     </foreignKey>
+    <field>
+       <name>absolute_date</name>
+       <type>date</type>
+       <comment>Date on which the reminder be sent.</comment>
+       <add>4.1</add>
+  </field>
 </table>
