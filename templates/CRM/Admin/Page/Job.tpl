@@ -47,7 +47,7 @@
         {foreach from=$rows item=row}
         <tr id="row_{$row.id}" class="crm-job {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
             <td class="crm-job-name">{$row.name} ({$row.run_frequency})<br/>{$row.description}</td>
-            <td class="crm-job-name">{$row.command}<br/><pre>{$row.parameters}</pre></td>
+            <td class="crm-job-name">{$row.command}<br/>{if $row.parameters eq null}<em>{ts}no parameters{/ts}</em>{else}<pre>{$row.parameters}</pre>{/if}</td>
             <td class="crm-job-name">{if $row.last_run eq null}never{else}{$row.last_run|crmDate:$config->dateformatDatetime}{/if}</td>
             <td id="row_{$row.id}_status" class="crm-job-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	    <td>{$row.action|replace:'xx':$row.id}</td>
