@@ -62,6 +62,15 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
       $this->assertFalse( $this->isTextPresent( "{$eventTitle4}" ) );
       $this->assertFalse( $this->isTextPresent( "{$eventTitle5}" ) ); 
 
+      //go to ical and check for presence of ongoing and upcomming events 
+      $this->open($this->sboxPath . "civicrm/event/ical?reset=1&page=1&html=1");
+      $this->waitForPageToLoad("30000");
+      $this->assertFalse( $this->isTextPresent( "{$eventTitle1}" ) ); 
+      $this->assertFalse( $this->isTextPresent( "{$eventTitle2}" ) ); 
+      $this->assertTrue(  $this->isTextPresent( "{$eventTitle3}" ) ); 
+      $this->assertTrue(  $this->isTextPresent( "{$eventTitle4}" ) );
+      $this->assertTrue(  $this->isTextPresent( "{$eventTitle5}" ) ); 
+
       //go to block listing to enable Upcomming Events Block
       $this->open($this->sboxPath . 'admin/build/block');
       $this->select('edit-civicrm-6-region','value=right');
