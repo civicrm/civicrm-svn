@@ -41,12 +41,14 @@
     <tr class="crm-job-form-block-description">
         <td class="label">{$form.description.label}</td><td>{$form.description.html}</td>
     </tr>
-
-    <tr class="crm-job-form-block-script">
-        <td class="label">{$form.cron_string.label}</td><td>{$form.cron_string.html}</td>
+    <tr class="crm-job-form-block-run_frequency">
+        <td class="label">{$form.run_frequency.label}</td><td>{$form.run_frequency.html}</td>
     </tr>
-    <tr class="crm-job-form-block-script">
-        <td class="label">{$form.script.label}</td><td>{$form.script.html}</td>
+    <tr class="crm-job-form-block-command">
+        <td class="label">{$form.command.label}</td><td>{$form.command.html}</td>
+    </tr>
+    <tr class="crm-job-form-block-parameters">
+        <td class="label">{$form.parameters.label}</td><td>{$form.parameters.html}</td>
     </tr>
     <tr class="crm-job-form-block-is_active">
         <td></td><td>{$form.is_active.html}&nbsp;{$form.is_active.label}</td>

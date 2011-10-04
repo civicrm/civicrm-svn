@@ -56,26 +56,7 @@ abstract class CRM_Core_ScheduledJob
      */
     public function __construct( )
     {
-        // figure out whether we are in cli or http
-        // and do proper thing
-        
         $this->_logStart();
-        
-        // this is copied from elsewhere, just example - needs implementing!
-        if ( php_sapi_name() == "cli" ) {
-            require_once ("bin/cli.php");
-            $this->cli=new civicrm_cli ();
-
-            //if it doesn't die, it's authenticated 
-            require_once 'CRM/Core/Config.php';
-            $config =& CRM_Core_Config::singleton();
-
-            processQueue( $config );
-
-        } else  { //from the webserver
-            run( );
-        }        
-        
     }                                                          
 
     public function __destruct( )
@@ -94,9 +75,6 @@ abstract class CRM_Core_ScheduledJob
     abstract protected function run();
 
     /**
-     * Provides permissions that are used by component.
-     * Needs to be implemented in component's information
-     * class.     
      *
      * @return array|null collection of permissions, null if none
      * @access public
@@ -116,6 +94,7 @@ abstract class CRM_Core_ScheduledJob
     private function _logStart( )
     {
         //TBD
+        CRM_Core_Error::debug_log_message( $name );
     }
 
 
@@ -129,6 +108,7 @@ abstract class CRM_Core_ScheduledJob
     private function _logEnd( )
     {
         //TBD
+        CRM_Core_Error::debug_log_message( $name );        
     }
 
 }

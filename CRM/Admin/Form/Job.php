@@ -86,12 +86,16 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
         $this->add( 'text', 'description', ts( 'Description' ),
                     $attributes['description'] );
 
-        $this->add( 'text', 'script', ts( 'Script' ),
-                    $attributes['script'], true );
+        $this->add( 'text', 'command', ts( 'API Call (command)' ),
+                    $attributes['command'], true );
 
-        $this->add( 'text', 'cron_string', ts( 'Cron String' ),
-                    $attributes['name'], true );
+        $this->add( 'select', 'run_frequency', ts( 'Run frequency' ),
+                    array( 'Daily' => ts('Daily'), 'Hourly' => ts('Hourly') ) );
 
+
+        $this->add('textarea', 'parameters', ts('Command parameters'), 
+                           "cols=50 rows=6" );
+                           
         // is this job active ?
         $this->add('checkbox', 'is_active' , ts('Is this Scheduled Job active?') );
 
@@ -154,9 +158,10 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
 
         $dao->id         = $this->_id;
         $dao->domain_id  = $domainID;
-        $dao->cron_string = $values['cron_string'];
+        $dao->run_frequency = $values['run_frequency'];
+        $dao->parameters = $values['parameters'];        
         $dao->name                   = $values['name'];
-        $dao->script                   = $values['script'];
+        $dao->command                   = $values['command'];
         $dao->description            = $values['description'];        
         $dao->is_active  = CRM_Utils_Array::value( 'is_active' , $values, 0 );
 

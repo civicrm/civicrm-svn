@@ -32,10 +32,11 @@
        <add>4.1</add>
   </foreignKey>  
   <field>
-       <name>cron_string</name>
-       <type>varchar</type>
-       <length>255</length>
-       <comment>Cron string for this job</comment>
+       <name>run_frequency</name>
+       <type>enum</type>
+       <values>Hourly, Daily</values>
+       <default>"Daily"</default>
+       <comment>Scheduled job run frequency.</comment>
        <add>4.1</add>
   </field>
   <field>
@@ -58,12 +59,21 @@
        <length>255</length>
        <comment>Description of the job</comment>
        <add>4.1</add>
-  </field>  
+  </field>
   <field>
-       <name>script</name>
+       <name>command</name>
        <type>varchar</type>
        <length>255</length>
        <comment>Full path to file containing job script</comment>
+       <add>4.1</add>
+  </field>
+  <field>
+       <name>parameters</name>
+       <type>text</type>
+       <comment>List of parameters to the command.</comment>
+       <htmlType>textarea</htmlType>
+       <rows>4</rows>
+       <cols>60</cols>
        <add>4.1</add>
   </field>
   <field>

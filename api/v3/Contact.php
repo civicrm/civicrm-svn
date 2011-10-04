@@ -803,3 +803,27 @@ LIMIT    0, {$limit}
     
     return civicrm_api3_create_success($contactList,$params);
 }
+
+/**
+ * Geocode group of contacts based on given params
+ *
+ * @param  array   	  $params (reference ) input parameters
+ *
+ * @return boolean        true if success, else false
+ * @static void
+ * @access public
+ *
+ */
+function civicrm_api3_contact_geocode( $params )
+{
+
+    require_once 'CRM/Utils/ScheduledJobs/GeocodeContacts.php';    
+    $gc = new CRM_Utils_ScheduledJobs_GeocodeContacts( $params );
+
+    if ( $gc->run() ) ) {
+      return civicrm_api3_create_success( );
+    } else {
+      return civicrm_api3_create_error(  'Could not geocode contacts'  );
+    }
+
+}
