@@ -177,12 +177,6 @@ define( 'CIVICRM_MAIL_SMARTY', 0 );
 define( 'CIVICRM_DOMAIN_ID'      , 1 );
 
 /**
- * Multi org / Multi site settings:
- *
- */
-// define( 'CIVICRM_MULTISITE'           , null );
-
-/**
  * Settings to enable external caching using a Memcache server.  This is an
  * advanced features, and you should read and understand the documentation
  * before you turn it on. We cannot store these settings in the DB since the
