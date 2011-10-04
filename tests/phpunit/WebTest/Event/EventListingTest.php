@@ -32,19 +32,21 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
       
       //Upcomming Event 
       $eventTitle4 ='My Conference - '.substr(sha1(rand()), 0, 7);
-      $this->_testCreateEvent($eventTitle4,'27 April 2012','29 December 2012');
+      $this->_testCreateEvent($eventTitle4,'+6 months','+12 months');
       
       //Upcomming Event
       $eventTitle5 ='My Conference - '.substr(sha1(rand()), 0, 7);
-      $this->_testCreateEvent($eventTitle5,'1 January 2012','29 May 2012');
+      $this->_testCreateEvent($eventTitle5,'+3 months','+6 months');
         
       //go to manage event and check for presence of ongoing and
       //upcomming events 
       $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
       $this->waitForPageToLoad("30000");
-      $this->assertTrue( $this->isTextPresent( "{$eventTitle3}" ) ); 
-      $this->assertTrue( $this->isTextPresent( "{$eventTitle4}" ) );
-      $this->assertTrue( $this->isTextPresent( "{$eventTitle5}" ) ); 
+      $this->assertFalse( $this->isTextPresent( "{$eventTitle1}" ) ); 
+      $this->assertFalse( $this->isTextPresent( "{$eventTitle2}" ) ); 
+      $this->assertTrue(  $this->isTextPresent( "{$eventTitle3}" ) ); 
+      $this->assertTrue(  $this->isTextPresent( "{$eventTitle4}" ) );
+      $this->assertTrue(  $this->isTextPresent( "{$eventTitle5}" ) ); 
       
       //check if closed Event is present
       $this->waitForElementPresent( 'CIVICRM_QFID_1_4' );
@@ -54,8 +56,20 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
       $this->click( '_qf_SearchEvent_refresh' );
       $this->waitForPageToLoad("30000");
       
-      $this->assertTrue( $this->isTextPresent( "{$eventTitle1}" ) ); 
-      $this->assertTrue( $this->isTextPresent( "{$eventTitle2}" ) ); 
+      $this->assertTrue(  $this->isTextPresent( "{$eventTitle1}" ) ); 
+      $this->assertTrue(  $this->isTextPresent( "{$eventTitle2}" ) ); 
+      $this->assertFalse( $this->isTextPresent( "{$eventTitle3}" ) ); 
+      $this->assertFalse( $this->isTextPresent( "{$eventTitle4}" ) );
+      $this->assertFalse( $this->isTextPresent( "{$eventTitle5}" ) ); 
+
+      //go to ical and check for presence of ongoing and upcomming events 
+      $this->open($this->sboxPath . "civicrm/event/ical?reset=1&page=1&html=1");
+      $this->waitForPageToLoad("30000");
+      $this->assertFalse( $this->isTextPresent( "{$eventTitle1}" ) ); 
+      $this->assertFalse( $this->isTextPresent( "{$eventTitle2}" ) ); 
+      $this->assertTrue(  $this->isTextPresent( "{$eventTitle3}" ) ); 
+      $this->assertTrue(  $this->isTextPresent( "{$eventTitle4}" ) );
+      $this->assertTrue(  $this->isTextPresent( "{$eventTitle5}" ) ); 
 
       //go to block listing to enable Upcomming Events Block
       $this->open($this->sboxPath . 'admin/build/block');
@@ -66,8 +80,11 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
       
       //go to civicrm home and check for presence of upcomming events
       $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
-      $this->assertTrue( $this->isTextPresent( "{$eventTitle4}" ) );
-      $this->assertTrue( $this->isTextPresent( "{$eventTitle5}" ) );  
+      $this->assertFalse( $this->isTextPresent( "{$eventTitle1}" ) ); 
+      $this->assertFalse( $this->isTextPresent( "{$eventTitle2}" ) ); 
+      $this->assertFalse( $this->isTextPresent( "{$eventTitle3}" ) ); 
+      $this->assertTrue(  $this->isTextPresent( "{$eventTitle4}" ) );
+      $this->assertTrue(  $this->isTextPresent( "{$eventTitle5}" ) );  
   
       //go to block listing to disable Upcomming Events Block
       $this->open($this->sboxPath . 'admin/build/block');

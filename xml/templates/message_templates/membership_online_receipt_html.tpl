@@ -171,10 +171,8 @@
          <td colspan="2" {$valueStyle}>
           <table> {* FIXME: style this table so that it looks like the text version (justification, etc.) *}
            <tr>
-            <th>{ts}Item{/ts}</th>
-            <th>{ts}Qty{/ts}</th>
-            <th>{ts}Each{/ts}</th>
-            <th>{ts}Total{/ts}</th>
+            <th>{ts}Membership Type{/ts}</th>
+            <th>{ts}Fee{/ts}</th>
 	    <th>{ts}Membership Start Date{/ts}</th>
 	    <th>{ts}Membership End Date{/ts}</th>
            </tr>
@@ -182,12 +180,6 @@
             <tr>
              <td>
              {if $line.html_type eq 'Text'}{$line.label}{else}{$line.field_title} - {$line.label}{/if} {if $line.description}<div>{$line.description|truncate:30:"..."}</div>{/if}
-             </td>
-             <td>
-              {$line.qty}
-             </td>
-             <td>
-              {$line.unit_price|crmMoney}
              </td>
              <td>
               {$line.line_total|crmMoney}
