@@ -38,16 +38,16 @@
  	{include file="CRM/common/enableDisable.tpl"}
         <table class="selector">
         <tr class="columnheader">
-            <th >{ts}Name/Script/Description{/ts}</th>
-            <th >{ts}Cron String{/ts}</th>
+            <th >{ts}Name (Frequency)/Description{/ts}</th>
+            <th >{ts}Command/Parameters{/ts}</th>
             <th >{ts}Last run{/ts}</th>
             <th >{ts}Enabled?{/ts}</th>
             <th ></th>
         </tr>
         {foreach from=$rows item=row}
         <tr id="row_{$row.id}" class="crm-job {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-            <td class="crm-job-name">{$row.name}<br/>{$row.script}<br/>{$row.description}</td>
-            <td class="crm-job-name">{$row.cron_string}</td>
+            <td class="crm-job-name">{$row.name} ({$row.run_frequency})<br/>{$row.description}</td>
+            <td class="crm-job-name">{$row.command}<br/><pre>{$row.parameters}</pre></td>
             <td class="crm-job-name">{if $row.last_run eq null}never{else}{$row.last_run|crmDate:$config->dateformatDatetime}{/if}</td>
             <td id="row_{$row.id}_status" class="crm-job-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	    <td>{$row.action|replace:'xx':$row.id}</td>
