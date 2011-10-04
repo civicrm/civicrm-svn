@@ -574,7 +574,7 @@ SELECT $select
                                                 $entityId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_EntityFile',
                                                                                          $fileDAO->id,
                                                                                          'entity_id',
-                                                                                         'id' );
+                                                                                         'file_id' );
                                                 $customValue['imageURL'] = str_replace( 'persist/contribute', 'custom' ,$config->imageUploadURL) . $fileDAO->uri;
                                                 require_once 'CRM/Core/BAO/File.php';
                                                 list( $path ) = CRM_Core_BAO_File::path( $fileDAO->id, $entityId,
