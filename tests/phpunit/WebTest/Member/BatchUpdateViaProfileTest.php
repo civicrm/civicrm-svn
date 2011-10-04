@@ -127,7 +127,10 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
 
         $this->waitForElementPresent( '_qf_Batch_back-bottom' );
         $this->type( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[1]/td[3]/input", "This is test custom data text1" );
+        $this->select("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[1]/td[4]/select", "label=Current");
+
         $this->type( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input", "This is test custom data text2" );
+        $this->select("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[4]/select", "label=Grace");
 
         $this->click( '_qf_Batch_next-bottom' );
         $this->waitForElementPresent( '_qf_Result_done' );
@@ -141,7 +144,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
         // Verify End date
         $verifyData = array(
                             'Membership Type' => $memTypeParams['membership_type'],
-                            'Status'          => 'New',
+                            'Status'          => 'Current',
                             'End date'        => $endDate
                             );
         foreach ( $verifyData as $label => $value ) {
@@ -159,7 +162,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
         // Verify End date
         $verifyData = array(
                             'Membership Type' => $memTypeParams['membership_type'],
-                            'Status'          => 'New',
+                            'Status'          => 'Grace',
                             'End date'        => $endDate
                             );
         foreach ( $verifyData as $label => $value ) {
@@ -220,10 +223,21 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
         $this->click( 'field_name[1]' );
         $this->click( 'label' );
         
+        // Clicking save and new
+        $this->click( '_qf_Field_next_new-bottom' );
+        $this->waitForPageToLoad("30000");
+        $this->assertTrue( $this->isTextPresent( "Your CiviCRM Profile Field '{$customDataParams[0]}' has been saved to '{$profileTitle}'." ) );
+        
+        // Add membership status field to profile - CRM-8618
+        $this->select( 'field_name[0]', "value=Membership" );
+        $this->select( 'field_name[1]', "label=Membership Status" );
+        $this->click( 'field_name[1]' );
+        $this->click( 'label' );
         // Clicking save
         $this->click( '_qf_Field_next-bottom' );
         $this->waitForPageToLoad("30000");
-        $this->assertTrue( $this->isTextPresent( "Your CiviCRM Profile Field '{$customDataParams[0]}' has been saved to '{$profileTitle}'." ) );
+        $this->assertTrue( $this->isTextPresent( "Your CiviCRM Profile Field 'Membership Status' has been saved to '{$profileTitle}'." ) );
+        
     }
 
     function _addCustomData( )
