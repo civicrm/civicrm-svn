@@ -619,10 +619,24 @@ function civicrm_api3_contact_quicksearch( $params )
 {
     civicrm_api3_verify_mandatory($params,null,array('name'));
     
-    require_once 'CRM/Core/BAO/Preferences.php';
     $name   = CRM_Utils_Array::value( 'name', $params );
 
-    $list   = array_keys( CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options' ), '1' );
+    // get the autocomplete options from settings
+    require_once 'CRM/Core/BAO/Setting.php';
+    $acpref = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                       CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                       'contact_autocomplete_options' ) );
+
+    // get the option values for contact autocomplete
+    $acOptions = CRM_Core_OptionGroup::values( 'contact_autocomplete_options', false, false, false, null, 'name' );
+    
+    $list = array();
+    foreach ( $acpref as $value ) {
+        if ( $value && CRM_Utils_Array::value( $value, $acOptions ) ) {
+            $list[$value] = $acOptions[$value];
+        }
+    } 
+    
     $select = array( 'sort_name' );
     $where  = '';
     $from   = array( );
