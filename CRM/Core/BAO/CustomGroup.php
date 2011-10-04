@@ -341,7 +341,9 @@ LEFT JOIN civicrm_custom_field ON (civicrm_custom_field.custom_group_id = civicr
 
         if ( $subType ) {
             $subTypeClause = '';
-
+            if ( is_array( $subType ) ) {
+                $subType = implode(',',  $subType);
+            }
             if ( strpos($subType, ',' ) ) {
                 $subTypeParts = explode(',',  $subType);
                 $subTypeClauses = array( );

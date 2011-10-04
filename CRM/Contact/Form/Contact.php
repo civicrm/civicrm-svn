@@ -751,10 +751,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         // subtype is a common field. lets keep it here
         $typeLabel = CRM_Contact_BAO_ContactType::getLabel( $this->_contactType );
         $subtypes  = CRM_Contact_BAO_ContactType::subTypePairs( $this->_contactType );
-        $subtypeElem =& $this->addElement( 'select', 'contact_sub_type', 
-                                           ts('Contact Type'), array( '' => $typeLabel ) + $subtypes,
-                                           array('onchange' => $buildCustomData ) );
-        
+        foreach ( $subtypes as $id => $label ) {
+            $this->addElement( 'checkbox', "contact_sub_type[$id]", null, $label, array('onclick' => $buildCustomData ) );
+        }
+
         $allowEditSubType = true;
         if ( $this->_contactId && $this->_contactSubType ) {
             $allowEditSubType = CRM_Contact_BAO_ContactType::isAllowEdit( $this->_contactId, $this->_contactSubType );
@@ -838,6 +838,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         $params['contact_type'] = $this->_contactType;
         if ( !CRM_Utils_Array::value( 'contact_sub_type', $params ) && $this->_isContactSubType ) {
             $params['contact_sub_type'] = $this->_contactSubType;
+        } else if ( CRM_Utils_Array::value( 'contact_sub_type', $params ) ) {
+            $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR . 
+                implode( CRM_Core_DAO::VALUE_SEPARATOR, array_keys($params['contact_sub_type']) ) . CRM_Core_DAO::VALUE_SEPARATOR;
         }
         
         if ( $this->_contactId ) {

@@ -478,7 +478,12 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
      *
      */
     static function isExtendsContactType( $subType, $contactType, $ignoreCache = false, $columnName = 'name') {
-        return in_array( $subType, self::subTypes( $contactType, true, $columnName, $ignoreCache ) );
+        if ( ! is_array($subType) ) {
+            $subType = explode( CRM_Core_DAO::VALUE_SEPARATOR, trim($subType, CRM_Core_DAO::VALUE_SEPARATOR) );
+        }
+        $subtypeList  = self::subTypes( $contactType, true, $columnName, $ignoreCache );
+        $intersection = array_intersect($subType, $subtypeList);
+        return $subType == $intersection;
     }
 
     /**
