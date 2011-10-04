@@ -30,7 +30,9 @@
       <td scope="row" class="label" width="20%">{$form.additional_custom_post_id_multiple[$profileBottomNumAdd].label}</td>
       <td>{$form.additional_custom_post_id_multiple[$profileBottomNumAdd].html}	
           &nbsp;<span class='profile_bottom_add_link_remove'><a href="javascript:removeProfileAdd('{$profileBottomNum}')">{ts}remove profile{/ts}</a></span>&nbsp;&nbsp;<span class='profile_bottom_add_link'>&nbsp;<a href="javascript:addProfileBottomAdd()">{ts}add profile{/ts}</a></span>
-          <br/><span class="profile-links">Edit links</span>
+            <br/>
+            <span class="description">{ts}Change this if you want to use a different profile for additional participants.{/ts}</span>
+            <br/><span class="profile-links"></span>
       </td>
     </tr>
   </table>
@@ -41,7 +43,9 @@
        <td scope="row" class="label" width="20%">{$form.custom_post_id_multiple[$profileBottomNum].label}</td>
        <td>{$form.custom_post_id_multiple[$profileBottomNum].html}
            &nbsp;<span class='profile_bottom_link_remove'><a href="javascript:removeProfile('{$profileBottomNum}')">{ts}remove profile{/ts}</a></span>&nbsp;&nbsp;<span class='profile_bottom_link'><a href="javascript:addProfileBottom()">{ts}add profile{/ts}</a></span>
-           <br/><span class="profile-links">Edit links</span>
+           <br/>
+            <span class="description">{ts}Include additional fields on this registration form by configuring and selecting a CiviCRM Profile to be included at the bottom of the page.{/ts}</span>
+           <br/><span class="profile-links"></span>
        </td>
      </tr>
    </table>
@@ -201,7 +205,7 @@
         </tr>
         <tr class='crm-event-manage-registration-form-block-create-new-profile'>
             <td class="label"></td>
-            <td><a href="{crmURL p='civicrm/admin/uf/group/add' q='reset=1&action=add'}" target="_blank">{ts}Create New Profile{/ts}</td>
+            <td><a href="{crmURL p='civicrm/admin/uf/group/add' q='reset=1&action=add'}" target="_blank">{ts}Click here for new profile{/ts}</td>
         </tr>
         </table>
         </div>
@@ -354,6 +358,10 @@ invert              = 0
     invert              = 0
 }
 {/if}
+
+{*include profile link function*}
+{include file="CRM/common/buildProfileLink.tpl"}
+
 <script type="text/javascript">
     {literal}
     cj("#is_multiple_registrations").change( function( ) {
@@ -455,16 +463,6 @@ invert              = 0
         });
     });
 
-    function buildLinks( element, profileId ) {
-      if ( profileId >= 1 ) {
-        var ufFieldUrl = {/literal}"{crmURL p='civicrm/admin/uf/group/field' q='reset=1&action=browse&gid=' h=0}"{literal};
-        ufFieldUrl = ufFieldUrl + profileId;
-        var editTitle = {/literal}{ts}"edit profile"{/ts}{literal};
-        element.parent().find('span.profile-links').html('<a href="' + ufFieldUrl +'" target="_blank" title="'+ editTitle+'">'+ editTitle+'</a>');
-      } else {
-        element.parent().find('span.profile-links').html('');
-      }
-    }
     {/literal}
 </script>
 {include file="CRM/common/formNavigate.tpl"}
