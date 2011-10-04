@@ -816,14 +816,12 @@ LIMIT    0, {$limit}
  */
 function civicrm_api3_contact_geocode( $params )
 {
-
     require_once 'CRM/Utils/ScheduledJobs/GeocodeContacts.php';    
     $gc = new CRM_Utils_ScheduledJobs_GeocodeContacts( $params );
 
-    if ( $gc->run() ) ) {
+    if ( $gc->run() ) {
       return civicrm_api3_create_success( );
     } else {
       return civicrm_api3_create_error(  'Could not geocode contacts'  );
     }
-
 }
