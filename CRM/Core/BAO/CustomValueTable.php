@@ -494,10 +494,30 @@ AND    cf.id IN ( $fieldIDList )
         $cvParams  = array( );
 
         while ( $dao->fetch( ) ) {
-            // ensure that value is of the right data type
             $dataType = $dao->data_type == 'Date' ? 'Timestamp' : $dao->data_type;
             foreach ( $fieldValues[$dao->cf_id] as $fieldValue ) {
-                if ( CRM_Utils_Type::escape( $fieldValue['value'],
+                // Format null values correctly
+                if ( $fieldValue['value'] === null || $fieldValue['value'] === '' ) {
+                  switch ( $dataType ) {
+                    case 'String':
+                    case 'Int':
+                    case 'Link':
+                    case 'Boolean':
+                      $fieldValue['value'] = '';
+                      break;
+                    case 'Timestamp':
+                      $fieldValue['value'] = null;
+                      break;
+                    case 'StateProvince':
+                    case 'Country':
+                    case 'Money':
+                    case 'Float':
+                      $fieldValue['value'] = (int) 0;
+                      break;
+                  }
+                }
+                // Ensure that value is of the right data type
+                elseif ( CRM_Utils_Type::escape( $fieldValue['value'],
                                              $dataType, false ) === null ) {
                     return CRM_Core_Error::createAPIError( ts( 'value: %1 is not of the right field data type: %2',
                                                                array( 1 => $fieldValue['value'],
