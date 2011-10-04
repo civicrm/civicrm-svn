@@ -36,16 +36,11 @@
  *
  */
 
-abstract class CRM_Core_ScheduledJob
+class CRM_Core_JobManager
 {
 
-    /*
-     * Name of the job.
-     * @var boolean true if running.
-     */
-    public $name;
 
-    public $cli;
+    var $jobs = null;
 
     /*
      * Class constructor
@@ -54,25 +49,38 @@ abstract class CRM_Core_ScheduledJob
      * @access public
      * 
      */
-    public function __construct( )
-    {
-        $this->_logStart();
+    public function __construct( ) {
+        $this->logEntry( 'Starting scheduled jobs execution' );
+        $this->jobs = $this->getJobs();
     }                                                          
 
-    public function __destruct( )
-    {
-        $this->_logEnd();
+    public function execute( ) {
+        require_once 'CRM/Utils/System.php';        
+        CRM_Utils_System::authenticateKey( );
+        require_once 'api/api.php';
+        foreach( $this->jobs as $job ) {
+            
+        }
+        $this->logEntry( 'Executing' );
     }
 
+    public function __destruct( ) {
+        $this->logEntry( 'Finishing scheduled jobs execution.' );
+    }
 
-    /**
-     * Starts execution of the job.
-     *
-     * @return boolean 
-     * @access public
-     *
-     */
-    abstract protected function run();
+    public function getJobs( ) {
+        $jobs = array();
+        $dao = new CRM_Core_DAO_Job();
+        $dao->orderBy('name');
+        $dao->find();
+        require_once 'CRM/Core/ScheduledJob.php';
+        while ($dao->fetch()) {
+            CRM_Core_DAO::storeValues( $dao, $temp);
+            $jobs[$dao->id] = new CRM_Core_ScheduledJob( $temp );
+        }
+        return $jobs;
+    }
+
 
     /**
      *
@@ -80,35 +88,9 @@ abstract class CRM_Core_ScheduledJob
      * @access public
      *
      */
-    public function logEntry() {
+    public function logEntry( $message ) {
+        CRM_Core_Error::debug_log_message( date('l jS \of F Y h:i:s A') . ": " . $message );
     }
 
-
-    /**
-     * Logs jobs start.
-     * 
-     * @return void
-     * @access public
-     *
-     */
-    private function _logStart( )
-    {
-        //TBD
-        CRM_Core_Error::debug_log_message( $name );
-    }
-
-
-    /**
-     * Logs jobs finish.
-     * 
-     * @return void
-     * @access public
-     *
-     */
-    private function _logEnd( )
-    {
-        //TBD
-        CRM_Core_Error::debug_log_message( $name );        
-    }
 
 }

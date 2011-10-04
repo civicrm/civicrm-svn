@@ -69,6 +69,12 @@ class CRM_Admin_Page_Job extends CRM_Core_Page_Basic
     {
         if (!(self::$_links)) {
             self::$_links = array(
+                                  CRM_Core_Action::EXPORT  => array(
+                                                                    'name'  => ts('Execute now'),
+                                                                    'url'   => 'civicrm/admin/job',
+                                                                    'qs'    => 'action=export&id=%%id%%&reset=1',
+                                                                    'title' => ts('Execute Scheduled Job Now') 
+                                                                    ),
                                   CRM_Core_Action::UPDATE  => array(
                                                                     'name'  => ts('Edit'),
                                                                     'url'   => 'civicrm/admin/job',
@@ -129,28 +135,25 @@ class CRM_Admin_Page_Job extends CRM_Core_Page_Basic
      */
     function browse($action=null)
     {
-        $job = array();
-        $dao = new CRM_Core_DAO_Job();
-        $dao->orderBy('name');
-        $dao->find();
 
-        while ($dao->fetch()) {
-            $job[$dao->id] = array();
-            CRM_Core_DAO::storeValues( $dao, $job[$dao->id]);
-            // form all action links
+        require_once 'CRM/Core/JobManager.php';
+        $sj = new CRM_Core_JobManager();
+        $rows = $temp = array();
+        foreach( $sj->jobs as $job ) {
             $action = array_sum(array_keys($this->links()));
-            
+
             // update enable/disable links.
-            if ($dao->is_active) {
+            if ($job->is_active) {
                 $action -= CRM_Core_Action::ENABLE;
             } else {
                 $action -= CRM_Core_Action::DISABLE;
             }
             
-            $job[$dao->id]['action'] = CRM_Core_Action::formLink(self::links(), $action, 
-                                                                              array('id' => $dao->id));
+            $job->action = CRM_Core_Action::formLink( self::links(), $action, 
+                                                      array('id' => $job->id));
+            $rows[] = get_object_vars( $job );
         }
-        $this->assign('rows', $job);
+        $this->assign('rows', $rows);
     }
 
     /**

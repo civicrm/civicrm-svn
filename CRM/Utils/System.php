@@ -1205,4 +1205,19 @@ class CRM_Utils_System {
             $content .= $template->fetch( $additionalTPLFile );
         }
     }
+    
+    /**
+     *
+     * @param string $fileName - the name of the tpl file that we are processing
+     * @param string $content (by reference) - the current content string
+     *
+     * @return void - the content string is modified if needed
+     * @static
+     */
+    static function executeScheduledJobs( ) {
+        require_once 'CRM/Core/ScheduledJobs.php';
+        $facility = new CRM_Core_JobManager();
+        $facility->execute();
+    }
+    
 }

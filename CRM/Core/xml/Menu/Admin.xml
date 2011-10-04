@@ -395,19 +395,27 @@
      <weight>360</weight>
   </item>
   <item>
+     <path>civicrm/admin/runjobs</path>
+     <desc>URL used for running scheduled jobs.</desc>
+     <page_callback>CRM_Utils_System::executeScheduledJobs</page_callback>
+     <access_arguments>access CiviCRM,administer CiviCRM</access_arguments>
+  </item>
+  <item>
      <path>civicrm/admin/job</path>
      <title>Scheduled Jobs</title>
      <desc>Managing periodially running tasks.</desc>
      <page_callback>CRM_Admin_Page_Job</page_callback>
+     <access_arguments>access CiviCRM,administer CiviCRM</access_arguments>     
      <adminGroup>Manage</adminGroup>
      <icon>admin/small/13.png</icon>
      <weight>1370</weight>
-  </item>  
+  </item>
   <item>
      <path>civicrm/admin/joblog</path>
      <title>Scheduled Jobs Log</title>
      <desc>Browsing the log of periodially running tasks.</desc>
      <page_callback>CRM_Admin_Page_JobLog</page_callback>
+     <access_arguments>access CiviCRM,administer CiviCRM</access_arguments>     
      <adminGroup>Manage</adminGroup>
      <icon>admin/small/13.png</icon>
      <weight>1380</weight>
