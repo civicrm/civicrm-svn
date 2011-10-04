@@ -602,7 +602,7 @@ ORDER BY parent_id, weight";
      */
     static function resetNavigation( ) 
     {
-        $query = "UPDATE civicrm_preferences SET navigation = NULL WHERE contact_id IS NOT NULL";
+        $query = "UPDATE civicrm_setting SET value = NULL WHERE name='navigation' AND contact_id IS NOT NULL";
         CRM_Core_DAO::executeQuery( $query );
         
         require_once 'CRM/Core/BAO/Cache.php';
