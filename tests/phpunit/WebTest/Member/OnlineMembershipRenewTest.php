@@ -78,7 +78,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $email = $firstName . "@example.com";
         
         //logout
-        $this->open($this->sboxPath . "civicrm/logout&reset=1");
+        $this->open($this->sboxPath . "civicrm/logout?reset=1");
         $this->waitForPageToLoad('30000');
         
         //Go to online membership signup page
@@ -120,7 +120,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->open( $this->sboxPath );
         $this->webtestLogin();
         //Find Member
-        $this->open( $this->sboxPath . "civicrm/member/search&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/member/search?reset=1" );
         $this->waitForElementPresent( "member_end_date_high" );
         
         $this->type( "sort_name", "$firstName $lastName" );
@@ -181,11 +181,8 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->click( "_qf_Confirm_next-bottom" );
         $this->waitForPageToLoad( '30000' );
         
-        // Log in using webtestLogin() method
-        $this->open( $this->sboxPath );
-        $this->webtestLogin();
         //Find Member
-        $this->open( $this->sboxPath . "civicrm/member/search&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/member/search?reset=1" );
         $this->waitForElementPresent( "member_end_date_high" );
         
         $this->type( "sort_name", "$firstName $lastName" );
@@ -285,7 +282,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad( '30000' );
         
         //Find Member
-        $this->open( $this->sboxPath . "civicrm/member/search&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/member/search?reset=1" );
         $this->waitForElementPresent( "member_end_date_high" );
         
         $this->type( "sort_name", "$firstName $lastName" );
@@ -333,7 +330,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad( '30000' );
         
         //Find Member
-        $this->open( $this->sboxPath . "civicrm/member/search&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/member/search?reset=1" );
         $this->waitForElementPresent( "member_end_date_high" );
         
         $this->type( "sort_name", "$firstName $lastName" );
@@ -421,7 +418,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
         
         //check for online contribution and profile listings permissions
-        $this->open($this ->sboxPath . "admin/user/permissions" );
+        $this->changeAdminLinks( );
         if ( !$this->isChecked( "edit-1-make-online-contributions" ) ) {
             $this->click( "edit-1-make-online-contributions" );
         }
@@ -469,14 +466,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
                                                      $pcp          ,
                                                      true
                                                      );
-        //logout
-        $this->open($this->sboxPath . "civicrm/logout&reset=1");
-        $this->waitForPageToLoad('30000');
-        $this->open( $this->sboxPath );
-        
-        // Log in using webtestLogin() method
-        $this->webtestLogin();
-
+       
         $hash = substr(sha1(rand()), 0, 7);
         $this->open($this->sboxPath . "civicrm/admin/contribute/settings?reset=1&action=update&id=$pageId");
         
@@ -499,13 +489,11 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad('30000');
     
         //logout
-        $this->open($this->sboxPath . "civicrm/logout&reset=1");
+        $this->open($this->sboxPath . "civicrm/logout?reset=1");
         $this->waitForPageToLoad('30000');
                
         //get Url for Live Contribution Page
-        $registerUrl = "{$this->sboxPath}civicrm/contribute/transact?reset=1&id=$pageId";
-        
-        $this->open( $registerUrl );
+        $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=".$pageId);
         $this->waitForElementPresent('_qf_Main_upload-bottom');
         
         $firstName = 'Eia' . substr(sha1(rand()), 0, 4);
@@ -558,7 +546,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         
         //Find member
         $endDate = date( 'F jS, Y', strtotime( " +1 year -1 day" ) );
-        $this->open( $this->sboxPath . "civicrm/member/search&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/member/search?reset=1" );
         $this->waitForPageToLoad( '30000' );
         $this->waitForElementPresent( "member_end_date_high" );
         
@@ -583,7 +571,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
                                preg_quote( $value ) );   
         }
         
-        $this->open( $this->sboxPath . "civicrm/member/search&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/member/search?reset=1" );
         $this->waitForPageToLoad( '30000' );
         $this->waitForElementPresent( "member_end_date_high" );
         
@@ -609,12 +597,10 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         }
         
         //logout
-        $this->open($this->sboxPath . "civicrm/logout&reset=1");
+        $this->open($this->sboxPath . "civicrm/logout?reset=1");
         $this->waitForPageToLoad('30000');
         
-        $registerUrl = "{$this->sboxPath}civicrm/contribute/transact?reset=1&id=$pageId";
-        $this->open($registerUrl);
-        
+        $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=".$pageId);
         $this->type( "email-5", $email );
         $this->click('is_for_organization');
         $this->type( 'onbehalf_organization_name', $organisationName );
@@ -660,7 +646,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         
         //Find member
         $endDate = date( 'F jS, Y', strtotime( " +2 year -1 day" ) );
-        $this->open( $this->sboxPath . "civicrm/member/search&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/member/search?reset=1" );
         $this->waitForPageToLoad( '30000' );
         $this->waitForElementPresent( "member_end_date_high" );
         
@@ -684,7 +670,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
                                preg_quote( $value ) );   
         }
         
-        $this->open( $this->sboxPath . "civicrm/member/search&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/member/search?reset=1" );
         $this->waitForPageToLoad( '30000' );
         $this->waitForElementPresent( "member_end_date_high" );
         

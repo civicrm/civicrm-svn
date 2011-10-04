@@ -43,7 +43,7 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
       $this->webtestLogin( true );
       
       // Go directly to the URL of the screen that will Create User Authentically.
-      $this->open( $this->sboxPath . "admin/user/user/create" );
+      $this->open( $this->sboxPath . "admin/people/create" );
       
       
       $this->waitForElementPresent( "edit-submit" );
@@ -105,10 +105,10 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
       
       $this->click( "edit-submit" );
       $this->waitForPageToLoad( "30000" );
-      $this->assertTrue( $this->isTextPresent( "Your password and further instructions have been sent to your e-mail address." ) );
+      $this->assertTrue( $this->isTextPresent( "Thank you for applying for an account. Your account is currently pending approval by the site administrator." ) );
       $this->webtestLogin( );
       
-      $this->open( $this->sboxPath . "civicrm/contact/search&reset=1" );
+      $this->open( $this->sboxPath . "civicrm/contact/search?reset=1" );
       $this->waitForElementPresent("_qf_Basic_refresh");
       $this->type("sort_name", $emailId);
       $this->click("_qf_Basic_refresh");

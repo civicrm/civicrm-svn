@@ -705,13 +705,13 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->waitForElementPresent('_qf_Custom_next-bottom');
           
             if ( $profilePreId )
-                $this->select('custom_pre_id',  "value=$profilePreId");
+                $this->select('custom_pre_id',  "value={$profilePreId}");
 
             if ( $profilePostId )
-                $this->select('custom_post_id', "value=$profilePostId");
+                $this->select('custom_post_id', "value={$profilePostId}");
 
-            $this->click('_qf_Custom_next');
-            $this->waitForElementPresent('_qf_Custom_next-bottom');
+            $this->click('_qf_Custom_next-bottom');
+            //$this->waitForElementPresent('_qf_Custom_next-bottom');
 
             $this->waitForPageToLoad('30000');
             $text = "'Custom' information has been saved.";
