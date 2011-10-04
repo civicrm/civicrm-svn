@@ -105,7 +105,7 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
 
         $this->addElement('checkbox', 'override_verp', ts('Track Replies?'));
 
-        require_once 'CRM/Core/BAO/Settings.php';
+        require_once 'CRM/Core/BAO/Setting.php';
         $defaults['override_verp'] = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
                                                                     'track_civimail_replies', null, false );
         
