@@ -274,7 +274,13 @@ class CRM_Report_Form extends CRM_Core_Form {
                 CRM_Utils_System::permissionDenied( );
                 CRM_Utils_System::civiExit( );
             }
-            $this->_formValues = unserialize( $this->_instanceValues['form_values'] );
+   
+            $formValues = CRM_Utils_Array::value( 'form_values', $this->_instanceValues );
+            if ( $formValues ) {
+                $this->_formValues = unserialize( $formValues );
+            } else {
+                $this->_formValues = null;
+            }
 
             // lets always do a force if reset is found in the url.
             if ( CRM_Utils_Array::value( 'reset', $_GET ) ) {
