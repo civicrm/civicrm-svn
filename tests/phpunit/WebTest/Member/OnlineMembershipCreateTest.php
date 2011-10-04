@@ -50,7 +50,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
         
         //check for online contribution and profile listings permissions
-        $this->open($this ->sboxPath . "admin/user/permissions" );
+        $this->changeAdminLinks( );
         if ( !$this->isChecked( "edit-1-make-online-contributions" ) ) {
             $this->click( "edit-1-make-online-contributions" );
         }
@@ -100,7 +100,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $registerUrl = "{$this->sboxPath}civicrm/contribute/transact?reset=1&id=$pageId";
         
         //logout
-        $this->open($this->sboxPath . "civicrm/logout&reset=1");
+        $this->open($this->sboxPath . "civicrm/logout?reset=1");
         $this->waitForPageToLoad('30000');
         
         //Open Live Contribution Page
@@ -152,7 +152,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->webtestLogin();
         
         //Find Member
-        $this->open($this->sboxPath . "civicrm/member/search&reset=1");
+        $this->open($this->sboxPath . "civicrm/member/search?reset=1");
         $this->waitForElementPresent("member_end_date_high");
         
         $this->type("sort_name", "$firstName $lastName" );
@@ -183,7 +183,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $verifyData = array(
                             'From'=> $firstName.' '.$lastName,
                             'Contribution Type' => 'Donation',
-                            'Total Amount'=> '$ 2.22',
+                            'Total Amount'=> '$ 50.00',
                             );
         foreach ( $verifyData as $label => $value ) {
             $this->verifyText( "xpath=//form[@id='ContributionView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 

@@ -153,10 +153,9 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
           $hash = substr(sha1(rand()), 0, 7);
           $rand = 2 * rand(2, 50);
           $processorName = "Webtest Auto Renew AuthNet" . $hash;
-          $this->webtestAddPaymentProcessor( $processorName, 'AuthNet' );
           
           // -- start updating membership types 
-          $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=1&reset=1");
+          $this->open($this->sboxPath . "civicrm/admin/member/membershipType?action=update&id=1&reset=1");
           $this->waitForPageToLoad("30000");
           
           $this->waitForElementPresent("CIVICRM_QFID_1_10");
@@ -168,7 +167,7 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
           $this->click("_qf_MembershipType_upload-bottom");
           $this->waitForPageToLoad("30000");
           
-          $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=2&reset=1");
+          $this->open($this->sboxPath . "civicrm/admin/member/membershipType?action=update&id=2&reset=1");
           $this->waitForPageToLoad("30000");
           
           $this->waitForElementPresent("CIVICRM_QFID_1_10");
@@ -216,11 +215,11 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
                                                        $premiums     ,
                                                        $widget       ,
                                                        $pcp          ,
-                                                       false 
+                                                       true 
                                                        );
           
           //make sure we do have required permissions.
-          $this->open( $this->sboxPath ."admin/user/permissions");
+          $this->changeAdminLinks( );
           $this->waitForElementPresent("edit-submit");
           if ( !$this->isChecked("edit-1-make-online-contributions") ) {
               $this->click("edit-1-make-online-contributions");
@@ -229,7 +228,7 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
           }
 
           // now logout and do membership test that way
-          $this->open($this->sboxPath . "civicrm/logout&reset=1");
+          $this->open($this->sboxPath . "civicrm/logout?reset=1");
           $this->waitForPageToLoad('30000'); 
       }
 

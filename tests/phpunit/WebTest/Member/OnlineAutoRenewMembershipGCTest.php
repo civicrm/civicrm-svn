@@ -42,7 +42,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
   {
       //configure membership signup page.
       $pageId = $this->_configureMembershipPage( );
-
+      
       //now do the test membership signup.
       $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&action=preview&id={$pageId}" );        
       $this->waitForPageToLoad( "3000" );
@@ -135,10 +135,9 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
           $hash = substr(sha1(rand()), 0, 7);
           $rand = 2 * rand(2, 50);
           $processorName = "Webtest Auto Renew Google Checkout" . $hash;
-          $this->webtestAddPaymentProcessor( $processorName, 'Google_Checkout' );
           
           // -- start updating membership types 
-          $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=1&reset=1");
+          $this->open($this->sboxPath . "civicrm/admin/member/membershipType?action=update&id=1&reset=1");
           $this->waitForPageToLoad("30000");
           
           $this->waitForElementPresent("CIVICRM_QFID_1_10");
@@ -150,7 +149,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
           $this->click("_qf_MembershipType_upload-bottom");
           $this->waitForPageToLoad("30000");
           
-          $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=2&reset=1");
+          $this->open($this->sboxPath . "civicrm/admin/member/membershipType?action=update&id=2&reset=1");
           $this->waitForPageToLoad("30000");
           
           $this->waitForElementPresent("CIVICRM_QFID_1_10");
@@ -183,7 +182,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
           $pageId = $this->webtestAddContributionPage( $hash, 
                                                        $rand, 
                                                        $contributionTitle, 
-                                                       'AuthNet', 
+                                                       'Google_Checkout', 
                                                        $processorName, 
                                                        $amountSection,
                                                        $payLater     , 
@@ -198,11 +197,11 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
                                                        $premiums     ,
                                                        $widget       ,
                                                        $pcp          ,
-                                                       false 
+                                                       true 
                                                        );
-          
+        
           //make sure we do have required permissions.
-          $this->open( $this->sboxPath ."admin/user/permissions");
+          $this->changeAdminLinks( );
           $this->waitForElementPresent("edit-submit");
           if ( !$this->isChecked("edit-1-make-online-contributions") ) {
               $this->click("edit-1-make-online-contributions");
@@ -211,7 +210,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
           }
 
           // now logout and do membership test that way
-          $this->open($this->sboxPath . "civicrm/logout&reset=1");
+          $this->open($this->sboxPath . "civicrm/logout?reset=1");
           $this->waitForPageToLoad('30000'); 
       }
 

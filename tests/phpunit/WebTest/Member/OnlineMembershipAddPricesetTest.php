@@ -46,7 +46,7 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
       $this->webtestLogin();
 
       // add the required Drupal permission
-      $this->open("{$this->sboxPath}admin/user/permissions");
+      $this->changeAdminLinks( );
       $this->waitForElementPresent('edit-submit');
       $this->check('edit-1-make-online-contributions');
       $this->click('edit-submit');
@@ -98,7 +98,7 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
 
   function _testAddSet( $setTitle, $usedFor, $contributionType = null, $setHelp )
   {
-      $this->open($this->sboxPath . 'civicrm/admin/price&reset=1&action=add');
+      $this->open($this->sboxPath . 'civicrm/admin/price?reset=1&action=add');
       $this->waitForPageToLoad('30000');
       $this->waitForElementPresent('_qf_Set_next-bottom');
 
@@ -276,7 +276,7 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
       // Log in using webtestLogin() method
       $this->webtestLogin();
 
-      $this->open($this->sboxPath . "civicrm/member/search&reset=1");
+      $this->open($this->sboxPath . "civicrm/member/search?reset=1");
       $this->waitForElementPresent("member_end_date_high");
         
       $this->type("sort_name", "{$contactParams['first_name']} {$contactParams['last_name']}" );
