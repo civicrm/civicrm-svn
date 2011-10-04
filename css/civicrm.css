@@ -2577,20 +2577,6 @@ div.crm-accordion-header div.helpicon {
     float: right;
 }
 
-div.statusicon {
-    background  : transparent url(../i/quiz.png) no-repeat;
-    display     : inline-block;
-    cursor      : pointer;
-    background-position:-48px -144px;
-    background-image:url("../packages/jquery/jquery-ui-1.8.16/css/smoothness/images/ui-icons_222222_256x240.png");
-    background-color:#CCC;
-    width:16px;
-    height:16px;
-    overflow:hidden;
-    text-indent: -10000px;
-}
-
-
 div#crm-toolTip {
     padding   : 10px;
     background: #eef4b8;
