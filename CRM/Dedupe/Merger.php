@@ -239,7 +239,6 @@ class CRM_Dedupe_Merger
                 'civicrm_note'                    => array('contact_id'),
                 'civicrm_participant'             => array('contact_id'),
                 'civicrm_pcp'                     => array('contact_id'),
-                'civicrm_preferences'             => array('contact_id'),
                 'civicrm_relationship'            => array('contact_id_a', 'contact_id_b'),
                 'civicrm_subscription_history'    => array('contact_id'),
                 'civicrm_uf_match'                => array('contact_id'),
