@@ -135,6 +135,12 @@ class CRM_Utils_Type
             }
             break;
 
+        case 'Link':
+            if (CRM_Utils_Rule::url( $data = trim($data) )) {
+                return $data;
+            }
+            break;
+
         case 'Boolean':
             if (CRM_Utils_Rule::boolean($data)) {
                 return $data;
