@@ -137,7 +137,9 @@ class CRM_Core_Config_Defaults
         if ( $config->templateCompileDir ) {
             $path = CRM_Utils_File::baseFilePath( $config->templateCompileDir );
         }
-
+        if(!isset($defaults['enableSSL'])){
+          $defaults['enableSSL'] = 0;
+        }
         //set defaults if not set in db
         if ( ! isset( $defaults['userFrameworkResourceURL'] ) ) {
             $testIMG = "i/tracker.gif";

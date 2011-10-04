@@ -96,20 +96,116 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
                                                      $pcp          
                                                      );
 
-        //get Url for Live Contribution Page
-        $registerUrl = "{$this->sboxPath}civicrm/contribute/transact?reset=1&id=$pageId";
-        
+
+        // create two new membership types
+        $memTypeParams1 = $this->webtestAddMembershipType( );
+        $memTypeTitle1  = $memTypeParams1['membership_type'];
+        $memTypeId1     = explode( '&id=', $this->getAttribute( "xpath=//div[@id='membership_type']/div[2]/table/tbody//tr/td[text()='{$memTypeTitle1}']/../td[10]/span/a[3]@href" ) );
+        $memTypeId1     = $memTypeId1[1];
+
+        $memTypeParams2 = $this->webtestAddMembershipType( );
+        $memTypeTitle2  = $memTypeParams2['membership_type'];
+        $memTypeId2     = explode( '&id=', $this->getAttribute( "xpath=//div[@id='membership_type']/div[2]/table/tbody//tr/td[text()='{$memTypeTitle2}']/../td[10]/span/a[3]@href" ) );
+        $memTypeId2     = $memTypeId2[1];
+
+        // edit contribution page memberships tab to add two new membership types
+        $this->open($this->sboxPath . "civicrm/admin/contribute/membership?reset=1&action=update&id={$pageId}");
+        $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');   
+        $this->click("membership_type[$memTypeId1]");
+        $this->click("membership_type[$memTypeId2]");
+        $this->click('_qf_MembershipBlock_next');
+        $this->waitForPageToLoad('30000');
+        $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
+        $text = "'MembershipBlock' information has been saved.";
+        $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+    
         //logout
         $this->open($this->sboxPath . "civicrm/logout?reset=1");
         $this->waitForPageToLoad('30000');
         
-        //Open Live Contribution Page
-        $this->open($registerUrl);
-        $this->waitForElementPresent("_qf_Main_upload-bottom");
-        
+        // signup for membership 1
         $firstName = 'Ma'.substr( sha1( rand( ) ), 0, 4 );
         $lastName  = 'An'.substr( sha1( rand( ) ), 0, 7 );
         
+        $this->_testOnlineMembershipSignup( $pageId, $memTypeId1, $firstName, $lastName );
+
+        //login to check membership
+        $this->open( $this->sboxPath );
+        
+        // Log in using webtestLogin() method
+        $this->webtestLogin();
+        
+        //Find Member
+        $this->open($this->sboxPath . "civicrm/member/search?reset=1");
+        $this->waitForElementPresent("member_end_date_high");
+        
+        $this->type("sort_name", "$firstName $lastName" );
+        $this->click("_qf_Search_refresh");
+        
+        $this->waitForPageToLoad('30000');
+        
+        $this->waitForElementPresent( "xpath=//div[@id='memberSearch']/table/tbody/tr" );
+        $this->click( "xpath=//div[@id='memberSearch']/table/tbody/tr/td[11]/span/a[text()='View']" );
+        $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
+        
+        //View Membership Record
+        $verifyData = array(
+                            'Member' => $firstName.' '.$lastName,
+                            'Membership Type'=> $memTypeTitle1,
+                            'Source' => 'Online Contribution:'.' '.$contributionTitle,
+                            );
+        foreach ( $verifyData as $label => $value ) {
+            $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
+                               preg_quote( $value ) );   
+        }
+        
+        // Click View action link on associated contribution record
+        $this->waitForElementPresent("xpath=//form[@id='MembershipView']/div[2]/div/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']");
+        $this->click("xpath=//form[@id='MembershipView']/div[2]/div/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']");
+        $this->waitForElementPresent( "_qf_ContributionView_cancel-bottom" ); 
+        //View Contribution Record
+        $verifyData = array(
+                            'From'=> $firstName.' '.$lastName,
+                            'Total Amount'=> '$ 100.00',
+                            );
+        foreach ( $verifyData as $label => $value ) {
+            $this->verifyText( "xpath=//form[@id='ContributionView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
+                               preg_quote( $value ) );   
+        }
+        
+        // CRM-8141 signup for membership 2 with same anonymous user info (should create 2 separate membership records because membership orgs are different)
+        //logout
+        $this->open($this->sboxPath . "civicrm/logout&reset=1");
+        $this->waitForPageToLoad('30000');
+        
+        $this->_testOnlineMembershipSignup( $pageId, $memTypeId2, $firstName, $lastName );
+        //login to check membership
+        $this->open( $this->sboxPath );
+        
+        // Log in using webtestLogin() method
+        $this->webtestLogin();
+        
+        //Find Member
+        $this->open($this->sboxPath . "civicrm/member/search&reset=1");
+        $this->waitForElementPresent("member_end_date_high");
+        
+        $this->type("sort_name", "$firstName $lastName" );
+        $this->click("_qf_Search_refresh");
+        
+        $this->waitForPageToLoad('30000');
+        $this->assertTrue( $this->isTextPresent( '2 Results' ), 'Missing text: ' . '2 Results' ); 
+
+    }  
+
+    function _testOnlineMembershipSignup( $pageId, $memTypeId, $firstName, $lastName )
+    {
+        //Open Live Contribution Page
+        $makeContribUrl = "{$this->sboxPath}civicrm/contribute/transact?reset=1&id=$pageId";
+        $this->open($makeContribUrl);
+        $this->waitForElementPresent("_qf_Main_upload-bottom");
+        
+        // Select membership type 1
+        $this->check( "name=selectMembership value={$memTypeId}" );
         $this->type("email-5", $firstName . "@example.com");
         
         $this->type("first_name", $firstName);
@@ -144,50 +240,5 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         
         $this->click("_qf_Confirm_next-bottom");
         $this->waitForPageToLoad('30000');
-        
-        //login to check membership
-        $this->open( $this->sboxPath );
-        
-        // Log in using webtestLogin() method
-        $this->webtestLogin();
-        
-        //Find Member
-        $this->open($this->sboxPath . "civicrm/member/search?reset=1");
-        $this->waitForElementPresent("member_end_date_high");
-        
-        $this->type("sort_name", "$firstName $lastName" );
-        $this->click("_qf_Search_refresh");
-        
-        $this->waitForPageToLoad('30000');
-        
-        $this->waitForElementPresent( "xpath=//div[@id='memberSearch']/table/tbody/tr" );
-        $this->click( "xpath=//div[@id='memberSearch']/table/tbody/tr/td[11]/span/a[text()='View']" );
-        $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
-        
-        //View Membership Record
-        $verifyData = array(
-                            'Member' => $firstName.' '.$lastName,
-                            'Membership Type'=> 'Student',
-                            'Source' => 'Online Contribution:'.' '.$contributionTitle,
-                            );
-        foreach ( $verifyData as $label => $value ) {
-            $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
-                               preg_quote( $value ) );   
-        }
-        
-        // Click View action link on associated contribution record
-        $this->waitForElementPresent("xpath=//form[@id='MembershipView']/div[2]/div/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']");
-        $this->click("xpath=//form[@id='MembershipView']/div[2]/div/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']");
-        $this->waitForElementPresent( "_qf_ContributionView_cancel-bottom" ); 
-        //View Contribution Record
-        $verifyData = array(
-                            'From'=> $firstName.' '.$lastName,
-                            'Contribution Type' => 'Donation',
-                            'Total Amount'=> '$ 50.00',
-                            );
-        foreach ( $verifyData as $label => $value ) {
-            $this->verifyText( "xpath=//form[@id='ContributionView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
-                               preg_quote( $value ) );   
-        }
-    }  
+    }
 }

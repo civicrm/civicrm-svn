@@ -25,7 +25,6 @@
 *}
 {if $addProfileBottomAdd OR $addProfileBottom}
   {if $addProfileBottomAdd}
-  <table id="additional_custom_post_id_multiple_{$profileBottomNum}_wrapper" class="form-layout-compressed">
     <tr class="crm-event-manage-registration-form-block-additional_custom_post_{$profileBottomNumAdd}">
       <td scope="row" class="label" width="20%">{$form.additional_custom_post_id_multiple[$profileBottomNumAdd].label}</td>
       <td>{$form.additional_custom_post_id_multiple[$profileBottomNumAdd].html}	
@@ -35,10 +34,8 @@
             <br/><span class="profile-links"></span>
       </td>
     </tr>
-  </table>
   {/if}
   {if $addProfileBottom}
-   <table id="custom_post_id_multiple_{$profileBottomNum}_wrapper" class="form-layout-compressed">
      <tr class="crm-event-manage-registration-form-block-custom_post_{$profileBottomNum}">
        <td scope="row" class="label" width="20%">{$form.custom_post_id_multiple[$profileBottomNum].label}</td>
        <td>{$form.custom_post_id_multiple[$profileBottomNum].html}
@@ -48,7 +45,6 @@
            <br/><span class="profile-links"></span>
        </td>
      </tr>
-   </table>
   {/if}
 {else}
 {assign var=eventID value=$id}
@@ -135,6 +131,8 @@
             <td>{$form.footer_text.html}
             <div class="description">{ts}Optional footer text for registration screen.{/ts}</div></td>
          </tr>
+	 </table>
+ 	 <table class= "form-layout-compressed">	
          <tr class="crm-event-manage-registration-form-block-custom_pre_id">
             <td scope="row" class="label" width="20%">{$form.custom_pre_id.label}</td>
             <td>{$form.custom_pre_id.html}<br />
@@ -142,7 +140,7 @@
                 <span class="profile-links"></span>
             </td>
 	    </tr>
-         <tr class="crm-event-manage-registration-form-block-custom_post_id">
+         <tr id="profile_post" class="crm-event-manage-registration-form-block-custom_post_id">
             <td scope="row" class="label" width="20%">{$form.custom_post_id.label}</td>
             <td>{$form.custom_post_id.html}
 	        &nbsp;<span class='profile_bottom_link_main {if $profilePostMultiple}hiddenElement{/if}'>&nbsp;<a href="javascript:addProfileBottom()">{ts}add profile{/ts}</a></span>
@@ -165,10 +163,9 @@
 	       </td>
          </tr>
          {/foreach}
- 	  {/if}
-	  <tr class='crm-event-manage-registration-form-block-custom_post_multiple'>
-	    <td id="profile_bottom_multiple" colspan="2"></td>
-        </tr>
+ 	{/if}
+	</table>
+	<table class= "form-layout-compressed">
         <tr id="additional_profile_pre" class="crm-event-manage-registration-form-block-additional_custom_pre_id">
             <td scope="row" class="label" width="20%">{$form.additional_custom_pre_id.label}</td>
             <td>{$form.additional_custom_pre_id.html}<br />
@@ -199,10 +196,6 @@
          </tr>
          {/foreach}
  	{/if}
-
-        <tr class='crm-event-manage-registration-form-block-additional_custom_post_multiple'>
-	        <td id="additional_profile_bottom_multiple" colspan="2"></td>
-        </tr>
         <tr class='crm-event-manage-registration-form-block-create-new-profile'>
             <td class="label"></td>
             <td><a href="{crmURL p='civicrm/admin/uf/group/add' q='reset=1&action=add'}" target="_blank">{ts}Click here for new profile{/ts}</td>
@@ -402,7 +395,7 @@ invert              = 0
                 async   : false,
                 global  : false,
 	        success : function ( content ) { 		
-                 cj( "#profile_bottom_multiple" ).append( content );
+                 cj( "#profile_post" ).parent().append( content );
                 }
       });   
     }
@@ -419,7 +412,7 @@ invert              = 0
                 async   : false,
                 global  : false,
 	        success : function ( contentAdd ) { 		
-                 cj( "#additional_profile_bottom_multiple" ).append( contentAdd );
+                 cj( "#additional_profile_post" ).parent().append( contentAdd );
                 }
       });   
     }
