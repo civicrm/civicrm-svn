@@ -1212,7 +1212,9 @@ WHERE  contribution_id = {$this->_id}
                                                                        $this->_params,
                                                                        $config->defaultCurrency );
             $this->_params['payment_action'] = 'Sale';
-            $this->_params['receive_date'] = CRM_Utils_Date::processDate( $this->_params['receive_date'], $this->_params['receive_date_time'] );
+            if ( CRM_Utils_Array::value( 'receive_date', $this->_params ) ) {
+                $this->_params['receive_date'] = CRM_Utils_Date::processDate( $this->_params['receive_date'], $this->_params['receive_date_time'] );
+            }
                                    
             if ( CRM_Utils_Array::value('soft_credit_to', $params) ) {
                 $this->_params['soft_credit_to'] = $params['soft_credit_to'];
@@ -1254,6 +1256,10 @@ WHERE  contribution_id = {$this->_id}
             $paymentParams['contributionPageID']                   = null;
             if ( CRM_Utils_Array::value( 'is_email_receipt', $this->_params ) ) {
                 $paymentParams['email'] = $this->userEmail;
+            }
+
+            if ( CRM_Utils_Array::value( 'receive_date', $this->_params ) ) {
+                $paymentParams['receive_date'] = $this->_params['receive_date'];
             }
 
             // force a reget of the payment processor in case the form changed it, CRM-7179
