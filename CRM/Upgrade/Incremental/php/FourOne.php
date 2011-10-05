@@ -73,6 +73,8 @@ class CRM_Upgrade_Incremental_php_FourOne {
     }
 
     function transferPreferencesToSettings( ) {
+        require_once 'CRM/Core/BAO/Setting.php';
+
         // first transfer system preferences
         $domainColumnNames = array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME => array( 
                                                                                            'contact_view_options',
@@ -106,7 +108,7 @@ SELECT *
 FROM   civicrm_preferences
 WHERE  domain_id = %1
 ";
-        $params = array( 1 => array( CRM_Core_Domain::domainID( ), 'Integer' ) );
+        $params = array( 1 => array( CRM_Core_Config::domainID( ), 'Integer' ) );
         $dao = CRM_Core_DAO::executeQuery( $sql, $params );
 
         $domainID    = CRM_Core_Config::domainID( );
