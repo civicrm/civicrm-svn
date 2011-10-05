@@ -705,7 +705,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         
         $this->type( "middle_name", "xyz" );
         $this->click( "CIVICRM_QFID_2_4");
-        $this->select("participant_role","value=1");
+        $this->select("participant_role","value=2");
         
         $this->click("_qf_Register_upload-bottom");
         $this->waitForElementPresent( "_qf_Participant_1_next-Array" );
@@ -786,7 +786,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         
         $this->type( "middle_name", "xyz" );
         $this->click( "CIVICRM_QFID_2_4");
-        $this->select("participant_role","value=1");
+        $this->select("participant_role","value=2");
         
         $this->click("_qf_Register_upload-bottom");
         $this->waitForElementPresent( "_qf_Participant_1_next-Array" );
