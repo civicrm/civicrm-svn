@@ -417,6 +417,9 @@ ORDER BY parent_id, weight";
             }
             if ( !empty( $value['child'] ) ) {
                 $navigationString .= '</ul></li>';
+                if ( isset( $value['attributes']['separator'] ) && $value['attributes']['separator'] ) {
+                    $navigationString .= '<li class="menu-separator"></li>';
+                }
             }
         }
         return $navigationString;
