@@ -139,8 +139,7 @@ function civicrm_api3_pledge_get( $params ) {
     $query = new CRM_Contact_BAO_Query( $newParams, $options['return'], null,
                                         false, false, CRM_Contact_BAO_Query::MODE_PLEDGE );
     list( $select, $from, $where ) = $query->query( );
-    $sql 
-    = "$select $from $where";
+    $sql = "$select $from $where";
 
     if ( ! empty( $options['sort'] ) ) {
       $sql .= " ORDER BY ". $options['sort'];
