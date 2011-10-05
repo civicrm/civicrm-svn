@@ -322,6 +322,13 @@ class CRM_Core_PseudoConstant
     private static $activityContacts;
 
     /**
+     * event contacts
+     * @var array
+     * @static
+     */
+    private static $eventContacts;
+
+    /**
      * auto renew options
      * @var array
      * @static
@@ -1660,6 +1667,28 @@ ORDER BY name";
             self::$activityContacts = CRM_Core_OptionGroup::values('activity_contacts');
         }
         return self::$activityContacts;
+    }
+
+    /**
+     * Get all Event Contacts
+     *
+     * The static array eventContacts is returned
+     *
+     * @access public
+     * @static
+     *
+     * @param boolean $all - get All event Contacts - default is to get only active ones.
+     *
+     * @return array - array reference of all  event Contacts
+     *
+     */
+    public static function &eventContacts( )
+    {
+        if ( ! self::$eventContacts ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            self::$eventContacts = CRM_Core_OptionGroup::values('event_recipients');
+        }
+        return self::$eventContacts;
     }
 
 }

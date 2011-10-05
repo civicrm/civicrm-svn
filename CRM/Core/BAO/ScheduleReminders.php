@@ -74,9 +74,12 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         asort($activityType);
         $eventType = CRM_Event_PseudoConstant::eventType();
         $activityContacts = CRM_Core_PseudoConstant::activityContacts();
+        $eventContacts = CRM_Core_PseudoConstant::eventContacts();
+
         $sel1 = $sel2 = $sel3 = $sel4 = $sel5 = array();
         $options = array( 'manual' => ts('Choose Recipient(s)'), 
                           'group'  => ts('Select a Group')  );
+
         foreach ( $mapping as $value ) {
             $entityValue  = CRM_Utils_Array::value('entity_value', $value );
             $entityStatus = CRM_Utils_Array::value('entity_status', $value );
@@ -131,6 +134,10 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
             switch ($entityRecipient) {
             case 'activity_contacts':
                 $sel5[$entityRecipient] = $activityContacts + $options;
+                break;
+                
+            case 'event_contacts':
+                $sel5[$entityRecipient] = $eventContacts + $options;
                 break;
                 
             case 'civicrm_participant_status_type':
