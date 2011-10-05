@@ -136,7 +136,7 @@ function civicrm_api3_mailing_group_event_resubscribe($params)
 function civicrm_api3_mailing_group_event_subscribe($params) 
 {
 
-        civicrm_api3_verify_mandatory ( $params,'CRM_Mailing_Event_DAO_Subscribe', array('email', 'group_id') );
+        civicrm_api3_verify_mandatory ( $params, 'CRM_Mailing_Event_DAO_Subscribe', array( 'email', 'group_id' ), false );
           
         $email      = $params['email']; 
         $group_id   = $params['group_id']; 
