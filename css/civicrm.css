@@ -2324,7 +2324,6 @@ span.icon {
     color:#333;
 }
 
-.light-icon, .ui-widget-content .light-icon {background-image:url("../packages/jquery/jquery-ui-1.8.16/css/smoothness/images/ui-icons_3e3e3e_256x240.png")}
 .dark-icon {background-image:url("../packages/jquery/jquery-ui-1.8.16/css/smoothness/images/ui-icons_222222_256x240.png")}
 .red-icon {background-image:url("../i/icons/jquery-ui-8A1F11.png")}
 
@@ -2560,7 +2559,6 @@ span.icon {
 
 /* Pop-up help icon - eliminate forced line break */
 div.helpicon {
-    background  : transparent url(../i/quiz.png) no-repeat;
     display     : inline;
     cursor      : pointer;
     background-position:-128px -98px;
