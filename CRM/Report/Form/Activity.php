@@ -139,6 +139,10 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                                array( 'no_display' => true,
                                                       'required'   => true   
                                                       ),
+                                               'source_record_id'  => 
+                                               array( 'no_display' => true,
+                                                      'required'   => true   
+                                                      ),
                                                'activity_type_id'  => 
                                                array( 'title'      => ts( 'Activity Type' ),
                                                       'default'    => true,
@@ -157,7 +161,8 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                                'status_id'         => 
                                                array( 'title'      => ts( 'Activity Status' ),
                                                       'default'    => true ,
-                                                      'type'       =>  CRM_Utils_Type::T_STRING ), ),
+                                                      'type'       =>  CRM_Utils_Type::T_STRING ),
+                                               ),
                                        'filters' =>   
                                        array( 'activity_date_time'  => 
                                               array( 'default'      => 'this.month',
@@ -503,11 +508,11 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                             $cid = $rows[$rowNum]['civicrm_activity_source_contact_id'];
                         }
 
-
-                        $actionLinks = CRM_Activity_Selector_Activity::actionLinks( $row['civicrm_activity_activity_type_id'],
-                                                                                    $cid,
-                                                                                    false.
-                                                                                    $rows[$rowNum]['civicrm_activity_id'] );
+                        $actionLinks = 
+                            CRM_Activity_Selector_Activity::actionLinks( $row['civicrm_activity_activity_type_id'],
+                                                                         CRM_Utils_Array::value('civicrm_activity_source_record_id', $rows[$rowNum]),
+                                                                         false.
+                                                                         $rows[$rowNum]['civicrm_activity_id'] );
                         
                         $linkValues = array( 'id'  => $rows[$rowNum]['civicrm_activity_id'],
                                              'cid' => $cid,
