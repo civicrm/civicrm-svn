@@ -16,7 +16,7 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
       $this->open( $this->sboxPath );
       
       // Log in using webtestLogin() method
-      $this->webtestLogin();
+      $this->webtestLogin( true );
       
       //Closed Event
       $eventTitle1 ='My Conference - '.substr(sha1(rand()), 0, 7);
@@ -71,14 +71,6 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
       $this->assertTrue(  $this->isTextPresent( "{$eventTitle4}" ) );
       $this->assertTrue(  $this->isTextPresent( "{$eventTitle5}" ) ); 
 
-      // make sure demo user has administer blocks permission
-      $this->open( $this->sboxPath . "admin/user/permissions" );
-      $this->waitForElementPresent( 'edit-submit' );
-      $this->check( 'edit-2-administer-blocks' );
-      $this->click( 'edit-submit' );
-      $this->waitForPageToLoad( '30000' );
-      $this->assertTrue( $this->isTextPresent( 'The changes have been saved.' ) );
-
       //go to block listing to enable Upcomming Events Block
       $this->open($this->sboxPath . 'admin/build/block');
       $this->select('edit-civicrm-6-region','value=right');
@@ -101,7 +93,7 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad('30000');
       $this->waitForTextPresent("The block settings have been updated.");
   }
-  
+
   function _testCreateEvent( $eventTitle, $startdate, $enddate )
   {
       // Go directly to the URL of the screen that you will be testing (New Event).
