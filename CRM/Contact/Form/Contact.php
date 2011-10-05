@@ -343,7 +343,15 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                     $val['signature_html_hidden'] = $val['signature_html'] ;
                 }
             }
-            
+
+            if ( $defaults['contact_sub_type'] ) {
+                $subTypes = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                     trim($defaults['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) );
+                $defaults['contact_sub_type'] = array( );
+                foreach ( $subTypes as $subtype ) {
+                    $defaults['contact_sub_type'][$subtype] = 1;
+                }
+            }
         }
         $this->assign( 'currentEmployer', CRM_Utils_Array::value('current_employer_id', $defaults) );            
 

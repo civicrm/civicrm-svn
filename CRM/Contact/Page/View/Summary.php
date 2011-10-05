@@ -189,7 +189,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         $contactType = array_key_exists( 'contact_sub_type',  $defaults ) ? 
             $defaults['contact_sub_type'] : $defaults['contact_type'];
         $defaults['contact_type_label'] = 
-            CRM_Contact_BAO_ContactType::contactTypePairs( true, $contactType );
+            CRM_Contact_BAO_ContactType::contactTypePairs( true, $contactType, ', ' );
 
         // get contact tags
         require_once 'CRM/Core/BAO/EntityTag.php';

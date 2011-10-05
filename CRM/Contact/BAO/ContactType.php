@@ -315,21 +315,27 @@ WHERE  type.name IS NOT NULL
      *@static
      *
      */
-    static function contactTypePairs( $all = false, $typeName = null ) {
+    static function contactTypePairs( $all = false, $typeName = null, $delimiter = null ) {
         $types = self::contactTypeInfo( $all );
 
+        if ( $typeName && !is_array($typeName) ) {
+            $typeName = explode( CRM_Core_DAO::VALUE_SEPARATOR, trim($typeName, CRM_Core_DAO::VALUE_SEPARATOR) );
+        }
+
+        $pairs = array( );
         if ( $typeName ) {
-            if ( array_key_exists($typeName, $types) ) {
-                return $types[$typeName]['label'];
+            foreach ( $typeName as $type ) {
+                if ( array_key_exists($type, $types) ) {
+                    $pairs[$type] = $types[$type]['label'];
+                }
             }
         } else {
-            $pairs = array( );
             foreach ( $types as $name => $info ) {
                 $pairs[$name] = $info['label'];
             }
-            return $pairs;
         }
-        return null;
+
+        return !$delimiter ? $pairs : implode( $delimiter, $pairs );
     }
 
     static function &getSelectElements( $all         = false, 
