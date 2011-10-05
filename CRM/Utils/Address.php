@@ -64,13 +64,11 @@ class CRM_Utils_Address
         if ( ! $format ) {
             $format = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                      'address_format' );
-            $format = str_replace('contact.',"",$format);
         }
 
         if ( $mailing ) {
             $format = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                      'mailing_format' );
-            $format = str_replace('contact.',"",$format);
         }
 
         $formatted = $format;
@@ -108,78 +106,78 @@ class CRM_Utils_Address
         if (! $microformat) {
             $replacements =
                 array( // replacements in case of Individual Name Format
-                      'display_name'           => CRM_Utils_Array::value( 'display_name', $fields ),
-                      'individual_prefix'      => CRM_Utils_Array::value( 'individual_prefix', $fields ),
-                      'first_name'             => CRM_Utils_Array::value( 'first_name', $fields ),
-                      'middle_name'            => CRM_Utils_Array::value( 'middle_name', $fields ),
-                      'last_name'              => CRM_Utils_Array::value( 'last_name', $fields ),
-                      'individual_suffix'      => CRM_Utils_Array::value( 'individual_suffix', $fields ),
-                      'address_name'           => CRM_Utils_Array::value( 'address_name', $fields ),
-                      'street_address'         => CRM_Utils_Array::value( 'street_address', $fields ),
-                      'supplemental_address_1' => CRM_Utils_Array::value( 'supplemental_address_1', $fields ),
-                      'supplemental_address_2' => CRM_Utils_Array::value( 'supplemental_address_2', $fields ),
-                      'city'                   => CRM_Utils_Array::value( 'city', $fields ),
-                      'state_province_name'    => CRM_Utils_Array::value( 'state_province_name', $fields ),
-                      'county'                 => CRM_Utils_Array::value( 'county', $fields ),
-                      'state_province'         => CRM_Utils_Array::value( 'state_province', $fields ),
-                      'postal_code'            => $fullPostalCode,
-                      'country'                => CRM_Utils_Array::value( 'country', $fields ),
-                      'world_region'           => CRM_Utils_Array::value( 'world_region', $fields ),
-                      'geo_code_1'             => CRM_Utils_Array::value( 'geo_code_1', $fields ),
-                      'geo_code_2'             => CRM_Utils_Array::value( 'geo_code_2', $fields ),
-                      'current_employer'       => CRM_Utils_Array::value( 'current_employer', $fields ),
-                      'nick_name'              => CRM_Utils_Array::value( 'nick_name', $fields ),
-                      'email'                  => CRM_Utils_Array::value( 'email', $fields ),
-                      'im'                     => CRM_Utils_Array::value( 'im', $fields ),
-                      'do_not_email'           => CRM_Utils_Array::value( 'do_not_email', $fields ),
-                      'do_not_phone'           => CRM_Utils_Array::value( 'do_not_phone', $fields ),
-                      'do_not_mail'            => CRM_Utils_Array::value( 'do_not_mail', $fields ),
-                      'do_not_sms'             => CRM_Utils_Array::value( 'do_not_sms', $fields ),
-                      'do_not_trade'           => CRM_Utils_Array::value( 'do_not_trade', $fields ),
-                      'job_title'              => CRM_Utils_Array::value( 'job_title', $fields ),
-                      'birth_date'             => CRM_Utils_Array::value( 'birth_date', $fields ),
-                      'gender'                 => CRM_Utils_Array::value( 'gender', $fields ),
-                      'is_opt_out'             => CRM_Utils_Array::value( 'is_opt_out', $fields ),
-                      'home_URL'               => CRM_Utils_Array::value( 'home_URL', $fields ),
-                      'preferred_mail_format'  => CRM_Utils_Array::value( 'preferred_mail_format', $fields ),
-                      'phone'                  => CRM_Utils_Array::value( 'phone', $fields ),
-                      'home_URL'               => CRM_Utils_Array::value( 'home_URL', $fields ),
-                      'contact_source'         => CRM_Utils_Array::value( 'contact_source', $fields ),
-                      'external_identifier'    => CRM_Utils_Array::value( 'external_identifier', $fields ),
-                      'contact_id'             => CRM_Utils_Array::value( 'id', $fields ),
-                      'household_name'         => CRM_Utils_Array::value( 'display_name', $fields ),
-                      'organization_name'      => CRM_Utils_Array::value( 'display_name', $fields ),
-                      'legal_name'             => CRM_Utils_Array::value( 'legal_name', $fields ),
-                      'preferred_communication_method' => CRM_Utils_Array::value( 'preferred_communication_method', $fields ),
-                      'addressee'              => CRM_Utils_Array::value( 'addressee_display', $fields ),
-                      'email_greeting'         => CRM_Utils_Array::value( 'email_greeting_display', $fields ),
-                      'postal_greeting'        => CRM_Utils_Array::value( 'postal_greeting_display', $fields )
+                      'contact.display_name'           => CRM_Utils_Array::value( 'display_name', $fields ),
+                      'contact.individual_prefix'      => CRM_Utils_Array::value( 'individual_prefix', $fields ),
+                      'contact.first_name'             => CRM_Utils_Array::value( 'first_name', $fields ),
+                      'contact.middle_name'            => CRM_Utils_Array::value( 'middle_name', $fields ),
+                      'contact.last_name'              => CRM_Utils_Array::value( 'last_name', $fields ),
+                      'contact.individual_suffix'      => CRM_Utils_Array::value( 'individual_suffix', $fields ),
+                      'contact.address_name'           => CRM_Utils_Array::value( 'address_name', $fields ),
+                      'contact.street_address'         => CRM_Utils_Array::value( 'street_address', $fields ),
+                      'contact.supplemental_address_1' => CRM_Utils_Array::value( 'supplemental_address_1', $fields ),
+                      'contact.supplemental_address_2' => CRM_Utils_Array::value( 'supplemental_address_2', $fields ),
+                      'contact.city'                   => CRM_Utils_Array::value( 'city', $fields ),
+                      'contact.state_province_name'    => CRM_Utils_Array::value( 'state_province_name', $fields ),
+                      'contact.county'                 => CRM_Utils_Array::value( 'county', $fields ),
+                      'contact.state_province'         => CRM_Utils_Array::value( 'state_province', $fields ),
+                      'contact.postal_code'            => $fullPostalCode,
+                      'contact.country'                => CRM_Utils_Array::value( 'country', $fields ),
+                      'contact.world_region'           => CRM_Utils_Array::value( 'world_region', $fields ),
+                      'contact.geo_code_1'             => CRM_Utils_Array::value( 'geo_code_1', $fields ),
+                      'contact.geo_code_2'             => CRM_Utils_Array::value( 'geo_code_2', $fields ),
+                      'contact.current_employer'       => CRM_Utils_Array::value( 'current_employer', $fields ),
+                      'contact.nick_name'              => CRM_Utils_Array::value( 'nick_name', $fields ),
+                      'contact.email'                  => CRM_Utils_Array::value( 'email', $fields ),
+                      'contact.im'                     => CRM_Utils_Array::value( 'im', $fields ),
+                      'contact.do_not_email'           => CRM_Utils_Array::value( 'do_not_email', $fields ),
+                      'contact.do_not_phone'           => CRM_Utils_Array::value( 'do_not_phone', $fields ),
+                      'contact.do_not_mail'            => CRM_Utils_Array::value( 'do_not_mail', $fields ),
+                      'contact.do_not_sms'             => CRM_Utils_Array::value( 'do_not_sms', $fields ),
+v                      'contact.do_not_trade'           => CRM_Utils_Array::value( 'do_not_trade', $fields ),
+                      'contact.job_title'              => CRM_Utils_Array::value( 'job_title', $fields ),
+                      'contact.birth_date'             => CRM_Utils_Array::value( 'birth_date', $fields ),
+                      'contact.gender'                 => CRM_Utils_Array::value( 'gender', $fields ),
+                      'contact.is_opt_out'             => CRM_Utils_Array::value( 'is_opt_out', $fields ),
+                      'contact.home_URL'               => CRM_Utils_Array::value( 'home_URL', $fields ),
+                      'contact.preferred_mail_format'  => CRM_Utils_Array::value( 'preferred_mail_format', $fields ),
+                      'contact.phone'                  => CRM_Utils_Array::value( 'phone', $fields ),
+                      'contact.home_URL'               => CRM_Utils_Array::value( 'home_URL', $fields ),
+                      'contact.contact_source'         => CRM_Utils_Array::value( 'contact_source', $fields ),
+                      'contact.external_identifier'    => CRM_Utils_Array::value( 'external_identifier', $fields ),
+                      'contact.contact_id'             => CRM_Utils_Array::value( 'id', $fields ),
+                      'contact.household_name'         => CRM_Utils_Array::value( 'display_name', $fields ),
+                      'contact.organization_name'      => CRM_Utils_Array::value( 'display_name', $fields ),
+                      'contact.legal_name'             => CRM_Utils_Array::value( 'legal_name', $fields ),
+                      'contact.preferred_communication_method' => CRM_Utils_Array::value( 'preferred_communication_method', $fields ),
+                      'contact.addressee'              => CRM_Utils_Array::value( 'addressee_display', $fields ),
+                      'contact.email_greeting'         => CRM_Utils_Array::value( 'email_greeting_display', $fields ),
+                      'contact.postal_greeting'        => CRM_Utils_Array::value( 'postal_greeting_display', $fields )
                        );
         } else {
             $replacements =
                 array(
-                      'address_name'           => "<span class=\"address-name\">" .     $fields['address_name'] . "</span>",
-                      'street_address'         => "<span class=\"street-address\">" .   $fields['street_address'] . "</span>",
-                      'supplemental_address_1' => "<span class=\"extended-address\">" . $fields['supplemental_address_1'] . "</span>",
-                      'supplemental_address_2' => $fields['supplemental_address_2'],
-                      'city'                   => "<span class=\"locality\">" .         $fields['city'] . "</span>",
-                      'state_province_name'    => "<span class=\"region\">" .           $fields['state_province_name'] . "</span>",
-                      'county'                 => "<span class=\"region\">" .           $fields['county'],
-                      'state_province'         => "<span class=\"region\">" .           $fields['state_province'] . "</span>",
-                      'postal_code'            => "<span class=\"postal-code\">" .      $fullPostalCode . "</span>",
-                      'country'                => "<span class=\"country-name\">" .     $fields['country'] . "</span>",
-                      'world_region'           => "<span class=\"region\">" .           $fields['world_region'] . "</span>"
+                      'contact.address_name'           => "<span class=\"address-name\">" .     $fields['address_name'] . "</span>",
+                      'contact.street_address'         => "<span class=\"street-address\">" .   $fields['street_address'] . "</span>",
+                      'contact.supplemental_address_1' => "<span class=\"extended-address\">" . $fields['supplemental_address_1'] . "</span>",
+                      'contact.supplemental_address_2' => $fields['supplemental_address_2'],
+                      'contact.city'                   => "<span class=\"locality\">" .         $fields['city'] . "</span>",
+                      'contact.state_province_name'    => "<span class=\"region\">" .           $fields['state_province_name'] . "</span>",
+                      'contact.county'                 => "<span class=\"region\">" .           $fields['county'],
+                      'contact.state_province'         => "<span class=\"region\">" .           $fields['state_province'] . "</span>",
+                      'contact.postal_code'            => "<span class=\"postal-code\">" .      $fullPostalCode . "</span>",
+                      'contact.country'                => "<span class=\"country-name\">" .     $fields['country'] . "</span>",
+                      'contact.world_region'           => "<span class=\"region\">" .           $fields['world_region'] . "</span>"
                       );
             
             // erase all empty ones, so we dont get blank lines
             foreach ( array_keys( $replacements ) as $key ) {
-                if ( $key != 'postal_code' &&
+                if ( $key != 'contact.postal_code' &&
                      CRM_Utils_Array::value( $key, $fields ) == null ) {
                     $replacements[$key] = '';
                 }
             }
             if ( empty( $fullPostalCode ) ) {
-                $replacements['postal_code'] = '';
+                $replacements['contact.postal_code'] = '';
             }
         }
         
@@ -188,7 +186,7 @@ class CRM_Utils_Address
             $customToken = array_keys( $fields );
             foreach( $customToken as $value ) {
                 if ( substr( $value,0,7 ) == 'custom_' ) {
-                    $replacements["{$value }"] = $fields["{$value}"];  
+                    $replacements["contact.{$value }"] = $fields["{$value}"];  
                 }
             }
         }
