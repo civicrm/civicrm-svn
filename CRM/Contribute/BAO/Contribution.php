@@ -1448,8 +1448,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
         // we might want to process contribution object.
         $processContribution = false;
         if ( $contributionStatusId == array_search( 'Cancelled', $contributionStatuses ) ) {
-            if ( $memberships &&
-                 is_array( $memberships ) ) {
+            if ( is_array( $memberships ) ) {
                 foreach ($memberships as $membership) {
                     if ( $membership ) {
                         $membership->status_id = array_search( 'Cancelled', $membershipStatuses );
@@ -1482,8 +1481,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
                 }
             }
         } else if ( $contributionStatusId == array_search( 'Failed', $contributionStatuses ) ) {
-            if ( $memberships &&
-                 is_array( $memberships ) ) {
+            if ( is_array( $memberships ) ) {
                 foreach ($memberships as $membership) {
                     if ( $membership ) {
                         $membership->status_id = array_search( 'Expired', $membershipStatuses );
@@ -1527,8 +1525,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
                 return $updateResult;
             }
             
-            if ( $memberships &&
-                 is_array( $memberships ) ) {
+            if ( is_array( $memberships ) ) {
                 foreach ($memberships as $membership) {
                     if ( $membership ) {
                         $format = '%Y%m%d';
