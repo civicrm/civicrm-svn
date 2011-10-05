@@ -976,17 +976,31 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                                             $html_type,
                                             $data_type,
                                             $format,
-                                            $contactID );
+                                            $contactID,
+                                            $fieldID );
     }
-
+    
     static function getDisplayValueCommon( $value,
                                            &$option,
                                            $html_type,
                                            $data_type,
                                            $format = null,
-                                           $contactID = null )
+                                           $contactID = null,
+                                           $fieldID = null )
     {
         $display = $value;
+        
+        if ( $fieldID &&
+             ( ( $html_type  == 'Radio' && $data_type != 'Boolean' ) ||
+               ( $html_type  == 'Autocomplete-Select' && $data_type != 'ContactReference' ) ||
+               $html_type == 'Select' ||
+               $html_type == 'CheckBox' ||
+               $html_type == 'AdvMulti-Select' ||
+               $html_type == 'Multi-Select' ) ) {
+            require_once 'CRM/Utils/Hook.php';
+            CRM_Utils_Hook::customFieldOptions( $fieldID, $option );
+        }
+
         switch ( $html_type ) {
 
         case 'Radio':
