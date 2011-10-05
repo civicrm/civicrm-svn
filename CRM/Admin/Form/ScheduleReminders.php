@@ -107,6 +107,9 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         foreach ($this->_freqUnits as $val => $label) {
             $freqUnitsDisplay[$val] = ts('%1(s)', array(1 => $label));
         }
+
+        $this->addDate( 'absolute_date', ts('Start Date'), false, array( 'formatType' => 'searchDate' ) );
+
         //reminder_frequency
         $this->add( 'select', 'start_action_unit', ts( 'Frequency' ), $freqUnitsDisplay, true );
 

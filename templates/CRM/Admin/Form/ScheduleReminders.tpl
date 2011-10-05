@@ -80,10 +80,15 @@
         <td>{$form.entity.html}</td>
     </tr>
 
-    <tr class="crm-scheduleReminder-form-block-description">
+    <tr class="crm-scheduleReminder-form-block-when">
         <td class="right">{$form.start_action_offset.label}</td>
-	<td colspan="3">{$form.start_action_offset.html}&nbsp;&nbsp;&nbsp;{$form.start_action_unit.html}&nbsp;&nbsp;&nbsp;
-			{$form.start_action_condition.html}&nbsp;&nbsp;&nbsp;{$form.start_action_date.html}
+	<td colspan="3">{include file="CRM/common/jcalendar.tpl" elementName=absolute_date} <strong>{ts}OR{/ts}</strong><br />  
+	</td>
+    </tr>
+
+   <tr class="crm-scheduleReminder-form-block-description">
+        <td class="right"></td>
+	<td colspan="3">{$form.start_action_offset.html}&nbsp;&nbsp;&nbsp;{$form.start_action_unit.html}&nbsp;&nbsp;&nbsp;{$form.start_action_condition.html}&nbsp;&nbsp;&nbsp;{$form.start_action_date.html}
 	</td>
     </tr>
     <tr class="crm-scheduleReminder-form-block-is_repeat"><td class="label" width="20%">{$form.is_repeat.label}</td>
@@ -111,6 +116,7 @@
 	    {edit}<span class="description">{ts}You can manually sent out the reminders to these recipients.{/ts}</span>{/edit}
         </td>
     </tr>
+
     <tr id="recipientGroup" class="crm-scheduleReminder-form-block-recipient_group_id">
     	<td class="label">{$form.group_id.label}</td>
         <td>{$form.group_id.html}
@@ -171,13 +177,14 @@
 
  {literal}
  <script type='text/javascript'>
-     cj(function() {
+      cj(function() {
          cj('#entity\\[0\\]').click( function( ) {
               buildSelect("start_action_date");
 	      buildSelect("end_date");
 	      buildSelect1("recipient");
-         });    
+         }); 
      });
+
      function buildSelect( selectID ) {
          var elementID = '#' +  selectID;
          cj( elementID ).html('');
