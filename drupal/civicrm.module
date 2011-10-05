@@ -69,21 +69,25 @@ function civicrm_html_head()
             }
         }
 
-        // add the final assignment
-        drupal_add_js( 'var cj = jQuery.noConflict(true);', array(
-            'type' => 'inline', 
-            'group' => JS_LIBRARY,
-            'weight' => 11,
-            'scope' => 'header',
-        ) );
-
         // add localized calendar js
         $localisation     = explode( '_', $config->lcMessages );
         $localizationFile = drupal_get_path('module', 'civicrm' ) . '/../packages/jquery/jquery-ui-1.8.11/development-bundle/ui/i18n/jquery.ui.datepicker-'. $localisation[0] . '.js';
         
         if ( file_exists( $localizationFile ) ) {
-            drupal_add_js( $localizationFile );
+            drupal_add_js( $localizationFile, array(
+              'group' => JS_LIBRARY,
+              'weight' => 11,
+              'scope' => 'header',
+            ) );
         }
+
+        // add the final assignment
+        drupal_add_js( 'var cj = jQuery.noConflict(true);', array(
+            'type' => 'inline', 
+            'group' => JS_LIBRARY,
+            'weight' => 12,
+            'scope' => 'header',
+        ) );
 
         // add Common.js
         drupal_add_js( drupal_get_path('module', 'civicrm' ) . '/../js/Common.js' );
