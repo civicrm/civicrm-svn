@@ -45,31 +45,55 @@ class CRM_Core_JobManager
     /*
      * Class constructor
      * 
-     * @param string $namespace namespace prefix for component's files
+     * @param void
      * @access public
      * 
      */
     public function __construct( ) {
         $this->logEntry( 'Starting scheduled jobs execution' );
-        $this->jobs = $this->getJobs();
+        $this->jobs = $this->_getJobs();
     }                                                          
 
+    /*
+     * 
+     * @param void
+     * @access private
+     * 
+     */
     public function execute( ) {
         require_once 'CRM/Utils/System.php';        
         CRM_Utils_System::authenticateKey( );
         require_once 'api/api.php';
         foreach( $this->jobs as $job ) {
-            
+            $this->logEntry( 'Starting execution of ' . $job->name );
+            $result = civicrm_api( $job->apiEntity, $job->apiAction, $job->apiParams );
+            $this->logEntry( 'Finished execution of ' . $job->name . ' with result: ' . $this->_apiResultToMessage( $result )  );
         }
         $this->logEntry( 'Executing' );
     }
 
+    /*
+     * Class destructor
+     * 
+     * @param void
+     * @access public
+     * 
+     */
     public function __destruct( ) {
         $this->logEntry( 'Finishing scheduled jobs execution.' );
     }
 
-    public function getJobs( ) {
+    /*
+     * Retrieves the list of jobs from the database,
+     * populates class param.
+     * 
+     * @param void
+     * @access private
+     * 
+     */
+    private function _getJobs( ) {
         $jobs = array();
+        require_once 'CRM/Core/DAO/Job.php';
         $dao = new CRM_Core_DAO_Job();
         $dao->orderBy('name');
         $dao->find();
@@ -82,7 +106,7 @@ class CRM_Core_JobManager
     }
 
 
-    /**
+    /*
      *
      * @return array|null collection of permissions, null if none
      * @access public
@@ -92,5 +116,12 @@ class CRM_Core_JobManager
         CRM_Core_Error::debug_log_message( date('l jS \of F Y h:i:s A') . ": " . $message );
     }
 
+
+    private function _apiResultToMessage( $apiResult ) {
+        $status = $apiResult['is_error'] ? ts('Failure') : ts('Success');
+        $message =  $apiResult['is_error'] ?  $apiResult['error_message'] : '';
+        $msg = 'Status: ' . $status . ( $apiResult['is_error'] ? ', Error message: ' . $apiResult['error_message'] : '');
+        return $msg;
+    }
 
 }

@@ -42,6 +42,8 @@ class CRM_Core_ScheduledJob
 
     var $name = null;
 
+    var $remarks = array();
+
     /*
      * Class constructor
      * 
@@ -53,6 +55,29 @@ class CRM_Core_ScheduledJob
         foreach( $params as $name => $param ) {
             $this->$name = $param;
         }
+        $cmd = split( '_', $this->command );
+
+        if( is_array( $cmd) && $cmd[0] == 'civicrm' ) {
+            $this->apiEntity = $cmd[2];
+            $this->apiAction = $cmd[3];
+        } else {
+            // fixme: maybe report error here?
+        }
+        
+        if( !empty( $this->parameters ) ) {
+            $lines = split( "\n", $this->parameters );
+            $this->apiParams = array();
+            foreach( $lines as $line ) {
+                $pair = split( "=", $line );
+                if( empty($pair[0]) || empty($pair[1]) ) {
+                    $this->remarks[] .= 'Malformed parameters!';
+                    break;
+                }
+                $this->apiParams[ trim($pair[0]) ] = trim($pair[1]);
+
+            }
+        }
+        
     }                                                          
 
     public function __destruct( ) {

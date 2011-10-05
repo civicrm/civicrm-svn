@@ -1215,7 +1215,7 @@ class CRM_Utils_System {
      * @static
      */
     static function executeScheduledJobs( ) {
-        require_once 'CRM/Core/ScheduledJobs.php';
+        require_once 'CRM/Core/JobManager.php';
         $facility = new CRM_Core_JobManager();
         $facility->execute();
     }
