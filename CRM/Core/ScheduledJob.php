@@ -58,8 +58,8 @@ class CRM_Core_ScheduledJob
         $cmd = split( '_', $this->command );
 
         if( is_array( $cmd) && $cmd[0] == 'civicrm' ) {
-            $this->apiEntity = $cmd[2];
             $this->apiAction = $cmd[3];
+            $this->apiEntity = $cmd[2];
         } else {
             // fixme: maybe report error here?
         }
@@ -77,7 +77,6 @@ class CRM_Core_ScheduledJob
 
             }
         }
-        
     }                                                          
 
     public function __destruct( ) {

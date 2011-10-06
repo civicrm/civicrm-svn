@@ -41,6 +41,8 @@ class CRM_Core_JobManager
 
 
     var $jobs = null;
+    
+    var $currentJob = null;
 
     /*
      * Class constructor
@@ -50,6 +52,9 @@ class CRM_Core_JobManager
      * 
      */
     public function __construct( ) {
+        require_once 'CRM/Core/Config.php';
+        $config = CRM_Core_Config::singleton();
+        $config->fatalErrorHandler = 'CRM_Core_JobManager_scheduledJobFatalErrorHandler';
         $this->logEntry( 'Starting scheduled jobs execution' );
         $this->jobs = $this->_getJobs();
     }                                                          
@@ -65,11 +70,18 @@ class CRM_Core_JobManager
         CRM_Utils_System::authenticateKey( );
         require_once 'api/api.php';
         foreach( $this->jobs as $job ) {
-            $this->logEntry( 'Starting execution of ' . $job->name );
-            $result = civicrm_api( $job->apiEntity, $job->apiAction, $job->apiParams );
-            $this->logEntry( 'Finished execution of ' . $job->name . ' with result: ' . $this->_apiResultToMessage( $result )  );
+            if( $job->is_active ) {
+                $this->currentJob = $job;
+                $this->logEntry( 'Starting execution of ' . $job->name );
+                try {
+                    $result = civicrm_api( $job->apiEntity, $job->apiAction, $job->apiParams );
+                } catch (Exception $e) {
+                    $this->logEntry( 'Error while executing ' . $job->name . ': ' . $e->getMessage() );
+                }
+                $this->logEntry( 'Finished execution of ' . $job->name . ' with result: ' . $this->_apiResultToMessage( $result )  );
+            }
+            $this->currentJob = FALSE;
         }
-        $this->logEntry( 'Executing' );
     }
 
     /*
@@ -113,15 +125,34 @@ class CRM_Core_JobManager
      *
      */
     public function logEntry( $message ) {
-        CRM_Core_Error::debug_log_message( date('l jS \of F Y h:i:s A') . ": " . $message );
+        $domainID = CRM_Core_Config::domainID( );
+        require_once 'CRM/Core/DAO/JobLog.php';
+        $dao = new CRM_Core_DAO_JobLog( );
+
+        $dao->domain_id  = $domainID;
+        $dao->run_time =  date( 'YmdHisu' );
+        $dao->description = $message;        
+        if( $this->currentJob ) {
+            $dao->job_id = $this->currentJob->id;
+            $dao->name = $this->currentJob->name;
+            $dao->command = $this->currentJob->command;
+            $dao->data = "Parameters raw: \n\n" . $this->currentJob->parameters . "\n\nParameters parsed: \n\n" . serialize( $this->currentJob->apiParams);
+        }
+        $dao->save( );
     }
 
 
     private function _apiResultToMessage( $apiResult ) {
         $status = $apiResult['is_error'] ? ts('Failure') : ts('Success');
         $message =  $apiResult['is_error'] ?  $apiResult['error_message'] : '';
-        $msg = 'Status: ' . $status . ( $apiResult['is_error'] ? ', Error message: ' . $apiResult['error_message'] : '');
+        $msg = $status . ( $apiResult['is_error'] ? ', Error message: ' . $apiResult['error_message'] : '');
         return $msg;
     }
 
+ 
+
+}
+
+function CRM_Core_JobManager_scheduledJobFatalErrorHandler( $message ) {
+    throw new Exception( "{$message['message']}: {$message['code']}" );
 }

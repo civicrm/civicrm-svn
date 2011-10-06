@@ -19,8 +19,21 @@
        <autoincrement>true</autoincrement>
   </primaryKey>
   <field>
-       <name>run_datetime</name>
-       <type>datetime</type>
+      <name>domain_id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>Which Domain is this scheduled job for</comment>
+      <add>4.1</add>
+  </field>
+  <foreignKey>
+       <name>domain_id</name>
+       <table>civicrm_domain</table>
+       <key>id</key>
+       <add>4.1</add>
+  </foreignKey>  
+  <field>
+       <name>run_time</name>
+       <type>timestamp</type>
        <comment>Log entry date</comment>
        <add>4.1</add>
   </field>
@@ -38,7 +51,7 @@
        <add>4.1</add>
   </field>
   <field>
-       <name>script</name>
+       <name>command</name>
        <type>varchar</type>
        <length>255</length>
        <comment>Full path to file containing job script</comment>
