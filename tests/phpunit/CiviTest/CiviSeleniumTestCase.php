@@ -1091,7 +1091,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             return;
         }
 
-        return CiviDBAssert::assertDBCompareValues( $daoName, $searchParams, $expectedValues );
+        return CiviDBAssert::assertDBCompareValues( $this, $daoName, $searchParams, $expectedValues );
     }
 
 
