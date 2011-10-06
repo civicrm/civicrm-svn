@@ -1791,7 +1791,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                     $orderBys[] = "{$orderByField['dbAlias']} {$orderBy['order']}";
 
                     // Record any section headers for assignment to the template
-                    if ( $orderBy['section'] ) {
+                    if ( CRM_Utils_Array::value('section', $orderBy) ) {
                         $this->_sections[$orderByField['tplField']] = $orderByField;
                     }
                 }
