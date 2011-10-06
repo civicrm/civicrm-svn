@@ -133,7 +133,7 @@ class CRM_Utils_Address
                       'contact.do_not_phone'           => CRM_Utils_Array::value( 'do_not_phone', $fields ),
                       'contact.do_not_mail'            => CRM_Utils_Array::value( 'do_not_mail', $fields ),
                       'contact.do_not_sms'             => CRM_Utils_Array::value( 'do_not_sms', $fields ),
-v                      'contact.do_not_trade'           => CRM_Utils_Array::value( 'do_not_trade', $fields ),
+                      'contact.do_not_trade'           => CRM_Utils_Array::value( 'do_not_trade', $fields ),
                       'contact.job_title'              => CRM_Utils_Array::value( 'job_title', $fields ),
                       'contact.birth_date'             => CRM_Utils_Array::value( 'birth_date', $fields ),
                       'contact.gender'                 => CRM_Utils_Array::value( 'gender', $fields ),
