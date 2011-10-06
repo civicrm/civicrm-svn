@@ -218,7 +218,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
         CRM_Utils_Hook::tokens( $tokens );
         $tokenFields = array( );
         foreach ( $tokens as $category => $catTokens ) {
-            foreach ( $catTokens as $token ) {
+            foreach ( $catTokens as $token => $tokenName ) {
                 $tokenFields[] = $token;
             }
         }

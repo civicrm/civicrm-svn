@@ -1547,7 +1547,7 @@ WHERE t1.contact_type = 'Individual'
  * Define the hook name
  */
 function civitest_civicrm_tokens( &$tokens ) {
-    $tokens['sharedAddress'] = array( 'sharedAddress.orgName' );
+    $tokens['sharedAddress'] = array( 'sharedAddress.orgName' => 'Shared Address Name' );
 }
 
 
