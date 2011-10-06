@@ -411,8 +411,8 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             CRM_Core_Config_Defaults::setValues( $variables );
 
             // retrieve directory and url preferences also
-            require_once 'CRM/Core/BAO/Preferences.php';
-            CRM_Core_BAO_Preferences::retrieveDirectoryAndURLPreferences( $defaults );
+            require_once 'CRM/Core/BAO/Setting.php';
+            CRM_Core_BAO_Setting::retrieveDirectoryAndURLPreferences( $defaults );
 
             // add component specific settings
             $this->componentRegistry->addConfig( $this );

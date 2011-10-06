@@ -26,9 +26,9 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Core/BAO/Preferences.php';
+require_once 'CRM/Core/BAO/Setting.php';
 
-class CRM_Core_BAO_PreferencesTest extends CiviUnitTestCase 
+class CRM_Core_BAO_SettingTest extends CiviUnitTestCase 
 {
     function get_info( ) 
     {
@@ -46,7 +46,8 @@ class CRM_Core_BAO_PreferencesTest extends CiviUnitTestCase
 
     function testValueOptions( ) {
         
-        $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options' );
+        $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                              'address_options' );
         
         // street_address should be set 
         $this->assertEquals( $addressOptions['street_address'], 1, 'Street Address is not set in address options' );
@@ -54,10 +55,14 @@ class CRM_Core_BAO_PreferencesTest extends CiviUnitTestCase
     }
 
     function testSetValueOptions( ) {
-        $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options' );
+        $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                              'address_options' );
         $addressOptions['county'] = 1;
-        CRM_Core_BAO_Preferences::setValue( 'address_options', $addressOptions );
-        $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options' );
+        CRM_Core_BAO_Setting::setValueOption( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                              'address_options', 
+                                              $addressOptions );
+        $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                              'address_options' );
 
         $this->assertEquals( $addressOptions['county'], 1, 'County was set but did not stick in db' );
     }

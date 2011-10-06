@@ -53,10 +53,12 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
     const 
         ADDRESS_STANDARDIZATION_PREFERENCES_NAME = 'Address Standardization Preferences',
         CONFIGURATION_PREFERENCES_NAME           = 'Configuration Preferences',
+        DIRECTORY_PREFERENCES_NAME               = 'Directory Preferences',
         MAILING_PREFERENCES_NAME                 = 'Mailing Preferences',
         MULTISITE_PREFERENCES_NAME               = 'Multi Site Preferences',
         NAVIGATION_NAME                          = 'Navigation Menu',
-        SYSTEM_PREFERENCES_NAME                  = 'CiviCRM Preferences';
+        SYSTEM_PREFERENCES_NAME                  = 'CiviCRM Preferences',
+        URL_PREFERENCES_NAME                     = 'URL Preferences';
 
     static $_cache = null;
 
@@ -155,6 +157,13 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
                              $componentID = null,
                              $defaultValue = null,
                              $contactID   = null ) {
+        
+        // if both group and name are defined, check if over-ridden by the admin
+        if ( $group &&
+             $name  &&
+             defined( "{$group}.{$name}" ) ) {
+            return constant( "{$group}.{$name}" );
+        }
 
         $cacheKey = self::inCache( $group, $name, $componentID, $contactID, true );
         if ( ! $cacheKey ) {
@@ -256,8 +265,14 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
         }
     }
 
-    static function valueOptions( $groupName, $name, $system = true, $userID = null, $localize = false,
-                                  $returnField = 'name', $returnNameANDLabels = false, $condition = null ) {
+    static function valueOptions( $group,
+                                  $name,
+                                  $system = true,
+                                  $userID = null,
+                                  $localize = false,
+                                  $returnField = 'name',
+                                  $returnNameANDLabels = false,
+                                  $condition = null ) {
         $optionValue = self::getItem( $groupName, $name );
 
         require_once 'CRM/Core/OptionGroup.php';
@@ -299,5 +314,139 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
         
         return ( $returnNameANDLabels ) ? $nameAndLabels : $returnValues;
     }
+
+    static function setValueOption( $groupName,
+                                    $name, 
+                                    $value, 
+                                    $system = true, 
+                                    $userID = null, 
+                                    $keyField = 'name' ) {
+        if ( $system ) {
+            $object = self::systemObject( );
+        } else {
+            $object = self::userObject( $userID );
+        }
+
+        if ( empty( $value ) ) {
+            $optionValue = null;
+        } else if ( is_array( $value ) ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            $groupValues = CRM_Core_OptionGroup::values( $name, false, false, false, null, $keyField );
+            
+            $cbValues = array( );
+            foreach ( $groupValues as $key => $val ) {
+                if ( CRM_Utils_Array::value( $val, $value ) ) {
+                    $cbValues[$key] = 1;
+                }
+            }
+
+            if ( ! empty( $cbValues ) ) {
+                $optionValue = 
+                    CRM_Core_DAO::VALUE_SEPARATOR .
+                    implode( CRM_Core_DAO::VALUE_SEPARATOR,
+                             array_keys( $cbValues ) ) .
+                    CRM_Core_DAO::VALUE_SEPARATOR;
+            } else {
+                $optionValue = null;
+            }
+        } else {
+            $optionValue = $value;
+        }
+
+        self::setItem( $optionValue,
+                       $group,
+                       $name );
+    }
+
+    static function fixAndStoreDirAndURL( &$params ) {
+        $sql = "
+SELECT name, group_name 
+FROM   civicrm_setting
+WHERE  ( group_name = %1
+OR       group_name = %2 )
+";
+        $sqlParams = array( 1 => array( self::DIRECTORY_PREFERENCES_NAME, 'String' ),
+                            2 => array( self::URL_PREFERENCES_NAME      , 'String' ) );
+
+        $dirParams = array( );
+        $urlParams = array( );
+        $dao    = CRM_Core_DAO::executeQuery( $sql, $sqlParams );
+        while ( $dao->fetch( ) ) {
+            if ( ! isset( $params[$dao->name] ) ) {
+                continue;
+            }
+            if ( $dao->group_name == self::DIRECTORY_PREFERENCES_NAME ) {
+                $dirParams[$dao->name] = CRM_Utils_Array::value( $dao->name, $params, '' );
+            } else {
+                $urlParams[$dao->name] = CRM_Utils_Array::value( $dao->name, $params, '' );
+            }
+            unset( $params[$dao->name] );
+        }
+
+        if ( ! empty( $dirParams ) ) {
+            self::storeDirectoryOrURLPreferences( $dirParams,
+                                                  self::DIRECTORY_PREFERENCES_NAME );
+        }
+
+        if ( ! empty( $urlParams ) ) {
+            self::storeDirectoryOrURLPreferences( $urlParams,
+                                                  self::URL_PREFERENCES_NAME );
+        }
+    }
+
+    static function storeDirectoryOrURLPreferences( &$params, $group ) {
+        require_once 'CRM/Utils/File.php';
+        foreach ( $params as $name => $value ) {
+            // always try to store relative directory or url from CMS root
+            $value = 
+                ( $group == self::DIRECTORY_PREFERENCES_NAME ) ?
+                CRM_Utils_File::relativeDirectory( $value ) :
+                CRM_Utils_System::relativeURL( $value );
+
+            self::setItem( $value,
+                           $group,
+                           $name );
+        }
+    }
+
+    static function retrieveDirectoryAndURLPreferences( &$params, $setInConfig = false ) {
+        if ( $setInConfig ) {
+            $config = CRM_Core_Config::singleton( );
+        }
+
+        $sql = "
+SELECT name, group_name, value
+FROM   civicrm_setting
+WHERE  ( group_name = %1
+OR       group_name = %2 )
+";
+        $sqlParams = array( 1 => array( self::DIRECTORY_PREFERENCES_NAME, 'String' ),
+                            2 => array( self::URL_PREFERENCES_NAME      , 'String' ) );
+
+        $dao    = CRM_Core_DAO::executeQuery( $sql, $sqlParams );
+
+        require_once 'CRM/Utils/File.php';
+        while ( $dao->fetch( ) ) {
+            $value = null;
+            // overwrite value from settings file
+            if ( defined( "{$dao->group_name}.{$dao->name}" ) ) {
+                $value = constant( "{$dao->group_name}.{$dao->name}" );
+            } else if ( $dao->value ) {
+                $value = unserialize( $dao->value );
+                if ( $dao->group_name == self::DIRECTORY_PREFERENCES_NAME ) {
+                    $value = CRM_Utils_File::absoluteDirectory( $value );
+                } else {
+                    // CRM-7622: we need to remove the language part
+                    $value = CRM_Utils_System::absoluteURL($value, true);
+                }
+            }
+            $params[$dao->name] = $value;
+
+            if ( $setInConfig ) {
+                $config->{$dao->name} = $value;
+            }
+        }
+    }
+
 
 }

@@ -118,11 +118,14 @@ function civicrm_engage_add_contact_subtypes() {
  * can divide the task between two people with two different lists. 
  */
 function civcrm_engage_enable_street_address_parsing() {
-  include_once 'CRM/Core/BAO/Preferences.php';
-  $address_options = CRM_Core_BAO_Preferences::valueOptions( 'address_options', 
-    true, null, true );
+  include_once 'CRM/Core/BAO/Setting.php';
+  $address_options = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                         'address_options', 
+                                                         true, null, true );					 
   $address_options['street_address_parsing'] = 1;
-  CRM_Core_BAO_Preferences::setValue( 'address_options',$address_options);
+  CRM_Core_BAO_Setting::setValueOption( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                        'address_options',
+                                        $address_options);
 }
 
 /**
@@ -131,12 +134,18 @@ function civcrm_engage_enable_street_address_parsing() {
  * to have the phone number included. 
  */
 function civcrm_engage_set_autocomplete_options() {
-  include_once 'CRM/Core/BAO/Preferences.php';
-  $contact_autocomplete_options = CRM_Core_BAO_Preferences::valueOptions( 
-    'contact_autocomplete_options', true, null, true );
+  include_once 'CRM/Core/BAO/Setting.php';
+  $contact_autocomplete_options = CRM_Core_BAO_Setting::valueOptions(
+                                                                     CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                     'contact_autocomplete_options',
+                                                                     true, null, true 
+                                                                     );
   $contact_autocomplete_options['phone'] = 1;
-  CRM_Core_BAO_Preferences::setValue( 
-    'contact_autocomplete_options',$contact_autocomplete_options);
+  CRM_Core_BAO_Setting::setValue(
+                                 CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                 'contact_autocomplete_options',
+                                 $contact_autocomplete_options
+                                 );
 }
 
 function civicrm_engage_load_configuration() {

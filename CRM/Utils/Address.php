@@ -39,7 +39,7 @@ class CRM_Utils_Address
      * format an address string from address fields and a format string
      *
      * Format an address basing on the address fields provided.
-     * Use Preferences::address_format if there's no format specified.
+     * Use Setting's address_format if there's no format specified.
      *
      * @param array   $fields            the address fields
      * @param string  $format            the desired address format

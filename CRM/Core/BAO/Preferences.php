@@ -38,6 +38,7 @@
  *
  */
 class CRM_Core_BAO_Preferences {
+
     static function fixAndStoreDirAndURL( &$params ) {
         $sql = "
 SELECT v.name as valueName, g.name as optionName

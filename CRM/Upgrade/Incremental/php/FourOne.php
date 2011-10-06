@@ -69,35 +69,43 @@ class CRM_Upgrade_Incremental_php_FourOne {
         $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
 
+        require_once 'CRM/Core/BAO/Setting.php';
+
         $this->transferPreferencesToSettings( );
+        $this->createNewSettings( );
+
+        // now modify the config so that the directories are now stored in the settings table
+        // CRM-8780
+        require_once 'CRM/Core/BAO/ConfigSetting.php';
+        $params = array( );
+        CRM_Core_BAO_ConfigSetting::add( $parambs );
     }
 
     function transferPreferencesToSettings( ) {
-        require_once 'CRM/Core/BAO/Setting.php';
-
         // first transfer system preferences
-        $domainColumnNames = array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME => array( 
-                                                                                           'contact_view_options',
-                                                                                           'advanced_search_options',
-                                                                                           'user_dashboard_options',
-                                                                                           'address_options',
-                                                                                           'address_format',
-                                                                                           'mailing_format',
-                                                                                           'display_name_format',
-                                                                                           'sort_name_format',
-                                                                                           'editor_id',
-                                                                                           'contact_autocomplete_options',
-                                                                                            ),
-                                    CRM_Core_BAO_Setting::ADDRESS_STANDARDIZATION_PREFERENCES_NAME => array(
-                                                                                                            'address_standardization_provider',
-                                                                                                            'address_standardization_userid',
-                                                                                                            'address_standardization_url',
-                                                                                                            ),
-                                    CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME => array(
-                                                                                            'mailing_backend',
-                                                                                            ),
-                                    );
-
+        $domainColumnNames = 
+            array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME => array( 
+                                                                          'contact_view_options',
+                                                                          'advanced_search_options',
+                                                                          'user_dashboard_options',
+                                                                          'address_options',
+                                                                          'address_format',
+                                                                          'mailing_format',
+                                                                          'display_name_format',
+                                                                          'sort_name_format',
+                                                                          'editor_id',
+                                                                          'contact_autocomplete_options',
+                                                                           ),
+                   CRM_Core_BAO_Setting::ADDRESS_STANDARDIZATION_PREFERENCES_NAME => array(
+                                                                                           'address_standardization_provider',
+                                                                                           'address_standardization_userid',
+                                                                                           'address_standardization_url',
+                                                                                           ),
+                   CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME => array(
+                                                                           'mailing_backend',
+                                                                           ),
+                   );
+        
         $userColumnNames = array( CRM_Core_BAO_Setting::NAVIGATION_NAME => array(
                                                                                  'navigation',
                                                                                  ),
@@ -139,7 +147,7 @@ WHERE  domain_id = %1
                         $value = empty( $dao->$settingName ) ? null : serialize( $dao->$settingName );
                         $values[] = array( "'$groupName'",
                                            "'$settingName'",
-                                           "'$value'",
+                                           $value ? "'$value'" : null,
                                            $domainID,
                                            $dao->contact_id,
                                            0,
@@ -148,17 +156,79 @@ WHERE  domain_id = %1
                     }
                 }
             }
+        }
 
-            $sql = "
+        $sql = "
 INSERT INTO civicrm_setting( group_name, name, value, domain_id, contact_id, is_domain, created_date, created_id )
 VALUES
 ";
-            $sql .= implode( ",\n", $values );
-            CRM_Core_DAO::executeQuery( $sql );
-        }
+        $sql .= implode( ",\n", $values );
+        CRM_Core_DAO::executeQuery( $sql );
 
         // now drop the civicrm_preferences table
         $sql = "DROP TABLE civicrm_preferences";
         CRM_Core_DAO::executeQuery( $sql );
     }
+
+    function createNewSettings( ) {
+        $domainColumns = 
+            array( CRM_Core_BAO_Setting::CONFIGURATION_PREFERENCES_NAME =>
+                   array( array( 'contact_ajax_check_similar', 1 ),
+                          array( 'tag_unconfirmed', 'Unconfirmed' ),
+                          array( 'petition_contacts', 'Petition Contacts' ),
+                          ),
+                   CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME =>
+                   array( array( 'profile_double_optin', 1 ),
+                          array( 'profile_add_to_group_double_optin', 0 ),
+                          array( 'track_civimail_replies', 0 ),
+                          array( 'activity_assignee_notification', 1 ),
+                          array( 'civimail_workflow', 0 ),
+                          ),
+                   CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME =>
+                   array( array( 'is_enabled', 0 ),
+                          array( 'uniq_email_per_site', 0 ),
+                          array( 'domain_group_id', 0 ),
+                          array( 'event_price_set_domain_id', 0 ),
+                          ),
+                   CRM_Core_BAO_Setting::DIRECTORY_PREFERENCES_NAME =>
+                   array( array( 'uploadDir', null ),
+                          array( 'imageUploadDir', null ),
+                          array( 'customFileUploadDir', null ),
+                          array( 'customPHPPathDir', null ),
+                          array( 'extensionsDir', null ),
+                          ),
+                   CRM_Core_BAO_Setting::URL_PREFERENCES_NAME =>
+                   array( array( 'userFrameworkResourceURL', null ),
+                          array( 'imageUploadURL', null ),
+                          array( 'customCSSURL', null ),
+                          ),
+                   );
+
+        $domainID    = CRM_Core_Config::domainID( );
+        $createdDate = date( 'YmdHis' );
+        $session     = CRM_Core_Session::singleton( );
+        $createdID = $contactID = $session->get( 'userID' );
+
+        foreach ( $domainColumns as $groupName => $settings ) {
+            foreach ( $settings as $setting ) {
+                $value = $setting[1] === null ? null : serialize( $setting[1] );
+                $values[] = array( "'$groupName'",
+                                   "'{$setting[0]}'",
+                                   $value ? "'$value'" : null,
+                                   $domainID,
+                                   $contactID,
+                                   0,
+                                   '$createdDate',
+                                   $createdID );
+            }
+        }
+
+        $sql = "
+INSERT INTO civicrm_setting( group_name, name, value, domain_id, contact_id, is_domain, created_date, created_id )
+VALUES
+";
+        $sql .= implode( ",\n", $values );
+        CRM_Core_DAO::executeQuery( $sql );
+    }
+
 }

@@ -89,8 +89,8 @@ class CRM_Core_BAO_ConfigSetting
             unset( $params[$var] );
         }
 
-        require_once 'CRM/Core/BAO/Preferences.php';
-        CRM_Core_BAO_Preferences::fixAndStoreDirAndURL( $params );
+        require_once 'CRM/Core/BAO/Setting.php';
+        CRM_Core_BAO_Setting::fixAndStoreDirAndURL( $params );
 
         // also skip all Dir Params, we dont need to store those in the DB!
         foreach ( $params as $name => $val ) {
@@ -233,7 +233,6 @@ class CRM_Core_BAO_ConfigSetting
                 return;
             }
 
-
             // check if there are any locale strings
             if ( $domain->locale_custom_strings ) {
                 $defaults['localeCustomStrings'] = unserialize($domain->locale_custom_strings);
@@ -342,8 +341,8 @@ class CRM_Core_BAO_ConfigSetting
         // dont add if its empty
         if ( ! empty( $defaults ) ) {
             // retrieve directory and url preferences also
-            require_once 'CRM/Core/BAO/Preferences.php';
-            CRM_Core_BAO_Preferences::retrieveDirectoryAndURLPreferences( $defaults );
+            require_once 'CRM/Core/BAO/Setting.php';
+            CRM_Core_BAO_Setting::retrieveDirectoryAndURLPreferences( $defaults );
         }
     }
 

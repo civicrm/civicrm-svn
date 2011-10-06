@@ -67,7 +67,16 @@ VALUES
   ( @domainID, NULL, 1, 'Multi Site Preferences', 'is_enabled', '{serialize}0{/serialize}' ),
   ( @domainID, NULL, 1, 'Multi Site Preferences', 'uniq_email_per_site', '{serialize}0{/serialize}' ),
   ( @domainID, NULL, 1, 'Multi Site Preferences', 'domain_group_id', '{serialize}0{/serialize}' ),
-  ( @domainID, NULL, 1, 'Multi Site Preferences', 'event_price_set_domain_id', '{serialize}0{/serialize}' );
+  ( @domainID, NULL, 1, 'Multi Site Preferences', 'event_price_set_domain_id', '{serialize}0{/serialize}' ),
+  ( @domainID, NULL, 1, 'Directory Preferences', 'uploadDir'          , NULL ),
+  ( @domainID, NULL, 1, 'Directory Preferences', 'imageUploadDir'     , NULL ),
+  ( @domainID, NULL, 1, 'Directory Preferences', 'customFileUploadDir', NULL ),
+  ( @domainID, NULL, 1, 'Directory Preferences', 'customTemplateDir'  , NULL ),
+  ( @domainID, NULL, 1, 'Directory Preferences', 'customPHPPathDir'   , NULL ),
+  ( @domainID, NULL, 1, 'Directory Preferences', 'extensionsDir'      , NULL ),
+  ( @domainID, NULL, 1, 'URL Preferences', 'userFrameworkResourceURL' , NULL ),
+  ( @domainID, NULL, 1, 'URL Preferences', 'imageUploadURL'           , NULL ),
+  ( @domainID, NULL, 1, 'URL Preferences', 'customCSSURL'             , NULL );
 
 -- mail settings 
 
