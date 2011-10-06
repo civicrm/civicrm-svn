@@ -273,7 +273,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
                                   $returnField = 'name',
                                   $returnNameANDLabels = false,
                                   $condition = null ) {
-        $optionValue = self::getItem( $groupName, $name );
+        $optionValue = self::getItem( $group, $name );
 
         require_once 'CRM/Core/OptionGroup.php';
         $groupValues = CRM_Core_OptionGroup::values( $name, false, false, $localize, $condition, $returnField );
@@ -315,7 +315,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
         return ( $returnNameANDLabels ) ? $nameAndLabels : $returnValues;
     }
 
-    static function setValueOption( $groupName,
+    static function setValueOption( $group,
                                     $name, 
                                     $value, 
                                     $system = true, 
