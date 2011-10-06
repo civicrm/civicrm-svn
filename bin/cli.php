@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 
 /*
@@ -130,10 +131,10 @@ class civicrm_Cli {
 
         $class = 'CRM_Utils_system_' . $this->_config->userFramework;
         $cms = new $class();
-        if( !$cms->loadBootstrap( array(), false, false )) {
-            $this->_log( ts("Failed to bootstrap CMS"));
-            return false;
-        }
+//        if( !$cms->loadBootstrap( array(), false, false )) {
+//            $this->_log( ts("Failed to bootstrap CMS"));
+//            return false;
+//        }
         if(!empty($this->_user)) {
           if( !$cms->loadUser( $this->_user ) ) {
             $this->_log( ts("Failed to login as %1", array('1' => $this->_user )));
