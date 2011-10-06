@@ -3236,11 +3236,13 @@ WHERE  id IN ( $groupIDs )
         //check for active, inactive and all relation status
         $today = date( 'Ymd' );
         if ( $relStatus[2] == 0 ) {
-            $this->_where[$grouping][] = "civicrm_relationship.is_active = 1 AND ( civicrm_relationship.end_date is NULL OR civicrm_relationship.end_date >= {$today} )";
+            $this->_where[$grouping][] = "civicrm_relationship.is_active = 1 AND ( civicrm_relationship.end_date is NULL OR civicrm_relationship.end_date >= {$today} 
+            																																 AND ( civicrm_relationship.start_date is NULL OR civicrm_relationship.start_date <= {$today} ))";
             $this->_qill[$grouping][]  = ts( 'Relationship - Active');
             
         } else if ( $relStatus[2] == 1 ) {
-            $this->_where[$grouping][] = "(civicrm_relationship.is_active = 0 OR civicrm_relationship.end_date < {$today})";
+            $this->_where[$grouping][] = "(civicrm_relationship.is_active = 0 OR civicrm_relationship.end_date < {$today}
+            																																	OR civicrm_relationship.start_date > {$today}	)";
             $this->_qill[$grouping][]  = ts( 'Relationship - Inactive');
         }
         $this->_where[$grouping][] = 'civicrm_relationship.relationship_type_id = '.$rel[0];
