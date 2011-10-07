@@ -299,32 +299,39 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
 			$subName  = CRM_Utils_Array::value( 'extends_entity_column_id', $customGroup[$key] );
             $type     = CRM_Utils_Array::value( 'extends', $customGroup[$key] );
             if ( $subValue ) {
-                $subValue = explode( CRM_Core_DAO::VALUE_SEPARATOR, $subValue );
+                $subValue = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                     substr( $subValue, 1, -1 ) );
                 $colValue = null;
                 foreach ( $subValue as $sub ) {
                     if ( $sub ) {
                         if ( $type == 'Participant') {
                             if ( $subName == 1 ) {
-                                $colValue = $colValue ? $colValue . ', ' . 
-                                    $subTypes['ParticipantRole'][$sub] : $subTypes['ParticipantRole'][$sub];
+                                $colValue = $colValue ? 
+                                    $colValue . ', ' . $subTypes['ParticipantRole'][$sub] :
+                                    $subTypes['ParticipantRole'][$sub];
                             } elseif ( $subName == 2 ) {
-                                $colValue = $colValue ? $colValue . ', ' .  
-                                    $subTypes['ParticipantEventName'][$sub] : $subTypes['ParticipantEventName'][$sub];
+                                $colValue = $colValue ?
+                                    $colValue . ', ' .  $subTypes['ParticipantEventName'][$sub] :
+                                    $subTypes['ParticipantEventName'][$sub];
                             } elseif ( $subName == 3 ) {
-                                $colValue = $colValue ? $colValue . ', ' .  
-                                    $subTypes['ParticipantEventType'][$sub] : $subTypes['ParticipantEventType'][$sub];
+                                $colValue = $colValue ?
+                                    $colValue . ', ' .  $subTypes['ParticipantEventType'][$sub] :
+                                    $subTypes['ParticipantEventType'][$sub];
                             }
                         } else if ( $type == 'Relationship' ) {
-                            $colValue = $colValue ? $colValue . ', ' . 
-                                $subTypes[$type][$sub.'_a_b'] : $subTypes[$type][$sub.'_a_b'];
+                            $colValue = $colValue ? 
+                                $colValue . ', ' . $subTypes[$type][$sub.'_a_b'] :
+                                $subTypes[$type][$sub.'_a_b'];
                             if ( isset( $subTypes[$type][$sub.'_b_a'] ) ) {
-                                $colValue = $colValue ? $colValue . ', ' . 
-                                    $subTypes[$type][$sub.'_b_a'] : $subTypes[$type][$sub.'_b_a'];
+                                $colValue = $colValue ?
+                                    $colValue . ', ' . $subTypes[$type][$sub.'_b_a'] :
+                                    $subTypes[$type][$sub.'_b_a'];
                             }
                         } else {
-                            $colValue = $colValue ? ( $colValue . ( isset($subTypes[$type][$sub]) ? ', '. $subTypes[$type][$sub] : '' ) ) :
+                            $colValue = $colValue ? 
+                                ( $colValue . ( isset($subTypes[$type][$sub]) ? ', '. $subTypes[$type][$sub] : '' ) ) :
                                 ( isset($subTypes[$type][$sub]) ? $subTypes[$type][$sub] : '' );
-                        } 
+                        }
                     }
                 }
                 $customGroup[$key]["extends_entity_column_value"] = $colValue;

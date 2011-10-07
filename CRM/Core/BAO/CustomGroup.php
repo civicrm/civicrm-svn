@@ -1099,7 +1099,8 @@ SELECT $select
                 default:
                     if ($field['data_type'] == "Float") {
                         $defaults[$elementName] = (float)$value;
-                    } elseif ($field['data_type'] == 'Money') {
+                    } elseif ($field['data_type'] == 'Money' &&
+                              $field['html_type'] == 'Text') {
                         require_once 'CRM/Utils/Money.php';
                         $defaults[$elementName] = CRM_Utils_Money::format($value, null, '%a');
                     } else { 

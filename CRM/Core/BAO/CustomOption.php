@@ -237,6 +237,7 @@ WHERE  f.custom_group_id = g.id
                 require_once 'CRM/Utils/Rule.php';
                 $params['value'] = CRM_Utils_Rule::cleanMoney( $params['value'] );
             }
+            CRM_Core_Error::debug( $params );
             switch ( $dao->htmlType ) {
             case 'Autocomplete-Select':    
             case 'Select':
@@ -244,7 +245,7 @@ WHERE  f.custom_group_id = g.id
                 $query = "
 UPDATE {$dao->tableName}
 SET    {$dao->columnName} = %1
-WHERE  {$dao->columnName} = %2";
+WHERE  id = %2";
                 if ( $dao->dataType == 'Auto-complete' ) {
                     $dataType = "String";
                 } else {
@@ -252,8 +253,8 @@ WHERE  {$dao->columnName} = %2";
                 }
                 $queryParams = array( 1 => array( $params['value'],
                                                   $dataType ),
-                                      2 => array( $oldValue,
-                                                  $dataType ) );
+                                      2 => array( $params['optionId'],
+                                                  'Integer' ) );
                 break;
 
             case 'AdvMulti-Select':

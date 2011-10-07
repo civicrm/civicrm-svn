@@ -76,7 +76,11 @@
 					    {/if}
 					{else}
                                             {if $element.field_data_type == 'Money'}
-                                                <td class="html-adjust">{$element.field_value|crmNumberFormat}</td>
+                                                {if $element.field_type == 'Text'}
+                                                    <td class="html-adjust">{$element.field_value|crmNumberFormat}</td>
+                                                {else}
+                                                    <td class="html-adjust">{$element.field_value}</td>
+                                                {/if}
                                             {else}
 					    <td class="html-adjust">
                         {if $element.contact_ref_id}
