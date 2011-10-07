@@ -339,6 +339,13 @@ VALUES
             CRM_Core_DAO::executeQuery( $query, $params );
         }
 
+        // CRM-8774
+        $config = CRM_Core_Config::singleton( );
+        if ( $config->userFramework == 'Drupal' ) {
+            db_query("UPDATE {system} SET weight = 100 WHERE name = 'civicrm'");
+            drupal_flush_all_caches();
+        }
+
         $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
