@@ -802,7 +802,8 @@ class CRM_Utils_System {
         if ( $config->enableSSL             &&
              ( ! isset( $_SERVER['HTTPS'] ) ||
                strtolower( $_SERVER['HTTPS'] )  == 'off' ) &&
-               strtolower( $req_headers['X_FORWARDED_PROTO'] ) != 'https' ) {
+             strtolower( CRM_Utils_Array::value( 'X_FORWARDED_PROTO',
+                                                 $req_headers ) != 'https' ) {
             // ensure that SSL is enabled on a civicrm url (for cookie reasons etc)
             $url = "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
             if ( ! self::checkURL( $url, true ) ) {
