@@ -49,12 +49,17 @@
         {/if}
         {if !empty($membershipTypes)}
             {foreach from=$membershipTypes item=row}
-                {if $row.current_membership}
+                {if array_key_exists( 'current_membership', $row )}
                     <div id='help'>
-                    {if $row.current_membership|date_format:"%Y%m%d" LT $smarty.now|date_format:"%Y%m%d"}
-                        {ts 1=$row.current_membership|crmDate 2=$row.name}Your <strong>%2</strong> membership expired on %1.{/ts}<br />
+                    {* Lifetime memberships have no end-date so current_membership array key exists but is NULL *}
+                    {if $row.current_membership}
+                        {if $row.current_membership|date_format:"%Y%m%d" LT $smarty.now|date_format:"%Y%m%d"}
+                            {ts 1=$row.current_membership|crmDate 2=$row.name}Your <strong>%2</strong> membership expired on %1.{/ts}<br />
+                        {else}
+                            {ts 1=$row.current_membership|crmDate 2=$row.name}Your <strong>%2</strong> membership expires on %1.{/ts}<br />
+                        {/if}
                     {else}
-                        {ts 1=$row.current_membership|crmDate 2=$row.name}Your <strong>%2</strong> membership expires on %1.{/ts}<br />
+                        {ts 1=$row.name}Your <strong>%1</strong> membership does not expire (you do not need to renew that membership).{/ts}<br />
                     {/if}
                     </div>
                 {/if}

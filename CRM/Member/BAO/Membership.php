@@ -742,9 +742,9 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
                             $membership->contact_id         = $cid;
                             $membership->membership_type_id = $memType['id'];
 
-                            //show current membership, skip pending membership record,
+                            //show current membership, skip pending and cancelled membership records,
                             //because we take first membership record id for renewal 
-                            $membership->whereAdd( 'status_id != 5' );
+                            $membership->whereAdd( 'status_id != 5 AND status_id !=6' );
                                 
                             if ( ! is_null( $isTest ) ) {
                                 $membership->is_test        = $isTest;
