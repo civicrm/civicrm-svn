@@ -139,10 +139,7 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
             case 'event_contacts':
                 $sel5[$entityRecipient] = $eventContacts + $options;
                 break;
-                
-            case 'civicrm_participant_status_type':
-                $sel5[$entityRecipient] = $participantStatus + $options;
-                break;
+
             }
             
         }
@@ -160,6 +157,7 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
                 }
                 break;
 
+           
             case 'civicrm_participant_status_type':
                 foreach( $sel3[$id] as $kkey => &$vval ) {
                     $vval = $statusLabel + $participantStatus;
@@ -181,6 +179,7 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
         require_once 'CRM/Event/PseudoConstant.php';
         $participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
         $activityContacts = CRM_Core_PseudoConstant::activityContacts();
+        $eventContacts = CRM_Core_PseudoConstant::eventContacts();
         $sel4 = $sel5 = array();
 
         foreach ( $mapping as $value ) {
@@ -189,7 +188,6 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
             $entityDateEnd = $value['entity_date_end'];
             $entityRecipient = $value['entity_recipient'];
             $key = $value['id'];
-           
 
             switch ($entityDateStart) {
             case 'activity_date_time':
@@ -211,16 +209,17 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
             case 'activity_contacts':
                 $sel5[$id] = $activityContacts + array( 'manual' => ts('Manual'), 'group' => ts('CiviCRM Group')  );
                 break;
-                
-            case 'civicrm_participant_status_type':
-                $sel5[$id] = $participantStatus + array( 'manual' => ts('Manual'), 'group' => ts('CiviCRM Group') );
+
+            case 'event_contacts':
+                $sel5[$id] = $eventContacts + array( 'manual' => ts('Manual'), 'group' => ts('CiviCRM Group')  );
                 break;
+                
             }
             
         }
        
-       
         return array( $sel4, $sel5[$id] );
+
     }
 
     /**

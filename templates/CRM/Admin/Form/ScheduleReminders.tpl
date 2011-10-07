@@ -182,6 +182,7 @@
 	 if(cj('#absolute_date_display').val()) {
 	     cj('#relativeDate').hide();
 	     cj('#relativeDateRepeat').hide();
+	     cj('#repeatFields').hide();
 	   } else {
 	     cj('#relativeDate').show();
 	     cj('#relativeDateRepeat').show();
