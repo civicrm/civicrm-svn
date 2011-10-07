@@ -290,7 +290,27 @@ class CRM_Core_OptionValue
                 $nameTitle = array('payment_instrument' => array('name' =>'payment_instrument',
                                                                  'title'=> ts('Payment Instrument'),
                                                                  'headerPattern' => '/^payment|(p(ayment\s)?instrument)$/i'
-                                                                 )
+                                                                  ),
+                                   'honor_contact_name'    => array('name' => 'honor_contact_name',
+                                                                  'title'=> 'Honor Contact Name',
+                                                                  'headerPattern' => '/^honor_contact_name$/i',
+                                                                  'where' => 'civicrm_contact_c.display_name'
+                                                                  ),
+                                    'honor_contact_email'    => array('name' => 'honor_contact_email',
+                                                                  'title'=> 'Honor Contact Email',
+                                                                  'headerPattern' => '/^honor_contact_email$/i',
+                                                                  'where' => 'honor_email.email'
+                                                                  ),
+                                    'honor_contact_id'    => array('name' => 'honor_contact_id',
+                                                                  'title'=> 'Honor Contact ID',
+                                                                  'headerPattern' => '/^honor_contact_id$/i',
+                                                                  'where' => 'civicrm_contribution.honor_contact_id'
+                                                                  ),
+                                    'honor_type_label'    => array('name' => 'honor_type_label',
+                                                                  'title'=> 'Honor Type Label',
+                                                                  'headerPattern' => '/^honor_type_label$/i',
+                                                                  'where' => 'honor_type.label'
+                                                                  ),
                                    );
             } else if ( $mode == '' ) {  
                 //the fields email greeting and postal greeting are meant only for Individual and Household
