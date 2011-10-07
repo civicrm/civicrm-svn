@@ -720,6 +720,7 @@ ORDER BY a.object_id
 SELECT g.*
   FROM civicrm_group g
  WHERE g.id IN ( $ids )
+ AND   g.is_active = 1
 ";
                 $dao = CRM_Core_DAO::executeQuery( $query );
                 $allGroupIDs = array();
