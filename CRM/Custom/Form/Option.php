@@ -372,6 +372,14 @@ SELECT count(*)
         // store the submitted values in an array
         $params = $this->controller->exportValues('Option');
 
+        if ($this->_action == CRM_Core_Action::DELETE) {
+            $fieldValues = array( 'option_group_id' => $this->_optionGroupID );
+            $wt = CRM_Utils_Weight::delWeight('CRM_Core_DAO_OptionValue', $this->_id, $fieldValues);
+            CRM_Core_BAO_CustomOption::del($this->_id);
+            CRM_Core_Session::setStatus(ts('Your multiple choice option has been deleted', array(1 => $customOption->label)));
+            return;
+        }
+
         // set values for custom field properties and save
         require_once 'CRM/Core/DAO/OptionValue.php';
         require_once 'CRM/Utils/String.php';
@@ -382,14 +390,6 @@ SELECT count(*)
         $customOption->value         = $params['value'];
         $customOption->is_active     = CRM_Utils_Array::value( 'is_active', $params, false );
        
-        if ($this->_action == CRM_Core_Action::DELETE) {
-            $fieldValues = array( 'option_group_id' => $this->_optionGroupID );
-            $wt = CRM_Utils_Weight::delWeight('CRM_Core_DAO_OptionValue', $this->_id, $fieldValues);
-            CRM_Core_BAO_CustomOption::del($this->_id);
-            CRM_Core_Session::setStatus(ts('Your multiple choice option has been deleted', array(1 => $customOption->label)));
-            return;
-        }
-
         $oldWeight = null;
         if ($this->_id) {
             $customOption->id = $this->_id;
