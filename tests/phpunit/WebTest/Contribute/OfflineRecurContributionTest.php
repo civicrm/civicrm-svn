@@ -91,7 +91,7 @@ class WebTest_Contribute_OfflineRecurContributionTest extends CiviSeleniumTestCa
       $this->waitForPageToLoad('30000');
 
       // Use Find Contributions to make sure test recurring contribution exists
-      $this->open($this->sboxPath . 'civicrm/contribute/search&reset=1');
+      $this->open($this->sboxPath . 'civicrm/contribute/search?reset=1');
       $this->waitForElementPresent('contribution_currency_type');
 
       $this->type('sort_name', "$firstName $lastName" );

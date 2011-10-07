@@ -96,7 +96,7 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
                                                    $pcp );        
       
       //logout
-      $this->open( $this->sboxPath . "civicrm/logout&reset=1" );
+      $this->open( $this->sboxPath . "civicrm/logout?reset=1" );
       $this->waitForPageToLoad( '30000' );
       
       //Open Live Contribution Page
@@ -152,7 +152,7 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
       $this->webtestLogin( );
       
       //Find Contribution
-      $this->open( $this->sboxPath . "civicrm/contribute/search&reset=1" );
+      $this->open( $this->sboxPath . "civicrm/contribute/search?reset=1" );
       
       $this->waitForElementPresent( "contribution_date_low" );
       

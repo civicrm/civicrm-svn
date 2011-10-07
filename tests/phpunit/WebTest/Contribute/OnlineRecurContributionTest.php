@@ -96,7 +96,7 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
       $contactName = "$firstName $lastName";
 
       // logout
-      $this->open($this->sboxPath . "civicrm/logout&reset=1");
+      $this->open($this->sboxPath . "civicrm/logout?reset=1");
       // Wait for Login button to indicate we've logged out.
       $this->waitForElementPresent( "edit-submit" );
 
@@ -136,7 +136,7 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
       // Log back in and verify that test contribution has been recorded
       $this->open( $this->sboxPath );
       $this->webtestLogin();
-      $this->open($this->sboxPath . "civicrm/contribute/search&reset=1");
+      $this->open($this->sboxPath . "civicrm/contribute/search?reset=1");
       $this->waitForElementPresent("contribution_currency_type");
 
       $this->type("sort_name", "{$lastName}, {$firstName}" );

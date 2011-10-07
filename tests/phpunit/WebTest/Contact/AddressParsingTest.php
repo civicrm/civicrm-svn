@@ -55,7 +55,7 @@ class WebTest_Contact_AddressParsingTest extends CiviSeleniumTestCase {
       }
      
       // Go to the URL to create an Individual contact.
-      $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual");
+      $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
       
       //contact details section
       
