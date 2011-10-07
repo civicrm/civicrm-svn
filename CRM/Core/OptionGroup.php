@@ -77,7 +77,14 @@ class CRM_Core_OptionGroup
                              $localize = false, $condition = null,
                              $valueColumnName = 'label', $onlyActive = true ) 
     {
+        static $_cache = array( );
+
         $cacheKey = "CRM_OG_{$name}_{$flip}_{$grouping}_{$localize}_{$condition}_{$valueColumnName}_{$onlyActive}";
+
+        if ( array_key_exists( $cacheKey, $_cache ) ) {
+            return $_cache[$cacheKey];
+        }
+
         $cache = CRM_Utils_Cache::singleton( );
         $var = $cache->get( $cacheKey );
         if ( $var ) {
@@ -109,11 +116,13 @@ WHERE  v.option_group_id = g.id
         $dao = CRM_Core_DAO::executeQuery( $query, $p );
         
         $var = self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
-        $cache->set( $cacheKey, $var );
 
         // call option value hook
         require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::optionValues( $var, $name );
+
+        $_cache[$cacheKey] = $var;
+        $cache->set( $cacheKey, $var );
 
         return $var;
     }
