@@ -337,7 +337,7 @@ class CRM_Group_Page_Group extends CRM_Core_Page_Basic
                                            substr( $values[$object->id]['group_type'], 1, -1 ) );
                     $types = array( );
                     foreach ( $groupTypes as $type ) {
-                        $types[] = $allTypes[$type];
+                        $types[] = CRM_Utils_Array::value( $type, $allTypes );
                     }
                     $values[$object->id]['group_type'] = implode( ', ', $types );
                 }
