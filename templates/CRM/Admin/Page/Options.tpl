@@ -40,7 +40,7 @@
   {elseif $gName eq "individual_suffix"}
      {ts}CiviCRM is pre-configured with standard options for individual contact name suffixes (e.g. Jr., Sr., II etc.). You can use this page to customize these options and add new ones as needed for your installation.{/ts}
   {elseif $gName eq "activity_type"}
-     {ts}Activities are 'interactions with contacts' which you want to record and track.{/ts} {help id='id-activity-types'}
+     {ts}Activities are 'interactions with contacts' which you want to record and track. This list is sorted by component and then by weight within the component.{/ts} {help id='id-activity-types'}
   {elseif $gName eq "payment_instrument"}
      {ts}You may choose to record the Payment Instrument used for each Contribution. Reserved payment methods are required - you may modify their labels but they can not be deleted (e.g. Check, Credit Card, Debit Card). If your site requires additional payment methods, you can add them here.{/ts}
   {elseif $gName eq "accept_creditcard"}
