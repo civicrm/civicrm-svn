@@ -376,7 +376,7 @@ SELECT count(*)
             $fieldValues = array( 'option_group_id' => $this->_optionGroupID );
             $wt = CRM_Utils_Weight::delWeight('CRM_Core_DAO_OptionValue', $this->_id, $fieldValues);
             CRM_Core_BAO_CustomOption::del($this->_id);
-            CRM_Core_Session::setStatus(ts('Your multiple choice option has been deleted', array(1 => $customOption->label)));
+            CRM_Core_Session::setStatus( ts('Your multiple choice option has been deleted') );
             return;
         }
 
