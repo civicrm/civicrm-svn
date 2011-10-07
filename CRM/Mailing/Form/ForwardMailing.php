@@ -74,17 +74,6 @@ class CRM_Mailing_Form_ForwardMailing extends CRM_Core_Form
     }
 
     /**
-     * This function sets the default values for the form. Note that in edit/view mode
-     * the default values are retrieved from the database
-     * 
-     * @access public
-     * @return None
-     */
-    function &setDefaultValues( ) 
-    {
-    }
-
-    /**
      * Function to actually build the form
      *
      * @return None
@@ -123,7 +112,8 @@ class CRM_Mailing_Form_ForwardMailing extends CRM_Core_Form
         $queue_id   = $this->get('queue_id');
         $job_id     = $this->get('job_id');
         $hash       = $this->get('hash');
-
+        $timeStamp  = date('YmdHis');
+        
         $formValues    = $this->controller->exportValues( $this->_name );
         $params= array();
         $params['body_text'] = $formValues['forward_comment'];
@@ -140,10 +130,12 @@ class CRM_Mailing_Form_ForwardMailing extends CRM_Core_Form
         
         $forwarded = null;
         foreach ($emails as $email) {
-            $params = array ( 'job_id'         => $job_id,
+            $params = array ( 'version' => 3,
+                              'job_id'         => $job_id,
                               'event_queue_id' => $queue_id,
                               'hash'           => $hash,
                               'email'          => $email,
+                              'time_stamp'     => $timeStamp,
                               'fromEmail'      => $this->_fromEmail,
                               'params'         => $params
                               );

@@ -96,7 +96,7 @@ class CRM_Mailing_Page_Preview extends CRM_Core_Page
                                                      $returnProperties,
                                                      true, true, null,
                                                      $mailing->getFlattenedTokens( ),
-                                                     get_class( $this ),
+                                                     get_class( $this )
                                                      );
 
         $mime =& $mailing->compose(null, null, null, $session->get('userID'), $fromEmail, $fromEmail,
