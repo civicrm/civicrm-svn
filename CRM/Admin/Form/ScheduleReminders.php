@@ -108,7 +108,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             $freqUnitsDisplay[$val] = ts('%1(s)', array(1 => $label));
         }
 
-        $this->addDate( 'absolute_date', ts('Start Date'), false, array( 'formatType' => 'searchDate' ) );
+        $this->addDate( 'absolute_date', ts('Start Date'), false, array( 'formatType' => 'mailing' ) );
 
         //reminder_frequency
         $this->add( 'select', 'start_action_unit', ts( 'Frequency' ), $freqUnitsDisplay, true );
@@ -243,7 +243,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             return;
         }
         $values = $this->controller->exportValues( $this->getName() );
-
+       
         $keys = array('title', 'start_action_offset' ,'start_action_unit',
                       'start_action_condition', 'start_action_date', 
                       'repetition_frequency_unit',
@@ -252,6 +252,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
                       'end_frequency_interval',
                       'end_action', 'end_date',
                       'subject',
+                      'absolute_date',
                       'group_id'
                       );
         
