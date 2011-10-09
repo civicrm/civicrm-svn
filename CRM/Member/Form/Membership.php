@@ -994,7 +994,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                         'start_date',
                         'end_date',
                         'reminder_date',
-                        'receive_date'
                         );
         
         $calcDates = array( );
