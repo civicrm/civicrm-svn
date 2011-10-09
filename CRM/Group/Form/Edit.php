@@ -361,15 +361,13 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
         // do check for both name and title uniqueness
         if ( CRM_Utils_Array::value( 'title', $fields ) ) {
             $title = trim( $fields['title'] );
-            $name  = CRM_Utils_String::titleToVar( $title, 63 );
             $query  = "
 SELECT count(*)
 FROM   civicrm_group 
-WHERE  (name LIKE %1 OR title LIKE %2) 
-AND    id <> %3
+WHERE  title = %1
+AND    id <> %2
 ";
-            $grpCnt = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $name,  'String' ),
-                                                                     2 => array( $title, 'String' ),
+            $grpCnt = CRM_Core_DAO::singleValueQuery( $query, array( 2 => array( $title, 'String' ),
                                                                      3 => array( (int)$self->_id, 'Integer' ) ) );
             if ( $grpCnt ) {
                 $errors['title'] = ts( 'Group \'%1\' already exists.', array( 1 => $fields['title']) );
