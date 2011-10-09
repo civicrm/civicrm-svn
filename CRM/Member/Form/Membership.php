@@ -1272,7 +1272,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                     $membershipTypeValues[$memType]['relate_contribution_id'] = $relateContribution;
                 }
 
-                $membershipParams = array_merge($params, $membershipTypeValues[$memType]);
+                $membershipParams = array_merge($membershipTypeValues[$memType],$params);
                 $membership = CRM_Member_BAO_Membership::create($membershipParams, $ids);
 
                 $createdMemberships[$memType] = $membership;
