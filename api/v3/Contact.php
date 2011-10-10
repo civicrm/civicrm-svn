@@ -712,7 +712,7 @@ function civicrm_api3_contact_quicksearch( $params )
     }
 
     if ( CRM_Utils_Array::value( 'cid', $params) ) {
-        $where .= " AND cc.id <> {$contactId}";
+        $where .= " AND cc.id <> {$params['cid']}";
     }
 
     //contact's based of relationhip type
