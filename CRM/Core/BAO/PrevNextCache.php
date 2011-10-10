@@ -175,6 +175,6 @@ AND        c.created_date < date_sub( NOW( ), INTERVAL $cacheTimeIntervalDays da
 ";
         $params = array( 1 => array( 'CiviCRM Search PrevNextCache', 'String' ),
                          2 => array( $cacheTimeIntervalDays, 'Integer' ) );
-        CRM_Core_DAO::executeQuery( $sql );
+        CRM_Core_DAO::executeQuery( $sql, $params );
     }
 }
