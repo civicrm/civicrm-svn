@@ -176,15 +176,20 @@ cj(function(){
             
             <td style="width: auto;">
               {* Check if there is an existing membership of this type (current_membership NOT empty) and if the end-date is prior to today. *}
-              {if $row.current_membership AND $context EQ "makeContribution" }
-                    {if $row.current_membership|date_format:"%Y%m%d" LT $smarty.now|date_format:"%Y%m%d"}
-                        <br /><em>{ts 1=$row.current_membership|crmDate 2=$row.name}Your <strong>%2</strong> membership expired on %1.{/ts}</em>
-                    {else}
-                        <br /><em>{ts 1=$row.current_membership|crmDate 2=$row.name}Your <strong>%2</strong> membership expires on %1.{/ts}</em>
-                    {/if}
+              {if array_key_exists( 'current_membership', $row ) AND $context EQ "makeContribution" }
+                  {if $row.current_membership}
+                        {if $row.current_membership|date_format:"%Y%m%d" LT $smarty.now|date_format:"%Y%m%d"}
+                            <br /><em>{ts 1=$row.current_membership|crmDate 2=$row.name}Your <strong>%2</strong> membership expired on %1.{/ts}</em>
+                        {else}
+                            <br /><em>{ts 1=$row.current_membership|crmDate 2=$row.name}Your <strong>%2</strong> membership expires on %1.{/ts}</em>
+                        {/if}
+                  {else}
+                    {ts 1=$row.name}Your <strong>%1</strong> membership does not expire (you do not need to renew that membership).{/ts}<br />
+                  {/if}
               {else}
                 &nbsp;
               {/if}
+              
            </td> 
         </tr>
 	
