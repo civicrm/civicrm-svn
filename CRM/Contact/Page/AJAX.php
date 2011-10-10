@@ -55,6 +55,7 @@ class CRM_Contact_Page_AJAX
             $limit = CRM_Utils_Type::escape( $_GET['limit'], 'Positive' );
         }
 
+        $orgId = $employee_id = $cid = $id = $context = $rel = null;
         $org = CRM_Utils_Array::value( 'org', $_GET);
         if ( CRM_Utils_Array::value( 'id', $_GET) ) {
             $orgId = CRM_Utils_Type::escape( $_GET['id'], 'Positive' );
@@ -65,7 +66,7 @@ class CRM_Contact_Page_AJAX
         }
 
         if ( CRM_Utils_Array::value( 'cid', $_GET) ) {
-            $orgId = CRM_Utils_Type::escape( $_GET['cid'], 'Positive' );
+            $cid = CRM_Utils_Type::escape( $_GET['cid'], 'Positive' );
         }
 
         if ( CRM_Utils_Array::value( 'id', $_GET) ) {
@@ -94,8 +95,16 @@ class CRM_Contact_Page_AJAX
                        );
         
         $result = civicrm_api( 'Contact', 'quicksearch', $params );
-        foreach( $result['values'] as $values ) {
-            echo $contactList = "{$values['data']}|{$values['id']}\n";
+        
+        foreach( $result['values'] as $key => &$values ) {
+            // only in case of current employer
+            if ( CRM_Utils_Array::value( 'employee_id', $_GET) &&
+                 $key == 'data' ) {
+                echo $contactList = "{$name}|{$name}\n";
+                break;
+            } else {
+                echo $contactList = "{$values['data']}|{$values['id']}\n";
+            }
         }
 
         CRM_Utils_System::civiExit( );
