@@ -326,18 +326,20 @@ class CRM_Contact_Form_Task_EmailCommon
         
         // process message template
         require_once 'CRM/Core/BAO/MessageTemplates.php';
-        if ( CRM_Utils_Array::value( 'saveTemplate', $formValues ) || CRM_Utils_Array::value( 'updateTemplate', $formValues ) ) {
+        if ( CRM_Utils_Array::value( 'saveTemplate', $formValues ) 
+            || CRM_Utils_Array::value( 'updateTemplate', $formValues ) ) {
             $messageTemplate = array( 'msg_text'    => $formValues['text_message'],
                                       'msg_html'    => $formValues['html_message'],
                                       'msg_subject' => $formValues['subject'],
                                       'is_active'   => true );
             
-            if ( $formValues['saveTemplate'] ) {
+            if ( CRM_Utils_Array::value( 'saveTemplate', $formValues ) ) {
                 $messageTemplate['msg_title'] = $formValues['saveTemplateName'];
                 CRM_Core_BAO_MessageTemplates::add( $messageTemplate );
             }
             
-            if ( $formValues['template'] && $formValues['updateTemplate']  ) {
+            if ( CRM_Utils_Array::value( 'template', $formValues ) &&
+                 CRM_Utils_Array::value( 'updateTemplate', $formValues ) ) {
                 $messageTemplate['id'] = $formValues['template'];
                 unset($messageTemplate['msg_title']);
                 CRM_Core_BAO_MessageTemplates::add( $messageTemplate );
