@@ -116,7 +116,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                            array( 1 => $latestVer ) );
             $template->assign( 'upgraded', true );
         } else {
-            $message   = ts('CiviCRM upgrade was successful.');
+            $message = ts('CiviCRM upgrade was successful.');
             if ( $latestVer == '3.2.alpha1' ) {
                 $message .= '<br />' . ts("We have reset the COUNTED flag to false for the event participant status 'Pending from incomplete transaction'. This change ensures that people who have a problem during registration can try again.");
             } else if ( $latestVer == '3.2.beta3' && ( version_compare($currentVer, '3.1.alpha1') >= 0 ) ) {
@@ -173,7 +173,8 @@ SELECT  count( id ) as statusCount
             self::setPreUpgradeMessage( $preUpgradeMessage, $currentVer, $latestVer );
             
             // check for changed message templates
-            self::checkMessageTemplate( &$template, $currentVer, $latestVer );
+            self::checkMessageTemplate( &$template, &$message, $latestVer );
+
             //turning some tables to monolingual during 3.4.beta3, CRM-7869
             if ( $upgrade->multilingual && 
                  version_compare( $currentVer, '3.4.beta3' ) == -1 &&
@@ -271,6 +272,7 @@ SELECT  count( id ) as statusCount
 
         $template->assign( 'preUpgradeMessage', $preUpgradeMessage );
         $template->assign( 'message', $message );
+
         $content = $template->fetch( 'CRM/common/success.tpl' );
         echo CRM_Utils_System::theme( 'page', $content, true, $this->_print, false, true );
     }
@@ -541,7 +543,7 @@ SELECT  id
             }
         }
     }
-    function checkMessageTemplate( &$template, $currentVer, $latestVer ) 
+    function checkMessageTemplate( &$template, &$message, $latestVer ) 
     {
         $sql =
             "SELECT orig.workflow_id as workflow_id,
@@ -596,9 +598,7 @@ SELECT  id
         if ( $flag == true ) {
             $html = "<ul>". $html."<ul>";
            
-            $messageTemplate = ts("The listed message templates that have been modified in your install will be changed in the current upgrade. You will need to apply the changes manually for the following workflow templates. Detailed steps <a href='%1'>here</a>. %2", array( 1 => 'http://wiki.civicrm.org/confluence/display/CRMDOC40/Message+Templates#MessageTemplates-UpgradesandCustomizedSystemWorkflowTemplates', 2 => $html));
-            
-            $template->assign( 'message_template', $messageTemplate);
+            $message .= '<br />' . ts("The listed message templates that have been modified in your install will be changed in the current upgrade. You will need to apply the changes manually for the following workflow templates. Detailed steps <a href='%1'>here</a>. %2", array( 1 => 'http://wiki.civicrm.org/confluence/display/CRMDOC40/Message+Templates#MessageTemplates-UpgradesandCustomizedSystemWorkflowTemplates', 2 => $html));
            
         }
     }
