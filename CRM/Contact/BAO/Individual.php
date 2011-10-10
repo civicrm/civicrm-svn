@@ -216,7 +216,6 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             //build the sort name.
             $format = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                      'sort_name_format' );
-            $format = str_replace( 'contact.', '', $format );
             $sortName = CRM_Utils_Address::format( $formatted, $format,
                                                    false, false, true, $tokenFields );
             $sortName = trim( $sortName );
@@ -224,7 +223,6 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             //build the display name.
             $format = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                      'display_name_format' );
-            $format = str_replace( 'contact.', '', $format );
             $displayName = CRM_Utils_Address::format( $formatted, $format,
                                                       false, false, true, $tokenFields );
             $displayName = trim( $displayName );
