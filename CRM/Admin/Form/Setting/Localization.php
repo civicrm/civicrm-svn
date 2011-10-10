@@ -183,10 +183,10 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
             $errors['customTranslateFunction'] = ts( 'Please define the custom translation function first.' );
         }
 
-        // CRM-7962
+        // CRM-7962, CRM-7713, CRM-9004
         if ( ! empty( $fields['defaultContactCountry'] ) && 
-             ( ! isset( $fields['countryLimit'] ) ||
-               ( ! in_array( $fields['defaultContactCountry'], $fields['countryLimit'] ) ) ) ) {
+            ( CRM_Utils_Array::value( 'countryLimit', $fields ) &&
+            ( !in_array( $fields['defaultContactCountry'], $fields['countryLimit'] ) ) ) ) {
             $errors['defaultContactCountry'] = ts( 'Please select a default country that is in the list of available countries.');
         }
 
