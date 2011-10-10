@@ -1339,8 +1339,9 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
                 // also add the contact tokens to the template
                 $smarty->assign_by_ref( 'contact', $values );
 
-                $tokenText = $smarty->fetch( "string:$tokenText" );
-                $tokenHtml = $smarty->fetch( "string:$tokenHtml" );
+                $tokenSubject = $smarty->fetch( "string:$tokenSubject" );
+                $tokenText    = $smarty->fetch( "string:$tokenText" );
+                $tokenHtml    = $smarty->fetch( "string:$tokenHtml" );
             }
             
             $sent = false;
