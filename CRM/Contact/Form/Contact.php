@@ -169,6 +169,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $typeLabel = 
                 CRM_Contact_BAO_ContactType::contactTypePairs( true, $this->_contactSubType ? 
                                                                $this->_contactSubType : $this->_contactType );
+            $typeLabel = implode( ' / ', $typeLabel );
+
             CRM_Utils_System::setTitle( ts( 'New %1', array( 1 => $typeLabel ) ) );
             $session->pushUserContext(CRM_Utils_System::url('civicrm/dashboard', 'reset=1'));
             $this->_contactId = null;
