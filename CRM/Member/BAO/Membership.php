@@ -720,7 +720,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
                                 $membership->membership_type_id = $memType['id'];
                                 if ( $membership->find(true) ) {
                                     $form->assign('renewal_mode', true );
-                                    $mem['current_membership'] =  $membership->end_date;
+                                    $memType['current_membership'] =  $membership->end_date;
                                     $form->_currentMemberships[$membership->membership_type_id] = $membership->membership_type_id;
                                 }
                             }
