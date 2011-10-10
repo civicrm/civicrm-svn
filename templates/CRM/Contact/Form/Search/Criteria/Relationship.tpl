@@ -37,10 +37,10 @@
                     {ts}Complete OR partial contact name.{/ts}
                 </div>
               
-              {$form.relation_target_group.label}<br />
+              {$form.relation_target_group.label} {help id="id-relationship-target-group" file="CRM/Contact/Form/Search/Advanced.hlp"}<br />
               {$form.relation_target_group.html|crmReplace:class:huge}
               <div class="description font-italic">
-                  {ts}Limit search results to relationships where the related contact is in one of these groups.{/ts}
+                  {ts}Limit search results to relationships where the related contact(s) are in one of these groups.{/ts}
               </div>
               {literal}
                 <script type="text/javascript">

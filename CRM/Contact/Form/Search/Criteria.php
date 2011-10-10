@@ -381,7 +381,7 @@ class CRM_Contact_Form_Search_Criteria {
 
         //add the target group
         if ( $form->_group ) {
-            $form->add( 'select', 'relation_target_group',  ts( 'Target Contact in Group' ), $form->_group, false, 
+            $form->add( 'select', 'relation_target_group',  ts( 'Target Contact(s) in Group' ), $form->_group, false, 
                 array( 'id' => 'relation_target_group',  'multiple'=> 'multiple', 'title' => ts('- select -') ) );
         }
         
