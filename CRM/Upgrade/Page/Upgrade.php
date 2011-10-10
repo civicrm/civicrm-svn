@@ -544,7 +544,6 @@ SELECT  id
     function checkMessageTemplate( &$template, $currentVer, $latestVer ) 
     {
         $sql =
-            
             "SELECT orig.workflow_id as workflow_id
             FROM civicrm_msg_template diverted JOIN civicrm_msg_template orig ON (
                 diverted.workflow_id = orig.workflow_id AND
@@ -565,7 +564,7 @@ SELECT  id
         }
 
         $path =  dirname( __FILE__ );
-        $pathName = substr($path,1,-5);
+        $pathName = substr($path,0,-5);
         
         foreach( $workflows as $workflow ) {
             $name = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue',
