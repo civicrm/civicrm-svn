@@ -344,7 +344,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 }
             }
 
-            if ( $defaults['contact_sub_type'] ) {
+            if ( CRM_Utils_Array::value('contact_sub_type', $defaults) ) {
                 $subTypes = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                                      trim($defaults['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) );
                 $defaults['contact_sub_type'] = array( );
