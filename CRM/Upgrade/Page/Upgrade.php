@@ -173,7 +173,7 @@ SELECT  count( id ) as statusCount
             self::setPreUpgradeMessage( $preUpgradeMessage, $currentVer, $latestVer );
             
             // check for changed message templates
-            self::checkMessageTemplate( &$template, &$message, $latestVer );
+            self::checkMessageTemplate( &$template, &$preUpgradeMessage, $latestVer );
 
             //turning some tables to monolingual during 3.4.beta3, CRM-7869
             if ( $upgrade->multilingual && 
