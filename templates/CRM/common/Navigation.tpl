@@ -94,13 +94,15 @@ cj( function() {
 
     var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=navigation' h=0 }"{literal};
 
-{/literal}{include file="CRM/common/crmAutocomplete.tpl" selector="#sort_name_navigation" params="array('aa'=>'bb')"}{literal}
-
-/*.result(function(event, data, formatted) {
+    cj( '#sort_name_navigation' ).autocomplete( contactUrl, {
+        width: 200,
+        selectFirst: false,
+        minChars:1,
+        matchContains: true 	 
+    }).result(function(event, data, formatted) {
        document.location={/literal}"{crmURL p='civicrm/contact/view' h=0 q='reset=1&cid='}"{literal}+data[1];
        return false;
     });    
-*/
 });
 
 var framework = "{/literal}{$config->userFramework}{literal}";
