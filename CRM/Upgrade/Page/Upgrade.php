@@ -172,6 +172,8 @@ SELECT  count( id ) as statusCount
             // set pre-upgrade warnings if any -
             self::setPreUpgradeMessage( $preUpgradeMessage, $currentVer, $latestVer );
             
+            // check for changed message templates
+            self::checkMessageTemplate( &$template, $currentVer, $latestVer );
             //turning some tables to monolingual during 3.4.beta3, CRM-7869
             if ( $upgrade->multilingual && 
                  version_compare( $currentVer, '3.4.beta3' ) == -1 &&
@@ -539,4 +541,62 @@ SELECT  id
             }
         }
     }
+    function checkMessageTemplate( &$template, $currentVer, $latestVer ) 
+    {
+        $sql =
+            
+            "SELECT orig.workflow_id as workflow_id
+            FROM civicrm_msg_template diverted JOIN civicrm_msg_template orig ON (
+                diverted.workflow_id = orig.workflow_id AND
+                orig.is_reserved = 1                    AND (
+                    diverted.msg_subject != orig.msg_subject OR
+                    diverted.msg_text    != orig.msg_text    OR
+                    diverted.msg_html    != orig.msg_html
+                )
+            )";
+        
+        $dao =& CRM_Core_DAO::executeQuery($sql);
+        while ($dao->fetch()) {
+            $workflows[] = $dao->workflow_id;
+        }
+
+        if(empty($workflows)){
+            return;
+        }
+
+        $path =  dirname( __FILE__ );
+        $pathName = substr($path,1,-5);
+        
+        foreach( $workflows as $workflow ) {
+            $name = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue',
+                                                 $workflow,
+                                                 'name',
+                                                 'id' ) ;  
+            
+            // check if file exists locally
+            $textFileName = implode( DIRECTORY_SEPARATOR,
+                                 array($pathName,
+                                       "{$latestVer}.msg_template",
+                                       'message_templates',
+                                       "{$name}_text.tpl" ) );
+
+            $htmlFileName = implode( DIRECTORY_SEPARATOR,
+                                     array($pathName,
+                                           "{$latestVer}.msg_template",
+                                           'message_templates',
+                                           "{$name}_html.tpl" ) );
+            
+            if ( file_exists( $textFileName ) || 
+                 file_exists( $htmlFileName ) ) {
+       
+                $template->assign( 'message_template', 
+                                   ts('Some of the message templates that you have modified will be changed in the current upgrade. You will need to apply these changes manually for any workflow templates which you have modified previously. Detailed steps here.'));         
+            }
+            
+
+        
+
+        }
+    }
+
 }
