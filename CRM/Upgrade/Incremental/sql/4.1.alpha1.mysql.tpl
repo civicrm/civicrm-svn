@@ -25,7 +25,7 @@ VALUES
 -- CRM-8780
 
 -- add the settings table
-Create Table: CREATE TABLE `civicrm_setting` (
+ CREATE TABLE `civicrm_setting` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `group_name` varchar(64) COLLATE utf8_unicode_ci NOT NULL COMMENT 'group name for setting element, useful in caching setting elements',
   `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Unique name for setting',
@@ -67,3 +67,6 @@ Create Table: CREATE TABLE `civicrm_setting` (
       (option_group_id,                {localize field='label'}label{/localize}, {localize field='description'}description{/localize}, value,                           name,               weight,                        filter, component_id)
     VALUES
         (@option_group_id_activity_type, {localize}'Change Custom Data'{/localize},{localize}''{/localize},                              (SELECT @max_val := @max_val+1), 'Change Custom Data', (SELECT @max_wt := @max_wt+1), 0, @caseCompId);
+
+-- CRM-8739
+    Update civicrm_navigation set label =  '{ts escape="sql" skip="true"}Cleanup Caches and Update Paths{/ts}', name = 'Cleanup Caches and Update Paths' where name = 'Update Directory Path and URL' and url = 'civicrm/admin/setting/updateConfigBackend&reset=1';
