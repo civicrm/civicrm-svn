@@ -544,7 +544,8 @@ SELECT  id
     function checkMessageTemplate( &$template, $currentVer, $latestVer ) 
     {
         $sql =
-            "SELECT orig.workflow_id as workflow_id
+            "SELECT orig.workflow_id as workflow_id,
+             orig.msg_title as title
             FROM civicrm_msg_template diverted JOIN civicrm_msg_template orig ON (
                 diverted.workflow_id = orig.workflow_id AND
                 orig.is_reserved = 1                    AND (
@@ -556,7 +557,7 @@ SELECT  id
         
         $dao =& CRM_Core_DAO::executeQuery($sql);
         while ($dao->fetch()) {
-            $workflows[] = $dao->workflow_id;
+            $workflows[$dao->workflow_id] = $dao->title;
         }
 
         if(empty($workflows)){
@@ -565,8 +566,8 @@ SELECT  id
 
         $path =  dirname( __FILE__ );
         $pathName = substr($path,0,-5);
-        
-        foreach( $workflows as $workflow ) {
+        $flag = false;
+        foreach( $workflows as $workflow => $title) {
             $name = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue',
                                                  $workflow,
                                                  'name',
@@ -587,14 +588,18 @@ SELECT  id
             
             if ( file_exists( $textFileName ) || 
                  file_exists( $htmlFileName ) ) {
-       
-                $template->assign( 'message_template', 
-                                   ts('Some of the message templates that you have modified will be changed in the current upgrade. You will need to apply these changes manually for any workflow templates which you have modified previously. Detailed steps here.'));         
+                $flag = true;
+                $html .= "<li>{$title}</li>";
             }
             
-
-        
-
+        }
+        if ( $flag == true ) {
+            $html = "<ul>". $html."<ul>";
+           
+            $messageTemplate = ts("The listed message templates that have been modified in your install will be changed in the current upgrade. You will need to apply the changes manually for the following workflow templates. Detailed steps <a href='%1'>here</a>. %2", array( 1 => 'http://wiki.civicrm.org/confluence/display/CRMDOC40/Message+Templates#MessageTemplates-UpgradesandCustomizedSystemWorkflowTemplates', 2 => $html));
+            
+            $template->assign( 'message_template', $messageTemplate);
+           
         }
     }
 
