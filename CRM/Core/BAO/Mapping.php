@@ -1117,32 +1117,35 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
 
                     $saveMappingFields->operator         = CRM_Utils_Array::value( $k, $params['operator'][$key] );
                     $saveMappingFields->value            = CRM_Utils_Array::value( $k, $params['value'][$key]    );
-                    //save relationship contacts
-                    list( $id, $first, $second ) = explode('_', CRM_Utils_Array::value( '1' ,$v ) );
-                    if ( ($first == 'a' && $second == 'b') || ($first == 'b' && $second == 'a') ) {
 
-                        if ( CRM_Utils_Array::value( '2' ,$v ) ) {
-                            $saveMappingFields->name = CRM_Utils_Array::value( '2' , $v );
-                        } else if ( CRM_Utils_Array::value( '4' ,$v ) ) {
-                            $saveMappingFields->name = CRM_Utils_Array::value( '4' , $v );
-                        }
-                        
-                        if ( is_numeric(CRM_Utils_Array::value( '3' ,$v ) )) {
-                            $locationTypeid = CRM_Utils_Array::value( '3' ,$v );
-                        } else if ( is_numeric(CRM_Utils_Array::value( '5' ,$v )) ) {
-                            $locationTypeid = CRM_Utils_Array::value( '5' ,$v );
-                        }
-                        
-                        if ( is_numeric(CRM_Utils_Array::value( '4' ,$v )) ) {
-                            $phoneTypeid = CRM_Utils_Array::value( '4' ,$v );
-                        } else if ( is_numeric(CRM_Utils_Array::value( '6' ,$v )) ) {
-                            $phoneTypeid = CRM_Utils_Array::value( '6' ,$v );
-                        }
+                    // Handle mapping for 'related contact' fields
+                    if ( count(explode('_', CRM_Utils_Array::value( '1' ,$v ) )) > 2 ){
+                        list( $id, $first, $second ) = explode('_', CRM_Utils_Array::value( '1' ,$v ) );
+                        if ( ($first == 'a' && $second == 'b') || ($first == 'b' && $second == 'a') ) {
 
-                        $saveMappingFields->location_type_id       = is_numeric($locationTypeid) ? $locationTypeid : null;
-                        $saveMappingFields->phone_type_id          = is_numeric($phoneTypeid) ? $phoneTypeid : null;
-                        $saveMappingFields->relationship_type_id   = $id;
-                        $saveMappingFields->relationship_direction = "{$first}_{$second}";
+                            if ( CRM_Utils_Array::value( '2' ,$v ) ) {
+                                $saveMappingFields->name = CRM_Utils_Array::value( '2' , $v );
+                            } else if ( CRM_Utils_Array::value( '4' ,$v ) ) {
+                                $saveMappingFields->name = CRM_Utils_Array::value( '4' , $v );
+                            }
+                        
+                            if ( is_numeric(CRM_Utils_Array::value( '3' ,$v ) )) {
+                                $locationTypeid = CRM_Utils_Array::value( '3' ,$v );
+                            } else if ( is_numeric(CRM_Utils_Array::value( '5' ,$v )) ) {
+                                $locationTypeid = CRM_Utils_Array::value( '5' ,$v );
+                            }
+                        
+                            if ( is_numeric(CRM_Utils_Array::value( '4' ,$v )) ) {
+                                $phoneTypeid = CRM_Utils_Array::value( '4' ,$v );
+                            } else if ( is_numeric(CRM_Utils_Array::value( '6' ,$v )) ) {
+                                $phoneTypeid = CRM_Utils_Array::value( '6' ,$v );
+                            }
+
+                            $saveMappingFields->location_type_id       = is_numeric($locationTypeid) ? $locationTypeid : null;
+                            $saveMappingFields->phone_type_id          = is_numeric($phoneTypeid) ? $phoneTypeid : null;
+                            $saveMappingFields->relationship_type_id   = $id;
+                            $saveMappingFields->relationship_direction = "{$first}_{$second}";
+                        }
                     }
                     
                     $saveMappingFields->grouping      = $key;
