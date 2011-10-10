@@ -36,9 +36,12 @@
                 <div class="description font-italic">
                     {ts}Complete OR partial contact name.{/ts}
                 </div>
-              <br/>
+              
               {$form.relation_target_group.label}<br />
               {$form.relation_target_group.html|crmReplace:class:huge}
+              <div class="description font-italic">
+                  {ts}Limit search results to relationships where the related contact is in one of these groups.{/ts}
+              </div>
               {literal}
                 <script type="text/javascript">
                 cj("#relation_target_group").crmasmSelect({
@@ -50,6 +53,7 @@
                 });
                 </script>
               {/literal}
+              
             </td>
             <td>
                {$form.relation_status.label}<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('relation_status', 'Advanced'); return false;" >{ts}clear{/ts}</a>)</span><br />
