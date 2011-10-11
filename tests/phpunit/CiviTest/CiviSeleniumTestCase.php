@@ -617,7 +617,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $text = "'Amount' information has been saved.";
         $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
 
-        if ( $membershipTypes === true ) {
+        if ( $membershipTypes === true  || ( is_array( $membershipTypes ) && !empty( $membershipTypes ) ) ) {
             // go to step 3 (memberships)
             $this->click('link=Memberships');        
             $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');   
@@ -632,8 +632,10 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                 $this->click( 'member_price_set_id' );
                 $this->select( 'member_price_set_id', "value={$memPriceSetId}" );
             } else {
-                $membershipTypes = array( array( 'id' => 2 ) );
-                               
+                if ( $membershipTypes === true ) {
+                    $membershipTypes = array( array( 'id' => 2 ) );
+                }
+            
                 // FIXME: handle Introductory Message - New Memberships/Renewals
                 foreach ( $membershipTypes as $mType ) {
                     $this->click("membership_type[{$mType['id']}]");
