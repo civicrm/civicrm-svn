@@ -597,7 +597,7 @@ SELECT  id
         if ( $flag == true ) {
             $html = "<ul>". $html."<ul>";
            
-            $message .= '<br />' . ts("The listed message templates that have been modified in your install will be changed in the current upgrade. You will need to apply the changes manually for the following workflow templates. Detailed steps <a href='%1'>here</a>. %2", array( 1 => 'http://wiki.civicrm.org/confluence/display/CRMDOC40/Message+Templates#MessageTemplates-UpgradesandCustomizedSystemWorkflowTemplates', 2 => $html));
+            $message .= '<br />' . ts("The default copies of the message templates listed above have been updated to handle new features. Your installation has customized versions of these message templates, and you will need to apply the updates manually. <a href='%1'>Detailed instructions can be found here</a>. %2", array( 1 => 'http://wiki.civicrm.org/confluence/display/CRMDOC40/Message+Templates#MessageTemplates-UpgradesandCustomizedSystemWorkflowTemplates', 2 => $html));
            
         }
     }
