@@ -45,22 +45,15 @@ require_once 'CRM/Activity/BAO/Activity.php';
 require_once 'CRM/Core/DAO/OptionGroup.php';
 
 /**
- * Create a new Activity.
- *
- * Creates a new Activity record and returns the newly created
- * activity object (including the contact_id property).
- *
+ * Creates or updates an Activity. See the example for usage
+ * 
  * @param array  $params       Associative array of property name/value
- *                             pairs to insert in new contact.
- * @param string $activity_type Which class of contact is being created.
- *            Valid values = 'SMS', 'Meeting', 'Event', 'PhoneCall'.
+ *                             pairs for the activity.
  * {@getfields activity}
- * {@getfields activity}
- * @return CRM_Activity|CRM_Error Newly created Activity object
+ * @return array Array containing 'is_error' to denote success or failure and details of the created activity
  *
- * @todo Eileen 2 Feb - custom data fields per test are non std
- *
- * @example ActivityCreate.php
+ * @example ActivityCreate.php Standard create example
+ * @example Activity/ContactRefCustomField.php Create example including setting a contact reference custom field
  * {@example ActivityCreate.php 0}
  *
  */
@@ -260,11 +253,13 @@ function civicrm_api3_activity_get( $params ) {
  * @param array $params array holding 'id' of activity to be deleted
  *
  * @return void|CRM_Core_Error  An error if 'activityName or ID' is invalid,
- *                         permissions are insufficient, etc.
+ *                         permissions are insufficient, etc. or CiviCRM success array
  *
  * @access public
  *
+ * @example ActivityDelete.php
  * {@example ActivityDelete.php 0}
+ * 
  */
 function civicrm_api3_activity_delete( $params )
 {
