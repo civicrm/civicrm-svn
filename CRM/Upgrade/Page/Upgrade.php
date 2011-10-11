@@ -562,12 +562,11 @@ SELECT  id
             $workflows[$dao->workflow_id] = $dao->title;
         }
 
-        if(empty($workflows)){
+        if( empty( $workflows ) ) {
             return;
         }
 
-        $path =  dirname( __FILE__ );
-        $pathName = substr($path,0,-5);
+        $pathName = dirname( dirname( __FILE__ ) );
         $flag = false;
         foreach( $workflows as $workflow => $title) {
             $name = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue',
