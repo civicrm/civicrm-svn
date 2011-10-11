@@ -13,7 +13,7 @@
 {ts}Membership Information{/ts}
 
 ===========================================================
-{ts}Item{/ts}: {$membership_name}
+{ts}Membership Type{/ts}: {$membership_name}
 {/if}
 {if ! $cancelled}
 {if !$lineItem}

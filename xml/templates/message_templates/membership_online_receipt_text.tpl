@@ -16,7 +16,7 @@
 {ts}Membership Information{/ts}
 
 ===========================================================
-{ts}Item{/ts}: {$membership_name}
+{ts}Membership Type{/ts}: {$membership_name}
 {if $mem_start_date}{ts}Membership Start Date{/ts}: {$mem_start_date|crmDate}
 {/if}
 {if $mem_end_date}{ts}Membership End Date{/ts}: {$mem_end_date|crmDate}

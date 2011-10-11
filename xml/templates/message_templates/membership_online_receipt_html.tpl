@@ -45,7 +45,7 @@
       </tr>
       <tr>
        <td {$labelStyle}>
-        {ts}Item{/ts}
+        {ts}Membership Type{/ts}
        </td>
        <td {$valueStyle}>
         {$membership_name}
