@@ -286,6 +286,7 @@ class CRM_Contribute_BAO_Query
             return;
 
         case 'contribution_in_honor_of':
+        case 'contribution_honor_contact_name':
             $name    = trim( $value ); 
             $newName = str_replace(',' , " " ,$name );
             $pieces  =  explode( ' ', $newName ); 
