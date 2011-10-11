@@ -237,9 +237,6 @@ INSERT INTO civicrm_location_type ( name, description, is_reserved, is_active )
 
     function upgrade_3_4_6( $rev ) 
     {
-        CRM_Core_Error::backtrace( );
-        exit( );
-
         require_once 'CRM/Report/DAO/Instance.php';
         $modifiedReportIds = array( 'event/summary', 'activity', 'Mailing/bounce', 'Mailing/clicks', 'Mailing/opened' );
         
