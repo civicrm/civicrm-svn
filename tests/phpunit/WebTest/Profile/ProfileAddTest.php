@@ -55,7 +55,7 @@ class WebTest_Profile_ProfileAddTest extends CiviSeleniumTestCase {
         
         $this->click('newCiviCRMProfile-top');
         
-        $this->waitForElementPresent('_qf_Group_next');
+        $this->waitForElementPresent('_qf_Group_next-bottom');
         
         //Name of profile
         $profileTitle = 'profile_'.substr(sha1(rand()), 0, 7);
@@ -136,8 +136,8 @@ class WebTest_Profile_ProfileAddTest extends CiviSeleniumTestCase {
     function _testdeleteProfile( $profileTitle )
     {
         //$this->waitForPageToLoad('30000');
-        $this->waitForElementPresent( "//div[@id='user-profiles']/div/table/tbody//tr/td[1][text() = '$profileTitle']/following-sibling::td[4]/span[2][text()='more ']/ul/li[4]/a[text()='Delete']" );
-        $this->click( "//div[@id='user-profiles']/div/table/tbody//tr/td[1][text() = '$profileTitle']/following-sibling::td[4]/span[2][text()='more ']/ul/li[4]/a[text()='Delete']" );
+        $this->waitForElementPresent( "//div[@id='user-profiles']/div/div/table/tbody//tr/td[1][text() = '$profileTitle']/following-sibling::td[4]/span[2][text()='more ']/ul/li[4]/a[text()='Delete']" );
+        $this->click( "//div[@id='user-profiles']/div/div/table/tbody//tr/td[1][text() = '$profileTitle']/following-sibling::td[4]/span[2][text()='more ']/ul/li[4]/a[text()='Delete']" );
         
         $this->waitForElementPresent( '_qf_Group_next-bottom' );
         $this->click( '_qf_Group_next-bottom' );

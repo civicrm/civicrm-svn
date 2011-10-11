@@ -87,7 +87,7 @@ class WebTest_Report_DonarReportTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
 
       // Open report list
-      $this->open($this->sboxPath . "civicrm/report/list&reset=1");
+      $this->open($this->sboxPath . "civicrm/report/list?reset=1");
       $this->waitForPageToLoad("30000");
 
       // Is report is resent in list?
