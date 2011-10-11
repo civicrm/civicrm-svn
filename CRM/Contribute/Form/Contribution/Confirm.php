@@ -999,22 +999,34 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                'contact_id'            => $contactID,
                                'contribution_type_id'  => $contributionType->id,
                                'contribution_page_id'  => $contributionPageId,
-                               'receive_date'          => ( CRM_Utils_Array::value( 'receive_date',  $params ) ) ? CRM_Utils_Date::processDate( $params['receive_date'] ) : date( 'YmdHis' ),
+                               'receive_date'          => 
+                               CRM_Utils_Array::value( 'receive_date',  $params ) ? 
+                               CRM_Utils_Date::processDate( $params['receive_date'] ) :
+                               date( 'YmdHis' ),
                                'non_deductible_amount' => $nonDeductibleAmount,
                                'total_amount'          => $params['amount'],
                                'amount_level'          => CRM_Utils_Array::value( 'amount_level', $params ),
                                'invoice_id'            => $params['invoiceID'],
                                'currency'              => $params['currencyID'],
-                               'source'                => ( ! $online || CRM_Utils_Array::value( 'source', $params ) ) ? 
-                               CRM_Utils_Array::value( 'source', $params ) : CRM_Utils_Array::value( 'description', $params ),
+                               'source'                => 
+                               ( ! $online || CRM_Utils_Array::value( 'source', $params ) ) ? 
+                               CRM_Utils_Array::value( 'source', $params ) :
+                               CRM_Utils_Array::value( 'description', $params ),
                                'is_pay_later'          => CRM_Utils_Array::value( 'is_pay_later', $params, 0 ),
                                //configure cancel reason, cancel date and thankyou date 
                                //from 'contribution' type profile if included
                                'cancel_reason'         => CRM_Utils_Array::value( 'cancel_reason', $params, 0),
-                               'cancel_date'           => isset( $params['cancel_date'] ) ? CRM_Utils_Date::format( $params['cancel_date'] ) : null,
-                               'thankyou_date'         => isset( $params['thankyou_date'] ) ? CRM_Utils_Date::format( $params['thankyou_date'] ) : null,
+                               'cancel_date'           => 
+                               isset( $params['cancel_date'] ) ?
+                               CRM_Utils_Date::format( $params['cancel_date'] ) :
+                               null,
+                               'thankyou_date'         => 
+                               isset( $params['thankyou_date'] ) ?
+                               CRM_Utils_Date::format( $params['thankyou_date'] ) :
+                               null,
                                'campaign_id'           => $campaignId,
                                );
+
         if ( ! $online && isset($params['thankyou_date'] ) ) {
             $contribParams['thankyou_date'] = $params['thankyou_date'];
         }
