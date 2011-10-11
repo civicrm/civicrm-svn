@@ -12,7 +12,7 @@
  | under the terms of the GNU Affero General Public License           |
  | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
- | CiviCRM is distributed in the hope that it will be useful, but     |
+ | CiviCRM is distributed in the hope that it will be usefusul, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
  | See the GNU Affero General Public License for more details.        |
@@ -1213,7 +1213,10 @@ WHERE  contribution_id = {$this->_id}
                                                                        $this->_params,
                                                                        $config->defaultCurrency );
             $this->_params['payment_action'] = 'Sale';
-                       
+            if ( CRM_Utils_Array::value( 'receive_date', $this->_params ) ) {
+                $this->_params['receive_date'] = CRM_Utils_Date::processDate( $this->_params['receive_date'], $this->_params['receive_date_time'] );
+            }
+                                   
             if ( CRM_Utils_Array::value('soft_credit_to', $params) ) {
                 $this->_params['soft_credit_to'] = $params['soft_credit_to'];
                 $this->_params['pcp_made_through_id'] = $params['pcp_made_through_id'];
@@ -1255,7 +1258,9 @@ WHERE  contribution_id = {$this->_id}
             if ( CRM_Utils_Array::value( 'is_email_receipt', $this->_params ) ) {
                 $paymentParams['email'] = $this->userEmail;
             }
-
+            if ( CRM_Utils_Array::value( 'receive_date', $this->_params ) ) {
+                $paymentParams['receive_date'] = $this->_params['receive_date'];
+           }
             // force a reget of the payment processor in case the form changed it, CRM-7179
             $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this, true );
             
@@ -1316,8 +1321,7 @@ WHERE  contribution_id = {$this->_id}
             
             $this->set( 'params', $this->_params );
             $this->assign( 'trxn_id', $result['trxn_id'] );
-            $this->assign( 'receive_date', CRM_Utils_Date::processDate( $this->_params['receive_date'],
-                                                                        $this->_params['receive_date_time']) );
+            $this->assign( 'receive_date', $this->_params['receive_date'] );
             
             // result has all the stuff we need
             // lets archive it to a financial transaction
