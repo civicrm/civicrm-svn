@@ -12,8 +12,9 @@
 // This plugin is dual-licensed under the GNU General Public License
 //   and the MIT License and is copyright A Beautiful Site, LLC.
 //
-if(jQuery)( function() {
-	$.extend($.fn, {
+(function($) {
+	
+    $.extend($.fn, {
 		
 		contextMenu: function(o, callback) {
 			// Defaults
