@@ -215,7 +215,7 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
          }
 
          if (CRM_Utils_Date::format( CRM_Utils_Date::processDate( $params['start_date'],
-                                                                  $params['start_date_time'] ) ) < CRM_Utils_Date::format(date('YmdHi00')) ) {
+                                                                  $params['start_date_time'] ) ) < date('YmdHi00') ) {
              return array('start_date' => 
                           ts('Start date cannot be earlier than the current time.'));
          }
