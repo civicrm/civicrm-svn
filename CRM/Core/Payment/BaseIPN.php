@@ -941,7 +941,12 @@ LIMIT 1;";
                             $url = $paymentObject->cancelSubscriptionURL( $membership->id, 'membership' );
                             $template->assign( 'cancelSubscriptionUrl', $url );
                         }
-                        CRM_Contribute_BAO_ContributionPage::sendMail( $ids['contact'], $values, $isTest, $returnMessageText );
+                        $result = CRM_Contribute_BAO_ContributionPage::sendMail( $ids['contact'], $values, 
+                                                                                 $isTest, $returnMessageText );
+                        if ( $returnMessageText ) {
+                            return $result;
+                        } // otherwise if its about sending emails, continue sending without return, as we
+                        // don't want to exit the loop.
                     }
                 }
             } else {

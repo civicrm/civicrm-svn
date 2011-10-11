@@ -33,11 +33,10 @@
     {/if}				 
     <table>
             <tr class="columnheader">
+		    <th>{ts}Item{/ts}</th>
 	    	{if $context EQ "Membership"}	
-                    <th>{ts}Membership Type{/ts}</th>
 		    <th class="right">{ts}Fee{/ts}</th>
                 {else}
-		    <th>{ts}Item{/ts}</th>
 		    <th class="right">{ts}Qty{/ts}</th>
                     <th class="right">{ts}Unit Price{/ts}</th>
 		    <th class="right">{ts}Total Price{/ts}</th>

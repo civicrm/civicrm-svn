@@ -135,8 +135,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
           $hash = substr(sha1(rand()), 0, 7);
           $rand = 2 * rand(2, 50);
           $processorName = "Webtest Auto Renew Google Checkout" . $hash;
-          $this->webtestAddPaymentProcessor( $processorName, 'Google_Checkout' );
-          
+        
           // -- start updating membership types 
           $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=1&reset=1");
           $this->waitForPageToLoad("30000");
@@ -183,7 +182,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
           $pageId = $this->webtestAddContributionPage( $hash, 
                                                        $rand, 
                                                        $contributionTitle, 
-                                                       'AuthNet', 
+                                                       'Google_Checkout', 
                                                        $processorName, 
                                                        $amountSection,
                                                        $payLater     , 
@@ -198,7 +197,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
                                                        $premiums     ,
                                                        $widget       ,
                                                        $pcp          ,
-                                                       false 
+                                                       true 
                                                        );
           
           //make sure we do have required permissions.

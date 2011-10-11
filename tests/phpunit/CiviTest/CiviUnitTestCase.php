@@ -121,13 +121,17 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         //  create test database
         self::$utils = new Utils( $GLOBALS['mysql_host'],
                                   $GLOBALS['mysql_user'],
-                                  $GLOBALS['mysql_pass'] );        
+                                  $GLOBALS['mysql_pass'] );
     }
 
     function requireDBReset () {
         return $this->DBResetRequired; 
     }
 
+    static function getDBName( ) {
+        $dbName = ! empty( $GLOBALS['mysql_db'] ) ? $GLOBALS['mysql_db'] : 'civicrm_tests_dev';
+        return $dbName;
+    }
 
     /**
      *  Create database connection for this instance
@@ -139,10 +143,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     protected function getConnection()
     {
         if ( !self::$dbInit ) {
+            $dbName = self::getDBName();
 
             //  install test database
             echo PHP_EOL
-                . "Installing civicrm_tests_dev database"
+                . "Installing $dbName database"
                 . PHP_EOL;
 
             $this->_populateDB();
@@ -150,7 +155,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             self::$dbInit = true;
         }
         return $this->createDefaultDBConnection(self::$utils->pdo,
-                                                'civicrm_tests_dev');
+                                                self::getDBName());
     }
 
     /**
@@ -171,8 +176,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         self::$populateOnce = null;
 
+        $dbName = self::getDBName();
         $pdo = self::$utils->pdo;
-        $tables = $pdo->query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'civicrm_tests_dev'");
+        $tables = $pdo->query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{$dbName}'");
 
         $truncates = array();
         $drops = array();
@@ -184,7 +190,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             }
         }
 
-        $queries = array( "USE civicrm_tests_dev;",
+        $queries = array( "USE {$dbName};",
                           "SET foreign_key_checks = 0",
                           // SQL mode needs to be strict, that's our standard
                           "SET SQL_MODE='STRICT_ALL_TABLES';" ,
@@ -308,8 +314,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         self::$utils = new Utils( $GLOBALS['mysql_host'],
                                   $GLOBALS['mysql_user'],
                                   $GLOBALS['mysql_pass'] );        
-    
-        $query = "USE civicrm_tests_dev;"
+        $dbName = self::getDBName();
+
+        $query = "USE {$dbName};"
             . "SET foreign_key_checks = 1";
         if ( self::$utils->do_query($query) === false ) {
             // fail happens
@@ -1800,10 +1807,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
 
         if ( $dropCustomValueTables ) {
+            $dbName = self::getDBName();
             $query = "
 SELECT TABLE_NAME as tableName
 FROM   INFORMATION_SCHEMA.TABLES
-WHERE  TABLE_SCHEMA = 'civicrm_tests_dev'
+WHERE  TABLE_SCHEMA = '{$dbName}'
 AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
 ";
 
