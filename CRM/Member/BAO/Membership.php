@@ -1286,6 +1286,8 @@ AND civicrm_membership.is_test = %2";
                                 CRM_Utils_Date::customFormat($membershipOb->start_date, '%d%f %b, %Y') : '-';
                             $priceFieldOp['end_date'] = $membershipOb->end_date ?
                                 CRM_Utils_Date::customFormat($membershipOb->end_date, '%d%f %b, %Y') : '-';
+                        } else {
+                            $priceFieldOp['start_date'] = $priceFieldOp['end_date'] = 'N/A';
                         }
                     }
                     $form->_values['lineItem'] = $form->_lineItem;

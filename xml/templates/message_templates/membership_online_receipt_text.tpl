@@ -16,7 +16,7 @@
 {ts}Membership Information{/ts}
 
 ===========================================================
-{ts}Membership Type{/ts}: {$membership_name}
+{ts}Item{/ts}: {$membership_name}
 {if $mem_start_date}{ts}Membership Start Date{/ts}: {$mem_start_date|crmDate}
 {/if}
 {if $mem_end_date}{ts}Membership End Date{/ts}: {$mem_end_date|crmDate}
@@ -57,7 +57,7 @@
 {else}
 {if $useForMember && $lineItem}
 {foreach from=$lineItem item=value key=priceset}
-{capture assign=ts_item}{ts}Membership Type{/ts}{/capture}
+{capture assign=ts_item}{ts}Item{/ts}{/capture}
 {capture assign=ts_total}{ts}Fee{/ts}{/capture}
 {capture assign=ts_start_date}{ts}Membership Start Date{/ts}{/capture}
 {capture assign=ts_end_date}{ts}Membership End Date{/ts}{/capture}

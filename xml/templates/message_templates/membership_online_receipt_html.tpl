@@ -45,7 +45,7 @@
       </tr>
       <tr>
        <td {$labelStyle}>
-        {ts}Membership Type{/ts}
+        {ts}Item{/ts}
        </td>
        <td {$valueStyle}>
         {$membership_name}
@@ -171,7 +171,7 @@
          <td colspan="2" {$valueStyle}>
           <table> {* FIXME: style this table so that it looks like the text version (justification, etc.) *}
            <tr>
-            <th>{ts}Membership Type{/ts}</th>
+            <th>{ts}Item{/ts}</th>
             <th>{ts}Fee{/ts}</th>
 	    <th>{ts}Membership Start Date{/ts}</th>
 	    <th>{ts}Membership End Date{/ts}</th>
