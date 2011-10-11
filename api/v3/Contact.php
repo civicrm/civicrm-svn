@@ -839,8 +839,35 @@ function civicrm_api3_contact_geocode( $params )
     $result = $gc->run();
 
     if ( $result['is_error'] == 0 ) {
-      return civicrm_api3_create_success( );
+        return civicrm_api3_create_success( );
     } else {
-      return civicrm_api3_create_error( $result['messages'] );
+        return civicrm_api3_create_error( $result['messages'] );
+    }
+}
+
+/**
+ * Send the scheduled reminders for all contacts (either for activities or events)
+ *
+ * @param  array   	  $params (reference ) input parameters
+ *                        now - the time to use, in YmdHis format
+ *                            - makes testing a bit simpler since we can simulate past/future time
+ *
+ * @return boolean        true if success, else false
+ * @static void
+ * @access public
+ *
+ */
+function civicrm_api3_contact_scheduledReminder( $params )
+{
+    // available params:
+    // 'now='
+
+    require_once 'CRM/Core/BAO/ScheduleReminders.php';
+    $result = CRM_Core_BAO_ScheduleReminders::processQueue( CRM_Utils_Array::value( 'now', $params _) );
+
+    if ( $result['is_error'] == 0 ) {
+        return civicrm_api3_create_success( );
+    } else {
+        return civicrm_api3_create_error( $result['messages'] );
     }
 }

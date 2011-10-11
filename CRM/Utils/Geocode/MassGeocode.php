@@ -109,7 +109,7 @@ class CRM_Utils_Geocode_MassGeocode
     
         // do check for parse street address.
         // we have an exclusive lock - run the mail queue
-        $this->processContacts( $config, $processGeocode, $parseStreetAddress );
+        return $this->processContacts( $config, $processGeocode, $parseStreetAddress );
     }
 
 
