@@ -859,11 +859,33 @@ function civicrm_api3_contact_geocode( $params )
  */
 function civicrm_api3_contact_scheduledReminder( $params )
 {
-    // available params:
-    // 'now='
-
     require_once 'CRM/Core/BAO/ScheduleReminders.php';
     $result = CRM_Core_BAO_ScheduleReminders::processQueue( CRM_Utils_Array::value( 'now', $params _) );
+
+    if ( $result['is_error'] == 0 ) {
+        return civicrm_api3_create_success( );
+    } else {
+        return civicrm_api3_create_error( $result['messages'] );
+    }
+}
+
+/**
+ * Execute a specific report instance and send the output via email
+ *
+ * @param  array   	  $params (reference ) input parameters
+ *                        sendmail - Boolean - should email be sent?, required
+ *                        instanceId - Integer - the report instance ID
+ *                        resetVal - Integer - should we reset form state (always true)?
+ *
+ * @return boolean        true if success, else false
+ * @static void
+ * @access public
+ *
+ */
+function civicrm_api3_contact_report( $params )
+{
+    require_once 'CRM/Report/Utils/Report.php';
+    $result = CRM_Report_Utils_Report::processReport( $params );
 
     if ( $result['is_error'] == 0 ) {
         return civicrm_api3_create_success( );

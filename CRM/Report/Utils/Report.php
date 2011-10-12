@@ -243,6 +243,7 @@ WHERE  inst.report_id = %1";
             CRM_Core_Session::setStatus( ts("Listed contact(s) have been added to the selected group."));
         } 
     }
+
     static function getInstanceID() {
 
         $config    = CRM_Core_Config::singleton( );
@@ -288,4 +289,53 @@ WHERE  inst.report_id = %1";
         
         return true;
     }
+
+    static function processReport( $params ) {
+        require_once 'CRM/Report/Page/Instance.php';
+        require_once 'CRM/Utils/Wrapper.php';
+
+        $sendmail     = CRM_Utils_Array::value( 'sendmail', $params, 1 );
+        $instanceId   = CRM_Utils_Array::value( 'instanceId', $params );
+        $resetVal     = CRM_Utils_Array::value( 'reset', $params, 1 );
+
+        // hack for now, CRM-8358
+        $_REQUEST['sendmail'] = $sendmail;
+        $_REQUEST['reset']    = $resetVal;
+
+        $optionVal    = self::getValueFromUrl( $instanceId );
+
+        $messages = array( );
+        $messages[] =  "Report Mail Triggered...";
+
+        require_once 'CRM/Core/OptionGroup.php';
+        $templateInfo = CRM_Core_OptionGroup::getRowValues( 'report_template', $optionVal, 'value' );
+        $obj = new CRM_Report_Page_Instance();
+        $is_error = 0;
+        if ( strstr($templateInfo['name'], '_Form') ) {
+            $instanceInfo = array( );
+            CRM_Report_BAO_Instance::retrieve( array('id' => $instanceId), $instanceInfo );
+            
+            if ( ! empty($instanceInfo['title']) ) {
+                $obj->assign( 'reportTitle', $instanceInfo['title'] );
+            } else {
+                $obj->assign( 'reportTitle', $templateInfo['label'] );
+            }
+            
+            $wrapper = new CRM_Utils_Wrapper( );
+            $arguments['urlToSession'] = array( array( 'urlVar'     => 'instanceId',
+                                                       'type'       => 'Positive',
+                                                       'sessionVar' => 'instanceId',
+                                                       'default'    => 'null' ) );
+            $messages[] = $wrapper->run( $templateInfo['name'], null, $arguments );
+        } else {
+            $messages[] = 'Did not find valid instance to execute';
+            $is_error = 1;
+        }
+
+        $result = array(
+                        'is_error' => $is_error,
+                        'messages' => implode( "\n", $messages ) );
+        return $result;
+    }
+
 }
