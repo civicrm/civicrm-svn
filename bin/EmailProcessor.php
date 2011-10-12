@@ -59,14 +59,14 @@ if ( php_sapi_name() == "cli" ) {
         throw new Exception('Could not acquire lock, another EmailProcessor process is running');
     }
 
-    require_once 'CRM/Utils/EmailProcessor.php';
+    require_once 'CRM/Utils/Mail/EmailProcessor.php';
 
     // check if the script is being used for civimail processing or email to 
     // activity processing.
     if ( isset( $cli->args[0] ) && $cli->args[0] == "activities" ) {
-        CRM_Utils_EmailProcessor::processActivities();
+        CRM_Utils_Mail_EmailProcessor::processActivities();
     } else {
-        CRM_Utils_EmailProcessor::processBounces();
+        CRM_Utils_Mail_EmailProcessor::processBounces();
     }
     $lock->release();
 } else {
@@ -91,16 +91,16 @@ if ( php_sapi_name() == "cli" ) {
         set_time_limit(0);
     }
         
-    require_once 'CRM/Utils/EmailProcessor.php';
+    require_once 'CRM/Utils/Mail/EmailProcessor.php';
 
     // cleanup directories with old mail files (if they exist): CRM-4452
-    CRM_Utils_EmailProcessor::cleanupDir($config->customFileUploadDir . DIRECTORY_SEPARATOR . 'CiviMail.ignored');
-    CRM_Utils_EmailProcessor::cleanupDir($config->customFileUploadDir . DIRECTORY_SEPARATOR . 'CiviMail.processed');
+    CRM_Utils_Mail_EmailProcessor::cleanupDir($config->customFileUploadDir . DIRECTORY_SEPARATOR . 'CiviMail.ignored');
+    CRM_Utils_Mail_EmailProcessor::cleanupDir($config->customFileUploadDir . DIRECTORY_SEPARATOR . 'CiviMail.processed');
     
     // check if the script is being used for civimail processing or email to 
     // activity processing.
     $isCiviMail = CRM_Utils_Array::value( 'emailtoactivity', $_REQUEST ) ? false : true;
-    CRM_Utils_EmailProcessor::process($isCiviMail);
+    CRM_Utils_Mail_EmailProcessor::process($isCiviMail);
 
     $lock->release();
 }

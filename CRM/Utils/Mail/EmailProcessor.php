@@ -39,7 +39,7 @@
 define( 'EMAIL_ACTIVITY_TYPE_ID', null  );
 define( 'MAIL_BATCH_SIZE'       , 50    );
 
-class CRM_Utils_EmailProcessor {
+class CRM_Utils_Mail_EmailProcessor {
     
     /**
      * Process the default mailbox (ie. that is used by civiMail for the bounce)
