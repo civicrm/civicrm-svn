@@ -91,11 +91,13 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                                        'name'      => 'sort_name',
                                        'alias'     => 'contacthonor',
                                        'default'   => false,
-                                       'no_repeat' => true, ), ),
+                                       'no_repeat' => true, ),
 
                                 'id_honor'           => 
-                                array( 'no_display' => true,
-                                       'required'  => true, ), ),
+                                array( 'name' => 'id',
+                                       'alias' => 'contacthonor',
+                                       'no_display' => true,
+                                       'required'  => true, ), ), ),
 
                   'civicrm_email_honor'   =>
                   array( 'dao'       => 'CRM_Core_DAO_Email',
@@ -225,7 +227,7 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                             $this->_emailFieldHonor = true;
                         }
                         
-                        if ( $tableName = 'civicrm_contact_honor') {
+                        if ( $tableName == 'civicrm_contact_honor' ) {
                             $this->_nameFieldHonor = true;
                         }
                         
