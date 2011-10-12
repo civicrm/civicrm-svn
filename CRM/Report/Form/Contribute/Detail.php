@@ -94,10 +94,11 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                                        'no_repeat' => true, ),
 
                                 'id_honor'           => 
-                                array( 'name' => 'id',
-                                       'alias' => 'contacthonor',
-                                       'no_display' => true,
-                                       'required'  => true, ), ), ),
+                                array( 'no_display' => true,
+                                       'title'      => ts( 'Honoree ID'),
+                                       'name'       => 'id',
+                                       'alias'      => 'contacthonor',
+                                       'required'   => true, ), ), ),
 
                   'civicrm_email_honor'   =>
                   array( 'dao'       => 'CRM_Core_DAO_Email',
@@ -259,7 +260,7 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                             
                         } else {
                             $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
-                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
+                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = CRM_Utils_Array::value('title', $field );
                             $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
                         }
                     }
@@ -404,7 +405,7 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
             
 
 
-            // convert display name to links
+            // convert donor sort name to link
             if ( array_key_exists('civicrm_contact_sort_name', $row) && 
                  CRM_Utils_Array::value( 'civicrm_contact_sort_name', $rows[$rowNum] ) && 
                  array_key_exists('civicrm_contact_id', $row) ) {
@@ -415,6 +416,20 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                 $rows[$rowNum]['civicrm_contact_sort_name_hover'] =  
                     ts("View Contact Summary for this Contact.");
             }
+            
+            // convert honoree sort name to link
+            if ( array_key_exists('civicrm_contact_honor_sort_name_honor', $row) && 
+                 CRM_Utils_Array::value( 'civicrm_contact_honor_sort_name_honor', $rows[$rowNum] ) && 
+                 array_key_exists('civicrm_contact_honor_id_honor', $row) ) {
+             
+                $url = CRM_Utils_System::url( "civicrm/contact/view"  , 
+                                              'reset=1&cid=' . $row['civicrm_contact_honor_id_honor'],
+                                              $this->_absoluteUrl );
+                $rows[$rowNum]['civicrm_contact_honor_sort_name_link' ] = $url;
+                $rows[$rowNum]['civicrm_contact_honor_sort_name_hover'] =  
+                    ts("View Contact Summary for Honoree.");
+            }
+
             if ( $value = CRM_Utils_Array::value( 'civicrm_contribution_contribution_type_id', $row ) ) {
                 $rows[$rowNum]['civicrm_contribution_contribution_type_id'] = $contributionTypes[$value];
                 $entryFound = true;
