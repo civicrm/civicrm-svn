@@ -230,7 +230,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
             $cid = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Contact',
                                                 $createdID,
                                                 'id',
-                                                'id' ):
+                                                'id' );
             if ( $cid ) {
                 $dao->created_id   = $session->get( 'userID' );
             }
