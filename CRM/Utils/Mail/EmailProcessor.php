@@ -54,7 +54,7 @@ class CRM_Utils_Mail_EmailProcessor {
         $dao->find( );
 
         while ( $dao->fetch() ) {
-            EmailProcessor::_process(true,$dao);
+            self::_process(true,$dao);
         }
     }
 
@@ -94,7 +94,7 @@ class CRM_Utils_Mail_EmailProcessor {
         $dao->find( );
 
         while ( $dao->fetch() ) {
-            EmailProcessor::_process(false,$dao);
+            self::_process(false,$dao);
         }
     }
 
@@ -111,7 +111,7 @@ class CRM_Utils_Mail_EmailProcessor {
         $dao->find( );
 
         while ( $dao->fetch() ) {
-            EmailProcessor::_process($civiMail,$dao);
+            self::_process($civiMail,$dao);
         }
     }
 

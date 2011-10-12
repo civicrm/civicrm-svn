@@ -767,5 +767,27 @@ abstract class CRM_Utils_Hook {
                                            self::$_nullObject, self::$_nullObject, self::$_nullObject,
                                            'civicrm_buildUFGroupsForModule' );
     }
+
+    /** 
+     * This hook is called when we are determining the contactID for a specific
+     * email address
+     * 
+     * @param string $email     the email address
+     * @param int    $contactID the contactID that matches this email address, IF it exists
+     * @param array  $result (reference) has two fields
+     *                          contactID - the new (or same) contactID
+     *                          action - 3 possible values:
+     *                                   CRM_Utils_Mail_Incoming::EMAILPROCESSOR_CREATE_INDIVIDUAL - create a new contact record
+     *                                   CRM_Utils_Mail_Incoming::EMAILPROCESSOR_OVERRIDE - use the new contactID
+     *                                   CRM_Utils_Mail_Incoming::EMAILPROCESSOR_IGNORE   - skip this email address
+     *  
+     * @return null
+     * @access public 
+     */
+    static function emailProcessorContact( $email, $contactID, &$result ) {
+        return self::singleton( )->invoke( 3, $email, $contactID, $result,
+                                           self::$_nullObject, self::$_nullObject,
+                                           'civicrm_emailProcessorContact' );
+    }
     
 }

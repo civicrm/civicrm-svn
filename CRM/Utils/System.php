@@ -435,6 +435,44 @@ class CRM_Utils_System {
         return true;
     }
 
+    static function authenticateScript( $abort = true, $name = null, $pass = null, $storeInSession = true, $loadCMSBootstrap = true ) {
+        // auth to make sure the user has a login/password to do a shell
+        // operation
+        // later on we'll link this to acl's
+        if ( ! $name ) {
+            $name = trim( CRM_Utils_Array::value( 'name', $_REQUEST ) );
+            $pass = trim( CRM_Utils_Array::value( 'pass', $_REQUEST ) );
+        }
+
+        if ( ! $name ) { // its ok to have an empty password
+            return self::authenticateAbort( "ERROR: You need to send a valid user name and password to execute this file\n",
+                                            $abort );
+        }
+
+        if ( ! self::authenticateKey( $abort ) ) {
+            return false;
+        }
+
+        $result = CRM_Utils_System::authenticate( $name, $pass, $loadCMSBootstrap );
+        if ( ! $result ) {
+            return self::authenticateAbort( "ERROR: Invalid username and/or password\n",
+                                            $abort );
+        } else if ( $storeInSession ) {
+            // lets store contact id and user id in session
+            list( $userID, $ufID, $randomNumber ) = $result;
+            if ( $userID && $ufID ) {
+                $session = CRM_Core_Session::singleton( );
+                $session->set( 'ufID'  , $ufID );
+                $session->set( 'userID', $userID );
+            } else {
+                return self::authenticateAbort( "ERROR: Unexpected error, could not match userID and contactID",
+                                                $abort );
+            }
+        }
+
+        return $result;
+    }
+
     /** 
      * Authenticate the user against the uf db 
      * 

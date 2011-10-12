@@ -44,7 +44,8 @@ class CRM_Utils_Hook_Drupal extends CRM_Utils_Hook {
         static $first = false;
         static $allModules = array( );
 
-        if ( ! $first ) {
+        if ( ! $first ||
+             empty( $allModules ) ) {
             $first = true;
 
             // copied from user_module_invoke

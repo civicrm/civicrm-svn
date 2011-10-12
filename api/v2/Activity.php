@@ -312,13 +312,18 @@ SELECT  count(*)
         }
     }
 
+    if ( ! $addMode && ! isset( $params['id'] )) {
+        return civicrm_create_error( ts( 'Required parameter "id" not found' ) );
+    }
+
+    // check for source contact id
+    if ( $addMode && empty( $params['source_contact_id'] ) ) {
+        return  civicrm_create_error( ts('Missing Source Contact') );
+    } 
+
     // check for activity subject if add mode
     if ( $addMode && ! isset( $params['subject'] ) ) {
         return civicrm_create_error( ts( 'Missing Subject' ) );
-    }
-
-    if ( ! $addMode && ! isset( $params['id'] )) {
-        return civicrm_create_error( ts( 'Required parameter "id" not found' ) );
     }
 
     if ( ! $addMode && $params['id'] && ! is_numeric ( $params['id'] )) {
@@ -380,11 +385,6 @@ SELECT  count(*)
         return civicrm_create_error( ts('Invalid Activity Duration (in minutes)') );
     }
         
-    // check for source contact id
-    if ( $addMode && empty( $params['source_contact_id'] ) ) {
-        return  civicrm_create_error( ts('Missing Source Contact') );
-    } 
-
     if ( $addMode && 
          !CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
         $params['activity_date_time'] = CRM_Utils_Date::processDate( date( 'Y-m-d H:i:s' ) );
@@ -439,7 +439,9 @@ function _civicrm_activity_buildmailparams( $result, $activityTypeID ) {
     foreach ( $keys as $key ) {
         if ( is_array( $result[$key] ) ) {
             foreach ( $result[$key] as $key => $keyValue ) {
-                $params['target_contact_id'][]  = $keyValue['id'];
+                if ( ! empty( $keyValue['id'] ) ) {
+                    $params['target_contact_id'][]  = $keyValue['id'];
+                }
             }
         }
     }

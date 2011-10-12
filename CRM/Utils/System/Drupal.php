@@ -582,7 +582,7 @@ AND    u.status = 1
         define('DRUPAL_ROOT', $cmsPath);
         require_once 'includes/bootstrap.inc';
         drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-        
+
         // explicitly setting error reporting, since we cannot handle drupal related notices
         error_reporting( 1 );
         if ( !function_exists('module_exists') || 
@@ -593,7 +593,7 @@ AND    u.status = 1
             } 
             return false;
         }
-        
+
         // seems like we've bootstrapped drupal
         $config = CRM_Core_Config::singleton( );
 

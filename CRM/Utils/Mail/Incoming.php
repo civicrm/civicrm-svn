@@ -35,7 +35,11 @@
  */
 
 class CRM_Utils_Mail_Incoming {
-
+    const
+        EMAILPROCESSOR_CREATE_INDIVIDUAL = 1,
+        EMAILPROCESSOR_OVERRIDE          = 2,
+        EMAILPROCESSOR_IGNORE            = 3;
+        
     function formatMail( $mail, &$attachments ) {
         $t = '';
         $t .= "From:      ". self::formatAddress( $mail->from ). "\n";
@@ -231,15 +235,18 @@ class CRM_Utils_Mail_Incoming {
         $params = array( 'is_error' => 0 );
 
         $params['from'] = array( );
-        self::parseAddress( $mail->from, $field, $params['from'] );
+        self::parseAddress( $mail->from, $field, $params['from'], $mail );
+
+        // we definitely need a contact id for the from address
+        // if we dont have one, skip this email
+        if ( empty( $params['from']['id'] ) ) {
+            return;
+        }
 
         $emailFields = array( 'to', 'cc', 'bcc' );
         foreach ( $emailFields as $field ) {
             $value = $mail->$field;
-            self::parseAddresses( $value, $field, $params );
-            if ( $params['is_error'] ) {
-                return;
-            }
+            self::parseAddresses( $value, $field, $params, $mail );
         }
 
         // define other parameters
@@ -275,25 +282,24 @@ class CRM_Utils_Mail_Incoming {
         return $params;
     }
 
-    function parseAddress( &$address, &$params, &$subParam ) {
+    function parseAddress( &$address, &$params, &$subParam, &$mail ) {
         $subParam['email'] = $address->email;
         $subParam['name' ] = $address->name ;
 
-        $subParam['id'   ] = self::getContactID( $subParam['email'],
-                                                 $subParam['name' ] );
-        if ( empty( $subParam['id'] ) ) {
-            $params['is_error'] = 1;
-            $params['error_message'] = ts( "Contact with address %1 was not found / created",
-                                           array( 1 => $subParam['email'] ) );
-        }
+
+        $contactID = self::getContactID( $subParam['email'],
+                                         $subParam['name' ],
+                                         true,
+                                         $mail );
+        $subParam['id'] = $contactID ? $contactID : null;
     }
 
-    function parseAddresses( &$addresses, $token, &$params ) {
+    function parseAddresses( &$addresses, $token, &$params, &$mail ) {
         $params[$token] = array( );
         
         foreach ( $addresses as $address ) {
             $subParam = array( );
-            self::parseAddress( $address, $params, $subParam );
+            self::parseAddress( $address, $params, $subParam, $mail );
             $params[$token][] = $subParam;
         }
     }
@@ -302,11 +308,33 @@ class CRM_Utils_Mail_Incoming {
      * retrieve a contact ID and if not present
      * create one with this email
      */
-    function getContactID( $email, $name = null, $create = true ) {
+    function getContactID( $email, $name = null, $create = true, &$mail ) {
         require_once 'CRM/Contact/BAO/Contact.php';
         $dao = CRM_Contact_BAO_Contact::matchContactOnEmail( $email, 'Individual' );
+
+        $contactID = null;
         if ( $dao ) {
-            return $dao->contact_id;
+            $contactID = $dao->contact_id;
+        }
+
+        $result = null;
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::emailProcessorContact( $email, $contactID, $result );
+
+        if ( ! empty( $result ) ) {
+            if ( $result['action'] == self::EMAILPROCESSOR_IGNORE ) {
+                return null;
+            }
+            if ( $result['action'] == self::EMAILPROCESSOR_OVERRIDE ) {
+                return $result['contactID'];
+            }
+
+            // else this is now create individual
+            // so we just fall out and do what we normally do
+        } 
+
+        if ( $contactID ) {
+            return $contactID;
         }
 
         if ( ! $create ) {
