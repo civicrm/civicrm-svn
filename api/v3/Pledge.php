@@ -47,7 +47,7 @@ require_once 'CRM/Utils/Rule.php';
  * 
  * @param array  $params       Associative array of property name/value
  *                             pairs for the activity.
- * {@getfields pledge}
+ * {@getfields pledge_create}
  * @return array Array containing 'is_error' to denote success or failure and details of the created pledge
  *
  * @example PledgeCreate.php Standard create example

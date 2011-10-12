@@ -49,7 +49,7 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  * 
  * @param array  $params       Associative array of property name/value
  *                             pairs for the activity.
- * {@getfields activity}
+ * {@getfields activity_create}
  * @return array Array containing 'is_error' to denote success or failure and details of the created activity
  *
  * @example ActivityCreate.php Standard create example
