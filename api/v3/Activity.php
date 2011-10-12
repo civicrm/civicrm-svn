@@ -205,12 +205,12 @@ function civicrm_api3_activity_getfields( $params ) {
 
 
 /**
- *
+ * Gets a CiviCRM activity according to parameters
+ * 
  * @param array $params
  * @return array
  *
- * @todo - if you pass in contact_id do you / can you get custom fields
- *
+ * @example Activity/DateTimeHigh.php Example get with date filtering
  * {@example ActivityGet.php 0}
  */
 
