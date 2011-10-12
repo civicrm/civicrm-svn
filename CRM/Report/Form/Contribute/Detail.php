@@ -368,8 +368,8 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
         $honorTypes = CRM_Core_OptionGroup::values( 'honor_type', false, false, false, null, 'label' );
         
         
-        crm_core_error::debug('$rows', $rows);
-        exit();
+//        crm_core_error::debug('$rows', $rows);
+//        exit();
         
         foreach ( $rows as $rowNum => $row ) {
             if ( !empty($this->_noRepeats) && $this->_outputMode != 'csv' ) {
