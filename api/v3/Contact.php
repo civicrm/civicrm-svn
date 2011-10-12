@@ -43,7 +43,6 @@
 require_once 'api/v3/utils.php';
 require_once 'CRM/Contact/BAO/Contact.php';
 /**
- * @todo - get rid of update & merge into this - wrapper handles update
  *
  * @param  array   $params           (reference ) input parameters
  *
@@ -169,8 +168,6 @@ function civicrm_api3_contact_create( $params )
  *
  * {@example ContactGet.php 0}
  * 
- * @todo Erik Hommel 16 dec 2010 Check that all DB fields are returned
- * @todo Erik Hommel 16 dec 2010 fix custom data (CRM-7231)
  * @todo EM 7 Jan 11 - does this return the number of contacts if required (replacement for deprecated contact_search_count function - if so is this tested?
  */
 

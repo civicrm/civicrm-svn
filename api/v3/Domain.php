@@ -43,7 +43,6 @@ require_once 'api/v3/utils.php';
 
 /**
  * Get CiviCRM domain details
- * @todo - is there too much stuff being returned?
  *
  */
 function civicrm_api3_domain_get($params ) {

@@ -62,12 +62,7 @@ require_once 'CRM/Case/PseudoConstant.php';
  *
  * @access public
  *
- * @todo Erik Hommel 16 dec 2010 use utils function civicrm_verify_mandatory to check for required params
  * @todo Erik Hommel 16 dec 2010 check if function processes update as per standard
- * @todo Eileen McNaughton 7 Jan 2011 No unit test
- * @todo Erik Hommel 16 dec 2010 check for permission using util function civicrm_api_permission_check
- * @todo Erik Hommel 16 dec 2010 introduce version as param
- * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
 function civicrm_api3_case_create($params) {
 
@@ -141,9 +136,8 @@ function civicrm_api3_case_create($params) {
  *
  * @return (get mode, case_id provided): Array with case details, case roles, case activity ids, (search mode, case_id not provided): Array of cases found
  * @access public
- *
+ * @todo Eileen McNaughton 13 Oct 2011 No unit test
  * @todo Erik Hommel 16 dec 2010 check if all DB fields are returned
- * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
 function civicrm_api3_case_get($params) {
 
@@ -275,12 +269,6 @@ SELECT DISTINCT case_id
  *
  * NOTE: For other case activity functions (update, delete, etc) use the Activity API
  *
- * @todo Erik Hommel 16 dec 2010 use utils function civicrm_verify_mandatory to check for required params
- * @todo Erik Hommel 16 dec 2010 check if function processes update as per standard (or should it not and use activity_update?)
- * @todo Erik Hommel 16 dec 2010 check for permission using util function civicrm_api_permission_check
- * @todo Erik Hommel 16 dec 2010 introduce version as param
- * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
- *
  */
 function civicrm_api3_case_activity_create($params) {
 
@@ -397,11 +385,8 @@ function civicrm_api3_case_update($params) {
  * @return boolean: true if success, else false
  *
  * @access public
- *
+ * @todo Eileen McNaughton 13 Oct 2011 No unit test
  * @todo Erik Hommel 16 dec 2010 use utils function civicrm_verify_mandatory to check for required params
- * @todo Erik Hommel 16 dec 2010 check for permission using util function civicrm_api_permission_check
- * @todo Erik Hommel 16 dec 2010 introduce version as param
- * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
 function civicrm_api3_case_delete($params) {
     
