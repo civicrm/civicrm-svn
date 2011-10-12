@@ -224,7 +224,16 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
             $dao->created_id = $createdID;
         } else {
             $session = CRM_Core_Session::singleton( );
-            $dao->created_id   = $session->get( 'userID' );
+            $createdID = $session->get( 'userID' );
+
+            // ensure that this is a valid contact id (for session inconsistency rules)
+            $cid = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Contact',
+                                                $createdID,
+                                                'id',
+                                                'id' ):
+            if ( $cid ) {
+                $dao->created_id   = $session->get( 'userID' );
+            }
         }
 
         $dao->save( );
