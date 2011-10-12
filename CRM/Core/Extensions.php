@@ -279,10 +279,11 @@ class CRM_Core_Extensions
                             }
                         }
                         $upg = $exts[$key];
-                    
 
-                    
-                        if( $outdated ) { $upg->setUpgradable(); $upg->setUpgradeVersion( $r->version ); }
+                        if ( $outdated ) { 
+                            $upg->setUpgradable(); 
+                            $upg->setUpgradeVersion( $r->version );
+                        }
                     }
                 }
             }
