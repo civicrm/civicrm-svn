@@ -174,6 +174,9 @@ function civicrm_api3_activity_create( $params ) {
 }
 
 /*
+ * Adjust meta info for activity create function
+ */
+/*
  * Return valid fields for API
  */
 function civicrm_api3_activity_getfields( $params ) {
@@ -192,6 +195,7 @@ function civicrm_api3_activity_getfields( $params ) {
     $fields['activity_status_id'] = array('name' => 'status_id',
                                            'title' => 'Status Id',
                                            'type' => 1,);
+    $fields['source_contact_id']['api.required'] = 1;
 
     require_once ('CRM/Core/BAO/CustomField.php');
 
