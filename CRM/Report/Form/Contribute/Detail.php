@@ -36,11 +36,15 @@
 
 require_once 'CRM/Report/Form.php';
 require_once 'CRM/Contribute/PseudoConstant.php';
+require_once 'CRM/Core/OptionGroup.php';
 
 class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
     protected $_addressField = false;
 
-    protected $_emailField   = false;
+    protected $_emailField      = false;
+    protected $_emailFieldHonor = false;
+
+    protected $_nameFieldHonor = false;
 
     protected $_summary      = null;
 
@@ -52,38 +56,66 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                    array( 'dao'     => 'CRM_Contact_DAO_Contact',
                           'fields'  =>
                           array( 'sort_name' => 
-                                 array( 'title' => ts( 'Contact Name' ),
+                                 array( 'title' => ts( 'Donor Name' ),
                                         'required'  => true,
                                         'no_repeat' => true ),
+
                                  'id'           => 
                                  array( 'no_display' => true,
                                         'required'  => true, ), ),
                           'filters' =>             
                           array('sort_name'    => 
-                                array( 'title'      => ts( 'Contact Name' ),
+                                array( 'title'      => ts( 'Donor Name' ),
                                        'operator'   => 'like' ),
                                 'id'    => 
                                 array( 'title'      => ts( 'Contact ID' ),
                                        'no_display' => true ), ),
                           'grouping'=> 'contact-fields',
                           ),
- 
                    'civicrm_email'   =>
                    array( 'dao'       => 'CRM_Core_DAO_Email',
                           'fields'    =>
                           array( 'email' => 
-                                 array( 'title'      => ts( 'Email' ),
+                                 array( 'title'      => ts( 'Donor Email' ),
                                         'default'    => true,
                                         'no_repeat'  => true
-                                       ),  ),
+                                       ), ),
                           'grouping'      => 'contact-fields',
                           ),
+
+                  'civicrm_contact_honor'  =>
+                  array( 'dao'     => 'CRM_Contact_DAO_Contact',
+                         'fields'  =>
+                         array( 'sort_name_honor' => 
+                                array( 'title'     => ts( 'Honoree Name' ),
+                                       'name'      => 'sort_name',
+                                       'alias'     => 'contacthonor',
+                                       'default'   => false,
+                                       'no_repeat' => true, ), ),
+
+                                'id_honor'           => 
+                                array( 'no_display' => true,
+                                       'required'  => true, ), ),
+
+                  'civicrm_email_honor'   =>
+                  array( 'dao'       => 'CRM_Core_DAO_Email',
+                         'fields'    =>
+                         array( 'email_honor' => 
+                                array( 'title'      => ts( 'Honoree Email' ), 
+                                        'name'       => 'email',
+                                        'alias'      => 'emailhonor',
+                                        'default'    => false,
+                                        'no_repeat'  => true,
+                                     ), ),
+                         'grouping'      => 'contact-fields',
+                         ),
+
 
                    'civicrm_phone'   =>
                    array( 'dao'       => 'CRM_Core_DAO_Phone',
                           'fields'    =>
                           array( 'phone' => 
-                                 array( 'title'      => ts( 'Phone' ),
+                                 array( 'title'      => ts( 'Donor Phone' ),
                                         'default'    => true,
                                         'no_repeat'  => true
                                         ), ),
@@ -109,6 +141,9 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                                  'trxn_id'              => null,
                                  'receive_date'         => array( 'default' => true ),
                                  'receipt_date'         => null,
+                                 'honor_type_id'        => array( 'title'   => ts('Honor Type'),
+                                                                  'default' => false,
+                                                                 ),
                                  'fee_amount'           => null,
                                  'net_amount'           => null,
                                  'total_amount'         => array( 'title'        => ts( 'Amount' ),
@@ -183,8 +218,15 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                          CRM_Utils_Array::value( $fieldName, $this->_params['fields'] ) ) {
                         if ( $tableName == 'civicrm_address' ) {
                             $this->_addressField = true;
-                        } else if ( $tableName == 'civicrm_email' ) {
+                        }
+                        if ( $tableName == 'civicrm_email' ) {
                             $this->_emailField = true;
+                        } else if ( $tableName == 'civicrm_email_honor' ) {
+                            $this->_emailFieldHonor = true;
+                        }
+                        
+                        if ( $tableName = 'civicrm_contact_honor') {
+                            $this->_nameFieldHonor = true;
                         }
                         
                         // only include statistics columns if set
@@ -227,8 +269,8 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
     }
 
     function from( ) {
+        
         $this->_from = null;
-
         $this->_from = "
         FROM  civicrm_contact      {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
               INNER JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']} 
@@ -257,6 +299,21 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
             LEFT JOIN civicrm_email {$this->_aliases['civicrm_email']} 
                    ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND 
                       {$this->_aliases['civicrm_email']}.is_primary = 1\n";
+        }
+
+        // include Honor name field
+        if ( $this->_nameFieldHonor ) {
+            $this->_from .= "
+            LEFT JOIN civicrm_contact contacthonor 
+                      ON contacthonor.id = {$this->_aliases['civicrm_contribution']}.honor_contact_id";
+            
+        }
+        // include Honor email field
+        if ( $this->_emailFieldHonor ) { 
+            $this->_from .= "
+            LEFT JOIN civicrm_email emailhonor 
+                      ON emailhonor.contact_id = {$this->_aliases['civicrm_contribution']}.honor_contact_id
+                      AND emailhonor.is_primary = 1\n";     
         }
 
     }
@@ -307,7 +364,13 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
         $display_flag = $prev_cid = $cid =  0;
         $contributionTypes = CRM_Contribute_PseudoConstant::contributionType( );
         $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
-        $paymentInstruments = CRM_Contribute_PseudoConstant::paymentInstrument( );        
+        $paymentInstruments = CRM_Contribute_PseudoConstant::paymentInstrument( );
+        $honorTypes = CRM_Core_OptionGroup::values( 'honor_type', false, false, false, null, 'label' );
+        
+        
+        crm_core_error::debug('$rows', $rows);
+        exit();
+        
         foreach ( $rows as $rowNum => $row ) {
             if ( !empty($this->_noRepeats) && $this->_outputMode != 'csv' ) {
                 // don't repeat contact details if its same as the previous row
@@ -360,6 +423,10 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
             }
             if ( $value = CRM_Utils_Array::value( 'civicrm_contribution_payment_instrument_id', $row ) ) {
                 $rows[$rowNum]['civicrm_contribution_payment_instrument_id'] = $paymentInstruments[$value];
+                $entryFound = true;
+            }
+            if ( $value = CRM_Utils_Array::value( 'civicrm_contribution_honor_type_id', $row ) ) {
+                $rows[$rowNum]['civicrm_contribution_honor_type_id'] = $honorTypes[$value];
                 $entryFound = true;
             }
             if ( ( $value = CRM_Utils_Array::value( 'civicrm_contribution_total_amount_sum', $row ) ) && 
