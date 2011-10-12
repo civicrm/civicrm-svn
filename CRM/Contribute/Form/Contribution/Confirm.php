@@ -1309,6 +1309,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
         
         $recurParams['start_date'] = $recurParams['create_date'] = $recurParams['modified_date'] = date( 'YmdHis' );
+        if( CRM_Utils_Array::value( 'receive_date',$params ) ){
+            $recurParams['start_date'] = CRM_Utils_Date::processDate( $params['receive_date'], 
+                                                                      $params['receive_date_time'] );
+        }
         $recurParams['invoice_id'] = $params['invoiceID'];
         $recurParams['contribution_status_id'] = 2;
         $recurParams['payment_processor_id']   = $params['payment_processor_id'];
