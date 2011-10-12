@@ -62,7 +62,7 @@ q="action=view&reset=1&id=`$row.activity_id`&cid=`$row.contact_id`&context=dashb
     {else}
         <div class="messages status">
            <div class="icon inform-icon"></div>&nbsp;
-                 {ts}There are no scheduled activities for you.{/ts}
+                 {ts}There are no scheduled activities assigned to you.{/ts}
 
         </div>
     {/if}
