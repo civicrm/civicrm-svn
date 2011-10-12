@@ -96,14 +96,16 @@ class CRM_Contact_Page_AJAX
         
         $result = civicrm_api( 'Contact', 'quicksearch', $params );
         
-        foreach( $result['values'] as $key => &$values ) {
-            // only in case of current employer
-            if ( CRM_Utils_Array::value( 'employee_id', $_GET) &&
-                 $key == 'data' ) {
-                echo $contactList = "{$name}|{$name}\n";
-                break;
-            } else {
-                echo $contactList = "{$values['data']}|{$values['id']}\n";
+        if ( is_array( $result['values'] ) ) {
+            foreach( $result['values'] as $key => &$values ) {
+                // only in case of current employer
+                if ( CRM_Utils_Array::value( 'employee_id', $_GET) &&
+                    $key == 'data' ) {
+                    echo $contactList = "{$name}|{$name}\n";
+                    break;
+                } else {
+                    echo $contactList = "{$values['data']}|{$values['id']}\n";
+                }
             }
         }
 

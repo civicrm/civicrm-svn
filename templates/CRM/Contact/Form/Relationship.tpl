@@ -119,30 +119,33 @@
                   <script type="text/javascript">
                     var relType = 0;
                     cj( function( ) {
-                        cj('#profiles_1').attr('disabled', true);
-                        cj('#contact_1').removeClass('ac_input');
-                        cj('#contact_1').attr('disabled', true);
+                        enableDisableContactSelection( );
                         createRelation( );
                         var relationshipType = cj('#relationship_type_id'); 
                         relationshipType.change( function() {
-                            if ( cj(this).val( ) ) {
-                              cj('#profiles_1').attr('disabled', false);
-                              cj('#contact_1').attr('disabled', false);
-                              cj('#contact_1').addClass('ac_input');
-                              buildCreateNewSelect( 'profiles_1', cj(this).val() );
-                            } else {
-                              cj('#profiles_1').attr('disabled', true);
-                              cj('#contact_1').removeClass('ac_input');
-                              cj('#contact_1').attr('disabled', true);
-                            }
+                            enableDisableContactSelection( );
                             cj('#relationship-refresh-save').hide();
-			     cj('#saveButtons').hide();
+                            cj('#saveButtons').hide();
                             createRelation( );
                             changeCustomData( 'Relationship' );
                             setPermissionStatus( cj(this).val( ) ); 
                         });
                         setPermissionStatus( relationshipType.val( ) ); 
                     });
+                    
+                    function enableDisableContactSelection( ) {
+                        var relationshipTypeValue = cj('#relationship_type_id').val();
+                        if ( relationshipTypeValue ) {
+                            cj('#profiles_1').attr('disabled', false);
+                            cj('#contact_1').attr('disabled', false);
+                            cj('#contact_1').addClass('ac_input');
+                            buildCreateNewSelect( 'profiles_1', relationshipTypeValue );
+                        } else {
+                            cj('#profiles_1').attr('disabled', true);
+                            cj('#contact_1').removeClass('ac_input');
+                            cj('#contact_1').attr('disabled', true);
+                        }
+                    }
 
                     function afterCreateNew() {
                       var relType    = cj('#relationship_type_id').val( );
