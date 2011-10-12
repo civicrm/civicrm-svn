@@ -1941,7 +1941,7 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (3460, 1120, "JL", "Mount Lebanon"),
 (3461, 1120, "AS", "North Lebanon"),
 (3462, 1120, "JA", "South Lebanon"),
-(3463, 1120, "NA", "North Lebanon"),
+(3463, 1120, "NA", "Nabatieh"),
 (3464, 1199, "52", "Ampara"),
 (3465, 1199, "71", "Anuradhapura"),
 (3466, 1199, "81", "Badulla"),
