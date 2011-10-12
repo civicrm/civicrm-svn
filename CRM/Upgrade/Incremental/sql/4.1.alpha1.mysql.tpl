@@ -56,7 +56,7 @@ VALUES
 -- When we are done with it, we'll also drop the preferences table from PHP
 
 
--- crm-8508
+-- CRM-8508
     SELECT @caseCompId := id FROM `civicrm_component` where `name` like 'CiviCase';
 
     SELECT @option_group_id_activity_type := max(id) from civicrm_option_group where name = 'activity_type';
@@ -70,3 +70,14 @@ VALUES
 
 -- CRM-8739
     Update civicrm_navigation set label =  '{ts escape="sql" skip="true"}Cleanup Caches and Update Paths{/ts}', name = 'Cleanup Caches and Update Paths' where name = 'Update Directory Path and URL' and url = 'civicrm/admin/setting/updateConfigBackend&reset=1';
+    
+-- CRM-8855
+    SELECT @option_group_id_udOpt := max(id) from civicrm_option_group where name = 'user_dashboard_options';
+    SELECT @max_val    := MAX(ROUND(op.value)) FROM civicrm_option_value op WHERE op.option_group_id  = @option_group_id_udOpt;
+    SELECT @max_wt     := max(weight) from civicrm_option_value where option_group_id=@option_group_id_udOpt;
+
+    INSERT INTO civicrm_option_value
+      (option_group_id,                {localize field='label'}label{/localize}, value, name, weight, filter, is_default, component_id)
+    VALUES
+        (@option_group_id_udOpt, {localize}'Assigned Activities'{/localize},  (SELECT @max_val := @max_val+1), 'Assigned Activities', (SELECT @max_wt := @max_wt+1), 0, NULL, NULL);
+

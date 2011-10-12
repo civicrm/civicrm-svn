@@ -150,8 +150,7 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
             }
         }
 
-        $sectionName = 'Permissioned Orgs';
-        if ( $this->_userOptions[ $sectionName ] ) {
+        if ( CRM_Utils_Array::value('Permissioned Orgs', $this->_userOptions ) ) {
             $dashboardElements[] = array( 'templatePath' => 'CRM/Contact/Page/View/Relationship.tpl',
                                           'sectionTitle' => ts( 'Your Contacts / Organizations' ),
                                           'weight'       => 40 );
@@ -164,7 +163,7 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
             $this->assign( 'currentRelationships',  $currentRelationships  );
         }
 
-        if ( $this->_userOptions['PCP'] ) {
+        if ( CRM_Utils_Array::value('PCP', $this->_userOptions ) ) {
             require_once 'CRM/Contribute/BAO/PCP.php';
             $dashboardElements[] = array( 'templatePath' => 'CRM/Contribute/Page/PcpUserDashboard.tpl',
                                           'sectionTitle' => ts( 'Personal Campaign Pages' ),
@@ -174,19 +173,21 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
             $this->assign( 'pcpInfo', $pcpInfo );
         }
 
-        // Add Activities
-        $dashboardElements[] = array( 'templatePath' => 'CRM/Activity/Page/UserDashboard.tpl',
-                                      'sectionTitle' => ts( 'Your Activities' ),
-                                      'weight'       => 5 );
-        require_once 'CRM/Activity/Page/UserDashboard.php';
-        $userDashboard = new CRM_Activity_Page_UserDashboard;
-        $userDashboard->run();
+        if ( CRM_Utils_Array::value('Assigned Activities', $this->_userOptions ) ) {
+            // Assigned Activities section
+            $dashboardElements[] = array( 'templatePath' => 'CRM/Activity/Page/UserDashboard.tpl',
+                                          'sectionTitle' => ts( 'Your Assigned Activities' ),
+                                          'weight'       => 5 );
+            require_once 'CRM/Activity/Page/UserDashboard.php';
+            $userDashboard = new CRM_Activity_Page_UserDashboard;
+            $userDashboard->run();
+        }
 
         require_once 'CRM/Utils/Sort.php';
         usort( $dashboardElements, array( 'CRM_Utils_Sort', 'cmpFunc' ) );
         $this->assign ( 'dashboardElements', $dashboardElements );
 
-        if ( $this->_userOptions['Groups'] ) {
+        if ( CRM_Utils_Array::value('Groups', $this->_userOptions ) ) {
             $this->assign( 'showGroup', true );
             //build group selector
             require_once "CRM/Contact/Page/View/UserDashBoard/GroupContact.php";

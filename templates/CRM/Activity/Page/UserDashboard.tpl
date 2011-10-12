@@ -37,7 +37,6 @@
                     <th>{ts}With{/ts}</th>
                     <th>{ts}Date{/ts}</th>
                     <th>{ts}Status{/ts}</th>
-                    <th></th>
                 </tr>
                 {counter start=0 skip=1 print=false}
                 {capture assign="no_subject"}{ts}(no subject){/ts}{/capture}
