@@ -40,7 +40,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
     protected $_params;
     protected $_entity;
     protected $scheduled_date;
-    public $DBResetRequired = false;
+    public $DBResetRequired = True;
 
     
     function setUp() 
@@ -104,8 +104,14 @@ class api_v3_PledgeTest extends CiviUnitTestCase
 
     }
     
-
-
+  /*
+   * 
+   */
+   function testgetfieldspledge(){
+     $result = civicrm_api('pledge','getfields', array('version' => 3, 'action' => 'get'));
+     $this->assertEquals(1, $result['values']['next_pay_date']['api.return']) ;
+   }
+   
     function testGetPledge()
     {     
      

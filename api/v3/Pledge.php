@@ -43,13 +43,15 @@ require_once 'api/v3/utils.php';
 require_once 'CRM/Utils/Rule.php';
 
 /**
- * Add or update a plege
+ * Creates or updates an Activity. See the example for usage
+ * 
+ * @param array  $params       Associative array of property name/value
+ *                             pairs for the activity.
+ * {@getfields pledge}
+ * @return array Array containing 'is_error' to denote success or failure and details of the created pledge
  *
- * @param  array   $params           (reference ) input parameters. Fields from interogate function should all work
+ * @example PledgeCreate.php Standard create example
  *
- * @return array (reference )        array representing created pledge
- * @static void
- * @access public
  */
 function civicrm_api3_pledge_create( $params ) {
 
@@ -107,6 +109,30 @@ function civicrm_api3_pledge_delete( $params ) {
       return civicrm_api3_create_error(  'Could not delete pledge'  );
     }
 
+}
+/*
+ * return field specification specific to get requests
+ */
+function _civicrm_api3_pledge_get_spec(&$params){
+  $params['next_pay_date'] = array(
+          'name' => 'next_pay_date',
+      		'type' => 12,
+      		'title' => 'Pledge Made',
+          'api.filter' => 0,
+          'api.return' => 1,
+
+  );
+}
+
+/*
+ * return field specification specific to get requests
+ */
+function _civicrm_api3_pledge_create_spec(&$params){
+  
+  $required =  array('contact_id', 'amount',  'installments','start_date');
+  foreach ($required as $required_field){
+    $params[$field]['api.required'] = 1;
+  }
 }
 
 /**

@@ -10,8 +10,36 @@
  */
  
 function civicrm_api3_generic_getfields($apiRequest) {
-  return civicrm_api3_create_success(_civicrm_api_get_fields($apiRequest['entity']));
+        if (empty($apiRequest['params']['action'])) { 
+                return civicrm_api3_create_success(_civicrm_api_get_fields($apiRequest['entity']));
+        }
+
+        // defaults based on data model and API policy
+        switch ($apiRequest['params']['action']) {
+                case 'create':
+                case 'update':
+                case 'replace':
+                case 'get':
+                        $metadata = _civicrm_api_get_fields($apiRequest['entity']);
+                        break;
+                case 'delete':
+                        $metadata = array('id' => array('name' => 'id'));
+                        break;
+                default:
+                        $metadata = array(); // oddballs are on their own
+        }
+         
+        // find any supplemental information
+        $hypApiRequest = array('entity' => $apiRequest['entity'], 'action' => $apiRequest['params']['action'], 'version' => $apiRequest['version']);
+        $hypApiRequest +=_civicrm_api_resolve($hypApiRequest);
+        $helper = '_' . $hypApiRequest['function'] . '_spec'; 
+        if (function_exists($helper)) {
+                $helper($metadata); // alter
+        }
+        return  civicrm_api3_create_success($metadata);
 }
+ 
+
 
 function civicrm_api3_generic_getcount($apiRequest) {
   $result = civicrm_api($apiRequest['entity'],'get',$apiRequest['params']);
