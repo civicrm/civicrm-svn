@@ -343,15 +343,15 @@ class CRM_Core_Extensions
         $outdated = (int) $timestamp < ( time() - 180) ? true : false;
         
         if( !$timestamp || $outdated ) {
-            $remoties = $this->grabRemoteKeyList();
+            $remotes = $this->grabRemoteKeyList();
             $cached = false;
         } else {
-            $remoties = $this->grabCachedKeyList();
+            $remotes = $this->grabCachedKeyList();
             $cached = true;
         }
 
         require_once 'CRM/Core/Extensions/Extension.php';
-        foreach( $remoties as $id => $rext ) {
+        foreach( $remotes as $id => $rext ) {
             $ext = new CRM_Core_Extensions_Extension( $rext['key'] );
             $ext->setRemote();
             $xml = $this->grabRemoteInfoFile( $rext['key'], $cached );
@@ -361,7 +361,7 @@ class CRM_Core_Extensions
             }
         }
 
-        if ( file_exists( $tsPath ) ) {
+        if ( file_exists( dirname( $tsPath ) ) ) {
             file_put_contents( $tsPath, (string) time() );
         }
 
@@ -660,6 +660,15 @@ class CRM_Core_Extensions
         return $exts;
     }
 
+    /**
+     * Given the key, retrieves the info XML from a remote server
+     * and stores locally, returning the contents.
+     * 
+     * @access public
+     * @param string $key extension key
+     * @param boolean $cached whether to use cached data
+     * @return contents of info.xml, or null if info.xml cannot be retrieved or parsed
+     */
     public function grabRemoteInfoFile( $key, $cached = false ) {
         require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton( );
@@ -668,12 +677,11 @@ class CRM_Core_Extensions
         $filename = $path . DIRECTORY_SEPARATOR . $key . '.xml';
         $url = self::PUBLIC_EXTENSIONS_REPOSITORY . '/' . $key . '.xml';
 
+        if ( !$cached || !file_exists( $filename ) ) {
+            file_put_contents( $filename, file_get_contents( $url ) );
+        }
 
         if ( file_exists( $filename ) ) {
-            if ( !$cached ) {
-                file_put_contents( $filename, file_get_contents( $url ) );
-            }
-
             $contents = file_get_contents( $filename );
 
             //parse just in case
