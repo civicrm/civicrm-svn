@@ -210,6 +210,7 @@ function civicrm_api3_activity_getfields( $params ) {
  * @param array $params
  * @return array
  *
+ * @example ActivityGet.php Basic example
  * @example Activity/DateTimeHigh.php Example get with date filtering
  * {@example ActivityGet.php 0}
  */
