@@ -147,7 +147,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
           $this->select("duration_unit", "label=year");
           
           $this->click("_qf_MembershipType_upload-bottom");
-          $this->waitForPageToLoad("30000");
+          sleep(5);
           
           $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=2&reset=1");
           $this->waitForPageToLoad("30000");
@@ -159,8 +159,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
           $this->select("duration_unit", "label=year");
           
           $this->click("_qf_MembershipType_upload-bottom");
-          $this->waitForPageToLoad("30000");
-          
+          sleep(5);
           
           // create contribution page with randomized title and default params
           $amountSection = false;
