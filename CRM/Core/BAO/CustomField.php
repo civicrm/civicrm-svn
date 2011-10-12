@@ -963,14 +963,14 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
      * @static
      * @access public
      */
-    static function getDisplayValue( $value, $id, &$options, $contactID = null )
+    static function getDisplayValue( $value, $id, &$options, $contactID = null, $fieldID = null )
     {
         $option     =& $options[$id];
         $attributes =& $option['attributes'];
         $html_type  =  $attributes['html_type'];
         $data_type  =  $attributes['data_type'];
         $format     =  CRM_Utils_Array::value( 'format', $attributes );
-
+        
         return self::getDisplayValueCommon( $value,
                                             $option,
                                             $html_type,
