@@ -83,6 +83,17 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                           'grouping'      => 'contact-fields',
                           ),
 
+                   'civicrm_phone'   =>
+                   array( 'dao'       => 'CRM_Core_DAO_Phone',
+                          'fields'    =>
+                          array( 'phone' => 
+                                 array( 'title'      => ts( 'Donor Phone' ),
+                                        'default'    => true,
+                                        'no_repeat'  => true
+                                        ), ),
+                          'grouping'      => 'contact-fields',
+                          ),
+
                   'civicrm_contact_honor'  =>
                   array( 'dao'     => 'CRM_Contact_DAO_Contact',
                          'fields'  =>
@@ -113,17 +124,6 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                          'grouping'      => 'contact-fields',
                          ),
 
-
-                   'civicrm_phone'   =>
-                   array( 'dao'       => 'CRM_Core_DAO_Phone',
-                          'fields'    =>
-                          array( 'phone' => 
-                                 array( 'title'      => ts( 'Donor Phone' ),
-                                        'default'    => true,
-                                        'no_repeat'  => true
-                                        ), ),
-                          'grouping'      => 'contact-fields',
-                          ),
 
                    'civicrm_contribution' =>
                    array( 'dao'     => 'CRM_Contribute_DAO_Contribution',

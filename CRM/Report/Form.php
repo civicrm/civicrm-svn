@@ -381,14 +381,14 @@ class CRM_Report_Form extends CRM_Core_Form {
                                     }
                                 }
                             }
+                        }
 
-                            // fill other vars
-                            if ( CRM_Utils_Array::value( 'no_repeat', $field ) ) {
-                                $this->_noRepeats[] = "{$tableName}_{$fieldName}";
-                            }
-                            if ( CRM_Utils_Array::value( 'no_display', $field ) ) {
-                                $this->_noDisplay[] = "{$tableName}_{$fieldName}";
-                            }
+                        // fill other vars
+                        if ( CRM_Utils_Array::value( 'no_repeat', $field ) ) {
+                            $this->_noRepeats[] = "{$tableName}_{$fieldName}";
+                        }
+                        if ( CRM_Utils_Array::value( 'no_display', $field ) ) {
+                            $this->_noDisplay[] = "{$tableName}_{$fieldName}";
                         }
 
                         // set alias = table-name, unless already set
