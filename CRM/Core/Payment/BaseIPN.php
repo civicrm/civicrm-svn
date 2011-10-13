@@ -146,8 +146,8 @@ WHERE  contribution_id = %1 AND membership_id != %2";
                         $membership = new CRM_Member_DAO_Membership( );
                         $membership->id = $id;
                         if ( ! $membership->find( true ) ) {
-                            CRM_Core_Error::debug_log_message( "Could not find membership record: $membershipID" );
-                            echo "Failure: Could not find membership record: $membershipID<p>";
+                            CRM_Core_Error::debug_log_message( "Could not find membership record: $id" );
+                            echo "Failure: Could not find membership record: $id<p>";
                             return false;
                         }
                         $membership->join_date     = CRM_Utils_Date::isoToMysql( $membership->join_date      );
