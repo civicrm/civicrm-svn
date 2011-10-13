@@ -502,21 +502,23 @@ cj('#saveDetails').hide( );
 cj('#addCurrentEmployer').hide( );
 cj('#addCurrentEmployee').hide( );
 
-cj(document).ready(function(){
+cj( function() {
   if ( cj.browser.msie ) {
-       cj('#rel_contact').keyup( function(e) {
+       cj('#contact_1').keyup( function(e) {
          if( e.keyCode == 9 || e.keyCode == 13 ) {
-	     return false;
+            return false;
 	     }
-         cj("input[name='rel_contact_id']").val('');
+         cj("input[name='contact_select_id[1]']").val('');
          cj('#relationship-refresh').show( );
          cj('#relationship-refresh-save').hide( );
-    }); } else {
-         cj('#rel_contact').focus( function() {
-         cj("input[name='rel_contact_id']").val('');
-         cj('#relationship-refresh').show( );
-         cj('#relationship-refresh-save').hide( ); 
-}); }
+        }); 
+   } else {
+         cj('#contact_1').focus( function() {
+            cj("input[name='contact_select_id[1]']").val('');
+            cj('#relationship-refresh').show( );
+            cj('#relationship-refresh-save').hide( ); 
+         });
+   }
 });
 
 {/literal}{if $searchRows || $callAjax}{literal} 
