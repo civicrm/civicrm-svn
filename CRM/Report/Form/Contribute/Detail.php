@@ -371,9 +371,6 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
         $honorTypes = CRM_Core_OptionGroup::values( 'honor_type', false, false, false, null, 'label' );
         
         
-//        crm_core_error::debug('$rows', $rows);
-//        exit();
-        
         foreach ( $rows as $rowNum => $row ) {
             if ( !empty($this->_noRepeats) && $this->_outputMode != 'csv' ) {
                 // don't repeat contact details if its same as the previous row
@@ -425,8 +422,8 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                 $url = CRM_Utils_System::url( "civicrm/contact/view"  , 
                                               'reset=1&cid=' . $row['civicrm_contact_honor_id_honor'],
                                               $this->_absoluteUrl );
-                $rows[$rowNum]['civicrm_contact_honor_sort_name_link' ] = $url;
-                $rows[$rowNum]['civicrm_contact_honor_sort_name_hover'] =  
+                $rows[$rowNum]['civicrm_contact_honor_sort_name_honor_link' ] = $url;
+                $rows[$rowNum]['civicrm_contact_honor_sort_name_honor_hover'] =  
                     ts("View Contact Summary for Honoree.");
             }
 
