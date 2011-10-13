@@ -135,15 +135,20 @@
                     
                     function enableDisableContactSelection( ) {
                         var relationshipTypeValue = cj('#relationship_type_id').val();
+                        var contactAutocomplete   = cj('#contact_1');
+                        
+                        //always reset field so that correct data url is linked
+                        contactAutocomplete.unautocomplete( );
+                        
                         if ( relationshipTypeValue ) {
                             cj('#profiles_1').attr('disabled', false);
-                            cj('#contact_1').attr('disabled', false);
-                            cj('#contact_1').addClass('ac_input');
+                            contactAutocomplete.attr('disabled', false);
+                            contactAutocomplete.addClass('ac_input');
                             buildCreateNewSelect( 'profiles_1', relationshipTypeValue );
                         } else {
                             cj('#profiles_1').attr('disabled', true);
-                            cj('#contact_1').removeClass('ac_input');
-                            cj('#contact_1').attr('disabled', true);
+                            contactAutocomplete.removeClass('ac_input');
+                            contactAutocomplete.attr('disabled', true);
                         }
                     }
 
