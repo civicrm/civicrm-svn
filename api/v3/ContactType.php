@@ -63,6 +63,12 @@ function civicrm_api3_contact_type_create( $params )
 
 }
 
+function _civicrm_api3_contact_type_create_spec(&$fields){
+  $fields['name']['api.required'] =1;
+  $fields['parent_id']['api.required'] =1; 
+  $fields['is_activte']['api.default'] =1;
+  
+}
 /**
  * Returns array of contact_types  matching a set of one or more group properties
  *
