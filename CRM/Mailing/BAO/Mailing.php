@@ -1121,7 +1121,8 @@ AND civicrm_contact.is_opt_out =0";
         }
         $mailParams['Subject'] = $mailingSubject;
 
-        $mailParams['toName' ] = $contact['display_name'];
+        $mailParams['toName' ] = CRM_Utils_Array::value( 'display_name',
+                                                         $contact );
         $mailParams['toEmail'] = $email;
 
         require_once 'CRM/Utils/Hook.php';

@@ -574,12 +574,15 @@ class CRM_Utils_Token
         if (!in_array($token,self::$_tokens['contact'])) {
             $value = "{contact.$token}";
         } else if ( $token == 'checksum' ) {
-            require_once 'CRM/Contact/BAO/Contact/Utils.php';
-            $cs = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contact['contact_id'],
-                                                                   null,
-                                                                   null,
-                                                                   $contact['hash'] );
-            $value = "cs={$cs}";
+            $hash = CRM_Utils_Array::value( 'hash', $contact );
+            if ( $hash ) {
+                require_once 'CRM/Contact/BAO/Contact/Utils.php';
+                $cs = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contact['contact_id'],
+                                                                       null,
+                                                                       null,
+                                                                       $hash );
+                $value = "cs={$cs}";
+            }
         } else {
             $value = CRM_Utils_Array::retrieveValueRecursive($contact, $token);
         }
@@ -947,12 +950,11 @@ class CRM_Utils_Token
         $query   = new CRM_Contact_BAO_Query( $params, $returnProperties );
 
         $details = $query->apiQuery( $params, $returnProperties, NULL, NULL, 0, $numberofContacts );
-        
+
         $contactDetails =& $details[0];
                 
         foreach ( $contactIDs as $key => $contactID ) {
             if ( array_key_exists( $contactID, $contactDetails ) ) {
-                
                 if ( CRM_Utils_Array::value( 'preferred_communication_method', $returnProperties ) == 1 
                      && array_key_exists( 'preferred_communication_method', $contactDetails[$contactID] ) ) {
                     require_once 'CRM/Core/PseudoConstant.php';
