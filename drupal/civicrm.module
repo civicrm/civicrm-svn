@@ -60,10 +60,10 @@ function civicrm_html_head()
             }
             if ( strpos( $line, '.js' ) !== false ) {
                 drupal_add_js( drupal_get_path('module', 'civicrm' ) . '/../' . $line, array(
-                    'group' => JS_LIBRARY,
-                    'weight' => 10,
-                    'scope' => 'header',
-                ) );
+                                                                                             'group' => JS_LIBRARY,
+                                                                                             'weight' => 10,
+                                                                                             'scope' => 'header',
+                                                                                             ) );
             } else if ( strpos( $line, '.css' ) !== false ) {
                 drupal_add_css( drupal_get_path('module', 'civicrm' ) . '/../' . $line );
             }
@@ -71,15 +71,19 @@ function civicrm_html_head()
 
         // add the final assignment
         drupal_add_js( 'var cj = jQuery.noConflict(true);', array(
-            'type' => 'inline', 
-            'group' => JS_LIBRARY,
-            'weight' => 11,
-            'scope' => 'header',
-        ) );
+                                                                  'type' => 'inline', 
+                                                                  'group' => JS_LIBRARY,
+                                                                  'weight' => 11,
+                                                                  'scope' => 'header',
+                                                                  ) );
 
         // add localized calendar js
         $localisation     = explode( '_', $config->lcMessages );
-        $localizationFile = drupal_get_path('module', 'civicrm' ) . '/../packages/jquery/jquery-ui-1.8.11/development-bundle/ui/i18n/jquery.ui.datepicker-'. $localisation[0] . '.js';
+        $localizationFile = 
+            drupal_get_path('module', 'civicrm' ) .
+            '/../packages/jquery/jquery-ui-1.8.11/development-bundle/ui/i18n/jquery.ui.datepicker-' .
+            $localisation[0] .
+            '.js';
         
         if ( file_exists( $localizationFile ) ) {
             drupal_add_js( $localizationFile );
@@ -174,8 +178,8 @@ function civicrm_permission()
     $permissions = CRM_Core_Permission::basicPermissions( );
     $perms_array = array();
     foreach ($permissions as $perm => $title) {
-      //order matters here, but we deal with that later
-      $perms_array[$perm] = array('title' => $title);
+        //order matters here, but we deal with that later
+        $perms_array[$perm] = array('title' => $title);
     }
 	return $perms_array;
 }
@@ -238,15 +242,15 @@ function civicrm_menu( )
                                     ),
                  // administration section for civicrm integration modules.
                  'admin/config/civicrm' => array(
-                                                'title'            => 'CiviCRM',
-                                                'description'      => 'Configure CiviCRM integration modules.',
-                                                'position'         => 'left',
-                                                'weight'           => -10,
-                                                'page callback'    => 'system_admin_menu_block_page',
-                                                'access arguments' => array('access administration pages'),
-                                                'file'             => 'system.admin.inc',
-                                                'file path'        => drupal_get_path('module', 'system'),
-                                               )
+                                                 'title'            => 'CiviCRM',
+                                                 'description'      => 'Configure CiviCRM integration modules.',
+                                                 'position'         => 'left',
+                                                 'weight'           => -10,
+                                                 'page callback'    => 'system_admin_menu_block_page',
+                                                 'access arguments' => array('access administration pages'),
+                                                 'file'             => 'system.admin.inc',
+                                                 'file path'        => drupal_get_path('module', 'system'),
+                                                 )
                  );
 }
 
@@ -285,7 +289,7 @@ function civicrm_initialize( )
         $forumLink      = "http://forum.civicrm.org/index.php/board,6.0.html";
 
 	    $errorMsgAdd = t("Please review the <a href='!1'>Drupal Installation Guide</a> and the <a href='!2'>Trouble-shooting page</a> for assistance. If you still need help installing, you can often find solutions to your issue by searching for the error message in the <a href='!3'>installation support section of the community forum</a>.</strong></p>", 
-                          array('!1' => $docLinkInstall, '!2' => $docLinkTrouble, '!3' => $forumLink ) );
+                         array('!1' => $docLinkInstall, '!2' => $docLinkTrouble, '!3' => $forumLink ) );
 
 
         if ( $error == false ) {
@@ -303,7 +307,7 @@ function civicrm_initialize( )
             $failure = true;
             drupal_set_message( "<strong><p class='error'>" . 
                                 t("Oops! - The path for including CiviCRM code files is not set properly. Most likely there is an error in the <em>civicrm_root</em> setting in your CiviCRM settings file (!1).", 
-                                   array( '!1' => $settingsFile ) ) .
+                                  array( '!1' => $settingsFile ) ) .
                                 "</p><p class='error'> &raquo; " . 
                                 t("civicrm_root is currently set to: <em>!1</em>.", array( '!1' => $civicrm_root ) ) . 
                                 "</p><p class='error'>" .  $errorMsgAdd . "</p></strong>" );
@@ -637,13 +641,13 @@ function civicrm_user_form_validate($form, &$form_state) {
 }
 
 /**
-* Disable the drupal cache for all civicrm pages which should not be cached
-*/
+ * Disable the drupal cache for all civicrm pages which should not be cached
+ */
 function civicrm_cache_disable( ) {
-  if(function_exists('drupal_page_is_cacheable')){
-  //this is a Drupal 7 function only - using 'easy option' of checking function
-    drupal_page_is_cacheable( false );
-  }
+    if(function_exists('drupal_page_is_cacheable')){
+        //this is a Drupal 7 function only - using 'easy option' of checking function
+        drupal_page_is_cacheable( false );
+    }
 }
 
 /**
@@ -749,29 +753,29 @@ function  civicrm_form_alter( &$form, $formValues, $formID ) {
         break;
         
     case 'user_profile_form':
-      $inCategory = true;
-      if ( $form['#user_category'] ) {
-          $inCategory = false;
-          $categories = civicrm_user_categories( );
-          foreach ( $categories as $cat ) {
-              if ( $form['#user_category'] == $cat['name'] ) {
-                  $inCategory = true;
-                  break;
-              }
-          }
-      }
+        $inCategory = true;
+        if ( $form['#user_category'] ) {
+            $inCategory = false;
+            $categories = civicrm_user_categories( );
+            foreach ( $categories as $cat ) {
+                if ( $form['#user_category'] == $cat['name'] ) {
+                    $inCategory = true;
+                    break;
+                }
+            }
+        }
       
-      // only return a form to drupal my account page
-      $output = array();
-      if ( $inCategory      &&
-           arg(0) == 'user' &&
-           arg(2) == 'edit' &&
-           arg(3) ) {
-          $output = civicrm_form_data($form, $form['#user'], $form['#user_category'], true );
-          if (!empty($output))
-            $form = array_merge($form, $output);
-      }
-      break;
+        // only return a form to drupal my account page
+        $output = array();
+        if ( $inCategory      &&
+             arg(0) == 'user' &&
+             arg(2) == 'edit' &&
+             arg(3) ) {
+            $output = civicrm_form_data($form, $form['#user'], $form['#user_category'], true );
+            if (!empty($output))
+                $form = array_merge($form, $output);
+        }
+        break;
 
     default:
         break;
@@ -838,137 +842,137 @@ function civicrm_preprocess_page(&$variables) {
  * 
  */
 function civicrm_drupal_get_wysiwyg_html($attributes, $value='', $format = NULL) {
-  $form = drupal_get_form('civicrm_drupal_wysiwyg_form', $attributes, $value, $format);
-  unset($form['#theme_wrappers']);
+    $form = drupal_get_form('civicrm_drupal_wysiwyg_form', $attributes, $value, $format);
+    unset($form['#theme_wrappers']);
   
-  //fix the elements to work with civi/QuickForm
-  $id = $attributes['id'];
-  $name = $attributes['name'];
-  $form[$id]['value']['#name'] = $name . '[value]';
-  $form[$id]['format']['format']['#name'] = $name . '[format]';
-  $html = drupal_render($form);  
+    //fix the elements to work with civi/QuickForm
+    $id = $attributes['id'];
+    $name = $attributes['name'];
+    $form[$id]['value']['#name'] = $name . '[value]';
+    $form[$id]['format']['format']['#name'] = $name . '[format]';
+    $html = drupal_render($form);  
   
-  //adds settings information. Required for instances loaded via ajax
-  $embed_prefix = "\n<!--//--><![CDATA[//><!--\n";
-  $embed_suffix = "\n//--><!]]>\n";
-  $element = array(
-    '#tag' => 'script',
-    '#value' => '',
-    '#attributes' => array(
-      'type' => 'text/javascript',
-    ),
-  );
-  $script = drupal_add_js();
+    //adds settings information. Required for instances loaded via ajax
+    $embed_prefix = "\n<!--//--><![CDATA[//><!--\n";
+    $embed_suffix = "\n//--><!]]>\n";
+    $element = array(
+                     '#tag' => 'script',
+                     '#value' => '',
+                     '#attributes' => array(
+                                            'type' => 'text/javascript',
+                                            ),
+                     );
+    $script = drupal_add_js();
   
-  $js_element = $element;
-  $js_element['#value_prefix'] = $embed_prefix;
-  $js_element['#value'] = 'jQuery.extend(Drupal.settings, ' . drupal_json_encode(drupal_array_merge_deep_array($script['settings']['data'])) . ");";
-  $js_element['#value_suffix'] = $embed_suffix;
-  $html .= theme('html_tag', array('element' => $js_element));
-  return $html;
+    $js_element = $element;
+    $js_element['#value_prefix'] = $embed_prefix;
+    $js_element['#value'] = 'jQuery.extend(Drupal.settings, ' . drupal_json_encode(drupal_array_merge_deep_array($script['settings']['data'])) . ");";
+    $js_element['#value_suffix'] = $embed_suffix;
+    $html .= theme('html_tag', array('element' => $js_element));
+    return $html;
 }
 
 function civicrm_drupal_wysiwyg_form($form, $form_state, $attributes, $value='', $format = NULL) {
-  $id = $attributes['id'];
-  $form = array();
-  $form[$id] = array(
-    '#type' => 'text_format',
-    '#base_type' => 'textarea',
-    '#title' => '', //$attributes['label'],  //title comes from quickform output
-    '#default_value' => $value,
-    '#rows' => $attributes['rows'],
-    '#cols' => $attributes['cols'],
-    '#id' => $attributes['id'],
-    '#format' => $format,
-  );  
+    $id = $attributes['id'];
+    $form = array();
+    $form[$id] = array(
+                       '#type' => 'text_format',
+                       '#base_type' => 'textarea',
+                       '#title' => '', //$attributes['label'],  //title comes from quickform output
+                       '#default_value' => $value,
+                       '#rows' => $attributes['rows'],
+                       '#cols' => $attributes['cols'],
+                       '#id' => $attributes['id'],
+                       '#format' => $format,
+                       );  
 
-  return $form;
+    return $form;
 }
 
 function civicrm_drupal_wysiwyg_update_value($element, $caller) {
-  // constant values override both default and submitted ones
-  // default values are overriden by submitted
-  $value = $element->_findValue($caller->_constantValues);
-  if (null === $value) {
-    $value = $element->_findValue($caller->_submitValues);
+    // constant values override both default and submitted ones
+    // default values are overriden by submitted
+    $value = $element->_findValue($caller->_constantValues);
     if (null === $value) {
-        $value = $element->_findValue($caller->_defaultValues);
+        $value = $element->_findValue($caller->_submitValues);
+        if (null === $value) {
+            $value = $element->_findValue($caller->_defaultValues);
+        }
+        else {
+            if (is_array($value)) {
+                $element->format = $value['format'];
+                $value = $value['value'];
+            }
+        }
     }
-    else {
-      if (is_array($value)) {
-        $element->format = $value['format'];
-        $value = $value['value'];
-      }
-    }
-  }
-  if (null !== $value) {
-    if (isset($element->format)) {
-      $element->setValue(check_markup($value, $element->format));
-    }
-    else {
-      $element->setValue($value);
-    }
-  } 
+    if (null !== $value) {
+        if (isset($element->format)) {
+            $element->setValue(check_markup($value, $element->format));
+        }
+        else {
+            $element->setValue($value);
+        }
+    } 
 }
 
 /**
  * Implementation of hook_filter_tips
  */
 function civicrm_filter_info() {
-  $filters = array();
-  $filters['civicrm_smarty'] = array(
-    'title' => t('CiviCRM-Smarty filter'),
-    'description' => t('Evaluate Smarty and CiviCRM API codes with CiviCRM\'s embedded Smarty engine'),
-    'cache' => FALSE,
-    'process callback' => '_civicrm_filter_process',
-    'tips callback' => '_civicrm_filter_tips',
-    'weight' => 10,
-  );
-  return $filters;
+    $filters = array();
+    $filters['civicrm_smarty'] = array(
+                                       'title' => t('CiviCRM-Smarty filter'),
+                                       'description' => t('Evaluate Smarty and CiviCRM API codes with CiviCRM\'s embedded Smarty engine'),
+                                       'cache' => FALSE,
+                                       'process callback' => '_civicrm_filter_process',
+                                       'tips callback' => '_civicrm_filter_tips',
+                                       'weight' => 10,
+                                       );
+    return $filters;
 }
 
 /**
  * Implementation of hook_filter_FILTER_tips
  */
 function _civicrm_filter_tips($filter, $format, $long = false) {
-  return
-    t('Evaluate <a target="_blank" href="@smarty">Smarty</a> and <a target="_blank" href="@civiapi">CiviCRM API</a> codes', array(
-      '@smarty' => 'http://www.smarty.net/docsv2/en/',
-      '@civiapi' => 'http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs'
-    ));
+    return
+        t('Evaluate <a target="_blank" href="@smarty">Smarty</a> and <a target="_blank" href="@civiapi">CiviCRM API</a> codes', array(
+                                                                                                                                      '@smarty' => 'http://www.smarty.net/docsv2/en/',
+                                                                                                                                      '@civiapi' => 'http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs'
+                                                                                                                                      ));
 }
    
 /**
  * Implementation of hook_filter_FILTER_process
  */
 function _civicrm_filter_process($text, $filter, $format, $langcode, $cache, $cache_id) {
-  civicrm_initialize();
-  $config = CRM_Core_Config::singleton();
-  $smarty = CRM_Core_Smarty::singleton();
-  require_once 'CRM/Core/Smarty/resources/String.php';
-  civicrm_smarty_register_string_resource( );
+    civicrm_initialize();
+    $config = CRM_Core_Config::singleton();
+    $smarty = CRM_Core_Smarty::singleton();
+    require_once 'CRM/Core/Smarty/resources/String.php';
+    civicrm_smarty_register_string_resource( );
 
-  $was_secure= $smarty->security;
-  $smarty->security = true;
-  $text = $smarty->fetch("string:${text}");
-  $smarty->security = $was_secure;
+    $was_secure= $smarty->security;
+    $smarty->security = true;
+    $text = $smarty->fetch("string:${text}");
+    $smarty->security = $was_secure;
       
-  // In the use-case of embedding Smarty codes inside a Drupal page, one is likely
-  // to load data using 'pull MVC' instead of 'push MVC', so the interesting
-  // data isn't loaded until after processing the main content. Therefore, we
-  // evaluate debug codes after the main content.
-  if ($config->debug) {
-    $text .= $smarty->fetch('CRM/common/debug.tpl');
-  }
-  return $text;
+    // In the use-case of embedding Smarty codes inside a Drupal page, one is likely
+    // to load data using 'pull MVC' instead of 'push MVC', so the interesting
+    // data isn't loaded until after processing the main content. Therefore, we
+    // evaluate debug codes after the main content.
+    if ($config->debug) {
+        $text .= $smarty->fetch('CRM/common/debug.tpl');
+    }
+    return $text;
 }
 
 function civicrm_civicrm_postProcess ( $formName, $form ) {
-  // Reset Views Cache when CiviCRM components page is saved
-  if ( $form instanceof CRM_Admin_Form_Setting_Component ) {
-    $modules = module_list();
-    if (isset($modules['views'])) {
-      views_invalidate_cache();
-    }
-  }    
+    // Reset Views Cache when CiviCRM components page is saved
+    if ( $form instanceof CRM_Admin_Form_Setting_Component ) {
+        $modules = module_list();
+        if (isset($modules['views'])) {
+            views_invalidate_cache();
+        }
+    }    
 }
