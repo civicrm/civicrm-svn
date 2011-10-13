@@ -916,6 +916,7 @@ function civicrm_preprocess_page(&$variables) {
         }
 
         // add localized calendar js
+        $config = CRM_Core_Config::singleton( );
         $localisation     = explode( '_', $config->lcMessages );
         $localizationFile = $path . '/../packages/jquery/jquery-ui-1.8.11/development-bundle/ui/i18n/jquery.ui.datepicker-'. $localisation[0] . '.js';
 
