@@ -148,7 +148,40 @@ class CRM_Utils_PDF_Label extends TCPDF {
      * function to Generate the pdf of one label (can be modified using SetGenerator)
      */
     function generateLabel($text) {
-        $this->MultiCell($this->width, 0, $text, 0, 'L', 0, 0, '', '', true, 0, false, false, $this->height);
+        $args = array( 'w' => $this->width, 
+                       'h' => 0, 
+                       'txt' => $text, 
+                       'border' => 0, 
+                       'align' => 'L', 
+                       'fill' => 0, 
+                       'ln' => 0, 
+                       'x' => '', 
+                       'y' => '', 
+                       'reseth' => true, 
+                       'stretch' => 0, 
+                       'ishtml' => false, 
+                       'autopadding' => false, 
+                       'maxh' => $this->height );
+        
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::alterMailingLabelParams( $args ); 
+        
+        if ( $args['ishtml'] == true ) {
+            $this->writeHTMLCell( $args['w'], $args['h'],
+                                  $args['x'], $args['y'],
+                                  $args['txt'], $args['border'],
+                                  $args['ln'], $args['fill'],
+                                  $args['reseth'], $args['align'],
+                                  $args['autopadding']);        	
+        } else {
+            $this->multiCell( $args['w'], $args['h'],
+                              $args['txt'], $args['border'],
+                              $args['align'], $args['fill'],
+                              $args['ln'], $args['x'],
+                              $args['y'], $args['reseth'],
+                              $args['stretch'], $args['ishtml'],
+                              $args['autopadding'], $args['maxh'] );
+        }
     }
  
     /*

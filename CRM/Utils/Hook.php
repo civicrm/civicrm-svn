@@ -790,4 +790,43 @@ abstract class CRM_Utils_Hook {
                                            'civicrm_emailProcessorContact' );
     }
     
+    /**
+     * Hook definition for altering the generation of Mailing Labels
+     * 
+     * @param array $args an array of the args in the order defined for the tcpdf multiCell api call
+     *                    with the variable names below converted into string keys (ie $w become 'w'
+     *                    as the first key for $args)
+     *   float $w Width of cells. If 0, they extend up to the right margin of the page.
+     *   float $h Cell minimum height. The cell extends automatically if needed.
+     *   string $txt String to print
+     *   mixed $border Indicates if borders must be drawn around the cell block. The value can 
+     *                 be either a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul>or
+     *                 a string containing some or all of the following characters (in any order):
+     *                 <ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul>
+     *   string $align Allows to center or align the text. Possible values are:<ul><li>L or empty string:
+     *                 left align</li><li>C: center</li><li>R: right align</li><li>J: justification 
+     *                 (default value when $ishtml=false)</li></ul>
+     *   int $fill Indicates if the cell background must be painted (1) or transparent (0). Default value: 0.
+     *   int $ln Indicates where the current position should go after the call. Possible values are:<ul><li>0:
+     *           to the right</li><li>1: to the beginning of the next line [DEFAULT]</li><li>2: below</li></ul>
+     *   float $x x position in user units
+     *   float $y y position in user units
+     *   boolean $reseth if true reset the last cell height (default true).
+     *   int $stretch stretch carachter mode: <ul><li>0 = disabled</li><li>1 = horizontal scaling only if 
+     *                necessary</li><li>2 = forced horizontal scaling</li><li>3 = character spacing only if
+     *                necessary</li><li>4 = forced character spacing</li></ul>
+     *   boolean $ishtml set to true if $txt is HTML content (default = false).
+     *   boolean $autopadding if true, uses internal padding and automatically adjust it to account for line width.
+     *   float $maxh maximum height. It should be >= $h and less then remaining space to the bottom of the page,
+     *               or 0 for disable this feature. This feature works only when $ishtml=false.
+     * 
+     */
+    
+    static function alterMailingLabelParams( &$args ) {
+        return self::singleton( )->invoke( 1, $args,
+                                           self::$_nullObject, self::$_nullObject,
+                                           self::$_nullObject, self::$_nullObject,
+                                           'civicrm_alterMailingLabelParams' );
+    }
+
 }
