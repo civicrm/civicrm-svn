@@ -48,16 +48,12 @@ function initTagTree() {
     //unobsctructive elements are there to provide the function to those not having javascript, no need for the others
     cj(".unobstructive").hide();
 
-    //load js tree.
-    cj("#tagtree").jstree({"plugins" : ["themes", "html_data"]});
-
     cj("#tagtree ul input:checked").each (function(){
         cj(this).parents("li").children(".jstree-icon").addClass('highlighted');
     });
-
+    
     cj("#tagtree input").change(function(){
         tagid = this.id.replace("check_", "");
-
         //get current tags from Summary and convert to array
         var tagLabels = cj.trim( cj("#tags").text( ) );
         if ( tagLabels ) {
@@ -93,7 +89,10 @@ function initTagTree() {
         cj("#tags").html( tagLabels );
         ( tagLabels ) ? cj("#tagLink,#tags").show( ) : cj("#tagLink,#tags").hide( );
     });
-    
+ 
+    //load js tree.
+    cj("#tagtree").jstree({"plugins" : ["themes", "html_data"]});
+   
     {/literal}
     {if $permission neq 'edit'}
     {literal}
