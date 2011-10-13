@@ -393,6 +393,23 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       $this->click("xpath=//div[@id='Memberships']//table/tbody/tr/td[7]/span[2][text()='more ']/ul/li/a[text()='Renew']");
 
       $this->waitForElementPresent('_qf_MembershipRenewal_cancel-bottom');
+      // Record contribution and set number of terms to 2
+      $this->click( 'record_contribution' );
+      $this->waitForElementPresent( 'contribution_type_id' );
+      $this->click( 'changeTermsLink' );
+      $this->waitForElementPresent( 'num_terms' );
+      $this->type( 'num_terms', '' );
+      $this->type( 'num_terms', '2' );
+      // added sleep to make sure jscript onchange for total_amount has a chance to fire
+      sleep(2);
+      $this->click( 'total_amount');
+      $this->verifyValue( 'total_amount', "200.00" );
+      $this->select( 'contribution_type_id', "label=Member Dues" );
+      $this->select( 'payment_instrument_id', "label=Check" );
+      $this->waitForElementPresent( 'check_number' );
+      $this->type( 'check_number', '1024' );
+      $this->select ( 'contribution_status_id', "label=Completed" );
+      $this->click( 'send_receipt' );
 
       // save the renewed membership
       $this->click('_qf_MembershipRenewal_upload-bottom');
@@ -410,7 +427,8 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent('_qf_MembershipView_cancel-bottom');
 
       $joinDate = $startDate = date('F jS, Y', strtotime("-2 year"));
-      $endDate  = date('F jS, Y', strtotime("+2 year -1 day"));
+      // Adding 2 x 2 years renewal to initial membership.
+      $endDate  = date('F jS, Y', strtotime("+4 year -1 day"));
 
       // verify membership renewed
       $verifyMembershipRenewData = array(
