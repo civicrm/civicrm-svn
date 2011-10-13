@@ -99,7 +99,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
         $defaults = array();
         require_once "CRM/Core/BAO/LabelFormat.php";
         $format = CRM_Core_BAO_LabelFormat::getDefaultValues();
-        $defaults['label_name'] = $format['name'];
+        $defaults['label_name'] = CRM_Utils_Array::value( 'name', $format );
         $defaults['do_not_mail'] = 1;
         
         return $defaults;
@@ -137,7 +137,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
         require_once 'CRM/Core/BAO/Setting.php';
         $mailingFormat = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                         'mailing_format' );
-            
+
         $mailingFormatProperties = array();
         if ( $mailingFormat ) {
             $mailingFormatProperties = self::getReturnProperties( $mailingFormat );
@@ -203,7 +203,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
                 $custom[] = $cfID;
             }
         }
-                           
+
         //get the total number of contacts to fetch from database.
         $numberofContacts = count( $this->_contactIds );
         require_once 'CRM/Contact/BAO/Query.php';      

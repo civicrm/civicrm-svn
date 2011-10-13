@@ -57,10 +57,10 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
                                                                                            'address_format',
                                                                                            'mailing_format',
                                                                                             ),
-                                    CRM_Core_BAO_Setting::ADDRESS_STANDARDIZATION_PREFERENCES_NAME => array(
-                                                                                                            'address_standardization_provider',
-                                                                                                            'address_standardization_userid',
-                                                                                                            'address_standardization_url',
+                                  CRM_Core_BAO_Setting::ADDRESS_STANDARDIZATION_PREFERENCES_NAME => array(
+                                                                                                          'address_standardization_provider',
+                                                                                                          'address_standardization_userid',
+                                                                                                          'address_standardization_url',
                                                                                                             ),
                                   );
 
@@ -175,8 +175,10 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
             }
         }
 
-        
-        $this->_config->copyValues( $this->_params );
+
+        foreach ( $this->_params as $name => $value ) {
+            $this->_config->$name = $value;
+        }
 
         // check if county option has been set
         $options = CRM_Core_OptionGroup::values( 'address_options', false, false, true );
