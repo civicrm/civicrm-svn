@@ -171,8 +171,9 @@ class CRM_Utils_Address
             
             // erase all empty ones, so we dont get blank lines
             foreach ( array_keys( $replacements ) as $key ) {
+                $exactKey = substr( $key, 0, 8 ) == 'contact.' ? substr( $key, 8 ) : $key;
                 if ( $key != 'contact.postal_code' &&
-                     CRM_Utils_Array::value( $key, $fields ) == null ) {
+                     CRM_Utils_Array::value( $exactKey, $fields ) == null ) {
                     $replacements[$key] = '';
                 }
             }
