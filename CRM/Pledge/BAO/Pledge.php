@@ -573,7 +573,7 @@ WHERE  $whereCond
             $returnProperties[$val] = true;
         }
         require_once 'CRM/Utils/Token.php';
-        $details = CRM_Utils_Token::getTokenDetails( $params,
+        $details = CRM_Utils_Token::getTokenDetails( $ids,
                                                      $returnProperties,
                                                      true, true, null,
                                                      $tokens,
