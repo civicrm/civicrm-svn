@@ -145,9 +145,24 @@ class CRM_Mailing_BAO_Query
 
             case 'mailing_delivery_status':
                 require_once('CRM/Mailing/PseudoConstant.php');
-                self::mailingEventQueryBuilder($query, $values,
-                    'civicrm_mailing_event_bounce', 'mailing_delivery_status', ts('Mailing Delivery Status'), CRM_Mailing_PseudoConstant::yesNoOptions('bounce'));
+
+                list( $name, $op, $value, $grouping, $wildcard ) = $values;
+                if ( $value == 'Y' ) {
+                    self::mailingEventQueryBuilder($query, $values,
+                                                   'civicrm_mailing_event_bounce', 
+                                                   'mailing_delivery_status', 
+                                                   ts('Mailing Delivery Status'), 
+                                                   CRM_Mailing_PseudoConstant::yesNoOptions('bounce'));
+                } elseif ( $value == 'N' ) {
+                    $values = array( $name, $op, 'Y', $grouping, $wildcard );
+                    self::mailingEventQueryBuilder($query, $values,
+                                                   'civicrm_mailing_event_delivered', 
+                                                   'mailing_delivery_status', 
+                                                   ts('Mailing Delivery Status'), 
+                                                   CRM_Mailing_PseudoConstant::yesNoOptions('success'));
+                }
                 return;
+
             case 'mailing_open_status':
                 require_once('CRM/Mailing/PseudoConstant.php');
                 self::mailingEventQueryBuilder($query, $values,
