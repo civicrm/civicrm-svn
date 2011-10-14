@@ -61,8 +61,8 @@ class CRM_Cron_Action {
 
     public function run( $now = null )
     {
-        require_once 'CRM/Core/BAO/ScheduleReminders.php';
-        CRM_Core_BAO_ScheduleReminders::processQueue( $now );
+        require_once 'CRM/Core/BAO/ActionSchedule.php';
+        CRM_Core_BAO_ActionSchedule::processQueue( $now );
     }
 
 }

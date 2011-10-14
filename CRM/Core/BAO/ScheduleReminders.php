@@ -41,7 +41,7 @@ require_once 'CRM/Core/DAO/ActionMapping.php';
 /**
  * This class contains functions for managing Scheduled Reminders
  */
-class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
+class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
 {
 
     static function getMapping( $id = null ) 
@@ -553,11 +553,11 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
                 $isError = 0; $errorMsg = '';
                 $toEmail = CRM_Contact_BAO_Contact::getPrimaryEmail( $dao->contact_id );
                 if ( $toEmail ) {
-                    $result = CRM_Core_BAO_ScheduleReminders::sendReminder( $dao->contact_id,
-                                                                            $toEmail,
-                                                                            $actionSchedule->id,
-                                                                            $fromEmailAddress,
-                                                                            $entityTokenParams );
+                    $result = CRM_Core_BAO_ActionSchedule::sendReminder( $dao->contact_id,
+                                                                         $toEmail,
+                                                                         $actionSchedule->id,
+                                                                         $fromEmailAddress,
+                                                                         $entityTokenParams );
                     if ( ! $result || is_a( $result, 'PEAR_Error' ) ) {
                         // we could not send an email, for now we ignore, CRM-3406
                         $isError = 1;

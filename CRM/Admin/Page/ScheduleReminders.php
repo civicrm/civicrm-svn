@@ -57,7 +57,7 @@ class CRM_Admin_Page_ScheduleReminders extends CRM_Core_Page_Basic
      */
     function getBAOName( ) 
     {
-        return 'CRM_Core_BAO_ScheduleReminders';
+        return 'CRM_Core_BAO_ActionSchedule';
     }
     
     /**
@@ -78,13 +78,13 @@ class CRM_Admin_Page_ScheduleReminders extends CRM_Core_Page_Basic
                                                                     ),
                                   CRM_Core_Action::ENABLE  => array(
                                                                     'name'  => ts('Enable'),
-                                                                    'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_ScheduleReminders' . '\',\'' . 'disable-enable' . '\' );"',
+                                                                    'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_ActionSchedule' . '\',\'' . 'disable-enable' . '\' );"',
                                                                     'ref'   => 'enable-action',
                                                                     'title' => ts('Enable Label Format') 
                                                                   ),
                                   CRM_Core_Action::DISABLE  => array(
                                                                     'name'  => ts('Disable'),
-                                                                    'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_ScheduleReminders' . '\',\'' . 'enable-disable' . '\' );"',
+                                                                    'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_ActionSchedule' . '\',\'' . 'enable-disable' . '\' );"',
                                                                     'ref'   => 'disable-action',
                                                                     'title' => ts('Disable Label Format') 
                                                                   ),
@@ -138,9 +138,9 @@ class CRM_Admin_Page_ScheduleReminders extends CRM_Core_Page_Basic
      */
     function browse($action=null)
     {
-        require_once 'CRM/Core/BAO/ScheduleReminders.php';
+        require_once 'CRM/Core/BAO/ActionSchedule.php';
         // Get list of configured reminders
-        $reminderList = CRM_Core_BAO_ScheduleReminders::getList();
+        $reminderList = CRM_Core_BAO_ActionSchedule::getList();
 
         if ( is_array( $reminderList ) ) {
             // Add action links to each of the reminders

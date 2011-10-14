@@ -378,8 +378,8 @@ LIMIT $limit";
             CRM_Utils_System::civiExit( );
         }
 
-        require_once 'CRM/Core/BAO/ScheduleReminders.php';
-        list( $sel1, $sel2 ) = CRM_Core_BAO_ScheduleReminders::getSelection1( $mappingID );
+        require_once 'CRM/Core/BAO/ActionSchedule.php';
+        list( $sel1, $sel2 ) = CRM_Core_BAO_ActionSchedule::getSelection1( $mappingID );
 
         $elements = array( );
         foreach ( $sel1 as $id => $name ) {
@@ -403,8 +403,8 @@ LIMIT $limit";
             CRM_Utils_System::civiExit( );
         }
 
-        require_once 'CRM/Core/BAO/ScheduleReminders.php';
-        list( $sel1, $sel2 ) =  CRM_Core_BAO_ScheduleReminders::getSelection1( $mappingID );
+        require_once 'CRM/Core/BAO/ActionSchedule.php';
+        list( $sel1, $sel2 ) =  CRM_Core_BAO_ActionSchedule::getSelection1( $mappingID );
 
         $elements = array( );
         foreach ( $sel2 as $id => $name ) {

@@ -68,8 +68,8 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         
         $this->add( 'text', 'title', ts( 'Title' ), array( 'size'=> 45,'maxlength' => 128 ), true );
 
-        require_once 'CRM/Core/BAO/ScheduleReminders.php';
-        list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ScheduleReminders::getSelection(  ) ;
+        require_once 'CRM/Core/BAO/ActionSchedule.php';
+        list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection(  ) ;
         
         $sel =& $this->add('hierselect',
                            'entity',
@@ -96,8 +96,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         require_once 'CRM/Core/OptionGroup.php';
         $this->_freqUnits = array( 'hour' => 'hour' ) + CRM_Core_OptionGroup::values('recur_frequency_units');
         
-        require_once 'CRM/Core/BAO/ScheduleReminders.php';
-        $mappings = CRM_Core_BAO_ScheduleReminders::getMapping(  );
+        $mappings = CRM_Core_BAO_ActionSchedule::getMapping(  );
 
         $numericOptions = array( 0 => ts('0'), 1 => ts('1'), 2 => ts('2'), 3 => ts('3'), 4 => ts('4'), 5 => ts('5' ),
                                  6 => ts('6'), 7 => ts('7'), 8 => ts('8'), 9 => ts('9'), 10 => ts('10') );
@@ -238,7 +237,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
     {
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             // delete reminder
-            CRM_Core_BAO_ScheduleReminders::del( $this->_id );
+            CRM_Core_BAO_ActionSchedule::del( $this->_id );
             CRM_Core_Session::setStatus( ts('Selected Reminder has been deleted.') );
             return;
         }
@@ -342,7 +341,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             $params['msg_template_id'] = CRM_Utils_Array::value( 'template', $values );
         }
         
-        CRM_Core_BAO_ScheduleReminders::add($params, $ids);
+        CRM_Core_BAO_ActionSchedule::add($params, $ids);
 
         $status = ts( "Your new Reminder titled %1 has been saved." , array( 1 => "<strong>{$values['title']}</strong>") );
         if ( $this->_action & CRM_Core_Action::UPDATE ) { 

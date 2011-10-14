@@ -90,6 +90,7 @@
         		    <li><a title="Location" class="action-item-wrap {if NOT $row.is_show_location} disabled{/if}" href="{crmURL p='civicrm/event/manage/location' q="reset=1&action=update&id=`$row.id`"}">{ts}Location{/ts}</a></li>
         		    <li><a title="Fees" class="action-item {if NOT $row.is_monetary} disabled{/if}" href="{crmURL p='civicrm/event/manage/fee' q="reset=1&action=update&id=`$row.id`"}">{ts}Fees{/ts}</a></li>
         		    <li><a title="Online Registration" class="action-item-wrap {if NOT $row.is_online_registration} disabled{/if}" href="{crmURL p='civicrm/event/manage/registration' q="reset=1&action=update&id=`$row.id`"}">{ts}Online Registration{/ts}</a></li>
+			     <li><a title="Schedule Reminders" class="action-item-wrap {if NOT $row.reminder} disabled{/if}" href="{crmURL p='civicrm/event/manage/reminder' q="reset=1&action=update&id=`$row.id`"}">{ts}Schedule Reminders{/ts}</a></li>
         		    <li><a title="Tell a Friend" class="action-item-wrap {if NOT $row.friend} disabled{/if}" href="{crmURL p='civicrm/event/manage/friend' q="reset=1&action=update&id=`$row.id`"}">{ts}Tell a Friend{/ts}</a></li>
 			</ul> 
         	    </span>
