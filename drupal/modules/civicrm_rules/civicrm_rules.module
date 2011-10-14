@@ -143,7 +143,11 @@ FROM   civicrm_mailing
             break;
             
         case 'CRM_Mailing_Form_Approve':
-            $mailingId = $form->get( 'mid' );
+            if ( $form->_mailingID ) {
+                $mailingId = $form->_mailingID;
+            } else {
+                $mailingId = $form->get( 'mid' );
+            }
             $eventName = 'mailing_approved';
             break;
             
