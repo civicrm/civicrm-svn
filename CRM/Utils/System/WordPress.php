@@ -180,8 +180,13 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
             $base = parse_url( $config->userFrameworkBaseURL );
             $config->useFrameworkRelativeBase = $base['path'];
         }
+        
         $base = $absolute ? $config->userFrameworkBaseURL : $config->useFrameworkRelativeBase;
-        $base = 'http://wp/wp-admin/admin.php';
+        
+        if ( is_admin() ) {
+            $base .= 'wp-admin/admin.php';
+        }
+        
         $script = '';
         $separator = $htmlize ? '&amp;' : '&';
 
