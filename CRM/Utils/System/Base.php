@@ -44,7 +44,11 @@ class CRM_Utils_System_Base {
         $config =& CRM_Core_Config::singleton( );
         if ( ! $print &&
              $config->userFramework == 'WordPress' ) {
-            require_once(ABSPATH . 'wp-admin/admin-header.php');
+             if ( is_admin( ) ) {    
+                 require_once(ABSPATH . 'wp-admin/admin-header.php');
+             } else {
+                // FIX ME: we need to figure out how to theme frontend pages
+             }
         }
 
         if ( $ret ) {

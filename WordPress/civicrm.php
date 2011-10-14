@@ -249,13 +249,23 @@ function civicrm_wp_styles( ) {
     return;
 }
 
-function civicrm_wp_main( ) {
-    add_action( 'admin_menu', 'civicrm_wp_add_menu_items' );
+function civicrm_wp_frontend( ) {
+    civicrm_wp_invoke();
+}
 
+function civicrm_wp_main( ) {
+    if ( is_admin() ) {
+        add_action( 'admin_menu', 'civicrm_wp_add_menu_items' );
+    }
+    
     if ( !civicrm_wp_in_civicrm( ) ) {
         return;
     }
-    
+
+    if ( !is_admin( ) ) {
+        civicrm_wp_frontend();
+    }
+
     add_action( 'admin_print_styles' , 'civicrm_wp_styles' );
     add_action( 'wp_print_scripts', 'civicrm_wp_scripts' );
    
