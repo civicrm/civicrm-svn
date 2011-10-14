@@ -61,9 +61,9 @@ class CRM_Core_BAO_ScheduleReminders extends CRM_Core_DAO_ActionSchedule
     }
 
 
-    static function getSelection(  ) 
+    static function getSelection(  $id = null  ) 
     {
-        $mapping  = self::getMapping( );
+        $mapping  = self::getMapping( $id );
 
         require_once 'CRM/Core/PseudoConstant.php';
         require_once 'CRM/Event/PseudoConstant.php';

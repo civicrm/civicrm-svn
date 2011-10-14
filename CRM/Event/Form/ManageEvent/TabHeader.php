@@ -80,6 +80,12 @@ class CRM_Event_Form_ManageEvent_TabHeader {
                                                'active' => false,
                                                'current' => false,
                                                ),
+                      'reminder'     => array( 'title' => ts( 'Schedule Reminders' ),
+                                               'link'   => null,
+                                               'valid' => false,
+                                               'active' => false,
+                                               'current' => false,
+                                               ),
                       'friend'       => array( 'title' => ts( 'Tell a Friend' ),
                                                'link'   => null,
                                                'valid' => false,
@@ -141,9 +147,12 @@ WHERE      e.id = %1
             if ( ! $dao->is_active ) {
                 $tabs['friend']['valid'] = false;
             }
-        }
 
+            //calculate if the reminder has been configured for this event
+            
+        }
         return $tabs;
+
     }
 
     static function reset( &$form ) {
