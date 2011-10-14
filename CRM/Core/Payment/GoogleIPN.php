@@ -210,7 +210,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
                     $ids['participant'] ;
             } else if ( $ids['membership'] ) {
                 $contribution->trxn_id = 
-                    $ids['membership'] . CRM_Core_DAO::VALUE_SEPARATOR .
+                    $ids['membership'][0] . CRM_Core_DAO::VALUE_SEPARATOR .
                     $ids['related_contact'] . CRM_Core_DAO::VALUE_SEPARATOR .
                     $ids['onbehalf_dupe_alert'];
             }
