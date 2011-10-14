@@ -158,13 +158,17 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
             $recur->save( );
         } else {
             // Declined
-            
             $recur->contribution_status_id = array_search( 'Failed', $contributionStatus ); // failed status
             $recur->cancel_date            = $now;
             $recur->save( );
 
             CRM_Core_Error::debug_log_message( "Subscription payment failed - '{$input['response_reason_text']}'" );
-            return $this->failed( $objects, $transaction );
+
+            // the recurring contribution has declined a payment or has failed
+            // so we just fix the recurring contribution and not change any of
+            // the existing contribiutions
+            // CRM-9036
+            return true;
         }
         
         // check if contribution is already completed, if so we ignore this ipn
