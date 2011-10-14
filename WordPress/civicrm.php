@@ -262,15 +262,18 @@ function civicrm_wp_main( ) {
         return;
     }
 
-    add_action( 'admin_print_styles' , 'civicrm_wp_styles' );
+    if ( !is_admin( ) ) {
+        add_action( 'wp_print_styles' , 'civicrm_wp_styles' );
+        civicrm_wp_frontend();
+    } else {
+        add_action( 'admin_print_styles' , 'civicrm_wp_styles' );
+    }
+
     add_action( 'wp_print_scripts', 'civicrm_wp_scripts' );
    
     add_filter( 'the_title' , 'civicrm_wp_set_title' );
     add_filter( 'wp_title'  , 'civicrm_wp_set_title' );
 
-    if ( !is_admin( ) ) {
-        civicrm_wp_frontend();
-    }
 }
 
 function civicrm_wp_in_civicrm( ) {
