@@ -95,6 +95,7 @@ class CRM_Mailing_BAO_Query
                 break;
                 
             case 'civicrm_mailing_event_bounce':
+            case 'civicrm_mailing_event_delivered':
             case 'civicrm_mailing_event_opened':
             case 'civicrm_mailing_event_reply':
             case 'civicrm_mailing_event_trackable_url_open':
