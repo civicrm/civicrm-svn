@@ -437,14 +437,26 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         //to create an cms user 
         if ( ! $this->_userID ) {
             $createCMSUser = false;
+
             if ( $this->_values['custom_pre_id'] ) {
                 $profileID = $this->_values['custom_pre_id'];
                 $createCMSUser = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup',  $profileID,'is_cms_user' );
             }
+
             if ( ! $createCMSUser &&
                  $this->_values['custom_post_id'] ) {
-                $profileID = $this->_values['custom_post_id'];
-                $createCMSUser = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $profileID, 'is_cms_user' );
+                if ( ! is_array( $this->_values['custom_post_id'] ) ) {
+                    $profileIDs = array( $this->_values['custom_post_id'] );
+                } else {
+                    $profileIDs = $this->_values['custom_post_id'];
+                }
+                foreach ( $profileIDs as $pid ) {
+                    if ( CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $pid, 'is_cms_user' ) ) {
+                        $profileID = $pid;
+                        $createCMSUser = true;
+                        break;
+                    }
+                }
             }
 
             if ( $createCMSUser ) {
