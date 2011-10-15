@@ -255,6 +255,8 @@ WHERE  c.group_id = {$groupDAO->id}
                         AND             $contact.is_opt_out = 0
                         AND             $contact.is_deceased = 0
                         AND            ($email.is_bulkmail = 1 OR $email.is_primary = 1)
+                        AND             $email.email IS NOT NULL
+                        AND             $email.email != ''
                         AND             $email.on_hold = 0
                         AND             $mg.mailing_id = {$mailing_id}
                         AND             X_$job_id.contact_id IS null
