@@ -26,7 +26,7 @@ if ( stristr( PHP_OS, 'WIN' ) ) {
 }
 
 // set installation type - drupal
-if ( !session_id( ) ) {
+if ( ! session_id( ) ) {
     session_start();
 }
 
@@ -822,6 +822,9 @@ class Installer extends InstallRequirements {
             $config['mysql']['username'],
             $config['mysql']['password'],
             $config['mysql']['database'] );
+
+        global $installDirPath;
+
         // Build database
         require_once $installDirPath . 'civicrm.php';
         civicrm_main( $config );
