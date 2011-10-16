@@ -199,7 +199,19 @@ function removeDefaultCustomFields( ) {
 	 });
 	 removeCustomData = false;
      }
+
+     var values = cj("#contact_sub_type").val();
+     if ( values ) {
+        var contactType = {/literal}"{$contactType}"{literal};
+        buildCustomData(contactType, values);
+     }
 }
+
+cj(document).ready(function() {
+     if ( cj("#contact_sub_type").val() ) {
+        removeDefaultCustomFields( );
+     }
+});
  
 </script>
 {/literal}

@@ -118,14 +118,8 @@ var checkSimilar =  {$checkSimilar};
         </td>
         <td>
             {if $buildContactSubType}
-               {ts}Contact Type{/ts}<br />
-               <div class="listing-box">
-               {foreach from=$form.contact_sub_type item="subtype"} 
-                  <div class="{cycle values="odd-row,even-row"}">
-                    {$subtype.html}
-                  </div>
-               {/foreach}
-               </div>
+              {$form.contact_sub_type.label}<br />
+              {$form.contact_sub_type.html}
             {/if}
         </td>
     </tr>
