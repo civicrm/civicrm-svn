@@ -628,3 +628,31 @@ function civicrm_date_views_tables() {
                  'civicrm_activity',
                  'civicrm_campaign',);
 }
+
+/**
+ * Implements hook_views_plugins
+ */
+function civicrm_views_plugins() {
+  if (modules_exists('calendar')) {
+    $civicrm_module_path = drupal_get_path('module', 'civicrm');
+  
+    $data = array(
+      'module' => 'civicrm', // This just tells our themes are elsewhere.
+  
+      'row' => array(
+        'civicrm_event_calendar' => array(
+          'title' => t('Calendar Items'),
+          'help' => t('Displays each selected node as a Calendar item.'),
+          'handler' => 'calendar_plugin_row_civicrm_event',
+          'path' => "$civicrm_module_path/modules/views/plugins",
+          'base' => array('civicrm_event'), 
+          'uses options' => TRUE,
+          'uses fields' => TRUE,
+          'type' => 'normal',
+        ),
+      ),
+    );
+    
+  }
+  return $data;
+}
