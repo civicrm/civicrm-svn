@@ -138,13 +138,6 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         }
         
         if ( CRM_Utils_Array::value(1, $fields['extends']) ) {
-            if ( !$self->_isGroupEmpty ) {
-                $updates = array_diff($self->_subtypes, array_intersect($self->_subtypes, $fields['extends'][1]));
-                if ( ! empty($updates) ) {
-                    $errors['extends'] = ts("Removing any existing subtypes is not allowed at this moment. However you can add more subtypes.");
-                } 
-            }
-            
             if( in_array('', $fields['extends'][1]) && count($fields['extends'][1]) > 1) {
                 $errors['extends'] = ts("Cannot combine other option with 'Any'.");
             }  
@@ -333,10 +326,8 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             //allow to edit settings if custom set is empty CRM-5258
             $this->_isGroupEmpty = CRM_Core_BAO_CustomGroup::isGroupEmpty( $this->_id );
             if ( !$this->_isGroupEmpty ) {
-                if ( !empty($this->_subtypes) &&
-                     (count(array_intersect($this->_subtypes, $sel2[$this->_defaults['extends']])) < 
-                      count($sel2[$this->_defaults['extends']])) ) {
-                    // we want to allow adding subtypes for this case, 
+                if ( !empty($this->_subtypes) ) {
+                    // we want to allow adding / updating subtypes for this case, 
                     // and therefore freeze the first selector only.
                     $sel->_elements[0]->freeze();
                 } else {
@@ -344,6 +335,8 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
                     $sel->freeze();
                 }
             }
+            $this->assign('isCustomGroupEmpty', $this->_isGroupEmpty);
+            $this->assign('defaultSubtypes', json_encode($this->_subtypes));
             $this->assign('gid', $this->_id);
         }
         

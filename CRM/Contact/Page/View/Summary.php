@@ -61,9 +61,11 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
 		$this->assign('actionsMenuList',$menuItems);
 		
         //retrieve inline custom data
-        $entityType    = $this->get('contactType');
-        $entitySubType = $this->get('contactSubtype');
-
+        $entityType = $this->get('contactType');
+        if ( $entitySubType = $this->get('contactSubtype') ) {
+            $entitySubType  = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                       trim($entitySubType, CRM_Core_DAO::VALUE_SEPARATOR) );
+        }
         $groupTree =& CRM_Core_BAO_CustomGroup::getTree( $entityType,
                                                          $this, 
                                                          $this->_contactId,
