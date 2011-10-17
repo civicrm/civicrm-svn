@@ -228,3 +228,35 @@ function civicrm_api3_mailing_process( $params )
     }
 
 }
+
+function civicrm_api3_mailing_fetch_bounces( $params ) 
+{
+    require_once 'CRM/Utils/Mail/EmailProcessor.php';
+    require_once 'CRM/Core/Lock.php';
+    $lock = new CRM_Core_Lock('EmailProcessor');
+    if (!$lock->isAcquired()) {
+      return civicrm_api3_create_error( "Could not acquire lock, another EmailProcessor process is running");
+    }
+    //if ( ! CRM_Utils_Mail_EmailProcessor::processBounces() )  { 
+    //   return civicrm_api3_create_error( "Process Bounces failed");
+    //   FIXME: processBounces doesn't return true/false on success/failure
+    $values = array( );
+    return civicrm_api3_create_success($values, $params,'mailing','bounces');
+    $lock->release();
+}
+
+function civicrm_api3_mailing_fetch_activities( $params ) 
+{
+    require_once 'CRM/Utils/Mail/EmailProcessor.php';
+    require_once 'CRM/Core/Lock.php';
+    $lock = new CRM_Core_Lock('EmailProcessor');
+    if (!$lock->isAcquired()) {
+      return civicrm_api3_create_error( "Could not acquire lock, another EmailProcessor process is running");
+    }
+    //if ( ! CRM_Utils_Mail_EmailProcessor::processActivities() )  { 
+    //   return civicrm_api3_create_error( "Process Activities failed");
+    //   FIXME: processBounces doesn't return true/false on success/failure
+    $values = array( );
+    return civicrm_api3_create_success($values, $params,'mailing','activities');
+    $lock->release();
+}
