@@ -62,18 +62,26 @@ function civicrm_wp_add_menu_items( ) {
 }
 
 function civicrm_db_settings( ) {
-    $settingsFile = 
-            WP_PLUGIN_DIR . DIRECTORY_SEPARATOR .
+    $installFile = 
+            WP_PLUGIN_DIR . DIRECTORY_SEPARATOR .         
             'civicrm' . DIRECTORY_SEPARATOR .
             'civicrm' . DIRECTORY_SEPARATOR .
             'install' . DIRECTORY_SEPARATOR .
             'index.php';
-    include( $settingsFile );
+    include( $installFile );
 }
 
 function civicrm_wp_set_title( $title = '' ) {
     global $civicrm_wp_title;
     return empty( $civicrm_wp_title ) ? $title : $civicrm_wp_title;
+}
+
+function civicrm_setup_warning( ) {
+    $installLink = admin_url() . "options-general.php?page=civicrm-settings";
+    echo '<div id="civicrm-warning" class="updated fade"><p><strong>' .
+    t( 'CiviCRM is almost ready.' ). '</strong> ' .
+    t( 'You must <a href="!1">configure CiviCRM</a> for it to work.', array( '!1' => $installLink) )    .
+    '</p></div>';
 }
 
 function civicrm_wp_initialize( ) {
@@ -93,31 +101,25 @@ function civicrm_wp_initialize( ) {
             exit( );
         }
 
-        $settingsFile = 
-            WP_PLUGIN_DIR . DIRECTORY_SEPARATOR .
-            'civicrm' . DIRECTORY_SEPARATOR .
-            'civicrm.settings.php';
-        $error = @include_once( $settingsFile );
+        $settingsFile = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR .
+                        'civicrm' . DIRECTORY_SEPARATOR .
+                        'civicrm.settings.php';
 
-	    // get ready for problems
-        $installLink    = "/wp-admin/options-general.php?page=civicrm-settings";
+        $error = include_once( $settingsFile );
+
+        // get ready for problems
+        $installLink    = admin_url() . "options-general.php?page=civicrm-settings";
         $docLinkInstall = "http://wiki.civicrm.org/confluence/display/CRMDOC/WordPress+Installation+Guide";
         $docLinkTrouble = "http://wiki.civicrm.org/confluence/display/CRMDOC/Installation+and+Configuration+Trouble-shooting";
         $forumLink      = "http://forum.civicrm.org/index.php/board,6.0.html";
 
-	    $errorMsgAdd = t("Please review the <a href='!1'>WordPress Installation Guide</a> and the <a href='!2'>Trouble-shooting page</a> for assistance. If you still need help installing, you can often find solutions to your issue by searching for the error message in the <a href='!3'>installation support section of the community forum</a>.</strong></p>", 
+        $errorMsgAdd = t("Please review the <a href='!1'>WordPress Installation Guide</a> and the <a href='!2'>Trouble-shooting page</a> for assistance. If you still need help installing, you can often find solutions to your issue by searching for the error message in the <a href='!3'>installation support section of the community forum</a>.</strong></p>", 
                          array('!1' => $docLinkInstall, '!2' => $docLinkTrouble, '!3' => $forumLink ) );
         
         $installMessage = t("Click <a href='!1'>here</a> for fresh install.", array( '!1' => $installLink ) );  
             
         if ( $error == false ) {
-            $failure = true;
-	        wp_die( "<strong><p class='error'>" . 
-                t("Oops! - The CiviCRM settings file (civicrm.settings.php) was not found in the expected location ") . 
-                "(" . $settingsFile . "). </p>
-                <p class='error'>" . $installMessage ." </p>
-                <p class='error'>" .
-                $errorMsgAdd . '</p></strong>' );
+            header( 'Location: ' . admin_url() . 'options-general.php?page=civicrm-settings' );
             return false;
         }
         
@@ -210,7 +212,7 @@ function civicrm_wp_scripts( ) {
             continue;
         }
         if ( strpos( $line, '.js' ) !== false ) {
-            wp_enqueue_script( $line, WP_PLUGIN_URL .  "/civicrm/civicrm/$line" );
+            wp_enqueue_script( $line, WP_PLUGIN_URL . "/civicrm/civicrm/$line" );
         }
     }
     
@@ -256,8 +258,19 @@ function civicrm_wp_frontend( ) {
 function civicrm_wp_main( ) {
     if ( is_admin() ) {
         add_action( 'admin_menu', 'civicrm_wp_add_menu_items' );
+
+        // check if settings file exist, do not show configuration link on
+        // install / settings page
+        if ( isset( $_GET['page'] ) && $_GET['page'] != 'civicrm-settings' ) {
+            $settingsFile = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 
+                'civicrm' . DIRECTORY_SEPARATOR .'civicrm.settings.php';
+        
+            if ( !file_exists( $settingsFile ) ) {
+                add_action( 'admin_notices', 'civicrm_setup_warning' );
+            }
+        }
     }
-    
+  
     if ( !civicrm_wp_in_civicrm( ) ) {
         return;
     }
@@ -289,7 +302,9 @@ function drupal_set_breadcrumb( ) {
     return;
 }
 
-function t( $str ) {
+function t( $str, $sub=null ) {
+    if(is_array($sub))
+        $str = str_replace( array_keys($sub), array_values($sub), $str);
     return $str;
 }
 
