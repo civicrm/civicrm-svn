@@ -252,7 +252,10 @@ function civicrm_wp_styles( ) {
 }
 
 function civicrm_wp_frontend( ) {
-    civicrm_wp_invoke();
+    // this places civicrm inside frontend theme
+    // wp documentation rocks if you know what you are looking for
+    // but best way is to check other plugin implementation :) 
+    add_filter('the_content', 'civicrm_wp_invoke');
 }
 
 function civicrm_wp_main( ) {
