@@ -1608,7 +1608,7 @@ function civitest_civicrm_emailProcessorContact( $email, $contactID, &$result ) 
     }
 
     define( 'FILE_TO_ORG_ALWAYS_TAG', 'MyTag1' );
-    $orgID = _civicrm_find_org_with_tag( FILE_TO_ORG_ALWAYS_TAG, $mailDomain );
+    $orgID = _civitest_find_org_with_tag( FILE_TO_ORG_ALWAYS_TAG, $mailDomain );
     if ( $orgID ) {
         $result = array( 'contactID' => $orgID,
                          'action'    => CRM_Utils_Mail_Incoming::EMAILPROCESSOR_OVERRIDE );
@@ -1625,7 +1625,7 @@ function civitest_civicrm_emailProcessorContact( $email, $contactID, &$result ) 
     // passes through the ALWAYS tag check without finding a match, AND it does 
     // not match an individual.
     define( 'FILE_TO_ORG_INDIVIDUAL_UNMATCHED_TAG', 'MyTag2' );
-    $orgID = _civicrm_find_org_with_tag( FILE_TO_ORG_INDIVIDUAL_UNMATCHED_TAG, $mailDomain );
+    $orgID = _civitest_find_org_with_tag( FILE_TO_ORG_INDIVIDUAL_UNMATCHED_TAG, $mailDomain );
     if ( $orgID ) {
         $result = array( 'contactID' => $orgID,
                          'action'    => CRM_Utils_Mail_Incoming::EMAILPROCESSOR_OVERRIDE );
