@@ -106,10 +106,13 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
         }
 
         //Fetch id of newly added user
-        $id_sql   = "SELECT uid FROM {$config->userFrameworkUsersTableName} where name = '{$params['cms_name']}'";
-        $id_query = $db_cms->query( $id_sql );
-        $id_row   = $id_query->fetchRow( DB_FETCHMODE_ASSOC ) ;
-        return $id_row['uid'];
+        $uid = db_query(
+            "SELECT uid FROM {users} WHERE name = :name",
+            array( ':name' => $params['cms_name'] )
+        ) -> fetchField( );
+
+        return $uid;
+
     }
     
     /*
@@ -153,44 +156,35 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
         }
 
         if ( CRM_Utils_Array::value('name', $params) ) {
-                if ( $nameError = user_validate_name( $params['name'] ) ) {
-                    $errors['cms_name'] = $nameError;
-                } elseif ( (bool) db_select('users')->fields($config->userFrameworkUsersTableName, array('uid'))->condition('name', db_like($params['name']), 'LIKE')->range(0, 1)->execute()->fetchField() )  {
+            if ( $nameError = user_validate_name( $params['name'] ) ) {
+                $errors['cms_name'] = $nameError;
+            } else {
+                $uid = db_query(
+                                "SELECT uid FROM {users} WHERE name = :name",
+                                array( ':name' => $params['name'] )
+                                ) -> fetchField( );
+                if ( (bool) $uid ) {
                     $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', array( 1 => $params['name'] ) );
                 }
-         }
+            }
+        }
 
          if ( CRM_Utils_Array::value( 'mail', $params ) ) {
-                if ( $emailError = user_validate_mail($params['mail']) ) {
-                    $errors[$emailName] = $emailError;
-                } elseif ( (bool) db_select('users')->fields($config->userFrameworkUsersTableName, array('uid'))->condition('mail', db_like($params['mail']), 'LIKE')->range(0, 1)->execute()->fetchField() ) {
-                    $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
-                                              array( 1 => $params['mail']) );
-                }
+             if ( $emailError = user_validate_mail($params['mail']) ) {
+                 $errors[$emailName] = $emailError;
+             } else {
+                 $uid = db_query(
+                                 "SELECT uid FROM {users} WHERE mail = :mail",
+                                 array( ':mail' => $params['mail'])
+                                 ) -> fetchField( );
+                 if ( (bool) $uid ) {
+                     $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
+                                               array( 1 => $params['mail']) );
+                 }
+             }
          }
-        
-         $db_cms = DB::connect($config->userFrameworkDSN);
-         if ( DB::isError( $db_cms ) ) { 
-                die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) ); 
-         }
-            
-         $query = $db_cms->query( $sql );
-         $row = $query->fetchRow( );
-         if ( !empty( $row ) ) {
-                $dbName  = CRM_Utils_Array::value( 0, $row );
-                $dbEmail = CRM_Utils_Array::value( 1, $row );
-                if ( strtolower( $dbName ) == strtolower( $name ) ) {
-                    $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', 
-                                              array( 1 => $name ) );
-                }
-                if ( strtolower( $dbEmail ) == strtolower( $email ) ) {
-                    $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
-                                              array( 1 => $email) );
-                }
-         }
+    }
  
-    } 
-
     /*
      * Function to get the drupal destination string. When this is passed in the
      * URL the user will be directed to it after filling in the drupal form

@@ -60,29 +60,36 @@ class CRM_Core_BAO_CMSUser
         CRM_Core_Error::ignoreException( );
         $db_uf = self::dbHandle( $config );
 
+        // Build an array of rows from UF users table.
+        $rows = array( );
         if ( $config->userSystem->is_drupal == '1' ) { 
             $id   = 'uid'; 
             $mail = 'mail'; 
             $name = 'name';
+
+            $result = db_query("SELECT uid, mail, name FROM {users} where mail != ''");
+
+            while ( $row = $result->fetchAssoc( ) ) {
+                $rows[] = $row;
+            }
+
         } else if ( $config->userFramework == 'Joomla' ) { 
             $id   = 'id'; 
             $mail = 'email'; 
             $name = 'name';
+            // TODO: Insert code here to populate $rows for Joomla;
         } else { 
             CRM_Core_Error::fatal( 'CMS user creation not supported for this framework' ); 
         } 
 
         set_time_limit(300);
 
-        $sql   = "SELECT $id, $mail, $name FROM {$config->userFrameworkUsersTableName} where $mail != ''";
-        $query = $db_uf->query( $sql );
-        
         $user            = new StdClass( );
         $uf              = $config->userFramework;
         $contactCount    = 0;
         $contactCreated  = 0;
         $contactMatching = 0;
-        while ( $row = $query->fetchRow( DB_FETCHMODE_ASSOC ) ) {
+        foreach ( $rows as $row ) {
             $user->$id   = $row[$id];
             $user->$mail = $row[$mail];
             $user->$name = $row[$name];
@@ -330,40 +337,27 @@ class CRM_Core_BAO_CMSUser
         $isDrupal = $config->userSystem->is_drupal ;
         $isJoomla = ucfirst($config->userFramework) == 'Joomla' ? true : false;
         
-        $db_uf = DB::connect($config->userFrameworkDSN);
-        
-        if ( DB::isError( $db_uf ) ) { 
-            die( "Cannot connect to UF db via $dsn, " . $db_uf->getMessage( ) ); 
-        } 
-        
         if ( !$isDrupal && !$isJoomla ) { 
             die( 'Unknown user framework' ); 
         }
         
+        // Use UF native framework to fetch data from UF user table
         if ( $isDrupal ) { 
-            $id   = 'uid'; 
-            $mail = 'mail';
+            $uid = db_query(
+                "SELECT uid FROM {users} where mail = :email",
+                array(':email' => $contact['email'])
+            ) -> fetchField( );
+
+            if ( $uid ) {
+                $contact['user_exists'] = true;
+                $result = $uid;
+            }
         } elseif ( $isJoomla ) { 
+            // TODO: Insert Joomla! code  here.
             $id   = 'id'; 
             $mail = 'email';
         } 
 
-        $sql   = "SELECT $id FROM {$config->userFrameworkUsersTableName} where $mail='" . $contact['email'] . "'";
-        
-        $query = $db_uf->query( $sql );
-        
-        if ( $row = $query->fetchRow( DB_FETCHMODE_ASSOC ) ) {
-            $contact['user_exists'] = true;
-            if ( $isDrupal ) {
-                $result = $row['uid'];
-            } elseif ( $isJoomla ) {
-                $result = $row['id'];
-            }
-        } else {
-            $result = false;
-        }
-        
-        $db_uf->disconnect( );
         return $result;
     }
 
