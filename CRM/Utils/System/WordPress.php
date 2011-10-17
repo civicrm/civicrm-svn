@@ -71,7 +71,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
      * @static
      */
     function appendBreadCrumb( $breadCrumbs ) {
-        $breadCrumb = drupal_get_breadcrumb( );
+        $breadCrumb = wp_get_breadcrumb( );
 
         if ( is_array( $breadCrumbs ) ) {
             foreach ( $breadCrumbs as $crumbs ) {
@@ -88,7 +88,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
                 $breadCrumb[]  = "<a href=\"{$crumbs['url']}\">{$crumbs['title']}</a>";
             }
         }
-        drupal_set_breadcrumb( $breadCrumb );
+        wp_set_breadcrumb( $breadCrumb );
     }
 
     /**
@@ -100,7 +100,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
      */
     function resetBreadCrumb( ) {
         $bc = array( );
-        drupal_set_breadcrumb( $bc );
+        wp_set_breadcrumb( $bc );
     }
 
     /**
@@ -113,7 +113,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
      * @static
      */
     function addHTMLHead( $head ) {
-      drupal_set_html_head( $head );
+        //drupal_set_html_head( $head );
     }
 
     /** 
@@ -233,6 +233,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
      * @static
      */
     function authenticate( $name, $password ) {
+        // FIX ME: need to check on this
         require_once 'DB.php';
 
         $config = CRM_Core_Config::singleton( );
@@ -339,8 +340,8 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
      */
     public function isUserLoggedIn( ) {
         $isloggedIn = false;
-        if ( function_exists( 'user_is_logged_in' ) ) {
-            $isloggedIn = user_is_logged_in( );
+        if ( function_exists( 'is_user_logged_in' ) ) {
+            $isloggedIn = is_user_logged_in( );
         }
         
         return $isloggedIn;
@@ -353,13 +354,11 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
      */
     public function getLoggedInUfID( ) {
         $ufID = null;
-        if ( function_exists( 'user_is_logged_in' ) && 
-             user_is_logged_in( ) && 
-             function_exists( 'user_uid_optional_to_arg' ) ) {
-            $ufID = user_uid_optional_to_arg( array( ) );
+        if ( function_exists( 'is_user_logged_in' ) && 
+             is_user_logged_in( ) ) {
+            global $current_user; 
+            $ufID = $current_user->ID; 
         }
-        
         return $ufID;
     }
-    
 }

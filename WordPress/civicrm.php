@@ -294,11 +294,11 @@ function civicrm_wp_in_civicrm( ) {
              $_GET['page'] == 'CiviCRM' ) ? true : false;
 }
 
-function drupal_get_breadcrumb( ) {
+function wp_get_breadcrumb( ) {
     return;
 }
 
-function drupal_set_breadcrumb( ) {
+function wp_set_breadcrumb( ) {
     return;
 }
 
