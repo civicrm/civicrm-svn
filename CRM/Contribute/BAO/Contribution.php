@@ -1686,8 +1686,13 @@ WHERE     c.id = $contributionId";
             $componentDetails['contact_id']   = $dao->contact_id;
             $componentDetails['event']        = $dao->event_id;
             $componentDetails['participant']  = $dao->participant_id;
-            $componentDetails['membership'][] = $dao->membership_id;
-            $componentDetails['membership_type'][] = $dao->membership_type_id;
+            if ( $dao->membership_id ) {
+                if ( ! isset( $componentDetails['membership'] ) ) {
+                    $componentDetails['membership'] = $componentDetails['membership_type'] = array( );
+                }
+                $componentDetails['membership'][] = $dao->membership_id;
+                $componentDetails['membership_type'][] = $dao->membership_type_id;
+            }
             if ( $dao->pledge_payment_id ) {
                 $pledgePayment[] = $dao->pledge_payment_id;
             }
