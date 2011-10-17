@@ -422,8 +422,8 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             $relTables[$name]['main_url']  = str_replace('$cid', $cid, $relTables[$name]['url']);
             $relTables[$name]['other_url'] = str_replace('$cid', $oid, $relTables[$name]['url']);
             if ( $name == 'rel_table_users' ) {
-                $relTables[$name]['main_url']    = str_replace('$ufid', $mainUfId,  $relTables[$name]['url']);
-                $relTables[$name]['other_url']   = str_replace('$ufid', $otherUfId, $relTables[$name]['url']);
+                $relTables[$name]['main_url']    = str_replace('%ufid', $mainUfId,  $relTables[$name]['url']);
+                $relTables[$name]['other_url']   = str_replace('%ufid', $otherUfId, $relTables[$name]['url']);
                 $find = array( '$ufid', '$ufname');
                 if($mainUser) {
                     $replace = array( $mainUfId, $mainUser->name );
