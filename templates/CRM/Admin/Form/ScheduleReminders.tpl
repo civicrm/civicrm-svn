@@ -110,6 +110,9 @@
     <tr class="crm-scheduleReminder-form-block-recipient">
         <td class="right">{$form.recipient.label}</td><td colspan="3">{$form.recipient.html}</td>
     </tr>
+    <tr id="recipientListing" class="crm-scheduleReminder-form-block-recipientListing">
+        <td class="right">{$form.recipientListing.label}</td><td colspan="3">{$form.recipientListing.html}</td>
+    </tr>
     <tr id="recipientManual" class="crm-scheduleReminder-form-block-recipient_manual_id">
     	<td class="label">{$form.recipient_manual_id.label}</td>
         <td>{$form.recipient_manual_id.html}
@@ -197,6 +200,21 @@
          }); 
      });
 
+    cj(function() {
+       populateRecipient();
+       cj('#recipient').click( function( ) {
+           populateRecipient();
+       });
+     });
+
+     function populateRecipient( ) {
+     	  var recipient = cj("#recipient option:selected").text();    
+	  if(recipient == 'Participant Status' || recipient == 'Participant Role'){
+	    cj("#recipientListing").show();	     
+	  } else {
+	    cj("#recipientListing").hide();
+	  }
+     }
      function buildSelect( selectID ) {
          var elementID = '#' +  selectID;
          cj( elementID ).html('');

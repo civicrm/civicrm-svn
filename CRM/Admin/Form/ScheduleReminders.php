@@ -70,6 +70,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
 
         require_once 'CRM/Core/BAO/ActionSchedule.php';
         list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection(  ) ;
+        //CRM_Core_Error::debug( '$sel3', $sel3[3][0] );
         
         $sel =& $this->add('hierselect',
                            'entity',
@@ -96,6 +97,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         require_once 'CRM/Core/OptionGroup.php';
         $this->_freqUnits = array( 'hour' => 'hour' ) + CRM_Core_OptionGroup::values('recur_frequency_units');
         
+        //pass the mapping ID in UPDATE mode
         $mappings = CRM_Core_BAO_ActionSchedule::getMapping(  );
 
         $numericOptions = array( 0 => ts('0'), 1 => ts('1'), 2 => ts('2'), 3 => ts('3'), 4 => ts('4'), 5 => ts('5' ),
@@ -140,7 +142,8 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->add( 'select', 'recipient', ts( 'Recipient(s)' ), $sel5[$recipient],
                     false, array( 'onClick' => "showHideByValue('recipient','manual','recipientManual','table-row','select',false); showHideByValue('recipient','group','recipientGroup','table-row','select',false);") 
                     );
-        
+        $recipientListing = $this->add( 'select', 'recipientListing', ts('Recipient Listing'), $sel3[3][0] );
+        $recipientListing->setMultiple( true ); 
         //autocomplete url
         $dataUrl = CRM_Utils_System::url( "civicrm/ajax/rest",
                                           "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=activity&reset=1",
