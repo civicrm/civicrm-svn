@@ -92,7 +92,7 @@ function contact_get_expectedresult(){
                       'is_pay_later' => 0,
                       'contribution_type_id' => '1',
                       'contribution_type' => 'Donation',
-                      'instrument_id' => '68',
+                      'instrument_id' => '69',
                       'payment_instrument' => 'Credit Card',
                       'contribution_status_id' => '1',
                       'contribution_status' => 'Completed',
