@@ -173,7 +173,7 @@ SELECT  count( id ) as statusCount
             self::setPreUpgradeMessage( $preUpgradeMessage, $currentVer, $latestVer );
             
             // check for changed message templates
-            self::checkMessageTemplate( &$template, &$preUpgradeMessage, $latestVer );
+            self::checkMessageTemplate( &$template, &$preUpgradeMessage, $latestVer, $currentVer );
 
             //turning some tables to monolingual during 3.4.beta3, CRM-7869
             $upgradeTo   = str_replace( '4.0.', '3.4.', $latestVer  );
@@ -554,8 +554,12 @@ SELECT  id
             }
         }
     }
-    function checkMessageTemplate( &$template, &$message, $latestVer ) 
+    function checkMessageTemplate( &$template, &$message, $latestVer, $currentVer ) 
     {
+        if ( version_compare($currentVer, '3.1.alpha1') < 0 ) {
+            return;
+        }
+        
         $sql =
             "SELECT orig.workflow_id as workflow_id,
              orig.msg_title as title
