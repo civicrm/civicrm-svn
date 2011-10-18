@@ -505,7 +505,8 @@ class CRM_Utils_System {
    
 
     static function isNull( $value ) {
-        if ( ! isset( $value ) || $value === null || $value === '' ) {
+        // FIXME: remove $value = 'null' string test when we upgrade our DAO code to handle passing null in a better way.
+        if ( ! isset( $value ) || $value === null || $value === '' || $value === 'null') {
             return true;
         }
         if ( is_array( $value ) ) {
