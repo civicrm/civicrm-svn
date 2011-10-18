@@ -437,4 +437,40 @@ LIMIT $limit";
         CRM_Utils_System::civiExit( );
     } 
 
+    function recipient(  ) {
+        $params = array( 'recipient' );
+        foreach ( $params as $param ) {
+            $$param = CRM_Utils_Array::value( $param, $_POST );
+        }
+
+        if ( !$recipient ) {
+            echo json_encode( array('error_msg' => 'required params missing.' ) );
+            CRM_Utils_System::civiExit( );
+        }
+        
+        require_once 'CRM/Event/PseudoConstant.php';
+        switch ( $recipient ) {
+            
+        case 'Participant Status':
+            $values = CRM_Event_PseudoConstant::participantStatus();
+            break;
+            
+        case 'Participant Role':
+            $values = CRM_Event_PseudoConstant::participantRole();
+            break;
+            
+        default:
+            exit;
+        }
+        
+        $elements = array( );
+        foreach ( $values as $id => $name ) {
+            $elements[] = array( 'name'  => $name,
+                                 'value' => $id );
+        }
+        
+        require_once 'CRM/Utils/JSON.php';
+        echo json_encode( $elements );
+        CRM_Utils_System::civiExit( );
+    } 
 }

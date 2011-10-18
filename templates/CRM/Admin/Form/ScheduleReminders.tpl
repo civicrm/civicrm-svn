@@ -110,7 +110,7 @@
     <tr class="crm-scheduleReminder-form-block-recipient">
         <td class="right">{$form.recipient.label}</td><td colspan="3">{$form.recipient.html}</td>
     </tr>
-    <tr id="recipientListing" class="crm-scheduleReminder-form-block-recipientListing">
+    <tr id="recipientList" class="crm-scheduleReminder-form-block-recipientListing">
         <td class="right">{$form.recipientListing.label}</td><td colspan="3">{$form.recipientListing.html}</td>
     </tr>
     <tr id="recipientManual" class="crm-scheduleReminder-form-block-recipient_manual_id">
@@ -209,10 +209,22 @@
 
      function populateRecipient( ) {
      	  var recipient = cj("#recipient option:selected").text();    
+	  var postUrl = "{/literal}{crmURL p='civicrm/ajax/populateRecipient' h=0}{literal}";
 	  if(recipient == 'Participant Status' || recipient == 'Participant Role'){
-	    cj("#recipientListing").show();	     
+   	  var elementID = '#recipientListing';
+          cj( elementID ).html('');
+	    cj.post(postUrl, {recipient: recipient},
+	    	function ( response ) {
+  		response = eval( response );
+  		for (i = 0; i < response.length; i++) {
+                     cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
+                 }
+                
+		}	    
+	    );
+	    cj("#recipientList").show();	     
 	  } else {
-	    cj("#recipientListing").hide();
+	    cj("#recipientList").hide();
 	  }
      }
      function buildSelect( selectID ) {

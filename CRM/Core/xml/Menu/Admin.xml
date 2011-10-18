@@ -683,4 +683,9 @@
      <page_callback>CRM_Admin_Page_AJAX::mappingList1</page_callback>
      <access_arguments>administer CiviCRM,access CiviCRM</access_arguments>
   </item>
+  <item>
+     <path>civicrm/ajax/populateRecipient</path>
+     <page_callback>CRM_Admin_Page_AJAX::recipient</page_callback>
+     <access_arguments>administer CiviCRM,access CiviCRM</access_arguments>
+  </item>
 </menu>
