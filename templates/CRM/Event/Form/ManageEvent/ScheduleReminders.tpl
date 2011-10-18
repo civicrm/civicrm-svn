@@ -198,11 +198,9 @@
 	    cj.post(postUrl, {recipient: recipient},
 	    	function ( response ) {
   		response = eval( response );
-		console.log(response);
-  		for (i = 0; i < response.length; i++) {
-                     cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
+  		for (iota = 0; iota < response.length; iota++) {
+                     cj( elementID ).get(0).add(new Option(response[iota].name, response[iota].value), document.all ? iota : null);
                  }
-                
 		}	    
 	    );
 	    cj("#recipientList").show();	     
