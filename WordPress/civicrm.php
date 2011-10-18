@@ -193,6 +193,7 @@ function civicrm_wp_invoke( ) {
         $_GET['reset'] = 1;
         $args = array( 'civicrm', 'dashboard' );
     }
+   
     require_once 'CRM/Core/Invoke.php';
     CRM_Core_Invoke::invoke( $args );
 }
@@ -252,11 +253,97 @@ function civicrm_wp_styles( ) {
 }
 
 function civicrm_wp_frontend( ) {
+    if ( ! civicrm_wp_initialize( ) ) {
+        return;
+    }
+
+    if ( isset( $_GET['q'] ) ) {
+        $args = explode( '/', trim( $_GET['q'] ) );
+    }
+   
+    // check permission
+    if ( ! civicrm_check_permission( $args ) ) {
+        add_filter('the_content', 'civicrm_set_frontendmessage');
+        return;
+    }
+
     // this places civicrm inside frontend theme
     // wp documentation rocks if you know what you are looking for
     // but best way is to check other plugin implementation :) 
     add_filter('the_content', 'civicrm_wp_invoke');
 }
+
+function civicrm_set_frontendmessage() {
+    return ts('You do not have permission to execute this url.');
+}
+
+function civicrm_check_permission( $args ) {
+    if ( $args[0] != 'civicrm' ) {
+        return false;
+    }
+
+    require_once 'CRM/Utils/Array.php';
+    // all profile and file urls, as well as user dashboard and tell-a-friend are valid
+    $arg1 = CRM_Utils_Array::value( 1, $args );
+    $validPaths = array( 'profile', 'user', 'dashboard', 'friend', 'file', 'ajax' );
+    if ( in_array( $arg1 , $validPaths ) ) {
+        return true;
+    }
+    
+    $config = CRM_Core_Config::singleton( );
+    
+    $arg2 = CRM_Utils_Array::value( 2, $args );
+    $arg3 = CRM_Utils_Array::value( 3, $args );
+
+    // allow editing of related contacts
+    if ( $arg1 == 'contact' &&
+         $arg2 == 'relatedcontact' ) {
+        return true;
+    }
+
+    // a contribution page / pcp page
+    if ( in_array( 'CiviContribute', $config->enableComponents ) ) {
+        if ( $arg1 == 'contribute' &&
+            in_array( $arg2, array( 'transact', 'campaign', 'pcp') ) ) {
+            return true;
+        }
+    }
+
+    // an event registration page is valid
+    if ( in_array( 'CiviEvent', $config->enableComponents ) ) {
+        if ( $arg1 == 'event' &&
+             in_array( $arg2, array( 'register', 'info', 'participant', 'ical', 'confirm' ) ) ) {
+            return true;
+        }
+
+        // also allow events to be mapped
+        if ( $arg1 == 'contact' &&
+             $arg2 == 'map'     &&
+             $arg3 == 'event'   ) {
+            return true;
+        }
+    }
+    
+    // allow mailing urls to be processed
+    if ( $arg1 == 'mailing' &&
+         in_array( 'CiviMail', $config->enableComponents ) ) {
+        if ( in_array( $arg2,
+                       array( 'forward', 'unsubscribe', 'resubscribe', 'optout', 'subscribe', 'confirm' ) ) ) {
+            return true;
+        }
+    }
+
+    // allow petition sign in, CRM-7401
+    if ( in_array( 'CiviCampaign', $config->enableComponents ) ) {
+        if ( $arg1 == 'petition' &&
+             $arg2 == 'sign' ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 
 function civicrm_wp_main( ) {
     if ( is_admin() ) {
