@@ -369,6 +369,9 @@ WHERE     pledge_id = %1
                                                                     'contribution_id', 
                                                                     'id'
                                                                     );
+
+crm_core_error::debug('$paymentContributionId', $paymentContributionId);
+
             if ( ! $paymentContributionId ) {
                 $editScheduled = true;
             }
@@ -379,6 +382,8 @@ WHERE     pledge_id = %1
             if ( $pledgeStatusID == array_search( 'Cancelled', $allStatus ) ) {
                 $paymentStatusID = $pledgeStatusID ;
             }
+            
+            crm_core_error::debug('$paymentStatusID', $paymentStatusID);
             
             self::updatePledgePayments( $pledgeID, $paymentStatusID, $paymentIDs, $actualAmount, $paymentContributionId ,$isScriptUpdate );
         }
@@ -637,19 +642,13 @@ WHERE  civicrm_pledge.id = %2
             $contributionIdClause = ", civicrm_pledge_payment.contribution_id = {$contributionId}";
             $actualAmountClause =", civicrm_pledge_payment.actual_amount = {$actualAmount}";
         }
-        
-        $cancelClause = null;
-        if ( $paymentStatusId == array_search( 'Cancelled', $allStatus ) ) { 
-             $completedStatus  = array_search( 'Completed', $allStatus );
-             $cancelClause = "AND civicrm_pledge_payment.status_id != {$completedStatus}";
-         }
-         
+                 
         $query = "
 UPDATE civicrm_pledge_payment
 SET    civicrm_pledge_payment.status_id = {$paymentStatusId}
        {$actualAmountClause} {$contributionIdClause}
 WHERE  civicrm_pledge_payment.pledge_id = %1    
-       {$paymentClause} {$cancelClause}
+       {$paymentClause}
 ";
         
         //get all status
