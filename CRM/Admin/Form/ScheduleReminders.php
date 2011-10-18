@@ -60,17 +60,21 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
     {
         parent::buildQuickForm( );
 
+        require_once 'CRM/Core/BAO/ActionSchedule.php';
         if ( $this->_action & (CRM_Core_Action::DELETE ) ) { 
-            $reminderName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_ActionSchedule', $this->_id, 'title' );
+            $reminderName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_ActionSchedule', 
+                                                         $this->_id, 'title' );
             $this->assign('reminderName', $reminderName);
             return;
+        } elseif ( $this->_action & (CRM_Core_Action::UPDATE ) ) { 
+            $this->_mappingID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_ActionSchedule', 
+                                                             $this->_id, 'mapping_id' );
         }
         
-        $this->add( 'text', 'title', ts( 'Title' ), array( 'size'=> 45,'maxlength' => 128 ), true );
+        $this->add( 'text', 'title', ts( 'Title' ), 
+                    array( 'size'=> 45,'maxlength' => 128 ), true );
 
-        require_once 'CRM/Core/BAO/ActionSchedule.php';
-        list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection(  ) ;
-        //CRM_Core_Error::debug( '$sel3', $sel3[3][0] );
+        list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection(  $this->_mappingID ) ;
         
         $sel =& $this->add('hierselect',
                            'entity',
@@ -98,7 +102,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->_freqUnits = array( 'hour' => 'hour' ) + CRM_Core_OptionGroup::values('recur_frequency_units');
         
         //pass the mapping ID in UPDATE mode
-        $mappings = CRM_Core_BAO_ActionSchedule::getMapping(  );
+        $mappings = CRM_Core_BAO_ActionSchedule::getMapping( $this->_mappingID );
 
         $numericOptions = array( 0 => ts('0'), 1 => ts('1'), 2 => ts('2'), 3 => ts('3'), 4 => ts('4'), 5 => ts('5' ),
                                  6 => ts('6'), 7 => ts('7'), 8 => ts('8'), 9 => ts('9'), 10 => ts('10') );
@@ -145,14 +149,14 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $recipientListing = $this->add( 'select', 'recipientListing', ts('Recipient Listing'), $sel3[3][0] );
         $recipientListing->setMultiple( true ); 
         //autocomplete url
-        $dataUrl = CRM_Utils_System::url( "civicrm/ajax/rest",
-                                          "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=activity&reset=1",
+        $dataUrl = CRM_Utils_System::url( 'civicrm/ajax/rest',
+                                          'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=activity&reset=1',
                                           false, null, false );
 
         $this->assign( 'dataUrl',$dataUrl );
         //tokeninput url
-        $tokenUrl = CRM_Utils_System::url( "civicrm/ajax/checkemail",
-                                           "noemail=1",
+        $tokenUrl = CRM_Utils_System::url( 'civicrm/ajax/checkemail',
+                                           'noemail=1',
                                            false, null, false );
         $this->assign( 'tokenUrl', $tokenUrl );
         $this->add( 'text', 'recipient_manual_id', ts('Manual Recipients') );

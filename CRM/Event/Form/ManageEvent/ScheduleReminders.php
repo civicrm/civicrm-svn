@@ -36,9 +36,9 @@
  */
 
 require_once 'CRM/Event/Form/ManageEvent.php';
-require_once "CRM/Core/BAO/CustomGroup.php";
-require_once "CRM/Custom/Form/CustomData.php";
-require_once "CRM/Core/BAO/CustomField.php";
+require_once 'CRM/Core/BAO/CustomGroup.php';
+require_once 'CRM/Custom/Form/CustomData.php';
+require_once 'CRM/Core/BAO/CustomField.php';
 
 /**
  * This class generates form components for processing Event  
@@ -79,7 +79,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         
         $showLocation = false;
         // when custom data is included in this page
-        if ( CRM_Utils_Array::value( "hidden_custom", $_POST ) ) {
+        if ( CRM_Utils_Array::value( 'hidden_custom', $_POST ) ) {
             $this->set('type',     'Event');
             $this->set('subType',  CRM_Utils_Array::value( 'event_type_id', $_POST ) );
             $this->set('entityId', $this->_id );
@@ -100,56 +100,6 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
      */
     function setDefaultValues( )
     {
-        if ( $this->_cdType ) {
-            $tempId = (int) CRM_Utils_Request::retrieve('template_id', 'Integer', $this );
-            // set template custom data as a default for event, CRM-5596
-            if ( $tempId && !$this->_id ) { 
-                $defaults = $this->templateCustomDataValues( $tempId );
-            } else {
-                $defaults = CRM_Custom_Form_CustomData::setDefaultValues( $this );
-            }
-            
-            return $defaults;
-        }
-        $defaults = parent::setDefaultValues();
-        
-        // in update mode, we need to set custom data subtype to tpl
-        if ( CRM_Utils_Array::value( 'event_type_id' ,$defaults ) ) {
-            $this->assign('customDataSubType',  $defaults["event_type_id"] );
-        }
-
-        require_once 'CRM/Core/ShowHideBlocks.php';
-        $this->_showHide = new CRM_Core_ShowHideBlocks( );
-        // Show waitlist features or event_full_text if max participants set
-        if ( CRM_Utils_Array::value('max_participants', $defaults) ) {
-            $this->_showHide->addShow( 'id-waitlist' );
-            if ( CRM_Utils_Array::value( 'has_waitlist', $defaults ) ) {
-                $this->_showHide->addShow( 'id-waitlist-text' );
-                $this->_showHide->addHide( 'id-event_full' );
-            } else {
-                $this->_showHide->addHide( 'id-waitlist-text' );
-                $this->_showHide->addShow( 'id-event_full' );
-            }
-        } else {
-            $this->_showHide->addHide( 'id-event_full' );
-            $this->_showHide->addHide( 'id-waitlist' );
-            $this->_showHide->addHide( 'id-waitlist-text' );
-        }
-
-        $this->_showHide->addToTemplate( );
-        $this->assign('elemType', 'table-row');
-
-        $this->assign('description', CRM_Utils_Array::value('description', $defaults ) ); 
-
-        // Provide suggested text for event full and waitlist messages if they're empty
-        $defaults['event_full_text'] = CRM_Utils_Array::value('event_full_text', $defaults, ts('This event is currently full.') );
-       
-        $defaults['waitlist_text'] = CRM_Utils_Array::value('waitlist_text', $defaults, ts('This event is currently full. However you can register now and get added to a waiting list. You will be notified if spaces become available.') );
-        list( $defaults['start_date'], $defaults['start_date_time'] ) = CRM_Utils_Date::setDateDefaults( CRM_Utils_Array::value( 'start_date' , $defaults ), 'activityDateTime' );
-        
-        if ( CRM_Utils_Array::value( 'end_date' , $defaults ) ) {
-            list( $defaults['end_date'], $defaults['end_date_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['end_date'], 'activityDateTime' );
-        }
         return $defaults;
     }
     
@@ -163,17 +113,15 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
     { 
         parent::buildQuickForm( );
 
-        if ( $this->_action & (CRM_Core_Action::DELETE ) ) { 
-            $reminderName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_ActionSchedule', $this->_id, 'title' );
-            $this->assign('reminderName', $reminderName);
-            return;
-        }
-        
-        $this->add( 'text', 'title', ts( 'Reminder Name' ), array( 'size'=> 45,'maxlength' => 128 ), true );
+        $this->add( 'text', 'title', ts( 'Reminder Name' ), 
+                    array( 'size'=> 45,'maxlength' => 128 ), true );
 
         require_once 'CRM/Core/BAO/ActionSchedule.php';
-        list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection(  3 ) ;
-        $this->add( 'select', 'entity', ts('Entity'), $sel3[3][0] );
+        
+        $mappingID = 3;
+        list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection( $mappingID ) ;
+
+        $this->add( 'select', 'entity', ts('Entity'), $sel3[$mappingID][0] );
         
         //get the frequency units.
         require_once 'CRM/Core/OptionGroup.php';
@@ -190,7 +138,8 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
             $freqUnitsDisplay[$val] = ts('%1(s)', array(1 => $label));
         }
 
-        $this->addDate( 'absolute_date', ts('Start Date'), false, array( 'formatType' => 'mailing' ) );
+        $this->addDate( 'absolute_date', ts('Start Date'), false, 
+                        array( 'formatType' => 'mailing' ) );
 
         //reminder_frequency
         $this->add( 'select', 'start_action_unit', ts( 'Frequency' ), $freqUnitsDisplay, true );
@@ -214,26 +163,19 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         $this->add( 'select', 'end_date', ts( 'Date Field' ), $sel4, true );
 
         $recipient = 'event_contacts';
-        if ( $this->_action & CRM_Core_Action::UPDATE ) {
-            $recipient = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_ActionMapping',
-                                                      //    $this->_values['mapping_id'],
-                                                      3,
-                                                      'entity_recipient' );
-        }
-
         $this->add( 'select', 'recipient', ts( 'Recipient(s)' ), $sel5[$recipient],
                     false, array( 'onClick' => "showHideByValue('recipient','manual','recipientManual','table-row','select',false); showHideByValue('recipient','group','recipientGroup','table-row','select',false);") 
                     );
         
         //autocomplete url
-        $dataUrl = CRM_Utils_System::url( "civicrm/ajax/rest",
+        $dataUrl = CRM_Utils_System::url( 'civicrm/ajax/rest',
                                           "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=activity&reset=1",
                                           false, null, false );
 
         $this->assign( 'dataUrl',$dataUrl );
         //tokeninput url
-        $tokenUrl = CRM_Utils_System::url( "civicrm/ajax/checkemail",
-                                           "noemail=1",
+        $tokenUrl = CRM_Utils_System::url( 'civicrm/ajax/checkemail',
+                                           'noemail=1',
                                            false, null, false );
         $this->assign( 'tokenUrl', $tokenUrl );
         $this->add( 'text', 'recipient_manual_id', ts('Manual Recipients') );
@@ -249,7 +191,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
 
         $this->add('checkbox', 'is_active', ts('Send email'));
 
-        ///$this->addFormRule( array( 'CRM_Admin_Form_ScheduleReminders', 'formRule' ) );
+        //$this->addFormRule( array( 'CRM_Event_Form_ManageEvent_ScheduleReminders', 'formRule' ) );
     }
     /**
      * global validation rules for the form
@@ -288,14 +230,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
      */
     public function postProcess() 
     {
-        if ( $this->_action & CRM_Core_Action::DELETE ) {
-            // delete reminder
-            CRM_Core_BAO_ActionSchedule::del( $this->_id );
-            CRM_Core_Session::setStatus( ts('Selected Reminder has been deleted.') );
-            return;
-        }
         $values = $this->controller->exportValues( $this->getName() );
-       
         $keys = array('title', 'start_action_offset' ,'start_action_unit',
                       'start_action_condition', 'start_action_date', 
                       'repetition_frequency_unit',
@@ -412,7 +347,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
      */
     public function getTitle( ) 
     {
-        return ts('Event xx');
+        return ts('Event Schedule Reminder');
     }
     
     /* Retrieve event template custom data values 
