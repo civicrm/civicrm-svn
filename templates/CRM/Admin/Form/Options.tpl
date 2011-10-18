@@ -84,7 +84,7 @@
                    <span class="description">{ts}Matched values are replaced with this prefix plus a unique code. EX: If replacement prefix for &quot;Vancouver&quot; is <em>city_</em>, occurrences will be replaced with <em>city_39121</em>.{/ts}</span>
                  </td>
               </tr>
-            {else}
+            {elseif $form.value.html}
               <tr class="crm-admin-options-form-block-value">
                 <td class="label">{$form.value.label}</td>
                 <td>{$form.value.html}<br />

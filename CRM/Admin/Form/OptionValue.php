@@ -158,11 +158,11 @@ class CRM_Admin_Form_OptionValue extends CRM_Admin_Form
         }
         //get contact type for which user want to create a new greeting/addressee type, CRM-4575
         if ( in_array( $this->_gName, array( 'email_greeting', 'postal_greeting', 'addressee' ) ) && ! $isReserved ) {
-            $values = array( 1 => ts('Individual'), 2 => ts('Household') );
-            if ( $this->_gName == 'addressee' ) {
-                $values[] =  ts('Organization'); 
-            }
-            $values[4] = ts('Multiple Contact Merge');
+            $values = array( 1 => ts('Individual'), 
+                            2 => ts('Household'), 
+                            3 => ts('Organization'),
+                            4 => ts('Multiple Contact Merge') );
+
             $this->add( 'select', 'contactOptions', ts('Contact Type'),array('' => '-select-' ) + $values, true );
         } 
         
