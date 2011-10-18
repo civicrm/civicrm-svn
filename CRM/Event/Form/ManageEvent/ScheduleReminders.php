@@ -120,7 +120,6 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         
         $mappingID = 3;
         list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection( $mappingID ) ;
-
         $this->add( 'select', 'entity', ts('Entity'), $sel3[$mappingID][0] );
         
         //get the frequency units.
@@ -166,6 +165,9 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         $this->add( 'select', 'recipient', ts( 'Recipient(s)' ), $sel5[$recipient],
                     false, array( 'onClick' => "showHideByValue('recipient','manual','recipientManual','table-row','select',false); showHideByValue('recipient','group','recipientGroup','table-row','select',false);") 
                     );
+        $recipientListing = $this->add( 'select', 'recipientListing', ts('Recipient Listing'), 
+                                        $sel3[$mappingID][0]);
+        $recipientListing->setMultiple( true ); 
         
         //autocomplete url
         $dataUrl = CRM_Utils_System::url( 'civicrm/ajax/rest',
