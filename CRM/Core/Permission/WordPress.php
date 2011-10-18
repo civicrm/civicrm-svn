@@ -88,15 +88,34 @@ class CRM_Core_Permission_WordPress {
      * @access public
      */
     static function check( $str ) {
-        $config = CRM_Core_Config::singleton( );
-        $adminPerm = array( 'administer users',
-                            'edit all contacts',
-                            'view all contacts' );
-        
-        if ( $config->userFrameworkFrontend && in_array( $str, $adminPerm ) ) {
-            return false;
+        // for administrators give them all permissions
+        if ( current_user_can('super admin') ||
+             current_user_can('administrator') ) {
+            return true;
         }
-        return true;
+
+        static $otherPerms = null;
+        if ( ! $otherPerms ) {
+            $otherPerms = array( 'access CiviMail subscribe/unsubscribe pages' => 1,
+                                 'access all custom data'                      => 1,
+                                 'access uploaded files'                       => 1,
+                                 'make online contributions'                   => 1,
+                                 'profile create'                              => 1,
+                                 'profile edit'                                => 1,
+                                 'profile view'                                => 1,
+                                 'register for events'                         => 1,
+                                 'view event info'                             => 1,
+                                 );
+
+        }
+
+        // for everyone else, give them permission only for
+        // some public pages
+        if ( array_key_exists( $str, $otherPerms ) ) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
