@@ -61,7 +61,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
     }
 
 
-    static function getSelection(  $id = null  ) 
+    static function getSelection( $id = null  ) 
     {
         $mapping  = self::getMapping( $id );
 
