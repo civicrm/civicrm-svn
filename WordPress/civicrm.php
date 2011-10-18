@@ -292,6 +292,9 @@ function civicrm_check_permission( $args ) {
     
     $config = CRM_Core_Config::singleton( );
     
+    // set frontend true 
+    $config->userFrameworkFrontend = true;
+
     $arg2 = CRM_Utils_Array::value( 2, $args );
     $arg3 = CRM_Utils_Array::value( 3, $args );
 
