@@ -71,14 +71,18 @@ class CRM_Core_JobManager
         require_once 'api/api.php';
         foreach( $this->jobs as $job ) {
             if( $job->is_active ) {
-                $this->currentJob = $job;
-                $this->logEntry( 'Starting execution of ' . $job->name );
-                try {
-                    $result = civicrm_api( $job->apiEntity, $job->apiAction, $job->apiParams );
-                } catch (Exception $e) {
-                    $this->logEntry( 'Error while executing ' . $job->name . ': ' . $e->getMessage() );
+                if( $job->needsRunning( ) ) {
+                    $this->currentJob = $job;
+                    $job->saveLastRun();
+                    $this->logEntry( 'Starting execution of ' . $job->name );
+                    
+                    try {
+                        $result = civicrm_api( $job->apiEntity, $job->apiAction, $job->apiParams );
+                    } catch (Exception $e) {
+                        $this->logEntry( 'Error while executing ' . $job->name . ': ' . $e->getMessage() );
+                    }
+                    $this->logEntry( 'Finished execution of ' . $job->name . ' with result: ' . $this->_apiResultToMessage( $result )  );
                 }
-                $this->logEntry( 'Finished execution of ' . $job->name . ' with result: ' . $this->_apiResultToMessage( $result )  );
             }
             $this->currentJob = FALSE;
         }
@@ -106,6 +110,7 @@ class CRM_Core_JobManager
     private function _getJobs( ) {
         $jobs = array();
         require_once 'CRM/Core/DAO/Job.php';
+        require_once 'CRM/Core/DAO/JobLog.php';        
         $dao = new CRM_Core_DAO_Job();
         $dao->orderBy('name');
         $dao->find();
@@ -140,7 +145,6 @@ class CRM_Core_JobManager
         }
         $dao->save( );
     }
-
 
     private function _apiResultToMessage( $apiResult ) {
         $status = $apiResult['is_error'] ? ts('Failure') : ts('Success');

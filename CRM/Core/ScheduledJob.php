@@ -79,6 +79,37 @@ class CRM_Core_ScheduledJob
         }
     }                                                          
 
+    public function saveLastRun( $date = null ) {
+        require_once 'CRM/Core/DAO/Job.php';
+        $dao = new CRM_Core_DAO_Job();
+        $dao->id = $this->id;
+        $dao->last_run = ( $date == null ) ? CRM_Utils_Date::currentDBDate( ) : CRM_Utils_Date::currentDBDate( $date );
+        $dao->save();
+    }
+
+    public function needsRunning( ) {
+        // run if it was never run
+        if( empty( $this->last_run ) ) return true;
+        
+        // run_frequency check
+        switch ( $this->run_frequency ) {
+            case 'Hourly':
+                $now = CRM_Utils_Date::currentDBDate( );
+                $hourAgo = strtotime( '-1 hour', strtotime( $now ) );
+                $lastRun = strtotime( $this->last_run );
+                if( $lastRun < $hourAgo ) return true;
+                break;
+            case 'Daily':
+                $now = CRM_Utils_Date::currentDBDate( );
+                $dayAgo = strtotime( '-1 day', strtotime( $now ) );
+                $lastRun = strtotime( $this->last_run );
+                if( $lastRun < $dayAgo ) return true;
+                break;
+        }
+
+        return false;
+    }
+
     public function __destruct( ) {
     }
 
