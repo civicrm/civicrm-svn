@@ -57,6 +57,6 @@ function civicrm_uninstall( ) {
 /**
  * Update CiviCRM module weight
  */
-function civicrm_update_6300(&$sandbox) {
+function civicrm_update_7400(&$sandbox) {
     db_query("UPDATE {system} SET weight = 100 WHERE name = 'civicrm'");
 }

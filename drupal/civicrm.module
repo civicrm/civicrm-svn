@@ -650,6 +650,8 @@ function civicrm_key_disable( ) {
 }
 
 function civicrm_enable( ) {
+    db_query("UPDATE {system} SET weight = 100 WHERE name = 'civicrm'");
+
     menu_rebuild( );
 
     menu_link_maintain( 'civicrm', 'delete', 'civicrm', 'CiviCRM' );
