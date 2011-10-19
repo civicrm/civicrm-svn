@@ -1811,9 +1811,15 @@ class CRM_Contact_BAO_Query
                         }
                     }
                     
+                    $type = null;
+                    if ( CRM_Utils_Array::value( 'type', $field ) ) {
+                        $type = CRM_Utils_Type::typeToString( $field['type'] );
+                    }
+
                     $this->_where[$grouping][] = self::buildClause( $fieldName,
                                                                     $op,
-                                                                    $value );
+                                                                    $value,
+                                                                    $type );
                     $this->_qill[$grouping][]  = "$field[title] $op $value";
                 }
                 

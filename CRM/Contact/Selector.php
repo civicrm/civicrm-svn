@@ -717,10 +717,10 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     }
                     $row['action'] = CRM_Core_Action::formLink($links, null, array('id' => $result->contact_id));
                 } elseif ( ( is_numeric( CRM_Utils_Array::value( 'geo_code_1', $row ) ) ) ||
-                     ( $config->mapGeoCoding &&
-                       CRM_Utils_Array::value('city',$row) && $row['state_province'] ) ) {
+                           ( $config->mapGeoCoding &&
+                             CRM_Utils_Array::value('city', $row ) && 
+                             CRM_Utils_Array::value('state_province', $row ) ) ) {
                     $row['action']   = CRM_Core_Action::formLink( $links, $mask   , array( 'id' => $result->contact_id ) );
-                // FIXME: guard with permission check
                 } else {
                     $row['action']   = CRM_Core_Action::formLink( $links, $mapMask, array( 'id' => $result->contact_id ) );
                 }
