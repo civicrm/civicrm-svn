@@ -1884,4 +1884,11 @@ LEFT  JOIN  civicrm_price_field_value value ON ( value.id = lineItem.price_field
         return (int)CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $eventId, 'Positive' ) ) );
     }
     
+    static function get_sub_events($event_id)
+    {
+        $params = array('parent_event_id' => $event_id);
+        $defaults = array();
+        return CRM_Event_BAO_Event::retrieve($params, $defaults);
+    }
+
 }

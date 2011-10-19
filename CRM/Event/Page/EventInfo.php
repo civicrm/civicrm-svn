@@ -262,7 +262,8 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                                                   true );
                 }
                 if ( !$eventFullMessage || $hasWaitingList ) {
-                    $this->assign( 'registerURL', $url    );
+                    require 'CRM/Event/Cart/BAO/EventInCart.php';
+                    $this->assign( 'registerURL', CRM_Event_Cart_BAO_EventInCart::get_event_registration_url( $this->_id, $action ) );
                 }
             } else if ( CRM_Core_Permission::check( 'register for events' ) ) {
                 $this->assign( 'registerClosed', true );

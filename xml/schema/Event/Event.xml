@@ -531,4 +531,23 @@
       <key>id</key> 
       <onDelete>SET NULL</onDelete>
   </foreignKey>
+  <field>
+      <name>parent_event_id</name>
+      <type>int unsigned</type>
+      <default>0</default>
+      <comment>Implicit FK to civicrm_event: parent event</comment>
+      <add>4.1</add>
+  </field>
+  <index>
+      <name>index_parent_event_id</name>
+    <fieldName>parent_event_id</fieldName>
+    <add>4.1</add>
+  </index>
+  <field>
+      <name>slot_label</name>
+      <type>varchar</type>
+      <length>255</length>
+      <comment>Subevent slot label</comment>
+      <add>4.1</add>
+  </field>
 </table>
