@@ -843,11 +843,14 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         if ( isset( $params['current_employer_id'] ) ) unset( $params['current_employer_id'] ); 
         
         $params['contact_type'] = $this->_contactType;
-        if ( !CRM_Utils_Array::value( 'contact_sub_type', $params ) && $this->_isContactSubType ) {
-            $params['contact_sub_type'] = $this->_contactSubType;
-        } else if ( CRM_Utils_Array::value( 'contact_sub_type', $params ) ) {
+        if ( empty($params['contact_sub_type']) && $this->_isContactSubType ) {
+            $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR . 
+                $this->_contactSubType . CRM_Core_DAO::VALUE_SEPARATOR;
+        } else if ( !empty($params['contact_sub_type']) ) {
             $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR .
                 implode( CRM_Core_DAO::VALUE_SEPARATOR, $params['contact_sub_type'] ) . CRM_Core_DAO::VALUE_SEPARATOR;
+        } else {
+            unset($params['contact_sub_type']);
         }
         
         if ( $this->_contactId ) {
