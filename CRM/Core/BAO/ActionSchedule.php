@@ -740,4 +740,17 @@ WHERE  action_date_time IS NULL AND action_schedule_id = %1";
                         'messages' => ts( 'Sent all scheduled reminders successfully' ) );
         return $result;
     }
+
+    static function isConfigured( $id, $mappingID )
+    {
+	 $queryString = "SELECT count(id) FROM civicrm_action_schedule
+                        WHERE  mapping_id = %1 AND 
+                               entity_value = %2";
+
+        $params = array( 1 => array( $mappingID, 'Integer' ),
+                         2 => array( $id, 'Integer' ) );
+		return CRM_Core_DAO::singleValueQuery( $queryString, $params );
+       
+    }
+
 }
