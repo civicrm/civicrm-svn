@@ -32,26 +32,30 @@ if [ ! -d $TRG/civicrm ] ; then
 	mkdir $TRG/civicrm
 fi
 
+if [ ! -d $TRG/civicrm/civicrm ] ; then
+	mkdir $TRG/civicrm/civicrm
+fi
+
 # copy all the stuff
 for CODE in css i js l10n packages PEAR templates bin joomla CRM api drupal extern Reports install; do
   echo $CODE
-  [ -d $SRC/$CODE ] && $RSYNCCOMMAND $SRC/$CODE $TRG/civicrm
+  [ -d $SRC/$CODE ] && $RSYNCCOMMAND $SRC/$CODE $TRG/civicrm/civicrm
 done
 
 # delete any setup.sh or setup.php4.sh if present
-if [ -d $TRG/civicrm/bin ] ; then
-  rm -f $TRG/civicrm/bin/setup.sh
-  rm -f $TRG/civicrm/bin/setup.php4.sh
-  rm -f $TRG/civicrm/bin/setup.bat
+if [ -d $TRG/civicrm/civicrm/bin ] ; then
+  rm -f $TRG/civicrm/civicrm/bin/setup.sh
+  rm -f $TRG/civicrm/civicrm/bin/setup.php4.sh
+  rm -f $TRG/civicrm/civicrm/bin/setup.bat
 fi
 
 # copy selected sqls
-if [ ! -d $TRG/civicrm/sql ] ; then
-	mkdir $TRG/civicrm/sql
+if [ ! -d $TRG/civicrm/civicrm/sql ] ; then
+	mkdir $TRG/civicrm/civicrm/sql
 fi
 
 for F in $SRC/sql/civicrm*.mysql $SRC/sql/counties.US.sql.gz; do 
-	cp $F $TRG/civicrm/sql
+	cp $F $TRG/civicrm/civicrm/sql
 done
 
 for F in $SRC/WordPress/*; do 
@@ -59,25 +63,25 @@ for F in $SRC/WordPress/*; do
 done
 
 # remove Quest
-find $TRG/civicrm -depth -name 'Quest' -exec rm -r {} \;
+find $TRG/civicrm/civicrm -depth -name 'Quest' -exec rm -r {} \;
 
 # delete SimpleTest
-if [ -d $TRG/civicrm/packages/SimpleTest ] ; then
-  rm -rf $TRG/civicrm/packages/SimpleTest
+if [ -d $TRG/civicrm/civicrm/packages/SimpleTest ] ; then
+  rm -rf $TRG/civicrm/civicrm/packages/SimpleTest
 fi
-if [ -d $TRG/civicrm/packages/drupal ] ; then
-  rm -rf $TRG/civicrm/packages/drupal
+if [ -d $TRG/civicrm/civicrm/packages/drupal ] ; then
+  rm -rf $TRG/civicrm/civicrm/packages/drupal
 fi
 
 # delete UFPDF's stuff not required on installations
-if [ -d $TRG/civicrm/packages/ufpdf/ttf2ufm-src ] ; then
-  rm -rf $TRG/civicrm/packages/ufpdf/ttf2ufm-src
+if [ -d $TRG/civicrm/civicrm/packages/ufpdf/ttf2ufm-src ] ; then
+  rm -rf $TRG/civicrm/civicrm/packages/ufpdf/ttf2ufm-src
 fi
 
 # copy docs
-cp $SRC/agpl-3.0.txt $TRG/civicrm
-cp $SRC/gpl.txt $TRG/civicrm
-cp $SRC/README.txt $TRG/civicrm
+cp $SRC/agpl-3.0.txt $TRG/civicrm/civicrm
+cp $SRC/gpl.txt $TRG/civicrm/civicrm
+cp $SRC/README.txt $TRG/civicrm/civicrm
 
 # final touch
 echo "<?php
@@ -86,7 +90,7 @@ function civicrmVersion( ) {
                 'cms'      => 'Wordpress',
                 'revision' => '$DM_REVISION' );
 }
-" > $TRG/civicrm/civicrm-version.php
+" > $TRG/civicrm/civicrm/civicrm-version.php
 
 # gen tarball
 cd $TRG

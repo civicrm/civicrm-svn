@@ -364,11 +364,14 @@ function civicrm_wp_main( ) {
         }
     }
   
-    if ( !civicrm_wp_in_civicrm( ) ) {
+    add_action( 'user_register'   , 'civicrm_user_register'  );
+    add_action( 'profile_update'  , 'civicrm_profile_update' );
+
+    if ( ! civicrm_wp_in_civicrm( ) ) {
         return;
     }
 
-    if ( !is_admin( ) ) {
+    if ( ! is_admin( ) ) {
         add_action( 'wp_print_styles' , 'civicrm_wp_styles' );
         civicrm_wp_frontend();
     } else {
@@ -376,7 +379,7 @@ function civicrm_wp_main( ) {
     }
 
     add_action( 'wp_print_scripts', 'civicrm_wp_scripts' );
-   
+ 
     add_filter( 'the_title' , 'civicrm_wp_set_title' );
     add_filter( 'wp_title'  , 'civicrm_wp_set_title' );
 
@@ -395,10 +398,16 @@ function wp_set_breadcrumb( ) {
     return;
 }
 
-function t( $str, $sub=null ) {
+function t( $str, $sub = null ) {
     if(is_array($sub))
         $str = str_replace( array_keys($sub), array_values($sub), $str);
     return $str;
+}
+
+function civicrm_user_register( $userID ) {
+}
+
+function civicrm_profile_update( $userID ) {
 }
 
 civicrm_wp_main( );
