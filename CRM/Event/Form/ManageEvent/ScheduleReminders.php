@@ -36,9 +36,7 @@
  */
 
 require_once 'CRM/Event/Form/ManageEvent.php';
-require_once 'CRM/Core/BAO/CustomGroup.php';
-require_once 'CRM/Custom/Form/CustomData.php';
-require_once 'CRM/Core/BAO/CustomField.php';
+require_once 'CRM/Core/BAO/ActionSchedule.php';
 
 /**
  * This class generates form components for processing Event  
@@ -46,10 +44,6 @@ require_once 'CRM/Core/BAO/CustomField.php';
  */
 class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_ManageEvent
 {
-    /**
-     * Event type
-     */
-    protected $_eventType = null;
 
     /** 
      * Function to set variables up before form is built 
@@ -59,35 +53,12 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
      */ 
     function preProcess( )
     {
-        //custom data related code
-        $this->_cdType     = CRM_Utils_Array::value( 'type', $_GET );
-        $this->assign('cdType', false);
-        if ( $this->_cdType ) {
-            $this->assign('cdType', true);
-            return CRM_Custom_Form_CustomData::preProcess( $this );
-        }
-        parent::preProcess( );
-                
-        if ( $this->_id ) {
-            $this->assign( 'entityID', $this->_id );
-            $eventType = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event',
-                                                      $this->_id,
-                                                      'event_type_id' );
-        } else {
-            $eventType = 'null';
-        }
-        
-        $showLocation = false;
-        // when custom data is included in this page
-        if ( CRM_Utils_Array::value( 'hidden_custom', $_POST ) ) {
-            $this->set('type',     'Event');
-            $this->set('subType',  CRM_Utils_Array::value( 'event_type_id', $_POST ) );
-            $this->set('entityId', $this->_id );
-
-            CRM_Custom_Form_Customdata::preProcess( $this );
-            CRM_Custom_Form_Customdata::buildQuickForm( $this );
-            CRM_Custom_Form_Customdata::setDefaultValues( $this );
-        }
+        parent::preProcess( );   
+        if ( $this->_action & CRM_Core_Action::UPDATE ) {
+            $reminderList = CRM_Core_BAO_ActionSchedule::getList( false, 
+                                                                  'civicrm_event', 
+                                                                  $this->_id);
+        }        
         
     }
     
@@ -116,7 +87,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         $this->add( 'text', 'title', ts( 'Reminder Name' ), 
                     array( 'size'=> 45,'maxlength' => 128 ), true );
 
-        require_once 'CRM/Core/BAO/ActionSchedule.php';
+
         
         $mappingID = 3;
         list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection( $mappingID ) ;
@@ -352,32 +323,5 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         return ts('Event Schedule Reminder');
     }
     
-    /* Retrieve event template custom data values 
-     * and set as default values for current new event.
-     *
-     * @params int $tempId event template id.
-     *
-     * @return $defaults an array of custom data defaults.
-     */
-    public function templateCustomDataValues( $templateId ) 
-    {
-        $defaults = array( );
-        if ( !$templateId ) {
-            return $defaults;  
-        }
-        
-        // pull template custom data as a default for event, CRM-5596
-        $groupTree = CRM_Core_BAO_CustomGroup::getTree( $this->_type, $this, $templateId, null, $this->_subType );
-        $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, $this->_groupCount, $this );
-        $customValues = array( );
-        CRM_Core_BAO_CustomGroup::setDefaults( $groupTree, $customValues );
-        foreach ( $customValues as $key => $val ) {
-            if ( $fieldKey = CRM_Core_BAO_CustomField::getKeyID( $key ) ) {
-                $defaults["custom_{$fieldKey}_-1"] = $val;
-            }
-        }
-        
-        return $defaults;
-    }
 }
 

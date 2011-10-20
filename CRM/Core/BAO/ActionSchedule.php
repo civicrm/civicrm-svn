@@ -231,7 +231,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
      * @static
      * @access public
      */
-    static function &getList( $namesOnly = false ) 
+    static function &getList( $namesOnly = false, $entityValue = null, $id = null ) 
     {
         require_once 'CRM/Core/PseudoConstant.php';
         require_once 'CRM/Event/PseudoConstant.php';
@@ -269,8 +269,20 @@ SELECT
 
 FROM civicrm_action_schedule cas
 LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
-
 ";
+        $params = CRM_Core_DAO::$_nullArray;
+        
+        if ( $entityValue and $id ) {
+            $where = "
+WHERE   cas.entity_value = $id AND
+        cam.entity_value = '$entityValue'";
+            
+            $query .= $where;
+
+            $params = array( 1 => array( $id, 'Integer' ),
+                             2 => array( $entityValue, 'String'));
+        }
+        
         $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch() ) {
             $list[$dao->id]['id']  = $dao->id;
