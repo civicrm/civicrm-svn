@@ -35,38 +35,49 @@
        </tr>	
     </table>
 
-    <div id="parent_event">
-      <table id="parent_event" class="form-layout">
-          <tr class="crm-event-conference-form-block-parent_event">
-             <td class="label">{$form.parent_event_id.label}</td>
-             <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='parent_event_id' id=$id}{/if}{$form.parent_event_id.html|crmReplace:class:big}
+    <div id="parent_event_name">
+      <table id="parent_event_name" class="form-layout">
+          <tr class="crm-event-conference-form-block-parent_event_name">
+             <td class="label">{$form.parent_event_name.label}</td>
+             <td>
+                 {$form.parent_event_name.html|crmReplace:class:huge}
              </td>
           </tr>
       </table>
     </div>
 
-    <div id="conference_slot">
-      <table id="conference_slot" class="form-layout">
-          <tr class="crm-event-conference-form-block-slot_label">
-             <td class="label">{$form.slot_label.label}</td>
-             <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='slot_label' id=$id}{/if}{$form.slot_label.html|crmReplace:class:big}
+    <div id="conference_slot_id">
+      <table id="conference_slot_id" class="form-layout">
+          <tr class="crm-event-conference-form-block-slot_label_id">
+             <td class="label">{$form.slot_label_id.label}</td>
+             <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='slot_label_id' id=$id}{/if}{$form.slot_label_id.html|crmReplace:class:big}
              </td>
           </tr>
       </table>
     </div>
-<div class="crm-submit-buttons">
-   {include file="CRM/common/formButtons.tpl" location="bottom"}
-</div>
+    <div class="crm-submit-buttons">
+        {include file="CRM/common/formButtons.tpl" location="bottom"}
+    </div>
 </div>
 
 {include file="CRM/common/formNavigate.tpl"}
 
 {literal}
 <script type="text/javascript"> 
-var eventUrl = "{/literal}{crmurl p='/civicrm/ajax/event'}{literal}";
+var eventUrl = "{/literal}{crmURL p='civicrm/ajax/event'}{literal}";
 
-cj('input#parent_event').autocomplete( eventUrl, { width : 280, selectFirst : false, matchContains: true
-}).result( function(event, data, formatted) { cj( "input#parent_event_id" ).val( data[1] );
-}).bind( 'click', function( ) { cj( "input#parent_event_id" ).val(''); });
+cj('input#parent_event_name').autocomplete(
+    eventUrl,
+    {
+        width : 280,
+        selectFirst : false,
+        matchContains: true,
+    }
+).result( function(event, data, formatted)
+    {
+        cj( "input#parent_event_name" ).val( data[0] );
+        cj( "input[name=parent_event_id]" ).val( data[1] );
+    }
+).bind( 'click', function( ) { cj( "input#parent_event_name" ).val(''); });
 </script>
 {/literal}

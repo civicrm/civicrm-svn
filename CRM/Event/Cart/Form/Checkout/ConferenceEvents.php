@@ -21,14 +21,23 @@ class CRM_Event_Cart_Form_Checkout_ConferenceEvents extends CRM_Event_Cart_Form_
 
 	$events = new CRM_Event_BAO_Event();
 	$query = <<<EOS
-	  SELECT * FROM civicrm_event
+	  SELECT
+               civicrm_event.*,
+               slot.label AS slot_label
+          FROM
+               civicrm_event
+          JOIN
+                civicrm_option_value slot ON civicrm_event.slot_label_id = slot.id
+          JOIN
+                civicrm_option_group og ON civicrm_option_value.option_group_id = og.id
 	  WHERE
 		parent_event_id = {$this->conference_event->id}
                 AND civicrm_event.is_active = 1
                 AND civicrm_event.is_public = 1
                 AND COALESCE(civicrm_event.is_template, 0) = 0
+                AND og.name = 'conference_slot'
 	  ORDER BY
-		slot_label, start_date
+		slot.weight, start_date
 EOS;
 	$events->query($query);
 	while ( $events->fetch() ) {

@@ -201,7 +201,8 @@ VALUES
    ('pdf_format'                    , '{ts escape="sql"}PDF Page Format{/ts}'                    , 0, 1),
    ('label_format'                  , '{ts escape="sql"}Mailing Label Format{/ts}'               , 0, 1),
    ('activity_contacts'             , '{ts escape="sql"}Activity Contacts{/ts}'                  , 0, 1),
-   ('event_recipients '             , '{ts escape="sql"}Event Recipients{/ts}'                   , 0, 1);
+   ('event_recipients '             , '{ts escape="sql"}Event Recipients{/ts}'                   , 0, 1),
+   ('conference_slot'               , '{ts escape="sql"}Conference Slot{/ts}'                    , 0, 1);
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';

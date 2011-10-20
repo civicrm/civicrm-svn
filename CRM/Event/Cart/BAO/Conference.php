@@ -9,8 +9,17 @@ class CRM_Event_Cart_BAO_Conference
 SELECT sub_event.* FROM civicrm_participant main_participant
     JOIN civicrm_event sub_event ON sub_event.parent_event_id = main_participant.event_id
     JOIN civicrm_participant sub_participant ON sub_participant.event_id = sub_event.id
-  WHERE main_participant.id = %1 AND sub_participant.contact_id = main_participant.contact_id
-  ORDER BY slot_label, sub_event.start_date
+    LEFT JOIN
+        civicrm_option_value slot ON sub_event.slot_label_id = slot.id
+    LEFT JOIN
+        civicrm_option_group og ON slot.option_group_id = og.id
+  WHERE
+      main_participant.id = %1
+      AND sub_participant.contact_id = main_participant.contact_id
+      AND og.name = 'conference_slot'
+  ORDER BY
+      slot.weight,
+      sub_event.start_date
 EOS;
         $sql_args = array( 1 => array($main_event_participant_id, 'Integer') );
         $dao = CRM_Core_DAO::executeQuery( $sql, $sql_args );

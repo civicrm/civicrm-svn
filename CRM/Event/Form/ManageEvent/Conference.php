@@ -84,8 +84,12 @@ class CRM_Event_Form_ManageEvent_Conference extends CRM_Event_Form_ManageEvent
         
         CRM_Event_BAO_Event::retrieve( $params, $defaults );
                
-        if ( isset( $eventId ) ) {
-                //$defaults['price_set_id'] = $price_set_id;
+        if (isset($defaults['parent_event_id']))
+        {
+            $params = array ('id' => $defaults['parent_event_id']);
+            $r_defaults = array();
+            $parent_event = CRM_Event_BAO_Event::retrieve($params, $r_defaults);
+            $defaults['parent_event_name'] = $parent_event->title;
         }
 
         $defaults = array_merge( $defaults, $parentDefaults );
@@ -104,15 +108,18 @@ class CRM_Event_Form_ManageEvent_Conference extends CRM_Event_Form_ManageEvent
      */
     public function buildQuickForm( ) 
     {
-        require_once 'CRM/Utils/Money.php';
+        require_once 'CRM/Core/OptionGroup.php';
+        $slots = CRM_Core_OptionGroup::values('conference_slot');
 
-        $this->addElement('textarea', 'slot_label', ts( 'Slot Label' ),  
-                          CRM_Core_DAO::getAttribute( 'CRM_Event_DAO_Event', 'slot_label' ), 
-                          false );
+        $this->add('select',
+                   'slot_label_id',
+                   ts('Conference Slot'),
+                   array('' => ts('- select -')) + $slots,
+                   false);
 
-        $this->addElement('textarea', 'parent_event_id', ts( 'Parent Event' ),  
-                          CRM_Core_DAO::getAttribute( 'CRM_Event_DAO_Event', 'parent_event_id' ), 
-                          false );
+        $this->addElement('text', 'parent_event_name', ts( 'Parent Event' ));
+        $this->addElement('hidden', 'parent_event_id');
+
         parent::buildQuickForm();
     }
     
