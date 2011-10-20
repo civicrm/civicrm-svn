@@ -1651,11 +1651,15 @@ ORDER BY civicrm_email.is_primary DESC";
         }
 
         //fix contact sub type CRM-5125
-        if ( $subType = CRM_Utils_Array::value('contact_sub_type', $params) ) {
-            $data['contact_sub_type'] = $subType;
-        } else if ( $subType = CRM_Utils_Array::value('contact_sub_type_hidden', $params ) ) {
+        if ( array_key_exists('contact_sub_type', $params) && 
+             !empty($params['contact_sub_type']) ) {
+            $data['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR .
+                implode( CRM_Core_DAO::VALUE_SEPARATOR, $params['contact_sub_type'] ) . CRM_Core_DAO::VALUE_SEPARATOR;
+        } else if ( array_key_exists('contact_sub_type_hidden', $params) && 
+                    !empty($params['contact_sub_type_hidden']) ) {
             // if profile was used, and had any subtype, we obtain it from there 
-            $data['contact_sub_type'] = $subType;
+            $data['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR .
+                implode( CRM_Core_DAO::VALUE_SEPARATOR, $params['contact_sub_type_hidden'] ) . CRM_Core_DAO::VALUE_SEPARATOR;
         }
         
         if ( $ctype == 'Organization' ) {

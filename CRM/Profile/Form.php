@@ -361,6 +361,13 @@ class CRM_Profile_Form extends CRM_Core_Form
             $this->assign( "imageURL", $this->_defaults['image_URL'] ); 
         }
         
+        if ( array_key_exists('contact_sub_type', $this->_defaults) && 
+             !empty($this->_defaults['contact_sub_type']) ) {
+            $this->_defaults['contact_sub_type'] = 
+                explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                         trim($this->_defaults['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) );
+        }
+
         $this->setDefaults( $this->_defaults );
     } 
     

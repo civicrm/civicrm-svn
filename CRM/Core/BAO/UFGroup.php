@@ -1616,10 +1616,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 $subtypeList = array( );
                 $subtypeList[$setSubtype] = $subtypes[$setSubtype];
             } else {
-                $subtypeList = array('' => ts('- select -')) + $subtypes;
+                $subtypeList = $subtypes;
             }
             
-            $form->add('select', $name, $title, $subtypeList, $required);
+            $sel = $form->add('select', $name, $title, $subtypeList, $required);
+            $sel->setMultiple(true);
         } else if (in_array($fieldName, array('email_greeting', 'postal_greeting', 'addressee' ) ) ) {
             //add email greeting, postal greeting, addressee, CRM-4575
             $gId = $form->get('gid') ? $form->get('gid') : CRM_Utils_Array::value('group_id', $field);
