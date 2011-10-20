@@ -80,7 +80,7 @@ class CRM_Contact_BAO_Contact_Utils
                 if ( $isSubtype ) { 
                     $type = CRM_Contact_BAO_ContactType::getBasicType( $typeInfo['name'] ) . '-subtype';
                 } else {
-                    $type = $typeInfo['name'];
+                    $type = CRM_Utils_Array::value( 'name', $typeInfo );
                 }
            		
 
