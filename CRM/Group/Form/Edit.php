@@ -131,7 +131,11 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
                 if ( isset($this->_groupValues['saved_search_id']) ){
                     $groupValues['mapping_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch', 
                                                                               $this->_groupValues['saved_search_id'], 
-                                                                              'mapping_id' ) ;
+                                                                              'mapping_id' );
+                    $groupValues['search_custom_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch', 
+                                                                                    $this->_groupValues['saved_search_id'], 
+                                                                                    'search_custom_id' );
+                    
                 }
                 $this->assign_by_ref( 'group', $groupValues );
                 
