@@ -43,7 +43,7 @@ License: AGPL3
 */
 
 // there is no session handling in WP hence we start it for CiviCRM pages
-if ( !session_id( ) ) {
+if ( ! session_id( ) ) {
     session_start( );
 }
 
@@ -194,6 +194,19 @@ function civicrm_wp_invoke( ) {
         $args = array( 'civicrm', 'dashboard' );
     }
    
+    global $current_user;
+    get_currentuserinfo( );
+    
+    /* bypass synchronize if running upgrade 
+     * to avoid any serious non-recoverable error 
+     * which might hinder the upgrade process. 
+     */
+    require_once 'CRM/Utils/Array.php';
+    if ( CRM_Utils_Array::value( 'q', $_GET ) != 'civicrm/upgrade' ) {
+        require_once 'CRM/Core/BAO/UFMatch.php';
+        CRM_Core_BAO_UFMatch::synchronize( $current_user, false, 'WordPress', 'Individual', true );
+    }
+    
     require_once 'CRM/Core/Invoke.php';
     CRM_Core_Invoke::invoke( $args );
 }
@@ -405,9 +418,24 @@ function t( $str, $sub = null ) {
 }
 
 function civicrm_user_register( $userID ) {
+    _civicrm_update_user( $userID );
 }
 
 function civicrm_profile_update( $userID ) {
+    _civicrm_update_user( $userID );
+}
+
+function _civicrm_update_user( $userID ) {
+    $user = get_userdata( $userID );
+    if ( $user ) {
+        civicrm_wp_initialize( );
+
+        require_once 'CRM/Core/BAO/UFMatch.php';
+        CRM_Core_BAO_UFMatch::synchronize( $user,
+                                           true,
+                                           'WordPress',
+                                           'Individual' );
+    }
 }
 
 civicrm_wp_main( );
