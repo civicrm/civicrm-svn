@@ -58,6 +58,8 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
             $reminderList = CRM_Core_BAO_ActionSchedule::getList( false, 
                                                                   'civicrm_event', 
                                                                   $this->_id);
+
+            $this->assign( 'rows', $reminderList );
         }        
         
     }
