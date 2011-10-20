@@ -26,9 +26,13 @@
 *}
 {* This template is used for adding/scheduling reminders.  *}
 <div class="crm-block crm-form-block crm-event-manage-scheduleReminder-form-block">
-<div class="crm-submit-buttons">
-   {include file="CRM/common/formButtons.tpl" location="top"}
-</div>
+{if $rows}
+   {include file="CRM/Admin/Page/Reminders.tpl"}
+{else}
+
+ <div class="crm-submit-buttons">
+    {include file="CRM/common/formButtons.tpl" location="top"}
+ </div>
 {if $action eq 8}
   <div class="messages status">  
       <div class="icon inform-icon"></div> 
@@ -146,13 +150,12 @@
 	</table>
         {include file="CRM/Contact/Form/Task/EmailCommon.tpl" upload=1 noAttach=1}
   </fieldset>
-
 {/if} 
 
-<div class="crm-submit-buttons">
-     {include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-</div>
-
+ <div class="crm-submit-buttons">
+      {include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+ </div>
+{/if}
 {include file="CRM/common/showHideByFieldValue.tpl" 
     trigger_field_id    = "is_repeat"
     trigger_value       = "true"
