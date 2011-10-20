@@ -17,7 +17,7 @@ function civicrm_member_roles_menu()
     if ( ! civicrm_initialize( ) ) {
         return;
     }
-    $items[] = array();
+    $items = array();
     $items['admin/settings/civicrm_member_roles'] = array(
                                                           'title' => t('CiviMember Roles Sync'),
                                                           'description' => t('Add/remove association rules and configure settings. Also perform manual synchronization.'),
