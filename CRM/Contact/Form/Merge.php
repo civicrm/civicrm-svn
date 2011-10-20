@@ -746,6 +746,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         // move other's belongings and delete the other contact
         CRM_Dedupe_Merger::moveContactBelongings( $this->_cid, $this->_oid );
         $otherParams = array( 'contact_id' => $this->_oid,
+                              'id'         => $this->_oid,
                               'version'    => 3 );
         
         if ( CRM_Core_Permission::check( 'merge duplicate contacts' ) && 
