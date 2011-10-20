@@ -26,8 +26,16 @@
 *}
 {* This template is used for adding/scheduling reminders.  *}
 <div class="crm-block crm-form-block crm-event-manage-scheduleReminder-form-block">
+
 {if $rows}
-   {include file="CRM/Admin/Page/Reminders.tpl"}
+    <div id="reminder">
+      {include file="CRM/Admin/Page/Reminders.tpl"}
+
+      <div class="action-link">
+    	  <a href="{crmURL q="action=update&reset=1&id=$eventId"}" id="newScheduleReminder" class="button"><span><div class="icon add-icon"></div>{ts}Add Reminder{/ts}</span></a>
+      </div>
+    </div>
+
 {else}
 
  <div class="crm-submit-buttons">

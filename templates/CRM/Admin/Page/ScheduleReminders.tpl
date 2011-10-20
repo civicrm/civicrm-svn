@@ -30,7 +30,14 @@
    {include file="CRM/Admin/Form/ScheduleReminders.tpl"}
 {else}
 {if $rows}
-   {include file="CRM/Admin/Page/Reminders.tpl"}
+    <div id="reminder">
+      {include file="CRM/Admin/Page/Reminders.tpl"}
+      <div class="action-link">
+    	  <a href="{crmURL q="action=add&reset=1"}" id="newScheduleReminder" class="button"><span><div class="icon add-icon"></div>{ts}Add Reminder{/ts}</span></a>
+      </div>
+
+    </div>
+
 {else}
     <div class="messages status">
       <div class="icon inform-icon"></div>
