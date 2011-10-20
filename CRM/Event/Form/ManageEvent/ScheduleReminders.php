@@ -59,7 +59,24 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
                                                                   'civicrm_event', 
                                                                   $this->_id);
 
-            $this->assign( 'rows', $reminderList );
+            if ( is_array( $reminderList ) ) {
+                // Add action links to each of the reminders
+                foreach ( $reminderList as &$format ) {
+                    $action = CRM_Core_Action::UPDATE;
+                    if ( $format['is_active'] ) {
+                        $action += CRM_Core_Action::ENABLE;
+                    } else {
+                        $action += CRM_Core_Action::DISABLE;
+                    }
+                    require_once 'CRM/Admin/Page/ScheduleReminders.php';
+                    $format['action'] = CRM_Core_Action::formLink(
+                                                                  CRM_Admin_Page_ScheduleReminders::links(), 
+                                                                  $action, 
+                                                                  array('id' => $this_id));
+                }
+                $this->assign( 'rows', $reminderList );
+            }
+            
         }        
         
     }
