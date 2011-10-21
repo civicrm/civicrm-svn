@@ -64,9 +64,9 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
                 foreach ( $reminderList as &$format ) {
                     $action = CRM_Core_Action::UPDATE;
                     if ( $format['is_active'] ) {
-                        $action += CRM_Core_Action::ENABLE;
-                    } else {
                         $action += CRM_Core_Action::DISABLE;
+                    } else {
+                        $action += CRM_Core_Action::ENABLE;
                     }
                     require_once 'CRM/Admin/Page/ScheduleReminders.php';
                     $format['action'] = CRM_Core_Action::formLink(
