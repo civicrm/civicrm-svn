@@ -25,6 +25,60 @@
 *}
 {literal}
 <script type="text/javascript">
+cj( function() {
+    cj('.action-icon').click( function( ) {
+        copyFieldValues( cj(this).attr('fname') );
+    });
+});
+
+function copyFieldValues( fname ) {
+    var elementId    = cj('[name^="field["][name$="[' + fname +']"]');
+    var firstElement = elementId.eq(0);
+
+    //check if it is date element
+    var isDateElement     =  elementId.attr('format');
+    var firstElementValue = firstElement.val();
+   
+    if ( isDateElement ) {
+        elementId.val( firstElementValue );
+        copyValuesDate( fname );
+    } else {
+        elementId.val( firstElementValue );
+    }
+}
+
+function copyValuesDate(fname)
+{
+    var fnameDisplay = fname + '_display';
+    var fnameTime    = fname + '_time';
+    var displayElement = cj('[name^="field["][name$="[' + fnameDisplay +']"]');
+    console.log( displayElement );
+    var timeElement    = cj('[name^="field["][name$="[' + fnameTime +']"]');
+   
+    displayElement.val( displayElement.eq(0).val() );
+    timeElement.val( timeElement.eq(0).val() );
+    
+    /*
+    var cId = new Array();
+    var i = 0;
+    {/literal}
+    {foreach from=$componentIds item=field}
+        {literal}cId[i++]{/literal} = {$field}
+    {/foreach}
+    {literal}
+    var firstDate = cj( "#field_" + cId[0] + '_' + fieldName + '_display' ).val( );
+    var firstTime = null;
+    if ( cj( "#field_" + cId[0] + '_' + fieldName + '_time') ) {
+    	firstTime = cj( "#field_" + cId[0] + '_' + fieldName + '_time' ).val( );
+    }
+ 	cj(cId).each(function(i,id) {
+        cj( '#field_' + id + '_' + fieldName + '_display' ).val( firstDate );
+        cj( '#field_' + id + '_' + fieldName ).val( firstDate );
+        cj( '#field_' + id + '_' + fieldName + '_time').val( firstTime );
+ 	});
+    */
+}
+
 function setStatusesTo(statusId)
 {
     var cId = new Array();
@@ -54,6 +108,7 @@ function copyValues(fieldName, source)
 
     if ( document.getElementById(source) ) {
         if ( document.getElementById(source).type == 'select-multiple' ) {
+            /*
             var multiSelectList = document.getElementById(source).options;
             for ( k=0; k<cId.length; k++ ) {
                 for ( i=0; i<multiSelectList.length; i++ ){
@@ -64,6 +119,7 @@ function copyValues(fieldName, source)
                     }
                 }
             }
+            */
         } else if ( document.getElementById(source).getAttribute("class") == "tinymce" ) {
             if ( editor == "tinymce" ) {
                 for ( k=0; k<cId.length; k++ ) {
@@ -86,6 +142,7 @@ function copyValues(fieldName, source)
         }
     } else if ( document.getElementsByName("field"+"["+cId[0]+"]"+"["+fieldName+"]") &&
             document.getElementsByName("field"+"["+cId[0]+"]"+"["+fieldName+"]").length > 0 ) {
+        /*
         if ( document.getElementsByName("field"+"["+cId[0]+"]"+"["+fieldName+"]")[0].type == "radio" ) {
             for ( t=0; t<document.getElementsByName("field"+"["+cId[0]+"]"+"["+fieldName+"]").length; t++ ) {
                 if  (document.getElementsByName("field"+"["+cId[0]+"]"+"["+fieldName+"]")[t].checked == true ) {break}
@@ -113,7 +170,7 @@ function copyValues(fieldName, source)
                     FCKeditorAPI.GetInstance( "field"+"["+cId[k]+"]"+"["+fieldName+"]" ).SetHTML( fckEditor.GetHTML() );
                 }
             }
-        }
+        } */
     } else {
         if ( f = document.getElementById('Batch') ) {
             if ( ts = f.getElementsByTagName('table') ) {
@@ -140,27 +197,6 @@ function copyValues(fieldName, source)
     }
 }
 
-
-function copyValuesDate(fieldName)
-{
-    var cId = new Array();
-    var i = 0;
-    {/literal}
-    {foreach from=$componentIds item=field}
-        {literal}cId[i++]{/literal} = {$field}
-    {/foreach}
-    {literal}
-    var firstDate = cj( "#field_" + cId[0] + '_' + fieldName + '_display' ).val( );
-    var firstTime = null;
-    if( cj( "#field_" + cId[0] + '_' + fieldName + '_time') ){
-    	firstTime = cj( "#field_" + cId[0] + '_' + fieldName + '_time' ).val( );
-    }
- 	cj(cId).each(function(i,id){
-        cj( '#field_' + id + '_' + fieldName + '_display' ).val( firstDate );
-        cj( '#field_' + id + '_' + fieldName ).val( firstDate );
-        cj( '#field_' + id + '_' + fieldName + '_time').val( firstTime );
- 	});    
-}
 
 </script>
 {/literal}
