@@ -112,7 +112,7 @@ class civicrm_handler_field_event_link extends views_handler_field {
                     require_once 'CRM/Event/Cart/BAO/EventInCart.php';
                     //TODO don't call for every row
                     $link = CRM_Event_Cart_BAO_EventInCart::get_registration_link($values->{$this->aliases['id']});
-                    return civicrm_views_href( $link->label, $link->path, $link->query );
+                    return civicrm_views_href( $link['label'], $link['path'], $link['query'] );
                 } else {
                     return civicrm_views_href( $data,
                                                 'civicrm/event/register',
