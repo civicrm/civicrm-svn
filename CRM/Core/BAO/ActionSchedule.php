@@ -539,7 +539,7 @@ WHERE   cas.entity_value = $id AND
             }
 
             if ( $mapping->entity == 'civicrm_activity' ) {
-                $tokenFields = array( 'activity_id', 'activity_type', 'subject', 'activity_date_time' );
+                $tokenFields = array( 'activity_id', 'activity_type', 'subject', 'details', 'activity_date_time' );
                 $extraSelect = ", ov.label as activity_type, e.id as activity_id";
                 $extraJoin   = "INNER JOIN civicrm_option_group og ON og.name = 'activity_type'
 INNER JOIN civicrm_option_value ov ON e.activity_type_id = ov.value AND ov.option_group_id = og.id";
