@@ -195,6 +195,10 @@ contribution2_total_amount_count, contribution2_total_amount_sum',
                    );
 
         $this->_tagFilter = true;
+
+        $this->_options = array( 'percentage_change' => array( 'title' => ts( 'Percentage Change in Amount' ),
+                                                               'type'  => 'text' ) );
+
         parent::__construct( );
     }
 
@@ -395,6 +399,21 @@ LEFT  JOIN (
             $clauses['total_amount1'] = '(' . $clauses['total_amount1'] . ' OR ' . $clauses['total_amount2'] . ')';
             unset($clauses['total_amount2']);
         }
+
+        $percentChange = 0;
+
+        $percentSQL = null;
+        if ( $percentChange ) {
+            $sqlMath = "( ( contribution2_total_amount_sum - contribution1_total_amount_sum ) * 100 / contribution1_total_amount_sum )";
+            $percentChange = CRM_Utils_Type::escape( $percentChange, 'Integer' );
+            if ( $percentChange > 0 ) {
+                $percentSQL = "( $sqlMath > $percentChange )";
+            } else {
+                $percentSQL = "( $sqlMath < $percentChange )";
+            }
+        }
+                
+            
         $this->_where = "WHERE " . implode( ' AND ', $clauses );
     }
 
