@@ -72,7 +72,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
                     $format['action'] = CRM_Core_Action::formLink(
                                                                   CRM_Admin_Page_ScheduleReminders::links(), 
                                                                   $action, 
-                                                                  array('id' => $this_id));
+                                                                  array('id' => $format['id']));
                 }
                 $this->assign( 'rows', $reminderList );
             }
@@ -316,7 +316,8 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
                       array( 1 => "<strong>{$values['title']}</strong>") );
 
         CRM_Core_Session::setStatus( $status );
-
+        
+        parent::endPostProcess( );
     }//end of function
     
     /**
