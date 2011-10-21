@@ -102,8 +102,10 @@ class CRM_Event_Form_ManageEvent_TabHeader {
         // hack for tell a friend, since class name is different
         if ( $className == 'Event' ) {
             $class = 'friend';
-        } elseif ( $className == 'EventInfo' ){
+        } elseif ( $className == 'EventInfo' ) {
             $class = 'eventInfo';
+        } elseif ( $className == 'ScheduleReminders' ) {
+            $class = 'reminder';
         }        
 
         if ( array_key_exists( $class, $tabs ) ) {

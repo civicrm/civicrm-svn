@@ -36,9 +36,9 @@
  */
 
 require_once 'CRM/Event/Form/ManageEvent.php';
-require_once "CRM/Core/BAO/CustomGroup.php";
-require_once "CRM/Custom/Form/CustomData.php";
-require_once "CRM/Core/BAO/CustomField.php";
+require_once 'CRM/Core/BAO/CustomGroup.php';
+require_once 'CRM/Custom/Form/CustomData.php';
+require_once 'CRM/Core/BAO/CustomField.php';
 
 /**
  * This class generates form components for processing Event  
@@ -79,7 +79,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         
         $showLocation = false;
         // when custom data is included in this page
-        if ( CRM_Utils_Array::value( "hidden_custom", $_POST ) ) {
+        if ( CRM_Utils_Array::value( 'hidden_custom', $_POST ) ) {
             $this->set('type',     'Event');
             $this->set('subType',  CRM_Utils_Array::value( 'event_type_id', $_POST ) );
             $this->set('entityId', $this->_id );
@@ -115,7 +115,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         
         // in update mode, we need to set custom data subtype to tpl
         if ( CRM_Utils_Array::value( 'event_type_id' ,$defaults ) ) {
-            $this->assign('customDataSubType',  $defaults["event_type_id"] );
+            $this->assign('customDataSubType',  $defaults['event_type_id'] );
         }
 
         require_once 'CRM/Core/ShowHideBlocks.php';
@@ -351,7 +351,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
                 
                 // Copy the Discount option Group and Values
                 require_once 'CRM/Core/BAO/Discount.php';
-                $optionGroupIds = CRM_Core_BAO_Discount::getOptionGroup($params['template_id'], "civicrm_event");
+                $optionGroupIds = CRM_Core_BAO_Discount::getOptionGroup($params['template_id'], 'civicrm_event');
                 foreach ( $optionGroupIds as $id ) {
                     $discountSuffix = '.discount.'. CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup',
                                                                                  $id,
@@ -401,7 +401,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
             $url = 'civicrm/event/manage/location';
             $urlParams = "action=update&reset=1&id={$event->id}";
             // special case for 'Save and Done' consistency.
-            if ( $this->controller->getButtonName('submit') == "_qf_EventInfo_upload_done" ) {
+            if ( $this->controller->getButtonName('submit') == '_qf_EventInfo_upload_done' ) {
                 $url = 'civicrm/event/manage';
                 $urlParams = 'reset=1';
                 CRM_Core_Session::setStatus( ts("'%1' information has been saved.", 
