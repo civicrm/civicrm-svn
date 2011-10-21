@@ -1765,6 +1765,9 @@ class CRM_Contact_BAO_Query
             $wc = 'civicrm_website.url';
             $this->_where[$grouping][] = self::buildClause( $wc, $op, "'$value'" );
             $this->_qill[$grouping][]  = "$field[title] $op \"$value\"";
+        } else if ( $name === 'contact_is_deleted' ) {
+            $this->_where[$grouping][] = self::buildClause( "contact_a.is_deleted", $op, $value );
+            $this->_qill[$grouping][]  = "$field[title] $op \"$value\"";
         } else {
             // sometime the value is an array, need to investigate and fix
             if ( is_array( $value ) ) {
