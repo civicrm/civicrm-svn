@@ -55,7 +55,7 @@ class CRM_Core_I18n
     {
         if ($locale != '' and $locale != 'en_US') {
             $config = CRM_Core_Config::singleton();
-            $streamer = new FileReader(implode(DIRECTORY_SEPARATOR, array($config->gettextResourceDir, $locale, 'civicrm.mo')));
+            $streamer = new FileReader($config->gettextResourceDir . $locale . DIRECTORY_SEPARATOR . 'civicrm.mo');
             $this->_phpgettext = new gettext_reader($streamer);
         }
     }
