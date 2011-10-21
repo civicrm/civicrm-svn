@@ -57,7 +57,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             $reminderList = CRM_Core_BAO_ActionSchedule::getList( false, 
                                                                   'civicrm_event', 
-                                                                  $this->_id);
+                                                                  $this->_id );
 
             if ( is_array( $reminderList ) ) {
                 // Add action links to each of the reminders
@@ -110,8 +110,10 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         
         $mappingID = 3;
         list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection( $mappingID ) ;
-        $this->add( 'select', 'entity', ts('Entity'), $sel3[$mappingID][0] );
         
+        $entity = $this->add( 'select', 'entity', ts('Entity'), $sel3[$mappingID][0], true );
+        $entity->setMultiple( true ); 
+
         //get the frequency units.
         require_once 'CRM/Core/OptionGroup.php';
         $this->_freqUnits = array( 'hour' => 'hour' ) + CRM_Core_OptionGroup::values('recur_frequency_units');
@@ -183,7 +185,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
 
         $this->add('checkbox', 'is_active', ts('Send email'));
 
-        //$this->addFormRule( array( 'CRM_Event_Form_ManageEvent_ScheduleReminders', 'formRule' ) );
+        $this->addFormRule( array( 'CRM_Event_Form_ManageEvent_ScheduleReminders', 'formRule' ) );
     }
     /**
      * global validation rules for the form
@@ -197,10 +199,6 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
     static function formRule( $fields ) 
     {
         $errors = array( );
-        if ( $fields['entity'][1][0] == 0 ||
-             $fields['entity'][2][0] == 0) {
-            $errors['entity'] = ts('Please select appropriate value');
-        }
         
         if ( CRM_Utils_Array::value( 'is_active', $fields ) &&  
              CRM_Utils_System::isNull( $fields['subject'] ) ) {
@@ -253,17 +251,12 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
             $params['group_id'] = $params['recipient_manual'] = 'null';
         }
 
-        $params['mapping_id'] = $values['entity'][0];
-        $entity_value  = $values['entity'][1];
-        $entity_status = $values['entity'][2];
-
-        foreach ( array('entity_value', 'entity_status') as $key ) {
-            $params[$key] = implode( CRM_Core_DAO::VALUE_SEPARATOR, $$key );
-        }
-
+        $params['mapping_id'] = 3;
+        $params['entity_value'] = $this->_id;
+        $params['entity_status'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, $values['entity'] );
         $params['is_active' ] =  CRM_Utils_Array::value( 'is_active', $values, 0 );
         $params['is_repeat'] = CRM_Utils_Array::value( 'is_repeat', $values, 0 );
-
+        
         if ( CRM_Utils_Array::value( 'is_repeat', $values ) == 0 ) {
             $params['repetition_frequency_unit'] = 'null';
             $params['repetition_frequency_interval'] = 'null';
@@ -273,13 +266,9 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
             $params['end_date'] = 'null';
         }
         
-        if ( $this->_action & CRM_Core_Action::UPDATE ) {
-            $params['id' ] = $this->_id;
-        } elseif ( $this->_action & CRM_Core_Action::ADD ) {
-            // we do this only once, so name never changes
-            $params['name']   = CRM_Utils_String::munge($params['title'], '_', 64 );
-        } 
-
+        
+        $params['name']   = CRM_Utils_String::munge($params['title'], '_', 64 );
+        
         $composeFields = array ( 'template', 'saveTemplate',
                                  'updateTemplate', 'saveTemplateName' );
         $msgTemplate = null;
@@ -323,10 +312,9 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         
         CRM_Core_BAO_ActionSchedule::add($params, $ids);
 
-        $status = ts( "Your new Reminder titled %1 has been saved." , array( 1 => "<strong>{$values['title']}</strong>") );
-        if ( $this->_action & CRM_Core_Action::UPDATE ) { 
-            $status = ts( "Your Reminder titled %1 has been updated." , array( 1 => "<strong>{$values['title']}</strong>") );
-        }
+        $status = ts( "Your new Reminder titled %1 has been saved." , 
+                      array( 1 => "<strong>{$values['title']}</strong>") );
+
         CRM_Core_Session::setStatus( $status );
 
     }//end of function
