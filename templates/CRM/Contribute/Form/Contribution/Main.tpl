@@ -297,8 +297,8 @@ function clearAmountOther() {
     {/if}
     <br>
     {if $isShare}
-    {capture assign=eventUrl}{crmURL p='civicrm/contribute/transact' q="reset=1&amp;id=`$contributionPageID`" a=true fe=1 h=1}{/capture}
-    {include file="CRM/common/  Network.tpl" url=$eventUrl title=$title pageURL=$eventUrl}
+        {capture assign=eventUrl}{crmURL p='civicrm/contribute/transact' q="reset=1&amp;id=`$contributionPageID`" a=true fe=1 h=1}{/capture}
+        {include file="CRM/common/SocialNetwork.tpl" url=$eventUrl title=$title pageURL=$eventUrl}
     {/if}
 </div>
 
