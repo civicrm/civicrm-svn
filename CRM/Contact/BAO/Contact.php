@@ -263,7 +263,8 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         $config = CRM_Core_Config::singleton();
 
         // CRM-6942: set preferred language to the current language if it’s unset (and we’re creating a contact)
-        if ((!isset($params['id']) or !$params['id']) and (!isset($params['preferred_language']) or !$params['preferred_language'])) {
+        if ( ( ! isset($params['id']) || ! $params['id']) &&
+             ( ! isset($params['preferred_language']) ||  ! $params['preferred_language'])) {
             $params['preferred_language'] = $config->lcMessages;
         }
 

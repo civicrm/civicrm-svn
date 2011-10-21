@@ -434,7 +434,6 @@ class CRM_Contact_BAO_Query
         // basically do all the work once, and then reuse it
         $this->initialize( );
 
-        // CRM_Core_Error::debug( $this );
     }
 
     /**
@@ -1525,7 +1524,7 @@ class CRM_Contact_BAO_Query
     function restWhere( &$values ) 
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
-        
+
         if ( ! CRM_Utils_Array::value( $grouping, $this->_where ) ) {
             $this->_where[$grouping] = array( );
         }
@@ -1783,7 +1782,13 @@ class CRM_Contact_BAO_Query
                     $op    = 'LIKE';
                 }
 
-                if ( $op != 'IN' ) {
+                $type = null;
+                if ( CRM_Utils_Array::value( 'type', $field ) ) {
+                    $type = CRM_Utils_Type::typeToString( $field['type'] );
+                }
+
+                if ( $op != 'IN' &&
+                     $type == 'String' ) {
                     $value     = "'$value'";
                 }
 
@@ -1813,11 +1818,7 @@ class CRM_Contact_BAO_Query
                             $fieldName = "{$field['where']}";
                         }
                     }
-                    
-                    $type = null;
-                    if ( CRM_Utils_Array::value( 'type', $field ) ) {
-                        $type = CRM_Utils_Type::typeToString( $field['type'] );
-                    }
+
 
                     $this->_where[$grouping][] = self::buildClause( $fieldName,
                                                                     $op,
