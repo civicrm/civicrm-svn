@@ -1619,16 +1619,14 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
 
                         $clause = $this->dateClause( $field['name'], $relative, $from, $to, $field['type'] );
                     } else {
-                        if ( ! CRM_Utils_Array::value( 'skipWhere', $field, 0 ) ) {
-                            $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
-                            if ( $op ) {
-                                $clause = 
-                                    $this->whereClause( $field,
-                                                        $op,
-                                                        CRM_Utils_Array::value( "{$fieldName}_value", $this->_params ),
-                                                        CRM_Utils_Array::value( "{$fieldName}_min", $this->_params ),
-                                                        CRM_Utils_Array::value( "{$fieldName}_max", $this->_params ) );
-                            }
+                        $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
+                        if ( $op ) {
+                            $clause = 
+                                $this->whereClause( $field,
+                                                    $op,
+                                                    CRM_Utils_Array::value( "{$fieldName}_value", $this->_params ),
+                                                    CRM_Utils_Array::value( "{$fieldName}_min", $this->_params ),
+                                                    CRM_Utils_Array::value( "{$fieldName}_max", $this->_params ) );
                         }
                     }
                     
