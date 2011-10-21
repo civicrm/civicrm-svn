@@ -3153,3 +3153,11 @@ div#crm-toolTip
     position: static;
     z-index: -100;
 }
+
+#crm-container .crm-socialnetwork {
+    margin-top: 1em;
+}
+
+#crm-container .crm-fb-tweet-buttons  {
+    width: 93%;
+}
