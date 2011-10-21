@@ -128,6 +128,10 @@ class CRM_Event_Form_ManageEvent_Conference extends CRM_Event_Form_ManageEvent
         $params = array( );
         $params = $this->exportValues( );
         
+        if (trim($params['parent_event_name']) === '')
+        {
+            $params['parent_event_id'] = ''; # believe me...
+        }
         //update events table
         require_once 'CRM/Event/BAO/Event.php';
         $params['id'] = $this->_id;

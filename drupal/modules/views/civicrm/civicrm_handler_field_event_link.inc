@@ -106,18 +106,17 @@ class civicrm_handler_field_event_link extends views_handler_field {
     // LINKING TO EVENT REGISTRATION PAGE
       case 'registration':
            if (user_access('register for events') && $data !== NULL && $data !== '') {
-                require_once 'CRM/Event/Cart/BAO/Cart.php';
-                //TODO don't call for every row
-                $cart = CRM_Event_Cart_BAO_Cart::find_or_create_for_current_session( );
-                $cart->load_associations( );
-                $event_in_cart = $cart->get_event_in_cart_by_event_id( $values->{$this->aliases['id']} );
-
-                if ($event_in_cart) {
-                  $data = "Remove From Cart";
-                  return civicrm_views_href( $data, 'civicrm/event/remove_from_cart', "reset=1&id={$event_in_cart->id}" );
+                $config = CRM_Core_Config::singleton();
+                if ($config->enable_cart)
+                {
+                    require_once 'CRM/Event/Cart/BAO/EventInCart.php';
+                    //TODO don't call for every row
+                    $link = CRM_Event_Cart_BAO_EventInCart::get_registration_link($values->{$this->aliases['id']});
+                    return civicrm_views_href( $link->label, $link->path, $link->query );
                 } else {
-                  $data = "Add To Cart";
-                  return civicrm_views_href( $data, 'civicrm/event/add_to_cart', "reset=1&id={$values->{$this->aliases['id']}}" );
+                    return civicrm_views_href( $data,
+                                                'civicrm/event/register',
+                                                "reset=1&id={$values->{$this->aliases['id']}}" );
                 }
            }
 

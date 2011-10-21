@@ -58,6 +58,15 @@
      <weight>0</weight>
   </item>
   <item>
+     <path>civicrm/admin/event_settings</path>
+     <title>Configure CiviEvent Settings</title>
+     <page_callback>CRM_Admin_Form_Setting_Event</page_callback>
+     <desc>Configure global event settings.</desc>
+     <access_arguments>access CiviEvent,administer CiviCRM</access_arguments>
+     <adminGroup>CiviEvent</adminGroup>
+     <weight>360</weight>
+  </item>
+  <item>
      <path>civicrm/admin/event</path>
      <title>Manage Events</title>
      <page_callback>CRM_Event_Page_ManageEvent</page_callback>

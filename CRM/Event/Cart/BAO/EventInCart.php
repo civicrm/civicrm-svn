@@ -192,33 +192,26 @@ class CRM_Event_Cart_BAO_EventInCart extends CRM_Event_Cart_DAO_EventInCart impl
 	return $result;
   }
 
-  public static function get_event_registration_url( $event_id, $action = null ) {
+  static function get_registration_link($event_id)
+  {
       require_once 'CRM/Event/Cart/BAO/Cart.php';
       $cart = CRM_Event_Cart_BAO_Cart::find_or_create_for_current_session( );
       $cart->load_associations( );
-      $in_cart = false;
-      foreach ( $cart->events_in_carts as $event_in_cart ) {
-        if ($event_id == $event_in_cart->event->id)  {
-            $in_cart = true;
-            break;
-        }
-      }
+      $event_in_cart = $cart->get_event_in_cart_by_event_id( $event_id );
 
-      if ( $action == CRM_Core_Action::PREVIEW ) {
-        if ($in_cart) {
-          $register_url = CRM_Utils_System::url( 'civicrm/event/remove_from_cart', "id={$event_id}&reset=1&action=preview", true, null, true, true );
-        } else {
-          $register_url = CRM_Utils_System::url( 'civicrm/event/add_to_cart', "id={$event_id}&reset=1&action=preview", true, null, true, true );
-        }
+      if ($event_in_cart) {
+        return array(
+          'label' => "Remove from Cart",
+          'path' => 'civicrm/event/remove_from_cart',
+          'query' => "reset=1&id={$event_id}",
+        );
+      } else {
+        return array(
+          'label' => "Add to Cart",
+          'path' => 'civicrm/event/add_to_cart',
+          'query' => "reset=1&id={$event_id}",
+        );
       }
-      else {
-        if ($in_cart) {
-           $register_url = CRM_Utils_System::url( 'civicrm/event/remove_from_cart', "id={$event_id}&reset=1", true, null, true, true );
-        } else {
-           $register_url = CRM_Utils_System::url( 'civicrm/event/add_to_cart', "id={$event_id}&reset=1", true, null, true, true );
-        }
-      }
-      return $register_url;
   }
 
   function is_parent_event()
