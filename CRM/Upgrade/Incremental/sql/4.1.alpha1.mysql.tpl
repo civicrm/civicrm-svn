@@ -81,3 +81,7 @@ VALUES
     VALUES
         (@option_group_id_udOpt, {localize}'Assigned Activities'{/localize},  (SELECT @max_val := @max_val+1), 'Assigned Activities', (SELECT @max_wt := @max_wt+1), 0, NULL, NULL);
 
+-- CRM-8737
+   ALTER TABLE `civicrm_event` ADD `is_share` TINYINT( 4 ) NULL DEFAULT '1' COMMENT 'Can people share the event through social media?';
+   ALTER TABLE `civicrm_contribution_page` ADD `is_share` TINYINT(4) NULL DEFAULT '1' COMMENT 'Can people share the contribution page through social media?'; 
+
