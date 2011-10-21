@@ -981,7 +981,8 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             
             $leftq .= ($quoteIdentifiers ? ($DB->quoteIdentifier($k) . ' ')  : "$k ");
-            
+
+            /***            
             if (is_a($this->$k,'DB_DataObject_Cast')) {
                 $value = $this->$k->toString($v,$DB);
                 if (PEAR::isError($value)) {
@@ -991,6 +992,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 $rightq .=  $value;
                 continue;
             }
+            **/
             
             
 
@@ -1242,7 +1244,8 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             
             $kSql = ($quoteIdentifiers ? $DB->quoteIdentifier($k) : $k);
-            
+
+            /***            
             if (is_a($this->$k,'DB_DataObject_Cast')) {
                 $value = $this->$k->toString($v,$DB);
                 if (PEAR::isError($value)) {
@@ -1252,6 +1255,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 $settings .= "$kSql = $value ";
                 continue;
             }
+            ***/
             
             // special values ... at least null is handled...
             if (!isset($options['disable_null_strings']) && is_string($this->$k) && (strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
@@ -2562,7 +2566,8 @@ class DB_DataObject extends DB_DataObject_Overload
                 : "{$this->__table}.{$k}";
              
              
-            
+
+            /***            
             if (is_a($this->$k,'DB_DataObject_Cast')) {
                 $dbtype = $DB->dsn["phptype"];
                 $value = $this->$k->toString($v,$DB);
@@ -2577,7 +2582,8 @@ class DB_DataObject extends DB_DataObject_Overload
                 $this->whereAdd(" $kSql = $value");
                 continue;
             }
-            
+            ***/
+
             if (!isset($options['disable_null_strings']) && is_string($this->$k) && (strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
                 $this->whereAdd(" $kSql  IS NULL");
                 continue;
