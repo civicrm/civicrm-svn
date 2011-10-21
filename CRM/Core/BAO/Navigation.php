@@ -603,11 +603,19 @@ ORDER BY parent_id, weight";
     /**
      * Reset navigation for all contacts
      */
-    static function resetNavigation( ) 
+    static function resetNavigation( $contactId = null ) 
     {
-        $query = "UPDATE civicrm_setting SET value = NULL WHERE name='navigation' AND contact_id IS NOT NULL";
-        CRM_Core_DAO::executeQuery( $query );
+        $params = array( );
+        $query  = "UPDATE civicrm_setting SET value = NULL WHERE name='navigation'";
+        if ( $contactId ) {
+            $query .= " AND contact_id = %1";
+            
+            $params[1] = array((int)$contactId, 'Integer'); 
+        } else {
+            $query .= " AND contact_id IS NOT NULL";
+        }
         
+        CRM_Core_DAO::executeQuery( $query, $params );
         require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::deleteGroup( 'navigation' );
     }          
