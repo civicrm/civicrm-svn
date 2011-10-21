@@ -157,6 +157,7 @@ LEFT JOIN  civicrm_contribution_page contrib ON ( pcp.contribution_page_id = con
         $this->assign( 'title',   CRM_Utils_Array::value( 'title', $defaults ) );
         $this->assign( 'intro',   CRM_Utils_Array::value( 'intro', $defaults ) );
         $this->assign( 'message', CRM_Utils_Array::value( 'suggested_message', $defaults ) );
+        $this->assign( 'entityID',  $this->_entityId );
         
         require_once "CRM/Contact/BAO/Contact.php";
         list( $fromName, $fromEmail ) = CRM_Contact_BAO_Contact::getContactDetails( $this->_contactID );

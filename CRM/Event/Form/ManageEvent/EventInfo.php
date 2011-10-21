@@ -228,6 +228,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         $this->add('textarea','summary',ts('Event Summary'), $attributes['summary']);
         $this->addWysiwyg( 'description', ts('Complete Description'),$attributes['event_description']);
         $this->addElement('checkbox', 'is_public', ts('Public Event?') );
+        $this->addElement('checkbox', 'is_share', ts('Allow sharing through social media?') );
         $this->addElement('checkbox', 'is_map', ts('Include Map to Event Location?') );
          
         $this->addDateTime( 'start_date', ts('Start Date'), false, array('formatType' => 'activityDateTime') );
@@ -305,6 +306,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         $params['is_map'    ]      = CRM_Utils_Array::value('is_map', $params, false);
         $params['is_active' ]      = CRM_Utils_Array::value('is_active', $params, false);
         $params['is_public' ]      = CRM_Utils_Array::value('is_public', $params, false);
+        $params['is_share' ]       = CRM_Utils_Array::value('is_share', $params, false);
         $params['default_role_id'] = CRM_Utils_Array::value('default_role_id', $params, false);
         $params['id']              = $this->_id;
 

@@ -65,8 +65,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      * @access public 
      */ 
     public function preProcess()  
-    {  
+    {
         parent::preProcess( );
+        
+        // Make the contributionPageID avilable to the template
+        $this->assign( 'contributionPageID', $this->_id );
+        $this->assign( 'isShare', $this->_values['is_share'] );
 
         // make sure we have right permission to edit this user
         $csContactID = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, false, $this->_userID );
@@ -205,7 +209,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 if ( ! empty( $this->_defaults[$name] ) ) {
                     $this->_defaults['billing_' . $name] = $this->_defaults[$name];
                 }
-            }
+            }  
         } 
         
         //set custom field defaults set by admin if value is not set
@@ -329,7 +333,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      * @access public
      */
     public function buildQuickForm( ) 
-    {
+    {   
         $config = CRM_Core_Config::singleton( );
         if ( $this->_values['is_for_organization'] == 2 ) {
             $this->assign( 'onBehalfRequired', true );

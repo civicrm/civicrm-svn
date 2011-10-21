@@ -531,4 +531,11 @@
       <key>id</key> 
       <onDelete>SET NULL</onDelete>
   </foreignKey>
+  <field> 
+      <name>is_share</name> 
+      <type>boolean</type>
+      <default>1</default>                
+      <comment>Can people share the event through social media?</comment> 
+      <add>4.1</add> 
+  </field>
 </table>
