@@ -171,7 +171,7 @@ contribution2_total_amount_count, contribution2_total_amount_sum',
                                        'type'    => CRM_Utils_Type::T_INT,
                                        'operatorType' => CRM_Report_Form::OP_INT,
                                        'name'    => 'percentage_change',
-                                       'clause' => '(1)', // dummy clause so that query doesn't give any error
+                                       'dbAlias' => '( ( contribution2_total_amount_sum - contribution1_total_amount_sum ) * 100 / contribution1_total_amount_sum )',
                                        ),
                                 'contribution_type_id'  =>
                                 array( 'title'   => ts( 'Contribution Type' ),
@@ -407,21 +407,6 @@ LEFT  JOIN (
             unset($clauses['total_amount2']);
         }
 
-        $percentChange = $this->_params['percentage_change_value'];
-
-        $percentSQL = null;
-        if ( $percentChange ) {
-            $sqlMath = "( ( contribution2_total_amount_sum - contribution1_total_amount_sum ) * 100 / contribution1_total_amount_sum )";
-            $percentChange = CRM_Utils_Type::escape( $percentChange, 'Integer' );
-            if ( $percentChange > 0 ) {
-                $percentSQL = "( $sqlMath > $percentChange )";
-            } else {
-                $percentSQL = "( $sqlMath < $percentChange )";
-            }
-            $clauses['percentage_change'] = $percentSQL;
-        }
-                
-            
         $this->_where = "WHERE " . implode( ' AND ', $clauses );
     }
 
