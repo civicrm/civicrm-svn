@@ -203,9 +203,6 @@ contribution2_total_amount_count, contribution2_total_amount_sum',
 
         $this->_tagFilter = true;
 
-        $this->_options = array( 'percentage_change' => array( 'title' => ts( 'Percentage Change in Amount' ),
-                                                               'type'  => 'text' ) );
-
         parent::__construct( );
     }
 
