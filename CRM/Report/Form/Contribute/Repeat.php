@@ -166,6 +166,13 @@ contribution2_total_amount_count, contribution2_total_amount_sum',
                                        'operatorType' => CRM_Report_Form::OP_INT,
                                        'name'    => 'receive_date',
                                        'dbAlias' => 'contribution2_total_amount_sum' ),
+                                'percentage_change'  =>
+                                array( 'title'   => ts( 'Percentage Change' ),
+                                       'type'    => CRM_Utils_Type::T_INT,
+                                       'operatorType' => CRM_Report_Form::OP_INT,
+                                       'name'    => 'percentage_change',
+                                       'clause' => '(1)', // dummy clause so that query doesn't give any error
+                                       ),
                                 'contribution_type_id'  =>
                                 array( 'title'   => ts( 'Contribution Type' ),
                                        'operatorType' => CRM_Report_Form::OP_MULTISELECT,
@@ -400,7 +407,7 @@ LEFT  JOIN (
             unset($clauses['total_amount2']);
         }
 
-        $percentChange = 0;
+        $percentChange = $this->_params['percentage_change_value'];
 
         $percentSQL = null;
         if ( $percentChange ) {
@@ -411,6 +418,7 @@ LEFT  JOIN (
             } else {
                 $percentSQL = "( $sqlMath < $percentChange )";
             }
+            $clauses['percentage_change'] = $percentSQL;
         }
                 
             
