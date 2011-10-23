@@ -192,11 +192,13 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
                 if ( ! is_array($value) ) $value = explode(CRM_Core_DAO::VALUE_SEPARATOR, substr($value,1,-1));
             } else if ( $name == 'contact_sub_type' ) {
                 $v = CRM_Utils_Request::retrieve( $name, 'String', $this, false, null, 'REQUEST' );
-                if ( ! is_array($v) ) { 
+                if ( $v && !is_array($v) ) { 
                     $v = explode(CRM_Core_DAO::VALUE_SEPARATOR, trim($v, CRM_Core_DAO::VALUE_SEPARATOR));
                 }
-                foreach ( $v as $item ) {
-                    $value[$item] = 1;
+                if ( ! empty($v) ) {
+                    foreach ( $v as $item ) {
+                        $value[$item] = 1;
+                    }
                 }
             } else {
                 $value = CRM_Utils_Request::retrieve( $name, 'String',
