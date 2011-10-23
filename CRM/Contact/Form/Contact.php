@@ -844,13 +844,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         
         $params['contact_type'] = $this->_contactType;
         if ( empty($params['contact_sub_type']) && $this->_isContactSubType ) {
-            $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR . 
-                $this->_contactSubType . CRM_Core_DAO::VALUE_SEPARATOR;
-        } else if ( !empty($params['contact_sub_type']) ) {
-            $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR .
-                implode( CRM_Core_DAO::VALUE_SEPARATOR, $params['contact_sub_type'] ) . CRM_Core_DAO::VALUE_SEPARATOR;
-        } else {
-            unset($params['contact_sub_type']);
+            $params['contact_sub_type'] = array( $this->_contactSubType );
         }
         
         if ( $this->_contactId ) {

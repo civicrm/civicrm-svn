@@ -1034,7 +1034,7 @@ class CRM_Profile_Form extends CRM_Core_Form
         $this->_id = CRM_Contact_BAO_Contact::createProfileContact($params, $profileFields,
                                                                    $this->_id, $addToGroupId,
                                                                    $this->_gid, $this->_ctype,
-                                                                   true );        
+                                                                   true );
         //mailing type group
         if ( ! empty ( $mailingType ) ) {
             require_once 'CRM/Mailing/Event/BAO/Subscribe.php';

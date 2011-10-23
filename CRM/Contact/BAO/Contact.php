@@ -110,13 +110,21 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         }
 
         //fix for validate contact sub type CRM-5143
-        $subType = CRM_Utils_Array::value('contact_sub_type', $params );
-        if ( $subType && 
-             !  CRM_Contact_BAO_ContactType::isExtendsContactType($subType, $params['contact_type'], true) ) {
-            // we'll need to fix tests to handle this
-            // CRM-7925
-            require_once 'CRM/Core/Error.php';
-            CRM_Core_Error::fatal( ts( 'The Contact Sub Type does not match the Contact type for this record' ) );
+        if ( !empty($params['contact_sub_type']) ) {
+            if ( !CRM_Contact_BAO_ContactType::isExtendsContactType($params['contact_sub_type'], 
+                                                                    $params['contact_type'], true) ) {
+                // we'll need to fix tests to handle this
+                // CRM-7925
+                require_once 'CRM/Core/Error.php';
+                CRM_Core_Error::fatal( ts( 'The Contact Sub Type does not match the Contact type for this record' ) );
+            }
+            if ( is_array($params['contact_sub_type']) ) {
+                $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR .
+                    implode( CRM_Core_DAO::VALUE_SEPARATOR, $params['contact_sub_type'] ) . CRM_Core_DAO::VALUE_SEPARATOR;
+            } else {
+                $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR . 
+                    trim($params['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) . CRM_Core_DAO::VALUE_SEPARATOR;
+            }
         }
         
         //fixed contact source

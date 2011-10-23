@@ -751,7 +751,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
         foreach ( $fields as $name => $field ) {            
             // fix for CRM-3962
             if ( $name == 'id' ) {
-                $name = 'contact_id';     
+                $name = 'contact_id';
             }
 
             $index = $field['title'];
@@ -853,6 +853,10 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                     $params[$index] = $details->$name;
                 } else if ( $name == 'activity_date_time' ) {
                     $values[$index] = CRM_Utils_Date::customFormat($details->$name);
+                    $params[$index] = $details->$name;
+                } else if ( $name == 'contact_sub_type' ) {
+                    $values[$index] = str_replace( CRM_Core_DAO::VALUE_SEPARATOR, ', ', 
+                                                   trim($details->$name, CRM_Core_DAO::VALUE_SEPARATOR) );
                     $params[$index] = $details->$name;
                 } else {
                     $processed = false;
