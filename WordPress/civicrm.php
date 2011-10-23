@@ -283,7 +283,11 @@ function civicrm_wp_frontend( ) {
     // this places civicrm inside frontend theme
     // wp documentation rocks if you know what you are looking for
     // but best way is to check other plugin implementation :) 
-    add_filter('the_content', 'civicrm_wp_invoke');
+   
+    // below code is not working due header redirection issue
+    //add_filter('the_content', 'civicrm_wp_invoke');
+   
+    civicrm_wp_invoke();
 }
 
 function civicrm_set_frontendmessage() {
