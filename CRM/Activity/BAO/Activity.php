@@ -1868,8 +1868,8 @@ AND cl.modified_id  = c.id
             $followupParams['target_contact_id'] = $params['target_contact_id'];
         }
         
-        $followupDate = CRM_Utils_Date::intervalAdd( $params['interval_unit'], $params['interval'], $params['activity_date_time'] );
-        $followupParams['activity_date_time'] = CRM_Utils_Date::format( $followupDate );
+        $followupParams['activity_date_time'] = CRM_Utils_Date::processDate( $params['followup_date'],
+                                                $params['followup_date_time'] );
         $followupActivity = self::create( $followupParams );
         
         return $followupActivity;

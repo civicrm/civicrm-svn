@@ -709,7 +709,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         $this->addDateTime( 'activity_date_time', ts('Date'), true, array( 'formatType' => 'activityDateTime') );  
 
         //add followup date
-        $this->addDate( 'followup_date', ts('in') );  
+        $this->addDateTime( 'followup_date', ts('in') );  
         
         //autocomplete url
         $dataUrl = CRM_Utils_System::url( "civicrm/ajax/rest",
