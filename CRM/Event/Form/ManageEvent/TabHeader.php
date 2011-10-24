@@ -99,6 +99,7 @@ class CRM_Event_Form_ManageEvent_TabHeader {
         $fullName  = $form->getVar( '_name' );      
         $className = CRM_Utils_String::getClassName( $fullName );
         $class = strtolower($className) ;
+        $new = '';
         // hack for tell a friend, since class name is different
         if ( $className == 'Event' ) {
             $class = 'friend';
@@ -106,6 +107,7 @@ class CRM_Event_Form_ManageEvent_TabHeader {
             $class = 'eventInfo';
         } elseif ( $className == 'ScheduleReminders' ) {
             $class = 'reminder';
+            $new = CRM_Utils_Array::value('new', $_GET) ? '&new=1' : '';
         }        
 
         if ( array_key_exists( $class, $tabs ) ) {
@@ -121,7 +123,7 @@ class CRM_Event_Form_ManageEvent_TabHeader {
             
             foreach ( $tabs as $key => $value ) {
                 $tabs[$key]['link'] = CRM_Utils_System::url( "civicrm/event/manage/{$key}",
-                                                             "{$reset}action=update&snippet=4&id={$eventID}&qfKey={$qfKey}" );
+                                                             "{$reset}action=update&snippet=4&id={$eventID}&qfKey={$qfKey}{$new}" );
                 $tabs[$key]['active'] = $tabs[$key]['valid'] = true;
             }
             

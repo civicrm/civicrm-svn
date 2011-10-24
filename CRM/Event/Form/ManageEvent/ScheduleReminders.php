@@ -54,11 +54,12 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
     function preProcess( )
     {
         parent::preProcess( );   
-        if ( $this->_action & CRM_Core_Action::UPDATE ) {
+        if ( $this->_action & CRM_Core_Action::UPDATE &&
+             ! CRM_Utils_Array::value('new', $_GET) ) {
+
             $reminderList = CRM_Core_BAO_ActionSchedule::getList( false, 
                                                                   'civicrm_event', 
                                                                   $this->_id );
-
             if ( is_array( $reminderList ) ) {
                 // Add action links to each of the reminders
                 foreach ( $reminderList as &$format ) {
