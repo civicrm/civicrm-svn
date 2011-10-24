@@ -223,22 +223,30 @@ class CRM_Member_Form_Task_Batch extends CRM_Member_Form_Task {
         
         if ( isset( $params['field'] ) ) {
             $customFields = array( );
-        	
             foreach ( $params['field'] as $key => $value ) {               
                 $ids['membership'] = $key;
-                if ($value['membership_source']) {
+                if ( CRM_Utils_Array::value( 'membership_source', $value ) ) {
                     $value['source'] = $value['membership_source'];
                 }
                 
+                if ( CRM_Utils_Array::value( 'membership_type', $value ) ) {
+                    $membershipTypeId = $value['membership_type_id'] = $value['membership_type'];
+                }
+                
                 unset($value['membership_source']);
+                unset($value['membership_type']);
                             
                 //Get the membership status
-                $value['status_id'] = ( CRM_Utils_Array::value( 'membership_status', $value ) ) ? $value['membership_status'] : CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', 'status_id', $key );
+                $value['status_id'] = ( CRM_Utils_Array::value( 'membership_status', $value ) ) ? $value['membership_status'] : CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $key, 'status_id' );
                 unset( $value['membership_status'] );
-                 
+                
                 if ( empty( $customFields ) ) {
+                    if ( !CRM_Utils_Array::value( 'membership_type_id', $value ) ) {
+                        $membershipTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $key, 'membership_type_id' );
+                    }
+                    
                     // membership type custom data
-                    $customFields = CRM_Core_BAO_CustomField::getFields( 'Membership', false, false, $membership->membership_type_id );
+                    $customFields = CRM_Core_BAO_CustomField::getFields( 'Membership', false, false, $membershipTypeId );
 
             		$customFields = CRM_Utils_Array::crmArrayMerge( $customFields, 
             														CRM_Core_BAO_CustomField::getFields( 'Membership',
@@ -249,7 +257,7 @@ class CRM_Member_Form_Task_Batch extends CRM_Member_Form_Task {
                                                                         $customFields,
                                                                         $key,
                                                                         'Membership',
-                                                                        $membership->membership_type_id);
+                                                                        $membershipTypeId );
                 
                 $membership = CRM_Member_BAO_Membership::add( $value ,$ids );
                 
