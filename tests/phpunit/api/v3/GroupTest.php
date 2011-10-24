@@ -97,9 +97,10 @@ class api_v3_GroupTest extends CiviUnitTestCase
     {    
         $params         = array('version' => $this->_apiversion  );
         $params['name'] = 'Test Group 1'; 
-        $group =&civicrm_api('group','get',$params );
+        $group = civicrm_api('group','get',$params );
+        $this->documentMe($params,$group,__FUNCTION__,__FILE__);  
         $group = $group['values'];
-        $this->documentMe($params,$group,__FUNCTION__,__FILE__);         
+     
         foreach( $group as $v){
             $this->assertEquals( $v['id'], $this->_groupID );
             $this->assertEquals( $v['title'],'New Test Group Created' );
@@ -153,7 +154,17 @@ class api_v3_GroupTest extends CiviUnitTestCase
         $params = array();
         $group = & civicrm_api('group','delete',$params );
         $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: id, version' );        
-    }    
+    } 
+
+    function testgetfields(){
+      $description = "demonstrate use of getfields to interogate api";
+      $params = array('version' => 3, 'action' => 'create');
+      $result = civicrm_api('group', 'getfields',$params);
+      $this->documentMe($params, $result, __FUNCTION__, __FILE__,$description, 'getfields', 'getfields');
+      $this->assertEquals(1, $result['values']['is_active']['api.default']);
+    }
+   
+
 }
 
 
