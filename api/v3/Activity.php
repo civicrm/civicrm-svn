@@ -59,9 +59,15 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  */
 function civicrm_api3_activity_create( $params ) {
 
-    if ( !CRM_Utils_Array::value('source_contact_id',$params )){
+    if ( ! CRM_Utils_Array::value('source_contact_id',
+                                  $params )){
            $session = CRM_Core_Session::singleton( );
-           $params['source_contact_id']  =  $session->get( 'userID' );
+           // sometimes this is not set, this happens for sure with tests
+           // since this gives an FK, adding a check
+           // also should we check if its an update and then skip the check?
+           if ( $session->get( 'userID' ) ) {
+               $params['source_contact_id']  =  $session->get( 'userID' );
+           }
     }
 
     civicrm_api3_verify_mandatory($params,
@@ -298,19 +304,23 @@ function civicrm_api3_activity_delete( $params )
 function _civicrm_api3_activity_check_params ( & $params)
 {
 
-   $contactIDFields = array_intersect_key($params, array('source_contact_id' => 1,'assignee_contact_id' => 1, 'target_contact_id' => 1));
-   if(!empty($contactIDFields)){
-   $contactIds = array();
-   foreach ($contactIDFields as $fieldname => $contactfield) {
-     if(empty($contactfield))break;
-     if(is_array($contactfield)) {
-       foreach ($contactfield as $contactkey => $contactvalue) {
-         $contactIds[$contactvalue] = $contactvalue;
-       }
-     }else{
-       $contactIds[$contactfield] = $contactfield;
-     }
-   }
+    $contactIDFields = array_intersect_key($params,
+                                           array('source_contact_id' => 1,
+                                                 'assignee_contact_id' => 1,
+                                                 'target_contact_id' => 1));
+
+    if(!empty($contactIDFields)){
+        $contactIds = array();
+        foreach ($contactIDFields as $fieldname => $contactfield) {
+            if(empty($contactfield))break;
+            if(is_array($contactfield)) {
+                foreach ($contactfield as $contactkey => $contactvalue) {
+                    $contactIds[$contactvalue] = $contactvalue;
+                }
+            }else{
+                $contactIds[$contactfield] = $contactfield;
+            }
+        }
 
 
         $sql = '
@@ -321,7 +331,7 @@ SELECT  count(*)
             return civicrm_api3_create_error( 'Invalid '. ucfirst($key) .' Contact Id' );
         }
 
-   }
+    }
    
    
     $activityIds = array( 'activity' => CRM_Utils_Array::value( 'id', $params ),
@@ -397,9 +407,9 @@ SELECT  count(*)
     }
 
 
-     //if adding a new activity & date_time not set make it now
+    //if adding a new activity & date_time not set make it now
     if (!CRM_Utils_Array::value( 'id', $params ) &&
-         !CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
+        !CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
         $params['activity_date_time'] = CRM_Utils_Date::processDate( date( 'Y-m-d H:i:s' ) );
     }
 

@@ -1929,6 +1929,8 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
 }
 
 function CiviUnitTestCase_fatalErrorHandler( $message ) {
+    CRM_Core_Error::debug( $message );
+    exit( );
     throw new Exception( "{$message['message']}: {$message['code']}" );
 }
 
