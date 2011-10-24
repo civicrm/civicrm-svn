@@ -53,8 +53,8 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
      * @access public
      */
     public function buildQuickForm( ) {
-        CRM_Utils_System::setTitle(ts('Settings - Update Directory Path and URL'));
-        
+        CRM_Utils_System::setTitle(ts('Settings - Cleanup Caches and Update Paths'));
+
         require_once 'CRM/Core/BAO/ConfigSetting.php';
         list( $this->_oldBaseURL,
               $this->_oldBaseDir,
@@ -64,6 +64,8 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
         $this->assign( 'oldBaseDir', $this->_oldBaseDir );
         $this->assign( 'oldSiteName', $this->_oldSiteName );
 
+        $this->addElement( 'submit', $this->getButtonName('next', 'cleanup'), 'Cleanup Caches', array( 'class' => 'form-submit' , 'id' => 'cleanup-cache') );
+        
         $this->add( 'text', 'newBaseURL', ts( 'New Base URL' ), null, true );
         $this->add( 'text', 'newBaseDir', ts( 'New Base Directory' ), null, true );
         if ( $this->_oldSiteName ) {
@@ -100,6 +102,22 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
     }
 
     function postProcess( ) {
+        if( CRM_Utils_Array::value( '_qf_UpdateConfigBackend_next_cleanup', $_POST ) ) {
+            require_once 'CRM/Core/Config.php';
+            
+            $config = CRM_Core_Config::singleton( );
+            
+            // cleanup templates_c directory
+            $config->cleanup( 1 , false );
+            
+            // clear db caching
+            $config->clearDBCache( );
+            parent::rebuildMenu( );
+            
+            CRM_Core_Session::setStatus( ts('Cache has been cleared and Menu has been rebuilt') );
+            return CRM_Utils_System::redirect( CRM_Utils_System::url('civicrm/admin/setting/updateConfigBackend', "reset=1") );
+        }
+     
         // redirect to admin page after saving
         $session = CRM_Core_Session::singleton();
         $session->pushUserContext( CRM_Utils_System::url( 'civicrm/admin') );
