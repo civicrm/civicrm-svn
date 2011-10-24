@@ -132,6 +132,16 @@ class CRM_Import_DataSource_CSV extends CRM_Import_DataSource
                 $duplicateColName = true;
             }
             
+            
+            // need to truncate values per mysql field name length limits
+            // mysql allows 64, but we need to account for appending colKey
+            // CRM-9079
+            foreach ( $columns as $colKey => &$colName ) {
+                if ( strlen($colName) > 58 ) {
+                    $colName = substr($colName, 0, 58);
+                }
+            } 
+
             if ( in_array( '', $columns ) || $duplicateColName ) {
                 foreach ( $columns as $colKey => &$colName ) {
                     if ( !$colName ) {
