@@ -24,30 +24,14 @@ class api_v3_CustomValueTest extends CiviUnitTestCase
     function tearDown() 
     {  
        $tablesToTruncate = array( 
-	  	'civicrm_setting',
-		'civicrm_email',
-		'civicrm_cache',
-		'civicrm_log',
-		'civicrm_msg_template',
-		'civicrm_custom_field',
-		'civicrm_custom_group', 
-		'civicrm_option_value',
-		'civicrm_option_group',
-		'civicrm_contact',
-		'civicrm_domain',
+                                 'civicrm_email',
+                                 'civicrm_custom_field',
+                                 'civicrm_custom_group', 
+                                 'civicrm_contact',
+                                  );
 
-                                   );
-        $this->quickCleanup( $tablesToTruncate, true ); // true tells quickCleanup to drop any tables that might have been created in the test
- 
-/*        $this->contactDelete( $this->individual);
-        $this->customFieldDelete($this->ids['single']['custom_field_id']);
-        $this->customGroupDelete($this->ids['single']['custom_group_id']); 
-        $this->customFieldDelete($this->ids['multi']['custom_field_id'][0]);
-        $this->customFieldDelete($this->ids['multi']['custom_field_id'][1]);
-        $this->customGroupDelete($this->ids['multi']['custom_group_id']); 
-        $this->customFieldDelete($this->ids['multi2']['custom_field_id'][0]);
-        $this->customFieldDelete($this->ids['multi2']['custom_field_id'][1]);
-        $this->customGroupDelete($this->ids['multi2']['custom_group_id']); */
+       // true tells quickCleanup to drop any tables that might have been created in the test
+       $this->quickCleanup( $tablesToTruncate, true );
     }
 
    public function testCreateCustomValue () {
