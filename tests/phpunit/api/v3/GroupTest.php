@@ -36,7 +36,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
     {
         $params = array();
         $group = & civicrm_api('group','create',$params );
-        $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: title, version' );        
+        $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: version' );        
     }
     
     function testgroupCreateNoTitle( )
@@ -52,7 +52,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
                         );
         
         $group = & civicrm_api('group','create',$params );
-        $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: title, version' );        
+        $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: version' );        
     }
     
     
@@ -72,7 +72,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
        
         $group = $group["values"]; 
         $this->assertNotNull( count( $group ) );
-        $this->assertEquals( $group[$this->_groupID]['name'], 'Test Group 1' );
+        $this->assertEquals( $group[$this->_groupID]['name'], "Test Group 1_{$this->_groupID}" );
         $this->assertEquals( $group[$this->_groupID]['is_active'], 1 );
         $this->assertEquals( $group[$this->_groupID]['visibility'], 'Public Pages' );
     }
@@ -85,7 +85,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
         $group =&civicrm_api('group','get',$params );
         
         foreach( $group['values'] as $v){
-            $this->assertEquals( $v['name'],'Test Group 1' );
+            $this->assertEquals( $v['name'],"Test Group 1_{$this->_groupID}" );
             $this->assertEquals( $v['title'],'New Test Group Created' );
             $this->assertEquals( $v['description'], 'New Test Group Created');
             $this->assertEquals( $v['is_active'], 1 );
@@ -96,7 +96,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
     function testGetGroupParamsWithGroupName( ) 
     {    
         $params         = array('version' => $this->_apiversion  );
-        $params['name'] = 'Test Group 1'; 
+        $params['name'] = "Test Group 1_{$this->_groupID}";
         $group = civicrm_api('group','get',$params );
         $this->documentMe($params,$group,__FUNCTION__,__FILE__);  
         $group = $group['values'];
@@ -116,7 +116,8 @@ class api_v3_GroupTest extends CiviUnitTestCase
         $params['id'] = $this->_groupID; 
         $params['return.name'] = 1;
         $group =&civicrm_api('group','get',$params );
-        $this->assertEquals( $group['values'][$this->_groupID]['name'],'Test Group 1' );
+        $this->assertEquals( $group['values'][$this->_groupID]['name'],
+                             "Test Group 1_{$this->_groupID}" );
     }
     
     function testGetGroupParamsWithGroupTitle( ) 
@@ -127,7 +128,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
         
         foreach( $group['values'] as $v){
             $this->assertEquals( $v['id'], $this->_groupID );
-            $this->assertEquals( $v['name'],'Test Group 1' );
+            $this->assertEquals( $v['name'], "Test Group 1_{$this->_groupID}" );
             $this->assertEquals( $v['description'], 'New Test Group Created' );
             $this->assertEquals( $v['is_active'], 1 );
             $this->assertEquals( $v['visibility'], 'Public Pages' );
@@ -153,7 +154,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
     {
         $params = array();
         $group = & civicrm_api('group','delete',$params );
-        $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: id, version' );        
+        $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: version' );        
     } 
 
     function testgetfields(){
