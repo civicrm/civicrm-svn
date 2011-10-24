@@ -100,12 +100,14 @@ class api_v3_ContactTest extends CiviUnitTestCase
                         
                         );
 
-                        $contact =& civicrm_api('contact','create',$params);
+                        $contact = civicrm_api('contact','create',$params);
                         $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__ );
                         $this->assertEquals( 1, $contact['id'], "In line " . __LINE__ );
-                        $getContact = civicrm_api('Contact','Get',array('version' =>3));
-                        // delete the contact
-                        civicrm_api('contact', 'delete' , $contact );
+
+                        unset( $params['version'] );
+                        $this->assertDBState( 'CRM_Contact_DAO_Contact',
+                                              $contact['id'],
+                                              $params );
   }
 
   /**
@@ -1029,8 +1031,8 @@ class api_v3_ContactTest extends CiviUnitTestCase
     //  Insert a row in civicrm_contact creating contact 17
     $op = new PHPUnit_Extensions_Database_Operation_Insert( );
     $op->execute( $this->_dbconn,
-    new PHPUnit_Extensions_Database_DataSet_XMLDataSet( dirname(__FILE__)
-    . '/dataset/contact_17.xml') );
+                  new PHPUnit_Extensions_Database_DataSet_XMLDataSet( dirname(__FILE__)
+                                                                      . '/dataset/contact_17.xml') );
 
     $params = array( 'first_name' => 'Test',
                       'version' 	=> $this->_apiversion );

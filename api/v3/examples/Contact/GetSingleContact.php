@@ -31,6 +31,7 @@ function contact_getsingle_expectedresult(){
   'is_opt_out' => 0,
   'first_name' => 'Test',
   'last_name' => 'Contact',
+  'is_deceased' => 0,
   'contact_is_deleted' => 0,
   'id' => '17',
 );

@@ -1787,11 +1787,6 @@ class CRM_Contact_BAO_Query
                     $type = CRM_Utils_Type::typeToString( $field['type'] );
                 }
 
-                if ( $op != 'IN' &&
-                     $type == 'String' ) {
-                    $value     = "'$value'";
-                }
-
                 if ( isset( $locType[1] ) &&
                      is_numeric( $locType[1] ) ) {
                     $setTables = false;

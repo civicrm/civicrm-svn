@@ -81,7 +81,7 @@
       <null /><!--  job_title  -->
       <null /><!--  gender_id  -->
       <null /><!--  birth_date  -->
-      <null /><!--  is_deceased  -->
+      <value>0</value> <!--  is_deceased  -->
       <null /><!--  deceased_date  -->
       <null /><!--  household_name  -->
       <null /><!--  primary_contact_id  -->
