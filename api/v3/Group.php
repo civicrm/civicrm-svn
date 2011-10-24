@@ -72,7 +72,7 @@ function civicrm_api3_group_create( $params )
 
 }
 
-function _civicrm_api3_group_create_spec($params){
+function _civicrm_api3_group_create_spec(&$params){
     $params['is_active']['api.default'] = 1; 
 }
 

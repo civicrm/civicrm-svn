@@ -2028,4 +2028,32 @@ function _civicrm_api_get_custom_fields($entity){
     }
     return $customfields;
 }
+/*
+ * Return array of defaults for the given API (function is a wrapper on getfields)
+ */
+function _civicrm_api3_getdefaults($apiRequest) {
 
+  $defaults = array();
+  $result = civicrm_api($apiRequest['entity'],'getfields', array('version' => 3, 'action' => $apiRequest['action']));
+  foreach ($result['values'] as $field => $values){   
+    if (CRM_Utils_Array::value('api.default',$values)){
+      $defaults[$field] =$values['api.default'];
+     }
+  }
+  return $defaults;
+}
+
+/*
+ * Return array of defaults for the given API (function is a wrapper on getfields)
+ */
+function _civicrm_api3_getrequired($apiRequest) {
+
+  $required = array();
+  $result = civicrm_api($apiRequest['entity'],'getfields', array('version' => 3, 'action' => $apiRequest['action']));
+  foreach ($result['values'] as $field => $values){   
+    if (CRM_Utils_Array::value('api.required',$values)){
+      $required[] = $field ;
+     }
+  }
+  return $required;
+}

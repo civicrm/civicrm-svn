@@ -44,7 +44,7 @@
  *  Add a Tag. Tags are used to classify CRM entities (including Contacts, Groups and Actions).
  *
  * Allowed @params array keys are:
- * {@schema Core/Tag.xml}
+ * {@getfields tag_create}
  * {@example TagCreate.php}
  * @return array of newly created tag property values.
  * @access public
@@ -52,7 +52,6 @@
 function civicrm_api3_tag_create( $params ) 
 {
 
-    civicrm_api3_verify_mandatory ($params,null,array ('name'));
     require_once 'CRM/Core/BAO/Tag.php';
     $ids = array( 'tag' => CRM_Utils_Array::value( 'tag', $params ) );
     if ( CRM_Utils_Array::value( 'tag', $params ) ) {
@@ -73,11 +72,13 @@ function civicrm_api3_tag_create( $params )
 
 }
 /*
- * returns defaults for create function
+ * Specify Meta data for create
  */
-function _civicrm_api3_tag_create_defaults(){
-  return array('used_for' =>   "civicrm_contact");
+function _civicrm_api3_tag_create_spec(&$params){
+  $params['used_for']['api.default'] = 'civicrm_contact';
+  $params['name']['api.required'] = 1;
 }
+
 /**
  * Deletes an existing Tag
  *
@@ -114,7 +115,6 @@ function civicrm_api3_tag_delete( $params )
 function civicrm_api3_tag_get($params) 
 {   
 
-    civicrm_api3_verify_mandatory($params);
     return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 
 }
