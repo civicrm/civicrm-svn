@@ -86,25 +86,7 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
     private static $_dataTypeValues = null;
     private static $_dataTypeKeys = null;
     
-    private static $_dataToHTML = 
-        array(
-              array( 'Text' => 'Text', 'Select' => 'Select', 
-                     'Radio' => 'Radio', 'CheckBox' => 'CheckBox', 
-                     'Multi-Select' => 'Multi-Select', 
-                     'AdvMulti-Select' => 'AdvMulti-Select',
-                     'Autocomplete-Select' => 'Autocomplete-Select' ),
-              array('Text' => 'Text', 'Select' => 'Select', 'Radio' => 'Radio'),
-              array('Text' => 'Text', 'Select' => 'Select', 'Radio' => 'Radio'),
-              array('Text' => 'Text', 'Select' => 'Select', 'Radio' => 'Radio'),
-              array('TextArea' => 'TextArea', 'RichTextEditor' => 'RichTextEditor'),
-              array('Date'  => 'Select Date'),
-              array('Radio' => 'Radio'),
-              array('StateProvince' => 'Select State/Province' , 'Multi-Select' => 'Multi-Select State/Province'),
-              array('Country' => 'Select Country', 'Multi-Select' => 'Multi-Select Country'),
-              array('File' => 'File'),
-              array('Link' => 'Link'),
-              array('ContactReference' => 'Autocomplete-Select' )
-              );
+    private static $_dataToHTML = null;
     
     private static $_dataToLabels = null;
         
@@ -123,7 +105,11 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
             self::$_dataTypeKeys   = array_keys  (CRM_Core_BAO_CustomField::dataType());
             self::$_dataTypeValues = array_values(CRM_Core_BAO_CustomField::dataType());
         }
-        
+
+        if ( ! self::$_dataToHTML ) {
+            self::$_dataToHTML = CRM_Core_BAO_CustomField::dataToHtml( );
+        }
+
         //custom group id
         $this->_gid = CRM_Utils_Request::retrieve( 'gid', 'Positive', $this );
         
