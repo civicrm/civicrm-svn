@@ -32,6 +32,7 @@
      &nbsp;{ts}Registration is closed for this event{/ts}
   </div>
 {/if}
+{if !$config->userFrameworkFrontend}
 <div class="crm-actions-ribbon crm-event-manage-tab-actions-ribbon">
 	<ul id="actions">
 {if call_user_func(array('CRM_Core_Permission','check'), 'edit all events')} 
@@ -75,6 +76,7 @@
 	</ul>
 	<div class="clear"></div>
 </div>
+{/if}
 <div class="vevent crm-block crm-event-info-form-block">
 	<div class="event-info">
 	
