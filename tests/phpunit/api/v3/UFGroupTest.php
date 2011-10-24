@@ -254,7 +254,13 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
         foreach ($this->params as $key => $value) {
           // skip created date because it doesn't seem to be working properly & fixing date handling is for another day
             if ($key == 'add_contact_to_group' or $key == 'group' or $key == 'version' or $key == 'created_date') continue;
-            $this->assertEquals($this->params[$key],$result['values'][$result['id']][$key], 'in line ' . __LINE__);
+            $expected = $this->params[$key];
+            $received = $result['values'][$result['id']][$key];
+            // group names are renamed to name_id by BAO
+            if ( $key == 'name' ) {
+              $expected = $this->params[$key] . '_' . $result['id'];
+            }
+            $this->assertEquals($expected, $received, "The string '$received' does not equal '$expected' for key '$key' in line " . __LINE__ );
         }
     
     }
