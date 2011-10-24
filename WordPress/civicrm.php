@@ -45,6 +45,7 @@ License: AGPL3
 // there is no session handling in WP hence we start it for CiviCRM pages
 if ( ! session_id( ) ) {
     session_start( );
+    // print_r( $_SESSION );
 }
 
 //this is require for ajax calls in civicrm
@@ -144,9 +145,11 @@ function civicrm_wp_initialize( ) {
 
         // sync the logged in user with WP
         global $current_user;
-        require_once 'CRM/Core/BAO/UFMatch.php';
-        CRM_Core_BAO_UFMatch::synchronize( $current_user, false, 'WordPress',
-                                           civicrm_get_ctype( 'Individual' ) );
+        if ( $current_user ) {
+            require_once 'CRM/Core/BAO/UFMatch.php';
+            CRM_Core_BAO_UFMatch::synchronize( $current_user, false, 'WordPress',
+                                               civicrm_get_ctype( 'Individual' ) );
+        }
 
     }
 
@@ -206,7 +209,7 @@ function civicrm_wp_invoke( ) {
         require_once 'CRM/Core/BAO/UFMatch.php';
         CRM_Core_BAO_UFMatch::synchronize( $current_user, false, 'WordPress', 'Individual', true );
     }
-    
+
     require_once 'CRM/Core/Invoke.php';
     CRM_Core_Invoke::invoke( $args );
 }
@@ -280,14 +283,16 @@ function civicrm_wp_frontend( ) {
         return;
     }
 
+    require_once 'wp-includes/pluggable.php';
+
     // this places civicrm inside frontend theme
     // wp documentation rocks if you know what you are looking for
     // but best way is to check other plugin implementation :) 
    
     // below code is not working due header redirection issue
-    //add_filter('the_content', 'civicrm_wp_invoke');
+    add_filter('the_content', 'civicrm_wp_invoke');
    
-    civicrm_wp_invoke();
+    // civicrm_wp_invoke();
 }
 
 function civicrm_set_frontendmessage() {
@@ -390,6 +395,13 @@ function civicrm_wp_main( ) {
 
     if ( ! is_admin( ) ) {
         add_action( 'wp_print_styles' , 'civicrm_wp_styles' );
+ 
+        add_action('wp_footer', 'civicrm_buffer_end');
+
+        // we do this here rather than as an action, since we dont control
+        // the order
+        civicrm_buffer_start( );
+
         civicrm_wp_frontend();
     } else {
         add_action( 'admin_print_styles' , 'civicrm_wp_styles' );
@@ -440,6 +452,19 @@ function _civicrm_update_user( $userID ) {
                                            'WordPress',
                                            'Individual' );
     }
+}
+
+function civicrm_buffer_start() {
+    ob_start( "civicrm_buffer_callback" );
+}
+
+function civicrm_buffer_end() {
+    ob_end_flush();
+}
+ 
+function civicrm_buffer_callback($buffer) {
+    // modify buffer here, and then return the updated code
+    return $buffer;
 }
 
 civicrm_wp_main( );
