@@ -15,15 +15,31 @@ class api_v3_CustomValueTest extends CiviUnitTestCase
         $this->_apiversion = 3;
         $this->individual = $this->individualCreate();
         $this->params = array('version' => $this->_apiversion, 
-        											'entity_id' => $this->individual);
-        $this->ids['single'] = $this->entityCustomGroupWithSingleFieldCreate( 'mySingleField','Contacts');
+			'entity_id' => $this->individual);
+        $this->ids['single'] = $this->entityCustomGroupWithSingleFieldCreate('mySingleField','Contacts');
         $this->ids['multi'] = $this->CustomGroupMultipleCreateWithFields();
         $this->ids['multi2'] = $this->CustomGroupMultipleCreateWithFields(array('title' => 'group2'));
     }
 
     function tearDown() 
-    {   
-        $this->contactDelete( $this->individual);
+    {  
+       $tablesToTruncate = array( 
+	  	'civicrm_setting',
+		'civicrm_email',
+		'civicrm_cache',
+		'civicrm_log',
+		'civicrm_msg_template',
+		'civicrm_custom_field',
+		'civicrm_custom_group', 
+		'civicrm_option_value',
+		'civicrm_option_group',
+		'civicrm_contact',
+		'civicrm_domain',
+
+                                   );
+        $this->quickCleanup( $tablesToTruncate, true ); // true tells quickCleanup to drop any tables that might have been created in the test
+ 
+/*        $this->contactDelete( $this->individual);
         $this->customFieldDelete($this->ids['single']['custom_field_id']);
         $this->customGroupDelete($this->ids['single']['custom_group_id']); 
         $this->customFieldDelete($this->ids['multi']['custom_field_id'][0]);
@@ -31,7 +47,7 @@ class api_v3_CustomValueTest extends CiviUnitTestCase
         $this->customGroupDelete($this->ids['multi']['custom_group_id']); 
         $this->customFieldDelete($this->ids['multi2']['custom_field_id'][0]);
         $this->customFieldDelete($this->ids['multi2']['custom_field_id'][1]);
-        $this->customGroupDelete($this->ids['multi2']['custom_group_id']); 
+        $this->customGroupDelete($this->ids['multi2']['custom_group_id']); */
     }
 
    public function testCreateCustomValue () {
