@@ -639,7 +639,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     
     function membershipDelete( $membershipID )
     {
-        $result = civicrm_api( 'Membership', 'Delete', $membershipID );
+        $result = civicrm_api( 'Membership', 'Delete', array( 'version' => 3,'id' => $membershipID ));
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Could not delete membership' );
         }

@@ -121,7 +121,6 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
       
     function testMembershipStatusesGet()
      {
-         $this->assertTrue( function_exists(civicrm_membership_status_get) );
          $params = 'wrong type';
          $result = civicrm_api('membership_status','get', $params );
          $this->assertEquals( 1, $result['is_error'],
