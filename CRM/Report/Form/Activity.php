@@ -162,6 +162,10 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                                array( 'title'      => ts( 'Activity Status' ),
                                                       'default'    => true ,
                                                       'type'       =>  CRM_Utils_Type::T_STRING ),
+                                               'duration'	   =>
+                                               array( 'title'      => ts( 'Duration' ),
+                                                      'type'       => CRM_Utils_Type::T_INT 
+                                                      ),
                                                ),
                                        'filters' =>   
                                        array( 'activity_date_time'  => 
