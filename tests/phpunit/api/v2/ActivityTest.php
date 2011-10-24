@@ -379,10 +379,8 @@ class api_v2_ActivityTest extends CiviUnitTestCase
                              . '/dataset/custom_group_activity_type.xml') );
 
         //  Drop and create table civicrm_value_activity_custom_9
-        $query = 'USE civicrm_tests_dev; ';
-        self::$utils->do_query( $query );
         $query = 'DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
-        self::$utils->do_query( $query );      
+        CRM_Core_DAO::executeQuery( $query );      
         $group = new CRM_Core_DAO_CustomGroup();
         $group->extends = "Activity";
         $group->table_name = 'civicrm_value_activity_custom_9';
@@ -651,10 +649,8 @@ class api_v2_ActivityTest extends CiviUnitTestCase
                              . '/dataset/custom_group_activity_type.xml') );
 
         //  Drop and create table civicrm_value_activity_custom_9
-        $query = 'USE civicrm_tests_dev; ';
-        self::$utils->do_query( $query );
         $query = 'DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
-        self::$utils->do_query( $query );  
+        CRM_Core_DAO::executeQuery( $query );  
         $group = new CRM_Core_DAO_CustomGroup();
         $group->extends = "Activity";
         $group->table_name = 'civicrm_value_activity_custom_9';
@@ -674,12 +670,10 @@ class api_v2_ActivityTest extends CiviUnitTestCase
 
         //  Insert a test value into the new table
         //  Insert a test value into the new table
-        $query = "USE civicrm_tests_dev; ";
-        self::$utils->do_query( $query );
         $query = "INSERT INTO civicrm_value_activity_custom_9"
                . "( entity_id, activity_custom_11 )"
                . " VALUES ( 4,  'bite my test data' )";
-        self::$utils->do_query( $query );
+        CRM_Core_DAO::executeQuery( $query );
 
         //  Retrieve the test value
         $params = array( 'activity_id' => 4,
@@ -1009,10 +1003,8 @@ class api_v2_ActivityTest extends CiviUnitTestCase
                              . '/dataset/custom_group_activity_type.xml') );
  
         //  Drop and create table civicrm_value_activity_custom_9
-        $query = 'USE civicrm_tests_dev;';
-        self::$utils->do_query( $query );
         $query = 'DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
-        self::$utils->do_query( $query );
+        CRM_Core_DAO::executeQuery( $query );
         $group = new CRM_Core_DAO_CustomGroup();
         $group->extends = "Activity";
         $group->table_name = 'civicrm_value_activity_custom_9';
