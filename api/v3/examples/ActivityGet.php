@@ -26,26 +26,8 @@ $params = array(
 function activity_get_expectedresult(){
 
   $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'id' => 1,
-  'values' => array( 
-      '0' => array( 
-          'source_contact_id' => '17',
-          'id' => 1,
-          'activity_type_id' => '1',
-          'subject' => 'test activity type id',
-          'location' => '',
-          'activity_date_time' => '2011-06-02 14:36:13',
-          'details' => '',
-          'status_id' => '2',
-          'activity_name' => 'Test activity type',
-          'status' => 'Completed',
-          'custom_1' => 'custom string',
-          'custom_1_1' => 'custom string',
-        ),
-    ),
+  'is_error' => 1,
+  'error_message' => 'Mandatory key(s) missing from params array: source_contact_id',
 );
 
   return $expectedResult  ;

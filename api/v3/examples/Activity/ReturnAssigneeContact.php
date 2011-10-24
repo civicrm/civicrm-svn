@@ -28,49 +28,8 @@ $params = array(
 function activity_get_expectedresult(){
 
   $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'id' => 13,
-  'values' => array( 
-      '0' => array( 
-          'id' => '13',
-          'source_contact_id' => '18',
-          'activity_type_id' => '1',
-          'subject' => 'test activity type id',
-          'status_id' => '1',
-          'priority_id' => '1',
-          'assignee_contact_id' => array( 
-              '0' => '19',
-            ),
-          'api.contact.get' => array( 
-              'is_error' => 0,
-              'version' => 3,
-              'count' => 1,
-              'id' => 18,
-              'values' => array( 
-                  '0' => array( 
-                      'contact_id' => '18',
-                      'contact_type' => 'Individual',
-                      'sort_name' => 'User 429722255, Logged In',
-                      'display_name' => 'Logged In User 429722255',
-                      'do_not_email' => 0,
-                      'do_not_phone' => 0,
-                      'do_not_mail' => 0,
-                      'do_not_sms' => 0,
-                      'do_not_trade' => 0,
-                      'is_opt_out' => 0,
-                      'preferred_mail_format' => 'Both',
-                      'first_name' => 'Logged In',
-                      'last_name' => 'User 429722255',
-                      'is_deceased' => 0,
-                      'contact_is_deleted' => 0,
-                      'id' => '18',
-                    ),
-                ),
-            ),
-        ),
-    ),
+  'is_error' => 1,
+  'error_message' => 'Mandatory key(s) missing from params array: source_contact_id',
 );
 
   return $expectedResult  ;
