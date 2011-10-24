@@ -297,7 +297,9 @@
 					 	<div class="crm-accordion-body">
                         <table class="form-layout-compressed">
                            <tr><td class="label">{ts}Schedule Follow-up Activity{/ts}</td>
-                               <td>{$form.followup_activity_type_id.html}&nbsp;{$form.interval.label}&nbsp;{$form.interval.html}&nbsp;{$form.interval_unit.html}                          </td>
+                               <td>{$form.followup_activity_type_id.html}&nbsp;&nbsp;{ts}in{/ts}
+                                {include file="CRM/common/jcalendar.tpl" elementName=followup_date}
+                               </td>
                            </tr>
                            <tr>
                               <td class="label">{$form.followup_activity_subject.label}</td>

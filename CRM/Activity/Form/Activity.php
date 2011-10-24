@@ -173,31 +173,13 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                                                          'attributes' => array( '' => '- '.ts('select activity').' -' ) +
                                                          CRM_Core_PseudoConstant::ActivityType( false ),
                                                          ),
-                  'interval'                  =>  array( 'type'       => 'text',
-                                                         'label'      => 'in',
-                                                         'attributes' => 
-                                                         array( 'size'=> 4,'maxlength' => 8 ),
-                                                         ),
-                  'interval_unit'             =>  array( 'type'       => 'select',
-                                                         'label'      =>  null,
-                                                         'attributes' => 
-                                                         CRM_Core_OptionGroup::values( 'recur_frequency_units', 
-                                                                                       false, false, false, 
-                                                                                       null, 'name' ),
-                                                         ),
                   // Add optional 'Subject' field for the Follow-up Activiity, CRM-4491
                   'followup_activity_subject' =>  array( 'type'       => 'text',
                                                          'label'      => ts('Subject'),
                                                          'attributes' => CRM_Core_DAO::getAttribute( 'CRM_Activity_DAO_Activity', 
                                                                                                      'subject' ),
-                                                         ),
-                  
+                                                         )
                   );
-        
-        // append (s) for interval_unit attribute list
-        foreach ( $this->_fields['interval_unit']['attributes'] as $name => $label ) {
-            $this->_fields['interval_unit']['attributes'][$name] = $label . '(s)';
-        }
         
         if ( ( $this->_context == 'standalone' ) &&
              ( $printPDF = CRM_Utils_Array::key( 'Print PDF Letter', $this->_fields['followup_activity_type_id']['attributes'] ) ) ) {
@@ -724,11 +706,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         
         $this->addRule('duration', 
                        ts('Please enter the duration as number of minutes (integers only).'), 'positiveInteger');  
-        
-        $this->addRule('interval', ts('Please enter the follow-up interval as a number (integers only).'), 
-                       'positiveInteger');
-
         $this->addDateTime( 'activity_date_time', ts('Date'), true, array( 'formatType' => 'activityDateTime') );  
+
+        //add followup date
+        $this->addDate( 'followup_date', ts('in') );  
         
         //autocomplete url
         $dataUrl = CRM_Utils_System::url( "civicrm/ajax/rest",
@@ -929,8 +910,8 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             $errors['status_id'] = ts('You cannot record scheduled SMS activity.');
         }
         
-        if ( CRM_Utils_Array::value( 'followup_activity_type_id', $fields ) && !CRM_Utils_Array::value( 'interval', $fields ) ) {
-            $errors['interval'] = ts('Interval is a required field.');
+        if ( CRM_Utils_Array::value( 'followup_activity_type_id', $fields ) && !CRM_Utils_Array::value( 'followup_date', $fields ) ) {
+            $errors['followup_date'] = ts('Followup date is a required field.');
         }
         //Activity type is mandatory if subject is specified for an Follow-up activity, CRM-4515
         if ( CRM_Utils_Array::value( 'followup_activity_subject',$fields ) && 
@@ -1071,7 +1052,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         $followupStatus = '';
         if ( CRM_Utils_Array::value('followup_activity_type_id', $params) ) {
             $followupActivity = CRM_Activity_BAO_Activity::createFollowupActivity( $activity->id, $params );
-            $followupStatus = "A followup activity has been scheduled.";
+            $followupStatus = ts('A followup activity has been scheduled.');
         }
 
         // send copy to assignee contacts.CRM-4509
