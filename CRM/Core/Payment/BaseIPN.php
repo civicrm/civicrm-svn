@@ -143,20 +143,22 @@ WHERE  contribution_id = %1 AND membership_id != %2";
 
                 if (is_array($ids['membership'])) {
                     foreach ( $ids['membership'] as $id ) {
-                        $membership = new CRM_Member_DAO_Membership( );
-                        $membership->id = $id;
-                        if ( ! $membership->find( true ) ) {
-                            CRM_Core_Error::debug_log_message( "Could not find membership record: $membershipID" );
-                            echo "Failure: Could not find membership record: $membershipID<p>";
-                            return false;
-                        }
-                        $membership->join_date     = CRM_Utils_Date::isoToMysql( $membership->join_date      );
-                        $membership->start_date    = CRM_Utils_Date::isoToMysql( $membership->start_date     );
-                        $membership->end_date      = CRM_Utils_Date::isoToMysql( $membership->end_date       );
-                        $membership->reminder_date = CRM_Utils_Date::isoToMysql( $membership->reminder_date  );
+                        if ( !empty($id) ) {
+                            $membership = new CRM_Member_DAO_Membership( );
+                            $membership->id = $id;
+                            if ( ! $membership->find( true ) ) {
+                                CRM_Core_Error::debug_log_message( "Could not find membership record: $membershipID" );
+                                echo "Failure: Could not find membership record: $membershipID<p>";
+                                return false;
+                            }
+                            $membership->join_date     = CRM_Utils_Date::isoToMysql( $membership->join_date      );
+                            $membership->start_date    = CRM_Utils_Date::isoToMysql( $membership->start_date     );
+                            $membership->end_date      = CRM_Utils_Date::isoToMysql( $membership->end_date       );
+                            $membership->reminder_date = CRM_Utils_Date::isoToMysql( $membership->reminder_date  );
 
-                        $objects['membership'][] = $membership;
-                        $membership->free();
+                            $objects['membership'][] = $membership;
+                            $membership->free();
+                        }
                     }
                 }  
             }
