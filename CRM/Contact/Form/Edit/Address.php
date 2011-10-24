@@ -389,8 +389,10 @@ class CRM_Contact_Form_Edit_Address
                                    CRM_Core_PseudoConstant::countyForState( $stateID ) ); 
             } 
             
-            // CRM-7296 freeze the select for state if address is shared with household 
-            if ( CRM_Utils_Array::value( 'is_shared', $form->_fields[$stateElementName] ) ) {
+            // CRM-7296 freeze the select for state if address is shared with household
+            // CRM-9070 freeze the select for state if it is view only
+            if ( CRM_Utils_Array::value( 'is_shared', $form->_fields[$stateElementName] ) ||
+                 CRM_Utils_Array::value( 'is_view', $form->_fields[$stateElementName] ) ) {
                 $stateSelect->freeze( );
             }
         }
