@@ -131,7 +131,7 @@ function _civicrm_api3_pledge_create_spec(&$params){
   
   $required =  array('contact_id', 'amount',  'installments','start_date');
   foreach ($required as $required_field){
-    $params[$field]['api.required'] = 1;
+    $params[$required_field]['api.required'] = 1;
   }
 }
 
