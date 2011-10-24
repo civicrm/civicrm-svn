@@ -38,7 +38,7 @@
  * Include utility functions
  */
 require_once 'CRM/Contact/BAO/Group.php';
-require_once 'api/v3/utils.php';
+
 
 /**
  * create/update group
@@ -70,6 +70,10 @@ function civicrm_api3_group_create( $params )
       return civicrm_api3_create_success($values,$params,'group','create',$group );
     }
 
+}
+
+function _civicrm_api3_group_create_spec($params){
+    $params['is_active']['api.default'] = 1; 
 }
 
 /**

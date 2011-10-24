@@ -86,3 +86,17 @@ function civicrm_api3_generic_getvalue($apiRequest) {
 function civicrm_api3_generic_replace($apiRequest) {
   return _civicrm_api3_generic_replace($apiRequest['entity'], $apiRequest['params']);
 }
+
+
+function civicrm_api3_generic_getdefaults($apiRequest) {
+  if($api['action'] == $apiRequest){
+    return;
+  }
+  $defaults = array();
+  $result = civicrm_api($apiRequest['entity'],'getfields', $apiRequest['params']);
+  foreach ($result['values'] as $field => $values){   
+    if (CRM_Utils_Array::value('api.required',$values)){
+      $defaults[$field] =$values['api.required'];
+     }
+  }
+}
