@@ -57,7 +57,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
                         'pledge_create_date'                 => date('Ymd'),
                         'start_date'   					     => date('Ymd'),
                         'scheduled_date'                     => $this->scheduled_date,   
-                        'pledge_amount'                      => 100.00,
+                        'amount'                      => 100.00,
                         'pledge_status_id'                   => '2',
                         'pledge_contribution_type_id'        => '1',
                         'pledge_original_installment_amount' => 20,
