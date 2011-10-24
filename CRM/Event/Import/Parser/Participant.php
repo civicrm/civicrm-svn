@@ -395,8 +395,8 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             
             //retrieve contact id using contact dedupe rule
             $formatValues['contact_type'] = $this->_contactType;
-            $error = civicrm_api3_check_contact_dedupe( $formatValues );
-                        
+            $error = civicrm_api('CheckContact', 'Dedupe', $formatValues);
+          
             if ( civicrm_api3_duplicate( $error ) ) {
                 $matchedIDs = explode(',',$error['error_message']['params'][0]);
                 if ( count( $matchedIDs) >= 1 ) {
@@ -453,7 +453,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             $newParticipant = _civicrm_api3_create_participant_formatted($formatted, $onDuplicate);
         }
         
-        if ( is_array( $newParticipant ) && civicrm_api3_error( $newParticipant ) ) {
+        if ( is_array( $newParticipant ) && civicrm_error( $newParticipant ) ) {
             if ( $onDuplicate == CRM_Event_Import_Parser::DUPLICATE_SKIP ) {
                 
                 $contactID     = CRM_Utils_Array::value( 'contactID', $newParticipant );
@@ -472,7 +472,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             }
         }
         
-        if ( ! ( is_array( $newParticipant ) && civicrm_api3_error( $newParticipant ) ) ) {
+        if ( ! ( is_array( $newParticipant ) && civicrm_error( $newParticipant ) ) ) {
             $this->_newParticipants[] = CRM_Utils_Array::value( 'id', $newParticipant );
         }
         

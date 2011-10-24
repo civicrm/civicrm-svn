@@ -387,7 +387,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                                   'userId'     => $session->get('userID') );
                     
                     $newMembership = CRM_Member_BAO_Membership::create( $formatted , $ids, true );
-                    if ( civicrm_api3_error( $newMembership ) ) {
+                    if ( civicrm_error( $newMembership ) ) {
                         array_unshift($values, $newMembership['is_error']." for Membership ID ". $formatValues['membership_id'].". Row was skipped.");
                         return CRM_Member_Import_Parser::ERROR;
                     } else {
@@ -410,7 +410,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
             
             //retrieve contact id using contact dedupe rule
             $formatValues['contact_type'] = $this->_contactType;
-            $error = civicrm_api3_check_contact_dedupe( $formatValues );
+            $error = civicrm_api('CheckContact', 'Dedupe', $formatValues);
             
             if ( civicrm_api3_duplicate( $error ) ) { 
                 $matchedIDs = explode(',',$error['error_message']['params'][0]);
@@ -458,7 +458,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                     
                     $formatted['version'] = 3;
                     $newMembership = civicrm_api( 'membership', 'create', $formatted );
-                    if ( civicrm_api3_error( $newMembership ) ) {
+                    if ( civicrm_error( $newMembership ) ) {
                         array_unshift($values, $newMembership['error_message']);
                         return CRM_Member_Import_Parser::ERROR;
                     }
@@ -546,7 +546,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
             
             $formatted['version'] = 3;
             $newMembership = civicrm_api( 'membership', 'create', $formatted );
-            if ( civicrm_api3_error( $newMembership ) ) {
+            if ( civicrm_error( $newMembership ) ) {
                 array_unshift($values, $newMembership['error_message']);
                 return CRM_Member_Import_Parser::ERROR;
             }

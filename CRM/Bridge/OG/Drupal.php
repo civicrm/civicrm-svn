@@ -76,7 +76,7 @@ class CRM_Bridge_OG_Drupal {//d6 compatible
             }
             
             $group = civicrm_api( 'group', 'create', $params );
-            if ( ! civicrm_api3_error( $group ) ) {
+            if ( ! civicrm_error( $group ) ) {
                 $params['group_id'] = $group['id'];
             }
         } else {

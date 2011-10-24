@@ -841,7 +841,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     $matchedIDs = array(  );
                     // To update/fill contact, get the matching contact Ids if duplicate contact found 
                     // otherwise get contact Id from object of related contact
-                    if ( is_array( $relatedNewContact ) && civicrm_api3_error( $relatedNewContact ) ) {
+                    if ( is_array( $relatedNewContact ) && civicrm_error( $relatedNewContact ) ) {
                         if ( civicrm_api3_duplicate($relatedNewContact) ) {
                             $matchedIDs = explode(',',$relatedNewContact['error_message']['params'][0]);
                         } else {
@@ -956,7 +956,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             return $this->processMessage( $values, $statusFieldName, $this->_retCode );
         }
         //dupe checking      
-        if ( is_array( $newContact ) && civicrm_api3_error( $newContact ) ) {
+        if ( is_array( $newContact ) && civicrm_error( $newContact ) ) {
             $code = null;
             
             if ( ( $code = CRM_Utils_Array::value( 'code', $newContact['error_message'] ) ) && 
@@ -1012,7 +1012,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     $newContact = CRM_Contact_BAO_Contact::retrieve( $contact, $defaults );
                 }
                 
-                if ( civicrm_api3_error( $newContact ) ) {
+                if ( civicrm_error( $newContact ) ) {
                     $contactID = $newContact['error_message']['params'][0];
                     if ( !in_array( $contactID, $this->_newContacts ) ) {
                         $this->_newContacts[] = $contactID;
@@ -1603,7 +1603,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                                      true,
                                                      false );
         if ( ( is_null( $error )                                                ) && 
-             ( civicrm_api3_error( _civicrm_api3_validate_formatted_contact($formatted) ) ) ) {
+             ( civicrm_error( _civicrm_api3_validate_formatted_contact($formatted) ) ) ) {
             $error = _civicrm_api3_validate_formatted_contact($formatted);
         }
         
