@@ -195,13 +195,6 @@ function &civicrm_api3_participant_delete( $params )
  */
 function _civicrm_api3_create_participant_formatted( $params , $onDuplicate )
 {
-    _civicrm_api3_initialize( );
-
-    // return error if we have no params
-    if ( empty( $params ) ) {
-        return civicrm_api3_create_error( 'Input Parameters empty' );
-    }
-
     require_once 'CRM/Event/Import/Parser.php';
     if ( $onDuplicate != CRM_Event_Import_Parser::DUPLICATE_NOCHECK) {
         CRM_Core_Error::reset( );
