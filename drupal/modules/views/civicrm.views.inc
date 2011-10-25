@@ -4858,7 +4858,7 @@ function civicrm_views_data() {
     $data['civicrm_pcp']['raised_amount'] = array(
                                                   'title' => t('Amount Raised'),
                                                   'help' => t('Amount raised through this Personal Campaign Page'),
-                                                  'real field' => id,
+                                                  'real field' => 'id',
                                                   'field' => array(
                                                                     'handler' => 'civicrm_handler_field_pcp_raised_amount',
                                                                     'click sortable' => TRUE,
@@ -4937,7 +4937,7 @@ function civicrm_views_data() {
 
     $data['civicrm_pcp']['image_url'] = array(
                                             'title'       => t('Image URL'),
-                                            'real field' => id,
+                                            'real field' => 'id',
                                             'help'        => t('URL for the image the user uploaded when creating this page'),
                                             'field'       => array(
                                                                   'handler'     => 'civicrm_handler_field_file',
