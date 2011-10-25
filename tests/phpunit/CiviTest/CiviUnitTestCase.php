@@ -67,6 +67,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     protected $_dbconn;
 
     /**
+     * The database name
+     *
+     * @var string
+     */
+    static protected $_dbName;
+
+    /**
      *  @var Utils instance
      */
     public static $utils;
@@ -115,10 +122,17 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         // we need full error reporting
         error_reporting (E_ALL & ~E_NOTICE);
 
+        if ( ! empty( $GLOBALS['mysql_db'] ) ) {
+            self::$_dbName = $GLOBALS['mysql_db'];
+        } else {
+            self::$_dbName = 'civicrm_tests_dev';
+        }
+
         //  create test database
         self::$utils = new Utils( $GLOBALS['mysql_host'],
                                   $GLOBALS['mysql_user'],
                                   $GLOBALS['mysql_pass'] );        
+
     }
 
     function requireDBReset () {
@@ -135,11 +149,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     protected function getConnection()
     {
+        $dbName = self::$_dbName;
         if ( !self::$dbInit ) {
 
             //  install test database
             echo PHP_EOL
-                . "Installing civicrm_tests_dev database"
+                . "Installing {$dbName} database"
                 . PHP_EOL;
 
             $this->_populateDB();
@@ -147,7 +162,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             self::$dbInit = true;
         }
         return $this->createDefaultDBConnection(self::$utils->pdo,
-                                                'civicrm_tests_dev');
+                                                $dbName);
     }
 
     /**
@@ -169,7 +184,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         self::$populateOnce = null;
 
         $pdo = self::$utils->pdo;
-        $tables = $pdo->query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'civicrm_tests_dev'");
+        $dbName = self::$_dbName;
+        $tables = $pdo->query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '$dbName'");
 
         $truncates = array();
         $drops = array();
@@ -181,7 +197,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             }
         }
 
-        $queries = array( "USE civicrm_tests_dev;",
+        $dbName = self::$_dbName;
+        $queries = array( "USE {$dbName};",
                           "SET foreign_key_checks = 0",
                           // SQL mode needs to be strict, that's our standard
                           "SET SQL_MODE='STRICT_ALL_TABLES';" ,
@@ -319,8 +336,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         self::$utils = new Utils( $GLOBALS['mysql_host'],
                                   $GLOBALS['mysql_user'],
                                   $GLOBALS['mysql_pass'] );        
-    
-        $query = "USE civicrm_tests_dev;"
+
+        $dbName = self::$_dbName;    
+        $query = "USE {$dbName};"
             . "SET foreign_key_checks = 1";
         if ( self::$utils->do_query($query) === false ) {
             // fail happens
@@ -1812,10 +1830,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
 
         if ( $dropCustomValueTables ) {
+            $dbName = self::$_dbName;
             $query = "
 SELECT TABLE_NAME as tableName
 FROM   INFORMATION_SCHEMA.TABLES
-WHERE  TABLE_SCHEMA = 'civicrm_tests_dev'
+WHERE  TABLE_SCHEMA = '{$dbName}'
 AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
 ";
 
@@ -1837,30 +1856,30 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
    * @param string $errorText text to print on error
    * 
    */
-  function getAndCheck($params,$id,$entity,$delete = 1, $errorText = ''){
+  function getAndCheck($params,$id,$entity,$delete = 1, $errorText = '') {
 
-        $result = civicrm_api($entity,'GetSingle', array( 'id' => $id ,
+      $result = civicrm_api($entity,'GetSingle', array( 'id' => $id ,
                                    
-                                  'version'        =>$this->_apiversion));
+                                                        'version'        =>$this->_apiversion));
 
-        if($delete){
-        civicrm_api($entity,'Delete',array( 'id' => $id ,
-                                  'version'        =>$this->_apiversion));
-        }
+      if($delete){
+          civicrm_api($entity,'Delete',array( 'id' => $id ,
+                                              'version'        =>$this->_apiversion));
+      }
 
         
-        if (strtolower($entity) =='contribution'){
+      if (strtolower($entity) =='contribution'){
           $params['receive_date'] = date('Y-m-d H:i:s' ,strtotime($params['receive_date']));
           unset($params['payment_instrument_id']);//this is not returned in id format
           $params['contribution_source'] = $params['source'];
           unset($params['source']);        
-        }
-        foreach($params as $key => $value){
+      }
+      foreach($params as $key => $value){
           if($key == 'version' )continue;
           $this->assertEquals($value, $result[$key],$key . "GetandCheck function determines that value: $value doesn't match " . print_r($result,true) . $errorText);        
           
-        } 
-    }
+      } 
+  }
   /* 
    *Function to get formatted values in  the actual and expected result
    *@param array $actual actual calculated values

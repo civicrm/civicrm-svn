@@ -29,6 +29,11 @@
 require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
 
 /**
+ *  Include configuration
+ */
+require_once 'tests/phpunit/CiviTest/civicrm.settings.php';
+
+/**
  *  Base class for CiviCRM Selenium tests
  *
  *  Common functions for unit tests
@@ -57,8 +62,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         
         require_once 'CiviSeleniumSettings.php';
         $this->settings = new CiviSeleniumSettings();
-
-        require_once 'civicrm.settings.php';
 
         // also initialize a connection to the db 
         require_once 'CRM/Core/Config.php';
