@@ -93,7 +93,6 @@ function civicrm_api3_relationship_type_create( $params ) {
 function civicrm_api3_relationship_type_get( $params  )
 {
 
-   civicrm_api3_verify_mandatory($params);
    return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 
 }
