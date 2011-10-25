@@ -188,34 +188,25 @@ function civicrm_api3_activity_create( $params ) {
         return civicrm_api3_create_success($activityArray,$params,'activity','get',$activityBAO);
     }
 }
-
 /*
- * Adjust meta info for activity create function
+ * Specify Meta data for create. Note that this data is retrievable via the getfields function 
+ * and is used for pre-filling defaults and ensuring mandatory requirements are met.
  */
-/*
- * Return valid fields for API
- */
-function civicrm_api3_activity_getfields( $params ) {
-    $fields =  _civicrm_api_get_fields('activity') ;
-    //activity_id doesn't appear to work so let's tell them to use 'id' (current focus is ensuring id works)
-    $fields['id'] = $fields['activity_id'];
-    unset ($fields['activity_id']);
-    $fields['assignee_contact_id'] = array('name' => 'assignee_id',
+function _civicrm_api3_activity_create_spec(&$params){
+    $params['source_contact_id']['api.required'] = 1;
+    $params['id'] = $params['activity_id'];
+    unset ($params['activity_id']);
+    $params['assignee_contact_id'] = array('name' => 'assignee_id',
                                            'title' => 'assigned to',
                                            'type' => 1,
                                            'FKClassName' => 'CRM_Activity_DAO_ActivityAssignment');
-    $fields['target_contact_id'] = array('name' => 'target_id',
+    $params['target_contact_id'] = array('name' => 'target_id',
                                            'title' => 'Activity Target',
                                            'type' => 1,
                                            'FKClassName' => 'CRM_Activity_DAO_ActivityTarget');
-    $fields['activity_status_id'] = array('name' => 'status_id',
+    $params['activity_status_id'] = array('name' => 'status_id',
                                            'title' => 'Status Id',
                                            'type' => 1,);
-    $fields['source_contact_id']['api.required'] = 1;
-
-    require_once ('CRM/Core/BAO/CustomField.php');
-
-    return civicrm_api3_create_success($fields );
 }
 
 
