@@ -232,7 +232,8 @@ class CRM_Report_Form_Instance {
         $dao->form_values = serialize( $params );
 
         $instanceID = $form->getVar( '_id' );
-        if ( $instanceID ) {
+        $isNew      = $form->getVar('_createNew');
+        if ( $instanceID && !$isNew ) {
             $dao->id = $instanceID;
         }
 
@@ -246,6 +247,9 @@ class CRM_Report_Form_Instance {
         $reloadTemplate = false;
         if ( $dao->id ) {
             if ( !empty($form->_navigation) ) {
+                if ( $isNew && CRM_Utils_Array::value('id', $form->_navigation) ) {
+                    unset($form->_navigation['id']);
+                }
                 $form->_navigation['url'] = "civicrm/report/instance/{$dao->id}&reset=1";
                 $navigation = CRM_Core_BAO_Navigation::add( $form->_navigation );
 
@@ -298,7 +302,7 @@ class CRM_Report_Form_Instance {
             $instanceUrl = CRM_Utils_System::url( 'civicrm/report/list',
                                                   "reset=1&ovid={$instanceDefaults['id']}" );
             $statusMsg = ts('Report "%1" has been created and is now available in the <a href="%3">report listings under "%2" Reports</a>.', array( 1 => $dao->title, 2 => $cmpName, 3 => $instanceUrl ));
-            if ( $instanceID ) {
+            if ( $instanceID && !$isNew ) {
                 $statusMsg = ts('Report "%1" has been updated.', array( 1 => $dao->title ));
             }
             CRM_Core_Session::setStatus( $statusMsg );

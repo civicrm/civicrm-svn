@@ -171,6 +171,7 @@ class CRM_Report_Form extends CRM_Core_Form {
     protected $_instanceForm   = false;
 
     protected $_instanceButtonName = null;
+    protected $_createNewButtonName = null;
     protected $_printButtonName    = null;
     protected $_pdfButtonName      = null;
     protected $_csvButtonName      = null;
@@ -321,6 +322,7 @@ class CRM_Report_Form extends CRM_Core_Form {
         }
 
         $this->_instanceButtonName = $this->getButtonName( 'submit', 'save'  );
+        $this->_createNewButtonName = $this->getButtonName( 'submit', 'next' );
         $this->_printButtonName    = $this->getButtonName( 'submit', 'print' );
         $this->_pdfButtonName      = $this->getButtonName( 'submit', 'pdf'   );
         $this->_csvButtonName      = $this->getButtonName( 'submit', 'csv'   );
@@ -773,6 +775,10 @@ class CRM_Report_Form extends CRM_Core_Form {
         $this->addElement( 'submit', $this->_instanceButtonName, $label );
         $this->addElement('submit', $this->_printButtonName, ts( 'Print Report' ) );
         $this->addElement('submit', $this->_pdfButtonName, ts( 'PDF' ) );
+        
+        if ( $this->_id ) {
+            $this->addElement( 'submit', $this->_createNewButtonName, ts('Save as new') );
+        }
         if ( $this->_instanceForm ){
             $this->assign( 'instanceForm', true );
         }
@@ -2127,7 +2133,11 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
         } else if ( $this->_instanceButtonName == $this->controller->getButtonName( ) ) {
             require_once 'CRM/Report/Form/Instance.php';
             CRM_Report_Form_Instance::postProcess( $this );
-        }      
+        } else if ( $this->_createNewButtonName == $this->controller->getButtonName( ) ) {
+            $this->_createNew = true;
+            require_once 'CRM/Report/Form/Instance.php';
+            CRM_Report_Form_Instance::postProcess( $this );
+        }
     }
 
     function postProcess( ) {
