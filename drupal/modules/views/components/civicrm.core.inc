@@ -772,10 +772,8 @@ function _civicrm_core_data (&$data, $enabled) {
                                                        'real field' => 'state_province_id',
                                                        'help' => t('The State or Province of the Address'),
                                                        'field' => array(
-                                                                        'handler' => 'civicrm_handler_field_address',
+                                                                        'handler' => 'civicrm_handler_field_state',
                                                                         'click sortable' => TRUE,
-                                                                        'pseudo class' => 'CRM_Core_PseudoConstant',
-                                                                        'pseudo method' => 'stateProvince',
                                                                         ),
 
                                                        'argument' => array(
