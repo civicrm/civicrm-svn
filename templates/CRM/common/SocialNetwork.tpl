@@ -2,7 +2,7 @@
 {* Add social networking buttons (Facebook like, Twitter tweet, and Google +1) to civi pages*}
 <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
 
-<div class ="crm-section crm-socialnetwork">
+<div class="crm-section crm-socialnetwork help">
     <h2>{ts}Help spread the word{/ts}</h2>
     <div class="description">
         {ts}Please help us and let your friends, colleagues and followers know about our page{/ts}
