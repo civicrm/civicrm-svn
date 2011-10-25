@@ -1,3 +1,6 @@
+-- get domain id 
+SELECT  @domainID := min(id) FROM civicrm_domain;
+
 -- CRM-8356
 -- Add filter column 'filter' for 'civicrm_custom_field'
 ALTER TABLE `civicrm_custom_field` ADD `filter` VARCHAR(255) NULL COMMENT 'Stores Contact Get API params contact reference custom fields. May be used for other filters in the future.';
@@ -91,3 +94,9 @@ VALUES
 ALTER TABLE `civicrm_contact` CHANGE `contact_sub_type` `contact_sub_type` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'May be used to over-ride contact view and edit templates.'
 
 UPDATE civicrm_contact SET contact_sub_type = CONCAT('', contact_sub_type, '');
+
+-- CRM-6811
+INSERT INTO `civicrm_dashboard` 
+    ( `domain_id`, {localize field='label'}`label`{/localize}, `url`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `fullscreen_url`, `is_fullscreen`, `is_reserved`) 
+    VALUES 
+    ( @domainID, '{localize}Case Dashboard Dashlet{/localize}', 'civicrm/dashlet/casedashboard&reset=1&snippet=4', 'access CiviCase', NULL , 0, 0, 1, 4, 'civicrm/dashlet/casedashboard&reset=1&snippet=4&context=dashletFullscreen', 1, 1);
