@@ -154,7 +154,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
     {
         $params = array();
         $group = & civicrm_api('group','delete',$params );
-        $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: version' );        
+        $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: id, version' );        
     } 
 
     function testgetfields(){
