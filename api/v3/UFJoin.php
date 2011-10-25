@@ -80,13 +80,11 @@ function _civicrm_api3_uf_join_create_spec(&$params){
  * @return array $result CiviCRM Result Array or null
  * @todo Delete function missing
  * @access public
- *
+ * {getfields UFJoin_get}
  */
 
 function civicrm_api3_uf_join_get($params)
 { 
-
-    civicrm_api3_verify_one_mandatory($params);
 	  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 
 
