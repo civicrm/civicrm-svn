@@ -213,7 +213,7 @@ class api_v3_TagTest extends CiviUnitTestCase
         $tag = array('version' => $this->_apiversion );
         $result = civicrm_api('tag', 'delete',  $tag );
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-        $this->assertEquals( 'Mandatory key(s) missing from params array: tag_id', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: one of (id, tag_id)', $result['error_message'], 'In line ' . __LINE__ );
     }
 
     /**
@@ -225,7 +225,7 @@ class api_v3_TagTest extends CiviUnitTestCase
         
         $result = civicrm_api('tag', 'delete', $tag); 
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ ); 
-        $this->assertEquals( 'Mandatory key(s) missing from params array: tag_id', $result['error_message'], 'In line ' . __LINE__ );            
+        $this->assertEquals( 'Mandatory key(s) missing from params array: one of (id, tag_id)', $result['error_message'], 'In line ' . __LINE__ );            
     }
 
     /**
