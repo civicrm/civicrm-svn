@@ -38,8 +38,8 @@ require_once 'CRM/Utils/Hook.php';
 class CRM_Utils_Hook_WordPress extends CRM_Utils_Hook {
 
    function invoke( $numParams,
-                           &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
-                           $fnSuffix ) {
+                    &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
+                    $fnSuffix ) {
        return $this->commonInvoke( $numParams,
                                    $arg1, $arg2, $arg3, $arg4, $arg5,
                                    $fnSuffix, 'wordpress' );
