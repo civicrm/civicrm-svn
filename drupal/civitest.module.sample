@@ -330,6 +330,31 @@ GROUP BY contact_id
     }
 }
 
+// example of token that does not depend on contactID
+// and using the new format
+function civitest_civicrm_tokenValues( &$values,
+                                       &$contactIDs,
+                                       $dontCare,
+                                       $tokens,
+                                       $context ) {
+    if ( isset( $tokens['views'] ) ) {
+        static $_cache = null;
+
+        if ( ! $_cache ) {
+            $_cache = array( );
+            foreach( $tokens['views'] as $token ) {
+                $_cache[$token] = CALL_YOUR_OWN_FUNCTION_TO_RENDER_THIS_VIEW( $token );
+            }
+        }
+
+        foreach( $contactIDs as $cid ) {
+            foreach( $tokens['views'] as $token ) {
+                $values[$cid]["views.{$token}"] = $_cache[$token];
+            }
+        }
+    }
+}
+
 function civitest_civicrm_pageRun( &$page ) {
     // You can assign variables to the template using:
     // $page->assign( 'varName', $varValue );
