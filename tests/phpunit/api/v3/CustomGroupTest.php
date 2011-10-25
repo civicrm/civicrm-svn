@@ -61,7 +61,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         $customGroup = civicrm_api('custom_group', 'create', $params);
         $this->assertEquals($customGroup['is_error'], 1 ,'In line ' . __LINE__); 
         $this->assertEquals($customGroup['error_message'],
-                            'Mandatory key(s) missing from params array: extends, title' ,'In line ' . __LINE__);
+                            'Mandatory key(s) missing from params array: title, extends' ,'In line ' . __LINE__);
     }
 
     /**
