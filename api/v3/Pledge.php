@@ -110,6 +110,11 @@ function civicrm_api3_pledge_delete( $params ) {
     }
 
 }
+
+function _civicrm_api3_pledge_delete_spec( &$params ) {
+  $params['id']['api.required'] =0;// set as not required as pledge_id also acceptable & no either/or std yet
+  
+}
 /*
  * return field specification specific to get requests
  */
