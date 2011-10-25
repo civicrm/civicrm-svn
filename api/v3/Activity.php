@@ -36,11 +36,6 @@
  *
  */
 
-/**
- * Include common API util functions
- */
-require_once 'api/v3/utils.php';
-
 require_once 'CRM/Activity/BAO/Activity.php';
 require_once 'CRM/Core/DAO/OptionGroup.php';
 
@@ -273,6 +268,7 @@ function civicrm_api3_activity_get( $params ) {
  *
  * @access public
  *
+ * {@getfields activity_delete}
  * @example ActivityDelete.php
  * {@example ActivityDelete.php 0}
  * 
