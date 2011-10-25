@@ -339,7 +339,12 @@
    <title>All Cases Dashlet</title>
    <page_callback>CRM_Dashlet_Page_AllCases</page_callback>
    <access_arguments>access all cases and activities</access_arguments>
-</item> 
+</item>
+<item>
+   <path>civicrm/dashlet/casedashboard</path>
+   <title>Case Dashboard Dashlet</title>
+   <page_callback>CRM_Dashlet_Page_CaseDashboard</page_callback>
+</item>
 <item>
    <path>civicrm/contact/deduperules</path>
    <title>Find and Merge Duplicate Contacts</title>
