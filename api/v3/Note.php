@@ -57,15 +57,8 @@ require_once 'CRM/Core/BAO/Note.php';
  * {@example NoteCreate.php
  */
 function civicrm_api3_note_create($params) {
-
-		if (! isset ( $params ['entity_table'] )) {
-			$params ['entity_table'] = "civicrm_contact";
-		}
-		
-		civicrm_api3_verify_mandatory ( $params, null, array ('note','entity_id', ) );
-		
-		$contactID = CRM_Utils_Array::value ( 'contact_id', $params );
-		
+	
+	  //@todo make today's date a 'rule' default - ie. extend date handling function to have something like #now that gets converted
 		if (! isset ( $params ['modified_date'] )) {
 			$params ['modified_date'] = date ( "Ymd" );
 		}
@@ -85,6 +78,17 @@ function civicrm_api3_note_create($params) {
 		$result = civicrm_api3_create_success ( $note, $params );
 		return civicrm_api3_create_success ( $note, $params );
 
+}
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_note_create_spec(&$params){
+  $params['entity_table']['api.default'] = "civicrm_contact";
+  $params['note']['api.required'] =1;
+  $params['entity_id']['api.required'] =1;
 }
 
 /**
@@ -113,21 +117,24 @@ function civicrm_api3_note_delete($params) {
  *
  * @return array (reference ) array of properties,
  * if error an array with an error id and error message
- *
+ * {getfields note_get}
  * @static void
  * @access public
  */
 
 function civicrm_api3_note_get($params) {
 
-		
-		if (empty ( $params ['entity_table'] )) {
-			$params ['entity_table'] = "civicrm_contact";
-		}
-		
-		civicrm_api3_verify_mandatory ( $params );
     return _civicrm_api3_basic_get('CRM_Core_BAO_Note', $params);		
 	
+}
+/*
+ * Adjust Metadata for Get action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_note_get_spec(&$params){
+  $params['entity_table']['api.default'] = "civicrm_contact";
 }
 
 /**
