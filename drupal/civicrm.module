@@ -731,9 +731,9 @@ function civicrm_add_jquery( &$html ) {
 
 function  civicrm_form_alter( &$form, $formValues, $formID ) {
     switch ( $formID ) {
-    case 'user_admin_perm':
+    case 'user_admin_permissions':
     case 'system_clean_url_settings':
-        if ( ! empty( $formValues['post'] ) ) {
+        if ( ! empty( $formValues['input'] ) ) {
             // reset navigation for permissions changed and clean url
             if ( ! civicrm_initialize( ) ) {
                 return;
@@ -772,8 +772,10 @@ function  civicrm_form_alter( &$form, $formValues, $formID ) {
              arg(2) == 'edit' &&
              arg(3) ) {
             $output = civicrm_form_data($form, $form['#user'], $form['#user_category'], true );
-            if (!empty($output))
+            if (!empty($output)) {
+                $form['#attributes']['enctype'] = 'multipart/form-data';
                 $form = array_merge($form, $output);
+            }
         }
         break;
 

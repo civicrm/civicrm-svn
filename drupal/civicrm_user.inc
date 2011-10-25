@@ -102,13 +102,13 @@ function civicrm_user_update( &$edit, &$user, $category )
         }
         CRM_Core_BAO_UFMatch::updateContactEmail( $contactID,
                                                   trim( $edit['mail'] ) );
-        $editrolediff = $orgrolediff = array();
-        $editrole = array_keys(CRM_Utils_Array::value( 'roles', $edit ) );
-        $orgrole = array_keys($edit['original']->roles);
-        $editrolediff = array_diff($editrole,$orgrole);
-        $orgrolediff = array_diff($orgrole,$editrole);
-        
-        if(!empty( $editrolediff ) || !empty( $orgrolediff ) ){
+
+        // reset navigation on user role change
+        $editRoles     = array_keys(CRM_Utils_Array::value('roles', $edit, array()));
+        $orginRoles    = array_keys($edit['original']->roles);
+        $editRoleDiff  = array_diff($editRoles, $orginRoles);
+        $orginRoleDiff = array_diff($orginRoles, $editRoles);
+        if ( !empty($editRoleDiff) || !empty($orginRoleDiff) ) {
             require_once 'CRM/Core/BAO/Navigation.php';
             CRM_Core_BAO_Navigation::resetNavigation( $contactID );
         }
