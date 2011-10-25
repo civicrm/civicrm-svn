@@ -754,6 +754,10 @@ LIMIT 1";
     } 
 
     static function getSubtypeCustomPair( $contactType, $subtypeSet = array() ) {
+        if ( empty( $subtypeSet ) ) {
+            return $subtypeSet;
+        }
+        
         $customSet = $subTypeClause = array();
         foreach ( $subtypeSet as $subtype ) {
             $subtype = CRM_Utils_Type::escape( $subtype, 'String' );
