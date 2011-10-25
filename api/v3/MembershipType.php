@@ -40,7 +40,6 @@
 /**
  * Files required for this package
  */
-require_once 'api/v3/utils.php';
 require_once 'CRM/Member/BAO/MembershipType.php';
 
 /**
@@ -49,6 +48,7 @@ require_once 'CRM/Member/BAO/MembershipType.php';
  * @param   array  $params  an associative array of name/value property values of civicrm_membership_type
  * @return array $result newly created or updated membership type property values.
  * @access public
+ * {getfields MembershipType_get}
  */
 function civicrm_api3_membership_type_create($params) 
 {
@@ -68,21 +68,34 @@ function civicrm_api3_membership_type_create($params)
     return civicrm_api3_create_success($membershipType,$params);
 
 }
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_membership_type_create_spec(&$params) 
+{
+  $params['domain_id']['api.required'] =1;// todo could set default here probably
+  $params['member_of_contact_id']['api.required'] =1;
+  $params['contribution_type_id']['api.required'] =1;
+  $params['name']['api.required'] =1;
+  $params['duration_unit']['api.required'] =1;
+  $params['duration_interval']['api.required'] =1;
+}
 /**
  * Get a Membership Type.
  * 
  * This api is used for finding an existing membership type.
  * 
  * @param  array $params  an associative array of name/value property values of civicrm_membership_type
- * 
+ * {getfields MembershipType_get}
  * @return  Array of all found membership type property values.
  * @access public
  */
 function civicrm_api3_membership_type_get($params) 
 {
 
-    civicrm_api3_verify_mandatory($params);
     return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 
@@ -96,12 +109,11 @@ function civicrm_api3_membership_type_get($params)
  * 
  * @return boolean        true if success, else false
  * @access public
+ * {getfields MembershipType_delete}
  */
 function civicrm_api3_membership_type_delete( $params ) {
 
-    civicrm_api3_verify_mandatory($params,null,array('id'));
 
-    require_once 'CRM/Member/BAO/MembershipType.php';
     $memberDelete = CRM_Member_BAO_MembershipType::del( $params['id'] , 1);
     return $memberDelete ?
     civicrm_api3_create_success(  $memberDelete ) :
