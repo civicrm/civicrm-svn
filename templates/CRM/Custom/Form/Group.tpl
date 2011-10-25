@@ -153,5 +153,23 @@ if ( subtypes ) {
           subtypes.style.display = 'inline';
      }
 }
+
+function warnDataLoss( )
+{
+   var submittedSubtypes = cj('#extends\\[1\\]').val();
+   var defaultSubtypes   = {/literal}{$defaultSubtypes}{literal};
+
+   var warning = false;
+   cj.each(defaultSubtypes, function(index, subtype) {
+      if ( cj.inArray(subtype, submittedSubtypes) < 0 ) {
+         warning = true;
+      }
+   });
+
+   if ( warning ) {
+      return confirm( 'One or more subtypes has been un-selected from the list. Any data associated with un-selected subtype would be removed. Click OK if you want to proceed.' );
+   }
+   return true;
+}
 </script>
 {/literal}

@@ -1907,6 +1907,41 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
     }
 
     /**
+     * Delete content / rows of a custom table specific to a subtype.
+     * This function currently works for contact subtypes only and could be later improved / genralized 
+     * to work for other subtypes as well.
+     *
+     * @param   int  $gID      - custom group id.
+     * @param  array $subtypes - list of subtypes related to which entry is to be removed.
+     * @return void
+     * @access public
+     */
+    function deleteRowsOfSubtype( $gID, $subtypes = array() ) 
+    {
+        if ( !$gID or empty($subtypes) ) {
+            return;
+        }
+        
+        $tableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',
+                                                  $gID,
+                                                  'table_name' );
+
+        $subtypeClause = array();
+        foreach ( $subtypes as $subtype ) {
+            $subtype = CRM_Utils_Type::escape( $subtype, 'String' );
+            $subtypeClause[] =  "civicrm_contact.contact_sub_type LIKE '%" . 
+                CRM_Core_DAO::VALUE_SEPARATOR . $subtype . CRM_Core_DAO::VALUE_SEPARATOR . "%'";
+        }
+        $subtypeClause = implode(' OR ', $subtypeClause);
+
+        $query = "DELETE custom.* 
+FROM {$tableName} custom
+INNER JOIN civicrm_contact ON civicrm_contact.id = custom.entity_id
+WHERE ($subtypeClause)";
+        return CRM_Core_DAO::singleValueQuery( $query ); 
+    }
+
+    /**
      * Get the list of types for objects that a custom group extends to.
      *
      * @param  array $types - var which should have the list appended.

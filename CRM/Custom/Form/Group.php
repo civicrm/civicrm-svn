@@ -383,16 +383,19 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
 
         $this->assign( 'showStyle', false );
         $this->assign( 'showMultiple', false );
-        $this->addButtons(array(
-                                array ( 'type'      => 'next',
-                                        'name'      => ts('Save'),
-                                        'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-                                        'isDefault' => true   ),
-                                array ( 'type'      => 'cancel',
-                                        'name'      => ts('Cancel') ),
-                                )
-                          );
-        
+        $buttons = array(
+                         array ( 'type'      => 'next',
+                                 'name'      => ts('Save'),
+                                 'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                                 'isDefault' => true   ),
+                         array ( 'type'      => 'cancel',
+                                 'name'      => ts('Cancel') ),
+                         );
+        if ( !$this->_isGroupEmpty && !empty($this->_subtypes) ) {
+            $buttons[0]['js'] = array( 'onclick' => "return warnDataLoss()" );
+        }
+        $this->addButtons($buttons);
+
         // views are implemented as frozen form
         if ($this->_action & CRM_Core_Action::VIEW) {
             $this->freeze();
@@ -469,6 +472,11 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             $params['id'] = $this->_id;
             if ($this->_defaults['extends'][0] != $params['extends'][0]) {
                 $params['overrideFKConstraint'] = 1;
+            }
+
+            if ( !empty($this->_subtypes) ) {
+                $subtypesToBeRemoved = array_diff($this->_subtypes, array_intersect($this->_subtypes, $params['extends'][1]));
+                CRM_Core_BAO_CustomGroup::deleteRowsOfSubtype( $this->_id, $subtypesToBeRemoved );
             }
         } elseif ($this->_action & CRM_Core_Action::ADD) {
             //new custom set , so lets set the created_id
