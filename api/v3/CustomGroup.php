@@ -69,11 +69,6 @@ require_once 'CRM/Core/BAO/CustomGroup.php';
  */
 function civicrm_api3_custom_group_create( $params )
 {
- 
-        civicrm_api3_verify_mandatory($params,null,array('extends','title'));  
-        if ( ! CRM_Utils_Array::value('style', $params)  ) {
-            $params['style'] = 'Inline';
-        }    
                 
         if (is_string($params['extends'])){
             $extends = explode(",",$params['extends']);
@@ -101,6 +96,16 @@ function civicrm_api3_custom_group_create( $params )
 
 }   
 
+/*
+ * Adjust Metadata for Create action
+ * 
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_custom_group_create_spec(&$params){
+  $params['extends']['api.required'] = 1;
+  $params['title']['api.required'] = 1;
+  $params['style']['api.default'] = 'inline'; 
+}
 
 /**
  * Use this API to delete an existing group.
