@@ -819,7 +819,7 @@ function civicrm_views_data() {
                                                        'real field' => 'state_province_id',
                                                        'help' => t('The State or Province of the Address'),
                                                        'field' => array(
-                                                                        'handler' => 'civicrm_handler_field_address',
+                                                                        'handler' => 'civicrm_handler_field_state',
                                                                         'click sortable' => TRUE,
                                                                         ),
 
