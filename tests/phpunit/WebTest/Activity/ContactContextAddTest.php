@@ -90,7 +90,7 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("Summerson, " . $firstName1), "Contact not found in line " . __LINE__ );
       
       // Since we're here, let's check if screen help is being displayed properly
-      $this->assertTrue($this->isTextPresent("A copy of this activity will be emailed to each Assignee"));
+      $this->assertTrue($this->isTextPresent("You can optionally assign this activity to someone"), "Help text is missing.");
 
       // Putting the contents into subject field - assigning the text to variable, it'll come in handy later
       $subject = "This is subject of test activity being added through activity tab of contact summary screen.";
@@ -122,8 +122,7 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
       // Scheduling follow-up.
       $this->click( "css=.crm-activity-form-block-schedule_followup div.crm-accordion-header" );
       $this->select( "followup_activity_type_id", "value=1" );
-      $this->type( "interval", "1" );
-      $this->select( "interval_unit","value=day" ); 
+      $this->webtestFillDateTime('followup_date','+2 months 10:00AM');
       $this->type( "followup_activity_subject","This is subject of schedule follow-up activity" );
 
       // Clicking save.

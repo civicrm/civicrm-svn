@@ -259,7 +259,7 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
                     <table class="form-layout-compressed">
                         <tr class="crm-case-activity-form-block-followup_activity_type_id">
 			                <td class="label">{ts}Schedule Follow-up Activity{/ts}</td>
-                            <td>{$form.followup_activity_type_id.html}&nbsp;&nbsp;{ts}in{/ts}
+                            <td>{$form.followup_activity_type_id.html}&nbsp;&nbsp;{ts}on{/ts}
                                 {include file="CRM/common/jcalendar.tpl" elementName=followup_date}
                             </td>
                         </tr>
