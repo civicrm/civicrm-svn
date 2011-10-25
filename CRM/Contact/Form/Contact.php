@@ -349,9 +349,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             }
 
             if ( CRM_Utils_Array::value('contact_sub_type', $defaults) ) {
-                $this->_oldSubtypes = $defaults['contact_sub_type'] = 
-                    explode( CRM_Core_DAO::VALUE_SEPARATOR, 
-                             trim($defaults['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) );
+                $defaults['contact_sub_type'] = $this->_oldSubtypes;
             }
         }
         $this->assign( 'currentEmployer', CRM_Utils_Array::value('current_employer_id', $defaults) );            
@@ -792,17 +790,29 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                           $this->getButtonName( 'next', 'sharedHouseholdDuplicate' ),
                           ts( 'Save With Duplicate Household' ) );
         
-        $this->addButtons( array(
-                                 array ( 'type'      => 'upload',
-                                         'name'      => ts('Save'),
-                                         'subName'   => 'view',
-                                         'isDefault' => true   ),
-                                 array ( 'type'      => 'upload',
-                                         'name'      => ts('Save and New'),
-                                         'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-                                         'subName'   => 'new' ),
-                                 array ( 'type'       => 'cancel',
-                                         'name'      => ts('Cancel') ) ) );
+        $buttons =  array(
+                          array ( 'type'      => 'upload',
+                                  'name'      => ts('Save'),
+                                  'subName'   => 'view',
+                                  'isDefault' => true   ),
+                          array ( 'type'      => 'upload',
+                                  'name'      => ts('Save and New'),
+                                  'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                                  'subName'   => 'new' ),
+                          array ( 'type'       => 'cancel',
+                                  'name'      => ts('Cancel') ) );
+
+        if ( CRM_Utils_Array::value('contact_sub_type', $this->_values) ) {
+            $this->_oldSubtypes = 
+                explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                         trim($this->_values['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) );
+        }
+
+        if ( !empty($this->_oldSubtypes) ) {
+            $this->assign( 'oldSubtypes', json_encode($this->_oldSubtypes) );
+            $buttons[0]['js'] = array( 'onclick' => "return warnSubtypeDataLoss()" );
+        }
+        $this->addButtons( $buttons );
     }
     
     /**

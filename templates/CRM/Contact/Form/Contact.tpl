@@ -213,6 +213,24 @@ cj(document).ready(function() {
      }
 });
  
+function warnSubtypeDataLoss( )
+{
+   var submittedSubtypes = cj('#contact_sub_type').val();
+   var defaultSubtypes   = {/literal}{$oldSubtypes}{literal};
+
+   var warning = false;
+   cj.each(defaultSubtypes, function(index, subtype) {
+      if ( cj.inArray(subtype, submittedSubtypes) < 0 ) {
+         warning = true;
+      }
+   });
+
+   if ( warning ) {
+      return confirm( 'One or more subtypes has been un-selected from the list. Any custom data associated with un-selected subtype would be removed. Click OK to proceed.' );
+   }
+   return true;
+}
+
 </script>
 {/literal}
 

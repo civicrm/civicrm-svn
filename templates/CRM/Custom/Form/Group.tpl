@@ -167,7 +167,7 @@ function warnDataLoss( )
    });
 
    if ( warning ) {
-      return confirm( 'One or more subtypes has been un-selected from the list. Any data associated with un-selected subtype would be removed. Click OK if you want to proceed.' );
+      return confirm( 'One or more subtypes has been un-selected from the list. Any custom data associated with un-selected subtype would be removed. Click OK to proceed.' );
    }
    return true;
 }
