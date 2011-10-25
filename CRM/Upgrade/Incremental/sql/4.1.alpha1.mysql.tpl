@@ -69,7 +69,9 @@ VALUES
         (@option_group_id_activity_type, {localize}'Change Custom Data'{/localize},{localize}''{/localize},                              (SELECT @max_val := @max_val+1), 'Change Custom Data', (SELECT @max_wt := @max_wt+1), 0, @caseCompId);
 
 -- CRM-8739
-    Update civicrm_navigation set label =  '{ts escape="sql" skip="true"}Cleanup Caches and Update Paths{/ts}', name = 'Cleanup Caches and Update Paths' where name = 'Update Directory Path and URL' and url = 'civicrm/admin/setting/updateConfigBackend&reset=1';
+    Update civicrm_navigation set label =  '{ts escape="sql" skip="true"}Cleanup Caches and Update Paths{/ts}', name = 'Cleanup Caches and Update Paths' where name = 'Update Directory Path and URL';
+    
+    Update civicrm_menu set title = 'Cleanup Caches and Update Paths' where title = 'Update Directory Path and URL';
     
 -- CRM-8855
     SELECT @option_group_id_udOpt := max(id) from civicrm_option_group where name = 'user_dashboard_options';
