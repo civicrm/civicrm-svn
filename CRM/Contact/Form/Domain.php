@@ -66,7 +66,7 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
 
     function preProcess( ) {
         
-        CRM_Utils_System::setTitle(ts('Domain Information'));
+        CRM_Utils_System::setTitle(ts('Organization Address and Contact Info'));
         $breadCrumbPath = CRM_Utils_System::url( 'civicrm/admin', 'reset=1' );
         CRM_Utils_System::appendBreadCrumb( ts('Administer CiviCRM'), $breadCrumbPath );
 
@@ -147,7 +147,7 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
 
     public function buildQuickForm( ) {
         
-        $this->add('text', 'name' , ts('Domain Name') , array('size' => 25), true);
+        $this->add('text', 'name' , ts('Organization Name') , array('size' => 25), true);
         $this->add('text', 'description', ts('Description'), array('size' => 25) );
 
         $this->add('text', 'email_name', ts('FROM Name'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email','email'), true);
