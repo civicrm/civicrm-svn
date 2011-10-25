@@ -82,11 +82,15 @@ function civicrm_api3_activity_create( $params ) {
            }
     }
 
-    civicrm_api3_verify_mandatory($params,
-                                  null,
-                                  array('source_contact_id',
-                                        array('subject','activity_subject'),
-                                        array('activity_name','activity_type_id')));
+    if ( ! CRM_Utils_Array::value('id', $params ) ) {
+        // an update does not require any mandatory parameters
+        civicrm_api3_verify_mandatory($params,
+                                      null,
+                                      array('source_contact_id',
+                                            array('subject','activity_subject'),
+                                            array('activity_name','activity_type_id')));
+    }
+
     $errors = array( );
 
     // check for various error and required conditions

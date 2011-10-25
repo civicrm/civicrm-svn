@@ -306,10 +306,6 @@ function civitest_civicrm_tokenValues( &$values,
                                        $dontCare,
                                        $tokens,
                                        $context ) {
-    
-    CRM_Core_Error::debug( $context, $tokens );
-    exit( );
-
     if ( is_array( $contactIDs ) ) {
         $contactIDString = implode( ',', array_values( $contactIDs ) );
     }

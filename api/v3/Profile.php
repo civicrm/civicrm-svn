@@ -228,7 +228,6 @@ function civicrm_api3_profile_set( $params ) {
         }
 
         $result = civicrm_api('contact', 'create', $profileParams);
-
         if ( CRM_Utils_Array::value('is_error', $result) ) {
             return $result; 
         }

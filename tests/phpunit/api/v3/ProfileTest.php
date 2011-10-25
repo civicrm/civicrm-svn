@@ -375,7 +375,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
                                 'activity_details'        => 'a test activity details',
                                 'activity_duration'       => '100',
                                 'activity_date_time'      => '03/08/2010',
-                                'activity_status_id'      => '2'
+                                'activity_status_id'      => '2',
                           );
         $profileParams = array_merge($params, $updateParams);
         $profile = civicrm_api('profile','set',  $profileParams );
