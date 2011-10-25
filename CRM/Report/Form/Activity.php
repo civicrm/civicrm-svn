@@ -515,7 +515,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                         $actionLinks = 
                             CRM_Activity_Selector_Activity::actionLinks( $row['civicrm_activity_activity_type_id'],
                                                                          CRM_Utils_Array::value('civicrm_activity_source_record_id', $rows[$rowNum]),
-                                                                         false.
+                                                                         false,
                                                                          $rows[$rowNum]['civicrm_activity_id'] );
                         
                         $linkValues = array( 'id'  => $rows[$rowNum]['civicrm_activity_id'],
