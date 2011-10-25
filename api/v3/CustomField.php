@@ -71,8 +71,6 @@ require_once 'CRM/Core/BAO/CustomField.php';
 
 function civicrm_api3_custom_field_create( $params )
 {
-
-        civicrm_api3_verify_mandatory($params,null,array('custom_group_id','label'));
         
         if ( !( CRM_Utils_Array::value('option_type', $params ) ) ) {
             if( CRM_Utils_Array::value('id', $params ) ){
@@ -101,7 +99,15 @@ function civicrm_api3_custom_field_create( $params )
         return civicrm_api3_create_success($values,$params, 'custom_field',$customField);
 
 }
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_custom_field_create_spec(&$params){
+  $params['label']['api.required'] = 1;
+  $params['custom_group_id']['api.required'] = 1; 
+}
 /**
  * Use this API to delete an existing custom group field.
  *
