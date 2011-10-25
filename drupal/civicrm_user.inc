@@ -105,7 +105,7 @@ function civicrm_user_update( &$edit, &$user, $category )
 
         // reset navigation on user role change
         $editRoles     = array_keys(CRM_Utils_Array::value('roles', $edit, array()));
-        $orginRoles    = array_keys($edit['original']->roles);
+        $orginRoles    = array_keys($user->original->roles);
         $editRoleDiff  = array_diff($editRoles, $orginRoles);
         $orginRoleDiff = array_diff($orginRoles, $editRoles);
         if ( !empty($editRoleDiff) || !empty($orginRoleDiff) ) {
