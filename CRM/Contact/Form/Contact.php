@@ -101,6 +101,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
     
     protected $_editOptions = array( );
     
+    protected $_oldSubtypes = array( );
+
     public $_blocks;
     
     public $_values = array( );
@@ -347,7 +349,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             }
 
             if ( CRM_Utils_Array::value('contact_sub_type', $defaults) ) {
-                $defaults['contact_sub_type'] = 
+                $this->_oldSubtypes = $defaults['contact_sub_type'] = 
                     explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                              trim($defaults['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) );
             }
@@ -762,14 +764,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                            $subtypes, false, array('onchange' => $buildCustomData) );
         $sel->setMultiple(true);
 
-        $allowEditSubType = true;
-        if ( $this->_contactId && $this->_contactSubType ) {
-            $allowEditSubType = CRM_Contact_BAO_ContactType::isAllowEdit( $this->_contactId, $this->_contactSubType );
-        }
-        if ( !$allowEditSubType ) {
-            $subtypeElem->freeze( );
-        }
-        
         // build edit blocks ( custom data, demographics, communication preference, notes, tags and groups )
         foreach( $this->_editOptions as $name => $label ) {                
             if ( $name == 'Address' ) {
@@ -846,7 +840,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         if ( empty($params['contact_sub_type']) && $this->_isContactSubType ) {
             $params['contact_sub_type'] = array( $this->_contactSubType );
         }
-        
+
         if ( $this->_contactId ) {
             $params['contact_id'] = $this->_contactId;
         }
@@ -888,7 +882,13 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                                                                    $this->_contactId,
                                                                    $customFieldExtends, 
                                                                    true );
-        
+        if ( $this->_contactId && !empty($this->_oldSubtypes) ) {
+            CRM_Contact_BAO_ContactType::deleteCustomSetForSubtypeMigration( $this->_contactId, 
+                                                                             $params['contact_type'], 
+                                                                             $this->_oldSubtypes,
+                                                                             $params['contact_sub_type'] );
+        }
+
         if ( array_key_exists( 'CommunicationPreferences',  $this->_editOptions ) ) {
             // this is a chekbox, so mark false if we dont get a POST value
             $params['is_opt_out'] = CRM_Utils_Array::value( 'is_opt_out', $params, false );

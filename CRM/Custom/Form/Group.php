@@ -476,7 +476,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
 
             if ( !empty($this->_subtypes) ) {
                 $subtypesToBeRemoved = array_diff($this->_subtypes, array_intersect($this->_subtypes, $params['extends'][1]));
-                CRM_Core_BAO_CustomGroup::deleteRowsOfSubtype( $this->_id, $subtypesToBeRemoved );
+                CRM_Contact_BAO_ContactType::deleteCustomRowsOfSubtype( $this->_id, $subtypesToBeRemoved );
             }
         } elseif ($this->_action & CRM_Core_Action::ADD) {
             //new custom set , so lets set the created_id
