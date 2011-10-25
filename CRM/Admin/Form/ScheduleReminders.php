@@ -59,7 +59,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
     public function buildQuickForm( ) 
     {
         parent::buildQuickForm( );
-
+        $this->_mappingID = null;
         require_once 'CRM/Core/BAO/ActionSchedule.php';
         if ( $this->_action & (CRM_Core_Action::DELETE ) ) { 
             $reminderName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_ActionSchedule', 
@@ -74,7 +74,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->add( 'text', 'title', ts( 'Title' ), 
                     array( 'size'=> 45,'maxlength' => 128 ), true );
 
-        list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection(  $this->_mappingID ) ;
+        list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection( $this->_mappingID ) ;
         
         $sel =& $this->add('hierselect',
                            'entity',
