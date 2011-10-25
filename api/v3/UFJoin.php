@@ -40,7 +40,6 @@
 /**
  * Files required for this package
  */
-require_once 'api/v3/utils.php';
 require_once 'CRM/Core/BAO/UFJoin.php';
 
 /**
@@ -51,21 +50,28 @@ require_once 'CRM/Core/BAO/UFJoin.php';
  * @return array CRM_Core_DAO_UFJoin Array
  * @access public
  * @example UFJoinCreate.php
- *  {@schema Core/UFJoin.xml}
+ *  {@getfields UFJoin_create}
  *
  */
 function civicrm_api3_uf_join_create($params)
 {
-
-    civicrm_api3_verify_mandatory($params,'CRM_Core_DAO_UFJoin',array());
 
     $ufJoin = CRM_Core_BAO_UFJoin::create($params);
     _civicrm_api3_object_to_array( $ufJoin, $ufJoinArray[]);
     return civicrm_api3_create_success($ufJoinArray,$params,'uf_join','create');
 
 }
-
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * @param array $params array or parameters determined by getfields
+ * @todo - suspect module, weight don't need to be required - need to test 
+ */
+function _civicrm_api3_uf_join_create_spec(&$params){
+  $params['module']['api.required'] = 1;
+  $params['weight']['api.required'] = 1;  
+  $params['uf_group_id']['api.required'] = 1; 
+}
 /**
  * Get CiviCRM UF_Joins (ie joins between CMS user records & CiviCRM user record
  *
