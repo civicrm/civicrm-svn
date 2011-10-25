@@ -1247,7 +1247,39 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     }
 
 
+    /**
+     *  Test civicrm_activity_update() where the source_contact_id
+     *  is not in the update params.
+     */
+    function testActivityUpdateKeepSource( )
+    {
+        //  Insert rows in civicrm_activity creating activities 4 and 13
+        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
+                                                                         dirname(__FILE__)
+                                                                         . '/dataset/activity_4_13.xml') );
+        //  Updating the activity but not providing anything for the source contact
+        //  (It was set as 17 earlier.)
+        $params = array(
+                        'id'                  => 4,
+                        'subject'             => 'Updated Make-it-Happen Meeting',
+                        'duration'            => 120,
+                        'location'            => '21, Park Avenue',
+                        'details'             => 'Lets update Meeting',
+                        'status_id'           => 1,
+                        'activity_name'       => 'Test activity type',
+                        'priority_id'         => 1,
+                        'version'							=>$this->_apiversion,
+                        );
 
+        $result = civicrm_api('activity', 'create' ,  $params );
+
+        $findactivity = civicrm_api( 'Activity','Get',array('id' => 4, 'version' => 3) );
+        
+        $this->assertAPISuccess($findactivity);
+        $this->assertEquals( 17, $findactivity['values'][$findactivity['id']]['source_contact_id'], 'In line ' . __LINE__ );
+    }
 
     /**
      *  Test civicrm_activities_contact_get()

@@ -58,7 +58,19 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  *
  */
 function civicrm_api3_activity_create( $params ) {
+    if ( CRM_Utils_Array::value('activity_id', $params) ) {
+        $params['id'] = $params['activity_id'];
+    }
 
+    if ( CRM_Utils_Array::value('id', $params ) &&
+         ! CRM_Utils_Array::value( 'source_contact_id', $params ) ) {
+        $oldActivityParams = array( 'id' => $params['id'] );
+        CRM_Activity_BAO_Activity::retrieve( $oldActivityParams, $oldActivityValues );
+        if ($oldActivityValues['source_contact_id']) {
+            $params['source_contact_id'] = $oldActivityValues['source_contact_id'];
+        }
+    } 
+    
     if ( ! CRM_Utils_Array::value('source_contact_id',
                                   $params )){
            $session = CRM_Core_Session::singleton( );
@@ -95,10 +107,6 @@ function civicrm_api3_activity_create( $params ) {
 
     $params['skipRecentView'] = true;
 
-    if ( CRM_Utils_Array::value('activity_id', $params) ) {
-        $params['id'] = $params['activity_id'];
-    }
-
     // If this is a case activity, see if there is an existing activity
     // and set it as an old revision. Also retrieve details we'll need.
     $case_id = '';
@@ -108,7 +116,9 @@ function civicrm_api3_activity_create( $params ) {
     	$case_id = $params['case_id'];
         if ( CRM_Utils_Array::value('id', $params) ) {	            
             $oldActivityParams = array( 'id' => $params['id'] );
-            CRM_Activity_BAO_Activity::retrieve( $oldActivityParams, $oldActivityValues );
+            if(!$oldActivityValues) {
+                CRM_Activity_BAO_Activity::retrieve( $oldActivityParams, $oldActivityValues );
+            }
             if ( empty( $oldActivityValues ) ) {	
             	return civicrm_api3_create_error( ts("Unable to locate existing activity."), null, CRM_Core_DAO::$_nullObject );
             } else {   
