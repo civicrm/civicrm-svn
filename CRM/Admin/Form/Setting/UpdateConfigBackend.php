@@ -102,7 +102,7 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
     }
 
     function postProcess( ) {
-        if( CRM_Utils_Array::value( '_qf_UpdateConfigBackend_next_cleanup', $_POST ) ) {
+        if ( CRM_Utils_Array::value( '_qf_UpdateConfigBackend_next_cleanup', $_POST ) ) {
             require_once 'CRM/Core/Config.php';
             
             $config = CRM_Core_Config::singleton( );
@@ -114,8 +114,8 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
             $config->clearDBCache( );
             parent::rebuildMenu( );
             
-            CRM_Core_Session::setStatus( ts('Cache has been cleared and Menu has been rebuilt') );
-            return CRM_Utils_System::redirect( CRM_Utils_System::url('civicrm/admin/setting/updateConfigBackend', "reset=1") );
+            CRM_Core_Session::setStatus( ts('Cache has been cleared and menu has been rebuilt successfully.') );
+            return CRM_Utils_System::redirect( CRM_Utils_System::url('civicrm/admin/setting/updateConfigBackend', 'reset=1') );
         }
      
         // redirect to admin page after saving
