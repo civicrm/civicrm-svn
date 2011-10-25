@@ -71,6 +71,33 @@ class CRM_Contact_Page_DashBoard extends CRM_Core_Page
             $this->assign( 'hookContentPlacement', $contentPlacement );
         }
         
+        //check that default FROM email address and owner organization name and address are configured.
+        $fromEmailOK = true;
+        $ownerOrgOK = true;
+        require_once 'CRM/Core/BAO/Domain.php';
+        list( $domainEmailName, $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( true );
+        
+//        crm_core_error::debug('$domainEmailAddress ', $domainEmailAddress );
+//        exit();
+        
+        if ( !$domainEmailAddress || $domainEmailAddress == 'info@FIXME.ORG') {
+            require_once 'CRM/Utils/System.php';
+            $fixEmailUrl = CRM_Utils_System::url("civicrm/admin/domain", 'action=update&reset=1');
+            $this->assign( 'fixEmailUrl', $fixEmailUrl );
+            $fromEmailOK = false;
+        }
+        
+        $domain = CRM_Core_BAO_Domain::getDomain();
+        $domainName = $domain->name;
+        if ( !$domainName || $domainName == 'Default Domain Name' ) {
+            $fixOrgUrl = CRM_Utils_System::url("civicrm/admin/domain", 'action=update&reset=1');
+            $this->assign( 'fixOrgUrl', $fixOrgUrl );
+            $ownerOrgOK = false;            
+        }
+        
+        $this->assign( 'fromEmailOK', $fromEmailOK );
+        $this->assign( 'ownerOrgOK', $ownerOrgOK );
+        
         return parent::run( );
     }
 }

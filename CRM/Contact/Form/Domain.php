@@ -69,6 +69,8 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
         CRM_Utils_System::setTitle(ts('Organization Address and Contact Info'));
         $breadCrumbPath = CRM_Utils_System::url( 'civicrm/admin', 'reset=1' );
         CRM_Utils_System::appendBreadCrumb( ts('Administer CiviCRM'), $breadCrumbPath );
+        $session = CRM_Core_Session::singleton( );
+        $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin', 'reset=1' ) );
 
         $this->_id = CRM_Core_Config::domainID( );
         $this->_action = CRM_Utils_Request::retrieve( 'action', 'String',
