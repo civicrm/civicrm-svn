@@ -156,7 +156,7 @@
     	    </tr>
 	 
 	</table>
-        {*include file="CRM/Contact/Form/Task/EmailCommon.tpl" upload=1 noAttach=1*}
+        {include file="CRM/Contact/Form/Task/EmailCommon.tpl" upload=1 noAttach=1}
   </fieldset>
 {/if} 
 

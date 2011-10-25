@@ -540,6 +540,38 @@ class CRM_Core_SelectValues
         }
         return $tokens;
     }
+ 
+    /**
+     * different type of Event Tokens
+     *
+     * @static
+     * return array
+     */
+    static function &eventTokens( ) 
+    {
+        static $tokens = null;
+
+        if (! $tokens ) {
+            $tokens = array( 
+                            '{event.id}' => ts('Event ID'),
+                            '{event.title}' => ts('Event Title'),
+                            '{event.start_date}' => ts('Event Start Date'),
+                            '{event.end_date}' => ts('Event End Date'),
+                            '{event.type}' => ts('Event Type'),
+                            '{event.summary}' => ts('Event Summary'),
+                            '{event.description}' => ts('Event Description'),
+                            '{event.contact_email}' => ts('Event Contact Email'),
+                            '{event.contact_phone}' => ts('Event Contact Phone'),
+                            '{event.location}' => ts('Event Location'),
+                            '{event.description}' => ts('Event Description'),
+                            '{event.location}' => ts('Event Location'),
+                            '{event.fees}' => ts('Event Fees'),
+                            '{event.info_url}' => ts('Event Info URL'),
+                            '{event.registration_url}' => ts('Event Registration URL'),
+                          );
+        }
+        return $tokens;
+    }
     
     /**
      * different type of Contact Tokens

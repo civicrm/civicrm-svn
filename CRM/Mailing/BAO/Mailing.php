@@ -994,7 +994,7 @@ AND civicrm_contact.is_opt_out =0";
         require_once 'CRM/Activity/BAO/Activity.php';
         $config = CRM_Core_Config::singleton( );
         $knownTokens = $this->getTokens();
-        
+               
         if ($this->_domain == null) {
             require_once 'CRM/Core/BAO/Domain.php';
             $this->_domain = CRM_Core_BAO_Domain::getDomain( );
@@ -2072,11 +2072,13 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                           'onclick'  => "return tokenReplText(this);"
                           )
                     );
-        
-        if ( CRM_Utils_System::getClassName( $form ) == 'CRM_Mailing_Form_Upload' ) {
+        $className = CRM_Utils_System::getClassName( $form );
+        if ( $className == 'CRM_Mailing_Form_Upload' ) {
             $tokens = array_merge( CRM_Core_SelectValues::mailingTokens( ), $tokens );
-        } elseif ( CRM_Utils_System::getClassName( $form ) == 'CRM_Admin_Form_ScheduleReminders' ) {
+        } elseif ( $className == 'CRM_Admin_Form_ScheduleReminders' ) {
             $tokens = array_merge( CRM_Core_SelectValues::activityTokens( ), $tokens );
+        } elseif ( $className == 'CRM_Event_Form_ManageEvent_ScheduleReminders' ) {
+            $tokens = array_merge( CRM_Core_SelectValues::eventTokens( ), $tokens );
         }
 
         //sorted in ascending order tokens by ignoring word case
