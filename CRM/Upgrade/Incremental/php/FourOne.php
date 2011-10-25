@@ -79,8 +79,12 @@ class CRM_Upgrade_Incremental_php_FourOne {
         require_once 'CRM/Core/BAO/ConfigSetting.php';
         $params = array( );
         CRM_Core_BAO_ConfigSetting::add( $parambs );
+        
+        // also reset navigation
+        require_once 'CRM/Core/BAO/Navigation.php';
+        CRM_Core_BAO_Navigation::resetNavigation( );
     }
-
+    
     function transferPreferencesToSettings( ) {
         // first transfer system preferences
         $domainColumnNames = 
