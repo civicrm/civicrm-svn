@@ -15,15 +15,15 @@ $params = array(
       'values' => array( 
           '10' => array( 
               'id' => 10,
-              'name' => 'New Tag323028',
-              'description' => 'This is description for New Tag 21789',
+              'name' => 'New Tag31984421155',
+              'description' => 'This is description for New Tag 1920233528',
               'parent_id' => '',
               'is_selectable' => '',
               'is_reserved' => '',
               'is_tagset' => '',
               'used_for' => 'civicrm_contact',
               'created_id' => '',
-              'created_date' => '20111025032024',
+              'created_date' => '20111025133128',
             ),
         ),
     ),

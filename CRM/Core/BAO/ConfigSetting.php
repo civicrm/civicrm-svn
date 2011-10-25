@@ -595,7 +595,16 @@ WHERE  id = %1
         $configBackend = CRM_Core_DAO::singleValueQuery( $sql, $params );
 
         if ( ! $configBackend ) {
-            CRM_Core_Error::fatal( ts('Returning early due to unexpected error - civicrm_domain.config_backend column value is NULL. Try visiting CiviCRM Home page.') );
+            static $alreadyVisited = false;
+            if ( $alreadyVisited ) {
+                CRM_Core_Error::fatal( ts('Returning early due to unexpected error - civicrm_domain.config_backend column value is NULL. Try visiting CiviCRM Home page.') );
+            }
+
+            $alreadyVisited = true;
+
+            // try to recreate the config backend
+            $config = CRM_Core_Config::singleton( true, true );
+            return self::enableComponent( $componentName );
         }
         $configBackend = unserialize( $configBackend );
         

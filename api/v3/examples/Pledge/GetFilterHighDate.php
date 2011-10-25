@@ -8,7 +8,7 @@
 function pledge_get_example(){
 $params = array( 
   'version' => 3,
-  'pledge_start_date_high' => '20110919111130',
+  'pledge_start_date_high' => '20111023133058',
 );
 
   require_once 'api/api.php';
@@ -32,10 +32,10 @@ function pledge_get_expectedresult(){
           'contact_id' => '1',
           'contact_type' => 'Individual',
           'sort_name' => 'Anderson, Anthony',
-          'display_name' => 'Mr. Anthony Anderson II',
+          'display_name' => 'Anthony Anderson',
           'pledge_id' => '5',
           'pledge_amount' => '100.00',
-          'pledge_create_date' => '2011-09-21 00:00:00',
+          'pledge_create_date' => '2011-10-25 00:00:00',
           'pledge_status' => 'Overdue',
           'pledge_next_pay_date' => '2010-03-05 00:00:00',
           'pledge_next_pay_amount' => '20.00',

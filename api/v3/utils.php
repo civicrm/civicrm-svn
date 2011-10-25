@@ -1872,11 +1872,11 @@ function _civicrm_api3_custom_data_get(&$returnArray,$entity,$entity_id ,$groupI
  * all variables are the same as per civicrm_api
  */
 function _civicrm_api3_validate_fields($entity, $action, &$params) {
-  //skip any entities without working getfields functions
-  $skippedEntities = array('entity', 'mailinggroup', 'customvalue', 'custom_value', 'mailing_group');
-  if (in_array(strtolower($entity), $skippedEntities) || strtolower ( $action ) == 'getfields'){
-			return;
-	}
+    //skip any entities without working getfields functions
+    $skippedEntities = array('entity', 'mailinggroup', 'customvalue', 'custom_value', 'mailing_group');
+    if (in_array(strtolower($entity), $skippedEntities) || strtolower ( $action ) == 'getfields'){
+        return;
+    }
 	$fields = civicrm_api ( $entity, 'getfields', array ('version' => 3 ) );
 	$fields = $fields['values'];
 	foreach ( $fields as $fieldname => $fieldInfo ) {
@@ -2034,7 +2034,10 @@ function _civicrm_api_get_custom_fields($entity){
 function _civicrm_api3_getdefaults($apiRequest) {
     $defaults = array();
 
-    $result = civicrm_api($apiRequest['entity'],'getfields', array('version' => 3, 'action' => $apiRequest['action']));
+    $result = civicrm_api($apiRequest['entity'],
+                          'getfields',
+                          array('version' => 3,
+                                'action' => $apiRequest['action']));
     foreach ($result['values'] as $field => $values){
         if (CRM_Utils_Array::value('api.default',$values)){
             $defaults[$field] =$values['api.default'];

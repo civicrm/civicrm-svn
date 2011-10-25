@@ -41,5 +41,7 @@ function civicrm_api3_entity_delete ($params) {
  *  Placeholder function. This should never be called, as it doesn't have any meaning
  */
 function civicrm_api3_entity_getfields ($params) {
-  return civicrm_api3_create_error ("API (Entity,getfields) does not exist entity_get only returns the list of entities you can access from the API, no fields");
+    // we return an empty array so it makes it easier to write generic getdefaults / required tests
+    // without putting an exception in for entity
+    return civicrm_api3_create_success( array( ) );
 }
