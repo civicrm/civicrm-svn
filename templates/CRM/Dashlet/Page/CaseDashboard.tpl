@@ -24,14 +24,6 @@
  +--------------------------------------------------------------------+
 *}
 
-<style type="text/css">
-<!--
-#case_dashboard_dashlet th {
-	white-space: normal;
-}
--->
-</style>
-
 <div id="case_dashboard_dashlet" class="form-item">
 
 {capture assign=newCaseURL}{crmURL p="civicrm/contact/view/case" q="action=add&context=standalone&reset=1"}{/capture}
