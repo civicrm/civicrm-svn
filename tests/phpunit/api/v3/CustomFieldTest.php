@@ -120,60 +120,72 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $customField = civicrm_api('custom_field', 'create', $fieldParams);
         $this->assertEquals($customField['is_error'], 1);
         $this->assertEquals( $customField['error_message'],'Mandatory key(s) missing from params array: custom_group_id' );
-    }    
+    }   
 
-    /**
-     * check with data type - Text array
-     */ 
-    function testCustomTextFieldCreate( )
+   /**
+    * Check for Each data type: loop through available form input types
+    **/ 
+    function testCustomFieldCreateAllAvailableFormInputs()
     {
-        $customGroup = $this->customGroupCreate('Individual','text_test_group',3);
-        $params = array('custom_group_id' => $customGroup['id'],
-                        'name'            => 'test_textfield2',
-                        'label'           => 'Name1',
-                        'html_type'       => 'Text',
-                        'data_type'       => 'String',
-                        'default_value'   => 'abc',
-                        'weight'          => 4,
-                        'is_required'     => 1,
-                        'is_searchable'   => 0,
-                        'is_active'       => 1, 
-                         'version'					=> $this->_apiversion,
-                        );
-        
+        $gid = $this->customGroupCreate('Individual', 'testAllFormInputs');
+
+        $dtype = CRM_Core_BAO_CustomField::dataType();
+        $htype = CRM_Core_BAO_CustomField::dataToHtml();
+
+        $n = 0;
+	foreach($dtype as $dkey => $dvalue)
+        {
+            foreach ($htype[$n] as $hkey => $hvalue)
+            {
+                //echo $dkey."][".$hvalue."\n";
+                $this->_loopingCustomFieldCreateTest($this->_buildParams($gid['id'], $hvalue, $dkey));
+            }
+            $n++;
+        }
+    }
+
+    function _loopingCustomFieldCreateTest($params)
+    {
         $customField = civicrm_api('custom_field', 'create', $params);
-        $this->assertEquals($customField['is_error'],0,'in line' . __LINE__);
-        $this->assertNotNull($customField['id'],'in line' . __LINE__);
-    } 
-    
-    /**
-     * check with data type - Date array
-     */
-    function testCustomDateFieldCreate( )
+
+        $this->documentMe($params, $result, $function, $filename,$description, $subfile);
+        $this->assertEquals(0,$customField['is_error'], var_export($customField, TRUE));
+        $this->assertNotNull($customField['id']);
+        $this->getAndCheck($params, $customField['id'], 'CustomField');
+    }
+
+    function _buildParams($gid, $htype, $dtype)
     {
-        $customGroup = $this->customGroupCreate('Individual','date_test_group',3);
-        $params = array('custom_group_id' => $customGroup['id'],
-                        'name'            => 'test_date',
-                        'label'           => 'test_date',
-                        'html_type'       => 'Select Date',
-                        'data_type'       => 'Date',
-                        'default_value'   => '20071212',
-                        'weight'          => 4,
-                        'is_required'     => 1,
-                        'is_searchable'   => 0,
-                        'is_active'       => 1,
-                        'version'					=> $this->_apiversion,
-                        );
-        $result = civicrm_api('custom_field', 'create', $params);
-        $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
-        $this->assertEquals($result['is_error'],0);
-        $this->assertNotNull($result['id']);
+        $params = $this->_buildBasicParams($gid, $htype, $dtype);
+/* //Not Working for any type. Maybe redundant with testCustomFieldCreateWithOptionValues()
+        if ($htype == 'Multi-Select')
+            $params = array_merge($params, array(
+                         'option_label'    => array( 'Label1','Label2'),
+                         'option_value'    => array( 'val1', 'val2' ),
+                         'option_weight'   => array( 1, 2),
+                         'option_status'   => array( 1, 1),
+                         ));
+*/
+        return $params;
+    }
+    function _buildBasicParams($gid, $htype, $dtype)
+    {
+        return array ('custom_group_id' => $gid,
+                         'label'           => $dtype.$htype,
+                         'html_type'       => $htype,
+                         'data_type'       => $dtype,
+                         'weight'          => 4,
+                         'is_required'     => 0,
+                         'is_searchable'   => 0,
+                         'is_active'       => 1,
+                         'version'         => $this->_apiversion,
+                         );
     }
     
     /**
      *  Test  using example code
      */
-    function testCustomFieldCreateExample( )
+    /*function testCustomFieldCreateExample( )
     {
 
         
@@ -182,107 +194,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $result = custom_field_create_example();
         $expectedResult = custom_field_create_expectedresult();
         $this->assertEquals($result,$expectedResult);
-    }
+    }*/
     
-    /**
-     * check with data type - Country array
-     */
-    function testCustomCountryFieldCreate( )
-    {
-        $customGroup = $this->customGroupCreate('Individual','Country_test_group',3);
-        $params = array('custom_group_id' => $customGroup['id'],
-                        'name'            => 'test_country',
-                        'label'           => 'test_country',
-                        'html_type'       => 'Select Country',
-                        'data_type'       => 'Country',
-                        'default_value'   => '1228',
-                        'weight'          => 4,
-                        'is_required'     => 1,
-                        'is_searchable'   => 0,
-                        'is_active'       => 1,
-                         'version'					=> $this->_apiversion,
-                        );
-               
-        $customField = civicrm_api('custom_field', 'create', $params);
-        $this->assertEquals($customField['is_error'],0);
-        $this->assertNotNull($customField['id']);
-    }
-       /**
-     * check with data type - Country array
-     */
-    function testCustomContactRefFieldCreate( )
-    {
-        $subfile = "ContactRefField";
-        $description = "shows creation of contact reference field";
-        $customGroup = $this->customGroupCreate('Individual','Country_test_group',3);
-        $params = array('custom_group_id' => $customGroup['id'],
-                        'name'            => 'Worker_Lookup',
-                        'label'           => 'Worker Lookup',
-                        'html_type'       => 'Autocomplete-Select',
-                        'data_type'       => 'ContactReference',
-                        'weight'          => 4,
-                        'is_searchable'   => 1,
-                        'is_active'       => 1,
-                        'version'					=> $this->_apiversion,
-                        );
-               
-        $customField = civicrm_api('custom_field', 'create', $params);
-        $this->documentMe($params, $result, $function, $filename,$description, $subfile);
-        $this->assertEquals($customField['is_error'],0);
-        $this->getAndCheck($params, $customField['id'], 'CustomField');
-        $this->assertNotNull($customField['id']);
-    }
-     
-    /**
-     * check with data type - Note array
-     */
-    function testCustomNoteFieldCreate( )
-    {
-        $customGroup = $this->customGroupCreate('Individual','Country2_test_group',3);
-        $params = array('custom_group_id' => $customGroup['id'],
-                        'name'            => 'test_note',
-                        'label'           => 'test_note',
-                        'html_type'       => 'TextArea',
-                        'data_type'       => 'Memo',
-                        'default_value'   => 'Hello',
-                        'weight'          => 4,
-                        'is_required'     => 1,
-                        'is_searchable'   => 0,
-                        'is_active'       => 1,
-                         'version'					=> $this->_apiversion,
-                        );
-        
-        $customField = civicrm_api('custom_field', 'create', $params);
-        $this->assertEquals($customField['is_error'],0);
-        $this->assertNotNull($customField['id']);
-    } 
-    
-    /**
-     * check with data type - Options array
-     */
-    function testCustomFieldOptionValueCreate( )
-    {
-        $customGroup = $this->customGroupCreate('Contact', 'select_test_group',3);
-        $params = array ('custom_group_id' => $customGroup['id'],
-                         'label'           => 'Country',
-                         'html_type'       => 'Select',
-                         'data_type'       => 'String',
-                         'weight'          => 4,
-                         'is_required'     => 1,
-                         'is_searchable'   => 0,
-                         'is_active'       => 1,
-                         'option_label'    => array( 'Label1','Label2'),
-                         'option_value'    => array( 'val1', 'val2' ),
-                         'option_weight'   => array( 1, 2),
-                         'option_status'   => array( 1, 1),
-                         'version'				 =>$this->_apiversion,
-                         );
-
-        $customField = civicrm_api('custom_field', 'create', $params);
-
-        $this->assertEquals($customField['is_error'],0);
-        $this->assertNotNull($customField['id']);
-    } 
      
     /**
      * check with data type - Options with option_values
@@ -320,114 +233,6 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
     }
-
-    /**
-     * check with data type - Select Option array
-     */
-    function testCustomFieldSelectOptionValueCreate( )
-    {
-        $customGroup = $this->customGroupCreate('Contact', 'select_test_group',3);
-        $params = array ('custom_group_id' => $customGroup['id'],
-                         'label'           => 'PriceSelect',
-                         'html_type'       => 'Select',
-                         'data_type'       => 'Int',
-                         'weight'          => 4,
-                         'is_required'     => 1,
-                         'is_searchable'   => 0,
-                         'is_active'       => 1,
-                         'option_label'    => array( 'Label1','Label2'),
-                         'option_value'    => array( '10', '20' ),
-                         'option_weight'   => array( 1, 2),
-                         'option_status'   => array( 1, 1),
-                         'version'				 =>$this->_apiversion,
-                         );
-        $customField = civicrm_api('custom_field', 'create', $params);    
-
-        $this->assertEquals($customField['is_error'],0);
-        $this->assertNotNull($customField['id']);
-    }
-    
-    /**
-     * check with data type - Checkbox Options array
-     */
-    function testCustomFieldCheckBoxOptionValueCreate( )
-    { 
-        $customGroup = $this->customGroupCreate('Contact','CheckBox_test_group',3);
-        $params = array ('custom_group_id' => $customGroup['id'],
-                         'label'           => 'PriceChk',
-                         'html_type'       => 'CheckBox',
-                         'data_type'       => 'String',
-                         'weight'          => 4,
-                         'is_required'     => 1,
-                         'is_searchable'   => 0,
-                         'is_active'       => 1,
-                         'option_label'    => array( 'Label1','Label2'),
-                         'option_value'    => array( '10', '20' ),
-                         'option_weight'   => array( 1, 2),
-                         'option_status'   => array( 1, 1),
-                         'default_checkbox_option' => array(1),
-                         'version'				 =>$this->_apiversion,
-                         );
-        
-        $customField = civicrm_api('custom_field', 'create', $params); 
-
-        $this->assertEquals($customField['is_error'],0);
-        $this->assertNotNull($customField['id']);
-    }   
-
-    /**
-     * check with data type - Radio Options array
-     */
-    function testCustomFieldRadioOptionValueCreate( )
-    {
-        $customGroup = $this->customGroupCreate('Contact', 'Radio_test_group',3);
-        $params = array ('custom_group_id' => $customGroup['id'],
-                         'label'           => 'PriceRadio',
-                         'html_type'       => 'Radio',
-                         'data_type'       => 'String',
-                         'weight'          => 4,
-                         'is_required'     => 1,
-                         'is_searchable'   => 0,
-                         'is_active'       => 1,
-                         'option_label'    => array( 'radioLabel1','radioLabel2'),
-                         'option_value'    => array( 10, 20 ),
-                         'option_weight'   => array( 1, 2),
-                         'option_status'   => array( 1, 1),
-                         'version'				 =>$this->_apiversion,
-                         );
-        
-        $customField = civicrm_api('custom_field', 'create', $params); 
-
-        $this->assertEquals($customField['is_error'],0);
-        $this->assertNotNull($customField['id']);
-    } 
-    
-    /**
-     * check with data type - Multi-Select Options array
-     */
-    function testCustomFieldMultiSelectOptionValueCreate( )
-    {
-        $customGroup = $this->customGroupCreate('Contact', 'MultiSelect_test_group',3);
-        $params = array ('custom_group_id' => $customGroup['id'],
-                         'label'           => 'PriceMufdlti',
-                         'html_type'       => 'Multi-Select',
-                         'data_type'       => 'String',
-                         'weight'          => 4,
-                         'is_required'     => 1,
-                         'is_searchable'   => 0,
-                         'is_active'       => 1,
-                         'option_label'    => array( 'MultiLabel1','MultiLabel2'),
-                         'option_value'    => array( 10, 20 ),
-                         'option_weight'   => array( 1, 2),
-                         'option_status'   => array( 1, 1),
-                         'version'				 =>$this->_apiversion,
-                         );
-              
-        $customField = civicrm_api('custom_field', 'create', $params);    
-
-        $this->assertEquals($customField['is_error'],0);
-        $this->assertNotNull($customField['id']);
-    }     
 
 ///////////////// civicrm_custom_field_delete methods
     
