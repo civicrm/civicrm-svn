@@ -197,7 +197,8 @@ class CRM_Admin_Page_AJAX
             case 'CRM_Core_BAO_OptionValue':
                 require_once(str_replace('_', DIRECTORY_SEPARATOR, $recordBAO) . '.php');
                 $label = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue', $recordID, 'label' );
-                $status = ts('Are you sure you want to disable this \'%1\' record ?', array(1 => $label));
+                $status = ts('Are you sure you want to disable the \'%1\' option ?', array(1 => $label));
+                $status .= '<br /><br />' . ts('WARNING - Disabling an option which has been assigned to existing records will result in that option being cleared when the record is edited.');
                 break;
 
             default:

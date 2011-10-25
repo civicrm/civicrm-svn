@@ -86,6 +86,24 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
         $this->_GName = ucwords(str_replace('_', ' ', $this->_gName));
         $url = "civicrm/admin/options/{$this->_gName}";
         $params = "group={$this->_gName}&reset=1";
+
+        if ( ( $this->_action & CRM_Core_Action::DELETE ) &&
+                in_array( $this->_gName, array( 'email_greeting', 'postal_greeting', 'addressee' ) ) ) {
+            // Don't allow delete if the option value belongs to addressee, postal or email greetings and is in use.
+        	$findValue = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue',$this->_id,'value');
+            $queryParam = array( 1 => array( $findValue, 'Integer' ));
+            $columnName = $this->_gName . "_id";
+            $sql = "SELECT count(id) FROM civicrm_contact WHERE " . $columnName . " = %1";
+            $isInUse = CRM_Core_DAO::singleValueQuery($sql, $queryParam);
+        	if ( $isInUse ) {
+        		$scriptURL = "<a href='" . CRM_Utils_System::docURL2('Update Greetings and Address Data for Contacts', true) . "'>" . ts('Learn more about a script that can automatically update contact addressee and greeting options.') . "</a>";
+                CRM_Core_Session::setStatus( ts('The selected %1 option has <strong>not been deleted</strong> because it is currently in use. Please update these contacts to use a different format before deleting this option. %2', array(1 => $this->_GName, 2 => $scriptURL) ) . "<br /><br />" );
+                $redirect = CRM_Utils_System::url( $url, $params );
+                CRM_Utils_System::redirect( $redirect );
+            }
+        }
+
+
         $session->pushUserContext( CRM_Utils_System::url( $url, $params ) );
         $this->assign('id', $this->_id);
         
