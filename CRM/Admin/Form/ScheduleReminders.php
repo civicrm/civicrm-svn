@@ -210,17 +210,19 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             $defaults['is_active'] = 1;
         } else {
             $defaults = $this->_values;
-            $entityValue = explode( CRM_Core_DAO::VALUE_SEPARATOR, $defaults['entity_value'] );
-            $entityStatus = explode( CRM_Core_DAO::VALUE_SEPARATOR, $defaults['entity_status'] );
-            $defaults['entity'][0] = $defaults['mapping_id'];
+            $entityValue = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                    CRM_Utils_Array::value( 'entity_value', $defaults ));
+            $entityStatus = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                     CRM_Utils_Array::value( 'entity_status', $defaults ));
+            $defaults['entity'][0] = CRM_Utils_Array::value( 'mapping_id', $defaults );
             $defaults['entity'][1] = $entityValue;
             $defaults['entity'][2] = $entityStatus;
-            $defaults['text_message'] = $defaults['body_text'] ;
-            $defaults['html_message'] = $defaults['body_html'] ;
-            $defaults['template'] = $defaults['msg_template_id'];
-            if ( $defaults['group_id'] ) {
+            $defaults['text_message'] = CRM_Utils_Array::value( 'body_text', $defaults );
+            $defaults['html_message'] = CRM_Utils_Array::value( 'body_html', $defaults );
+            $defaults['template'] = CRM_Utils_Array::value( 'msg_template_id', $defaults );
+            if ( CRM_Utils_Array::value( 'group_id', $defaults ) ) {
                 $defaults['recipient'] = 'group';
-            } elseif ( $defaults['recipient_manual'] ) {
+            } elseif ( CRM_Utils_Array::value( 'recipient_manual', $defaults ) ) {
                 $defaults['recipient'] = 'manual';
                 $recipients = array( );
                 foreach ( explode(',', $defaults['recipient_manual']) as $cid ) {
@@ -288,7 +290,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             $params[$key] = implode( CRM_Core_DAO::VALUE_SEPARATOR, $$key );
         }
 
-        $params['is_active' ] =  CRM_Utils_Array::value( 'is_active', $values, 0 );
+        $params['is_active'] = CRM_Utils_Array::value( 'is_active', $values, 0 );
         $params['is_repeat'] = CRM_Utils_Array::value( 'is_repeat', $values, 0 );
 
         if ( CRM_Utils_Array::value( 'is_repeat', $values ) == 0 ) {
@@ -350,9 +352,11 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         
         CRM_Core_BAO_ActionSchedule::add($params, $ids);
 
-        $status = ts( "Your new Reminder titled %1 has been saved." , array( 1 => "<strong>{$values['title']}</strong>") );
+        $status = ts( "Your new Reminder titled %1 has been saved." , 
+                      array( 1 => "<strong>{$values['title']}</strong>") );
         if ( $this->_action & CRM_Core_Action::UPDATE ) { 
-            $status = ts( "Your Reminder titled %1 has been updated." , array( 1 => "<strong>{$values['title']}</strong>") );
+            $status = ts( "Your Reminder titled %1 has been updated." , 
+                          array( 1 => "<strong>{$values['title']}</strong>") );
         }
         CRM_Core_Session::setStatus( $status );
 
