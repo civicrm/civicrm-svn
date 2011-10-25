@@ -220,7 +220,8 @@ function _civicrm_api3_activity_create_spec(&$params){
  * 
  * @param array $params
  * @return array
- *
+ * 
+ * {@getfields activity_get}
  * @example ActivityGet.php Basic example
  * @example Activity/DateTimeHigh.php Example get with date filtering
  * {@example ActivityGet.php 0}

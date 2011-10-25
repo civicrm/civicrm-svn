@@ -44,6 +44,7 @@ require_once 'CRM/Core/BAO/Address.php';
  * Allowed @params array keys are:
  * {@schema Core/Address.xml}
  * {@example AddressCreate.php}
+ * {@getfields address_create}
  * @return array of newly created tag property values.
  * @access public
  */
