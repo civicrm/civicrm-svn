@@ -227,7 +227,6 @@ function _civicrm_api3_activity_create_spec(&$params){
  */
 
 function civicrm_api3_activity_get( $params ) {
-        civicrm_api3_verify_mandatory($params);
 
         if (!empty($params['contact_id'])){
            $activities = CRM_Activity_BAO_Activity::getContactActivity( $params['contact_id'] );
@@ -279,7 +278,6 @@ function civicrm_api3_activity_get( $params ) {
  */
 function civicrm_api3_activity_delete( $params )
 {
-        civicrm_api3_verify_mandatory($params);
         $errors = array( );
 
         //check for various error and required conditions

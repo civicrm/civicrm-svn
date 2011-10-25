@@ -57,7 +57,6 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_activity_type_get($params ) {
 
-     civicrm_api3_verify_mandatory($params);
     require_once 'CRM/Core/OptionGroup.php';
     $activityTypes = CRM_Core_OptionGroup::values( 'activity_type' );
     return civicrm_api3_create_success($activityTypes,$params,'activity_type','get');
@@ -75,7 +74,7 @@ function civicrm_api3_activity_type_get($params ) {
  *{@schema Activity/ActivityType.xml}
  *
  * {@example ActivityTypeCreate.php 0}
- * @ deprecated - we will introduce OptionValue Create - plse consider helping with this if not done
+ * @deprecated - we will introduce OptionValue Create - plse consider helping with this if not done
  */
  
 function civicrm_api3_activity_type_create( $params ) {

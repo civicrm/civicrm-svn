@@ -50,8 +50,6 @@ require_once 'CRM/Core/BAO/Address.php';
 function civicrm_api3_address_create( &$params ) 
 {
 
-   civicrm_api3_verify_mandatory ($params, null, array('location_type_id', 'contact_id'));
-
 	/*
 	 * if street_parsing, street_address has to be parsed into
 	 * separate parts
@@ -95,6 +93,16 @@ function civicrm_api3_address_create( &$params )
 		 return civicrm_api3_create_success($values, $params,'address',$addressBAO[0]);
 	 }
 
+}
+/*
+ * Adjust Metadata for Create action
+ * 
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_address_create_spec(&$params){
+  $params['location_type_id']['api.required'] = 1;
+  $params['contact_id']['api.required'] = 1; 
+  $params['is_primary']['api.default'] = 1;// TODO note this should be changes to a function call that checks if one exists
 }
 /**
  * Deletes an existing Address
@@ -140,16 +148,6 @@ function civicrm_api3_address_delete( &$params )
 
 function civicrm_api3_address_get(&$params) 
 {   
-    civicrm_api3_verify_one_mandatory($params); 
 	  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 
-
-/*
- * Set defaults used for 'create' action
- * @return array $defaults array of default values
-*/
-
-function _civicrm_api3_address_create_defaults(){
-  return array('is_primary' => 1);
-}
