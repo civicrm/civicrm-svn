@@ -71,7 +71,7 @@ VALUES
 -- CRM-8739
     Update civicrm_navigation set label =  '{ts escape="sql" skip="true"}Cleanup Caches and Update Paths{/ts}', name = 'Cleanup Caches and Update Paths' where name = 'Update Directory Path and URL';
     
-    Update civicrm_menu set title = 'Cleanup Caches and Update Paths' where title = 'Update Directory Path and URL';
+    Update civicrm_menu set title = 'Cleanup Caches and Update Paths' where path = 'civicrm/admin/setting/updateConfigBackend';
     
 -- CRM-8855
     SELECT @option_group_id_udOpt := max(id) from civicrm_option_group where name = 'user_dashboard_options';
