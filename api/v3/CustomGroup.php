@@ -60,7 +60,7 @@ require_once 'CRM/Core/BAO/CustomGroup.php';
  * $params['class_name'] is a required field, class being extended.
  *
  * @param $params     array   Associative array of property name/value pairs to insert in group.
- *
+ * {@getfields CustomGroup_create}
  *
  * @return   Newly create custom_group object
  * @todo $params['extends'] is array format - is that std compatible
@@ -70,11 +70,7 @@ require_once 'CRM/Core/BAO/CustomGroup.php';
 function civicrm_api3_custom_group_create( $params )
 {
  
-        civicrm_api3_verify_mandatory($params,null,array('extends','title'));  
-        if ( ! CRM_Utils_Array::value('style', $params)  ) {
-            $params['style'] = 'Inline';
-        }    
-                
+    
         if (is_string($params['extends'])){
             $extends = explode(",",$params['extends']);
             unset ($params['extends']);
@@ -101,7 +97,16 @@ function civicrm_api3_custom_group_create( $params )
 
 }   
 
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_custom_group_create_spec(&$params){
+  $params['extends']['api.required'] = 1;
+  $params['title']['api.required'] = 1;
+  $params['style']['api.default'] = 'Inline'; 
+}
 /**
  * Use this API to delete an existing group.
  *
