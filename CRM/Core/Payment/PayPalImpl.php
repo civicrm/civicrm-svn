@@ -327,7 +327,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
         $result = $this->invokeAPI( $args );
 
 		//WAG
-        if ( is_a( $result, CRM_Core_Error ) ) { 
+        if ( is_a( $result, 'CRM_Core_Error' ) ) { 
             return $result;  
         }
         

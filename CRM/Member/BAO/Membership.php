@@ -1194,7 +1194,7 @@ AND civicrm_membership.is_test = %2";
             }
 
             $result = null;
-            if ($form->_values['is_monetary'] && !$form->_params['is_pay_later']) {
+            if ($form->_values['is_monetary'] && !$form->_params['is_pay_later'] && $minimumFee > 0.0 ) {
                 require_once 'CRM/Core/Payment.php';
                 $payment = CRM_Core_Payment::singleton( $form->_mode, $form->_paymentProcessor, $form );
                 

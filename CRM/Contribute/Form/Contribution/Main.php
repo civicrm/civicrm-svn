@@ -1049,9 +1049,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 
                 if ( $amountID ) {
                     $params['amount_level'] =
-                        $form->_values['amount'][$amountID]['label'];
+                        CRM_Utils_Array::value( 'label', $form->_values['amount'][$amountID] );
                     $amount = 
-                        $form->_values['amount'][$amountID]['value'];
+                        CRM_Utils_Array::value( 'value', $form->_values['amount'][$amountID] );
                 }
             }
         }
