@@ -23,7 +23,8 @@ function civicrm_api3_generic_getfields($apiRequest) {
                         $metadata = _civicrm_api_get_fields($apiRequest['entity']);
                         break;
                 case 'delete':
-                        $metadata = array('id' => array('name' => 'id'));
+                        $metadata = array('id' => array('name' => 'id',
+                                                        'api.required' => 1));
                         break;
                 default:
                         $metadata = array(); // oddballs are on their own
