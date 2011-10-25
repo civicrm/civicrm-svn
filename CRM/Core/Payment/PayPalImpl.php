@@ -301,9 +301,9 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
         $args['state']          = $params['state_province'];
         $args['countryCode']    = $params['country'];
         $args['zip']            = $params['postal_code'];
-        $args['desc']           = $params['description'];
-        $args['custom']         = CRM_Utils_Array::value( 'accountingCode',
-                                                          $params );
+        $args['desc']           = CRM_Utils_Array::value( 'description', $params );
+        $args['custom']         = CRM_Utils_Array::value( 'accountingCode', $params );
+
         if ( CRM_Utils_Array::value( 'is_recur', $params ) == 1 ) {
             $start_time = strtotime(date('m/d/Y'));
             $start_date = date('Y-m-d\T00:00:00\Z', $start_time );

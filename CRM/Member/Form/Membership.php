@@ -261,9 +261,11 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             
             //get back original object campaign id.
             $defaults['campaign_id'] = $memberCampaignId;
-            
-            list( $defaults['receive_date'] ) = CRM_Utils_Date::setDateDefaults( $defaults['receive_date'] );
-            
+
+            if ( CRM_Utils_Array::value( 'receive_date', $defaults ) ) { 
+                list( $defaults['receive_date'] ) = CRM_Utils_Date::setDateDefaults( $defaults['receive_date'] );
+            }
+
             // Contribution::getValues() over-writes the membership record's source field value - so we need to restore it.
             if ( CRM_Utils_Array::value( 'membership_source', $defaults ) ) {
                 $defaults['source'] = $defaults['membership_source'];
@@ -931,7 +933,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                                      $recurMembershipTypeValues );
                      }
                 }
-                $count++;
+                count++;
             }
             
             // unset send-receipt option, since receipt will be sent when ipn is received.
@@ -947,9 +949,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                               $this->_params, $lineItem[$priceSetId] );
             $params['total_amount'] = CRM_Utils_Array::value( 'amount', $this->_params );
         }
-        if ( !CRM_Utils_Array::value( 'total_amount', $this->_params ) ) {
-            $params['total_amount'] = $this->_values['total_amount']; 
-        }        
         
         // set the contact, when contact is selected
         require_once 'CRM/Contact/BAO/Contact/Location.php';
@@ -1076,15 +1075,16 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $params['lineItems'] = $lineItem;
             $params['processPriceSet'] = true;
         }
-        
+        //crm_core_error::debug('params', $params );
+        //crm_core_error::debug('formValue', $formValues );
+       //exit; 
         $createdMemberships =  array( );
         if ( $this->_mode ) {
-
-            if( empty( $formValues['total_amount'] ) ) { 
+            if ( empty( $formValues['total_amount'] ) ) { 
                 // if total amount not provided minimum for membership type is used
                 $params['total_amount'] = $formValues['total_amount']  = 
                     CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
-                                                 $params['membership_type_id'],'minimum_fee' );
+                                                 $formValues['membership_type_id'][1],'minimum_fee' );
             } else {
                 $params['total_amount'] = $formValues['total_amount']  ;
             }
@@ -1215,9 +1215,10 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 }
             }
             
-            $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
-            
-            $result  =& $payment->doDirectPayment( $paymentParams );
+            if ( $params['total_amount'] > 0.0 ) {
+                $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
+                $result  =& $payment->doDirectPayment( $paymentParams );
+            }
 
             if ( is_a( $result, 'CRM_Core_Error' ) ) {
                 //make sure to cleanup db for recurring case.
@@ -1241,13 +1242,14 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 //assign amount to template if payment was successful
                 $this->assign( 'amount', $params['total_amount'] );			
             }
+
             $params['contribution_status_id'] = CRM_Utils_Array::value( 'is_recur', $paymentParams ) ? 2 : 1;
             $params['receive_date']           = $now;
             $params['invoice_id']             = $this->_params['invoiceID'];
             $params['contribution_source']    = ts('%1 Membership Signup: Credit card or direct debit (by %2)',
                                                                      array( 1 => $membershipType, 2 => $userName));
             $params['source']                 = $formValues['source'] ? $formValues['source'] :$params['contribution_source'];
-            $params['trxn_id']                = $result['trxn_id'];
+            $params['trxn_id']                = CRM_Utils_Array::value( 'trxn_id', $result );
             $params['payment_instrument_id']  = 1;
             $params['is_test']                = ( $this->_mode == 'live' ) ? 0 : 1 ; 
             if ( CRM_Utils_Array::value( 'send_receipt', $this->_params ) ) {
@@ -1257,7 +1259,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             }
             
             $this->set( 'params', $this->_params );
-            $this->assign( 'trxn_id', $result['trxn_id'] );
+            $this->assign( 'trxn_id', CRM_Utils_Array::value( 'trxn_id', $result ) );
             $this->assign( 'receive_date',
                            CRM_Utils_Date::mysqlToIso( $params['receive_date']) );
        
@@ -1279,9 +1281,9 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $count++;
             }
             
-            if ( !CRM_Utils_Array::value( 'is_recur', $params ) ) {
+            if ( !CRM_Utils_Array::value( 'is_recur', $params ) && $params['total_amount'] > 0.0 ) {
                 $contribution = new CRM_Contribute_BAO_Contribution();
-                $contribution->trxn_id = $result['trxn_id'];
+                $contribution->trxn_id = CRM_Utils_Array::value( 'trxn_id', $result ); 
                 if ( $contribution->find( true ) ) {
                     // next create the transaction record
                     $trxnParams = array(
@@ -1293,7 +1295,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                         'net_amount'        => CRM_Utils_Array::value( 'net_amount', $result, $params['total_amount'] ),
                                         'currency'          => $config->defaultCurrency,
                                         'payment_processor' => $this->_paymentProcessor['payment_processor_type'],
-                                        'trxn_id'           => $result['trxn_id'],
+                                        'trxn_id'           => CRM_Utils_Array::value( 'trxn_id', $result ) 
                                         );
                     
                     require_once 'CRM/Core/BAO/FinancialTrxn.php';
