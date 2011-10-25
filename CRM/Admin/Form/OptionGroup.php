@@ -54,6 +54,7 @@ class CRM_Admin_Form_OptionGroup extends CRM_Admin_Form
         if ($this->_action & CRM_Core_Action::DELETE ) { 
             return;
         }
+        CRM_Utils_System::setTitle(ts('Dropdown Options'));
 
         $this->applyFilter('__ALL__', 'trim');
         $this->add('text',
@@ -66,6 +67,11 @@ class CRM_Admin_Form_OptionGroup extends CRM_Admin_Form
                         'objectExists',
                         array( 'CRM_Core_DAO_OptionGroup', $this->_id ) );
         
+        $this->add('text',
+                   'label',
+                   ts('Group Title'),
+                   CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionGroup', 'label' ) );
+
         $this->add('text',
                    'description',
                    ts('Description'),
@@ -85,8 +91,8 @@ class CRM_Admin_Form_OptionGroup extends CRM_Admin_Form
                 }
                
             } 
-            if ( $this->_values['is_reserved'] ) { 
-                $this->freeze( array( 'name', 'description', 'is_active' ) );
+            if ( CRM_Utils_Array::value('is_reserved', $this->_values ) ) { 
+                $this->freeze( array( 'name','is_active' ) );
             }
         }
 
