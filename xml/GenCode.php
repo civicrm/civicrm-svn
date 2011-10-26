@@ -3,6 +3,8 @@
 ini_set( 'include_path', '.' . PATH_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'packages' . PATH_SEPARATOR . '..' );
 ini_set( 'memory_limit', '512M' );
 
+define( 'CIVICRM_UF', 'Drupal' );
+
 $versionFile = "version.xml";
 $versionXML  =& parseInput( $versionFile );
 $db_version  = $versionXML->version_no;
@@ -28,7 +30,7 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
 
 // default cms is 'drupal', if not specified 
 $cms = isset($argv[3]) ? strtolower($argv[3]) : 'drupal';
-if ( !in_array($cms, array('drupal', 'standalone', 'joomla')) ) {
+if ( !in_array($cms, array('drupal', 'joomla')) ) {
     echo "Config file for '{$cms}' not known.";
     exit();
 } else if ( $cms !== 'joomla' ) {
@@ -37,8 +39,6 @@ if ( !in_array($cms, array('drupal', 'standalone', 'joomla')) ) {
 
 require_once 'Smarty/Smarty.class.php';
 require_once 'PHP/Beautifier.php';
-
-require_once '../civicrm.config.php';
 
 require_once 'CRM/Core/Config.php';
 require_once 'CRM/Core/I18n.php';
