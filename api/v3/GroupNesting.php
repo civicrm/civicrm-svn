@@ -80,7 +80,7 @@ function civicrm_api3_group_nesting_create( $params )
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
-function _civicrm_api3_group_create_spec(&$params){
+function _civicrm_api3_group_nesting_create_spec(&$params){
     $params['child_group_id']['api.required'] = 1; 
     $params['parent_group_id']['api.required'] = 1; 
 }
@@ -104,9 +104,9 @@ function civicrm_api3_group_nesting_delete( $params )
 
   if( $dao->delete( ) ) {
     $result = array( 'is_error' => 0 );
-     return civicrm_api3_create_success($result,$params,'group_nesting','delete');
+     return civicrm_api3_create_success($result,$params,'group_nesting','delete',$dao);
   }
-   return civicrm_api3_create_error($result,$params,'group_nesting','delete');
+   return civicrm_api3_create_error($result,$params,$dao);
 
 }
 /*
