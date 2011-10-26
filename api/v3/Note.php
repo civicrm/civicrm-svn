@@ -58,11 +58,6 @@ require_once 'CRM/Core/BAO/Note.php';
  */
 function civicrm_api3_note_create($params) {
 	
-	  //@todo make today's date a 'rule' default - ie. extend date handling function to have something like #now that gets converted
-		if (! isset ( $params ['modified_date'] )) {
-			$params ['modified_date'] = date ( "Ymd" );
-		}
-		
 		$ids = array ();
 		$ids = array ('id' => CRM_Utils_Array::value ( 'id', $params ) );
 		$noteBAO = CRM_Core_BAO_Note::add ( $params, $ids );
@@ -87,6 +82,7 @@ function civicrm_api3_note_create($params) {
  */
 function _civicrm_api3_note_create_spec(&$params){
   $params['entity_table']['api.default'] = "civicrm_contact";
+  $params['modified_date']['api.default'] = "now";
   $params['note']['api.required'] =1;
   $params['entity_id']['api.required'] =1;
 }
