@@ -89,15 +89,7 @@ function civicrm_api3_pledge_create( $params ) {
  * @access public
  */
 function civicrm_api3_pledge_delete( $params ) {
-    //we set id to be pledge_id here & then verify 'id' to support legacy 'pledge_id' but no advertise it
-    if (!empty($params['id'])){
-      //handle field name or unique db name
-      $params['id'] = CRM_Utils_Array::value('pledge_id', $params);
-    }
-
-    civicrm_api3_verify_mandatory ($params,null,array('id'));
-
-    if ( CRM_Pledge_BAO_Pledge::deletePledge( $params['id'] ) ) {
+   if ( CRM_Pledge_BAO_Pledge::deletePledge( $params['id'] ) ) {
       return civicrm_api3_create_success(array($pledgeID =>$params['id']),$params,'pledge','delete' );
     } else {
       return civicrm_api3_create_error(  'Could not delete pledge'  );
@@ -132,6 +124,8 @@ function _civicrm_api3_pledge_create_spec(&$params){
   foreach ($required as $required_field){
     $params[$required_field]['api.required'] = 1;
   }
+  // @todo this can come from xml
+  $params['amount']['api.aliases'] = array('pledge_amount'); 
 }
 
 /**
@@ -144,7 +138,7 @@ function _civicrm_api3_pledge_create_spec(&$params){
  * @access public
  */
 function civicrm_api3_pledge_get( $params ) {
-    civicrm_api3_verify_mandatory ($params);
+
     if(!empty($params['id'])  && empty($params['pledge_id'])){
       //if you pass in 'id' it will be treated by the query as contact_id
       $params['pledge_id'] = $params['id'];
