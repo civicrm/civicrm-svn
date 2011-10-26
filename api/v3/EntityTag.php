@@ -148,7 +148,13 @@ function civicrm_api3_entity_tag_delete( $params ) {
       return _civicrm_api3_entity_tag_common( $params, 'remove' );
 
 }
-
+/*
+ * modify metadata
+ */
+function _civicrm_api3_entity_tag_delete_spec( &$params ) {
+  $params['id']['api.required'] =0;// set as not required as tag_id also acceptable & no either/or std yet
+  
+}
 /**
  *
  * @param <type> $params
