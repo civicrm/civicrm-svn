@@ -633,6 +633,7 @@ function civicrm_date_views_tables() {
  * Implements hook_views_plugins
  */
 function civicrm_views_plugins() {
+  $data = array();
   if (module_exists('calendar')) {
     $civicrm_module_path = drupal_get_path('module', 'civicrm');
   
