@@ -1,46 +1,37 @@
 <?php
-/*
- +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
- +--------------------------------------------------------------------+
- | This file is a part of CiviCRM.                                    |
- |                                                                    |
- | CiviCRM is free software; you can copy, modify, and distribute it  |
- | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
- |                                                                    |
- | CiviCRM is distributed in the hope that it will be useful, but     |
- | WITHOUT ANY WARRANTY; without even the implied warranty of         |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
- | See the GNU Affero General Public License for more details.        |
- |                                                                    |
- | You should have received a copy of the GNU Affero General Public   |
- | License and the CiviCRM Licensing Exception along                  |
- | with this program; if not, contact CiviCRM LLC                     |
- | at info[AT]civicrm[DOT]org. If you have questions about the        |
- | GNU Affero General Public License or the licensing of CiviCRM,     |
- | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +--------------------------------------------------------------------+
-*/
+/**
+ * @file
+ * Contains the Calendar row style plugin.
+ *
+ * This plugin takes the view results, finds the date value for each,
+ * then compares that date to the date range for the current view.
+ * Items that started before or ended after the current date range
+ * are shortened to the current range. Items that extend over more
+ * than one day are cloned to create a calendar item for each day.
+ * The resulting array of results (which may have a different number
+ * of items than the original view result) are then passed back
+ * to the style plugin so they can be displayed in a calendar.
+ *
+ * Row plugins are specific to entity types. To create a row plugin
+ * for other types of entities, this class can be extended or copied,
+ * adjusting the parts that are specific to nodes.
+ */
 
 /**
  * Plugin which creates a view on the resulting object
  * and formats it as a Calendar node.
- * 
  */
 
-class calendar_plugin_row_civicrm_event extends calendar_plugin_row_node {
+class calendar_plugin_row_civicrm extends calendar_plugin_row_node {
   // Basic properties that let the row style follow relationships.
-  var $base_table = 'civicrm_event';
+  var $base_table = '';
   var $base_field = 'id';
-
-  // Stores the nodes loaded with pre_render.
-  var $nodes = array();
 
   function construct () {
     if ( ! civicrm_initialize( ) ) {
       return;
     }
+    $this->base_table = $this->definition['base'][0];
   }
 
   function option_definition() {
@@ -117,15 +108,16 @@ class calendar_plugin_row_civicrm_event extends calendar_plugin_row_node {
     }
     // @TODO Move to CiviCRM API, currently API only returns arrays
     // the render() method of this class and the calander_pluing_style are expecting
-    // and object, hence using DAO
+    // an object, hence using DAO.
+    // Sadly neither DAO nor API allows you to load multiple at once eg node_load_multiple()
     foreach( $ids as $key => $id ) {
-      require_once 'CRM/Event/DAO/Event.php';
-      $dao = New CRM_Event_DAO_Event;
+      require_once str_replace('_',DIRECTORY_SEPARATOR,$this->definition['dao class']) .'.php';
+      $dao = New $this->definition['dao class'];
       $dao->id = $id;
       $dao->find();
       $dao->fetch();
       // Make sure no NULL records get through
-      if (! empty($dao->title) ) {
+      if (! empty($dao->{$this->definition['title field']}) ) {
         $this->nodes[$dao->id] = $dao;    
       }
       $dao->release();
@@ -135,7 +127,7 @@ class calendar_plugin_row_civicrm_event extends calendar_plugin_row_node {
     // Identify the date argument and fields that apply to this view.
     // Preload the Date Views field info for each field, keyed by the
     // field name, so we know how to retrieve field values from the cached node.
-    $data = date_views_fields('civicrm_event');
+    $data = date_views_fields($this->base_table);
     $data = $data['name'];
     $date_fields = array();
     foreach ($this->view->argument as $handler) {
@@ -241,11 +233,10 @@ class calendar_plugin_row_civicrm_event extends calendar_plugin_row_node {
       // Set the item date to the proper display timezone;      
       $item_start_date->setTimezone(new dateTimezone($to_zone));
       $item_end_date->setTimezone(new dateTimezone($to_zone));
-
       $event = new stdClass();
       $event->nid = $node->id;
-      $event->title = $node->civicrm_event_title;
-      $event->type = $node->event_type_id;
+      $event->title = $node->{$this->definition['title field']};
+      //$event->type = $node->event_type_id;
       $event->date_start = $item_start_date;
       $event->date_end = $item_end_date;
       $event->db_tz = $db_tz;
@@ -268,4 +259,3 @@ class calendar_plugin_row_civicrm_event extends calendar_plugin_row_node {
     return $rows;
   }
 }
-
