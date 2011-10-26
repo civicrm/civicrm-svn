@@ -366,7 +366,7 @@
             </div>{* end of save element div *}
         <div id="customData"></div>
         <div class="spacer"></div>
-        <div class="crm-submit-buttons" id="saveButtons"> {include file="CRM/common/formButtons.tpl" location="top"}</div> 
+        <div class="crm-submit-buttons" id="saveButtons"> {include file="CRM/common/formButtons.tpl" location="bottom"}</div> 
         {if $action EQ 1}
             <div class="crm-submit-buttons" id="saveDetails">
             <span class="crm-button crm-button-type-save crm-button_qf_Relationship_refresh_savedetails">{$form._qf_Relationship_refresh_savedetails.html}</span>
@@ -412,7 +412,7 @@ cj( function( ) {
 
     cj('.pagerDisplay tbody tr .contact_select input').live('click', function () {
         var valueSelected = cj(this).val();	  
-        if ( cj(this).attr('checked') == true ) {   
+        if ( cj(this).attr('checked') ) {
             contact_checked[valueSelected] =  valueSelected;
             countSelected++;
         } else if( contact_checked[valueSelected] ) {
@@ -433,7 +433,7 @@ cj( function( ) {
             if ( isRadio ) {
                 employer_checked = new Array();
             }
-            if ( cj(this).attr('checked') == true ) {
+            if ( cj(this).attr('checked') ) {
                 // add validation to match with selected contacts
                 if( !contact_checked[valueSelected] ) {
                     alert('Current employer / Current employee should be among the selected contacts.');

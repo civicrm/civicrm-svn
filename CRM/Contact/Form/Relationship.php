@@ -468,8 +468,6 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
             if ( is_numeric( $params['contact_select_id'][1] ) ) {
                 if ( $quickSave ) {
                     $params['contact_check'] = array( $params['contact_select_id'][1] => 1 );
-                } else {
-                    $quickSave = false;
                 }
             } else {
                 $this->set( 'callAjax', true );  
