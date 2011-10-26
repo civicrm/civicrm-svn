@@ -174,7 +174,7 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
         $result =& civicrm_api('group_organization', 'create',$params);
 
         $this->assertEquals( $result['is_error'], 1);
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: organization_id, group_id' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: group_id, organization_id' );
     }
 
     /**
@@ -199,7 +199,7 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
         $result =& civicrm_api('group_organization', 'create', $params );
 
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: organization_id, group_id' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: group_id, organization_id' );
     }
 
     ///////////////// civicrm_group_organization_remove methods
