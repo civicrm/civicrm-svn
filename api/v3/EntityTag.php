@@ -38,7 +38,7 @@
 /**
  * Include utility functions
  */
-require_once 'api/v3/utils.php';
+ require_once 'CRM/Core/BAO/EntityTag.php';
 
 /**
  *
@@ -47,22 +47,8 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_entity_tag_get( $params ) {
 
-    civicrm_api3_verify_one_mandatory($params, null,array('entity_id','contact_id'));
-    
-    $entityID    = null;
-    $entityTable = 'civicrm_contact';
-   
-    if ( !( $entityID = CRM_Utils_Array::value( 'entity_id', $params ) ) ) {
-        $entityID = CRM_Utils_Array::value( 'contact_id', $params );
-    }
-    
 
-    if ( CRM_Utils_Array::value( 'entity_table', $params ) ) {
-        $entityTable = $params['entity_table'];
-    }
-
-    require_once 'CRM/Core/BAO/EntityTag.php';
-    $values = CRM_Core_BAO_EntityTag::getTag( $entityID, $entityTable );
+    $values = CRM_Core_BAO_EntityTag::getTag( $params['entity_id'], $params['entity_table'] );
     $result = array( );
     foreach ( $values as $v ) {
         $result[$v] = array( 'tag_id' => $v );
@@ -71,12 +57,23 @@ function civicrm_api3_entity_tag_get( $params ) {
 
 
 }
-
+/*
+ * Adjust Metadata for Get action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_entity_tag_get_spec(&$params){
+  $params['entity_id']['api.required'] =1;
+  $params['entity_id']['api.aliases'] = array('contact_id');
+  $params['entity_table']['api.default'] = array('civicrm_contact');  
+}
 /**
  *
  * @param <type> $params
  * @return <type>
  * @todo EM 7 Jan 2011 - believe this should be deleted
+ * @deprecated
  */
 function civicrm_api3_entity_tag_display( $params ) {
 
