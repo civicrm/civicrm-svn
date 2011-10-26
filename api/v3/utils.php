@@ -141,18 +141,21 @@ function civicrm_api3_verify_mandatory($params, $daoName = null, $keys = array()
     }
 
     if ($daoName != null && $verifyDAO && !CRM_Utils_Array::value('id',$params)) {
-        if(!is_array($unmatched =_civicrm_api3_check_required_fields($params, $daoName, true))) {
+        if (!is_array($unmatched =_civicrm_api3_check_required_fields($params, $daoName, true))) {
             $unmatched = array();
         }
     }
     else {
-        $unmatched = array();                     // always define to prevent E_NOTICE warning
+        $unmatched = array();   //always define to prevent E_NOTICE warning
     }
-    if (!in_array('version', $keys)) {
-        $keys[] = 'version';
+    require_once 'CRM/Utils/Array.php';
+    if (CRM_Utils_Array::value('id',$params)){
+        $keys = array('version');
+    } else {
+        $keys[] = 'version';    //required from v3 onwards
     }
     foreach ($keys as $key) {
-        if (is_array($key)){
+        if (is_array($key)) {
             $match = 0;
             $optionset = array();
             foreach($key as $subkey){
@@ -2053,7 +2056,7 @@ function _civicrm_api3_getrequired($apiRequest) {
     $required = array('version');
 
     $result = civicrm_api($apiRequest['entity'],
-                          'getfields', 
+                          'getfields',
                           array('version' => 3,
                                 'action' => $apiRequest['action']));
     foreach ($result['values'] as $field => $values){
@@ -2077,8 +2080,8 @@ function _civicrm_api3_swap_out_aliases(&$apiRequest ) {
     foreach ($result['values'] as $field => $values){
         if (CRM_Utils_Array::value('api.aliases',$values)){
           if (!CRM_Utils_Array::value($field,$apiRequest['params'])){ // aliased field is empty so we try to use field alias
-            foreach ($values['api.aliases'] as $alias) {       
-             $apiRequest['params'][$field] = CRM_Utils_Array::value($alias,$apiRequest['params']);          
+            foreach ($values['api.aliases'] as $alias) {
+             $apiRequest['params'][$field] = CRM_Utils_Array::value($alias,$apiRequest['params']);
              //unset original field  nb - need to be careful with this as it may bring inconsistencies
              // out of the woodwork but will be implementing only as _spec function extended
              unset($apiRequest['params'][$alias]);
