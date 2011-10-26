@@ -36,11 +36,8 @@
  *
  */
 
-/**
- * Include utility functions
- */
-require_once 'api/v3/utils.php';
-require_once 'CRM/Contact/DAO/GroupNesting.php';
+require_once 'CRM/Contact/BAO/GroupNesting.php';
+
  
 /**
  * Provides group nesting record(s) given parent and/or child id.
@@ -52,12 +49,8 @@ require_once 'CRM/Contact/DAO/GroupNesting.php';
 function civicrm_api3_group_nesting_get( $params )
 {
 
-    civicrm_api3_verify_mandatory($params);
-
-    civicrm_api3_verify_mandatory($params);
     return _civicrm_api3_basic_get('CRM_Contact_DAO_GroupNesting', $params);
 
-    return civicrm_api3_create_success($values,$params);
 
 }
 
@@ -66,22 +59,13 @@ function civicrm_api3_group_nesting_get( $params )
  * Parent and child groups need to exist.
  *
  * @param array $params parameters array - allowed array keys include:
- * {@schema Contact/GroupNesting.xml}
  *
  * @return array TBD
- *
+ * {@getfields GroupNesting_create
  * @todo Work out the return value.
  */
 function civicrm_api3_group_nesting_create( $params )
 {
-    civicrm_api3_verify_mandatory($params);
-
-  require_once 'CRM/Contact/BAO/GroupNesting.php';
-
-  if ( ! array_key_exists( 'child_group_id', $params ) &&
-  ! array_key_exists( 'parent_group_id', $params ) ) {
-    return civicrm_api3_create_error(  'You need to define parent_group_id and child_group_id in params.'  );
-  }
 
   CRM_Contact_BAO_GroupNesting::add( $params['parent_group_id'], $params['child_group_id'] );
 
@@ -90,27 +74,29 @@ function civicrm_api3_group_nesting_create( $params )
   return civicrm_api3_create_success($result,$params);
 
 }
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_group_create_spec(&$params){
+    $params['child_group_id']['api.required'] = 1; 
+    $params['parent_group_id']['api.required'] = 1; 
+}
 /**
  * Removes specific nesting records.
  *
  * @param array $params parameters array - allowed array keys include:
- * {@schema Contact/GroupNesting.xml}
+ * {@getfields GroupNesting_delete}
  *
- * @return array TBD
+ * @return array API Success or fail array
  *
  * @todo Work out the return value.
  */
 function civicrm_api3_group_nesting_delete( $params )
 {
 
-    civicrm_api3_verify_mandatory($params);
-  
-
-  if ( ! array_key_exists( 'child_group_id', $params ) ||
-  ! array_key_exists( 'parent_group_id', $params ) ) {
-    return civicrm_api3_create_error('You need to define parent_group_id and child_group_id in params.'  );
-  }
 
   require_once 'CRM/Contact/DAO/GroupNesting.php';
   $dao = new CRM_Contact_DAO_GroupNesting();
@@ -118,7 +104,21 @@ function civicrm_api3_group_nesting_delete( $params )
 
   if( $dao->delete( ) ) {
     $result = array( 'is_error' => 0 );
+     return civicrm_api3_create_success($result,$params,'group_nesting','delete');
   }
-  return $result;
+   return civicrm_api3_create_error($result,$params,'group_nesting','delete');
 
+}
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ * 
+ * For backward compatibility we need to support child_group_id & parent_group_id
+ */
+function _civicrm_api3_group_nesting_delete_spec(&$params){
+    $params['id']['api.required'] = 0; 
+    $params['child_group_id']['api.required'] = 1; 
+    $params['parent_group_id']['api.required'] = 1; 
 }
