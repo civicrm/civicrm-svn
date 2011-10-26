@@ -933,7 +933,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                                      $recurMembershipTypeValues );
                      }
                 }
-                count++;
+                $count++;
             }
             
             // unset send-receipt option, since receipt will be sent when ipn is received.
