@@ -41,7 +41,7 @@
 /**
  * Files required for this package
  */
-require_once 'api/v3/utils.php';
+    require_once 'CRM/Event/BAO/Event.php';
 
 /**
  * Create a Event
@@ -78,7 +78,17 @@ function civicrm_api3_event_create( $params )
     return civicrm_api3_create_success($event,$params);
 
 }
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_event_create_spec(&$params){
+  $params['event_type_id']['api.required'] =1;;
+  $params['start_date']['api.required'] =1;
+  $params['title']['api.required'] =1;
+}
 
 /**
  * Get Event record.
@@ -92,8 +102,6 @@ function civicrm_api3_event_create( $params )
 
 function civicrm_api3_event_get( $params )
 {
-
-    civicrm_api3_verify_mandatory($params);
 
     $inputParams            = array( );
     $returnProperties       = array( );
@@ -176,20 +184,18 @@ function civicrm_api3_event_get( $params )
 function civicrm_api3_event_delete( $params )
 {
 
-    civicrm_api3_verify_one_mandatory($params,null,array('event_id','id'));
-    $eventID = 
-        CRM_Utils_Array::value( 'event_id', $params ) ?
-        CRM_Utils_Array::value( 'event_id', $params ) :
-        CRM_Utils_Array::value( 'id', $params );
-
-    require_once 'CRM/Event/BAO/Event.php';
     return 
-        CRM_Event_BAO_Event::del( $eventID ) ?
+        CRM_Event_BAO_Event::del($params['id'] ) ?
         civicrm_api3_create_success( ) :
         civicrm_api3_create_error( ts( 'Error while deleting event' ) );
 
 }
-
+/*
+ * modify metadata. This causes 'tag_id' to be acceptable
+ */
+function _civicrm_api3_event_delete_spec( &$params ) {
+  $params['id']['api.aliases']= array('event_id');
+}
 /*
  * Function to add 'is_full' & 'available_seats' to the return array. (this might be better in the BAO)
  * Default BAO function returns a string if full rather than a Bool - which is more appropriate to a form
