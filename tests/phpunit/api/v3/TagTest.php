@@ -181,16 +181,17 @@ class api_v3_TagTest extends CiviUnitTestCase
                          'description' => 'This is description for New Cont tag' ,
                          'version'    => $this->_apiversion,
                          'used_for'   => 'civicrm_contribution');
-        
         $result = civicrm_api('tag', 'create', $params);
-        $this->getAndCheck($params, $result['id'], 'tag',__FUNCTION__ . ' tag first created');
+        $this->assertAPISuccess($result,"contribution tag created");
+        $check = civicrm_api('tag','get', array('version'=>3));
+        $this->getAndCheck($params, $result['id'], 'tag',0,__FUNCTION__ . ' tag first created');
         unset ($params['used_for']);
         $this->assertAPISuccess($result, 'tag created');
         $params['id'] = $result['id'];
         $result = civicrm_api('tag', 'create', $params);
         $this->assertAPISuccess($result);
         $params['used_for'] = 'civicrm_contribution';
-        $this->getAndCheck($params, $result['id'], 'tag');
+        $this->getAndCheck($params, $result['id'], 'tag',1,__FUNCTION__ . ' tag updated in line ' . __LINE__);
     }
 ///////////////// civicrm_tag_delete methods
 
@@ -213,7 +214,7 @@ class api_v3_TagTest extends CiviUnitTestCase
         $tag = array('version' => $this->_apiversion );
         $result = civicrm_api('tag', 'delete',  $tag );
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-        $this->assertEquals( 'Mandatory key(s) missing from params array: one of (id, tag_id)', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: id', $result['error_message'], 'In line ' . __LINE__ );
     }
 
     /**
@@ -225,7 +226,7 @@ class api_v3_TagTest extends CiviUnitTestCase
         
         $result = civicrm_api('tag', 'delete', $tag); 
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ ); 
-        $this->assertEquals( 'Mandatory key(s) missing from params array: one of (id, tag_id)', $result['error_message'], 'In line ' . __LINE__ );            
+        $this->assertEquals( 'Mandatory key(s) missing from params array: id', $result['error_message'], 'In line ' . __LINE__ );            
     }
 
     /**
@@ -240,12 +241,23 @@ class api_v3_TagTest extends CiviUnitTestCase
     }  
 
     /**
-     * Test civicrm_tag_delete with wrong tag id type.
+     * Test civicrm_tag_delete .
      */  
-    function testTagDelete( )
+    function testTagDeleteOldSyntax( )
     {
         $tagID = $this->tagCreate(null); 
-        $params = array('tag_id'=> $tagID,
+        $params = array('tag_id'=> $tagID['id'],
+                        'version' => $this->_apiversion);
+        $result = civicrm_api('tag', 'delete', $params );
+        $this->assertAPISuccess($result, 'In line ' . __LINE__ );
+    }
+    /**
+     * Test civicrm_tag_delete = $params['id'] is correct
+     */  
+    function testTagDeleteCorrectSyntax( )
+    {
+        $tagID = $this->tagCreate(null); 
+        $params = array('id'=> $tagID['id'],
                         'version' => $this->_apiversion);
         $result = civicrm_api('tag', 'delete', $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);  

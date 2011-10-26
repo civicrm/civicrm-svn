@@ -57,11 +57,15 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     
     $errorFnName = ( $apiRequest['version'] == 2 ) ? 'civicrm_create_error' : 'civicrm_api3_create_error';
     if ($apiRequest['version'] > 2) civicrm_api3_api_check_permission($apiRequest['entity'], $apiRequest['action'], $apiRequest['params']);
-    if(!CRM_Utils_Array::value('id',$params)  && strtolower($action) != 'getfields'){
-      $apiRequest['params'] = array_merge(_civicrm_api3_getdefaults($apiRequest),$apiRequest['params']);
-      civicrm_api3_verify_mandatory($params, null, _civicrm_api3_getrequired($apiRequest));
+    if(strtolower($action) != 'getfields'){
+      _civicrm_api3_swap_out_aliases($apiRequest );// we do this before we 
+      if(!CRM_Utils_Array::value('id',$params) ){
+        $apiRequest['params'] = array_merge(_civicrm_api3_getdefaults($apiRequest),$apiRequest['params']);
+      }
+      //if 'id' is set then only 'version' will be checked but should still be checked for consistency
+      civicrm_api3_verify_mandatory($apiRequest['params'], null, _civicrm_api3_getrequired($apiRequest));
+ 
     }
-    
     $function = $apiRequest['function'];    
     if ($apiRequest['function'] && $apiRequest['is_generic']) {
       // Unlike normal API implementations, generic implementations require explicit

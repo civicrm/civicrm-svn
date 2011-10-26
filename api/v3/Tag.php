@@ -91,20 +91,13 @@ function _civicrm_api3_tag_create_spec(&$params){
  */
 function civicrm_api3_tag_delete( $params ) 
 {
-
-    civicrm_api3_verify_one_mandatory ($params,null,array ('id','tag_id'));
-    $tagID = CRM_Utils_Array::value( 'tag_id', $params );
-
-
-    return CRM_Core_BAO_Tag::del( $tagID ) ? civicrm_api3_create_success(1,$params,'tag','delete' ) : civicrm_api3_create_error(  ts( 'Could not delete tag' )  );
-
+    return CRM_Core_BAO_Tag::del( $params['id'] ) ? civicrm_api3_create_success(1,$params,'tag','delete' ) : civicrm_api3_create_error(  ts( 'Could not delete tag' )  );
 }
 /*
- * modify metadata
+ * modify metadata. This causes 'tag_id' to be acceptable
  */
 function _civicrm_api3_tag_delete_spec( &$params ) {
-  $params['id']['api.required'] =0;// set as not required as tag_id also acceptable & no either/or std yet
-  
+  $params['id']['api.aliases']= array('tag_id');
 }
 
 /**

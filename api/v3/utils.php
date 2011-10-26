@@ -148,7 +148,7 @@ function civicrm_api3_verify_mandatory($params, $daoName = null, $keys = array()
     else {
         $unmatched = array();                     // always define to prevent E_NOTICE warning
     }
-    if (!array_key_exists('version', $keys)) {
+    if (!in_array('version', $keys)) {
         $keys[] = 'version';
     }
     foreach ($keys as $key) {
@@ -2050,7 +2050,7 @@ function _civicrm_api3_getdefaults($apiRequest) {
  * Return array of defaults for the given API (function is a wrapper on getfields)
  */
 function _civicrm_api3_getrequired($apiRequest) {
-    $required = array();
+    $required = array('version');
 
     $result = civicrm_api($apiRequest['entity'],
                           'getfields', 
@@ -2062,4 +2062,28 @@ function _civicrm_api3_getrequired($apiRequest) {
         }
     }
     return $required;
+}
+
+/*
+ * Fill params array with alternate (alias) values where a field has an alias and that is filled & the main field isn't
+ * If multiple aliases the last takes precedence
+ */
+function _civicrm_api3_swap_out_aliases(&$apiRequest ) {
+    $result = civicrm_api($apiRequest['entity'],
+                          'getfields',
+                          array('version' => 3,
+                                'action' => $apiRequest['action']));
+
+    foreach ($result['values'] as $field => $values){
+        if (CRM_Utils_Array::value('api.aliases',$values)){
+          if (!CRM_Utils_Array::value($field,$apiRequest['params'])){ // aliased field is empty so we try to use field alias
+            foreach ($values['api.aliases'] as $alias) {       
+             $apiRequest['params'][$field] = CRM_Utils_Array::value($alias,$apiRequest['params']);          
+             //unset original field  nb - need to be careful with this as it may bring inconsistencies
+             // out of the woodwork but will be implementing only as _spec function extended
+             unset($apiRequest['params'][$alias]);
+           }
+        }
+        }
+    }
 }
