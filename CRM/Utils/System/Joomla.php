@@ -427,11 +427,6 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
 
         $config = CRM_Core_Config::singleton( );
         
-        $dbJoomla = DB::connect( $config->userFrameworkDSN );
-        if ( DB::isError( $dbJoomla ) ) {
-            CRM_Core_Error::fatal( "Cannot connect to joomla db via $config->userFrameworkDSN, " . $dbJoomla->getMessage( ) ); 
-        }                                                      
-
         if ( $loadCMSBootstrap ) {
             $bootStrapParams = array( );
             if ( $name && $password ) {
@@ -441,13 +436,6 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
             CRM_Utils_System::loadBootStrap( $bootStrapParams );
         }
 
-        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
-        $name      = $dbJoomla->escapeSimple( $strtolower( $name ) );
-        $sql = 'SELECT u.* FROM ' . $config->userFrameworkUsersTableName .
-            " u WHERE LOWER(u.username) = '$name' AND u.block = 0";
-        $query = $dbJoomla->query( $sql );
-
-        
         $JUserTable =& JTable::getInstance( 'User' , 'JTable' );
         
         $db     = $JUserTable->getDbo();
