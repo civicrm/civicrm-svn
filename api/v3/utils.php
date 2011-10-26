@@ -152,7 +152,9 @@ function civicrm_api3_verify_mandatory($params, $daoName = null, $keys = array()
     if (CRM_Utils_Array::value('id',$params)){
         $keys = array('version');
     } else {
-        $keys[] = 'version';    //required from v3 onwards
+      if (! in_array('version', $keys)) {
+          $keys[] = 'version';    //required from v3 onwards
+      }
     }
     foreach ($keys as $key) {
         if (is_array($key)) {
