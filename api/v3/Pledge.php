@@ -39,7 +39,7 @@
 /**
  * Include utility functions
  */
-require_once 'api/v3/utils.php';
+require_once 'CRM/Pledge/BAO/Pledge.php';
 require_once 'CRM/Utils/Rule.php';
 
 /**
@@ -89,22 +89,16 @@ function civicrm_api3_pledge_create( $params ) {
  * @access public
  */
 function civicrm_api3_pledge_delete( $params ) {
-
-
-    civicrm_api3_verify_one_mandatory ($params,null,array('id', 'pledge_id'));
+    //we set id to be pledge_id here & then verify 'id' to support legacy 'pledge_id' but no advertise it
     if (!empty($params['id'])){
       //handle field name or unique db name
-      $params['pledge_id'] = $params['id'];
+      $params['id'] = CRM_Utils_Array::value('pledge_id', $params);
     }
 
-    $pledgeID = CRM_Utils_Array::value( 'pledge_id', $params );
-    if ( ! $pledgeID ) {
-      return civicrm_api3_create_error(  'Could not find pledge_id in input parameters' );
-    }
+    civicrm_api3_verify_mandatory ($params,null,array('id'));
 
-    require_once 'CRM/Pledge/BAO/Pledge.php';
-    if ( CRM_Pledge_BAO_Pledge::deletePledge( $pledgeID ) ) {
-      return civicrm_api3_create_success(array($pledgeID =>$pledgeID),$params,'pledge','delete' );
+    if ( CRM_Pledge_BAO_Pledge::deletePledge( $params['id'] ) ) {
+      return civicrm_api3_create_success(array($pledgeID =>$params['id']),$params,'pledge','delete' );
     } else {
       return civicrm_api3_create_error(  'Could not delete pledge'  );
     }
