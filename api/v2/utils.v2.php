@@ -207,7 +207,7 @@ function _civicrm_add_formatted_param(&$values, &$params)
     }
     
     if ( isset($values['individual_prefix']) ) {
-        if ( $params['prefix_id'] ) {
+        if ( CRM_Utils_Array::value( 'prefix_id', $params ) ) {
             $prefixes = array( );
             $prefixes = CRM_Core_PseudoConstant::individualPrefix( );
             $params['prefix'] = $prefixes[$params['prefix_id']];
@@ -218,7 +218,7 @@ function _civicrm_add_formatted_param(&$values, &$params)
     }
 
     if (isset($values['individual_suffix'])) {
-        if ( $params['suffix_id'] ) {
+        if ( CRM_Utils_Array::value( 'suffix_id', $params ) ) {
             $suffixes = array( );
             $suffixes = CRM_Core_PseudoConstant::individualSuffix( );
             $params['suffix'] = $suffixes[$params['suffix_id']];
@@ -270,7 +270,7 @@ function _civicrm_add_formatted_param(&$values, &$params)
     }
     
     if ( isset($values['gender']) ) {
-        if ( $params['gender_id'] ) {
+        if ( CRM_Utils_Array::value( 'gender_id', $params ) ) {
             $genders = array( );
             $genders = CRM_Core_PseudoConstant::gender( );
             $params['gender'] = $genders[$params['gender_id']];
