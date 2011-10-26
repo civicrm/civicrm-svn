@@ -39,7 +39,7 @@
 /**
  * Files required for this package
  */
-require_once 'api/v3/utils.php';
+
 require_once 'CRM/Core/BAO/UFGroup.php';
 
 /**
@@ -53,13 +53,10 @@ require_once 'CRM/Core/BAO/UFGroup.php';
  */
 function civicrm_api3_uf_group_create($params) {
 
-		civicrm_api3_verify_mandatory ( $params, 'CRM_Core_DAO_UFGroup' );
-		
 		$ids = array ();
 		$ids ['ufgroup'] = $params ['id'];
 		
-		require_once 'CRM/Core/BAO/UFGroup.php';
-		
+	
 		$ufGroup = CRM_Core_BAO_UFGroup::add ( $params, $ids );
 		_civicrm_api3_object_to_array ( $ufGroup, $ufGroupArray [$ufGroup->id] );
 		
@@ -80,7 +77,6 @@ function civicrm_api3_uf_group_create($params) {
 function civicrm_api3_uf_group_get( $params )
 {
 
-    civicrm_api3_verify_mandatory($params);
     return _civicrm_api3_basic_get('CRM_Core_BAO_UFGroup', $params);
 
 }
@@ -98,8 +94,6 @@ function civicrm_api3_uf_group_get( $params )
  */
 function civicrm_api3_uf_group_delete($params) {
 
-		civicrm_api3_verify_mandatory ( $params, null, array ('id' ) );
-		require_once 'CRM/Core/BAO/UFGroup.php';
 		return CRM_Core_BAO_UFGroup::del ( $params ['id'] );
 
 }
