@@ -40,6 +40,7 @@
  	{include file="CRM/common/enableDisable.tpl"}
     <table cellpadding="0" cellspacing="0" border="0">
         <tr class="columnheader">
+        <th>{ts}Title{/ts}</th>
         <th>{ts}Name{/ts}</th>
         <th>{ts}Description{/ts}</th>
         <th>{ts}Reserved?{/ts}</th>
@@ -48,6 +49,7 @@
         </tr>
         {foreach from=$rows item=row}
     	<tr id="row_{$row.id}"class="crm-admin-optionGroup {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+            <td class="crm-admin-optionGroup-title">{$row.title}</td>	
             <td class="crm-admin-optionGroup-name">{$row.name}</td>	
             <td class="crm-admin-optionGroup-description">{$row.description}</td>
             <td class="crm-admin-optionGroup-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
@@ -60,7 +62,7 @@
 
     {if $action ne 1 and $action ne 2}
 	    <div class="action-link">
-    	<a href="{crmURL q="action=add&reset=1"}" id="newOptionGroup">&raquo; {ts}New Option Group{/ts}</a>
+    	    <a href="{crmURL p='admin/optionGroup' q="action=add&reset=1"}" id="newOptionGroup" class="button"><span><div class="icon add-icon"></div>{ts}New Option Group{/ts}</span></a>
         </div>
     {/if}
 </div>
@@ -68,6 +70,6 @@
     <div class="messages status">
         <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
         {capture assign=crmURL}{crmURL p='civicrm/admin/optionGroup' q="action=add&reset=1"}{/capture}
-        {ts 1=$crmURL}There are no Option Group entered. You can <a href='%1'>add one</a>.{/ts}
+        {ts 1=$crmURL}There are no Option Groups entered. You can <a href='%1'>add one</a>.{/ts}
     </div>    
 {/if}
