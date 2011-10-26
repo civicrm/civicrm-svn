@@ -84,6 +84,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     /**
      */
     function webtestLogin( $admin = false ) {
+		$this->open("{$this->sboxPath}user");
         $password = $admin ? $this->settings->adminPassword : $this->settings->password;
         $username = $admin ? $this->settings->adminUsername : $this->settings->username;
         // Make sure login form is available
@@ -105,7 +106,41 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
      * @return mixed either a string with the (either generated or provided) email or null (if no email)
      */
 
-    function webtestAddContact( $fname = 'Anthony', $lname = 'Anderson', $email = null ) {
+    
+	function webtest_civicrm_api($entity,$action, $params){
+		$CiviSeleniumSettings = new CiviSeleniumSettings;
+		$url_params = array_merge(array('json'=>1, 'key' => $CiviSeleniumSettings->sandboxSITEKEY, 'api_key'=> $CiviSeleniumSettings->apikey, 'action' => $action, 'entity' => $entity), $params);
+		$url_query = http_build_query($url_params);
+		$settingsBaseURL = parse_url($CiviSeleniumSettings->sandboxURL);
+		$url = $CiviSeleniumSettings->sandboxURL . '/sites/all/modules/civicrm/extern/rest.php?' . $url_query;    
+		$result = json_decode(file_get_contents(($url)), TRUE);
+		return $result;
+	}
+
+	function webtestGetFirstValueForOptionGroup($option_group_name){
+      	$result=$this->webtest_civicrm_api("OptionValue", "getvalue", array('option_group_name'=>$option_group_name,'option.limit'=>1,'return'=>'value'));
+		return $result['result'];
+	}
+
+	function webtestGetValidCountryID(){
+		$config_backend=$this->webtestGetConfig('countryLimit');
+		return current($config_backend);
+	}
+
+	function webtestGetValidEntityID($entity){
+		//michaelmcandrew: would like to use getvalue but there is a bug for e.g. group where option.limit not working at the moment CRM-9110
+      	$result=$this->webtest_civicrm_api($entity, "get", array('option.limit'=>1,'return'=>'id'));
+		return current(array_keys($result['values']));
+	}
+
+	function webtestGetConfig($field){
+      	$result=$this->webtest_civicrm_api("Domain", "getvalue", array('option.limit'=>1,'return'=>'config_backend'));
+		$config_backend = unserialize($result['result']);
+		return $config_backend[$field];
+	}
+
+
+	function webtestAddContact( $fname = 'Anthony', $lname = 'Anderson', $email = null ) {
         $this->open($this->sboxPath . 'civicrm/contact/add?reset=1&ct=Individual');
         $this->waitForElementPresent('_qf_Contact_upload_view-bottom');
         $this->type('first_name', $fname);
