@@ -96,15 +96,13 @@ function _civicrm_api3_note_create_spec(&$params){
  *
  * This API is used for deleting a note
  *
- * @param  Int  $noteID   Id of the note to be deleted
- *
+ * @params  array  $noteID   array including id of the note to be deleted
+ * {getfields note_delete}
  * @return null
  * @access public
  */
 function civicrm_api3_note_delete($params) {
-
-		civicrm_api3_verify_mandatory ( $params, null, array ('id' ) );
-		
+	
 		$result = new CRM_Core_BAO_Note ();
 		return $result->del ( $params ['id'] ) ? civicrm_api3_create_success () : civicrm_api3_create_error ( 'Error while deleting Note' );
 
