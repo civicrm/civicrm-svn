@@ -206,6 +206,14 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
             $errors['email_name'] = ts( 'Double quotes are not allow in from name.' );
         }
         
+        // Check for default from email address and organization (domain) name. Force them to change it.
+        if ( $fields['email_address'] == 'info@FIXME.ORG' ){
+            $errors['email_address'] = ts( 'Please enter a valid default FROM email address for system-generated emails.');
+        }
+        if ( $fields['name'] == 'Default Domain Name' ){
+            $errors['name'] = ts( 'Please enter the name of the organization or entity which owns this CiviCRM site.');
+        }
+
         return empty($errors) ? true : $errors;
     }    
 
