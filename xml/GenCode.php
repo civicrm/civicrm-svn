@@ -60,13 +60,13 @@ $smarty->plugins_dir  = array( '../packages/Smarty/plugins', '../CRM/Core/Smarty
      $tempDir = '/tmp';
  }
 
-$compileDir = $tempDir . '/templates_c';
+$compileDir =
+     $tempDir .
+     '/templates_c_' .
+     rand( 1, 10000 );
 
 if (file_exists($compileDir)) {
-    $oldTemplates = preg_grep('/tpl\.php$/', scandir($compileDir));
-    foreach ($oldTemplates as $templateFile) {
-        unlink($compileDir . '/' . $templateFile);
-    }
+    rmdir($compileDir);
 }
 $smarty->compile_dir = $compileDir;
 
@@ -284,11 +284,7 @@ $smarty->assign('db_version',$db_version);
 $smarty->assign('cms',ucwords($cms));
 file_put_contents( $phpCodePath . "civicrm-version.php", $smarty->fetch( 'civicrm_version.tpl' ));
 
-// unlink the templates_c directory
-foreach(glob($tempDir . '/templates_c/*') as $tempFile) {
-  unlink($tempFile);
-}
-rmdir($tempDir . '/templates_c');
+rmdir($compileDir);
 
 function &parseInput( $file ) {
     $dom = new DomDocument( );
@@ -677,8 +673,8 @@ function getIndex(&$indexXML, &$fields, &$indices)
         if (!array_key_exists($fieldName, $fields)) {
             echo "Table does not contain $fieldName\n";
             print_r( $fields );
+            unlink($compileDir);
             exit( );
-            return;
         }
     }
     $indices[$indexName] =& $index;
