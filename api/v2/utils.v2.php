@@ -230,7 +230,7 @@ function _civicrm_add_formatted_param(&$values, &$params)
     
     //CRM-4575
     if ( isset( $values['email_greeting'] ) ) {
-        if ( $params['email_greeting_id'] ) {
+        if ( CRM_Utils_Array::value( 'email_greeting_id', $params ) ) {
             $emailGreetings = array( );
             $emailGreetingFilter = array( 'contact_type'  => CRM_Utils_Array::value('contact_type', $params),
                                           'greeting_type' => 'email_greeting' );
@@ -244,7 +244,7 @@ function _civicrm_add_formatted_param(&$values, &$params)
     }
     
     if ( isset($values['postal_greeting'] ) ) {
-        if ( $params['postal_greeting_id'] ) {
+        if ( CRM_Utils_Array::value( 'postal_greeting_id', $params ) ) {
             $postalGreetings = array( );
             $postalGreetingFilter = array( 'contact_type'  => CRM_Utils_Array::value('contact_type', $params),
                                            'greeting_type' => 'postal_greeting' );
@@ -257,7 +257,7 @@ function _civicrm_add_formatted_param(&$values, &$params)
     }
     
     if ( isset($values['addressee'] ) ) {
-        if ( $params['addressee_id'] ) {
+        if ( CRM_Utils_Array::value( 'addressee_id', $params ) ) {
             $addressee = array( );
             $addresseeFilter = array( 'contact_type'  => CRM_Utils_Array::value('contact_type', $params),
                                       'greeting_type' => 'addressee' );
