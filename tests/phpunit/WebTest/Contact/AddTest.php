@@ -57,16 +57,17 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       //contact details section
       //select prefix
       $this->click("prefix_id");
-      $this->select("prefix_id", "value=3");
+      $this->select("prefix_id", "value=".$this->webtestGetFirstValueForOptionGroup('individual_prefix'));
+
       
       //fill in first name
-      $this->type("first_name", "John" . substr(sha1(rand()), 0, 7));
+      $this->type("first_name", substr(sha1(rand()), 0, 7)."John");
       
       //fill in middle name
       $this->type("middle_name", "Bruce");
       
       //fill in last name
-      $this->type("last_name", "Smith" . substr(sha1(rand()), 0, 7));
+      $this->type("last_name", substr(sha1(rand()), 0, 7)."Smith");
       
       //select suffix
       $this->select("suffix_id", "value=3");
@@ -84,7 +85,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("im_1_name", "testYahoo");
       
       //fill in openID
-      $this->type("openid_1_openid", "http://www.john" . substr(sha1(rand()), 0, 7) . "openid.com");
+      $this->type("openid_1_openid", "http://" . substr(sha1(rand()), 0, 7) . "openid.com");
       
       //fill in website
       $this->type("website_1_url", "http://www.john.com");
@@ -108,10 +109,14 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("address_1_street_address", "902C El Camino Way SW");
       $this->type("address_1_city", "Dumfries");
       $this->type("address_1_postal_code", "1234");
-      $this->assertTrue($this->isTextPresent("- select - United States"));
-      $this->select("address_1_state_province_id", "value=1019");
-      $this->type("address_1_geo_code_1", "1234");
-      $this->type("address_1_geo_code_2", "5678");
+
+      $this->click("address_1_country_id");
+      $this->select("address_1_country_id", "value=".$this->webtestGetValidCountryID());
+
+      if($this->isTextPresent("Latitude")){
+	      $this->type("address_1_geo_code_1", "1234");
+	      $this->type("address_1_geo_code_2", "5678");	
+      }
       
       //fill in address 2
       $this->click("//div[@id='addMoreAddress1']/a/span");
@@ -119,10 +124,14 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("address_2_street_address", "2782Y Dowlen Path W");
       $this->type("address_2_city", "Birmingham");
       $this->type("address_2_postal_code", "3456");
-      $this->assertTrue($this->isTextPresent("- select - United States"));
-      $this->select("address_2_state_province_id", "value=1002");
-      $this->type("address_2_geo_code_1", "2678");
-      $this->type("address_2_geo_code_2", "1456");
+
+      $this->click("address_2_country_id");
+      $this->select("address_2_country_id", "value=".$this->webtestGetValidCountryID());
+
+      if($this->isTextPresent("Latitude")){
+	      $this->type("address_2_geo_code_1", "1234");
+	      $this->type("address_2_geo_code_2", "5678");	
+      }
       
       
       //Communication Preferences section
@@ -162,8 +171,11 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       //Tags and Groups section
       $this->click("tagGroup");
       
-      $this->click("group[1]");
-      $this->click("tag[4]");
+      $this->click("group[{$this->webtestGetValidEntityID('Group')}]");
+      $this->click("tag[{$this->webtestGetValidEntityID('Tag')}]");
+
+
+      
       
       // Clicking save.
       $this->click("_qf_Contact_upload_view");
@@ -184,11 +196,11 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       //contact details section
       //fill in Household name
       $this->click("household_name");
-      $name = "Fraddie Grant's home " . substr(sha1(rand()), 0, 7);
+      $name = substr(sha1(rand()), 0, 7)."Fraddie Grant's home ";
       $this->type("household_name", $name );
       
       //fill in nick name
-      $this->type("nick_name", "Grant's home" . substr(sha1(rand()), 0, 7));
+      $this->type("nick_name", substr(sha1(rand()), 0, 7)."Grant's home");
 
       //fill in email
       $email = substr(sha1(rand()), 0, 7) . "fraddiegrantshome@web.com ";
@@ -197,7 +209,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //fill in phone
       $this->type("phone_1_phone", "444-4444");
-      $this->select("phone_1_phone_type_id", "value=4");
+      $this->select("phone_1_phone_type_id", "value=".$this->webtestGetFirstValueForOptionGroup('phone_type'));
       
       
       //fill in IM
@@ -207,7 +219,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->select("im_1_provider_id", "value=6");
       
       //fill in openID
-      $this->type("openid_1_openid", "http://www.grant" . substr(sha1(rand()), 0, 7) . "shomeopenid.com");
+      $this->type("openid_1_openid", "http://" . substr(sha1(rand()), 0, 7) . "shomeopenid.com");
       
       //fill in website url
       $this->type("website_1_url", "http://www.fraddiegrantshome.com");
@@ -229,11 +241,14 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("address_1_street_address", "938U Bay Rd E");
       $this->type("address_1_city", "Birmingham");
       $this->type("address_1_postal_code", "35278");
-      $this->assertTrue($this->isTextPresent("Country\n - select - United States"));
-      $this->select("address_1_state_province_id", "value=1030");
-      $this->type("address_1_geo_code_1", "5647");
-      $this->type("address_1_geo_code_2", "2843");
       
+      $this->click("address_1_country_id");
+      $this->select("address_1_country_id", "value=".$this->webtestGetValidCountryID());
+
+      if($this->isTextPresent("Latitude")){
+	      $this->type("address_1_geo_code_1", "1234");
+	      $this->type("address_1_geo_code_2", "5678");	
+      }
       
       //Communication Preferences section
       $this->click("commPrefs");
@@ -263,15 +278,14 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("note", "This is a household contact webtest note.");
       
       //Tags and Groups section
-      $this->click("tagGroup");
-      $this->click("group[1]");
-      $this->click("tag[1]");
+      $this->click("group[{$this->webtestGetValidEntityID('Group')}]");
+      $this->click("tag[{$this->webtestGetValidEntityID('Tag')}]");
       
       // Clicking save.
       $this->click("_qf_Contact_upload_view");
       $this->waitForPageToLoad("30000");
       
-      $this->assertTrue($this->isTextPresent("Your Household contact record has been saved."));
+      $this->assertTrue($this->isTextPresent("Your Household contact record has been saved"));
 
   }
   
@@ -296,7 +310,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       //contact details section
       //fill in Organization name
       $this->click("organization_name");
-      $this->type("organization_name", "syntel tech" . substr(sha1(rand()), 0, 7));
+      $this->type("organization_name", substr(sha1(rand()), 0, 7)."syntel tech");
       
       //fill in legal name
       $this->type("legal_name", "syntel tech Ltd");
@@ -318,7 +332,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //fill in openID
       $this->select("openid_1_location_type_id", "value=5");
-      $this->type("openid_1_openid", "http://www.syntel" . substr(sha1(rand()), 0, 7) . "Openid.com");
+      $this->type("openid_1_openid", "http://" . substr(sha1(rand()), 0, 7) . "Openid.com");
       
       //fill in website url
       $this->type("website_1_url", "http://syntelglobal.com");
@@ -340,10 +354,15 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("address_1_street_address", "928A Lincoln Way W");
       $this->type("address_1_city", "Madison");
       $this->type("address_1_postal_code", "68748");
-      $this->assertTrue($this->isTextPresent("Country\n - select - United States"));
-      $this->select("address_1_state_province_id", "value=1030");
-      $this->type("address_1_geo_code_1", "5644");
-      $this->type("address_1_geo_code_2", "3678");
+
+      $this->click("address_1_country_id");
+      $this->select("address_1_country_id", "value=".$this->webtestGetValidCountryID());
+
+      if($this->isTextPresent("Latitude")){
+	      $this->type("address_1_geo_code_1", "1234");
+	      $this->type("address_1_geo_code_2", "5678");	
+      }
+
       
       
       //Communication Preferences section
@@ -368,14 +387,14 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //Tags and Groups section
       $this->click("tagGroup");
-      $this->click("group[1]");
-      $this->click("tag[1]");
+      $this->click("group[{$this->webtestGetValidEntityID('Group')}]");
+      $this->click("tag[{$this->webtestGetValidEntityID('Tag')}]");
       
       // Clicking save.
       $this->click("_qf_Contact_upload_view");
       $this->waitForPageToLoad("30000");
       
-      $this->assertTrue($this->isTextPresent("Your Organization contact record has been saved."));
+      $this->assertTrue($this->isTextPresent("Your Organization contact record has been saved"));
   }
 
   function testIndividualAdWithSharedAddress( )
@@ -398,19 +417,19 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       //contact details section
       //select prefix
       $this->click("prefix_id");
-      $this->select("prefix_id", "value=3");
+      $this->select("prefix_id", "value=".$this->webtestGetFirstValueForOptionGroup('individual_prefix'));
 
       //fill in first name
-      $this->type("first_name", "John" . substr(sha1(rand()), 0, 7));
+      $this->type("first_name", substr(sha1(rand()), 0, 7)."John");
 
       //fill in middle name
       $this->type("middle_name", "Bruce");
 
       //fill in last name
-      $this->type("last_name", "Smith" . substr(sha1(rand()), 0, 7));
+      $this->type("last_name", substr(sha1(rand()), 0, 7)."Smith" );
 
       //create new current employer
-      $currentEmployer = "Web Access" . substr(sha1(rand()), 0, 7);
+      $currentEmployer = substr(sha1(rand()), 0, 7)."Web Access";
 
       $this->type( 'current_employer', $currentEmployer );
 
@@ -432,7 +451,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click('address[1][use_shared_address]');
 
       // create new organization with dialog
-      $this->select("profiles_1", "value=5,8");
+      $this->select("profiles_1", "label=New Organization");
 
       // create new contact using dialog
       $this->waitForElementPresent("css=div#contact-dialog-1");
@@ -440,9 +459,9 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
       $this->type( 'organization_name', $currentEmployer );
       $this->type( 'street_address-1', '902C El Camino Way SW' );
+      $this->type("email-Primary", "john@gmail.com".substr(sha1(rand()), 0, 7)  );
       $this->type( 'city-1', 'Dumfries' );
       $this->type( 'postal_code-1', '1234' );
-      $this->select('state_province-1', 'value=1019');
 
       $this->click("_qf_Edit_next");
 
@@ -461,18 +480,18 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click('address[2][use_shared_address]');
 
       // create new household with dialog
-      $this->select( 'profiles_2', 'value=6,8');
+      $this->select( 'profiles_2', "label=New Household");
 
       // create new contact using dialog
       $this->waitForElementPresent("css=div#contact-dialog-2");
       $this->waitForElementPresent("_qf_Edit_next");
 
-      $sharedHousehold = 'Smith Household' . substr(sha1(rand()), 0, 7 ) ;
+      $sharedHousehold = substr(sha1(rand()), 0, 7 ).'Smith Household' ;
       $this->type( 'household_name', $sharedHousehold );
       $this->type( 'street_address-1', '2782Y Dowlen Path W' );
+      $this->type("email-Primary", substr(sha1(rand()), 0, 7) . "john@gmail.com");
       $this->type( 'city-1', 'Birmingham' );
       $this->type( 'postal_code-1', '3456' );
-      $this->select('state_province-1', 'value=1002');
 
       $this->click("_qf_Edit_next");
 
@@ -485,8 +504,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       // Clicking save.
       $this->click("_qf_Contact_upload_view");
       $this->waitForPageToLoad("30000");
-
-      $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+      $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved"));
 
       //make sure current employer is set
       $this->verifyText("xpath=id('contactTopBar')/table/tbody/tr/td[3]", 'Employer' );
