@@ -139,7 +139,7 @@ function civicrm_api3_uf_field_get( $params )
 function civicrm_api3_uf_field_delete($params ) {
 
     civicrm_api3_verify_mandatory($params,null,array('field_id'));
-    $fieldId  = $params['field_id'];
+    $fieldId  = CRM_Utils_Array::value('field_id',$params,CRM_Utils_Array::value('id',$params));
     
     $ufGroupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFField', $fieldId, 'uf_group_id' );
     if (!$ufGroupId) {
@@ -154,4 +154,11 @@ function civicrm_api3_uf_field_delete($params ) {
 
     return civicrm_api3_create_success($result,$params);
 
+}
+/* 
+ * field id accepted for backward compat - unset required on id
+ */
+function _civicrm_api3_uf_field_delete_spec( &$params ) {
+  $params['id']['api.required'] =0;// set as not required as tag_id also acceptable & no either/or std yet
+  
 }
