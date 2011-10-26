@@ -192,6 +192,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
     {
         $result = civicrm_api('uf_group', 'create', array());
         $this->assertEquals($result['is_error'], 1);
+        print_r($result);
     }
 
     function testUFGroupCreateWithWrongParams()
