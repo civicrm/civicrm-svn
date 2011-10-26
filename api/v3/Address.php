@@ -116,12 +116,9 @@ function _civicrm_api3_address_create_spec(&$params){
  */
 function civicrm_api3_address_delete( &$params ) 
 {
-    civicrm_api3_verify_mandatory ($params,null,array ('id'));
-    $addressID = CRM_Utils_Array::value( 'id', $params );
 
-    require_once 'CRM/Core/DAO/Address.php';
     $addressDAO = new CRM_Core_DAO_Address();
-    $addressDAO->id = $addressID;
+    $addressDAO->id = $params['id'];
     if ( $addressDAO->find( ) ) {
 		while ( $addressDAO->fetch() ) {
 			$addressDAO->delete();
