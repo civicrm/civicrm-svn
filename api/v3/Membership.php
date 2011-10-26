@@ -56,27 +56,35 @@ require_once 'CRM/Utils/Array.php';
  */
 function civicrm_api3_membership_delete($params)
 {
-   
-    civicrm_api3_verify_one_mandatory($params,null,array('id','membership_id'));
-    $membershipID = empty($params['id']) ?$params['membership_id'] :$params['id'];
-
+    
+    if(empty($params['id'])){
+      $params['id'] = CRM_Utils_Array::value('membership_id', $params);
+    }
+    // we'll set it & then check mandatory on id so that membership_id doesn't get 'advertised'
+    //@todo handle this in the api wrapper
+    civicrm_api3_verify_mandatory($params,null,array('id'));
 
     // membershipID should be numeric
-    if ( ! is_numeric( $membershipID) ) {
+    if ( ! is_numeric( $params['id']) ) {
       return civicrm_api3_create_error( 'Input parameter should be numeric' );
     }
 
     require_once 'CRM/Member/BAO/Membership.php';
-    CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipID );
+    CRM_Member_BAO_Membership::deleteRelatedMemberships( $params['id'] );
 
     $membership = new CRM_Member_BAO_Membership();
-    $result = $membership->deleteMembership($membershipID);
+    $result = $membership->deleteMembership($params['id']);
 
     return $result ? civicrm_api3_create_success( ) : civicrm_api3_create_error('Error while deleting Membership');
 
 }
 
-
+/*
+ * modify metadata
+ */
+function _civicrm_api3_membership_delete_spec( &$params ) {
+  $params['id']['api.required'] =0;// set as not required as membership_id also acceptable & no either/or std yet
+}
 
 /**
  * Create a Contact Membership
