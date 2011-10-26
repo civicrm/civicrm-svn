@@ -67,15 +67,23 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
 
         $acl = JFactory::getACL();
 
+        
+        
+        if ( isset($params['name']) ) {
+            $fullname = trim( $params['name'] );
+        } elseif ( isset($params['contactID']) ) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $fullname = trim( CRM_Contact_BAO_Contact::displayName($params['contactID']) );
+        } else {
+            $fullname = trim( $params['cms_name'] );
+        }
+        
         // Prepare the values for a new Joomla! user.
         $values                 = array();
-        $values['name']         = trim($params['cms_name']);
+        $values['name']         = $fullname;
         $values['username']     = trim($params['cms_name']);
-        $values['password']     = $params['cms_pass'];
-        $values['password2']    = $params['cms_confirm_pass'];
-        $values['email']        = trim($params[$mail]);
-        $values['gid']          = $acl->get_group_id( '', $userType);
-        $values['sendEmail']    = 0; 
+        $values['password1']     = $params['cms_pass'];
+        $values['email1']        = trim($params[$mail]);
         
         $useractivation = $userParams->get( 'useractivation' );
         if ( $useractivation == 1 ) { 
@@ -114,20 +122,16 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
      */
     function updateCMSName( $ufID, $ufName ) 
     {
-        $config = CRM_Core_Config::singleton( );
-        require_once('CRM/Core/BAO/CMSUser.php');
-        $db_uf = CRM_Core_BAO_CMSUser::dbHandle( $config );
         $ufID   = CRM_Utils_Type::escape( $ufID, 'Integer' );
         $ufName = CRM_Utils_Type::escape( $ufName, 'String' );
-
-            $sql = "
-UPDATE {$config->userFrameworkUsersTableName}
-SET    email = '$ufName'
-WHERE  id    = $ufID";
-
-            $db_uf->query( $sql );
-            $db_uf->disconnect( );
-       
+        
+        $values = array();
+        $user =& JUser::getInstance( $ufID );
+        
+        $values['email'] = $ufName;
+        $user->bind($values);
+        
+        $user->save();
     }
     
     /**
@@ -150,34 +154,39 @@ WHERE  id    = $ufID";
         //regex \\ to match a single backslash would become '/\\\\/' 
         $isNotValid = (bool) preg_match('/[\<|\>|\"|\'|\%|\;|\(|\)|\&|\\\\|\/]/im', $name );
         if ( $isNotValid || strlen( $name ) < 2 ) {
-                $errors['cms_name'] = ts('Your username contains invalid characters or is too short');
+            $errors['cms_name'] = ts('Your username contains invalid characters or is too short');
         }
-        $sql = "
-SELECT username, email
-  FROM {$config->userFrameworkUsersTableName}
- WHERE (LOWER(username) = LOWER('$name')) OR (LOWER(email) = LOWER('$email'))
-";
-             
-         $db_cms = DB::connect($config->userFrameworkDSN);
-         if ( DB::isError( $db_cms ) ) { 
-                die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) ); 
-         }
-            
-         $query = $db_cms->query( $sql );
-         $row = $query->fetchRow( );
-         if ( !empty( $row ) ) {
-                $dbName  = CRM_Utils_Array::value( 0, $row );
-                $dbEmail = CRM_Utils_Array::value( 1, $row );
-                if ( strtolower( $dbName ) == strtolower( $name ) ) {
-                    $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', 
-                                              array( 1 => $name ) );
-                }
-                if ( strtolower( $dbEmail ) == strtolower( $email ) ) {
-                    $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
-                                              array( 1 => $email) );
-                }
-          }      
+
+        
+        $JUserTable =& JTable::getInstance( 'User' , 'JTable' );
+        
+        $db     = $JUserTable->getDbo();
+        $query  = $db->getQuery(true);
+        $query->select( 'username, email' );
+        $query->from($JUserTable->getTableName());
+        $query->where('(LOWER(username) = LOWER(\''.$name.'\')) OR (LOWER(email) = LOWER(\''.$email.'\'))');
+        $db->setQuery($query, 0, $limit);
+        $users = $db->loadAssocList();
+        
+        $row = array();;
+        if (count($users)) {
+            $row = $users[0];
+        }
+        
+        if ( !empty( $row ) ) {
+            $dbName  = CRM_Utils_Array::value( 'username', $row );
+            $dbEmail = CRM_Utils_Array::value( 'email', $row );
+            if ( strtolower( $dbName ) == strtolower( $name ) ) {
+                $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.',
+                                          array( 1 => $name ) );
+            }
+            if ( strtolower( $dbEmail ) == strtolower( $email ) ) {
+                $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
+                                          array( 1 => $email) );
+            }
+        }
     }
+        
 
     /**
      * sets the title of the page
@@ -438,28 +447,49 @@ SELECT username, email
             " u WHERE LOWER(u.username) = '$name' AND u.block = 0";
         $query = $dbJoomla->query( $sql );
 
+        
+        $JUserTable =& JTable::getInstance( 'User' , 'JTable' );
+        
+        $db     = $JUserTable->getDbo();
+        $query  = $db->getQuery(true);
+        $query->select( 'username, email' );
+        $query->from($JUserTable->getTableName());
+        $query->where('(LOWER(username) = LOWER(\''.$name.'\')) AND (block = 0)');
+        $db->setQuery($query, 0, $limit);
+        $users = $db->loadAssocList();
+        
+        $row = array();;
+        if (count($users)) {
+            $row = $users[0];
+        }
+        
+
         $user = null;
         require_once 'CRM/Core/BAO/UFMatch.php';
-        if ( $row = $query->fetchRow( DB_FETCHMODE_ASSOC ) ) {
+        if ( !empty( $row ) ) {
+            $dbPassword  = CRM_Utils_Array::value( 'password', $row );
+            $dbId  = CRM_Utils_Array::value( 'id', $row );
+            $dbEmail  = CRM_Utils_Array::value( 'email', $row );
+
             // now check password
-            if ( strpos( $row['password'], ':' ) === false ) {
-                if ( $row['password'] != md5( $password ) ) {
+            if ( strpos( $dbPassword, ':' ) === false ) {
+                if ( $dbPassword != md5( $password ) ) {
                     return false;
                 }
             } else {
-                list( $hash, $salt ) = explode( ':', $row['password'] );
+                list( $hash, $salt ) = explode( ':', $dbPassword );
                 $cryptpass           = md5( $password . $salt );
                 if ( $hash != $cryptpass ) {
                     return false;
                 }
             }
             
-            CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user, $row['id'], $row['email'], 'Joomla' );
-            $contactID = CRM_Core_BAO_UFMatch::getContactId( $row['id'] );
+            CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user, $dbId, $dbEmail, 'Joomla' );
+            $contactID = CRM_Core_BAO_UFMatch::getContactId( $dbId );
             if ( ! $contactID ) {
                 return false;
             }
-            return array( $contactID, $row['id'], mt_rand() );
+            return array( $contactID, $dbId, mt_rand() );
         }
         return false;
     }

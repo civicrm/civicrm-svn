@@ -57,9 +57,6 @@ class CRM_Core_BAO_CMSUser
         //start of schronization code
         $config = CRM_Core_Config::singleton( );
 
-        CRM_Core_Error::ignoreException( );
-        $db_uf = self::dbHandle( $config );
-
         // Build an array of rows from UF users table.
         $rows = array( );
         if ( $config->userSystem->is_drupal == '1' ) { 
@@ -84,35 +81,85 @@ class CRM_Core_BAO_CMSUser
 
         set_time_limit(300);
 
-        $user            = new StdClass( );
-        $uf              = $config->userFramework;
-        $contactCount    = 0;
-        $contactCreated  = 0;
-        $contactMatching = 0;
-        foreach ( $rows as $row ) {
-            $user->$id   = $row[$id];
-            $user->$mail = $row[$mail];
-            $user->$name = $row[$name];
-            $contactCount++;
-            if ($match = CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user, $row[$id], $row[$mail], $uf, 1, 'Individual', true ) ) {
-                $contactCreated++;
-            } else {
-                $contactMatching++;
+        if ($config->userFramework == 'Drupal') {
+            $user            = new StdClass( );
+            $uf              = $config->userFramework;
+            $contactCount    = 0;
+            $contactCreated  = 0;
+            $contactMatching = 0;
+            foreach ( $rows as $row ) {
+                $user->$id   = $row[$id];
+                $user->$mail = $row[$mail];
+                $user->$name = $row[$name];
+                $contactCount++;
+                if ($match = CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user, $row[$id], $row[$mail], $uf, 1, 'Individual', true ) ) {
+                    $contactCreated++;
+                } else {
+                    $contactMatching++;
+                }
+                if (is_object($match)) {
+                    $match->free();
+                }
             }
-            if (is_object($match)) {
-              $match->free();
+        } else if ($config->userFramework == 'Joomla') {
+            
+            $JUserTable =& JTable::getInstance( 'User' , 'JTable' );
+            
+            $db     = $JUserTable->getDbo();
+            $query  = $db->getQuery(true);
+            $query->select( $id.', '.$mail.', '.$name );
+            $query->from($JUserTable->getTableName());
+            $query->where($mail != '');
+            
+            $db->setQuery($query, 0, $limit);
+            $users = $db->loadObjectList();
+            
+            $user            = new StdClass( );
+            $uf              = $config->userFramework;
+            $contactCount    = 0;
+            $contactCreated  = 0;
+            $contactMatching = 0;
+            for ($i=0; $i<count($users); $i++ ) {
+                $user->$id   = $users[$i]->$id;
+                $user->$mail = $users[$i]->$mail;
+                $user->$name = $users[$i]->$name;
+                $contactCount++;
+                if ($match = CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user,
+                                                                       $users[$i]->$id,
+                                                                       $users[$i]->$mail,
+                                                                       $uf,
+                                                                       1,
+                                                                       'Individual',
+                                                                       true ) ) {
+                    $contactCreated++;
+                } else {
+                    $contactMatching++;
+                }
+                if (is_object($match)) {
+                    $match->free();
+                }
             }
         }
-        
-        $db_uf->disconnect( );
         
         //end of schronization code
         $status = ts('Synchronize Users to Contacts completed.');
-        $status .= ' ' . ts('Checked one user record.', array('count' => $contactCount, 'plural' => 'Checked %count user records.'));
+        $status .= ' ' . 
+            ts('Checked one user record.',
+               array('count' => $contactCount,
+                     'plural' => 'Checked %count user records.'));
         if ($contactMatching) {
-            $status .= ' ' . ts('Found one matching contact record.', array('count' => $contactMatching, 'plural' => 'Found %count matching contact records.'));
+            $status .= 
+                ' ' . 
+                ts('Found one matching contact record.',
+                   array('count' => $contactMatching,
+                         'plural' => 'Found %count matching contact records.'));
         }
-        $status .= ' ' . ts('Created one new contact record.', array('count' => $contactCreated, 'plural' => 'Created %count new contact records.'));
+
+        $status .= 
+            ' ' . 
+            ts('Created one new contact record.',
+               array('count' => $contactCreated,
+                     'plural' => 'Created %count new contact records.'));
         CRM_Core_Session::setStatus($status, true);
         CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin', 'reset=1' ) );
     }
@@ -353,17 +400,32 @@ class CRM_Core_BAO_CMSUser
                 $result = $uid;
             }
         } elseif ( $isJoomla ) { 
-            // TODO: Insert Joomla! code  here.
-            $id   = 'id'; 
-            $mail = 'email';
-        } 
+            $mail = $contact['email'];
+            
+            $JUserTable =& JTable::getInstance( 'User' , 'JTable' );
+            
+            $db     = $JUserTable->getDbo();
+            $query  = $db->getQuery(true);
+            $query->select( 'username, email' );
+            $query->from($JUserTable->getTableName());
+            $query->where('(LOWER(email) = LOWER(\''.$email.'\'))');
+            $db->setQuery($query, 0, $limit);
+            $users = $db->loadAssocList();
+            
+            $row = array();;
+            if (count($users)) {
+                $row = $users[0];
+            }
+            
+            if ( !empty( $row ) ) {
+                $uid = CRM_Utils_Array::value( 'id', $row );
+                $contact['user_exists'] = true;
+                $result = $uid;
+            }
+        }
 
         return $result;
     }
-
-
-
-
 
     static function &dbHandle( &$config ) {
         CRM_Core_Error::ignoreException( );
