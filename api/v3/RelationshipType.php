@@ -116,7 +116,6 @@ function civicrm_api3_relationship_type_get( $params  )
  */
 function civicrm_api3_relationship_type_delete( $params ) {
 
-        civicrm_api3_verify_mandatory($params,null,array('id'));
         require_once 'CRM/Utils/Rule.php';
         if( $params['id'] != null && ! CRM_Utils_Rule::integer( $params['id'] ) ) {
             return civicrm_api3_create_error( 'Invalid value for relationship type ID' );
