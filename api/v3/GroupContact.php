@@ -128,7 +128,13 @@ function civicrm_api3_group_contact_delete($params) {
 		return civicrm_api ( 'GroupContact','Create',$params);
 
 }
-
+/*
+ * modify metadata
+ */
+function _civicrm_api3_group_contact_delete_spec( &$params ) {
+  $params['id']['api.required'] =0;// set as not required no either/or std yet
+  
+}
 
 /**
  *
