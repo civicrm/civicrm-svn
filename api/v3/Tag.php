@@ -99,7 +99,9 @@ function civicrm_api3_tag_delete( $params )
     return CRM_Core_BAO_Tag::del( $tagID ) ? civicrm_api3_create_success(1,$params,'tag','delete' ) : civicrm_api3_create_error(  ts( 'Could not delete tag' )  );
 
 }
-
+/*
+ * modify metadata
+ */
 function _civicrm_api3_tag_delete_spec( &$params ) {
   $params['id']['api.required'] =0;// set as not required as tag_id also acceptable & no either/or std yet
   
