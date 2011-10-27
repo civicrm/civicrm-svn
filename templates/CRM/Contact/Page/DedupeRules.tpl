@@ -47,7 +47,7 @@
                 </thead>
                 {foreach from=$rows item=row}
                   <tr class="{cycle values="odd-row,even-row"}">
-                    <td>{if isset($row.name)}{$row.name}{/if}</td>
+                    <td>{$row.title}</td>
                     <td>{$row.contact_type_display}</td>	
                     <td>{$row.level}</td>	
                     {if $row.is_default}
