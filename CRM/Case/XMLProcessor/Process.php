@@ -318,6 +318,11 @@ AND        a.is_deleted = 0
             $client = array( 1 => $params['clientID'] );
         }
 
+        //set order
+        if ( isset( $activityTypeXML->order ) ) {
+            $orderVal = (string) $activityTypeXML->order;
+        }
+
         require_once 'CRM/Core/OptionGroup.php';
         if ( $activityTypeName == 'Open Case' ) {
             $activityParams = array( 'activity_type_id'    => $activityTypeID,
@@ -333,7 +338,8 @@ AND        a.is_deleted = 0
                                      'location'            => CRM_Utils_Array::value('location',  $params),
                                      'details'             => CRM_Utils_Array::value('details',   $params),
                                      'duration'            => CRM_Utils_Array::value('duration',  $params),
-                                     );
+                                     'weight'              => $orderVal
+                                    );
         } else {
             $activityParams = array( 'activity_type_id'    => $activityTypeID,
                                      'source_contact_id'   => $params['creatorID'],
@@ -342,7 +348,8 @@ AND        a.is_deleted = 0
                                      'status_id'           => CRM_Core_OptionGroup::getValue( 'activity_status',
                                                                                             $statusName,
                                                                                             'name' ),
-                                     'target_contact_id'   => $client
+                                     'target_contact_id'   => $client,
+                                     'weight'              => $orderVal
                                     );
         }
         
