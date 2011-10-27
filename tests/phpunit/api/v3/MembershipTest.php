@@ -85,8 +85,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                         'version'  => $this->_apiversion,);
         $result = civicrm_api('membership','delete',$params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        $this->assertEquals( $result['is_error'], 0,
-                             "In line " . __LINE__ );      
+        $this->assertAPISuccess( $result, "In line " . __LINE__ );      
   
     }
     
