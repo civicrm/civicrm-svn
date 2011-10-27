@@ -30,8 +30,7 @@ class CRM_Dedupe_BAO_QueryBuilder_IndividualStrict extends CRM_Dedupe_BAO_QueryB
             SELECT contact1.id as id1, contact2.id as id2, {$rg->threshold} as weight
             FROM civicrm_contact as contact1
               JOIN civicrm_email as email1 ON email1.contact_id=contact1.id
-              JOIN civicrm_contact as contact2 ON
-                contact1.id = contact2.id
+              JOIN civicrm_contact as contact2
               JOIN civicrm_email as email2 ON
                 email2.contact_id=contact2.id AND
                 email1.email=email2.email

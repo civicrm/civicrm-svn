@@ -36,7 +36,6 @@ class CRM_Dedupe_BAO_QueryBuilder_IndividualFuzzy extends CRM_Dedupe_BAO_QueryBu
             FROM civicrm_contact as contact1
               JOIN civicrm_email as email1 ON email1.contact_id=contact1.id
               JOIN civicrm_contact as contact2 ON
-                contact1.id = contact2.id AND
                 contact1.first_name = contact2.first_name AND
                 contact1.last_name = contact2.last_name
               JOIN civicrm_email as email2 ON
