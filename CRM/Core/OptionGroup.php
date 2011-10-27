@@ -295,7 +295,7 @@ WHERE  v.option_group_id = g.id
      * @param string $groupName the name of the option group - make sure there is no conflict
      * @param array  $values    the associative array that has information on the option values
      *                          the keys of this array are:
-     *                          string 'label'       (required)
+     *                          string 'title'       (required)
      *                          string 'value'       (required)
      *                          string 'name'        (optional)
      *                          string 'description' (optional)
@@ -310,14 +310,14 @@ WHERE  v.option_group_id = g.id
      * @return int   the option group ID
      *
      */
-    static function createAssoc( $groupName, &$values, &$defaultID, $groupLabel = null ) 
+    static function createAssoc( $groupName, &$values, &$defaultID, $groupTitle = null ) 
     {
         self::deleteAssoc( $groupName );
         if ( ! empty( $values ) ) {
             require_once 'CRM/Core/DAO/OptionGroup.php';
             $group = new CRM_Core_DAO_OptionGroup( );
             $group->name        = $groupName;
-            $group->label       = empty( $groupLabel ) ? $groupName : $groupLabel;
+            $group->title       = empty( $groupTitle ) ? $groupName : $groupTitle;
             $group->is_reserved = 1;
             $group->is_active   = 1;
             $group->save( );
