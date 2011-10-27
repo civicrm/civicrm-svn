@@ -121,19 +121,34 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         $navContacts = array( 'prevContactID'   => null,
                               'prevContactName' => null,
                               'nextContactID'   => null,
-                              'nextContactName' => null );
+                              'nextContactName' => null,
+                              'nextPrevError'   => 0 );
         if ( $qfKey ) {
             require_once 'CRM/Core/BAO/PrevNextCache.php';
             $pos = CRM_Core_BAO_PrevNextCache::getPositions( "civicrm search $qfKey",
                                                              $this->_contactId,
                                                              $this->_contactId );
+            $found = false;
+
             if ( isset( $pos['prev'] ) ) {
                 $navContacts['prevContactID'  ] = $pos['prev']['id1'];
                 $navContacts['prevContactName'] = $pos['prev']['data'];
+                $found = true;
             }
+
             if ( isset( $pos['next'] ) ) {
                 $navContacts['nextContactID'  ] = $pos['next']['id1'];
                 $navContacts['nextContactName'] = $pos['next']['data'];
+                $found = true;
+            }
+
+            if ( ! $found ) {
+                // seems like we did not find any contacts
+                // maybe due to bug CRM-9096
+                // however we should account for 1 contact results (which dont have prev next)
+                if ( ! $pos['foundEntry'] ) {
+                    $navContacts['nextPrevError'] = 1;
+                }
             }
         }
         $this->assign( $navContacts );

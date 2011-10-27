@@ -792,7 +792,7 @@ SELECT 'civicrm_contact', contact_a.id, contact_a.id, '$cacheKey', contact_a.dis
         if ( is_a( $result, 'DB_Error' ) ) {
             // oops the above query failed, so lets just ignore it
             // and return
-            CRM_Core_Session::setStatus( ts( 'PrevNext Support has limited support for sort.' ) );
+            // we print a sorry cant figure it out on view page
             return;
         }
 
