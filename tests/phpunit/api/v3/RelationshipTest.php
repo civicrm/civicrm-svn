@@ -470,10 +470,10 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
      */
     function testRelationshipDeleteEmpty( )
     {
-        $params = array( );
+        $params = array('version' => $this->_apiversion );
         $result =& civicrm_api('relationship','delete',$params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: id, version' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: id' );
     }
     
     /**
@@ -501,7 +501,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         
         $result =& civicrm_api('relationship','delete',$params ); 
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: id, version' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: version, id' );
     }
     
     /**

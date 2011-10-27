@@ -36,7 +36,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
     {
         $params = array();
         $group = & civicrm_api('group','create',$params );
-        $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: version' );        
+        $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: version, title' );        
     }
     
     function testgroupCreateNoTitle( )
@@ -52,7 +52,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
                         );
         
         $group = & civicrm_api('group','create',$params );
-        $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: version' );        
+        $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: version, title' );        
     }
     
     
@@ -154,7 +154,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
     {
         $params = array();
         $group = & civicrm_api('group','delete',$params );
-        $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: id, version' );        
+        $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: version, id' );        
     } 
 
     function testgetfields(){
