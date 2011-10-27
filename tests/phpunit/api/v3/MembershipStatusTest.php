@@ -267,7 +267,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
         $params = array( 'id' => $membershipStatusID ,
                          'version' => $this->_apiversion,);
         $result = civicrm_api('membership_status','delete', $params );
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
+        $this->assertAPISuccess( $result, 'In line ' . __LINE__ );
 
         civicrm_api('Membership','Delete',array('id'      =>  $membershipID  ,
                                                 'version' => $this->_apiversion,));
