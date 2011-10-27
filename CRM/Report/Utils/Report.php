@@ -289,9 +289,19 @@ WHERE  inst.report_id = %1";
         
         return true;
     }
-
-    // check role based permission for report
+    
+    /**
+     * Check if the user can view a report instance based on their role(s)
+     *
+     * @instanceId string $str the report instance to check
+     *
+     * @return boolean true if yes, else false
+     * @static
+     * @access public
+     */
     static function isInstanceGroupRoleAllowed( $instanceId ) {
+        if ( ! $instanceId ) {
+             return true;    static function isInstanceGroupRoleAllowed( $instanceId ) {
         if ( ! $instanceId ) {
             return true;
         }
