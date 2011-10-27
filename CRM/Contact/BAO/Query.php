@@ -4036,7 +4036,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
             } else {
                 $this->_where[$grouping][] = "{$tableName}.{$dbFieldName} $firstOP {$value}";
                 $displayValue = $options ? $options[$value] : $value;
-                $this->_qill[$grouping][]  = "$fieldTitle - $phrase \"$displayValue\"";
+                $this->_qill[$grouping][]  = "$fieldTitle - $firstPhrase \"$displayValue\"";
             }
             $this->_tables[$tableName] = $this->_whereTables[$tableName] = 1;
 
