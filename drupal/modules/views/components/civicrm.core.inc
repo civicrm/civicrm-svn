@@ -129,6 +129,13 @@ function _civicrm_core_data (&$data, $enabled) {
                                            'sort' => array(
                                                            'handler' => 'views_handler_sort',
                                                            ),
+                                            'relationship' => array(
+                                                                   'base' => 'civicrm_contribution',
+                                                                   'title' => 'Contribution records',
+                                                                   'field' => 'contact_id',
+                                                                   'handler' => 'views_handler_relationship',
+                                                                   'label' => t('CiviCRM Contributions'),
+                                                                  ), 
                                            );
 
     // Drupal ID of the contact (from uf_match.uf_id)
