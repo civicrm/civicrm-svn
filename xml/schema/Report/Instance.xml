@@ -72,6 +72,14 @@
        <type>varchar</type>
        <length>255</length>
        <comment>permission required to be able to run this instance</comment>
+       <add>2.2</add>
+  </field>
+  <field>
+       <name>grouprole</name>
+       <type>varchar</type>
+       <length>1024</length>
+       <comment>role required to be able to run this instance</comment>
+       <add>4.1</add>
   </field>
   <field>
        <name>form_values</name>

@@ -61,6 +61,19 @@ class CRM_Core_Permission_UnitTests {
     }
 
     /**
+     * Given a roles array, check for access requirements
+     *
+     * @param array $array the roles to check
+     *
+     * @return boolean true if yes, else false
+     * @static
+     * @access public
+     */
+    static function checkGroupRole( $array) {
+        return false;
+    }
+
+    /**
      * Get all the contact emails for users that have a specific permission
      *
      * @param string $permissionName name of the permission we are interested in
