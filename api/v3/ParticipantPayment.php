@@ -92,6 +92,7 @@ function _civicrm_api3_participant_payment_create_spec(&$params){
  */
 function civicrm_api3_participant_payment_delete( $params )
 {
+    $participant = new CRM_Event_BAO_ParticipantPayment();
     return $participant->deleteParticipantPayment( $params ) ? civicrm_api3_create_success( ) : civicrm_api3_create_error('Error while deleting participantPayment');
 
 }
