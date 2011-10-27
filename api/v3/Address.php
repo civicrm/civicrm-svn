@@ -109,7 +109,7 @@ function _civicrm_api3_address_create_spec(&$params){
  *
  * @param  array  $params
  * 
- * {@schema Core/Address.xml}
+ * {@getfields address_delete}
  * {@example AddressDelete.php 0}
  * @return boolean | error  true if successfull, error otherwise
  * @access public
