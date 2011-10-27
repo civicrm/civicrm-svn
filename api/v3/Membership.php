@@ -40,10 +40,11 @@
 /**
  * Files required for this package
  */
-require_once 'api/v3/utils.php';
+
 require_once 'CRM/Utils/Rule.php';
 require_once 'CRM/Utils/Array.php';
-
+require_once "CRM/Member/DAO/Membership.php";
+require_once "CRM/Member/PseudoConstant.php";
 /**
  * Deletes an existing contact membership
  *
@@ -57,13 +58,6 @@ require_once 'CRM/Utils/Array.php';
 function civicrm_api3_membership_delete($params)
 {
     
-    if(empty($params['id'])){
-      $params['id'] = CRM_Utils_Array::value('membership_id', $params);
-    }
-    // we'll set it & then check mandatory on id so that membership_id doesn't get 'advertised'
-    //@todo handle this in the api wrapper
-    civicrm_api3_verify_mandatory($params,null,array('id'));
-
     // membershipID should be numeric
     if ( ! is_numeric( $params['id']) ) {
       return civicrm_api3_create_error( 'Input parameter should be numeric' );
@@ -83,7 +77,8 @@ function civicrm_api3_membership_delete($params)
  * modify metadata
  */
 function _civicrm_api3_membership_delete_spec( &$params ) {
-  $params['id']['api.required'] =0;// set as not required as membership_id also acceptable & no either/or std yet
+  $params['id']['api.required'] =1;// set as not required as membership_id also acceptable & no either/or std yet
+  $params['id']['api.aliases'] = array('membership_id');
 }
 
 /**
@@ -99,8 +94,6 @@ function _civicrm_api3_membership_delete_spec( &$params ) {
  */
 function civicrm_api3_membership_create($params)
 {
-
-
 
     $error = _civicrm_api3_membership_check_params( $params );
     if ( civicrm_api3_error( $error ) ) {
@@ -271,8 +264,7 @@ function civicrm_api3_membership_get($params)
  */
 function _civicrm_api3_membership_format_params( $params, &$values, $create=false)
 {
-  require_once "CRM/Member/DAO/Membership.php";
-  require_once "CRM/Member/PseudoConstant.php";
+
   $fields = CRM_Member_DAO_Membership::fields( );
   _civicrm_api3_store_values( $fields, $params, $values );
 
