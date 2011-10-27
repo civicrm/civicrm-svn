@@ -40,7 +40,7 @@
 /**
  * Files required for this package
  */
-require_once 'api/v3/utils.php';
+ require_once 'CRM/Event/BAO/Participant.php';
 
 /**
  * Create an Event Participant
@@ -188,7 +188,7 @@ function &civicrm_api3_participant_delete( $params )
 
 
 /**
- *
+ * @deprecated - this is part of the import parser not the API & needs to be moved on out
  * @param <type> $params
  * @param <type> $onDuplicate
  * @return <type>
@@ -214,7 +214,7 @@ function _civicrm_api3_create_participant_formatted( $params , $onDuplicate )
  */
 function _civicrm_api3_participant_check_params( $params ,$checkDuplicate = false )
 {
-    require_once 'CRM/Event/BAO/Participant.php';
+
     //check if participant id is valid or not
     if( CRM_Utils_Array::value( 'id', $params ) ) {
         $participant = new CRM_Event_BAO_Participant();
