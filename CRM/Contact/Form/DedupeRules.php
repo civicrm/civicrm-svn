@@ -71,11 +71,13 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
             $rgDao            = new CRM_Dedupe_DAO_RuleGroup();
             $rgDao->id        = $this->_rgid;
             $rgDao->find(true);
-            $this->_defaults['threshold']  = $rgDao->threshold;
-            $this->_contactType            = $rgDao->contact_type;
-            $this->_defaults['level']      = $rgDao->level;
-            $this->_defaults['name']       = $rgDao->name;
-            $this->_defaults['is_default'] = $rgDao->is_default;
+            $this->_defaults['threshold']   = $rgDao->threshold;
+            $this->_contactType             = $rgDao->contact_type;
+            $this->_defaults['level']       = $rgDao->level;
+            $this->_defaults['name']        = $rgDao->name;
+            $this->_defaults['title']       = $rgDao->title;
+            $this->_defaults['is_default']  = $rgDao->is_default;
+            $this->_defaults['is_reserved'] = $rgDao->is_reserved;
             $ruleDao = new CRM_Dedupe_DAO_Rule();
             $ruleDao->dedupe_rule_group_id = $this->_rgid;
             $ruleDao->find();
@@ -108,7 +110,8 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
     {
         $foo = CRM_Core_DAO::getAttribute('CRM_Dedupe_DAO_Rule', 'title');
         
-        $this->add('text', 'name', ts('Rule Name'), array( 'maxlength' => 64, 'class' => 'huge'), true );
+        $this->add('text', 'title', ts('Rule Name'), array( 'maxlength' => 255, 'class' => 'huge'), true );
+        $this->add('text', 'name', ts('Internal Name'), array( 'maxlength' => 64, 'class' => 'huge'), true );
         $this->addRule( 'name', ts('A duplicate matching rule with this name already exists. Please select another name.'), 
                         'objectExists', array( 'CRM_Dedupe_DAO_RuleGroup', $this->_rgid, 'name' ) );
         $levelType = array(
@@ -117,6 +120,8 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
                            );
         $ruleLevel = $this->add('select', 'level', ts('Level'), $levelType);
 
+        $this->add('checkbox', 'is_reserved', ts('Reserved?') );
+        
         $default = $this->add('checkbox', 'is_default', ts('Default?') );
         if ( CRM_Utils_Array::value( 'is_default', $this->_defaults ) ) {
             $default->freeze();
@@ -197,9 +202,11 @@ UPDATE civicrm_dedupe_rule_group
             $rgDao->id           = $this->_rgid;
         }
         $rgDao->threshold    = $values['threshold'];
+        $rgDao->title        = $values['title'];
         $rgDao->name         = $values['name'];
         $rgDao->level        = $values['level'];
         $rgDao->contact_type = $this->_contactType;
+        $rgDao->is_reserved  = CRM_Utils_Array::value( 'is_reserved', $values, false );
         $rgDao->is_default   = $isDefault;
         $rgDao->save();
         
