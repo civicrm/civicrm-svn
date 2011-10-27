@@ -199,7 +199,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                 require_once 'CRM/Core/BAO/OptionGroup.php';
                 $optionGroup            = new CRM_Core_DAO_OptionGroup( );
                 $optionGroup->name      =  "{$params['column_name']}_". date( 'YmdHis' );
-                $optionGroup->label     =  $params['label'];
+                $optionGroup->title     =  $params['label'];
                 $optionGroup->is_active = 1;
                 $optionGroup->save( );
                 $params['option_group_id'] = $optionGroup->id;
@@ -1881,14 +1881,14 @@ AND    cf.id = %1";
             }
             
             $query = "
-    SELECT  g.id, g.label
+    SELECT  g.id, g.title
       FROM  civicrm_option_group g
 INNER JOIN  civicrm_custom_field f ON ( g.id = f.option_group_id ) 
      WHERE  {$whereClause}";
             
             $dao = CRM_Core_DAO::executeQuery( $query );
             while ( $dao->fetch( ) ) {
-                $customOptionGroup[$cacheKey][$dao->id] = $dao->label;
+                $customOptionGroup[$cacheKey][$dao->id] = $dao->title;
             }
         }
         

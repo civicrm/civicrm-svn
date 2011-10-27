@@ -28,7 +28,8 @@
    {include file="CRM/Admin/Form/OptionGroup.tpl"}
 {else}
 <div id="help">
-    {ts}CiviCRM stores configurable choices for various drop-down fields as 'option groups'. You can click <strong>Options</strong> to view the available choices. Many option groups are used programatically and values should be added or modified with caution.{/ts}
+    {ts}CiviCRM stores configurable choices for various drop-down fields as 'option groups'. You can click <strong>Options</strong> to view the available choices.{/ts}
+    <p><div class="icon alert-icon"></div> {ts}WARNING: Many option groups are used programatically and values should be added or modified with caution.{/ts}</p>
 </div>
 {/if}
 
@@ -46,7 +47,7 @@
         </tr>
         {foreach from=$rows item=row}
     	<tr id="row_{$row.id}"class="crm-admin-optionGroup {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-            <td class="crm-admin-optionGroup-title">{$row.title}</td>	
+            <td class="crm-admin-optionGroup-title">{if $row.title}{$row.title}{else}( {ts}none{/ts} ){/if}</td>	
             <td class="crm-admin-optionGroup-name">{$row.name}</td>	
             <td><a href="{crmURL p="civicrm/admin/optionValue" q="gid=`$row.id`&reset=1"}" title="{ts}view and edit options{/ts}">{ts}Options{/ts}</a></td>
         </tr>
