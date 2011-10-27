@@ -270,4 +270,11 @@
        <key>id</key> 
        <onDelete>SET NULL</onDelete>
   </foreignKey>
+  <field>
+      <name>dedupe_email</name>
+      <type>boolean</type>
+      <default>0</default>
+      <add>4.1</add>    
+      <comment>Remove duplicate emails?</comment>
+  </field>
 </table>

@@ -39,8 +39,16 @@
      campaignTrClass="crm-mailing-group-form-block-campaign_id"}
 
     {if $context EQ 'search'}
-        <tr class="crm-mailing-group-form-block-baseGroup"><td class="label">{$form.baseGroup.label}</td><td>{$form.baseGroup.html} {help id="base-group"}</td></tr>
-    {/if}	
+        <tr class="crm-mailing-group-form-block-baseGroup">
+            <td class="label">{$form.baseGroup.label}</td>
+            <td>{$form.baseGroup.html} {help id="base-group"}</td>
+        </tr>
+    {/if}
+    
+    <tr class="crm-mailing-group-form-block-dedupeemail">
+        <td class="label">{$form.dedupe_email.label}</td>
+        <td>{$form.dedupe_email.html} {help id="dedupe-email"}</td>
+    </tr>
   </table>
 
 
