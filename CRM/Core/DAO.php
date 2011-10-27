@@ -880,7 +880,10 @@ FROM   civicrm_domain
             require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
             eval( '$dao   = new ' . $daoName . '( );' );
         }
-        $dao->query( $queryStr, $i18nRewrite );
+        $result = $dao->query( $queryStr, $i18nRewrite );
+        if ( is_a( $result, 'DB_Error' ) ) {
+            return $result;
+        }
 
         if ( $freeDAO ||
              preg_match( '/^(insert|update|delete|create|drop|replace)/i', $queryStr ) ) {

@@ -374,12 +374,14 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
 
                 require_once 'CRM/Core/PseudoConstant.php';
                 $locationTypes = CRM_Core_PseudoConstant::locationType( );
-                
+
+                CRM_Core_Error::debug( $this->_fields );
+
                 foreach ( $this->_fields as $name => $field ) { 
                     if ( CRM_Utils_Array::value( 'in_selector', $field ) &&
                          ! in_array( $name, $skipFields ) ) {
                         if ( strpos( $name, '-' ) !== false ) {
-                            list( $fieldName, $lType, $type ) = explode( '-', $name );
+                            list( $fieldName, $lType, $type ) = CRM_Utils_System::explode( '-', $name, 3 );
                             
                             if ( $lType == 'Primary' ) {
                                 $locationTypeName = 1;
@@ -522,7 +524,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                 if ( CRM_Utils_Array::value( 'in_selector', $field ) && 
                      ! in_array( $key, $skipFields ) ) { 
                     if ( strpos( $key, '-' ) !== false ) {
-                        list( $fieldName, $id, $type ) = explode( '-', $key );
+                        list( $fieldName, $id, $type ) = CRM_Utils_System::explode( '-', $key, 3 );
 
                         if ($id == 'Primary') {
                             $locationTypeName = 1;
@@ -756,15 +758,25 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
     }
 
     function fillupPrevNextCache( $sort ) {
+        $cacheKey = "civicrm search {$this->_key}";
+
+        require_once 'CRM/Core/BAO/PrevNextCache.php';
+        CRM_Core_BAO_PrevNextCache::deleteItem( null, $cacheKey, 'civicrm_contact' );
+
         // lets fill up the prev next cache here, so view can scroll thru
         $sql = $this->_query->searchQuery( 0, 0, $sort,
                                            false, false, 
                                            false, true, true, null );
 
-        
-        $cacheKeyString = "civicrm search {$this->_key}";
+        // CRM-9096
+        // due to limitations in our search query writer, the above query does not work
+        // in cases where the query is being sorted on a non-contact table
+        // this results in a fatal error :(
+        // see below for the gross hack of trapping the error and not filling
+        // the prev next cache in this situation
+        // the other alternative of running the FULL query will just be incredibly inefficient
+        // and slow things down way too much on large data sets / complex queries
 
-        $cacheKey = "civicrm search {$this->_key}";
         $insertSQL = "
 INSERT INTO civicrm_prevnext_cache ( entity_table, entity_id1, entity_id2, cacheKey, data )
 SELECT 'civicrm_contact', contact_a.id, contact_a.id, '$cacheKey', contact_a.display_name
@@ -773,16 +785,22 @@ SELECT 'civicrm_contact', contact_a.id, contact_a.id, '$cacheKey', contact_a.dis
 
         $sql = str_replace( $replaceSQL, $insertSQL, $sql );
 
-        require_once 'CRM/Core/BAO/PrevNextCache.php';
-        CRM_Core_BAO_PrevNextCache::deleteItem( null, $cacheKeyString, 'civicrm_contact' );
+        CRM_Core_Error::ignoreException();
+        $result = CRM_Core_DAO::executeQuery( $sql );
+        CRM_Core_Error::setCallback();
 
-        CRM_Core_DAO::executeQuery( $sql );
+        if ( is_a( $result, 'DB_Error' ) ) {
+            // oops the above query failed, so lets just ignore it
+            // and return
+            CRM_Core_Session::setStatus( ts( 'PrevNext Support has limited support for sort.' ) );
+            return;
+        }
 
         // also record an entry in the cache key table, so we can delete it periodically
         require_once 'CRM/Core/BAO/Cache.php';
-        CRM_Core_BAO_Cache::setItem( $cacheKeyString,
+        CRM_Core_BAO_Cache::setItem( $cacheKey,
                                      'CiviCRM Search PrevNextCache',
-                                     $cacheKeyString );
+                                     $cacheKey );
     }
    
     /**
