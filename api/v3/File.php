@@ -43,7 +43,6 @@
 /**
  * Files required for this package
  */
-require_once 'api/v3/utils.php';
 require_once 'CRM/Core/DAO/File.php';
 require_once 'CRM/Core/BAO/File.php';
 /**
@@ -113,9 +112,6 @@ function civicrm_api3_file_get($params)
  * @access public
  */
 function &civicrm_api3_file_update( $params ) {
-  if ( !is_array( $params ) ) {
-    return civicrm_api3_create_error( 'Input variable `params` is not an array' );
-  }
 
   if ( !isset($params['id']) ) {
     return civicrm_api3_create_error( 'Required parameter missing' );

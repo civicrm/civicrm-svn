@@ -59,8 +59,7 @@ require_once 'CRM/Contact/BAO/Group.php';
 function civicrm_api3_group_create( $params )
 {
      
-    civicrm_api3_verify_mandatory($params,null,array('title'));
-    $group = CRM_Contact_BAO_Group::create( $params );
+  $group = CRM_Contact_BAO_Group::create( $params );
 
     if ( is_null( $group ) ) {
       return civicrm_api3_create_error( 'Group not created' );
@@ -79,6 +78,7 @@ function civicrm_api3_group_create( $params )
  */
 function _civicrm_api3_group_create_spec(&$params){
     $params['is_active']['api.default'] = 1; 
+    $params['title']['api.required'] = 1; 
 }
 
 /**

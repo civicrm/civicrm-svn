@@ -96,7 +96,16 @@ function civicrm_api3_activity_type_create( $params ) {
     return civicrm_api3_create_success($activityType,$params,'activity_type','create');
 
 }
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_activity_type_create_spec(&$params){
+  $params['label']['api.required'] =1;
+  $params['weight']['api.required'] =1;
+}
 /**
  * Function to delete activity type
  * @param activityTypeId int   activity type id to delete

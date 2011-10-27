@@ -242,11 +242,8 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
         $membershipStatusID = $this->membershipStatusCreate( );
         
         $this->_contactID           = $this->individualCreate( ) ;
-     
-        require_once 'CRM/Member/PseudoConstant.php';
-
-
-        
+    
+       
         $this->_entity = 'membership';
         $params = array(
                         'contact_id'         => $this->_contactID,  
@@ -267,7 +264,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
         $params = array( 'id' => $membershipStatusID ,
                          'version' => $this->_apiversion,);
         $result = civicrm_api('membership_status','delete', $params );
-        $this->assertAPISuccess( $result, 'In line ' . __LINE__ );
+        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
 
         civicrm_api('Membership','Delete',array('id'      =>  $membershipID  ,
                                                 'version' => $this->_apiversion,));
