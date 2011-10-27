@@ -125,12 +125,15 @@ class CRM_Admin_Page_OptionValue extends CRM_Core_Page_Basic
         $this->assign('gid' , $this->_gid );
 
         if ($this->_gid) {
-            require_once 'CRM/Core/BAO/OptionGroup.php';
-            $groupTitle = CRM_Core_BAO_OptionGroup::getTitle($this->_gid);
+            $groupTitle = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionGroup', $this->_gid, 'title', 'id' );
             CRM_Utils_System::setTitle(ts('%1 - Option Values', array(1 => $groupTitle)));
             //get optionGroup name in case of email/postal greeting or addressee, CRM-4575
             $this->_gName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $this->_gid, 'name');
         }
+        $breadCrumb = array( array('title' => ts('Option Groups'),
+                                   'url'   => CRM_Utils_System::url( 'civicrm/admin/options', 
+                                                                     'reset=1' )) );
+        CRM_Utils_System::appendBreadCrumb( $breadCrumb ); 
         
         return parent::run();
     }

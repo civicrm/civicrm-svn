@@ -29,7 +29,7 @@ SELECT @domainID := id FROM civicrm_domain where name = 'Default Domain Name';
 INSERT INTO 
    `civicrm_option_group` (`name`, `description`, `is_reserved`, `is_active`) 
 VALUES 
-    ('civicrm_contribution_page.amount.1', 'Contribution Page Amount: 1', 0, 1);
+    ('civicrm_contribution_page.amount.1', 'Contribution Page Amount: 1', 1, 1);
 
 SELECT @option_cpage_id   := max(id) from civicrm_option_group where name = 'civicrm_contribution_page.amount.1';
 

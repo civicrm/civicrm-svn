@@ -35,9 +35,9 @@
      {else}
       <table class="form-layout-compressed">
           <tr class="crm-admin-optiongroup-form-block-name">
-          <tr class="crm-admin-optiongroup-form-block-label">
-              <td class="label">{$form.label.label} 
-            {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_option_group' field='label' id=$id}{/if}</td><td>{$form.label.html}</td>
+          <tr class="crm-admin-optiongroup-form-block-title">
+              <td class="label">{$form.title.label} 
+            {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_option_group' field='title' id=$id}{/if}</td><td>{$form.title.html}</td>
           </tr>
           <tr class="crm-admin-optiongroup-form-block-description">
               <td class="label">{$form.description.label} 

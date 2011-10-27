@@ -68,9 +68,9 @@ class CRM_Admin_Form_OptionGroup extends CRM_Admin_Form
                         array( 'CRM_Core_DAO_OptionGroup', $this->_id ) );
         
         $this->add('text',
-                   'label',
+                   'title',
                    ts('Group Title'),
-                   CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionGroup', 'label' ) );
+                   CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionGroup', 'title' ) );
 
         $this->add('text',
                    'description',

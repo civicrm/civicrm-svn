@@ -242,3 +242,9 @@ VALUES
 
 -- CRM-9113
 ALTER TABLE `civicrm_report_instance` ADD `grouprole` VARCHAR( 1024 ) NULL AFTER `permission`;
+
+-- CRM-8762 Fix option_group table
+ALTER TABLE civicrm_option_group CHANGE `label` `title` varchar(255);
+ALTER TABLE civicrm_option_group CHANGE `is_reserved` `is_reserved` TINYINT DEFAULT 1;
+UPDATE civicrm_option_group SET `title` = `description` WHERE `title` IS NULL;
+UPDATE civicrm_option_group SET `is_reserved` = 1;

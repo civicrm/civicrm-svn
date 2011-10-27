@@ -1463,9 +1463,9 @@ VALUES
         //create event fees
         $optionGroup = "INSERT INTO civicrm_option_group ( name, is_reserved, is_active)
       VALUES
-      ( 'civicrm_event.amount.1', 0, 1),
-      ( 'civicrm_event.amount.2', 0, 1),
-      ( 'civicrm_event.amount.3', 0, 1)
+      ( 'civicrm_event.amount.1', 1, 1),
+      ( 'civicrm_event.amount.2', 1, 1),
+      ( 'civicrm_event.amount.3', 1, 1)
 ";
         CRM_Core_DAO::executeQuery( $optionGroup, CRM_Core_DAO::$_nullArray );
         

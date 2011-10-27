@@ -28,7 +28,7 @@
    {include file="CRM/Admin/Form/OptionGroup.tpl"}
 {else}
 <div id="help">
-    {ts}CiviCRM stores configurable choices for various drop-down fields as 'option groups'. Choices used by core fields are reserved and cannot be modified. If a group is editable, you can click <strong>Options</strong> to view and modify the available choices.{/ts}
+    {ts}CiviCRM stores configurable choices for various drop-down fields as 'option groups'. You can click <strong>Options</strong> to view the available choices. Many option groups are used programatically and values should be added or modified with caution.{/ts}
 </div>
 {/if}
 
@@ -42,19 +42,13 @@
         <tr class="columnheader">
         <th>{ts}Title{/ts}</th>
         <th>{ts}Name{/ts}</th>
-        <th>{ts}Description{/ts}</th>
-        <th>{ts}Reserved?{/ts}</th>
-        <th>{ts}Enabled?{/ts}</th>
         <th></th>
         </tr>
         {foreach from=$rows item=row}
     	<tr id="row_{$row.id}"class="crm-admin-optionGroup {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
             <td class="crm-admin-optionGroup-title">{$row.title}</td>	
             <td class="crm-admin-optionGroup-name">{$row.name}</td>	
-            <td class="crm-admin-optionGroup-description">{$row.description}</td>
-            <td class="crm-admin-optionGroup-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-            <td id="row_{$row.id}_status" class="crm-admin-optionGroup-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-            <td>{$row.action|replace:'xx':$row.id}</td>
+            <td><a href="{crmURL p="civicrm/admin/optionValue" q="gid=`$row.id`&reset=1"}" title="{ts}view and edit options{/ts}">{ts}Options{/ts}</a></td>
         </tr>
         {/foreach}
     </table>
