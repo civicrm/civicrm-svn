@@ -453,7 +453,23 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         self::assertAttributesEquals( $expectedValues, $dbValues);
     }
 
-
+    /**
+     * Assert that a SQL query returns a given value
+     *
+     * The first argument is an expected value. The remaining arguments are passed
+     * to CRM_Core_DAO::singleValueQuery
+     *
+     * Example: $this->assertSql(2, 'select count(*) from foo where foo.bar like "%1"', array(1 => array("Whiz", "String")));
+     */
+    protected function assertDBQuery($expected, $query, $params = array()) {
+        $actual = CRM_Core_DAO::singleValueQuery($query, $params);
+        $this->assertEquals($expected, $actual,
+            sprintf('expected=[%s] actual=[%s] query=[%s]',
+                $expected, $actual, CRM_Core_DAO::composeQuery($query, $params, FALSE)
+            )
+        );
+    }
+    
     function assertAttributesEquals( &$expectedValues, &$actualValues ) 
     {
         foreach( $expectedValues as $paramName => $paramValue ) {

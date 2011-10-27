@@ -59,7 +59,7 @@ class Custom extends CiviUnitTestCase
         if ( empty( $params ) ){
             $params = array(
                             'custom_group_id' => $fields['groupId'],
-                            'label'           => 'test_' . $fields['dataType'],
+                            'label'           => empty($fields['label']) ? 'test_' . $fields['dataType'] : $fields['label'],
                             'html_type'       => $fields['htmlType'],
                             'data_type'       => $fields['dataType'],
                             'weight'          => 4,
