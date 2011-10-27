@@ -937,6 +937,17 @@ INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, r
 VALUES (@drgid, 'civicrm_contact', 'household_name', 10),
        (@drgid, 'civicrm_email'  , 'email',          10);
 
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
+VALUES ('Individual', 15, 'Strict', true, 'IndividualComplete', '{ts escape="sql"}Individual-Complete{/ts}', 1);
+
+SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
+INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
+VALUES (@drgid, 'civicrm_contact', 'first_name',     '5'),
+       (@drgid, 'civicrm_contact', 'last_name',      '5'),
+       (@drgid, 'civicrm_address', 'street_address', '5'),
+       (@drgid, 'civicrm_contact', 'middle_name',    '1'),
+       (@drgid, 'civicrm_contact', 'suffix_id',      '1');
+
 -- Sample counties (state-province and country lists defined in a separate tpl files)
 INSERT INTO civicrm_county (name, state_province_id) VALUES ('Alameda', 1004);
 INSERT INTO civicrm_county (name, state_province_id) VALUES ('Contra Costa', 1004);
