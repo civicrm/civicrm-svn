@@ -66,7 +66,7 @@ $compileDir =
      rand( 1, 10000 );
 
 if (file_exists($compileDir)) {
-    rmdir($compileDir);
+    rmemoveDirectory($compileDir);
 }
 $smarty->compile_dir = $compileDir;
 
@@ -284,7 +284,7 @@ $smarty->assign('db_version',$db_version);
 $smarty->assign('cms',ucwords($cms));
 file_put_contents( $phpCodePath . "civicrm-version.php", $smarty->fetch( 'civicrm_version.tpl' ));
 
-rmdir($compileDir);
+removeDirectory($compileDir);
 
 function &parseInput( $file ) {
     $dom = new DomDocument( );
@@ -673,7 +673,7 @@ function getIndex(&$indexXML, &$fields, &$indices)
         if (!array_key_exists($fieldName, $fields)) {
             echo "Table does not contain $fieldName\n";
             print_r( $fields );
-            unlink($compileDir);
+            removeDirectory($compileDir);
             exit( );
         }
     }
@@ -779,5 +779,10 @@ function getSize( $maxLength ) {
     return 'CRM_Utils_Type::HUGE';
 }
 
-
+function removeDirectory( $dir ) {
+    foreach(glob("$dir/*") as $tempFile) {
+        unlink($tempFile);
+    }
+    rmdir($dir);
+}
 

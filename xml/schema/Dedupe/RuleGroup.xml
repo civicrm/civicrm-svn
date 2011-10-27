@@ -50,4 +50,17 @@
     <comment>Name of the rule group</comment>
     <add>2.1</add>
   </field>
+  <field>
+    <name>label</name>
+    <type>varchar</type>
+    <length>255</length>
+    <comment>Label of the rule group</comment>
+    <add>4.1</add>
+  </field>
+  <field>
+    <name>is_reserved</name>
+    <type>boolean</type>
+    <comment>Is this a reserved rule - a rule group that has been optimized and cannot be changed by the admin</comment>
+    <add>4.1</add>
+  </field>
 </table>
