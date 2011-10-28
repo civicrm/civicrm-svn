@@ -79,10 +79,8 @@
         {* Previous and Next contact navigation when accessing contact summary from search results. *}
         {if $nextPrevError}
            <li class="crm-next-action">
-             <span">{ts}Could not compute next prev contacts{/ts}</span>
-             </a>
+             {help id="id-next-prev-buttons"}&nbsp;
            </li>
-
         {else}
           {if $nextContactID}
            {assign var='viewParams' value=$urlParams|cat:"&cid=$nextContactID"}
