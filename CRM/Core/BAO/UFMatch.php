@@ -199,6 +199,8 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
         
         $newContact   = false;
 
+        require_once 'CRM/Core/DAO.php';
+
         // make sure that a contact id exists for this user id
         $ufmatch = new CRM_Core_DAO_UFMatch( );
         $ufmatch->domain_id = CRM_Core_Config::domainID( );
@@ -242,11 +244,27 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
                 $dao = CRM_Contact_BAO_Contact::matchContactOnEmail( $uniqId, $ctype );
             }
 
+            $found = false;
             if ( $dao ) {
-                //print "Found contact with uniqId $uniqId<br/>";
-                $ufmatch->contact_id     = $dao->contact_id;
-                $ufmatch->uf_name        = $uniqId;
-            } else {
+                // ensure there does not exists a contact_id / uf_id pair
+                // in the DB. This might be due to multiple emails per contact
+                // CRM-9091
+                $sql = "
+SELECT id
+FROM   civicrm_uf_match
+WHERE  contact_id = %1
+";
+                $params = array( 1 => array( $dao->contact_id, 'Integer' ) );
+                $conflict = CRM_Core_DAO::singleValueQuery( $sql, $params );
+            
+                if ( ! $conflict ) {
+                    $found = true;
+                    $ufmatch->contact_id     = $dao->contact_id;
+                    $ufmatch->uf_name        = $uniqId;
+                }
+            }
+
+            if ( ! $found ) {
                 if ( $config->userSystem->is_drupal ) {
                     $mail = 'mail';
                 } elseif ( $uf = 'WordPress' ) {
@@ -255,7 +273,7 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
                     $mail = 'email';
                 }
                 
-                if ( is_Object($user) ) {
+                if ( is_object($user) ) {
                     $params = array( 'email-Primary'  => $user->$mail );
                 }
                 
@@ -264,6 +282,8 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
                 } else if ( $ctype == 'Household' ) {
                     $params['household_name'] = $uniqId;
                 }
+
+
                 if ( ! $ctype ) {
                     $ctype = "Individual";
                 }
@@ -308,7 +328,6 @@ AND    domain_id    = %4
                              3 => array( $ufmatch->uf_id     , 'Integer' ),
                              4 => array( $ufmatch->domain_id , 'Integer' ) );
 
-            require_once 'CRM/Core/DAO.php';
             $conflict = CRM_Core_DAO::singleValueQuery( $sql, $params );
             
             if ( ! $conflict ) {
