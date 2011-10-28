@@ -340,6 +340,44 @@ function civicrm_views_data() {
                                                                   ),
                                                   );
 
+    //Prefix
+    $data['civicrm_contact']['prefix_id'] = array(
+                                                  'title' => t('Prefix'),
+                                                  'help' => t('Prefix'),
+                                                  'field' => array(
+                                                                   'handler' => 'civicrm_handler_field_prefix',
+                                                                   'click sortable' => TRUE,
+                                                                   ),
+
+                                                  'filter' => array(
+                                                                    'handler' => 'civicrm_handler_filter_prefix',
+                                                                    'allow empty' => TRUE,
+                                                                    ),
+
+                                                  'sort' => array(
+                                                                  'handler' => 'views_handler_sort',
+                                                                  ),
+                                                  );
+
+    //Suffix
+    $data['civicrm_contact']['suffix_id'] = array(
+                                                  'title' => t('Suffix'),
+                                                  'help' => t('Suffix'),
+                                                  'field' => array(
+                                                                   'handler' => 'civicrm_handler_field_suffix',
+                                                                   'click sortable' => TRUE,
+                                                                   ),
+
+                                                  'filter' => array(
+                                                                    'handler' => 'civicrm_handler_filter_suffix',
+                                                                    'allow empty' => TRUE,
+                                                                    ),
+
+                                                  'sort' => array(
+                                                                  'handler' => 'views_handler_sort',
+                                                                  ),
+                                                  );
+
     //BOOLEAN : IS Deceased
     $data['civicrm_contact']['is_deceased'] = array(
                                                     'title' => t('Is Deceased'),
