@@ -63,7 +63,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
             if ( is_array( $reminderList ) ) {
                 // Add action links to each of the reminders
                 foreach ( $reminderList as &$format ) {
-                    $action = CRM_Core_Action::UPDATE;
+                    $action = CRM_Core_Action::UPDATE + CRM_Core_Action::DELETE;
                     if ( $format['is_active'] ) {
                         $action += CRM_Core_Action::DISABLE;
                     } else {
@@ -107,8 +107,6 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
 
         $this->add( 'text', 'title', ts( 'Reminder Name' ), 
                     array( 'size'=> 45,'maxlength' => 128 ), true );
-
-
         
         $mappingID = 3;
         list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection( $mappingID ) ;
@@ -118,7 +116,8 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
 
         //get the frequency units.
         require_once 'CRM/Core/OptionGroup.php';
-        $this->_freqUnits = array( 'hour' => 'hour' ) + CRM_Core_OptionGroup::values('recur_frequency_units');
+        $this->_freqUnits = array( 'hour' => 'hour' ) + 
+            CRM_Core_OptionGroup::values('recur_frequency_units');
         
         $mappings = CRM_Core_BAO_ActionSchedule::getMapping(  );
 
@@ -222,6 +221,13 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
      */
     public function postProcess() 
     {
+        if ( $this->_action & CRM_Core_Action::DELETE ) {
+            // delete reminder
+            CRM_Core_BAO_ActionSchedule::del( $this->_id );
+            CRM_Core_Session::setStatus( ts('Selected Reminder has been deleted.') );
+            return;
+        }
+
         $values = $this->controller->exportValues( $this->getName() );
         $keys = array('title', 'start_action_offset' ,'start_action_unit',
                       'start_action_condition', 'start_action_date', 
