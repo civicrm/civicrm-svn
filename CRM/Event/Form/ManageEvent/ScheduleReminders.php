@@ -234,29 +234,38 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         }
 
         $values = $this->controller->exportValues( $this->getName() );
-        $keys = array('title', 'start_action_offset' ,'start_action_unit',
-                      'start_action_condition', 'start_action_date', 
-                      'repetition_frequency_unit',
-                      'repetition_frequency_interval',
-                      'end_frequency_unit',
-                      'end_frequency_interval',
-                      'end_action', 'end_date',
+        $keys = array('title',
                       'subject',
                       'absolute_date',
                       'group_id'
                       );
-        
         foreach ( $keys as $key ) {
             $params[$key] = CRM_Utils_Array::value( $key, $values );
         }
+
+        $moreKeys = array('start_action_offset' ,'start_action_unit',
+                          'start_action_condition', 'start_action_date', 
+                          'repetition_frequency_unit',
+                          'repetition_frequency_interval',
+                          'end_frequency_unit',
+                          'end_frequency_interval',
+                          'end_action', 'end_date',
+                      );
+        
+        if ( $absoluteDate = CRM_Utils_Array::value( 'absolute_date', $params ) ) {
+            $params['absolute_date'] = CRM_Utils_Date::processDate( $absoluteDate );
+            foreach ( $moreKeys as $mkey ) {
+                $params[$mkey] = 'null';
+            }                   
+        } else {
+            $params['absolute_date'] = 'null';
+            foreach ( $moreKeys as $mkey ) {
+                $params[$mkey] = CRM_Utils_Array::value( $mkey, $values );
+            }
+         } 
         
         $params['body_text'] = CRM_Utils_Array::value( 'text_message', $values );
         $params['body_html'] = CRM_Utils_Array::value( 'html_message', $values );
-        if ( $absoluteDate = CRM_Utils_Array::value( 'absolute_date', $params ) ) {
-            $params['absolute_date'] = CRM_Utils_Date::processDate( $absoluteDate );
-        } else {
-            $params['absolute_date'] = 'null';
-        }
        
         if ( CRM_Utils_Array::value( 'recipient', $values ) == 'manual' ) {
             $params['recipient_manual'] = CRM_Utils_Array::value( 'recipient_manual_id', $values );
