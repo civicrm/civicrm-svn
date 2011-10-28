@@ -290,6 +290,11 @@ function civicrm_wp_frontend( ) {
     // but best way is to check other plugin implementation :) 
    
     add_filter('the_content', 'civicrm_wp_invoke');
+    add_filter('the_title', 'civicrm_set_blank');
+}
+
+function civicrm_set_blank() {
+    return;
 }
 
 function civicrm_set_frontendmessage() {
