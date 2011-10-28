@@ -65,6 +65,9 @@ INSERT INTO civicrm_domain (name, version, loc_block_id) VALUES (@domainName, '2
 SELECT @domainID := id FROM civicrm_domain where name = 'Default Domain Name';
 
 -- Sample location types
+-- CRM-9120 for legacy reasons we are continuing to translate the 'name', but this
+-- field is used mainly as an ID, and display_name will be shown to the user, but 
+-- we have not yet finished modifying all places where the 'name' is shown.
 INSERT INTO civicrm_location_type( name, display_name, vcard_name, description, is_reserved, is_active, is_default ) VALUES( '{ts escape="sql"}Home{/ts}', '{ts escape="sql"}Home{/ts}', 'HOME', '{ts escape="sql"}Place of residence{/ts}', 0, 1, 1 );
 INSERT INTO civicrm_location_type( name, display_name, vcard_name, description, is_reserved, is_active ) VALUES( '{ts escape="sql"}Work{/ts}', '{ts escape="sql"}Work{/ts}', 'WORK', '{ts escape="sql"}Work location{/ts}', 0, 1 );
 INSERT INTO civicrm_location_type( name, display_name, vcard_name, description, is_reserved, is_active ) VALUES( '{ts escape="sql"}Main{/ts}', '{ts escape="sql"}Main{/ts}', NULL, '{ts escape="sql"}Main office location{/ts}', 0, 1 );
