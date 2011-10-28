@@ -51,14 +51,6 @@ VALUES
   CONSTRAINT `FK_civicrm_setting_created_id` FOREIGN KEY (`created_id`) REFERENCES `civicrm_contact` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
--- TODO
--- copy over all the current settings to the settings table
--- since we need to serialize the values from the DB into the new table
--- we do this in PHP
--- finally, drop the preferences table
--- When we are done with it, we'll also drop the preferences table from PHP
-
-
 -- CRM-8508
     SELECT @caseCompId := id FROM `civicrm_component` where `name` like 'CiviCase';
 
