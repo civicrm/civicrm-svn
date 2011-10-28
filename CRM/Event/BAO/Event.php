@@ -1659,10 +1659,20 @@ WHERE  ce.loc_block_id = $locBlockId";
         return CRM_Core_DAO::singleValueQuery( $query );
     }
 
-    static function validRegistrationDate( &$values, $contactID ) {
+    static function validRegistrationRequest( $values, $contactID ) {
+        // check that the user has permission to register for this event
+        $hasPermission = CRM_Core_Permission::event( CRM_Core_Permission::EDIT,
+                                                     $contactID );
+
+        return $hasPermission &&
+            self::validRegistrationDate( $values );
+    }
+
+    static function validRegistrationDate( &$values ) {
         // make sure that we are between  registration start date and registration end date
         $startDate = CRM_Utils_Date::unixTime( CRM_Utils_Array::value( 'registration_start_date', $values ) );
         $endDate   = CRM_Utils_Date::unixTime( CRM_Utils_Array::value( 'registration_end_date', $values ) );
+        $eventEnd  = CRM_Utils_Date::unixTime( CRM_Utils_Array::value( 'end_date', $values ) );
         $now       = time( );
         $validDate = true;
         if ( $startDate && $startDate >= $now ) {
@@ -1671,12 +1681,8 @@ WHERE  ce.loc_block_id = $locBlockId";
         if ( $endDate && $endDate < $now ) {
             $validDate = false;
         }
-        
-        // also check that the user has permission to register for this event
-        $hasPermission = CRM_Core_Permission::event( CRM_Core_Permission::EDIT,
-                                                     $contactID );
 
-        return $validDate && $hasPermission;
+        return $validDate;
     }
  
     /* Function to Show - Hide the Registration Link.
@@ -1721,6 +1727,9 @@ WHERE  ce.loc_block_id = $locBlockId";
         $alreadyRegistered = false;
         if ( !CRM_Utils_Array::value( 'contact_id', $params ) ) {
             return $alreadyRegistered;
+        }
+        if ( $eventEnd && $eventEnd < $now ) {
+            $validDate = false;
         }
 
         require_once 'CRM/Event/DAO/Participant.php';

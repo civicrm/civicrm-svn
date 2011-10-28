@@ -238,7 +238,7 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         
         $allowRegistration = false;
         if ( CRM_Utils_Array::value( 'is_online_registration', $values['event'] ) ) {
-            if ( CRM_Event_BAO_Event::validRegistrationDate( $values['event'], $this->_id ) ) {
+            if ( CRM_Event_BAO_Event::validRegistrationRequest( $values['event'], $this->_id ) ) {
                 if ( !$eventFullMessage || $hasWaitingList ) {
                     $registerText = ts('Register Now');
                     if ( CRM_Utils_Array::value('registration_link_text', $values['event'] ) ) {

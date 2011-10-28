@@ -513,7 +513,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
 
             $count++;
         }
-        
+
         return $addresses;
     }
     
