@@ -71,6 +71,7 @@ class CRM_Admin_Form_LocationType extends CRM_Admin_Form
                         ts( 'Name can only consist of alpha-numeric characters' ),
                         'variable' );
         
+        $this->add('text', 'display_name', ts('Display Name'), CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_LocationType', 'display_name' ) );
         $this->add('text', 'vcard_name', ts('vCard Name'), CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_LocationType', 'vcard_name' ) );
 
         $this->add('text', 'description', ts('Description'), CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_LocationType', 'description' ) );
@@ -107,6 +108,7 @@ class CRM_Admin_Form_LocationType extends CRM_Admin_Form
         // action is taken depending upon the mode
         $locationType               = new CRM_Core_DAO_LocationType( );
         $locationType->name         = $params['name'];
+        $locationType->display_name = $params['display_name'];
         $locationType->vcard_name   = $params['vcard_name'];
         $locationType->description  = $params['description'];
         $locationType->is_active    = $params['is_active'];

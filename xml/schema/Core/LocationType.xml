@@ -26,6 +26,15 @@
        <add>1.1</add>
   </field>
   <field>
+       <name>display_name</name>
+       <title>Display Name</title>
+       <type>varchar</type>
+       <length>64</length>
+       <comment>Location Type Display Name.</comment>
+       <localizable>true</localizable>
+       <add>4.1</add>
+  </field>
+  <field>
        <name>vcard_name</name>
        <title>vCard Location Type</title>
        <type>varchar</type>

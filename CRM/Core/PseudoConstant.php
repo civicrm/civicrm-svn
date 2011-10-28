@@ -60,6 +60,13 @@ class CRM_Core_PseudoConstant
      * @static
      */
     private static $locationVcardName;
+
+    /**
+     * location display name
+     * @var array
+     * @static
+     */
+    private static $locationDisplayName;
     
     /**
      * activity type
@@ -456,6 +463,27 @@ class CRM_Core_PseudoConstant
             self::populate( self::$locationVcardName, 'CRM_Core_DAO_LocationType', $all, 'vcard_name' );
         }
         return self::$locationVcardName;
+    }
+
+    /**
+     * Get all location Display names.
+     *
+     * The static array locationDisplayName is returned
+     *
+     * @access public
+     * @static
+     *
+     * @param boolean $all - get All location display names - default is to get only active ones.
+     *
+     * @return array - array reference of all location display names.
+     *
+     */
+    public static function &locationDisplayName( $all=false )
+    {
+        if ( ! self::$locationDisplayName ) {
+            self::populate( self::$locationDisplayName, 'CRM_Core_DAO_LocationType', $all, 'display_name' );
+        }
+        return self::$locationDisplayName;
     }
 
     /**

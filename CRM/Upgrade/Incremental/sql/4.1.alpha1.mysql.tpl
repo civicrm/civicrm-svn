@@ -249,3 +249,6 @@ UPDATE `civicrm_dedupe_rule_group` SET `title` = `name`;
 UPDATE `civicrm_dedupe_rule_group` SET `name` = REPLACE( `name`, ' ', '' );
 UPDATE `civicrm_dedupe_rule_group` SET is_reserved = 1 WHERE contact_type IN ('Household','Organization');
 
+-- CRM-9120
+ALTER TABLE `civicrm_location_type` ADD `display_name` VARCHAR( 64 ) DEFAULT NULL  COMMENT 'Location Type Display Name.' AFTER `name`;
+UPDATE `civicrm_location_type` SET `display_name` = `name`;
