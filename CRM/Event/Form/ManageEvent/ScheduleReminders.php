@@ -200,10 +200,15 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
     static function formRule( $fields ) 
     {
         $errors = array( );
-        
         if ( CRM_Utils_Array::value( 'is_active', $fields ) &&  
              CRM_Utils_System::isNull( $fields['subject'] ) ) {
             $errors['subject'] = ts('Subject is a required field.');
+        }
+
+        if ( ( CRM_Utils_Array::value( 'recipient', $fields ) == 1 ||
+               CRM_Utils_Array::value( 'recipient', $fields ) == 2 ) && 
+             CRM_Utils_System::isNull( $fields['recipientListing'] ) ){
+            $errors['recipientListing'] = ts('Recipient Listing is a required field.');
         }
 
         if ( ! empty( $errors ) ) {
@@ -247,7 +252,12 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         
         $params['body_text'] = CRM_Utils_Array::value( 'text_message', $values );
         $params['body_html'] = CRM_Utils_Array::value( 'html_message', $values );
-
+        if ( $absoluteDate = CRM_Utils_Array::value( 'absolute_date', $params ) ) {
+            $params['absolute_date'] = CRM_Utils_Date::processDate( $absoluteDate );
+        } else {
+            $params['absolute_date'] = 'null';
+        }
+       
         if ( CRM_Utils_Array::value( 'recipient', $values ) == 'manual' ) {
             $params['recipient_manual'] = CRM_Utils_Array::value( 'recipient_manual_id', $values );
             $params['group_id'] = $params['recipient'] = 'null';
