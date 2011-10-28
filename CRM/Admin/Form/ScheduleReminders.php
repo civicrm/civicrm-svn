@@ -217,6 +217,10 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             $defaults['entity'][0] = CRM_Utils_Array::value( 'mapping_id', $defaults );
             $defaults['entity'][1] = $entityValue;
             $defaults['entity'][2] = $entityStatus;
+            if ( $absoluteDate = CRM_Utils_Array::value( 'absolute_date', $defaults ) ) {
+                list( $date, $time ) = CRM_Utils_Date::setDateDefaults( $absoluteDate );
+                $defaults['absolute_date'] = $date;
+            }
             $defaults['text_message'] = CRM_Utils_Array::value( 'body_text', $defaults );
             $defaults['html_message'] = CRM_Utils_Array::value( 'body_html', $defaults );
             $defaults['template'] = CRM_Utils_Array::value( 'msg_template_id', $defaults );
@@ -270,6 +274,11 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         
         $params['body_text'] = CRM_Utils_Array::value( 'text_message', $values );
         $params['body_html'] = CRM_Utils_Array::value( 'html_message', $values );
+        if ( $absoluteDate = CRM_Utils_Array::value( 'absolute_date', $params ) ) {
+            $params['absolute_date'] = CRM_Utils_Date::processDate( $absoluteDate );
+        } else {
+            $params['absolute_date'] = 'null';
+        }
 
         if ( CRM_Utils_Array::value( 'recipient', $values ) == 'manual' ) {
             $params['recipient_manual'] = CRM_Utils_Array::value( 'recipient_manual_id', $values );
