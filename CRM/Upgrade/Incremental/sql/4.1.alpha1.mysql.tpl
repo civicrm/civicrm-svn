@@ -252,3 +252,15 @@ UPDATE `civicrm_dedupe_rule_group` SET is_reserved = 1 WHERE contact_type IN ('H
 -- CRM-9120
 ALTER TABLE `civicrm_location_type` ADD `display_name` VARCHAR( 64 ) DEFAULT NULL  COMMENT 'Location Type Display Name.' AFTER `name`;
 UPDATE `civicrm_location_type` SET `display_name` = `name`;
+
+-- CRM-9125
+ALTER TABLE `civicrm_contribution_recur` ADD `contribution_type_id` int(10) unsigned NULL COMMENT 'FK to Contribution Type';
+ALTER TABLE `civicrm_contribution_recur` ADD CONSTRAINT `FK_civicrm_contribution_recur_contribution_type_id` FOREIGN KEY (`contribution_type_id`) REFERENCES `civicrm_contribution_type` (`id`) ON DELETE SET NULL;
+
+ALTER TABLE `civicrm_contribution_recur` ADD `payment_instrument_id` int(10) unsigned NULL COMMENT 'FK to Payment Instrument';
+ALTER TABLE `civicrm_contribution_recur` ADD INDEX UI_contribution_recur_payment_instrument_id ( payment_instrument_id );
+
+ALTER TABLE `civicrm_contribution_recur` ADD `campaign_id` int(10) unsigned NULL COMMENT 'The campaign for which this contribution has been triggered.';
+ALTER TABLE `civicrm_contribution_recur` ADD CONSTRAINT `FK_civicrm_contribution_recur_campaign_id` FOREIGN KEY (`campaign_id`) REFERENCES `civicrm_campaign` (`id`) ON DELETE SET NULL;
+
+UPDATE `civicrm_contribution_recur` ccr INNER JOIN `civicrm_contribution` cc ON ccr.id = cc.contribution_recur_id SET ccr.campaign_id = cc.campaign_id, ccr.payment_instrument_id = cc.payment_instrument_id, ccr.contribution_type_id = cc.contribution_type_id;
