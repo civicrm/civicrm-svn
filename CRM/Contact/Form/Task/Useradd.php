@@ -42,6 +42,22 @@ class CRM_Contact_Form_Task_Useradd extends CRM_Core_Form
      */
     protected $_contactId;
 
+    /**
+     * contact.display_name of contact for whom we are adding user
+     *
+     * @var int
+     * @public
+     */
+    public $_displayName;
+
+    /**
+     * primary email of contact for whom we are adding user
+     *
+     * @var int
+     * @public
+     */
+    public $_email;
+
     function preProcess( ) {
         $defaults = array( );
         
@@ -51,12 +67,10 @@ class CRM_Contact_Form_Task_Useradd extends CRM_Core_Form
         
         $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
         $params['id'] = $params['contact_id'] = $this->_contactId;
-        $contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults, $ids );
-
-        // set title to "Note - "+Contact Name    
-        $displayName = $contact->display_name;
-        $pageTitle = 'Create new User for Contact - '.$displayName;
-        $this->assign( 'pageTitle', $pageTitle );
+        $contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults, $ids );    
+        $this->_displayName = $contact->display_name;
+        $this->_email = $contact->email;
+        CRM_Utils_System::setTitle( ts('Create User Record for') . ' ' . $this->_displayName );
     }
 
     /**
@@ -67,16 +81,11 @@ class CRM_Contact_Form_Task_Useradd extends CRM_Core_Form
      * @return None
      */
     function setDefaultValues( ) {
-        $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
-        $defaults = $params = $results = array( );
-        $params['id'] = $params['contact_id'] = $this->_contactId;
-        $contact = CRM_Contact_BAO_Contact::retrieve( $params, $results );
-
-        
+        $defaults = array( );
         $defaults['contactID'] = $this->_contactId;
-        $defaults['name'] = $contact->display_name;
-        if ( ! empty( $contact->email ) ) {
-            $defaults['email'] = $contact->email[1]['email'];
+        $defaults['name'] = $this->_displayName;
+        if ( ! empty( $this->_email ) ) {
+            $defaults['email'] = $this->_email[1]['email'];
         }
 
         return $defaults;
@@ -88,18 +97,16 @@ class CRM_Contact_Form_Task_Useradd extends CRM_Core_Form
      * @return None
      * @access public
      */
-    public function buildQuickForm( ) {
-
-        CRM_Utils_System::setTitle( ts('Create new User'));
-       
-        $this->add('text', 'name' , ts('Full Name:') , array('size' => 20, 'readonly' => true));
-        $this->add('text', 'cms_name' , ts('Username:') , array('size' => 20));
-        $this->addRule('cms_name','Enter a valid username','minlength',2);
-        $this->add('password', 'cms_pass' , ts('Password:') , array('size' => 20));
-        $this->add('password', 'cms_confirm_pass' , ts('Password confirm:') , array('size' => 20));
+    public function buildQuickForm( ) {       
+        $element = $this->add( 'text', 'name' , ts('Full Name') , array('class' => 'huge') );
+        $element->freeze( );
+        $this->add( 'text', 'cms_name' , ts('Username') ,  array('class' => 'huge') );
+        $this->addRule('cms_name','Enter a valid username','minlength', 2);
+        $this->add('password', 'cms_pass' , ts('Password') ,  array('class' => 'huge'));
+        $this->add('password', 'cms_confirm_pass' , ts('Confirm Password') ,  array('class' => 'huge') );
         $this->addRule(array('cms_pass','cms_confirm_pass'), 'ERROR: Password mismatch', 'compare');
-        $this->add('text', 'email' , ts('Email:') , array('size' => 20, 'readonly' => true));
-        
+        $element = $this->add('text', 'email' , ts('Email:') ,  array('class' => 'huge') );
+        $element->freeze();
         $this->add('hidden', 'contactID');
 
         $this->addButtons( array(

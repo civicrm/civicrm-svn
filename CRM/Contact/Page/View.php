@@ -241,9 +241,10 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         $config = CRM_Core_Config::singleton( );
         require_once 'CRM/Core/BAO/UFMatch.php';
         if ( $uid = CRM_Core_BAO_UFMatch::getUFId( $this->_contactId ) ) {
-            if ($config->userSystem->is_drupal == '1') {
+            if ($config->userSystem->is_drupal == '1' && CRM_Core_Permission::check( 'Administer users' ) ) {
                 $userRecordUrl = CRM_Utils_System::url( 'user/' . $uid );
-            } else if ( $config->userFramework == 'Joomla' ) {
+            } else if ( $config->userFramework == 'Joomla' &&
+                        JFactory::getUser()->authorise('core.edit', 'com_users') ) {
                 $userRecordUrl = $config->userFrameworkVersion > 1.5 ? 
                     $config->userFrameworkBaseURL ."index.php?option=com_users&view=user&task=user.edit&id=". $uid : 
                     $config->userFrameworkBaseURL ."index2.php?option=com_users&view=user&task=edit&id[]=". $uid;
@@ -252,7 +253,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
             }
             $this->assign( 'userRecordUrl', $userRecordUrl );
             $this->assign( 'userRecordId' , $uid );
-        } else if ( $config->userFramework == 'Drupal' ||
+        } else if ( ( $config->userFramework == 'Drupal' && CRM_Core_Permission::check( 'Administer users' ) ) ||
                     ( $config->userFramework == 'Joomla' &&
                       JFactory::getUser()->authorise('core.create', 'com_users') ) ) {
             $userAddUrl = CRM_Utils_System::url('civicrm/contact/view/useradd',
