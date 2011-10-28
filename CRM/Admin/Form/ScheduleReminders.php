@@ -60,6 +60,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
     {
         parent::buildQuickForm( );
         $this->_mappingID = null;
+
         require_once 'CRM/Core/BAO/ActionSchedule.php';
         if ( $this->_action & (CRM_Core_Action::DELETE ) ) { 
             $reminderName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_ActionSchedule', 
@@ -196,6 +197,13 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
              CRM_Utils_System::isNull( $fields['subject'] ) ) {
             $errors['subject'] = ts('Subject is a required field.');
         }
+        
+        if ( ( CRM_Utils_Array::value( 'recipient', $fields ) == 1 ||
+               CRM_Utils_Array::value( 'recipient', $fields ) == 2 ) && 
+             CRM_Utils_System::isNull( $fields['recipientListing'] ) &&
+             ( $fields['entity'][0] == 2 || $fields['entity'][0] == 3 )){
+            $errors['recipientListing'] = ts('Recipient Listing is a required field.');
+        }
 
         if ( ! empty( $errors ) ) {
             return $errors;
@@ -255,40 +263,54 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             return;
         }
         $values = $this->controller->exportValues( $this->getName() );
-       
-        $keys = array('title', 'start_action_offset' ,'start_action_unit',
-                      'start_action_condition', 'start_action_date', 
-                      'repetition_frequency_unit',
-                      'repetition_frequency_interval',
-                      'end_frequency_unit',
-                      'end_frequency_interval',
-                      'end_action', 'end_date',
+
+        $keys = array('title',
                       'subject',
                       'absolute_date',
                       'group_id'
                       );
-        
         foreach ( $keys as $key ) {
             $params[$key] = CRM_Utils_Array::value( $key, $values );
         }
+
+        $moreKeys = array('start_action_offset' ,'start_action_unit',
+                          'start_action_condition', 'start_action_date', 
+                          'repetition_frequency_unit',
+                          'repetition_frequency_interval',
+                          'end_frequency_unit',
+                          'end_frequency_interval',
+                          'end_action', 'end_date',
+                          );
         
-        $params['body_text'] = CRM_Utils_Array::value( 'text_message', $values );
-        $params['body_html'] = CRM_Utils_Array::value( 'html_message', $values );
         if ( $absoluteDate = CRM_Utils_Array::value( 'absolute_date', $params ) ) {
             $params['absolute_date'] = CRM_Utils_Date::processDate( $absoluteDate );
+            foreach ( $moreKeys as $mkey ) {
+                $params[$mkey] = 'null';
+            }                   
         } else {
             $params['absolute_date'] = 'null';
-        }
-
+            foreach ( $moreKeys as $mkey ) {
+                $params[$mkey] = CRM_Utils_Array::value( $mkey, $values );
+            }
+        } 
+                
+        $params['body_text'] = CRM_Utils_Array::value( 'text_message', $values );
+        $params['body_html'] = CRM_Utils_Array::value( 'html_message', $values );
+        
         if ( CRM_Utils_Array::value( 'recipient', $values ) == 'manual' ) {
             $params['recipient_manual'] = CRM_Utils_Array::value( 'recipient_manual_id', $values );
-            $params['group_id'] = $params['recipient'] = 'null';
+            $params['group_id'] = $params['recipient'] = $params['recipientListing'] = 'null';
         } else if ( CRM_Utils_Array::value( 'recipient', $values ) == 'group' ) {
             $params['group_id'] = $values['group_id'];
-            $params['recipient_manual'] = $params['recipient'] = 'null';
+            $params['recipient_manual'] = $params['recipient'] = $params['recipientListing'] = 'null';
+        } else if ( !CRM_Utils_System::isNull( $values['recipientListing'] ) ) {
+            $params['recipient'] = CRM_Utils_Array::value( 'recipient', $values );
+
+            $params['recipientListing'] = CRM_Utils_Array::value( 'recipientListing', $values );
+            $params['group_id'] = $params['recipient_manual'] = 'null';
         } else {
             $params['recipient'] = CRM_Utils_Array::value( 'recipient', $values );
-            $params['group_id'] = $params['recipient_manual'] = 'null';
+            $params['group_id'] = $params['recipient_manual'] = $params['recipientListing'] = 'null';
         }
 
         $params['mapping_id'] = $values['entity'][0];
