@@ -56,7 +56,7 @@
 {/htxt}
 
 {htxt id="exclude-groups"}
-<p>{ts}You also have the option to <strong>Exclude</strong> some contacts in your included groups by selecting on or more <strong>Excluded Groups</strong>. Contacts who are in both groups will NOT receive the mailing (they are 'excluded').{/ts}</p>
+<p>{ts}You also have the option to <strong>Exclude</strong> some contacts in your included groups by selecting one or more <strong>Excluded Groups</strong>. Contacts who are in both groups will NOT receive the mailing (they are 'excluded').{/ts}</p>
 {/htxt}
 
 {htxt id="include-mailings"}
