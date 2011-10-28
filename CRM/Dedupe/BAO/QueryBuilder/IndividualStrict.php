@@ -8,7 +8,6 @@ class CRM_Dedupe_BAO_QueryBuilder_IndividualStrict extends CRM_Dedupe_BAO_QueryB
     static function record($rg) {
         require_once 'CRM/Core/DAO.php';
         require_once 'CRM/Utils/Array.php';
-        var_dump($rg); exit();
         $civicrm_email = CRM_Utils_Array::value('civicrm_email', $rg->params, array());
 
         $params = array(
