@@ -1681,6 +1681,9 @@ WHERE  ce.loc_block_id = $locBlockId";
         if ( $endDate && $endDate < $now ) {
             $validDate = false;
         }
+        if ( $eventEnd && $eventEnd < $now ) {
+            $validDate = false;
+        }
 
         return $validDate;
     }
@@ -1727,9 +1730,6 @@ WHERE  ce.loc_block_id = $locBlockId";
         $alreadyRegistered = false;
         if ( !CRM_Utils_Array::value( 'contact_id', $params ) ) {
             return $alreadyRegistered;
-        }
-        if ( $eventEnd && $eventEnd < $now ) {
-            $validDate = false;
         }
 
         require_once 'CRM/Event/DAO/Participant.php';
