@@ -185,8 +185,8 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
                 } 
             } else {
                 if ( $params['id'] ) {
-                    require_once 'CRM/Pledge/BAO/Payment.php';
-                    $params['status_id'] = CRM_Pledge_BAO_Payment::calculatePledgeStatus( $params['id'] );
+                    require_once 'CRM/Pledge/BAO/PledgePayment.php';
+                    $params['status_id'] = CRM_Pledge_BAO_PledgePayment::calculatePledgeStatus( $params['id'] );
                 } else {
                     $params['status_id'] = array_search( 'Pending', $paymentStatusTypes );
                 }
@@ -210,11 +210,11 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
         if ( !isset( $params['id'] ) ||
              CRM_Utils_Array::value('is_pledge_pending', $params ) ) {
             
-            require_once 'CRM/Pledge/BAO/Payment.php';
+            require_once 'CRM/Pledge/BAO/PledgePayment.php';
             
             //if pledge is pending delete all payments and recreate.
             if ( CRM_Utils_Array::value('is_pledge_pending', $params ) ) {
-                CRM_Pledge_BAO_Payment::deletePayments( $pledge->id );
+                CRM_Pledge_BAO_PledgePayment::deletePayments( $pledge->id );
             }
             
             //building payment params
@@ -224,7 +224,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
             foreach ( $paymentKeys as $key ) {
                 $paymentParams[$key] = CRM_Utils_Array::value( $key, $params, null );               
             }
-            CRM_Pledge_BAO_Payment::create( $paymentParams );
+            CRM_Pledge_BAO_PledgePayment::create( $paymentParams );
         }
         
         $transaction->commit( );
@@ -283,8 +283,8 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
         $transaction = new CRM_Core_Transaction( );
 
         //check for no Completed Payment records with the pledge
-        require_once 'CRM/Pledge/DAO/Payment.php';
-        $payment = new CRM_Pledge_DAO_Payment( );
+        require_once 'CRM/Pledge/DAO/PledgePayment.php';
+        $payment = new CRM_Pledge_DAO_PledgePayment( );
         $payment->pledge_id = $id;
         $payment->find( );
         
@@ -491,7 +491,7 @@ WHERE  $whereCond
         $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         $returnProperties = array( 'status_id', 'scheduled_amount', 'scheduled_date', 'contribution_id' );
         //get all paymnets details.
-        CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_Payment', 'pledge_id', $params['id'], $allPayments, $returnProperties );
+        CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'pledge_id', $params['id'], $allPayments, $returnProperties );
         
         if ( !empty( $allPayments )) {
             foreach( $allPayments as $payID => $values ) {
@@ -707,8 +707,8 @@ WHERE  $whereCond
                 $fields['pledge_campaign'] = array( 'title' => ts( 'Campaign Title' ) ); 
             }
             
-            require_once 'CRM/Pledge/DAO/Payment.php';
-            $fields = array_merge( $fields, CRM_Pledge_DAO_Payment::export( ) );
+            require_once 'CRM/Pledge/DAO/PledgePayment.php';
+            $fields = array_merge( $fields, CRM_Pledge_DAO_PledgePayment::export( ) );
             
             //set title to calculated fields
             $calculatedFields = array( 'pledge_total_paid'          => array( 'title' => ts('Total Paid') ),

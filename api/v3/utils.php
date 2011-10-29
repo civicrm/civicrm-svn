@@ -100,10 +100,7 @@ function _civicrm_api3_get_DAO ($name) {
         $name = substr ($name, 13, $last -13);// len ('civicrm_api3_') == 13
 
     }
-    if($name =='pledge_payment' || $name == 'PledgePayment'){
-            //for some reason pledge_payment doesn't follow normal conventions of BAO being the same as table name
-            $name = 'Payment';
-    }
+
     if(strtolower($name) =='individual' || strtolower($name) =='household' ||strtolower($name) =='organization'){
         $name = 'Contact';
     }

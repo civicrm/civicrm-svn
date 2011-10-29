@@ -239,7 +239,13 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
 		//$args['desc']           = 'Recurring Contribution';
 		$args['totalbillingcycles'] = $params['installments'];
         $args['version']        = '56.0' ;
-		$args['profilereference']   = "i=".$params['invoiceID']."&m=".$component."&c=".$params['contactID']."&r=".$params['contributionRecurID']."&b=".$params['contributionID']."&p=".$params['contributionPageID'];
+		$args['profilereference'] = 
+            "i={$params['invoiceID']}" .
+            "&m=$component" . 
+            "&c={$params['contactID']}" .
+            "&r={$params['contributionRecurID']}" .
+            "&b=$params['contributionID']" .
+            "&p={$params['contributionPageID']}";
 
         $result = $this->invokeAPI( $args );
 

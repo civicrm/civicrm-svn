@@ -79,8 +79,8 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
         $defaults = array( );
         if ( $this->_id ) {
             $params['id'] = $this->_id;
-            require_once 'CRM/Pledge/BAO/Payment.php';
-            CRM_Pledge_BAO_Payment::retrieve( $params, $defaults );
+            require_once 'CRM/Pledge/BAO/PledgePayment.php';
+            CRM_Pledge_BAO_PledgePayment::retrieve( $params, $defaults );
             list( $defaults['scheduled_date'] ) = CRM_Utils_Date::setDateDefaults( $defaults['scheduled_date'] );
             if( isset( $defaults['contribution_id'] ) ) {
                 $this->assign('pledgePayment', true );
@@ -153,36 +153,36 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
         } 
         
         $params['id'] = $this->_id;
-        $pledgeId = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', $params['id'], 'pledge_id' );       
+        $pledgeId = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_PledgePayment', $params['id'], 'pledge_id' );       
 
-        require_once 'CRM/Pledge/BAO/Payment.php';
-        CRM_Pledge_BAO_Payment::add( $params );
+        require_once 'CRM/Pledge/BAO/PledgePayment.php';
+        CRM_Pledge_BAO_PledgePayment::add( $params );
         $adjustTotalAmount = false;
         if ( CRM_Utils_Array::value( 'option_type', $formValues ) == 2 ) {
             $adjustTotalAmount = true;
         }
         
         
-        $pledgeScheduledAmount = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', 
+        $pledgeScheduledAmount = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_PledgePayment', 
                                                               $params['id'],
                                                               'scheduled_amount', 
                                                               'id'
                                                               );
         
-        $oldestPaymentAmount = CRM_Pledge_BAO_Payment::getOldestPledgePayment( $pledgeId, 2 );
+        $oldestPaymentAmount = CRM_Pledge_BAO_PledgePayment::getOldestPledgePayment( $pledgeId, 2 );
         if ( ( $oldestPaymentAmount['count'] != 1 ) && ( $oldestPaymentAmount['id'] == $params['id'] ) ) {
-            $oldestPaymentAmount = CRM_Pledge_BAO_Payment::getOldestPledgePayment( $pledgeId );
+            $oldestPaymentAmount = CRM_Pledge_BAO_PledgePayment::getOldestPledgePayment( $pledgeId );
         }
         if ( ( $formValues['scheduled_amount'] - $pledgeScheduledAmount  ) >= $oldestPaymentAmount['amount'] ) {
             $adjustTotalAmount = true;
         }
         //update pledge status
-        CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $pledgeId,
-                                                           array( $params['id'] ),
-                                                           $params['status_id'],
-                                                           null,
-                                                           $formValues['scheduled_amount'],
-                                                           $adjustTotalAmount );
+        CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $pledgeId,
+                                                                 array( $params['id'] ),
+                                                                 $params['status_id'],
+                                                                 null,
+                                                                 $formValues['scheduled_amount'],
+                                                                 $adjustTotalAmount );
         
         $statusMsg = ts('Pledge Payment Schedule has been updated.<br />');
         CRM_Core_Session::setStatus( $statusMsg );

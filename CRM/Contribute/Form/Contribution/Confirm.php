@@ -1139,9 +1139,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 
                 //when user doing pledge payments.
                 //update the schedule when payment(s) are made 
-                require_once 'CRM/Pledge/BAO/Payment.php';
+                require_once 'CRM/Pledge/BAO/PledgePayment.php';
                 foreach ( $form->_params['pledge_amount'] as $paymentId => $dontCare ) {
-                    $scheduledAmount  =  CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', 
+                    $scheduledAmount  =  CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_PledgePayment', 
                                                                        $paymentId,
                                                                        'scheduled_amount', 
                                                                        'id'
@@ -1154,11 +1154,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                                  );
                     
                     
-                    CRM_Pledge_BAO_Payment::add( $pledgePaymentParams );
+                    CRM_Pledge_BAO_PledgePayment::add( $pledgePaymentParams );
                 }
                 
                 //update pledge status according to the new payment statuses
-                CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $form->_values['pledge_id'] );
+                CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $form->_values['pledge_id'] );
                 
             } else {
                 //when user creating pledge record.

@@ -265,7 +265,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             //get all payment statuses.
             $statuses = array( );
             $returnProperties = array( 'status_id' );
-            CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_Payment', 'pledge_id', $this->_values['pledge_id'],
+            CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'pledge_id', $this->_values['pledge_id'],
                                              $statuses, $returnProperties );
             
             require_once 'CRM/Contribute/PseudoConstant.php';
@@ -1041,7 +1041,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         } else if  ( !empty( $params['pledge_amount'] ) ) {
             $amount = 0;
             foreach ( $params['pledge_amount'] as $paymentId => $dontCare ) {
-                $amount += CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', $paymentId, 'scheduled_amount' );
+                $amount += CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_PledgePayment', $paymentId, 'scheduled_amount' );
             } 
         } else {
             if ( CRM_Utils_Array::value( 'amount', $form->_values ) ) {
