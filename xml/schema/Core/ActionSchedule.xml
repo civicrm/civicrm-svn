@@ -142,6 +142,14 @@
       <comment>Contact IDs to which reminder should be sent.</comment> 
       <add>3.4</add> 
   </field>
+  <field> 
+      <name>recipient_listing</name> 
+      <title>Recipient Listing</title>
+      <type>varchar</type>  
+      <length>128</length> 
+      <comment>listing based on recipient field.</comment> 
+      <add>4.1</add> 
+  </field>
   <field>
        <name>body_text</name>
        <type>longtext</type>
