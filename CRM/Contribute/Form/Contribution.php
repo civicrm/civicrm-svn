@@ -1261,9 +1261,6 @@ WHERE  contribution_id = {$this->_id}
             if ( CRM_Utils_Array::value( 'receive_date', $this->_params ) ) {
                 $paymentParams['receive_date'] = $this->_params['receive_date'];
             }
-
-            // force a reget of the payment processor in case the form changed it, CRM-7179
-            $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this, true );
             
             $result = null;
             
@@ -1287,8 +1284,13 @@ WHERE  contribution_id = {$this->_id}
                 $paymentParams['contributionPageID']  = $contribution->contribution_page_id;
                 $paymentParams['contributionRecurID'] = $contribution->contribution_recur_id;
             }
-            $result = $payment->doDirectPayment( $paymentParams );
-            
+
+            if ( $paymentParams['amount'] > 0.0 ) {
+                // force a reget of the payment processor in case the form changed it, CRM-7179
+                $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this, true );
+                $result = $payment->doDirectPayment( $paymentParams );
+            }
+
             if ( is_a( $result, 'CRM_Core_Error' ) ) {
                 //make sure to cleanup db for recurring case.
                 if ( CRM_Utils_Array::value( 'contributionID', $paymentParams ) ) {
