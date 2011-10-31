@@ -52,23 +52,18 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_contact_type_create( $params )
 {
+    require_once 'CRM/Utils/String.php';
     civicrm_api3_verify_mandatory($params,_civicrm_api3_get_DAO(__FUNCTION__),array('name','parent_id'));
     if (!array_key_exists('label',$params))
         $params['label'] = $params['name'];
     if (!array_key_exists('is_active',$params))
       $params['is_active'] = true;
-    print_r(CRM_Contact_BAO_ContactType::add($params));
-    die ("toto");
+
+    $params['name'] = CRM_Utils_String::munge( $params['name'] );
     return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 
 }
 
-function _civicrm_api3_contact_type_create_spec(&$fields){
-  $fields['name']['api.required'] =1;
-  $fields['parent_id']['api.required'] =1; 
-  $fields['is_activte']['api.default'] =1;
-  
-}
 /**
  * Returns array of contact_types  matching a set of one or more group properties
  *
