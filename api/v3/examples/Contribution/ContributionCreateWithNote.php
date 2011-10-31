@@ -8,7 +8,7 @@
 function contribution_create_example(){
 $params = array( 
   'contact_id' => 1,
-  'receive_date' => '20111025',
+  'receive_date' => '20111031',
   'total_amount' => '100',
   'contribution_type_id' => 11,
   'payment_instrument_id' => 1,
@@ -46,7 +46,7 @@ function contribution_create_expectedresult(){
           'contribution_type_id' => 11,
           'contribution_page_id' => '',
           'payment_instrument_id' => 1,
-          'receive_date' => '20111025000000',
+          'receive_date' => '20111031000000',
           'non_deductible_amount' => '10',
           'total_amount' => '100',
           'fee_amount' => '50',

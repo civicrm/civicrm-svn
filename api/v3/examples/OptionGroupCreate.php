@@ -41,7 +41,7 @@ function option_group_create_expectedresult(){
       '0' => array( 
           'id' => 75,
           'name' => 'civicrm_event.amount.560',
-          'label' => '',
+          'title' => '',
           'description' => '',
           'is_reserved' => 1,
           'is_active' => 1,

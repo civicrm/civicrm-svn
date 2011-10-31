@@ -8,7 +8,7 @@
 function tag_get_example(){
 $params = array( 
   'id' => 6,
-  'name' => 'New Tag31323943821',
+  'name' => 'New Tag3893530668',
   'version' => 3,
 );
 
@@ -31,13 +31,13 @@ function tag_get_expectedresult(){
   'values' => array( 
       '6' => array( 
           'id' => '6',
-          'name' => 'New Tag31323943821',
-          'description' => 'This is description for New Tag 916757414',
+          'name' => 'New Tag3893530668',
+          'description' => 'This is description for New Tag 1004099364',
           'is_selectable' => '1',
           'is_reserved' => 0,
           'is_tagset' => 0,
           'used_for' => 'civicrm_contact',
-          'created_date' => '2011-10-25 13:31:28',
+          'created_date' => '2011-10-31 16:57:00',
         ),
     ),
 );

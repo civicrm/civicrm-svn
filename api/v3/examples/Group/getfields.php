@@ -25,7 +25,7 @@ function group_getfields_expectedresult(){
   $expectedResult = array( 
   'is_error' => 0,
   'version' => 3,
-  'count' => 8,
+  'count' => 9,
   'id' => array( 
       'name' => 'id',
       'type' => 1,
@@ -73,6 +73,9 @@ function group_getfields_expectedresult(){
         ),
       'is_active' => array( 
           'api.default' => 1,
+        ),
+      'title' => array( 
+          'api.required' => 1,
         ),
     ),
 );

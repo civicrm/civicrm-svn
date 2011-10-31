@@ -34,7 +34,7 @@ function group_contact_get_expectedresult(){
           'title' => 'New Test Group Created',
           'visibility' => 'Public Pages',
           'is_hidden' => 0,
-          'in_date' => '2011-10-25 13:28:57',
+          'in_date' => '2011-10-31 16:55:02',
           'in_method' => 'API',
         ),
     ),

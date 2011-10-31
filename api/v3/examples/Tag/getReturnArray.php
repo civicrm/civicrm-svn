@@ -8,7 +8,7 @@
 function tag_get_example(){
 $params = array( 
   'id' => 7,
-  'name' => 'New Tag31986196865',
+  'name' => 'New Tag31357491965',
   'version' => 3,
   'return' => array( 
       '0' => 'name',
@@ -34,7 +34,7 @@ function tag_get_expectedresult(){
   'values' => array( 
       '7' => array( 
           'id' => '7',
-          'name' => 'New Tag31986196865',
+          'name' => 'New Tag31357491965',
         ),
     ),
 );

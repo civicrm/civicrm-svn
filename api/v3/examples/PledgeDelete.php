@@ -7,7 +7,7 @@
  */
 function pledge_delete_example(){
 $params = array( 
-  'id' => '',
+  'id' => 17,
   'version' => 3,
 );
 
@@ -23,8 +23,13 @@ $params = array(
 function pledge_delete_expectedresult(){
 
   $expectedResult = array( 
-  'is_error' => 1,
-  'error_message' => 'Mandatory key(s) missing from params array: one of (id, pledge_id)',
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => '',
+  'values' => array( 
+      '' => 17,
+    ),
 );
 
   return $expectedResult  ;

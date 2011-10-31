@@ -49,7 +49,8 @@ function event_get_expectedresult(){
           'is_multiple_registrations' => 0,
           'allow_same_participant_emails' => 0,
           'is_template' => 0,
-          'created_date' => '2011-10-25 13:28:51',
+          'created_date' => '2011-10-31 16:54:55',
+          'is_share' => '1',
         ),
     ),
 );

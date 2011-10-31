@@ -37,7 +37,7 @@ function activity_type_create_expectedresult(){
           'id' => 657,
           'option_group_id' => '2',
           'label' => 'send out letters',
-          'value' => 33,
+          'value' => 34,
           'name' => 'send out letters',
           'grouping' => '',
           'filter' => 0,

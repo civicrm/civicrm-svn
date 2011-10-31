@@ -7,26 +7,7 @@
  */
 function tag_delete_example(){
 $params = array( 
-  'tag_id' => array( 
-      'is_error' => 0,
-      'version' => 3,
-      'count' => 1,
-      'id' => 10,
-      'values' => array( 
-          '10' => array( 
-              'id' => 10,
-              'name' => 'New Tag31984421155',
-              'description' => 'This is description for New Tag 1920233528',
-              'parent_id' => '',
-              'is_selectable' => '',
-              'is_reserved' => '',
-              'is_tagset' => '',
-              'used_for' => 'civicrm_contact',
-              'created_id' => '',
-              'created_date' => '20111025133128',
-            ),
-        ),
-    ),
+  'id' => 11,
   'version' => 3,
 );
 
@@ -57,7 +38,7 @@ function tag_delete_expectedresult(){
 /*
 * This example has been generated from the API test suite. The test that created it is called
 * 
-* testTagDelete and can be found in 
+* testTagDeleteCorrectSyntax and can be found in 
 * http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/TagTest.php
 * 
 * You can see the outcome of the API tests at 

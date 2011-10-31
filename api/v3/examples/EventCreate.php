@@ -96,9 +96,10 @@ function event_create_expectedresult(){
           'is_template' => '',
           'template_title' => '',
           'created_id' => '',
-          'created_date' => '20111025132854',
+          'created_date' => '20111031165458',
           'currency' => '',
           'campaign_id' => '',
+          'is_share' => '',
         ),
     ),
 );

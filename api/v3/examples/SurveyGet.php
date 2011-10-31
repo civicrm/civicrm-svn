@@ -39,7 +39,7 @@ function survey_get_expectedresult(){
           'max_number_of_contacts' => '12',
           'is_active' => '1',
           'is_default' => 0,
-          'created_date' => '2011-10-25 13:31:22',
+          'created_date' => '2011-10-31 16:56:53',
         ),
     ),
 );

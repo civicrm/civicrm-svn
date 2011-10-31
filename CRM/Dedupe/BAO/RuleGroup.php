@@ -129,7 +129,7 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
         // Reserved Rule Groups can optionally get special treatment by
         // implementing an optimization class and returning a query array.
         if( $this->is_reserved &&
-            include "CRM/Dedupe/BAO/QueryBuilder/{$this->name}.php") {
+            include_once "CRM/Dedupe/BAO/QueryBuilder/{$this->name}.php") {
             $class = "CRM_Dedupe_BAO_QueryBuilder_{$this->name}";
             $command = empty($this->params) ? 'internal' : 'record';
             $queries = call_user_func(array($class,$command),$this);

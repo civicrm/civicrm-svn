@@ -8,7 +8,7 @@
 function pledge_payment_update_example(){
 $params = array( 
   'contact_id' => 1,
-  'pledge_id' => '',
+  'pledge_id' => 1,
   'contribution_id' => 1,
   'version' => 3,
   'status_id' => 2,
@@ -27,8 +27,24 @@ $params = array(
 function pledge_payment_update_expectedresult(){
 
   $expectedResult = array( 
-  'is_error' => 1,
-  'error_message' => 'No pledge_payment with id ',
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 33,
+  'values' => array( 
+      '33' => array( 
+          'id' => 33,
+          'pledge_id' => '1',
+          'contribution_id' => '1',
+          'scheduled_amount' => '20.00',
+          'actual_amount' => '20.00',
+          'currency' => 'USD',
+          'scheduled_date' => '20111031000000',
+          'reminder_date' => '',
+          'reminder_count' => 0,
+          'status_id' => 1,
+        ),
+    ),
 );
 
   return $expectedResult  ;

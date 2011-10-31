@@ -24,8 +24,54 @@ function pledge_payment_get_expectedresult(){
   $expectedResult = array( 
   'is_error' => 0,
   'version' => 3,
-  'count' => 0,
-  'values' => array(),
+  'count' => 5,
+  'values' => array( 
+      '1' => array( 
+          'id' => '1',
+          'pledge_id' => '1',
+          'scheduled_amount' => '20.00',
+          'currency' => 'USD',
+          'scheduled_date' => '2011-10-31 00:00:00',
+          'reminder_count' => 0,
+          'status_id' => '2',
+        ),
+      '2' => array( 
+          'id' => '2',
+          'pledge_id' => '1',
+          'scheduled_amount' => '20.00',
+          'currency' => 'USD',
+          'scheduled_date' => '2016-10-31 00:00:00',
+          'reminder_count' => 0,
+          'status_id' => '2',
+        ),
+      '3' => array( 
+          'id' => '3',
+          'pledge_id' => '1',
+          'scheduled_amount' => '20.00',
+          'currency' => 'USD',
+          'scheduled_date' => '2021-10-31 00:00:00',
+          'reminder_count' => 0,
+          'status_id' => '2',
+        ),
+      '4' => array( 
+          'id' => '4',
+          'pledge_id' => '1',
+          'scheduled_amount' => '20.00',
+          'currency' => 'USD',
+          'scheduled_date' => '2026-10-31 00:00:00',
+          'reminder_count' => 0,
+          'status_id' => '2',
+        ),
+      '5' => array( 
+          'id' => '5',
+          'pledge_id' => '1',
+          'scheduled_amount' => '20.00',
+          'currency' => 'USD',
+          'scheduled_date' => '2031-10-31 00:00:00',
+          'reminder_count' => 0,
+          'status_id' => '2',
+        ),
+    ),
 );
 
   return $expectedResult  ;

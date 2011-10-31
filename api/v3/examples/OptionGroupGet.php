@@ -31,8 +31,8 @@ function option_group_get_expectedresult(){
       '1' => array( 
           'id' => '1',
           'name' => 'preferred_communication_method',
-          'description' => 'Preferred Communication Method',
-          'is_reserved' => 0,
+          'title' => 'Preferred Communication Method',
+          'is_reserved' => '1',
           'is_active' => '1',
         ),
     ),

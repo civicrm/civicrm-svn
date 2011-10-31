@@ -48,8 +48,8 @@ function activity_create_expectedresult(){
           'is_deleted' => 0,
           'custom_2_id' => '17',
           'custom_2_1_id' => '17',
-          'custom_2' => '',
-          'custom_2_1' => '',
+          'custom_2' => 'Contact, Test',
+          'custom_2_1' => 'Contact, Test',
         ),
     ),
 );

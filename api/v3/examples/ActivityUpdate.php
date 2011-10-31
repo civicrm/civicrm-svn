@@ -12,7 +12,7 @@ $params = array(
   'subject' => 'Make-it-Happen Meeting',
   'status_id' => 1,
   'activity_name' => 'Test activity type',
-  'activity_date_time' => '20111025',
+  'activity_date_time' => '20111031',
   'custom_1' => 'Updated my test data',
   'version' => 3,
 );
@@ -40,7 +40,7 @@ function activity_update_expectedresult(){
           'source_record_id' => '',
           'activity_type_id' => 1,
           'subject' => 'Make-it-Happen Meeting',
-          'activity_date_time' => '20111025000000',
+          'activity_date_time' => '20111031000000',
           'duration' => '',
           'location' => '',
           'phone_id' => '',
@@ -59,6 +59,7 @@ function activity_update_expectedresult(){
           'is_deleted' => '',
           'campaign_id' => '',
           'engagement_level' => '',
+          'weight' => '',
         ),
     ),
 );

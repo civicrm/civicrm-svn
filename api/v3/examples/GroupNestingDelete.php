@@ -25,6 +25,12 @@ function group_nesting_delete_expectedresult(){
 
   $expectedResult = array( 
   'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 'is_error',
+  'values' => array( 
+      'is_error' => 0,
+    ),
 );
 
   return $expectedResult  ;

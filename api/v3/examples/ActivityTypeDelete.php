@@ -22,7 +22,10 @@ $params = array(
  */
 function activity_type_delete_expectedresult(){
 
-  $expectedResult = 1;
+  $expectedResult = array( 
+  'is_error' => 1,
+  'error_message' => 'Mandatory key(s) missing from params array: id',
+);
 
   return $expectedResult  ;
 }
