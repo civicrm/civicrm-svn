@@ -66,7 +66,7 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form
         CRM_Contribute_BAO_Contribution::resolveDefaults( $values );
         
         if ( CRM_Utils_Array::value( 'contribution_page_id', $values ) ){
-            $contribPages = CRM_Contribute_PseudoConstant::contributionPage( );
+            $contribPages = CRM_Contribute_PseudoConstant::contributionPage( null, true );
             $values["contribution_page_title"] = CRM_Utils_Array::value( CRM_Utils_Array::value( 'contribution_page_id', $values ) , $contribPages );
         }
         
