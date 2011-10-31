@@ -46,7 +46,7 @@
         <tr id="row_{$row.id}" class="crm-scheduleReminders {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
             <td class="crm-scheduleReminders-title">{$row.title}</td>
             <td class="crm-scheduleReminders-value">{$row.entity} - {$row.value}</td>
-            <td class="crm-scheduleReminders-description">{$row.first_action_offset}&nbsp;{$row.first_action_unit}&nbsp;{$row.first_action_condition}&nbsp;{$row.entityDate}</td>
+            <td class="crm-scheduleReminders-description">{if $row.absolute_date}{$row.absolute_date|crmDate}{else}{$row.start_action_offset}&nbsp;{$row.start_action_unit}&nbsp;{$row.start_action_condition}&nbsp;{$row.entityDate}{/if}</td>
             <td class="crm-scheduleReminders-title">{$row.status}</td>
             <td class="crm-scheduleReminders-is_repeat">{if $row.is_repeat eq 1}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}&nbsp;</td>
 	    <td id="row_{$row.id}_status" class="crm-scheduleReminders-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>

@@ -264,6 +264,7 @@ SELECT
        cas.start_action_offset,
        cas.start_action_unit,
        cas.start_action_condition,
+       cas.absolute_date,
        is_repeat,
        is_active
 
@@ -285,12 +286,13 @@ WHERE   cas.entity_value = $id AND
         
         $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch() ) {
-            $list[$dao->id]['id']  = $dao->id;
-            $list[$dao->id]['title']  = $dao->title;
-            $list[$dao->id]['start_action_offset']  = $dao->start_action_offset;
-            $list[$dao->id]['start_action_unit']  = $dao->start_action_unit;
-            $list[$dao->id]['start_action_condition']  = $dao->start_action_condition;
-            $list[$dao->id]['entityDate']  = ucwords(str_replace('_', ' ', $dao->entityDate));
+            $list[$dao->id]['id'] = $dao->id;
+            $list[$dao->id]['title'] = $dao->title;
+            $list[$dao->id]['start_action_offset'] = $dao->start_action_offset;
+            $list[$dao->id]['start_action_unit'] = $dao->start_action_unit;
+            $list[$dao->id]['start_action_condition'] = $dao->start_action_condition;
+            $list[$dao->id]['entityDate'] = ucwords(str_replace('_', ' ', $dao->entityDate));
+            $list[$dao->id]['absolute_date'] = $dao->absolute_date;
             $status = $dao->entityStatus;
             $statusIds = str_replace(CRM_Core_DAO::VALUE_SEPARATOR, ', ', $dao->entityStatusIds);
             foreach ($$status as $key => $val) {
@@ -300,7 +302,7 @@ WHERE   cas.entity_value = $id AND
             $value = $dao->entityValue;
             $valueIds = str_replace(CRM_Core_DAO::VALUE_SEPARATOR, ', ', $dao->entityValueIds);
             foreach ($$value as $key => $val) {
-              $valueIds   = str_replace($key, $val, $valueIds);
+              $valueIds = str_replace($key, $val, $valueIds);
             }
             $list[$dao->id]['entity']     = $entity[$dao->entity];
             $list[$dao->id]['value']      = $valueIds;
