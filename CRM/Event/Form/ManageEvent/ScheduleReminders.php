@@ -158,7 +158,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         $this->add( 'select', 'recipient', ts( 'Recipient(s)' ), $sel5[$recipient],
                     false, array( 'onClick' => "showHideByValue('recipient','manual','recipientManual','table-row','select',false); showHideByValue('recipient','group','recipientGroup','table-row','select',false);") 
                     );
-        $recipientListing = $this->add( 'select', 'recipientListing', ts('Recipient Listing'), 
+        $recipientListing = $this->add( 'select', 'recipient_listing', ts('Recipient Listing'), 
                                         $sel3[$mappingID][0]);
         $recipientListing->setMultiple( true ); 
         
@@ -207,8 +207,8 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
 
         if ( ( CRM_Utils_Array::value( 'recipient', $fields ) == 1 ||
                CRM_Utils_Array::value( 'recipient', $fields ) == 2 ) && 
-             CRM_Utils_System::isNull( $fields['recipientListing'] ) ){
-            $errors['recipientListing'] = ts('Recipient Listing is a required field.');
+             CRM_Utils_System::isNull( $fields['recipient_listing'] ) ){
+            $errors['recipient_listing'] = ts('Recipient Listing is a required field.');
         }
 
         if ( ! empty( $errors ) ) {
@@ -269,13 +269,18 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
        
         if ( CRM_Utils_Array::value( 'recipient', $values ) == 'manual' ) {
             $params['recipient_manual'] = CRM_Utils_Array::value( 'recipient_manual_id', $values );
-            $params['group_id'] = $params['recipient'] = 'null';
+            $params['group_id'] = $params['recipient'] = $params['recipient_listing'] = 'null';
         } else if ( CRM_Utils_Array::value( 'recipient', $values ) == 'group' ) {
             $params['group_id'] = $values['group_id'];
-            $params['recipient_manual'] = $params['recipient'] = 'null';
+            $params['recipient_manual'] = $params['recipient'] =  $params['recipient_listing'] = 'null';
+        } else if ( !CRM_Utils_System::isNull( $values['recipient_listing'] ) ) {
+            $params['recipient'] = CRM_Utils_Array::value( 'recipient', $values );
+            $params['recipient_listing'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                                    CRM_Utils_Array::value( 'recipient_listing', $values ) );
+            $params['group_id'] = $params['recipient_manual'] = 'null';
         } else {
             $params['recipient'] = CRM_Utils_Array::value( 'recipient', $values );
-            $params['group_id'] = $params['recipient_manual'] = 'null';
+            $params['group_id'] = $params['recipient_manual'] = $params['recipient_listing'] = 'null';
         }
 
         $params['mapping_id'] = 3;

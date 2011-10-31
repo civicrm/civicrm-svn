@@ -229,6 +229,11 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
                 list( $date, $time ) = CRM_Utils_Date::setDateDefaults( $absoluteDate );
                 $defaults['absolute_date'] = $date;
             }
+
+            if ( $recipientListing = CRM_Utils_Array::value( 'recipient_listing', $defaults ) ) {
+                $defaults['recipient_listing']= explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                                         $recipientListing);
+            }
             $defaults['text_message'] = CRM_Utils_Array::value( 'body_text', $defaults );
             $defaults['html_message'] = CRM_Utils_Array::value( 'body_html', $defaults );
             $defaults['template'] = CRM_Utils_Array::value( 'msg_template_id', $defaults );
