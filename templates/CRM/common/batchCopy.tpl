@@ -34,16 +34,25 @@ cj( function() {
 function copyFieldValues( fname ) {
     var elementId    = cj('[name^="field["][name$="[' + fname +']"]');
     var firstElement = elementId.eq(0);
-
+    
+    //console.log( elementId );
+    //console.log( firstElement );
+    
     //check if it is date element
-    var isDateElement     =  elementId.attr('format');
+    var isDateElement     = elementId.attr('format');
+    var elementType       = elementId.attr('type'); 
     var firstElementValue = firstElement.val();
-   
-    if ( isDateElement ) {
-        elementId.val( firstElementValue );
-        copyValuesDate( fname );
+
+    // set the value for all the elements
+    if ( elementType == 'radio' ) {
+        firstElementValue = elementId.filter(':checked').eq(0).val();
+        elementId.filter("[value=" + firstElementValue + "]").prop("checked",true);
     } else {
         elementId.val( firstElementValue );
+    }
+
+    if ( isDateElement ) {
+        copyValuesDate( fname );
     }
 }
 
