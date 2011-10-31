@@ -1080,13 +1080,13 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
        //exit; 
         $createdMemberships =  array( );
         if ( $this->_mode ) {
-            if ( empty( $formValues['total_amount'] ) ) { 
+            if ( empty( $formValues['total_amount'] ) && !$priceSetId ) { 
                 // if total amount not provided minimum for membership type is used
                 $params['total_amount'] = $formValues['total_amount']  = 
                     CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
                                                  $formValues['membership_type_id'][1],'minimum_fee' );
             } else {
-                $params['total_amount'] = $formValues['total_amount']  ;
+                $params['total_amount'] = CRM_Utils_Array::value('total_amount', $formValues, 0);
             }
             
             if ( $priceSetId ) {
