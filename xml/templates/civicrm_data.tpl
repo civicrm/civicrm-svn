@@ -317,7 +317,6 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}Link Cases{/ts}',                         25, 'Link Cases', NULL, 0,  NULL, 25, '', 0, 1, 1, @caseCompId, NULL ),
    (@option_group_id_act, '{ts escape="sql"}Change Case Tags{/ts}',                   26, 'Change Case Tags', NULL,0, 0, 26, '', 0, 1, 1, @caseCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}Add Client To Case{/ts}',                 27, 'Add Client To Case', NULL,0, 0, 26, '', 0, 1, 1, @caseCompId, NULL),
-   (@option_group_id_act, '{ts escape="sql"}Change Custom Data{/ts}',                 28, 'Change Custom Data', NULL,0, 0, 27, '', 0, 1, 1, @caseCompId, NULL),
 
 -- Activity Types for CiviCampaign
    (@option_group_id_act, '{ts escape="sql"}Survey{/ts}',                             28, 'Survey', NULL,0, 0, 27, '', 0, 1, 1, @campaignCompId, NULL),
@@ -325,6 +324,9 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}PhoneBank{/ts}',                          30, 'PhoneBank', NULL,0, 0, 29, '', 0, 1, 1, @campaignCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}WalkList{/ts}',                           31, 'WalkList', NULL,0, 0, 30, '', 0, 1, 1, @campaignCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}Petition{/ts}',                           32, 'Petition', NULL,0, 0, 31, '', 0, 1, 1, @campaignCompId, NULL),
+
+-- Activity Types for CiviCampaign CiviCase
+   (@option_group_id_act, '{ts escape="sql"}Change Custom Data{/ts}',                 33, 'Change Custom Data', NULL,0, 0, 33, '', 0, 1, 1, @caseCompId, NULL),
 
    (@option_group_id_gender, '{ts escape="sql"}Female{/ts}',      1, 'Female',      NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_gender, '{ts escape="sql"}Male{/ts}',        2, 'Male',        NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),

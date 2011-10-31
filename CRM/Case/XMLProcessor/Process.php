@@ -319,6 +319,7 @@ AND        a.is_deleted = 0
         }
 
         //set order
+        $orderVal = '';
         if ( isset( $activityTypeXML->order ) ) {
             $orderVal = (string) $activityTypeXML->order;
         }

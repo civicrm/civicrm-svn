@@ -170,7 +170,12 @@ class CRM_Case_Form_CustomData extends CRM_Core_Form
                                  'activity_date_time'  => date('YmdHis'),
                                  );
         require_once 'CRM/Activity/BAO/Activity.php';
-        CRM_Activity_BAO_Activity::create( $activityParams );
+        $activity   = CRM_Activity_BAO_Activity::create( $activityParams );
+
+        $caseParams = array( 'activity_id' => $activity->id,
+                             'case_id'     => $this->_entityID );
+        require_once 'CRM/Case/BAO/Case.php';
+        CRM_Case_BAO_Case::processCaseActivity( $caseParams );
 
         $transaction->commit( );
     }
