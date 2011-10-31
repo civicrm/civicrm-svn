@@ -47,36 +47,15 @@ function copyFieldValues( fname ) {
     }
 }
 
-function copyValuesDate(fname)
-{
+function copyValuesDate(fname) {
     var fnameDisplay = fname + '_display';
     var fnameTime    = fname + '_time';
-    var displayElement = cj('[name^="field["][name$="[' + fnameDisplay +']"]');
-    console.log( displayElement );
-    var timeElement    = cj('[name^="field["][name$="[' + fnameTime +']"]');
-   
+    
+    var displayElement = cj('[name^="field_"][name$="_' + fnameDisplay +'"]');
+    var timeElement    = cj('[name^="field_"][name$="_' + fnameTime +'"]');
+  
     displayElement.val( displayElement.eq(0).val() );
     timeElement.val( timeElement.eq(0).val() );
-    
-    /*
-    var cId = new Array();
-    var i = 0;
-    {/literal}
-    {foreach from=$componentIds item=field}
-        {literal}cId[i++]{/literal} = {$field}
-    {/foreach}
-    {literal}
-    var firstDate = cj( "#field_" + cId[0] + '_' + fieldName + '_display' ).val( );
-    var firstTime = null;
-    if ( cj( "#field_" + cId[0] + '_' + fieldName + '_time') ) {
-    	firstTime = cj( "#field_" + cId[0] + '_' + fieldName + '_time' ).val( );
-    }
- 	cj(cId).each(function(i,id) {
-        cj( '#field_' + id + '_' + fieldName + '_display' ).val( firstDate );
-        cj( '#field_' + id + '_' + fieldName ).val( firstDate );
-        cj( '#field_' + id + '_' + fieldName + '_time').val( firstTime );
- 	});
-    */
 }
 
 function setStatusesTo(statusId)
