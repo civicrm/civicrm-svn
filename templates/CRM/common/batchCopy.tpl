@@ -32,7 +32,10 @@ cj( function() {
 });
 
 function copyFieldValues( fname ) {
-    var elementId    = cj('[name^="field["][name$="[' + fname +']"]');
+    // this is the most common pattern for elements, so first check if it exits
+    var elementId    = cj('[name^="field["][name*="[' + fname +']"][type!=hidden]');
+    
+    // get the first element
     var firstElement = elementId.eq(0);
     
     //console.log( elementId );
@@ -42,11 +45,13 @@ function copyFieldValues( fname ) {
     var isDateElement     = elementId.attr('format');
     var elementType       = elementId.attr('type'); 
     var firstElementValue = firstElement.val();
-
+    
     // set the value for all the elements
     if ( elementType == 'radio' ) {
         firstElementValue = elementId.filter(':checked').eq(0).val();
         elementId.filter("[value=" + firstElementValue + "]").prop("checked",true);
+    } else if ( elementType == 'checkbox' ) {
+        // handle checkbox
     } else {
         elementId.val( firstElementValue );
     }
