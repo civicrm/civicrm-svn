@@ -938,10 +938,11 @@ function civicrm_filter_info() {
  */
 function _civicrm_filter_tips($filter, $format, $long = false) {
     return
-        t('Evaluate <a target="_blank" href="@smarty">Smarty</a> and <a target="_blank" href="@civiapi">CiviCRM API</a> codes', array(
-                                                                                                                                      '@smarty' => 'http://www.smarty.net/docsv2/en/',
-                                                                                                                                      '@civiapi' => 'http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs'
-                                                                                                                                      ));
+        t('Evaluate <a target="_blank" href="@smarty">Smarty</a> and <a target="_blank" href="@civiapi">CiviCRM API</a> codes',
+          array(
+                '@smarty' => 'http://www.smarty.net/docsv2/en/',
+                '@civiapi' => 'http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs'
+                ));
 }
    
 /**

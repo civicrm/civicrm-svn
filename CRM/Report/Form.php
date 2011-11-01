@@ -2736,7 +2736,8 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                                                                 $this->_absoluteUrl, $this->_id );
                     $rows[$rowNum]['civicrm_address_country_id_link'] = $url;
                     $rows[$rowNum]['civicrm_address_country_id_hover'] = 
-                        ts("$urltxt for this country.");
+                        ts( "%1 for this country.",
+                            array( 1 => $urltxt ) );
                 }
                 
              $entryFound = true;
@@ -2751,7 +2752,8 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                                                                 $this->_absoluteUrl, $this->_id );
                     $rows[$rowNum]['civicrm_address_county_id_link'] = $url;
                     $rows[$rowNum]['civicrm_address_county_id_hover'] = 
-                        ts("$urltxt for this county.");
+                        ts( "%1 for this county.",
+                            array( 1 => $urltxt ) );
                 }
                 $entryFound = true;
             }
@@ -2767,7 +2769,8 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                                                              $this->_absoluteUrl, $this->_id );
                     $rows[$rowNum]['civicrm_address_state_province_id_link']  = $url;
                     $rows[$rowNum]['civicrm_address_state_province_id_hover'] = 
-                        ts("$urltxt  for this state.");
+                        ts( "%1 for this state.",
+                            array( 1 => $urltxt ) );
                 }
                 $entryFound = true;
             }
