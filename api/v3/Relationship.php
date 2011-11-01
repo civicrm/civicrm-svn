@@ -107,6 +107,7 @@ function _civicrm_api3_relationship_create_spec(&$params){
  * @param  array $params
  *
  * @return boolean  true if success, else false
+ * {getfields relationship_delete}
  * @static void
  * @access public
  */
