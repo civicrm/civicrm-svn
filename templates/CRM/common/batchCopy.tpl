@@ -48,12 +48,15 @@ function copyFieldValues( fname ) {
     var firstElement = elementId.eq(0);
     var firstElementValue = firstElement.val();
     
-    //console.log( elementId );
-    //console.log( firstElement );
-    //console.log( firstElementValue );
+    console.log( elementId );
+    console.log( firstElement );
+    console.log( firstElementValue );
     
     //check if it is date element
     var isDateElement     = elementId.attr('format');
+
+    // check if it is wysiwyg element
+    var editor = elementId.attr('editor');
 
     //get the element type
     var elementType       = elementId.attr('type'); 
@@ -81,6 +84,31 @@ function copyFieldValues( fname ) {
                 cj('#Batch [type=checkbox][name^="field["][name*="['+ fname +']['+ correctIndexValue+']"][type!=hidden]').prop('checked',true);
             }
         });
+    } else if ( editor ) {
+        var firstElementId = firstElement.attr('id');
+        switch ( editor ) {
+            case 'ckeditor':
+                oEditor = CKEDITOR.instances[firstElementId];
+                var htmlMessage = oEditor.getData( );
+                
+                elementId.each( function() {
+                    var elemtId = cj(this).attr('id');
+                    oEditor = CKEDITOR.instances[elemtId];
+                    oEditor.setData( htmlMessage );
+                });
+
+                break;
+            case 'tinymce':
+                
+                break;
+            case 'joomlaeditor':
+                 // TO DO
+            case 'drupalwysiwyg':
+                 // TO DO
+            default:
+                elementId.val( firstElementValue );
+
+        }
     } else {
         elementId.val( firstElementValue );
     }

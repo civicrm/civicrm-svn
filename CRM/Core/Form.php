@@ -807,7 +807,10 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         if ( $editor == 'drupal default editor' ) {
             $editor = 'drupalwysiwyg';
         }
- 
+        
+        //lets add the editor as a attribute
+        $attributes['editor'] = $editor;
+
         $this->addElement( $editor, $name, $label, $attributes );
         $this->assign('editor', $editor);
     }    
