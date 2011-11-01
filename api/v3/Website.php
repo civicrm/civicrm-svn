@@ -43,6 +43,7 @@ require_once 'CRM/Core/BAO/Website.php';
  * 
  * Allowed @params array keys are:
  * {@getfields website_create}
+ * @example WebsiteCreate.php
  * {@example WebsiteCreate.php}
  * @return array of newly created website property values.
  * @access public
@@ -73,7 +74,7 @@ function _civicrm_api3_website_create_spec( &$params ) {
  * Deletes an existing Website
  *
  * @param  array  $params
- *
+ * @example WebsiteDelete.php Std Delete Example
  * {@schema Core/Website.xml}
  * {@example WebsiteDelete.php 0}
  * @return boolean | error  true if successfull, error otherwise
