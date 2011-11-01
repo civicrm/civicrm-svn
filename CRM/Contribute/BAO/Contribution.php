@@ -309,7 +309,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             if ( CRM_Utils_Array::value( 'pcp_made_through_id', $params ) ) {
                 $csParams['pcp_id'] = CRM_Utils_Array::value( 'pcp_made_through_id', $params );
                 require_once 'CRM/Core/DAO.php';
-                $csParams['contact_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP',
+                $csParams['contact_id'] = CRM_Core_DAO::getFieldValue( 'CRM_PCP_DAO_PCP',
                                                                         $csParams['pcp_id'], 'contact_id' );
             } else {
                 $csParams['contact_id'] = $params['soft_credit_to'];

@@ -478,6 +478,12 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         }
         $this->addFormRule( array( 'CRM_Event_Form_Registration_Register', 'formRule' ),
                             $this );
+
+        // add pcp fields
+        if ($this->_pcpId){
+          require_once "CRM/PCP/BAO/PCP.php";
+          CRM_PCP_BAO_PCP::buildPcp($this->_pcpId, $this);
+        }
         
     }
     
@@ -1306,6 +1312,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     if ( !$isAdditional ) {
                         $registerUrl = CRM_Utils_System::url( 'civicrm/event/register',
                                                               "reset=1&id={$self->_values['event']['id']}&cid=0" );
+                        if ( $self->_pcpId){
+                          $registerUrl .= '&pcpId=' . $self->_pcpId;
+                        }
+
                         $status = ts("Oops. It looks like you are already registered for this event. If you want to change your registration, or you feel that you've gotten this message in error, please contact the site administrator.") 
                                   . ' ' . ts('You can also <a href="%1">register another participant</a>.', array(1 => $registerUrl));
                         $session->setStatus( $status );
@@ -1314,6 +1324,11 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                         if ( $self->_action & CRM_Core_Action::PREVIEW ) {
                             $url .= '&action=preview';
                         }
+
+                        if ( $self->_pcpId){
+                          $url .= '&pcpId=' . $self->_pcpId;
+                        }
+                        
                         CRM_Utils_System::redirect( $url );
                     }
 

@@ -95,7 +95,7 @@ class CRM_Friend_Form extends CRM_Core_Form
             
             $values = array( );
             $params = array( 'id' => $this->_pcpBlockId );
-            CRM_Core_DAO::commonRetrieve( 'CRM_Contribute_DAO_PCPBlock', 
+            CRM_Core_DAO::commonRetrieve( 'CRM_PCP_DAO_PCPBlock', 
                                           $params, $values, array( 'is_tellfriend_enabled', 'tellfriend_limit' ) );
             
             if ( ! CRM_Utils_Array::value( 'is_tellfriend_enabled', $values ) ) { 
@@ -291,8 +291,8 @@ LEFT JOIN  civicrm_contribution_page contrib ON ( pcp.contribution_page_id = con
             $defaults['thankyou_text'] = ts( 'Thanks for supporting this campaign by spreading the word to your friends.' );
         } else if ( $this->_entityTable == 'civicrm_contribution_page' ) {
             // If this is tell a friend after contributing, give donor link to create their own fundraising page
-            require_once 'CRM/Contribute/BAO/PCP.php';
-            if ( $linkText = CRM_Contribute_BAO_PCP::getPcpBlockStatus( $defaults['entity_id'] ) ) {
+            require_once 'CRM/PCP/BAO/PCP.php';
+            if ( $linkText = CRM_PCP_BAO_PCP::getPcpBlockStatus( $defaults['entity_id'], $defaults['entity_table'] ) ) {
                 
                 $linkTextUrl = CRM_Utils_System::url( 'civicrm/contribute/campaign',
                                                      "action=add&reset=1&pageId={$defaults['entity_id']}",

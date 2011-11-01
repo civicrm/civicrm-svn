@@ -195,7 +195,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
     {
         $this->_eventId = CRM_Utils_Request::retrieve( 'id'    , 'Positive', $this, true  );
         $this->_action  = CRM_Utils_Request::retrieve( 'action', 'String'  , $this, false );
-        
+   
         //CRM-4320
         $this->_participantId = CRM_Utils_Request::retrieve( 'participantId', 'Positive', $this );
                 
@@ -313,7 +313,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                                                  $this->_values['event']['contribution_type_id'],
                                                  'accounting_code' );
             }
-
+            
             if( isset( $this->_values['event']['default_role_id'] ) ) {
                 require_once 'CRM/Core/OptionGroup.php';
                 $participant_role = CRM_Core_OptionGroup::values('participant_role');
@@ -489,13 +489,35 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         // Use Browser Print instead.
         $this->assign( 'browserPrint', true  );
 
+        $isShowLocation = CRM_Utils_Array::value('is_show_location',$this->_values['event'])  ;
+        $this->assign( 'isShowLocation',$isShowLocation );
+
+        // Handle PCP
+        $pcpId = CRM_Utils_Request::retrieve( 'pcpId', 'Positive', $this );
+        if ( $pcpId ) {
+            require_once 'CRM/PCP/BAO/PCP.php';
+            $pcp = CRM_PCP_BAO_PCP::handlePcp($pcpId, 'event', $this->_values['event']);
+            
+            $this->_pcpId    = $pcp['pcpId'];
+            $this->_pcpBlock = $pcp['pcpBlock'];
+            $this->_pcpInfo  = $pcp['pcpInfo'];
+        }
+        
+        if ($pcp['pcpInfo']['intro_text']){
+          $this->_values['event']['intro_text'] = $pcp['pcpInfo']['intro_text'];
+        }
+
         // assign all event properties so wizard templates can display event info.
         $this->assign('event', $this->_values['event']);
         $this->assign('location',$this->_values['location']);
         $this->assign( 'bltID', $this->_bltID );
         $isShowLocation = CRM_Utils_Array::value('is_show_location',$this->_values['event'])  ;
         $this->assign( 'isShowLocation',$isShowLocation );
-        
+        require_once('CRM/PCP/BAO/PCP.php');
+        if ( $this->_pcpId && $pcpSupporter = CRM_PCP_BAO_PCP::displayName( $this->_pcpId ) ) {
+            $this->assign( 'pcpSupporterText' , ts('This event registration is being made thanks to effort of <strong>%1</strong>, who supports our campaign. You can support it as well - once you complete the registration, you will be able to create your own Personal Campaign Page!', array(1 => $pcpSupporter ) ) );
+        }
+
         //CRM-6907
         $config = CRM_Core_Config::singleton( );
         $config->defaultCurrency = CRM_Utils_Array::value( 'currency', 

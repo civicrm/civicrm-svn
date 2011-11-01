@@ -324,6 +324,10 @@ class CRM_Core_BAO_CMSUser
                         break;
                     }
                 }
+
+              if ($form->_component){
+                $args .= '&component=' . $form->_component;
+              }
             }
                 
             if ( $emailName == null ) {

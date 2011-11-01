@@ -439,9 +439,9 @@ WHERE  contribution_id = {$this->_id}
 
             if ( CRM_Utils_Array::value('pcp_id', $softCredit ) ){
                 $pcpId = CRM_Utils_Array::value('pcp_id', $softCredit );
-                $pcpTitle = CRM_Core_DAO::getFieldValue ( 'CRM_Contribute_DAO_PCP', $pcpId, 'title' );
-                require_once 'CRM/Contribute/BAO/PCP.php';
-                $contributionPageTitle = CRM_Contribute_BAO_PCP::getPcpContributionPageTitle( $pcpId );
+                $pcpTitle = CRM_Core_DAO::getFieldValue ( 'CRM_PCP_DAO_PCP', $pcpId, 'title' );
+                require_once 'CRM/PCP/BAO/PCP.php';
+                $contributionPageTitle = CRM_PCP_BAO_PCP::getPcpPageTitle( $pcpId, 'contribute' );
                 $this->_values['pcp_made_through' ]    = CRM_Utils_Array::value( 'sort_name',           $softCredit) . " :: " .
                                                          $pcpTitle . " :: " . $contributionPageTitle;
                 $this->_values['pcp_made_through_id']  = CRM_Utils_Array::value( 'pcp_id',              $softCredit);

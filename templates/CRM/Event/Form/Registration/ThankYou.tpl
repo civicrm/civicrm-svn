@@ -44,8 +44,15 @@
         <div id="tell-a-friend" class="crm-section tell_friend_link-section">
             <a href="{$friendURL}" title="{$friendText}" class="button"><span>&raquo; {$friendText}</span></a>
        </div><br /><br />
-    {/if}  
+    {/if}
 
+    {* Add button for donor to create their own Personal Campaign page *}
+    {if $pcpLink}
+      <div class="crm-section create_pcp_link-section">
+            <a href="{$pcpLink}" title="{$pcpLinkText}" class="button"><span>&raquo; {$pcpLinkText}</span></a>
+        </div><br /><br />
+    {/if}
+    
     <div id="help">
         {if $isOnWaitlist}
             <p>

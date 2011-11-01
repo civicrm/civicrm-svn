@@ -92,6 +92,7 @@
         		    <li><a title="Online Registration" class="action-item-wrap {if NOT $row.is_online_registration} disabled{/if}" href="{crmURL p='civicrm/event/manage/registration' q="reset=1&action=update&id=`$row.id`"}">{ts}Online Registration{/ts}</a></li>
 			     <li><a title="Schedule Reminders" class="action-item-wrap {if NOT $row.reminder} disabled{/if}" href="{crmURL p='civicrm/event/manage/reminder' q="reset=1&action=update&id=`$row.id`"}">{ts}Schedule Reminders{/ts}</a></li>
         		    <li><a title="Tell a Friend" class="action-item-wrap {if NOT $row.friend} disabled{/if}" href="{crmURL p='civicrm/event/manage/friend' q="reset=1&action=update&id=`$row.id`"}">{ts}Tell a Friend{/ts}</a></li>
+                <li><a title="PCP" class="action-item-wrap {if NOT $row.is_pcp_enabled} disabled{/if}" href="{crmURL p='civicrm/event/manage/pcp' q="reset=1&action=update&id=`$row.id`"}">{ts}PCP{/ts}</a></li>
 			</ul> 
         	    </span>
         	    </div>

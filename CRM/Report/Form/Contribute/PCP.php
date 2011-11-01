@@ -79,7 +79,7 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
                          ),
                   
                   'civicrm_pcp' =>
-                  array( 'dao'    => 'CRM_Contribute_DAO_PCP',
+                  array( 'dao'    => 'CRM_PCP_DAO_PCP',
                          'fields' =>
                          array( 'title'        => 
                                 array( 'title'   => ts( 'Pesonal Campaign Title' ),  

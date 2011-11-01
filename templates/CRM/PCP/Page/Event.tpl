@@ -1,8 +1,6 @@
-<?php
-
-/*
+{*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -24,58 +22,5 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*/
-
-/**
- *
- * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
- * $Id$
- *
- */
-
-require_once 'CRM/Core/Controller.php';
-require_once 'CRM/Core/Session.php';
-
-/**
- * This class is used by the Search functionality.
- *
- *  - the search controller is used for building/processing multiform
- *    searches.
- *
- * Typically the first form will display the search criteria and it's results
- *
- * The second form is used to process search results with the asscociated actions
- *
- */
-
-class CRM_Contribute_Controller_PCP extends CRM_Core_Controller {
-
-    /**
-     * class constructor
-     */
-    function __construct( $title = null, $action = CRM_Core_Action::NONE, $modal = true ) {
-        require_once 'CRM/Contribute/StateMachine/PCP.php';
-
-        parent::__construct( $title, $modal );
-
-        
-        $this->_stateMachine = new CRM_Contribute_StateMachine_PCP( $this, $action );
-
-        // create and instantiate the pages
-        $this->addPages( $this->_stateMachine, $action );
-
-        // add all the actions
-        $uploadNames = $this->get( 'uploadNames' );
-        if ( ! empty( $uploadNames ) ) {
-            $config = CRM_Core_Config::singleton( );
-            $this->addActions( $config->customFileUploadDir, $uploadNames );
-        } else {
-            $this->addActions( );
-        }
-    
-    }
-
-}
-
-
+*}
+{include file="CRM/PCP/Page/PCP.tpl" context="Event"}

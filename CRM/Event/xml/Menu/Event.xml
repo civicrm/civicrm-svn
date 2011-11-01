@@ -76,7 +76,7 @@
      <adminGroup>CiviEvent</adminGroup>
      <icon>admin/small/template.png</icon>
      <weight>375</weight>
-  </item>  
+  </item>
   <item>
      <path>civicrm/admin/options/event_type</path>
      <title>Event Types</title>
@@ -133,7 +133,7 @@
      <access_arguments>access CiviEvent</access_arguments>
   </item>
   <item>
-     <path>civicrm/event/manage/eventInfo</path>
+     <path>civicrm/event/manage/settings</path>
      <title>Event Info and Settings</title>
      <page_callback>CRM_Event_Form_ManageEvent_EventInfo</page_callback>
      <access_arguments>access CiviEvent</access_arguments>

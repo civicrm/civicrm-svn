@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -23,16 +23,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div id="pcp-form" class="crm-block crm-form-block crm-contribution-contributionpage-pcp-form-block">
-{if !$profile}
-	{capture assign=pUrl}{crmURL p='civicrm/admin/uf/group' q="reset=1"}{/capture}
-	<div class="status message">
-	{ts 1=$pUrl}No Profile with a user account registration option has been configured / enabled for your site. You need to <a href='%1'>configure a Supporter profile</a> first. It will be used to collect or update basic information from users while they are creating a Personal Campaign Page.{/ts}
-	</div>
-{/if}
-<div id="help">
-{ts}Allow constituents to create their own personal fundraising pages linked to this contribution page.{/ts} {help id="id-pcp_intro_help"}
-</div>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <table class="form-layout">
 	<tr  class="crm-contribution-contributionpage-pcp-form-block-pcp_active">
@@ -44,32 +34,49 @@
 <div class="spacer"></div>
 
 <div id="pcpFields">
-<table class="form-layout">
-   <tr class="crm-contribution-contributionpage-pcp-form-block-is_approval_needed">
-	    <td class="label">{$form.is_approval_needed.label}</td>
-	    <td>{$form.is_approval_needed.html} {help id="id-approval_needed"}</td>
-   </tr>
-   <tr class="crm-contribution-contributionpage-pcp-form-block-notify_email">
-	    <td class="label">{$form.notify_email.label}</td>
-	    <td>{$form.notify_email.html} {help id="id-notify"}</td>
-   </tr>       
-   <tr class="crm-contribution-contributionpage-pcp-form-block-supporter_profile_id">
-	    <td class="label">{$form.supporter_profile_id.label} <span class="marker"> *</span></td>
-	    <td>{$form.supporter_profile_id.html} {help id="id-supporter_profile"}</td>
-   </tr>
-   <tr class="crm-contribution-contributionpage-pcp-form-block-is_tellfriend_enabled">
-	    <td class="label">{$form.is_tellfriend_enabled.label}</td>
-	    <td>{$form.is_tellfriend_enabled.html} {help id="id-is_tellfriend"}</td>
-   </tr>
-   <tr id="tflimit" class="crm-contribution-contributionpage-pcp-form-block-tellfriend_limit">
-	    <td class="label">{$form.tellfriend_limit.label}</td>
-	    <td>{$form.tellfriend_limit.html|crmReplace:class:four} {help id="id-tellfriend_limit"}</td>
-   </tr>
-   <tr class="crm-contribution-contributionpage-pcp-form-block-link_text">
-	    <td class="label">{$form.link_text.label}</td>
-	    <td>{$form.link_text.html|crmReplace:class:huge} {help id="id-link_text"}</td>
-   </tr>
-</table>
+  {if $form.target_entity_type}
+  <table class="form-layout">
+  	<tr  class="crm-contribution-contributionpage-pcp-form-block-target_entity_type">
+  	    <td class="label">{$form.target_entity_type.label} <span class="marker"> *</span></td>
+  	    <td>{$form.target_entity_type.html} {help id="id-target_entity_type"}</td>
+  	</tr>
+  </table>
+  <div id="pcpDetailFields" {if $form.target_entity_type.value[0] == 'event'} style="display:none;"{/if}>
+    <table class="form-layout">
+    	<tr class="crm-contribution-contributionpage-pcp-form-block-target_entity_id" id="pcpDetailFields">
+    	    <td class="label">{$form.target_entity_id.label} <span class="marker"> *</span></td>
+    	    <td>{$form.target_entity_id.html} {help id="id-target_entity_id"}</td>
+    	</tr>
+    </table>
+  </div>
+  {/if}
+  
+  <table class="form-layout">
+     <tr class="crm-contribution-contributionpage-pcp-form-block-is_approval_needed">
+  	    <td class="label">{$form.is_approval_needed.label}</td>
+  	    <td>{$form.is_approval_needed.html} {help id="id-approval_needed"}</td>
+     </tr>
+     <tr class="crm-contribution-contributionpage-pcp-form-block-notify_email">
+  	    <td class="label">{$form.notify_email.label}</td>
+  	    <td>{$form.notify_email.html} {help id="id-notify"}</td>
+     </tr>       
+     <tr class="crm-contribution-contributionpage-pcp-form-block-supporter_profile_id">
+  	    <td class="label">{$form.supporter_profile_id.label} <span class="marker"> *</span></td>
+  	    <td>{$form.supporter_profile_id.html} {help id="id-supporter_profile"}</td>
+     </tr>
+     <tr class="crm-contribution-contributionpage-pcp-form-block-is_tellfriend_enabled">
+  	    <td class="label">{$form.is_tellfriend_enabled.label}</td>
+  	    <td>{$form.is_tellfriend_enabled.html} {help id="id-is_tellfriend"}</td>
+     </tr>
+     <tr id="tflimit" class="crm-contribution-contributionpage-pcp-form-block-tellfriend_limit">
+  	    <td class="label">{$form.tellfriend_limit.label}</td>
+  	    <td>{$form.tellfriend_limit.html|crmReplace:class:four} {help id="id-tellfriend_limit"}</td>
+     </tr>
+     <tr class="crm-contribution-contributionpage-pcp-form-block-link_text">
+  	    <td class="label">{$form.link_text.label}</td>
+  	    <td>{$form.link_text.html|crmReplace:class:huge} {help id="id-link_text"}</td>
+     </tr>
+  </table>
 </div>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

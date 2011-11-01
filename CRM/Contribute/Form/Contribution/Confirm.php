@@ -250,20 +250,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
         
         if ( $this->_pcpId ) { 
-            $this->_params['pcp_made_through_id'] = $this-> _pcpInfo['pcp_id'];
-            $this->assign( 'pcpBlock', true );
-            if ( CRM_Utils_Array::value( 'pcp_display_in_roll', $this->_params ) && 
-                 ! CRM_Utils_Array::value( 'pcp_roll_nickname', $this->_params ) ) {
-                $this->_params['pcp_roll_nickname'] = ts('Anonymous');
-                $this->_params['pcp_is_anonymous'] = 1;
-            } else {
-                $this->_params['pcp_is_anonymous'] = 0;
-            }                
-            foreach ( array ( 'pcp_display_in_roll', 'pcp_is_anonymous', 'pcp_roll_nickname', 'pcp_personal_note' ) as $val ) {
-                if ( CRM_Utils_Array::value( $val, $this->_params ) ) {
-                    $this->assign( $val, $this->_params[$val]);
-                }
-            }
+            $params = $this->processPcp($this, $this->_params);
+            $this->_params = $params;
         }
         $this->_params['invoiceID'] = $this->get( 'invoiceID' );
         
@@ -1488,5 +1476,52 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             // organization id.
             $contactID = $orgID;
         }
+    }
+    
+    static function processPcpSoft($params, $contribution){
+        foreach ( array ('pcp_display_in_roll', 'pcp_roll_nickname', 'pcp_personal_note' ) as $val ) {
+            if ( CRM_Utils_Array::value( $val, $params ) ) {
+                $contribSoftParams[$val] = $params[$val];
+            }
+        }
+
+        //add soft contribution due to pcp or Submit Credit / Debit Card Contribution by admin.
+        if ( CRM_Utils_Array::value( 'pcp_made_through_id', $params ) || CRM_Utils_Array::value( 'soft_credit_to', $params ) ) {
+            $contribSoftParams['contribution_id'] = $contribution->id;
+
+            $contribSoftParams['amount']          = $params['amount'];
+
+            //if its due to pcp
+            if ( CRM_Utils_Array::value( 'pcp_made_through_id', $params ) ) {
+                $contribSoftParams['pcp_id']          = $params['pcp_made_through_id'];
+                $contribSoftParams['contact_id']      = CRM_Core_DAO::getFieldValue( 'CRM_PCP_DAO_PCP',
+                                                                                     $params['pcp_made_through_id'],
+                                                                                     'contact_id' );
+            } else {
+                $contribSoftParams['contact_id'] = CRM_Utils_Array::value( 'soft_credit_to', $params );
+            }
+
+            require_once "CRM/Contribute/BAO/Contribution.php";
+            $softContribution = CRM_Contribute_BAO_Contribution::addSoftContribution( $contribSoftParams );
+        }
+    }
+    
+    static function processPcp(&$page, $params){
+      $params['pcp_made_through_id'] = $page-> _pcpInfo['pcp_id'];
+      $page->assign( 'pcpBlock', true );
+      if ( CRM_Utils_Array::value( 'pcp_display_in_roll', $params ) &&
+           ! CRM_Utils_Array::value( 'pcp_roll_nickname', $params ) ) {
+          $params['pcp_roll_nickname'] = ts('Anonymous');
+          $params['pcp_is_anonymous'] = 1;
+      } else {
+          $params['pcp_is_anonymous'] = 0;
+      }
+      foreach ( array ( 'pcp_display_in_roll', 'pcp_is_anonymous', 'pcp_roll_nickname', 'pcp_personal_note' ) as $val ) {
+          if ( CRM_Utils_Array::value( $val, $params ) ) {
+              $page->assign( $val, $params[$val]);
+          }
+      }
+
+      return $params;
     }
 }

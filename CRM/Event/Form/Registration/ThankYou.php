@@ -172,6 +172,20 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
         }
         $this->assign( 'isOnWaitlist', $isOnWaitlist );
         $this->assign( 'isRequireApproval', $isRequireApproval );
+
+        // find pcp info
+        require_once "CRM/PCP/DAO/PCPBlock.php";
+        $eventId = $this->_eventId;
+        $dao = new CRM_PCP_DAO_PCPBlock();
+        $dao->entity_table = 'civicrm_event';
+        $dao->entity_id = $eventId;
+        $dao->find(true);
+
+        if ($dao->id){
+          $this->assign('pcpLink', CRM_Utils_System::url('civicrm/contribute/campaign', 'action=add&reset=1&pageId=' . $eventId . '&component=event'));
+          $this->assign('pcpLinkText', $dao->link_text);
+        }
+
         
         // Assign Participant Count to Lineitem Table
         require_once 'CRM/Price/BAO/Set.php';

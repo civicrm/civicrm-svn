@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -38,7 +38,7 @@ require_once 'CRM/Core/Form.php';
  * This class generates form components for processing a ontribution 
  * 
  */
-class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
+class CRM_PCP_Form_PCPAccount extends CRM_Core_Form
 {
     /**
      *Variable defined for Contribution Page Id
@@ -47,6 +47,7 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
 
     public  $_pageId = null;
     public  $_id     = null;
+    public  $_component = null;
 
     /** 
      * are we in single form mode or wizard mode?
@@ -62,13 +63,15 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
         $config = CRM_Core_Config::singleton( );
         $this->_action = CRM_Utils_Request::retrieve( 'action', 'String', $this, false );
         $this->_pageId = CRM_Utils_Request::retrieve( 'pageId', 'Positive', $this );
+        $this->_component = CRM_Utils_Request::retrieve( 'component', 'String', $this );
         $this->_id     = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
+        
         if( !$this->_pageId && $config->userFramework == 'Joomla' && $config->userFrameworkFrontend ) {
             $this->_pageId = $this->_id;
         }
-        
+
         if ( $this->_id ){
-            $contactID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP', $this->_id, 'contact_id' );   
+            $contactID = CRM_Core_DAO::getFieldValue( 'CRM_PCP_DAO_PCP', $this->_id, 'contact_id' );   
         }
         
         $this->_contactID = isset( $contactID ) ? $contactID : $session->get( 'userID' );     
@@ -77,32 +80,24 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
                 $msg = ts( 'We can\'t load the requested web page due to an incomplete link. This can be caused by using your browser\'s Back button or by using an incomplete or invalid link.' );
                 CRM_Core_Error::fatal( $msg );
             } else {
-                $this->_pageId = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP', $this->_id, 'contribution_page_id' );
+                $this->_pageId = CRM_Core_DAO::getFieldValue( 'CRM_PCP_DAO_PCP', $this->_id, 'page_id' );
             }
         }
         
         if ( !$this->_pageId ) {
-            CRM_Core_Error::fatal( ts( 'Could not find contribution page id.' ) );
+            CRM_Core_Error::fatal( ts( 'Could not find source page id.' ) );
         }
         
-        //redirect back to online Contribution page, we allow only logged in
-        //user to configure the PCP account and Page in standalone installation.
-        if ( $config->userFramework == 'Standalone' && !$this->_contactID ) {
-            CRM_Core_Error::statusBounce( ts("You must login with your OpenID provider before you can create a Personal Campaign Page."),
-                                          CRM_Utils_System::url( 'civicrm/contribute/transact',
-                                                                 "reset=1&id={$this->_pageId}",
-                                                                 false, null, false, true ) );
-        }
         $this->_single = $this->get( 'single' );
         
         if ( !$this->_single ) {
             $this->_single = $session->get('singleForm');
         }
 
-        $this->set( 'action'              , $this->_action );
-        $this->set( 'page_id'             , $this->_id );
-        $this->set( 'contribution_page_id', $this->_pageId );
-
+        $this->set( 'action'             , $this->_action );
+        $this->set( 'page_id'            , $this->_id );
+        $this->set( 'component_page_id'  , $this->_pageId );
+        
         // we do not want to display recently viewed items, so turn off
         $this->assign('displayRecent' , false );
 
@@ -145,9 +140,9 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
      */ 
     public function buildQuickForm( )  
     {
-        require_once 'CRM/Contribute/BAO/PCP.php';
-        $id = CRM_Contribute_BAO_PCP::getSupporterProfileId( $this->_pageId );
-        if ( CRM_Contribute_BAO_PCP::checkEmailProfile( $id ) ){
+        require_once 'CRM/PCP/BAO/PCP.php';
+        $id = CRM_PCP_BAO_PCP::getSupporterProfileId( $this->_pageId, $this->_component );
+        if ( CRM_PCP_BAO_PCP::checkEmailProfile( $id ) ){
             $this->assign('profileDisplay', true);
         }
         $fields = null;
@@ -156,7 +151,7 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
             if ( CRM_Core_BAO_UFGroup::filterUFGroups($id, $this->_contactID)  ) {
                 $fields = CRM_Core_BAO_UFGroup::getFields( $id, false,CRM_Core_Action::ADD );
             }
-            $this->addFormRule( array( 'CRM_Contribute_Form_PCP_PCPAccount', 'formRule' ), $this ); 
+            $this->addFormRule( array( 'CRM_PCP_Form_PCPAccount', 'formRule' ), $this ); 
         } else {
             require_once 'CRM/Core/BAO/CMSUser.php';
             CRM_Core_BAO_CMSUser::buildForm( $this, $id , true );
@@ -183,14 +178,20 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
             
             if ( $addCaptcha ) {
                 require_once 'CRM/Utils/ReCAPTCHA.php';
-                $captcha = CRM_Utils_ReCAPTCHA::singleton( );
+                $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
                 $captcha->add( $this );
                 $this->assign( "isCaptcha" , true );
             }
         }
 
-        require_once "CRM/Contribute/PseudoConstant.php";
-        $this->assign( 'campaignName', CRM_Contribute_PseudoConstant::contributionPage( $this->_pageId ) );
+
+        if ($this->_component == 'contribute'){
+          require_once "CRM/Contribute/PseudoConstant.php";
+          $this->assign( 'campaignName', CRM_Contribute_PseudoConstant::contributionPage( $this->_pageId ) );
+        } else if ($this->_component == 'event'){
+          require_once "CRM/Event/PseudoConstant.php";
+          $this->assign( 'campaignName', CRM_Event_PseudoConstant::event( $this->_pageId ) );
+        }
         
         if ( $this->_single ) {
             $button = array ( array ( 'type'      => 'next',
@@ -206,7 +207,7 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
                                 'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', 
                                 'isDefault' => true   );
         }
-        $this->addFormRule( array( 'CRM_Contribute_Form_PCP_PCPAccount', 'formRule' ), $this );
+        $this->addFormRule( array( 'CRM_PCP_Form_PCPAccount', 'formRule' ), $this );
         $this->addButtons( $button );
     }
     
@@ -253,7 +254,7 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
                     $isPrimary = 0;
                    if ( $locTypeId == 'Primary') {
                        require_once "CRM/Core/BAO/LocationType.php";
-                       $locTypeId = CRM_Core_BAO_LocationType::getDefault();
+                       $locTypeId = & CRM_Core_BAO_LocationType::getDefault();
                        $isPrimary = 1;
                    }
 
@@ -271,7 +272,7 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
         if ( $ids ) {
             $this->_contactID = $ids['0'];
         }
-        $contactID = CRM_Contact_BAO_Contact::createProfileContact( $params, $this->_fields, $this->_contactID );
+        $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params, $this->_fields, $this->_contactID );
         $this->set('contactID', $contactID);
         
         if ( !empty($params['email']) ) {

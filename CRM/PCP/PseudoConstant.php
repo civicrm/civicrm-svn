@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -34,36 +34,64 @@
  *
  */
 
-require_once 'CRM/Core/StateMachine.php';
+require_once 'CRM/Core/OptionGroup.php';
+require_once 'CRM/Core/PseudoConstant.php';
 
 /**
- * State machine for managing different states of the Import process.
- *
+ * This class holds all the Pseudo constants that are specific to PCP. This avoids
+ * polluting the core class and isolates the Event
  */
-class CRM_Contribute_StateMachine_PCP extends CRM_Core_StateMachine {
+class CRM_PCP_PseudoConstant extends CRM_Core_PseudoConstant 
+{
+    /**
+     * pcp types 
+     *
+     * @var array
+     * @static
+     */
+    private static $pcpType;
+  
+    /**
+     * pcp status 
+     *
+     * @var array
+     * @static
+     */
+    private static $pcpStatus;
+    
+    /**
+     * Get all the PCP types
+     *
+     * @access public
+     * @return array - array reference of all PCP types
+     * @static
+     */
+    public static function &pcpType( )
+    {
+        self::$pcpType = array();
+        if ( ! self::$pcpType ) {
+          self::$pcpType = array(
+            'contribute' => 'Contribution',
+            'event' => 'Event',
+          );
+        }
+        return self::$pcpType;
+    }
 
     /**
-     * class constructor
+     * Get all the PCP status
      *
-     * @param object  CRM_Import_Controller
-     * @param int     $action
-     *
-     * @return object CRM_Import_StateMachine
+     * @access public
+     * @return array - array reference of all PCP status
+     * @static
      */
-    function __construct( $controller, $action = CRM_Core_Action::NONE ) {
-        parent::__construct( $controller, $action );
-
-        $session = CRM_Core_Session::singleton();
-        $session->set('singleForm', false);
-
-        $this->_pages = array(
-                              'CRM_Contribute_Form_PCP_PCPAccount' => null,
-                              'CRM_Contribute_Form_PCP_Campaign'   => null
-                              );
-        
-        $this->addSequentialPages( $this->_pages, $action );
+    public static function &pcpStatus( )
+    {
+        self::$pcpStatus = array();
+        if ( ! self::$pcpStatus ) {
+            self::$pcpStatus = CRM_Core_OptionGroup::values("pcp_status");
+        }
+        return self::$pcpStatus;
     }
 
 }
-
-

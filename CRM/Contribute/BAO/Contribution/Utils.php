@@ -155,6 +155,8 @@ class CRM_Contribute_BAO_Contribution_Utils
                         
                         require_once 'CRM/Contribute/BAO/ContributionPage.php';
                         $form->_values['contribution_id'] = $contribution->id;
+                        $form->_values['contribution_page_id'] = $contribution->contribution_page_id;
+
                         CRM_Contribute_BAO_ContributionPage::sendMail( $contactID,
                                                                        $form->_values,
                                                                        $contribution->is_test );

@@ -72,7 +72,7 @@ class CRM_Utils_Request {
      * @static
      *
      */
-    static function retrieve( $name, $type, &$store, $abort = false, $default = null, $method = 'GET' ) {
+    static function retrieve( $name, $type, &$store = null, $abort = false, $default = null, $method = 'GET' ) {
 
         // hack to detect stuff not yet converted to new style
         if ( ! is_string( $type ) ) {

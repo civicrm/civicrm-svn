@@ -215,7 +215,7 @@
             <table class="crm-info-panel">
                 <tr>
             	    <td class="label">{ts}Personal Campaign Page{/ts}</td>
-                    <td><a href="{crmURL p="civicrm/contribute/pcp/info" q="reset=1&id=`$pcp_id`"}">{$pcp}</a><br />
+                    <td><a href="{crmURL p="civicrm/pcp/info" q="reset=1&id=`$pcp_id`"}">{$pcp}</a><br />
                         <span class="description">{ts}Contribution was made through this personal campaign page.{/ts}</span>
                     </td>
                 </tr>

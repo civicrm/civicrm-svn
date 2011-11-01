@@ -56,7 +56,7 @@ class CRM_Event_Form_ManageEvent_TabHeader {
         }
 
         $tabs = array(
-                      'eventInfo'    => array( 'title'  => ts( 'Info and Settings' ),
+                      'settings'     => array( 'title'  => ts( 'Info and Settings' ),
                                                'link'   => null,
                                                'valid'  => false,
                                                'active' => false,
@@ -180,7 +180,7 @@ WHERE      e.id = %1
             }
         }
         
-        $current = $current ? $current : 'eventInfo';
+        $current = $current ? $current : 'settings';
         return $current;
 
     }

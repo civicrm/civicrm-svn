@@ -28,18 +28,18 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 
 /**
- * Test class for CRM_Contribute_BAO_PCPTest BAO
+ * Test class for CRM_PCP_BAO_PCPTest BAO
  *
  *  @package   CiviCRM
  */
-class CRM_Contribute_BAO_PCPTest extends CiviUnitTestCase 
+class CRM_PCP_BAO_PCPTest extends CiviUnitTestCase 
 {
 
     function get_info( ) 
     {
         return array(
                      'name'        => 'PCP BAOs',
-                     'description' => 'Test all Contribute_BAO_PCP methods.',
+                     'description' => 'Test all PCP_BAO_PCP methods.',
                      'group'       => 'CiviCRM BAO Tests',
                      );
     }
@@ -59,10 +59,10 @@ class CRM_Contribute_BAO_PCPTest extends CiviUnitTestCase
     {
         
         $params = $this->pcpBlockParams();
-        require_once 'CRM/Contribute/BAO/PCP.php';
-        $pcpBlock = CRM_Contribute_BAO_PCP::add($params, true);
+        require_once 'CRM/PCP/BAO/PCP.php';
+        $pcpBlock = CRM_PCP_BAO_PCP::add($params, true);
 
-        $this->assertType( 'CRM_Contribute_DAO_PCPBlock', $pcpBlock, 'Check for created object' );
+        $this->assertType( 'CRM_PCP_DAO_PCPBlock', $pcpBlock, 'Check for created object' );
         $this->assertEquals( $params['entity_table'], $pcpBlock->entity_table, 'Check for entity table.' );
         $this->assertEquals( $params['entity_id'], $pcpBlock->entity_id, 'Check for entity id.' );
         $this->assertEquals( $params['supporter_profile_id'], $pcpBlock->supporter_profile_id, 'Check for profile id .' );
@@ -75,7 +75,7 @@ class CRM_Contribute_BAO_PCPTest extends CiviUnitTestCase
         require_once 'CRM/Core/DAO.php';
         $delParams = array( 'id' => $pcpBlock->id );
         // FIXME: Currently this delete fails with an FK constraint error: DELETE FROM civicrm_contribution_type  WHERE (  civicrm_contribution_type.id = 5 )
-        // CRM_Core_DAO::deleteTestObjects( 'CRM_Contribute_DAO_PCPBlock', $delParams );
+        // CRM_Core_DAO::deleteTestObjects( 'CRM_PCP_DAO_PCPBlock', $delParams );
         
     }
 
@@ -83,10 +83,10 @@ class CRM_Contribute_BAO_PCPTest extends CiviUnitTestCase
     {
         $params = $this->pcpParams();
 
-        require_once 'CRM/Contribute/BAO/PCP.php';
-        $pcp = CRM_Contribute_BAO_PCP::add($params, false);
+        require_once 'CRM/PCP/BAO/PCP.php';
+        $pcp = CRM_PCP_BAO_PCP::add($params, false);
 
-        $this->assertType( 'CRM_Contribute_DAO_PCP', $pcp, 'Check for created object' );
+        $this->assertType( 'CRM_PCP_DAO_PCP', $pcp, 'Check for created object' );
         $this->assertEquals( $params['contact_id'], $pcp->contact_id, 'Check for entity table.' );
         $this->assertEquals( $params['status_id'], $pcp->status_id, 'Check for status.' );
         $this->assertEquals( $params['title'], $pcp->title, 'Check for title.' );
@@ -104,7 +104,7 @@ class CRM_Contribute_BAO_PCPTest extends CiviUnitTestCase
         require_once 'CRM/Core/DAO.php';
         $delParams = array( 'id' => $pcp->id );
         // FIXME: Currently this delete fails with an FK constraint error: DELETE FROM civicrm_contribution_type  WHERE (  civicrm_contribution_type.id = 5 )
-        // CRM_Core_DAO::deleteTestObjects( 'CRM_Contribute_DAO_PCP', $delParams );
+        // CRM_Core_DAO::deleteTestObjects( 'CRM_PCP_DAO_PCP', $delParams );
         
     }
 
@@ -113,10 +113,10 @@ class CRM_Contribute_BAO_PCPTest extends CiviUnitTestCase
         $params = $this->pcpParams();
         unset($params['status_id']);
 
-        require_once 'CRM/Contribute/BAO/PCP.php';
-        $pcp = CRM_Contribute_BAO_PCP::add($params, false);
+        require_once 'CRM/PCP/BAO/PCP.php';
+        $pcp = CRM_PCP_BAO_PCP::add($params, false);
 
-        $this->assertType( 'CRM_Contribute_DAO_PCP', $pcp, 'Check for created object' );
+        $this->assertType( 'CRM_PCP_DAO_PCP', $pcp, 'Check for created object' );
         $this->assertEquals( $params['contact_id'], $pcp->contact_id, 'Check for entity table.' );
         $this->assertEquals( 0, $pcp->status_id, 'Check for zero status when no status_id passed.' );
         $this->assertEquals( $params['title'], $pcp->title, 'Check for title.' );
@@ -134,18 +134,18 @@ class CRM_Contribute_BAO_PCPTest extends CiviUnitTestCase
         require_once 'CRM/Core/DAO.php';
         $delParams = array( 'id' => $pcp->id );
         // FIXME: Currently this delete fails with an FK constraint error: DELETE FROM civicrm_contribution_type  WHERE (  civicrm_contribution_type.id = 5 )
-        // CRM_Core_DAO::deleteTestObjects( 'CRM_Contribute_DAO_PCP', $delParams );
+        // CRM_Core_DAO::deleteTestObjects( 'CRM_PCP_DAO_PCP', $delParams );
     }
 
     function testDeletePCP()
     {
         require_once 'CRM/Core/DAO.php';
-        require_once 'CRM/Contribute/BAO/PCP.php';
+        require_once 'CRM/PCP/BAO/PCP.php';
 
-        $pcp = CRM_Core_DAO::createTestObject('CRM_Contribute_DAO_PCP');
+        $pcp = CRM_Core_DAO::createTestObject('CRM_PCP_DAO_PCP');
         $pcpId = $pcp->id;
-        $del = CRM_Contribute_BAO_PCP::delete( $pcpId);
-        $this->assertDBRowNotExist( 'CRM_Contribute_DAO_PCP', $pcpId,
+        $del = CRM_PCP_BAO_PCP::delete( $pcpId);
+        $this->assertDBRowNotExist( 'CRM_PCP_DAO_PCP', $pcpId,
                                     'Database check PCP deleted successfully.' );
         
     }

@@ -32,6 +32,7 @@
 	    <tr>
 		    <td>{$form.status_id.label}<br />{$form.status_id.html}</td>
 		    <td>{$form.contibution_page_id.label}<br />{$form.contibution_page_id.html}</td>
+        <td>{$form.event_id.label}<br />{$form.event_id.html}</td>
 	    </tr>
         </table>
         <div class="crm-submit-buttons">{$form.buttons.html}</div>

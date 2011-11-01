@@ -779,8 +779,8 @@ LIMIT 1;";
                 $template->assign( 'pcp_personal_note'  , $softDAO->pcp_personal_note );
                 
                 //assign the pcp page title for email subject
-                require_once 'CRM/Contribute/DAO/PCP.php';
-                $pcpDAO = new CRM_Contribute_DAO_PCP();
+                require_once 'CRM/PCP/DAO/PCP.php';
+                $pcpDAO = new CRM_PCP_DAO_PCP();
                 $pcpDAO->id = $softDAO->pcp_id;
                 if ( $pcpDAO->find(true) ) {
                     $template->assign( 'title', $pcpDAO->title );
