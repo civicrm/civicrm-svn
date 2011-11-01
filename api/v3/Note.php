@@ -54,6 +54,7 @@ require_once 'CRM/Core/BAO/Note.php';
  * @return array note id if note is created otherwise is_error = 1
  * @access public
  * @example NoteCreate.php
+ * {@getfields note_create}
  * {@example NoteCreate.php
  */
 function civicrm_api3_note_create($params) {
@@ -93,7 +94,7 @@ function _civicrm_api3_note_create_spec(&$params){
  * This API is used for deleting a note
  *
  * @params  array  $noteID   array including id of the note to be deleted
- * {getfields note_delete}
+ * {@getfields note_delete}
  * @return null
  * @access public
  */
@@ -111,7 +112,7 @@ function civicrm_api3_note_delete($params) {
  *
  * @return array (reference ) array of properties,
  * if error an array with an error id and error message
- * {getfields note_get}
+ * {@getfields note_get}
  * @static void
  * @access public
  */
