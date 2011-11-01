@@ -120,7 +120,7 @@ class CRM_Utils_VersionCheck
                     'CRM_Contribute_DAO_ContributionPage'    => 'is_active = 1',
                     'CRM_Contribute_DAO_ContributionProduct' => null,
                     'CRM_Contribute_DAO_Widget'              => 'is_active = 1',
-                    'CRM_Core_DAO_Discount'                  => null,
+                    'CRM_Order_DAO_Discount'                  => null,
                     'CRM_Price_DAO_SetEntity'                => null,
                     'CRM_Core_DAO_UFGroup'                   => 'is_active = 1',
                     'CRM_Event_DAO_Event'                    => 'is_active = 1',
@@ -144,7 +144,7 @@ class CRM_Utils_VersionCheck
 
                 // get active payment processor types
                 require_once 'CRM/Financial/DAO/PaymentProcessor.php';
-                $dao = new CRM_Core_DAO_PaymentProcessor;
+                $dao = new CRM_Financial_DAO_PaymentProcessor;
                 $dao->is_active = 1;
                 $dao->find();
 

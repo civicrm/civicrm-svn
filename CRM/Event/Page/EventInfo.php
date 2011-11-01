@@ -144,7 +144,7 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                 require_once 'CRM/Core/BAO/Discount.php';
                 $discountId = CRM_Core_BAO_Discount::findSet( $this->_id, 'civicrm_event' );
                 if ( $discountId ) {
-                    CRM_Core_OptionGroup::getAssoc( CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Discount', 
+                    CRM_Core_OptionGroup::getAssoc( CRM_Core_DAO::getFieldValue( 'CRM_Order_DAO_Discount', 
                                                                                  $discountId, 
                                                                                  'option_group_id' ),
                                                     $values['feeBlock'], false, 'id' );

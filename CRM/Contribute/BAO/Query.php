@@ -472,7 +472,7 @@ class CRM_Contribute_BAO_Query
             
         case 'civicrm_financial_account':
             if ( $mode & CRM_Contact_BAO_Query::MODE_CONTRIBUTE ) {
-                $from = " INNER JOIN civicrm_financial_account ON civicrm_contribution.financial_account_id = civicrm_financial_account.id "
+                $from = " INNER JOIN civicrm_financial_account ON civicrm_contribution.financial_account_id = civicrm_financial_account.id ";
             } else {
                 $from = " $side JOIN civicrm_financial_account ON civicrm_contribution.financial_account_id = civicrm_financial_account.id ";
             }

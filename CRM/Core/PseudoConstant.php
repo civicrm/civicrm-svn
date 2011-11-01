@@ -1163,7 +1163,7 @@ WHERE  id = %1";
         $cacheKey = "{$name}_{$key}";
         if ( !isset( self::$currencySymbols[$cacheKey] ) ) {
             self::populate( self::$currencySymbols[$cacheKey], 
-                            'CRM_Core_DAO_Currency', true, $name, null, null, 'name', $key );
+                            'CRM_Financial_DAO_Currency', true, $name, null, null, 'name', $key );
         }
         
         return self::$currencySymbols[$cacheKey];
@@ -1289,7 +1289,7 @@ WHERE  id = %1";
         $cacheKey = $condition.'_'.(int)$all;
         if ( !isset( self::$paymentProcessor[$cacheKey] ) ) {
             self::populate( self::$paymentProcessor[$cacheKey], 
-                            'CRM_Core_DAO_PaymentProcessor', $all, 
+                            'CRM_Financial_DAO_PaymentProcessor', $all, 
                             'name', 'is_active', $condition, 'is_default desc, name' );
         }
         
@@ -1312,7 +1312,7 @@ WHERE  id = %1";
     public static function &paymentProcessorType( $all = false )
     {
         if ( ! self::$paymentProcessorType ) {
-            self::populate( self::$paymentProcessorType, 'CRM_Core_DAO_PaymentProcessorType', $all, 
+            self::populate( self::$paymentProcessorType, 'CRM_Financial_DAO_PaymentProcessorType', $all, 
                             'title', 'is_active', null, 'is_default, title', 'name' );
         }
         return self::$paymentProcessorType;

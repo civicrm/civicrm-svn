@@ -39,7 +39,7 @@ require_once 'CRM/Financial/DAO/PaymentProcessor.php';
 /**
  * This class contains payment processor related functions.
  */
-class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor 
+class CRM_Core_BAO_PaymentProcessor extends CRM_Financial_DAO_PaymentProcessor 
 {
     /**
      * static holder for the default payment processor
@@ -62,13 +62,13 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
      * @param array $params   (reference ) an assoc array of name/value pairs
      * @param array $defaults (reference ) an assoc array to hold the flattened values
      *
-     * @return object CRM_Core_DAO_PaymentProcessor object on success, null otherwise
+     * @return object CRM_Financial_DAO_PaymentProcessor object on success, null otherwise
      * @access public
      * @static
      */
     static function retrieve( &$params, &$defaults ) 
     {
-        $paymentProcessor = new CRM_Core_DAO_PaymentProcessor( );
+        $paymentProcessor = new CRM_Financial_DAO_PaymentProcessor( );
         $paymentProcessor->copyValues( $params );
         if ( $paymentProcessor->find( true ) ) {
             CRM_Core_DAO::storeValues( $paymentProcessor, $defaults );
@@ -90,7 +90,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
      */
     static function setIsActive( $id, $is_active ) 
     {
-        return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_PaymentProcessor', $id, 'is_active', $is_active );
+        return CRM_Core_DAO::setFieldValue( 'CRM_Financial_DAO_PaymentProcessor', $id, 'is_active', $is_active );
     }
     
     /**
@@ -126,13 +126,13 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
             CRM_Core_Error::fatal( ts( 'Invalid value passed to delete function' ) );
         }
 
-        $dao            = new CRM_Core_DAO_PaymentProcessor( );
+        $dao            = new CRM_Financial_DAO_PaymentProcessor( );
         $dao->id        =  $paymentProcessorID;
         if ( ! $dao->find( true ) ) {
             return null;
         }
 
-        $testDAO            = new CRM_Core_DAO_PaymentProcessor( );
+        $testDAO            = new CRM_Financial_DAO_PaymentProcessor( );
         $testDAO->name      =  $dao->name;
         $testDAO->is_test   =  1;
         $testDAO->delete( );
@@ -156,7 +156,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
             CRM_Core_Error::fatal( ts( 'Invalid value passed to getPayment function' ) );
         }
 
-        $dao            = new CRM_Core_DAO_PaymentProcessor( );
+        $dao            = new CRM_Financial_DAO_PaymentProcessor( );
         $dao->id        =  $paymentProcessorID;
         $dao->is_active =  1;
         if ( ! $dao->find( true ) ) {
@@ -164,7 +164,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
         }
 
         if ( $mode == 'test' ) {
-            $testDAO = new CRM_Core_DAO_PaymentProcessor( );
+            $testDAO = new CRM_Financial_DAO_PaymentProcessor( );
             $testDAO->name      = $dao->name;
             $testDAO->is_active = 1;
             $testDAO->is_test   = 1;

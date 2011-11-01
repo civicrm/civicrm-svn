@@ -119,10 +119,10 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
                     CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $optionGroupId, 'label' );
                 
                 list( $defaults["discount_start_date[$i]"] ) = 
-                    CRM_Utils_Date::setDateDefaults(CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Discount', $optionGroupId, 
+                    CRM_Utils_Date::setDateDefaults(CRM_Core_DAO::getFieldValue( 'CRM_Order_DAO_Discount', $optionGroupId, 
                                                                                  'start_date', 'option_group_id' ));
                 list( $defaults["discount_end_date[$i]"] ) =
-                    CRM_Utils_Date::setDateDefaults(CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Discount', $optionGroupId, 
+                    CRM_Utils_Date::setDateDefaults(CRM_Core_DAO::getFieldValue( 'CRM_Order_DAO_Discount', $optionGroupId, 
                                                                                  'end_date', 'option_group_id' ));
                 CRM_Core_OptionGroup::getAssoc( "civicrm_event.amount.{$eventId}.discount.{$name}", $defaultDiscounts[] );
                 $i++;

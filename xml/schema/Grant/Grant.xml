@@ -117,18 +117,6 @@
       <add>1.8</add>
   </field>
   <field>
-      <name>financial_account_id</name>
-      <type>int unsigned</type>
-      <comment>FK to civicrm_financial_account.</comment>
-      <add>4.1</add>
-  </field>
-  <foreignKey>
-       <name>financial_account_id</name>
-       <table>civicrm_financial_account</table>
-       <key>id</key>
-       <add>4.1</add>
-  </foreignKey>  
-  <field>
       <name>currency</name>
       <type>varchar</type>
       <length>3</length>

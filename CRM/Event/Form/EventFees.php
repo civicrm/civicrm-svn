@@ -223,7 +223,7 @@ class CRM_Event_Form_EventFees
                 if ( $form->_action == CRM_Core_Action::UPDATE && !$form->_originalDiscountId ) {
                     $form->_originalDiscountId = $defaults[$form->_pId]['discount_id'];
                     if ( $form->_originalDiscountId ) {
-                        $optionGroupId = CRM_Core_DAO::getFieldValue( "CRM_Core_DAO_Discount", 
+                        $optionGroupId = CRM_Core_DAO::getFieldValue( "CRM_Order_DAO_Discount", 
                                                                       $form->_originalDiscountId,
                                                                       'option_group_id' );
                         $defaults[$form->_pId]['discount_id'] = $form->_originalDiscountId;
@@ -253,7 +253,7 @@ class CRM_Event_Form_EventFees
                     $defaults[$form->_pId]['discount_id'] = $discountId;
                     $defaults[$form->_pId]['amount'] = key(array_slice($form->_values['discount'][$discountId], $discountKey-1, $discountKey, true));
 
-                    $optionGroupId = CRM_Core_DAO::getFieldValue( "CRM_Core_DAO_Discount", 
+                    $optionGroupId = CRM_Core_DAO::getFieldValue( "CRM_Order_DAO_Discount", 
                                                                   $discountId,
                                                                   'option_group_id' );
                 } else {                    

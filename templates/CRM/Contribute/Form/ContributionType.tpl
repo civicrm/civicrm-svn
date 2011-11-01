@@ -48,6 +48,12 @@
        	      <span class="description">{ts}Use this field to flag contributions of this type with the corresponding code used in your accounting system. This code will be included when you export contribution data to your accounting package.{/ts}</span>
 	  </td>
        </tr>
+       <tr>
+	  <td class="label"> {$form.organization_name.label}&nbsp;{help id="id-current-employer" file="CRM/Contact/Form/Contact.hlp"}
+	  </td>
+	  <td class="html-adjust">{$form.organization_name.html|crmReplace:class:twenty}
+          </td>
+       </tr>
        <tr class="crm-contribution-form-block-is_deductible">
     	  <td class="label">{$form.is_deductible.label}</td>
 	  <td class="html-adjust">{$form.is_deductible.html}<br />
@@ -62,3 +68,52 @@
    {/if}
    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="botttom"}</div>
 </div>
+
+{literal}
+<script type="text/javascript">
+var dataUrl        = "{/literal}{$dataURL}{literal}";
+var newContactText = "{/literal}({ts}new contact record{/ts}){literal}";
+cj('#organization_name').autocomplete( dataUrl, { 
+                                      width        : 250, 
+                                      selectFirst  : false,
+                                      matchCase    : true, 
+                                      matchContains: true
+    }).result( function(event, data, formatted) {
+        var foundContact   = ( parseInt( data[1] ) ) ? cj( "#contact_id" ).val( data[1] ) : cj( "#contact_id" ).val('');
+        if ( ! foundContact.val() ) {
+            cj('div#employer_address').html(newContactText).show();    
+        } else {
+            cj('div#employer_address').html('').hide();    
+        }
+    }).bind('change blur', function() {
+        if ( !cj( "#contact_id" ).val( ) ) {
+            cj('div#employer_address').html(newContactText).show();    
+        }
+});
+
+// remove current employer id when current employer removed.
+cj("form").submit(function() {
+  if ( !cj('#organization_name').val() ) cj( "#contact_id" ).val('');
+});
+
+//current employer default setting
+var employerId = "{/literal}{$organizationId}{literal}";
+if ( employerId ) {
+    var dataUrl = "{/literal}{crmURL p='civicrm/ajax/rest' h=0 q="className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&org=1&id=" }{literal}" + employerId ;
+    cj.ajax({ 
+        url     : dataUrl,   
+        async   : false,
+        success : function(html){
+            //fixme for showing address in div
+            htmlText = html.split( '|' , 2);
+            cj('input#organization_name').val(htmlText[0]);
+            cj('input#contact_id').val(htmlText[1]);
+        }
+    }); 
+}
+
+cj("input#organization_name").click( function( ) {
+    cj("input#contact_id").val('');
+});
+</script>
+{/literal}

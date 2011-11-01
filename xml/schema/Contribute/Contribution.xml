@@ -105,13 +105,11 @@
       <type>int unsigned</type>
       <comment>FK to Payment Instrument</comment>   
       <add>1.3</add>  
-      <drop>4.1</drop> 
   </field>  
   <index>
       <name>UI_contrib_payment_instrument_id</name>
       <fieldName>payment_instrument_id</fieldName>      
       <add>1.6</add>
-      <drop>4.1</drop> 
   </index>   
   <field> 
       <name>receive_date</name> 
@@ -121,7 +119,6 @@
       <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
       <comment>when was gift received</comment> 
       <add>1.3</add> 
-      <drop>4.1</drop> 
   </field> 
   <field>     
       <name>non_deductible_amount</name>  
@@ -165,8 +162,7 @@
       <headerPattern>/fee(.?am(ou)?nt)?/i</headerPattern>
       <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
       <comment>actual processor fee if known - may be 0.</comment>
-      <add>1.3</add>    
-      <drop>4.1</drop> 
+      <add>1.3</add> 
   </field> 
   <field>    
       <name>net_amount</name>    
@@ -175,8 +171,7 @@
       <headerPattern>/net(.?am(ou)?nt)?/i</headerPattern>
       <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
       <comment>actual funds transfer amount. total less fees. if processor does not report actual fee during transaction, this is set to total_amount.</comment>
-      <add>1.3</add>    
-      <drop>4.1</drop> 
+      <add>1.3</add> 
   </field>
   <field>        
       <name>trxn_id</name>     
@@ -186,8 +181,7 @@
       <import>true</import>
       <headerPattern>/tr(ansactio|x)n(.?id)?/i</headerPattern>
       <comment>unique transaction id. may be processor id, bank id + trans id, or account number + check number... depending on payment_method</comment>
-      <add>1.3</add>     
-      <drop>4.1</drop> 
+      <add>1.3</add> 
   </field>   
   <field>        
       <name>invoice_id</name>     
@@ -197,8 +191,7 @@
       <import>true</import>
       <headerPattern>/invoice(.?id)?/i</headerPattern>
       <comment>unique invoice id, system generated or passed in</comment>
-      <add>1.3</add>     
-      <drop>4.1</drop> 
+      <add>1.3</add> 
   </field>   
   <field>      
       <name>currency</name>   
@@ -209,8 +202,7 @@
       <headerPattern>/cur(rency)?/i</headerPattern>
       <dataPattern>/^[A-Z]{3}$/i</dataPattern>
       <comment>3 character string, value from config setting or input via user.</comment>
-      <add>1.3</add>   
-      <drop>4.1</drop>
+      <add>1.3</add>
   </field> 
   <field>  
       <name>cancel_date</name>  
@@ -219,16 +211,14 @@
       <headerPattern>/cancel(.?date)?/i</headerPattern>
       <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
       <comment>when was gift cancelled</comment>  
-      <add>1.3</add>  
-      <drop>4.1</drop>
+      <add>1.3</add>
   </field> 
   <field>   
       <name>cancel_reason</name>   
       <type>text</type>   
       <import>true</import>
       <headerPattern>/(cancel.?)?reason/i</headerPattern>
-      <add>1.3</add>   
-      <drop>4.1</drop>
+      <add>1.3</add>
   </field>  
   <field>   
       <name>receipt_date</name>   
@@ -237,8 +227,7 @@
       <headerPattern>/receipt(.?date)?/i</headerPattern>
       <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
       <comment>when (if) receipt was sent. populated automatically for online donations w/ automatic receipting</comment>
-      <add>1.3</add>   
-      <drop>4.1</drop>
+      <add>1.3</add>
   </field>  
   <field>    
       <name>thankyou_date</name>
@@ -248,8 +237,7 @@
       <headerPattern>/thank(s|(.?you))?(.?date)?/i</headerPattern>
       <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
       <comment>when (if) was donor thanked</comment>    
-      <add>1.3</add>    
-      <drop>4.1</drop>
+      <add>1.3</add>
   </field>   
   <field>      
       <name>source</name>
@@ -287,28 +275,24 @@
     <fieldName>trxn_id</fieldName>
     <unique>true</unique>
     <add>2.1</add>
-    <drop>4.1</drop>
   </index>
   <index>
     <name>UI_contrib_invoice_id</name>
     <fieldName>invoice_id</fieldName>
     <unique>true</unique>
     <add>2.1</add>
-    <drop>4.1</drop>
   </index>
   <field> 
     <name>contribution_recur_id</name> 
     <type>int unsigned</type> 
     <comment>Conditional foreign key to civicrm_contribution_recur id. Each contribution made in connection with a recurring contribution carries a foreign key to the recurring contribution record. This assumes we can track these processor initiated events.</comment> 
-    <add>1.4</add> 
-    <drop>4.1</drop>
+    <add>1.4</add>
   </field> 
   <foreignKey> 
     <name>contribution_recur_id</name> 
     <table>civicrm_contribution_recur</table> 
     <key>id</key> 
-    <add>1.4</add> 
-    <drop>4.1</drop>
+    <add>1.4</add>
     <onDelete>SET NULL</onDelete>
   </foreignKey>
   <field>   
@@ -331,7 +315,6 @@
       <type>boolean</type>
       <default>0</default>
       <import>true</import>
-      <drop>4.1</drop>
   </field>
   <field>     
       <name>is_pay_later</name>  
@@ -339,12 +322,11 @@
       <type>boolean</type>
       <default>0</default>
       <import>true</import>
-      <add>2.1</add> 
-      <drop>4.1</drop>
+      <add>2.1</add>
   </field>
   <field>
-      <name>payment_status_id</name>
-      <title>Payment Status</title>
+      <name>contribution_status_id</name>
+      <title>Contribution Status</title>
       <type>int unsigned</type>
       <default>1</default>
       <import>true</import>
@@ -352,7 +334,7 @@
       <headerPattern>/status/i</headerPattern>
       <add>1.6</add>
       <change>4.1</change>
-      <changedName>contribution_status_id</changedName>
+      <changedName>payment_status_id</changedName>
   </field>
   <field>
       <name>honor_type_id</name>
@@ -363,32 +345,27 @@
       <onDelete>SET NULL</onDelete>
   </field>
   <index>
-    <name>index_payment_status</name>
-    <fieldName>payment_status_id</fieldName>
+    <name>index_contribution_status</name>
+    <fieldName>contribution_status_id</fieldName>
     <add>1.6</add>
-    <drop>4.1</drop>
   </index>
   <index>
      <name>received_date</name>
      <fieldName>receive_date</fieldName>
      <add>1.6</add>
-     <drop>4.1</drop>
    </index>
   <field> 
     <name>address_id</name> 
     <type>int unsigned</type> 
     <comment>Conditional foreign key to civicrm_address.id. We insert an address record for each contribution when we have associated billing name and address data.</comment> 
-    <add>2.2</add> 
-    <drop>4.1</drop>
+    <add>2.2</add>
   </field> 
   <foreignKey> 
     <name>address_id</name> 
     <table>civicrm_address</table> 
     <key>id</key> 
-    <add>2.2</add> 
-    <drop>4.1</drop>
+    <add>2.2</add>
     <onDelete>SET NULL</onDelete>
-    <drop>4.1</drop>
   </foreignKey>
   <field>        
     <name>check_number</name>     
@@ -397,14 +374,12 @@
     <type>varchar</type>     
     <length>255</length>  
     <import>true</import>
-    <add>2.2</add>     
-    <drop>4.1</drop>
+    <add>2.2</add>
   </field>  
   <index>
     <name>check_number</name>
     <fieldName>check_number</fieldName>
     <add>2.2</add>
-    <drop>4.1</drop>
   </index>
   <field> 
     <name>campaign_id</name>

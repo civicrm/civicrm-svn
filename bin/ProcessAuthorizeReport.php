@@ -717,7 +717,7 @@ class CRM_ProcessAuthorizeReport {
 
             // get the contribution type
             require_once 'CRM/Financial/DAO/FinancialAccount.php';
-            $contribution_type_name = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
+            $contribution_type_name = CRM_Core_DAO::getFieldValue( 'CRM_FinancialAccount_DAO_FinancialAccount',
                                                   $contribution->contribution_type_id,
                                                   'name' );
 

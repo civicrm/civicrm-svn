@@ -146,55 +146,7 @@
       <headerPattern>/(is.)?(pay(.)?later)$/i</headerPattern>
       <add>2.1</add> 
   </field>
-  <field>     
-      <name>total_amount</name>  
-      <type>decimal</type>  
-      <required>true</required>
-      <import>true</import>
-      <headerPattern>/^total|(.?^am(ou)?nt)/i</headerPattern>
-      <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
-      <comment>Total amount for this participant.</comment>  
-      <add>4.1</add>  
-  </field>
-  <field>  
-      <name>financial_account_id</name>
-      <title>Financial Account</title>
-      <export>false</export>
-      <type>int unsigned</type>
-      <comment>FK to Financial Account for (total_amount - non_deductible_amount).</comment>
-      <add>4.1</add>
-  </field>    
-  <foreignKey>  
-       <name>financial_account_id</name>  
-       <table>civicrm_financial_account</table>  
-       <key>id</key>         
-       <add>4.1</add>
-  </foreignKey>  
-  <field>     
-      <name>non_deductible_amount</name>  
-      <title>Non-deductible Amount</title>
-      <type>decimal</type>
-      <default>0</default>
-      <import>true</import>
-      <headerPattern>/non?.?deduct/i</headerPattern>
-      <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
-      <comment>Portion of total amount which is NOT tax deductible. Equal to total_amount for non-deductible contribution types.</comment>  
-      <add>4.1</add>  
-  </field>
-  <field>  
-      <name>non_deductible_financial_account_id</name>
-      <title>Non-deductible Financial Account</title>
-      <export>false</export>
-      <type>int unsigned</type>
-      <comment>FK to Financial Account</comment>
-      <add>4.1</add>  
-  </field>    
-  <foreignKey>  
-       <name>non_deductible_financial_account_id</name>  
-       <table>civicrm_financial_account</table>  
-       <key>id</key>         
-       <add>4.1</add>  
-  </foreignKey>  
+    
   <field>    
       <name>fee_amount</name>
       <uniqueName>participant_fee_amount</uniqueName>   
@@ -203,8 +155,7 @@
       <headerPattern>/fee(.?am(ou)?nt)?/i</headerPattern>
       <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
       <comment>actual processor fee if known - may be 0.</comment>
-      <add>2.1</add> 
-      <drop>4.1</drop>   
+      <add>2.1</add>   
   </field> 
   <field> 
       <name>registered_by_id</name>
@@ -251,7 +202,6 @@
       <dataPattern>/^[A-Z]{3}$/i</dataPattern>
       <comment>3 character string, value derived from config setting.</comment>   
       <add>3.0</add>
-      <drop>4.1</drop>
   </field>
   <field> 
       <name>campaign_id</name> 

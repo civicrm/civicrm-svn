@@ -107,7 +107,7 @@ class CRM_Core_Payment_BaseIPN {
         $objects['pledge_payment']    = null;
 
         require_once 'CRM/Financial/DAO/FinancialAccount.php';
-        $contributionType = new CRM_Contribute_DAO_ContributionType( );
+        $contributionType = new CRM_Financial_DAO_FinancialAccount( );
         $contributionType->id = $contribution->financial_account_id;
         if ( ! $contributionType->find( true ) ) {
             CRM_Core_Error::debug_log_message( "Could not find contribution type record: $contributionTypeID" );

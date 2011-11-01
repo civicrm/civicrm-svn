@@ -308,7 +308,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             // also get the accounting code
             if ( CRM_Utils_Array::value( 'financial_account_id', $this->_values['event'] ) ) {
                 $this->_values['event']['accountingCode'] =
-                    CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
+                    CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount',
                                                  $this->_values['event']['financial_account_id'],
                                                  'accounting_code' );
             }

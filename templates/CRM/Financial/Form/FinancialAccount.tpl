@@ -151,7 +151,7 @@ cj("input#organisation_name").click( function( ) {
 
 {literal}
 <script type="text/javascript">
-var dataUrl        = "{/literal}{$dataURL}{literal}";
+var dataUrl        = "{/literal}{$dataURLParentID}{literal}";
 var newContactText = "{/literal}({ts}new contact record{/ts}){literal}";
 cj('#parent_financial_account').autocomplete( dataUrl, { 
                                       width        : 250, 
@@ -177,9 +177,9 @@ cj("form").submit(function() {
 });
 
 //current employer default setting
-var employerId = "{/literal}{$currentEmployer}{literal}";
+var employerId = "{/literal}{$parentId}{literal}";
 if ( employerId ) {
-    var dataUrl = "{/literal}{crmURL p='civicrm/ajax/rest' h=0 q="className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&org=1&id=" }{literal}" + employerId + "&employee_id=" + cid ;
+    var dataUrl = "{/literal}{crmURL p='civicrm/ajax/rest' h=0 q="className=CRM_Financial_Page_AJAX&fnName=financialAccount&json=1&parentID=" }{literal}" + employerId ;
     cj.ajax({ 
         url     : dataUrl,   
         async   : false,

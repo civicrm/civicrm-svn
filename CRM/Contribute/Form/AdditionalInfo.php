@@ -308,7 +308,7 @@ class CRM_Contribute_Form_AdditionalInfo
     {
         $this->assign('receiptType', 'contribution');
         // Retrieve Contribution Type Name from contribution_type_id
-        $params['contributionType_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
+        $params['contributionType_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount',
                                                                         $params['financial_account_id'] );
         if ( CRM_Utils_Array::value( 'payment_instrument_id', $params ) ) {
             require_once 'CRM/Contribute/PseudoConstant.php';

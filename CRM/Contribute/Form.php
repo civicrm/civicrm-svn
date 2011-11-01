@@ -83,13 +83,14 @@ class CRM_Contribute_Form extends CRM_Core_Form
             $this->assign( 'delName', $defaults['name'] );
         } elseif ($this->_action == CRM_Core_Action::ADD) {
             $condition = " AND is_default = 1";
-            $values = CRM_Core_OptionGroup::values( 'activity_contacts', false, false, false, $condition );
+            $values = CRM_Core_OptionGroup::values( 'financial_account_type', false, false, false, $condition );
             $defaults['financial_account_type_id'] = array_keys( $values );
             $defaults['is_active'] = 1;
-            $defaults['is_default'] = 1;
         }elseif ($this->_action & CRM_Core_Action::UPDATE){
             $organisationId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $this->_id, 'contact_id' );
-            $this->assign('organisationId', $organisationId );                            
+            $this->assign('organisationId', $organisationId );    
+            $parentId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $this->_id, 'parent_id' );
+            $this->assign('parentId', $parentId ); 
         }
         
         return $defaults;

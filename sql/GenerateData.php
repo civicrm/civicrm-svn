@@ -1568,7 +1568,7 @@ SELECT  id
         
         $participant = "
 INSERT INTO civicrm_participant
-        (contact_id, event_id, status_id, role_id, register_date, source, fee_level, is_test, total_amount)
+        (contact_id, event_id, status_id, role_id, register_date, source, fee_level, is_test, fee_amount)
 VALUES
         ( ". $randomContacts[0]  .", 1, 1, 1, '2009-01-21', 'Check', 'Single', 0, 50 ),
         ( ". $randomContacts[1]  .", 2, 2, 2, '2008-05-07', 'Credit Card', 'Soprano', 0, 50 ),

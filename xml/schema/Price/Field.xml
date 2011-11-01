@@ -31,17 +31,6 @@
       <add>1.8</add>
   </foreignKey>
   <field>
-  	<name>financial_account_id</name>
-  	<type>int unsigned</type>
-  	<required>true</required>
-  	<comment>FK to financial_civicrm_account</comment>
-  	<add>4.1</add></field>
-  <foreignKey>
-  	<name>financial_account_id</name>
-  	<table>civicrm_financial_account</table>
-  	<key>id</key>
-  	<add>4.1</add></foreignKey>
-  <field>
       <name>name</name>
       <type>varchar</type>
       <title>Name</title>

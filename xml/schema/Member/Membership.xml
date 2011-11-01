@@ -93,32 +93,6 @@
       <add>1.5</add>  
   </field> 
   <field>  
-      <name>financial_account_id</name>
-      <title>Financial Account</title>
-      <type>int unsigned</type>
-      <comment>FK to Financial Account. NB: Account for (total_amount - non_deductible_amount), NOT total_amount</comment>
-      <add>4.1</add>  
-  </field>    
-  <foreignKey>  
-       <name>financial_account_id</name>  
-       <table>civicrm_financial_account</table>  
-       <key>id</key>         
-       <add>4.1</add>  
-  </foreignKey>  
-  <field>  
-      <name>non_deductible_financial_account_id</name>  
-      <title>Non-deductible Account</title>
-      <type>int unsigned</type>
-      <comment>FK to Account</comment>
-      <add>4.1</add>  
-  </field>    
-  <foreignKey>  
-       <name>non_deductible_financial_account_id</name>  
-       <table>civicrm_financial_account</table>  
-       <key>id</key>         
-       <add>4.1</add>  
-  </foreignKey>  
-  <field>  
       <name>source</name>     
       <uniqueName>membership_source</uniqueName>
       <title>Source</title>
@@ -181,12 +155,6 @@
     <fieldName>owner_membership_id</fieldName>
     <add>1.7</add>
   </index>
-  <field>
-      <name>payor_snapshot</name>
-      <type>text</type>
-      <comment>Serialized array of contact info fields stored at time of membership purchase or renewal</comment>
-      <add>4.1</add>
-  </field>
   <field>     
       <name>is_test</name>  
       <title>Test</title>

@@ -56,7 +56,7 @@ class CRM_Core_Extensions_Payment
         }
 
 
-        $dao = new CRM_Core_DAO_PaymentProcessorType( );
+        $dao = new CRM_Financial_DAO_PaymentProcessorType( );
 
         $dao->is_active               = 1;
         $dao->class_name              = trim($this->ext->key);
@@ -124,25 +124,25 @@ class CRM_Core_Extensions_Payment
             
         }
         
-        require_once "CRM/Core/BAO/PaymentProcessorType.php";
+        require_once "CRM/Financial/BAO/PaymentProcessorType.php";
         CRM_Core_BAO_PaymentProcessorType::del( $this->paymentProcessorTypes[$this->ext->key] );
     }
     
     public function disable() {
-        require_once "CRM/Core/BAO/PaymentProcessorType.php";
+        require_once "CRM/Financial/BAO/PaymentProcessorType.php";
         CRM_Core_BAO_PaymentProcessorType::setIsActive( $this->paymentProcessorTypes[$this->ext->key], 0 );
     }
     
     public function enable() {
-        require_once "CRM/Core/BAO/PaymentProcessorType.php";
+        require_once "CRM/Financial/BAO/PaymentProcessorType.php";
         CRM_Core_BAO_PaymentProcessorType::setIsActive( $this->paymentProcessorTypes[$this->ext->key], 1 );    
     }
 
     private function _getAllPaymentProcessorTypes( $attr ) {
         $ppt = array();
-        require_once "CRM/Core/DAO/PaymentProcessorType.php";
+        require_once "CRM/Financial/DAO/PaymentProcessorType.php";
         require_once "CRM/Core/DAO.php";
-        $dao = new CRM_Core_DAO_PaymentProcessorType();
+        $dao = new CRM_Financial_DAO_PaymentProcessorType();
         $dao->find( );
         while ($dao->fetch( )) {
             $ppt[$dao->$attr] = $dao->id;

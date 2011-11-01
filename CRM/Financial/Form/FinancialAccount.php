@@ -54,7 +54,8 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form
 
         $dataURL = CRM_Utils_System::url( 'civicrm/ajax/rest', 'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&org=1', false, null, false );
         $this->assign('dataURL', $dataURL );
-        
+         $dataURLParentID = CRM_Utils_System::url( 'civicrm/ajax/rest', 'className=CRM_Financial_Page_AJAX&fnName=financialAccount&json=1', false, null, false );
+        $this->assign('dataURLParentID', $dataURLParentID );
         if ($this->_action & CRM_Core_Action::DELETE ) { 
             return;
         }
@@ -65,20 +66,22 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form
         
         $this->add('text', 'description', ts('Description'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'description' ) );
         $this->add('text', 'accounting_code', ts('Accounting Code'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'accounting_code' ) );
-        $this->add('text', 'organisation_name', ts('Contact Name'), '' );
+        $this->add('text', 'organisation_name', ts('Contact Name'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'contact_id' ) );
+        // $this->add('text', 'organisation_name', ts('Contact Name'), '' );
         $this->add('hidden', 'contact_id', '', array( 'id' => 'contact_id') );
-        $this->add('text', 'parent_financial_account', ts('Financial Account'), '' );
+        $this->add('text', 'parent_financial_account', ts('Financial Account'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'parent_financial_account' ) );
+        // $this->add('text', 'parent_financial_account', ts('Financial Account'), '' );
         $this->add('hidden', 'parent_id', '', array( 'id' => 'parent_id') );
-        $this->add('text', 'tax_rate', ts('Tax Rate'), '' );
+        $this->add('text', 'tax_rate', ts('Tax Rate'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'tax_rate' ) );
         
-        $this->add('checkbox', 'is_deductible', ts('Tax-deductible?'));
-        $this->add('checkbox', 'is_active', ts('Enabled?'));
-        $this->add('checkbox', 'is_header_account', ts('Header-Account?'));
-        $this->add('checkbox', 'is_tax', ts('Is Tax?'));
-        $this->add('checkbox', 'is_default', ts('Default?'));
+        $this->add('checkbox', 'is_deductible', ts('Tax-deductible?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'is_deductible' ) );
+        $this->add('checkbox', 'is_active', ts('Enabled?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'is_active' ) );
+        $this->add('checkbox', 'is_header_account', ts('Header-Account?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'is_header_account' ) );
+        $this->add('checkbox', 'is_tax', ts('Is Tax?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'is_tax' ) );
+        $this->add('checkbox', 'is_default', ts('Default?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'is_default' ) );
 
         $financialAccountType = CRM_Core_PseudoConstant::financialAccountType( );
-        if ( $financialAccountType ) {
+        if ( !empty( $financialAccountType ) ) {
             $this->add('select', 'financial_account_type_id', ts('Financial Account Type'), array('select' => '--Select Financial Account Type--') + $financialAccountType );
         }
 
@@ -100,9 +103,8 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form
     static function formRule( $values, $files, $self ) 
     {
         $errorMsg = array( );
-        if ($values['tax_rate']<=0 && $values['tax_rate']>=100 ){
-            exit;
-            $errorMsg['tax_rate'] = ts( 'Percentage Should be between 0 - 100' );
+        if ( $values['tax_rate'] <= 0 || $values['tax_rate'] > 100 ){
+            $errorMsg['tax_rate'] = ts( 'Tax Rate Should be between 0 - 100' );
         }
         return CRM_Utils_Array::crmIsEmptyArray( $errorMsg ) ? true : $errorMsg;
     }

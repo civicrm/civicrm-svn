@@ -66,7 +66,7 @@ class CRM_Contribute_BAO_Contribution_Utils
         CRM_Core_Payment_Form::mapParams( $form->_bltID, $form->_params, $paymentParams, true );
         
         require_once 'CRM/Financial/DAO/FinancialAccount.php';
-        $contributionType = new CRM_Contribute_DAO_ContributionType( );
+        $contributionType = new CRM_Financial_DAO_FinancialAccount( );
         if ( isset( $paymentParams['financial_account'] ) ) {
             $contributionType->id = $paymentParams['financial_account'];
         } else if ( CRM_Utils_Array::value( 'pledge_id', $form->_values ) ) {

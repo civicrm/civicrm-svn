@@ -719,8 +719,8 @@ GROUP BY  participant.event_id
                 $participantFields['participant_campaign'] = array( 'title' => ts( 'Campaign Title' ) );
             }
             
-            require_once 'CRM/Core/DAO/Discount.php';
-            $discountFields  = CRM_Core_DAO_Discount::export( );
+            require_once 'CRM/Order/DAO/Discount.php';
+            $discountFields  = CRM_Order_DAO_Discount::export( );
 
             $fields = array_merge( $participantFields, $participantStatus, $participantRole, $noteField, $discountFields );
             

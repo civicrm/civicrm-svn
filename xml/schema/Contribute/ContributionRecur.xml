@@ -37,45 +37,6 @@
        <comment>Amount to be contributed or charged each recurrence.</comment>
        <add>1.6</add>
   </field>
-  <field>  
-      <name>financial_account_id</name>  
-      <title>Financial Account</title>
-      <type>int unsigned</type>
-      <comment>FK to Financial Account. NB: Financial Account for (amount - non_deductible_amount), NOT amount</comment>
-      <add>4.1</add>  
-  </field>    
-  <foreignKey>  
-       <name>financial_account_id</name>  
-       <table>civicrm_financial_account</table>  
-       <key>id</key>         
-       <add>4.1</add>  
-       <onDelete>SET NULL</onDelete>
-  </foreignKey>  
-  <field>     
-      <name>non_deductible_amount</name>  
-      <title>Non-deductible Amount</title>
-      <type>decimal</type>
-      <default>0</default>
-      <import>true</import>
-      <headerPattern>/non?.?deduct/i</headerPattern>
-      <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
-      <comment>Portion of amount which is NOT tax deductible. Equal to amount for non-deductible contribution types.</comment>  
-      <add>4.1</add>  
-  </field>
-  <field>  
-      <name>non_deductible_account_id</name>  
-      <title>Non-deductible Financial Account</title>
-      <type>int unsigned</type>
-      <comment>FK to Financial Account</comment>
-      <add>4.1</add>  
-  </field>    
-  <foreignKey>  
-       <name>non_deductible_account_id</name>  
-       <table>civicrm_financial_account</table>  
-       <key>id</key>         
-       <add>4.1</add>  
-       <onDelete>SET NULL</onDelete>
-  </foreignKey>
   <field>
       <name>currency</name>
       <type>varchar</type>

@@ -1237,7 +1237,7 @@ WHERE  contribution_id = {$this->_id}
             require_once 'CRM/Core/Payment/Form.php';
             CRM_Core_Payment_Form::mapParams( $this->_bltID, $this->_params, $paymentParams, true );
             
-            $contributionType = new CRM_Contribute_DAO_ContributionType( );
+            $contributionType = new CRM_Financial_DAO_FinancialAccount( );
             $contributionType->id = $params['financial_account_id'];
             if ( ! $contributionType->find( true ) ) {
                 CRM_Core_Error::fatal( 'Could not find a system table' );
