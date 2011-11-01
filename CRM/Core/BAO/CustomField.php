@@ -1708,7 +1708,6 @@ SELECT $columnName
             return $errors;
         }
         
-        require_once 'CRM/Core/DAO/CustomGroup.php';
         $newGroup = new CRM_Core_DAO_CustomGroup();
         $newGroup->id = $newGroupID;
         if (!$newGroup->find(TRUE)) {
@@ -1733,12 +1732,8 @@ AND        b.custom_group_id = %2
             $errors['newGroupID'] = ts( 'A field of the same label exists in the destination group' );
         }
         
-        $tableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',
-                                                  $oldGroup->id,
-                                                  'table_name' );
-        $columnName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField',
-                                                  $field->id,
-                                                  'column_name' );
+        $tableName  = $oldGroup->table_name;
+        $columnName = $field->column_name;
 
         $query = "
 SELECT count(*)
