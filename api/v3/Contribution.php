@@ -127,6 +127,12 @@ function civicrm_api3_contribution_delete($params) {
 		}
 
 }
+/*
+ * modify metadata. Legacy support for contribution_id
+ */
+function _civicrm_api3_contribution_delete_spec( &$params ) {
+  $params['id']['api.aliases']= array('contribution_id');
+}
 
 /**
  * Retrieve a set of contributions, given a set of input params
