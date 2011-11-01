@@ -74,7 +74,7 @@ class CRM_Custom_Form_MoveField extends CRM_Core_Form {
      *
      * @var string
      */
-    protected $_label;
+    protected $_srcFieldLabel;
 
     /**
      * set up variables to build the form
@@ -90,12 +90,12 @@ class CRM_Custom_Form_MoveField extends CRM_Core_Form {
                                                       $this->_srcFID,
                                                       'custom_group_id' );
 
-        $this->_label  = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField',
-                                                      $this->_srcFID,
-                                                      'label' );
+        $this->_srcFieldLabel  = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField',
+                                                              $this->_srcFID,
+                                                              'label' );
 
         CRM_Utils_System::setTitle( ts( 'Custom Field Move: %1',
-                                        array( 1 => $this->_label ) ) );
+                                        array( 1 => $this->_srcFieldLabel ) ) );
     }
 
     /**
@@ -149,6 +149,12 @@ class CRM_Custom_Form_MoveField extends CRM_Core_Form {
     public function postProcess( ) {
         require_once 'CRM/Core/BAO/CustomField.php';
         CRM_Core_BAO_CustomField::moveField( $this->_srcFID, $this->_dstGID );
+        
+        $dstGroup  = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',
+                                                  $this->_dstGID,
+                                                  'title' );
+        CRM_Core_Session::setStatus( ts("%1 has been moved to the custom set '%2'.", array( 1 => $this->_srcFieldLabel,
+                                                                                            2 => $dstGroup )) );
     }
 
 }
