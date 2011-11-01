@@ -47,25 +47,33 @@ require_once 'api/v3/utils.php';
  *                       name/value pairs to insert in new 'campaign'
  *
  * @return array   campaign array
- *
+ * {@getfields campaign_create}
  * @access public
  */
 function civicrm_api3_campaign_create( $params )
 {
-    civicrm_api3_verify_mandatory($params,null,array('title'));
     return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 
 }
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_note_create_spec(&$params){
+  $params['title']['api.required'] =1;
+}
 /**
  * Returns array of campaigns  matching a set of one or more group properties
  *
  * @param array $params  (referance) Array of one or more valid
  *                       property_name=>value pairs. If $params is set
  *                       as null, all campaigns will be returned
- *
+ * 
  * @return array  (referance) Array of matching campaigns
  * @access public
+ * {@getfields campaign_get}
  */
 function civicrm_api3_campaign_get( $params )
 {
@@ -83,7 +91,7 @@ function civicrm_api3_campaign_get( $params )
  *
  * @return array  (referance) returns flag true if successfull, error
  *                message otherwise
- *
+ * {@getfields campaign_delete}
  * @access public
  */
 function civicrm_api3_campaign_delete( $params )

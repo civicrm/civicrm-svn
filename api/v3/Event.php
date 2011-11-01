@@ -50,7 +50,7 @@
  *
  * @param  array   $params           (reference ) input parameters
  * Allowed @params array keys are:
- * {@schema Event/Event.xml}
+ * {@getfields event_create}
  *
  * @return array of newly created event property values.
  * @access public
@@ -58,7 +58,7 @@
 function civicrm_api3_event_create( $params )
 {
 
-    civicrm_api3_verify_mandatory ($params,'CRM_Event_DAO_Event',array ('start_date','event_type_id','title'));
+    civicrm_api3_verify_mandatory ($params,'CRM_Event_DAO_Event');// to be removed - need to check what's being required
    
     //format custom fields so they can be added
     $value = array();
@@ -98,6 +98,7 @@ function _civicrm_api3_event_create_spec(&$params){
  *
  * @return  Array of all found event property values.
  * @access public
+ * {@getfields event_get}
  */
 
 function civicrm_api3_event_get( $params )
@@ -178,8 +179,8 @@ function civicrm_api3_event_get( $params )
  *
  * @return boolean        true if success, error otherwise
  * @access public
- * 
- * note API has legacy support for 'event_id'
+ *   note API has legacy support for 'event_id'
+ *  {@getfields event_delete}
  */
 function civicrm_api3_event_delete( $params )
 {
