@@ -182,7 +182,7 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
 	 $DAO =  _civicrm_api3_get_DAO ('civicrm_api3_survey_get');
 	 $this->assertEquals('CRM_Campaign_DAO_Survey', $DAO );
 	 $DAO =  _civicrm_api3_get_DAO ('civicrm_api3_pledge_payment_get');
-	 $this->assertEquals('CRM_Pledge_DAO_Payment', $DAO );
+	 $this->assertEquals('CRM_Pledge_DAO_PledgePayment', $DAO );
 	 $DAO =  _civicrm_api3_get_DAO ('civicrm_api3_website_get');
 	 $this->assertEquals('CRM_Core_DAO_Website', $DAO );
 	 $DAO =  _civicrm_api3_get_DAO ('Membership');
@@ -197,7 +197,7 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
 	 $BAO =  _civicrm_api3_get_BAO ('civicrm_api3_survey_get');
 	 $this->assertEquals('CRM_Campaign_BAO_Survey', $BAO );
 	 $BAO =  _civicrm_api3_get_BAO ('civicrm_api3_pledge_payment_get');
-	 $this->assertEquals('CRM_Pledge_BAO_Payment', $BAO );
+	 $this->assertEquals('CRM_Pledge_BAO_PledgePayment', $BAO );
 
 	}
 	
