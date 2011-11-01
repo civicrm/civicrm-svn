@@ -39,7 +39,7 @@
 /**
  * Include common API util functions
  */
-require_once 'api/v3/utils.php';
+
 require_once 'CRM/Core/BAO/UFField.php';
 require_once 'CRM/Core/BAO/UFGroup.php';
 
@@ -53,7 +53,8 @@ require_once 'CRM/Core/BAO/UFGroup.php';
  * @return Newly created $ufFieldArray array
  *
  * @access public
- *
+ * {@getfields UFField_create}
+ * @example UFFieldCreate.php
  */
 function civicrm_api3_uf_field_create( $params)
 {
@@ -115,13 +116,14 @@ function civicrm_api3_uf_field_create( $params)
  *                       property_name=>value pairs. If $params is set
  *                       as null, all surveys will be returned
  *
- * @return array  (reference) Array of matching profiles
+ * @return array  (reference) Array 
+ * {@getfields UFField_get
+ * @example UFFieldGet.php
  * @access public
  */
 function civicrm_api3_uf_field_get( $params )
 {
 
-    civicrm_api3_verify_mandatory($params);
     return _civicrm_api3_basic_get('CRM_Core_BAO_UFField', $params);
 
 }
@@ -134,20 +136,13 @@ function civicrm_api3_uf_field_get( $params )
  * @return true on successful delete or return error
  *
  * @access public
- *
+ * {@getfields UFField_delete}
+ * @example UFFieldDelete.php
  */
 function civicrm_api3_uf_field_delete($params ) {
+   
 
-    civicrm_api3_verify_mandatory($params,null,array('field_id'));
-    $fieldId  = CRM_Utils_Array::value('field_id',$params,CRM_Utils_Array::value('id',$params));
-    
-    $ufGroupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFField', $fieldId, 'uf_group_id' );
-    if (!$ufGroupId) {
-        return civicrm_api3_create_error('Invalid value for field_id.');  
-    }
-    
-    require_once 'CRM/Core/BAO/UFField.php';
-    $result = CRM_Core_BAO_UFField::del($fieldId);
+    $result = CRM_Core_BAO_UFField::del($params['id']);
 
     $fieldsType = CRM_Core_BAO_UFGroup::calculateGroupType($ufGroupId, true);
     CRM_Core_BAO_UFGroup::updateGroupTypes($ufGroupId, $fieldsType);
@@ -159,6 +154,6 @@ function civicrm_api3_uf_field_delete($params ) {
  * field id accepted for backward compat - unset required on id
  */
 function _civicrm_api3_uf_field_delete_spec( &$params ) {
-  $params['id']['api.required'] =0;// set as not required as tag_id also acceptable & no either/or std yet
+  $params['id']['api.aliases'] = array('field_id');// legacy support for field_id
   
 }

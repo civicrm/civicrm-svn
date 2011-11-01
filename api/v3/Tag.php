@@ -44,15 +44,15 @@
  *  Add a Tag. Tags are used to classify CRM entities (including Contacts, Groups and Actions).
  *
  * Allowed @params array keys are:
- * {@getfields tag_create}
+ * 
  * {@example TagCreate.php}
  * @return array of newly created tag property values.
+ * {@getfields tag_create}
  * @access public
  */
 function civicrm_api3_tag_create( $params ) 
 {
 
-    require_once 'CRM/Core/BAO/Tag.php';
     $ids = array( 'tag' => CRM_Utils_Array::value( 'tag', $params ) );
     if ( CRM_Utils_Array::value( 'tag', $params ) ) {
         $ids['tag'] = $params['tag'];
@@ -85,13 +85,14 @@ function _civicrm_api3_tag_create_spec(&$params){
  *
  * @param  array  $params
  * 
- * {@example TagDelete.php 0}
+ * @example TagDelete.ph
  * @return boolean | error  true if successfull, error otherwise
+ * {@getfields tag_delete}
  * @access public
  */
 function civicrm_api3_tag_delete( $params ) 
 {
-    return CRM_Core_BAO_Tag::del( $params['id'] ) ? civicrm_api3_create_success(1,$params,'tag','delete' ) : civicrm_api3_create_error(  ts( 'Could not delete tag' )  );
+    return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 /*
  * modify metadata. This causes 'tag_id' to be acceptable
@@ -106,10 +107,11 @@ function _civicrm_api3_tag_delete_spec( &$params ) {
  * This api is used for finding an existing tag.
  * Either id or name of tag are required parameters for this api.
  * 
- * {@example TagGet.php 0}
+ * @example TagGet.php
  * @param  array $params  an associative array of name/value pairs.
  *
  * @return  array details of found tags else error
+ * {@getfields tag_get}
  * @access public
  */
 
