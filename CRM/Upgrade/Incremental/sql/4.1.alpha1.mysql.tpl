@@ -264,3 +264,22 @@ ALTER TABLE `civicrm_contribution_recur` ADD `campaign_id` int(10) unsigned NULL
 ALTER TABLE `civicrm_contribution_recur` ADD CONSTRAINT `FK_civicrm_contribution_recur_campaign_id` FOREIGN KEY (`campaign_id`) REFERENCES `civicrm_campaign` (`id`) ON DELETE SET NULL;
 
 UPDATE `civicrm_contribution_recur` ccr INNER JOIN `civicrm_contribution` cc ON ccr.id = cc.contribution_recur_id SET ccr.campaign_id = cc.campaign_id, ccr.payment_instrument_id = cc.payment_instrument_id, ccr.contribution_type_id = cc.contribution_type_id;
+
+-- CRM-8962
+INSERT INTO civicrm_action_mapping ( entity, entity_value, entity_value_label, entity_status, entity_status_label, entity_date_start, entity_date_end, entity_recipient ) 
+VALUES
+('civicrm_participant', 'event_type', 'Event Type', 'civicrm_participant_status_type', 'Participant Status', 'event_start_date', 'event_end_date', 'event_contacts'),
+('civicrm_participant', 'civicrm_event', 'Event Name', 'civicrm_participant_status_type', 'Participant Status', 'event_start_date', 'event_end_date', 'event_contacts');
+
+INSERT INTO civicrm_option_group
+      (name, {localize field='description'}description{/localize}, is_reserved, is_active)
+VALUES
+      ('event_recipients', {localize}'{ts escape="sql"}Event Recipients{/ts}'{/localize}, 0, 1);
+
+SELECT @option_group_id_ere := max(id) from civicrm_option_group where name = 'event_recipients';
+
+INSERT INTO civicrm_option_value 
+   (option_group_id, {localize field='label'}label{/localize}, value, name,  filter,  weight, is_active ) 
+VALUES
+   (@option_group_id_ere, {localize}'{ts escape="sql"}Participant Status{/ts}'{/localize}, 1, 'civicrm_participant_status_type', 0, 1, 1 ),
+   (@option_group_id_ere, {localize}'{ts escape="sql"}Participant Role{/ts}'{/localize}, 2, 'participant_role', 0,  2, 1 );
