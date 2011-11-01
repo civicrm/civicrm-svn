@@ -42,7 +42,7 @@ function copyFieldValues( fname ) {
     // this is the most common pattern for elements, so first check if it exits
     // this check field starting with "field[" and contains [fname] and is not
     // hidden ( for checkbox hidden element is created )
-    var elementId    = cj('[name^="field["][name*="[' + fname +']"][type!=hidden]');
+    var elementId    = cj('#Batch [name^="field["][name*="[' + fname +']"][type!=hidden]');
     
     // get the first element and it's value
     var firstElement = elementId.eq(0);
@@ -50,6 +50,7 @@ function copyFieldValues( fname ) {
     
     //console.log( elementId );
     //console.log( firstElement );
+    //console.log( firstElementValue );
     
     //check if it is date element
     var isDateElement     = elementId.attr('format');
@@ -65,6 +66,21 @@ function copyFieldValues( fname ) {
         elementId.filter("[value=" + firstElementValue + "]").prop("checked",true);
     } else if ( elementType == 'checkbox' ) {
         // handle checkbox
+        // get the contact id of first element
+        var firstContactId = firstElement.parent().parent().attr('contact_id');
+       
+        // lets uncheck all the checkbox except first one
+        cj('#Batch [type=checkbox]:not([name^="field['+ firstContactId +']['+ fname +']["])').removeProp('checked');
+        
+        //here for each checkbox for first row, check if it is checked and set remaining checkboxes
+        cj('#Batch [type=checkbox][name^="field['+ firstContactId +']['+ fname +']"][type!=hidden]').each(function() {
+            if (cj(this).prop('checked') ) {
+                var elementName = cj(this).attr('name');
+                var correctIndex = elementName.split('field['+ firstContactId +']['+ fname +'][');
+                correctIndexValue = correctIndex[1].replace(']', '');
+                cj('#Batch [type=checkbox][name^="field["][name*="['+ fname +']['+ correctIndexValue+']"][type!=hidden]').prop('checked',true);
+            }
+        });
     } else {
         elementId.val( firstElementValue );
     }
@@ -139,60 +155,6 @@ function copyValues(fieldName, source)
 		if ( copyHidden ) {
 		  document.getElementById("field_"+cId[k]+"_"+fieldName+'_id').value = document.getElementById(source+'_id').value;
 		}
-            }
-        }
-    } else if ( document.getElementsByName("field"+"["+cId[0]+"]"+"["+fieldName+"]") &&
-            document.getElementsByName("field"+"["+cId[0]+"]"+"["+fieldName+"]").length > 0 ) {
-        /*
-        if ( document.getElementsByName("field"+"["+cId[0]+"]"+"["+fieldName+"]")[0].type == "radio" ) {
-            for ( t=0; t<document.getElementsByName("field"+"["+cId[0]+"]"+"["+fieldName+"]").length; t++ ) {
-                if  (document.getElementsByName("field"+"["+cId[0]+"]"+"["+fieldName+"]")[t].checked == true ) {break}
-            }
-            if ( t == document.getElementsByName("field"+"["+cId[0]+"]"+"["+fieldName+"]").length ) {
-                for ( k=0; k<cId.length; k++ ) {
-                    for ( t=0; t<document.getElementsByName("field"+"["+cId[0]+"]"+"["+fieldName+"]").length; t++ ) {
-                        document.getElementsByName("field"+"["+cId[k]+"]"+"["+fieldName+"]")[t].checked = false;
-                    }
-                }
-            } else {
-                for ( k=0; k<cId.length; k++ ) {
-                    document.getElementsByName("field"+"["+cId[k]+"]"+"["+fieldName+"]")[t].checked = document.getElementsByName("field"+"["+cId[0]+"]"+"["+fieldName+"]")[t].checked;
-                }
-            }
-        } else if ( document.getElementsByName("field"+"["+cId[0]+"]"+"["+fieldName+"]")[0].type == "checkbox" ) {
-            for ( k=0; k<cId.length; k++ ) {
-                document.getElementsByName("field"+"["+cId[k]+"]"+"["+fieldName+"]")[0].checked = document.getElementsByName("field"+"["+cId[0]+"]"+"["+fieldName+"]")[0].checked;
-            }
-        } else if ( document.getElementById( "field"+"["+cId[0]+"]"+"["+fieldName+"]___Frame" ) ) {
-            //currently FckEditor field is mapped accross ___frames. It can also be mapped accross ___config.
-            if ( editor == "fckeditor" ) {
-                fckEditor = FCKeditorAPI.GetInstance( "field"+"["+cId[0]+"]"+"["+fieldName+"]" );
-                for ( k=0; k<cId.length; k++ ) {
-                    FCKeditorAPI.GetInstance( "field"+"["+cId[k]+"]"+"["+fieldName+"]" ).SetHTML( fckEditor.GetHTML() );
-                }
-            }
-        } */
-    } else {
-        if ( f = document.getElementById('Batch') ) {
-            if ( ts = f.getElementsByTagName('table') ) {
-                if ( t = ts[0] ) {
-                    tRows = t.getElementsByTagName('tr') ;
-                    if ( tRows[1] ) {
-                        secondRow = tRows[1] ;
-                        inputs = secondRow.getElementsByTagName('input') ;
-                        for ( ii = 0 ; ii<inputs.length ; ii++ ) {
-                            pattern = 'field['+cId[0]+']['+fieldName+']';
-                            if ( inputs[ii].name.search(pattern) && inputs[ii].type == 'checkbox' ) {
-                                for ( k=1; k<cId.length; k++ ) {
-                                    target = document.getElementsByName(inputs[ii].name.replace('field['+cId[0]+']', 'field['+cId[k]+']')) ;
-                                    if ( target.length > 0 ) {
-                                        target[1].checked = inputs[ii].checked ;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     }
