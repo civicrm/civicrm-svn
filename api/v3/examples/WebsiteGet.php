@@ -27,8 +27,16 @@ function website_get_expectedresult(){
   $expectedResult = array( 
   'is_error' => 0,
   'version' => 3,
-  'count' => 0,
-  'values' => array(),
+  'count' => 1,
+  'id' => 2,
+  'values' => array( 
+      '2' => array( 
+          'id' => '2',
+          'contact_id' => '1',
+          'url' => 'website.com',
+          'website_type_id' => '1',
+        ),
+    ),
 );
 
   return $expectedResult  ;

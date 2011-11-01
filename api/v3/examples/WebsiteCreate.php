@@ -25,8 +25,18 @@ $params = array(
 function website_create_expectedresult(){
 
   $expectedResult = array( 
-  'is_error' => 1,
-  'error_message' => 'DB Error: constraint violation',
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => 1,
+          'contact_id' => 1,
+          'url' => 'website.com',
+          'website_type_id' => 1,
+        ),
+    ),
 );
 
   return $expectedResult  ;
