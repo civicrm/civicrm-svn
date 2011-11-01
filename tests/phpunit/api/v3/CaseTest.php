@@ -213,6 +213,8 @@ class api_v3_CaseTest extends CiviUnitTestCase
 
         // create a logged in USER since the code references it for source_contact_id
         $this->createLoggedInUser( );
+        $session = CRM_Core_Session::singleton( );
+        $this->_loggedInUser = $session->get( 'userID' );
     }
 
 
@@ -299,6 +301,7 @@ class api_v3_CaseTest extends CiviUnitTestCase
         $params = array( 'case_id' => 1,
                          'activity_type_id' => 14, // follow up
                          'subject' => 'Test followup',
+                         'source_contact_id' => $this->_loggedInUser,
                          'target_contact_id' => $this->_params['contact_id'],
                          'version' => $this->_apiversion,
                        );
@@ -341,6 +344,7 @@ class api_v3_CaseTest extends CiviUnitTestCase
         $params = array( 'activity_id' => $this->_caseActivityId,
                          'case_id' => 1,
                          'activity_type_id' => 14,
+                         'source_contact_id' => $this->_loggedInUser,
                          'subject' => 'New subject',
                          'version' => $this->_apiversion,
                        );
@@ -386,6 +390,7 @@ class api_v3_CaseTest extends CiviUnitTestCase
         $params = array( 'case_id' => 1,
                          'activity_type_id' => 14, // follow up
                          'subject' => 'Test followup',
+                         'source_contact_id' => $this->_loggedInUser,
                          'target_contact_id' => $this->_params['contact_id'],
                          'custom_'.$custom_ids['custom_field_id'] => "custom string",
                          'version' => $this->_apiversion,
@@ -401,6 +406,7 @@ class api_v3_CaseTest extends CiviUnitTestCase
         $params = array( 'activity_id' => $aid,
                          'case_id' => 1,
                          'activity_type_id' => 14,
+                         'source_contact_id' => $this->_loggedInUser,
                          'subject' => 'New subject',
                          'version' => $this->_apiversion,
                        );
