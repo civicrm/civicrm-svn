@@ -41,9 +41,10 @@
  require_once 'CRM/Core/BAO/EntityTag.php';
 
 /**
- *
+ * {@getfields EntityTag_get}
+ * @example EntityTagGet.php
  * @param array $params
- * @return <type>
+ * @return array
  */
 function civicrm_api3_entity_tag_get( $params ) {
 
@@ -127,6 +128,8 @@ function civicrm_api3_tag_entities_get( $params )
  *
  * @param array $params
  * @return array
+ * {@getfields EntityTag_create}
+ * @example EntityTagCreate.php
  */
 function civicrm_api3_entity_tag_create( $params ) {
 
@@ -136,9 +139,10 @@ function civicrm_api3_entity_tag_create( $params ) {
 }
 
 /**
- *
+ *{@getfields EntityTag_delete} 
+ * @example EntityTagGet.php 
  * @param array $params
- * @return <type>
+ * @return array
  */
 function civicrm_api3_entity_tag_delete( $params ) {
 
