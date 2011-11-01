@@ -85,10 +85,11 @@ function civicrm_api3_membership_payment_create( $params ) {
  *
  * @return array (reference )        array of properties, if error an array with an error id and error message
  * @static void
+ * {@getfields MembershipPayment_delete}
  * @access public
  */
 function &civicrm_api3_membership_payment_get( $params ) {
 
-    civicrm_api3_verify_mandatory($params);
+
     return _civicrm_api3_basic_get('CRM_Member_DAO_MembershipPayment', $params);
 }

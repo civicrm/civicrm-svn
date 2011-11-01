@@ -61,7 +61,7 @@ function civicrm_api3_campaign_create( $params )
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
-function _civicrm_api3_note_create_spec(&$params){
+function _civicrm_api3_campaign_create_spec(&$params){
   $params['title']['api.required'] =1;
 }
 /**

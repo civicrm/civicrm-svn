@@ -114,6 +114,7 @@ function _civicrm_api3_custom_group_create_spec(&$params){
  *
  * @return Null if success
  * @access public
+ * {@getfields CustomGroup_delete}
  **/
 function civicrm_api3_custom_group_delete($params)
 {    
@@ -138,7 +139,7 @@ function civicrm_api3_custom_group_delete($params)
  * @param array $params Array to search on
  *
 * @access public
- * 
+ * {@getfields CustomGroup_get}
  **/
 function civicrm_api3_custom_group_get($params)
 {

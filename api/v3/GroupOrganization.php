@@ -45,7 +45,7 @@ require_once 'CRM/Contact/BAO/GroupOrganization.php';
  * to fetch the records
  *
  * @param  array $params  name value pair of contact information
- *
+ * {@getfields GroupOrganization_get}
  * @return  array  list of groups, given contact subsribed to
  */
 function civicrm_api3_group_organization_get( $params )
@@ -89,9 +89,10 @@ function _civicrm_api3_group_organization_create_spec(&$params){
  *
  * This API is used for deleting a Group Organization
  *
- * @param  array  $params  ID of the Group Organization to be deleted
+ * @param  array  $params  with 'id' = ID of the Group Organization to be deleted
  *
- * @return null if successfull, array with is_error = 1 otherwise
+ * @return array API Result
+ * {@getfields GroupOrganization_delete}
  * @access public
  */
 

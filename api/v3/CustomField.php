@@ -64,7 +64,7 @@ require_once 'CRM/Core/BAO/CustomField.php';
  * @access public
  * 
  * @example CustomFieldCreate.php
- * 
+ * {@getfields CustomField_create}
  * {@example CustomFieldCreate.php 0}
  *
  */
@@ -115,12 +115,12 @@ function _civicrm_api3_custom_field_create_spec(&$params){
  * @example CustomFieldDelete.php
  * 
  * {@example CustomFieldDelete.php 0}
+ * {@getfields CustomField_delete}
  * @access public
  **/
 function civicrm_api3_custom_field_delete( $params )
 {
-        civicrm_api3_verify_mandatory($params,null,array('id'));
-        
+       
         $field = new CRM_Core_BAO_CustomField( );
         $field->id = $params['id'];
         $field->find(true);
@@ -138,14 +138,12 @@ function civicrm_api3_custom_field_delete( $params )
  * Use this API to get existing custom fields.
  *
  * @param array $params Array to search on
- *
+ *{@getfields CustomField_get}
 * @access public
  * 
  **/
 function civicrm_api3_custom_field_get($params)
 {
-
-        civicrm_api3_verify_mandatory($params);
         return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 
 }

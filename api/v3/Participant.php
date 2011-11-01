@@ -50,23 +50,12 @@
  *                     : participant as name/value with participantid for edit
  * @param   array  $params     an associative array of name/value property values of civicrm_participant
  *
- * @return array participant id if participant is created/edited otherwise is_error = 1
+ * @return array apiresult
+ * {@getfields participant_create}
  * @access public
  */
 function civicrm_api3_participant_create($params)
 {
-
-        if ( ! isset($params['status_id'] )) {
-            $params['participant_status_id']= $params['status_id'] = 1;
-        }
-
-        if ( !isset($params['register_date'] )) {
-            $params['register_date']= date( 'YmdHis' );
-        }
-        civicrm_api3_verify_mandatory($params,null,array('event_id','contact_id')) ;
-
-
-
         $errors= _civicrm_api3_participant_check_params( $params );
         if ( civicrm_api3_error( $errors ) ) {
             return $errors;
@@ -82,7 +71,18 @@ function civicrm_api3_participant_create($params)
     
 
 }
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_participant_create_spec(&$params){
+  $params['status_id']['api.default'] = "1";
+  $params['register_date']['api.default'] = "now";
+  $params['event_id']['api.required'] =1;
+  $params['contact_id']['api.required'] =1;
+}
 /**
  * Retrieve a specific participant, given a set of input params
  * If more than one matching participant exists, return an error, unless
@@ -91,14 +91,12 @@ function civicrm_api3_participant_create($params)
  * @param  array   $params           (reference ) input parameters
  *
  * @return array (reference )        array of properties, if error an array with an error id and error message
- * @static void
+ * {@getfields participant_get}
  * @access public
  */
 function civicrm_api3_participant_get( $params ) {
 
         $values = array( );
-        civicrm_api3_verify_mandatory($params);
-
         if ( isset ( $params['id'] ) ) {
             $params['participant_id' ] = $params['id'];
             unset( $params['id'] );
@@ -163,24 +161,19 @@ function civicrm_api3_participant_get( $params ) {
  *
  * @param  Int  $participantID   Id of the contact participant to be deleted
  *
- * @return boolean        true if success, else false
+ * {@getfields participant_delete}
  * @access public
  */
 function &civicrm_api3_participant_delete( $params )
 {
-
-        civicrm_api3_verify_mandatory($params,null,array('id'));
-
-        require_once 'CRM/Event/BAO/Participant.php';
         $participant = new CRM_Event_BAO_Participant();
         $result = $participant->deleteParticipant( $params['id'] );
 
         if ( $result ) {
-            $values = civicrm_api3_create_success( );
+            return  civicrm_api3_create_success( );
         } else {
-            $values = civicrm_api3_create_error('Error while deleting participant');
+            return  civicrm_api3_create_error('Error while deleting participant');
         }
-        return $values;
 
 }
 

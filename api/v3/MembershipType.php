@@ -54,7 +54,7 @@ function civicrm_api3_membership_type_create($params)
 {
 
     $values = $params;
-    civicrm_api3_verify_mandatory($values,'CRM_Member_DAO_MembershipType' ,array('name',  'duration_unit','duration_interval'));
+    civicrm_api3_verify_mandatory($values,'CRM_Member_DAO_MembershipType' );
      
     $ids['membershipType']   = CRM_Utils_Array::value( 'id', $values );
     $ids['memberOfContact']  = CRM_Utils_Array::value( 'member_of_contact_id', $values );
@@ -64,8 +64,7 @@ function civicrm_api3_membership_type_create($params)
     $membershipTypeBAO = CRM_Member_BAO_MembershipType::add($values, $ids);
     $membershipType = array();    
     _civicrm_api3_object_to_array( $membershipTypeBAO, $membershipType[$membershipTypeBAO->id] );
-    $membershipTypeBAO->free();
-    return civicrm_api3_create_success($membershipType,$params);
+    return civicrm_api3_create_success($membershipType,$params, 'membership_type', 'create', $membershipTypeBAO );
 
 }
 /*
