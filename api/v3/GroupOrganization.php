@@ -46,6 +46,7 @@ require_once 'CRM/Contact/BAO/GroupOrganization.php';
  *
  * @param  array $params  name value pair of contact information
  * {@getfields GroupOrganization_get}
+ * @example GroupOrganizationGet.php
  * @return  array  list of groups, given contact subsribed to
  */
 function civicrm_api3_group_organization_get( $params )
@@ -54,10 +55,11 @@ function civicrm_api3_group_organization_get( $params )
 }
 
 /**
- *
- * @param $params array
- * @return <type>
+ * @example GroupOrganizationCreate.php
  * {getfields GroupOrganization_create}
+ * @param $params array
+ * @return array
+ * 
  */
 function civicrm_api3_group_organization_create( $params )
 {
@@ -93,6 +95,7 @@ function _civicrm_api3_group_organization_create_spec(&$params){
  *
  * @return array API Result
  * {@getfields GroupOrganization_delete}
+ * @example GroupOrganizationDelete.php
  * @access public
  */
 
