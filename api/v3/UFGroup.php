@@ -48,7 +48,8 @@ require_once 'CRM/Core/BAO/UFGroup.php';
  * @param $params  array   Associative array of property name/value pairs to insert in group.
  *
  * @return   Newly create $ufGroupArray array
- *
+ * {@getfields UFGroup_create}
+ * @example UFGroupCreate.php
  * @access public 
  */
 function civicrm_api3_uf_group_create($params) {
@@ -71,7 +72,9 @@ function civicrm_api3_uf_group_create($params) {
  *                       property_name=>value pairs. If $params is set
  *                       as null, all surveys will be returned
  *
- * @return array  (reference) Array of matching profiles
+ * @return array   Array of matching profiles
+ * {@getfields UFGroup_get}
+ * @example UFGroupGet.php
  * @access public
  */
 function civicrm_api3_uf_group_get( $params )
@@ -90,10 +93,11 @@ function civicrm_api3_uf_group_get( $params )
  * @return true on successful delete or return error
  * @todo doesnt rtn success or error properly
  * @access public
- *
+ * {@getfields UFGroup_delete}
+ * @example UFGroupDelete.php
  */
 function civicrm_api3_uf_group_delete($params) {
 
-		return CRM_Core_BAO_UFGroup::del ( $params ['id'] );
+    return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 
 }

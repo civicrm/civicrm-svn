@@ -75,8 +75,9 @@ function _civicrm_api3_website_create_spec( &$params ) {
  *
  * @param  array  $params
  * @example WebsiteDelete.php Std Delete Example
- * {@schema Core/Website.xml}
  * {@example WebsiteDelete.php 0}
+ * {@getfields website_delete}
+ * 
  * @return boolean | error  true if successfull, error otherwise
  * @access public
  */
@@ -103,11 +104,12 @@ function civicrm_api3_website_delete( $params )
  *
  * @param  mixed[]  (reference ) input parameters
  * 
- * {@schema Core/Website.xml}
- * {@example WebsiteDelete.php 0}
+ *  * {@example WebsiteGet.php 0}
+ * @example WebsiteGet.php
  * @param  array $params  an associative array of name/value pairs.
  *
- * @return  array details of found websites else error
+ * @return  array details of found websites 
+ * {@getfields website_get}
  * @access public
  */
 

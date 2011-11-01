@@ -278,4 +278,15 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
         $result = civicrm_api('uf_group', 'create', array('title' => 'Title'), 'a string');
         $this->assertEquals($result['is_error'], 1);
     }
+    function testUFGroupDelete()
+    {
+
+        $ufGroup = civicrm_api('uf_group', 'create', $this->params);
+        $params = array('version' => $this->_apiversion, 'id' => $ufGroup['id']);
+        $this->assertEquals(1 , civicrm_api('uf_group', 'getcount', $params), "in line ". __LINE__);
+        $result = civicrm_api('uf_group', 'delete', $params, "in line ". __LINE__);
+        $this->documentMe($this->params,$result,__FUNCTION__,__FILE__);
+        $this->assertEquals(0 , civicrm_api('uf_group', 'getcount', $params), "in line ". __LINE__);
+        $this->assertAPISuccess($result, "in line ". __LINE__);
+    }
 }

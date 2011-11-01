@@ -40,7 +40,7 @@
 /**
  * Files required for this package
  */
-require_once 'api/v3/utils.php';
+
 require_once 'CRM/Core/BAO/UFMatch.php';
 
 /**
