@@ -157,45 +157,5 @@ function setStatusesTo( statusId ) {
         document.getElementById("field_"+cId[k]+"_participant_status").value = statusId;
     }
 }
-
-function copyValues(fieldName, source)
-{
-    var cId = new Array();
-    var i = 0;
-    var editor = {/literal}"{$editor}"{literal};
-    {/literal}
-    {foreach from=$componentIds item=field}
-        {literal}cId[i++]{/literal} = {$field}
-    {/foreach}
-    {literal}
-
-    if (source === undefined) source = "field_"+cId[0]+"_"+fieldName;
-
-    if ( document.getElementById(source) ) {
-        if ( document.getElementById(source).type == 'select-multiple' ) {
-        } else if ( document.getElementById(source).getAttribute("class") == "tinymce" ) {
-            if ( editor == "tinymce" ) {
-                for ( k=0; k<cId.length; k++ ) {
-                    cj( '#field_' + cId[k] + '_' + fieldName ).html( cj('#'+ source).html( ) );
-                }
-            }
-        } else {
-	    var copyHidden = false;
-            if ( document.getElementById(source).type == 'text' &&
-	         cj('#'+ source +'_id').length > 0 &&
-		 cj('#field_'+ cId[1] + '_' + fieldName + '_id').length > 0 ) {
-		 copyHidden = true;
-            }
-            for ( k=0; k<cId.length; k++ ) {
-                document.getElementById("field_"+cId[k]+"_"+fieldName).value = document.getElementById(source).value;
-		if ( copyHidden ) {
-		  document.getElementById("field_"+cId[k]+"_"+fieldName+'_id').value = document.getElementById(source+'_id').value;
-		}
-            }
-        }
-    }
-}
-
-
 </script>
 {/literal}

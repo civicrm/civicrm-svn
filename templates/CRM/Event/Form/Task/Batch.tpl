@@ -41,25 +41,21 @@
 </div>
     <legend>{$profileTitle}</legend>
          <table>
-	  <thead class="sticky">
+	     <thead class="sticky">
             <tr class="columnheader">
              {foreach from=$readOnlyFields item=fTitle key=fName}
-	        <td>{$fTitle}</td>
-	     {/foreach}
+	            <td>{$fTitle}</td>
+	         {/foreach}
 
              <td>{ts}Event{/ts}</td>
              {foreach from=$fields item=field key=fieldName}
-                {if strpos( $field.name, '_date' ) !== false ||
-                    (substr( $field.name, 0, 7 ) == 'custom_' && $field.data_type == 'Date')}   
-                  <td><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" onclick="copyValuesDate('{$field.name}')" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</td>
-                {else}
-                  <td><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" onclick="copyValues('{$field.name}')" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</td>
-                {/if}
+                <td><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" fname="{$field.name}" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</td>
              {/foreach}
-            </tr>
-          </thead>
+ 
+         </tr>
+         </thead>
             {foreach from=$componentIds item=pid}
-             <tr class="{cycle values="odd-row,even-row"}">
+             <tr class="{cycle values="odd-row,even-row"}" entity_id="{$pid}">
 	      {foreach from=$readOnlyFields item=fTitle key=fName}
 	         <td>{$contactDetails.$pid.$fName}</td>
 	      {/foreach}
