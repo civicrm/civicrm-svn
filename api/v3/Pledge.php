@@ -56,7 +56,6 @@ require_once 'CRM/Utils/Rule.php';
 function civicrm_api3_pledge_create( $params ) {
      
     $values  = array( );
-    require_once 'CRM/Pledge/BAO/Pledge.php';
     //check that fields are in appropriate format. Dates will be formatted (within reason) by this function
     $error = _civicrm_api3_pledge_format_params( $params, $values,TRUE ); 
     if ( civicrm_api3_error( $error ) ) {
@@ -77,6 +76,8 @@ function civicrm_api3_pledge_create( $params ) {
  *
  * @return boolean        true if success, else false
  * @static void
+ * {@getfields pledge_delete}
+ * @example PledgeDelete.php
  * @access public
  */
 function civicrm_api3_pledge_delete( $params ) {
@@ -126,7 +127,8 @@ function _civicrm_api3_pledge_create_spec(&$params){
  * @param  array   $params           (reference ) input parameters. Use interogate for possible fields
  *
  * @return array (reference )        array of pledges, if error an array with an error id and error message
- * @static void
+ * {@getfields pledge_get}
+ * @example PledgeGet.php
  * @access public
  */
 function civicrm_api3_pledge_get( $params ) {

@@ -53,6 +53,7 @@ require_once 'CRM/Event/BAO/ParticipantPayment.php';
  * @example ParticipantPaymentCreate.php
  * {@example ParticipantPaymentCreate.php 0}
  * @return array of newly created payment property values.
+ * {@getfields ParticipantPayment_create}
  * @access public
  */
 function civicrm_api3_participant_payment_create($params)
@@ -87,7 +88,9 @@ function _civicrm_api3_participant_payment_create_spec(&$params){
  *
  * @param  Int  $participantPaymentID   Id of the Participant Payment to be deleted
  *
- * @return null if successfull, array with is_error=1 otherwise
+ * @return array API result
+ * @example ParticipantPaymentDelete.php
+ * {@getfields ParticipantPayment_delete}
  * @access public
  */
 function civicrm_api3_participant_payment_delete( $params )
