@@ -78,7 +78,7 @@ class CRM_Upgrade_Incremental_php_FourOne {
         // CRM-8780
         require_once 'CRM/Core/BAO/ConfigSetting.php';
         $params = array( );
-        CRM_Core_BAO_ConfigSetting::add( $parambs );
+        CRM_Core_BAO_ConfigSetting::add( $params );
         
         // also reset navigation
         require_once 'CRM/Core/BAO/Navigation.php';
@@ -134,14 +134,12 @@ WHERE  domain_id = %1
                 foreach ( $domainColumnNames as $groupName => $settingNames ) {
                     foreach ( $settingNames as $settingName ) {
                         $value = empty( $dao->$settingName ) ? null : serialize( $dao->$settingName );
-                        $values[] = array( "'$groupName'",
-                                           "'$settingName'",
-                                           "'$value'",
-                                           $domainID,
-                                           null,
-                                           1,
-                                           '$createdDate',
-                                           $createdID );
+                        
+                        if( $value ){
+                            $value = addslashes($value);
+                        }
+                        $value =  $value ? "'{$value}'" : 'null';
+                        $values[] =  "('{$groupName}','{$settingName}', {$value}, {$domainID}, null, 1, '{$createdDate}', {$createdID})" ;
                     }
                 }
             } else {
@@ -149,14 +147,12 @@ WHERE  domain_id = %1
                 foreach ( $userColumnNames as $groupName => $settingNames ) {
                     foreach ( $settingNames as $settingName ) {
                         $value = empty( $dao->$settingName ) ? null : serialize( $dao->$settingName );
-                        $values[] = array( "'$groupName'",
-                                           "'$settingName'",
-                                           $value ? "'$value'" : null,
-                                           $domainID,
-                                           $dao->contact_id,
-                                           0,
-                                           '$createdDate',
-                                           $createdID );
+                        
+                        if( $value ){
+                            $value = addslashes($value);
+                        }
+                        $value = $value ? "'{$value}'" : 'null';
+                        $values[] = "('{$groupName}', '{$settingName}', {$value}, {$domainID}, {$dao->contact_id}, 0, '{$createdDate}', {$createdID})" ;
                     }
                 }
             }
@@ -213,20 +209,27 @@ VALUES
         $session     = CRM_Core_Session::singleton( );
         $createdID = $contactID = $session->get( 'userID' );
 
+        $dbSettings = array( );
+        self::retrieveDirectoryAndURLPaths( $dbSettings );
+
         foreach ( $domainColumns as $groupName => $settings ) {
             foreach ( $settings as $setting ) {
+
+                if ( isset($dbSettings[$groupName][$setting[0]]) && !empty($dbSettings[$groupName][$setting[0]]) ) {
+                    $setting[1] = $dbSettings[$groupName][$setting[0]];
+                }
+                
                 $value = $setting[1] === null ? null : serialize( $setting[1] );
-                $values[] = array( "'$groupName'",
-                                   "'{$setting[0]}'",
-                                   $value ? "'$value'" : null,
-                                   $domainID,
-                                   $contactID,
-                                   0,
-                                   '$createdDate',
-                                   $createdID );
+                
+                if( $value ){
+                    $value = addslashes($value);
+                }
+                
+                $value = $value ? "'{$value}'" : 'null';
+                $values[] = "('{$groupName}', '{$setting[0]}', {$value}, {$domainID}, {$contactID}, 0, '{$createdDate}', {$createdID})" ;
+        
             }
         }
-
         $sql = "
 INSERT INTO civicrm_setting( group_name, name, value, domain_id, contact_id, is_domain, created_date, created_id )
 VALUES
@@ -235,4 +238,30 @@ VALUES
         CRM_Core_DAO::executeQuery( $sql );
     }
 
-}
+    static function retrieveDirectoryAndURLPaths( &$params ) {
+                
+        $sql = "
+SELECT v.name as valueName, v.value, g.name as optionName
+FROM   civicrm_option_value v,
+       civicrm_option_group g
+WHERE  ( g.name = 'directory_preferences'
+OR       g.name = 'url_preferences' )
+AND    v.option_group_id = g.id
+AND    v.is_active = 1
+";        
+        $dao    = CRM_Core_DAO::executeQuery( $sql );
+        while ( $dao->fetch( ) ) {
+            if ( ! $dao->value ) {
+                continue;
+            }
+           
+            $groupName = CRM_Core_BAO_Setting::DIRECTORY_PREFERENCES_NAME;
+            if ( $dao->optionName == 'url_preferences' ) {
+                $groupName = CRM_Core_BAO_Setting::URL_PREFERENCES_NAME;
+            }
+            $params[$groupName][$dao->valueName] = $dao->value;
+            
+        }
+    }
+    
+  }
