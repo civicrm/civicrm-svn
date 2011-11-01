@@ -10,6 +10,8 @@ class api_v3_WebsiteTest extends CiviUnitTestCase
     public $DBResetRequired = false;  
     function setUp() 
     {
+        parent::setUp();
+
         $this->_entity = 'website';
         $this->_apiversion = 3;
         $this->_contactID    = $this->organizationCreate( );
@@ -19,7 +21,6 @@ class api_v3_WebsiteTest extends CiviUnitTestCase
                               'website_type_id' => 1,
 
                            );
-        parent::setUp();
     }
 
     function tearDown() 
@@ -37,7 +38,7 @@ class api_v3_WebsiteTest extends CiviUnitTestCase
     }
 
    public function testGetWebsite () {
-     
+        $result = civicrm_api($this->_entity,'create',$this->params);
         $result = civicrm_api($this->_entity,'get',$this->params);
         $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
         $this->assertAPISuccess($result, 'In line ' . __LINE__ );
@@ -48,6 +49,7 @@ class api_v3_WebsiteTest extends CiviUnitTestCase
     }
 
    public function testDeleteWebsite () {
+        $result = civicrm_api($this->_entity,'create',$this->params);
         $entity = civicrm_api($this->_entity,'get',$this->params);   
         $result = civicrm_api($this->_entity,'delete',array('version' =>3,'id' => $entity['id']));
         $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
