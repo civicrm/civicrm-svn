@@ -53,7 +53,8 @@ require_once 'CRM/Contact/BAO/Group.php';
  *
  * @return array   returns id of the group created if success,
  *                 error message otherwise
- *
+  *@example GroupCreate.php
+ *{@getfields group_create}
  * @access public
  */
 function civicrm_api3_group_create( $params )
@@ -89,12 +90,12 @@ function _civicrm_api3_group_create_spec(&$params){
  *                       as null, all groups will be returned
  *
  * @return array  (referance) Array of matching groups
+ * @example GroupGet.php
+ *{@getfields group_get}
  * @access public
  */
 function civicrm_api3_group_get( $params )
 {
-     civicrm_api3_verify_mandatory($params);
-
     $returnProperties = array( );
     foreach ( $params as $n => $v ) {
       if ( substr( $n, 0, 7 ) == 'return.' ) {
@@ -130,13 +131,14 @@ function civicrm_api3_group_get( $params )
  *
  * @return array  (referance) returns flag true if successfull, error
  *                message otherwise
+ *@example GroupDelete.php
+ *{@getfields group_delete}
  *
  * @access public
  */
 function civicrm_api3_group_delete( $params )
 {
 
-    civicrm_api3_verify_mandatory($params,null,array('id'));
     CRM_Contact_BAO_Group::discard( $params['id'] );
     return civicrm_api3_create_success( true );
 
