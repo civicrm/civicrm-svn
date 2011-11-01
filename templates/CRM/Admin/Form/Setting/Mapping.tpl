@@ -25,19 +25,29 @@
 *}
 <div class="crm-block crm-form-block crm-map-form-block">
 <div id="help">
-    {ts}CiviCRM includes plugins for Google and Yahoo mapping services which allow your users to display contact addresses on a map. To enable this feature, select your mapping provider and obtain a 'key' for your site from that provider.{/ts} {help id='map-key'}
+    {ts}CiviCRM includes plugins for Google and Yahoo geocoding and mapping services which allow your users to geocode addresses and display contact addresses on a map. If you are using Yahoo you must obtain a 'key' for your site and enter it here. Most organizations will use the same service for both geocoding and mapping.{/ts} {help id='map-key'}
 </div>
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     <table class="form-layout-compressed">
          <tr class="crm-map-form-block-mapProvider">
              <td>{$form.mapProvider.label}</td>
              <td>{$form.mapProvider.html}<br />
-             <span class="description">{ts}Choose the provider that has the best coverage for the majority of your contact addresses.{/ts}</span></td>
+             <span class="description">{ts}Choose the mapping provider that has the best coverage for the majority of your contact addresses.{/ts}</span></td>
          </tr>
          <tr class="crm-map-form-block-mapAPIKey">
              <td>{$form.mapAPIKey.label}</td>
              <td>{$form.mapAPIKey.html|crmReplace:class:huge}<br />
              <span class="description">{ts}Enter your Google API Key OR your Yahoo Application ID.{/ts} {help id='map-key2'}</span></td>
+         </tr>
+         <tr class="crm-map-form-block-geoProvider">
+             <td>{$form.geoProvider.label}</td>
+             <td>{$form.geoProvider.html}<br />
+             <span class="description">{ts}Choose the geocoding provider that has the best coverage for the majority of your contact addresses.{/ts}</span></td>
+         </tr>
+         <tr class="crm-map-form-block-geoAPIKey">
+             <td>{$form.geoAPIKey.label}</td>
+             <td>{$form.geoAPIKey.html|crmReplace:class:huge}<br />
+             <span class="description">{ts}Enter the API key associated with your geocoding provider.{/ts} {help id='map-key2'}</span></td>
          </tr>
     </table>
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>

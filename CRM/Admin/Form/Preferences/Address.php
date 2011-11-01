@@ -120,10 +120,11 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
         $this->addElement('textarea','mailing_format', ts('Mailing Label Format'));  
         $this->addElement('textarea','address_format', ts('Display Format'));  
 
-        // Address Standarization
-        $this->addElement('text', 'address_standardization_provider', ts('Provider'));
-        $this->addElement('text', 'address_standardization_userid'  , ts('User ID'));
-        $this->addElement('text', 'address_standardization_url'     , ts('Web Service URL'));
+        // Address Standardization
+        $addrProviders = CRM_Core_SelectValues::addressProvider();
+        $this->addElement('select', 'address_standardization_provider', ts('Address Provider'), array('' => '- select -') + $addrProviders);
+        $this->addElement('text', 'address_standardization_userid', ts('User ID'));
+        $this->addElement('text', 'address_standardization_url', ts('Web Service URL'));
 
         $this->addFormRule( array( 'CRM_Admin_Form_Preferences_Address', 'formRule' ) );
 

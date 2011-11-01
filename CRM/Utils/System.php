@@ -1245,6 +1245,64 @@ class CRM_Utils_System {
             $content .= $template->fetch( $additionalTPLFile );
         }
     }
+
+	/**
+     * Get a list of all files that are found within the directories
+     * that are the result of appending the provided relative path to
+     * each component of the PHP include path.
+     *
+     * @author Ken Zalewski
+     * @param string $relpath a relative path, typically pointing to
+     *               a directory with multiple class files
+     * @return array An array of files that exist in one or more of the
+     *               directories that are referenced by the relative path
+     *               when appended to each element of the PHP include path
+     * @access public
+     */
+    static function listIncludeFiles( $relpath ) {
+        $file_list = array( );
+        $inc_dirs = explode( PATH_SEPARATOR, get_include_path( ) );
+        foreach ( $inc_dirs as $inc_dir ) {
+            $target_dir = $inc_dir.DIRECTORY_SEPARATOR.$relpath;
+            if ( is_dir( $target_dir ) ) {
+                $cur_list = scandir( $target_dir );
+                foreach ( $cur_list as $fname ) {
+                    if ( $fname != '.' && $fname != '..' ) {
+                        $file_list[$fname] = $fname;
+                    }
+                }
+            }
+        }
+        return $file_list;
+    } // listIncludeFiles()
+ 
+
+    /**
+     * Get a list of all "plugins" (PHP classes that implement a piece of
+     * functionality using a well-defined interface) that are found in a
+     * particular CiviCRM directory (both custom and core are searched).
+     *
+     * @author Ken Zalewski
+     * @param string $relpath a relative path referencing a directory that
+     *               contains one or more plugins
+     * @param string $fext only files with this extension will be considered
+     *               to be plugins
+     * @return array List of plugins, where the plugin name is both the
+     *               key and the value of each element. 
+     * @access public
+     */
+    static function getPluginList( $relpath, $fext = '.php' ) {
+        $fext_len = strlen( $fext );
+        $plugins = array( );
+        $inc_files = CRM_Utils_System::listIncludeFiles( $relpath );
+        foreach ( $inc_files as $inc_file ) {
+            if ( substr( $inc_file, 0 - $fext_len ) == $fext ) {
+                $plugin_name = substr( $inc_file, 0, 0 - $fext_len );
+                $plugins[$plugin_name] = ts( $plugin_name );
+            }
+        }
+        return $plugins;
+    } // getPluginList()
     
     /**
      *

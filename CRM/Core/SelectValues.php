@@ -476,17 +476,47 @@ class CRM_Core_SelectValues
      * @return array $map array of map providers
      * @static
      */
-    static function &mapProvider()
+    static function mapProvider()
     {
         static $map = null;
-        if (!$map) {
-            $map = array(
-                         'Yahoo'  => ts('Yahoo'),
-                         'Google' => ts('Google')
-                         );
+		if (! $map ) {
+            return CRM_Utils_System::getPluginList( 'templates/CRM/Contact/Form/Task/Map', ".tpl" );
         }
         return $map;
     }
+
+    /**
+     * Function to get the Geocoding Providers from available plugins
+     * 
+     * @return array $geo array of geocoder providers
+     * @static
+     */
+    static function geoProvider()
+    {
+        static $geo = null;
+        if (! $geo ) {
+            return CRM_Utils_System::getPluginList( 'CRM/Utils/Geocode' );
+        }
+        return $geo;
+    }
+
+
+    /**
+     * Function to get the Address Standardization Providers from available
+     * plugins
+     * 
+     * @return array $addr array of address standardization providers
+     * @static
+     */
+    static function &addressProvider()
+    {
+        static $addr = null;
+        if (! $addr ) {
+            return CRM_Utils_System::getPluginList( 'CRM/Utils/Address' );
+        }
+        return $addr;
+    }
+
 
     /**
      * different type of Mailing Tokens
