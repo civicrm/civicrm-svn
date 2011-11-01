@@ -78,10 +78,10 @@ VALUES
 
 -- CRM-8737
    ALTER TABLE `civicrm_event` ADD `is_share` TINYINT( 4 ) NULL DEFAULT '1' COMMENT 'Can people share the event through social media?';
-   ALTER TABLE `civicrm_contribution_page` ADD `is_share` TINYINT(4) NULL DEFAULT '1' COMMENT 'Can people share the contribution page through social media?'; 
+   ALTER TABLE `civicrm_contribution_page` ADD `is_share` TINYINT(4) NULL DEFAULT '1' COMMENT 'Can people share the contribution page through social media?';
 
 -- CRM-8357
-ALTER TABLE `civicrm_contact` CHANGE `contact_sub_type` `contact_sub_type` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'May be used to over-ride contact view and edit templates.'
+ALTER TABLE `civicrm_contact` CHANGE `contact_sub_type` `contact_sub_type` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'May be used to over-ride contact view and edit templates.';
 
 UPDATE civicrm_contact SET contact_sub_type = CONCAT('', contact_sub_type, '');
 
