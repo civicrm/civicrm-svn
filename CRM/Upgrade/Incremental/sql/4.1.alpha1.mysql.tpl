@@ -283,3 +283,8 @@ INSERT INTO civicrm_option_value
 VALUES
    (@option_group_id_ere, {localize}'{ts escape="sql"}Participant Status{/ts}'{/localize}, 1, 'civicrm_participant_status_type', 0, 1, 1 ),
    (@option_group_id_ere, {localize}'{ts escape="sql"}Participant Role{/ts}'{/localize}, 2, 'participant_role', 0,  2, 1 );
+
+ALTER TABLE civicrm_action_schedule ADD `absolute_date` date DEFAULT NULL COMMENT 'Date on which the reminder be sent.';
+ALTER TABLE civicrm_action_schedule ADD `recipient_listing` varchar(128) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'listing based on recipient field.';
+  
+  
