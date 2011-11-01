@@ -34,7 +34,7 @@
  */
 
 require_once 'CRM/Campaign/BAO/Survey.php';
-require_once 'api/v3/utils.php';
+
 
 /**
  * create/update survey
@@ -47,7 +47,7 @@ require_once 'api/v3/utils.php';
  *                       name/value pairs to insert in new 'survey'
  *
  * @return array   survey array
- *
+ * {@getfields survey_create}
  * @access public
  */
 function civicrm_api3_survey_create( $params )
@@ -71,6 +71,7 @@ function _civicrm_api3_survey_create_spec(&$params){
  *                       as null, all surveys will be returned
  *
  * @return array  (referance) Array of matching surveys
+ * {@getfields survey_get}
  * @access public
  */
 function civicrm_api3_survey_get( $params )
@@ -89,7 +90,7 @@ function civicrm_api3_survey_get( $params )
  *
  * @return array  (referance) returns flag true if successfull, error
  *                message otherwise
- *
+ * {@getfields survey_delete}
  * @access public
  */
 function civicrm_api3_survey_delete( $params )
