@@ -432,7 +432,7 @@ WHERE  mailing_id = %1
             // CRM-3975
             $groupBy = $groupJoin = '';
             if ( $dedupeEmail ) {
-                $groupJoin = " INNER JOIN civicrm_email e ON e.email_id = i.email_id";
+                $groupJoin = " INNER JOIN civicrm_email e ON e.id = i.email_id";
                 $groupBy = " GROUP BY e.email ";
             }
       
