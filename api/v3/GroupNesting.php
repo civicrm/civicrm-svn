@@ -97,8 +97,6 @@ function _civicrm_api3_group_nesting_create_spec(&$params){
 function civicrm_api3_group_nesting_delete( $params )
 {
 
-
-  require_once 'CRM/Contact/DAO/GroupNesting.php';
   $dao = new CRM_Contact_DAO_GroupNesting();
   $dao->copyValues( $params );
 
@@ -108,17 +106,4 @@ function civicrm_api3_group_nesting_delete( $params )
   }
    return civicrm_api3_create_error($result,$params,$dao);
 
-}
-/*
- * Adjust Metadata for Create action
- * 
- * The metadata is used for setting defaults, documentation & validation
- * @param array $params array or parameters determined by getfields
- * 
- * For backward compatibility we need to support child_group_id & parent_group_id
- */
-function _civicrm_api3_group_nesting_delete_spec(&$params){
-    $params['id']['api.required'] = 0; 
-    $params['child_group_id']['api.required'] = 1; 
-    $params['parent_group_id']['api.required'] = 1; 
 }
