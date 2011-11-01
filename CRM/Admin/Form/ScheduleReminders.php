@@ -205,6 +205,12 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             $errors['recipient_listing'] = ts('Recipient Listing is a required field.');
         }
 
+        if ( !CRM_Utils_System::isNull( $fields['absolute_date'] ) ) {
+            if (CRM_Utils_Date::format( CRM_Utils_Date::processDate( $fields['absolute_date'], null ) ) < CRM_Utils_Date::format(date('YmdHi00')) ) {
+                $errors['absolute_date'] = ts('Absolute date cannot be earlier than the current time.');
+            }
+        }
+
         if ( ! empty( $errors ) ) {
             return $errors;
         }
