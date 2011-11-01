@@ -325,8 +325,8 @@ function civicrm_initialize( )
             drupal_add_html_head($header);
         }
         require_once 'CRM/Core/BAO/Setting.php';
-        if ( CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
-                                            'editor_id' ) == 4 ) { //drupal wysiwyg
+        $args = explode( '/', $_GET['q'] );
+        if ( ( ! isset( $args[1] ) OR $args[1] != 'upgrade') && CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'editor_id' ) == 4 ) { //drupal wysiwyg
             //we have to ensure that wysiwyg is loaded since some
             //pages load only with ajax callbacks
             $formats = filter_formats();
