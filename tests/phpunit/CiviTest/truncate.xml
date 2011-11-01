@@ -73,6 +73,8 @@
 
   <civicrm_premiums_product />
 
+  <civicrm_pcp />
+
   <civicrm_project />
 
   <civicrm_task />
@@ -184,8 +186,6 @@
   <civicrm_contribution_page />
 
   <civicrm_contribution_widget />
-
-  <civicrm_pcp />
 
   <civicrm_activity />
 

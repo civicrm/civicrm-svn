@@ -75,7 +75,7 @@ class Utils {
         $string = preg_replace("/^#[^\n]*$/m", "\n", $query );
         $string = preg_replace("/^(--[^-]).*/m", "\n", $string );
         
-        $queries  = preg_split('/;$/m', $string);
+        $queries  = preg_split('/;\s*$/m', $string);
         foreach ( $queries as $query ) {
             $query = trim( $query );
             if ( ! empty( $query ) ) {
