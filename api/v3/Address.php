@@ -140,6 +140,7 @@ function civicrm_api3_address_delete( &$params )
  * @param  array $params  an associative array of name/value pairs.
  *
  * @return  array details of found addresses else error
+ * {@getfields address_get}
  * @access public
  */
 

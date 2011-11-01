@@ -1,8 +1,19 @@
 <?php
 require_once 'CRM/Core/BAO/OptionValue.php';
+/**
+ * Retrieve one or more OptionValues 
+ *
+ * @param  array  $ params input parameters
+ * 
+ * {@example OptionValueGet.php 0}
+ * @example OptionValueGet.php
+ * 
+ * @return  array details of found Option Values
+ * {@getfields OptionValue_get}
+ * @access public
+ */
 function civicrm_api3_option_value_get( $params ) {
 
-     civicrm_api3_verify_mandatory($params);
      if (empty($params['option_group_id']) && !empty($params['option_group_name'])){
        $opt = array('version' =>3, 'name' => $params['option_group_name']);
        $optionGroup = civicrm_api('OptionGroup', 'Get', $opt);   
@@ -20,19 +31,16 @@ function civicrm_api3_option_value_get( $params ) {
  *  Add a OptionValue. OptionValues are used to classify CRM entities (including Contacts, Groups and Actions).
  *
  * Allowed @params array keys are:
- * {@schema Core/OptionValue.xml}
+ * 
  * {@example OptionValueCreate.php}
  * @return array of newly created option_value property values.
+ * {@getfields OptionValue_create}
  * @access public
  */
 function civicrm_api3_option_value_create( $params ) 
 {
 
-    civicrm_api3_verify_mandatory ($params);//need to check it's an array before the next part so it meets standards. better solution later
-    $weight=0;
-    if ( !array_key_exists ('is_active', $params)) {
-      $params ['is_active'] = 1;
-    }
+   $weight=0;
     if ( !array_key_exists ('label', $params) && array_key_exists ('name', $params)) {
       $params ['label'] = $params ['name']; // no idea why that's a "mandatory" field
     }
@@ -64,24 +72,31 @@ function civicrm_api3_option_value_create( $params )
 
 }
 
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_option_value_create_spec(&$params){
+  $params['is_active']['api.default'] = 1;
+  $params['modified_date']['api.default'] = "now";
+  $params['note']['api.required'] =1;
+  $params['entity_id']['api.required'] =1;
+}
 /**
  * Deletes an existing OptionValue
  *
  * @param  array  $params
  * 
  * {@example OptionValueDelete.php 0}
- * @return boolean | error  true if successfull, error otherwise
+ * @return array Api result
+ * {@getfields OptionValue_create}
  * @access public
  */
 function civicrm_api3_option_value_delete( $params ) 
 {
-
-    civicrm_api3_verify_mandatory ($params,null,array ('id'));
-    $id = (int) $params["id"];
-
-    require_once 'CRM/Core/BAO/OptionValue.php';
-    return CRM_Core_BAO_OptionValue::del( $id ) ? civicrm_api3_create_success( ) : civicrm_api3_create_error(  'Could not delete OptionValue '. $id  );
+    return CRM_Core_BAO_OptionValue::del( (int) $params["id"] ) ? civicrm_api3_create_success( ) : civicrm_api3_create_error(  'Could not delete OptionValue '. $id  );
 
 }
 
