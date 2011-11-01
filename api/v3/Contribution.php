@@ -39,7 +39,7 @@
 /**
  * Include utility functions
  */
-require_once 'api/v3/utils.php';
+require_once 'CRM/Contribute/BAO/Contribution.php';
 require_once 'CRM/Utils/Rule.php';
 require_once 'CRM/Contribute/PseudoConstant.php';
 
@@ -52,9 +52,10 @@ require_once 'CRM/Contribute/PseudoConstant.php';
  * @static void
  * @access public
  * @example ContributionCreate.php
+ * {@getfields Contribution_create}
  */
 function civicrm_api3_contribution_create($params) {
-		civicrm_api3_verify_mandatory ( $params, null, array ('contact_id', 'total_amount', array ('contribution_type_id', 'contribution_type' ) ) );
+		civicrm_api3_verify_one_mandatory ( $params, null,  array ('contribution_type_id', 'contribution_type'  ) );
 		
 		$error = _civicrm_api3_contribute_check_params ( $params );
 		if (civicrm_api3_error ( $error )) {
@@ -63,7 +64,6 @@ function civicrm_api3_contribution_create($params) {
 		
 		$values = array ();
 		
-		require_once 'CRM/Contribute/BAO/Contribution.php';
 		$error = _civicrm_api3_contribute_format_params ( $params, $values );
 		if (civicrm_api3_error ( $error )) {
 			return $error;
@@ -85,7 +85,25 @@ function civicrm_api3_contribution_create($params) {
 		return civicrm_api3_create_success ( $contributeArray, $params, 'contribution',$contribution );
 
 }
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_contribution_create_spec(&$params){
+  $params['contact_id']['api.required'] =1;
+  $params['total_amount']['api.required'] =1;
+  $params['note'] = array('name' => 'note',
+                                           'title' => 'note',
+                                           'type' => 2,
+                                           'description' => 'Associated Note in the notes table');
+   $params['soft_credit_to'] = array('name' => 'soft_credit_to',
+                                           'title' => 'Soft Credit contact ID',
+                                           'type' => 1,
+                                           'description' => 'ID of Contact to be Soft credited to',
+                                           'FKClassName' => 'CRM_Contact_DAO_Contact');
+}
 /**
  * Delete a contribution
  *
@@ -94,6 +112,8 @@ function civicrm_api3_contribution_create($params) {
  * @return boolean        true if success, else false
  * @static void
  * @access public
+ * {@getfields Contribution_delete}
+ * @example ContributionDelete.php
  */
 function civicrm_api3_contribution_delete($params) {
 
@@ -119,10 +139,11 @@ function civicrm_api3_contribution_delete($params) {
  * @return array (reference )        array of contributions, if error an array with an error id and error message
  * @static void
  * @access public
+ * {@getfields Contribution_get}
+ * @example ContributionGet.php
  */
 function civicrm_api3_contribution_get($params) {
 
-		civicrm_api3_verify_mandatory ( $params );
 		if(CRM_Utils_Array::value('id', $params) ){
     //api supports 'id' but BAO supports 'contribution_id. Change it here
 		  $params['contribution_id'] = CRM_Utils_Array::value('contribution_id', $params,$params['id']);
@@ -144,11 +165,6 @@ function civicrm_api3_contribution_get($params) {
 			} else {
 				$inputParams [$n] = $v;
 			}
-		}
-		
-		// add is_test to the clause if not present
-		if (! array_key_exists ( 'contribution_test', $inputParams )) {
-			$inputParams ['contribution_test'] = 0;
 		}
 		
 		require_once 'CRM/Contribute/BAO/Query.php';
@@ -181,28 +197,15 @@ function civicrm_api3_contribution_get($params) {
 
 }
 /*
- * Return valid fields for API. In general these are the fields accepted by the 'Create' operation
- * The format of these fields is as per the $dao->fields function which is called by _civicrm_api_get_fields
- * The getfields function is used by the API explorer and by field validation functions
+ * Adjust Metadata for Get action
  * 
- * @param array $params array of parameters
- * @return array values accepted by api
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
  */
-function civicrm_api3_contribution_getfields( $params ) {
-    $fields =  _civicrm_api_get_fields('contribution') ;
-    $fields['note'] = array('name' => 'note',
-                                           'title' => 'note',
-                                           'type' => 2,
-                                           'description' => 'Associated Note in the notes table');
-    $fields['soft_credit_to'] = array('name' => 'soft_credit_to',
-                                           'title' => 'Soft Credit contact ID',
-                                           'type' => 1,
-                                           'description' => 'ID of Contact to be Soft credited to',
-                                           'FKClassName' => 'CRM_Contact_DAO_Contact');
-
-
-    return civicrm_api3_create_success($fields );
+function _civicrm_api3_contribution_get_spec(&$params){
+  $params['contribution_test']['api.default'] =0;
 }
+
 /**
  * This function ensures that we have the right input contribution parameters
  *
