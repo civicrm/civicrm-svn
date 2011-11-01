@@ -44,7 +44,7 @@
             </tr>
 	   </thead> 
             {foreach from=$componentIds item=cid}
-             <tr class="{cycle values="odd-row,even-row"}" contact_id="{$cid}">
+             <tr class="{cycle values="odd-row,even-row"}" entity_id="{$cid}">
               <td>{$sortName.$cid}</td> 
               {foreach from=$fields item=field key=fieldName}
                 {assign var=n value=$field.name}

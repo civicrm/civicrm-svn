@@ -48,9 +48,9 @@ function copyFieldValues( fname ) {
     var firstElement = elementId.eq(0);
     var firstElementValue = firstElement.val();
     
-    console.log( elementId );
-    console.log( firstElement );
-    console.log( firstElementValue );
+    //console.log( elementId );
+    //console.log( firstElement );
+    //console.log( firstElementValue );
     
     //check if it is date element
     var isDateElement     = elementId.attr('format');
@@ -62,24 +62,24 @@ function copyFieldValues( fname ) {
     var elementType       = elementId.attr('type'); 
     
     // set the value for all the elements, elements needs to be handled are
-    // select, checkbox, radio, date fields, text, textarea, multu-select
-    // advanced multi-select, wysiwyg editor
+    // select, checkbox, radio, date fields, text, textarea, multi-select
+    // wysiwyg editor, advanced multi-select ( to do )
     if ( elementType == 'radio' ) {
         firstElementValue = elementId.filter(':checked').eq(0).val();
         elementId.filter("[value=" + firstElementValue + "]").prop("checked",true);
     } else if ( elementType == 'checkbox' ) {
         // handle checkbox
-        // get the contact id of first element
-        var firstContactId = firstElement.parent().parent().attr('contact_id');
+        // get the entity id of first element
+        var firstEntityId = firstElement.parent().parent().attr('entity_id');
        
         // lets uncheck all the checkbox except first one
-        cj('#Batch [type=checkbox]:not([name^="field['+ firstContactId +']['+ fname +']["])').removeProp('checked');
+        cj('#Batch [type=checkbox]:not([name^="field['+ firstEntityId +']['+ fname +']["])').removeProp('checked');
         
         //here for each checkbox for first row, check if it is checked and set remaining checkboxes
-        cj('#Batch [type=checkbox][name^="field['+ firstContactId +']['+ fname +']"][type!=hidden]').each(function() {
+        cj('#Batch [type=checkbox][name^="field['+ firstEntityId +']['+ fname +']"][type!=hidden]').each(function() {
             if (cj(this).prop('checked') ) {
                 var elementName = cj(this).attr('name');
-                var correctIndex = elementName.split('field['+ firstContactId +']['+ fname +'][');
+                var correctIndex = elementName.split('field['+ firstEntityId +']['+ fname +'][');
                 correctIndexValue = correctIndex[1].replace(']', '');
                 cj('#Batch [type=checkbox][name^="field["][name*="['+ fname +']['+ correctIndexValue+']"][type!=hidden]').prop('checked',true);
             }
@@ -88,18 +88,26 @@ function copyFieldValues( fname ) {
         var firstElementId = firstElement.attr('id');
         switch ( editor ) {
             case 'ckeditor':
+                //get the content of first element
                 oEditor = CKEDITOR.instances[firstElementId];
-                var htmlMessage = oEditor.getData( );
+                var htmlContent = oEditor.getData( );
                 
+                // copy first element content to all the elements
                 elementId.each( function() {
                     var elemtId = cj(this).attr('id');
                     oEditor = CKEDITOR.instances[elemtId];
-                    oEditor.setData( htmlMessage );
+                    oEditor.setData( htmlContent );
                 });
-
                 break;
             case 'tinymce':
+                //get the content of first element
+                var htmlContent = tinyMCE.get( firstElementId ).getContent();
                 
+                // copy first element content to all the elements
+                elementId.each( function() {
+                    var elemtId = cj(this).attr('id');
+                    tinyMCE.get( elemtId ).setContent( htmlContent ); 
+                });
                 break;
             case 'joomlaeditor':
                  // TO DO
