@@ -246,7 +246,7 @@ ALTER TABLE `civicrm_dedupe_rule_group` ADD `title` VARCHAR( 255 ) CHARACTER SET
 ALTER TABLE `civicrm_dedupe_rule_group` ADD `is_reserved` TINYINT( 4 ) NULL DEFAULT NULL COMMENT 'Is this a reserved rule - a rule group that has been optimized and cannot be changed by the admin';
 
 UPDATE `civicrm_dedupe_rule_group` SET `title` = `name`;
-UPDATE `civicrm_dedupe_rule_group` SET `name` = REPLACE( `name`, ' ', '' );
+UPDATE `civicrm_dedupe_rule_group` SET `name` = REPLACE( `name`, '-', '' );
 UPDATE `civicrm_dedupe_rule_group` SET is_reserved = 1 WHERE contact_type IN ('Household','Organization');
 
 -- CRM-9120
@@ -295,7 +295,7 @@ ALTER TABLE civicrm_pcp DROP FOREIGN KEY FK_civicrm_pcp_contribution_page_id;
 ALTER TABLE `civicrm_pcp` 
   ADD `page_type` VARCHAR( 64 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'contribute' AFTER `contribution_page_id`;
 ALTER TABLE `civicrm_pcp` 
-  CHANGE `contribution_page_id` `page_id` INT( 10 ) UNSIGNED NOT NULL COMMENT 'The Page which triggered this pcp'; 
+  CHANGE `contribution_page_id` `page_id` INT( 10 ) UNSIGNED NOT NULL COMMENT 'The Page which triggered this pcp';
 ALTER TABLE `civicrm_pcp`
   ADD `pcp_block_id` int(10) unsigned NOT NULL COMMENT 'The pcp block that this pcp page was created from' AFTER `page_type`;
 
