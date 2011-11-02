@@ -385,12 +385,11 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
             $this->set( 'fields', $this->_fields );
         }
         
+        require_once 'CRM/PCP/BAO/PCP.php';
         // Handle PCP
         $pcpId = CRM_Utils_Request::retrieve( 'pcpId', 'Positive', $this );
         if ( $pcpId ) {
-            require_once 'CRM/PCP/BAO/PCP.php';
             $pcp = CRM_PCP_BAO_PCP::handlePcp($pcpId, 'contribute', $this->_values);
-            
             $this->_pcpId    = $pcp['pcpId'];
             $this->_pcpBlock = $pcp['pcpBlock'];
             $this->_pcpInfo  = $pcp['pcpInfo'];
