@@ -156,8 +156,15 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
      */
     public function deleteActivity( &$params, $moveToTrash = false ) 
     {
+    	// CRM-9137
+        if ( CRM_Utils_Array::value( 'id', $params ) && ! is_array( $params['id'] ) ) {
+	        CRM_Utils_Hook::pre( 'delete', 'Activity', $params['id'], $params );
+        } else { 
+        	CRM_Utils_Hook::pre( 'delete', 'Activity', null, $params );
+        }
+    
         require_once 'CRM/Core/Transaction.php';
-      
+        CRM_Utils_Hook::pre( 'delete', 'Activity', $activity->id, $activity );
         $transaction = new CRM_Core_Transaction( );
         if ( is_array( CRM_Utils_Array::value( 'source_record_id', $params ) ) ) {
                     $sourceRecordIds = implode( ',', $params['source_record_id'] );
@@ -183,7 +190,6 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
 
                 require_once 'CRM/Case/BAO/Case.php';
                 $activity->case_id = CRM_Case_BAO_Case::getCaseIdByActivityId($activity->id); // CRM-8708
-                CRM_Utils_Hook::post( 'delete', 'Activity', $activity->id, $activity );
             }
         } else {
             $activity    = new CRM_Activity_DAO_Activity( );
@@ -363,7 +369,13 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             $params['assignee_contact_id'] = array_unique( $params['assignee_contact_id'] );
         }
 
-
+        // CRM-9137
+        if ( CRM_Utils_Array::value( 'id', $params ) ) {
+	        CRM_Utils_Hook::pre( 'edit', 'Activity', $activity->id, $params );
+        } else { 
+        	CRM_Utils_Hook::pre( 'create', 'Activity', null, $params );
+        }
+     
         $activity->copyValues( $params );
         if (isset($params['case_id'])) {
             $activity->case_id = $params['case_id']; // CRM-8708, preserve case ID even though it's not part of the SQL model
@@ -371,7 +383,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             require_once 'CRM/Case/BAO/Case.php';
             $activity->case_id = CRM_Case_BAO_Case::getCaseIdByActivityId($activity->id); // CRM-8708, preserve case ID even though it's not part of the SQL model
         }
-
+   
         // start transaction        
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );

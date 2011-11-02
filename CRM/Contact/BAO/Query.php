@@ -3550,7 +3550,7 @@ civicrm_relationship.start_date > {$today}
 
                         $order = " ORDER BY $orderBy";
                         
-                       if ( $sortOrder ) {
+                        if ( $sortOrder ) {
                             $order .= " $sortOrder";
                         }
                     }
