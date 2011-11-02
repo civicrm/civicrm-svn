@@ -470,10 +470,10 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
      */
     function testRelationshipDeleteEmpty( )
     {
-        $params = array( );
+        $params = array('version' => $this->_apiversion );
         $result =& civicrm_api('relationship','delete',$params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: id, version' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: id' );
     }
     
     /**
@@ -501,7 +501,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         
         $result =& civicrm_api('relationship','delete',$params ); 
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: id, version' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: version, id' );
     }
     
     /**
@@ -558,10 +558,10 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
      */
     function testRelationshipUpdateEmpty( )
     {
-        $params = array( );
+        $params = array('version' => 3 );
         $result =& civicrm_api('relationship','create',$params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( 'Mandatory key(s) missing from params array: contact_id_a, contact_id_b, relationship_type_id, contact_id_a, contact_id_b, one of (relationship_type_id, relationship_type), version', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: contact_id_a, contact_id_b, relationship_type_id', $result['error_message'], 'In line ' . __LINE__ );
     }
     
     /**

@@ -76,7 +76,7 @@ class CRM_Contribute_Form_ContributionPage_TabHeader
                                                'active'  => false,
                                                'current' => false,
                                                ),
-                      'thankYou'     => array( 'title'   => ts( 'Receipt' ),
+                      'thankyou'     => array( 'title'   => ts( 'Receipt' ),
                                                'link'    => null,
                                                'valid'   => false,
                                                'active'  => false,
@@ -118,16 +118,22 @@ class CRM_Contribute_Form_ContributionPage_TabHeader
         $fullName      = $form->getVar( '_name' );
         $className     = CRM_Utils_String::getClassName( $fullName );
         
-        if ( $className == 'ThankYou' ) {
-            $class = 'thankYou';
-        } else if ( $className == 'Contribute' ) {
-            $class = 'friend';
-        } else if ( $className == 'MembershipBlock' ) {
-            $class = 'membership';
-        } else {
-            $class = strtolower($className) ;
+        // Hack for special cases.
+        switch( $className ) {
+            case 'Contribute':
+                $attributes = $form->getVar( '_attributes' );
+                $class = strtolower(basename( CRM_Utils_Array::value('action', $attributes) ));
+                break;
+            
+            case 'MembershipBlock':
+                $class = 'membership';
+                break;
+              
+            default:
+                $class = strtolower($className);
+                break;
         }
-
+        
         $qfKey = $form->get( 'qfKey' );
         $form->assign( 'qfKey', $qfKey );
 

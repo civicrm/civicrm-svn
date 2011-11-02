@@ -166,6 +166,13 @@ contribution2_total_amount_count, contribution2_total_amount_sum',
                                        'operatorType' => CRM_Report_Form::OP_INT,
                                        'name'    => 'receive_date',
                                        'dbAlias' => 'contribution2_total_amount_sum' ),
+                                'percentage_change'  =>
+                                array( 'title'   => ts( 'Percentage Change' ),
+                                       'type'    => CRM_Utils_Type::T_INT,
+                                       'operatorType' => CRM_Report_Form::OP_INT,
+                                       'name'    => 'percentage_change',
+                                       'dbAlias' => '( ( contribution2_total_amount_sum - contribution1_total_amount_sum ) * 100 / contribution1_total_amount_sum )',
+                                       ),
                                 'contribution_type_id'  =>
                                 array( 'title'   => ts( 'Contribution Type' ),
                                        'operatorType' => CRM_Report_Form::OP_MULTISELECT,
@@ -195,6 +202,7 @@ contribution2_total_amount_count, contribution2_total_amount_sum',
                    );
 
         $this->_tagFilter = true;
+
         parent::__construct( );
     }
 
@@ -395,6 +403,7 @@ LEFT  JOIN (
             $clauses['total_amount1'] = '(' . $clauses['total_amount1'] . ' OR ' . $clauses['total_amount2'] . ')';
             unset($clauses['total_amount2']);
         }
+
         $this->_where = "WHERE " . implode( ' AND ', $clauses );
     }
 

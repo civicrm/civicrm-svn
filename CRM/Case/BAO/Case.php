@@ -1012,7 +1012,8 @@ INNER JOIN  civicrm_contact ON civicrm_relationship.contact_id_b = civicrm_conta
                           ca.status_id as status, 
                           ca.subject as subject, 
                           ca.is_deleted as deleted,
-                          ca.priority_id as priority ";
+                          ca.priority_id as priority,
+                          ca.weight as weight ";
 
         $from  = 'FROM civicrm_case_activity cca 
                   INNER JOIN civicrm_activity ca ON ca.id = cca.activity_id
@@ -1080,7 +1081,7 @@ INNER JOIN  civicrm_contact ON civicrm_relationship.contact_id_b = civicrm_conta
         
         if ( !$sortname AND !$sortorder ) {
             // CRM-5081 - added id to act like creation date
-            $orderBy = " ORDER BY overdue_date ASC, display_date DESC, ca.id DESC";
+            $orderBy = " ORDER BY overdue_date ASC, display_date DESC, weight DESC";
         } else {
             $orderBy = " ORDER BY {$sortname} {$sortorder}";
             if ( $sortname != 'display_date' ) {

@@ -50,7 +50,7 @@
         {if $lineItems.$participant_id}
             <td>
             {foreach from=$lineItems.$participant_id item=line name=lineItemsIter}
-               {$line.description}: {$line.qty}
+               {$line.label}: {$line.qty}
                {if ! $smarty.foreach.lineItemsIter.last}<br>{/if}
             {/foreach}
             </td>
@@ -63,7 +63,7 @@
               <br/>- {$row.event_end_date|truncate:10:''|crmDate}
           {/if}
         </td>
-        <td class="crm-event-print-participant_status_id">{$row.participant_status_id}</td>
+        <td class="crm-event-print-participant_status">{$row.participant_status}</td>
         <td class="crm-event-print-participant_role_id">{$row.participant_role_id}</td>
     </tr>
 {/foreach}

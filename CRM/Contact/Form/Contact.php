@@ -101,6 +101,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
     
     protected $_editOptions = array( );
     
+    protected $_oldSubtypes = array( );
+
     public $_blocks;
     
     public $_values = array( );
@@ -347,9 +349,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             }
 
             if ( CRM_Utils_Array::value('contact_sub_type', $defaults) ) {
-                $defaults['contact_sub_type'] = 
-                    explode( CRM_Core_DAO::VALUE_SEPARATOR, 
-                             trim($defaults['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) );
+                $defaults['contact_sub_type'] = $this->_oldSubtypes;
             }
         }
         $this->assign( 'currentEmployer', CRM_Utils_Array::value('current_employer_id', $defaults) );            
@@ -756,20 +756,13 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
 
         // subtype is a common field. lets keep it here
-        $typeLabel = CRM_Contact_BAO_ContactType::getLabel( $this->_contactType );
-        $subtypes  = CRM_Contact_BAO_ContactType::subTypePairs( $this->_contactType );
-        $sel = $this->add( 'select', 'contact_sub_type', ts( 'Contact Type' ), 
-                           $subtypes, false, array('onchange' => $buildCustomData) );
-        $sel->setMultiple(true);
+        $subtypes = CRM_Contact_BAO_ContactType::subTypePairs( $this->_contactType );
+        if ( ! empty($subtypes) ) {
+            $sel = $this->add( 'select', 'contact_sub_type', ts( 'Contact Type' ), 
+                               $subtypes, false, array('onchange' => $buildCustomData) );
+            $sel->setMultiple(true);
+        }
 
-        $allowEditSubType = true;
-        if ( $this->_contactId && $this->_contactSubType ) {
-            $allowEditSubType = CRM_Contact_BAO_ContactType::isAllowEdit( $this->_contactId, $this->_contactSubType );
-        }
-        if ( !$allowEditSubType ) {
-            $subtypeElem->freeze( );
-        }
-        
         // build edit blocks ( custom data, demographics, communication preference, notes, tags and groups )
         foreach( $this->_editOptions as $name => $label ) {                
             if ( $name == 'Address' ) {
@@ -798,17 +791,29 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                           $this->getButtonName( 'next', 'sharedHouseholdDuplicate' ),
                           ts( 'Save With Duplicate Household' ) );
         
-        $this->addButtons( array(
-                                 array ( 'type'      => 'upload',
-                                         'name'      => ts('Save'),
-                                         'subName'   => 'view',
-                                         'isDefault' => true   ),
-                                 array ( 'type'      => 'upload',
-                                         'name'      => ts('Save and New'),
-                                         'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-                                         'subName'   => 'new' ),
-                                 array ( 'type'       => 'cancel',
-                                         'name'      => ts('Cancel') ) ) );
+        $buttons =  array(
+                          array ( 'type'      => 'upload',
+                                  'name'      => ts('Save'),
+                                  'subName'   => 'view',
+                                  'isDefault' => true   ),
+                          array ( 'type'      => 'upload',
+                                  'name'      => ts('Save and New'),
+                                  'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                                  'subName'   => 'new' ),
+                          array ( 'type'       => 'cancel',
+                                  'name'      => ts('Cancel') ) );
+
+        if ( CRM_Utils_Array::value('contact_sub_type', $this->_values) ) {
+            $this->_oldSubtypes = 
+                explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                         trim($this->_values['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) );
+            if ( !empty($this->_oldSubtypes) ) {
+                $buttons[0]['js'] = array( 'onclick' => "return warnSubtypeDataLoss()" );
+            }
+        }
+        $this->assign( 'oldSubtypes', json_encode($this->_oldSubtypes) );
+
+        $this->addButtons( $buttons );
     }
     
     /**
@@ -844,15 +849,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         
         $params['contact_type'] = $this->_contactType;
         if ( empty($params['contact_sub_type']) && $this->_isContactSubType ) {
-            $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR . 
-                $this->_contactSubType . CRM_Core_DAO::VALUE_SEPARATOR;
-        } else if ( !empty($params['contact_sub_type']) ) {
-            $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR .
-                implode( CRM_Core_DAO::VALUE_SEPARATOR, $params['contact_sub_type'] ) . CRM_Core_DAO::VALUE_SEPARATOR;
-        } else {
-            unset($params['contact_sub_type']);
+            $params['contact_sub_type'] = array( $this->_contactSubType );
         }
-        
+
         if ( $this->_contactId ) {
             $params['contact_id'] = $this->_contactId;
         }
@@ -894,7 +893,13 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                                                                    $this->_contactId,
                                                                    $customFieldExtends, 
                                                                    true );
-        
+        if ( $this->_contactId && !empty($this->_oldSubtypes) ) {
+            CRM_Contact_BAO_ContactType::deleteCustomSetForSubtypeMigration( $this->_contactId, 
+                                                                             $params['contact_type'], 
+                                                                             $this->_oldSubtypes,
+                                                                             $params['contact_sub_type'] );
+        }
+
         if ( array_key_exists( 'CommunicationPreferences',  $this->_editOptions ) ) {
             // this is a chekbox, so mark false if we dont get a POST value
             $params['is_opt_out'] = CRM_Utils_Array::value( 'is_opt_out', $params, false );

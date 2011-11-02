@@ -478,6 +478,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
         }
         
         $isDelivered = false;
+
         // make sure that there's no more than $config->mailerBatchLimit mails processed in a run
         while ($eq->fetch()) {
             // if ( ( $mailsProcessed % 100 ) == 0 ) {

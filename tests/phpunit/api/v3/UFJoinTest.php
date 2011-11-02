@@ -155,7 +155,7 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
         $result = civicrm_api('uf_join', 'create', $params);
 
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__  );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: module, weight, uf_group_id, version', 'In line ' . __LINE__  );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: version, module, weight, uf_group_id', 'In line ' . __LINE__  );
     }
 
     public function testUFJoinEditWithoutUFGroupId()
@@ -227,7 +227,7 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
         $result = civicrm_api('uf_join', 'create', $params);
 
         $this->assertEquals( $result['is_error'], 1 ,'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: module, weight, uf_group_id, version' ,'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: version, module, weight, uf_group_id' ,'In line ' . __LINE__ );
     }
 
     public function testFindUFJoinWithoutUFGroupId()

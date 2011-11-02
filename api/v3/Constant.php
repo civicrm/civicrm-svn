@@ -36,11 +36,6 @@
  */
 
 /**
- * Include utility functions
- */
-require_once 'api/v3/utils.php';
-
-/**
  * Generic file to retrieve all the constants and
  * pseudo constants used in CiviCRM
  *
@@ -88,11 +83,11 @@ require_once 'api/v3/utils.php';
  *    <li>worldRegion</li>
  *    <li>wysiwygEditor</li>
  *  </ul>
+ *  @example ConstantGet.php
  */
 function civicrm_api3_constant_get($params)
 {
  
-    civicrm_api3_verify_mandatory ($params,null,array ('name'));
     $name= $params ['name'];
     require_once 'CRM/Core/PseudoConstant.php';
     $className = 'CRM_Core_PseudoConstant';
@@ -116,7 +111,8 @@ function civicrm_api3_constant_get($params)
 
 function civicrm_api3_constant_getfields($params) {
 
-  return civicrm_api3_create_success (array ('name' => array('options' =>
+  return civicrm_api3_create_success (array ('name' => array('api.required' => 1,
+  'options' =>
    'activityStatus',
    'activityType',
    'addressee',

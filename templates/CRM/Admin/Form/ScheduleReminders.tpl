@@ -111,7 +111,7 @@
         <td class="right">{$form.recipient.label}</td><td colspan="3">{$form.recipient.html}</td>
     </tr>
     <tr id="recipientList" class="crm-scheduleReminder-form-block-recipientListing">
-        <td class="right">{$form.recipientListing.label}</td><td colspan="3">{$form.recipientListing.html}</td>
+        <td class="right">{$form.recipient_listing.label}</td><td colspan="3">{$form.recipient_listing.html}</td>
     </tr>
     <tr id="recipientManual" class="crm-scheduleReminder-form-block-recipient_manual_id">
     	<td class="label">{$form.recipient_manual_id.label}</td>
@@ -211,7 +211,7 @@
      	  var recipient = cj("#recipient option:selected").text();    
 	  var postUrl = "{/literal}{crmURL p='civicrm/ajax/populateRecipient' h=0}{literal}";
 	  if(recipient == 'Participant Status' || recipient == 'Participant Role'){
-   	  var elementID = '#recipientListing';
+   	  var elementID = '#recipient_listing';
           cj( elementID ).html('');
 	    cj.post(postUrl, {recipient: recipient},
 	    	function ( response ) {

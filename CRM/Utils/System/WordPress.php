@@ -183,7 +183,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
         
         $base = $absolute ? $config->userFrameworkBaseURL : $config->useFrameworkRelativeBase;
         
-        if ( is_admin() ) {
+        if ( is_admin() && !$frontend ) {
             $base .= 'wp-admin/admin.php';
         }
         

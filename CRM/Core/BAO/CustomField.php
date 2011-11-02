@@ -55,6 +55,14 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
     public static $_dataType = null;
 
     /**
+     * Array for valid combinations of data_type & html_type
+     *
+     * @var array
+     * @static
+     */
+    public static $_dataToHtml = null;
+
+    /**
      * Array to hold (formatted) fields for import
      *
      * @var array
@@ -90,7 +98,33 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
         }
         return self::$_dataType;
     }
-    
+
+    static function dataToHtml( ) {
+        if ( ! self::$_dataToHtml ) {
+            self::$_dataToHtml = 
+                array(
+                      array( 'Text' => 'Text', 'Select' => 'Select', 
+                             'Radio' => 'Radio', 'CheckBox' => 'CheckBox', 
+                             'Multi-Select' => 'Multi-Select', 
+                             'AdvMulti-Select' => 'AdvMulti-Select',
+                             'Autocomplete-Select' => 'Autocomplete-Select' ),
+                      array('Text' => 'Text', 'Select' => 'Select', 'Radio' => 'Radio'),
+                      array('Text' => 'Text', 'Select' => 'Select', 'Radio' => 'Radio'),
+                      array('Text' => 'Text', 'Select' => 'Select', 'Radio' => 'Radio'),
+                      array('TextArea' => 'TextArea', 'RichTextEditor' => 'RichTextEditor'),
+                      array('Date'  => 'Select Date'),
+                      array('Radio' => 'Radio'),
+                      array('StateProvince' => 'Select State/Province' , 'Multi-Select' => 'Multi-Select State/Province'),
+                      array('Country' => 'Select Country', 'Multi-Select' => 'Multi-Select Country'),
+                      array('File' => 'File'),
+                      array('Link' => 'Link'),
+                      array('ContactReference' => 'Autocomplete-Select' )
+                      );
+            
+        }
+        return self::$_dataToHtml;
+    }
+
     /**
      * takes an associative array and creates a custom field object
      *
@@ -165,7 +199,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                 require_once 'CRM/Core/BAO/OptionGroup.php';
                 $optionGroup            = new CRM_Core_DAO_OptionGroup( );
                 $optionGroup->name      =  "{$params['column_name']}_". date( 'YmdHis' );
-                $optionGroup->label     =  $params['label'];
+                $optionGroup->title     =  $params['label'];
                 $optionGroup->is_active = 1;
                 $optionGroup->save( );
                 $params['option_group_id'] = $optionGroup->id;
@@ -1648,6 +1682,133 @@ SELECT $columnName
         require_once 'CRM/Core/BAO/SchemaHandler.php';
         CRM_Core_BAO_SchemaHandler::alterFieldSQL( $params, $indexExist );
     }
+    
+    /**
+     * Determine whether it would be safe to move a field
+     *
+     * @param int $fieldID FK to civicrm_custom_field
+     * @param int $newGroupID FK to civicrm_custom_group
+     * @return array(string) or TRUE
+     */
+    static function _moveFieldValidate($fieldID, $newGroupID) {
+        $errors = array( );
+        
+        $field = new CRM_Core_DAO_CustomField();
+        $field->id = $fieldID;
+        if (!$field->find(TRUE)) {
+            $errors['fieldID'] = 'Invalid ID for custom field';
+            return $errors;
+        }
+        
+        require_once 'CRM/Core/DAO/CustomGroup.php';
+        $oldGroup = new CRM_Core_DAO_CustomGroup();
+        $oldGroup->id = $field->custom_group_id;
+        if (!$oldGroup->find(TRUE)) {
+            $errors['fieldID'] = 'Invalid ID for old custom group';
+            return $errors;
+        }
+        
+        $newGroup = new CRM_Core_DAO_CustomGroup();
+        $newGroup->id = $newGroupID;
+        if (!$newGroup->find(TRUE)) {
+            $errors['newGroupID'] = 'Invalid ID for new custom group';
+            return $errors;
+        }
+        
+        $query = "
+SELECT     b.id
+FROM       civicrm_custom_field a
+INNER JOIN civicrm_custom_field b
+WHERE      a.id = %1
+AND        a.label = b.label
+AND        b.custom_group_id = %2
+";
+        $params = array(
+          1 => array( $field->id, 'Integer' ),
+          2 => array( $newGroup->id, 'Integer' ),
+        );
+        $count = CRM_Core_DAO::singleValueQuery( $query, $params );
+        if ( $count > 0 ) {
+            $errors['newGroupID'] = ts( 'A field of the same label exists in the destination group' );
+        }
+        
+        $tableName  = $oldGroup->table_name;
+        $columnName = $field->column_name;
+
+        $query = "
+SELECT count(*)
+FROM   $tableName
+WHERE  $columnName is not null
+";
+        $count = CRM_Core_DAO::singleValueQuery( $query,
+                                                 CRM_Core_DAO::$_nullArray );
+        if ( $count > 0 ) {
+            $query = "
+SELECT extends
+FROM   civicrm_custom_group
+WHERE  id IN ( %1, %2 )
+";
+            $params = array( 1 => array( $oldGroup->id, 'Integer' ),
+                             2 => array( $newGroup->id, 'Integer' ) );
+                
+            $dao = CRM_Core_DAO::executeQuery( $query, $params );
+            $extends = array( );
+            while ( $dao->fetch( ) ) {
+                $extends[] = $dao->extends;
+            }
+            if ( $extends[0] != $extends[1] ) {
+                $errors['newGroupID'] = ts( 'The destination group extends a different entity type.' );
+            }
+        }
+
+        return empty( $errors ) ? true : $errors;
+    }
+    
+    /**
+     * Move a custom data field from one group (table) to another
+     *
+     * @param int $fieldID FK to civicrm_custom_field
+     * @param int $newGroupID FK to civicrm_custom_group
+     * @return void
+     */
+    static function moveField( $fieldID, $newGroupID ) {
+        $validation = self::_moveFieldValidate($fieldID, $newGroupID);
+        if (TRUE !== $validation) {
+            CRM_Core_Error::fatal(implode(' ', $validation));
+        }
+        require_once 'CRM/Core/DAO/CustomField.php';
+        $field = new CRM_Core_DAO_CustomField();
+        $field->id = $fieldID;
+        $field->find(TRUE);
+
+        require_once 'CRM/Core/DAO/CustomGroup.php';
+        $newGroup = new CRM_Core_DAO_CustomGroup();
+        $newGroup->id = $newGroupID;
+        $newGroup->find(TRUE);
+        
+        require_once 'CRM/Core/DAO/CustomGroup.php';
+        $oldGroup = new CRM_Core_DAO_CustomGroup();
+        $oldGroup->id = $field->custom_group_id;
+        $oldGroup->find(TRUE);
+        
+        $add = clone $field;
+        $add->custom_group_id = $newGroup->id;
+        self::createField($add, 'add');
+        
+        $sql = "INSERT INTO {$newGroup->table_name} (entity_id, {$field->column_name})
+            SELECT entity_id, {$field->column_name} FROM {$oldGroup->table_name}
+            ON DUPLICATE KEY UPDATE {$field->column_name} = {$oldGroup->table_name}.{$field->column_name}
+            ";
+        CRM_Core_DAO::executeQuery($sql);
+
+        $del = clone $field;
+        $del->custom_group_id = $oldGroup->id;
+        self::createField($del, 'delete');
+        
+        $add->save();
+        
+        self::resetCache( );
+    }
 
     /**
      * Get the database table name and column name for a custom field
@@ -1715,14 +1876,14 @@ AND    cf.id = %1";
             }
             
             $query = "
-    SELECT  g.id, g.label
+    SELECT  g.id, g.title
       FROM  civicrm_option_group g
 INNER JOIN  civicrm_custom_field f ON ( g.id = f.option_group_id ) 
      WHERE  {$whereClause}";
             
             $dao = CRM_Core_DAO::executeQuery( $query );
             while ( $dao->fetch( ) ) {
-                $customOptionGroup[$cacheKey][$dao->id] = $dao->label;
+                $customOptionGroup[$cacheKey][$dao->id] = $dao->title;
             }
         }
         

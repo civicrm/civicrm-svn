@@ -44,8 +44,8 @@ require_once 'CRM/Core/BAO/Phone.php';
  *  Add an Phone for a contact
  * 
  * Allowed @params array keys are:
- * {@schema Core/Phone.xml}
- * {@example PhoneCreate.php}
+ * {@getfields phone_create}
+ * @example PhoneCreate.php
  * @return array of newly created phone property values.
  * @access public
  */
@@ -114,15 +114,14 @@ function civicrm_api3_phone_create( $params )
  *
  * @param  array  $params
  *
- * {@schema Core/Phone.xml}
- * {@example PhoneDelete.php 0}
- * @return boolean | error  true if successfull, error otherwise
+ * @return array Api Result
+ * {@getfields phone_delete}
+ * @example PhoneDelete.php
  * @access public
  */
 function civicrm_api3_phone_delete( $params ) 
 {
 
-    civicrm_api3_verify_mandatory ($params,null,array ('id'));
     $phoneID = CRM_Utils_Array::value( 'id', $params );
 
     require_once 'CRM/Core/DAO/Phone.php';

@@ -122,7 +122,8 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
     // and does not play a role in the queries generated
     function &getRecipients($job_id, $mailing_id = null,
                             $offset = NULL, $limit = NULL,
-                            $storeRecipients = false) 
+                            $storeRecipients = false,
+                            $dedupeEmail = false) 
     {
         $mailingGroup = new CRM_Mailing_DAO_Group();
         
@@ -139,7 +140,7 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
         require_once 'CRM/Contact/DAO/Group.php';
         $group      = CRM_Contact_DAO_Group::getTableName();
         $g2contact  = CRM_Contact_DAO_GroupContact::getTableName();
-      
+
         /* Create a temp table for contact exclusion */
         $mailingGroup->query(
             "CREATE TEMPORARY TABLE X_$job_id 
@@ -262,7 +263,6 @@ WHERE  c.group_id = {$groupDAO->id}
                         AND             X_$job_id.contact_id IS null
                     ORDER BY $email.is_bulkmail";
         $mailingGroup->query($query);
-
 
         /* Query prior mailings */
         $mailingGroup->query(
@@ -429,27 +429,26 @@ WHERE  mailing_id = %1
             $params = array( 1 => array( $mailing_id, 'Integer' ) );
             CRM_Core_DAO::executeQuery( $sql, $params );
 
+            // CRM-3975
+            $groupBy = $groupJoin = '';
+            if ( $dedupeEmail ) {
+                $groupJoin = " INNER JOIN civicrm_email e ON e.id = i.email_id";
+                $groupBy = " GROUP BY e.email ";
+            }
+      
             $sql = "
 INSERT INTO civicrm_mailing_recipients ( mailing_id, contact_id, email_id )
 SELECT %1, i.contact_id, i.email_id
 FROM       civicrm_contact contact_a
 INNER JOIN I_$job_id i ON contact_a.id = i.contact_id
+           $groupJoin
            {$aclFrom}
            {$aclWhere}
+           $groupBy
 ORDER BY   i.contact_id, i.email_id
 ";
             CRM_Core_DAO::executeQuery( $sql, $params );
         }
-
-        $eq->query("
-SELECT     i.contact_id, i.email_id 
-FROM       civicrm_contact contact_a
-INNER JOIN I_$job_id i ON contact_a.id = i.contact_id
-           {$aclFrom}
-           {$aclWhere}
-ORDER BY   i.contact_id, i.email_id
-           $limitString
-");
 
         /* Delete the temp table */
         $mailingGroup->reset();
@@ -994,7 +993,7 @@ AND civicrm_contact.is_opt_out =0";
         require_once 'CRM/Activity/BAO/Activity.php';
         $config = CRM_Core_Config::singleton( );
         $knownTokens = $this->getTokens();
-        
+               
         if ($this->_domain == null) {
             require_once 'CRM/Core/BAO/Domain.php';
             $this->_domain = CRM_Core_BAO_Domain::getDomain( );
@@ -2072,11 +2071,13 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                           'onclick'  => "return tokenReplText(this);"
                           )
                     );
-        
-        if ( CRM_Utils_System::getClassName( $form ) == 'CRM_Mailing_Form_Upload' ) {
+        $className = CRM_Utils_System::getClassName( $form );
+        if ( $className == 'CRM_Mailing_Form_Upload' ) {
             $tokens = array_merge( CRM_Core_SelectValues::mailingTokens( ), $tokens );
-        } elseif ( CRM_Utils_System::getClassName( $form ) == 'CRM_Admin_Form_ScheduleReminders' ) {
+        } elseif ( $className == 'CRM_Admin_Form_ScheduleReminders' ) {
             $tokens = array_merge( CRM_Core_SelectValues::activityTokens( ), $tokens );
+        } elseif ( $className == 'CRM_Event_Form_ManageEvent_ScheduleReminders' ) {
+            $tokens = array_merge( CRM_Core_SelectValues::eventTokens( ), $tokens );
         }
 
         //sorted in ascending order tokens by ignoring word case

@@ -28,7 +28,7 @@
       <name>entity_id</name>
       <type>int unsigned</type>
       <required>true</required>
-      <comment>FK to civicrm_contribution_page.id</comment>
+      <comment>FK to civicrm_contribution_page.id OR civicrm_event.id</comment>
       <add>2.2</add>
   </field>
   <foreignKey> 
@@ -36,7 +36,24 @@
       <table>civicrm_contribution_page</table> 
       <key>id</key>
       <add>2.2</add>
+      <drop>4.1</drop>
   </foreignKey>
+  <field>
+      <name>target_entity_type</name>
+      <type>varchar</type>
+      <length>255</length>
+      <required>true</required>
+      <default>'contribute'</default>
+      <comment>The type of entity that this pcp targets</comment>
+      <add>4.1</add>
+  </field>
+  <field>
+      <name>target_entity_id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>The entity that this pcp targets</comment>
+      <add>4.1</add>
+  </field>
   <field>  
       <name>supporter_profile_id</name>  
       <type>int unsigned</type>                  

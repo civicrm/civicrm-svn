@@ -116,6 +116,11 @@
 	</tr>
 </table>
 <table class="form-layout-compressed">
+        <tr class="crm-contribution-contributionpage-settings-form-block-is_share">
+    		<td>&nbsp;</td>
+    		<td>{$form.is_share.html} {$form.is_share.label}<br />
+    		<span class="description">{ts}When enabled, links will appear allowing people to share this event through social media.{/ts}</span></td>
+    	</tr>
 		<tr class="crm-contribution-contributionpage-settings-form-block-is_active"><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>{$form.is_active.html} {$form.is_active.label}<br />
 	{if $contributionPageID}
     		<span class="description">

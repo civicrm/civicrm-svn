@@ -272,7 +272,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon
                                                                 null,
                                                                 $tokens,
                                                                 'CRM_Contact_Form_Task_PDFLetterCommon' );
-            if ( civicrm_api3_error( $contact ) ) {
+            if ( civicrm_error( $contact ) ) {
                 $notSent[] = $contactId;
                 continue;
             }

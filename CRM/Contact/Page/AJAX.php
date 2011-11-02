@@ -701,6 +701,13 @@ WHERE cc.is_deceased = 0 AND {$queryString}
       {$aclWhere}
 LIMIT {$offset}, {$rowCount}
 ";
+
+             // send query to hook to be modified if needed
+             require_once 'CRM/Utils/Hook.php';
+             CRM_Utils_Hook::contactListQuery( $query,
+                                              $name,
+                                              CRM_Utils_Array::value( 'context', $_GET ),
+                                              CRM_Utils_Array::value( 'cid', $_GET ) );
             
                     $dao = CRM_Core_DAO::executeQuery( $query );
                     while( $dao->fetch( ) ) {
@@ -716,6 +723,14 @@ WHERE  ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$query
        {$aclWhere}
 LIMIT {$offset}, {$rowCount}
 ";
+
+              // send query to hook to be modified if needed
+              require_once 'CRM/Utils/Hook.php';
+              CRM_Utils_Hook::contactListQuery( $query,
+                                               $name,
+                                               CRM_Utils_Array::value( 'context', $_GET ),
+                                               CRM_Utils_Array::value( 'cid', $_GET ) );
+
             
                     $dao = CRM_Core_DAO::executeQuery( $query );
             
@@ -844,11 +859,12 @@ LIMIT {$offset}, {$rowCount}
         $relType            = CRM_Utils_Type::escape( $_REQUEST['relType'], 'String' );
         $typeName           = isset( $_REQUEST['typeName'] ) ? CRM_Utils_Type::escape( $_REQUEST['typeName'], 'String' ):'';
         $relContact         = CRM_Utils_Type::escape( $_REQUEST['relContact'], 'String' );
-        $excludedContactIds = isset($_REQUEST['cid'])?  array( CRM_Utils_Type::escape($_REQUEST['cid'], 'Integer') ) : array( );
+        $currentContactId   = CRM_Utils_Type::escape( $_REQUEST['cid'], 'Integer');
 
         if ( in_array( $typeName, array( 'Employee of', 'Employer of' ) ) ) {
             $addCount = 1; 
         }
+        
         $sortMapper = array( 1 => 'sort_name', (2+$addCount) => 'city', (3+$addCount) => 'state_province', 
                              (4+$addCount) => 'email', (5+$addCount) => 'phone' );
            
@@ -869,24 +885,27 @@ LIMIT {$offset}, {$rowCount}
 
         $relationshipType->id = $rid;
         if ( $relationshipType->find( true ) ) {
-                if ( $direction == 'a_b' ) {
-                    $type    = $relationshipType->contact_type_b;
-                    $subType = $relationshipType->contact_sub_type_b;
-                } else {
-                    $type    = $relationshipType->contact_type_a;
-                    $subType = $relationshipType->contact_sub_type_a;
-                }
-
-                if ( $type == 'Individual' || $type == 'Organization' || $type == 'Household' ) {
-                    $searchValues[] = array( 'contact_type', '=', $type, 0, 0 );
-                    $contactTypeAdded = true;
-                }
-
-                if ( $subType ) {
-                    $searchValues[] = array( 'contact_sub_type', '=', $subType, 0, 0 );
-                }
+            if ( $direction == 'a_b' ) {
+                $type    = $relationshipType->contact_type_b;
+                $subType = $relationshipType->contact_sub_type_b;
+            } else {
+                $type    = $relationshipType->contact_type_a;
+                $subType = $relationshipType->contact_sub_type_a;
             }
 
+            if ( $type == 'Individual' || $type == 'Organization' || $type == 'Household' ) {
+                $searchValues[] = array( 'contact_type', '=', $type, 0, 0 );
+                $contactTypeAdded = true;
+            }
+
+            if ( $subType ) {
+                $searchValues[] = array( 'contact_sub_type', '=', $subType, 0, 0 );
+            }
+        }
+        
+        // exclude current contact
+        $searchValues[] = array( 'contact_id', '!=', $currentContactId, 0, 0 );
+        
         $contactBAO  = new CRM_Contact_BAO_Contact( );
         $query       = new CRM_Contact_BAO_Query( $searchValues );
         $searchCount = $query->searchQuery(0, 0, null, true );
@@ -904,10 +923,6 @@ LIMIT {$offset}, {$rowCount}
             
             while($result->fetch()) {
                 $contactID = $result->contact_id;
-                if ( in_array( $contactID, $excludedContactIds ) ) {
-                    $duplicateRelationship++;
-                    continue;
-                }
 
                 $duplicateRelationship = 0;       
         
@@ -928,11 +943,7 @@ LIMIT {$offset}, {$rowCount}
         }
 
         foreach( $searchRows as $cid => $row ) {
-            if ( $sEcho == 1 && count($searchRows) == 1 ) { 
-                 $searchRows[$cid]['check'] = '<input type="checkbox" id="contact_check['.$cid.']" name="contact_check['.$cid.']" value='.$cid.' checked />';
-            } else {
-                 $searchRows[$cid]['check'] = '<input type="checkbox" id="contact_check['.$cid.']" name="contact_check['.$cid.']" value='.$cid.' />';
-            }
+            $searchRows[$cid]['check'] = '<input type="checkbox" id="contact_check['.$cid.']" name="contact_check['.$cid.']" value='.$cid.' />';
 
             if ( $typeName == 'Employee of' ) {
                  $searchRows[$cid]['employee_of'] = '<input type="radio" name="employee_of" value='.$cid.' >';

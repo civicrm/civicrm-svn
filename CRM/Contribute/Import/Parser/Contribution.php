@@ -433,8 +433,8 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
             }
 
             //retrieve contact id using contact dedupe rule
-            $error = civicrm_api3_check_contact_dedupe( $paramValues );
-                        
+            $error = civicrm_api('CheckContact', 'Dedupe', $paramValues);
+
             if ( civicrm_api3_duplicate( $error ) ) {
                 $matchedIDs = explode(',',$error['error_message']['params'][0]);        
                 if (count( $matchedIDs) >1) {
@@ -445,7 +445,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                     $formatted['contact_id'] = $cid;
                     
                     $newContribution = civicrm_api( 'contribution','create', $formatted );
-                    if ( civicrm_api3_error( $newContribution ) ) { 
+                    if ( civicrm_error( $newContribution ) ) { 
                         if ( is_array( $newContribution['error_message'] ) ) {
                             array_unshift($values, $newContribution['error_message']['message']);
                             if ( $newContribution['error_message']['params'][0] ) {
@@ -513,7 +513,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                 }
             }
             $newContribution = civicrm_api( 'contribution','create', $formatted );
-            if ( civicrm_api3_error( $newContribution ) ) { 
+            if ( civicrm_error( $newContribution ) ) { 
                 if ( is_array( $newContribution['error_message'] ) ) {
                     array_unshift($values, $newContribution['error_message']['message']);
                     if ( $newContribution['error_message']['params'][0] ) {
@@ -551,11 +551,11 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
             $completeStatusID = CRM_Core_OptionGroup::getValue( 'contribution_status', 'Completed', 'name' );
            
             //need to update payment record to map contribution_id
-            CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_Payment', $formatted['pledge_payment_id'], 
+            CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_PledgePayment', $formatted['pledge_payment_id'], 
                                          'contribution_id', $formatted['contribution_id'] );
             
-            require_once 'CRM/Pledge/BAO/Payment.php';
-            CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $formatted['pledge_id'], 
+            require_once 'CRM/Pledge/BAO/PledgePayment.php';
+            CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $formatted['pledge_id'], 
                                                                array( $formatted['pledge_payment_id'] ),  
                                                                $completeStatusID,
                                                                null,

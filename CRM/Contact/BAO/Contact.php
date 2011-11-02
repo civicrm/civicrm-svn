@@ -110,13 +110,23 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         }
 
         //fix for validate contact sub type CRM-5143
-        $subType = CRM_Utils_Array::value('contact_sub_type', $params );
-        if ( $subType && 
-             !  CRM_Contact_BAO_ContactType::isExtendsContactType($subType, $params['contact_type'], true) ) {
-            // we'll need to fix tests to handle this
-            // CRM-7925
-            require_once 'CRM/Core/Error.php';
-            CRM_Core_Error::fatal( ts( 'The Contact Sub Type does not match the Contact type for this record' ) );
+        if ( !empty($params['contact_sub_type']) ) {
+            if ( !CRM_Contact_BAO_ContactType::isExtendsContactType($params['contact_sub_type'], 
+                                                                    $params['contact_type'], true) ) {
+                // we'll need to fix tests to handle this
+                // CRM-7925
+                require_once 'CRM/Core/Error.php';
+                CRM_Core_Error::fatal( ts( 'The Contact Sub Type does not match the Contact type for this record' ) );
+            }
+            if ( is_array($params['contact_sub_type']) ) {
+                $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR .
+                    implode( CRM_Core_DAO::VALUE_SEPARATOR, $params['contact_sub_type'] ) . CRM_Core_DAO::VALUE_SEPARATOR;
+            } else {
+                $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR . 
+                    trim($params['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) . CRM_Core_DAO::VALUE_SEPARATOR;
+            }
+        } else {
+            $params['contact_sub_type'] = 'null';
         }
         
         //fixed contact source
@@ -263,7 +273,8 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         $config = CRM_Core_Config::singleton();
 
         // CRM-6942: set preferred language to the current language if it’s unset (and we’re creating a contact)
-        if ((!isset($params['id']) or !$params['id']) and (!isset($params['preferred_language']) or !$params['preferred_language'])) {
+        if ( ( ! isset($params['id']) || ! $params['id']) &&
+             ( ! isset($params['preferred_language']) ||  ! $params['preferred_language'])) {
             $params['preferred_language'] = $config->lcMessages;
         }
 
@@ -1651,11 +1662,15 @@ ORDER BY civicrm_email.is_primary DESC";
         }
 
         //fix contact sub type CRM-5125
-        if ( $subType = CRM_Utils_Array::value('contact_sub_type', $params) ) {
-            $data['contact_sub_type'] = $subType;
-        } else if ( $subType = CRM_Utils_Array::value('contact_sub_type_hidden', $params ) ) {
+        if ( array_key_exists('contact_sub_type', $params) && 
+             !empty($params['contact_sub_type']) ) {
+            $data['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR .
+                implode( CRM_Core_DAO::VALUE_SEPARATOR, $params['contact_sub_type'] ) . CRM_Core_DAO::VALUE_SEPARATOR;
+        } else if ( array_key_exists('contact_sub_type_hidden', $params) && 
+                    !empty($params['contact_sub_type_hidden']) ) {
             // if profile was used, and had any subtype, we obtain it from there 
-            $data['contact_sub_type'] = $subType;
+            $data['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR .
+                implode( CRM_Core_DAO::VALUE_SEPARATOR, $params['contact_sub_type_hidden'] ) . CRM_Core_DAO::VALUE_SEPARATOR;
         }
         
         if ( $ctype == 'Organization' ) {

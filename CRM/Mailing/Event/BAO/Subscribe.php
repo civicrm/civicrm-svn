@@ -119,7 +119,7 @@ LEFT JOIN civicrm_email      ON contact_a.id = civicrm_email.contact_id
             $formatted['fixAddress'] = true;
             require_once 'api/api.php';
             $contact = civicrm_api( 'contact', 'create', $formatted );
-            if ( civicrm_api3_error( $contact ) ) {
+            if ( civicrm_error( $contact ) ) {
                 return $success;
             }
             $contact_id = $contact['id'];

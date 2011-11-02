@@ -65,8 +65,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      * @access public 
      */ 
     public function preProcess()  
-    {  
+    {
         parent::preProcess( );
+        
+        // Make the contributionPageID avilable to the template
+        $this->assign( 'contributionPageID', $this->_id );
+        $this->assign( 'isShare', $this->_values['is_share'] );
 
         // make sure we have right permission to edit this user
         $csContactID = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, false, $this->_userID );
@@ -205,7 +209,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 if ( ! empty( $this->_defaults[$name] ) ) {
                     $this->_defaults['billing_' . $name] = $this->_defaults[$name];
                 }
-            }
+            }  
         } 
         
         //set custom field defaults set by admin if value is not set
@@ -261,7 +265,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             //get all payment statuses.
             $statuses = array( );
             $returnProperties = array( 'status_id' );
-            CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_Payment', 'pledge_id', $this->_values['pledge_id'],
+            CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'pledge_id', $this->_values['pledge_id'],
                                              $statuses, $returnProperties );
             
             require_once 'CRM/Contribute/PseudoConstant.php';
@@ -329,7 +333,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      * @access public
      */
     public function buildQuickForm( ) 
-    {
+    {   
         $config = CRM_Core_Config::singleton( );
         if ( $this->_values['is_for_organization'] == 2 ) {
             $this->assign( 'onBehalfRequired', true );
@@ -465,8 +469,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             }
         }
         if ( $this->_pcpId ) {
-            require_once 'CRM/Contribute/BAO/PCP.php';
-            if ( $pcpSupporter = CRM_Contribute_BAO_PCP::displayName( $this->_pcpId ) ) {
+            require_once 'CRM/PCP/BAO/PCP.php';
+            if ( $pcpSupporter = CRM_PCP_BAO_PCP::displayName( $this->_pcpId ) ) {
                 $this->assign( 'pcpSupporterText' , ts('This contribution is being made thanks to effort of <strong>%1</strong>, who supports our campaign. You can support it as well - once you complete the donation, you will be able to create your own Personal Campaign Page!', array(1 => $pcpSupporter ) ) );
             }
             $this->assign( 'pcp', true );
@@ -1037,7 +1041,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         } else if  ( !empty( $params['pledge_amount'] ) ) {
             $amount = 0;
             foreach ( $params['pledge_amount'] as $paymentId => $dontCare ) {
-                $amount += CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', $paymentId, 'scheduled_amount' );
+                $amount += CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_PledgePayment', $paymentId, 'scheduled_amount' );
             } 
         } else {
             if ( CRM_Utils_Array::value( 'amount', $form->_values ) ) {
@@ -1045,9 +1049,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 
                 if ( $amountID ) {
                     $params['amount_level'] =
-                        $form->_values['amount'][$amountID]['label'];
+                        CRM_Utils_Array::value( 'label', $form->_values['amount'][$amountID] );
                     $amount = 
-                        $form->_values['amount'][$amountID]['value'];
+                        CRM_Utils_Array::value( 'value', $form->_values['amount'][$amountID] );
                 }
             }
         }

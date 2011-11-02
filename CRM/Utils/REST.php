@@ -31,8 +31,11 @@
  *
  * @package CRM
  * @copyright CiviCRM LLC (c) 2004-2011
- *
+ *	
  */
+
+require_once 'CRM/Utils/Request.php';
+
 
 class CRM_Utils_REST
 {
@@ -249,6 +252,7 @@ class CRM_Utils_REST
   }
 
   function handle( ) {
+	require_once 'CRM/Utils/Request.php';
     // Get the function name being called from the q parameter in the query string
     $q = CRM_Utils_array::value( 'q', $_REQUEST );
     // or for the rest interface, from fnName
@@ -479,16 +483,17 @@ class CRM_Utils_REST
     // the request has to be sent by an ajax call. First line of protection against csrf
     require_once 'CRM/Core/Config.php';
     $config = CRM_Core_Config::singleton( );
-    if ( false && !$config->debug && ( ! array_key_exists ( 'HTTP_X_REQUESTED_WITH',
-      $_SERVER ) ||
-      $_SERVER['HTTP_X_REQUESTED_WITH'] != "XMLHttpRequest" ) ) {
+    if ( false &&
+         ! $config->debug && 
+         ( ! array_key_exists ( 'HTTP_X_REQUESTED_WITH', $_SERVER ) ||
+           $_SERVER['HTTP_X_REQUESTED_WITH'] != "XMLHttpRequest" ) ) {
         require_once 'api/v3/utils.php';
         $error =
-          civicrm_api3_create_error( "SECURITY ALERT: Ajax requests can only be issued by javascript clients, eg. $().crmAPI().",
+            civicrm_api3_create_error( "SECURITY ALERT: Ajax requests can only be issued by javascript clients, eg. $().crmAPI().",
             array( 'IP'      => $_SERVER['REMOTE_ADDR'],
-            'level'   => 'security',
-            'referer' => $_SERVER['HTTP_REFERER'],
-            'reason'  => 'CSRF suspected' ) );
+                   'level'   => 'security',
+                   'referer' => $_SERVER['HTTP_REFERER'],
+                   'reason'  => 'CSRF suspected' ) );
         echo json_encode( $error );
         CRM_Utils_System::civiExit( );
       }
@@ -559,7 +564,7 @@ class CRM_Utils_REST
       require_once 'CRM/Utils/Request.php';
 
       $store      = null;
-      $api_key    = CRM_Utils_Request::retrieve( 'api_key', 'String', $store, false, null, 'REQUEST' );
+      $api_key    = CRM_::retrieve( 'api_key', 'String', $store, false, null, 'REQUEST' );
       $contact_id = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $api_key, 'id', 'api_key');
       if ( $contact_id ) {
         require_once 'CRM/Core/BAO/UFMatch.php';

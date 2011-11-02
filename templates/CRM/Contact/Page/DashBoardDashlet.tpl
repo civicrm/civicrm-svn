@@ -25,6 +25,38 @@
 *}
 {include file="CRM/common/dashboard.tpl"}
 {include file="CRM/common/openFlashChart.tpl"}
+{* Alerts for critical configuration settings. *}
+{if ! $fromEmailOK || ! $ownerOrgOK || ! $defaultMailboxOK}
+    <div class="help">
+    <div class="finalconf-intro">
+    	{ts}There are a few things to setup before using your site ...{/ts}
+    </div>
+    {if ! $ownerOrgOK}
+        <div class="finalconf-button">
+            <a href="{$fixOrgUrl}" id="fixOrgUrl" class="button"><span><div class="icon settings-icon"></div>{ts}Go{/ts}</span></a>
+        </div>
+	    <div class="finalconf-itemdesc">{ts}Please enter your organization's name and primary address.{/ts}</div>
+	    <h4 class="finalconf-item"><div class="icon alert-icon"></div> &nbsp;{ts}Organization Name{/ts}</h4>
+	    <div style="clear:both"></div>
+	{/if}
+    {if ! $fromEmailOK}
+        <div class="finalconf-button">
+            <a href="{$fixEmailUrl}" id="fixOrgUrl" class="button"><span><div class="icon settings-icon"></div>{ts}Go{/ts}</span></a>
+        </div>
+	    <div class="finalconf-itemdesc">{ts}Please enter a default FROM Email Address (for system-generated emails).{/ts}</div>
+	    <h4 class="finalconf-item"><div class="icon alert-icon"></div> &nbsp;{ts}From Email Address{/ts}</h4>
+	    <div style="clear:both"></div>
+    {/if}
+    {if ! $defaultMailboxOK}
+        <div class="finalconf-button">
+            <a href="{$fixDefaultMailbox}" id="fixDefaultMailbox" class="button"><span><div class="icon settings-icon"></div>{ts}Go{/ts}</span></a>
+        </div>
+        <div class="finalconf-itemdesc">{ts}Please configure a default mailbox for CiviMail.{/ts} (<a href="http://en.flossmanuals.net/civicrm/ch042_system-configuration/" title="{ts}opens online user guide in a new window{/ts}" target="_blank">{ts}learn more{/ts}</a>)</div>
+        <h4 class="finalconf-item"><div class="icon alert-icon"></div> &nbsp;{ts}Default CiviMail Mailbox{/ts}</h4>
+        <div style="clear:both"></div>
+    {/if}    
+    </div>
+{/if}
 <div class="crm-submit-buttons">
 <a href="javascript:addDashlet( );" class="button show-add">
 	<span><div class="icon settings-icon"></div>{ts}Configure Your Dashboard{/ts}</span></a>

@@ -226,7 +226,7 @@ function civicrm_api3_profile_set( $params ) {
             $tags = $profileParams['tag'];
             unset($profileParams['tag']);
         }
-               
+
         $result = civicrm_api('contact', 'create', $profileParams);
         if ( CRM_Utils_Array::value('is_error', $result) ) {
             return $result; 

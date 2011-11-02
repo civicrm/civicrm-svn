@@ -3,9 +3,9 @@
 -- most common languages, according to http://en.wikipedia.org/wiki/List_of_languages_by_number_of_native_speakers enabled
 
 INSERT INTO `civicrm_option_group`
-  (`name`, {localize field='label'}`label`{/localize}, {localize field='description'}`description`{/localize}, `is_reserved`, `is_active`)
+  (`name`, {localize field='title'}`title`{/localize}, {localize field='description'}`description`{/localize}, `is_reserved`, `is_active`)
 VALUES
-  ('languages', {localize}'{ts escape="sql"}Languages{/ts}'{/localize}, {localize}'{ts escape="sql"}List of Languages{/ts}'{/localize}, 0, 1);
+  ('languages', {localize}'{ts escape="sql"}Languages{/ts}'{/localize}, {localize}'{ts escape="sql"}List of Languages{/ts}'{/localize}, 1, 1);
   
 SELECT @option_group_id_languages      := max(id) from civicrm_option_group where name = 'languages';
 

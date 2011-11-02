@@ -457,7 +457,7 @@ FROM   {$this->_componentTable}
             
             foreach ( $params as $id => $field ) {
                 if ( CRM_Utils_Array::value( 'filter', $field ) == 4 ) {
-                    $options[$key][++$greetingCount] = ts( $field['label'] );
+                    $options[$key][++$greetingCount] = $field['label'];
                 }
             }
             

@@ -143,30 +143,32 @@ WHERE  contribution_id = %1 AND membership_id != %2";
 
                 if (is_array($ids['membership'])) {
                     foreach ( $ids['membership'] as $id ) {
-                        $membership = new CRM_Member_DAO_Membership( );
-                        $membership->id = $id;
-                        if ( ! $membership->find( true ) ) {
-                            CRM_Core_Error::debug_log_message( "Could not find membership record: $membershipID" );
-                            echo "Failure: Could not find membership record: $membershipID<p>";
-                            return false;
-                        }
-                        $membership->join_date     = CRM_Utils_Date::isoToMysql( $membership->join_date      );
-                        $membership->start_date    = CRM_Utils_Date::isoToMysql( $membership->start_date     );
-                        $membership->end_date      = CRM_Utils_Date::isoToMysql( $membership->end_date       );
-                        $membership->reminder_date = CRM_Utils_Date::isoToMysql( $membership->reminder_date  );
+                        if ( !empty($id) ) {
+                            $membership = new CRM_Member_DAO_Membership( );
+                            $membership->id = $id;
+                            if ( ! $membership->find( true ) ) {
+                                CRM_Core_Error::debug_log_message( "Could not find membership record: $membershipID" );
+                                echo "Failure: Could not find membership record: $membershipID<p>";
+                                return false;
+                            }
+                            $membership->join_date     = CRM_Utils_Date::isoToMysql( $membership->join_date      );
+                            $membership->start_date    = CRM_Utils_Date::isoToMysql( $membership->start_date     );
+                            $membership->end_date      = CRM_Utils_Date::isoToMysql( $membership->end_date       );
+                            $membership->reminder_date = CRM_Utils_Date::isoToMysql( $membership->reminder_date  );
 
-                        $objects['membership'][] = $membership;
-                        $membership->free();
+                            $objects['membership'][] = $membership;
+                            $membership->free();
+                        }
                     }
                 }  
             }
           
             if ( isset( $ids['pledge_payment'] ) ) {
-                require_once 'CRM/Pledge/DAO/Payment.php';
+                require_once 'CRM/Pledge/DAO/PledgePayment.php';
                 
                 $objects['pledge_payment'] = array( );
                 foreach ( $ids['pledge_payment'] as $key => $paymentID ) { 
-                    $payment = new CRM_Pledge_DAO_Payment( );
+                    $payment = new CRM_Pledge_DAO_PledgePayment( );
                     $payment->id = $paymentID;
                     if ( ! $payment->find( true ) ) {
                         CRM_Core_Error::debug_log_message( "Could not find pledge payment record: $pledge_paymentID" );
@@ -565,7 +567,7 @@ LIMIT 1;";
         //update corresponding pledge payment record
         require_once 'CRM/Core/DAO.php';
         $returnProperties = array( 'id', 'pledge_id' );
-        if ( CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_Payment', 'contribution_id', $contribution->id, 
+        if ( CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'contribution_id', $contribution->id, 
                                               $paymentDetails, $returnProperties ) ) {
             $paymentIDs = array( );
             foreach ( $paymentDetails as $key => $value ) {
@@ -574,8 +576,8 @@ LIMIT 1;";
             }
             
             // update pledge and corresponding payment statuses
-            require_once 'CRM/Pledge/BAO/Payment.php';
-            CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $pledgeId, $paymentIDs, $contribution->contribution_status_id );
+            require_once 'CRM/Pledge/BAO/PledgePayment.php';
+            CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $pledgeId, $paymentIDs, $contribution->contribution_status_id );
         }
 
         // create an activity record
@@ -777,8 +779,8 @@ LIMIT 1;";
                 $template->assign( 'pcp_personal_note'  , $softDAO->pcp_personal_note );
                 
                 //assign the pcp page title for email subject
-                require_once 'CRM/Contribute/DAO/PCP.php';
-                $pcpDAO = new CRM_Contribute_DAO_PCP();
+                require_once 'CRM/PCP/DAO/PCP.php';
+                $pcpDAO = new CRM_PCP_DAO_PCP();
                 $pcpDAO->id = $softDAO->pcp_id;
                 if ( $pcpDAO->find(true) ) {
                     $template->assign( 'title', $pcpDAO->title );

@@ -34,32 +34,27 @@
 	  <thead class="sticky">
             <tr class="columnheader">
              {foreach from=$readOnlyFields item=fTitle key=fName}
-	        <th>{$fTitle}</th>
-	     {/foreach}
+	            <th>{$fTitle}</th>
+	         {/foreach}
 
-             {foreach from=$fields item=field key=fieldName}
-                {if strpos( $field.name, '_date' ) !== false ||
-                    (substr( $field.name, 0, 7 ) == 'custom_' && $field.data_type == 'Date')}
-                  <th><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" onclick="copyValuesDate('{$field.name}')" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</th>
-                {else}
-                  <th><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" onclick="copyValues('{$field.name}')" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</th>
-                 {/if}
+              {foreach from=$fields item=field key=fieldName}
+                <td><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" fname="{$field.name}" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</td>
              {/foreach}
             </tr>
           </thead>
-            {foreach from=$componentIds item=cid}
-             <tr class="{cycle values="odd-row,even-row"}">
+            {foreach from=$componentIds item=mid}
+             <tr class="{cycle values="odd-row,even-row"}" entity_id="{$mid}">
 
 	      {foreach from=$readOnlyFields item=fTitle key=fName}
-	         <td>{$contactDetails.$cid.$fName}</td>
+	         <td>{$contactDetails.$mid.$fName}</td>
 	      {/foreach}
 
               {foreach from=$fields item=field key=fieldName}
                 {assign var=n value=$field.name}
                 {if ( $fields.$n.data_type eq 'Date') }
-                   <td class="compressed">{include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$cid batchUpdate=1}</td>
+                   <td class="compressed">{include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$mid batchUpdate=1}</td>
                 {else}
-                	<td class="compressed">{$form.field.$cid.$n.html}</td> 
+                	<td class="compressed">{$form.field.$mid.$n.html}</td> 
                 {/if}
               {/foreach}
              </tr>

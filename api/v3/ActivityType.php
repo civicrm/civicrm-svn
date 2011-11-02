@@ -44,7 +44,7 @@
 /**
  * Include common API util functions
  */   
-require_once 'api/v3/utils.php';
+require_once 'CRM/Core/OptionGroup.php';
 
 /**
  * Function to retrieve activity types
@@ -57,8 +57,7 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_activity_type_get($params ) {
 
-     civicrm_api3_verify_mandatory($params);
-    require_once 'CRM/Core/OptionGroup.php';
+
     $activityTypes = CRM_Core_OptionGroup::values( 'activity_type' );
     return civicrm_api3_create_success($activityTypes,$params,'activity_type','get');
 
@@ -75,13 +74,11 @@ function civicrm_api3_activity_type_get($params ) {
  *{@schema Activity/ActivityType.xml}
  *
  * {@example ActivityTypeCreate.php 0}
- * @ deprecated - we will introduce OptionValue Create - plse consider helping with this if not done
+ * @deprecated - we will introduce OptionValue Create - plse consider helping with this if not done
  */
  
 function civicrm_api3_activity_type_create( $params ) {
 
-    civicrm_api3_verify_mandatory($params,null,array('label','weight'));
-    require_once 'CRM/Core/OptionGroup.php';
    
     $action = 1;
     $groupParams = array ( 'name' => 'activity_type' );
@@ -97,7 +94,16 @@ function civicrm_api3_activity_type_create( $params ) {
     return civicrm_api3_create_success($activityType,$params,'activity_type','create');
 
 }
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_activity_type_create_spec(&$params){
+  $params['label']['api.required'] =1;
+  $params['weight']['api.required'] =1;
+}
 /**
  * Function to delete activity type
  * @param activityTypeId int   activity type id to delete

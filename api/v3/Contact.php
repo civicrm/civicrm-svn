@@ -47,7 +47,7 @@ require_once 'CRM/Contact/BAO/Contact.php';
  * @param  array   $params           (reference ) input parameters
  *
  * Allowed @params array keys are:
- * {@schema Contact/Contact.xml}
+ * {@getfields contact_create}
  * {@schema Core/Address.xml}}
  * 
  * {@example ContactCreate.php 0}
@@ -59,14 +59,8 @@ require_once 'CRM/Contact/BAO/Contact.php';
  */
 function civicrm_api3_contact_create( $params )
 {
-    civicrm_api3_verify_mandatory($params,null,array('contact_type'));
 
-    require_once 'CRM/Utils/Array.php';
-    $contactID = CRM_Utils_Array::value( 'contact_id', $params );
-    if (empty($contactID )){
-        $contactID = CRM_Utils_Array::value( 'id', $params );
-    }
-
+    $contactID = CRM_Utils_Array::value( 'contact_id', $params,CRM_Utils_Array::value( 'id', $params ) );
     $dupeCheck = CRM_Utils_Array::value( 'dupe_check', $params, false );
     $values    = _civicrm_api3_contact_check_params( $params, $dupeCheck );
     if ( $values ) {
@@ -156,7 +150,14 @@ function civicrm_api3_contact_create( $params )
 
 }
 
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_contact_create_spec(&$params){
+  $params['contact_type']['api.required'] = 1;
+}
 /**
  * Retrieve one or more contacts, given a set of search params
  *

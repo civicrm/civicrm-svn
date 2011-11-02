@@ -63,6 +63,7 @@ function activity__expectedresult(){
           'is_deleted' => '',
           'campaign_id' => '',
           'engagement_level' => '',
+          'weight' => '',
         ),
     ),
 );

@@ -159,7 +159,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
         $entity       =& civicrm_api('entity_tag', 'get',  $paramsEntity ); 
         $this->assertEquals( $entity['is_error'], 1 );
         $this->assertNotNull( $entity['error_message'] );
-        $this->assertEquals( $entity['error_message'], 'Mandatory key(s) missing from params array: one of (entity_id, contact_id)' );
+        $this->assertEquals( $entity['error_message'], 'Mandatory key(s) missing from params array: entity_id' );
     }
     
     function testIndividualEntityTagGet()

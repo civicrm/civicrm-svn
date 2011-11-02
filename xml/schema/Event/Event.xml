@@ -552,4 +552,11 @@
       <comment>Subevent slot label. Implicit FK to civicrm_option_value where option_group = conference_slot.</comment> 
       <add>4.1</add>
   </field>
+  <field> 
+      <name>is_share</name> 
+      <type>boolean</type>
+      <default>1</default>                
+      <comment>Can people share the event through social media?</comment> 
+      <add>4.1</add> 
+  </field>
 </table>

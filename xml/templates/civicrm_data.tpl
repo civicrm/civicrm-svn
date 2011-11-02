@@ -65,12 +65,15 @@ INSERT INTO civicrm_domain (name, version, loc_block_id) VALUES (@domainName, '2
 SELECT @domainID := id FROM civicrm_domain where name = 'Default Domain Name';
 
 -- Sample location types
-INSERT INTO civicrm_location_type( name, vcard_name, description, is_reserved, is_active, is_default ) VALUES( '{ts escape="sql"}Home{/ts}', 'HOME', '{ts escape="sql"}Place of residence{/ts}', 0, 1, 1 );
-INSERT INTO civicrm_location_type( name, vcard_name, description, is_reserved, is_active ) VALUES( '{ts escape="sql"}Work{/ts}', 'WORK', '{ts escape="sql"}Work location{/ts}', 0, 1 );
-INSERT INTO civicrm_location_type( name, vcard_name, description, is_reserved, is_active ) VALUES( '{ts escape="sql"}Main{/ts}', NULL, '{ts escape="sql"}Main office location{/ts}', 0, 1 );
-INSERT INTO civicrm_location_type( name, vcard_name, description, is_reserved, is_active ) VALUES( '{ts escape="sql"}Other{/ts}', NULL, '{ts escape="sql"}Other location{/ts}', 0, 1 );
+-- CRM-9120 for legacy reasons we are continuing to translate the 'name', but this
+-- field is used mainly as an ID, and display_name will be shown to the user, but 
+-- we have not yet finished modifying all places where the 'name' is shown.
+INSERT INTO civicrm_location_type( name, display_name, vcard_name, description, is_reserved, is_active, is_default ) VALUES( '{ts escape="sql"}Home{/ts}', '{ts escape="sql"}Home{/ts}', 'HOME', '{ts escape="sql"}Place of residence{/ts}', 0, 1, 1 );
+INSERT INTO civicrm_location_type( name, display_name, vcard_name, description, is_reserved, is_active ) VALUES( '{ts escape="sql"}Work{/ts}', '{ts escape="sql"}Work{/ts}', 'WORK', '{ts escape="sql"}Work location{/ts}', 0, 1 );
+INSERT INTO civicrm_location_type( name, display_name, vcard_name, description, is_reserved, is_active ) VALUES( '{ts escape="sql"}Main{/ts}', '{ts escape="sql"}Main{/ts}', NULL, '{ts escape="sql"}Main office location{/ts}', 0, 1 );
+INSERT INTO civicrm_location_type( name, display_name, vcard_name, description, is_reserved, is_active ) VALUES( '{ts escape="sql"}Other{/ts}', '{ts escape="sql"}Other{/ts}', NULL, '{ts escape="sql"}Other location{/ts}', 0, 1 );
 -- the following location must stay with the untranslated Billing name, CRM-2064
-INSERT INTO civicrm_location_type( name, vcard_name, description, is_reserved, is_active ) VALUES( 'Billing', NULL, '{ts escape="sql"}Billing Address location{/ts}', 1, 1 );
+INSERT INTO civicrm_location_type( name, display_name, vcard_name, description, is_reserved, is_active ) VALUES( 'Billing',  '{ts escape="sql"}Billing{/ts}', NULL, '{ts escape="sql"}Billing Address location{/ts}', 1, 1 );
 
 -- Sample relationship types
 INSERT INTO civicrm_relationship_type( name_a_b,label_a_b, name_b_a,label_b_a, description, contact_type_a, contact_type_b, is_reserved )
@@ -137,7 +140,7 @@ VALUES
 -- option groups and values for 'preferred communication methods' , 'activity types', 'gender', etc.
 
 INSERT INTO 
-   `civicrm_option_group` (`name`, `description`, `is_reserved`, `is_active`) 
+   `civicrm_option_group` (`name`, `title`, `is_reserved`, `is_active`) 
 VALUES 
    ('preferred_communication_method', '{ts escape="sql"}Preferred Communication Method{/ts}'     , 0, 1),
    ('activity_type'                 , '{ts escape="sql"}Activity Type{/ts}'                      , 0, 1),
@@ -316,7 +319,6 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}Link Cases{/ts}',                         25, 'Link Cases', NULL, 0,  NULL, 25, '', 0, 1, 1, @caseCompId, NULL ),
    (@option_group_id_act, '{ts escape="sql"}Change Case Tags{/ts}',                   26, 'Change Case Tags', NULL,0, 0, 26, '', 0, 1, 1, @caseCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}Add Client To Case{/ts}',                 27, 'Add Client To Case', NULL,0, 0, 26, '', 0, 1, 1, @caseCompId, NULL),
-   (@option_group_id_act, '{ts escape="sql"}Change Custom Data{/ts}',                 28, 'Change Custom Data', NULL,0, 0, 27, '', 0, 1, 1, @caseCompId, NULL),
 
 -- Activity Types for CiviCampaign
    (@option_group_id_act, '{ts escape="sql"}Survey{/ts}',                             28, 'Survey', NULL,0, 0, 27, '', 0, 1, 1, @campaignCompId, NULL),
@@ -324,6 +326,9 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}PhoneBank{/ts}',                          30, 'PhoneBank', NULL,0, 0, 29, '', 0, 1, 1, @campaignCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}WalkList{/ts}',                           31, 'WalkList', NULL,0, 0, 30, '', 0, 1, 1, @campaignCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}Petition{/ts}',                           32, 'Petition', NULL,0, 0, 31, '', 0, 1, 1, @campaignCompId, NULL),
+
+-- Activity Types for CiviCampaign CiviCase
+   (@option_group_id_act, '{ts escape="sql"}Change Custom Data{/ts}',                 33, 'Change Custom Data', NULL,0, 0, 33, '', 0, 1, 1, @caseCompId, NULL),
 
    (@option_group_id_gender, '{ts escape="sql"}Female{/ts}',      1, 'Female',      NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_gender, '{ts escape="sql"}Male{/ts}',        2, 'Male',        NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
@@ -830,8 +835,8 @@ VALUES
 -- * Encounter Medium Option Values (for case activities)
 -- *
 -- *******************************************************/
-INSERT INTO `civicrm_option_group` (name, label, description, is_reserved, is_active)
-    VALUES  ('encounter_medium', 'Encounter Medium', 'Encounter medium for case activities (e.g. In Person, By Phone, etc.)', 0, 1);
+INSERT INTO `civicrm_option_group` (name, title, description, is_reserved, is_active)
+    VALUES  ('encounter_medium', 'Encounter Medium', 'Encounter medium for case activities (e.g. In Person, By Phone, etc.)', 1, 1);
 SELECT @option_group_id_medium        := max(id) from civicrm_option_group where name = 'encounter_medium';
 INSERT INTO
    `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`)
@@ -892,43 +897,67 @@ VALUES
  ('FirstData',          '{ts escape="sql"}FirstData (aka linkpoint){/ts}', '{ts escape="sql"}FirstData (aka linkpoint){/ts}', 1, 0, 'Store name', 'certificate path', NULL, NULL, 'Payment_FirstData', 'https://secure.linkpt.net', NULL, NULL, NULL, 'https://staging.linkpt.net', NULL, NULL, NULL, 1, NULL);
 
 
+
 -- the fuzzy default dedupe rules
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Individual', 20, 'Fuzzy', true, '{ts escape="sql"}Individual-Fuzzy{/ts}');
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved) 
+VALUES ('Individual', 20, 'Fuzzy', true, 'IndividualFuzzy', '{ts escape="sql"}Individual-Fuzzy{/ts}', 1);
+
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'first_name', 5),
        (@drgid, 'civicrm_contact', 'last_name',  7),
        (@drgid, 'civicrm_email'  , 'email',     10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Organization', 10, 'Fuzzy', true, '{ts escape="sql"}Organization-Fuzzy{/ts}');
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved) 
+VALUES ('Organization', 10, 'Fuzzy', true, 'OrganizationFuzzy', '{ts escape="sql"}Organization-Fuzzy{/ts}', 0);
+
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'organization_name', 10),
        (@drgid, 'civicrm_email'  , 'email',             10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Household', 10, 'Fuzzy', true, '{ts escape="sql"}Household-Fuzzy{/ts}');
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved) 
+VALUES ('Household', 10, 'Fuzzy', true, 'HouseholdFuzzy', '{ts escape="sql"}Household-Fuzzy{/ts}', 0);
+
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'household_name', 10),
        (@drgid, 'civicrm_email'  , 'email',          10);
 
 -- the strict dedupe rules
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Individual', 10, 'Strict', true, '{ts escape="sql"}Individual-Strict{/ts}');
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved) 
+VALUES ('Individual', 10, 'Strict', true, 'IndividualStrict', '{ts escape="sql"}Individual-Strict{/ts}', 1);
+
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_email', 'email', 10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Organization', 10, 'Strict', true, '{ts escape="sql"}Organization-Strict{/ts}');
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved) 
+VALUES ('Organization', 10, 'Strict', true, 'OrganizationStrict', '{ts escape="sql"}Organization-Strict{/ts}', 0);
+
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'organization_name', 10),
        (@drgid, 'civicrm_email'  , 'email',             10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Household', 10, 'Strict', true, '{ts escape="sql"}Household-Strict{/ts}');
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
+VALUES ('Household', 10, 'Strict', true, 'HouseholdStrict', '{ts escape="sql"}Household-Strict{/ts}', 0);
+
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'household_name', 10),
        (@drgid, 'civicrm_email'  , 'email',          10);
+
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
+VALUES ('Individual', 15, 'Strict', true, 'IndividualComplete', '{ts escape="sql"}Individual-Complete{/ts}', 1);
+
+SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
+INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
+VALUES (@drgid, 'civicrm_contact', 'first_name',     '5'),
+       (@drgid, 'civicrm_contact', 'last_name',      '5'),
+       (@drgid, 'civicrm_address', 'street_address', '5'),
+       (@drgid, 'civicrm_contact', 'middle_name',    '1'),
+       (@drgid, 'civicrm_contact', 'suffix_id',      '1');
 
 -- Sample counties (state-province and country lists defined in a separate tpl files)
 INSERT INTO civicrm_county (name, state_province_id) VALUES ('Alameda', 1004);
@@ -1269,3 +1298,10 @@ INSERT INTO `civicrm_contact_type`
   ( 3, 'Organization', '{ts escape="sql"}Organization{/ts}', NULL, NULL, 1, 1);
 
 {include file='civicrm_msg_template.tpl'}
+
+-- CRM-8358
+
+INSERT INTO `civicrm_job`
+    ( domain_id, run_frequency, last_run, name, description, command, parameters, is_active ) 
+VALUES 
+    ( @domainID, 'Hourly' , NULL, 'Mailings scheduler', 'Sends out scheduled mailings', 'civicrm_v3_mailing_process', 'user=USERNAME\r\npassword=PASSWORD\r\nkey=SITE_KEY', 0);

@@ -23,7 +23,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-
 {if $action & 1024}
     {include file="CRM/Event/Form/Registration/PreviewHeader.tpl"}
 {/if}
@@ -45,8 +44,15 @@
         <div id="tell-a-friend" class="crm-section tell_friend_link-section">
             <a href="{$friendURL}" title="{$friendText}" class="button"><span>&raquo; {$friendText}</span></a>
        </div><br /><br />
-    {/if}  
+    {/if}
 
+    {* Add button for donor to create their own Personal Campaign page *}
+    {if $pcpLink}
+      <div class="crm-section create_pcp_link-section">
+            <a href="{$pcpLink}" title="{$pcpLinkText}" class="button"><span>&raquo; {$pcpLinkText}</span></a>
+        </div><br /><br />
+    {/if}
+    
     <div id="help">
         {if $isOnWaitlist}
             <p>
@@ -263,5 +269,9 @@
 
     {if $event.is_public }
         {include file="CRM/Event/Page/iCalLinks.tpl"}
-    {/if} 
+    {/if}
+    {if $event.is_share}
+    {capture assign=eventUrl}{crmURL p='civicrm/event/info' q="id=`$event.id`&amp;reset=1" a=true fe=1 h=1}{/capture}
+    {include file="CRM/common/SocialNetwork.tpl" url=$eventUrl title=$event.title pageURL=$eventUrl}
+    {/if}
 </div>

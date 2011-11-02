@@ -87,6 +87,21 @@ class CRM_Core_Permission {
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userPermissionClass ) . '.php' );
         return eval( 'return ' . $config->userPermissionClass . '::check( $str ); ' );
     }
+
+    /**
+     * Given a group/role array, check for access requirements
+     *
+     * @param array $array the group/role to check
+     *
+     * @return boolean true if yes, else false
+     * @static
+     * @access public
+     */
+    static function checkGroupRole( $array ) {
+        $config   = CRM_Core_Config::singleton( );
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userPermissionClass ) . '.php' );
+        return eval( 'return ' . $config->userPermissionClass . '::checkGroupRole( $array ); ' );
+    }
     
     /**
      * Get the permissioned where clause for the user

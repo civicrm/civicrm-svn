@@ -134,7 +134,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         // current pledge id
         if ( $this->_id ) {
             //get the contribution id
-            $this->_contributionID = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment',
+            $this->_contributionID = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_PledgePayment',
                                                                   $this->_id, 'contribution_id', 'pledge_id' );
             $params = array( 'id' => $this->_id );
             require_once "CRM/Pledge/BAO/Pledge.php";
@@ -153,7 +153,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
                         array_search( 'Overdue',  $paymentStatusTypes ) ) {
                 
                 $allPledgePayments = array( );
-                CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_Payment', 
+                CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 
                                                  'pledge_id', 
                                                  $this->_id, 
                                                  $allPledgePayments, 

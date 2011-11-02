@@ -149,7 +149,7 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
         
         $this->assertEquals( $groups['is_error'], 1 );
         $this->assertEquals( $groups['error_message'], 
-                             'Mandatory key(s) missing from params array: group_id, contact_id, version' );
+                             'Mandatory key(s) missing from params array: version, group_id, contact_id' );
     }
 
     function testCreateWithoutGroupIdParams( ) 

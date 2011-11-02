@@ -32,10 +32,10 @@ function contribution_get_expectedresult(){
           'contact_id' => '1',
           'contact_type' => 'Individual',
           'sort_name' => 'Anderson, Anthony',
-          'display_name' => 'Mr. Anthony Anderson II',
+          'display_name' => 'Anthony Anderson',
           'contribution_id' => '1',
           'currency' => 'USD',
-          'receive_date' => '2011-07-15 00:00:00',
+          'receive_date' => '2010-01-20 00:00:00',
           'non_deductible_amount' => '10.00',
           'total_amount' => '100.00',
           'fee_amount' => '51.00',
@@ -63,11 +63,14 @@ function contribution_get_expectedresult(){
 
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* contribution_get 
+* 
+* testGetContribution and can be found in 
+* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/ContributionTest.php
+* 
 * You can see the outcome of the API tests at 
 * http://tests.dev.civicrm.org/trunk/results-api_v3
 * and review the wiki at
-* http://wiki.civicrm.org/confluence/display/CRMDOC40/CiviCRM+Public+APIs
+* http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */

@@ -110,6 +110,8 @@
 	        <br />
 		{if $group.mapping_id}
 		    <a href="{crmURL p="civicrm/contact/search/builder" q="reset=1&force=1&ssID=`$group.saved_search_id`"}">&raquo; {ts}Edit Smart Group Criteria{/ts}</a>
+		{elseif $group.search_custom_id}
+                    <a href="{crmURL p="civicrm/contact/search/custom" q="reset=1&force=1&ssID=`$group.saved_search_id`"}">&raquo; {ts}Edit Smart Group Criteria{/ts}</a>
 		{else} 
 		    <a href="{crmURL p="civicrm/contact/search/advanced" q="reset=1&force=1&ssID=`$group.saved_search_id`"}">&raquo; {ts}Edit Smart Group Criteria{/ts}</a>
 		{/if}

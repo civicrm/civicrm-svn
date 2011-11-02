@@ -240,7 +240,6 @@ class CRM_Dedupe_Merger
                 'civicrm_participant'             => array('contact_id'),
                 'civicrm_pcp'                     => array('contact_id'),
                 'civicrm_relationship'            => array('contact_id_a', 'contact_id_b'),
-                'civicrm_subscription_history'    => array('contact_id'),
                 'civicrm_uf_match'                => array('contact_id'),
                 'civicrm_uf_group'                => array('created_id'),
                 'civicrm_pledge'                  => array('contact_id'),
@@ -285,9 +284,15 @@ class CRM_Dedupe_Merger
     static function &cpTables( )
     {
         static $tables;
-        if ( !$tables ) {
-            $tables = array( 'civicrm_case_contact' => array( 'path'     => 'CRM_Case_BAO_Case',
-                                                              'function' => 'mergeCases' ) );
+        if ( ! $tables ) {
+            $tables = array( 'civicrm_case_contact'         => array( 'path'     => 'CRM_Case_BAO_Case',
+                                                                      'function' => 'mergeCases' ),
+                             'civicrm_group_contact'        => array( 'path'     => 'CRM_Contact_BAO_GroupContact',
+                                                                      'function' => 'mergeGroupContact' ),
+                             'civicrm_subscription_history' => array( 'path'     => 'CRM_Contact_BAO_GroupContact',
+                                                                      'function' => 'ignoreMergeSubscriptionHistory' ),
+                             );
+
         }
         
         return $tables;
@@ -330,6 +335,7 @@ INNER JOIN  civicrm_pledge pledge ON ( pledge.id = payment.pledge_id )
        SET  contribution.contact_id = $mainContactId
      WHERE  pledge.contact_id = $otherContactId";
             break;
+
         case 'civicrm_membership' :
             $sqls[] = "
     UPDATE  IGNORE  civicrm_contribution contribution
@@ -338,6 +344,7 @@ INNER JOIN  civicrm_membership membership ON ( membership.id = payment.membershi
        SET  contribution.contact_id = $mainContactId
      WHERE  membership.contact_id = $otherContactId";
             break;
+
         case 'civicrm_participant' :
             $sqls[] = "
     UPDATE  IGNORE  civicrm_contribution contribution

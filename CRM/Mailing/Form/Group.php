@@ -98,7 +98,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             $mailing->id = $mailingID;
             $mailing->addSelect( 'name', 'campaign_id' );
             $mailing->find( true );
-            
+
             $defaults['name'] = $mailing->name;
             if ( ! $continue ) {
                 $defaults['name'] = ts('Copy of %1', array( 1 => $mailing->name ) );
@@ -107,8 +107,9 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
                 $this->set('mailing_id', $mailingID);
             }
              
-            $defaults['campaign_id'] = $mailing->campaign_id;
-        
+            $defaults['campaign_id']  = $mailing->campaign_id;
+            $defaults['dedupe_email'] = $mailing->dedupe_email;
+            
             require_once 'CRM/Mailing/DAO/Group.php';
             $dao = new CRM_Mailing_DAO_Group();
             
@@ -181,6 +182,9 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Mailing', $mailingId, 'campaign_id' ); 
         }
         CRM_Campaign_BAO_Campaign::addCampaign( $this, $campaignId );
+        
+        //dedupe on email option
+        $this->addElement('checkbox', 'dedupe_email', ts('Remove duplicate emails?'));
         
         //get the mailing groups.
         $groups = CRM_Core_PseudoConstant::group('Mailing');
@@ -344,7 +348,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             $values['includeGroups'][] = $smartGroupId;
         }
         
-        foreach ( array( 'name', 'group_id', 'search_id', 'search_args', 'campaign_id' ) as $n ) {
+        foreach ( array( 'name', 'group_id', 'search_id', 'search_args', 'campaign_id', 'dedupe_email' ) as $n ) {
             if ( CRM_Utils_Array::value( $n, $values ) ) {
                 $params[$n] = $values[$n];
             }
@@ -427,11 +431,18 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         $mailing = CRM_Mailing_BAO_Mailing::create($params, $ids);
         $this->set('mailing_id', $mailing->id);
 
-
+        $dedupeEmail = false;
+        if ( isset($params['dedupe_email']) ) {
+            $dedupeEmail = $params['dedupe_email'];
+        }
+        
         // also compute the recipients and store them in the mailing recipients table
-        CRM_Mailing_BAO_Mailing::getRecipients( $mailing->id, $mailing->id,
-                                                null, null,
-                                                true );
+        CRM_Mailing_BAO_Mailing::getRecipients( $mailing->id,
+                                                $mailing->id,
+                                                null,
+                                                null,
+                                                true,
+                                                $dedupeEmail );
 
         require_once 'CRM/Mailing/BAO/Recipients.php';
         $count = CRM_Mailing_BAO_Recipients::mailingSize( $mailing->id );

@@ -118,6 +118,6 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
                           'version'=>  $this->_apiversion );
         $result = & civicrm_api('activity_type', 'delete', $params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        $this->assertEquals($result , 1 , 'In line ' . __LINE__);
+        $this->assertEquals($result['is_error'] , 1 , 'In line ' . __LINE__);
     }
 }

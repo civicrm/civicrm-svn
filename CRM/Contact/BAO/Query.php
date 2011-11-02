@@ -434,7 +434,6 @@ class CRM_Contact_BAO_Query
         // basically do all the work once, and then reuse it
         $this->initialize( );
 
-        // CRM_Core_Error::debug( $this );
     }
 
     /**
@@ -1112,7 +1111,8 @@ class CRM_Contact_BAO_Query
             if ( $this->_useDistinct && !isset( $this->_distinctComponentClause) ) {
                 if ( !( $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) ) {
                     // CRM-5954
-                    $this->_select['contact_id'] = 'DISTINCT(contact_a.id) as contact_id';
+                    $this->_select['contact_id'] = 'contact_a.id as contact_id';
+                    $this->_useDistinct = false;
                     $this->_useGroupBy = true;
                 }
             } 
@@ -1525,7 +1525,7 @@ class CRM_Contact_BAO_Query
     function restWhere( &$values ) 
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
-        
+
         if ( ! CRM_Utils_Array::value( $grouping, $this->_where ) ) {
             $this->_where[$grouping] = array( );
         }
@@ -1765,6 +1765,9 @@ class CRM_Contact_BAO_Query
             $wc = 'civicrm_website.url';
             $this->_where[$grouping][] = self::buildClause( $wc, $op, "'$value'" );
             $this->_qill[$grouping][]  = "$field[title] $op \"$value\"";
+        } else if ( $name === 'contact_is_deleted' ) {
+            $this->_where[$grouping][] = self::buildClause( "contact_a.is_deleted", $op, $value );
+            $this->_qill[$grouping][]  = "$field[title] $op \"$value\"";
         } else {
             // sometime the value is an array, need to investigate and fix
             if ( is_array( $value ) ) {
@@ -1780,8 +1783,9 @@ class CRM_Contact_BAO_Query
                     $op    = 'LIKE';
                 }
 
-                if ( $op != 'IN' ) {
-                    $value     = "'$value'";
+                $type = null;
+                if ( CRM_Utils_Array::value( 'type', $field ) ) {
+                    $type = CRM_Utils_Type::typeToString( $field['type'] );
                 }
 
                 if ( isset( $locType[1] ) &&
@@ -1810,10 +1814,12 @@ class CRM_Contact_BAO_Query
                             $fieldName = "{$field['where']}";
                         }
                     }
-                    
+
+
                     $this->_where[$grouping][] = self::buildClause( $fieldName,
                                                                     $op,
-                                                                    $value );
+                                                                    $value,
+                                                                    $type );
                     $this->_qill[$grouping][]  = "$field[title] $op $value";
                 }
                 
@@ -2071,8 +2077,9 @@ class CRM_Contact_BAO_Query
                 continue;
 
             case 'im_provider':
+                $from .= " $side JOIN civicrm_im ON (contact_a.id = civicrm_im.contact_id) ";
                 $from .= " $side JOIN civicrm_option_group option_group_imProvider ON option_group_imProvider.name = 'instant_messenger_service'";
-                $from .= " $side JOIN civicrm_im_provider im_provider ON (civicrm_im.provider_id = im_provider.id AND option_group_imProvider.id = im_provider.option_group_id)";
+                $from .= " $side JOIN civicrm_option_value im_provider ON (civicrm_im.provider_id = im_provider.value AND option_group_imProvider.id = im_provider.option_group_id)";
                 continue;
                 
             case 'civicrm_openid':
@@ -2284,23 +2291,25 @@ class CRM_Contact_BAO_Query
     }
 
     function includeContactSubTypes( $value, $grouping ) {
-        if ( ! is_array( $value ) ) {
-            $clause = "'" . CRM_Utils_Type::escape( $value, 'String' ) . "'";
         
-            $this->_where[$grouping][] = "contact_a.contact_sub_type = $clause";
-            $this->_qill [$grouping][]  = ts('Contact Subtype') . ' - ' . $clause;
-        } else {
-            $clause = array( );
+        $clause = array( );
+        $alias  = "contact_a.contact_sub_type";
+
+        if ( is_array( $value ) ) {
             foreach ( $value as $k => $v) { 
                 if ( ! empty( $k ) ) {
-                    $clause[$k] = "'" . CRM_Utils_Type::escape( $k, 'String' ) . "'";
+                    $clause[$k] = "($alias like '%" . CRM_Core_DAO::VALUE_SEPARATOR . 
+                        CRM_Utils_Type::escape( $k, 'String' ) . CRM_Core_DAO::VALUE_SEPARATOR . "%')";
                 }
             }
-            
-            if ( ! empty( $clause ) ) {
-                $this->_where[$grouping][] = 'contact_a.contact_sub_type IN (' . implode( ',', $clause ) . ')';
-                $this->_qill [$grouping][] = ts('Contact Subtype') . ' - ' . implode( ' ' . ts('or') . ' ', $clause );
-            }
+        } else {
+            $clause[$value] = "($alias like '%" . CRM_Core_DAO::VALUE_SEPARATOR . 
+                CRM_Utils_Type::escape( $value, 'String' ) . CRM_Core_DAO::VALUE_SEPARATOR . "%')";
+        }
+        
+        if ( ! empty( $clause ) ) {
+            $this->_where[$grouping][] = "( ". implode( ' OR ', $clause ). " )";
+            $this->_qill [$grouping][] = ts('Contact Subtype') . ' - ' . implode( ' ' . ts('or') . ' ', array_keys($clause) );
         }
     }
 
@@ -3522,7 +3531,6 @@ civicrm_relationship.start_date > {$today}
         }
         
         $order = $orderBy = $limit = '';
-
         if ( ! $count ) {
             $config = CRM_Core_Config::singleton( );
             if ( $config->includeOrderByClause ||
@@ -3542,7 +3550,7 @@ civicrm_relationship.start_date > {$today}
 
                         $order = " ORDER BY $orderBy";
                         
-                       if ( $sortOrder ) {
+                        if ( $sortOrder ) {
                             $order .= " $sortOrder";
                         }
                     }
@@ -4029,7 +4037,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
             } else {
                 $this->_where[$grouping][] = "{$tableName}.{$dbFieldName} $firstOP {$value}";
                 $displayValue = $options ? $options[$value] : $value;
-                $this->_qill[$grouping][]  = "$fieldTitle - $phrase \"$displayValue\"";
+                $this->_qill[$grouping][]  = "$fieldTitle - $firstPhrase \"$displayValue\"";
             }
             $this->_tables[$tableName] = $this->_whereTables[$tableName] = 1;
 

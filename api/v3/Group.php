@@ -38,7 +38,7 @@
  * Include utility functions
  */
 require_once 'CRM/Contact/BAO/Group.php';
-require_once 'api/v3/utils.php';
+
 
 /**
  * create/update group
@@ -53,14 +53,14 @@ require_once 'api/v3/utils.php';
  *
  * @return array   returns id of the group created if success,
  *                 error message otherwise
- *
+  *@example GroupCreate.php
+ *{@getfields group_create}
  * @access public
  */
 function civicrm_api3_group_create( $params )
 {
      
-    civicrm_api3_verify_mandatory($params,null,array('title'));
-    $group = CRM_Contact_BAO_Group::create( $params );
+  $group = CRM_Contact_BAO_Group::create( $params );
 
     if ( is_null( $group ) ) {
       return civicrm_api3_create_error( 'Group not created' );
@@ -71,6 +71,16 @@ function civicrm_api3_group_create( $params )
     }
 
 }
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_group_create_spec(&$params){
+    $params['is_active']['api.default'] = 1; 
+    $params['title']['api.required'] = 1; 
+}
 
 /**
  * Returns array of groups  matching a set of one or more group properties
@@ -80,12 +90,12 @@ function civicrm_api3_group_create( $params )
  *                       as null, all groups will be returned
  *
  * @return array  (referance) Array of matching groups
+ * @example GroupGet.php
+ *{@getfields group_get}
  * @access public
  */
 function civicrm_api3_group_get( $params )
 {
-     civicrm_api3_verify_mandatory($params);
-
     $returnProperties = array( );
     foreach ( $params as $n => $v ) {
       if ( substr( $n, 0, 7 ) == 'return.' ) {
@@ -121,13 +131,14 @@ function civicrm_api3_group_get( $params )
  *
  * @return array  (referance) returns flag true if successfull, error
  *                message otherwise
+ *@example GroupDelete.php
+ *{@getfields group_delete}
  *
  * @access public
  */
 function civicrm_api3_group_delete( $params )
 {
 
-    civicrm_api3_verify_mandatory($params,null,array('id'));
     CRM_Contact_BAO_Group::discard( $params['id'] );
     return civicrm_api3_create_success( true );
 

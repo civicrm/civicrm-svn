@@ -187,6 +187,13 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         if ( isset ($this->_values['event']['confirm_title'] ) ) {
             CRM_Utils_System::setTitle($this->_values['event']['confirm_title']);
         }
+
+        if ($this->_pcpId){
+          require_once "CRM/Contribute/Form/Contribution/Confirm.php";
+          $params = CRM_Contribute_Form_Contribution_Confirm::processPcp($this, $this->_params[0]);
+          $this->_params[0] = $params;
+        }
+        
         $this->set( 'params', $this->_params );
     }
 

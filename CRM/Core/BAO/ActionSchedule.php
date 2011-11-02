@@ -231,7 +231,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
      * @static
      * @access public
      */
-    static function &getList( $namesOnly = false ) 
+    static function &getList( $namesOnly = false, $entityValue = null, $id = null ) 
     {
         require_once 'CRM/Core/PseudoConstant.php';
         require_once 'CRM/Event/PseudoConstant.php';
@@ -264,21 +264,35 @@ SELECT
        cas.start_action_offset,
        cas.start_action_unit,
        cas.start_action_condition,
+       cas.absolute_date,
        is_repeat,
        is_active
 
 FROM civicrm_action_schedule cas
 LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
-
 ";
+        $params = CRM_Core_DAO::$_nullArray;
+        
+        if ( $entityValue and $id ) {
+            $where = "
+WHERE   cas.entity_value = $id AND
+        cam.entity_value = '$entityValue'";
+            
+            $query .= $where;
+
+            $params = array( 1 => array( $id, 'Integer' ),
+                             2 => array( $entityValue, 'String'));
+        }
+        
         $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch() ) {
-            $list[$dao->id]['id']  = $dao->id;
-            $list[$dao->id]['title']  = $dao->title;
-            $list[$dao->id]['start_action_offset']  = $dao->start_action_offset;
-            $list[$dao->id]['start_action_unit']  = $dao->start_action_unit;
-            $list[$dao->id]['start_action_condition']  = $dao->start_action_condition;
-            $list[$dao->id]['entityDate']  = ucwords(str_replace('_', ' ', $dao->entityDate));
+            $list[$dao->id]['id'] = $dao->id;
+            $list[$dao->id]['title'] = $dao->title;
+            $list[$dao->id]['start_action_offset'] = $dao->start_action_offset;
+            $list[$dao->id]['start_action_unit'] = $dao->start_action_unit;
+            $list[$dao->id]['start_action_condition'] = $dao->start_action_condition;
+            $list[$dao->id]['entityDate'] = ucwords(str_replace('_', ' ', $dao->entityDate));
+            $list[$dao->id]['absolute_date'] = $dao->absolute_date;
             $status = $dao->entityStatus;
             $statusIds = str_replace(CRM_Core_DAO::VALUE_SEPARATOR, ', ', $dao->entityStatusIds);
             foreach ($$status as $key => $val) {
@@ -288,7 +302,7 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
             $value = $dao->entityValue;
             $valueIds = str_replace(CRM_Core_DAO::VALUE_SEPARATOR, ', ', $dao->entityValueIds);
             foreach ($$value as $key => $val) {
-              $valueIds   = str_replace($key, $val, $valueIds);
+              $valueIds = str_replace($key, $val, $valueIds);
             }
             $list[$dao->id]['entity']     = $entity[$dao->entity];
             $list[$dao->id]['value']      = $valueIds;
@@ -527,7 +541,7 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
             }
 
             if ( $mapping->entity == 'civicrm_activity' ) {
-                $tokenFields = array( 'activity_id', 'activity_type', 'subject', 'activity_date_time' );
+                $tokenFields = array( 'activity_id', 'activity_type', 'subject', 'details', 'activity_date_time' );
                 $extraSelect = ", ov.label as activity_type, e.id as activity_id";
                 $extraJoin   = "INNER JOIN civicrm_option_group og ON og.name = 'activity_type'
 INNER JOIN civicrm_option_value ov ON e.activity_type_id = ov.value AND ov.option_group_id = og.id";

@@ -306,10 +306,6 @@ function civitest_civicrm_tokenValues( &$values,
                                        $dontCare,
                                        $tokens,
                                        $context ) {
-    
-    CRM_Core_Error::debug( $context, $tokens );
-    exit( );
-
     if ( is_array( $contactIDs ) ) {
         $contactIDString = implode( ',', array_values( $contactIDs ) );
     }
@@ -331,6 +327,31 @@ GROUP BY contact_id
         }
         $values[$dao->contact_id]['contribution.amount'] = $dao->total_amount;
         $values[$dao->contact_id]['contribution.date'  ] = $dao->receive_date;
+    }
+}
+
+// example of token that does not depend on contactID
+// and using the new format
+function civitest_civicrm_tokenValues( &$values,
+                                       &$contactIDs,
+                                       $dontCare,
+                                       $tokens,
+                                       $context ) {
+    if ( isset( $tokens['views'] ) ) {
+        static $_cache = null;
+
+        if ( ! $_cache ) {
+            $_cache = array( );
+            foreach( $tokens['views'] as $token ) {
+                $_cache[$token] = CALL_YOUR_OWN_FUNCTION_TO_RENDER_THIS_VIEW( $token );
+            }
+        }
+
+        foreach( $contactIDs as $cid ) {
+            foreach( $tokens['views'] as $token ) {
+                $values[$cid]["views.{$token}"] = $_cache[$token];
+            }
+        }
     }
 }
 

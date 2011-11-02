@@ -222,9 +222,7 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
     static function &links( )
     {
         if (!(self::$_links)) {
-            $deleteExtra = ts('Are you sure you want to delete this relationship?');
             $disableExtra = ts('Are you sure you want to disable this relationship?');
-            $enableExtra = ts('Are you sure you want to re-enable this relationship?');
 
             self::$_links = array(
                                   CRM_Core_Action::UPDATE  => array(

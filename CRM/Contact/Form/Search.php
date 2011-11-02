@@ -389,8 +389,13 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                 $tasks = $tasks + CRM_Contact_Task::optionalTaskTitle();
             }
 
-            $savedSearchValues = array( 'id' => $this->_ssID,
-                                        'name' => CRM_Contact_BAO_SavedSearch::getName( $this->_ssID, 'title' ) );
+            $search_custom_id = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch', 
+                                                             $this->_ssID, 
+                                                             'search_custom_id' );
+
+            $savedSearchValues = array( 'id'               => $this->_ssID,
+                                        'name'             => CRM_Contact_BAO_SavedSearch::getName( $this->_ssID, 'title' ),
+                                        'search_custom_id' => $search_custom_id );
             $this->assign_by_ref( 'savedSearch', $savedSearchValues );
             $this->assign( 'ssID', $this->_ssID );
         }

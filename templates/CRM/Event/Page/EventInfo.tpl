@@ -32,6 +32,7 @@
      &nbsp;{ts}Registration is closed for this event{/ts}
   </div>
 {/if}
+{if !$config->userFrameworkFrontend}
 <div class="crm-actions-ribbon crm-event-manage-tab-actions-ribbon">
 	<ul id="actions">
 {if call_user_func(array('CRM_Core_Permission','check'), 'edit all events')} 
@@ -41,12 +42,13 @@
 	      <div class="ac_results" id="crm-event-links-list">
 	      	   <div class="crm-event-links-list-inner">
 	      	   	<ul>
-        		    <li><a title="Info and Settings" href="{crmURL p='civicrm/event/manage/eventInfo' q="reset=1&action=update&id=`$event.id`"}">{ts}Info and Settings{/ts}</a></li>
+        		    <li><a title="Info and Settings" href="{crmURL p='civicrm/event/manage/settings' q="reset=1&action=update&id=`$event.id`"}">{ts}Info and Settings{/ts}</a></li>
         		    <li><a title="Location" href="{crmURL p='civicrm/event/manage/location' q="reset=1&action=update&id=`$event.id`"}">{ts}Location{/ts}</a></li>
         		    <li><a title="Fees" href="{crmURL p='civicrm/event/manage/fee' q="reset=1&action=update&id=`$event.id`"}">{ts}Fees{/ts}</a></li>
         		    <li><a title="Online Registration" href="{crmURL p='civicrm/event/manage/registration' q="reset=1&action=update&id=`$event.id`"}">{ts}Online Registration{/ts}</a></li>
         		    <li><a title="Tell a Friend" href="{crmURL p='civicrm/event/manage/friend' q="reset=1&action=update&id=`$event.id`"}">{ts}Tell a Friend{/ts}</a></li>
-		        </ul>
+                    <li><a title="PCP" href="{crmURL p='civicrm/event/manage/pcp' q="reset=1&action=update&id=`$event.id`"}">{ts}PCP{/ts}</a></li>
+                </ul>
 	           </div>
 	      </div>
     </div></li>
@@ -75,6 +77,7 @@
 	</ul>
 	<div class="clear"></div>
 </div>
+{/if}
 <div class="vevent crm-block crm-event-info-form-block">
 	<div class="event-info">
 	
@@ -194,6 +197,10 @@
         <br />{include file="CRM/Event/Page/iCalLinks.tpl"}
     {/if}
     
+    {if $event.is_share }
+        {capture assign=eventUrl}{crmURL p='civicrm/event/info' q="id=`$event.id`&amp;reset=1" a=true fe=1 h=1}{/capture}
+        {include file="CRM/common/SocialNetwork.tpl" url=$eventUrl title=$event.title pageURL=$eventUrl}
+    {/if}
     </div>
 </div>
 {literal}

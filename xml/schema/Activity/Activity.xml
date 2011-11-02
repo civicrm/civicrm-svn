@@ -367,4 +367,9 @@
        <key>id</key> 
        <onDelete>SET NULL</onDelete>
   </foreignKey>
+  <field>
+      <name>weight</name>
+      <type>int</type>
+      <add>4.1</add>
+  </field>
 </table>

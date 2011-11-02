@@ -65,8 +65,8 @@ class CRM_Pledge_Page_Payment extends CRM_Core_Page
         } else {
             $pledgeId = CRM_Utils_Request::retrieve( 'pledgeId', 'Positive', $this );
             
-            require_once 'CRM/Pledge/BAO/Payment.php';
-            $paymentDetails = CRM_Pledge_BAO_Payment::getPledgePayments( $pledgeId );
+            require_once 'CRM/Pledge/BAO/PledgePayment.php';
+            $paymentDetails = CRM_Pledge_BAO_PledgePayment::getPledgePayments( $pledgeId );
             
             $this->assign( 'rows'     , $paymentDetails );
             $this->assign( 'pledgeId' , $pledgeId );

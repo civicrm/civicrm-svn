@@ -31,6 +31,7 @@ ORIGPWD=`pwd`
 # Set no actions by default 
 D5PACK=0
 J5PACK=0
+WP5PACK=0
 
 # Display usage
 display_usage()
@@ -108,6 +109,7 @@ case $1 in
 	echo; echo "Generating all we've got."; echo;
 	D5PACK=1
 	J5PACK=1
+	WP5PACK=1
 	;;
 
 	# USAGE

@@ -40,7 +40,7 @@
 /**
  * Files required for this package
  */
-require_once 'api/v3/utils.php';
+
 require_once 'CRM/Member/BAO/MembershipStatus.php';
 /**
  * Create a Membership Status
@@ -49,6 +49,7 @@ require_once 'CRM/Member/BAO/MembershipStatus.php';
  *
  * @param   array  $params  an associative array of name/value property values of civicrm_membership_status
  * @return array of newly created membership status property values.
+ * {@getfields MembershipStatus_create}
  * @access public
  */
 function civicrm_api3_membership_status_create($params) {
@@ -90,15 +91,12 @@ function civicrm_api3_membership_status_create($params) {
  * @param  array $params  an associative array of name/value property values of civicrm_membership_status
  *
  * @return  Array of all found membership status property values.
+ * {@getfields MembershipStatus_get}
  * @access public
  */
 function civicrm_api3_membership_status_get($params) {
 
-		civicrm_api3_verify_mandatory ( $params );
-
     return _civicrm_api3_basic_get('CRM_Member_BAO_MembershipStatus', $params);		
-
-
 }
 
 /**
@@ -149,17 +147,15 @@ function &civicrm_api3_membership_status_update($params) {
  *
  * This API is used for deleting a membership status
  *
- * @param  Int  $membershipStatusID   Id of the membership status to be deleted
- *
- * @return null if successfull, object of CRM_Core_Error otherwise
+ * @param  array  Params array containing 'id' -    Id of the membership status to be deleted
+ * {@getfields MembershipStatus_delete}
+ * @return array i
  * @access public
  */
 function civicrm_api3_membership_status_delete($params) {
 
-		civicrm_api3_verify_mandatory ( $params, null, array ('id' ) );
-		require_once 'CRM/Member/BAO/MembershipStatus.php';
 		$memberStatusDelete = CRM_Member_BAO_MembershipStatus::del ( $params ['id'], true );
-		return $memberStatusDelete ? civicrm_api3_create_error ( 'Error while deleting membership type Status' ) : civicrm_api3_create_success ();
+		return $memberStatusDelete ? civicrm_api3_create_error ( $memberStatusDelete['error_message'] ) : civicrm_api3_create_success ();
 
 }
 
@@ -176,9 +172,6 @@ function civicrm_api3_membership_status_delete($params) {
  * @public
  */
 function civicrm_api3_membership_status_calc($membershipParams) {
-	if (! is_array ( $membershipParams )) {
-		return civicrm_api3_create_error ( ts ( 'Input variable `params` is not an array' ) );
-	}
 	
 	if (! ($membershipID = CRM_Utils_Array::value ( 'membership_id', $membershipParams ))) {
 		return civicrm_api3_create_error ( 'membershipParams do not contain membership_id' );

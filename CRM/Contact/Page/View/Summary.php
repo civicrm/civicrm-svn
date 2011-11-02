@@ -161,7 +161,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         foreach( $communicationType as $key => $value ) {
             if ( CRM_Utils_Array::value( $key, $defaults ) ) {
                 foreach( $defaults[$key] as &$val ) {
-                    CRM_Utils_Array::lookupValue( $val, 'location_type', CRM_Core_PseudoConstant::locationType(), false );
+                    CRM_Utils_Array::lookupValue( $val, 'location_type', CRM_Core_PseudoConstant::locationDisplayName(), false );
                     if ( !CRM_Utils_Array::value( 'skip', $value ) ) {
                         eval( '$pseudoConst = CRM_Core_PseudoConstant::'.$value['type'].'( );' );
                         CRM_Utils_Array::lookupValue( $val, $value['id'], $pseudoConst, false );
@@ -223,9 +223,11 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         require_once 'CRM/Contact/BAO/Contact/Utils.php';
         $shareAddressContactNames = CRM_Contact_BAO_Contact_Utils::getAddressShareContactNames( $defaults['address'] );
         foreach ( $defaults['address'] as $key => $addressValue ) {
-            if ( CRM_Utils_Array::value( 'master_id', $addressValue ) && !$shareAddressContactNames[ $addressValue['master_id']]['is_deleted'] ) {
-                $sharedAddresses[$key]['shared_address_display'] = array( 'address' => $addressValue['display'],
-                    'name'    => $shareAddressContactNames[ $addressValue['master_id'] ]['name'] ); 
+            if ( CRM_Utils_Array::value( 'master_id', $addressValue ) && 
+                 ! $shareAddressContactNames[ $addressValue['master_id']]['is_deleted'] ) {
+                $sharedAddresses[$key]['shared_address_display'] = 
+                    array( 'address' => $addressValue['display'],
+                           'name'    => $shareAddressContactNames[ $addressValue['master_id'] ]['name'] ); 
             }
         }
         $this->assign( 'sharedAddresses', $sharedAddresses );
@@ -240,7 +242,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
             //for birthdate format with respect to birth format set 
             $this->assign( 'birthDateViewFormat',  CRM_Utils_Array::value( 'qfMapping', CRM_Utils_Date::checkBirthDateFormat( ) ) );
         }
-        
+
         $this->assign( $defaults );
         
         // also assign the last modifed details

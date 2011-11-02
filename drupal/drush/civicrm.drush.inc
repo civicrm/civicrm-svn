@@ -66,6 +66,18 @@ function civicrm_drush_command() {
     $items = array();
 
     // the key in the $items array is the name of the command.
+    $items['civicrm-api'] = 
+        array('callback'    => 'drush_civicrm_api',
+              'description' => 'CLI access to CiviCRM APIs. It can return pretty-printor json formatted data.', 
+              'examples'    => 
+              array('drush civicrm-api contact.create first_name=John last_name=Doe contact_type=Individual' => 'Create a new contact named John Doe',
+                    'drush civicrm-api contact.create id=1 --out=json' =>  'Find/display a contact in JSON format',
+                    ),
+              'options'     =>  array(
+                  '--in' => 'Input type: "args" (command-line), "json" (STDIN)',
+                  '--out' => 'Output type: "pretty" (STDOUT), "json" (STDOUT)',
+                  ),
+              );
     $items['civicrm-install'] = 
         array('callback'    => 'civicrm_pkg_install',
               'description' => "Install a new instance of CiviCRM.",
@@ -857,4 +869,52 @@ function _civicrm_get_crmpath( ) {
         }
     }
     return $crmpath;        
+}
+
+/**
+ * (Drush callback)
+ */
+function drush_civicrm_api() {
+  $DEFAULTS = array('version' => 3);
+
+  $args = func_get_args();
+  list ($entity,$action) = explode('.', $args[0]);
+  array_shift($args);
+
+  // Parse $params
+  switch (drush_get_option('in', 'args')) {
+    case 'args':
+      $params = $DEFAULTS;
+      foreach ($args as $arg) {
+        preg_match('/^([^=]+)=(.*)$/', $arg, $matches);
+        $params[ $matches[1] ] = $matches[2];
+      }
+      break;
+    case 'json':
+      $json = stream_get_contents(STDIN);
+      if (empty($json)) {
+        $params = $DEFAULTS;
+      } else {
+        $params = array_merge($DEFAULTS, json_decode($json, TRUE));
+      }
+      break;
+    default:
+      drush_set_error(dt('Unknown format: @format', array('@format' => $format)));
+      break;
+  }
+  
+  civicrm_initialize();
+  $result = civicrm_api($entity, $action, $params);
+
+  switch (drush_get_option('out', 'pretty')) {
+    case 'pretty':
+      drush_print_r($result);
+      break;
+    case 'json':
+      drush_print(json_encode($result));
+      break;
+    default:
+      drush_set_error(dt('Unknown format: @format', array('@format' => $format)));
+      break;
+  }
 }

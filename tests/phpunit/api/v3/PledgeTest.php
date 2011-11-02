@@ -57,7 +57,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
                         'pledge_create_date'                 => date('Ymd'),
                         'start_date'   					     => date('Ymd'),
                         'scheduled_date'                     => $this->scheduled_date,   
-                        'pledge_amount'                      => 100.00,
+                        'amount'                      => 100.00,
                         'pledge_status_id'                   => '2',
                         'pledge_contribution_type_id'        => '1',
                         'pledge_original_installment_amount' => 20,
@@ -326,7 +326,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $this->assertEquals(5,$pledge['pledge_frequency_interval'], 'In line ' . __LINE__);
         $this->assertEquals(20, $pledge['pledge_next_pay_amount'],'In line ' . __LINE__);
 
-        $pledgeID = array( 'pledge_id' => $result['id'], 'version' => 3 );
+        $pledgeID = array( 'id' => $result['id'], 'version' => 3 );
         $pledge   =& civicrm_api('pledge','delete',$pledgeID);
 
     }
@@ -340,7 +340,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $cancelparams = array('sequential' => 1, 'version' => $this->_apiversion,'id' => $result['id'], 'pledge_status_id' => 3);
         $result=& civicrm_api('pledge','create', $cancelparams);
         $this->assertEquals(3, $result['values'][0]['status_id'], "in line " . __LINE__);
-        $pledgeID = array( 'pledge_id' => $result['id'], 'version' => 3 );
+        $pledgeID = array( 'id' => $result['id'], 'version' => 3 );
         $pledge   =& civicrm_api('pledge','delete',$pledgeID);    
     }
 
@@ -419,7 +419,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $params = array('version' =>$this->_apiversion );
         $pledge = civicrm_api('pledge','delete',$params);
         $this->assertEquals( $pledge['is_error'], 1 );
-        $this->assertEquals( $pledge['error_message'], 'Mandatory key(s) missing from params array: one of (id, pledge_id)' );
+        $this->assertEquals( $pledge['error_message'], 'Mandatory key(s) missing from params array: id' );
     }
     
     
@@ -438,7 +438,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
                          'version'			 =>$this->_apiversion );
         $pledge =& civicrm_api('pledge','delete', $params );
         $this->assertEquals($pledge['is_error'], 1);
-        $this->assertEquals( $pledge['error_message'], 'Mandatory key(s) missing from params array: one of (id, pledge_id)' );
+        $this->assertEquals( $pledge['error_message'], 'Mandatory key(s) missing from params array: id' );
     }
     
     /*

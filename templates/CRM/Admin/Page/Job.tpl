@@ -32,6 +32,14 @@
 {else}
 
 {if $rows}
+
+        {if $action ne 1 and $action ne 2}
+        <div class="action-link">
+          <a href="{crmURL q="action=add&reset=1"}" id="newJob" class="button"><span><div class="icon add-icon"></div>{ts}Add New Scheduled Job{/ts}</span></a>
+          <a href="{crmURL p='civicrm/admin/joblog' q="reset=1"}" id="jobLog" class="button"><span><div class="icon add-icon"></div>{ts}See the log{/ts}</span></a>
+        </div>
+        {/if}
+
 <div id="ltype">
         {strip}
         {* handle enable/disable actions*}
@@ -59,6 +67,7 @@
         {if $action ne 1 and $action ne 2}
         <div class="action-link">
           <a href="{crmURL q="action=add&reset=1"}" id="newJob" class="button"><span><div class="icon add-icon"></div>{ts}Add New Scheduled Job{/ts}</span></a>
+          <a href="{crmURL p='civicrm/admin/joblog' q="reset=1"}" id="jobLog" class="button"><span><div class="icon add-icon"></div>{ts}See the log{/ts}</span></a>
         </div>
         {/if}
 </div>
@@ -70,5 +79,6 @@
      <div class="action-link">
        <a href="{crmURL p='civicrm/admin/job' q="action=add&reset=1"}" id="newJob" class="button"><span><div class="icon add-icon"></div>{ts}Add New Scheduled Job{/ts}</span></a>
      </div>
+ 
 {/if}
 {/if}

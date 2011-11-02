@@ -192,10 +192,10 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     
     function testCreateParamsWithoutRequiredKeys()
     {
-        $params = array( 'no_required' => 1 );
+        $params = array( 'version' => 3 );
         $contribution =& civicrm_api('contribution', 'create', $params);
         $this->assertEquals( $contribution['is_error'], 1 );
-        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contact_id, total_amount, one of (contribution_type_id, contribution_type), version' );
+        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contact_id, total_amount, one of (contribution_type_id, contribution_type)' );
     }
     function testCreateContribution()
     {

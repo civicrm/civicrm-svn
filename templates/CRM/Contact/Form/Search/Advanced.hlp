@@ -25,7 +25,7 @@
 *}
 {htxt id='id-advanced-intro'}
     <p>{ts}Use <strong>&#37;</strong> wildcard(s) for partial matches. EXAMPLE: Enter 'Volunteer&#37;' as your Activity Type to match any activity whose type is 'Volunteer' + any other words (e.g. Volunteer for Open House).{/ts}</p>
-    <p>{ts}If multiple boxes are checked for Contact Types, Groups, Tags and Location Types, the selections are combined as <strong>OR</strong> criteria (e.g. checking 'Group A' and 'Group B' will find contacts who are either in 'Group A' OR 'Group B'). All other search fields are combined as <strong>AND</strong> criteria (e.g. selecting Tag is 'Major Donor' AND Country is 'Mexico' returns only those contacts who meet both criteria).{/ts}</p>
+    <p>{ts}If multiple boxes are checked for Contact Types, Groups, Tags and Location Types, the selections are combined as <strong>OR</strong> criteria (e.g. checking 'Group A' and 'Group B' will find contacts who are either in 'Group A' OR 'Group B'). All other search fields are combined as <strong>AND</strong> criteria (e.g. selecting Tag is 'Age' AND Country is 'Canada' returns only those contacts who meet both criteria).{/ts}</p>
 {/htxt}
 
 {htxt id='id-advanced-smart'}
@@ -38,7 +38,7 @@
 {/htxt}
 
 {htxt id="id-display-results"}
-    <p>{ts}Advanced Search returns your results as Contact records by default. However, you may want to get another record type instead. For example, you may want to see all the Contribution records which match your search criteria.{/ts}</p>
+    <p>{ts}Advanced Search returns your results as Contact records by default. However, you may want to get another record type instead. For example, you may want to see all the Activity records which match your search criteria.{/ts}</p>
 {/htxt}
 
 {htxt id="id-search-views"}

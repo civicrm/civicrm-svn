@@ -91,7 +91,7 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
     function preProcess( ) 
     {
         $config = CRM_Core_Config::singleton( );
-        if ( in_array("CiviEvent", $config->enableComponents) ) {
+        if ( in_array('CiviEvent', $config->enableComponents) ) {
             $this->assign('CiviEvent', true );
         }
         
@@ -297,15 +297,23 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
         // make submit buttons keep the current working tab opened.
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             $className = CRM_Utils_String::getClassName( $this->_name );
-            if ( $className == 'EventInfo' ) {
-                $subPage = 'eventInfo';
-            } elseif ( $className == 'Event' ) {
-                $subPage = 'friend';
-            } else {
-                $subPage = strtolower( $className );
-            }
             
-            CRM_Core_Session::setStatus( ts("'%1' information has been saved.", array(1 => ( $subPage == 'friend' )?'Friend':$className ) ) );
+            // hack for special cases.
+            switch( $className ) {
+                case 'Event':
+                    $attributes = $this->getVar( '_attributes' );
+                    $subPage = strtolower(basename( CRM_Utils_Array::value('action', $attributes) ));
+                    break;
+                case 'ScheduleReminders':
+                    $subPage = 'reminder';
+                    break;
+                default:
+                    $subPage = strtolower($className);
+                    break;
+            }
+
+            CRM_Core_Session::setStatus( ts("'%1' information has been saved.", 
+                                            array(1 => ( $subPage == 'friend' )?'Friend':$className ) ) );
             
             $this->postProcessHook( );
             

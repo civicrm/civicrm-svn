@@ -28,7 +28,7 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CRM/Core/BAO/Setting.php';
 
-class CRM_Core_BAO_SettingTest extends CiviUnitTestCase 
+class CRM_Core_BAO_PreferencesTest extends CiviUnitTestCase 
 {
     function get_info( ) 
     {

@@ -59,7 +59,7 @@ for F in $SRC/sql/civicrm*.mysql $SRC/sql/counties.US.sql.gz; do
 done
 
 for F in $SRC/WordPress/*; do 
-	cp $F $TRG
+	cp $F $TRG/civicrm
 done
 
 # remove Quest

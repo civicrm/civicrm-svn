@@ -39,7 +39,7 @@
 /**
  * Include utility functions
  */
-require_once 'api/v3/utils.php';
+require_once 'CRM/Pledge/BAO/Pledge.php';
 require_once 'CRM/Utils/Rule.php';
 
 /**
@@ -54,18 +54,8 @@ require_once 'CRM/Utils/Rule.php';
  *
  */
 function civicrm_api3_pledge_create( $params ) {
-
-
-    if ($params['pledge_amount']){
-      //acceptable in unique format or DB format but change to unique format here
-      $params['amount'] = $params['pledge_amount'];
-    }
-     $required =  array('contact_id', 'amount', array('pledge_contribution_type_id','contribution_type_id') , 'installments','start_date');
-    
-   civicrm_api3_verify_mandatory ($params,null,$required);
      
     $values  = array( );
-    require_once 'CRM/Pledge/BAO/Pledge.php';
     //check that fields are in appropriate format. Dates will be formatted (within reason) by this function
     $error = _civicrm_api3_pledge_format_params( $params, $values,TRUE ); 
     if ( civicrm_api3_error( $error ) ) {
@@ -86,29 +76,22 @@ function civicrm_api3_pledge_create( $params ) {
  *
  * @return boolean        true if success, else false
  * @static void
+ * {@getfields pledge_delete}
+ * @example PledgeDelete.php
  * @access public
  */
 function civicrm_api3_pledge_delete( $params ) {
-
-
-    civicrm_api3_verify_one_mandatory ($params,null,array('id', 'pledge_id'));
-    if (!empty($params['id'])){
-      //handle field name or unique db name
-      $params['pledge_id'] = $params['id'];
-    }
-
-    $pledgeID = CRM_Utils_Array::value( 'pledge_id', $params );
-    if ( ! $pledgeID ) {
-      return civicrm_api3_create_error(  'Could not find pledge_id in input parameters' );
-    }
-
-    require_once 'CRM/Pledge/BAO/Pledge.php';
-    if ( CRM_Pledge_BAO_Pledge::deletePledge( $pledgeID ) ) {
-      return civicrm_api3_create_success(array($pledgeID =>$pledgeID),$params,'pledge','delete' );
+   if ( CRM_Pledge_BAO_Pledge::deletePledge( $params['id'] ) ) {
+      return civicrm_api3_create_success(array($pledgeID =>$params['id']),$params,'pledge','delete' );
     } else {
       return civicrm_api3_create_error(  'Could not delete pledge'  );
     }
 
+}
+
+function _civicrm_api3_pledge_delete_spec( &$params ) {
+  $params['id']['api.aliases'] =array('pledge_id')  ;// set as not required as pledge_id also acceptable & no either/or std yet
+  
 }
 /*
  * return field specification specific to get requests
@@ -129,10 +112,13 @@ function _civicrm_api3_pledge_get_spec(&$params){
  */
 function _civicrm_api3_pledge_create_spec(&$params){
   
-  $required =  array('contact_id', 'amount',  'installments','start_date');
+  $required =  array('contact_id', 'amount',  'installments','start_date', 'pledge_contribution_type_id');
   foreach ($required as $required_field){
-    $params[$field]['api.required'] = 1;
+    $params[$required_field]['api.required'] = 1;
   }
+  // @todo this can come from xml
+  $params['amount']['api.aliases'] = array('pledge_amount'); 
+  $params['pledge_contribution_type_id']['api.aliases'] = array('contribution_type_id'); 
 }
 
 /**
@@ -141,11 +127,12 @@ function _civicrm_api3_pledge_create_spec(&$params){
  * @param  array   $params           (reference ) input parameters. Use interogate for possible fields
  *
  * @return array (reference )        array of pledges, if error an array with an error id and error message
- * @static void
+ * {@getfields pledge_get}
+ * @example PledgeGet.php
  * @access public
  */
 function civicrm_api3_pledge_get( $params ) {
-    civicrm_api3_verify_mandatory ($params);
+
     if(!empty($params['id'])  && empty($params['pledge_id'])){
       //if you pass in 'id' it will be treated by the query as contact_id
       $params['pledge_id'] = $params['id'];

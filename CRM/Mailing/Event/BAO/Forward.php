@@ -119,7 +119,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
             $formatted['onDuplicate'] = CRM_Import_Parser::DUPLICATE_SKIP;
             $formatted['fixAddress'] = true;
             $contact = civicrm_api( 'contact', 'create', $formatted );
-            if ( civicrm_api3_error( $contact ) ) {
+            if ( civicrm_error( $contact ) ) {
                 return $successfulForward;
             }
             $contact_id = $contact['id'];

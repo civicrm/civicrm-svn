@@ -121,7 +121,7 @@
                 </thead>
                 <tbody>
                 {foreach from=$template_row item=row}
-                    <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+                    <tr id="row_{$row.id}" class="{$row.class}{if NOT $row.is_active} disabled{/if}">
                       <td>{$row.msg_title}</td>
                       {if $type eq 'userTemplates'}
                         <td>{$row.msg_subject}</td>

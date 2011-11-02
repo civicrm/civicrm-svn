@@ -93,6 +93,9 @@ class CRM_Core_ScheduledJob
         
         // run_frequency check
         switch ( $this->run_frequency ) {
+            case 'Always':
+                return true;
+                break;
             case 'Hourly':
                 $now = CRM_Utils_Date::currentDBDate( );
                 $hourAgo = strtotime( '-1 hour', strtotime( $now ) );

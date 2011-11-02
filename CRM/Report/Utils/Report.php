@@ -289,6 +289,37 @@ WHERE  inst.report_id = %1";
         
         return true;
     }
+    
+    /**
+     * Check if the user can view a report instance based on their role(s)
+     *
+     * @instanceId string $str the report instance to check
+     *
+     * @return boolean true if yes, else false
+     * @static
+     * @access public
+     */
+    static function isInstanceGroupRoleAllowed( $instanceId ) {
+        if ( ! $instanceId ) {
+            return true;
+        }
+
+        $instanceValues = array( );
+        $params         = array( 'id' => $instanceId );
+        CRM_Core_DAO::commonRetrieve( 'CRM_Report_DAO_Instance',
+                                      $params,
+                                      $instanceValues );
+        //transform grouprole to array
+        if ( !empty($instanceValues['grouprole']) ) {
+            $grouprole_array = explode( CRM_Core_DAO::VALUE_SEPARATOR,
+                                        $instanceValues['grouprole'] );
+			if ( !CRM_Core_Permission::checkGroupRole( $grouprole_array ) &&
+                 !CRM_Core_Permission::check( 'administer Reports' ) ) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     static function processReport( $params ) {
         require_once 'CRM/Report/Page/Instance.php';

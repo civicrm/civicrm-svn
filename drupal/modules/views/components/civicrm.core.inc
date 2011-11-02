@@ -129,6 +129,13 @@ function _civicrm_core_data (&$data, $enabled) {
                                            'sort' => array(
                                                            'handler' => 'views_handler_sort',
                                                            ),
+                                            'relationship' => array(
+                                                                   'base' => 'civicrm_contribution',
+                                                                   'title' => 'Contribution records',
+                                                                   'field' => 'contact_id',
+                                                                   'handler' => 'views_handler_relationship',
+                                                                   'label' => t('CiviCRM Contributions'),
+                                                                  ), 
                                            );
 
     // Drupal ID of the contact (from uf_match.uf_id)
@@ -224,6 +231,44 @@ function _civicrm_core_data (&$data, $enabled) {
                                                                'handler' => 'views_handler_sort',
                                                                ),
                                                );
+    // Prefix
+    $data['civicrm_contact']['prefix_id'] = array(
+                                                     'title' => t('Prefix'), // The item it appears as on the UI,
+                                                     'help'  => t('Prefix'), // The help that appears on the UI,
+                                                     'field' => array(
+                                                                      'handler' => 'civicrm_handler_field_pseudo_constant',
+                                                                      'click sortable' => TRUE,
+                                                                      'pseudo class' => t('CRM_Core_PseudoConstant'),
+                                                                      'pseudo method' => t('individualPrefix'),                                                     
+                                                                      ),
+                                                     'sort' => array(
+                                                                     'handler' => 'views_handler_sort',
+                                                                     ),
+                                                     'filter' => array(
+                                                                       'handler' => 'civicrm_handler_filter_pseudo_constant',
+                                                                       'pseudo class' => t('CRM_Core_PseudoConstant'),
+                                                                       'pseudo method' => t('individualPrefix'),                                                     
+                                                                       ),
+                                                     );
+    // Suffix
+    $data['civicrm_contact']['suffix_id'] = array(
+                                                     'title' => t('Suffix'), // The item it appears as on the UI,
+                                                     'help'  => t('Suffix'), // The help that appears on the UI,
+                                                     'field' => array(
+                                                                      'handler' => 'civicrm_handler_field_pseudo_constant',
+                                                                      'click sortable' => TRUE,
+                                                                      'pseudo class' => t('CRM_Core_PseudoConstant'),
+                                                                      'pseudo method' => t('individualSuffix'),                                                     
+                                                                      ),
+                                                     'sort' => array(
+                                                                     'handler' => 'views_handler_sort',
+                                                                     ),
+                                                     'filter' => array(
+                                                                       'handler' => 'civicrm_handler_filter_pseudo_constant',
+                                                                       'pseudo class' => t('CRM_Core_PseudoConstant'),
+                                                                       'pseudo method' => t('individualSuffix'),                                                     
+                                                                       ),
+                                                     );
 
     //FIRST NAME
     $data['civicrm_contact']['first_name'] = array(
@@ -772,10 +817,8 @@ function _civicrm_core_data (&$data, $enabled) {
                                                        'real field' => 'state_province_id',
                                                        'help' => t('The State or Province of the Address'),
                                                        'field' => array(
-                                                                        'handler' => 'civicrm_handler_field_address',
+                                                                        'handler' => 'civicrm_handler_field_state',
                                                                         'click sortable' => TRUE,
-                                                                        'pseudo class' => 'CRM_Core_PseudoConstant',
-                                                                        'pseudo method' => 'stateProvince',
                                                                         ),
 
                                                        'argument' => array(

@@ -49,8 +49,12 @@
                 <div id="instanceForm">
                     {include file="CRM/Report/Form/Instance.tpl"}
                     {assign var=save value="_qf_"|cat:$form.formName|cat:"_submit_save"}
+                    {assign var=next value="_qf_"|cat:$form.formName|cat:"_submit_next"}
                         <div class="crm-submit-buttons">
                             {$form.$save.html}
+                            {if $mode neq 'template' && $form.$next}
+                                {$form.$next.html}
+                            {/if}
                         </div>
                 </div>
         </div>
@@ -59,6 +63,9 @@
 {if $updateReportButton}
 <div id='update-button' class="crm-submit-buttons">
    {$form.$save.html}
+   {if $mode neq 'template' && $form.$next}
+       {$form.$next.html}
+   {/if}
 </div>
 {/if}
 {/if} {* settings section ends *}

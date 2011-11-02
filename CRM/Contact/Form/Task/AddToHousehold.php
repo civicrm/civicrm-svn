@@ -111,7 +111,6 @@ class CRM_Contact_Form_Task_AddToHousehold extends CRM_Contact_Form_Task {
      */
     public function postProcess() {
 
-        require_once 'CRM/Contact/Form/Relationship.php';
         // store the submitted values in an array
         $params = $this->controller->exportValues( $this->_name );
        
@@ -119,7 +118,7 @@ class CRM_Contact_Form_Task_AddToHousehold extends CRM_Contact_Form_Task {
         if ( CRM_Utils_Array::value( '_qf_AddToHousehold_refresh', $_POST ) ) {
             $searchParams['contact_type'] = array('Household' => 'Household');
             $searchParams['rel_contact' ] = $params['name'];
-            CRM_Contact_Form_Relationship::search( $searchParams );
+            self::search( $form, $searchParams );
             $this->set( 'searchDone', 1 );
             return;
         }
@@ -171,6 +170,114 @@ class CRM_Contact_Form_Task_AddToHousehold extends CRM_Contact_Form_Task {
         }
     }//end of function
 
+    /**
+     * This function is to get the result of the search for Add to * forms
+     *
+     * @param  array $params  This contains elements for search criteria
+     *
+     * @access public
+     * @return None
+     *
+     */
+    function search( &$form, &$params ) 
+    {
+        //max records that will be listed
+        $searchValues = array();
+        if ( CRM_Utils_Array::value( 'rel_contact', $params ) ) {
+            if ( isset( $params['rel_contact_id'] ) &&
+                 is_numeric( $params['rel_contact_id'] ) ) {
+                $searchValues[] = array( 'contact_id', '=', $params['rel_contact_id'], 0, 1 );
+            } else {
+                $searchValues[] = array( 'sort_name', 'LIKE', $params['rel_contact'], 0, 1 );
+            }
+        }
+        $contactTypeAdded = false;
+        
+        $excludedContactIds = array( );
+        if ( isset( $form->_contactId ) ) {
+            $excludedContactIds[] = $form->_contactId;
+        }
+
+        if ( CRM_Utils_Array::value( 'relationship_type_id', $params ) ) {
+            $relationshipType = new CRM_Contact_DAO_RelationshipType( );
+            list( $rid, $direction ) = explode( '_', $params['relationship_type_id'], 2 );
+           
+            $relationshipType->id = $rid;
+            if ( $relationshipType->find( true ) ) {
+                if ( $direction == 'a_b' ) {
+                    $type    = $relationshipType->contact_type_b;
+                    $subType = $relationshipType->contact_sub_type_b;
+                } else {
+                    $type    = $relationshipType->contact_type_a;
+                    $subType = $relationshipType->contact_sub_type_a;
+                }
+
+                $form->set( 'contact_type', $type );
+                $form->set( 'contact_sub_type', $subType );
+                if ( $type == 'Individual' || $type == 'Organization' || $type == 'Household' ) {
+                    $searchValues[] = array( 'contact_type', '=', $type, 0, 0 );
+                    $contactTypeAdded = true;
+                }
+
+                if ( $subType ) {
+                    $searchValues[] = array( 'contact_sub_type', '=', $subType, 0, 0 );
+                }
+            }
+        }
+
+        if ( ! $contactTypeAdded && CRM_Utils_Array::value( 'contact_type', $params ) ) {
+            $searchValues[] = array( 'contact_type', '=', $params['contact_type'], 0, 0 );
+        }
+
+        // get the count of contact
+        $contactBAO  = new CRM_Contact_BAO_Contact( );
+        $query = new CRM_Contact_BAO_Query( $searchValues );
+        $searchCount = $query->searchQuery(0, 0, null, true );
+        $form->set( 'searchCount', $searchCount );
+        if ( $searchCount <= 50 ) {
+            // get the result of the search
+            $result = $query->searchQuery(0, 50, null);
+            
+            $config = CRM_Core_Config::singleton( );
+            $searchRows = array( );
+
+            //variable is set if only one record is foun and that record already has relationship with the contact
+            $duplicateRelationship = 0;
+            
+            while($result->fetch()) {
+                $contactID = $result->contact_id;
+                if ( in_array( $contactID, $excludedContactIds ) ) {
+                    $duplicateRelationship++;
+                    continue;
+                }
+
+                $duplicateRelationship = 0;                
+
+                $searchRows[$contactID]['id'] = $contactID;
+                $searchRows[$contactID]['name'] = $result->sort_name;
+                $searchRows[$contactID]['city'] = $result->city;
+                $searchRows[$contactID]['state'] = $result->state_province;
+                $searchRows[$contactID]['email'] = $result->email;
+                $searchRows[$contactID]['phone'] = $result->phone;
+
+                $contact_type = '<img src="' . $config->resourceBase . 'i/contact_';
+
+                require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
+                $searchRows[$contactID]['type'] = 
+                    CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
+                                                             $result->contact_sub_type : $result->contact_type );
+
+            }
+
+            $form->set( 'searchRows' , $searchRows );
+            $form->set('duplicateRelationship', $duplicateRelationship);
+        } else {
+            // resetting the session variables if many records are found
+            $form->set( 'searchRows' , null );
+            $form->set('duplicateRelationship', null);
+        }
+    }
+    
 }
 
 

@@ -68,6 +68,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             CRM_Core_Error::fatal( ts( 'You do not have access to this page' ) );
         }
 
+        $rows = array( );
         $cid  = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
         $oid  = CRM_Utils_Request::retrieve( 'oid', 'Positive', $this, true );
         $flip = CRM_Utils_Request::retrieve( 'flip', 'Positive', $this, false );
@@ -746,6 +747,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         // move other's belongings and delete the other contact
         CRM_Dedupe_Merger::moveContactBelongings( $this->_cid, $this->_oid );
         $otherParams = array( 'contact_id' => $this->_oid,
+                              'id'         => $this->_oid,
                               'version'    => 3 );
         
         if ( CRM_Core_Permission::check( 'merge duplicate contacts' ) && 

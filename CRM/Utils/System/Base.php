@@ -47,7 +47,8 @@ class CRM_Utils_System_Base {
              if ( is_admin( ) ) {    
                  require_once(ABSPATH . 'wp-admin/admin-header.php');
              } else {
-                // FIX ME: we need to figure out how to theme frontend pages
+                 // FIX ME: we need to figure out to replace civicrm content on the frontend pages
+                
              }
         }
 

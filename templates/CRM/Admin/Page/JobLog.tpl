@@ -24,12 +24,16 @@
  +--------------------------------------------------------------------+
 *}
 <div id="help">
-    {ts}You can configure scheduled jobs (cron tasks) for your CiviCRM installation..{/ts} {$docLink}
+    {ts}This screen presents the list of scheduled jobs (cron tasks) log entries.{/ts} {$docLink}
 </div>
 
-{if $action eq 1 or $action eq 2 or $action eq 8}
-   {include file="CRM/Admin/Form/Job.tpl"}
-{else}
+{if $jobId}
+    <h1>{ts}List of log entries for:{/ts} {$jobName}</h1>
+{/if}
+
+<div class="action-link">
+  <a href="{crmURL p='civicrm/admin/job' q="reset=1"}" id="jobsList" class="button"><span><div class="icon add-icon"></div>{ts}Back to jobs list{/ts}</span></a>
+</div>
 
 {if $rows}
 <div id="ltype">
@@ -40,17 +44,17 @@
         <tr class="columnheader">
             <th >{ts}Date{/ts}</th>
             <th >{ts}Job Name{/ts}</th>
-            <th >{ts}Command{/ts}</th>
-            <th >{ts}Description{/ts}</th>
-            <th >{ts}Additional information{/ts}</th>
+            <th >{ts}Command{/ts}/{ts}Description{/ts}/{ts}Additional information{/ts}</th>
         </tr>
         {foreach from=$rows item=row}
         <tr id="row_{$row.id}" class="crm-job {cycle values="odd-row,even-row"} {$row.class}">
-            <td class="crm-joblog-run_datetime">{$row.run_datetime}</td>
+            <td class="crm-joblog-run_datetime">{$row.run_time}</td>
             <td class="crm-joblog-name">{$row.name}</td>
-            <td class="crm-joblog-command">{$row.command}</td>
-            <td class="crm-joblog-description">{$row.description}</td>
-	    <td class="crm-joblog-data">{$row.data}</td>
+            <td class="crm-joblog-details">
+                <div class="crm-joblog-command">{$row.command}</div>
+                <div class="crm-joblog-description">{$row.description}</div>
+	        <div class="crm-joblog-data">{$row.data}</div>
+            </td>
         </tr>
         {/foreach}
         </table>
@@ -60,10 +64,14 @@
 {elseif $action ne 1}
     <div class="messages status">
       <div class="icon inform-icon"></div>
-        {ts}There are no jobs configured.{/ts}
+      {if $jobId}
+          {ts}This scheduled job does have any log entries.{/ts}
+      {else}
+        {ts}There are no scheduled job log entries.{/ts}
+      {/if}
      </div>    
-     <div class="action-link">
-       <a href="{crmURL p='civicrm/admin/job' q="action=add&reset=1"}" id="newJob" class="button"><span><div class="icon add-icon"></div>{ts}Add New Scheduled Job{/ts}</span></a>
-     </div>
 {/if}
-{/if}
+
+<div class="action-link">
+  <a href="{crmURL p='civicrm/admin/job' q="reset=1"}" id="jobsList" class="button"><span><div class="icon add-icon"></div>{ts}Back to jobs list{/ts}</span></a>
+</div>

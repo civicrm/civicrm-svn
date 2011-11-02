@@ -266,6 +266,29 @@ class CRM_Core_Permission_Drupal {
     }
 
     /**
+     * Given a roles array, check for access requirements
+     *
+     * @param array $array the roles to check
+     *
+     * @return boolean true if yes, else false
+     * @static
+     * @access public
+     */
+    static function checkGroupRole( $array) {
+        if ( function_exists( 'user_load' ) && isset($array)) {
+            $user = user_load(array('uid' => $GLOBALS['user']->uid));
+            //if giver roles found in user roles - return true
+            foreach ($array as $key => $value) {
+                if (in_array($value, $user->roles)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get all the contact emails for users that have a specific permission
      *
      * @param string $permissionName name of the permission we are interested in

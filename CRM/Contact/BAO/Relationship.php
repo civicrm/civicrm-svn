@@ -66,7 +66,14 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
         $valid = $invalid = $duplicate = $saved = 0;
         require_once 'CRM/Utils/Array.php';
         $relationshipId = CRM_Utils_Array::value( 'relationship', $ids );
-        
+        //CRM-9015 - the hooks are called here & in add (since add doesn't call create)
+        // but in future should be tidied per ticket
+        require_once 'CRM/Utils/Hook.php';
+        if ( CRM_Utils_Array::value( 'relationship', $ids ) ) {
+            CRM_Utils_Hook::pre( 'edit', 'Relationship', $ids['relationship'], $params );
+        } else {
+            CRM_Utils_Hook::pre( 'create', 'Relationship', null, $params ); 
+        }  
         if ( ! $relationshipId ) {
             // creating a new relationship
             $dataExists = self::dataExists( $params );

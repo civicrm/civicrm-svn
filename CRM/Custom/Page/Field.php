@@ -108,6 +108,12 @@ class CRM_Custom_Page_Field extends CRM_Core_Page
                                                                           'ref'   => 'enable-action',
                                                                           'title' => ts('Enable Custom Field'),
                                                                           ),
+                                        CRM_Core_Action::EXPORT  => array(
+                                                                          'name'  => ts('Move'),
+                                                                          'url'   => 'civicrm/admin/custom/group/field/move',
+                                                                          'qs'    => 'reset=1&fid=%%id%%',
+                                                                          'title' => ts('Move Custom Field'),
+                                                                          ),
                                         CRM_Core_Action::DELETE  => array(
                                                                           'name'  => ts('Delete'),
                                                                           'url'   => 'civicrm/admin/custom/group/field',

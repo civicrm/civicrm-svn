@@ -231,6 +231,10 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 self::buildCustomDisplay( $postID, 'customPost', $userID, $template, $params['custom_post_id'] );
             }
 
+            require_once "CRM/Contribute/PseudoConstant.php";
+            $contribution_page = CRM_Contribute_PseudoConstant::contributionPage($values['contribution_page_id']);
+            $title = isset($values['title']) ? $values['title'] : $contribution_page;
+
             // set email in the template here
             $tplParams = array(
                 'email'            => $email,
@@ -240,6 +244,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 'membershipID'     => CRM_Utils_Array::value('membership_id', $values),
                 'lineItem'         => CRM_Utils_Array::value('lineItem',      $values), // CRM-5095
                 'priceSetID'       => CRM_Utils_Array::value('priceSetID',    $values), // CRM-5095
+                'title'            => $title,
             );
 
             if ( $contributionTypeId = CRM_Utils_Array::value('contribution_type_id', $values ) ) {
@@ -509,7 +514,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                                                              'entity_table' => 'civicrm_contribution_page'),
                                                       array( 'entity_id'    => $copy->id ) );
         
-        $copyPersonalCampaignPages =& CRM_Core_DAO::copyGeneric( 'CRM_Contribute_DAO_PCPBlock', 
+        $copyPersonalCampaignPages =& CRM_Core_DAO::copyGeneric( 'CRM_PCP_DAO_PCPBlock', 
                                                                  array( 'entity_id'    => $id,
                                                                         'entity_table' => 'civicrm_contribution_page'),
                                                                  array( 'entity_id'    => $copy->id ) );

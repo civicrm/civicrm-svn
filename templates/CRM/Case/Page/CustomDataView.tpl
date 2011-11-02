@@ -116,7 +116,7 @@
          url: dataURL,
          success: function( content ) {
              cj( '#case_custom_edit' ).show( ).html( content ).dialog({
-         	    	title: "Create New Contact",
+         	    	title: "Update Custom Information",
              		modal: true,
              		width: 680, 
              		overlay: { 

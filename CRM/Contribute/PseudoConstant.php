@@ -90,14 +90,6 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant
     private static $contributionStatus;
 
     /**
-     * pcp status 
-     *
-     * @var array
-     * @static
-     */
-    private static $pcpStatus;
-
-    /**
      * Personal campaign pages
      * @var array
      * @static
@@ -274,22 +266,6 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant
         
         return $result;
     }
-
-    /**
-     * Get all the pcp status
-     *
-     * @access public
-     * @return array - array reference of all pcp status
-     * @static
-     */
-    public static function &pcpStatus( )
-    {
-        self::$pcpStatus = array();
-        if ( ! self::$pcpStatus ) {
-            self::$pcpStatus = CRM_Core_OptionGroup::values("pcp_status");
-        }
-        return self::$pcpStatus;
-    }
     
     /**
      * Get all the Personal campaign pages
@@ -302,7 +278,7 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant
     {
         if ( ! self::$pcPage ) {
             CRM_Core_PseudoConstant::populate( self::$pcPage,
-                                               'CRM_Contribute_DAO_PCP',
+                                               'CRM_PCP_DAO_PCP',
                                                false, 'title' );
         }
         if ( $id ) {

@@ -309,7 +309,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             if ( CRM_Utils_Array::value( 'pcp_made_through_id', $params ) ) {
                 $csParams['pcp_id'] = CRM_Utils_Array::value( 'pcp_made_through_id', $params );
                 require_once 'CRM/Core/DAO.php';
-                $csParams['contact_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP',
+                $csParams['contact_id'] = CRM_Core_DAO::getFieldValue( 'CRM_PCP_DAO_PCP',
                                                                         $csParams['pcp_id'], 'contact_id' );
             } else {
                 $csParams['contact_id'] = $params['soft_credit_to'];
@@ -626,8 +626,8 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
         self::deleteAddress( $id ); 
         
         //update pledge and pledge payment, CRM-3961
-        require_once 'CRM/Pledge/BAO/Payment.php';
-        CRM_Pledge_BAO_Payment::resetPledgePayment( $id );
+        require_once 'CRM/Pledge/BAO/PledgePayment.php';
+        CRM_Pledge_BAO_PledgePayment::resetPledgePayment( $id );
         
         // remove entry from civicrm_price_set_entity, CRM-5095
         require_once 'CRM/Price/BAO/Set.php';
@@ -1423,7 +1423,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
         $contribution   =& $objects['contribution'  ];
         
         if ( $pledgePayment ) {
-            require_once 'CRM/Pledge/BAO/Payment.php';
+            require_once 'CRM/Pledge/BAO/PledgePayment.php';
             $pledgePaymentIDs = array ( );
             foreach ( $pledgePayment as $key => $object ) {
                 $pledgePaymentIDs[] = $object->id;
@@ -1473,7 +1473,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
             }
             
             if ( $pledgePayment ) {
-                CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $pledgeID, $pledgePaymentIDs, $contributionStatusId ); 
+                CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $pledgeID, $pledgePaymentIDs, $contributionStatusId ); 
                 
                 $updateResult['updatedComponents']['CiviPledge'] = $contributionStatusId;
                 if ( $processContributionObject ) {
@@ -1505,7 +1505,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
             }
             
             if ( $pledgePayment ) {
-                CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $pledgeID, $pledgePaymentIDs, $contributionStatusId );
+                CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $pledgeID, $pledgePaymentIDs, $contributionStatusId );
                 
                 $updateResult['updatedComponents']['CiviPledge'] = $contributionStatusId;
                 if ( $processContributionObject ) {
@@ -1622,7 +1622,7 @@ LIMIT     1;";
             }
             
             if ( $pledgePayment ) {
-                CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $pledgeID, $pledgePaymentIDs, $contributionStatusId );   
+                CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $pledgeID, $pledgePaymentIDs, $contributionStatusId );   
                 
                 $updateResult['updatedComponents']['CiviPledge'] = $contributionStatusId;
                 if ( $processContributionObject ) {

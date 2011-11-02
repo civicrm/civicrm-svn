@@ -43,11 +43,11 @@ require_once 'api/v3/utils.php';
 
 /**
  * Get CiviCRM domain details
- *
+ * {@getfields domain_create}
+ * @example DomainGet.php
  */
 function civicrm_api3_domain_get($params ) {
 
-        civicrm_api3_verify_mandatory($params);
         $params['version'] = CRM_Utils_array::value('domain_version',$params);
         unset($params['version']);
 
@@ -96,13 +96,23 @@ function civicrm_api3_domain_get($params ) {
         return civicrm_api3_create_success($domains,$params,'domain','get',$dao);
 
 }
+/*
+ * Adjust Metadata for Get action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_domain_get_spec(&$params){
+    $params['current_domain'] = array('title' => "get loaded domain");
 
+}
 /**
  * Create a new domain
  *
  * @param array $params
  * @return array
- * @example
+ * @example DomainCreate.php
+ * {@getfields domain_create}
  */
 function civicrm_api3_domain_create( $params ) {
 
@@ -116,17 +126,13 @@ function civicrm_api3_domain_create( $params ) {
         return civicrm_api3_create_success($domain_array,$params);
 
 }
-
-/* 
- * Gets field for civicrm_domain functions
+/*
+ * Adjust Metadata for Create action
  * 
- * @return array fields valid for other functions
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
  */
-
-function civicrm_api3_domain_getfields(){
-    $fields = _civicrm_api_get_fields('domain');
-    $fields['domain_version'] = array('title' =>  "version of domain");
-    $fields['current_domain'] = array('title' => "get loaded domain");
-    unset ($fields['version']); 
-    return civicrm_api3_create_success($fields);
+function _civicrm_api3_domain_create_spec(&$params){
+    $params['domain_version'] = $params['version'];
+    unset($params['version']);
 }

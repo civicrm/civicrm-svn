@@ -86,7 +86,7 @@ class CRM_Contact_Form_Edit_TagsandGroups
             $elements = array( );
             $groupID  = isset( $form->_grid ) ? $form->_grid : null ;
             if ( $groupID && $visibility ) {
-                $ids = '= '.$groupID;
+                $ids = "= {$groupID}";
             } else {
                 if ( $visibility ) {
                     $group  = CRM_Core_PseudoConstant::allGroup( );

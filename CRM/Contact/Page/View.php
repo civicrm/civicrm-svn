@@ -121,19 +121,34 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         $navContacts = array( 'prevContactID'   => null,
                               'prevContactName' => null,
                               'nextContactID'   => null,
-                              'nextContactName' => null );
+                              'nextContactName' => null,
+                              'nextPrevError'   => 0 );
         if ( $qfKey ) {
             require_once 'CRM/Core/BAO/PrevNextCache.php';
             $pos = CRM_Core_BAO_PrevNextCache::getPositions( "civicrm search $qfKey",
                                                              $this->_contactId,
                                                              $this->_contactId );
+            $found = false;
+
             if ( isset( $pos['prev'] ) ) {
                 $navContacts['prevContactID'  ] = $pos['prev']['id1'];
                 $navContacts['prevContactName'] = $pos['prev']['data'];
+                $found = true;
             }
+
             if ( isset( $pos['next'] ) ) {
                 $navContacts['nextContactID'  ] = $pos['next']['id1'];
                 $navContacts['nextContactName'] = $pos['next']['data'];
+                $found = true;
+            }
+
+            if ( ! $found ) {
+                // seems like we did not find any contacts
+                // maybe due to bug CRM-9096
+                // however we should account for 1 contact results (which dont have prev next)
+                if ( ! $pos['foundEntry'] ) {
+                    $navContacts['nextPrevError'] = 1;
+                }
             }
         }
         $this->assign( $navContacts );
@@ -226,9 +241,10 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         $config = CRM_Core_Config::singleton( );
         require_once 'CRM/Core/BAO/UFMatch.php';
         if ( $uid = CRM_Core_BAO_UFMatch::getUFId( $this->_contactId ) ) {
-            if ($config->userSystem->is_drupal == '1') {
+            if ($config->userSystem->is_drupal == '1' && CRM_Core_Permission::check( 'Administer users' ) ) {
                 $userRecordUrl = CRM_Utils_System::url( 'user/' . $uid );
-            } else if ( $config->userFramework == 'Joomla' ) {
+            } else if ( $config->userFramework == 'Joomla' &&
+                        JFactory::getUser()->authorise('core.edit', 'com_users') ) {
                 $userRecordUrl = $config->userFrameworkVersion > 1.5 ? 
                     $config->userFrameworkBaseURL ."index.php?option=com_users&view=user&task=user.edit&id=". $uid : 
                     $config->userFrameworkBaseURL ."index2.php?option=com_users&view=user&task=edit&id[]=". $uid;
@@ -237,7 +253,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
             }
             $this->assign( 'userRecordUrl', $userRecordUrl );
             $this->assign( 'userRecordId' , $uid );
-        } else if ( $config->userFramework == 'Drupal' ||
+        } else if ( ( $config->userFramework == 'Drupal' && CRM_Core_Permission::check( 'Administer users' ) ) ||
                     ( $config->userFramework == 'Joomla' &&
                       JFactory::getUser()->authorise('core.create', 'com_users') ) ) {
             $userAddUrl = CRM_Utils_System::url('civicrm/contact/view/useradd',

@@ -188,18 +188,17 @@ class CRM_Case_Form_Case extends CRM_Core_Form
         //when custom data is included in this page
         CRM_Custom_Form_Customdata::preProcess( $this, null, $this->_activityTypeId, 1, 'Activity' );
         eval("CRM_Case_Form_Activity_{$this->_activityTypeFile}::preProcess( \$this );");
+        $activityGroupTree = $this->_groupTree;
 
-        // when custom data is included in this page
+        // for case custom fields to populate with defaults
         if ( CRM_Utils_Array::value( 'hidden_custom', $_POST ) ) {
-            // we need to set it in the session for the below code to work
-            // CRM-3014
-            //need to assign custom data subtype to the template
-            $this->set( 'type'    , 'Case' );
-            //$this->set( 'subType' , $this->_activityTypeId );
-            //$this->set( 'entityId', $this->_activityId );
             CRM_Custom_Form_CustomData::preProcess( $this );
             CRM_Custom_Form_CustomData::buildQuickForm( $this );
         }
+
+        // so that grouptree is not populated with case fields, since the grouptree is used 
+        // for populating activity custom fields.
+        $this->_groupTree = $activityGroupTree;
     }
     
     /**

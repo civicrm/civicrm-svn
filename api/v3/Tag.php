@@ -44,16 +44,15 @@
  *  Add a Tag. Tags are used to classify CRM entities (including Contacts, Groups and Actions).
  *
  * Allowed @params array keys are:
- * {@schema Core/Tag.xml}
+ * 
  * {@example TagCreate.php}
  * @return array of newly created tag property values.
+ * {@getfields tag_create}
  * @access public
  */
 function civicrm_api3_tag_create( $params ) 
 {
 
-    civicrm_api3_verify_mandatory ($params,null,array ('name'));
-    require_once 'CRM/Core/BAO/Tag.php';
     $ids = array( 'tag' => CRM_Utils_Array::value( 'tag', $params ) );
     if ( CRM_Utils_Array::value( 'tag', $params ) ) {
         $ids['tag'] = $params['tag'];
@@ -73,29 +72,33 @@ function civicrm_api3_tag_create( $params )
 
 }
 /*
- * returns defaults for create function
+ * Specify Meta data for create. Note that this data is retrievable via the getfields function 
+ * and is used for pre-filling defaults and ensuring mandatory requirements are met.
  */
-function _civicrm_api3_tag_create_defaults(){
-  return array('used_for' =>   "civicrm_contact");
+function _civicrm_api3_tag_create_spec(&$params){
+  $params['used_for']['api.default'] = 'civicrm_contact';
+  $params['name']['api.required'] = 1;
 }
+
 /**
  * Deletes an existing Tag
  *
  * @param  array  $params
  * 
- * {@example TagDelete.php 0}
+ * @example TagDelete.ph
  * @return boolean | error  true if successfull, error otherwise
+ * {@getfields tag_delete}
  * @access public
  */
 function civicrm_api3_tag_delete( $params ) 
 {
-
-    civicrm_api3_verify_mandatory ($params,null,array ('tag_id'));
-    $tagID = CRM_Utils_Array::value( 'tag_id', $params );
-
-
-    return CRM_Core_BAO_Tag::del( $tagID ) ? civicrm_api3_create_success(1,$params,'tag','delete' ) : civicrm_api3_create_error(  ts( 'Could not delete tag' )  );
-
+    return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+}
+/*
+ * modify metadata. This causes 'tag_id' to be acceptable
+ */
+function _civicrm_api3_tag_delete_spec( &$params ) {
+  $params['id']['api.aliases']= array('tag_id');
 }
 
 /**
@@ -104,17 +107,17 @@ function civicrm_api3_tag_delete( $params )
  * This api is used for finding an existing tag.
  * Either id or name of tag are required parameters for this api.
  * 
- * {@example TagGet.php 0}
+ * @example TagGet.php
  * @param  array $params  an associative array of name/value pairs.
  *
  * @return  array details of found tags else error
+ * {@getfields tag_get}
  * @access public
  */
 
 function civicrm_api3_tag_get($params) 
 {   
 
-    civicrm_api3_verify_mandatory($params);
     return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 
 }

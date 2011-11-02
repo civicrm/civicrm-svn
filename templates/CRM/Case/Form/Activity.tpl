@@ -82,11 +82,12 @@ cj(document).ready( function( ) {
 {literal}
 
 var sourceDataUrl = "{/literal}{$dataUrl}{literal}";
-var tokenDataUrl  = "{/literal}{$tokenUrl}{literal}";
+var tokenDataUrl_target  = "{/literal}{$tokenUrl}&context=case_activity_target{literal}";
+var tokenDataUrl_assignee  = "{/literal}{$tokenUrl}&context=case_activity_assignee{literal}";
 
 var hintText = "{/literal}{ts}Type in a partial or complete name or email address of an existing contact.{/ts}{literal}";
-cj( "#assignee_contact_id").tokenInput( tokenDataUrl, { prePopulate: assignee_contact, theme: 'facebook', hintText: hintText });
-cj( "#target_contact_id"  ).tokenInput( tokenDataUrl, { prePopulate: target_contact,   theme: 'facebook', hintText: hintText });
+cj( "#assignee_contact_id").tokenInput( tokenDataUrl_assignee, { prePopulate: assignee_contact, theme: 'facebook', hintText: hintText });
+cj( "#target_contact_id"  ).tokenInput( tokenDataUrl_target, { prePopulate: target_contact,   theme: 'facebook', hintText: hintText });
 cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );
 cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirst : false, matchContains:true
                             }).result( function(event, data, formatted) { cj( "#source_contact_qid" ).val( data[1] );
@@ -258,8 +259,10 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
 
                     <table class="form-layout-compressed">
                         <tr class="crm-case-activity-form-block-followup_activity_type_id">
-			    <td class="label">{ts}Schedule Follow-up Activity{/ts}</td>
-                            <td>{$form.followup_activity_type_id.html}&nbsp;{$form.interval.label}&nbsp;{$form.interval.html}&nbsp;{$form.interval_unit.html}</td>
+			                <td class="label">{ts}Schedule Follow-up Activity{/ts}</td>
+                            <td>{$form.followup_activity_type_id.html}&nbsp;&nbsp;{ts}on{/ts}
+                                {include file="CRM/common/jcalendar.tpl" elementName=followup_date}
+                            </td>
                         </tr>
                         <tr class="crm-case-activity-form-block-followup_activity_subject">
                            <td class="label">{$form.followup_activity_subject.label}</td>

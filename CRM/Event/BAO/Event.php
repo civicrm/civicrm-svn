@@ -135,14 +135,19 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
     {
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
-                //new event, so lets set the created_id
-        if ( empty($params['created_id']) ) { 
-            $session = CRM_Core_Session::singleton( );
-            $params['created_id']   = $session->get( 'userID' );
-        }   
-        if ( empty($params['created_date']) && empty($params['id'])) { 
+        if ( empty( $params['is_template'] ) ) {
+            $params['is_template'] = 0;
+        }
+        // check if new event, if so set the created_id (if not set)
+        // and always set created_date to now
+        if ( empty( $params['id'] ) ) {
+            if ( empty($params['created_id']) ) { 
+                $session = CRM_Core_Session::singleton( );
+                $params['created_id']   = $session->get( 'userID' );
+            }   
             $params['created_date'] = date('YmdHis');
-        }   
+        }
+
         $event = self::add( $params );
         
         if ( is_a( $event, 'CRM_Core_Error') ) {
@@ -1665,10 +1670,20 @@ WHERE  ce.loc_block_id = $locBlockId";
         return CRM_Core_DAO::singleValueQuery( $query );
     }
 
-    static function validRegistrationDate( &$values, $contactID ) {
+    static function validRegistrationRequest( $values, $contactID ) {
+        // check that the user has permission to register for this event
+        $hasPermission = CRM_Core_Permission::event( CRM_Core_Permission::EDIT,
+                                                     $contactID );
+
+        return $hasPermission &&
+            self::validRegistrationDate( $values );
+    }
+
+    static function validRegistrationDate( &$values ) {
         // make sure that we are between  registration start date and registration end date
         $startDate = CRM_Utils_Date::unixTime( CRM_Utils_Array::value( 'registration_start_date', $values ) );
         $endDate   = CRM_Utils_Date::unixTime( CRM_Utils_Array::value( 'registration_end_date', $values ) );
+        $eventEnd  = CRM_Utils_Date::unixTime( CRM_Utils_Array::value( 'end_date', $values ) );
         $now       = time( );
         $validDate = true;
         if ( $startDate && $startDate >= $now ) {
@@ -1677,12 +1692,11 @@ WHERE  ce.loc_block_id = $locBlockId";
         if ( $endDate && $endDate < $now ) {
             $validDate = false;
         }
-        
-        // also check that the user has permission to register for this event
-        $hasPermission = CRM_Core_Permission::event( CRM_Core_Permission::EDIT,
-                                                     $contactID );
+        if ( $eventEnd && $eventEnd < $now ) {
+            $validDate = false;
+        }
 
-        return $validDate && $hasPermission;
+        return $validDate;
     }
  
     /* Function to Show - Hide the Registration Link.
@@ -1892,7 +1906,35 @@ LEFT  JOIN  civicrm_price_field_value value ON ( value.id = lineItem.price_field
         
         return (int)CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $eventId, 'Positive' ) ) );
     }
-    
+    /* 
+     * Retrieve event template default values to be set
+     *  as default values for current new event.
+     *
+     * @params int $templateId event template id.
+     *
+     * @return $defaults an array of custom data defaults.
+     */
+    public function getTemplateDefaultValues( $templateId ) 
+    {
+        $defaults = array( );
+        if ( !$templateId ) {
+            return $defaults;  
+        }
+        
+        $templateParams = array('id' => $templateId);
+        require_once 'CRM/Event/BAO/Event.php';
+        CRM_Event_BAO_Event::retrieve($templateParams, $defaults);
+        $fieldsToExclude = array('id',
+                                  'default_fee_id',
+                                  'default_discount_fee_id',
+                                  'created_date',
+                                  'created_id',
+                                  'is_template',
+                                  'template_title'
+        ) ;
+        $defaults = array_diff_key($defaults,array_flip($fieldsToExclude));     
+        return $defaults;
+    }
     static function get_sub_events($event_id)
     {
         $params = array('parent_event_id' => $event_id);

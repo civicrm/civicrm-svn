@@ -99,12 +99,6 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
             return false;
         }
 
-        // looks like we created a drupal user, lets make another db call to get the user id!
-        $db_cms = DB::connect($config->userFrameworkDSN);
-        if ( DB::isError( $db_cms ) ) {
-            die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) );
-        }
-
         //Fetch id of newly added user
         $uid = db_query(
             "SELECT uid FROM {users} WHERE name = :name",

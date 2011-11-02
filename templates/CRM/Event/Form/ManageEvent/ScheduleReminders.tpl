@@ -26,9 +26,21 @@
 *}
 {* This template is used for adding/scheduling reminders.  *}
 <div class="crm-block crm-form-block crm-event-manage-scheduleReminder-form-block">
-<div class="crm-submit-buttons">
-   {include file="CRM/common/formButtons.tpl" location="top"}
-</div>
+
+{if $rows}
+    <div id="reminder">
+      {include file="CRM/Admin/Page/Reminders.tpl"}
+
+      <div class="action-link">
+    	  <a href="{crmURL q="action=update&reset=1&id=$eventId&new=1"}" id="newScheduleReminder" class="button"><span><div class="icon add-icon"></div>{ts}Add Reminder{/ts}</span></a>
+      </div>
+    </div>
+
+{else}
+
+ <div class="crm-submit-buttons">
+    {include file="CRM/common/formButtons.tpl" location="top"}
+ </div>
 {if $action eq 8}
   <div class="messages status">  
       <div class="icon inform-icon"></div> 
@@ -112,7 +124,7 @@
         <td class="right">{$form.recipient.label}</td><td colspan="3">{$form.recipient.html}</td>
     </tr>
     <tr id="recipientList" class="crm-scheduleReminder-form-block-recipientListing">
-        <td class="right">{$form.recipientListing.label}</td><td colspan="3">{$form.recipientListing.html}</td>
+        <td class="right">{$form.recipient_listing.label}</td><td colspan="3">{$form.recipient_listing.html}</td>
     </tr>
     <tr id="recipientManual" class="crm-scheduleReminder-form-block-recipient_manual_id">
     	<td class="label">{$form.recipient_manual_id.label}</td>
@@ -146,13 +158,12 @@
 	</table>
         {include file="CRM/Contact/Form/Task/EmailCommon.tpl" upload=1 noAttach=1}
   </fieldset>
-
 {/if} 
 
-<div class="crm-submit-buttons">
-     {include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-</div>
-
+ <div class="crm-submit-buttons">
+      {include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+ </div>
+{/if}
 {include file="CRM/common/showHideByFieldValue.tpl" 
     trigger_field_id    = "is_repeat"
     trigger_value       = "true"
@@ -193,7 +204,7 @@
      	  var recipient = cj("#recipient option:selected").text();    
 	  var postUrl = "{/literal}{crmURL p='civicrm/ajax/populateRecipient' h=0}{literal}";
 	  if(recipient == 'Participant Status' || recipient == 'Participant Role'){
-   	  var elementID = '#recipientListing';
+   	  var elementID = '#recipient_listing';
           cj( elementID ).html('');
 	    cj.post(postUrl, {recipient: recipient},
 	    	function ( response ) {

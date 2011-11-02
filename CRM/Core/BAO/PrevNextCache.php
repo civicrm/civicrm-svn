@@ -63,8 +63,10 @@ WHERE  cacheKey     = %3 AND
             $mergeId = CRM_Core_DAO::singleValueQuery( $query, $params );
         }
         
-        $pos = array( );
+        $pos = array( 'foundEntry' => 0 );
         if ( $mergeId ) {
+            $pos['foundEntry'] = 1;
+
             if ( $where ) $where = " AND {$where}";
             $p         = array( 1 => array( $mergeId, 'Integer' ),
                                 2 => array( $cacheKey,'String' ) );
@@ -91,7 +93,7 @@ WHERE  cacheKey     = %3 AND
                 $pos['next']['mergeId'] = $dao->id;
                 $pos['next']['data']    = $dao->data;
             }
-        }   
+        }
         return $pos;
     }
 

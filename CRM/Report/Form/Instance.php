@@ -35,6 +35,7 @@
  */
 require_once 'CRM/Core/BAO/Navigation.php';
 require_once 'CRM/Core/Permission.php';
+require_once 'CRM/Report/Utils/Report.php';
 
 class CRM_Report_Form_Instance {
 
@@ -43,6 +44,14 @@ class CRM_Report_Form_Instance {
         if ( $form->_section ) {
             return;
         }
+		
+		// check role based permission
+		$instanceID = $form->getVar( '_id' );
+		if ( $instanceID && !CRM_Report_Utils_Report::isInstanceGroupRoleAllowed($instanceID) ) {
+		    $url = CRM_Utils_System::url( 'civicrm/report/list', 'reset=1' );
+			CRM_Core_Error::statusBounce( ts( 'You do not have permission to access this report.' ), 
+			                              $url );
+		}
         
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Report_DAO_Instance' );
 
@@ -87,12 +96,29 @@ class CRM_Report_Form_Instance {
         $form->addElement( 'checkbox', 'addToDashboard', ts('Available for Dashboard?') );
         
         $config = CRM_Core_Config::singleton( );
-        if ( $config->userFramework != 'Joomla' ) {
+        if ( $config->userFramework != 'Joomla' ||
+             $config->userFramework != 'WordPress' ) {
             $form->addElement( 'select',
                                'permission',
                                ts( 'Permission' ),
                                array( '0' => '- Any One -') + CRM_Core_Permission::basicPermissions( ) );
+
+            // prepare user_roles to save as names not as ids
+            if ( function_exists( 'user_roles' ) ) {
+                $user_roles_array = user_roles();
+                foreach($user_roles_array as $key=>$value) {
+                    $user_roles[$value] = $value;
+                }
+                $form->addElement( 'advmultiselect',
+                                   'grouprole',
+                                   ts( 'ACL Group/Role' ),
+                                   $user_roles,
+                                   array('size' => 5,
+                                         'style' => 'width:240px',
+                                         'class' => 'advmultiselect') );
+            }
         }
+
         // navigation field
         $parentMenu = CRM_Core_BAO_Navigation::getNavigationList( );
        
@@ -169,6 +195,14 @@ class CRM_Report_Form_Instance {
                     $form->_navigation['parent_id'] = $navigationDefaults['parent_id'];
                 }
             }
+
+            if ( CRM_Utils_Array::value( 'grouprole', $defaults ) ) {
+                foreach ( explode( CRM_Core_DAO::VALUE_SEPARATOR , $defaults['grouprole'] ) as $value ){
+                    $grouproles[] = $value;
+                }
+                $defaults['grouprole'] = $grouproles;
+            }
+
         } else {
             $defaults['description'] = $form->_description;
         }
@@ -201,7 +235,17 @@ class CRM_Report_Form_Instance {
             unset($params['parent_id']);
             unset($params['is_navigation']);
         }
-        
+
+        // convert roles array to string
+        if ( isset($params['grouprole']) && is_array($params['grouprole']) ) {
+            $grouprole_array = array();
+            foreach ($params['grouprole'] as $key=>$value) {
+                $grouprole_array[$value] = $value;
+            }
+            $params['grouprole'] = implode( CRM_Core_DAO::VALUE_SEPARATOR,
+                                            array_keys($grouprole_array) );
+        }
+
         // add to dashboard
         $dashletParams = array( );
         if ( CRM_Utils_Array::value( 'addToDashboard', $params ) ) {
@@ -220,19 +264,25 @@ class CRM_Report_Form_Instance {
         $dao->copyValues( $params );
 
         if ( $config->userFramework == 'Joomla' ) {
-            $dao->permission = NULL;
+            $dao->permission = 'null';
+        }
+
+        // explicitly set to null if params value is empty
+        if ( empty($params['grouprole']) ) {
+            $dao->grouprole = 'null';
         }
 
         // unset all the params that we use
         $fields = array( 'title', 'to_emails', 'cc_emails', 'header', 'footer',
-                         'qfKey', '_qf_default', 'report_header', 'report_footer' );
+                         'qfKey', '_qf_default', 'report_header', 'report_footer', 'grouprole' );
         foreach ( $fields as $field ) {
             unset( $params[$field] );
         }
         $dao->form_values = serialize( $params );
 
         $instanceID = $form->getVar( '_id' );
-        if ( $instanceID ) {
+        $isNew      = $form->getVar('_createNew');
+        if ( $instanceID && !$isNew ) {
             $dao->id = $instanceID;
         }
 
@@ -246,6 +296,9 @@ class CRM_Report_Form_Instance {
         $reloadTemplate = false;
         if ( $dao->id ) {
             if ( !empty($form->_navigation) ) {
+                if ( $isNew && CRM_Utils_Array::value('id', $form->_navigation) ) {
+                    unset($form->_navigation['id']);
+                }
                 $form->_navigation['url'] = "civicrm/report/instance/{$dao->id}&reset=1";
                 $navigation = CRM_Core_BAO_Navigation::add( $form->_navigation );
 
@@ -298,7 +351,7 @@ class CRM_Report_Form_Instance {
             $instanceUrl = CRM_Utils_System::url( 'civicrm/report/list',
                                                   "reset=1&ovid={$instanceDefaults['id']}" );
             $statusMsg = ts('Report "%1" has been created and is now available in the <a href="%3">report listings under "%2" Reports</a>.', array( 1 => $dao->title, 2 => $cmpName, 3 => $instanceUrl ));
-            if ( $instanceID ) {
+            if ( $instanceID && !$isNew ) {
                 $statusMsg = ts('Report "%1" has been updated.', array( 1 => $dao->title ));
             }
             CRM_Core_Session::setStatus( $statusMsg );

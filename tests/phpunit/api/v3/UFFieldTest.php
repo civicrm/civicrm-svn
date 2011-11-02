@@ -196,7 +196,7 @@ class api_v3_UFFieldTest extends CiviUnitTestCase
                         'field_id'  => $ufField['id']);
         $result = civicrm_api('uf_field', 'delete', $params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
-        $this->assertEquals($result['is_error'], 0,'in line' . __LINE__);
+        $this->assertAPISuccess($result, 0,'in line' . __LINE__);
     }
     
     public function testGetUFFieldSuccess(){

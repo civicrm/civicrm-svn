@@ -512,8 +512,8 @@ class CRM_Core_Block {
             $session = CRM_Core_Session::singleton( );
             // check if registration link should be displayed
             foreach ( $info as $id => $event ) {
-                $info[$id]['onlineRegistration'] = CRM_Event_BAO_Event::validRegistrationDate( $event,
-                                                                                               $session->get( 'userID' ) );
+                $info[$id]['onlineRegistration'] = CRM_Event_BAO_Event::validRegistrationRequest( $event,
+                                                                                                  $session->get( 'userID' ) );
             }
 
             self::setProperty( self::EVENT, 'templateValues', array( 'eventBlock' => $info ) );

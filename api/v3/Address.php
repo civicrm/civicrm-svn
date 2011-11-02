@@ -42,15 +42,13 @@ require_once 'CRM/Core/BAO/Address.php';
  *  Add an Address for a contact
  * 
  * Allowed @params array keys are:
- * {@schema Core/Address.xml}
+ * {@getfields address_create}
  * {@example AddressCreate.php}
  * @return array of newly created tag property values.
  * @access public
  */
 function civicrm_api3_address_create( &$params ) 
 {
-
-   civicrm_api3_verify_mandatory ($params, null, array('location_type_id', 'contact_id'));
 
 	/*
 	 * if street_parsing, street_address has to be parsed into
@@ -96,24 +94,31 @@ function civicrm_api3_address_create( &$params )
 	 }
 
 }
+/*
+ * Adjust Metadata for Create action
+ * 
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_address_create_spec(&$params){
+  $params['location_type_id']['api.required'] = 1;
+  $params['contact_id']['api.required'] = 1; 
+  $params['is_primary']['api.default'] = 1;// TODO note this should be changes to a function call that checks if one exists
+}
 /**
  * Deletes an existing Address
  *
  * @param  array  $params
  * 
- * {@schema Core/Address.xml}
+ * {@getfields address_delete}
  * {@example AddressDelete.php 0}
  * @return boolean | error  true if successfull, error otherwise
  * @access public
  */
 function civicrm_api3_address_delete( &$params ) 
 {
-    civicrm_api3_verify_mandatory ($params,null,array ('id'));
-    $addressID = CRM_Utils_Array::value( 'id', $params );
 
-    require_once 'CRM/Core/DAO/Address.php';
     $addressDAO = new CRM_Core_DAO_Address();
-    $addressDAO->id = $addressID;
+    $addressDAO->id = $params['id'];
     if ( $addressDAO->find( ) ) {
 		while ( $addressDAO->fetch() ) {
 			$addressDAO->delete();
@@ -135,21 +140,12 @@ function civicrm_api3_address_delete( &$params )
  * @param  array $params  an associative array of name/value pairs.
  *
  * @return  array details of found addresses else error
+ * {@getfields address_get}
  * @access public
  */
 
 function civicrm_api3_address_get(&$params) 
 {   
-    civicrm_api3_verify_one_mandatory($params); 
 	  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 
-
-/*
- * Set defaults used for 'create' action
- * @return array $defaults array of default values
-*/
-
-function _civicrm_api3_address_create_defaults(){
-  return array('is_primary' => 1);
-}

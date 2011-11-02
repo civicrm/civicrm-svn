@@ -34,7 +34,7 @@ function contact_create_expectedresult(){
       '1' => array( 
           'id' => 1,
           'contact_type' => 'Individual',
-          'contact_sub_type' => '',
+          'contact_sub_type' => 'null',
           'do_not_email' => '',
           'do_not_phone' => '',
           'do_not_mail' => '',

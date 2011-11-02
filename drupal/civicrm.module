@@ -325,8 +325,8 @@ function civicrm_initialize( )
             drupal_add_html_head($header);
         }
         require_once 'CRM/Core/BAO/Setting.php';
-        if ( CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
-                                            'editor_id' ) == 4 ) { //drupal wysiwyg
+        $args = explode( '/', $_GET['q'] );
+        if ( ( ! isset( $args[1] ) OR $args[1] != 'upgrade') && CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'editor_id' ) == 4 ) { //drupal wysiwyg
             //we have to ensure that wysiwyg is loaded since some
             //pages load only with ajax callbacks
             $formats = filter_formats();
@@ -731,9 +731,9 @@ function civicrm_add_jquery( &$html ) {
 
 function  civicrm_form_alter( &$form, $formValues, $formID ) {
     switch ( $formID ) {
-    case 'user_admin_perm':
+    case 'user_admin_permissions':
     case 'system_clean_url_settings':
-        if ( ! empty( $formValues['post'] ) ) {
+        if ( ! empty( $formValues['input'] ) ) {
             // reset navigation for permissions changed and clean url
             if ( ! civicrm_initialize( ) ) {
                 return;
@@ -772,8 +772,10 @@ function  civicrm_form_alter( &$form, $formValues, $formID ) {
              arg(2) == 'edit' &&
              arg(3) ) {
             $output = civicrm_form_data($form, $form['#user'], $form['#user_category'], true );
-            if (!empty($output))
+            if (!empty($output)) {
+                $form['#attributes']['enctype'] = 'multipart/form-data';
                 $form = array_merge($form, $output);
+            }
         }
         break;
 
@@ -936,10 +938,11 @@ function civicrm_filter_info() {
  */
 function _civicrm_filter_tips($filter, $format, $long = false) {
     return
-        t('Evaluate <a target="_blank" href="@smarty">Smarty</a> and <a target="_blank" href="@civiapi">CiviCRM API</a> codes', array(
-                                                                                                                                      '@smarty' => 'http://www.smarty.net/docsv2/en/',
-                                                                                                                                      '@civiapi' => 'http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs'
-                                                                                                                                      ));
+        t('Evaluate <a target="_blank" href="@smarty">Smarty</a> and <a target="_blank" href="@civiapi">CiviCRM API</a> codes',
+          array(
+                '@smarty' => 'http://www.smarty.net/docsv2/en/',
+                '@civiapi' => 'http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs'
+                ));
 }
    
 /**

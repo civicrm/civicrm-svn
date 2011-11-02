@@ -162,6 +162,10 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                                array( 'title'      => ts( 'Activity Status' ),
                                                       'default'    => true ,
                                                       'type'       =>  CRM_Utils_Type::T_STRING ),
+                                               'duration'	   =>
+                                               array( 'title'      => ts( 'Duration' ),
+                                                      'type'       => CRM_Utils_Type::T_INT 
+                                                      ),
                                                ),
                                        'filters' =>   
                                        array( 'activity_date_time'  => 
@@ -511,7 +515,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                         $actionLinks = 
                             CRM_Activity_Selector_Activity::actionLinks( $row['civicrm_activity_activity_type_id'],
                                                                          CRM_Utils_Array::value('civicrm_activity_source_record_id', $rows[$rowNum]),
-                                                                         false.
+                                                                         false,
                                                                          $rows[$rowNum]['civicrm_activity_id'] );
                         
                         $linkValues = array( 'id'  => $rows[$rowNum]['civicrm_activity_id'],

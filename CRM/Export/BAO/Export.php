@@ -743,8 +743,8 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                             }
                         }
                     } else if ( array_key_exists( $field, $contactRelationshipTypes ) ) {
-                        $relDAO = $allRelContactArray[$field][$dao->contact_id];
-
+                        
+                        $relDAO = CRM_Utils_Array::value( $dao->contact_id, $allRelContactArray[$field] );
                         foreach ( $value as $relationField => $relationValue ) {
                             if ( is_object( $relDAO ) && property_exists( $relDAO, $relationField ) ) {
                                 $fieldValue = $relDAO->$relationField;

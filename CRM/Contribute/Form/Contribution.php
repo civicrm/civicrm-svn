@@ -306,13 +306,13 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
         if ( in_array( 'CiviPledge', $config->enableComponents ) &&
              ! $this->_formType ) {
             require_once 'CRM/Pledge/BAO/Pledge.php';
-            require_once 'CRM/Pledge/BAO/Payment.php';
+            require_once 'CRM/Pledge/BAO/PledgePayment.php';
             //get the payment values associated with given pledge payment id OR check for payments due. 
             $this->_pledgeValues = array( );
             if ( $this->_ppID ) {
                 $payParams = array( 'id' => $this->_ppID );
                 
-                CRM_Pledge_BAO_Payment::retrieve( $payParams, $this->_pledgeValues['pledgePayment'] );
+                CRM_Pledge_BAO_PledgePayment::retrieve( $payParams, $this->_pledgeValues['pledgePayment'] );
                 $this->_pledgeID = CRM_Utils_Array::value( 'pledge_id', $this->_pledgeValues['pledgePayment'] );
                 $paymentStatusID = CRM_Utils_Array::value( 'status_id', $this->_pledgeValues['pledgePayment'] );
                 $this->_id = CRM_Utils_Array::value( 'contribution_id', $this->_pledgeValues['pledgePayment'] );
@@ -340,7 +340,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
                         $payments = $paymentsDue = null;
                         $multipleDue = false;
                         foreach ( $contactPledges as $key => $pledgeId ) {
-                            $payments = CRM_Pledge_BAO_Payment::getOldestPledgePayment( $pledgeId );
+                            $payments = CRM_Pledge_BAO_PledgePayment::getOldestPledgePayment( $pledgeId );
                             if ( $payments ) {
                                 if ( $paymentsDue ) {
                                     $multipleDue = true;
@@ -360,7 +360,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
                             require_once 'CRM/Utils/Date.php';
                             require_once 'CRM/Utils/Money.php';
                             $ppAmountDue = CRM_Utils_Money::format($payments['amount']);
-                            $ppSchedDate = CRM_Utils_Date::customFormat( CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', $payments['id'], 'scheduled_date' ) );
+                            $ppSchedDate = CRM_Utils_Date::customFormat( CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_PledgePayment', $payments['id'], 'scheduled_date' ) );
                             if ( $this->_mode ) {
                                 $ppUrl = CRM_Utils_System::url( 'civicrm/contact/view/contribution',
                                                                 "reset=1&action=add&cid={$this->_contactID}&ppid={$payments['id']}&context=pledge&mode=live" );
@@ -439,9 +439,9 @@ WHERE  contribution_id = {$this->_id}
 
             if ( CRM_Utils_Array::value('pcp_id', $softCredit ) ){
                 $pcpId = CRM_Utils_Array::value('pcp_id', $softCredit );
-                $pcpTitle = CRM_Core_DAO::getFieldValue ( 'CRM_Contribute_DAO_PCP', $pcpId, 'title' );
-                require_once 'CRM/Contribute/BAO/PCP.php';
-                $contributionPageTitle = CRM_Contribute_BAO_PCP::getPcpContributionPageTitle( $pcpId );
+                $pcpTitle = CRM_Core_DAO::getFieldValue ( 'CRM_PCP_DAO_PCP', $pcpId, 'title' );
+                require_once 'CRM/PCP/BAO/PCP.php';
+                $contributionPageTitle = CRM_PCP_BAO_PCP::getPcpPageTitle( $pcpId, 'contribute' );
                 $this->_values['pcp_made_through' ]    = CRM_Utils_Array::value( 'sort_name',           $softCredit) . " :: " .
                                                          $pcpTitle . " :: " . $contributionPageTitle;
                 $this->_values['pcp_made_through_id']  = CRM_Utils_Array::value( 'pcp_id',              $softCredit);
@@ -913,7 +913,7 @@ WHERE  contribution_id = {$this->_id}
             // and if we already have line items for that participant. CRM-5095
             if ( $buildPriceSet && $this->_id ) {
                 $componentDetails = CRM_Contribute_BAO_Contribution::getComponentDetails( $this->_id );
-                $pledgePaymentId = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment',
+                $pledgePaymentId = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_PledgePayment',
                                                                 $this->_id,
                                                                 'id',
                                                                 'contribution_id' );
@@ -1261,9 +1261,6 @@ WHERE  contribution_id = {$this->_id}
             if ( CRM_Utils_Array::value( 'receive_date', $this->_params ) ) {
                 $paymentParams['receive_date'] = $this->_params['receive_date'];
             }
-
-            // force a reget of the payment processor in case the form changed it, CRM-7179
-            $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this, true );
             
             $result = null;
             
@@ -1287,8 +1284,13 @@ WHERE  contribution_id = {$this->_id}
                 $paymentParams['contributionPageID']  = $contribution->contribution_page_id;
                 $paymentParams['contributionRecurID'] = $contribution->contribution_recur_id;
             }
-            $result = $payment->doDirectPayment( $paymentParams );
-            
+
+            if ( $paymentParams['amount'] > 0.0 ) {
+                // force a reget of the payment processor in case the form changed it, CRM-7179
+                $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this, true );
+                $result = $payment->doDirectPayment( $paymentParams );
+            }
+
             if ( is_a( $result, 'CRM_Core_Error' ) ) {
                 //make sure to cleanup db for recurring case.
                 if ( CRM_Utils_Array::value( 'contributionID', $paymentParams ) ) {
@@ -1388,10 +1390,10 @@ WHERE  contribution_id = {$this->_id}
             //update pledge payment status.
             if ( $this->_ppID && $contribution->id ) { 
                 //store contribution id in payment record.
-                CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_Payment', $this->_ppID, 'contribution_id', $contribution->id );
+                CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_PledgePayment', $this->_ppID, 'contribution_id', $contribution->id );
 
-                require_once 'CRM/Pledge/BAO/Payment.php';
-                CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $this->_pledgeID,
+                require_once 'CRM/Pledge/BAO/PledgePayment.php';
+                CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $this->_pledgeID,
                                                                    array( $this->_ppID ), 
                                                                    $contribution->contribution_status_id,
                                                                    null,
@@ -1529,7 +1531,7 @@ WHERE  contribution_id = {$this->_id}
                 $sendReceipt = CRM_Contribute_Form_AdditionalInfo::emailReceipt( $this, $formValues );
             }
             
-            $pledgePaymentId = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment',
+            $pledgePaymentId = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_PledgePayment',
                                                             $contribution->id,
                                                             'id',
                                                             'contribution_id' );
@@ -1540,14 +1542,14 @@ WHERE  contribution_id = {$this->_id}
                 
                 if ( $this->_ppID ) {
                     //store contribution id in payment record.
-                    CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_Payment', $this->_ppID, 'contribution_id', $contribution->id );
+                    CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_PledgePayment', $this->_ppID, 'contribution_id', $contribution->id );
                 } else {
-                    $this->_ppID = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', 
+                    $this->_ppID = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_PledgePayment', 
                                                                 $contribution->id,
                                                                 'id', 
                                                                 'contribution_id'
                                                                 );
-                    $this->_pledgeID = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', 
+                    $this->_pledgeID = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_PledgePayment', 
                                                                     $contribution->id,
                                                                     'pledge_id', 
                                                                     'contribution_id'
@@ -1558,13 +1560,13 @@ WHERE  contribution_id = {$this->_id}
                 if ( CRM_Utils_Array::value( 'option_type', $formValues ) == 2 ) {
                     $adjustTotalAmount = true;
                 }
-                require_once 'CRM/Pledge/BAO/Payment.php';
-                CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $this->_pledgeID, 
-                                                                   array( $this->_ppID ), 
-                                                                   $contribution->contribution_status_id,
-                                                                   null,
-                                                                   $contribution->total_amount,
-                                                                   $adjustTotalAmount );
+                require_once 'CRM/Pledge/BAO/PledgePayment.php';
+                CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $this->_pledgeID, 
+                                                                         array( $this->_ppID ), 
+                                                                         $contribution->contribution_status_id,
+                                                                         null,
+                                                                         $contribution->total_amount,
+                                                                         $adjustTotalAmount );
             } 
             
             $statusMsg = ts('The contribution record has been saved.');

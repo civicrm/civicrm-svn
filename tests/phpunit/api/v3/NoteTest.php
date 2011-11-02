@@ -197,6 +197,8 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $result = civicrm_api('note','create', $this->_params );
         $this->documentMe( $this->_params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['values'][$result['id']]['note'], 'Hello!!! m testing Note','in line ' . __LINE__);
+        $this->assertEquals( date('Y-m-d', strtotime($this->_params['modified_date'])), date('Y-m-d',strtotime($result['values'][$result['id']]['modified_date'])),'in line ' . __LINE__);
+ 
         $this->assertArrayHasKey( 'id', $result,'in line ' . __LINE__ ); 
         $this->assertEquals( $result['is_error'], 0,'in line ' . __LINE__ );
         $note = array('id' => $result['id'],
@@ -228,6 +230,20 @@ class api_v3_NoteTest extends CiviUnitTestCase
                       'version' => $this->_apiversion );
           $this->noteDelete( $note );
     }
+        /**
+     * Check civicrm_note_create - tests used of default set to now
+     */
+    function testCreateWithoutModifiedDate( )
+    {
+        unset($this->_params['modified_date']);
+        $apiResult = civicrm_api('note','create', $this->_params );
+        $this->assertAPISuccess($apiResult);
+        $this->assertEquals(date('Y-m-d'), date('Y-m-d', strtotime($apiResult['values'][$apiResult['id']]['modified_date'])));
+        $this->noteDelete( array('id' => $apiResult['id'],
+                      'version' => $this->_apiversion ) );
+    }
+   
+    
 ///////////////// civicrm_note_update methods
 
 
@@ -319,7 +335,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $params     = array();        
         $deleteNote = & civicrm_api('note','delete', $params );           
         $this->assertEquals( $deleteNote['is_error'], 1 );
-        $this->assertEquals( $deleteNote['error_message'], 'Mandatory key(s) missing from params array: id, version');
+        $this->assertEquals( $deleteNote['error_message'], 'Mandatory key(s) missing from params array: version, id');
     }
 
     /**
