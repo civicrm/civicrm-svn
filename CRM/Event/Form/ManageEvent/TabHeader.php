@@ -104,7 +104,7 @@ class CRM_Event_Form_ManageEvent_TabHeader {
 
         $fullName  = $form->getVar( '_name' );      
         $className = CRM_Utils_String::getClassName( $fullName );
-
+        $new = '';
         // hack for special cases.
         switch( $className ) {
             case 'Event':
@@ -113,6 +113,7 @@ class CRM_Event_Form_ManageEvent_TabHeader {
                 break;
             case 'ScheduleReminders':
                 $class = 'reminder';
+                $new = CRM_Utils_Array::value('new', $_GET) ? '&new=1' : '';
                 break;
             default:
                 $class = strtolower($className);
@@ -132,7 +133,7 @@ class CRM_Event_Form_ManageEvent_TabHeader {
             
             foreach ( $tabs as $key => $value ) {
                 $tabs[$key]['link'] = CRM_Utils_System::url( "civicrm/event/manage/{$key}",
-                                                             "{$reset}action=update&snippet=4&id={$eventID}&qfKey={$qfKey}&component=event" );
+                                                             "{$reset}action=update&snippet=4&id={$eventID}&qfKey={$qfKey}&component=event{$new}" );
                 $tabs[$key]['active'] = $tabs[$key]['valid'] = true;
             }
             
