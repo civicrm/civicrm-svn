@@ -47,7 +47,8 @@
         		    <li><a title="Fees" href="{crmURL p='civicrm/event/manage/fee' q="reset=1&action=update&id=`$event.id`"}">{ts}Fees{/ts}</a></li>
         		    <li><a title="Online Registration" href="{crmURL p='civicrm/event/manage/registration' q="reset=1&action=update&id=`$event.id`"}">{ts}Online Registration{/ts}</a></li>
         		    <li><a title="Tell a Friend" href="{crmURL p='civicrm/event/manage/friend' q="reset=1&action=update&id=`$event.id`"}">{ts}Tell a Friend{/ts}</a></li>
-		        </ul>
+                    <li><a title="PCP" href="{crmURL p='civicrm/event/manage/pcp' q="reset=1&action=update&id=`$event.id`"}">{ts}PCP{/ts}</a></li>
+                </ul>
 	           </div>
 	      </div>
     </div></li>
