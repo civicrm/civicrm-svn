@@ -105,11 +105,14 @@ class CRM_Event_Form_ManageEvent_TabHeader {
         $fullName  = $form->getVar( '_name' );      
         $className = CRM_Utils_String::getClassName( $fullName );
 
-        // Hack for special cases.
+        // hack for special cases.
         switch( $className ) {
             case 'Event':
                 $attributes = $form->getVar( '_attributes' );
                 $class = strtolower(basename( CRM_Utils_Array::value('action', $attributes) ));
+                break;
+            case 'ScheduleReminders':
+                $class = 'reminder';
                 break;
             default:
                 $class = strtolower($className);
