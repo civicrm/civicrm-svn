@@ -834,6 +834,8 @@ function civicrm_api3_contact_geocode( $params )
 
     require_once 'CRM/Utils/Geocode/MassGeocode.php';
     $gc = new CRM_Utils_Geocode_MassGeocode( $params );
+
+    
     $result = $gc->run();
 
     if ( $result['is_error'] == 0 ) {

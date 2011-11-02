@@ -72,6 +72,7 @@ class CRM_Core_JobManager
            $this->logEntry( 'Could not authenticate the site key.' );
        }
         require_once 'api/api.php';
+
         foreach( $this->jobs as $job ) {
             if( $job->is_active ) {
                 if( $job->needsRunning( ) ) {
@@ -84,6 +85,7 @@ class CRM_Core_JobManager
                     } catch (Exception $e) {
                         $this->logEntry( 'Error while executing ' . $job->name . ': ' . $e->getMessage() );
                     }
+
                     $this->logEntry( 'Finished execution of ' . $job->name . ' with result: ' . $this->_apiResultToMessage( $result )  );
                 }
             }
