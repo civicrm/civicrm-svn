@@ -40,17 +40,17 @@
         <tr class="columnheader">
             <th >{ts}Date{/ts}</th>
             <th >{ts}Job Name{/ts}</th>
-            <th >{ts}Command{/ts}</th>
-            <th >{ts}Description{/ts}</th>
-            <th >{ts}Additional information{/ts}</th>
+            <th >{ts}Command{/ts}/{ts}Description{/ts}/{ts}Additional information{/ts}</th>
         </tr>
         {foreach from=$rows item=row}
         <tr id="row_{$row.id}" class="crm-job {cycle values="odd-row,even-row"} {$row.class}">
             <td class="crm-joblog-run_datetime">{$row.run_time}</td>
             <td class="crm-joblog-name">{$row.name}</td>
-            <td class="crm-joblog-command">{$row.command}</td>
-            <td class="crm-joblog-description">{$row.description}</td>
-	    <td class="crm-joblog-data">{$row.data}</td>
+            <td class="crm-joblog-details">
+                <div class="crm-joblog-command">{$row.command}</div>
+                <div class="crm-joblog-description">{$row.description}</div>
+	        <div class="crm-joblog-data">{$row.data}</div>
+            </td>
         </tr>
         {/foreach}
         </table>
