@@ -313,6 +313,44 @@ UPDATE `civicrm_pcp_block`
 
 ALTER TABLE `civicrm_pcp` DROP COLUMN `referer`;
 
+// CRM-8358 - consolidated cron jobs
+
+CREATE TABLE `civicrm_job` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Job Id',
+  `domain_id` int(10) unsigned NOT NULL COMMENT 'Which Domain is this scheduled job for',
+  `run_frequency` enum('Hourly','Daily') COLLATE utf8_unicode_ci DEFAULT 'Daily' COMMENT 'Scheduled job run frequency.',
+  `last_run` datetime DEFAULT NULL COMMENT 'When was this cron entry last run',
+  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Title of the job',
+  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Description of the job',
+  `command` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Full path to file containing job script',
+  `parameters` text COLLATE utf8_unicode_ci COMMENT 'List of parameters to the command.',
+  `is_active` tinyint(4) DEFAULT NULL COMMENT 'Is this job active?',
+  PRIMARY KEY (`id`),
+  KEY `FK_civicrm_job_domain_id` (`domain_id`),
+  CONSTRAINT `FK_civicrm_job_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `civicrm_domain` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE `civicrm_job_log` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Job log entry Id',
+  `domain_id` int(10) unsigned NOT NULL COMMENT 'Which Domain is this scheduled job for',
+  `run_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Log entry date',
+  `job_id` int(10) unsigned DEFAULT NULL COMMENT 'Pointer to job id - not a FK though, just for logging purposes',
+  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Title of the job',
+  `command` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Full path to file containing job script',
+  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Title line of log entry',
+  `data` text COLLATE utf8_unicode_ci COMMENT 'Potential extended data for specific job run (e.g. tracebacks).',
+  PRIMARY KEY (`id`),
+  KEY `FK_civicrm_job_log_domain_id` (`domain_id`),
+  CONSTRAINT `FK_civicrm_job_log_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `civicrm_domain` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+INSERT INTO `civicrm_job`
+    ( domain_id, run_frequency, last_run, name, description, command, parameters, is_active ) 
+VALUES 
+    ( @domainID, 'Hourly' , NULL, 'Mailings scheduler', 'Sends out scheduled mailings', 'civicrm_v3_mailing_process', 'user=USERNAME\r\npassword=PASSWORD\r\nkey=SITE_KEY', 0);
+
+
+
 #Other tasks
 # 1) Change the civicrm/admin/pcp?reset=1 navigation item to civicrm/admin/pcp?reset=1&context=contribute
 # 2) Add navigation item for civicrm/admin/pcp?reset=1&context=event
