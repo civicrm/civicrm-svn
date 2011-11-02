@@ -44,7 +44,7 @@
 /**
  * Include common API util functions
  */   
-require_once 'api/v3/utils.php';
+require_once 'CRM/Core/OptionGroup.php';
 
 /**
  * Function to retrieve activity types
@@ -57,7 +57,7 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_activity_type_get($params ) {
 
-    require_once 'CRM/Core/OptionGroup.php';
+
     $activityTypes = CRM_Core_OptionGroup::values( 'activity_type' );
     return civicrm_api3_create_success($activityTypes,$params,'activity_type','get');
 
@@ -79,8 +79,6 @@ function civicrm_api3_activity_type_get($params ) {
  
 function civicrm_api3_activity_type_create( $params ) {
 
-    civicrm_api3_verify_mandatory($params,null,array('label','weight'));
-    require_once 'CRM/Core/OptionGroup.php';
    
     $action = 1;
     $groupParams = array ( 'name' => 'activity_type' );
