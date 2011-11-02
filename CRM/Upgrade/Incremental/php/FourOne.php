@@ -80,9 +80,63 @@ class CRM_Upgrade_Incremental_php_FourOne {
         $params = array( );
         CRM_Core_BAO_ConfigSetting::add( $params );
         
-        // also reset navigation
+         // also reset navigation
         require_once 'CRM/Core/BAO/Navigation.php';
         CRM_Core_BAO_Navigation::resetNavigation( );
+        
+        require_once 'CRM/Dedupe/DAO/Rule.php';
+        require_once 'CRM/Dedupe/BAO/RuleGroup.php';
+       
+        $rgBao = new CRM_Dedupe_BAO_RuleGroup();
+        $rgBao->contact_type = 'Individual';
+        $rgBao->level = 'Strict';
+        $rgBao->is_default = 1;
+        $rgBao->threshold = 10;
+        if (!$rgBao->find(true)) {
+            return;
+        }
+        $ruleDao = new CRM_Dedupe_DAO_Rule();
+        $ruleDao->dedupe_rule_group_id = $rgBao->id;
+        
+        $ruleDao->find();
+        $count = 0;
+        $IndividualStrictFields = array( );
+        while ($ruleDao->fetch()) {
+            $IndividualStrictFields["where_$count"]  = "{$ruleDao->rule_table}.{$ruleDao->rule_field}";
+            $IndividualStrictFields["length_$count"] = $ruleDao->rule_length;
+            $IndividualStrictFields["weight_$count"] = $ruleDao->rule_weight;
+            $count++;
+        }
+         
+        if( $count > 1 || ( $count == 1 && CRM_Utils_Array::value( 'where_0', $IndividualStrictFields ) != 'civicrm_email.email' && CRM_Utils_Array::value( 'weight_0', $IndividualStrictFields ) != 10 ) ){
+            
+            $valuesArr = array( );
+            $valuesArr['is_default'] = 0;
+            $valuesArr['threshold'] = 15;
+            $valuesArr['level'] = 'Strict';
+            $valuesArr['name'] = 'IndividualComplete';
+            $valuesArr['title'] = 'Individual-Complete';
+            $valuesArr['is_reserved'] = 1;
+            $valuesArr['where_0'] = 'civicrm_contact.first_name';
+            $valuesArr['weight_0'] = 5;
+            $valuesArr['where_1'] = 'civicrm_contact.last_name';
+            $valuesArr['weight_1'] = 5;
+            $valuesArr['where_2'] = 'civicrm_address.street_address';
+            $valuesArr['weight_2'] = 5;
+            $valuesArr['where_3'] = 'civicrm_contact.middle_name';
+            $valuesArr['weight_3'] = 1;
+            $valuesArr['where_4'] = 'civicrm_contact.suffix_id' ;
+            $valuesArr['weight_4'] = 1;
+
+            self::dedupeRuleAdd( $valuesArr );
+        }
+        else if( $count == 1 && CRM_Utils_Array::value( 'where_0', $IndividualStrictFields ) == 'civicrm_email.email' && CRM_Utils_Array::value( 'weight_0', $IndividualStrictFields ) == 10 ){
+            
+            $rgBaoForInsertion = new CRM_Dedupe_BAO_RuleGroup();
+            $rgBaoForInsertion->id = $rgBao->id;
+            $rgBaoForInsertion->is_reserved = 1;
+            $rgBaoForInsertion->save();
+        }         
     }
     
     function transferPreferencesToSettings( ) {
@@ -262,6 +316,79 @@ AND    v.is_active = 1
             $params[$groupName][$dao->valueName] = $dao->value;
             
         }
+    }
+    
+    public function dedupeRuleAdd( $values ) 
+    {
+        require_once 'CRM/Contact/Form/DedupeRules.php';
+
+        $isDefault = CRM_Utils_Array::value( 'is_default', $values, false );
+        // reset defaults
+        if ( $isDefault ) {
+            $query = "
+UPDATE civicrm_dedupe_rule_group 
+   SET is_default = 0
+ WHERE contact_type = %1 
+   AND level = %2";
+            $queryParams = array( 1 => array( 'Individual', 'String' ),
+                                  2 => array( $values['level'], 'String' ) ); 
+            CRM_Core_DAO::executeQuery( $query, $queryParams );
+        }
+
+        $rgDao            = new CRM_Dedupe_DAO_RuleGroup();
+
+        $rgDao->threshold    = $values['threshold'];
+        $rgDao->title        = $values['title'];
+        $rgDao->name         = $values['name'];
+        $rgDao->level        = $values['level'];
+        $rgDao->contact_type = 'Individual';
+        $rgDao->is_reserved  = CRM_Utils_Array::value( 'is_reserved', $values, false );
+        $rgDao->is_default   = $isDefault;
+        $rgDao->save();
+        
+        $ruleDao = new CRM_Dedupe_DAO_Rule();
+        $ruleDao->dedupe_rule_group_id = $rgDao->id;
+        $ruleDao->delete();
+        $ruleDao->free();
+
+        $substrLenghts = array();
+
+        $tables = array( );
+        for ($count = 0; $count < CRM_Contact_Form_DedupeRules::RULES_COUNT; $count++) {
+            if ( ! CRM_Utils_Array::value( "where_$count", $values ) ) {
+                continue;
+            }
+            list($table, $field) = explode('.', CRM_Utils_Array::value( "where_$count", $values ) );
+            $length = CRM_Utils_Array::value( "length_$count", $values ) ? CRM_Utils_Array::value( "length_$count", $values ) : null;
+            $weight = $values["weight_$count"];
+            if ($table and $field) {
+                $ruleDao = new CRM_Dedupe_DAO_Rule();
+                $ruleDao->dedupe_rule_group_id = $rgDao->id;
+                $ruleDao->rule_table           = $table;
+                $ruleDao->rule_field           = $field;
+                $ruleDao->rule_length          = $length;
+                $ruleDao->rule_weight          = $weight;
+                $ruleDao->save();
+                $ruleDao->free();
+
+                if ( ! array_key_exists( $table, $tables ) ) {
+                    $tables[$table] = array( );
+                }
+                $tables[$table][] = $field;
+            }
+
+            // CRM-6245: we must pass table/field/length triples to the createIndexes() call below
+            if ($length) {
+                if (!isset($substrLenghts[$table])) $substrLenghts[$table] = array();
+                $substrLenghts[$table][$field] = $length;
+            }
+        }
+
+        // also create an index for this dedupe rule
+        // CRM-3837
+        require_once 'CRM/Core/BAO/SchemaHandler.php';
+        CRM_Core_BAO_SchemaHandler::createIndexes( $tables, 'dedupe_index', $substrLenghts );
+                  
     }
     
   }
