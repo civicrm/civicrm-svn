@@ -244,7 +244,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
             "&m=$component" . 
             "&c={$params['contactID']}" .
             "&r={$params['contributionRecurID']}" .
-            "&b=$params['contributionID']" .
+            "&b={$params['contributionID']}" .
             "&p={$params['contributionPageID']}";
 
         $result = $this->invokeAPI( $args );
