@@ -756,11 +756,12 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
 
         // subtype is a common field. lets keep it here
-        $typeLabel = CRM_Contact_BAO_ContactType::getLabel( $this->_contactType );
-        $subtypes  = CRM_Contact_BAO_ContactType::subTypePairs( $this->_contactType );
-        $sel = $this->add( 'select', 'contact_sub_type', ts( 'Contact Type' ), 
-                           $subtypes, false, array('onchange' => $buildCustomData) );
-        $sel->setMultiple(true);
+        $subtypes = CRM_Contact_BAO_ContactType::subTypePairs( $this->_contactType );
+        if ( ! empty($subtypes) ) {
+            $sel = $this->add( 'select', 'contact_sub_type', ts( 'Contact Type' ), 
+                               $subtypes, false, array('onchange' => $buildCustomData) );
+            $sel->setMultiple(true);
+        }
 
         // build edit blocks ( custom data, demographics, communication preference, notes, tags and groups )
         foreach( $this->_editOptions as $name => $label ) {                
@@ -806,12 +807,12 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $this->_oldSubtypes = 
                 explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                          trim($this->_values['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) );
+            if ( !empty($this->_oldSubtypes) ) {
+                $buttons[0]['js'] = array( 'onclick' => "return warnSubtypeDataLoss()" );
+            }
         }
+        $this->assign( 'oldSubtypes', json_encode($this->_oldSubtypes) );
 
-        if ( !empty($this->_oldSubtypes) ) {
-            $this->assign( 'oldSubtypes', json_encode($this->_oldSubtypes) );
-            $buttons[0]['js'] = array( 'onclick' => "return warnSubtypeDataLoss()" );
-        }
         $this->addButtons( $buttons );
     }
     
