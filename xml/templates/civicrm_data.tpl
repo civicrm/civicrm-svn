@@ -1290,3 +1290,10 @@ INSERT INTO `civicrm_contact_type`
   ( 3, 'Organization', '{ts escape="sql"}Organization{/ts}', NULL, NULL, 1, 1);
 
 {include file='civicrm_msg_template.tpl'}
+
+-- CRM-8358
+
+INSERT INTO `civicrm_job`
+    ( domain_id, run_frequency, last_run, name, description, command, parameters, is_active ) 
+VALUES 
+    ( @domainID, 'Hourly' , NULL, 'Mailings scheduler', 'Sends out scheduled mailings', 'civicrm_v3_mailing_process', 'user=USERNAME\r\npassword=PASSWORD\r\nkey=SITE_KEY', 0);
