@@ -86,7 +86,6 @@ function _civicrm_api3_email_create_spec(&$params){
 function civicrm_api3_email_delete( $params ) 
 {
 
-    civicrm_api3_verify_mandatory ($params,null,array ('id'));
     $emailID = CRM_Utils_Array::value( 'id', $params );
 
     require_once 'CRM/Core/DAO/Email.php';
