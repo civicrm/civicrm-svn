@@ -789,6 +789,9 @@ WHERE civicrm_event.is_active = 1
         $permissions = CRM_Core_Permission::event( CRM_Core_Permission::VIEW );
 
         require_once 'CRM/Utils/String.php';
+        if ($config->enable_cart) {
+            require_once 'CRM/Event/Cart/BAO/EventInCart.php';
+        }
         while ( $dao->fetch( ) ) {
             if ( in_array($dao->event_id, $permissions) ) {
                 $info                     = array( );
@@ -828,6 +831,12 @@ WHERE civicrm_event.is_active = 1
                                           CRM_Utils_Address::format($addrFields) );
                 $info['location'     ] = $address;
                 $info['url'          ] = CRM_Utils_System::url( 'civicrm/event/info', 'reset=1&id=' . $dao->event_id, true, null, false );
+
+                if ($config->enable_cart) {
+                    $reg = CRM_Event_Cart_BAO_EventInCart::get_registration_link($dao->event_id);
+                    $info['registration_link'] = CRM_Utils_System::url($reg['path'], $reg['query'], true);
+                    $info['registration_link_text'] = $reg['label'];
+                }
                 
                 $all[] = $info;
             }
