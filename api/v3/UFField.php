@@ -139,10 +139,27 @@ function civicrm_api3_uf_field_get( $params )
  * {@getfields UFField_delete}
  * @example UFFieldDelete.php
  */
+/**
+ * Delete uf field
+ *
+ * @param $fieldId int  Valid uf_field id that to be deleted
+ *
+ * @return true on successful delete or return error
+ *
+ * @access public
+ *
+ */
 function civicrm_api3_uf_field_delete($params ) {
-   
 
-    $result = CRM_Core_BAO_UFField::del($params['id']);
+
+    $fieldId  = $params['id'];
+    
+    $ufGroupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFField', $fieldId, 'uf_group_id' );
+    if (!$ufGroupId) {
+        return civicrm_api3_create_error('Invalid value for field_id.');  
+    }
+    
+    $result = CRM_Core_BAO_UFField::del($fieldId);
 
     $fieldsType = CRM_Core_BAO_UFGroup::calculateGroupType($ufGroupId, true);
     CRM_Core_BAO_UFGroup::updateGroupTypes($ufGroupId, $fieldsType);
