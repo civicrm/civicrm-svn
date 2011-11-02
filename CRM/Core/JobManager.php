@@ -143,7 +143,10 @@ class CRM_Core_JobManager
             $dao->job_id = $this->currentJob->id;
             $dao->name = $this->currentJob->name;
             $dao->command = $this->currentJob->command;
-            $dao->data = "Parameters raw: \n\n" . $this->currentJob->parameters . "\n\nParameters parsed: \n\n" . serialize( $this->currentJob->apiParams);
+            $dao->data = "Parameters raw: \n\n" . $this->currentJob->parameters;
+            if( $this->currentJob->apiParams ) {
+                $dao->data .= "\n\nParameters parsed: \n\n" . serialize( $this->currentJob->apiParams);
+            }
         }
         $dao->save( );
     }

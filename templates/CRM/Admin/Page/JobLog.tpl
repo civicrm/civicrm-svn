@@ -27,9 +27,13 @@
     {ts}This screen presents the list of scheduled jobs (cron tasks) log entries.{/ts} {$docLink}
 </div>
 
-{if $action eq 1 or $action eq 2 or $action eq 8}
-   {include file="CRM/Admin/Form/Job.tpl"}
-{else}
+{if $jobId}
+    <h1>{ts}List of log entries for:{/ts} {$jobName}</h1>
+{/if}
+
+<div class="action-link">
+  <a href="{crmURL p='civicrm/admin/job' q="reset=1"}" id="jobsList" class="button"><span><div class="icon add-icon"></div>{ts}Back to jobs list{/ts}</span></a>
+</div>
 
 {if $rows}
 <div id="ltype">
@@ -60,7 +64,14 @@
 {elseif $action ne 1}
     <div class="messages status">
       <div class="icon inform-icon"></div>
+      {if $jobId}
+          {ts}This scheduled job does have any log entries.{/ts}
+      {else}
         {ts}There are no scheduled job log entries.{/ts}
+      {/if}
      </div>    
 {/if}
-{/if}
+
+<div class="action-link">
+  <a href="{crmURL p='civicrm/admin/job' q="reset=1"}" id="jobsList" class="button"><span><div class="icon add-icon"></div>{ts}Back to jobs list{/ts}</span></a>
+</div>

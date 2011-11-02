@@ -67,40 +67,6 @@ class CRM_Admin_Page_JobLog extends CRM_Core_Page_Basic
      */
     function &links()
     {
-        if (!(self::$_links)) {
-            self::$_links = array(
-                                  CRM_Core_Action::EXPORT  => array(
-                                                                    'name'  => ts('Execute'),
-                                                                    'url'   => 'civicrm/admin/job',
-                                                                    'qs'    => 'action=export&id=%%id%%&reset=1',
-                                                                    'title' => ts('Execute Scheduled Job Now') 
-                                                                    ),
-                                  CRM_Core_Action::UPDATE  => array(
-                                                                    'name'  => ts('Edit'),
-                                                                    'url'   => 'civicrm/admin/job',
-                                                                    'qs'    => 'action=update&id=%%id%%&reset=1',
-                                                                    'title' => ts('Edit Scheduled Job') 
-                                                                    ),
-                                  CRM_Core_Action::DISABLE => array(
-                                                                    'name'  => ts('Disable'),
-                                                                    'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_Job' . '\',\'' . 'enable-disable' . '\' );"',
-                                                                    'ref'   => 'disable-action',
-                                                                    'title' => ts('Disable Scheduled Job') 
-                                                                    ),
-                                  CRM_Core_Action::ENABLE  => array(
-                                                                    'name'  => ts('Enable'),
-                                                                    'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_Job' . '\',\'' . 'disable-enable' . '\' );"',
-                                                                    'ref'   => 'enable-action',
-                                                                    'title' => ts('Enable Scheduled Job') 
-                                                                    ),
-                                  CRM_Core_Action::DELETE  => array(
-                                                                    'name'  => ts('Delete'),
-                                                                    'url'   => 'civicrm/admin/job',
-                                                                    'qs'    => 'action=delete&id=%%id%%',
-                                                                    'title' => ts('Delete Scheduled Job') 
-                                                                    )
-                                  );
-        }
         return self::$_links;
     }
 
@@ -136,9 +102,24 @@ class CRM_Admin_Page_JobLog extends CRM_Core_Page_Basic
     function browse($action=null)
     {
 
+        $jid = CRM_Utils_Request::retrieve('jid', 'Positive', $this);
+        
+        require_once 'CRM/Core/JobManager.php';
+        $sj = new CRM_Core_JobManager();
+
+        $jobName = null;
+        foreach( $sj->jobs as $i => $job ) {
+            if( $job->id == $jid ) {
+                $jobName = $job->name;
+            }
+        }
+
+        $this->assign('jobName', $jobName );
+        
         require_once 'CRM/Core/DAO/JobLog.php';
         $dao = new CRM_Core_DAO_JobLog();
         $dao->orderBy('run_time desc');
+        if( $jobName ) $dao->job_id = $jid;
         $dao->find();
         $rows = array();
         while ($dao->fetch()) {
@@ -147,6 +128,13 @@ class CRM_Admin_Page_JobLog extends CRM_Core_Page_Basic
             $rows[$dao->id] = $row;
         }
         $this->assign('rows', $rows);
+        
+        $this->assign('jobId', $jid );
+        
+
+        
+ 
+        
     }
 
     /**
