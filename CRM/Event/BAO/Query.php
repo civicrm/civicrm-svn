@@ -197,7 +197,7 @@ class CRM_Event_BAO_Query
  
             // get discount name
             if ( CRM_Utils_Array::value( 'participant_discount_name', $query->_returnProperties ) ) {
-                $query->_select['participant_discount_name']      = "discount_name.label as participant_discount_name";
+                $query->_select['participant_discount_name']      = "discount_name.title as participant_discount_name";
                 $query->_element['participant_discount_name']     = 1;
                 $query->_tables['civicrm_discount']               = 1;
                 $query->_tables['participant_discount_name']      = 1;
