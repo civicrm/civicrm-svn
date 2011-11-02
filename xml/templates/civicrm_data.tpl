@@ -266,6 +266,7 @@ SELECT @option_group_id_paperSize      := max(id) from civicrm_option_group wher
 SELECT @option_group_id_label          := max(id) from civicrm_option_group where name = 'label_format';
 SELECT @option_group_id_aco            := max(id) from civicrm_option_group where name = 'activity_contacts';
 SELECT @option_group_id_ere            := max(id) from civicrm_option_group where name = 'event_recipients';
+SELECT @option_group_id_conference_slot := max(id) from civicrm_option_group where name = 'conference_slot';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -766,6 +767,10 @@ VALUES
 -- event_recipients 
    (@option_group_id_ere, '{ts escape="sql"}Participant Status{/ts}', 1, 'civicrm_participant_status_type', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_ere, '{ts escape="sql"}Participant Role{/ts}', 2, 'participant_role', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+
+-- default conference slots
+   (@option_group_id_conference_slot, '{ts escape="sql"}Morning Sessions{/ts}', 1, '{ts escape="sql"}Morning Sessions{/ts}', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_conference_slot, '{ts escape="sql"}Evening Sessions{/ts}', 2, '{ts escape="sql"}Evening Sessions{/ts}', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
 
 -- Label Formats
   (@option_group_id_label, '{ts escape="sql"}Avery 3475{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":10,"font-style":"","metric":"mm","lMargin":0,"tMargin":5,"NX":3,"NY":8,"SpaceX":0,"SpaceY":0,"width":70,"height":36,"lPadding":5.08,"tPadding":5.08}{/literal}',                   '3475',  'Avery', NULL, 0, 1,  NULL, 0, 1, 1, NULL, NULL), 
