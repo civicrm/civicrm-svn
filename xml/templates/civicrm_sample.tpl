@@ -55,9 +55,9 @@ VALUES
     ('civicrm_event', 1, 'Tell A Friend', '<p>Help us spread the word about this event. Use the space below to personalize your email message - let your friends know why you''re attending. Then fill in the name(s) and email address(es) and click ''Send Your Message''.</p>', 'Thought you might be interested in checking out this event. I''m planning on attending.', NULL, 'Thanks for Spreading the Word', '<p>Thanks for spreading the word about this event to your friends.</p>', 1);
 
 INSERT INTO `civicrm_pcp_block`
-    (`id`, `entity_table`, `entity_id`, `supporter_profile_id`, `is_approval_needed`, `is_tellfriend_enabled`, `tellfriend_limit`, `link_text`, `is_active`)
+    (`id`, `entity_table`, `entity_id`, `supporter_profile_id`, `is_approval_needed`, `is_tellfriend_enabled`, `tellfriend_limit`, `link_text`, `is_active`, `target_entity_id` )
 VALUES
-    (1, 'civicrm_contribution_page', 1, 2, 1, 1, 5, 'Create your own Personal Campaign Page!', 1);
+    (1, 'civicrm_contribution_page', 1, 2, 1, 1, 5, 'Create your own Personal Campaign Page!', 1, 1);
 
 INSERT INTO civicrm_contact
     (contact_type, contact_sub_type, legal_identifier, external_identifier, sort_name, display_name, nick_name, source, preferred_communication_method, preferred_mail_format, do_not_phone, do_not_email, do_not_mail, do_not_trade, hash, is_opt_out,organization_name)
