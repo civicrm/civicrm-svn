@@ -36,10 +36,7 @@
  * @version $Id: CustomGroup.php 30879 2010-11-22 15:45:55Z shot $
  */
 
-/**
- * Files required for this package
- */
-require_once 'api/v3/utils.php';
+
 require_once 'CRM/Core/BAO/CustomGroup.php';
 /**
  * Most API functions take in associative arrays ( name => value pairs
@@ -115,13 +112,11 @@ function _civicrm_api3_custom_group_create_spec(&$params){
  * @return Null if success
  * @access public
  * {@getfields CustomGroup_delete}
+ * @example CustomGroupDelete.php
  **/
 function civicrm_api3_custom_group_delete($params)
 {    
 
-        civicrm_api3_verify_mandatory($params,null,array('id'));
-        // convert params array into Object
-        require_once 'CRM/Core/DAO/CustomGroup.php';
         $values = new CRM_Core_DAO_CustomGroup( );
         $values->id = $params['id'];
         $values->find(true);
@@ -140,9 +135,9 @@ function civicrm_api3_custom_group_delete($params)
  *
 * @access public
  * {@getfields CustomGroup_get}
+ * @example CustomGroupGet.php
  **/
 function civicrm_api3_custom_group_get($params)
 {
-    civicrm_api3_verify_mandatory($params);
     return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
  }
