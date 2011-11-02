@@ -320,22 +320,9 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
                                                                    'Event' );
 
         require_once 'CRM/Event/BAO/Event.php';
-
-        // copy all not explicitely set $params keys from the template (if it should be sourced)
-        if ( CRM_Utils_Array::value( 'template_id', $params ) ) {
-            $defaults = array();
-            $templateParams = array('id' => $params['template_id']);
-            CRM_Event_BAO_Event::retrieve($templateParams, $defaults);
-            unset($defaults['id']);
-            unset($defaults['default_fee_id']);
-            unset($defaults['default_discount_fee_id']);
-            foreach ($defaults as $key => $value) {
-                if (!isset($params[$key])) $params[$key] = $value;
-            }
-        }
-        
-        if ( empty( $params['is_template'] ) ) {
-            $params['is_template'] = 0;
+        //merge params with defaults from templates
+        if ( CRM_Utils_Array::value( 'template_id', $params ) ) { 
+          $params = array_merge(CRM_Event_BAO_Event::getTemplateDefaultValues($params['template_id']),$params);
         }
         
         $event =  CRM_Event_BAO_Event::create( $params );

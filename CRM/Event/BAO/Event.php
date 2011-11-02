@@ -135,7 +135,9 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
     {
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
-
+        if ( empty( $params['is_template'] ) ) {
+            $params['is_template'] = 0;
+        }
         // check if new event, if so set the created_id (if not set)
         // and always set created_date to now
         if ( empty( $params['id'] ) ) {
@@ -1895,5 +1897,33 @@ LEFT  JOIN  civicrm_price_field_value value ON ( value.id = lineItem.price_field
         
         return (int)CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $eventId, 'Positive' ) ) );
     }
-    
+    /* 
+     * Retrieve event template default values to be set
+     *  as default values for current new event.
+     *
+     * @params int $templateId event template id.
+     *
+     * @return $defaults an array of custom data defaults.
+     */
+    public function getTemplateDefaultValues( $templateId ) 
+    {
+        $defaults = array( );
+        if ( !$templateId ) {
+            return $defaults;  
+        }
+        
+        $templateParams = array('id' => $templateId);
+        require_once 'CRM/Event/BAO/Event.php';
+        CRM_Event_BAO_Event::retrieve($templateParams, $defaults);
+        $fieldsToExclude = array('id',
+                                  'default_fee_id',
+                                  'default_discount_fee_id',
+                                  'created_date',
+                                  'created_id',
+                                  'is_template',
+                                  'template_title'
+        ) ;
+        $defaults = array_diff_key($defaults,array_flip($fieldsToExclude));     
+        return $defaults;
+    }
 }
