@@ -34,7 +34,6 @@
  */
 
 require_once 'CRM/Campaign/BAO/Campaign.php';
-require_once 'api/v3/utils.php';
 
 /**
  * create/update campaign
