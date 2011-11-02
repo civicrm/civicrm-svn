@@ -55,6 +55,7 @@ class CRM_Core_ScheduledJob
         foreach( $params as $name => $param ) {
             $this->$name = $param;
         }
+
         $cmd = split( '_', $this->command );
 
         if( is_array( $cmd) && $cmd[0] == 'civicrm' ) {

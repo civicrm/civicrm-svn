@@ -891,3 +891,53 @@ function civicrm_api3_contact_report( $params )
         return civicrm_api3_create_error( $result['messages'] );
     }
 }
+
+
+/**
+ * 
+ * This method allows to update Email Greetings, Postal Greetings and Addressee for a specific contact type.
+ * IMPORTANT: You must first create valid option value before using via admin interface. 
+ * Check option lists for Email Greetings, Postal Greetings and Addressee 
+ *
+ * @param  array   	  $params (reference ) input parameters
+ *                        ct - String - ct=Individual or ct=Household or ct=Organization
+ *                        gt - String - gt=email_greeting or gt=postal_greeting or gt=addressee
+ *                        id - Integer - greetings option group
+ *
+ * @return boolean        true if success, else false
+ * @static
+ * @access public
+ *
+ */
+function civicrm_api3_contact_greeting_update( $params )
+{
+    require_once 'CRM/Contact/BAO/Contact/Utils.php';
+    
+    civicrm_api3_verify_mandatory($params,null,array('ct', 'gt', 'id'));
+
+    // FIXME: verify_type along the lines of: $id = CRM_Utils_Request::retrieve( 'id', 'Positive', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
+ 
+    // FIXME: verify_type along the lines of: $contactType = CRM_Utils_Request::retrieve( 'ct', 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
+    if ( ! in_array( $params['ct'],
+                     array( 'Individual', 'Household', 'Organization' ) ) ) {
+        return civicrm_api3_create_error( ts('Invalid contact type (ct) parameter value') );
+    }
+    
+    // FIXME: verify_type along the lines of: $greeting = CRM_Utils_Request::retrieve( 'gt', 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
+    if ( ! in_array( $params['gt'],
+                     array( 'email_greeting', 'postal_greeting', 'addressee' ) ) ) {
+        return civicrm_api3_create_error( ts('Invalid greeting type (gt) parameter value') );
+    }
+
+    if (  in_array( $params['gt'], array( 'email_greeting', 'postal_greeting' ) ) && $params['ct'] == 'Organization' ) {
+        return civicrm_api3_create_error( ts('You cannot use %1 for contact type %2.', array( 1 => $params['gt'], 2 => $params['ct']) ) );
+    }
+            
+    $result = CRM_Contact_BAO_Contact_Utils::updateGreeting( $params );
+    
+    if ( $result['is_error'] == 0 ) {
+        return civicrm_api3_create_success( );
+    } else {
+        return civicrm_api3_create_error( $result['messages'] );
+    }
+}
