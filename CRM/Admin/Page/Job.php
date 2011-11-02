@@ -70,7 +70,7 @@ class CRM_Admin_Page_Job extends CRM_Core_Page_Basic
         if (!(self::$_links)) {
             self::$_links = array(
                                   CRM_Core_Action::EXPORT  => array(
-                                                                    'name'  => ts('Execute'),
+                                                                    'name'  => ts('Execute now'),
                                                                     'url'   => 'civicrm/admin/job',
                                                                     'qs'    => 'action=export&id=%%id%%&reset=1',
                                                                     'title' => ts('Execute Scheduled Job Now') 

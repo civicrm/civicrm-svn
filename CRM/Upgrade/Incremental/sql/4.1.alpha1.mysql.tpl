@@ -318,7 +318,7 @@ ALTER TABLE `civicrm_pcp` DROP COLUMN `referer`;
 CREATE TABLE `civicrm_job` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Job Id',
   `domain_id` int(10) unsigned NOT NULL COMMENT 'Which Domain is this scheduled job for',
-  `run_frequency` enum('Hourly','Daily') COLLATE utf8_unicode_ci DEFAULT 'Daily' COMMENT 'Scheduled job run frequency.',
+  `run_frequency` enum('Hourly','Daily','Always') COLLATE utf8_unicode_ci DEFAULT 'Daily' COMMENT 'Scheduled job run frequency.',
   `last_run` datetime DEFAULT NULL COMMENT 'When was this cron entry last run',
   `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Title of the job',
   `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Description of the job',
