@@ -82,11 +82,12 @@ cj(document).ready( function( ) {
 {literal}
 
 var sourceDataUrl = "{/literal}{$dataUrl}{literal}";
-var tokenDataUrl  = "{/literal}{$tokenUrl}{literal}";
+var tokenDataUrl_target  = "{/literal}{$tokenUrl}&context=case_activity_target{literal}";
+var tokenDataUrl_assignee  = "{/literal}{$tokenUrl}&context=case_activity_assignee{literal}";
 
 var hintText = "{/literal}{ts}Type in a partial or complete name or email address of an existing contact.{/ts}{literal}";
-cj( "#assignee_contact_id").tokenInput( tokenDataUrl, { prePopulate: assignee_contact, theme: 'facebook', hintText: hintText });
-cj( "#target_contact_id"  ).tokenInput( tokenDataUrl, { prePopulate: target_contact,   theme: 'facebook', hintText: hintText });
+cj( "#assignee_contact_id").tokenInput( tokenDataUrl_assignee, { prePopulate: assignee_contact, theme: 'facebook', hintText: hintText });
+cj( "#target_contact_id"  ).tokenInput( tokenDataUrl_target, { prePopulate: target_contact,   theme: 'facebook', hintText: hintText });
 cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );
 cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirst : false, matchContains:true
                             }).result( function(event, data, formatted) { cj( "#source_contact_qid" ).val( data[1] );

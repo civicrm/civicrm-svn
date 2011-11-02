@@ -74,24 +74,11 @@
     {literal}
 
     var sourceDataUrl = "{/literal}{$dataUrl}{literal}";
-    var tokenDataUrl  = "{/literal}{$tokenUrl}{literal}";
-    var assigneeTokenDataUrl  = "{/literal}{$assigneeTokenUrl}{literal}";
+    var tokenDataUrl_target  = "{/literal}{$tokenUrl}&context=activity_target{literal}";
+    var tokenDataUrl_assignee  = "{/literal}{$tokenUrl}&context=activity_assignee{literal}";
     var hintText = "{/literal}{ts}Type in a partial or complete name of an existing contact.{/ts}{literal}";
-    cj( "#target_contact_id"  ).tokenInput( tokenDataUrl, { prePopulate: target_contact,   theme: 'facebook', hintText: hintText });
-    cj( "#assignee_contact_id").tokenInput( assigneeTokenDataUrl, { prePopulate: assignee_contact, theme: 'facebook', hintText: hintText,
-                  queryParam: 'sort_name',
-                  onResult: function (results) {
-                    var formattedResult = new Array();t = {};
-                    cj.each(results.values, function (index, value) {
-                        t = {}; 
-                        t.name = value.sort_name;
-                        t.id=value.id;
-                        formattedResult.push(t);
-                    });
-
-                    return formattedResult;
-                }
-    });
+    cj( "#target_contact_id"  ).tokenInput( tokenDataUrl_target,   { prePopulate: target_contact,   theme: 'facebook', hintText: hintText });
+    cj( "#assignee_contact_id").tokenInput( tokenDataUrl_assignee, { prePopulate: assignee_contact, theme: 'facebook', hintText: hintText });
     cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );
     cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst : false, hintText: hintText, matchContains: true, minChars: 1
                                 }).result( function(event, data, formatted) { cj( "#source_contact_qid" ).val( data[1] );

@@ -723,22 +723,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                                            false, null, false );
         $this->assign( 'tokenUrl', $tokenUrl );
         
-        // Filtered tokeninput url for activity assignee
-        $tokenParams = 'json=1&version=3&entity=Contact&action=get&return=sort_name';
-        // TODO Get assigneeFilterParams from new civicrm_settings table. Example below:
-        //$assigneeFilterParams = 'contact_type=Individual&group=4';
-        $assigneeFilterParams = '';
-        if ( !empty($assigneeFilterParams) && strpos($assigneeFilterParams, '=') > 0 ) {
-            if ( substr($assigneeFilterParams, 0, 1) != '&' ) {
-                $tokenParams .= '&';
-            }
-            $tokenParams .=  $assigneeFilterParams;
-        }
-        $assigneeTokenUrl = CRM_Utils_System::url( 'civicrm/ajax/rest',
-                                                   $tokenParams,
-                                                   false, null, false );
-        $this->assign( 'assigneeTokenUrl', $assigneeTokenUrl );
-        
         $admin = CRM_Core_Permission::check( 'administer CiviCRM' );
         //allow to edit sourcecontactfield field if context is civicase.
         if ( $this->_context == 'caseActivity' ) {
