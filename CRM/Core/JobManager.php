@@ -55,7 +55,7 @@ class CRM_Core_JobManager
         require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton();
         $config->fatalErrorHandler = 'CRM_Core_JobManager_scheduledJobFatalErrorHandler';
-        $this->logEntry( 'Starting scheduled jobs execution' );
+
         $this->jobs = $this->_getJobs();
     }                                                          
 
@@ -66,8 +66,11 @@ class CRM_Core_JobManager
      * 
      */
     public function execute( ) {
-        require_once 'CRM/Utils/System.php';        
-        CRM_Utils_System::authenticateKey( );
+        $this->logEntry( 'Starting scheduled jobs execution' );
+        require_once 'CRM/Utils/System.php';
+       if( !CRM_Utils_System::authenticateKey( FALSE ) ) {
+           $this->logEntry( 'Could not authenticate the site key.' );
+       }
         require_once 'api/api.php';
         foreach( $this->jobs as $job ) {
             if( $job->is_active ) {
@@ -86,6 +89,7 @@ class CRM_Core_JobManager
             }
             $this->currentJob = FALSE;
         }
+        $this->logEntry( 'Finishing scheduled jobs execution.' );        
     }
 
     /*
@@ -96,7 +100,6 @@ class CRM_Core_JobManager
      * 
      */
     public function __destruct( ) {
-        $this->logEntry( 'Finishing scheduled jobs execution.' );
     }
 
     /*
@@ -135,7 +138,6 @@ class CRM_Core_JobManager
         $dao = new CRM_Core_DAO_JobLog( );
 
         $dao->domain_id  = $domainID;
-        $dao->run_time =  date( 'YmdHisu' );
         $dao->description = $message;        
         if( $this->currentJob ) {
             $dao->job_id = $this->currentJob->id;
