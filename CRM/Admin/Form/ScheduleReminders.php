@@ -147,7 +147,8 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->add( 'select', 'recipient', ts( 'Recipient(s)' ), $sel5[$recipient],
                     false, array( 'onClick' => "showHideByValue('recipient','manual','recipientManual','table-row','select',false); showHideByValue('recipient','group','recipientGroup','table-row','select',false);") 
                     );
-        $recipientListing = $this->add( 'select', 'recipient_listing', ts('Recipient Listing'), $sel3[3][0] );
+        $recipientListing = $this->add( 'select', 'recipient_listing', ts('Recipient Listing'), 
+                                         $sel4);
         $recipientListing->setMultiple( true ); 
         //autocomplete url
         $dataUrl = CRM_Utils_System::url( 'civicrm/ajax/rest',
@@ -188,8 +189,9 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
     static function formRule( $fields )
     {
         $errors = array( );
-        if ( $fields['entity'][1][0] == 0 ||
-             $fields['entity'][2][0] == 0) {
+        
+        if ( (array_key_exists(1, $fields['entity']) &&$fields['entity'][1][0] == 0 )||
+             (array_key_exists(2, $fields['entity']) &&$fields['entity'][2][0] == 0 ) ) {
             $errors['entity'] = ts('Please select appropriate value');
         }
         
@@ -200,7 +202,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         
         if ( ( CRM_Utils_Array::value( 'recipient', $fields ) == 1 ||
                CRM_Utils_Array::value( 'recipient', $fields ) == 2 ) && 
-             CRM_Utils_System::isNull( $fields['recipient_listing'] ) &&
+             CRM_Utils_Array::value( 'recipient_listing', $fields ) &&
              ( $fields['entity'][0] == 2 || $fields['entity'][0] == 3 )){
             $errors['recipient_listing'] = ts('Recipient Listing is a required field.');
         }
