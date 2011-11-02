@@ -42,7 +42,7 @@
 	      <div class="ac_results" id="crm-event-links-list">
 	      	   <div class="crm-event-links-list-inner">
 	      	   	<ul>
-        		    <li><a title="Info and Settings" href="{crmURL p='civicrm/event/manage/eventInfo' q="reset=1&action=update&id=`$event.id`"}">{ts}Info and Settings{/ts}</a></li>
+        		    <li><a title="Info and Settings" href="{crmURL p='civicrm/event/manage/settings' q="reset=1&action=update&id=`$event.id`"}">{ts}Info and Settings{/ts}</a></li>
         		    <li><a title="Location" href="{crmURL p='civicrm/event/manage/location' q="reset=1&action=update&id=`$event.id`"}">{ts}Location{/ts}</a></li>
         		    <li><a title="Fees" href="{crmURL p='civicrm/event/manage/fee' q="reset=1&action=update&id=`$event.id`"}">{ts}Fees{/ts}</a></li>
         		    <li><a title="Online Registration" href="{crmURL p='civicrm/event/manage/registration' q="reset=1&action=update&id=`$event.id`"}">{ts}Online Registration{/ts}</a></li>
