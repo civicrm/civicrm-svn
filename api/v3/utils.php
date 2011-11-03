@@ -179,38 +179,6 @@ function civicrm_api3_verify_mandatory($params, $daoName = null, $keys = array()
     }
 }
 
-/*
- * Verify if the params are of the right type
- * @param array $params array of params to check
- * @param string $type ('numeric' only for now)
- * @param string/object dao to test the param againsts (test the standard fields based on the schema definition)
- * @param array $extra contains arrays of (fieldname, type)
- * @return null or throws error if some of the params are not of the right type
- */
-function civicrm_api3_verify_type ($params, $dao, $extra) {
-    throw new Exception("TODO: To be implemented");
-    $notProperType = array();
-    if ( !is_array( $keys ) ) {
-        $keys = array ($keys) ;
-    }
-    foreach ($keys as $key) {
-        if ( array_key_exists ($key, $params)) {
-            switch ($type) {
-            case 'numeric':
-                if (!is_numeric($params[$key]))
-                    $notProperType[] = $key;
-                break;
-            default:
-                throw new Exception("Type $type not known. Can't verify_type");
-            }
-        }
-    }
-    if(!empty($notProperType)){
-        throw new Exception("Not of type $type " . implode(", ",$notProperType));
-    }
-}
-
-
 /**
  *
  * @param <type> $msg
