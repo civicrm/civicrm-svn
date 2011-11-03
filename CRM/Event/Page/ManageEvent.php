@@ -226,8 +226,6 @@ ORDER BY start_date desc
              $eventPCPS[$pcpDao->entity_id] = $pcpDao->entity_id;
         }
 
-        crm_core_error::debug( $eventPCPS );
-
         while ($dao->fetch()) {
             if ( in_array( $dao->id, $permissions[CRM_Core_Permission::VIEW] ) ) {
                 $manageEvent[$dao->id] = array();
