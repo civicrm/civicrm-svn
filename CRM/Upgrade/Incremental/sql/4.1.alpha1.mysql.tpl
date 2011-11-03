@@ -341,7 +341,20 @@ UPDATE `civicrm_pcp_block`
 
 ALTER TABLE `civicrm_pcp` DROP COLUMN `referer`;
 
-// CRM-8358 - consolidated cron jobs
+UPDATE civicrm_navigation SET url = 'civicrm/admin/pcp?reset=1&context=contribute' WHERE url = 'civicrm/admin/pcp&reset=1';
+
+SELECT @lastEventId        := MAX(id) FROM civicrm_navigation where name = 'Events';
+SELECT @adminEventId       := MAX(id) FROM civicrm_navigation where name = 'CiviEvent';
+SELECT @lastEventIdWeight  := MAX(weight)+1 FROM civicrm_navigation where parent_id = @lastEventId;
+SELECT @adminEventIdWeight := MAX(weight)+1 FROM civicrm_navigation where parent_id = @adminEventId;
+
+INSERT INTO civicrm_navigation
+    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+VALUES    
+    ( @domainID, 'civicrm/admin/pcp?reset=1&context=event',            '{ts escape="sql" skip="true"}Personal Campaign Pages{/ts}',   'Personal Campaign Pages',   'access CiviEvent,administer CiviCRM', 'AND', @lastEventId, '1', 1, @lastEventIdWeight ),
+    ( @domainID, 'civicrm/admin/pcp?reset=1&context=event',            '{ts escape="sql" skip="true"}Personal Campaign Pages{/ts}',   'Personal Campaign Pages',   'access CiviEvent,administer CiviCRM', 'AND', @adminEventId, '1', 1, @adminEventIdWeight );
+
+-- CRM-8358 - consolidated cron jobs
 
 CREATE TABLE `civicrm_job` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Job Id',
@@ -378,10 +391,9 @@ VALUES
     ( @domainID, 'Hourly' , NULL, 'Mailings scheduler', 'Sends out scheduled mailings', 'civicrm_v3_mailing_process', 'user=USERNAME\r\npassword=PASSWORD\r\nkey=SITE_KEY', 0);
 
 
-//CRM 9135
+--CRM 9135
 ALTER TABLE civicrm_contribution_recur
  ADD is_email_receipt TINYINT (4) COMMENT 'if true, receipt is automatically emailed to contact on each successful payment' AFTER payment_processor_id;
-
 
 #Other tasks
 # 1) Change the civicrm/admin/pcp?reset=1 navigation item to civicrm/admin/pcp?reset=1&context=contribute
