@@ -74,7 +74,6 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
             $this->_defaults['threshold']   = $rgDao->threshold;
             $this->_contactType             = $rgDao->contact_type;
             $this->_defaults['level']       = $rgDao->level;
-            $this->_defaults['name']        = $rgDao->name;
             $this->_defaults['title']       = $rgDao->title;
             $this->_defaults['is_default']  = $rgDao->is_default;
             $this->_defaults['is_reserved'] = $rgDao->is_reserved;
@@ -111,9 +110,8 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
         $foo = CRM_Core_DAO::getAttribute('CRM_Dedupe_DAO_Rule', 'title');
         
         $this->add('text', 'title', ts('Rule Name'), array( 'maxlength' => 255, 'class' => 'huge'), true );
-        $this->add('text', 'name', ts('Internal Name'), array( 'maxlength' => 64, 'class' => 'huge'), true );
-        $this->addRule( 'name', ts('A duplicate matching rule with this name already exists. Please select another name.'), 
-                        'objectExists', array( 'CRM_Dedupe_DAO_RuleGroup', $this->_rgid, 'name' ) );
+        $this->addRule( 'title', ts('A duplicate matching rule with this name already exists. Please select another name.'), 
+                        'objectExists', array( 'CRM_Dedupe_DAO_RuleGroup', $this->_rgid, 'title' ) );
         $levelType = array(
                            'Fuzzy'  => ts('Fuzzy'),
                            'Strict' => ts('Strict')
@@ -133,6 +131,7 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
             $this->add('text', "length_$count", ts('Length'), array('class' => 'two', 'style' => 'text-align: right'));
             $this->add('text', "weight_$count", ts('Weight'), array('class' => 'two', 'style' => 'text-align: right'));
         }
+        
         $this->add('text', 'threshold', ts("Weight Threshold to Consider Contacts 'Matching':"), array('class' => 'two', 'style' => 'text-align: right'));
         $this->addButtons(array(
                                 array('type' => 'next',   'name' => ts('Save'), 'isDefault' => true),
@@ -198,18 +197,26 @@ UPDATE civicrm_dedupe_rule_group
         }
 
         $rgDao            = new CRM_Dedupe_DAO_RuleGroup();
-        if ($this->_action & CRM_Core_Action::UPDATE ) {
+        if ( $this->_action & CRM_Core_Action::UPDATE ) {
             $rgDao->id           = $this->_rgid;
         }
+        
         $rgDao->threshold    = $values['threshold'];
         $rgDao->title        = $values['title'];
-        $rgDao->name         = $values['name'];
         $rgDao->level        = $values['level'];
         $rgDao->contact_type = $this->_contactType;
         $rgDao->is_reserved  = CRM_Utils_Array::value( 'is_reserved', $values, false );
         $rgDao->is_default   = $isDefault;
         $rgDao->save();
         
+        // make sure name is set only during insert
+        if ( $this->_action & CRM_Core_Action::ADD ) {
+            // generate name based on title
+            require_once 'CRM/Utils/String.php';
+            $rgDao->name = CRM_Utils_String::titleToVar( $values['title'] ) . "_{$rgDao->id}";
+            $rgDao->save();
+        }
+
         $ruleDao = new CRM_Dedupe_DAO_Rule();
         $ruleDao->dedupe_rule_group_id = $rgDao->id;
         $ruleDao->delete();

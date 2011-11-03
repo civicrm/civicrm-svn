@@ -40,16 +40,7 @@
             </div>
         </td>
     </tr>
-    <tr class="crm-dedupe-rules-form-block-name">
-        <td class="label">{$form.name.label}</td>
-        <td>
-            {$form.name.html}
-            <div class="description">
-                {ts}Enter a unique descriptive name for this matching rule.{/ts}
-            </div>
-        </td>
-     </tr>
-     <tr class="crm-dedupe-rules-form-block-level">
+    <tr class="crm-dedupe-rules-form-block-level">
         <td class="label">{$form.level.label}</td>
         <td>{$form.level.html}</td>
      </tr>
