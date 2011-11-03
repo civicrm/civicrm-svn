@@ -46,7 +46,7 @@ class JFormFieldCiviContribPagesPCP extends JFormField {
         // Initiate CiviCRM
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 		require_once 'CRM/Core/Config.php';
-		$config =& CRM_Core_Config::singleton( );
+		$config = CRM_Core_Config::singleton( );
         
 		// Get list of all ContribPagesPCP  and assign to options array
 		$options = array();
@@ -63,7 +63,8 @@ class JFormFieldCiviContribPagesPCP extends JFormField {
         while ( $dao->fetch( ) ) {
             $options[] = JHTML::_( 'select.option', $dao->id, $dao->title ); 
         }
-      	return JHTML::_( 'select.genericlist', $options, ''.$control_name.'['.$name.']', null, 'value', 'text', $value, $control_name.$name );
+        
+        return JHTML::_( 'select.genericlist', $options, $name,
+                         null, 'value', 'text', $value, $name );
 	}
 }
-?>

@@ -56,10 +56,10 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
     {
         $config = CRM_Core_Config::singleton();
        
-        $i18n   =& CRM_Core_I18n::singleton();
+        $i18n   = CRM_Core_I18n::singleton();
         CRM_Utils_System::setTitle(ts('Settings - Localization'));
 
-        $locales =& CRM_Core_I18n::languages();
+        $locales = CRM_Core_I18n::languages();
 
         require_once 'CRM/Core/DAO/Domain.php';
         $domain = new CRM_Core_DAO_Domain();
@@ -183,10 +183,10 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
             $errors['customTranslateFunction'] = ts( 'Please define the custom translation function first.' );
         }
 
-        // CRM-7962
+        // CRM-7962, CRM-7713, CRM-9004
         if ( ! empty( $fields['defaultContactCountry'] ) && 
-             ( ! isset( $fields['countryLimit'] ) ||
-               ( ! in_array( $fields['defaultContactCountry'], $fields['countryLimit'] ) ) ) ) {
+            ( CRM_Utils_Array::value( 'countryLimit', $fields ) &&
+            ( !in_array( $fields['defaultContactCountry'], $fields['countryLimit'] ) ) ) ) {
             $errors['defaultContactCountry'] = ts( 'Please select a default country that is in the list of available countries.');
         }
 
@@ -219,7 +219,10 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
         //though we changed localization, so reseting cache.
         require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::deleteGroup( 'contact fields' );  
-        
+
+        //CRM-8559, cache navigation do not respect locale if it is changed, so reseting cache.
+        CRM_Core_BAO_Cache::deleteGroup( 'navigation' );
+
         // we do this only to initialize monetary decimal point and thousand separator
         $config = CRM_Core_Config::singleton();
 

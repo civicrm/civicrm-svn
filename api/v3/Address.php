@@ -35,16 +35,14 @@
  * @version $Id: Address.php 2011-02-16 ErikHommel $
  */
 
-/**
- * Include utility functions
- */
-require_once 'api/v3/utils.php';
+
+require_once 'CRM/Core/BAO/Address.php';
 
 /**
  *  Add an Address for a contact
  * 
  * Allowed @params array keys are:
- * {@schema Core/Address.xml}
+ * {@getfields address_create}
  * {@example AddressCreate.php}
  * @return array of newly created tag property values.
  * @access public
@@ -52,19 +50,6 @@ require_once 'api/v3/utils.php';
 function civicrm_api3_address_create( &$params ) 
 {
 
-    civicrm_api3_verify_one_mandatory ($params, null, 
-    array ('contact_id', 'id'));
-    civicrm_api3_verify_mandatory ($params, null, array('location_type_id'));
-    
-    require_once 'CRM/Core/BAO/Address.php';
-
-	/*
-	 * if is_primary is not set in params, set default = 0
-	 */
-	if ( !array_key_exists('is_primary', $params )) {
-		$params['is_primary'] = 0; 
-	}	
-	
 	/*
 	 * if street_parsing, street_address has to be parsed into
 	 * separate parts
@@ -100,33 +85,40 @@ function civicrm_api3_address_create( &$params )
 	 unset ($params['contact_id']);
 	 $paramsBAO['address'][0] = $params;
 	 $addressBAO = CRM_Core_BAO_Address::create($paramsBAO, true);
-	 if ( is_a( $addressBAO, 'CRM_Core_Error' )) {
+	 if (empty( $addressBAO)) {
 		 return civicrm_api3_create_error( "Address is not created or updated ");
 	 } else {
 		 $values = array( );
-		 CRM_Core_DAO::storeValues($addressBAO[0], $values);
-		 return civicrm_api3_create_success($values, $params,'address',$addressBAO);
+		 $values = _civicrm_api3_dao_to_array ($addressBAO[0], $params);
+		 return civicrm_api3_create_success($values, $params,'address',$addressBAO[0]);
 	 }
 
+}
+/*
+ * Adjust Metadata for Create action
+ * 
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_address_create_spec(&$params){
+  $params['location_type_id']['api.required'] = 1;
+  $params['contact_id']['api.required'] = 1; 
+  $params['is_primary']['api.default'] = 1;// TODO note this should be changes to a function call that checks if one exists
 }
 /**
  * Deletes an existing Address
  *
  * @param  array  $params
  * 
- * {@schema Core/Address.xml}
+ * {@getfields address_delete}
  * {@example AddressDelete.php 0}
  * @return boolean | error  true if successfull, error otherwise
  * @access public
  */
 function civicrm_api3_address_delete( &$params ) 
 {
-    civicrm_api3_verify_mandatory ($params,null,array ('id'));
-    $addressID = CRM_Utils_Array::value( 'id', $params );
 
-    require_once 'CRM/Core/DAO/Address.php';
     $addressDAO = new CRM_Core_DAO_Address();
-    $addressDAO->id = $addressID;
+    $addressDAO->id = $params['id'];
     if ( $addressDAO->find( ) ) {
 		while ( $addressDAO->fetch() ) {
 			$addressDAO->delete();
@@ -148,34 +140,12 @@ function civicrm_api3_address_delete( &$params )
  * @param  array $params  an associative array of name/value pairs.
  *
  * @return  array details of found addresses else error
+ * {@getfields address_get}
  * @access public
  */
 
 function civicrm_api3_address_get(&$params) 
 {   
-    civicrm_api3_verify_one_mandatory($params, null, 
-		array('id', 'contact_id', 'location_type_id'));
-	
-    require_once 'CRM/Core/BAO/Address.php';
-    $addressBAO = new CRM_Core_BAO_Address();
-    $fields = array_keys($addressBAO->fields());
-
-    foreach ( $fields as $name) {
-        if (array_key_exists($name, $params)) {
-            $addressBAO->$name = $params[$name];
-        }
-    }
-    
-    if ( $addressBAO->find() ) {
-      $addresses = array();
-      while ( $addressBAO->fetch() ) {
-        CRM_Core_DAO::storeValues( $addressBAO, $address );
-        $addresses[$addressBAO->id] = $address;
-      }
-      return civicrm_api3_create_success($addresses,$params,'activity','get',$addressBAO);
-    } else {
-      return civicrm_api3_create_success(array(),$params,'activity','get',$addressBAO);
-    }
-				
+	  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 

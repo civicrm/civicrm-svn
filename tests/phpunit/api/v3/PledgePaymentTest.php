@@ -73,7 +73,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
     {
        $params = array('version'	=>$this->_apiversion,
                        );                        
-        $result=& civicrm_api('pledge_payment','get',$params);
+        $result = civicrm_api('pledge_payment','get',$params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals(0, $result['is_error'], " in line " . __LINE__);
         $this->assertEquals(5, $result['count'], " in line " . __LINE__);
@@ -139,7 +139,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
       //check that 5 pledge payments exist at the start
       $getParams = array('version'	=>$this->_apiversion,
                        );                        
-      $beforeAdd=& civicrm_api('pledge_payment','get',$getParams);
+      $beforeAdd = civicrm_api('pledge_payment','get',$getParams);
       $this->assertEquals(0, $beforeAdd['is_error'], " in line " . __LINE__);
       $this->assertEquals(5, $beforeAdd['count'], " in line " . __LINE__);
       
@@ -158,7 +158,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
       $this->assertEquals(0, $result['is_error'], " in line " . __LINE__);
       
       //check existing updated not new one created - 'create' means add contribution_id in this context
-      $afterAdd=& civicrm_api('pledge_payment','get',$getParams);
+      $afterAdd = civicrm_api('pledge_payment','get',$getParams);
       $this->assertEquals(0, $beforeAdd['is_error'], " in line " . __LINE__);
       $this->assertEquals(5, $afterAdd['count'], " in line " . __LINE__);   
 
@@ -258,7 +258,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
                   ); 
          
       $contributionID =   $this->contributionCreate($this->_individualId, $this->_contributionTypeId, 45,45);            
-      $pledge=& civicrm_api('Pledge','Create',$pledgeParams);
+      $pledge = civicrm_api('Pledge','Create',$pledgeParams);
       $this->assertEquals(0, $pledge['is_error'], " in line " . __LINE__);
       
       //test the pledge_payment_create function
@@ -276,7 +276,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
       $this->assertEquals(0, $result['is_error'], " in line " . __LINE__);
       
       //check existing updated not new one created - 'create' means add contribution_id in this context
-      $afterAdd=& civicrm_api('pledge_payment','get',array('version' => 3,    'contribution_id'        => $contributionID ,) );
+      $afterAdd = civicrm_api('pledge_payment','get',array('version' => 3,    'contribution_id'        => $contributionID ,) );
       $this->assertEquals(1, $afterAdd['count'], " in line " . __LINE__);   
 
        

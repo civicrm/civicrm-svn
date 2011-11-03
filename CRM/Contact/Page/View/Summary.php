@@ -56,14 +56,16 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         parent::preProcess( );
 		
 		// actions buttom contextMenu
-		$menuItems = CRM_Contact_BAO_Contact::contextMenu( );
+		$menuItems = CRM_Contact_BAO_Contact::contextMenu( $this->_contactId );
 		
 		$this->assign('actionsMenuList',$menuItems);
 		
         //retrieve inline custom data
-        $entityType    = $this->get('contactType');
-        $entitySubType = $this->get('contactSubtype');
-
+        $entityType = $this->get('contactType');
+        if ( $entitySubType = $this->get('contactSubtype') ) {
+            $entitySubType  = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                       trim($entitySubType, CRM_Core_DAO::VALUE_SEPARATOR) );
+        }
         $groupTree =& CRM_Core_BAO_CustomGroup::getTree( $entityType,
                                                          $this, 
                                                          $this->_contactId,
@@ -159,7 +161,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         foreach( $communicationType as $key => $value ) {
             if ( CRM_Utils_Array::value( $key, $defaults ) ) {
                 foreach( $defaults[$key] as &$val ) {
-                    CRM_Utils_Array::lookupValue( $val, 'location_type', CRM_Core_PseudoConstant::locationType(), false );
+                    CRM_Utils_Array::lookupValue( $val, 'location_type', CRM_Core_PseudoConstant::locationDisplayName(), false );
                     if ( !CRM_Utils_Array::value( 'skip', $value ) ) {
                         eval( '$pseudoConst = CRM_Core_PseudoConstant::'.$value['type'].'( );' );
                         CRM_Utils_Array::lookupValue( $val, $value['id'], $pseudoConst, false );
@@ -189,7 +191,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         $contactType = array_key_exists( 'contact_sub_type',  $defaults ) ? 
             $defaults['contact_sub_type'] : $defaults['contact_type'];
         $defaults['contact_type_label'] = 
-            CRM_Contact_BAO_ContactType::contactTypePairs( true, $contactType );
+            CRM_Contact_BAO_ContactType::contactTypePairs( true, $contactType, ', ' );
 
         // get contact tags
         require_once 'CRM/Core/BAO/EntityTag.php';
@@ -202,8 +204,9 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         $defaults['privacy_values'] = CRM_Core_SelectValues::privacy();
         
         //Show blocks only if they are visible in edit form
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $this->_editOptions  = CRM_Core_BAO_Preferences::valueOptions( 'contact_edit_options' );
+        require_once 'CRM/Core/BAO/Setting.php';
+        $this->_editOptions  = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                   'contact_edit_options' );
         $configItems = array( 'CommBlock'     => 'Communication Preferences',
                               'Demographics'  => 'Demographics',
                               'TagsAndGroups' => 'Tags and Groups',
@@ -220,9 +223,11 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         require_once 'CRM/Contact/BAO/Contact/Utils.php';
         $shareAddressContactNames = CRM_Contact_BAO_Contact_Utils::getAddressShareContactNames( $defaults['address'] );
         foreach ( $defaults['address'] as $key => $addressValue ) {
-            if ( CRM_Utils_Array::value( 'master_id', $addressValue ) && !$shareAddressContactNames[ $addressValue['master_id']]['is_deleted'] ) {
-                $sharedAddresses[$key]['shared_address_display'] = array( 'address' => $addressValue['display'],
-                    'name'    => $shareAddressContactNames[ $addressValue['master_id'] ]['name'] ); 
+            if ( CRM_Utils_Array::value( 'master_id', $addressValue ) && 
+                 ! $shareAddressContactNames[ $addressValue['master_id']]['is_deleted'] ) {
+                $sharedAddresses[$key]['shared_address_display'] = 
+                    array( 'address' => $addressValue['display'],
+                           'name'    => $shareAddressContactNames[ $addressValue['master_id'] ]['name'] ); 
             }
         }
         $this->assign( 'sharedAddresses', $sharedAddresses );
@@ -237,18 +242,19 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
             //for birthdate format with respect to birth format set 
             $this->assign( 'birthDateViewFormat',  CRM_Utils_Array::value( 'qfMapping', CRM_Utils_Date::checkBirthDateFormat( ) ) );
         }
-        
+
         $this->assign( $defaults );
         
         // also assign the last modifed details
         require_once 'CRM/Core/BAO/Log.php';
-        $lastModified =& CRM_Core_BAO_Log::lastModified( $this->_contactId, 'civicrm_contact' );
+        $lastModified = CRM_Core_BAO_Log::lastModified( $this->_contactId, 'civicrm_contact' );
         $this->assign_by_ref( 'lastModified', $lastModified );
         
         $allTabs  = array( );
         $weight = 10;        
         
-        $this->_viewOptions = CRM_Core_BAO_Preferences::valueOptions( 'contact_view_options', true );
+        $this->_viewOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                  'contact_view_options', true );
         $changeLog = $this->_viewOptions['log'];
         $this->assign_by_ref( 'changeLog' , $changeLog );
         require_once 'CRM/Core/Component.php';

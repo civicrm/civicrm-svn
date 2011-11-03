@@ -74,6 +74,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
         $pledges = false;
         $recurring = false;
         $memberships = false;
+        $memPriceSetId = null;
         $friend = false;
         $profilePreId  = null;
         $profilePostId = null;
@@ -95,6 +96,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
                                                      $pledges, 
                                                      $recurring, 
                                                      $memberships, 
+                                                     $memPriceSetId,
                                                      $friend, 
                                                      $profilePreId,
                                                      $profilePostId,
@@ -189,7 +191,8 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
         
         $this->waitForElementPresent( "contribution_date_low" );
         
-        $this->type( "sort_name", "$firstName $lastName" );
+        $this->select( 'contribution_pcp_made_through_id',  "label={$pcpTitle}" );
+ 
         $this->click( "_qf_Search_refresh" );
         
         $this->waitForPageToLoad( '30000' );
@@ -211,7 +214,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
         }
         
         //Check for SoftCredit
-        $this->verifyText( "xpath=id('PCPView')//div[@class='crm-accordion-body']/table/tbody/tr[1]/td[2]/a", preg_quote( $pcpTitle ) ); 
-        $this->verifyText( "xpath=id('PCPView')//div[@class='crm-accordion-body']/table/tbody/tr[2]/td[2]/a", preg_quote( "{$firstName} {$lastName}" ) ); 
+        $this->verifyText( "xpath=id('PCPView')//div[@class='crm-accordion-body']/table/tbody/tr[1]/td[2]/a[text()]", preg_quote( $pcpTitle ) ); 
+        $this->verifyText( "xpath=id('PCPView')//div[@class='crm-accordion-body']/table/tbody/tr[2]/td[2]/a[text()]", preg_quote( "{$firstName} {$lastName}" ) ); 
     }
 }

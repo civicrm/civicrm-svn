@@ -119,7 +119,7 @@ ORDER BY
         $params = array( 1 => array( $id, 'Integer' ) );
 
         $emails = $values = array( );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         $count = 1;
         while ( $dao->fetch( ) ) {
             $values = array( 'locationType'   => $dao->locationType,
@@ -169,7 +169,7 @@ ORDER BY e.is_primary DESC, email_id ASC ";
         $params = array( 1 => array( $entityId, 'Integer' ) );
             
         $emails = array( );
-        $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
         while ( $dao->fetch( ) ) {
             $emails[$dao->email_id] = array( 'locationType'   => $dao->locationType,
                                              'is_primary'     => $dao->is_primary,

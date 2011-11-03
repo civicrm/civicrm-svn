@@ -89,7 +89,7 @@ class CRM_Contact_Form_Search_Criteria {
         $attributes['job_title']['size'] = 30;
         $form->addElement('text', 'job_title', ts('Job Title'), $attributes['job_title'], 'size="30"' );
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         if (CRM_Core_Permission::check('access deleted contacts') and $config->contactUndelete) {
             $form->add('checkbox', 'deleted_contacts', ts('Search in Trash (deleted contacts)'));
         }
@@ -108,7 +108,7 @@ class CRM_Contact_Form_Search_Criteria {
         $componentProfiles = array( );
         $componentProfiles = CRM_Core_BAO_UFGroup::getProfiles($types);
 
-        $ufGroups           =& CRM_Core_BAO_UFGroup::getModuleUFGroup('Search Profile', 1);
+        $ufGroups           = CRM_Core_BAO_UFGroup::getModuleUFGroup('Search Profile', 1);
         $accessibleUfGroups = CRM_Core_Permission::ufGroup( CRM_Core_Permission::VIEW );
 
         $searchProfiles = array ( );
@@ -124,7 +124,7 @@ class CRM_Contact_Form_Search_Criteria {
                           array('0' => ts('- default view -')) + $searchProfiles );
 
         require_once 'CRM/Contact/Form/Search.php';
-        $componentModes =& CRM_Contact_Form_Search::getModeSelect( );
+        $componentModes = CRM_Contact_Form_Search::getModeSelect( );
 
         // unset contributions or participants if user does not have
         // permission on them
@@ -207,8 +207,9 @@ class CRM_Contact_Form_Search_Criteria {
     static function location( &$form ) {
         $form->addElement( 'hidden', 'hidden_location', 1 );
         
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+        require_once 'CRM/Core/BAO/Setting.php';
+        $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                              'address_options', true, null, true );
         
         $attributes = CRM_Core_DAO::getAttribute('CRM_Core_DAO_Address');
         
@@ -377,6 +378,12 @@ class CRM_Contact_Form_Search_Criteria {
         $relStatusOption  = array( ts('Active '), ts('Inactive '), ts('All') );
         $form->addRadio( 'relation_status', ts( 'Relationship Status' ), $relStatusOption);
         $form->setDefaults(array('relation_status' => 0));
+
+        //add the target group
+        if ( $form->_group ) {
+            $form->add( 'select', 'relation_target_group',  ts( 'Target Contact(s) in Group' ), $form->_group, false, 
+                array( 'id' => 'relation_target_group',  'multiple'=> 'multiple', 'title' => ts('- select -') ) );
+        }
         
         // add all the custom  searchable fields
         require_once 'CRM/Core/BAO/CustomGroup.php';
@@ -404,7 +411,9 @@ class CRM_Contact_Form_Search_Criteria {
         $genderOptions = array( );
         $gender =CRM_Core_PseudoConstant::gender();
         foreach ($gender as $key => $var) {
-            $genderOptions[$key] = HTML_QuickForm::createElement('radio', null, ts('Gender'), $var, $key);
+            $genderOptions[$key] = HTML_QuickForm::createElement('radio', null,
+                                                                 ts('Gender'), $var, $key,
+                                                                 array( 'id' => "civicrm_gender_{$var}_{$key}" ) );
         }
         $form->addGroup($genderOptions, 'gender', ts('Gender'));
          

@@ -137,7 +137,7 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
         // get the requested action
         $action = CRM_Utils_Request::retrieve('action', 'String',
                                               $this, false, 'browse'); // default to 'browse'
-        
+
         // assign vars to templates
         $this->assign('action', $action);
         $sid = CRM_Utils_Request::retrieve('sid', 'Positive',
@@ -154,7 +154,7 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
             $this->preview($sid) ;
         } else if ($action & CRM_Core_Action::COPY) {
             $session = CRM_Core_Session::singleton();
-            CRM_Core_Session::setStatus("A copy of the price set has been created" );
+            CRM_Core_Session::setStatus(ts('A copy of the price set has been created') );
             $this->copy( );
         } else {
             require_once 'CRM/Price/BAO/Set.php';
@@ -162,11 +162,11 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
 
             // if action is delete do the needful.
             if ($action & (CRM_Core_Action::DELETE)) {
-                $usedBy =& CRM_Price_BAO_Set::getUsedBy( $sid );
+                $usedBy = CRM_Price_BAO_Set::getUsedBy( $sid );
                 
                 if ( empty( $usedBy ) ) {
                     // prompt to delete
-                    $session = & CRM_Core_Session::singleton();
+                    $session = CRM_Core_Session::singleton();
                     $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/price', 'action=browse'));
                     $controller = new CRM_Core_Controller_Simple( 'CRM_Price_Form_DeleteSet','Delete Price Set', null );
                     // $id = CRM_Utils_Request::retrieve('sid', 'Positive', $this, false, 0);
@@ -180,8 +180,9 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
                     CRM_Utils_System::appendBreadCrumb( ts('Price Sets'), $url );
                     $this->assign( 'usedPriceSetTitle', CRM_Price_BAO_Set::getTitle( $sid ) );
                     $this->assign( 'usedBy', $usedBy );
-                    $comps = array( "Event"        => "civicrm_event", 
-                                    "Contribution" => "civicrm_contribution_page" );
+
+                    $comps = array( 'Event'        => 'civicrm_event', 
+                                    'Contribution' => 'civicrm_contribution_page' );
                     $priceSetContexts = array( );
                     foreach ( $comps as $name => $table ) {
                         if ( array_key_exists( $table, $usedBy ) ) {
@@ -261,12 +262,15 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
         $priceSet = array();
         require_once 'CRM/Core/Component.php';
         $comps = array( 'CiviEvent'      => ts( 'Event' ),
-                        'CiviContribute' => ts( 'Contribution' ) );
+                        'CiviContribute' => ts( 'Contribution' ),
+                        'CiviMember'     => ts( 'Membership' ) );
         
+        require_once 'CRM/Price/BAO/Set.php';
         $dao = new CRM_Price_DAO_Set();
-        if ( defined( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID' ) && CIVICRM_EVENT_PRICE_SET_DOMAIN_ID ) {
+        if ( CRM_Price_BAO_Set::eventPriceSetDomainID( ) ) {
             $dao->domain_id = CRM_Core_Config::domainID( );
         }
+
         $dao->find();
         while ($dao->fetch()) {
             $priceSet[$dao->id] = array();

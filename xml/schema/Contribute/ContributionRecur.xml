@@ -200,5 +200,47 @@
        <key>id</key> 
        <add>3.3</add> 
        <onDelete>SET NULL</onDelete>
-  </foreignKey> 
+  </foreignKey>
+  <field>
+      <name>contribution_type_id</name>
+      <title>Contribution Type</title>
+      <export>false</export>
+      <type>int unsigned</type>
+      <comment>FK to Contribution Type</comment>
+      <add>4.1</add>
+  </field>
+  <foreignKey>
+       <name>contribution_type_id</name>
+       <table>civicrm_contribution_type</table>
+       <key>id</key>
+       <add>4.1</add>
+       <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+      <name>payment_instrument_id</name>
+      <title>Payment Instrument</title>
+      <type>int unsigned</type>
+      <comment>FK to Payment Instrument</comment>
+      <add>4.1</add>
+  </field>
+  <index>
+      <name>UI_contrib_payment_instrument_id</name>
+      <fieldName>payment_instrument_id</fieldName>
+      <add>4.1</add>
+  </index>
+  <field>
+    <name>campaign_id</name>
+    <uniqueName>contribution_campaign_id</uniqueName>
+    <type>int unsigned</type>
+    <title>Campaign ID</title>
+    <import>true</import>
+    <comment>The campaign for which this contribution has been triggered.</comment>
+    <add>4.1</add>
+  </field>
+  <foreignKey>
+    <name>campaign_id</name>
+    <table>civicrm_campaign</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
 </table>

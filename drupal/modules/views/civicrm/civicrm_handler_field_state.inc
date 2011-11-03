@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
+ | CiviCRM version 4.0                                               |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,11 +28,12 @@
  *
  * @ingroup civicrm_field_handlers
  */
-class civicrm_handler_field_state extends views_handler_field {
+class civicrm_handler_field_state extends civicrm_handler_field_address {
     static $_states;
     static $_states_full;
     
     function construct( ) {
+        parent::construct();
         if ( ! self::$_states || ! self::$_states_full) {
             if ( ! civicrm_initialize( ) ) {
                 return;

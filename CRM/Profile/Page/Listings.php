@@ -190,6 +190,16 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
                         || CRM_Utils_Array::value( 'html_type', $field ) == 'Multi-Select Country') {
                 $value = CRM_Utils_Request::retrieve( $name, 'String', $this, false, null, 'REQUEST' );
                 if ( ! is_array($value) ) $value = explode(CRM_Core_DAO::VALUE_SEPARATOR, substr($value,1,-1));
+            } else if ( $name == 'contact_sub_type' ) {
+                $v = CRM_Utils_Request::retrieve( $name, 'String', $this, false, null, 'REQUEST' );
+                if ( $v && !is_array($v) ) { 
+                    $v = explode(CRM_Core_DAO::VALUE_SEPARATOR, trim($v, CRM_Core_DAO::VALUE_SEPARATOR));
+                }
+                if ( ! empty($v) ) {
+                    foreach ( $v as $item ) {
+                        $value[$item] = 1;
+                    }
+                }
             } else {
                 $value = CRM_Utils_Request::retrieve( $name, 'String',
                                                       $this, false, null, 'REQUEST' );
@@ -399,11 +409,11 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
                                                           CRM_Core_BAO_UFGroup::LISTINGS_VISIBILITY,
                                                           false, $gid );
 
-        $returnProperties =& CRM_Contact_BAO_Contact::makeHierReturnProperties( $fields );
+        $returnProperties = CRM_Contact_BAO_Contact::makeHierReturnProperties( $fields );
         $returnProperties['contact_type'] = 1;
         $returnProperties['sort_name'   ] = 1;
 
-        $queryParams =& CRM_Contact_BAO_Query::convertFormValues( $params, 1 );
+        $queryParams = CRM_Contact_BAO_Query::convertFormValues( $params, 1 );
         $query   = new CRM_Contact_BAO_Query( $queryParams, $returnProperties, $fields );
         
         $ids = $query->searchQuery( 0, 0, null, 
@@ -418,7 +428,7 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
     function getTemplateFileName() {
         if ( $this->_gid ) {
             $templateFile = "CRM/Profile/Page/{$this->_gid}/Listings.tpl";
-            $template     =& CRM_Core_Page::getTemplate( );
+            $template     = CRM_Core_Page::getTemplate( );
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;
             }

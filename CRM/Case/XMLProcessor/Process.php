@@ -284,7 +284,7 @@ AND        a.is_deleted = 0
         $count       = CRM_Core_DAO::singleValueQuery( $query, $sqlParams );
         
         // check for max instance
-        $caseType    = CRM_Case_BAO_Case::getCaseType( $params['caseID'] );
+        $caseType    = CRM_Case_BAO_Case::getCaseType( $params['caseID'], 'name' );
         $maxInstance = self::getMaxInstance( $caseType, $params['activityTypeName'] );
 
         return $maxInstance ? ($count < $maxInstance ? false : true) : false;  
@@ -318,6 +318,12 @@ AND        a.is_deleted = 0
             $client = array( 1 => $params['clientID'] );
         }
 
+        //set order
+        $orderVal = '';
+        if ( isset( $activityTypeXML->order ) ) {
+            $orderVal = (string) $activityTypeXML->order;
+        }
+
         require_once 'CRM/Core/OptionGroup.php';
         if ( $activityTypeName == 'Open Case' ) {
             $activityParams = array( 'activity_type_id'    => $activityTypeID,
@@ -333,7 +339,8 @@ AND        a.is_deleted = 0
                                      'location'            => CRM_Utils_Array::value('location',  $params),
                                      'details'             => CRM_Utils_Array::value('details',   $params),
                                      'duration'            => CRM_Utils_Array::value('duration',  $params),
-                                     );
+                                     'weight'              => $orderVal
+                                    );
         } else {
             $activityParams = array( 'activity_type_id'    => $activityTypeID,
                                      'source_contact_id'   => $params['creatorID'],
@@ -342,7 +349,8 @@ AND        a.is_deleted = 0
                                      'status_id'           => CRM_Core_OptionGroup::getValue( 'activity_status',
                                                                                             $statusName,
                                                                                             'name' ),
-                                     'target_contact_id'   => $client
+                                     'target_contact_id'   => $client,
+                                     'weight'              => $orderVal
                                     );
         }
         
@@ -470,7 +478,10 @@ AND        a.is_deleted = 0
      */      
     function getAllowMultipleCaseClients(  ) {
         $xml = $this->retrieve( "Settings" );
-        return ( string ) $xml->AllowMultipleCaseClients ? 1 : 0;
+        if ( $xml ) {
+            return ( string ) $xml->AllowMultipleCaseClients ? 1 : 0;
+        }
+        return 0;
     }
     
 

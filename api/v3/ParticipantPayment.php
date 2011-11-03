@@ -40,7 +40,7 @@
 /**
  * Files required for this package
  */
-require_once 'api/v3/utils.php';
+require_once 'CRM/Event/BAO/ParticipantPayment.php';
 
 
 /**
@@ -53,18 +53,16 @@ require_once 'api/v3/utils.php';
  * @example ParticipantPaymentCreate.php
  * {@example ParticipantPaymentCreate.php 0}
  * @return array of newly created payment property values.
+ * {@getfields ParticipantPayment_create}
  * @access public
  */
 function civicrm_api3_participant_payment_create($params)
 {
 
-    civicrm_api3_verify_mandatory($params,null,array('participant_id','contribution_id')) ;
-
     $ids= array();
     if( CRM_Utils_Array::value( 'id', $params ) ) {
       $ids['id'] = $params['id'];
     }
-    require_once 'CRM/Event/BAO/ParticipantPayment.php';
     $participantPayment = CRM_Event_BAO_ParticipantPayment::create($params, $ids);
 
     $payment = array( );
@@ -73,7 +71,16 @@ function civicrm_api3_participant_payment_create($params)
     return civicrm_api3_create_success($payment,$params);
 
 }
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_participant_payment_create_spec(&$params){
+  $params['participant_id']['api.required'] =1;
+  $params['contribution_id']['api.required'] =1;
+}
 /**
  * Deletes an existing Participant Payment
  *
@@ -81,16 +88,14 @@ function civicrm_api3_participant_payment_create($params)
  *
  * @param  Int  $participantPaymentID   Id of the Participant Payment to be deleted
  *
- * @return null if successfull, array with is_error=1 otherwise
+ * @return array API result
+ * @example ParticipantPaymentDelete.php
+ * {@getfields ParticipantPayment_delete}
  * @access public
  */
 function civicrm_api3_participant_payment_delete( $params )
 {
-
-    civicrm_api3_verify_mandatory($params,null,array('id'));
-    require_once 'CRM/Event/BAO/ParticipantPayment.php';
     $participant = new CRM_Event_BAO_ParticipantPayment();
-
     return $participant->deleteParticipantPayment( $params ) ? civicrm_api3_create_success( ) : civicrm_api3_create_error('Error while deleting participantPayment');
 
 }

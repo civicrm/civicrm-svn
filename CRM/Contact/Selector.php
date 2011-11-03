@@ -191,9 +191,9 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
 
             //CRM_Core_Error::debug( 'f', $this->_fields );
             
-            $this->_customFields =& CRM_Core_BAO_CustomField::getFieldsForImport( 'Individual' );
+            $this->_customFields = CRM_Core_BAO_CustomField::getFieldsForImport( 'Individual' );
 
-            $this->_returnProperties =& CRM_Contact_BAO_Contact::makeHierReturnProperties( $this->_fields );
+            $this->_returnProperties = CRM_Contact_BAO_Contact::makeHierReturnProperties( $this->_fields );
             $this->_returnProperties['contact_type'] = 1;
             $this->_returnProperties['contact_sub_type'] = 1;
             $this->_returnProperties['sort_name'   ] = 1;
@@ -338,7 +338,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
      */
     function &getColumnHeaders($action = null, $output = null) 
     {
-
+        $headers = null;
         if ( $output == CRM_Core_Selector_Controller::EXPORT ) {
             $csvHeaders = array( ts('Contact Id'), ts('Contact Type') );
             foreach ( $this->getColHeads($action, $output) as $column ) {
@@ -346,17 +346,17 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     $csvHeaders[] = $column['name'];
                 }
             }
-            return $csvHeaders;
+            $headers = $csvHeaders;
         } else if ( $output == CRM_Core_Selector_Controller::SCREEN ) {
             $csvHeaders = array( ts('Name') );
-            foreach ( $this->getColHeads($action, $output) as $column ) {
+            foreach ( $this->getColHeads($action, $output) as $key => $column ) {
                 if ( array_key_exists( 'name', $column ) &&
                      $column['name']                     &&
                      $column['name'] != ts( 'Name' ) ) {
-                    $csvHeaders[] = $column['name'];
+                    $csvHeaders[$key] = $column['name'];
                 }
             }
-            return $csvHeaders;
+            $headers = $csvHeaders;
         } else if ( $this->_ufGroupID ) {
             // we dont use the cached value of column headers
             // since it potentially changed because of the profile selected
@@ -374,12 +374,14 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
 
                 require_once 'CRM/Core/PseudoConstant.php';
                 $locationTypes = CRM_Core_PseudoConstant::locationType( );
-                
+
+                CRM_Core_Error::debug( $this->_fields );
+
                 foreach ( $this->_fields as $name => $field ) { 
                     if ( CRM_Utils_Array::value( 'in_selector', $field ) &&
                          ! in_array( $name, $skipFields ) ) {
                         if ( strpos( $name, '-' ) !== false ) {
-                            list( $fieldName, $lType, $type ) = explode( '-', $name );
+                            list( $fieldName, $lType, $type ) = CRM_Utils_System::explode( '-', $name, 3 );
                             
                             if ( $lType == 'Primary' ) {
                                 $locationTypeName = 1;
@@ -415,10 +417,10 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                 if ( $empty ) {
                     self::$_columnHeaders = array( );
                 } else {
-                    self::$_columnHeaders[] = array('desc' => ts('Actions'));
+                    self::$_columnHeaders[] = array('desc' => ts('Actions'), 'name' => ts('Action') );
                 }
             }
-            return self::$_columnHeaders;
+            $headers = self::$_columnHeaders;
         } else if ( ! empty( $this->_returnProperties ) ) { 
 
             self::$_columnHeaders = array( array( 'name' => '' ),
@@ -428,7 +430,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                                                  'direction' => CRM_Utils_Sort::ASCENDING,
                                                  )
                                            );
-            $properties =& self::makeProperties( $this->_returnProperties );
+            $properties = self::makeProperties( $this->_returnProperties );
 
             foreach ( $properties as $prop ) {
                 if ( $prop == 'contact_type' || $prop == 'contact_sub_type' || $prop == 'sort_name' ) {
@@ -449,10 +451,12 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                 self::$_columnHeaders[] = array( 'name' => $title, 'sort' => $prop );
             }
             self::$_columnHeaders[] = array('name' => ts('Actions'));
-            return self::$_columnHeaders;
+            $headers = self::$_columnHeaders;
         } else {
-            return $this->getColHeads($action, $output);
+            $headers = $this->getColHeads($action, $output);
         }
+
+        return $headers;
     }
 
 
@@ -520,7 +524,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                 if ( CRM_Utils_Array::value( 'in_selector', $field ) && 
                      ! in_array( $key, $skipFields ) ) { 
                     if ( strpos( $key, '-' ) !== false ) {
-                        list( $fieldName, $id, $type ) = explode( '-', $key );
+                        list( $fieldName, $id, $type ) = CRM_Utils_System::explode( '-', $key, 3 );
 
                         if ($id == 'Primary') {
                             $locationTypeName = 1;
@@ -550,7 +554,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             $names[] =  "status";
             
         } else if ( ! empty( $this->_returnProperties ) ) {
-            $names =& self::makeProperties( $this->_returnProperties );
+            $names = self::makeProperties( $this->_returnProperties );
         } else {
             $names = self::$_properties;
         }
@@ -563,7 +567,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         }
         
         require_once 'CRM/Core/OptionGroup.php';
-        $links =& self::links( $this->_context, $this->_contextMenu, $this->_key );
+        $links = self::links( $this->_context, $this->_contextMenu, $this->_key );
         
         //check explicitly added contact to a Smart Group.
         $groupID   = CRM_Utils_Array::key( '1', $this->_formValues['group'] );  
@@ -571,15 +575,15 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         // for CRM-3157 purposes
         require_once 'CRM/Core/PseudoConstant.php';
         if ( in_array('country',        $names ) ) {
-            $countries =& CRM_Core_PseudoConstant::country();
+            $countries = CRM_Core_PseudoConstant::country();
         }
 
         if ( in_array('state_province', $names ) ) {
-            $provinces =& CRM_Core_PseudoConstant::stateProvince();
+            $provinces = CRM_Core_PseudoConstant::stateProvince();
         }
 
         if ( in_array('world_region',   $names ) ) {
-            $regions   =& CRM_Core_PseudoConstant::worldRegions();
+            $regions   = CRM_Core_PseudoConstant::worldRegion();
         }
 
         $seenIDs = array( );
@@ -691,7 +695,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
 
                 if ( CRM_Utils_Array::value( 'deleted_contacts', $this->_formValues ) 
                      && CRM_Core_Permission::check( 'access deleted contacts' ) ) {
-                    $row['is_deleted'] = true;
                     $links = array(
                                    array(
                                          'name'  => ts('View'),
@@ -716,10 +719,10 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     }
                     $row['action'] = CRM_Core_Action::formLink($links, null, array('id' => $result->contact_id));
                 } elseif ( ( is_numeric( CRM_Utils_Array::value( 'geo_code_1', $row ) ) ) ||
-                     ( $config->mapGeoCoding &&
-                       CRM_Utils_Array::value('city',$row) && $row['state_province'] ) ) {
+                           ( $config->mapGeoCoding &&
+                             CRM_Utils_Array::value('city', $row ) && 
+                             CRM_Utils_Array::value('state_province', $row ) ) ) {
                     $row['action']   = CRM_Core_Action::formLink( $links, $mask   , array( 'id' => $result->contact_id ) );
-                // FIXME: guard with permission check
                 } else {
                     $row['action']   = CRM_Core_Action::formLink( $links, $mapMask, array( 'id' => $result->contact_id ) );
                 }
@@ -749,8 +752,55 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             }
         }
 
-        //CRM_Core_Error::debug( '$rows', $rows );
+        $this->fillupPrevNextCache( $sort );
+
         return $rows;
+    }
+
+    function fillupPrevNextCache( $sort ) {
+        $cacheKey = "civicrm search {$this->_key}";
+
+        require_once 'CRM/Core/BAO/PrevNextCache.php';
+        CRM_Core_BAO_PrevNextCache::deleteItem( null, $cacheKey, 'civicrm_contact' );
+
+        // lets fill up the prev next cache here, so view can scroll thru
+        $sql = $this->_query->searchQuery( 0, 0, $sort,
+                                           false, false, 
+                                           false, true, true, null );
+
+        // CRM-9096
+        // due to limitations in our search query writer, the above query does not work
+        // in cases where the query is being sorted on a non-contact table
+        // this results in a fatal error :(
+        // see below for the gross hack of trapping the error and not filling
+        // the prev next cache in this situation
+        // the other alternative of running the FULL query will just be incredibly inefficient
+        // and slow things down way too much on large data sets / complex queries
+
+        $insertSQL = "
+INSERT INTO civicrm_prevnext_cache ( entity_table, entity_id1, entity_id2, cacheKey, data )
+SELECT 'civicrm_contact', contact_a.id, contact_a.id, '$cacheKey', contact_a.display_name
+";
+        $replaceSQL = "SELECT contact_a.id as id";
+
+        $sql = str_replace( $replaceSQL, $insertSQL, $sql );
+
+        CRM_Core_Error::ignoreException();
+        $result = CRM_Core_DAO::executeQuery( $sql );
+        CRM_Core_Error::setCallback();
+
+        if ( is_a( $result, 'DB_Error' ) ) {
+            // oops the above query failed, so lets just ignore it
+            // and return
+            // we print a sorry cant figure it out on view page
+            return;
+        }
+
+        // also record an entry in the cache key table, so we can delete it periodically
+        require_once 'CRM/Core/BAO/Cache.php';
+        CRM_Core_BAO_Cache::setItem( $cacheKey,
+                                     'CiviCRM Search PrevNextCache',
+                                     $cacheKey );
     }
    
     /**
@@ -790,41 +840,49 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
     private static function &_getColumnHeaders() 
     {
         if ( ! isset( self::$_columnHeaders ) )
-        { self::$_columnHeaders = array(
-                                          array('desc' => ts('Contact Type') ),
-                                          array(
-                                                'name'      => ts('Name'),
-                                                'sort'      => 'sort_name',
-                                                'direction' => CRM_Utils_Sort::ASCENDING,
-                                                ),
-                                          array('name' => ts('Address') ),
-                                          array(
-                                                'name'      => ts('City'),
-                                                'sort'      => 'city',
-                                                'direction' => CRM_Utils_Sort::DONTCARE,
-                                                ),
-                                          array(
-                                                'name'      => ts('State'),
-                                                'sort'      => 'state_province',
-                                                'direction' => CRM_Utils_Sort::DONTCARE,
-                                                ),
-                                          array(
-                                                'name'      => ts('Postal'),
-                                                'sort'      => 'postal_code',
-                                                'direction' => CRM_Utils_Sort::DONTCARE,
-                                                ),
-                                          array(
-                                                'name'      => ts('Country'),
-                                                'sort'      => 'country',
-                                                'direction' => CRM_Utils_Sort::DONTCARE,
-                                                ),
-                                          array(
-                                                'name'      => ts('Email'),
-                                                'sort'      => 'email',
-                                                'direction' => CRM_Utils_Sort::DONTCARE,
-                                                ),
-                                          array('name' => ts('Phone') )
-                );
+        { 
+            require_once 'CRM/Core/BAO/Setting.php';
+            $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                  'address_options', true, null, true );
+            
+            self::$_columnHeaders = array( 'contact_type' => array('desc' => ts('Contact Type') ),
+                                           'sort_name'    => array(
+                                                                   'name'      => ts('Name'),
+                                                                   'sort'      => 'sort_name',
+                                                                   'direction' => CRM_Utils_Sort::ASCENDING,
+                                                 ) );
+
+            $defaultAddress = array( 'street_address' => array( 'name' => ts('Address') ), 
+                                     'city'   => array( 'name'      => ts('City'),
+                                                        'sort'      => 'city',
+                                                        'direction' => CRM_Utils_Sort::DONTCARE,
+                                                        ),
+                                     'state_province' => array( 'name'      => ts('State'),
+                                                                'sort'      => 'state_province',
+                                                                'direction' => CRM_Utils_Sort::DONTCARE,
+                                                                ),
+                                     'postal_code' => array( 'name'      => ts('Postal'),
+                                                             'sort'      => 'postal_code',
+                                                             'direction' => CRM_Utils_Sort::DONTCARE,
+                                                             ),
+                                     'country' => array( 'name'      => ts('Country'),
+                                                         'sort'      => 'country',
+                                                         'direction' => CRM_Utils_Sort::DONTCARE,
+                                                         ),
+                                     ); 
+            
+            foreach ( $defaultAddress as $columnName => $column ) {
+                if ( CRM_Utils_Array::value($columnName, $addressOptions) ) {
+                    self::$_columnHeaders[$columnName] = $column;  
+                }
+            }
+           
+            self::$_columnHeaders['email'] = array( 'name'      => ts('Email'),
+                                                    'sort'      => 'email',
+                                                    'direction' => CRM_Utils_Sort::DONTCARE,
+                                                    );
+            
+            self::$_columnHeaders['phone'] = array( 'name' => ts('Phone') );
         }
         return self::$_columnHeaders;
     }
@@ -837,7 +895,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         return $this->_query->searchQuery( null, null, null, false, false, true );
     }
 
-    function contactIDQuery( $params, $action, $sortID, $displayRelationshipType = null ) {
+    function contactIDQuery( $params, $action, $sortID, $displayRelationshipType = null, $queryOperator = 'AND' ) {
         $sortOrder =& $this->getSortOrder( $this->_action );
         $sort      = new CRM_Utils_Sort( $sortOrder, $sortID );
 
@@ -849,11 +907,16 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         }
 
         if ( ! $displayRelationshipType ) {
-            $query = new CRM_Contact_BAO_Query( $params, $this->_returnProperties );
+            $query = new CRM_Contact_BAO_Query( $params, 
+                                                $this->_returnProperties,
+                                                null, false, false, 1,
+                                                false, true, true, null,
+                                                $queryOperator );
         } else {
             $query = new CRM_Contact_BAO_Query( $params, $this->_returnProperties,
                                                 null, false, false, 1,
-                                                false, true, true, $displayRelationshipType );
+                                                false, true, true, $displayRelationshipType,
+                                                $queryOperator );
         }
         $value =  $query->searchQuery( 0, 0, $sort,
                                        false, false, false,

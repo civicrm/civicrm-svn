@@ -43,12 +43,11 @@
 require_once 'api/v3/utils.php';
 require_once 'CRM/Contact/BAO/Contact.php';
 /**
- * @todo - get rid of update & merge into this - wrapper handles update
  *
  * @param  array   $params           (reference ) input parameters
  *
  * Allowed @params array keys are:
- * {@schema Contact/Contact.xml}
+ * {@getfields contact_create}
  * {@schema Core/Address.xml}}
  * 
  * {@example ContactCreate.php 0}
@@ -60,14 +59,8 @@ require_once 'CRM/Contact/BAO/Contact.php';
  */
 function civicrm_api3_contact_create( $params )
 {
-    civicrm_api3_verify_mandatory($params,null,array('contact_type'));
 
-    require_once 'CRM/Utils/Array.php';
-    $contactID = CRM_Utils_Array::value( 'contact_id', $params );
-    if (empty($contactID )){
-        $contactID = CRM_Utils_Array::value( 'id', $params );
-    }
-
+    $contactID = CRM_Utils_Array::value( 'contact_id', $params,CRM_Utils_Array::value( 'id', $params ) );
     $dupeCheck = CRM_Utils_Array::value( 'dupe_check', $params, false );
     $values    = _civicrm_api3_contact_check_params( $params, $dupeCheck );
     if ( $values ) {
@@ -157,7 +150,14 @@ function civicrm_api3_contact_create( $params )
 
 }
 
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_contact_create_spec(&$params){
+  $params['contact_type']['api.required'] = 1;
+}
 /**
  * Retrieve one or more contacts, given a set of search params
  *
@@ -169,8 +169,6 @@ function civicrm_api3_contact_create( $params )
  *
  * {@example ContactGet.php 0}
  * 
- * @todo Erik Hommel 16 dec 2010 Check that all DB fields are returned
- * @todo Erik Hommel 16 dec 2010 fix custom data (CRM-7231)
  * @todo EM 7 Jan 11 - does this return the number of contacts if required (replacement for deprecated contact_search_count function - if so is this tested?
  */
 
@@ -237,7 +235,7 @@ function civicrm_api3_contact_get( $params )
     }
 
     require_once 'CRM/Contact/BAO/Query.php';
-    $newParams =& CRM_Contact_BAO_Query::convertFormValues( $inputParams );
+    $newParams = CRM_Contact_BAO_Query::convertFormValues( $inputParams );
     list( $contacts, $options ) = CRM_Contact_BAO_Query::apiQuery( $newParams,
                                                                    $returnProperties,
                                                                    null,
@@ -285,7 +283,7 @@ function civicrm_api3_contact_delete( $params )
     $contactID = CRM_Utils_Array::value( 'id', $params );
 
 
-    $session =& CRM_Core_Session::singleton( );
+    $session = CRM_Core_Session::singleton( );
     if ( $contactID ==  $session->get( 'userID' ) ) {
       return civicrm_api3_create_error(  'This contact record is linked to the currently logged in user account - and cannot be deleted.'  );
     }
@@ -604,5 +602,292 @@ function _civicrm_api3_greeting_format_params( $params )
         if ( isset( $params["{$key}{$greeting}"] ) ) {
             unset( $params["{$key}{$greeting}"] );
         }
+    }
+}
+
+/**
+ * Contact quick search api 
+ *
+ * @access public
+ *
+ * {@example ContactQuicksearch.php 0}
+ * 
+ */
+function civicrm_api3_contact_quicksearch( $params )
+{
+    civicrm_api3_verify_mandatory($params,null,array('name'));
+    
+    $name   = CRM_Utils_Array::value( 'name', $params );
+
+    // get the autocomplete options from settings
+    require_once 'CRM/Core/BAO/Setting.php';
+    $acpref = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                       CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                       'contact_autocomplete_options' ) );
+
+    // get the option values for contact autocomplete
+    $acOptions = CRM_Core_OptionGroup::values( 'contact_autocomplete_options', false, false, false, null, 'name' );
+    
+    $list = array();
+    foreach ( $acpref as $value ) {
+        if ( $value && CRM_Utils_Array::value( $value, $acOptions ) ) {
+            $list[$value] = $acOptions[$value];
+        }
+    } 
+    
+    $select = array( 'sort_name' );
+    $where  = '';
+    $from   = array( );
+    foreach( $list as $value ) {
+        $suffix = substr( $value, 0, 2 ) . substr( $value, -1 );
+        switch( $value ) {
+
+        case 'street_address':
+        case 'city':
+            $selectText = $value;
+            $value      = "address";
+            $suffix     = 'sts';
+        case 'phone':                
+        case 'email':
+            $select[] = ( $value == 'address' ) ? $selectText : $value;
+            $from[$value] = "LEFT JOIN civicrm_{$value} {$suffix} ON ( cc.id = {$suffix}.contact_id AND {$suffix}.is_primary = 1 ) ";
+            break;
+
+        case 'country':
+        case 'state_province':
+            $select[] = "{$suffix}.name";
+            if ( ! in_array( 'address', $from ) ) {
+                $from ['address'] = 'LEFT JOIN civicrm_address sts ON ( cc.id = sts.contact_id AND sts.is_primary = 1) ';
+            }
+            $from[$value] = " LEFT JOIN civicrm_{$value} {$suffix} ON ( sts.{$value}_id = {$suffix}.id  ) ";
+            break;
+        }
+    }
+
+    $config = CRM_Core_Config::singleton( );
+    $as = $select;
+    $select = implode( ', ', $select );
+    $from   = implode( ' ' , $from   );
+    $limit = CRM_Utils_Array::value( 'limit', $params, 10);
+
+    // add acl clause here
+    require_once 'CRM/Contact/BAO/Contact/Permission.php';
+    list( $aclFrom, $aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( 'cc' );
+
+    if ( $aclWhere ) {
+        $where .= " AND $aclWhere ";
+    }
+
+    if ( CRM_Utils_Array::value( 'org', $params ) ) {
+        $where .= " AND contact_type = \"Organization\"";
+        //set default for current_employer
+        if ( $orgId = CRM_Utils_Array::value( 'id', $params ) ) {
+            $where .= " AND cc.id = {$orgId}";
+        }
+
+        // CRM-7157, hack: get current employer details when
+        // employee_id is present.
+        $currEmpDetails  = array( );
+        if ( CRM_Utils_Array::value( 'employee_id', $params ) ) {
+            if ( $currentEmployer = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                CRM_Utils_Array::value( 'employee_id', $params ),
+                'employer_id' ) ) {
+                if ( $config->includeWildCardInName ) {
+                    $strSearch = "%$name%";
+                } else {
+                    $strSearch = "$name%";
+                }
+
+                // get current employer details
+                $dao = CRM_Core_DAO::executeQuery( "SELECT cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
+                    FROM civicrm_contact cc {$from} WHERE cc.contact_type = \"Organization\" AND cc.id = {$currentEmployer} AND cc.sort_name LIKE '$strSearch'" );
+                if ( $dao->fetch( ) ) {
+                    $currEmpDetails = array( 'id'   => $dao->id,
+                                             'data' => $dao->data );
+                }
+            }
+        }
+    }
+
+    if ( CRM_Utils_Array::value( 'cid', $params) ) {
+        $where .= " AND cc.id <> {$params['cid']}";
+    }
+
+    //contact's based of relationhip type
+    $relType = null; 
+    if ( CRM_Utils_Array::value( 'rel', $params ) ) {
+        $relation = explode( '_', CRM_Utils_Array::value( 'rel', $params ) );
+        $relType  = CRM_Utils_Type::escape( $relation[0], 'Integer');
+        $rel      = CRM_Utils_Type::escape( $relation[2], 'String');
+    }
+
+    if ( $config->includeWildCardInName ) {
+        $strSearch = "%$name%";
+    } else {
+        $strSearch = "$name%";
+    }
+    $includeEmailFrom = $includeNickName = $exactIncludeNickName = '';
+    if ( $config->includeNickNameInName ) {
+        $includeNickName = " OR nick_name LIKE '$strSearch'";
+        $exactIncludeNickName = " OR nick_name LIKE '$name'";
+    }
+
+    if( $config->includeEmailInName ) {
+        if( !in_array( 'email', $list ) ) {
+            $includeEmailFrom ="LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )" ;  
+        }
+        $whereClause = " WHERE ( email LIKE '$strSearch' OR sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
+        $exactWhereClause = " WHERE ( email LIKE '$name' OR sort_name LIKE '$name' $exactIncludeNickName ) {$where} ";
+    } else {
+        $whereClause = " WHERE ( sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
+        $exactWhereClause = " WHERE ( sort_name LIKE '$name' $exactIncludeNickName ) {$where} ";
+    }
+    $additionalFrom = '';
+    if ( $relType ) {
+        $additionalFrom = "
+            INNER JOIN civicrm_relationship_type r ON ( 
+                r.id = {$relType}
+                AND ( cc.contact_type = r.contact_type_{$rel} OR r.contact_type_{$rel} IS NULL )
+                AND ( cc.contact_sub_type = r.contact_sub_type_{$rel} OR r.contact_sub_type_{$rel} IS NULL )
+            )";
+    }
+
+    //CRM-5954
+    $query = "
+        SELECT DISTINCT(id), data, {$select}
+        FROM   (
+            ( SELECT 0 as exactFirst, cc.id as id, {$select},CONCAT_WS( ' :: ', {$select} ) as data
+            FROM   civicrm_contact cc {$from}
+    {$aclFrom}
+    {$additionalFrom} {$includeEmailFrom}
+    {$exactWhereClause}
+    LIMIT 0, {$limit} )
+    UNION
+    ( SELECT 1 as exactFirst, cc.id as id, {$select}, CONCAT_WS( ' :: ', {$select} ) as data
+    FROM   civicrm_contact cc {$from}
+    {$aclFrom}
+    {$additionalFrom} {$includeEmailFrom}
+    {$whereClause}
+    ORDER BY sort_name
+    LIMIT 0, {$limit} )
+) t
+ORDER BY exactFirst, sort_name
+LIMIT    0, {$limit}
+    ";
+    // send query to hook to be modified if needed
+    require_once 'CRM/Utils/Hook.php';
+    CRM_Utils_Hook::contactListQuery( $query,
+                                      $name,
+                                      CRM_Utils_Array::value( 'context', $params ),
+                                      CRM_Utils_Array::value( 'id', $params ) 
+                                    );
+
+    $dao = CRM_Core_DAO::executeQuery( $query );
+    $contactList = array();
+    $listCurrentEmployer = true;
+    while ( $dao->fetch( ) ) {
+        $t = array('id'=>$dao->id);
+        foreach ($as as $k) {
+            $t[$k] = $dao->$k;
+        }
+        $t['data'] = $dao->data;
+        $contactList[] = $t;
+        if ( CRM_Utils_Array::value( 'org', $params ) &&
+            !empty($currEmpDetails) && 
+            $dao->id == $currEmpDetails['id']) {
+            $listCurrentEmployer = false;
+        }
+    }
+
+    //return organization name if doesn't exist in db
+    if ( empty( $contactList ) ) {
+        if ( CRM_Utils_Array::value( 'org', $params ) ) {
+            if ( $listCurrentEmployer && !empty($currEmpDetails) ) {
+                $contactList = array( 'data' => $currEmpDetails['data'],
+                                      'id'   => $currEmpDetails['id']
+                                    );
+            } else {
+                $contactList = array( 'data' => CRM_Utils_Array::value( 's', $params ),
+                                      'id'   => CRM_Utils_Array::value( 's', $params ) );
+            }
+        }
+    }
+    
+    return civicrm_api3_create_success($contactList,$params);
+}
+
+/**
+ * Geocode group of contacts based on given params
+ *
+ * @param  array   	  $params (reference ) input parameters
+ *
+ * @return boolean        true if success, else false
+ * @static void
+ * @access public
+ *
+ */
+function civicrm_api3_contact_geocode( $params )
+{
+
+    // available params:
+    // 'start=', 'end=', 'geocoding=', 'parse=', 'throttle='
+
+    require_once 'CRM/Utils/Geocode/MassGeocode.php';
+    $gc = new CRM_Utils_Geocode_MassGeocode( $params );
+    $result = $gc->run();
+
+    if ( $result['is_error'] == 0 ) {
+        return civicrm_api3_create_success( );
+    } else {
+        return civicrm_api3_create_error( $result['messages'] );
+    }
+}
+
+/**
+ * Send the scheduled reminders for all contacts (either for activities or events)
+ *
+ * @param  array   	  $params (reference ) input parameters
+ *                        now - the time to use, in YmdHis format
+ *                            - makes testing a bit simpler since we can simulate past/future time
+ *
+ * @return boolean        true if success, else false
+ * @static void
+ * @access public
+ *
+ */
+function civicrm_api3_contact_scheduledReminder( $params )
+{
+    require_once 'CRM/Core/BAO/ActionSchedule.php';
+    $result = CRM_Core_BAO_ActionSchedule::processQueue( CRM_Utils_Array::value( 'now', $params) );
+
+    if ( $result['is_error'] == 0 ) {
+        return civicrm_api3_create_success( );
+    } else {
+        return civicrm_api3_create_error( $result['messages'] );
+    }
+}
+
+/**
+ * Execute a specific report instance and send the output via email
+ *
+ * @param  array   	  $params (reference ) input parameters
+ *                        sendmail - Boolean - should email be sent?, required
+ *                        instanceId - Integer - the report instance ID
+ *                        resetVal - Integer - should we reset form state (always true)?
+ *
+ * @return boolean        true if success, else false
+ * @static void
+ * @access public
+ *
+ */
+function civicrm_api3_contact_report( $params )
+{
+    require_once 'CRM/Report/Utils/Report.php';
+    $result = CRM_Report_Utils_Report::processReport( $params );
+
+    if ( $result['is_error'] == 0 ) {
+        return civicrm_api3_create_success( );
+    } else {
+        return civicrm_api3_create_error( $result['messages'] );
     }
 }

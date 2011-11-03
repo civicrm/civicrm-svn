@@ -52,7 +52,7 @@ class CRM_Member_Form_MembershipStatus extends CRM_Member_Form
      */
     public function setDefaultValues( ) {
         $defaults = array( );
-        $defaults =& parent::setDefaultValues( );
+        $defaults = parent::setDefaultValues( );
 
         //finding default weight to be put 
         if ( ! CRM_Utils_Array::value( 'weight', $defaults ) ) {

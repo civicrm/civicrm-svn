@@ -122,6 +122,7 @@ class CRM_Core_BAO_CustomQuery
                                'Group'        => 'civicrm_group',
                                'Relationship' => 'civicrm_relationship',
                                'Event'        => 'civicrm_event',
+                               'Case'         => 'civicrm_case',
                                'Activity'     => 'civicrm_activity',
                                'Pledge'       => 'civicrm_pledge',
                                'Grant'        => 'civicrm_grant',
@@ -173,10 +174,10 @@ SELECT f.id, f.label, f.data_type,
    AND f.is_active = 1 
    AND f.id IN ( $idString )";
 
-        $dao =& CRM_Core_DAO::executeQuery( $query );
+        $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
             // get the group dao to figure which class this custom field extends
-            $extends =& CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup', $dao->custom_group_id, 'extends' );
+            $extends = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup', $dao->custom_group_id, 'extends' );
             if ( array_key_exists( $extends, self::$extendsMap ) ) { 
                 $extendsTable = self::$extendsMap[$extends];
             } else if ( in_array( $extends, CRM_Contact_BAO_ContactType::subTypes( ) ) ) {
@@ -223,7 +224,7 @@ SELECT label, value
  WHERE option_group_id = $optionGroupID
 ";
 
-                $option =& CRM_Core_DAO::executeQuery( $query );
+                $option = CRM_Core_DAO::executeQuery( $query );
                 while ( $option->fetch( ) ) {
                     $dataType = $this->_fields[$dao->id]['data_type'];
                     if ( $dataType == 'Int' || $dataType == 'Float' ) {
@@ -282,6 +283,8 @@ SELECT label, value
                 $joinTable = 'civicrm_grant';
             } else  if ( $field['extends'] == 'civicrm_address' ) {
                 $joinTable = 'civicrm_address';
+            } else  if ( $field['extends'] == 'civicrm_case' ) {
+                $joinTable = 'civicrm_case';
             }
             
             if ( $joinTable ) {
@@ -426,7 +429,7 @@ SELECT label, value
                     } 
                     continue;
                 case 'ContactReference':
-                    $label = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value,  'sort_name');
+                    $label = $value ? CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value,  'sort_name') : '';
                     $this->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( $fieldName, $op, $value, 'String' );
                     $this->_qill[$grouping][]  = $field['label'] . " $op $label";                    
                     continue;

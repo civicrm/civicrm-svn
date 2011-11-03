@@ -266,7 +266,7 @@ class CRM_Upgrade_ThreeZero_ThreeZero extends CRM_Upgrade_Form {
         CRM_Core_DAO::executeQuery( $alterQuery );
 
         //set status message for default greetings 
-        $template = & CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $template->assign('afterUpgradeMessage', $afterUpgradeMessage);
     }
 }

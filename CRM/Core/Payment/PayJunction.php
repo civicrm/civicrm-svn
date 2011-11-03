@@ -164,7 +164,7 @@ class CRM_Core_Payment_PayJunction extends CRM_Core_Payment
       }
 
       /* Check for application errors */
-      $result =& self::checkResult( $pjpgResponse );
+      $result = self::checkResult( $pjpgResponse );
       if ( is_a( $result, 'CRM_Core_Error' ) ) {
           return $result;
       }
@@ -216,7 +216,7 @@ class CRM_Core_Payment_PayJunction extends CRM_Core_Payment
    
    function &error( $error = null ) 
    {
-       $e =& CRM_Core_Error::singleton( );
+       $e = CRM_Core_Error::singleton( );
        if ( $error ) {
            $e->push( $error['dc_response_code'],
                      0, null,

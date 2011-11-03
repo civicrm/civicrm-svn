@@ -56,3 +56,4 @@
 {/strip}
 
 {include file="CRM/Case/Form/ActivityToCase.tpl"}
+{include file="CRM/Case/Form/ActivityChangeStatus.tpl"}

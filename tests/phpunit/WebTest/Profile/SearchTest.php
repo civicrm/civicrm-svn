@@ -54,7 +54,7 @@ class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
         
         $this->click('newCiviCRMProfile-bottom');
         
-        $this->waitForElementPresent('_qf_Group_next');
+        $this->waitForElementPresent('_qf_Group_next-bottom');
         
         //Name of profile
         $profileTitle = 'profile_'.substr(sha1(rand()), 0, 7);

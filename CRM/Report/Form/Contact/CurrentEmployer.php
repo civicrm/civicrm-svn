@@ -206,7 +206,7 @@ FROM civicrm_contact {$this->_aliases['civicrm_contact']}
             if ( array_key_exists('filters', $table) ) {
                 foreach ( $table['filters'] as $fieldName => $field ) {
                     $clause = null;
-                    if ( $field['operatorType'] & CRM_Report_Form::OP_DATE ) {
+                    if ( CRM_Utils_Array::value( 'operatorType', $field )  & CRM_Report_Form::OP_DATE ) {
                         $relative = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params );
                         $from     = CRM_Utils_Array::value( "{$fieldName}_from"    , $this->_params );
                         $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );
@@ -278,7 +278,7 @@ FROM civicrm_contact {$this->_aliases['civicrm_contact']}
                 // in previous row
                 
                 foreach ( $row as $colName => $colVal ) {
-                    if ( is_array($checkList[$colName]) && 
+                    if ( CRM_Utils_Array::value( $colName, $checkList ) && is_array($checkList[$colName]) && 
                          in_array($colVal, $checkList[$colName]) ) {
                         $rows[$rowNum][$colName] = "";
                     }

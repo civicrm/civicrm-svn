@@ -48,9 +48,9 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Core_Page {
   
         $count   = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, null, null, true);
         
-        $in      =& CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Added' );
-        $pending =& CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Pending' );
-        $out     =& CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Removed' );
+        $in      = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Added' );
+        $pending = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Pending' );
+        $out     = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Removed' );
 
         $this->assign       ( 'groupCount'  , $count );
         $this->assign_by_ref( 'groupIn'     , $in );
@@ -155,12 +155,18 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Core_Page {
         case 'o' :
             $groupStatus = 'Removed';
             break;
+        case 'd' :
+            $groupStatus = 'Deleted';
+            break;
         }
 
         $groupNum = CRM_Contact_BAO_GroupContact::getContactGroup( $this->_contactId, 'Added', 
                                                                    null, true, true );
-        if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE && 
-             $groupNum == 1 && $groupStatus == 'Removed' ) {
+        require_once 'CRM/Core/BAO/Setting.php';
+        if ( $groupNum == 1 &&
+             $groupStatus == 'Removed' &&
+             CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
+                                            'is_enabled' ) ) {
             CRM_Core_Session::setStatus( 'make sure at least one contact group association is maintained.' );
             return false;
         }

@@ -77,10 +77,21 @@ else
 fi
 
 cd $CALLEDPATH/../sql
-echo; echo Dropping $DBNAME database
-mysqladmin -f -u $DBUSER $PASSWDSECTION $DBARGS drop $DBNAME
-echo; echo Creating $DBNAME database
-mysqladmin -f -u $DBUSER $PASSWDSECTION $DBARGS create $DBNAME
+echo; echo "Dropping civicrm_* tables from database $DBNAME"
+# mysqladmin -f -u $DBUSER $PASSWDSECTION $DBARGS drop $DBNAME
+MYSQLCMD="mysql -u$DBUSER $PASSWDSECTION $DBARGS $DBNAME"
+echo "SELECT table_name FROM information_schema.TABLES  WHERE TABLE_SCHEMA='${DBNAME}' AND TABLE_TYPE = 'VIEW'" \
+  | $MYSQLCMD \
+  | grep '^\(civicrm_\|log_civicrm_\)' \
+  | awk -v NOFOREIGNCHECK='SET FOREIGN_KEY_CHECKS=0;' 'BEGIN {print NOFOREIGNCHECK}{print "drop view " $1 ";"}' \
+  | $MYSQLCMD
+echo "SELECT table_name FROM information_schema.TABLES  WHERE TABLE_SCHEMA='${DBNAME}' AND TABLE_TYPE = 'BASE TABLE'" \
+  | $MYSQLCMD \
+  | grep '^\(civicrm_\|log_civicrm_\)' \
+  | awk -v NOFOREIGNCHECK='SET FOREIGN_KEY_CHECKS=0;' 'BEGIN {print NOFOREIGNCHECK}{print "drop table " $1 ";"}' \
+  | $MYSQLCMD
+
+
 echo; echo Creating database structure
 mysql -u $DBUSER $PASSWDSECTION $DBARGS $DBNAME < civicrm.mysql
 #mysql -u $DBUSER $PASSWDSECTION $DBARGS $DBNAME < trigger.mysql

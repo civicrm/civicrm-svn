@@ -36,9 +36,9 @@
  */
 
 require_once 'CRM/Event/Form/ManageEvent.php';
-require_once "CRM/Core/BAO/CustomGroup.php";
-require_once "CRM/Custom/Form/CustomData.php";
-require_once "CRM/Core/BAO/CustomField.php";
+require_once 'CRM/Core/BAO/CustomGroup.php';
+require_once 'CRM/Custom/Form/CustomData.php';
+require_once 'CRM/Core/BAO/CustomField.php';
 
 /**
  * This class generates form components for processing Event  
@@ -79,7 +79,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         
         $showLocation = false;
         // when custom data is included in this page
-        if ( CRM_Utils_Array::value( "hidden_custom", $_POST ) ) {
+        if ( CRM_Utils_Array::value( 'hidden_custom', $_POST ) ) {
             $this->set('type',     'Event');
             $this->set('subType',  CRM_Utils_Array::value( 'event_type_id', $_POST ) );
             $this->set('entityId', $this->_id );
@@ -115,7 +115,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         
         // in update mode, we need to set custom data subtype to tpl
         if ( CRM_Utils_Array::value( 'event_type_id' ,$defaults ) ) {
-            $this->assign('customDataSubType',  $defaults["event_type_id"] );
+            $this->assign('customDataSubType',  $defaults['event_type_id'] );
         }
 
         require_once 'CRM/Core/ShowHideBlocks.php';
@@ -181,7 +181,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
 
         if ($this->_action & CRM_Core_Action::ADD) {
             require_once 'CRM/Event/PseudoConstant.php';
-            $eventTemplates =& CRM_Event_PseudoConstant::eventTemplates();
+            $eventTemplates = CRM_Event_PseudoConstant::eventTemplates();
             if (CRM_Utils_System::isNull( $eventTemplates )) {
                 $this->assign('noEventTemplates', true);
             } else {
@@ -228,6 +228,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         $this->add('textarea','summary',ts('Event Summary'), $attributes['summary']);
         $this->addWysiwyg( 'description', ts('Complete Description'),$attributes['event_description']);
         $this->addElement('checkbox', 'is_public', ts('Public Event?') );
+        $this->addElement('checkbox', 'is_share', ts('Allow sharing through social media?') );
         $this->addElement('checkbox', 'is_map', ts('Include Map to Event Location?') );
          
         $this->addDateTime( 'start_date', ts('Start Date'), false, array('formatType' => 'activityDateTime') );
@@ -238,7 +239,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         $this->addRule('max_participants', ts('Max participants should be a positive number') , 'positiveInteger');
 
         require_once 'CRM/Event/PseudoConstant.php';
-        $participantStatuses =& CRM_Event_PseudoConstant::participantStatus();
+        $participantStatuses = CRM_Event_PseudoConstant::participantStatus();
         if (in_array('On waitlist', $participantStatuses) and in_array('Pending from waitlist', $participantStatuses)) {
             $this->addElement('checkbox', 'has_waitlist', ts('Offer a Waitlist?'), null, array( 'onclick' => "showHideByValue('has_waitlist','0','id-event_full','table-row','radio',true); showHideByValue('has_waitlist','0','id-waitlist-text','table-row','radio',false);" ));
             $this->add('textarea', 'waitlist_text',   ts('Waitlist Message'), $attributes['waitlist_text']);
@@ -305,6 +306,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         $params['is_map'    ]      = CRM_Utils_Array::value('is_map', $params, false);
         $params['is_active' ]      = CRM_Utils_Array::value('is_active', $params, false);
         $params['is_public' ]      = CRM_Utils_Array::value('is_public', $params, false);
+        $params['is_share' ]       = CRM_Utils_Array::value('is_share', $params, false);
         $params['default_role_id'] = CRM_Utils_Array::value('default_role_id', $params, false);
         $params['id']              = $this->_id;
 
@@ -318,22 +320,9 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
                                                                    'Event' );
 
         require_once 'CRM/Event/BAO/Event.php';
-
-        // copy all not explicitely set $params keys from the template (if it should be sourced)
-        if ( CRM_Utils_Array::value( 'template_id', $params ) ) {
-            $defaults = array();
-            $templateParams = array('id' => $params['template_id']);
-            CRM_Event_BAO_Event::retrieve($templateParams, $defaults);
-            unset($defaults['id']);
-            unset($defaults['default_fee_id']);
-            unset($defaults['default_discount_fee_id']);
-            foreach ($defaults as $key => $value) {
-                if (!isset($params[$key])) $params[$key] = $value;
-            }
-        }
-        
-        if ( empty( $params['is_template'] ) ) {
-            $params['is_template'] = 0;
+        //merge params with defaults from templates
+        if ( CRM_Utils_Array::value( 'template_id', $params ) ) { 
+          $params = array_merge(CRM_Event_BAO_Event::getTemplateDefaultValues($params['template_id']),$params);
         }
         
         $event =  CRM_Event_BAO_Event::create( $params );
@@ -351,7 +340,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
                 
                 // Copy the Discount option Group and Values
                 require_once 'CRM/Core/BAO/Discount.php';
-                $optionGroupIds = CRM_Core_BAO_Discount::getOptionGroup($params['template_id'], "civicrm_event");
+                $optionGroupIds = CRM_Core_BAO_Discount::getOptionGroup($params['template_id'], 'civicrm_event');
                 foreach ( $optionGroupIds as $id ) {
                     $discountSuffix = '.discount.'. CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup',
                                                                                  $id,
@@ -401,7 +390,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
             $url = 'civicrm/event/manage/location';
             $urlParams = "action=update&reset=1&id={$event->id}";
             // special case for 'Save and Done' consistency.
-            if ( $this->controller->getButtonName('submit') == "_qf_EventInfo_upload_done" ) {
+            if ( $this->controller->getButtonName('submit') == '_qf_EventInfo_upload_done' ) {
                 $url = 'civicrm/event/manage';
                 $urlParams = 'reset=1';
                 CRM_Core_Session::setStatus( ts("'%1' information has been saved.", 

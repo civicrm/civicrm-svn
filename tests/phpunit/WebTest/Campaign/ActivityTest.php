@@ -97,15 +97,15 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       }
 
       // add the required Drupal permission
-      $this->open("{$this->sboxPath}admin/user/permissions");
+      $this->changeAdminLinks();
       $this->waitForElementPresent('edit-submit');
-      $this->check('edit-2-administer-CiviCampaign');
+      $this->check('edit-2-administer-civicampaign');
       $this->click('edit-submit');
       $this->waitForPageToLoad();
       $this->assertTrue($this->isTextPresent('The changes have been saved.'));
 
       // Go directly to the URL of the screen that you will be testing
-      $this->open($this->sboxPath . "civicrm/campaign/add&reset=1");
+      $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
 
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
       // button at the end of this page to show up, to make sure it's fully loaded.
@@ -173,14 +173,15 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
 
       // Now we're filling the "Assigned To" field.
       // Typing contact's name into the field (using typeKeys(), not type()!)...
-      $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", $firstName1);
+      $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
 
       // ...waiting for drop down with results to show up...
-      $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
+      $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
+      $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
       
-      // ...clicking first result (which is a li element), selenium picks first matching element so we don't need to specify that...
-      $this->click("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
-
+      // ...need to use mouseDownAt on first result (which is a li element), click does not work
+      $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
+     
       // ...again, waiting for the box with contact name to show up...
       $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
       

@@ -320,7 +320,7 @@ class CRM_Core_BAO_AddressTest extends CiviUnitTestCase
         $street_address =  "West St. Apt 1";
         $locale = 'en_US';
         $parsedStreetAddress = CRM_Core_BAO_Address::parseStreetAddress( $street_address, $locale );
-        $this->assertEquals( $parsedStreetAddress['street_name'], 'St.' );
+        $this->assertEquals( $parsedStreetAddress['street_name'], 'West St.' );
         $this->assertEquals( $parsedStreetAddress['street_unit'],'Apt 1' );
         $this->assertNotContains('street_number', $parsedStreetAddress );
         $this->assertNotContains( 'street_number_suffix', $parsedStreetAddress );

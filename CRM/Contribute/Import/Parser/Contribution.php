@@ -76,7 +76,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
     function init( ) 
     {
         require_once 'CRM/Contribute/BAO/Contribution.php';
-        $fields =& CRM_Contribute_BAO_Contribution::importableFields( $this->_contactType , false );
+        $fields = CRM_Contribute_BAO_Contribution::importableFields( $this->_contactType , false );
         
         $fields = array_merge( $fields,
                                array( 'soft_credit' => array( 'title'         => ts('Soft Credit'),
@@ -253,7 +253,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
 
         $params =& $this->getActiveFieldParams( );            
                 
-        $formatted = array('version' => 3);
+        $formatted = array( 'version' => 3 );
 
         // don't add to recent items, CRM-4399
         $formatted['skipRecentView'] = true;
@@ -298,7 +298,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
         static $indieFields = null;
         if ($indieFields == null) {
             require_once('CRM/Contribute/DAO/Contribution.php');
-            $tempIndieFields =& CRM_Contribute_DAO_Contribution::import();
+            $tempIndieFields = CRM_Contribute_DAO_Contribution::import();
             $indieFields = $tempIndieFields;
         }
         
@@ -312,7 +312,8 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
         
         //import contribution record according to select contact type
         if ( $onDuplicate == CRM_Contribute_Import_Parser::DUPLICATE_SKIP && 
-             ( $paramValues['contribution_contact_id'] || $paramValues['external_identifier'] ) ) {
+             ( CRM_Utils_Array::value( 'contribution_contact_id', $paramValues ) || 
+               CRM_Utils_Array::value( 'external_identifier', $paramValues ) ) ) {
             $paramValues['contact_type'] = $this->_contactType;
         } else if( $onDuplicate == CRM_Contribute_Import_Parser::DUPLICATE_UPDATE && 
                    ( $paramValues['contribution_id'] || $values['trxn_id'] || $paramValues['invoice_id'] ) ) {
@@ -328,7 +329,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
             $paramValues['onDuplicate'] = $onDuplicate;
         }
         
-        $formatError = _civicrm_contribute_formatted_param( $paramValues, $formatted, true);
+        $formatError = _civicrm_api3_contribute_formatted_param( $paramValues, $formatted, true);
         
         if ( $formatError ) {
             array_unshift($values, $formatError['error_message']);
@@ -395,7 +396,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                         }
                     }
                     
-                    $newContribution =& CRM_Contribute_BAO_Contribution::create( $formatted , $ids );
+                    $newContribution = CRM_Contribute_BAO_Contribution::create( $formatted , $ids );
                     $this->_newContributions[] = $newContribution->id;                    
                     
                     //return soft valid since we need to show how soft credits were added
@@ -432,9 +433,9 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
             }
 
             //retrieve contact id using contact dedupe rule
-            $error = civicrm_check_contact_dedupe( $paramValues );
-            
-            if ( civicrm_duplicate( $error ) ) {
+            $error = civicrm_api('CheckContact', 'Dedupe', $paramValues);
+
+            if ( civicrm_api3_duplicate( $error ) ) {
                 $matchedIDs = explode(',',$error['error_message']['params'][0]);        
                 if (count( $matchedIDs) >1) {
                     array_unshift($values,"Multiple matching contact records detected for this row. The contribution was not imported");
@@ -442,9 +443,8 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                 } else {
                     $cid = $matchedIDs[0];
                     $formatted['contact_id'] = $cid;
-                    $formatted['version'] = 2;
-
-                    $newContribution = civicrm_api('contribution', 'format_create', $formatted);
+                    
+                    $newContribution = civicrm_api( 'contribution','create', $formatted );
                     if ( civicrm_error( $newContribution ) ) { 
                         if ( is_array( $newContribution['error_message'] ) ) {
                             array_unshift($values, $newContribution['error_message']['message']);
@@ -512,8 +512,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                     return CRM_Contribute_Import_Parser::ERROR;
                 }
             }
-            $formatted['version'] = 2;
-            $newContribution = civicrm_api('contribution', 'format_create', $formatted);
+            $newContribution = civicrm_api( 'contribution','create', $formatted );
             if ( civicrm_error( $newContribution ) ) { 
                 if ( is_array( $newContribution['error_message'] ) ) {
                     array_unshift($values, $newContribution['error_message']['message']);
@@ -552,11 +551,11 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
             $completeStatusID = CRM_Core_OptionGroup::getValue( 'contribution_status', 'Completed', 'name' );
            
             //need to update payment record to map contribution_id
-            CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_Payment', $formatted['pledge_payment_id'], 
+            CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_PledgePayment', $formatted['pledge_payment_id'], 
                                          'contribution_id', $formatted['contribution_id'] );
             
-            require_once 'CRM/Pledge/BAO/Payment.php';
-            CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $formatted['pledge_id'], 
+            require_once 'CRM/Pledge/BAO/PledgePayment.php';
+            CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $formatted['pledge_id'], 
                                                                array( $formatted['pledge_payment_id'] ),  
                                                                $completeStatusID,
                                                                null,

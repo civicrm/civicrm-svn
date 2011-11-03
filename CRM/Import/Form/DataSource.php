@@ -153,8 +153,8 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
         require_once "CRM/Core/BAO/Mapping.php";
         require_once "CRM/Core/OptionGroup.php";
         $mappingArray = CRM_Core_BAO_Mapping::getMappings( CRM_Core_OptionGroup::getValue( 'mapping_type',
-                                                                                                           'Import Contact',
-                                                                                                           'name' ) );
+                                                                                           'Import Contact',
+                                                                                           'name' ) );
 
         $this->assign('savedMapping',$mappingArray);
         $this->addElement('select','savedMapping', ts('Mapping Option'), array('' => ts('- select -'))+$mappingArray);
@@ -208,7 +208,7 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
     }
 
     function setDefaultValues( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $defaults = array( 'dataSource'     => 'CRM_Import_DataSource_CSV',
                            'onDuplicate'    => CRM_Import_Parser::DUPLICATE_SKIP,
                            'contactType'    => CRM_Import_Parser::CONTACT_INDIVIDUAL,

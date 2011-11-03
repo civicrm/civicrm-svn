@@ -48,7 +48,7 @@ WHERE  n.child_group_id  = gc.id
   AND  n.parent_group_id = gp.id
 ";
 
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
 
         $tree = array( );
         while ( $dao->fetch( ) ) {
@@ -131,11 +131,11 @@ WHERE  id = $id
 
     static function getPotentialCandidates( $id, &$groups ) {
         require_once 'CRM/Core/BAO/Cache.php';
-        $tree =& CRM_Core_BAO_Cache::getItem( 'contact groups', 'nestable tree hierarchy' );
+        $tree = CRM_Core_BAO_Cache::getItem( 'contact groups', 'nestable tree hierarchy' );
 
         if ( $tree === null ) {
             self::update( );
-            $tree =& CRM_Core_BAO_Cache::getItem( 'contact groups', 'nestable tree hierarchy' );
+            $tree = CRM_Core_BAO_Cache::getItem( 'contact groups', 'nestable tree hierarchy' );
         }
 
         $potential = $groups;
@@ -181,15 +181,15 @@ WHERE  id = $id
 
     static function json( ) {
         require_once 'CRM/Core/BAO/Cache.php';
-        $tree =& CRM_Core_BAO_Cache::getItem( 'contact groups', 'nestable tree hierarchy' );
+        $tree = CRM_Core_BAO_Cache::getItem( 'contact groups', 'nestable tree hierarchy' );
 
         if ( $tree === null ) {
             self::update( );
-            $tree =& CRM_Core_BAO_Cache::getItem( 'contact groups', 'nestable tree hierarchy' );
+            $tree = CRM_Core_BAO_Cache::getItem( 'contact groups', 'nestable tree hierarchy' );
         }
 
         // get all the groups
-        $groups =& CRM_Core_PseudoConstant::group( );
+        $groups = CRM_Core_PseudoConstant::group( );
 
         foreach ( $groups as $id => $name ) {
             $string = "id:'$id', name:'$name'";

@@ -105,7 +105,7 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
         $mask  = CRM_Core_Action::mask( $permissions );
         
         $values =  array( );
-        $links  =& self::links( );
+        $links  = self::links( );
         $action = array_sum( array_keys( $links ) ) & $mask;
         
         $note->find( );

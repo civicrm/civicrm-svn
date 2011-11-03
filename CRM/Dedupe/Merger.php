@@ -55,13 +55,13 @@ class CRM_Dedupe_Merger
         static $relTables;
         
         $config = CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Drupal' ) {
-            $userRecordUrl = CRM_Utils_System::url( 'user/$ufid' );
+        if ( $config->userSystem->is_drupal ) {
+            $userRecordUrl = CRM_Utils_System::url( 'user/%ufid' );
             $title = ts('%1 User: %2; user id: %3', array(1 => $config->userFramework, 2 => '$ufname', 3 => '$ufid'));
         } else if ( $config->userFramework == 'Joomla' ) {
             $userRecordUrl = $config->userFrameworkVersion > 1.5 ? 
-                $config->userFrameworkBaseURL ."index.php?option=com_users&view=user&task=user.edit&id=". '$ufid' : 
-                $config->userFrameworkBaseURL ."index2.php?option=com_users&view=user&task=edit&id[]=". '$ufid';
+                $config->userFrameworkBaseURL ."index.php?option=com_users&view=user&task=user.edit&id=". '%ufid' : 
+                $config->userFrameworkBaseURL ."index2.php?option=com_users&view=user&task=edit&id[]=". '%ufid';
             $title = ts('%1 User: %2; user id: %3', array(1 => $config->userFramework, 2 => '$ufname', 3 => '$ufid'));
         }
         
@@ -176,9 +176,9 @@ class CRM_Dedupe_Merger
         $cid = (int) $cid;
         $groups = array();
 
-        $relTables =& self::relTables();
-        $cidRefs   =& self::cidRefs();
-        $eidRefs   =& self::eidRefs();
+        $relTables = self::relTables();
+        $cidRefs   = self::cidRefs();
+        $eidRefs   = self::eidRefs();
         foreach ($relTables as $group => $params) {
             $sqls = array();
             foreach ($params['tables'] as $table) {
@@ -239,9 +239,7 @@ class CRM_Dedupe_Merger
                 'civicrm_note'                    => array('contact_id'),
                 'civicrm_participant'             => array('contact_id'),
                 'civicrm_pcp'                     => array('contact_id'),
-                'civicrm_preferences'             => array('contact_id'),
                 'civicrm_relationship'            => array('contact_id_a', 'contact_id_b'),
-                'civicrm_subscription_history'    => array('contact_id'),
                 'civicrm_uf_match'                => array('contact_id'),
                 'civicrm_uf_group'                => array('created_id'),
                 'civicrm_pledge'                  => array('contact_id'),
@@ -286,9 +284,15 @@ class CRM_Dedupe_Merger
     static function &cpTables( )
     {
         static $tables;
-        if ( !$tables ) {
-            $tables = array( 'civicrm_case_contact' => array( 'path'     => 'CRM_Case_BAO_Case',
-                                                              'function' => 'mergeCases' ) );
+        if ( ! $tables ) {
+            $tables = array( 'civicrm_case_contact'         => array( 'path'     => 'CRM_Case_BAO_Case',
+                                                                      'function' => 'mergeCases' ),
+                             'civicrm_group_contact'        => array( 'path'     => 'CRM_Contact_BAO_GroupContact',
+                                                                      'function' => 'mergeGroupContact' ),
+                             'civicrm_subscription_history' => array( 'path'     => 'CRM_Contact_BAO_GroupContact',
+                                                                      'function' => 'ignoreMergeSubscriptionHistory' ),
+                             );
+
         }
         
         return $tables;
@@ -331,6 +335,7 @@ INNER JOIN  civicrm_pledge pledge ON ( pledge.id = payment.pledge_id )
        SET  contribution.contact_id = $mainContactId
      WHERE  pledge.contact_id = $otherContactId";
             break;
+
         case 'civicrm_membership' :
             $sqls[] = "
     UPDATE  IGNORE  civicrm_contribution contribution
@@ -339,6 +344,7 @@ INNER JOIN  civicrm_membership membership ON ( membership.id = payment.membershi
        SET  contribution.contact_id = $mainContactId
      WHERE  membership.contact_id = $otherContactId";
             break;
+
         case 'civicrm_participant' :
             $sqls[] = "
     UPDATE  IGNORE  civicrm_contribution contribution
@@ -409,7 +415,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             $affected = array_unique(array_intersect($affected, $tables));
         } else { 
             // if there aren't any specific tables, don't affect the ones handled by relTables()
-            $relTables =& self::relTables();
+            $relTables = self::relTables();
             $handled = array();
             foreach ($relTables as $params) {
                 $handled = array_merge($handled, $params['tables']);
@@ -510,8 +516,8 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         }
 
         require_once 'CRM/Core/BAO/CustomValueTable.php';
-        $mainEvs  =& CRM_Core_BAO_CustomValueTable::getEntityValues($mainId);
-        $otherEvs =& CRM_Core_BAO_CustomValueTable::getEntityValues($otherId);
+        $mainEvs  = CRM_Core_BAO_CustomValueTable::getEntityValues($mainId);
+        $otherEvs = CRM_Core_BAO_CustomValueTable::getEntityValues($otherId);
         $keys = array_unique(array_merge(array_keys($mainEvs), array_keys($otherEvs)));
         foreach ($keys as $key) {
             if ($mainEvs[$key] != $otherEvs[$key]) $diffs['custom'][] = $key;

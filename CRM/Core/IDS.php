@@ -77,7 +77,7 @@ class CRM_Core_IDS {
       require_once 'IDS/Init.php';
 
       // init the PHPIDS and pass the REQUEST array
-      $config =& CRM_Core_Config::singleton( );
+      $config = CRM_Core_Config::singleton( );
 
       $configFile = $config->configAndLogDir . 'Config.IDS.ini';
       if ( ! file_exists( $configFile ) ) {

@@ -116,7 +116,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
             $totalLables = $maxSize = $defaultDiscounts = array();
             foreach ( $discountedEvent as $optionGroupId ) {
                 $name = $defaults["discount_name[$i]"] = 
-                    CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $optionGroupId, 'label' );
+                    CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $optionGroupId, 'title' );
                 
                 list( $defaults["discount_start_date[$i]"] ) = 
                     CRM_Utils_Date::setDateDefaults(CRM_Core_DAO::getFieldValue( 'CRM_Order_DAO_Discount', $optionGroupId, 
@@ -255,7 +255,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
         $this->addCurrency( 'currency', ts( 'Currency' ), false );
         
         require_once 'CRM/Contribute/PseudoConstant.php';
-        $paymentProcessor =& CRM_Core_PseudoConstant::paymentProcessor( );
+        $paymentProcessor = CRM_Core_PseudoConstant::paymentProcessor( );
         $this->assign('paymentProcessor',$paymentProcessor);
         $this->add( 'select', 'payment_processor_id',
                     ts( 'Payment Processor' ),
@@ -619,7 +619,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
                             $discountOptions = array( );
                             for ( $i = 1; $i < self::NUM_OPTION; $i++ ) {
                                 if ( ! empty( $labels[$i] ) && 
-                                     ! CRM_Utils_System::isNull( $values[$i][$j] ) ) {
+                                     ! empty( $values[$i][$j] ) ) {
                                     $discountOptions[] = array( 'label'      => trim( $labels[$i] ),
                                                                 'value'      => CRM_Utils_Rule::cleanMoney( trim( $values[$i][$j] ) ),
                                                                 'weight'     => $i,

@@ -99,7 +99,7 @@ class CRM_Upgrade_Form extends CRM_Core_Form {
         $smarty->assign('multilingual', $this->multilingual);
         $smarty->assign('locales',      $this->locales);
         
-        // we didn't call CRM_Core_BAO_Setting::retrieve(), so we need to set $dbLocale by hand
+        // we didn't call CRM_Core_BAO_ConfigSetting::retrieve(), so we need to set $dbLocale by hand
         if ($this->multilingual) {          
             global $dbLocale;
             $dbLocale = "_{$this->_config->lcMessages}";            
@@ -252,7 +252,7 @@ SET    version = '$version'
                            array(dirname(__FILE__), 'Incremental', 'sql') );
         $sqlFiles = scandir($sqlDir);
 
-        $sqlFilePattern = '/^((\d{1,2}\.\d{1,2})\.(\d{1,2}|\w{4,7}))\.(my)?sql(\.tpl)?$/i';
+        $sqlFilePattern = '/^((\d{1,2}\.\d{1,2})\.(\d{1,2}\.)?(\d{1,2}|\w{4,7}))\.(my)?sql(\.tpl)?$/i';
         foreach ($sqlFiles as $file) {
             if ( preg_match($sqlFilePattern, $file, $matches) ) {
                 if ( $matches[2] == '4.0' ) {

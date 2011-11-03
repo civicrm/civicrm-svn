@@ -47,7 +47,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         $this->webtestLogin();
         
         // Go directly to the URL of the screen that you will be testing (New Event).
-        $this->open($this->sboxPath . "civicrm/event/add&reset=1&action=add");
+        $this->open($this->sboxPath . "civicrm/event/add?reset=1&action=add");
         
         $eventTitle = 'My Conference - '.substr(sha1(rand()), 0, 7);
         $eventDescription = "Here is a description for this conference.";
@@ -75,14 +75,14 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         $registerUrl = $this->getLocation( );
         
         // give permissions for event registration
-        $this->open( $this->sboxPath . "admin/user/permissions" );
+        $this->changeAdminLinks( );
         $this->waitForElementPresent( 'edit-submit' ); 
         $this->check( "edit-1-register-for-events" );
         $this->click( "edit-submit" );
         $this->waitForPageToLoad( '30000' );
         
         // register as an anonymous user
-        $this->open( $this->sboxPath . "civicrm/logout&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/logout?reset=1" );
         $this->waitForElementPresent( 'edit-submit' ); 
         $this->open( $registerUrl );
         $this->waitForElementPresent( '_qf_Register_upload-bottom' );

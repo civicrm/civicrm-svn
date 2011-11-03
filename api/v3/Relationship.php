@@ -36,10 +36,6 @@
  *
  */
 
-/**
- * Include utility functions
- */
-require_once 'api/v3/utils.php';
 require_once 'CRM/Contact/BAO/Relationship.php';
 require_once 'CRM/Contact/BAO/RelationshipType.php';
 
@@ -53,16 +49,10 @@ require_once 'CRM/Contact/BAO/RelationshipType.php';
  * @return array (reference) id of created or updated record
  * @static void
  * @access public
- * @todo date handling is 'funky' check difference in tests between update & create. current create test won't work if end_date is same format as start_date
- * @todo create should handle update.
+ * {getfields relationship_create}
  */
 function civicrm_api3_relationship_create( $params ) {
 
-        // check params for required fields (add/update)
-        static $required = array( 'contact_id_a', 
-                                  'contact_id_b',
-                                  array('relationship_type_id' , 'relationship_type'));
-        civicrm_api3_verify_mandatory($params,'CRM_Contact_DAO_Relationship',$required);
         // check entities exist
         _civicrm_api3_relationship_check_params( $params );
         $values = array( );
@@ -101,23 +91,31 @@ function civicrm_api3_relationship_create( $params ) {
                                                                          'moreIDs' => implode( ',', $relationshipBAO[4] ) ) ) );
 
 }
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_relationship_create_spec(&$params){
+  $params['contact_id_a']['api.required'] = 1;
+  $params['contact_id_b']['api.required'] = 1;
+  $params['relationship_type_id']['api.required'] = 1;
+}
 /**
  * Delete a relationship 
  *
  * @param  array $params
  *
  * @return boolean  true if success, else false
+ * {getfields relationship_delete}
  * @static void
  * @access public
  */
 
 function civicrm_api3_relationship_delete( $params ) {
 
-        civicrm_api3_verify_mandatory($params,null,array('id'));
-
         require_once 'CRM/Utils/Rule.php';
-        if( $params['id'] != null && ! CRM_Utils_Rule::integer( $params['id'] ) ) {
+        if( ! CRM_Utils_Rule::integer( $params['id'] ) ) {
             return civicrm_api3_create_error( 'Invalid value for relationship ID' );
         }
     
@@ -140,18 +138,17 @@ function civicrm_api3_relationship_delete( $params ) {
  * @todo  function in not a search - just returns all relationships for 'contact_id'
  * 
  * @return        Array of all relevant relationships.
- *
+ * {getfields relationship_get}
  * @access  public
  */
 function civicrm_api3_relationship_get($params) 
 {
 
-        civicrm_api3_verify_mandatory($params, null,array('contact_id'));
- 
-        require_once 'CRM/Contact/BAO/Relationship.php';
-        $relationships= array();
-        $contactID     = $params['contact_id'];
-        $relationships = CRM_Contact_BAO_Relationship::getRelationship($contactID,
+        if(!CRM_Utils_Array::value('contact_id',$params)){
+           $relationships = _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params,FALSE);
+        }else{
+             $relationships= array();
+             $relationships = CRM_Contact_BAO_Relationship::getRelationship($params['contact_id'],
                                         CRM_Utils_Array::value('status_id',$params),
                                          0,
                                          0,
@@ -159,23 +156,10 @@ function civicrm_api3_relationship_get($params)
 
      
     
-        //handle custom data.
-        require_once 'CRM/Core/BAO/CustomGroup.php';
-
-        foreach ( $relationships as $relationshipId => $values ) {
-            $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Relationship', CRM_Core_DAO::$_nullObject, $relationshipId, false,
-                                                             $values['civicrm_relationship_type_id'] );
-            $formatTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, CRM_Core_DAO::$_nullObject );
-        
-            $defaults = array( );
-            CRM_Core_BAO_CustomGroup::setDefaults( $formatTree, $defaults );
-        
-            if ( !empty( $defaults ) ) {
-                foreach ( $defaults as $key => $val ) {
-                    $relationships[$relationshipId][$key] = $val;
-                }
-            }
         }
+        foreach ( $relationships as $relationshipId => $values ) {
+               _civicrm_api3_custom_data_get($relationships[$relationshipId],'Relationship',$relationshipId);
+         }
     
         
         return civicrm_api3_create_success( $relationships ,$params);
@@ -197,7 +181,7 @@ function civicrm_api3_relationship_get($params)
 function _civicrm_api3_relationship_format_params( $params, &$values ) {
     // copy all the relationship fields as is
    
-    $fields =& CRM_Contact_DAO_Relationship::fields( );
+    $fields = CRM_Contact_DAO_Relationship::fields( );
     _civicrm_api3_store_values( $fields, $params, $values );
 
     $relationTypes = CRM_Core_PseudoConstant::relationshipType( 'name' );
@@ -275,6 +259,9 @@ function _civicrm_api3_relationship_format_params( $params, &$values ) {
     
     return array();
 }
+/*
+ * @deprecated - checking to be moved to wrapper
+ */
 function _civicrm_api3_relationship_check_params( &$params ) {
 
 

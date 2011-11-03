@@ -62,7 +62,11 @@ class CRM_Core_Config_Defaults
         $this->templateDir =
             array( $civicrm_root . DIRECTORY_SEPARATOR .
                    'templates'   . DIRECTORY_SEPARATOR );
-            
+
+        $this->sqlDir =
+            $civicrm_root . DIRECTORY_SEPARATOR .
+            'sql'   . DIRECTORY_SEPARATOR ;
+
         $this->importDataSourceDir =
             $civicrm_root . DIRECTORY_SEPARATOR .
             'CRM'         . DIRECTORY_SEPARATOR .
@@ -73,9 +77,6 @@ class CRM_Core_Config_Defaults
             $civicrm_root . DIRECTORY_SEPARATOR .
             'l10n'        . DIRECTORY_SEPARATOR ;
 
-        // This should be moved to database config.
-        $this->sunlight = defined( 'CIVICRM_SUNLIGHT' ) ? true : false;
-
         // show tree widget
         $this->groupTree = defined( 'CIVICRM_GROUPTREE' ) ? true : false;
 
@@ -83,23 +84,6 @@ class CRM_Core_Config_Defaults
         //$this->revampPages = array( 'CRM/Admin/Form/Setting/Url.tpl', 'CRM/Admin/Form/Preferences/Address.tpl' );
         $this->revampPages = array( );
         
-        $this->profileDoubleOptIn = false;
-        // enable profile double Opt-In if Civimail enabled
-        if ( in_array( 'CiviMail', $this->enableComponents ) ) {
-            // set defined value for Profile double Opt-In from civicrm settings file else true 
-            $this->profileDoubleOptIn = defined( 'CIVICRM_PROFILE_DOUBLE_OPTIN' ) ? (bool) CIVICRM_PROFILE_DOUBLE_OPTIN : true;
-        }
-
-        $this->profileAddToGroupDoubleOptIn = false;
-        // enable profile add to group double Opt-In if Civimail enabled
-        if ( in_array( 'CiviMail', $this->enableComponents ) ) {
-            // set defined value for Profile add to group double Opt-In from civicrm settings file else true 
-            $this->profileAddToGroupDoubleOptIn = defined( 'CIVICRM_PROFILE_ADD_TO_GROUP_DOUBLE_OPTIN' ) ? (bool) CIVICRM_PROFILE_ADD_TO_GROUP_DOUBLE_OPTIN : true;
-        }
-
-       //email notifications to activity Assignees
-        $this->activityAssigneeNotification = defined( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' ) ? (bool) CIVICRM_ACTIVITY_ASSIGNEE_MAIL : true;
-
         // IDS enablement
         $this->useIDS = defined( 'CIVICRM_IDS_ENABLE' ) ? (bool) CIVICRM_IDS_ENABLE : true;
         
@@ -140,7 +124,7 @@ class CRM_Core_Config_Defaults
 
         // CRM-6216: Drupal’s $baseURL might have a trailing LANGUAGE_NEGOTIATION_PATH,
         // which needs to be stripped before we start basing ResourceURL on it
-        if ($config->userFramework == 'Drupal') {
+        if ($config->userSystem->is_drupal) {
             global $language;
             if (isset($language->prefix) and $language->prefix) {
                 if (substr($baseURL, -(strlen($language->prefix) + 1)) == $language->prefix . '/') {
@@ -153,7 +137,9 @@ class CRM_Core_Config_Defaults
         if ( $config->templateCompileDir ) {
             $path = CRM_Utils_File::baseFilePath( $config->templateCompileDir );
         }
-
+        if(!isset($defaults['enableSSL'])){
+          $defaults['enableSSL'] = 0;
+        }
         //set defaults if not set in db
         if ( ! isset( $defaults['userFrameworkResourceURL'] ) ) {
             $testIMG = "i/tracker.gif";
@@ -161,11 +147,8 @@ class CRM_Core_Config_Defaults
                 if ( CRM_Utils_System::checkURL( "{$baseURL}components/com_civicrm/civicrm/{$testIMG}" ) ) {
                     $defaults['userFrameworkResourceURL'] = $baseURL . "components/com_civicrm/civicrm/";
                 }
-            } else if ( $config->userFramework == 'Standalone' ) {
-                // potentially sane default for standalone;
-                // could probably be smarter about this, but this
-                // should work in many cases
-                $defaults['userFrameworkResourceURL'] = str_replace( 'standalone/', '', $baseURL );
+            } else if ( $config->userFramework == 'WordPress' ) {
+                $defaults['userFrameworkResourceURL'] = $baseURL . "wp-content/plugins/civicrm/civicrm/";
             } else {
                 // Drupal setting
                 // check and see if we are installed in sites/all (for D5 and above)
@@ -173,8 +156,7 @@ class CRM_Core_Config_Defaults
                 // the system for a loop on lobo's macosx box
                 // or in modules
                 global $civicrm_root;
-                require_once "CRM/Utils/System/Drupal.php";
-                $cmsPath = CRM_Utils_System_Drupal::cmsRootPath( );
+                $cmsPath = $config->userSystem->cmsRootPath( );
                 $defaults['userFrameworkResourceURL'] = $baseURL . str_replace( "$cmsPath/", '',  
                                                                                 str_replace('\\', '/', $civicrm_root ) );
                 
@@ -208,9 +190,9 @@ class CRM_Core_Config_Defaults
                 // we need to remove the administrator/ from the end
                 $tempURL = str_replace( "/administrator/", "/", $baseURL );
                 $defaults['imageUploadURL'] = $tempURL . "media/civicrm/persist/contribute/";
-            } else if ( $config->userFramework == 'Standalone' ) {
+            } else if ( $config->userFramework == 'WordPress' ) {
                 //for standalone no need of sites/defaults directory
-                $defaults['imageUploadURL'] = $baseURL . "files/civicrm/persist/contribute/";
+                $defaults['imageUploadURL'] = $baseURL . "wp-content/plugins/civicrm/files/civicrm/persist/contribute/";
             } else {
                 $defaults['imageUploadURL'] = $baseURL . "sites/default/files/civicrm/persist/contribute/";
             }

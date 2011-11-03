@@ -44,7 +44,7 @@ class CRM_Upgrade_Incremental_php_ThreeTwo {
         //CRM-5666 -if user already have 'access CiviCase'
         //give all new permissions and drop access CiviCase.
         $config = CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Drupal' ) {
+        if ( $config->userSystem->is_drupal ) {
             
             // CRM-7896
             $roles = user_roles(false, 'access CiviCase');
@@ -95,7 +95,7 @@ class CRM_Upgrade_Incremental_php_ThreeTwo {
     {
         $upgrade = new CRM_Upgrade_Form;
         
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $seedLocale = $config->lcMessages;
 
         //handle missing civicrm_uf_field.help_pre
@@ -271,7 +271,7 @@ UPDATE  civicrm_membership_status
             }
         }
         // CRM-6563: restrict access to the upload dir, tighten access to the config-and-log dir
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         require_once 'CRM/Utils/File.php';
         CRM_Utils_File::restrictAccess($config->uploadDir);
         CRM_Utils_File::restrictAccess($config->configAndLogDir);

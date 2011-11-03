@@ -51,7 +51,7 @@ class WebTest_Contact_AddViaProfileTest extends CiviSeleniumTestCase {
       $this->webtestLogin( );
       
       // Go directly to the URL of the screen that you will be testing (Create Profile).
-      $this->open($this->sboxPath . "civicrm/profile/create&reset=1&gid=1");
+      $this->open($this->sboxPath . "civicrm/profile/create?reset=1&gid=1");
        
       $firstName = 'Jo'.substr(sha1(rand()), 0, 4);
       $lastName  = 'Ad'.substr(sha1(rand()), 0, 7);

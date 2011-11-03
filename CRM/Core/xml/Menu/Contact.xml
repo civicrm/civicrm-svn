@@ -113,6 +113,7 @@
      <title>Edit Related Contact</title>
      <page_callback>CRM_Contact_Form_RelatedContact</page_callback>
      <access_arguments>access Contact Dashboard</access_arguments>
+	 <is_public>true</is_public>
   </item>
   <item>
      <path>civicrm/contact/merge</path>
@@ -338,7 +339,12 @@
    <title>All Cases Dashlet</title>
    <page_callback>CRM_Dashlet_Page_AllCases</page_callback>
    <access_arguments>access all cases and activities</access_arguments>
-</item> 
+</item>
+<item>
+   <path>civicrm/dashlet/casedashboard</path>
+   <title>Case Dashboard Dashlet</title>
+   <page_callback>CRM_Dashlet_Page_CaseDashboard</page_callback>
+</item>
 <item>
    <path>civicrm/contact/deduperules</path>
    <title>Find and Merge Duplicate Contacts</title>
@@ -371,5 +377,16 @@
      <path>civicrm/ajax/dedupeRules</path>
      <page_callback>CRM_Contact_Page_AJAX::buildDedupeRules</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
+</item>
+<item>
+     <path>civicrm/ajax/relationshipContactTypeList</path>
+     <page_callback>CRM_Contact_Page_AJAX::relationshipContactTypeList</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+</item>
+<item>
+    <path>civicrm/contact/view/useradd</path>
+    <path_arguments>cid=%%cid%%</path_arguments>
+    <title>Add User</title>
+    <page_callback>CRM_Contact_Page_View_Useradd</page_callback>
 </item>
 </menu>

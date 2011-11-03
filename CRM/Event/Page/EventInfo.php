@@ -74,7 +74,8 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         $noFullMsg = CRM_Utils_Request::retrieve( 'noFullMsg', 'String' , $this, false, 'false' );
 
         // set breadcrumb to append to 2nd layer pages
-        $breadCrumbPath       = CRM_Utils_System::url( "civicrm/event/info", "id={$this->_id}&reset=1" );
+        $breadCrumbPath       = CRM_Utils_System::url( 'civicrm/event/info', 
+                                                       "id={$this->_id}&reset=1" );
         $additionalBreadCrumb = "<a href=\"$breadCrumbPath\">" . ts('Events') . '</a>';
        
         //retrieve event information
@@ -160,11 +161,11 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         
         //retrieve custom field information
         require_once 'CRM/Core/BAO/CustomGroup.php';
-        $groupTree =& CRM_Core_BAO_CustomGroup::getTree("Event", $this, $this->_id, 0, $values['event']['event_type_id'] );
+        $groupTree = CRM_Core_BAO_CustomGroup::getTree('Event', $this, $this->_id, 0, $values['event']['event_type_id'] );
         CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree );
         $this->assign( 'action', CRM_Core_Action::VIEW);
         //To show the event location on maps directly on event info page
-        $locations =& CRM_Event_BAO_Event::getMapInfo( $this->_id );
+        $locations = CRM_Event_BAO_Event::getMapInfo( $this->_id );
         if ( !empty( $locations ) && CRM_Utils_Array::value( 'is_map', $values['event'] ) ) {
             $this->assign( 'locations', $locations );
             $this->assign( 'mapProvider', $config->mapProvider );
@@ -212,13 +213,32 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
             $this->assign( 'skipLocationType', true );
             $this->assign( 'mapURL', $mapURL );
         }
+        
+        if ( CRM_Core_Permission::check( 'view event participants' ) &&
+             CRM_Core_Permission::check( 'view all contacts' ) ) {  
+            require_once 'CRM/Event/PseudoConstant.php';
+            $statusTypes        = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 1');
+            $statusTypesPending = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 0');
+            $findParticipants['statusCounted'] = implode( ', ', array_values( $statusTypes ) );
+            $findParticipants['statusNotCounted'] = implode( ', ', array_values( $statusTypesPending ) );
+            $this->assign('findParticipants', $findParticipants);
+        }
+        
+        $participantListingID = CRM_Utils_Array::value( 'participant_listing_id', $values['event'] );
+        if ( $participantListingID ) {
+            $participantListingURL = CRM_Utils_System::url( 'civicrm/event/participant',
+                                                                "reset=1&id={$this->_id}",
+                                                                true, null, true, true );
+            $this->assign( 'participantListingURL', $participantListingURL );
+        }
+ 
         require_once 'CRM/Event/BAO/Participant.php';
         $eventFullMessage = CRM_Event_BAO_Participant::eventFull( $this->_id );
         $hasWaitingList   = CRM_Utils_Array::value( 'has_waitlist', $values['event'] );
         
         $allowRegistration = false;
         if ( CRM_Utils_Array::value( 'is_online_registration', $values['event'] ) ) {
-            if ( CRM_Event_BAO_Event::validRegistrationDate( $values['event'], $this->_id ) ) {
+            if ( CRM_Event_BAO_Event::validRegistrationRequest( $values['event'], $this->_id ) ) {
                 if ( !$eventFullMessage || $hasWaitingList ) {
                     $registerText = ts('Register Now');
                     if ( CRM_Utils_Array::value('registration_link_text', $values['event'] ) ) {
@@ -261,7 +281,10 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
             $statusMessage =  $eventFullMessage;
             if ( CRM_Event_BAO_Event::checkRegistration( $params ) ) {
                 if ( $noFullMsg == 'false' ) {
-                    $statusMessage = ts( "It looks like you are already registered for this event. If you want to change your registration, or you feel that you've gotten this message in error, please contact the site administrator." );
+                    $registerUrl = CRM_Utils_System::url( 'civicrm/event/register',
+                                                          "reset=1&id={$values['event']['id']}&cid=0" );
+                    $statusMessage = ts("It looks like you are already registered for this event. If you want to change your registration, or you feel that you've gotten this message in error, please contact the site administrator.") 
+                              . ' ' . ts('You can also <a href="%1">register another participant</a>.', array(1 => $registerUrl));
                 }
             } else if ( $hasWaitingList ) {
                 $statusMessage = CRM_Utils_Array::value( 'waitlist_text', $values['event'] );
@@ -292,7 +315,7 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
     {
         if ( $this->_id ) {
             $templateFile = "CRM/Event/Page/{$this->_id}/EventInfo.tpl";
-            $template     =& CRM_Core_Page::getTemplate( );
+            $template     = CRM_Core_Page::getTemplate( );
             
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;

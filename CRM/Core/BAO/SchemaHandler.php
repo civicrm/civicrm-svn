@@ -76,7 +76,7 @@ class CRM_Core_BAO_SchemaHandler
     static function createTable( &$params )
     {
         $sql =  self::buildTableSQL( $params );
-        $dao =& CRM_Core_DAO::executeQuery( $sql, array(), true, null, false, false ); // do not i18n-rewrite
+        $dao = CRM_Core_DAO::executeQuery( $sql, array(), true, null, false, false ); // do not i18n-rewrite
         $dao->free();
 
         // logging support
@@ -210,16 +210,21 @@ class CRM_Core_BAO_SchemaHandler
     
     static function changeFKConstraint( $tableName, $fkTableName ) 
     {
+        $fkName = "{$tableName}_entity_id";
+        if ( strlen( $fkName ) >= 48) {
+            $fkName = substr( $fkName, 0, 32 ) . "_" .
+                substr( md5( $fkName ), 0, 16 );
+        }
         $dropFKSql = "
 ALTER TABLE {$tableName}
-      DROP FOREIGN KEY `FK_{$tableName}_entity_id`;";
+      DROP FOREIGN KEY `FK_{$fkName}`;";
 
         $dao = CRM_Core_DAO::executeQuery( $dropFKSql );
         $dao->free();
 
 $addFKSql = "
 ALTER TABLE {$tableName}
-      ADD CONSTRAINT `FK_{$tableName}_entity_id` FOREIGN KEY (`entity_id`) REFERENCES {$fkTableName} (`id`) ON DELETE CASCADE;";
+      ADD CONSTRAINT `FK_{$fkName}` FOREIGN KEY (`entity_id`) REFERENCES {$fkTableName} (`id`) ON DELETE CASCADE;";
         // CRM-7007: do not i18n-rewrite this query
         $dao = CRM_Core_DAO::executeQuery($addFKSql, array(), true, null, false, false);
         $dao->free();
@@ -287,7 +292,7 @@ ALTER TABLE {$tableName}
         }
 
         // CRM-7007: do not i18n-rewrite this query
-        $dao =& CRM_Core_DAO::executeQuery($sql, array(), true, null, false, false);
+        $dao = CRM_Core_DAO::executeQuery($sql, array(), true, null, false, false);
         $dao->free();
 
         // logging support: if we’re adding a column (but only then!) make sure the potential relevant log table gets a column as well
@@ -318,13 +323,13 @@ ALTER TABLE {$tableName}
     static function dropTable( $tableName ) 
     {
         $sql = "DROP TABLE $tableName";
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
     }
 
     static function dropColumn( $tableName, $columnName ) 
     {
         $sql = "ALTER TABLE $tableName DROP COLUMN $columnName";
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
     }
 
     static function changeUniqueToIndex( $tableName, $dropUnique = true ) 
@@ -338,7 +343,7 @@ ADD INDEX `FK_{$tableName}_entity_id` ( `entity_id` )";
 DROP INDEX `FK_{$tableName}_entity_id` ,
 ADD UNIQUE INDEX `unique_entity_id` ( `entity_id` )";
         }       
-            $dao =& CRM_Core_DAO::executeQuery( $sql );
+            $dao = CRM_Core_DAO::executeQuery( $sql );
     }
 
     static function createIndexes(&$tables, $createIndexPrefix = 'index', $substrLenghts = array())
@@ -354,7 +359,7 @@ ADD UNIQUE INDEX `unique_entity_id` ( `entity_id` )";
         require_once 'CRM/Utils/System.php';
         if ( !CRM_Utils_System::isNull( $locales ) and $columns === null ) {
             require_once 'CRM/Core/I18n/SchemaStructure.php';
-            $columns =& CRM_Core_I18n_SchemaStructure::columns();
+            $columns = CRM_Core_I18n_SchemaStructure::columns();
         }
 
         foreach ( $tables as $table => $fields ) {

@@ -44,8 +44,8 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
     protected $_phoneField   = false;
     
     protected $_summary      = null;
-    
-    protected $_customGroupExtends = array( 'Contact', 'Individual', 'Household', 'Organization' );
+    protected $_customGroupGroupBy = true;   
+    protected $_customGroupExtends = array( 'Contact', 'Individual', 'Household', 'Organization', 'Activity' );
     
     private static $_surveyRespondentStatus;
 
@@ -291,6 +291,10 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
                 implode( ' , ', array_keys(  $surveyActivityTypes ) ) . ' ) )';
         }
         
+        // always filter out deleted activities (so contacts that have been released
+        // don't show up in the report).
+        $clauses[] = "( {$this->_aliases['civicrm_activity']}.is_deleted = 0 )";
+
         if ( empty( $clauses ) ) {
             $this->_where = "WHERE ( 1 ) ";
         } else {
@@ -304,7 +308,7 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
     
     function groupBy( ) {
         $this->_groupBy = null;
-        if ( !CRM_Utils_System::isNull( $this->_params['group_bys'] ) &&
+        if ( CRM_Utils_Array::value('group_bys', $this->_params) &&
              is_array( $this->_params['group_bys'] ) ) {
             foreach ( $this->_columns as $tableName => $table ) {
                 if ( array_key_exists('group_bys', $table) ) {
@@ -660,6 +664,10 @@ INNER JOIN  civicrm_survey survey ON ( survey.result_id = grp.id )
             }
         }
         
+        if ( empty($surveyResponseFieldIds) ) {
+            return;
+        }
+
         $hasResponseData = false;
         foreach ( $surveyResponseFields as $fldName ) {
             foreach ( $rows as $row ) {
@@ -767,7 +775,6 @@ INNER JOIN  civicrm_custom_group cg ON ( cg.id = cf.custom_group_id )
             $cfId = CRM_Core_BAO_CustomField::getKeyID( $key );
             if ( $cfId ) $responseFieldIds[$cfId] = $cfId;
         }
-        
         if ( empty( $responseFieldIds ) ) return;
         
         $query ='
@@ -793,7 +800,6 @@ INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
             if ( !array_key_exists( $resTable, $this->_columns ) ) {
                 $this->_columns[$resTable]['dao']     = 'CRM_Contact_DAO_Contact'; 
                 $this->_columns[$resTable]['extends'] = $response->extends;
-                $this->_columns[$resTable]['alias']   = $tableAlias;
             }
             if ( !CRM_Utils_Array::value( 'alias', $this->_columns[$resTable] ) ) {
                 $this->_columns[$resTable]['alias'] = "{$resTable}_survey_response"; 
@@ -822,7 +828,7 @@ INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
                             'dataType' => $response->data_type,
                             'htmlType' => $response->html_type,
                             'required' => true,
-                            'alias'    => $this->_columns[$resTable]['alias'],
+                            'alias'    => ($response->data_type == 'ContactReference') ?  $this->_columns[$resTable]['alias'] .'_contact' : $this->_columns[$resTable]['alias'],
                             'dbAlias'  => $this->_columns[$resTable]['alias'].'.'.$response->column_name,
                             'no_display' => true,
                             'isSurveyResponseField' => true );
@@ -830,7 +836,6 @@ INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
             $this->_columns[$resTable]['fields'][$fieldName] = $field;
             $this->_aliases[$resTable] = $this->_columns[$resTable]['alias'];
         }
-        
     }
     
 }

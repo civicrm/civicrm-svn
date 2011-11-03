@@ -86,6 +86,24 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
         $this->_GName = ucwords(str_replace('_', ' ', $this->_gName));
         $url = "civicrm/admin/options/{$this->_gName}";
         $params = "group={$this->_gName}&reset=1";
+
+        if ( ( $this->_action & CRM_Core_Action::DELETE ) &&
+                in_array( $this->_gName, array( 'email_greeting', 'postal_greeting', 'addressee' ) ) ) {
+            // Don't allow delete if the option value belongs to addressee, postal or email greetings and is in use.
+        	$findValue = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue',$this->_id,'value');
+            $queryParam = array( 1 => array( $findValue, 'Integer' ));
+            $columnName = $this->_gName . "_id";
+            $sql = "SELECT count(id) FROM civicrm_contact WHERE " . $columnName . " = %1";
+            $isInUse = CRM_Core_DAO::singleValueQuery($sql, $queryParam);
+        	if ( $isInUse ) {
+        		$scriptURL = "<a href='" . CRM_Utils_System::docURL2('Update Greetings and Address Data for Contacts', true) . "'>" . ts('Learn more about a script that can automatically update contact addressee and greeting options.') . "</a>";
+                CRM_Core_Session::setStatus( ts('The selected %1 option has <strong>not been deleted</strong> because it is currently in use. Please update these contacts to use a different format before deleting this option. %2', array(1 => $this->_GName, 2 => $scriptURL) ) . "<br /><br />" );
+                $redirect = CRM_Utils_System::url( $url, $params );
+                CRM_Utils_System::redirect( $redirect );
+            }
+        }
+
+
         $session->pushUserContext( CRM_Utils_System::url( $url, $params ) );
         $this->assign('id', $this->_id);
         
@@ -168,15 +186,17 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
         $required = false;
         if ( $this->_gName == 'custom_search' ) {
             $required = true;
-        } elseif ( $this->_gName == 'redaction_rule' ) {
+        } elseif ( $this->_gName == 'redaction_rule' || $this->_gName == 'engagement_index' ) {
             $this->add( 'text', 
                         'value', 
                         ts('Value'), 
                         CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue', 'value' ),
                         true );
-            $this->add( 'checkbox', 
-                        'filter', 
-                        ts('Regular Expression?'));
+            if ( $this->_gName == 'redaction_rule' ) {
+                $this->add( 'checkbox', 
+                            'filter', 
+                            ts('Regular Expression?'));
+            }
         }
         if ( $this->_gName == 'participant_listing' ) {
             $this->add('text', 
@@ -228,18 +248,18 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
         }
         
         //fix for CRM-3552, CRM-4575
-        if ( in_array( $this->_gName, array('email_greeting', 'postal_greeting', 'addressee', 'from_email_address', 'case_status', 'encounter_medium') ) ) {
+        if ( in_array( $this->_gName, array('email_greeting', 'postal_greeting', 'addressee', 'from_email_address', 'case_status', 'encounter_medium', 'case_type') ) ) {
             $this->assign( 'showDefault', true );
             $this->add('checkbox', 'is_default', ts('Default Option?'));
         }
         
-         //get contact type for which user want to create a new greeting/addressee type, CRM-4575
+        //get contact type for which user want to create a new greeting/addressee type, CRM-4575
         if ( in_array( $this->_gName, array( 'email_greeting', 'postal_greeting', 'addressee' ) ) && ! $isReserved ) {
-            $values = array( 1 => ts('Individual'), 2 => ts('Household') );
-            if ( $this->_gName == 'addressee' ) {
-                $values[] =  ts('Organization'); 
-            }
-            $this->add( 'select', 'contactOptions', ts('Contact Type'),array('' => '-select-' ) + $values, true );
+            $values = array( 1 => ts('Individual'), 
+                             2 => ts('Household'), 
+                             3 => ts('Organization'),
+                             4 => ts('Multiple Contact Merge') );
+            $this->add( 'select', 'contactOptions', ts('Contact Type'), array( '' => '-select-' ) + $values, true );
             $this->assign( 'showContactFilter', true );
         }
         
@@ -276,7 +296,7 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
         } 
 
         if ( in_array( $self->_gName, array( 'email_greeting', 'postal_greeting', 'addressee' ) ) 
-             && !$self->_defaultValues['is_reserved'] ) {
+             && !CRM_Utils_Array::value('is_reserved', $self->_defaultValues) ) {
             $label     = $fields['label'];
             $condition = " AND v.label = '{$label}' ";
             $values    = CRM_Core_OptionGroup::values( $self->_gName, false, false, false, $condition, 'filter' );

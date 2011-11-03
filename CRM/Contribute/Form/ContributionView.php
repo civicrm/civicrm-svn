@@ -66,7 +66,7 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form
         CRM_Contribute_BAO_Contribution::resolveDefaults( $values );
         
         if ( CRM_Utils_Array::value( 'contribution_page_id', $values ) ){
-            $contribPages = CRM_Contribute_PseudoConstant::contributionPage( );
+            $contribPages = CRM_Contribute_PseudoConstant::contributionPage( null, true );
             $values["contribution_page_title"] = CRM_Utils_Array::value( CRM_Utils_Array::value( 'contribution_page_id', $values ) , $contribPages );
         }
         
@@ -93,7 +93,7 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form
             }
         }
 
-        $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Contribution', $this, $id, 0,$values['financial_account_id'] );
+        $groupTree = CRM_Core_BAO_CustomGroup::getTree( 'Contribution', $this, $id, 0,$values['contribution_type_id'] );
 		CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree );
         
         $premiumId = null;
@@ -144,7 +144,8 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form
         
         require_once 'CRM/Price/BAO/Set.php';
         $lineItems = array( );
-        if ( $id && CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $id ) ) {
+        if ( $id && ( CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $id, CRM_Core_Component::getComponentID( 'CiviContribute' ) )
+                      || CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $id, CRM_Core_Component::getComponentID( 'CiviMember' ) ) ) ) {
             require_once 'CRM/Price/BAO/LineItem.php';
             $lineItems[] = CRM_Price_BAO_LineItem::getLineItems( $id, 'contribution' );
         }

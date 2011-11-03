@@ -239,13 +239,26 @@ SELECT  petition.id                         as id,
         CRM_Core_DAO::executeQuery($sql, $params);
 
         // remove 'Unconfirmed' tag for this contact
-        $tag_name = defined('CIVICRM_TAG_UNCONFIRMED') ? CIVICRM_TAG_UNCONFIRMED : 'Unconfirmed';
-        $sql = "DELETE FROM civicrm_entity_tag WHERE entity_table = 'civicrm_contact' AND entity_id = %1 AND tag_id = (SELECT id FROM civicrm_tag WHERE name = %2)";
-        $params = array(1 => array($contact_id, 'Integer'), 2 => array($tag_name, 'String'));
+        require_once 'CRM/Core/BAO/Setting.php';
+        $tag_name = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CONFIGURATION_PREFERENCES_NAME,
+                                                   'tag_unconfirmed',
+                                                   null,
+                                                   'Unconfirmed' );
+
+        $sql = "
+DELETE FROM civicrm_entity_tag 
+WHERE       entity_table = 'civicrm_contact' 
+AND         entity_id = %1 
+AND         tag_id = ( SELECT id FROM civicrm_tag WHERE name = %2 )";
+        $params = array( 1 => array( $contact_id, 'Integer' ),
+                         2 => array( $tag_name  , 'String'  ) );
         CRM_Core_DAO::executeQuery($sql, $params);
 
         // set permanent cookie to indicate this users email address now confirmed
-        setcookie('confirmed_'.$petition_id, $activity_id, time() + $this->cookieExpire, '/');
+        setcookie( "confirmed_{$petition_id}",
+                   $activity_id,
+                   time() + $this->cookieExpire,
+                   '/' );
 
         return true;
     }
@@ -275,7 +288,7 @@ SELECT  petition.id                         as id,
             $sql .= " AND status_id = ". (int) $status_id;
         $sql .= " GROUP BY civicrm_address.country_id";
         $fields = array ('total','country_id','country_iso','country');
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
             $row = array();
             foreach ($fields as $field) {
@@ -309,7 +322,7 @@ SELECT  petition.id                         as id,
         require_once 'CRM/Contact/BAO/Contact.php';
 
         $statusTotal = array();$total =0;
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
             $total += $dao->total;
             $statusTotal['status'][$dao->status_id] = $dao->total;
@@ -334,7 +347,7 @@ SELECT  petition.id                         as id,
             AND ov.option_group_id = og.id
             AND og.name = 'activity_type'";
 
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
             //$survey['campaign_id'] = $dao->campaign_id;
             //$survey['campaign_name'] = $dao->campaign_name;
@@ -384,7 +397,7 @@ SELECT  petition.id                         as id,
         $fields = array ('id','survey_id','contact_id','activity_date_time','activity_type_id','status_id','first_name','last_name', 'sort_name','gender_id','country_id','state_province_id','country_iso','country');
         $sql .= " ORDER BY  a.activity_date_time";
 
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
             $row = array();
             foreach ($fields as $field) {
@@ -445,7 +458,7 @@ SELECT  petition.id                         as id,
 
         require_once 'CRM/Contact/BAO/Contact.php';
 
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
             $signature[$dao->id]['id'] = $dao->id;
             $signature[$dao->id]['source_record_id'] = $dao->source_record_id;
@@ -485,10 +498,16 @@ SELECT  petition.id                         as id,
         require_once 'CRM/Campaign/Form/Petition/Signature.php';
 
         // check if the group defined by CIVICRM_PETITION_CONTACTS exists, else create it
+        require_once 'CRM/Core/BAO/Setting.php';
+        $petitionGroupName = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CONFIGURATION_PREFERENCES_NAME,
+                                                            'petition_contacts',
+                                                            null,
+                                                            'Petition Contacts' );
+
         require_once 'CRM/Contact/DAO/Group.php';
         $dao = new CRM_Contact_DAO_Group();
-        $dao->title = defined('CIVICRM_PETITION_CONTACTS') ? CIVICRM_PETITION_CONTACTS : 'Petition Contacts';
-        if (!$dao->find(true)) {
+        $dao->title = $petitionGroupName;
+        if (! $dao->find(true)) {
             $dao->is_active = 1;
             $dao->visibility = 'Public Pages';
             $dao->save();
@@ -557,7 +576,7 @@ SELECT  petition.id                         as id,
                 $params['contactId'] );
 
             //    require_once 'CRM/Core/BAO/Domain.php';
-            //    $domain =& CRM_Core_BAO_Domain::getDomain();
+            //    $domain = CRM_Core_BAO_Domain::getDomain();
             $config = CRM_Core_Config::singleton();
             $localpart   = CRM_Core_BAO_MailSettings::defaultLocalpart();
 

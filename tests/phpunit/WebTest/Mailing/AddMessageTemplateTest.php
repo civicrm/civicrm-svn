@@ -49,7 +49,7 @@ class WebTest_Mailing_AddMessageTemplateTest extends CiviSeleniumTestCase {
         $this->webtestLogin( );
         
         // Go directly to the URL of the screen that you will be testing (Add Message Template).
-        $this->open($this->sboxPath . "civicrm/admin/messageTemplates&reset=1");
+        $this->open($this->sboxPath . "civicrm/admin/messageTemplates?reset=1");
         
         $this->click("newMessageTemplates");
         $this->waitForPageToLoad("30000");

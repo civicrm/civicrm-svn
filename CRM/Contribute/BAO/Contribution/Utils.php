@@ -92,7 +92,7 @@ class CRM_Contribute_BAO_Contribution_Utils
         
         if ( $form->_values['is_monetary'] && $form->_amount > 0.0 && is_array( $form->_paymentProcessor ) ) {
             require_once 'CRM/Core/Payment.php';
-            $payment =& CRM_Core_Payment::singleton( $form->_mode, $form->_paymentProcessor, $form );
+            $payment = CRM_Core_Payment::singleton( $form->_mode, $form->_paymentProcessor, $form );
         }
         
         //fix for CRM-2062
@@ -155,6 +155,8 @@ class CRM_Contribute_BAO_Contribution_Utils
                         
                         require_once 'CRM/Contribute/BAO/ContributionPage.php';
                         $form->_values['contribution_id'] = $contribution->id;
+                        $form->_values['contribution_page_id'] = $contribution->contribution_page_id;
+
                         CRM_Contribute_BAO_ContributionPage::sendMail( $contactID,
                                                                        $form->_values,
                                                                        $contribution->is_test );
@@ -695,4 +697,41 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
         return true;
     }
 
+    static function getFirstLastDetails( $contactID ) {
+        static $_cache;
+        
+        if ( ! $_cache ) {
+            $_cache = array( );
+        }
+
+        if ( ! isset( $_cache[$contactID] ) ) {
+            $sql = "
+SELECT   total_amount, receive_date
+FROM     civicrm_contribution c
+WHERE    contact_id = %1
+ORDER BY receive_date ASC
+LIMIT 1
+";
+            $params = array( 1 => array( $contactID, 'Integer' ) );
+
+            $dao = CRM_Core_DAO::executeQuery( $sql, $params );
+            $details = array( 'first' => null,
+                              'last'  => null );
+            if ( $dao->fetch( ) ) {
+                $details['first'] = array( 'total_amount' => $dao->total_amount,
+                                           'receive_date' => $dao->receive_date );
+            }
+
+            // flip asc and desc to get the last query
+            $sql = str_replace( 'ASC', 'DESC', $sql );
+            $dao = CRM_Core_DAO::executeQuery( $sql, $params );
+            if ( $dao->fetch( ) ) {
+                $details['last'] = array( 'total_amount' => $dao->total_amount,
+                                          'receive_date' => $dao->receive_date );
+            }
+
+            $_cache[$contactID] = $details;
+        }
+        return $_cache[$contactID];
+    }
 }

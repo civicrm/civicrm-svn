@@ -113,23 +113,26 @@ class CRM_Core_Page_AJAX_Location
             $website       = CRM_Core_BAO_Website::getValues( $entityBlock, $values );
                         
             foreach ( $location as $fld => $values ) {
-                $locType = $values[1]['location_type_id'];
-                if ( $fld == 'email' ) {
-                    $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
-                                                                     'value' => $location[$fld][1][$fld] );
-                    unset( $profileFields["{$fld}-{$locType}"] );
-                } else if ( $fld == 'phone' ) {
-                    $phoneTypeId = $values[1]['phone_type_id'];
-                    $elements["onbehalf_{$fld}-{$locType}-{$phoneTypeId}"] = array( 'type'  => 'Text',
-                                                                                    'value' => $location[$fld][1][$fld] );
-                    unset( $profileFields["{$fld}-{$locType}"] );
-                } else if ( $fld == 'im' ) {
-                    $providerId = $values[1]['provider_id'];
-                    $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
-                                                                     'value' => $location[$fld][1][$fld] );
-                    $elements["onbehalf_{$fld}-{$locType}-provider_id"] = 
-                        array( 'type'  => 'Select',
-                               'value' => $location[$fld][1]['provider_id'] );
+                if ( is_array( $values ) && !empty( $values ) ) {
+                    $locType = $values[1]['location_type_id'];
+                    if ( $fld == 'email' ) {
+                        $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
+                                                                         'value' => $location[$fld][1][$fld] );
+                        unset( $profileFields["{$fld}-{$locType}"] );
+                    } else if ( $fld == 'phone' ) {
+                        $phoneTypeId = $values[1]['phone_type_id'];
+                        $elements["onbehalf_{$fld}-{$locType}-{$phoneTypeId}"] = array( 'type'  => 'Text',
+                                                                                        'value' => $location[$fld][1][$fld] );
+                        unset( $profileFields["{$fld}-{$locType}-{$phoneTypeId}"] );
+                    } else if ( $fld == 'im' ) {
+                        $providerId = $values[1]['provider_id'];
+                        $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
+                                                                         'value' => $location[$fld][1][$fld] );
+                        $elements["onbehalf_{$fld}-{$locType}provider_id"] = 
+                            array( 'type'  => 'Select',
+                                   'value' => $location[$fld][1]['provider_id'] );
+                        unset( $profileFields["{$fld}-{$locType}-{$providerId}"] );
+                    }
                 }
             }
             
@@ -141,6 +144,7 @@ class CRM_Core_Page_AJAX_Location
                     $elements["onbehalf_url-1-website_type_id"] = 
                         array( 'type'  => 'Select',
                                'value' => $website[1]['website_type_id'] );
+                    unset( $profileFields["url-1"] );
                 }
             }
             
@@ -167,7 +171,7 @@ class CRM_Core_Page_AJAX_Location
             
             //set custom field defaults
             $defaults = array( );
-            CRM_Core_BAO_UFGroup::setProfileDefaults( $cid, $profileFields, $defaults );
+            CRM_Core_BAO_UFGroup::setProfileDefaults( $cid, $profileFields, $defaults, true, null, null, true );
             
             if ( !empty( $defaults ) ) {
                 foreach ( $profileFields as $key => $val ) {
@@ -181,6 +185,15 @@ class CRM_Core_Page_AJAX_Location
                                 $elements["onbehalf[{$key}][{$k}]"]['type'] = $val['html_type'];
                                 $elements["onbehalf[{$key}][{$k}]"]['value'] = $v;
                             }
+                        } else if ( $val['html_type'] == 'Multi-Select' ) {
+                            foreach ( $defaults[$key] as $k => $v ) {
+                                $elements["onbehalf_{$key}"]['type'] = $val['html_type'];
+                                $elements["onbehalf_{$key}"]['value'][$k] = $v;
+                            }
+                        } else if ( $val['html_type'] == 'Autocomplete-Select' ) {
+                            $elements["onbehalf_{$key}"]['type']  = $val['html_type'];
+                            $elements["onbehalf_{$key}"]['value'] = $defaults[$key];
+                            $elements["onbehalf_{$key}"]['id'] = $defaults["{$key}_id"];
                         } else {
                             $elements["onbehalf_{$key}"]['type'] = $val['html_type'];
                             $elements["onbehalf_{$key}"]['value'] = $defaults[$key];
@@ -203,7 +216,7 @@ class CRM_Core_Page_AJAX_Location
         }
 
         require_once 'CRM/Core/PseudoConstant.php';
-        $result =& CRM_Core_PseudoConstant::stateProvinceForCountry( $_GET['_value'] );
+        $result = CRM_Core_PseudoConstant::stateProvinceForCountry( $_GET['_value'] );
 
         $elements = array( array( 'name'  => ts('- select a state-'),
             'value' => '' ) );
@@ -226,7 +239,7 @@ class CRM_Core_Page_AJAX_Location
         } else {
 
             require_once 'CRM/Core/PseudoConstant.php';
-            $result =& CRM_Core_PseudoConstant::countyForState( $_GET['_value'] );
+            $result = CRM_Core_PseudoConstant::countyForState( $_GET['_value'] );
 
             $elements = array( array( 'name'  => ts('- select -'),
                 'value' => '' ) );
@@ -263,8 +276,9 @@ class CRM_Core_Page_AJAX_Location
         }
 
         $result = array( );
-		require_once 'CRM/Core/BAO/Preferences.php';
-        $addressOptions  = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+		require_once 'CRM/Core/BAO/Setting.php';
+        $addressOptions  = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                               'address_options', true, null, true );
         // lets output only required fields.
         foreach ( $addressOptions as $element => $isSet ) {
             if ( $isSet && (! in_array($element, array('im', 'openid'))) ) {

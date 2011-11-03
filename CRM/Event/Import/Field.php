@@ -115,7 +115,7 @@ class CRM_Event_Import_Field
         case 'event_id':
             static $events = null;
             if (!$events) {
-                $events =& CRM_Event_PseudoConstant::event();
+                $events = CRM_Event_PseudoConstant::event();
             }
             if (in_array($this->_value, $events)) {
                 return true;
@@ -133,7 +133,7 @@ class CRM_Event_Import_Field
         if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($this->_name)) {
             static $customFields = null;
             if (!$customFields) {
-                $customFields =& CRM_Core_BAO_CustomField::getFields('Membership');
+                $customFields = CRM_Core_BAO_CustomField::getFields('Membership');
             }
             if (!array_key_exists($customFieldID, $customFields)) {
                 return false;

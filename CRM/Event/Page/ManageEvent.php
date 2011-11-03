@@ -261,6 +261,8 @@ ORDER BY start_date desc
                 
                 //show campaigns on selector.
                 $manageEvent[$dao->id]['campaign'] = CRM_Utils_Array::value( $dao->campaign_id, $allCampaigns );
+                require_once 'CRM/Core/BAO/ActionSchedule.php';
+                $manageEvent[$dao->id]['reminder'] = CRM_Core_BAO_ActionSchedule::isConfigured( $dao->id, 3 );
             }
         }
         $this->assign('rows', $manageEvent);

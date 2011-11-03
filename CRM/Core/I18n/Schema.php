@@ -52,7 +52,7 @@ class CRM_Core_I18n_Schema
         if (!$domain->locales) return;
 
         $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
-        $tables =& CRM_Core_I18n_SchemaStructure::tables();
+        $tables = CRM_Core_I18n_SchemaStructure::tables();
 
         foreach ($locales as $locale) {
             foreach ($tables as $table) {
@@ -79,8 +79,8 @@ class CRM_Core_I18n_Schema
         $dao = new CRM_Core_DAO();
 
         // build the column-adding SQL queries
-        $columns =& CRM_Core_I18n_SchemaStructure::columns();
-        $indices =& CRM_Core_I18n_SchemaStructure::indices();
+        $columns = CRM_Core_I18n_SchemaStructure::columns();
+        $indices = CRM_Core_I18n_SchemaStructure::indices();
         $queries = array();
         foreach ($columns as $table => $hash) {
             // drop old indices
@@ -130,7 +130,7 @@ class CRM_Core_I18n_Schema
         if (!$locales) return;
 
         // turn subsequent tables singlelingual
-        $tables =& CRM_Core_I18n_SchemaStructure::tables();
+        $tables = CRM_Core_I18n_SchemaStructure::tables();
         foreach ($tables as $table) {
             self::makeSinglelingualTable($retain, $table);
         }
@@ -223,8 +223,8 @@ class CRM_Core_I18n_Schema
         $dao = new CRM_Core_DAO();
 
         // build the required SQL queries
-        $columns =& CRM_Core_I18n_SchemaStructure::columns();
-        $indices =& CRM_Core_I18n_SchemaStructure::indices();
+        $columns = CRM_Core_I18n_SchemaStructure::columns();
+        $indices = CRM_Core_I18n_SchemaStructure::indices();
         $queries = array();
         foreach ($columns as $table => $hash) {
             // add new columns
@@ -343,7 +343,7 @@ class CRM_Core_I18n_Schema
     {
         static $tables = null;
         if ($tables === null) {
-            $tables =& CRM_Core_I18n_SchemaStructure::tables();
+            $tables = CRM_Core_I18n_SchemaStructure::tables();
         }
         global $dbLocale;
         foreach ($tables as $table) {

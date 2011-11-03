@@ -1059,7 +1059,7 @@ class CRM_GCD {
             $groupContact = new CRM_Contact_DAO_GroupContact();
             $groupContact->group_id = 2;                                                     // newsletter subscribers
             $groupContact->contact_id = $this->individual[$i];
-            $groupContact->status = $this->_getRandomElement($this->groupMembershipStatus);  // membership status
+            $groupContact->status = 'Added'; // always add members
 
 
             $subscriptionHistory = new CRM_Contact_DAO_SubscriptionHistory();
@@ -1080,7 +1080,7 @@ class CRM_GCD {
             $groupContact = new CRM_Contact_DAO_GroupContact();
             $groupContact->group_id = 3; // Volunteers
             $groupContact->contact_id = $this->individual[$i+60];
-            $groupContact->status = $this->_getRandomElement($this->groupMembershipStatus);  // membership status
+            $groupContact->status = 'Added'; // membership status
 
             $subscriptionHistory = new CRM_Contact_DAO_SubscriptionHistory();
             $subscriptionHistory->contact_id = $groupContact->contact_id;
@@ -1100,7 +1100,7 @@ class CRM_GCD {
             $groupContact = new CRM_Contact_DAO_GroupContact();
             $groupContact->group_id = 4; // advisory board group
             $groupContact->contact_id = $this->individual[$i*7];
-            $groupContact->status = $this->_getRandomElement($this->groupMembershipStatus);  // membership status
+            $groupContact->status = 'Added'; // membership status  
 
             $subscriptionHistory = new CRM_Contact_DAO_SubscriptionHistory();
             $subscriptionHistory->contact_id = $groupContact->contact_id;
@@ -1463,9 +1463,9 @@ VALUES
         //create event fees
         $optionGroup = "INSERT INTO civicrm_option_group ( name, is_reserved, is_active)
       VALUES
-      ( 'civicrm_event.amount.1', 0, 1),
-      ( 'civicrm_event.amount.2', 0, 1),
-      ( 'civicrm_event.amount.3', 0, 1)
+      ( 'civicrm_event.amount.1', 1, 1),
+      ( 'civicrm_event.amount.2', 1, 1),
+      ( 'civicrm_event.amount.3', 1, 1)
 ";
         CRM_Core_DAO::executeQuery( $optionGroup, CRM_Core_DAO::$_nullArray );
         
@@ -1686,9 +1686,9 @@ VALUES
     {
         $query = "
 INSERT INTO `civicrm_pcp`
-    (contact_id, status_id, title, intro_text, page_text, donate_link_text, contribution_page_id, is_thermometer, is_honor_roll, goal_amount, currency, referer, is_active)
+    (contact_id, status_id, title, intro_text, page_text, donate_link_text, page_id, page_type, is_thermometer, is_honor_roll, goal_amount, currency, is_active, pcp_block_id)
 VALUES
-    ({$this->individual[3]}, 2, 'My Personal Civi Fundraiser', 'I''m on a mission to get all my friends and family to help support my favorite open-source civic sector CRM.', '<p>Friends and family - please help build much needed infrastructure for the civic sector by supporting my personal campaign!</p>\r\n<p><a href=\"http://civicrm.org\">You can learn more about CiviCRM here</a>.</p>\r\n<p>Then click the <strong>Contribute Now</strong> button to go to our easy-to-use online contribution form.</p>', 'Contribute Now', 1, 1, 1, 5000.00, 'USD', NULL, 1);
+    ({$this->individual[3]}, 2, 'My Personal Civi Fundraiser', 'I''m on a mission to get all my friends and family to help support my favorite open-source civic sector CRM.', '<p>Friends and family - please help build much needed infrastructure for the civic sector by supporting my personal campaign!</p>\r\n<p><a href=\"http://civicrm.org\">You can learn more about CiviCRM here</a>.</p>\r\n<p>Then click the <strong>Contribute Now</strong> button to go to our easy-to-use online contribution form.</p>', 'Contribute Now', 1, 'contribute', 1, 1, 5000.00, 'USD', 1, 1);
 ";
         CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
     }

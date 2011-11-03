@@ -27,19 +27,15 @@
 {if $action eq 1 or $action eq 2 or $action eq 8}
    {include file="CRM/Admin/Form/Extensions.tpl"}
 {else}
-    {capture assign='adminURL'}{crmURL p='civicrm/admin/setting/path' q="reset=1&destination=$returnURL"}{/capture}
-    {if not $extEnabled}
+    {capture assign='adminURL'}{crmURL p='civicrm/admin/setting/path' q="reset=1&civicrmDestination=/civicrm/admin/extensions?reset=1"}{/capture}
+    {if !$extEnabled }
       <div class="crm-content-block crm-block">
         <div class="messages status">
              <div class="icon inform-icon"></div>
-             {capture assign='returnURL'}{crmURL p='civicrm/admin/extensions' q='reset=1'}{/capture}
-             {ts 1=$adminURL}Your extensions directory is not set. Click <a href='%1'>here</a> to set the extension directory.{/ts}
+             {ts 1=$adminURL}Your extensions directory is not set or is not writable. Click <a href='%1'>here</a> to set the extension directory.{/ts}
         </div>
       </div>
     {else} {* extEnabled *}
-
-
-
       {if $action ne 1 and $action ne 2}
           <div class="action-link">
               <a href="{crmURL q="reset=1"}" id="new" class="button"><span><div class="icon refresh-icon"></div>{ts}Refresh{/ts}</span></a>
@@ -48,7 +44,7 @@
 
       <div class="messages help">
         <p>{ts 1=$adminURL}CiviCRM extensions allow you to install additional features for your site. They can provide new functionality in three areas: Custom Searches, Report Templates and Payment Processors. In order to install an extension, you need to upload it manually to your <a href="%1">Extensions Directory</a>, reload this page and click Install. Once installed, extensions become available under the Custom Searches, Report Templates or Payment Processor Types administrative screens.{/ts}</p>
-        <strong>{ts 1="http://forum.civicrm.org"}Please note that extensions are in a testing period during the 3.3 release cycle. Get in touch with the CiviCRM core team on the <a href="%1">community forum</a> if you've developed an extension which you want to share with the community.{/ts}</strong>
+        <strong>{ts 1="http://forum.civicrm.org"}Please note that extensions are in a testing period during the 4.1 release cycle. Get in touch with the CiviCRM core team on the <a href="%1">community forum</a> if you've developed an extension which you want to share with the community.{/ts}</strong>
       </div>
 
       {include file="CRM/common/enableDisable.tpl"}
@@ -61,7 +57,7 @@
             <thead>
               <tr>
                 <th>{ts}Extension name (key){/ts}</th>
-		<th>{ts}Status{/ts}</th>
+                <th>{ts}Status{/ts}</th>
                 <th>{ts}Version{/ts}</th>
                 <th>{ts}Enabled?{/ts}</th>
                 <th>{ts}Type{/ts}</th>
@@ -95,7 +91,7 @@
       {else}
         <div class="messages status">
              <div class="icon inform-icon"></div>
-            {ts}You have no locally aavailable extensions and didn't download any information about publically available extensions from our server. Please click "Refresh" to update information about available extensions.{/ts}
+            {ts}You have no locally available extensions and didn't download any information about publically available extensions from our server. Please click "Refresh" to update information about available extensions.{/ts}
         </div>    
       {/if}
 

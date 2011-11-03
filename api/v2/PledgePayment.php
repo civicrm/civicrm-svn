@@ -203,7 +203,7 @@ function &civicrm_pledge_payment_search( &$params ) {
         $returnProperties = CRM_Pledge_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_PLEDGE );
     }
     
-    $newParams =& CRM_Contact_BAO_Query::convertFormValues( $inputParams );
+    $newParams = CRM_Contact_BAO_Query::convertFormValues( $inputParams );
 
     $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null );
     list( $select, $from, $where ) = $query->query( );
@@ -214,7 +214,7 @@ function &civicrm_pledge_payment_search( &$params ) {
         $sql .= " ORDER BY $sort ";
     }
     $sql .= " LIMIT $offset, $rowCount ";
-    $dao =& CRM_Core_DAO::executeQuery( $sql );
+    $dao = CRM_Core_DAO::executeQuery( $sql );
     
     $pledge = array( );
     while ( $dao->fetch( ) ) {
@@ -342,7 +342,7 @@ function _civicrm_pledgepayment_format_params( &$params, &$values, $create=false
     // copy all the pledge fields as is
    require_once 'CRM/Pledge/BAO/Payment.php';
    require_once 'CRM/Pledge/DAO/Pledge.php';
-    $fields =& CRM_Pledge_DAO_Pledge::fields( );
+    $fields = CRM_Pledge_DAO_Pledge::fields( );
 
     _civicrm_store_values( $fields, $params, $values );
 
@@ -456,7 +456,7 @@ function _civicrm_pledgepayment_format_params( &$params, &$values, $create=false
 // function that sets which parameters are required would be accessible from this function to add them in
 // function at the moment doesn't have custom fields
 function civicrm_pledge_payment_interogate($params) {
-    $fields =& CRM_Pledge_DAO_Pledge::fields( );
+    $fields = CRM_Pledge_DAO_Pledge::fields( );
     $fields ['installment_amount'] = array(
         
                     'name' => 'installment_amount',

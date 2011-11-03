@@ -55,15 +55,14 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
      * @static
      */
     static function synchronize( &$user, $update, $uf, $ctype, $isLogin = false ) {
+        $config = CRM_Core_Config::singleton( );
         $session = CRM_Core_Session::singleton( );
         if ( ! is_object( $session ) ) {
             CRM_Core_Error::fatal( 'wow, session is not an object?' );
             return;
         }
         
-        //print "synchronize called with uniq_id " . $user->identity_url . "<br/>";
-
-        if ( $uf == 'Drupal' ) {
+        if ( $config->userSystem->is_drupal ) {
             $key   = 'uid';
             $login = 'name';
             $mail  = 'mail';
@@ -71,44 +70,24 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
             $key   = 'id';
             $login = 'username';
             $mail  = 'email';
-        } else if ( $uf == 'Standalone' ) {
-            $key = 'id';
-            $mail = 'email';
-            $uniqId = $user->identity_url;
-            $query = "
-SELECT    uf_id
-FROM      civicrm_uf_match 
-LEFT JOIN civicrm_openid ON ( civicrm_uf_match.contact_id = civicrm_openid.contact_id ) 
-WHERE     openid = %1";
-            $p = array( 1 => array( $uniqId, 'String' ) );
-            $dao = CRM_Core_DAO::executeQuery( $query, $p );
-            if ( $dao->fetch() ) {
-                $user->$key = $dao->uf_id;
+            if ( ! isset( $user->id ) || ! isset( $user->email ) ) {
+                $user = JFactory::getUser( );
             }
-
-            if ( ! $user->$key ) {
-                // Let's get the next uf_id since we don't actually have one
-                $user->$key = self::getNextUfIdValue( );
-            }
+        } else if ( $uf == 'WordPress' ) {
+            $key   = 'ID';
+            $login = 'user_login';
+            $mail  = 'user_email';
         } else {
             CRM_Core_Error::statusBounce(ts('Please set the user framework variable'));
         }
         
-        // make sure we load the joomla object to get valid information
-        if ( $uf == 'Joomla' ) {
-            if ( ! isset( $user->id ) || ! isset( $user->email ) ) {
-                $user =& JFactory::getUser( );
-            }
-        }
-
         // if the id of the object is zero (true for anon users in drupal)
         // have we already processed this user, if so early
         // return.
         $userID = $session->get( 'userID' );        
         $ufID   = $session->get( 'ufID'   );
-
+        
         if ( ! $update && $ufID == $user->$key ) {
-            //print "Already processed this user<br/>";
             return;
         }
 
@@ -139,8 +118,7 @@ WHERE     openid = %1";
             $uniqId = $user->$mail;
         }
 
-        //print "Calling synchronizeUFMatch...<br/>";
-        $ufmatch =& self::synchronizeUFMatch( $user, $user->$key, $uniqId, $uf, null, $ctype, $isLogin );
+        $ufmatch = self::synchronizeUFMatch( $user, $user->$key, $uniqId, $uf, null, $ctype, $isLogin );
         if ( ! $ufmatch ) {
             return;
         }
@@ -165,7 +143,7 @@ WHERE     openid = %1";
         $session->set( 'userID'  , $userID   );
         $session->set( 'ufUniqID', $ufUniqID );
         
-        // add current contact to recentlty viewed
+        // add current contact to recently viewed
         if ( $ufmatch->contact_id ) {
             require_once 'CRM/Contact/BAO/Contact.php';
             list( $displayName, $contactImage, $contactType, $contactSubtype, $contactImageUrl ) = 
@@ -212,35 +190,29 @@ WHERE     openid = %1";
      */
     static function &synchronizeUFMatch( &$user, $userKey, $uniqId, $uf, $status = null, $ctype = null, $isLogin = false ) 
     {
-        // validate that uniqId is a valid url. it will either be
-        // an OpenID (which should always be a valid url) or a
-        // http://uf_username/ construction (so that it can
-        // be used as an OpenID in the future)
+        $config = CRM_Core_Config::singleton( );
+
         require_once 'CRM/Utils/Rule.php';
-        if ( $uf == 'Standalone' ) {
-            if ( ! CRM_Utils_Rule::url( $uniqId ) ) {
-                return $status ? null : false;
-            }
-        } else if ( ! CRM_Utils_Rule::email( $uniqId ) ) {
+        if ( ! CRM_Utils_Rule::email( $uniqId ) ) {
             return $status ? null : false;
         }
         
         $newContact   = false;
 
+        require_once 'CRM/Core/DAO.php';
+
         // make sure that a contact id exists for this user id
         $ufmatch = new CRM_Core_DAO_UFMatch( );
-        if ( CRM_Core_DAO::checkFieldExists('civicrm_uf_match', 'domain_id') ) {
-            // FIXME: if() condition check was required especially for upgrade cases (2.2.x -> 3.0.x), 
-            // where folks if happen to logout, would encounter a column not found fatal error  
-            $ufmatch->domain_id = CRM_Core_Config::domainID( );
-        }
+        $ufmatch->domain_id = CRM_Core_Config::domainID( );
         $ufmatch->uf_id = $userKey;
+
         if ( ! $ufmatch->find( true ) ) {
             require_once 'CRM/Core/Transaction.php';
             $transaction = new CRM_Core_Transaction( );
 
             $dao = null;
-            if ( ! empty( $_POST ) && ! $isLogin ) {
+            if ( ! empty( $_POST ) &&
+                 ! $isLogin ) {
                 $params = $_POST;
                 $params['email'] = $uniqId;
 
@@ -249,7 +221,10 @@ WHERE     openid = %1";
                 $dedupeParams['check_permission'] = false;
                 $ids          = CRM_Dedupe_Finder::dupesByParams( $dedupeParams, 'Individual' );
                 
-                if ( ! empty( $ids ) && defined( 'CIVICRM_UNIQ_EMAIL_PER_SITE' ) && CIVICRM_UNIQ_EMAIL_PER_SITE ) {
+                require_once 'CRM/Core/BAO/Setting.php';
+                if ( ! empty( $ids ) && 
+                     CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
+                                                    'uniq_email_per_site' ) ) {
                     // restrict dupeIds to ones that belong to current domain/site.
                     require_once 'CRM/Core/BAO/Domain.php';
                     $siteContacts = CRM_Core_BAO_Domain::getContactList();
@@ -266,25 +241,39 @@ WHERE     openid = %1";
                 }
             } else {
                 require_once 'CRM/Contact/BAO/Contact.php';
-                if ( $uf == 'Standalone' ) {
-                    $dao =& CRM_Contact_BAO_Contact::matchContactOnOpenId( $uniqId, $ctype );
-                } else {
-                    $dao =& CRM_Contact_BAO_Contact::matchContactOnEmail( $uniqId, $ctype );
+                $dao = CRM_Contact_BAO_Contact::matchContactOnEmail( $uniqId, $ctype );
+            }
+
+            $found = false;
+            if ( $dao ) {
+                // ensure there does not exists a contact_id / uf_id pair
+                // in the DB. This might be due to multiple emails per contact
+                // CRM-9091
+                $sql = "
+SELECT id
+FROM   civicrm_uf_match
+WHERE  contact_id = %1
+";
+                $params = array( 1 => array( $dao->contact_id, 'Integer' ) );
+                $conflict = CRM_Core_DAO::singleValueQuery( $sql, $params );
+            
+                if ( ! $conflict ) {
+                    $found = true;
+                    $ufmatch->contact_id     = $dao->contact_id;
+                    $ufmatch->uf_name        = $uniqId;
                 }
             }
 
-            if ( $dao ) {
-                //print "Found contact with uniqId $uniqId<br/>";
-                $ufmatch->contact_id     = $dao->contact_id;
-                $ufmatch->uf_name        = $uniqId;
-            } else {
-                if ( $uf == 'Drupal' ) {
+            if ( ! $found ) {
+                if ( $config->userSystem->is_drupal ) {
                     $mail = 'mail';
+                } elseif ( $uf = 'WordPress' ) {
+                    $mail = 'user_email';
                 } else {
                     $mail = 'email';
                 }
                 
-                if ( is_Object($user) ) {
+                if ( is_object($user) ) {
                     $params = array( 'email-Primary'  => $user->$mail );
                 }
                 
@@ -293,6 +282,8 @@ WHERE     openid = %1";
                 } else if ( $ctype == 'Household' ) {
                     $params['household_name'] = $uniqId;
                 }
+
+
                 if ( ! $ctype ) {
                     $ctype = "Individual";
                 }
@@ -300,22 +291,19 @@ WHERE     openid = %1";
 
                 // extract first / middle / last name
                 // for joomla
-                if ( $uf == 'Joomla' && $user->name ) {
+                if ( $uf == 'Joomla' &&
+                     $user->name ) {
                     require_once 'CRM/Utils/String.php';
                     CRM_Utils_String::extractName( $user->name, $params );
                 }
 
-                if ( $uf == 'Standalone' ) {
-                    $params['openid-Primary'] = $uniqId;
-
-                    //need to delete below code once profile is
-                    //exposed on signup page
-                    if ( ( ! empty( $user->first_name ) ) || ( ! empty( $user->last_name ) ) ) {
+                if ( $uf == 'WordPress' ) {
+                    if ( $user->first_name ) {
                         $params['first_name'] = $user->first_name;
+                    }
+
+                    if ( $user->last_name ) {
                         $params['last_name'] = $user->last_name;
-                    } elseif ( ! empty( $user->name ) ) {
-                        require_once 'CRM/Utils/String.php';
-                        CRM_Utils_String::extractName( $user->name, $params );
                     }
                 }
 
@@ -340,7 +328,6 @@ AND    domain_id    = %4
                              3 => array( $ufmatch->uf_id     , 'Integer' ),
                              4 => array( $ufmatch->domain_id , 'Integer' ) );
 
-            require_once 'CRM/Core/DAO.php';
             $conflict = CRM_Core_DAO::singleValueQuery( $sql, $params );
             
             if ( ! $conflict ) {
@@ -376,13 +363,11 @@ AND    domain_id    = %4
      * @static
      */
     static function updateUFName( $contactId ) {
-        if ( !$contactId ) return;
-        $config = CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Standalone' ) {
-            $ufName = CRM_Contact_BAO_Contact::getPrimaryOpenId( $contactId );
-        } else {
-            $ufName = CRM_Contact_BAO_Contact::getPrimaryEmail( $contactId );
+        if ( ! $contactId ) {
+            return;
         }
+        $config = CRM_Core_Config::singleton( );
+        $ufName = CRM_Contact_BAO_Contact::getPrimaryEmail( $contactId );
 
         if ( ! $ufName ) {
             return;
@@ -412,8 +397,8 @@ AND    domain_id    = %4
         $ufmatch->uf_name = $ufName;
         $ufmatch->save( );
 
-        require_once 'CRM/Core/BAO/CMSUser.php';
-        CRM_Core_BAO_CMSUser::updateUFName( $ufmatch->uf_id, $ufName );
+       
+        $config->userSystem->updateCMSName( $ufmatch->uf_id, $ufName );
 
     }
     
@@ -454,7 +439,7 @@ AND    domain_id    = %4
                      WHERE id =  %2";
                 $p = array( 1 => array( $emailAddress, 'String'  ),
                             2 => array( $emailID, 'Integer' ) );
-                $dao =& CRM_Core_DAO::executeQuery( $query, $p );
+                $dao = CRM_Core_DAO::executeQuery( $query, $p );
             } else {
                 //else insert a new email record
                 require_once 'CRM/Core/DAO/Email.php';

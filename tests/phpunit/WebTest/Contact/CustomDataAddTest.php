@@ -29,7 +29,7 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
 
 
  
-class WebTest_Contact_AddCustomData extends CiviSeleniumTestCase {
+class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
 
   protected function setUp()
   {
@@ -51,7 +51,7 @@ class WebTest_Contact_AddCustomData extends CiviSeleniumTestCase {
       $this->webtestLogin( );
       
       // Go directly to the URL of the screen that you will be testing (New Custom Group).
-      $this->open($this->sboxPath . "civicrm/admin/custom/group&reset=1 ");
+      $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1 ");
 
       //add new custom data
       $this->click("//a[@id='newCustomDataGroup']/span");

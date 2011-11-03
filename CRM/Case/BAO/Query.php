@@ -528,7 +528,7 @@ class CRM_Case_BAO_Query
             break;
 
         case 'case_relationship':
-            $session = & CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $userID  = $session->get('userID');
             $from .=" $side JOIN civicrm_relationship case_relationship ON ( case_relationship.contact_id_a = civicrm_case_contact.contact_id AND case_relationship.contact_id_b = {$userID} AND case_relationship.case_id = civicrm_case.id )";
             break;
@@ -593,6 +593,15 @@ case_relation_type.id = case_relationship.relationship_type_id )";
                                 'phone'                       =>      1,
                                 // 'case_scheduled_activity_type'=>      1
                                 );
+
+            // also get all the custom case properties
+            require_once "CRM/Core/BAO/CustomField.php";
+            $fields = CRM_Core_BAO_CustomField::getFieldsForImport('Case');
+            if ( ! empty( $fields ) ) {
+                foreach ( $fields as $name => $dontCare ) {
+                    $properties[$name] = 1;
+                }
+            }
         }
         return $properties;
     }
@@ -685,6 +694,25 @@ case_relation_type.id = case_relationship.relationship_type_id )";
         require_once"CRM/Core/Permission.php";
         if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) { 
             $form->addElement( 'checkbox', 'case_deleted' , ts( 'Deleted Cases' ) );
+        }
+
+        // add all the custom  searchable fields
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        $extends      = array( 'Case' );
+        $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail( null, true, $extends );
+        if ( $groupDetails ) {
+            require_once 'CRM/Core/BAO/CustomField.php';
+            $form->assign('caseGroupTree', $groupDetails);
+            foreach ($groupDetails as $group) {
+                foreach ($group['fields'] as $field) {
+                    $fieldId = $field['id'];
+                    $elementName = 'custom_' . $fieldId;
+                    CRM_Core_BAO_CustomField::addQuickFormElement( $form,
+                                                                   $elementName,
+                                                                   $fieldId,
+                                                                   false, false, true );
+                }
+            }
         }
     }
 

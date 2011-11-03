@@ -92,7 +92,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             //we lost rfp in case of additional participant. So set it explicitly.
             if ( $rfp || CRM_Utils_Array::value( 'additional_participants', $this->_params[0], false ) ) {
                 require_once 'CRM/Core/Payment.php'; 
-                $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
+                $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
                 $expressParams = $payment->getExpressCheckoutDetails( $this->get( 'token' ) );
                              
                 $params['payer'       ] = $expressParams['payer'       ];
@@ -187,6 +187,13 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         if ( isset ($this->_values['event']['confirm_title'] ) ) {
             CRM_Utils_System::setTitle($this->_values['event']['confirm_title']);
         }
+
+        if ($this->_pcpId){
+          require_once "CRM/Contribute/Form/Contribution/Confirm.php";
+          $params = CRM_Contribute_Form_Contribution_Confirm::processPcp($this, $this->_params[0]);
+          $this->_params[0] = $params;
+        }
+        
         $this->set( 'params', $this->_params );
     }
 
@@ -457,6 +464,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         }
                 
         $payment = $registerByID = $primaryCurrencyID = $contribution = null;
+        $this->participantIDS = array( );
+
         foreach ( $params as $key => $value ) {
             $this->fixLocationFields( $value, $fields );
             //unset the billing parameters if it is pay later mode
@@ -515,7 +524,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             if ( $this->_values['event']['is_monetary'] ) {
                 require_once 'CRM/Core/Payment.php';
                 if ( is_array( $this->_paymentProcessor ) ) {
-                    $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
+                    $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
                 }
                 $pending = false;
                 $result  = null;
@@ -633,20 +642,25 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             
             $this->confirmPostProcess( $contactID, $contribution, $payment );
         }
+
         //handle if no additional participant.
-        if ( !$registerByID ) {
+        if ( ! $registerByID ) {
             $registerByID = $this->get('registerByID');
         }
-        
+
+        $this->set( 'participantIDs', $this->_participantIDS );
+
         // create line items, CRM-5313 
-        if ( $this->_priceSetId && !empty( $this->_lineItem ) ) {
+        if ( $this->_priceSetId &&
+             ! empty( $this->_lineItem ) ) {
             require_once 'CRM/Price/BAO/LineItem.php';
             
             // take all processed participant ids.
             $allParticipantIds = $this->_participantIDS;
             
             // when participant re-walk wizard.
-            if ( $this->_allowConfirmation && !empty( $this->_additionalParticipantIds ) ) {
+            if ( $this->_allowConfirmation &&
+                 ! empty( $this->_additionalParticipantIds ) ) {
                 $allParticipantIds = array_merge( array( $registerByID ), $this->_additionalParticipantIds );
             }
 
@@ -874,7 +888,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         }
         
 		// create contribution record
-        $contribution =& CRM_Contribute_BAO_Contribution::add( $contribParams, $ids );
+        $contribution = CRM_Contribute_BAO_Contribution::add( $contribParams, $ids );
         
         // return if pending
         if ( $pending || ($contribution->total_amount == 0) ) {
@@ -896,7 +910,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                             );
         
         require_once 'CRM/Core/BAO/FinancialTrxn.php';
-        $trxn =& CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
+        $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
 
         $transaction->commit( );
         

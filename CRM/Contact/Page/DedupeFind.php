@@ -179,6 +179,10 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                             $dstID = $dupes[0];
                         }
                         
+                        /***
+                         * Eliminate this since it introduces 3 queries PER merge row
+                         * and hence is very expensive
+                         * CRM-8822
                         if ( !array_key_exists( $srcID, $permission ) ) {
                             $permission[$srcID] = CRM_Contact_BAO_Contact_Permission::allow( $srcID, CRM_Core_Permission::EDIT );
                         }
@@ -187,6 +191,11 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                         }
                         
                         $canMerge = ( $permission[$dstID] && $permission[$srcID] );
+                        *
+                        */
+
+                        // we'll do permission checking during the merge process
+                        $canMerge = true;
 
                         $mainContacts[] = $row = array( 'srcID'   => $srcID,
                                                         'srcName' => $displayNames[$srcID],

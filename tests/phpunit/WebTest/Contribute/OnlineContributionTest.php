@@ -72,7 +72,7 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
       $premiums = false;
       $widget = false;
       $pcp = false;
-      
+      $memPriceSetId = null;
       
       // create a new online contribution page
       // create contribution page with randomized title and default params
@@ -87,6 +87,7 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
                                                    $pledges, 
                                                    $recurring, 
                                                    $memberships, 
+                                                   $memPriceSetId,
                                                    $friend, 
                                                    $profilePreId,
                                                    $profilePostId,
@@ -95,7 +96,7 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
                                                    $pcp );        
       
       //logout
-      $this->open( $this->sboxPath . "civicrm/logout&reset=1" );
+      $this->open( $this->sboxPath . "civicrm/logout?reset=1" );
       $this->waitForPageToLoad( '30000' );
       
       //Open Live Contribution Page
@@ -151,7 +152,7 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
       $this->webtestLogin( );
       
       //Find Contribution
-      $this->open( $this->sboxPath . "civicrm/contribute/search&reset=1" );
+      $this->open( $this->sboxPath . "civicrm/contribute/search?reset=1" );
       
       $this->waitForElementPresent( "contribution_date_low" );
       

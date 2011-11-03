@@ -130,6 +130,11 @@
 			<td>{$form.is_public.html} {$form.is_public.label}<br />
 			<span class="description">{ts}Include this event in iCalendar feeds?{/ts}</span></td>
 		</tr>
+		<tr class="crm-event-manage-eventinfo-form-block-is_share">
+			<td>&nbsp;</td>
+			<td>{$form.is_share.html} {$form.is_share.label}<br />
+			<span class="description">{ts}When enabled, links will appear allowing people to share this event through social media.{/ts}</span></td>
+		</tr>
 		<tr class="crm-event-manage-eventinfo-form-block-is_active">
 			<td>&nbsp;</td>
 			<td>{$form.is_active.html} {$form.is_active.label}</td>
@@ -139,7 +144,7 @@
 		<tr>
 			<td>&nbsp;</td>
 			<td class="description">
-			{if $config->userFramework EQ 'Drupal'}
+			{if $config->userSystem->is_drupal}
 				{ts}When this Event is active, create links to the Event Information page by copying and pasting the following URL:{/ts}<br />
 				<strong>{crmURL a=true p='civicrm/event/info' q="reset=1&id=`$eventID`"}</strong> 
 			{elseif $config->userFramework EQ 'Joomla'}

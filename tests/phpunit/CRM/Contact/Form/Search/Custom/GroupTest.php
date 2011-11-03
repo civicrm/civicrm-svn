@@ -152,7 +152,7 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
         $obj = new CRM_Contact_Form_Search_Custom_Group( $fv );
         $sql = $obj->all( );
         $this->assertTrue( is_string( $sql ), 'In line ' . __LINE__ );
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch( ) ) {
             $all[] = array( 'contact_id'   => $dao->contact_id,
                             'contact_type' => $dao->contact_type,
@@ -196,7 +196,7 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
         $obj = new CRM_Contact_Form_Search_Custom_Group( $fv );
         $sql = $obj->contactIDs( );
         $this->assertTrue( is_string( $sql ), 'In line ' . __LINE__ );
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
         $contacts = array( );
         while ( $dao->fetch( ) ) {
             $contacts[] = $dao->contact_id;

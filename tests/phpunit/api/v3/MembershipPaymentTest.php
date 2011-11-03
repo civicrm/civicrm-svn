@@ -67,7 +67,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
     {  
         $params = array('version' =>$this->_apiversion);
         $CreateEmptyParams = civicrm_api('membership_payment','create', $params);
-        $this->assertEquals( $CreateEmptyParams['error_message'],'Mandatory key(s) missing from params array: membership_id, contribution_id, membership_id');
+        $this->assertEquals( $CreateEmptyParams['error_message'],'Mandatory key(s) missing from params array: membership_id, contribution_id');
     }
     
     /**

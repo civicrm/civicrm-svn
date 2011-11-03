@@ -196,7 +196,7 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation
 
         // check if we can retrieve from database cache
         require_once 'CRM/Core/BAO/Cache.php'; 
-        $navigations =& CRM_Core_BAO_Cache::getItem( 'navigation', $cacheKeyString );
+        $navigations = CRM_Core_BAO_Cache::getItem( 'navigation', $cacheKeyString );
 
         if ( ! $navigations ) {
             $domainID  = CRM_Core_Config::domainID( );
@@ -224,9 +224,11 @@ FROM civicrm_navigation WHERE domain_id = $domainID {$whereClause} ORDER BY pare
 
     // helper function for getNavigationList( )
     static function _getNavigationLabel( $list, &$navigations, $separator = '' ) {
+        $i18n = CRM_Core_I18n::singleton();
         foreach ( $list as $label => $val ) {
             if ( $label == 'navigation_id' ) continue;
-            $navigations[is_array( $val ) ? $val['navigation_id'] : $val] = "{$separator}{$label}";
+            $translatedLabel = $i18n->crm_translate($label, array('context' => 'menu'));
+            $navigations[is_array( $val ) ? $val['navigation_id'] : $val] = "{$separator}{$translatedLabel}";
             if ( is_array( $val ) ) {
                 self::_getNavigationLabel( $val, $navigations, $separator . '&nbsp;&nbsp;&nbsp;&nbsp;' );
             }
@@ -321,7 +323,7 @@ ORDER BY parent_id, weight";
         
         //skip children menu item if user don't have access to parent menu item
         $skipMenuItems = array( );
-        foreach( $navigations as $key => $value ) { 
+        foreach( $navigations as $key => $value ) {
             if ( $json ) {
                 if ( $navigationString ) {
                     $navigationString .= '},';
@@ -415,6 +417,9 @@ ORDER BY parent_id, weight";
             }
             if ( !empty( $value['child'] ) ) {
                 $navigationString .= '</ul></li>';
+                if ( isset( $value['attributes']['separator'] ) && $value['attributes']['separator'] ) {
+                    $navigationString .= '<li class="menu-separator"></li>';
+                }
             }
         }
         return $navigationString;
@@ -426,7 +431,7 @@ ORDER BY parent_id, weight";
     function getMenuName( &$value, &$skipMenuItems ) {
         // we need to localise the menu labels (CRM-5456) and don’t
         // want to use ts() as it would throw the ts-extractor off
-        $i18n =& CRM_Core_I18n::singleton();
+        $i18n = CRM_Core_I18n::singleton();
 
         $name       = $i18n->crm_translate($value['attributes']['label'], array('context' => 'menu'));
         $url        = $value['attributes']['url'];
@@ -527,11 +532,6 @@ ORDER BY parent_id, weight";
      */
     static function createNavigation( $contactID ) 
     {
-        if ( !$contactID || 
-             !CRM_Core_DAO::checkFieldExists( 'civicrm_preferences', 'navigation' ) ) {
-            return;
-        }
-
         $config = CRM_Core_Config::singleton();
         // For Joomla front end user, there is no need to create
         // navigation menu items, CRM-5349
@@ -540,20 +540,18 @@ ORDER BY parent_id, weight";
         }
 
         $navParams = array( 'contact_id' => $contactID );
-        if ( CRM_Core_DAO::checkFieldExists('civicrm_preferences', 'domain_id') ) {
-            // FIXME: if() condition check was required especially for upgrade 
-            // cases (2.2.x -> 3.0.x), CRM-5203
-            $navParams['domain_id'] = CRM_Core_Config::domainID( );
-        }
 
-        CRM_Core_DAO::commonRetrieve( 'CRM_Core_DAO_Preferences', $navParams, $navParams );
-        $navigation = array_key_exists('navigation', $navParams) ? $navParams['navigation'] : false;
+        require_once 'CRM/Core/BAO/Setting.php';
+        $navigation = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::NAVIGATION_NAME,
+                                                     'navigation',
+                                                     null,
+                                                     null,
+                                                     $contactID );
 
         // FIXME: hack for CRM-5027: we need to prepend the navigation string with
         // (HTML-commented-out) locale info so that we rebuild menu on locale changes
         if (!$navigation or substr($navigation, 0, 14) != "<!-- $config->lcMessages -->") {
             //retrieve navigation if it's not cached.       
-            require_once 'CRM/Core/BAO/Navigation.php';
             $navigation = self::buildNavigation( );
             
             //add additional navigation items
@@ -574,7 +572,7 @@ ORDER BY parent_id, weight";
                 $homeLabel   = ts('Home');
             }
 
-            if ( ( $config->userFramework == 'Drupal' ) && 
+            if ( ( $config->userSystem->is_drupal ) && 
                  ( ( module_exists('toolbar') && user_access('access toolbar') ) ||
                    module_exists('admin_menu') && user_access('access administration menu') ) ) {
                 $prepandString = "<li class=\"menumain crm-link-home\">" . $homeLabel . "<ul id=\"civicrm-home\"><li><a href=\"{$homeURL}\">" . $homeLabel . "</a></li><li><a href=\"#\" onclick=\"cj.Menu.closeAll( );cj('#civicrm-menu').toggle( );\">" . ts('Drupal Menu') . "</a></li></ul></li>";
@@ -591,14 +589,12 @@ ORDER BY parent_id, weight";
             $contact = new CRM_Contact_DAO_Contact( );
             $contact->id = $contactID;
             if ( $contact->find(true ) ) {
-                // save in preference table for this particular user
-                require_once 'CRM/Core/DAO/Preferences.php';
-                $preference = new CRM_Core_DAO_Preferences();
-                $preference->contact_id = $contactID;
-                $preference->domain_id  = CRM_Core_Config::domainID( );
-                $preference->find(true);
-                $preference->navigation = $navigation;
-                $preference->save();
+                CRM_Core_BAO_Setting::setItem( $navigation,
+                                               CRM_Core_BAO_Setting::NAVIGATION_NAME,
+                                               'navigation',
+                                               null,
+                                               $contactID,
+                                               $contactID );
             }
         }
         return $navigation;
@@ -607,11 +603,19 @@ ORDER BY parent_id, weight";
     /**
      * Reset navigation for all contacts
      */
-    static function resetNavigation( ) 
+    static function resetNavigation( $contactId = null ) 
     {
-        $query = "UPDATE civicrm_preferences SET navigation = NULL WHERE contact_id IS NOT NULL";
-        CRM_Core_DAO::executeQuery( $query );
+        $params = array( );
+        $query  = "UPDATE civicrm_setting SET value = NULL WHERE name='navigation'";
+        if ( $contactId ) {
+            $query .= " AND contact_id = %1";
+            
+            $params[1] = array((int)$contactId, 'Integer'); 
+        } else {
+            $query .= " AND contact_id IS NOT NULL";
+        }
         
+        CRM_Core_DAO::executeQuery( $query, $params );
         require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::deleteGroup( 'navigation' );
     }          
@@ -628,7 +632,7 @@ ORDER BY parent_id, weight";
      {
          $nodeID      = (int)str_replace("node_","",$params['id']);
          $referenceID = (int)str_replace("node_","",$params['ref_id']);
-        $position    = $params['ps'];
+         $position    = $params['ps'];
          $type        = $params['type'];
          $label       = $params['data'];
          
@@ -649,109 +653,121 @@ ORDER BY parent_id, weight";
          CRM_Utils_System::civiExit( );
      }
      
-     /**
-      * Function to process move action
-      */
-    static function processMove( $nodeID, $referenceID, $position ) 
-      {
-        if( $referenceID ) {                 
-          $referenInfo = self::getNavigationInfo( $referenceID );
-            if( empty( $referenInfo['parent_id']) ){
-              $newParentID = $referenceID;
+    /**
+     * Function to process move action
+     */
+    static function processMove( $nodeID, $referenceID, $position ) {
+        if ( $referenceID ) {                 
+            $referenInfo = self::getNavigationInfo( $referenceID );
+            if ( empty( $referenInfo['parent_id']) ) {
+                $newParentID = $referenceID;
                 $newWeight   = $position;           
             }
-          } else {
+        } else {
             $newParentID = 'NULL';
-            $newWeight = $position+1;
-          }
+            // since we use weights like 10, 20, ... for parents
+            // we cannot use 
+            // $newWeight =  $position + 1;
+            // so based on position let's get the weight of menu
+            // with position - 1 and calculate new weight
+            $position = $position - 1 ; 
+            
+            $sql = "SELECT weight from civicrm_navigation WHERE parent_id IS NULL ORDER BY weight LIMIT %1, 1";
+            $params = array( 1 => array( $position, 'Positive') );
+            $dao = CRM_Core_DAO::executeQuery( $sql, $params );
+            $dao->fetch();
+            $newWeight =  $dao->weight + 1;
+        }
           
-          // get the details of current node
-          $nodeInfo = self::getNavigationInfo( $nodeID ); 
-          $oldParentID  = $nodeInfo['parent_id'];
-          $oldWeight    = $nodeInfo['weight'];
-          $oldParentClause = " parent_id = {$oldParentID}";
+        // get the details of current node
+        $nodeInfo = self::getNavigationInfo( $nodeID ); 
+        $oldParentID     = $nodeInfo['parent_id'];
+        $oldWeight       = $nodeInfo['weight'];
+        $oldParentClause = " parent_id = {$oldParentID}";
           
-          // since we need to do multiple updates lets build sql array and then fire all with transaction
-          $sql = array( );
+        // since we need to do multiple updates lets build sql array and then fire all with transaction
+        $sql = array( );
           
-          // reorder was made, since parent are same
-          if ( $oldParentID == $newParentID ) {
-              if ( $newWeight > $oldWeight ) {
-                if( !$referenceID ) { $newWeight = $newWeight - 1; }
-                  $sql[] = "UPDATE civicrm_navigation SET weight = weight - 1 
-                             WHERE {$oldParentClause}  AND weight BETWEEN {$oldWeight} + 1 AND {$newWeight}";  
-              }
-              if ( $newWeight < $oldWeight ) {
-                  $sql[] = "UPDATE civicrm_navigation SET weight = weight + 1 
+        // reorder was made, since parent are same
+        if ( $oldParentID == $newParentID ) {
+            if ( $newWeight > $oldWeight ) {
+                if ( !$referenceID ) { 
+                    $newWeight = $newWeight - 1; 
+                }
+                $sql[] = "UPDATE civicrm_navigation SET weight = weight - 1 
+                    WHERE {$oldParentClause}  AND weight BETWEEN {$oldWeight} + 1 AND {$newWeight}";  
+            }
+            if ( $newWeight < $oldWeight ) {
+                $sql[] = "UPDATE civicrm_navigation SET weight = weight + 1 
                             WHERE {$oldParentClause} AND weight BETWEEN {$newWeight} AND {$oldWeight} - 1";
-              }
-              }
+            }
+        }
               
-          // finally set the weight of current node
-          $sql[] = "UPDATE civicrm_navigation SET weight = {$newWeight}, parent_id = {$newParentID} WHERE id = {$nodeID}";
+        // finally set the weight of current node
+        $sql[] = "UPDATE civicrm_navigation SET weight = {$newWeight}, parent_id = {$newParentID} WHERE id = {$nodeID}";
           
-          // now execute all the sql's
-          require_once 'CRM/Core/Transaction.php';
-          $transaction = new CRM_Core_Transaction( );
+        // now execute all the sql's
+        require_once 'CRM/Core/Transaction.php';
+        $transaction = new CRM_Core_Transaction( );
           
-          foreach ( $sql as $query ) {
-              CRM_Core_DAO::executeQuery( $query );
-          }
+        foreach ( $sql as $query ) {
+            CRM_Core_DAO::executeQuery( $query );
+        }
           
-          $transaction->commit( );
-      }
+        $transaction->commit( );
+    }
       
-      /**
-       *  Function to process rename action for tree
-       *
-       */
-       static function processRename( $nodeID, $label ) 
-       {
-           CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_Navigation', $nodeID, 'label', $label );
-       }
+    /**
+     *  Function to process rename action for tree
+     *
+     */
+    static function processRename( $nodeID, $label ) 
+    {
+        CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_Navigation', $nodeID, 'label', $label );
+    }
     
-      /**
-       *  Function to process delete action for tree
-       *
-       */
-       static function processDelete( $nodeID ) 
-       {
-           $query = "DELETE FROM civicrm_navigation WHERE id = {$nodeID}";
-           CRM_Core_DAO::executeQuery( $query );
-       }
+    /**
+     *  Function to process delete action for tree
+     *
+     */
+    static function processDelete( $nodeID ) 
+    {
+        $query = "DELETE FROM civicrm_navigation WHERE id = {$nodeID}";
+        CRM_Core_DAO::executeQuery( $query );
+    }
        
-      /**
-      * Function to get the info on navigation item
-      * 
-      * @param int $navigationID  navigation id
-      *
-      * @return array associated array
-      * @static
-      */
-      static function getNavigationInfo( $navigationID ) 
-      {
-          $query  = "SELECT parent_id, weight FROM civicrm_navigation WHERE id = %1";
-          $params = array( $navigationID, 'Integer' );
-          $dao =& CRM_Core_DAO::executeQuery( $query, array( 1 => $params ) );
-          $dao->fetch();            
-          return array( 'parent_id' => $dao->parent_id,
-                        'weight'    => $dao->weight );
-      }
+    /**
+     * Function to get the info on navigation item
+     * 
+     * @param int $navigationID  navigation id
+     *
+     * @return array associated array
+     * @static
+     */
+    static function getNavigationInfo( $navigationID ) 
+    {
+        $query  = "SELECT parent_id, weight FROM civicrm_navigation WHERE id = %1";
+        $params = array( $navigationID, 'Integer' );
+        $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => $params ) );
+        $dao->fetch();            
+        return array( 'parent_id' => $dao->parent_id,
+                      'weight'    => $dao->weight );
+    }
     
-      /**
-       * Function to update menu 
-       * 
-       * @param array  $params  
-       * @param array  $newParams new value of params
-       * @static
-       */
-      static function processUpdate( $params, $newParams ) 
-      {
-          $dao = new CRM_Core_DAO_Navigation( );
-          $dao->copyValues( $params );
-          if( $dao->find( true ) ) {
-              $dao->copyValues( $newParams );
-              $dao->save( );
-          }
-      }
+    /**
+     * Function to update menu 
+     * 
+     * @param array  $params  
+     * @param array  $newParams new value of params
+     * @static
+     */
+    static function processUpdate( $params, $newParams ) 
+    {
+        $dao = new CRM_Core_DAO_Navigation( );
+        $dao->copyValues( $params );
+        if( $dao->find( true ) ) {
+            $dao->copyValues( $newParams );
+            $dao->save( );
+        }
+    }
 }

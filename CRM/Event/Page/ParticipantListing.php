@@ -54,7 +54,7 @@ class CRM_Event_Page_ParticipantListing extends CRM_Core_Page {
                                                                     $this->_id,
                                                                     'participant_listing_id' );
         if ( ! $this->_participantListingID ) {
-            CRM_Core_Error::fatal( ts( "The Participant Listing feature is not currently enabled for this event." ) );
+            CRM_Core_Error::fatal( ts( 'The Participant Listing feature is not currently enabled for this event.' ) );
         }
 
         // retrieve Event Title and include it in page title

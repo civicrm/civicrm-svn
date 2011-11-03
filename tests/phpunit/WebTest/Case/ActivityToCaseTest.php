@@ -57,12 +57,12 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         }
 
         // let's give full CiviCase permissions to demo user (registered user).
-        $this->open( $this->sboxPath . "admin/user/permissions" );
+        $this->changeAdminLinks( );
         $this->waitForElementPresent( 'edit-submit' );
         $this->check( 'edit-2-access-all-cases-and-activities' );
         $this->check( 'edit-2-access-my-cases-and-activities' );
-        $this->check( 'edit-2-administer-CiviCase' );
-        $this->check( 'edit-2-delete-in-CiviCase' );
+        $this->check( 'edit-2-administer-civicase' );
+        $this->check( 'edit-2-delete-in-civicase' );
         
         // save permissions
         $this->click( 'edit-submit' );
@@ -70,7 +70,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         $this->assertTrue( $this->isTextPresent( 'The changes have been saved.' ) );
         
         // Go directly to the URL of the screen that you will be testing (New Case-standalone).
-        $this->open( $this->sboxPath . "civicrm/case/add&reset=1&action=add&atype=13&context=standalone" );
+        $this->open( $this->sboxPath . "civicrm/case/add?reset=1&action=add&atype=13&context=standalone" );
         
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
@@ -114,10 +114,10 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         $this->assertTextPresent( "Case opened successfully.", "Save successful status message didn't show up after saving!" );
         $customGroupTitle = 'Custom_' . substr(sha1(rand()), 0, 7);
 
-        $this->_testAddNewActivity( $firstName, $subject, $customGroupTitle );
+        $this->_testAddNewActivity( $firstName, $subject, $customGroupTitle, $contactName );
     }
     
-    function _testAddNewActivity( $firstName, $caseSubject, $customGroupTitle )
+    function _testAddNewActivity( $firstName, $caseSubject, $customGroupTitle, $contactName )
     {
         $customDataParams = $this->_addCustomData( $customGroupTitle );
         //$customDataParams = array( 'optionLabel_47d58', 'custom_8_-1' );
@@ -140,34 +140,32 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         
         // waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
-        $this->waitForElementPresent("_qf_Activity_upload");
+        $this->waitForElementPresent("_qf_Activity_upload-bottom");
         
         // Let's start filling the form with values.
 
         // ...and verifying if the page contains properly formatted display name for chosen contact.
         $this->assertTrue( $this->isTextPresent( "Anderson, " . $firstName2 ), "Contact not found in line " . __LINE__ );
-        
+       
         // Now we're filling the "Assigned To" field.
         // Typing contact's name into the field (using typeKeys(), not type()!)...
-        $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", $firstName1);
-        
+        $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
+       
         // ...waiting for drop down with results to show up...
-        $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
-        
-        // ...clicking first result (which is a li element), selenium picks first matching element so we don't need to specify that...
-        $this->click("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
+        $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
+        $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
+ 
+        //..need to use mouseDownAt on first result (which is a li element), click does not work
+        $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
         
         // ...again, waiting for the box with contact name to show up...
         $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
         
         // ...and verifying if the page contains properly formatted display name for chosen contact.
         $this->assertTrue( $this->isTextPresent( "Summerson, " . $firstName1 ), "Contact not found in line " . __LINE__ );
-        
-        // Since we're here, let's check if screen help is being displayed properly
-        $this->assertTrue( $this->isTextPresent( "A copy of this activity will be emailed to each Assignee" ) );
-        
+         
         // Putting the contents into subject field - assigning the text to variable, it'll come in handy later
-         $subject = "This is subject of test activity being added through activity tab of contact summary screen.";
+        $subject = "This is subject of test activity being added through activity tab of contact summary screen.";
         // For simple input fields we can use field id as selector
         $this->type("subject", $subject);
         $this->type("location", "Some location needs to be put in this field.");
@@ -203,7 +201,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         $this->type( "followup_activity_subject","This is subject of schedule follow-up activity" );
         
         // Clicking save.
-        $this->click("_qf_Activity_upload");
+        $this->click("_qf_Activity_upload-bottom");
         $this->waitForPageToLoad("30000");
         
         // Is status message correct?
@@ -232,11 +230,12 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         // verify if custom data is present
         $this->open( $this->sboxPath . "civicrm/case?reset=1" );
         $this->waitForPageToLoad("30000");
-        $this->click( "xpath=//table[@class='caseSelector']/tbody//tr/td[3][text()='{$caseSubject}']/../td[9]/span/a[text()='Manage']" );
+        $this->click( "xpath=//table[@class='caseSelector']/tbody//tr/td[2]/a[text()='{$contactName}']/../../td[9]/span/a[text()='Manage']" );
 
         $this->waitForElementPresent( '_qf_CaseView_cancel-bottom' );
         $this->waitForElementPresent( "xpath=//div[@id='activities']//table[@id='activities-selector']/tbody/tr[1]/td[2]" );
-        $this->click( "xpath=//div[@id='activities']//table[@id='activities-selector']/tbody/tr[1]/td[2]/a[text()='{$subject}']" );
+        
+        $this->click( "xpath=//div[@id='activities']//table[@id='activities-selector']//a[text()='{$subject}']" );
 
         $this->waitForElementPresent( 'view-activity' );
         $this->waitForElementPresent( "css=table#crm-activity-view-table tr.crm-case-activityview-form-block-groupTitle" );
@@ -248,7 +247,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
     function _addCustomData( $customGroupTitle )
     {
         // Go directly to the URL of the screen that you will be testing (New Custom Group).
-        $this->open( $this->sboxPath . "civicrm/admin/custom/group&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group?reset=1" );
         
         //add new custom data
         $this->click("//a[@id='newCustomDataGroup']/span");
@@ -326,7 +325,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         
         //Is custom field created
         $this->assertTrue( $this->isTextPresent( "Your custom field '$textFieldLabel' has been saved." ) );
-        $textFieldId = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']//table/tbody//tr/td[text()='$textFieldLabel']/../td[7]/span/a@href" ) );
+        $textFieldId = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']//table/tbody//tr/td[text()='$textFieldLabel']/../td[8]/span/a[text()='Edit Field']/@href" ) );
         $textFieldId = $textFieldId[1];
 
         return array( $radioOptionLabel1, "custom_{$textFieldId}_-1" );

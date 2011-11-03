@@ -40,7 +40,7 @@
   {elseif $gName eq "individual_suffix"}
      {ts}CiviCRM is pre-configured with standard options for individual contact name suffixes (e.g. Jr., Sr., II etc.). You can use this page to customize these options and add new ones as needed for your installation.{/ts}
   {elseif $gName eq "activity_type"}
-     {ts}Activities are 'interactions with contacts' which you want to record and track.{/ts} {help id='id-activity-types'}
+     {ts}Activities are 'interactions with contacts' which you want to record and track. This list is sorted by component and then by weight within the component.{/ts} {help id='id-activity-types'}
   {elseif $gName eq "payment_instrument"}
      {ts}You may choose to record the Payment Instrument used for each Contribution. Reserved payment methods are required - you may modify their labels but they can not be deleted (e.g. Check, Credit Card, Debit Card). If your site requires additional payment methods, you can add them here.{/ts}
   {elseif $gName eq "accept_creditcard"}
@@ -120,18 +120,19 @@
                 <td class="crm-admin-options-component_name">{$row.component_name}</td>
             {/if}
 	        <td class="crm-admin-options-label">{$row.label}</td>
-	    {if $gName eq "case_status"}				
-		<td class="crm-admin-options-grouping">{$row.grouping}</td>
+    	    {if $gName eq "case_status"}				
+    		    <td class="crm-admin-options-grouping">{$row.grouping}</td>
             {/if}	
-	        <td class="crm-admin-options-value">{$row.value}</td>
-		{if $showCounted}
-		<td class="yes-no crm-admin-options-filter">{if $row.filter eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Counted{/ts}" />{/if}</td>
-		{/if}
+    	    <td class="crm-admin-options-value">{$row.value}</td>
+    		{if $showCounted}
+    		    <td class="yes-no crm-admin-options-filter">{if $row.filter eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Counted{/ts}" />{/if}</td>
+    		{/if}
             {if $showVisibility}<td class="crm-admin-visibility_label">{$row.visibility_label}</td>{/if}
-	        <td class="crm-admin-options-description">{$row.description}</td>	
-	        <td class="nowrap crm-admin-options-order">{$row.order}</td>
+    	    <td class="crm-admin-options-description">{$row.description}</td>	
+    	    <td class="nowrap crm-admin-options-order">{$row.order}</td>
             {if $showIsDefault}
-	    	<td class="crm-admin-options-is_default" align="center">{if $row.is_default eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>{/if}
+    	    	<td class="crm-admin-options-is_default" align="center">{if $row.is_default eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
+    	    {/if}
 	        <td class="crm-admin-options-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>

@@ -71,6 +71,53 @@ class CRM_Contact_Page_DashBoard extends CRM_Core_Page
             $this->assign( 'hookContentPlacement', $contentPlacement );
         }
         
+        //check that default FROM email address, owner (domain) organization name and default mailbox are configured.
+        $fromEmailOK = true;
+        $ownerOrgOK = true;
+        $defaultMailboxOK = true;
+        
+        // Don't put up notices if user doesn't have administer CiviCRM permission
+        require_once 'CRM/Core/Permission.php';
+        if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) {
+            $destination = CRM_Utils_System::url( 'civicrm/dashboard',
+                                                  'reset=1',
+                                                  false, null, false );
+
+            $destination = urlencode( $destination );
+ 
+            require_once 'CRM/Core/BAO/Domain.php';
+            list( $domainEmailName, $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( true );
+
+            if ( !$domainEmailAddress || $domainEmailAddress == 'info@FIXME.ORG') {
+                require_once 'CRM/Utils/System.php';
+                $fixEmailUrl = CRM_Utils_System::url("civicrm/admin/domain", "action=update&reset=1&civicrmDestination={$destination}");
+                $this->assign( 'fixEmailUrl', $fixEmailUrl );
+                $fromEmailOK = false;
+            }
+
+            $domain = CRM_Core_BAO_Domain::getDomain();
+            $domainName = $domain->name;
+            if ( !$domainName || $domainName == 'Default Domain Name' ) {
+                $fixOrgUrl = CRM_Utils_System::url("civicrm/admin/domain", "action=update&reset=1&civicrmDestination={$destination}");
+                $this->assign( 'fixOrgUrl', $fixOrgUrl );
+                $ownerOrgOK = false;            
+            }
+
+            require_once 'CRM/Core/BAO/MailSettings.php';
+            $config = CRM_Core_Config::singleton( );
+            if ( in_array( 'CiviMail', $config->enableComponents ) &&
+                 CRM_Core_BAO_MailSettings::defaultDomain() == "FIXME.ORG" ) {
+                $fixDefaultMailbox = CRM_Utils_System::url('civicrm/admin/mailSettings', "reset=1&civicrmDestination={$destination}");
+                $this->assign( 'fixDefaultMailbox', $fixDefaultMailbox );
+                $defaultMailboxOK = false;
+            }
+            
+        }
+
+        $this->assign( 'fromEmailOK', $fromEmailOK );
+        $this->assign( 'ownerOrgOK', $ownerOrgOK );
+        $this->assign( 'defaultMailboxOK', $defaultMailboxOK );
+        
         return parent::run( );
     }
 }

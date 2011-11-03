@@ -73,13 +73,25 @@
     {/if}
     {literal}
 
-    eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
-
     var sourceDataUrl = "{/literal}{$dataUrl}{literal}";
     var tokenDataUrl  = "{/literal}{$tokenUrl}{literal}";
+    var assigneeTokenDataUrl  = "{/literal}{$assigneeTokenUrl}{literal}";
     var hintText = "{/literal}{ts}Type in a partial or complete name of an existing contact.{/ts}{literal}";
-    cj( "#target_contact_id"  ).tokenInput( tokenDataUrl, { prePopulate: target_contact,   classes: tokenClass, hintText: hintText });
-    cj( "#assignee_contact_id").tokenInput( tokenDataUrl, { prePopulate: assignee_contact, classes: tokenClass, hintText: hintText });
+    cj( "#target_contact_id"  ).tokenInput( tokenDataUrl, { prePopulate: target_contact,   theme: 'facebook', hintText: hintText });
+    cj( "#assignee_contact_id").tokenInput( assigneeTokenDataUrl, { prePopulate: assignee_contact, theme: 'facebook', hintText: hintText,
+                  queryParam: 'sort_name',
+                  onResult: function (results) {
+                    var formattedResult = new Array();t = {};
+                    cj.each(results.values, function (index, value) {
+                        t = {}; 
+                        t.name = value.sort_name;
+                        t.id=value.id;
+                        formattedResult.push(t);
+                    });
+
+                    return formattedResult;
+                }
+    });
     cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );
     cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst : false, hintText: hintText, matchContains: true, minChars: 1
                                 }).result( function(event, data, formatted) { cj( "#source_contact_qid" ).val( data[1] );
@@ -285,7 +297,9 @@
 					 	<div class="crm-accordion-body">
                         <table class="form-layout-compressed">
                            <tr><td class="label">{ts}Schedule Follow-up Activity{/ts}</td>
-                               <td>{$form.followup_activity_type_id.html}&nbsp;{$form.interval.label}&nbsp;{$form.interval.html}&nbsp;{$form.interval_unit.html}                          </td>
+                               <td>{$form.followup_activity_type_id.html}&nbsp;&nbsp;{ts}on{/ts}
+                                {include file="CRM/common/jcalendar.tpl" elementName=followup_date}
+                               </td>
                            </tr>
                            <tr>
                               <td class="label">{$form.followup_activity_subject.label}</td>
@@ -317,7 +331,7 @@
 		            {if ($context eq 'fulltext' || $context eq 'search') && $searchKey}
 		                {assign var='urlParams' value="reset=1&atype=$atype&action=update&reset=1&id=$entityID&cid=$contactId&context=$context&key=$searchKey"}
 		            {/if}
-                    <a href="{crmURL p='civicrm/contact/view/activity' q=$urlParams}" class="edit button" title="{ts}Edit{/ts}"><span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span></a>
+                    <a href="{crmURL p='civicrm/activity/add' q=$urlParams}" class="edit button" title="{ts}Edit{/ts}"><span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span></a>
                  {/if}
                  
                  {if call_user_func(array('CRM_Core_Permission','check'), 'delete activities')}

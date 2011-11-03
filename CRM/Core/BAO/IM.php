@@ -103,7 +103,7 @@ ORDER BY
         $params = array( 1 => array( $id, 'Integer' ) );
 
         $ims = $values = array( );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         $count = 1;
         while ( $dao->fetch( ) ) {
             $values = array( 'locationType'   => $dao->locationType,
@@ -154,7 +154,7 @@ ORDER BY cim.is_primary DESC, im_id ASC ";
         $params = array( 1 => array( $entityId, 'Integer' ) );
        
         $ims = array( );
-        $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
         while ( $dao->fetch( ) ) {
             $ims[$dao->im_id] = array( 'locationType'   => $dao->locationType,
                                        'is_primary'     => $dao->is_primary,

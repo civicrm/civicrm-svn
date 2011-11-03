@@ -313,7 +313,7 @@ WHERE      a.id = %1
                                            'type'  => 'String' );
         }
         
-        if ( $activityDAO->targetID ) {
+        if ( !empty( $activityDAO->targetID ) ) {
             // Re-lookup the target ID since the DAO only has the first recipient if there are multiple.
         	// Maybe not the best solution.
         	require_once 'CRM/Activity/BAO/ActivityTarget.php';
@@ -396,7 +396,7 @@ WHERE      a.id = %1
                                        'value' => $this->redact( $reporter ),
                                        'type'  => 'String' );
         
-        if ( $activityDAO->assigneeID ) {
+        if ( !empty( $activityDAO->assigneeID ) ) {
             //allow multiple assignee contacts.CRM-4503.
             require_once 'CRM/Activity/BAO/ActivityAssignment.php';
             $assignee_contact_names = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $activityDAO->id, true );
@@ -474,23 +474,23 @@ WHERE      a.id = %1
                     $value = CRM_Core_BAO_CustomField::getDisplayValue( $dao->$columnName,
                                                                         $typeValue['fieldID'],
                                                                         $options );
-                    
-                    // Note: this is already taken care in getDisplayValue above, but sometimes 
-                    // strings like '^A^A' creates problem. So to fix this special case -
-                    if ( strstr($value, CRM_Core_DAO::VALUE_SEPARATOR) ) {
-                        $value = trim($value, CRM_Core_DAO::VALUE_SEPARATOR);
+                    if ( $value ) {
+                        // Note: this is already taken care in getDisplayValue above, but sometimes 
+                        // strings like '^A^A' creates problem. So to fix this special case -
+                        if ( strstr($value, CRM_Core_DAO::VALUE_SEPARATOR) ) {
+                            $value = trim($value, CRM_Core_DAO::VALUE_SEPARATOR);
+                        }
+                        if ( CRM_Utils_Array::value('type', $typeValue) == 'String' ||
+                            CRM_Utils_Array::value('type', $typeValue) == 'Memo' ) {
+                            $value = $this->redact($value );
+                        } else if ( CRM_Utils_Array::value( 'type', $typeValue ) == 'File' ) {
+                            require_once 'CRM/Core/BAO/File.php';
+                            $tableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_EntityFile', $typeValue, 'entity_table' );
+                            $value     = CRM_Core_BAO_File::attachmentInfo( $tableName, $activityDAO->id );
+                        } else if ( CRM_Utils_Array::value( 'type', $typeValue ) == 'Link' ) {
+                            $value = CRM_Utils_System::formatWikiURL( $value );
+                        }
                     }
-                    if ( CRM_Utils_Array::value('type', $typeValue) == 'String' ||
-                         CRM_Utils_Array::value('type', $typeValue) == 'Memo' ) {
-                        $value = $this->redact($value );
-                    } else if ( CRM_Utils_Array::value( 'type', $typeValue ) == 'File' ) {
-                        require_once 'CRM/Core/BAO/File.php';
-                        $tableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_EntityFile', $value, 'entity_table' );
-                        $value     = CRM_Core_BAO_File::attachmentInfo( $tableName, $activityDAO->id );
-                    } else if ( CRM_Utils_Array::value( 'type', $typeValue ) == 'Link' ) {
-                        $value = CRM_Utils_System::formatWikiURL( $value );
-                    }
-
                     //$typeValue
                     $customGroup[] = array( 'label'  => $typeValue['label'],
                                             'value'  => $value,
@@ -560,7 +560,7 @@ SELECT label, value
  WHERE option_group_id = {$dao->optionGroupID}
 ";
                     
-                    $option =& CRM_Core_DAO::executeQuery( $query );
+                    $option = CRM_Core_DAO::executeQuery( $query );
                     while ( $option->fetch( ) ) {
                         $dataType = $dao->dataType;
                         if ( $dataType == 'Int' || $dataType == 'Float' ) {

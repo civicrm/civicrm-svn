@@ -51,6 +51,10 @@ class CRM_Contact_BAO_Contact_Utils
     static function getImage( $contactType, $urlOnly = false, $contactId = null, $addProfileOverlay = true ) 
     {
         static $imageInfo = array( );
+
+        $contactType = explode( CRM_Core_DAO::VALUE_SEPARATOR, trim($contactType, CRM_Core_DAO::VALUE_SEPARATOR) );
+        $contactType = $contactType[0];
+
         if ( ! array_key_exists( $contactType, $imageInfo ) ) {
             $imageInfo[$contactType] = array( );
             
@@ -76,7 +80,7 @@ class CRM_Contact_BAO_Contact_Utils
                 if ( $isSubtype ) { 
                     $type = CRM_Contact_BAO_ContactType::getBasicType( $typeInfo['name'] ) . '-subtype';
                 } else {
-                    $type = $typeInfo['name'];
+                    $type = CRM_Utils_Array::value( 'name', $typeInfo );
                 }
            		
 
@@ -225,10 +229,6 @@ WHERE  id IN ( $idString )
      */
     static function maxLocations( $contactId )
     {
-        // find the system config related location blocks
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $locationCount = CRM_Core_BAO_Preferences::value( 'location_count' );
-        
         $contactLocations = array( );
 
         // find number of location blocks for this contact and adjust value accordinly
@@ -243,12 +243,7 @@ UNION
 ( SELECT location_type_id FROM civicrm_address WHERE contact_id = {$contactId} )
 ";
         $dao      = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
-        $locCount = $dao->N;
-        if ( $locCount &&  $locationCount < $locCount ) {
-            $locationCount = $locCount;
-        }
-
-        return $locationCount;
+        return $dao->N;
     }
 
     /**
@@ -706,8 +701,9 @@ LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
         }
         
         if ( empty( $returnProperties ) ) {
-            require_once 'CRM/Core/BAO/Preferences.php';
-            $autocompleteContactSearch = CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options' );
+            require_once 'CRM/Core/BAO/Setting.php';
+            $autocompleteContactSearch = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                             'contact_autocomplete_options' );
             $returnProperties = array_fill_keys( array_merge( array( 'sort_name'), 
                                                               array_keys( $autocompleteContactSearch ) ), 1 );
         }
@@ -728,27 +724,45 @@ LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
             $value = ( in_array( $property, array( 'city', 'street_address' ) ) ) ? 'address' : $property;
             switch ( $property ) {
             case 'sort_name' :
-                $select[] = "$property as $property";
                 if ( $componentName == 'Activity' )  { 
+                    $select[] = "contact_source.$property as $property";
                     $from[$value] = "INNER JOIN civicrm_contact contact ON ( contact.id = $compTable.source_contact_id )";  
                 } else {
+                    $select[] = "$property as $property";
                     $from[$value] = "INNER JOIN civicrm_contact contact ON ( contact.id = $compTable.contact_id )"; 
                 }
                 break;
                 
+            case 'target_sort_name' :
+                $select[] = "contact_target.sort_name as $property";
+                $from[$value] = "INNER JOIN civicrm_contact contact_source ON ( contact_source.id = $compTable.source_contact_id )
+                                 LEFT JOIN civicrm_activity_target ON (civicrm_activity_target.activity_id = $compTable.id)
+                                 LEFT JOIN civicrm_contact as contact_target ON ( contact_target.id = civicrm_activity_target.target_contact_id )";  
+                break;
+
             case 'email' :
             case 'phone' :
             case 'city' :
             case 'street_address' :
                 $select[] = "$property as $property";
-                $from[$value] = "LEFT JOIN civicrm_{$value} {$value} ON ( contact.id = {$value}.contact_id AND {$value}.is_primary = 1 ) ";
+                // Grab target contact properties if this is for activity
+                if ( $componentName == 'Activity' )  { 
+                    $from[$value] = "LEFT JOIN civicrm_{$value} {$value} ON ( contact_target.id = {$value}.contact_id AND {$value}.is_primary = 1 ) ";
+                } else {
+                    $from[$value] = "LEFT JOIN civicrm_{$value} {$value} ON ( contact.id = {$value}.contact_id AND {$value}.is_primary = 1 ) ";
+                }
                 break;
                 
             case 'country':
             case 'state_province':
                 $select[] = "{$property}.name as $property";
                 if ( !in_array( 'address', $from ) ) {
-                    $from['address'] = 'LEFT JOIN civicrm_address address ON ( contact.id = address.contact_id AND address.is_primary = 1) ';
+                    // Grab target contact properties if this is for activity
+                    if ( $componentName == 'Activity' )  { 
+                        $from['address'] = 'LEFT JOIN civicrm_address address ON ( contact_target.id = address.contact_id AND address.is_primary = 1) ';
+                    } else {
+                        $from['address'] = 'LEFT JOIN civicrm_address address ON ( contact.id = address.contact_id AND address.is_primary = 1) ';
+                    }
                 }
                 $from[$value] = " LEFT JOIN civicrm_{$value} {$value} ON ( address.{$value}_id = {$value}.id  ) ";
                 break;

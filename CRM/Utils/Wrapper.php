@@ -73,8 +73,8 @@ class CRM_Utils_Wrapper
             $mode         = CRM_Utils_Array::value( 'mode',        $arguments );
             $imageUpload  = (bool) CRM_Utils_Array::value( 'imageUpload' , $arguments, false );
             $addSequence  = (bool) CRM_Utils_Array::value( 'addSequence' , $arguments, false );
-            $attachUpload = (bool) CRM_Utils_Array::value( 'attachUpload',   $arguments, false );
-            $ignoreKey    = (bool) CRM_Utils_Array::value( 'ignoreKey'   ,   $arguments, false );
+            $attachUpload = (bool) CRM_Utils_Array::value( 'attachUpload', $arguments, false );
+            $ignoreKey    = (bool) CRM_Utils_Array::value( 'ignoreKey'   , $arguments, false );
         } else {
             $arguments   = array( );
             $mode        = null;
@@ -82,12 +82,12 @@ class CRM_Utils_Wrapper
         }
 
         $this->_controller = new CRM_Core_Controller_Simple( $formName    ,
-                                                              $formLabel   ,
-                                                              $mode        ,
-                                                              $imageUpload ,
-                                                              $addSequence ,
-                                                              $ignoreKey   ,
-                                                              $attachUpload );
+                                                             $formLabel   ,
+                                                             $mode        ,
+                                                             $imageUpload ,
+                                                             $addSequence ,
+                                                             $ignoreKey   ,
+                                                             $attachUpload );
 
         if ( array_key_exists('urlToSession', $arguments) ) {
             if ( is_array($arguments['urlToSession']) ) {

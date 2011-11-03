@@ -99,7 +99,7 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
                                     $mimeType    ) {
 
         require_once 'CRM/Core/DAO/File.php';
-        $config = & CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         
         $path = explode( '/', $data );
         $filename = $path[count($path) - 1];
@@ -126,7 +126,7 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
             list( $sql, $params ) = self::sql( $entityTable, $entityID, 0 );
         }
 
-        $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
         $dao->fetch();
 
         if ( ! $mimeType ) {

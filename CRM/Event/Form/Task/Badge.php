@@ -70,7 +70,7 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
             $this->assign( 'totalSelectedParticipants', 1 );
 
             // also set the user context to send back to view page
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $session->pushUserContext( CRM_Utils_System::url( 'civicrm/contact/view/participant',
                                                               "reset=1&action=view&id={$participantID}&cid={$contactID}" ) );
         } else {
@@ -118,7 +118,7 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
         require_once 'CRM/Event/BAO/Query.php';
         require_once 'CRM/Contact/BAO/Query.php';
         
-        $returnProperties =& CRM_Event_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_EVENT );
+        $returnProperties = CRM_Event_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_EVENT );
         $additionalFields = array( 'first_name', 'last_name', 'middle_name', 'current_employer' );
         foreach ( $additionalFields as $field ) {
             $returnProperties[$field] = 1;

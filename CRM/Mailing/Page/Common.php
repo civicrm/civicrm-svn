@@ -58,7 +58,7 @@ class CRM_Mailing_Page_Common extends CRM_Core_Page
         require_once 'CRM/Mailing/Event/BAO/Queue.php';
 
         // verify that the three numbers above match
-        $q =& CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
+        $q = CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
         if ( ! $q ) {
             CRM_Core_Error::fatal( ts( "There was an error in your request" ) );
         }
@@ -91,7 +91,7 @@ class CRM_Mailing_Page_Common extends CRM_Core_Page
      
         if ( $confirm ) { 
             if ( $this->_type == 'unsubscribe' ) {
-                $groups =& CRM_Mailing_Event_BAO_Unsubscribe::unsub_from_mailing($job_id, $queue_id, $hash);
+                $groups = CRM_Mailing_Event_BAO_Unsubscribe::unsub_from_mailing($job_id, $queue_id, $hash);
                 if ( count( $groups ) ) {
                     CRM_Mailing_Event_BAO_Unsubscribe::send_unsub_response($queue_id, $groups, false, $job_id);
                 } else {
@@ -99,7 +99,7 @@ class CRM_Mailing_Page_Common extends CRM_Core_Page
                 }
             } elseif ( $this->_type == 'resubscribe' ) {
                 require_once 'CRM/Mailing/Event/BAO/Resubscribe.php';
-                $groups =& CRM_Mailing_Event_BAO_Resubscribe::resub_to_mailing($job_id, $queue_id, $hash);
+                $groups = CRM_Mailing_Event_BAO_Resubscribe::resub_to_mailing($job_id, $queue_id, $hash);
                 if ( count( $groups ) ) {
                     CRM_Mailing_Event_BAO_Resubscribe::send_resub_response($queue_id, $groups, false, $job_id);
                 } else {

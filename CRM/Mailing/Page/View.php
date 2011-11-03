@@ -93,7 +93,7 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
              is_numeric( $contactID )) {
 			$this->_contactID = $contactID;
 		} else {
-			$session   =& CRM_Core_Session::singleton( );
+			$session   = CRM_Core_Session::singleton( );
 			$this->_contactID = $session->get( 'userID' );
         }
 
@@ -127,7 +127,13 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
 			//get details of contact with token value including Custom Field Token Values.CRM-3734
 			$returnProperties = $this->_mailing->getReturnProperties( );
 			$params  = array( 'contact_id' => $this->_contactID );
-			$details = $this->_mailing->getDetails( $params, $returnProperties );
+            require_once 'CRM/Utils/Token.php';
+            $details = CRM_Utils_Token::getTokenDetails( $params,
+                                                         $returnProperties,
+                                                         true, true, null,
+                                                         $this->_mailing->getFlattenedTokens( ),
+                                                         get_class( $this )
+                                                         );
 			$details = $details[0][$this->_contactID];
 		} else {
 			$details = array('test');

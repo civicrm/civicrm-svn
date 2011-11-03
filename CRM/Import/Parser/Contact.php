@@ -248,9 +248,10 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             $this->_updateWithId = true;
         }
         
-        require_once 'CRM/Core/BAO/Preferences.php';
+        require_once 'CRM/Core/BAO/Setting.php';
         $this->_parseStreetAddress = CRM_Utils_Array::value( 'street_address_parsing', 
-                                                             CRM_Core_BAO_Preferences::valueOptions( 'address_options' ), 
+                                                             CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                                                 'address_options' ), 
                                                              false );
     }
 
@@ -437,7 +438,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
      */
     function import( $onDuplicate, &$values, $doGeocodeAddress = false ) 
     { 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $this->_unparsedStreetAddressContacts = array( );
         if ( ! $doGeocodeAddress ) {
             // CRM-5854, reset the geocode method to null to prevent geocoding
@@ -462,7 +463,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         static $contactFields = null;
         if ( $contactFields == null) {
             require_once "CRM/Contact/DAO/Contact.php";
-            $contactFields =& CRM_Contact_DAO_Contact::import( );
+            $contactFields = CRM_Contact_DAO_Contact::import( );
         }              
         
         //check if external identifier exists in database
@@ -824,7 +825,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     }
                     
                     //fixed for CRM-4148
-                    if ( $params[$key]['id'] ) {
+                    if ( CRM_Utils_Array::value( 'id', $params[$key] ) ) {
                         $contact           = array( 'contact_id' => $params[$key]['id'] );
                         $defaults          = array( );
                         $relatedNewContact = CRM_Contact_BAO_Contact::retrieve( $contact, $defaults );
@@ -840,7 +841,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     $matchedIDs = array(  );
                     // To update/fill contact, get the matching contact Ids if duplicate contact found 
                     // otherwise get contact Id from object of related contact
-                    if ( is_array( $relatedNewContact ) && civicrm_api3_error( $relatedNewContact ) ) {
+                    if ( is_array( $relatedNewContact ) && civicrm_error( $relatedNewContact ) ) {
                         if ( civicrm_api3_duplicate($relatedNewContact) ) {
                             $matchedIDs = explode(',',$relatedNewContact['error_message']['params'][0]);
                         } else {
@@ -955,7 +956,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             return $this->processMessage( $values, $statusFieldName, $this->_retCode );
         }
         //dupe checking      
-        if ( is_array( $newContact ) && civicrm_api3_error( $newContact ) ) {
+        if ( is_array( $newContact ) && civicrm_error( $newContact ) ) {
             $code = null;
             
             if ( ( $code = CRM_Utils_Array::value( 'code', $newContact['error_message'] ) ) && 
@@ -1011,7 +1012,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     $newContact = CRM_Contact_BAO_Contact::retrieve( $contact, $defaults );
                 }
                 
-                if ( civicrm_api3_error( $newContact ) ) {
+                if ( civicrm_error( $newContact ) ) {
                     $contactID = $newContact['error_message']['params'][0];
                     if ( !in_array( $contactID, $this->_newContacts ) ) {
                         $this->_newContacts[] = $contactID;
@@ -1602,7 +1603,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                                      true,
                                                      false );
         if ( ( is_null( $error )                                                ) && 
-             ( civicrm_api3_error( _civicrm_api3_validate_formatted_contact($formatted) ) ) ) {
+             ( civicrm_error( _civicrm_api3_validate_formatted_contact($formatted) ) ) ) {
             $error = _civicrm_api3_validate_formatted_contact($formatted);
         }
         
@@ -1614,7 +1615,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             }
             
             // pass doNotResetCache flag since resetting and rebuilding cache could be expensive.
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $config->doNotResetCache = 1;
             $cid = CRM_Contact_BAO_Contact::createProfileContact( $formatted, $contactFields, 
                                                                   $contactId, null, null, 

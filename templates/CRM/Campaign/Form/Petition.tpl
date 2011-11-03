@@ -59,13 +59,17 @@
        </tr>
        <tr class="crm-campaign-survey-form-block-profile_id">
            <td class="label">{$form.contact_profile_id.label}</td>
-           <td>{$form.contact_profile_id.html}
+           <td>{$form.contact_profile_id.html}&nbsp;<span class="profile-links"></span>
 	   <div class="description">{ts}Fields about the contact you want to collect.{/ts}</div></td>
        </tr>	
        <tr class="crm-campaign-survey-form-block-profile_id">
            <td class="label">{$form.profile_id.label}</td>
-           <td>{$form.profile_id.html}
-	   <div class="description">{ts}Fields about the petition.{/ts}</div></td>
+           <td>{$form.profile_id.html}&nbsp;<span class="profile-links"></span>
+	       <div class="description">{ts}Fields about the petition.{/ts}</div>
+           <div class="profile-create">
+                <a href="{crmURL p='civicrm/admin/uf/group/add' q='reset=1&action=add'}" target="_blank">{ts}Click here for new profile{/ts}
+           </div>
+           </td>
        </tr>	
        <tr class="crm-campaign-survey-form-block-is_active">
            <td class="label">{$form.is_active.label}</td>
@@ -80,5 +84,24 @@
       </table>
 {/if}
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-
 </div>
+
+{*include profile link function*}
+{include file="CRM/common/buildProfileLink.tpl"}
+
+{literal}
+<script type="text/javascript">
+    //show edit profile field links
+    cj(function() {
+        // show edit for both contact and activity profile
+        cj('select[id$="profile_id"]').change( function( ) {
+            buildLinks( cj(this), cj(this).val());
+        });
+
+        // make sure we set edit links for both profiles when form loads
+        cj('select[id$="profile_id"]').each( function(e) {
+            buildLinks( cj(this), cj(this).val()); 
+        });
+    });
+</script>
+{/literal}

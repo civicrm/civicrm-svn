@@ -31,6 +31,7 @@ ORIGPWD=`pwd`
 # Set no actions by default 
 D5PACK=0
 J5PACK=0
+WP5PACK=0
 
 # Display usage
 display_usage()
@@ -43,6 +44,7 @@ display_usage()
 	echo "  all - generate all available tarballs"
 	echo "  d5  - generate Drupal PHP5 module"
 	echo "  j5  - generate Joomla PHP5 module"
+	echo "  wp5  - generate Wordpress PHP5 module"
 	echo
 	echo "You also need to have distmaker.conf file in place."
 	echo "See distmaker.conf.dist for example contents."
@@ -95,12 +97,19 @@ case $1 in
 	echo; echo "Generating Joomla PHP5 module"; echo;
 	J5PACK=1
 	;;
+	
+	# WORDPRESS PHP5
+	wp5)
+	echo; echo "Generating Wordpress PHP5 module"; echo;
+	WP5PACK=1
+	;;
 
 	# ALL
 	all)
 	echo; echo "Generating all we've got."; echo;
 	D5PACK=1
 	J5PACK=1
+	WP5PACK=1
 	;;
 
 	# USAGE
@@ -129,6 +138,10 @@ if [ $J5PACK = 1 ]; then
 	sh $P/dists/joomla_php5.sh
 fi
 
+if [ $WP5PACK = 1 ]; then
+	echo; echo "Packaging for Wordpress, PHP5 version"; echo;
+	sh $P/dists/wordpress_php5.sh
+fi
 
 unset DM_SOURCEDIR DM_GENFILESDIR DM_TARGETDIR DM_TMPDIR DM_PHP DM_RSYNC DM_VERSION DM_ZIP
 echo;echo "DISTMAKER Done.";echo;

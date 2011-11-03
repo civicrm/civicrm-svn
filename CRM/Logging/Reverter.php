@@ -66,7 +66,7 @@ class CRM_Logging_Reverter
 
         // get custom data tables, columns and types
         $ctypes = array();
-        $dao =& CRM_Core_DAO::executeQuery('SELECT table_name, column_name, data_type FROM civicrm_custom_group cg JOIN civicrm_custom_field cf ON (cf.custom_group_id = cg.id)');
+        $dao = CRM_Core_DAO::executeQuery('SELECT table_name, column_name, data_type FROM civicrm_custom_group cg JOIN civicrm_custom_field cf ON (cf.custom_group_id = cg.id)');
         while ($dao->fetch()) {
             if (!isset($ctypes[$dao->table_name])) $ctypes[$dao->table_name] = array('entity_id' => 'Integer');
             $ctypes[$dao->table_name][$dao->column_name] = $dao->data_type;

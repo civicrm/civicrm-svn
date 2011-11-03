@@ -7,6 +7,10 @@
 
   <civicrm_file />
 
+  <civicrm_job />
+
+  <civicrm_job_log />
+
   <civicrm_location_type />
 
   <civicrm_mail_settings />
@@ -49,7 +53,6 @@
 
   <civicrm_mailing_bounce_pattern />
 
-  <civicrm_product />
 
   <civicrm_discount />
 
@@ -59,9 +62,7 @@
 
   <civicrm_financial_trxn />
 
-  <civicrm_payment_processor />
-
-  <civicrm_payment_processor_type />
+  <civicrm_pcp />
 
   <civicrm_project />
 
@@ -133,8 +134,6 @@
 
   <civicrm_phone />
 
-  <civicrm_preferences />
-
   <civicrm_state_province />
 
   <civicrm_tag />
@@ -146,6 +145,8 @@
   <civicrm_openid />
 
   <civicrm_website />
+
+  <civicrm_setting />
 
   <civicrm_acl_cache />
 
@@ -177,8 +178,6 @@
 
   <civicrm_contribution_widget />
 
-  <civicrm_pcp />
-
   <civicrm_entity_financial_trxn />
 
   <civicrm_activity />
@@ -192,8 +191,6 @@
   <civicrm_pledge />
 
   <civicrm_price_field />
-
-  <civicrm_price_field_value />
 
   <civicrm_county />
 
@@ -259,7 +256,9 @@
 
   <civicrm_membership_log />
 
-  <civicrm_pledge_payment />
+  <civicrm_price_field_value />
+
+  <civicrm_line_item />
 
   <civicrm_address />
 

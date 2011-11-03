@@ -60,6 +60,13 @@ class CRM_Core_PseudoConstant
      * @static
      */
     private static $locationVcardName;
+
+    /**
+     * location display name
+     * @var array
+     * @static
+     */
+    private static $locationDisplayName;
     
     /**
      * activity type
@@ -301,11 +308,18 @@ class CRM_Core_PseudoConstant
     private static $mailProtocol;
     
     /**
-     * Email Greeting
+     * Greetings
      * @var array
      * @static
      */
     private static $greeting = array( );
+	
+	/** 
+     * Default Greetings
+     * @var array
+     * @static
+     */
+    private static $greetingDefaults = array( );
     
     /**
      * Extensions
@@ -320,6 +334,20 @@ class CRM_Core_PseudoConstant
      * @static
      */
     private static $activityContacts;
+
+    /**
+     * event contacts
+     * @var array
+     * @static
+     */
+    private static $eventContacts;
+
+    /**
+     * auto renew options
+     * @var array
+     * @static
+     */
+    private static $autoRenew;
 
     /**
      * Financial Account Type
@@ -352,7 +380,7 @@ class CRM_Core_PseudoConstant
                                      $filter = 'is_active', $condition = null, $orderby = null, $key = 'id' ) 
     {
         $cacheKey = "CRM_PC_{$name}_{$all}_{$key}_{$retrieve}_{$filter}_{$condition}_{$orderby}";
-        $cache =& CRM_Utils_Cache::singleton( );
+        $cache = CRM_Utils_Cache::singleton( );
         $var = $cache->get( $cacheKey );
         if ( $var ) {
             return $var;
@@ -442,6 +470,27 @@ class CRM_Core_PseudoConstant
             self::populate( self::$locationVcardName, 'CRM_Core_DAO_LocationType', $all, 'vcard_name' );
         }
         return self::$locationVcardName;
+    }
+
+    /**
+     * Get all location Display names.
+     *
+     * The static array locationDisplayName is returned
+     *
+     * @access public
+     * @static
+     *
+     * @param boolean $all - get All location display names - default is to get only active ones.
+     *
+     * @return array - array reference of all location display names.
+     *
+     */
+    public static function &locationDisplayName( $all=false )
+    {
+        if ( ! self::$locationDisplayName ) {
+            self::populate( self::$locationDisplayName, 'CRM_Core_DAO_LocationType', $all, 'display_name' );
+        }
+        return self::$locationDisplayName;
     }
 
     /**
@@ -721,7 +770,7 @@ class CRM_Core_PseudoConstant
             $config = CRM_Core_Config::singleton();
             if ( $limit ) {
                 // limit the state/province list to the countries specified in CIVICRM_PROVINCE_LIMIT
-                $countryIsoCodes =& self::countryIsoCode();
+                $countryIsoCodes = self::countryIsoCode();
                 $limitCodes = $config->provinceLimit( );
                 $limitIds = array();
                 foreach ($limitCodes as $code) {
@@ -738,7 +787,7 @@ class CRM_Core_PseudoConstant
             // localise the province names if in an non-en_US locale
             global $tsLocale;
             if ($tsLocale != '' and $tsLocale != 'en_US') {
-                $i18n =& CRM_Core_I18n::singleton();
+                $i18n = CRM_Core_I18n::singleton();
                 $i18n->localizeArray(self::$stateProvince, array('context' => 'province'));
                 asort(self::$stateProvince);
             }
@@ -782,7 +831,7 @@ WHERE  id = %1";
 
             if ( $limit ) {
                 $config = CRM_Core_Config::singleton();
-                $countryIsoCodes =& self::countryIsoCode();
+                $countryIsoCodes = self::countryIsoCode();
                 $limitCodes = $config->provinceLimit( );
                 $limitIds = array();
                 foreach ($limitCodes as $code) {
@@ -858,7 +907,7 @@ WHERE  id = %1";
 
             // if default country is set, percolate it to the top
             if ( $config->defaultContactCountry( ) ) {
-                $countryIsoCodes =& self::countryIsoCode();
+                $countryIsoCodes = self::countryIsoCode();
                 $defaultID = array_search($config->defaultContactCountry( ), $countryIsoCodes); 
                 if ( $defaultID !== false ) {
                     $default[$defaultID] = CRM_Utils_Array::value($defaultID,self::$country);
@@ -869,7 +918,7 @@ WHERE  id = %1";
             // localise the country names if in an non-en_US locale
             global $tsLocale;
             if ($tsLocale != '' and $tsLocale != 'en_US') {
-                $i18n =& CRM_Core_I18n::singleton();
+                $i18n = CRM_Core_I18n::singleton();
                 $i18n->localizeArray(self::$country, array('context' => 'country'));
                 asort(self::$country);
             }
@@ -1042,20 +1091,27 @@ WHERE  id = %1";
      *
      */
     public static function &staticGroup( $onlyPublic = false,
-                                         $groupType  = null )
+                                         $groupType  = null,
+                                         $excludeHidden = true )
     {
         if ( ! self::$staticGroup ) {
             $condition = 'saved_search_id = 0 OR saved_search_id IS NULL';
             if ( $onlyPublic ) {
                 $condition .= " AND visibility != 'User and User Admin Only'";
             }
+
             if ( $groupType ) {
                 require_once 'CRM/Contact/BAO/Group.php';
                 $condition .= ' AND ' . CRM_Contact_BAO_Group::groupTypeCondition( $groupType );
             }
+
+            if ( $excludeHidden ) {
+                $condition .= ' AND is_hidden != 1 ';
+            }
             
             self::populate( self::$staticGroup, 'CRM_Contact_DAO_Group', false, 'title', 'is_active', $condition, 'title' );
         }
+
         return self::$staticGroup;        
     }
 
@@ -1489,7 +1545,7 @@ ORDER BY name";
         $config = CRM_Core_Config::singleton( );
         global $tsLocale;
         if ( $tsLocale != '' and $tsLocale != 'en_US' ) {
-            $i18n =& CRM_Core_I18n::singleton();
+            $i18n = CRM_Core_I18n::singleton();
             $i18n->localizeArray( $result );
             asort( $result );
         }
@@ -1542,6 +1598,11 @@ ORDER BY name";
                 $result[$dao->id] = $dao->name;
             }
         }
+        
+        // first build the radio boxes
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::buildStateProvinceForCountry( $countryID, $result );
+        
         return $result;
     }
 
@@ -1560,12 +1621,19 @@ ORDER BY name";
      */
 	public static function greeting( $filter, $columnName = 'label' )
     { 
-		$index = $filter['greeting_type'] .'_'.$columnName;
-		$filterCondition = null;
+		$index = $filter['greeting_type']  . '_' . $columnName;
+
+        // also add contactType to the array
+        $contactType = CRM_Utils_Array::value( 'contact_type', $filter );
+        if ( $contactType ) {
+            $index .= '_' . $contactType;
+        }
+
 	    if ( ! CRM_Utils_Array::value( $index, self::$greeting ) ) {
-			if ( CRM_Utils_Array::value( 'contact_type', $filter ) ) {
+            $filterCondition = null;
+			if ( $contactType ) {
 				$filterVal = 'v.filter =';
-				switch( $filter['contact_type'] ) {
+				switch( $contactType ) {
 				case 'Individual': 
 					$filterVal .= "1";
 					break;
@@ -1577,14 +1645,64 @@ ORDER BY name";
 					break;
 				}			
 				$filterCondition .= "AND (v.filter = 0 OR {$filterVal}) "; 
-			}	 
-			   
+			} 
+            
             require_once 'CRM/Core/OptionGroup.php';
-            self::$greeting[$index] = CRM_Core_OptionGroup::values( $filter['greeting_type'], null, null, null, 
+            self::$greeting[$index] = CRM_Core_OptionGroup::values( $filter['greeting_type'], 
+                                                                    null, null, null, 
 																	$filterCondition, $columnName );
         }
+
         return self::$greeting[$index];
     }
+
+    /**
+     * Construct array of default greeting values for contact type
+     *
+     * @access public
+     * @static
+     *
+     * @return array - array reference of default greetings.
+     *
+     */
+    public static function &greetingDefaults( )
+    {
+	    if ( ! self::$greetingDefaults ) {
+			$defaultGreetings = array();
+			$contactTypes     = array( 'Individual', 'Organization', 'Household' );
+			$greetingTypes    = array( 'addressee', 'email_greeting', 'postal_greeting' );
+            
+			require_once 'CRM/Core/OptionGroup.php';
+            
+			foreach ( $contactTypes as $contactType ) {
+				$filterCondition = '';
+				$filterVal       = 'v.filter =';
+                
+				switch( $contactType ) {
+				case 'Individual': 
+					$filterVal .= "1";
+					break;
+				case 'Household':
+					$filterVal .= "2";
+					break;
+				case 'Organization':
+					$filterVal .= "3";
+					break;
+				}			
+				$filterCondition .= " AND (v.filter = 0 OR {$filterVal}) AND v.is_default = 1 ";	
+                
+				foreach ( $greetingTypes as $greetingType ) {
+					$tokenVal = CRM_Core_OptionGroup::values( $greetingType, null, null, null, 
+                                                              $filterCondition, 'label' );
+					$defaultGreetings[$contactType][$greetingType] = $tokenVal;
+				}
+			}
+            
+			self::$greetingDefaults = $defaultGreetings;
+        }
+        
+        return self::$greetingDefaults;
+	}
 
     /**
      * Get all the Languages from database.
@@ -1643,25 +1761,25 @@ ORDER BY name";
     }
 
     /**
-     * Get all Financial Account Types
+     * Get all Event Contacts
      *
-     * The static array financial_account_type is returned
+     * The static array eventContacts is returned
      *
      * @access public
      * @static
      *
-     * @param boolean $all - get All Financial Account Type - default is to get only active ones.
+     * @param boolean $all - get All event Contacts - default is to get only active ones.
      *
-     * @return array - array reference of all Financial Account Type
+     * @return array - array reference of all  event Contacts
      *
      */
-    public static function financialAccountType( )
+    public static function &eventContacts( )
     {
-        if ( ! self::$financialAccountType ) {
+        if ( ! self::$eventContacts ) {
             require_once 'CRM/Core/OptionGroup.php';
-            self::$financialAccountType = CRM_Core_OptionGroup::values('financial_account_type');
+            self::$eventContacts = CRM_Core_OptionGroup::values('event_recipients');
         }
-        return self::$financialAccountType;
+        return self::$eventContacts;
     }
 }
 

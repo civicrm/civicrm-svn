@@ -77,21 +77,27 @@ class CRM_Core_Permission_Drupal {
     public static function &group( $groupType = null, $excludeHidden = true ) {
         if ( ! isset( self::$_viewPermissionedGroups ) ) {
             self::$_viewPermissionedGroups = self::$_editPermissionedGroups = array( );
+        }
 
-            $groups =& CRM_Core_PseudoConstant::allGroup( $groupType, $excludeHidden );
+        $groupKey = $groupType ? $groupType : 'all';
+
+        if ( ! isset( self::$_viewPermissionedGroups[$groupKey] ) ) {
+            self::$_viewPermissionedGroups[$groupKey] = self::$_editPermissionedGroups[$groupKey] = array( );
+
+            $groups = CRM_Core_PseudoConstant::allGroup( $groupType, $excludeHidden );
 
             if ( self::check( 'edit all contacts' ) ) {
                 // this is the most powerful permission, so we return
                 // immediately rather than dilute it further
-                self::$_editAdminUser          = self::$_viewAdminUser  = true;
-                self::$_editPermission         = self::$_viewPermission = true;
-                self::$_editPermissionedGroups = $groups;
-                self::$_viewPermissionedGroups = $groups;
-                return self::$_viewPermissionedGroups;
+                self::$_editAdminUser                     = self::$_viewAdminUser  = true;
+                self::$_editPermission                    = self::$_viewPermission = true;
+                self::$_editPermissionedGroups[$groupKey] = $groups;
+                self::$_viewPermissionedGroups[$groupKey] = $groups;
+                return self::$_viewPermissionedGroups[$groupKey];
             } else if ( self::check( 'view all contacts' ) ) {
-                self::$_viewAdminUser          = true;
-                self::$_viewPermission         = true;
-                self::$_viewPermissionedGroups = $groups;
+                self::$_viewAdminUser                     = true;
+                self::$_viewPermission                    = true;
+                self::$_viewPermissionedGroups[$groupKey] = $groups;
             }
 
             require_once 'CRM/ACL/API.php';
@@ -99,21 +105,21 @@ class CRM_Core_Permission_Drupal {
             $ids = CRM_ACL_API::group( CRM_Core_Permission::VIEW, null, 'civicrm_saved_search', $groups );
             foreach ( array_values( $ids ) as $id ) {
                 $title = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group', $id, 'title' );
-                self::$_viewPermissionedGroups[$id] = $title;
+                self::$_viewPermissionedGroups[$groupKey][$id] = $title;
                 self::$_viewPermission              = true; 
             }
 
             $ids = CRM_ACL_API::group( CRM_Core_Permission::EDIT, null, 'civicrm_saved_search', $groups );
             foreach ( array_values( $ids ) as $id ) {
                 $title = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group', $id, 'title' );
-                self::$_editPermissionedGroups[$id] = $title;
-                self::$_viewPermissionedGroups[$id] = $title;
+                self::$_editPermissionedGroups[$groupKey][$id] = $title;
+                self::$_viewPermissionedGroups[$groupKey][$id] = $title;
                 self::$_editPermission              = true; 
                 self::$_viewPermission              = true; 
             }
         }
 
-        return self::$_viewPermissionedGroups;
+        return self::$_viewPermissionedGroups[$groupKey];
     }
 
     /**
@@ -127,25 +133,28 @@ class CRM_Core_Permission_Drupal {
      * @access public
      */
     public static function groupClause( $type, &$tables, &$whereTables ) {
-        if (! isset( self::$_viewPermissionedGroups ) ) {
+        if ( ! isset( self::$_viewPermissionedGroups ) ) {
             self::group( );
         }
 
+        $groupKey = 'all'; // we basically get all the groups here
         if ( $type == CRM_Core_Permission::EDIT ) {
             if ( self::$_editAdminUser ) {
                 $clause = ' ( 1 ) ';
-            } else if ( empty( self::$_editPermissionedGroups ) ) {
+            } else if ( empty( self::$_editPermissionedGroups[$groupKey] ) ) {
                 $clause = ' ( 0 ) ';
             } else {
                 $clauses = array( );
-                $groups = implode( ', ', self::$_editPermissionedGroups );
-                $clauses[] = ' ( civicrm_group_contact.group_id IN ( ' . implode( ', ', array_keys( self::$_editPermissionedGroups ) ) .
+                $groups = implode( ', ', self::$_editPermissionedGroups[$groupKey] );
+                $clauses[] = 
+                    ' ( civicrm_group_contact.group_id IN ( ' .
+                    implode( ', ', array_keys( self::$_editPermissionedGroups[$groupKey] ) ) .
                     " ) AND civicrm_group_contact.status = 'Added' ) ";
                 $tables['civicrm_group_contact'] = 1;
                 $whereTables['civicrm_group_contact'] = 1;
                 
                 // foreach group that is potentially a saved search, add the saved search clause
-                foreach ( array_keys( self::$_editPermissionedGroups ) as $id ) {
+                foreach ( array_keys( self::$_editPermissionedGroups[$groupKey] ) as $id ) {
                     $group     = new CRM_Contact_DAO_Group( );
                     $group->id = $id;
                     if ( $group->find( true ) && $group->saved_search_id ) {
@@ -163,19 +172,21 @@ class CRM_Core_Permission_Drupal {
         } else {
             if ( self::$_viewAdminUser ) {
                 $clause = ' ( 1 ) ';
-            } else if ( empty( self::$_viewPermissionedGroups ) ) {
+            } else if ( empty( self::$_viewPermissionedGroups[$groupKey] ) ) {
                 $clause = ' ( 0 ) ';
             } else {
                 $clauses = array( );
-                $groups = implode( ', ', self::$_viewPermissionedGroups );
-                $clauses[] = ' ( civicrm_group_contact.group_id IN (' . implode( ', ', array_keys( self::$_viewPermissionedGroups ) ) .
+                $groups = implode( ', ', self::$_viewPermissionedGroups[$groupKey] );
+                $clauses[] = 
+                    ' ( civicrm_group_contact.group_id IN (' .
+                    implode( ', ', array_keys( self::$_viewPermissionedGroups[$groupKey] ) ) .
                     " ) AND civicrm_group_contact.status = 'Added' ) ";
                 $tables['civicrm_group_contact'] = 1;
                 $whereTables['civicrm_group_contact'] = 1;
 
         
                 // foreach group that is potentially a saved search, add the saved search clause
-                foreach ( array_keys( self::$_viewPermissionedGroups ) as $id ) {
+                foreach ( array_keys( self::$_viewPermissionedGroups[$groupKey] ) as $id ) {
                     $group     = new CRM_Contact_DAO_Group( );
                     $group->id = $id;
                     if ( $group->find( true ) && $group->saved_search_id ) {
@@ -254,6 +265,118 @@ class CRM_Core_Permission_Drupal {
         */
     }
 
+    /**
+     * Given a roles array, check for access requirements
+     *
+     * @param array $array the roles to check
+     *
+     * @return boolean true if yes, else false
+     * @static
+     * @access public
+     */
+    static function checkGroupRole( $array) {
+        if ( function_exists( 'user_load' ) && isset($array)) {
+            $user = user_load(array('uid' => $GLOBALS['user']->uid));
+            //if giver roles found in user roles - return true
+            foreach ($array as $key => $value) {
+                if (in_array($value, $user->roles)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get all the contact emails for users that have a specific permission
+     *
+     * @param string $permissionName name of the permission we are interested in
+     *
+     * @return string a comma separated list of email addresses
+     */
+    public static function permissionEmails( $permissionName ) {
+        static $_cache = array( );
+        
+        if ( isset( $_cache[$permissionName] ) ) {
+            return $_cache[$permissionName];
+        }
+        
+        $uids = array( );
+        $sql = "
+SELECT     {users}.uid, {permission}.perm
+FROM       {users}
+LEFT  JOIN {users_roles} ON {users}.uid = {users_roles}.uid
+INNER JOIN {permission}  ON ( {permission}.rid = {users_roles}.rid OR {permission}.rid = 2 )
+WHERE      {permission}.perm LIKE '%%{$permissionName}%%'
+AND        {users}.status = 1
+";
+
+        $query = db_query( $sql );
+        while ( $result = db_fetch_object( $query ) ) {
+            $uids[] = $result->uid;
+        }
+
+        $_cache[$permissionName] = self::getContactEmails( $uids );
+        return $_cache[$permissionName];
+    }
+
+    /**
+     * Get all the contact emails for users that have a specific role
+     *
+     * @param string $roleName name of the role we are interested in
+     *
+     * @return string a comma separated list of email addresses
+     */
+    public static function roleEmails( $roleName ) {
+        static $_cache = array( );
+        
+        if ( isset( $_cache[$roleName] ) ) {
+            return $_cache[$roleName];
+        }
+
+        $uids = array( );
+        $sql = "
+SELECT     {users}.uid, {permission}.perm
+FROM       {users}
+LEFT  JOIN {users_roles} ON {users}.uid = {users_roles}.uid
+INNER JOIN {role}        ON ( {role}.rid = {users_roles}.rid OR {role}.rid = 2 )
+WHERE      {role}. name LIKE '%%{$roleName}%%'
+AND        {users}.status = 1
+";
+
+        $query = db_query( $sql );
+        while ( $result = db_fetch_object( $query ) ) {
+            $uids[] = $result->uid;
+        }
+
+        $_cache[$roleName] = self::getContactEmails( $uids );
+        return $_cache[$roleName];
+    }
+    
+    static function getContactEmails( $uids ) {
+        if ( empty( $uids ) ) {
+            return '';
+        }
+        $uidString = implode( ',', $uids );
+        $sql = "
+SELECT     e.email
+FROM       civicrm_contact c
+INNER JOIN civicrm_email e     ON ( c.id = e.contact_id AND e.is_primary = 1 )
+INNER JOIN civicrm_uf_match uf ON ( c.id = uf.contact_id )
+WHERE      c.is_deceased = 0
+AND        c.is_deleted  = 0
+AND        uf.uf_id IN ( $uidString )
+";
+
+        $dao = CRM_Core_DAO::executeQuery( $sql );
+
+        $emails = array( );
+        while ( $dao->fetch( ) ) {
+            $emails[] = $dao->email;
+        }
+
+        return implode( ', ', $emails );
+    }
+
 }
-
-

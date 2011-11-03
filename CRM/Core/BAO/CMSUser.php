@@ -57,55 +57,109 @@ class CRM_Core_BAO_CMSUser
         //start of schronization code
         $config = CRM_Core_Config::singleton( );
 
-        CRM_Core_Error::ignoreException( );
-        $db_uf =& self::dbHandle( $config );
-
-        if ( $config->userFramework == 'Drupal' ) { 
+        // Build an array of rows from UF users table.
+        $rows = array( );
+        if ( $config->userSystem->is_drupal == '1' ) { 
             $id   = 'uid'; 
             $mail = 'mail'; 
             $name = 'name';
+
+            $result = db_query("SELECT uid, mail, name FROM {users} where mail != ''");
+
+            while ( $row = $result->fetchAssoc( ) ) {
+                $rows[] = $row;
+            }
+
         } else if ( $config->userFramework == 'Joomla' ) { 
             $id   = 'id'; 
             $mail = 'email'; 
             $name = 'name';
+            // TODO: Insert code here to populate $rows for Joomla;
         } else { 
             CRM_Core_Error::fatal( 'CMS user creation not supported for this framework' ); 
         } 
 
         set_time_limit(300);
 
-        $sql   = "SELECT $id, $mail, $name FROM {$config->userFrameworkUsersTableName} where $mail != ''";
-        $query = $db_uf->query( $sql );
-        
-        $user            = new StdClass( );
-        $uf              = $config->userFramework;
-        $contactCount    = 0;
-        $contactCreated  = 0;
-        $contactMatching = 0;
-        while ( $row = $query->fetchRow( DB_FETCHMODE_ASSOC ) ) {
-            $user->$id   = $row[$id];
-            $user->$mail = $row[$mail];
-            $user->$name = $row[$name];
-            $contactCount++;
-            if ($match = CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user, $row[$id], $row[$mail], $uf, 1, 'Individual', true ) ) {
-                $contactCreated++;
-            } else {
-                $contactMatching++;
+        if ($config->userFramework == 'Drupal') {
+            $user            = new StdClass( );
+            $uf              = $config->userFramework;
+            $contactCount    = 0;
+            $contactCreated  = 0;
+            $contactMatching = 0;
+            foreach ( $rows as $row ) {
+                $user->$id   = $row[$id];
+                $user->$mail = $row[$mail];
+                $user->$name = $row[$name];
+                $contactCount++;
+                if ($match = CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user, $row[$id], $row[$mail], $uf, 1, 'Individual', true ) ) {
+                    $contactCreated++;
+                } else {
+                    $contactMatching++;
+                }
+                if (is_object($match)) {
+                    $match->free();
+                }
             }
-            if (is_object($match)) {
-              $match->free();
+        } else if ($config->userFramework == 'Joomla') {
+            
+            $JUserTable =& JTable::getInstance( 'User' , 'JTable' );
+            
+            $db     = $JUserTable->getDbo();
+            $query  = $db->getQuery(true);
+            $query->select( $id.', '.$mail.', '.$name );
+            $query->from($JUserTable->getTableName());
+            $query->where($mail != '');
+            
+            $db->setQuery($query, 0, $limit);
+            $users = $db->loadObjectList();
+            
+            $user            = new StdClass( );
+            $uf              = $config->userFramework;
+            $contactCount    = 0;
+            $contactCreated  = 0;
+            $contactMatching = 0;
+            for ($i=0; $i<count($users); $i++ ) {
+                $user->$id   = $users[$i]->$id;
+                $user->$mail = $users[$i]->$mail;
+                $user->$name = $users[$i]->$name;
+                $contactCount++;
+                if ($match = CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user,
+                                                                       $users[$i]->$id,
+                                                                       $users[$i]->$mail,
+                                                                       $uf,
+                                                                       1,
+                                                                       'Individual',
+                                                                       true ) ) {
+                    $contactCreated++;
+                } else {
+                    $contactMatching++;
+                }
+                if (is_object($match)) {
+                    $match->free();
+                }
             }
         }
-        
-        $db_uf->disconnect( );
         
         //end of schronization code
         $status = ts('Synchronize Users to Contacts completed.');
-        $status .= ' ' . ts('Checked one user record.', array('count' => $contactCount, 'plural' => 'Checked %count user records.'));
+        $status .= ' ' . 
+            ts('Checked one user record.',
+               array('count' => $contactCount,
+                     'plural' => 'Checked %count user records.'));
         if ($contactMatching) {
-            $status .= ' ' . ts('Found one matching contact record.', array('count' => $contactMatching, 'plural' => 'Found %count matching contact records.'));
+            $status .= 
+                ' ' . 
+                ts('Found one matching contact record.',
+                   array('count' => $contactMatching,
+                         'plural' => 'Found %count matching contact records.'));
         }
-        $status .= ' ' . ts('Created one new contact record.', array('count' => $contactCreated, 'plural' => 'Created %count new contact records.'));
+
+        $status .= 
+            ' ' . 
+            ts('Created one new contact record.',
+               array('count' => $contactCreated,
+                     'plural' => 'Created %count new contact records.'));
         CRM_Core_Session::setStatus($status, true);
         CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin', 'reset=1' ) );
     }
@@ -124,21 +178,18 @@ class CRM_Core_BAO_CMSUser
     {
         $config  = CRM_Core_Config::singleton( );
         
-        $isDrupal = ucfirst($config->userFramework) == 'Drupal' ? TRUE : FALSE;
-        $isJoomla = ucfirst($config->userFramework) == 'Joomla' ? TRUE : FALSE;
-
-        if ( $isDrupal ) {
-            $ufID = self::createDrupalUser( $params, $mail );
-            if ( (variable_get('user_register', TRUE ) == 1) && !variable_get('user_email_verification', TRUE ) ) {
+        $ufID = $config->userSystem->createUser( $params, $mail );
+        if ($config->userSystem->is_drupal == 1 
+                    && (variable_get('user_register', TRUE ) == 1) 
+                    && !variable_get('user_email_verification', TRUE )) {
+                // Don't create drupal UF match record at this point if drupal user verification required
                 $contact = array('email' => $params[$mail] );
                 if ( self::userExists( $contact ) ) {
                     return $ufID;
                 }
-            }
-        } elseif ( $isJoomla ) {            
-            $ufID = self::createJoomlaUser( $params, $mail );           
-        }
+         }
 
+        //if contact doesn't already exist create UF Match
         if ( $ufID !== false &&
              isset( $params['contactID'] ) ) {
             // create the UF Match record
@@ -149,11 +200,6 @@ class CRM_Core_BAO_CMSUser
             $ufmatch->uf_name        =  $params[$mail];
             $ufmatch->save( );
             
-            // Simulate user login by storing details in session.
-            // Might break if we ever allow admins to create CMS users.
-            // This allows anonymous creator of PCP to see their page after they create it.
-            //$session = CRM_Core_Session::singleton();
-            //$session->set( 'userID'  , $ufmatch->contact_id );
         }
         
         return $ufID;
@@ -174,36 +220,33 @@ class CRM_Core_BAO_CMSUser
         $config = CRM_Core_Config::singleton( );
         $showCMS = false;
         
-        $isDrupal = ucfirst($config->userFramework) == 'Drupal' ? TRUE : FALSE;
+        $isDrupal = $config->userSystem->is_drupal ;
         $isJoomla = ucfirst($config->userFramework) == 'Joomla' ? TRUE : FALSE;
         //if CMS is configured for not to allow creating new CMS user,
         //don't build the form,Fixed for CRM-4036
         if ( $isJoomla ) {
-            $userParams = &JComponentHelper::getParams('com_users');
+            $userParams = JComponentHelper::getParams('com_users');
             if ( !$userParams->get('allowUserRegistration') ) {
                 return false;
             }
         } else if ( $isDrupal && ! variable_get('user_register', TRUE ) ) {
             return false;
         }
-        // if cms is drupal having version greater than equal to 5.1
-        // we also need email verification enabled, else we dont do it
-        // then showCMS will true
-        if ( $isDrupal OR $isJoomla ) {
-            if ( $gid ) {                                        
-                $isCMSUser = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $gid, 'is_cms_user' );
-            } 
-            // $cms is true when there is email(primary location) is set in the profile field.
-            $session = CRM_Core_Session::singleton( );                         
-            $userID  = $session->get( 'userID' );      
-            $showUserRegistration = false;
-            if ( $action ) { 
-                $showUserRegistration = true;
-            }elseif (!$action && !$userID ) { 
-                $showUserRegistration = true;
-            }
 
-            if ( $isCMSUser && $emailPresent ) {                
+        if ( $gid ) {                                        
+                $isCMSUser = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $gid, 'is_cms_user' );
+        } 
+        // $cms is true when there is email(primary location) is set in the profile field.
+        $session = CRM_Core_Session::singleton( );                         
+        $userID  = $session->get( 'userID' );      
+        $showUserRegistration = false;
+        if ( $action ) { 
+                $showUserRegistration = true;
+        }elseif (!$action && !$userID ) { 
+                $showUserRegistration = true;
+        }
+
+        if ( $isCMSUser && $emailPresent ) {                
                 if ( $showUserRegistration ) {
                     if ( $isCMSUser != 2  ) {
                         $extra = array(
@@ -229,9 +272,8 @@ class CRM_Core_BAO_CMSUser
                     } 
                     $showCMS = true;
                 } 
-            }
-            
-        } 
+        }
+
 
         $loginUrl =  $config->userFrameworkBaseURL;
         if ( $isJoomla ) {
@@ -239,36 +281,25 @@ class CRM_Core_BAO_CMSUser
             $loginUrl .= 'index.php?option=com_users&view=login';
         } elseif ( $isDrupal ) {
             $loginUrl .= 'user';
-            // For Drupal we can redirect user to current page after login by passing it as destination.
-            require_once 'CRM/Utils/System.php';
-            $args = null;
-
-            $id = $form->get( 'id' );
-            if ( $id ) {
-                $args .= "&id=$id";
-            } else {
-                $gid =  $form->get( 'gid' );
-                if ( $gid ) {
-                    $args .= "&gid=$gid";
-                } else {
-                     // Setup Personal Campaign Page link uses pageId
-                     $pageId =  $form->get( 'pageId' );
-                    if ( $pageId ) {
-                        $args .= "&pageId=$pageId&action=add";
-                    }
-                }
-            }
-    
-            if ( $args ) {
-                // append destination so user is returned to form they came from after login
-                $destination = CRM_Utils_System::currentPath( ) . '?reset=1' . $args;
+            // append destination so user is returned to form they came from after login
+            $destination = $config->userSystem->getLoginDestination($form);
+            if ( ! empty( $destination ) ) {
                 $loginUrl .= '?destination=' . urlencode( $destination );
-             }
+            }
         }
         $form->assign( 'loginUrl', $loginUrl );
         $form->assign( 'showCMS', $showCMS ); 
     } 
     
+    /*
+     * Checks that there is a valid username & email 
+     *  optionally checks password is present & matches DB & gets the CMS to validate 
+     *  
+     *  @params array $fields Posted values of form
+     *  @param  array $files uploaded files if any 
+     *  @param array $self reference to form object
+     * 
+     */
     static function formRule( $fields, $files, $self ) {
         if ( ! CRM_Utils_Array::value( 'cms_create_account', $fields ) ) {
             return true;
@@ -276,7 +307,7 @@ class CRM_Core_BAO_CMSUser
 
         $config  = CRM_Core_Config::singleton( );
             
-        $isDrupal = ucfirst($config->userFramework) == 'Drupal' ? TRUE : FALSE;
+        $isDrupal = $config->userSystem->is_drupal ;
         $isJoomla = ucfirst($config->userFramework) == 'Joomla' ? TRUE : FALSE;
 
         $errors = array( );
@@ -293,6 +324,10 @@ class CRM_Core_BAO_CMSUser
                         break;
                     }
                 }
+
+              if ($form->_component){
+                $args .= '&component=' . $form->_component;
+              }
             }
                 
             if ( $emailName == null ) {
@@ -328,94 +363,13 @@ class CRM_Core_BAO_CMSUser
                                  'mail' => $fields[$emailName] );
             }
                 
-            self::checkUserNameEmailExists( $params, $errors, $emailName );
+            $config->userSystem->checkUserNameEmailExists( $params, $errors, $emailName );
 
         }           
         return ( ! empty( $errors ) ) ? $errors : true;
     }
 
-    /**
-     * Check if username and email exists in the drupal db
-     * 
-     * @params $params    array   array of name and mail values
-     * @params $errors    array   array of errors
-     * @params $emailName string  field label for the 'email'
-     *
-     * @return void
-     * @static
-     */
-    static function checkUserNameEmailExists( &$params, &$errors, $emailName = 'email' )
-    {
-        $config  = CRM_Core_Config::singleton( );
 
-        $isDrupal = ucfirst($config->userFramework) == 'Drupal' ? true : false;
-        $isJoomla = ucfirst($config->userFramework) == 'Joomla' ? true : false;
-        
-        $dao = new CRM_Core_DAO( );
-        $name  = $dao->escape( CRM_Utils_Array::value( 'name', $params ) );
-        $email = $dao->escape( CRM_Utils_Array::value( 'mail', $params ) );
-
-
-        if ( $isDrupal ) {
-            $errors = form_get_errors( );
-            if ( $errors ) {
-                // unset drupal messages to avoid twice display of errors
-                unset( $_SESSION['messages'] );
-            }
-
-            if ( CRM_Utils_Array::value('name', $params) ) {
-                if ( $nameError = user_validate_name( $params['name'] ) ) {
-                    $errors['cms_name'] = $nameError;
-                } elseif ( (bool) db_select('users')->fields($config->userFrameworkUsersTableName, array('uid'))->condition('name', db_like($params['name']), 'LIKE')->range(0, 1)->execute()->fetchField() )  {
-                    $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', array( 1 => $params['name'] ) );
-                }
-            }
-
-            if ( CRM_Utils_Array::value( 'mail', $params ) ) {
-                if ( $emailError = user_validate_mail($params['mail']) ) {
-                    $errors[$emailName] = $emailError;
-                } elseif ( (bool) db_select('users')->fields($config->userFrameworkUsersTableName, array('uid'))->condition('mail', db_like($params['mail']), 'LIKE')->range(0, 1)->execute()->fetchField() ) {
-                    $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
-                                              array( 1 => $params['mail']) );
-                }
-            }
-
-        } elseif ( $isJoomla ) {
-            //don't allow the special characters and min. username length is two
-            //regex \\ to match a single backslash would become '/\\\\/' 
-            $isNotValid = (bool) preg_match('/[\<|\>|\"|\'|\%|\;|\(|\)|\&|\\\\|\/]/im', $name );
-            if ( $isNotValid || strlen( $name ) < 2 ) {
-                $errors['cms_name'] = ts('Your username contains invalid characters or is too short');
-            }
-            $sql = "
-SELECT username, email
-  FROM {$config->userFrameworkUsersTableName}
- WHERE (LOWER(username) = LOWER('$name')) OR (LOWER(email) = LOWER('$email'))
-";
-
-                    
-            $db_cms = DB::connect($config->userFrameworkDSN);
-            if ( DB::isError( $db_cms ) ) { 
-                die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) ); 
-            }
-            
-            $query = $db_cms->query( $sql );
-            $row = $query->fetchRow( );
-            if ( !empty( $row ) ) {
-                $dbName  = CRM_Utils_Array::value( 0, $row );
-                $dbEmail = CRM_Utils_Array::value( 1, $row );
-                if ( strtolower( $dbName ) == strtolower( $name ) ) {
-                    $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', 
-                                              array( 1 => $name ) );
-                }
-                if ( strtolower( $dbEmail ) == strtolower( $email ) ) {
-                    $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
-                                              array( 1 => $email) );
-                }
-            }
-        }
-
-    }
     
     /**
      * Function to check if a cms user already exists.
@@ -431,189 +385,50 @@ SELECT username, email
     {        
         $config = CRM_Core_Config::singleton( );
 
-        $isDrupal = ucfirst($config->userFramework) == 'Drupal' ? true : false;
+        $isDrupal = $config->userSystem->is_drupal ;
         $isJoomla = ucfirst($config->userFramework) == 'Joomla' ? true : false;
-        
-        $db_uf = DB::connect($config->userFrameworkDSN);
-        
-        if ( DB::isError( $db_uf ) ) { 
-            die( "Cannot connect to UF db via $dsn, " . $db_uf->getMessage( ) ); 
-        } 
         
         if ( !$isDrupal && !$isJoomla ) { 
             die( 'Unknown user framework' ); 
         }
         
+        // Use UF native framework to fetch data from UF user table
         if ( $isDrupal ) { 
-            $id   = 'uid'; 
-            $mail = 'mail';
+            $uid = db_query(
+                "SELECT uid FROM {users} where mail = :email",
+                array(':email' => $contact['email'])
+            ) -> fetchField( );
+
+            if ( $uid ) {
+                $contact['user_exists'] = true;
+                $result = $uid;
+            }
         } elseif ( $isJoomla ) { 
-            $id   = 'id'; 
-            $mail = 'email';
-        } 
-
-        $sql   = "SELECT $id FROM {$config->userFrameworkUsersTableName} where $mail='" . $contact['email'] . "'";
-        
-        $query = $db_uf->query( $sql );
-        
-        if ( $row = $query->fetchRow( DB_FETCHMODE_ASSOC ) ) {
-            $contact['user_exists'] = true;
-            if ( $isDrupal ) {
-                $result = $row['uid'];
-            } elseif ( $isJoomla ) {
-                $result = $row['id'];
+            $mail = $contact['email'];
+            
+            $JUserTable =& JTable::getInstance( 'User' , 'JTable' );
+            
+            $db     = $JUserTable->getDbo();
+            $query  = $db->getQuery(true);
+            $query->select( 'username, email' );
+            $query->from($JUserTable->getTableName());
+            $query->where('(LOWER(email) = LOWER(\''.$email.'\'))');
+            $db->setQuery($query, 0, $limit);
+            $users = $db->loadAssocList();
+            
+            $row = array();;
+            if (count($users)) {
+                $row = $users[0];
             }
-        } else {
-            $result = false;
+            
+            if ( !empty( $row ) ) {
+                $uid = CRM_Utils_Array::value( 'id', $row );
+                $contact['user_exists'] = true;
+                $result = $uid;
+            }
         }
-        
-        $db_uf->disconnect( );
+
         return $result;
-    }
-    
-    /**
-     * Function to create a user in Drupal.
-     *  
-     * @param array  $params associated array 
-     * @param string $mail email id for cms user
-     *
-     * @return uid if user exists, false otherwise
-     * 
-     * @access public
-     * @static
-     */    
-    static function createDrupalUser( &$params, $mail )
-    {
-        $form_state = array( );
-        $form_state['input']  = array (
-                                    'name' => $params['cms_name'],
-                                    'mail' => $params[$mail],
-                                    'op'   => 'Create new account'
-                                    );
-        if ( !variable_get('user_email_verification', TRUE )) {
-            $form_state['input']['pass']['pass1'] = $params['cms_pass'];
-            $form_state['input']['pass']['pass2'] = $params['cms_pass'];
-        }
-       
-        
-        $form_state['rebuild']    = FALSE;
-        $form_state['programmed'] = TRUE;
-        $form_state['method']     = 'post';
-        $form_state['build_info']['args'] = array();
-
-        $config = CRM_Core_Config::singleton( );
-
-        // we also need to redirect b
-        $config->inCiviCRM = true;
-
-        $form = drupal_retrieve_form('user_register_form', $form_state);
-       
-        drupal_prepare_form('user_register_form', $form, $form_state);
-
-        // remove the captcha element from the form prior to processing
-        unset($form['captcha']);
-       
-        $form_state['process_input'] = 1;
-        $form_state['submitted'] = 1;
-       
-        drupal_process_form('user_register_form', $form, $form_state);
-       
-        $config->inCiviCRM = false;
-       
-        if ( form_get_errors( ) ) {
-            return false;
-        }
-
-        // looks like we created a drupal user, lets make another db call to get the user id!
-        $db_cms = DB::connect($config->userFrameworkDSN);
-        if ( DB::isError( $db_cms ) ) {
-            die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) );
-        }
-
-        //Fetch id of newly added user
-        $id_sql   = "SELECT uid FROM {$config->userFrameworkUsersTableName} where name = '{$params['cms_name']}'";
-        $id_query = $db_cms->query( $id_sql );
-        $id_row   = $id_query->fetchRow( DB_FETCHMODE_ASSOC ) ;
-        return $id_row['uid'];
-    }
-
-    /**
-     * Function to create a user of Joomla.
-     *  
-     * @param array  $params associated array 
-     * @param string $mail email id for cms user
-     *
-     * @return uid if user exists, false otherwise
-     * 
-     * @access public
-     * @static
-     */
-    static function createJoomlaUser( &$params, $mail ) 
-    {
-        $userParams = &JComponentHelper::getParams( 'com_users' );
-        
-        $defaultUserGroup = $userParams->get( 'new_usertype', 2 );
-        
-        // Prepare the values for a new Joomla! user.
-        $values                 = array( );
-        $values['name']         = trim( $params['cms_name'] );
-        $values['username']     = trim( $params['cms_name'] );
-        $values['password']     = $params['cms_pass'];
-        $values['password2']    = $params['cms_confirm_pass'];
-        $values['email']        = trim( $params[$mail] );
-        $values['groups']       = array( $defaultUserGroup );
-        $values['usertype']     = 'deprecated';
-        $values['sendEmail']    = 0;
-        
-        $useractivation = $userParams->get( 'useractivation' );
-        if ( $useractivation == 1 ) { 
-            jimport('joomla.user.helper');
-            // block the User
-            $values['block'] = 1; 
-            $values['activation'] =JUtility::getHash( JUserHelper::genRandomPassword() ); 
-        } else { 
-            // don't block the user
-            $values['block'] = 0; 
-        }
-        
-        // Get an empty JUser instance.
-        $user =& JUser::getInstance( 0 );
-        $user->bind( $values );
-        
-        // Store the Joomla! user.
-        if ( ! $user->save( ) ) {
-            // Error can be accessed via $user->getError();
-            return false;
-        }
-        
-        return $user->get('id');
-    }
-    
-    static function updateUFName( $ufID, $ufName ) 
-    {
-        $config = CRM_Core_Config::singleton( );
-        
-        if ( $config->userFramework == 'Drupal' ) {
-            if ( function_exists( 'user_load' ) ) { // CRM-5555
-                $user = user_load( array( 'uid' => $ufID ) );
-                if ($user->mail != $ufName) {
-                    user_save( $user, array( 'mail' => $ufName ) );
-                    $user = user_load( array( 'uid' => $ufID ) );
-                }
-            }
-        } else if ( $config->userFramework == 'Joomla' ) {
-            $db_uf = self::dbHandle( $config );
-            $ufID   = CRM_Utils_Type::escape( $ufID, 'Integer' );
-            $ufName = CRM_Utils_Type::escape( $ufName, 'String' );
-
-            $sql = "
-UPDATE {$config->userFrameworkUsersTableName}
-SET    email = '$ufName'
-WHERE  id    = $ufID";
-
-            $db_uf->query( $sql );
-            $db_uf->disconnect( );
-        }
     }
 
     static function &dbHandle( &$config ) {

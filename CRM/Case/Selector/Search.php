@@ -172,7 +172,7 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
         $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
                                                     CRM_Contact_BAO_Query::MODE_CASE);
 
-        $this->_query->_distinctComponentClause = " DISTINCT ( civicrm_case.id )";
+        $this->_query->_distinctComponentClause = " civicrm_case.id ";
 		$this->_query->_groupByComponentClause  = " GROUP BY civicrm_case.id ";
     }//end of constructor
 
@@ -329,7 +329,7 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
              $isDeleted = false;
              if ( $result->case_deleted ) {
                  $isDeleted = true;
-                 $row['case_status_id'] =  $row['case_status_id'].'<br />(deleted)';
+                 $row['case_status_id'] = empty($row['case_status_id']) ? "" : $row['case_status_id']  .'<br />(deleted)';
              }
  
              $scheduledInfo['case_id'][]    = $result->case_id;
@@ -343,7 +343,7 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
                                                                        'cid' => $result->contact_id,
                                                                        'cxt' => $this->_context ) 
                                                          );
-             $row['moreActions'] = CRM_Core_Action::formLink( $links['moreActions'], 
+             $row['moreActions'] = CRM_Core_Action::formLink( CRM_Utils_Array::value('moreActions',$links), 
                                                               $mask, array( 'id'  => $result->case_id,
                                                                             'cid' => $result->contact_id,
                                                                             'cxt' => $this->_context ),

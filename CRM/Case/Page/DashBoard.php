@@ -65,7 +65,7 @@ class CRM_Case_Page_DashBoard extends CRM_Core_Page
             return;
         }
         
-        $session = & CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $allCases = CRM_Utils_Request::retrieve( 'all', 'Positive', $session );
         
         CRM_Utils_System::setTitle( ts('CiviCase Dashboard') );

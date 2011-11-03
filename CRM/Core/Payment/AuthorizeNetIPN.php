@@ -158,13 +158,17 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
             $recur->save( );
         } else {
             // Declined
-            
             $recur->contribution_status_id = array_search( 'Failed', $contributionStatus ); // failed status
             $recur->cancel_date            = $now;
             $recur->save( );
 
             CRM_Core_Error::debug_log_message( "Subscription payment failed - '{$input['response_reason_text']}'" );
-            return $this->failed( $objects, $transaction );
+
+            // the recurring contribution has declined a payment or has failed
+            // so we just fix the recurring contribution and not change any of
+            // the existing contribiutions
+            // CRM-9036
+            return true;
         }
         
         // check if contribution is already completed, if so we ignore this ipn
@@ -274,7 +278,7 @@ INNER JOIN civicrm_membership_payment mp ON m.id = mp.membership_id AND mp.contr
     function checkMD5( $ids, $input ) {
         $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ids['paymentProcessor'],
                                                                        $input['is_test'] ? 'test' : 'live' );
-        $paymentObject    =& CRM_Core_Payment::singleton( $input['is_test'] ? 'test' : 'live', $paymentProcessor );
+        $paymentObject    = CRM_Core_Payment::singleton( $input['is_test'] ? 'test' : 'live', $paymentProcessor );
 
         if ( ! $paymentObject->checkMD5 ( $input['MD5_Hash'], $input['trxn_id'], $input['amount'], true ) ) {
             CRM_Core_Error::debug_log_message( "MD5 Verification failed." );

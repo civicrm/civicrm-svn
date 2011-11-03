@@ -65,7 +65,7 @@ class CRM_Mailing_Event_BAO_Unsubscribe extends CRM_Mailing_Event_DAO_Unsubscrib
      * @static
      */
     public static function unsub_from_domain($job_id, $queue_id, $hash) {
-        $q =& CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
+        $q = CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
         if (! $q) {
             return false;
         }
@@ -109,7 +109,7 @@ class CRM_Mailing_Event_BAO_Unsubscribe extends CRM_Mailing_Event_DAO_Unsubscrib
      */
     public static function &unsub_from_mailing($job_id, $queue_id, $hash, $return = false) {
         /* First make sure there's a matching queue event */
-        $q =& CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
+        $q = CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
         $success = null;
         if (! $q) {
             return $success;
@@ -266,7 +266,7 @@ class CRM_Mailing_Event_BAO_Unsubscribe extends CRM_Mailing_Event_DAO_Unsubscrib
      */
     public static function send_unsub_response($queue_id, $groups, $is_domain = false, $job) {
         $config = CRM_Core_Config::singleton();
-        $domain =& CRM_Core_BAO_Domain::getDomain( );
+        $domain = CRM_Core_BAO_Domain::getDomain( );
         
         $jobTable = CRM_Mailing_BAO_Job::getTableName();
         $mailingTable = CRM_Mailing_DAO_Mailing::getTableName();
@@ -359,7 +359,7 @@ class CRM_Mailing_Event_BAO_Unsubscribe extends CRM_Mailing_Event_DAO_Unsubscrib
                          'Return-Path'   => "do-not-reply@$emailDomain",
                          );
         
-        $b =& CRM_Utils_Mail::setMimeParams( $message );
+        $b = CRM_Utils_Mail::setMimeParams( $message );
         $h =& $message->headers($headers);
 
         $mailer =& $config->getMailer();
@@ -527,7 +527,7 @@ SELECT DISTINCT(civicrm_mailing_event_queue.contact_id) as contact_id,
    AND civicrm_mailing_event_queue.email_id = civicrm_email.id
    AND civicrm_mailing_event_queue.id = " . CRM_Utils_Type::escape($queueID, 'Integer');
         
-        $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         
         $displayName = 'Unknown';
         $email       = 'Unknown';

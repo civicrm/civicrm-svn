@@ -66,7 +66,7 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
             SELECT status_id, count(id) as status_total 
             FROM civicrm_grant  GROUP BY status_id";
 
-        $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
 
         require_once 'CRM/Grant/PseudoConstant.php';
         $status = array( );
@@ -197,7 +197,7 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
         
         // set currency for CRM-1496
         if ( ! isset( $grant->currency ) ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $grant->currency = $config->defaultCurrency;
         }
         
@@ -263,7 +263,7 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
             return $grant;
         }
 
-        $session = & CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $id = $session->get('userID');
         if ( !$id ) {
             $id = $params['contact_id'];

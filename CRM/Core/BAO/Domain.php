@@ -199,9 +199,15 @@ class CRM_Core_BAO_Domain extends CRM_Core_DAO_Domain {
             return $groupID;
         }
 
-        if ( defined('CIVICRM_DOMAIN_GROUP_ID') && CIVICRM_DOMAIN_GROUP_ID ) {
-            $groupID = CIVICRM_DOMAIN_GROUP_ID;
-        } else if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE ) {
+        require_once 'CRM/Core/BAO/Setting.php';
+        $domainGroupID = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
+                                                        'domain_group_id' );
+        $multisite     = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
+                                                        'is_enabled' );
+
+        if ( $domainGroupID ) {
+            $groupID = $domainGroupID;
+        } else if ( $multisite ) {
             // create a group with that of domain name
             $title   = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Domain', 
                                                     CRM_Core_Config::domainID( ), 'name' );
@@ -248,7 +254,7 @@ FROM        civicrm_contact cc
 INNER JOIN  civicrm_group_contact gc ON 
            (gc.contact_id = cc.id AND gc.status = 'Added' AND gc.group_id IN (" . implode(',', $siteGroups) . "))";
 
-            $dao =& CRM_Core_DAO::executeQuery( $query );
+            $dao = CRM_Core_DAO::executeQuery( $query );
             while ( $dao->fetch() ) {
                 $siteContacts[] = $dao->id;
             }

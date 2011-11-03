@@ -43,8 +43,8 @@
  * $Id$
  *
  */
-
-require_once 'api/v2/Mailer.php';
+civicrm_api_include( 'Mailing', false, 3 );
+civicrm_api_include( 'MailingGroup', false, 3 );
 class CRM_Utils_SoapServer
 {
     /**
@@ -122,9 +122,9 @@ class CRM_Utils_SoapServer
      * @access public
      * @static
      */
-    public function authenticate($name, $pass) {
+    public function authenticate($name, $pass, $loadCMSBootstrap = false ) {
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $this->ufClass ) . '.php' );
-        eval ('$result =& ' . $this->ufClass . '::authenticate($name, $pass);');
+        eval ('$result =& ' . $this->ufClass . '::authenticate($name, $pass, $loadCMSBootstrap );');
 
         if (empty($result)) {
             throw new SoapFault('Client', 'Invalid login');
@@ -140,85 +140,93 @@ class CRM_Utils_SoapServer
     /*** MAILER API ***/
     public function mailer_event_bounce($key, $job, $queue, $hash, $body) {
         $this->verify($key);
-         $params = array ( 'job_id'         => $job,
-                           'event_queue_id' => $queue,
-                           'hash'           => $hash,
-                           'body'           => $body
-                           );
-         return civicrm_mailer_event_bounce( $params );
+        $params = array( 'job_id'         => $job,
+                         'event_queue_id' => $queue,
+                         'hash'           => $hash,
+                         'body'           => $body,
+                         'version'        => 3
+                         );
+        return civicrm_api('Mailing', 'event_bounce', $params);
     }
     
     public function mailer_event_unsubscribe($key, $job, $queue, $hash) {
         $this->verify($key);
-        $params = array ( 'job_id'         => $job,
-                          'event_queue_id' => $queue,
-                          'hash'           => $hash
-                          );
-        return civicrm_mailer_event_unsubscribe( $params );
+        $params = array( 'job_id'         => $job,
+                         'event_queue_id' => $queue,
+                         'hash'           => $hash,
+                         'version'        => 3
+                         );
+        return civicrm_api('MailingGroup', 'event_unsubscribe', $params);
     }
 
     public function mailer_event_domain_unsubscribe($key, $job, $queue, $hash) {
         $this->verify($key);
-        $params = array ( 'job_id'         => $job,
-                          'event_queue_id' => $queue,
-                          'hash'           => $hash
-                          );
-        return civicrm_mailer_event_domain_unsubscribe( $params );
+        $params = array( 'job_id'         => $job,
+                         'event_queue_id' => $queue,
+                         'hash'           => $hash,
+                         'version'        => 3
+                         );
+        return civicrm_api('MailingGroup', 'event_domain_unsubscribe', $params);
     }
 
     public function mailer_event_resubscribe($key, $job, $queue, $hash) {
         $this->verify($key);
-        $params = array ( 'job_id'         => $job,
-                          'event_queue_id' => $queue,
-                          'hash'           => $hash
-                          );
-        return civicrm_mailer_event_resubscribe( $params );
+        $params = array( 'job_id'         => $job,
+                         'event_queue_id' => $queue,
+                         'hash'           => $hash,
+                         'version'        => 3
+                         );
+        return civicrm_api('MailingGroup', 'event_resubscribe', $params);
     }
 
     public function mailer_event_subscribe($key, $email, $domain, $group) {
         $this->verify($key);
-        $params = array ( 'email'          => $email,
-                          'group_id'       => $group
-                          );
-        return civicrm_mailer_event_subscribe( $params );
+        $params = array( 'email'          => $email,
+                         'group_id'       => $group,
+                         'version'        => 3
+                         );
+        return civicrm_api('MailingGroup', 'event_subscribe', $params);
     }
     
     public function mailer_event_confirm($key, $contact, $subscribe, $hash) {
         $this->verify($key);
-        $params = array ( 'contact_id'   => $contact,
-                          'subscribe_id' => $subscribe,
-                          'hash'         => $hash
-                          );
-        return civicrm_mailer_event_confirm( $params );
+        $params = array( 'contact_id'   => $contact,
+                         'subscribe_id' => $subscribe,
+                         'hash'         => $hash,
+                         'version'      => 3
+                         );
+        return civicrm_api('Mailing', 'event_confirm', $params);
     }
     
     public function mailer_event_reply($key, $job, $queue, $hash, $bodyTxt, $rt, $bodyHTML = null, $fullEmail = null) {
         $this->verify($key);
-        $params = array ( 'job_id'         => $job,
-                          'event_queue_id' => $queue,
-                          'hash'           => $hash,
-                          'bodyTxt'        => $bodyTxt,
-                          'replyTo'        => $rt,
-                          'bodyHTML'       => $bodyHTML,
-                          'fullEmail'      => $fullEmail
-                          );
-        return civicrm_mailer_event_reply( $params );
+        $params = array( 'job_id'         => $job,
+                         'event_queue_id' => $queue,
+                         'hash'           => $hash,
+                         'bodyTxt'        => $bodyTxt,
+                         'replyTo'        => $rt,
+                         'bodyHTML'       => $bodyHTML,
+                         'fullEmail'      => $fullEmail,
+                         'version'        => 3
+                         );
+        return civicrm_api('Mailing', 'event_reply', $params);
     }
     
     public function mailer_event_forward($key, $job, $queue, $hash, $email) {
         $this->verify($key);
-        $params = array ( 'job_id'         => $job,
-                          'event_queue_id' => $queue,
-                          'hash'           => $hash,
-                          'email'          => $email
-                          );
-        return civicrm_mailer_event_forward( $params );
+        $params = array( 'job_id'         => $job,
+                         'event_queue_id' => $queue,
+                         'hash'           => $hash,
+                         'email'          => $email,
+                         'version'        => 3
+                         );
+        return civicrm_api('Mailing', 'event_forward', $params);
     }
     
     public function get_contact($key, $params) { 
         $this->verify($key);
         $params['version'] = 3;
-        return civicrm_api('contact', 'get', $params);
+        return civicrm_api( 'contact', 'get', $params );
     }
 
 }

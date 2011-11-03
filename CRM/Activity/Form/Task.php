@@ -110,6 +110,8 @@ class CRM_Activity_Form_Task extends CRM_Core_Form
             $queryParams =  $form->get( 'queryParams' );
             $query       = new CRM_Contact_BAO_Query( $queryParams, null, null, false, false, 
                                                        CRM_Contact_BAO_Query::MODE_ACTIVITY);
+            $query->_distinctComponentClause = '( civicrm_activity.id )';
+            $query->_groupByComponentClause  = " GROUP BY civicrm_activity.id ";
             $result = $query->searchQuery(0, 0, null);
 
             while ($result->fetch()) {
@@ -154,7 +156,7 @@ SELECT source_contact_id
   FROM civicrm_activity
  WHERE id IN ( $IDs )
 ";
-        $dao =& CRM_Core_DAO::executeQuery( $query );
+        $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
             $contactIDs[] = $dao->source_contact_id;
         }

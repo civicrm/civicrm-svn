@@ -46,7 +46,7 @@ class CRM_Core_Extensions_ExtensionType
      */
     const OPTION_GROUP_NAME = 'system_extensions';
 
-    private $allowedExtTypes = array( 'payment', 'search', 'report' );
+    private $allowedExtTypes = array( 'payment', 'search', 'report', 'module' );
 
     protected static $_extensions = null;
 
@@ -69,7 +69,10 @@ class CRM_Core_Extensions_ExtensionType
         $e = self::$_extensions;
         if( $e['per_id'][$id]['status'] === 'uploaded' ) {
             require_once( 'CRM/Utils/File.php' );
-            CRM_Utils_File::copyDir( $e['per_id'][$id]['path'], $this->extDir . DIRECTORY_SEPARATOR . $e['per_id'][$id]['type'] . DIRECTORY_SEPARATOR . $e['per_id'][$id]['key'] );
+            CRM_Utils_File::copyDir( $e['per_id'][$id]['path'],
+                                     $this->extDir . DIRECTORY_SEPARATOR .
+                                     $e['per_id'][$id]['type'] . DIRECTORY_SEPARATOR .
+                                     $e['per_id'][$id]['key'] );
             
             if ( $deleteOrginal ) {
                 $this->deleteFiles( $id, $key );

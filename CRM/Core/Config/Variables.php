@@ -235,7 +235,7 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     public $gettextResourceDir = './l10n/';
 
     /**
-     * Default user framework
+     * Default user framework. This basically makes Drupal 7 the default
      */
     public $userFramework               = 'Drupal';
     public $userFrameworkVersion        = 'Unknown';
@@ -268,21 +268,35 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     /**
      * Map Provider 
      *
-     * @var boolean
+     * @var string
      */
     public $mapProvider = null;
 
     /**
      * Map API Key 
      *
-     * @var boolean
+     * @var string
      */
     public $mapAPIKey = null;
-    
+
+    /**
+     * Geocoding Provider 
+     *
+     * @var string
+     */
+    public $geoProvider = null;
+
+    /**
+     * Geocoding API Key 
+     *
+     * @var string
+     */
+    public $geoAPIKey = null;
+	    
     /**
      * How should we get geo code information if google map support needed
      *
-     * @var boolean
+     * @var string
      */
     public $geocodeMethod    = '';
     
@@ -320,6 +334,13 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     public $enableComponents   = array( 'CiviContribute','CiviPledge','CiviMember',
                                         'CiviEvent', 'CiviMail', 'CiviReport' );
     public $enableComponentIDs = array( 1, 6, 2, 3, 4, 8 );
+
+    /**
+     * Array of enabled civiModules
+     *
+     * @var array
+     */
+    public $civiModules = array( );
 
     /**
      * Should payments be accepted only via SSL?
@@ -433,8 +454,12 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
      * @return string
      */
     public function addressSequence( ) {
-        require_once 'CRM/Core/BAO/Preferences.php';
-        return CRM_Core_BAO_Preferences::value( 'address_sequence' );
+        require_once 'CRM/Core/BAO/Setting.php';
+        $addressFormat = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                        'address_format' );
+        
+        require_once 'CRM/Utils/Address.php';
+        return CRM_Utils_Address::sequence( $addressFormat );
     }
 
     /**

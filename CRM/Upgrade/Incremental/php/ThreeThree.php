@@ -42,10 +42,9 @@ class CRM_Upgrade_Incremental_php_ThreeThree {
     function upgrade_3_3_alpha1( $rev ) 
     {
         $config = CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Drupal' ) {
+        if ( $config->userSystem->is_drupal ) {
             // CRM-6426 - make civicrm profiles permissioned on drupal my account
-            require_once 'CRM/Utils/System/Drupal.php';
-            CRM_Utils_System_Drupal::updateCategories( );
+            $config->userSystem->updateCategories( );
         }
         
         // CRM-6846
@@ -116,9 +115,9 @@ WHERE id = %2
 
         // now modify the config so that the directories are stored in option group/value
         // CRM-6914
-        require_once 'CRM/Core/BAO/Setting.php';
+        require_once 'CRM/Core/BAO/ConfigSetting.php';
         $params = array( );
-        CRM_Core_BAO_Setting::add( $params );
+        CRM_Core_BAO_ConfigSetting::add( $parambs );
     }
     
     function upgrade_3_3_beta1( $rev ) 

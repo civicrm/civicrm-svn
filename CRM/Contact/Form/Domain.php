@@ -66,9 +66,11 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
 
     function preProcess( ) {
         
-        CRM_Utils_System::setTitle(ts('Domain Information'));
+        CRM_Utils_System::setTitle(ts('Organization Address and Contact Info'));
         $breadCrumbPath = CRM_Utils_System::url( 'civicrm/admin', 'reset=1' );
         CRM_Utils_System::appendBreadCrumb( ts('Administer CiviCRM'), $breadCrumbPath );
+        $session = CRM_Core_Session::singleton( );
+        $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin', 'reset=1' ) );
 
         $this->_id = CRM_Core_Config::domainID( );
         $this->_action = CRM_Utils_Request::retrieve( 'action', 'String',
@@ -147,7 +149,7 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
 
     public function buildQuickForm( ) {
         
-        $this->add('text', 'name' , ts('Domain Name') , array('size' => 25), true);
+        $this->add('text', 'name' , ts('Organization Name') , array('size' => 25), true);
         $this->add('text', 'description', ts('Description'), array('size' => 25) );
 
         $this->add('text', 'email_name', ts('FROM Name'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email','email'), true);
@@ -204,6 +206,14 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
             $errors['email_name'] = ts( 'Double quotes are not allow in from name.' );
         }
         
+        // Check for default from email address and organization (domain) name. Force them to change it.
+        if ( $fields['email_address'] == 'info@FIXME.ORG' ){
+            $errors['email_address'] = ts( 'Please enter a valid default FROM email address for system-generated emails.');
+        }
+        if ( $fields['name'] == 'Default Domain Name' ){
+            $errors['name'] = ts( 'Please enter the name of the organization or entity which owns this CiviCRM site.');
+        }
+
         return empty($errors) ? true : $errors;
     }    
 
@@ -226,7 +236,7 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
         $domain = CRM_Core_BAO_Domain::edit($params, $this->_id);
 
         require_once 'CRM/Core/BAO/LocationType.php';
-        $defaultLocationType =& CRM_Core_BAO_LocationType::getDefault();
+        $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
         
         $location = array();
         $params['address'][1]['location_type_id'] = $defaultLocationType->id;

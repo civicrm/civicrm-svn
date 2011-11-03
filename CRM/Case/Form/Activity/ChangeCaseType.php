@@ -72,6 +72,9 @@ class CRM_Case_Form_Activity_ChangeCaseType
 
     static function buildQuickForm( &$form ) 
     { 
+        $form->removeElement('status_id');
+        $form->removeElement('priority_id');
+        
         require_once 'CRM/Case/PseudoConstant.php';
         $form->_caseType   = CRM_Case_PseudoConstant::caseType( );
         $caseTypeId        = explode( CRM_Case_BAO_Case::VALUE_SEPARATOR, CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case',
@@ -152,6 +155,11 @@ class CRM_Case_Form_Activity_ChangeCaseType
              ) {
             CRM_Core_Error::fatal('Required parameter missing for ChangeCaseType - end post processing');
         }
+        
+        $params['status_id'] = CRM_Core_OptionGroup::getValue('activity_status', 'Completed', 'name' );
+        $activity->status_id = $params['status_id'];
+        $params['priority_id'] = CRM_Core_OptionGroup::getValue('priority', 'Normal', 'name' );
+        $activity->priority_id = $params['priority_id'];
         
         if ($activity->subject == 'null'){
             $activity->subject = ts( 'Case type changed from %1 to %2', 

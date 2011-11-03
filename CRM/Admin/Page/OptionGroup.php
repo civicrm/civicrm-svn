@@ -69,10 +69,10 @@ class CRM_Admin_Page_OptionGroup extends CRM_Core_Page_Basic
         if (!(self::$_links)) {
             self::$_links = array(
                                   CRM_Core_Action::BROWSE  => array(
-                                                                    'name'  => ts('Multiple Choice Options'),
+                                                                    'name'  => ts('Options'),
                                                                     'url'   => 'civicrm/admin/optionValue',
                                                                     'qs'    => 'reset=1&action=browse&gid=%%id%%',
-                                                                    'title' => ts('View and Edit Multiple Choice Options'),
+                                                                    'title' => ts('View and Edit Options'),
                                                                     ),
                                   CRM_Core_Action::UPDATE  => array(
                                                                     'name'  => ts('Edit Group'),

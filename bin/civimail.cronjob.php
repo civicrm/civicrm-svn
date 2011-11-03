@@ -92,7 +92,7 @@ function run( ) {
     }
 
     require_once 'CRM/Core/Config.php'; 
-    $config =& CRM_Core_Config::singleton(); 
+    $config = CRM_Core_Config::singleton(); 
 
     // this does not return on failure
     CRM_Utils_System::authenticateScript( true );
@@ -108,7 +108,7 @@ if ( php_sapi_name() == "cli" ) {
 
   //if it doesn't die, it's authenticated 
   require_once 'CRM/Core/Config.php';
-  $config =& CRM_Core_Config::singleton();
+  $config = CRM_Core_Config::singleton();
 
   processQueue( $config );
 

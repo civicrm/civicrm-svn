@@ -26,7 +26,7 @@
 {htxt id='profile_overview'}
     <p>{ts}Profiles may be linked to specific modules, accessed via built-in CiviCRM URLs, or embedded into any web page using the HTML Form Snippet feature. Examples include:{/ts}</p>
     <ul class="indented">
-    {if $config->userFramework EQ 'Drupal'}
+    {if $config->userSystem->supports_form_extensions EQ '1'}
         <li>{ts}<strong>User Screens</strong> - One or several profiles can be linked to either the <strong>new user registration</strong> and/or view and edit screens for <strong>existing user accounts</strong>.{/ts}</li>
     {/if}
     {capture assign=configContribURL}{crmURL p='civicrm/admin/contribute' q='reset=1'}{/capture}

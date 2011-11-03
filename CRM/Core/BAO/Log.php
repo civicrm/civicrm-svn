@@ -160,7 +160,7 @@ UPDATE civicrm_log
      static function useLoggingReport( ) {
 
          // first check if logging is enabled
-         $config =& CRM_Core_Config::singleton( );
+         $config = CRM_Core_Config::singleton( );
          if ( ! $config->logging ) {
              return false;
          }

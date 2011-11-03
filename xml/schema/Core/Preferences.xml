@@ -6,6 +6,7 @@
   <name>civicrm_preferences</name>
   <comment>Define preferences for the site and users</comment>
   <add>1.8</add>
+  <drop>4.1</drop>
   <log>true</log>
   <field>
       <name>id</name>

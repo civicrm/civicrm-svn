@@ -57,7 +57,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
     public function setDefaultValues( ) 
     {
         $defaults = array( );
-        $defaults =& parent::setDefaultValues( );
+        $defaults = parent::setDefaultValues( );
                 
         //finding default weight to be put 
         if ( !isset  ( $defaults['weight'] ) ||( ! $defaults['weight'] ) ) {
@@ -130,13 +130,13 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
         $this->add('date', 'fixed_period_start_day', ts('Fixed Period Start Day'), 
                    CRM_Core_SelectValues::date( null, 'M d' ), false);
         
-        require_once "CRM/Core/BAO/MessageTemplates.php";
+        require_once 'CRM/Core/BAO/MessageTemplates.php';
         $msgTemplates = CRM_Core_BAO_MessageTemplates::getMessageTemplates( false );
         $hasMsgTemplates = false;
         if ( !empty( $msgTemplates ) ) $hasMsgTemplates = true;
         
         //Auto-renew Option
-        $paymentProcessor =& CRM_Core_PseudoConstant::paymentProcessor( false, false, 'is_recur = 1');
+        $paymentProcessor = CRM_Core_PseudoConstant::paymentProcessor( false, false, 'is_recur = 1');
         $isAuthorize = false;
         $options = array( );
         $allowAutoRenewMsg = false;

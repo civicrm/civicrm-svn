@@ -245,7 +245,7 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
        function &import( $prefix = false ) {ldelim}
             if ( ! ( self::$_import ) ) {ldelim}
                self::$_import = array ( );
-               $fields =& self::fields( );
+               $fields = self::fields( );
                foreach ( $fields as $name => $field ) {ldelim}
                  if ( CRM_Utils_Array::value( 'import', $field ) ) {ldelim}
                    if ( $prefix ) {ldelim}
@@ -276,7 +276,7 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
        function &export( $prefix = false ) {ldelim}
             if ( ! ( self::$_export ) ) {ldelim}
                self::$_export = array ( );
-               $fields =& self::fields( );
+               $fields = self::fields( );
                foreach ( $fields as $name => $field ) {ldelim}
                  if ( CRM_Utils_Array::value( 'export', $field ) ) {ldelim}
                    if ( $prefix ) {ldelim}

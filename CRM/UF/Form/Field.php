@@ -38,7 +38,7 @@ require_once 'CRM/Core/Form.php';
 require_once 'CRM/Contact/BAO/Contact.php';
 require_once 'CRM/Activity/BAO/Activity.php';
 require_once 'CRM/Core/BAO/UFField.php';
-
+require_once 'CRM/Core/BAO/UFGroup.php';
 /**
  * form to process actions on the field aspect of Custom
  */
@@ -127,7 +127,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             $this->assign( 'showBestResult', $showBestResult );
         }
         
-        $this->_fields =& CRM_Contact_BAO_Contact::importableFields( 'All', true, true, true );
+        $this->_fields = CRM_Contact_BAO_Contact::importableFields( 'All', true, true, true );
         $this->_fields = array_merge( CRM_Activity_BAO_Activity::exportableFields( 'Activity' ), $this->_fields );
         
         //unset campaign related fields.
@@ -235,12 +235,15 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         } else {
             $defaults['is_active'] = 1;
         }
-
+        
+        $otherModules = array( );
         if ( $this->_action & CRM_Core_Action::ADD ) {
+            $otherModules = array_values( CRM_Core_BAO_UFGroup::getUFJoinRecord( $this->_gid ) );
+            $this->assign( 'otherModules', $otherModules );
             $fieldValues = array('uf_group_id' => $this->_gid);
             $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_UFField', $fieldValues);
         }
-        
+    
         // lets trim all the whitespace
         $this->applyFilter('__ALL__', 'trim');
 
@@ -251,16 +254,17 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->add('hidden', 'field_id', $this->_id);
          
         $fields = array();
-        $fields['Individual'  ] =& CRM_Contact_BAO_Contact::importableFields('Individual', false, false, true);
-        $fields['Household'   ] =& CRM_Contact_BAO_Contact::importableFields('Household', false, false, true);
-        $fields['Organization'] =& CRM_Contact_BAO_Contact::importableFields('Organization', false, false, true);
+        $fields['Individual'  ] = CRM_Contact_BAO_Contact::importableFields('Individual', false, false, true);
+        $fields['Household'   ] = CRM_Contact_BAO_Contact::importableFields('Household', false, false, true);
+        $fields['Organization'] = CRM_Contact_BAO_Contact::importableFields('Organization', false, false, true);
         
         // add current employer for individuals
         $fields['Individual']['current_employer'] = array( 'name'  => 'organization_name',
                                                            'title' => ts('Current Employer') );
         
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+        require_once 'CRM/Core/BAO/Setting.php';
+        $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                              'address_options', true, null, true );
         
         if ( !$addressOptions['county'] ) {
             unset( $fields['Individual'  ]['county']);
@@ -329,11 +333,11 @@ class CRM_UF_Form_Field extends CRM_Core_Form
 
         if ( CRM_Core_Permission::access( 'Quest' ) ) {
             require_once 'CRM/Quest/BAO/Student.php';
-            $fields['Student'] =& CRM_Quest_BAO_Student::exportableFields();
+            $fields['Student'] = CRM_Quest_BAO_Student::exportableFields();
         }
 
         if ( CRM_Core_Permission::access( 'CiviContribute' ) ) {
-            $contribFields =& CRM_Contribute_BAO_Contribution::getContributionFields();
+            $contribFields = CRM_Contribute_BAO_Contribution::getContributionFields();
             if ( ! empty( $contribFields ) ) {
                 unset( $contribFields['is_test'] );
                 unset( $contribFields['is_pay_later'] );
@@ -344,7 +348,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
 
         if ( CRM_Core_Permission::access( 'CiviEvent' ) ) {
             require_once 'CRM/Event/BAO/Query.php';
-            $participantFields =& CRM_Event_BAO_Query::getParticipantFields( true );
+            $participantFields = CRM_Event_BAO_Query::getParticipantFields( true );
             if ( ! empty( $participantFields ) ) {
                 unset($participantFields['external_identifier'] );
                 unset($participantFields['event_id'] );
@@ -367,7 +371,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         
         if ( CRM_Core_Permission::access( 'CiviMember' ) ) {
             require_once 'CRM/Member/BAO/Membership.php';
-            $membershipFields =& CRM_Member_BAO_Membership::getMembershipFields(); 
+            $membershipFields = CRM_Member_BAO_Membership::getMembershipFields(); 
             unset( $membershipFields['membership_id'] );
             unset( $membershipFields['join_date'] );
             unset( $membershipFields['membership_start_date'] );
@@ -424,8 +428,8 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->assign( 'noSearchable', $noSearchable );
 
         require_once 'CRM/Core/BAO/LocationType.php';
-        $this->_location_types =& CRM_Core_PseudoConstant::locationType();        
-        $defaultLocationType =& CRM_Core_BAO_LocationType::getDefault();
+        $this->_location_types = CRM_Core_PseudoConstant::locationType();        
+        $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
         
        /* FIXME: dirty hack to make the default option show up first.  This
         * avoids a mozilla browser bug with defaults on dynamically constructed
@@ -545,13 +549,20 @@ class CRM_UF_Form_Field extends CRM_Core_Form
 
         $sel->setOptions( array( $sel1, $sel2, $sel3, $sel4 ) );
         
+        $visibleValues = array();
+        if(in_array( 'Search Profile', $otherModules ) ) {
+            $visibleValues['Public Pages and Listings'] = 'Public Pages and Listings';
+        } else { 
+            $visibleValues = CRM_Core_SelectValues::ufVisibility( );
+        }
+        
         $js .= "</script>\n";
         $this->assign( 'initHideBoxes', $js );
         
         $this->add( 'select', 
                     'visibility', 
                     ts('Visibility'),
-                    CRM_Core_SelectValues::ufVisibility( ), 
+                    $visibleValues, 
                     true,
                     array( 'onChange' => "showHideSeletorSearch(this.value);" ) );
         
@@ -858,8 +869,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         //check profile is configured for double option process
         //adding group field, email field should be present in the group 
         //fixed for  issue CRM-2861 & CRM-4153
-        $config = CRM_Core_Config::singleton( );
-        if ( $config->profileDoubleOptIn ) { 
+        if ( CRM_Core_BAO_UFGroup::isProfileDoubleOptin( ) ) {
             if ( $fields['field_name'][1] == 'group' ) {
                 require_once 'CRM/Core/BAO/UFField.php';
                 $dao = new CRM_Core_BAO_UFField();

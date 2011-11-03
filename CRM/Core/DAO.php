@@ -58,7 +58,12 @@ class CRM_Core_DAO extends DB_DataObject
 
         VALUE_SEPARATOR = "",
 
-        BULK_INSERT_COUNT = 200;
+        BULK_INSERT_COUNT     = 200,
+
+        // special value for mail bulk inserts to avoid
+        // potential duplication, assuming a smaller number reduces number of queries
+        // by some factor, so some tradeoff. CRM-8678
+        BULK_MAIL_INSERT_COUNT = 10;
 
     /**
      * the factory class for this application
@@ -283,6 +288,10 @@ class CRM_Core_DAO extends DB_DataObject
             $this->insert();
         }
         $this->free( );
+
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::postSave( $this );
+
         return $this;
     }
 
@@ -872,7 +881,10 @@ FROM   civicrm_domain
             require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
             eval( '$dao   = new ' . $daoName . '( );' );
         }
-        $dao->query( $queryStr, $i18nRewrite );
+        $result = $dao->query( $queryStr, $i18nRewrite );
+        if ( is_a( $result, 'DB_Error' ) ) {
+            return $result;
+        }
 
         if ( $freeDAO ||
              preg_match( '/^(insert|update|delete|create|drop|replace)/i', $queryStr ) ) {
@@ -1098,7 +1110,7 @@ SELECT contact_id
  WHERE id IN ( $IDs )
 ";
 
-        $dao =& CRM_Core_DAO::executeQuery( $query );
+        $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
             $contactIDs[] = $dao->contact_id;
         }
@@ -1325,7 +1337,7 @@ SELECT contact_id
         return $tableName;
    }
 
-    static function checkTriggerViewPermission( $view = true ) {
+    static function checkTriggerViewPermission( $view = true, $trigger = true ) {
         // test for create view and trigger permissions and if allowed, add the option to go multilingual
         // and logging
         CRM_Core_Error::ignoreException();
@@ -1338,25 +1350,27 @@ SELECT contact_id
             }
         }
 
-        $dao->query('CREATE TRIGGER civicrm_domain_trigger BEFORE INSERT ON civicrm_domain FOR EACH ROW BEGIN END');
-
-        if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
-            CRM_Core_Error::setCallback();
-            if ( $view ) {
-                $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
-            }
-            return false;
+        if ( $trigger) {
+	        $dao->query('CREATE TRIGGER civicrm_domain_trigger BEFORE INSERT ON civicrm_domain FOR EACH ROW BEGIN END');
+	
+	        if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
+	            CRM_Core_Error::setCallback();
+	            if ( $view ) {
+	                $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
+	            }
+	            return false;
+	        }
+	
+	        $dao->query('DROP TRIGGER IF EXISTS civicrm_domain_trigger');
+	        if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
+	            CRM_Core_Error::setCallback();
+	            if ( $view ) {
+	                $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
+	            }
+	            return false;
+	        }
         }
-
-        $dao->query('DROP TRIGGER IF EXISTS civicrm_domain_trigger');
-        if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
-            CRM_Core_Error::setCallback();
-            if ( $view ) {
-                $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
-            }
-            return false;
-        }
-
+        
         if ( $view ) {
             $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
             if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {

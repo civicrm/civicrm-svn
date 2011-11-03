@@ -34,11 +34,159 @@
  *
  */
 
+require_once 'CRM/Utils/System/Base.php';
 
 /**
  * Joomla specific stuff goes here
  */
-class CRM_Utils_System_Joomla {
+class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
+
+    function __construct() {
+      $this->is_joomla = TRUE;
+    }
+    
+    /**
+     * Function to create a user of Joomla.
+     *  
+     * @param array  $params associated array 
+     * @param string $mail email id for cms user
+     *
+     * @return uid if user exists, false otherwise
+     * 
+     * @access public
+     */
+    function createUser( &$params, $mail ) 
+    {
+        $userParams = JComponentHelper::getParams('com_users');
+
+        // get the default usertype
+        $userType = $userParams->get('new_usertype');
+        if ( ! $userType ) {
+            $userType = 'Registered';
+        }
+
+        $acl = JFactory::getACL();
+
+        
+        
+        if ( isset($params['name']) ) {
+            $fullname = trim( $params['name'] );
+        } elseif ( isset($params['contactID']) ) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $fullname = trim( CRM_Contact_BAO_Contact::displayName($params['contactID']) );
+        } else {
+            $fullname = trim( $params['cms_name'] );
+        }
+        
+        // Prepare the values for a new Joomla! user.
+        $values                 = array();
+        $values['name']         = $fullname;
+        $values['username']     = trim($params['cms_name']);
+        $values['password1']     = $params['cms_pass'];
+        $values['email1']        = trim($params[$mail]);
+        
+        $useractivation = $userParams->get( 'useractivation' );
+        if ( $useractivation == 1 ) { 
+            jimport('joomla.user.helper');
+            // block the User
+            $values['block'] = 1; 
+            $values['activation'] =JUtility::getHash( JUserHelper::genRandomPassword() ); 
+        } else { 
+            // don't block the user
+            $values['block'] = 0; 
+        }
+
+        // Get an empty JUser instance.
+        $user = JUser::getInstance( 0 );
+        $user->bind( $values );
+
+        // Store the Joomla! user.
+        if ( ! $user->save( ) ) {
+            // Error can be accessed via $user->getError();
+            return false;
+        }
+        //since civicrm don't have own tokens to use in user
+        //activation email. we have to use com_user tokens, CRM-5809
+        $lang = JFactory::getLanguage();
+        $lang->load( 'com_user' );
+        require_once 'components/com_user/controller.php';
+        UserController::_sendMail( $user, $user->password2 );
+        return $user->get('id');
+    }
+    
+    /*
+     *  Change user name in host CMS
+     *  
+     *  @param integer $ufID User ID in CMS
+     *  @param string $ufName User name
+     */
+    function updateCMSName( $ufID, $ufName ) 
+    {
+        $ufID   = CRM_Utils_Type::escape( $ufID, 'Integer' );
+        $ufName = CRM_Utils_Type::escape( $ufName, 'String' );
+        
+        $values = array();
+        $user =& JUser::getInstance( $ufID );
+        
+        $values['email'] = $ufName;
+        $user->bind($values);
+        
+        $user->save();
+    }
+    
+    /**
+     * Check if username and email exists in the Joomla! db
+     * 
+     * @params $params    array   array of name and mail values
+     * @params $errors    array   array of errors
+     * @params $emailName string  field label for the 'email'
+     *
+     * @return void
+     */
+    function checkUserNameEmailExists( &$params, &$errors, $emailName = 'email' )
+    {
+        $config  = CRM_Core_Config::singleton( );
+        
+        $dao = new CRM_Core_DAO( );
+        $name  = $dao->escape( CRM_Utils_Array::value( 'name', $params ) );
+        $email = $dao->escape( CRM_Utils_Array::value( 'mail', $params ) );
+        //don't allow the special characters and min. username length is two
+        //regex \\ to match a single backslash would become '/\\\\/' 
+        $isNotValid = (bool) preg_match('/[\<|\>|\"|\'|\%|\;|\(|\)|\&|\\\\|\/]/im', $name );
+        if ( $isNotValid || strlen( $name ) < 2 ) {
+            $errors['cms_name'] = ts('Your username contains invalid characters or is too short');
+        }
+
+        
+        $JUserTable =& JTable::getInstance( 'User' , 'JTable' );
+        
+        $db     = $JUserTable->getDbo();
+        $query  = $db->getQuery(true);
+        $query->select( 'username, email' );
+        $query->from($JUserTable->getTableName());
+        $query->where('(LOWER(username) = LOWER(\''.$name.'\')) OR (LOWER(email) = LOWER(\''.$email.'\'))');
+        $db->setQuery($query, 0, $limit);
+        $users = $db->loadAssocList();
+        
+        $row = array();;
+        if (count($users)) {
+            $row = $users[0];
+        }
+        
+        if ( !empty( $row ) ) {
+            $dbName  = CRM_Utils_Array::value( 'username', $row );
+            $dbEmail = CRM_Utils_Array::value( 'email', $row );
+            if ( strtolower( $dbName ) == strtolower( $name ) ) {
+                $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.',
+                                          array( 1 => $name ) );
+            }
+            if ( strtolower( $dbEmail ) == strtolower( $email ) ) {
+                $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
+                                          array( 1 => $email) );
+            }
+        }
+    }
+        
 
     /**
      * sets the title of the page
@@ -57,7 +205,7 @@ class CRM_Utils_System_Joomla {
         $template = CRM_Core_Smarty::singleton( );
         $template->assign( 'pageTitle', $pageTitle );
 
-		$document=& JFactory::getDocument();
+		$document= JFactory::getDocument();
 		$document->setTitle($title);
 
         return;
@@ -71,9 +219,8 @@ class CRM_Utils_System_Joomla {
      *
      * @return void
      * @access public
-     * @static
      */
-    static function appendBreadCrumb( $breadCrumbs ) {
+    function appendBreadCrumb( $breadCrumbs ) {
         $template = CRM_Core_Smarty::singleton( );
         $bc = $template->get_template_vars( 'breadcrumb' );
 
@@ -103,9 +250,8 @@ class CRM_Utils_System_Joomla {
      *
      * @return void
      * @access public
-     * @static
      */
-    static function resetBreadCrumb( ) {
+    function resetBreadCrumb( ) {
         return;
     }
 
@@ -116,10 +262,9 @@ class CRM_Utils_System_Joomla {
      *
      * @return void
      * @access public
-     * @static
      */
-    static function addHTMLHead( $string = null, $includeAll = false ) {
-        $document =& JFactory::getDocument( );
+    function addHTMLHead( $string = null, $includeAll = false ) {
+        $document = JFactory::getDocument( );
 
         if ( $string ) {
             $document->addCustomTag( $string );
@@ -228,9 +373,8 @@ class CRM_Utils_System_Joomla {
      * 
      * @return void 
      * access public  
-     * @static  
      */  
-    static function mapConfigToSSL( ) {
+    function mapConfigToSSL( ) {
         // dont need to do anything, let CMS handle their own switch to SSL
         return;
     }
@@ -242,14 +386,13 @@ class CRM_Utils_System_Joomla {
      *
      * @return string the url to post the form
      * @access public
-     * @static
      */
     function postURL( $action ) {
         if ( ! empty( $action ) ) {
             return $action;
         }
 
-        return self::url( CRM_Utils_Array::value( 'task', $_GET ),
+        return $this->url( CRM_Utils_Array::value( 'task', $_GET ),
                           null, true, null, false );
     }
 
@@ -278,18 +421,12 @@ class CRM_Utils_System_Joomla {
      * @return mixed false if no auth
      *               array( contactID, ufID, unique string ) if success
      * @access public
-     * @static
      */
-    static function authenticate( $name, $password, $loadCMSBootstrap = false ) {
+    function authenticate( $name, $password, $loadCMSBootstrap = false ) {
         require_once 'DB.php';
 
         $config = CRM_Core_Config::singleton( );
         
-        $dbJoomla = DB::connect( $config->userFrameworkDSN );
-        if ( DB::isError( $dbJoomla ) ) {
-            CRM_Core_Error::fatal( "Cannot connect to joomla db via $config->userFrameworkDSN, " . $dbJoomla->getMessage( ) ); 
-        }                                                      
-
         if ( $loadCMSBootstrap ) {
             $bootStrapParams = array( );
             if ( $name && $password ) {
@@ -299,34 +436,48 @@ class CRM_Utils_System_Joomla {
             CRM_Utils_System::loadBootStrap( $bootStrapParams );
         }
 
-        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
-        $name      = $dbJoomla->escapeSimple( $strtolower( $name ) );
-        $sql = 'SELECT u.* FROM ' . $config->userFrameworkUsersTableName .
-            " u WHERE LOWER(u.username) = '$name' AND u.block = 0";
-        $query = $dbJoomla->query( $sql );
+        $JUserTable =& JTable::getInstance( 'User' , 'JTable' );
+        
+        $db     = $JUserTable->getDbo();
+        $query  = $db->getQuery(true);
+        $query->select( 'username, email' );
+        $query->from($JUserTable->getTableName());
+        $query->where('(LOWER(username) = LOWER(\''.$name.'\')) AND (block = 0)');
+        $db->setQuery($query, 0, $limit);
+        $users = $db->loadAssocList();
+        
+        $row = array();;
+        if (count($users)) {
+            $row = $users[0];
+        }
+        
 
         $user = null;
         require_once 'CRM/Core/BAO/UFMatch.php';
-        if ( $row = $query->fetchRow( DB_FETCHMODE_ASSOC ) ) {
+        if ( !empty( $row ) ) {
+            $dbPassword  = CRM_Utils_Array::value( 'password', $row );
+            $dbId  = CRM_Utils_Array::value( 'id', $row );
+            $dbEmail  = CRM_Utils_Array::value( 'email', $row );
+
             // now check password
-            if ( strpos( $row['password'], ':' ) === false ) {
-                if ( $row['password'] != md5( $password ) ) {
+            if ( strpos( $dbPassword, ':' ) === false ) {
+                if ( $dbPassword != md5( $password ) ) {
                     return false;
                 }
             } else {
-                list( $hash, $salt ) = explode( ':', $row['password'] );
+                list( $hash, $salt ) = explode( ':', $dbPassword );
                 $cryptpass           = md5( $password . $salt );
                 if ( $hash != $cryptpass ) {
                     return false;
                 }
             }
             
-            CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user, $row['id'], $row['email'], 'Joomla' );
-            $contactID = CRM_Core_BAO_UFMatch::getContactId( $row['id'] );
+            CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user, $dbId, $dbEmail, 'Joomla' );
+            $contactID = CRM_Core_BAO_UFMatch::getContactId( $dbId );
             if ( ! $contactID ) {
                 return false;
             }
-            return array( $contactID, $row['id'], mt_rand() );
+            return array( $contactID, $dbId, mt_rand() );
         }
         return false;
     }
@@ -337,17 +488,19 @@ class CRM_Utils_System_Joomla {
      * @param string $message  the message to set  
      *    
      * @access public    
-     * @static    
      */    
-    static function setMessage( $message ) { 
+    function setMessage( $message ) { 
         return;
     }
 
-    static function permissionDenied( ) {
+    function loadUser( $user ) {
+        return true;
+    }
+    function permissionDenied( ) {
         CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
     }
 
-    static function logout( ) {
+    function logout( ) {
         session_destroy();
         header("Location:index.php");
     }
@@ -356,16 +509,25 @@ class CRM_Utils_System_Joomla {
      * Get the locale set in the hosting CMS
      * @return string  the used locale or null for none
      */
-    static function getUFLocale()
+    function getUFLocale()
     {
         if ( defined('_JEXEC') ) {
-            $conf	=& JFactory::getConfig();
+            $conf	= JFactory::getConfig();
             $locale	= $conf->getValue('config.language');
             return str_replace('-', '_', $locale);
         }
         return null;
     }
 
+    function getVersion() {
+        if ( class_exists('JVersion') ) {
+            $version = new JVersion;
+            return $version->getShortVersion();
+        } else {
+            return 'Unknown';
+        }
+    }
+    
     /* 
      * load joomla bootstrap
      *
@@ -373,7 +535,7 @@ class CRM_Utils_System_Joomla {
      * @param $loadUser boolean load cms user?
      * @param $throwError throw error on failure?
      */
-    static function loadBootStrap( $params = array( ), $loadUser = true, $throwError = true )
+    function loadBootStrap( $params = array( ), $loadUser = true, $throwError = true )
     {
         // load BootStrap here if needed
         return true;
@@ -384,7 +546,7 @@ class CRM_Utils_System_Joomla {
      *
      * @return boolean true/false.
      */
-    public static function isUserLoggedIn( ) {
+    public function isUserLoggedIn( ) {
         $user = JFactory::getUser();
         return ( $user->guest ) ? false : true; 
     }
@@ -394,7 +556,7 @@ class CRM_Utils_System_Joomla {
      *
      * @return int logged in user uf id.
      */
-    public static function getLoggedInUfID( ) {
+    public function getLoggedInUfID( ) {
         $user = JFactory::getUser( );
         return ( $user->guest ) ? null : $user->id;
     }

@@ -72,7 +72,7 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         $this->_searchKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
                 
         // sort out whether it’s a delete-to-trash, delete-into-oblivion or restore (and let the template know)
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $values = $this->controller->exportValues();
         require_once 'CRM/Contact/Task.php';
         $this->_skipUndelete = (CRM_Core_Permission::check('access deleted contacts') and (CRM_Utils_Request::retrieve('skip_undelete', 'Boolean', $this) or CRM_Utils_Array::value( 'task', $values ) == CRM_Contact_Task::DELETE_PERMANENTLY));
@@ -80,7 +80,7 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
 
         if ( $this->_restore && !CRM_Core_Permission::check( 'access deleted contacts' ) ) {
             CRM_Core_Error::fatal( ts( 'You do not have permission to access this contact.' ) );
-        } else if ( $this->_skipUndelete && !CRM_Core_Permission::check( 'delete contacts' ) ) {
+        } else if ( !CRM_Core_Permission::check( 'delete contacts' ) ) {
             CRM_Core_Error::fatal( ts( 'You do not have permission to delete this contact.' ) );
         }
 
@@ -177,6 +177,9 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         } elseif ( $context == 'search' ) {
             $urlParams .= "&qfKey={$this->controller->_key}";
             $urlString = 'civicrm/contact/search';
+        } elseif ( $context == 'smog' ) {
+            $urlParams .= "&qfKey={$this->controller->_key}&context=smog";
+            $urlString = 'civicrm/group/search';
         } else {
             $urlParams = "reset=1";
             $urlString = 'civicrm/dashboard';
@@ -195,6 +198,8 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
                 $deletedContacts++;
             }
         }
+
+        $session->replaceUserContext( CRM_Utils_System::url( $urlString, $urlParams ) );
         if ( ! $this->_single ) {
             $label = $this->_restore ? ts('Restored Contact(s): %1', array(1 => $deletedContacts)) : ts('Deleted Contact(s): %1', array(1 => $deletedContacts));
             $status = array(
@@ -210,9 +215,6 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
             }
         } else {
             if ( $deletedContacts ) {
-                
-                $session->replaceUserContext( CRM_Utils_System::url( $urlString, $urlParams ) );
-                
                 if ($this->_restore) {
                     $status = ts('Selected contact was restored sucessfully.');
                     $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$this->_contactIds[0]}"));
@@ -252,6 +254,5 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         }            
         
         CRM_Core_Session::setStatus( $status );
-        $session->replaceUserContext( CRM_Utils_System::url( $urlString, $urlParams ) );
     }//end of function
 }

@@ -131,7 +131,11 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
                 if ( isset($this->_groupValues['saved_search_id']) ){
                     $groupValues['mapping_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch', 
                                                                               $this->_groupValues['saved_search_id'], 
-                                                                              'mapping_id' ) ;
+                                                                              'mapping_id' );
+                    $groupValues['search_custom_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch', 
+                                                                                    $this->_groupValues['saved_search_id'], 
+                                                                                    'search_custom_id' );
+                    
                 }
                 $this->assign_by_ref( 'group', $groupValues );
                 
@@ -167,8 +171,8 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
                 }
             }
             
-            if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE && 
-                 CRM_Core_Permission::check( 'administer Multiple Organizations' ) ) {
+        if ( CRM_Core_Permission::check( 'administer Multiple Organizations' ) &&
+             CRM_Core_Permission::isMultisiteEnabled( ) ) {
                 require_once 'CRM/Contact/BAO/GroupOrganization.php';
                 CRM_Contact_BAO_GroupOrganization::retrieve( $this->_id, $defaults );
                 
@@ -182,7 +186,8 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
         }
 
         if ( !( ( CRM_Core_Permission::check( 'access CiviMail' ) ) || 
-                ( CRM_Mailing_Info::workflowEnabled( ) && CRM_Core_Permission::check( 'create mailings' ) ) ) ) {
+                ( CRM_Mailing_Info::workflowEnabled( ) &&
+                  CRM_Core_Permission::check( 'create mailings' ) ) ) ) {
             $groupTypes = CRM_Core_OptionGroup::values( 'group_type', true );
             if ( $defaults['group_type'][$groupTypes['Mailing List']] == 1 ) {
                 $this->assign( 'freezeMailignList', $groupTypes['Mailing List'] ); 
@@ -244,7 +249,7 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
         $this->add( 'select', 'visibility', ts('Visibility'),
                     CRM_Core_SelectValues::ufVisibility( true ), true ); 
         
-        $groupNames =& CRM_Core_PseudoConstant::group();
+        $groupNames = CRM_Core_PseudoConstant::group();
 
         $parentGroups = $parentGroupElements = array( );
         if ( isset( $this->_id ) &&
@@ -278,7 +283,7 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
         }
         
         if ( count( $parentGroupSelectValues ) > 1 ) {
-            if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE ) {
+            if ( CRM_Core_Permission::isMultisiteEnabled( ) ) {
                 $required = empty($parentGroups) ? true : false;
                 $required = ( ($this->_id && CRM_Core_BAO_Domain::isDomainGroup($this->_id)) || 
                               !isset($this->_id) ) ? false : $required;
@@ -287,8 +292,8 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
             }
             $this->add( 'select', 'parents', ts('Add Parent'), $parentGroupSelectValues, $required );
         }
-        if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE && 
-             CRM_Core_Permission::check( 'administer Multiple Organizations' ) ) {
+        if ( CRM_Core_Permission::check( 'administer Multiple Organizations' ) &&
+             CRM_Core_Permission::isMultisiteEnabled( ) ) {
             //group organization Element
             $groupOrgDataURL =  CRM_Utils_System::url( 'civicrm/ajax/search', 'org=1', false, null, false );
             $this->assign('groupOrgDataURL',$groupOrgDataURL );
@@ -311,7 +316,7 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
                            );
         
         $doParentCheck = false;
-        if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE ) {
+        if ( CRM_Core_Permission::isMultisiteEnabled( ) ) {
             $doParentCheck = ($this->_id && CRM_Core_BAO_Domain::isDomainGroup($this->_id)) ? false : true;
         }
 
@@ -360,16 +365,14 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
         // do check for both name and title uniqueness
         if ( CRM_Utils_Array::value( 'title', $fields ) ) {
             $title = trim( $fields['title'] );
-            $name  = CRM_Utils_String::titleToVar( $title, 63 );
             $query  = "
 SELECT count(*)
 FROM   civicrm_group 
-WHERE  (name LIKE %1 OR title LIKE %2) 
-AND    id <> %3
+WHERE  title = %1
+AND    id <> %2
 ";
-            $grpCnt = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $name,  'String' ),
-                                                                     2 => array( $title, 'String' ),
-                                                                     3 => array( (int)$self->_id, 'Integer' ) ) );
+            $grpCnt = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $title, 'String' ),
+                                                                     2 => array( (int)$self->_id, 'Integer' ) ) );
             if ( $grpCnt ) {
                 $errors['title'] = ts( 'Group \'%1\' already exists.', array( 1 => $fields['title']) );
             }
@@ -414,7 +417,7 @@ AND    id <> %3
                                                                        'Group' );
             
             require_once 'CRM/Contact/BAO/Group.php';
-            $group =& CRM_Contact_BAO_Group::create( $params );
+            $group = CRM_Contact_BAO_Group::create( $params );
             
             /*
              * Remove any parent groups requested to be removed

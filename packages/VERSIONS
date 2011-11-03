@@ -64,7 +64,7 @@ Mail_Mime                     1.8.0      BSD 3-cl.      local changes
 Mail_mimeDecode               1.5.1      BSD 3-cl.
 Net_Curl                      1.2.5      BSD 3-cl.
 Net_DIME                      1.0.1      BSD 3-cl.
-Net_SMTP                      1.4.2      PHP 2          local changes
+Net_SMTP                      1.6.1      PHP 2          local changes
 Net_Socket                    1.0.9      PHP 2
 Net_URL                       1.0.15     BSD 3-cl.
 Net_UserAgent_Detect          2.5.1      PHP 2
@@ -85,7 +85,7 @@ NON-PEAR
 ========
 AMFPHP         1.2.6      GPL 2       http://amfphp.org/
 PHP gettext    1.0.7      GPL 2+      http://savannah.nongnu.org/projects/php-gettext/
-PHPIDS         0.6.4      LGPL 3+     http://php-ids.org/
+PHPIDS         0.7        LGPL 3+     http://phpids.org/
 Smarty         2.6.26     LGPL 2.1+   http://smarty.php.net/                                        local changes
 Smarty Gettext 1.0b1      LGPL 2.1+   http://smarty.incutio.com/?page=SmartyGettext
 TCPDF          4.8.027    LGPL 2.1+   http://tecnick.com/public/code/cp_dpage.php?aiocp_dp=tcpdf    doc, examples, images and most of fonts removed

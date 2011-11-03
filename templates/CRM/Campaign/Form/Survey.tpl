@@ -61,8 +61,12 @@
        </tr>
        <tr class="crm-campaign-survey-form-block-profile_id">
            <td class="label">{$form.profile_id.label}</td>
-           <td class="view-value">{$form.profile_id.html}
-	   <div class="description">{ts}Select the Profile for Survey.{/ts}</div></td>
+           <td class="view-value">{$form.profile_id.html}&nbsp;<span class="profile-links"></span>
+	       <div class="description">{ts}Select the Profile for Survey.{/ts}</div>
+           <div class="profile-create">
+                <a href="{crmURL p='civicrm/admin/uf/group/add' q='reset=1&action=add'}" target="_blank">{ts}Click here for new profile{/ts}
+           </div>
+           </td> 
        </tr>
       
        <tr id='showoption'>
@@ -112,6 +116,25 @@
 {/if}
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
+
+{*include profile link function*}
+{include file="CRM/common/buildProfileLink.tpl"}
+
+{literal}
+<script type="text/javascript">
+    //show edit profile field links
+    cj(function() {
+        // show edit for profile
+        cj('select[id="profile_id"]').change( function( ) {
+            buildLinks( cj(this), cj(this).val());
+        });
+
+        // show edit links on form loads
+        var profileField =  cj('select[id="profile_id"]'); 
+        buildLinks( profileField, profileField.val()); 
+    });
+</script>
+{/literal}
 
 {include file="CRM/common/customData.tpl"}
 {literal}

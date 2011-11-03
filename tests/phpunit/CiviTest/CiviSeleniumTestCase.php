@@ -29,6 +29,11 @@
 require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
 
 /**
+ *  Include configuration
+ */
+require_once 'tests/phpunit/CiviTest/civicrm.settings.php';
+
+/**
  *  Base class for CiviCRM Selenium tests
  *
  *  Common functions for unit tests
@@ -58,8 +63,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         require_once 'CiviSeleniumSettings.php';
         $this->settings = new CiviSeleniumSettings();
 
-        require_once 'civicrm.settings.php';
-
         // also initialize a connection to the db 
         require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton( );
@@ -81,8 +84,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     /**
      */
     function webtestLogin( $admin = false ) {
+		$this->open("{$this->sboxPath}user");
         $password = $admin ? $this->settings->adminPassword : $this->settings->password;
         $username = $admin ? $this->settings->adminUsername : $this->settings->username;
+        // Make sure login form is available
+        $this->waitForElementPresent('edit-submit');
         $this->type('edit-name', $username);
         $this->type('edit-pass', $password);
         $this->click('edit-submit');
@@ -100,13 +106,48 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
      * @return mixed either a string with the (either generated or provided) email or null (if no email)
      */
 
-    function webtestAddContact( $fname = 'Anthony', $lname = 'Anderson', $email = null ) {
-        $this->open($this->sboxPath . 'civicrm/dashboard?reset=1');
-        $this->type('qa_first_name', $fname);
-        $this->type('qa_last_name', $lname);
+    
+	function webtest_civicrm_api($entity,$action, $params){
+		$CiviSeleniumSettings = new CiviSeleniumSettings;
+		$url_params = array_merge(array('json'=>1, 'key' => $CiviSeleniumSettings->sandboxSITEKEY, 'api_key'=> $CiviSeleniumSettings->apikey, 'action' => $action, 'entity' => $entity), $params);
+		$url_query = http_build_query($url_params);
+		$settingsBaseURL = parse_url($CiviSeleniumSettings->sandboxURL);
+		$url = $CiviSeleniumSettings->sandboxURL . '/sites/all/modules/civicrm/extern/rest.php?' . $url_query;    
+		$result = json_decode(file_get_contents(($url)), TRUE);
+		return $result;
+	}
+
+	function webtestGetFirstValueForOptionGroup($option_group_name){
+      	$result=$this->webtest_civicrm_api("OptionValue", "getvalue", array('option_group_name'=>$option_group_name,'option.limit'=>1,'return'=>'value'));
+		return $result['result'];
+	}
+
+	function webtestGetValidCountryID(){
+		$config_backend=$this->webtestGetConfig('countryLimit');
+		return current($config_backend);
+	}
+
+	function webtestGetValidEntityID($entity){
+		//michaelmcandrew: would like to use getvalue but there is a bug for e.g. group where option.limit not working at the moment CRM-9110
+      	$result=$this->webtest_civicrm_api($entity, "get", array('option.limit'=>1,'return'=>'id'));
+		return current(array_keys($result['values']));
+	}
+
+	function webtestGetConfig($field){
+      	$result=$this->webtest_civicrm_api("Domain", "getvalue", array('option.limit'=>1,'return'=>'config_backend'));
+		$config_backend = unserialize($result['result']);
+		return $config_backend[$field];
+	}
+
+
+	function webtestAddContact( $fname = 'Anthony', $lname = 'Anderson', $email = null ) {
+        $this->open($this->sboxPath . 'civicrm/contact/add?reset=1&ct=Individual');
+        $this->waitForElementPresent('_qf_Contact_upload_view-bottom');
+        $this->type('first_name', $fname);
+        $this->type('last_name', $lname);
         if ($email === true) $email = substr(sha1(rand()), 0, 7) . '@example.org';
-        if ($email) $this->type('qa_email', $email);
-        $this->click('_qf_Contact_next');
+        if ($email) $this->type('email_1_email', $email);
+        $this->click('_qf_Contact_upload_view-bottom');
         $this->waitForPageToLoad('30000');        
         return $email;
     }
@@ -128,7 +169,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     function webtestAddOrganization( $organizationName = "Smith's Home", $email = null ) {
         
-        $this->open($this->sboxPath . 'civicrm/contact/add&reset=1&ct=Organization');
+        $this->open($this->sboxPath . 'civicrm/contact/add?reset=1&ct=Organization');
         $this->click('organization_name');
         $this->type('organization_name', $organizationName );
 
@@ -203,9 +244,9 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         }
         foreach ($expected as $label => $value) {
             if ( $xpathPrefix ) {
-                $this->verifyText("xpath=//x:table{$tableLocator}/x:tbody/tr/td{$xpathPrefix}[text()='{$label}']/../following-sibling::td", preg_quote( $value ) );
+                $this->verifyText("xpath=//table{$tableLocator}/tbody/tr/td{$xpathPrefix}[text()='{$label}']/../following-sibling::td", preg_quote( $value ) );
             } else {
-                $this->verifyText("xpath=//x:table{$tableLocator}/x:tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote($value));
+                $this->verifyText("xpath=//table{$tableLocator}/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote($value));
             }
         }
     }
@@ -248,6 +289,9 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         foreach ( $options as $oIndex => $oValue ) {
             $validateStrings[] = $oValue['label'];
             $validateStrings[] = $oValue['amount'];
+            if ( $oValue['membership_type_id'] ) {
+                $this->select( "membership_type_id_{$oIndex}", "value={$oValue['membership_type_id']}" );
+            }
             $this->type("option_label_{$oIndex}", $oValue['label'] ); 
             $this->type("option_amount_{$oIndex}" , $oValue['amount']  ); 
             $this->click('link=another choice');
@@ -342,6 +386,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $processorSettings = array( 'test_user_name' => '5ULu56ex',
                                         'test_password'  => '7ARxW575w736eF5p',
                                         );
+        } elseif ( $processorType == 'Google_Checkout' ) {
+            // FIXME: we 'll need to make a new separate account for testing
+            $processorSettings = array( 'test_user_name' => '559999327053114',
+                                        'test_password'  => 'R2zv2g60-A7GXKJYl0nR0g',
+                                        );
         } elseif ( empty( $processorSettings ) ) {
             $this->fail("webTestAddPaymentProcessor requires $processorSettings array if processorType is not Dummy.");
         }
@@ -383,6 +432,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         $this->type('billing_street_address-5', '234 Lincoln Ave');
         $this->type('billing_city-5', 'San Bernadino');
+        $this->click('billing_state_province_id-5');
         $this->select('billing_state_province_id-5', 'label=California');
         $this->type('billing_postal_code-5', '93245');
 
@@ -498,6 +548,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                                          $pledges       = true, 
                                          $recurring     = false, 
                                          $membershipTypes = true, 
+                                         $memPriceSetId = null,
                                          $friend        = true, 
                                          $profilePreId  = 1, 
                                          $profilePostId = 7, 
@@ -535,7 +586,9 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         if ( $onBehalf ) {
             $this->click('is_organization');
+            $this->select('onbehalf_profile_id', 'label=On Behalf Of Organization');
             $this->type('for_organization', "On behalf $hash");
+            
             if ( $onBehalf == 'required' ) {
                 $this->click('CIVICRM_QFID_2_4');          
             } else if ( $onBehalf == 'optional' ) {
@@ -564,7 +617,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->select('payment_processor_id',  "label={$processorName}");
         }
 
-        if ( $amountSection ) {
+        if ( $amountSection && !$memPriceSetId ) {
             if ( $payLater ) {
                 $this->click('is_pay_later');
                 $this->type('pay_later_text',    "Pay later label $hash");
@@ -603,35 +656,43 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $text = "'Amount' information has been saved.";
         $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
 
-        if ( $membershipTypes === true ) {
-            $membershipTypes = array( array( 'id' => 2 ) );
-        }
-        if ( is_array($membershipTypes) && !empty($membershipTypes) ) {
+        if ( ( $membershipTypes === true ) || ( is_array( $membershipTypes ) && !empty( $membershipTypes ) ) ) {
             // go to step 3 (memberships)
             $this->click('link=Memberships');        
-            $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');            
+            $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');   
+            
             // fill in step 3 (Memberships)
-            $this->click('is_active');
+            $this->click('member_is_active');
+            $this->waitForElementPresent( 'displayFee' );
             $this->type('new_title',     "Title - New Membership $hash");
             $this->type('renewal_title', "Title - Renewals $hash");
 
-            // FIXME: handle Introductory Message - New Memberships/Renewals
-            foreach ( $membershipTypes as $mType ) {
-                $this->click("membership_type[{$mType['id']}]");
-                if ( array_key_exists('default', $mType) ) {
-                    // FIXME:
+            if ( $memPriceSetId ) {
+                $this->click( 'member_price_set_id' );
+                $this->select( 'member_price_set_id', "value={$memPriceSetId}" );
+            } else {
+                //$membershipTypes = array( array( 'id' => 2 ) );
+                if ( $membershipTypes === true ) {
+                    $membershipTypes = array( array( 'id' => 2 ) );
                 }
-                if ( array_key_exists('auto_renew', $mType) ) {
-                    $this->select("auto_renew_{$mType['id']}", "label=Give option");
+                               
+                // FIXME: handle Introductory Message - New Memberships/Renewals
+                foreach ( $membershipTypes as $mType ) {
+                    $this->click("membership_type[{$mType['id']}]");
+                    if ( array_key_exists('default', $mType) ) {
+                        // FIXME:
+                    }
+                    if ( array_key_exists('auto_renew', $mType) ) {
+                        $this->select("auto_renew_{$mType['id']}", "label=Give option");
+                    }
+                }
+                
+                $this->click('is_required');
+                
+                if( $isSeparatePayment ){
+                    $this->click('is_separate_payment');
                 }
             }
-
-            $this->click('is_required');
-            
-            if( $isSeparatePayment ){
-                $this->click('is_separate_payment');
-            }
-            
             $this->click('_qf_MembershipBlock_next');
             $this->waitForPageToLoad('30000');
             $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
@@ -683,13 +744,13 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->waitForElementPresent('_qf_Custom_next-bottom');
           
             if ( $profilePreId )
-                $this->select('custom_pre_id',  "value=$profilePreId");
+                $this->select('custom_pre_id',  "value={$profilePreId}");
 
             if ( $profilePostId )
-                $this->select('custom_post_id', "value=$profilePostId");
+                $this->select('custom_post_id', "value={$profilePostId}");
 
-            $this->click('_qf_Custom_next');
-            $this->waitForElementPresent('_qf_Custom_next-bottom');
+            $this->click('_qf_Custom_next-bottom');
+            //$this->waitForElementPresent('_qf_Custom_next-bottom');
 
             $this->waitForPageToLoad('30000');
             $text = "'Custom' information has been saved.";
@@ -877,11 +938,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     function WebtestAddGroup( ) 
     {
-        $this->open($this->sboxPath . 'civicrm/group/add&reset=1');
+        $this->open($this->sboxPath . 'civicrm/group/add?reset=1');
       
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
-        $this->waitForElementPresent('_qf_Edit_upload');
+        $this->waitForElementPresent('_qf_Edit_upload-bottom');
       
         // Create new group
         $title = substr(sha1(rand()), 0, 7);
@@ -903,7 +964,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->select('visibility', 'value=Public Pages');
       
         // Clicking save.
-        $this->click('_qf_Edit_upload');
+        $this->click('_qf_Edit_upload-bottom');
         $this->waitForPageToLoad('30000');
       
         // Is status message correct?
@@ -928,18 +989,20 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         // Select the activity type from the activity dropdown
         $this->select("other_activity", "label=Meeting");
+        
         $this->waitForElementPresent("_qf_Activity_upload");
 
         $this->assertTrue($this->isTextPresent("Anderson, " . $firstName2), "Contact not found in line " . __LINE__ );
 
         // Typing contact's name into the field (using typeKeys(), not type()!)...
-        $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", $firstName1);
+        $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
 
         // ...waiting for drop down with results to show up...
-        $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
+        $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
+        $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
 
-        // ...clicking first result (which is a li element), selenium picks first matching element so we don't need to specify that...
-        $this->click("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
+        //.need to use mouseDownAt on first result (which is a li element), click does not work
+        $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
 
         // ...again, waiting for the box with contact name to show up...
         $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
@@ -1082,4 +1145,13 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         return CiviDBAssert::assertAttributesEquals( $expectedValues, $actualValues );
     }
+    
+    function changeAdminLinks( ){
+        $version = 7;
+        if( $version == 7 ) {
+            $this->open("{$this->sboxPath}admin/people/permissions");
+        } else {
+            $this->open("{$this->sboxPath}admin/user/permissions"); 
+        }   
+    } 
 }

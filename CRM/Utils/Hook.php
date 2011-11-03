@@ -34,7 +34,7 @@
  *
  */
 
-class CRM_Utils_Hook {
+abstract class CRM_Utils_Hook {
     
     // Allowed values for dashboard hook content placement
     const DASHBOARD_BELOW = 1;		// Default - place content below activity list
@@ -44,7 +44,106 @@ class CRM_Utils_Hook {
     const SUMMARY_BELOW = 1;         // by default - place content below existing content
     const SUMMARY_ABOVE = 2;         // pace hook content above
     const SUMMARY_REPLACE = 3;       // create your own summarys
+
+    static $_nullObject = null;
+
+    /**
+     * We only need one instance of this object. So we use the singleton
+     * pattern and cache the instance in this variable
+     *
+     * @var object
+     * @static
+     */
+    static private $_singleton = null;
+
     
+    /**
+     * Constructor and getter for the singleton instance
+     * @return instance of $config->userHookClass
+     */
+    static function singleton( ) {
+        if (self::$_singleton == null) {
+            $config = CRM_Core_Config::singleton( );
+            $class = $config->userHookClass;
+            require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
+            self::$_singleton = new $class();
+        }
+        return self::$_singleton;
+    }
+    
+    abstract function invoke( $numParams,
+                              &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
+                              $fnSuffix );
+
+    function commonInvoke( $numParams,
+                           &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
+                           $fnSuffix, $fnPrefix ) {
+        static $included    = false;
+        static $civiModules = array( );
+
+        if ( ! $included ) {
+            // include external file
+            $included = true;
+
+            $config = CRM_Core_Config::singleton( );
+            if ( !empty($config->customPHPPathDir) && 
+                 file_exists( "{$config->customPHPPathDir}/civicrmHooks.php" ) ) {
+                @include_once( "civicrmHooks.php" );
+            }
+
+            if ( ! empty( $fnPrefix ) ) {
+                $civiModules[$fnPrefix] = $fnPrefix;
+            }
+
+            $this->requireCiviModules( $civiModules );
+        }
+
+        return $this->runHooks( $civiModules, $fnSuffix,
+                                $numParams, $arg1, $arg2, $arg3, $arg4, $arg5 );
+    }
+
+    function runHooks( &$civiModules, $fnSuffix, $numParams,
+                       &$arg1, &$arg2, &$arg3, &$arg4, &$arg5 ) {
+        $result = $fResult = array( );
+        
+        foreach ( $civiModules as $module) { 
+            $fnName = "{$module}_{$fnSuffix}";
+            if ( function_exists( $fnName ) ) {
+                if ( $numParams == 1 ) {
+                    $fResult = $fnName( $arg1 );
+                } else if ( $numParams == 2 ) {
+                    $fResult = $fnName( $arg1, $arg2 );
+                } else if ( $numParams == 3 ) {
+                    $fResult = $fnName( $arg1, $arg2, $arg3 );
+                } else if ( $numParams == 4 ) {
+                    $fResult = $fnName( $arg1, $arg2, $arg3, $arg4 );
+                } else if ( $numParams == 5 ) {
+                    $fResult = $fnName( $arg1, $arg2, $arg3, $arg4, $arg5 );
+                }
+
+                if ( !empty( $fResult ) ) {
+                    $result = array_merge( $result, $fResult );
+                }
+
+            }
+        }
+
+        return empty( $result ) ? true : $result;
+    }
+
+    function requireCiviModules( &$moduleList ) {
+        $config = CRM_Core_Config::singleton( );
+        if ( isset( $config->extensionsDir ) &&
+             ! empty( $config->civiModules ) ) {
+            foreach ( $config->civiModules as $moduleName => $modulePath ) {
+                include_once(
+                             $config->extensionsDir . DIRECTORY_SEPARATOR . 
+                             $modulePath );
+                $moduleList[$moduleName] = $moduleName;
+            }
+        }
+    }
+
     /** 
      * This hook is called before a db write on some core objects.
      * This hook does not allow the abort of the operation 
@@ -58,12 +157,7 @@ class CRM_Utils_Hook {
      * @access public 
      */ 
     static function pre( $op, $objectName, $id, &$params ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 4, $op, $objectName, $id, $params, $op, \'civicrm_pre\' );' );  
+        return self::singleton( )->invoke( 4, $op, $objectName, $id, $params, $op, 'civicrm_pre' );
     }
 
     /** 
@@ -79,12 +173,7 @@ class CRM_Utils_Hook {
      * @access public 
      */ 
     static function post( $op, $objectName, $objectId, &$objectRef ) {
-        $config = CRM_Core_Config::singleton( );  
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 4, $op, $objectName, $objectId, $objectRef, $op, \'civicrm_post\' );' );  
+        return self::singleton( )->invoke( 4, $op, $objectName, $objectId, $objectRef, $op, 'civicrm_post' );
     }
 
     /**
@@ -101,12 +190,7 @@ class CRM_Utils_Hook {
      * @access public
      */
     static function links( $op, $objectName, &$objectId, &$links, &$mask=null ) {
-        $config = CRM_Core_Config::singleton( );  
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 5, $op, $objectName, $objectId, $links, $mask, \'civicrm_links\' );' );  
+        return self::singleton( )->invoke( 5, $op, $objectName, $objectId, $links, $mask, 'civicrm_links' );
     }
 
     /** 
@@ -119,12 +203,7 @@ class CRM_Utils_Hook {
      * @return null the return value is ignored
      */
     static function buildForm( $formName, &$form ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 2, $formName, $form, $formName, $formName, $formName, \'civicrm_buildForm\' );' );  
+        return self::singleton( )->invoke( 2, $formName, $form, $formName, $formName, $formName, 'civicrm_buildForm' );
     }
 
     /** 
@@ -137,12 +216,7 @@ class CRM_Utils_Hook {
      * @return null the return value is ignored
      */
     static function postProcess( $formName, &$form ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 2, $formName, $form, $formName, $formName, $formName, \'civicrm_postProcess\' );' );  
+        return self::singleton( )->invoke( 2, $formName, $form, $formName, $formName, $formName, 'civicrm_postProcess' );
     }
 
     /** 
@@ -159,12 +233,7 @@ class CRM_Utils_Hook {
      * @access public 
      */ 
     static function validate( $formName, &$fields, &$files, &$form ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 4, $formName, $fields, $files, $form, $formName, \'civicrm_validate\' );' );  
+        return self::singleton( )->invoke( 4, $formName, $fields, $files, $form, $formName, 'civicrm_validate' );
     }
 
     /** 
@@ -179,12 +248,7 @@ class CRM_Utils_Hook {
      * @access public 
      */ 
     static function custom( $op, $groupID, $entityID, &$params ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 4, $op, $groupID, $entityID, $params, $op, \'civicrm_custom\' );' );  
+        return self::singleton( )->invoke( 4, $op, $groupID, $entityID, $params, $op, 'civicrm_custom' );
     }
 
     /** 
@@ -201,12 +265,7 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function aclWhereClause( $type, &$tables, &$whereTables, &$contactID, &$where ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 5, $type, $tables, $whereTables, $contactID, $where, \'civicrm_aclWhereClause\' );' );  
+        return self::singleton( )->invoke( 5, $type, $tables, $whereTables, $contactID, $where, 'civicrm_aclWhereClause' );
     }
 
     /** 
@@ -223,12 +282,7 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function aclGroup( $type, $contactID, $tableName, &$allGroups, &$currentGroups ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 5, $type, $contactID, $tableName, $allGroups, $currentGroups, \'civicrm_aclGroup\' );' );  
+        return self::singleton( )->invoke( 5, $type, $contactID, $tableName, $allGroups, $currentGroups, 'civicrm_aclGroup' );
     }
 
     /** 
@@ -240,13 +294,9 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function xmlMenu( &$files ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 1, $files, $null, $null, $null, $null, \'civicrm_xmlMenu\' );' );
+        return self::singleton( )->invoke( 1, $files,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_xmlMenu' );
     }
 
     /** 
@@ -259,25 +309,22 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function dashboard( $contactID, &$contentPlacement = self::DASHBOARD_BELOW ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-        $retval =   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 2, $contactID, $contentPlacement, $null, $null, $null, \'civicrm_dashboard\' );' );
-
-		/* Note we need this seemingly unnecessary code because in the event that the implentation of the hook
-		 * declares the second parameter but doesn't set it, then it comes back unset even
+        $retval = self::singleton( )->invoke( 2, $contactID, $contentPlacement,
+                                              self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                              'civicrm_dashboard' );
+        
+		/*
+         * Note we need this seemingly unnecessary code because in the event that the implementation
+         * of the hook declares the second parameter but doesn't set it, then it comes back unset even
 		 * though we have a default value in this function's declaration above. 
 		 */
-        if (! isset($contentPlacement)) {
+
+        if (! isset( $contentPlacement ) ) {
         	$contentPlacement = self::DASHBOARD_BELOW;
         }
         
         return $retval;
     }
-    
     
     /** 
      * This hook is called before storing recently viewed items.
@@ -288,12 +335,9 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function recent( &$recentArray ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-        return eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 1, $null, $null, $null, $null, $null, \'civicrm_recent\' );' );
+        return self::singleton( )->invoke( 1, $recentArray,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_recent' );
     }    
 
     /** 
@@ -307,13 +351,21 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function buildAmount( $pageType, &$form, &$amount ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 3, $pageType, $form, $amount, $null, $null, \'civicrm_buildAmount\' );' );
+        return self::singleton( )->invoke( 3, $pageType, $form, $amount, self::$_nullObject, self::$_nullObject, 'civicrm_buildAmount' );
+    }
+    
+    /** 
+     * This hook is called when building the state list for a particular country.
+     * 
+     * @param array  $countryID - the country id whose states are being selected.
+     *  
+     * @return null
+     * @access public 
+     */
+    static function buildStateProvinceForCountry( $countryID, &$states ) {
+        return self::singleton( )->invoke( 2, $countryID, $states,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_buildStateProvinceForCountry' );
     }
 
     /** 
@@ -326,13 +378,8 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function tabs( &$tabs, $contactID ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 2, $tabs, $contactID, $null, $null, $null, \'civicrm_tabs\' );' );
+        return self::singleton( )->invoke( 2, $tabs, $contactID,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject, 'civicrm_tabs' );
     }
 
     /** 
@@ -344,34 +391,29 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function tokens( &$tokens ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 1, $tokens, $null, $null, $null, $null, \'civicrm_tokens\' );' );
+        return self::singleton( )->invoke( 1, $tokens,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject, 'civicrm_tokens' );
     }
 
     /** 
      * This hook is called when sending an email / printing labels to get the values for all the 
      * tokens returned by the 'tokens' hook
      * 
-     * @param array       $details    - the array to store the token values indexed by contactIDs (unless it a single)
-     * @param int / array $contactIDs - an array of contactIDs, in some situations we also send a single contactID. 
+     * @param array  $details    - the array to store the token values indexed by contactIDs (unless it a single)
+     * @param array  $contactIDs - an array of contactIDs
+     * @param int    $jobID      - the jobID if this is associated with a CiviMail mailing
+     * @param array  $tokens     - the list of tokens associated with the content
+     * @param string $className  - the top level className from where the hook is invoked
      *  
      * @return null
      * @access public 
      */
-    static function tokenValues( &$details, &$contactIDs, $jobID = null ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 3, $details, $contactIDs, $jobID, $null, $null, \'civicrm_tokenValues\' );' );
+    static function tokenValues( &$details,
+                                 $contactIDs,
+                                 $jobID = null,
+                                 $tokens = array( ),
+                                 $className = null ) {
+        return self::singleton( )->invoke( 5, $details, $contactIDs, $jobID, $tokens, $className, 'civicrm_tokenValues' );
     }
 
     /** 
@@ -384,14 +426,9 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function pageRun( &$page ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 1, $page, $null, $null, $null, $null, \'civicrm_pageRun\' );' );
+        return self::singleton( )->invoke( 1, $page,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_pageRun' );
     }
 
     /** 
@@ -405,14 +442,9 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function copy( $objectName, &$object ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 2, $objectName, $object, $null, $null, $null, \'civicrm_copy\' );' );
+        return self::singleton( )->invoke( 2, $objectName, $object,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_copy' );
     }
 
     /**
@@ -425,111 +457,37 @@ class CRM_Utils_Hook {
      **/
 
     static function unsubscribeGroups($op, $mailingId, $contactId, &$groups, &$baseGroups) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-
-        return
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke(5,$op, $mailingId, $contactId, $groups, $baseGroups, \'civicrm_unsubscribeGroups\');');
-    }
-
-    static function invoke( $numParams,
-                            &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
-                            $fnSuffix, $fnPrefix ) {
-        static $included = false;
-
-        $result = array( );
-        $fnName = "{$fnPrefix}_{$fnSuffix}";
-        if ( ! function_exists( $fnName ) ) {
-            if ( $included ) {
-                return;
-            }
-
-            // include external file
-            $included = true;
-
-            $config =& CRM_Core_Config::singleton( );
-            if ( !empty($config->customPHPPathDir) && 
-                 file_exists( "{$config->customPHPPathDir}/civicrmHooks.php" ) ) {
-                @include_once( "civicrmHooks.php" );
-            }
-
-            if ( ! function_exists( $fnName ) ) {
-                return;
-            }
-        }
-
-        if ( $numParams == 1 ) {
-            $result = $fnName( $arg1 );
-        } else if ( $numParams == 2 ) {
-            $result = $fnName( $arg1, $arg2 );
-        } else if ( $numParams == 3 ) {
-            $result = $fnName( $arg1, $arg2, $arg3 );
-        } else if ( $numParams == 4 ) {
-            $result = $fnName( $arg1, $arg2, $arg3, $arg4 );
-        } else if ( $numParams == 5 ) {
-            $result = $fnName( $arg1, $arg2, $arg3, $arg4, $arg5 );
-        }
-
-        return empty( $result ) ? true : $result;
+        return self::singleton( )->invoke(5,$op, $mailingId, $contactId, $groups, $baseGroups, 'civicrm_unsubscribeGroups');
     }
 
     static function customFieldOptions( $customFieldID, &$options, $detailedFormat = false ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 3, $customFieldID, $options, $detailedFormat, $null, $null, \'civicrm_customFieldOptions\' );' );
+        return self::singleton( )->invoke( 3, $customFieldID, $options, $detailedFormat,
+                                           self::$_nullObject, self::$_nullObject, 
+                                           'civicrm_customFieldOptions' );
     }
 
     static function searchTasks( $objectType, &$tasks ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 2, $objectType, $tasks, $null, $null, $null, \'civicrm_searchTasks\' );' );
+        return self::singleton( )->invoke( 2, $objectType, $tasks,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_searchTasks' );
     }
     
     static function eventDiscount( &$form, &$params ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 2, $form, $params, $null, $null, $null, \'civicrm_eventDiscount\' );' );
+        return self::singleton( )->invoke( 2, $form, $params,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_eventDiscount' );
     }
 
     static function mailingGroups( &$form, &$groups, &$mailings ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 3, $form, $groups, $mailings, $null, $null, \'civicrm_mailingGroups\' );' );
+        return self::singleton( )->invoke( 3, $form, $groups, $mailings,
+                                           self::$_nullObject, self::$_nullObject,
+                                           'civicrm_mailingGroups' );
     }
 
     static function membershipTypeValues( &$form, &$membershipTypes ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 2, $form, $membershipTypes, $null, $null, $null, \'civicrm_membershipTypeValues\' );' );
-                                    
+        return self::singleton( )->invoke( 2, $form, $membershipTypes, 
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_membershipTypeValues' );                                    
     }
     
     /** 
@@ -542,23 +500,15 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function summary( $contactID, &$content, &$contentPlacement = self::SUMMARY_BELOW ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 3, $contactID, $content, $contentPlacement, $null, $null, \'civicrm_summary\' );' );
+        return self::singleton( )->invoke( 3, $contactID, $content, $contentPlacement,
+                                           self::$_nullObject, self::$_nullObject,
+                                           'civicrm_summary' );
     }
 
     static function contactListQuery( &$query, $name, $context, $id ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 4, $query, $name, $context, $id, $null, \'civicrm_contactListQuery\' );' );
+        return self::singleton( )->invoke( 4, $query, $name, $context, $id,
+                                           self::$_nullObject,
+                                           'civicrm_contactListQuery' );
     }
 
     /**
@@ -581,25 +531,15 @@ class CRM_Utils_Hook {
     static function alterPaymentProcessorParams( $paymentObj,
                                                  &$rawParams, 
                                                  &$cookedParams ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 3, $paymentObj, $rawParams, $cookedParams, $null, $null, \'civicrm_alterPaymentProcessorParams\' );' );
+        return self::singleton( )->invoke( 3, $paymentObj, $rawParams, $cookedParams,
+                                           self::$_nullObject, self::$_nullObject,
+                                           'civicrm_alterPaymentProcessorParams' );
     }
 
     static function alterMailParams( &$params, $context = null ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 2, $params, $context, $null, $null, $null, \'civicrm_alterMailParams\' );' );
+        return self::singleton( )->invoke( 2, $params, $context,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_alterMailParams' );
     }
 
    /** 
@@ -611,33 +551,21 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function caseSummary( $caseID ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 1, $caseID, $null, $null, $null, $null, \'civicrm_caseSummary\' );' );
+        return self::singleton( )->invoke( 1, $caseID,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_caseSummary' );
     }
     
     static function config( &$config ) {
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 1, $config, $null, $null, $null, $null, \'civicrm_config\' );' );
+        return self::singleton( )->invoke( 1, $config,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_config' );
     }
     
     static function enableDisable( $recordBAO, $recordID, $isActive ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 3, $recordBAO, $recordID, $isActive, $null, $null, \'civicrm_enableDisable\' );' );
+        return self::singleton( )->invoke( 3, $recordBAO, $recordID, $isActive,
+                                           self::$_nullObject, self::$_nullObject,
+                                           'civicrm_enableDisable' );
     }
 
     /**
@@ -649,14 +577,9 @@ class CRM_Utils_Hook {
      * @access public
      */
     static function optionValues( &$options, $name ) {
-        $config =& CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 2, $options, $name, $null, $null, $null, \'civicrm_optionValues\' );' );
+        return self::singleton( )->invoke( 2, $options, $name,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_optionValues' );
                                     
     }
     
@@ -666,14 +589,9 @@ class CRM_Utils_Hook {
      * @access public
      */
     static function navigationMenu( &$params ) {
-        $config =& CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-        
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 1, $params, $null, $null, $null, $null, \'civicrm_navigationMenu\' );' );
+        return self::singleton( )->invoke( 1, $params,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_navigationMenu' );
                                     
     }
 
@@ -688,13 +606,7 @@ class CRM_Utils_Hook {
      * @access public
      */
     static function merge( $type, &$data, $mainId = NULL, $otherId = NULL, $tables = NULL) {
-        $config =& CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-
-        return
-            eval( 'return ' .
-                $config->userHookClass .
-                '::invoke( 5, $type, $data, $mainId, $otherId, $tables , \'civicrm_merge\' );' );
+        return self::singleton( )->invoke( 5, $type, $data, $mainId, $otherId, $tables , 'civicrm_merge' );
 
     }
 
@@ -705,14 +617,9 @@ class CRM_Utils_Hook {
      * @access public
      */
     static function notePrivacy( &$noteValues ) {
-        $config =& CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-
-        return
-            eval( 'return ' .
-                $config->userHookClass .
-                '::invoke( 1, $noteValues, $null, $null, $null, $null, \'civicrm_notePrivacy\' );' );
+        return self::singleton( )->invoke( 1, $noteValues,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_notePrivacy' );
     }
     
     /** 
@@ -727,13 +634,9 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function export( &$exportTempTable, &$headerRows, &$sqlColumns, &$exportMode ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 4, $exportTempTable, $headerRows, $sqlColumns, $exportMode, $null, \'civicrm_export\' );' );
+        return self::singleton( )->invoke( 4, $exportTempTable, $headerRows, $sqlColumns, $exportMode,
+                                           self::$_nullObject,
+                                           'civicrm_export' );
     }
 
     /**
@@ -745,14 +648,9 @@ class CRM_Utils_Hook {
      * @access public
      */
     static function dupeQuery( $obj, $type, &$query ) {
-        $config =& CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-
-        return
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 3, $obj, $type, $query, $null, $null , \'civicrm_dupeQuery\' );' );
+        return self::singleton( )->invoke( 3, $obj, $type, $query,
+                                           self::$_nullObject, self::$_nullObject,
+                                           'civicrm_dupeQuery' );
     }
 
 
@@ -768,13 +666,7 @@ class CRM_Utils_Hook {
      * @access public
      */
     static function emailProcessor( $type, &$params, $mail, &$result, $action = null ) {
-        $config =& CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-
-        return
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 5, $type, $params, $mail, $result, $action, \'civicrm_emailProcessor\' );' );
+        return self::singleton( )->invoke( 5, $type, $params, $mail, $result, $action, 'civicrm_emailProcessor' );
     }
 
     
@@ -796,13 +688,9 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function import( $object, $usage, &$objectRef, &$params ) {
-        $config = CRM_Core_Config::singleton( );
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
-        $null =& CRM_Core_DAO::$_nullObject;
-        return   
-            eval( 'return ' .
-                  $config->userHookClass .
-                  '::invoke( 4, $object, $usage, $objectRef, $params, $null, $null, \'civicrm_import\' );' );
+        return self::singleton( )->invoke( 4, $object, $usage, $objectRef, $params,
+                                           self::$_nullObject,
+                                           'civicrm_import' );
     }
 
     /**
@@ -816,9 +704,129 @@ class CRM_Utils_Hook {
      */
     static function alterAPIPermissions($entity, $action, &$params, &$permissions)
     {
-        $config = CRM_Core_Config::singleton();
-        require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userHookClass) . '.php');
-        $null =& CRM_Core_DAO::$_nullObject;
-        return eval("return {$config->userHookClass}::invoke(4, \$entity, \$action, \$params, \$permissions, \$null, 'civicrm_alterAPIPermissions');");
+        return self::singleton( )->invoke(4, $entity, $action, $params, $permissions,
+                                          self::$_nullObject,
+                                          'civicrm_alterAPIPermissions' );
     }
+
+    static function postSave( &$dao ) {
+        $hookName = 'civicrm_postSave_' . $dao->getTableName( );
+        return self::singleton( )->invoke( 1, $dao,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           $hookName );
+    }
+    
+     /**
+     * This hook allows user to customize context menu Actions on contact summary page.
+     *
+     * @param array $actions       Array of all Actions in contextmenu.
+     * @param int   $contactID     ContactID for the summary page
+     */
+    static function summaryActions( &$actions, $contactID = NULL ) {
+        return self::singleton( )->invoke( 2, $actions, $contactID,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_summaryActions' );
+    }
+
+
+    /**
+     * This hook is called from CRM_Core_Selector_Controller through which all searches in civicrm go.
+     * This enables us hook implementors to modify both the headers and the rows
+     *
+     * The BIGGEST drawback with this hook is that you may need to modify the result template to include your
+     * fields. The result files are CRM/{Contact,Contribute,Member,Event...}/Form/Selector.tpl
+     *
+     * However, if you use the same number of columns, you can overwrite the existing columns with the values that
+     * you want displayed. This is a hackish, but avoids template modification.
+     *
+     * @param string $objectName the component name that we are doing the search
+     *                           activity, campaign, case, contact, contribution, event, grant, membership, and pledge
+     * @param array  &$headers   the list of column headers, an associative array with keys: ( name, sort, order )
+     * @param array  &$rows      the list of values, an associate array with fields that are displayed for that component
+     * @param array  &$seletor   the selector object. Allows you access to the context of the search
+     *
+     * @return void  modify the header and values object to pass the data u need
+     */
+    static function searchColumns( $objectName, &$headers, &$rows, &$selector ) {
+        return self::singleton( )->invoke( 4, $objectName, $headers, $rows, $selector,
+                                           self::$_nullObject,
+                                           'civicrm_searchColumns' );
+    }
+
+    /** 
+     * This hook is called when uf groups are being built for a module.
+     * 
+     * @param string $moduleName module name.
+     * @param array $ufGroups array of ufgroups for a module.
+     *  
+     * @return null
+     * @access public 
+     */
+    static function buildUFGroupsForModule( $moduleName, &$ufGroups ) {
+        return self::singleton( )->invoke( 2, $moduleName, $ufGroups,
+                                           self::$_nullObject, self::$_nullObject, self::$_nullObject,
+                                           'civicrm_buildUFGroupsForModule' );
+    }
+
+    /** 
+     * This hook is called when we are determining the contactID for a specific
+     * email address
+     * 
+     * @param string $email     the email address
+     * @param int    $contactID the contactID that matches this email address, IF it exists
+     * @param array  $result (reference) has two fields
+     *                          contactID - the new (or same) contactID
+     *                          action - 3 possible values:
+     *                                   CRM_Utils_Mail_Incoming::EMAILPROCESSOR_CREATE_INDIVIDUAL - create a new contact record
+     *                                   CRM_Utils_Mail_Incoming::EMAILPROCESSOR_OVERRIDE - use the new contactID
+     *                                   CRM_Utils_Mail_Incoming::EMAILPROCESSOR_IGNORE   - skip this email address
+     *  
+     * @return null
+     * @access public 
+     */
+    static function emailProcessorContact( $email, $contactID, &$result ) {
+        return self::singleton( )->invoke( 3, $email, $contactID, $result,
+                                           self::$_nullObject, self::$_nullObject,
+                                           'civicrm_emailProcessorContact' );
+    }
+    
+    /**
+     * Hook definition for altering the generation of Mailing Labels
+     * 
+     * @param array $args an array of the args in the order defined for the tcpdf multiCell api call
+     *                    with the variable names below converted into string keys (ie $w become 'w'
+     *                    as the first key for $args)
+     *   float $w Width of cells. If 0, they extend up to the right margin of the page.
+     *   float $h Cell minimum height. The cell extends automatically if needed.
+     *   string $txt String to print
+     *   mixed $border Indicates if borders must be drawn around the cell block. The value can 
+     *                 be either a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul>or
+     *                 a string containing some or all of the following characters (in any order):
+     *                 <ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul>
+     *   string $align Allows to center or align the text. Possible values are:<ul><li>L or empty string:
+     *                 left align</li><li>C: center</li><li>R: right align</li><li>J: justification 
+     *                 (default value when $ishtml=false)</li></ul>
+     *   int $fill Indicates if the cell background must be painted (1) or transparent (0). Default value: 0.
+     *   int $ln Indicates where the current position should go after the call. Possible values are:<ul><li>0:
+     *           to the right</li><li>1: to the beginning of the next line [DEFAULT]</li><li>2: below</li></ul>
+     *   float $x x position in user units
+     *   float $y y position in user units
+     *   boolean $reseth if true reset the last cell height (default true).
+     *   int $stretch stretch carachter mode: <ul><li>0 = disabled</li><li>1 = horizontal scaling only if 
+     *                necessary</li><li>2 = forced horizontal scaling</li><li>3 = character spacing only if
+     *                necessary</li><li>4 = forced character spacing</li></ul>
+     *   boolean $ishtml set to true if $txt is HTML content (default = false).
+     *   boolean $autopadding if true, uses internal padding and automatically adjust it to account for line width.
+     *   float $maxh maximum height. It should be >= $h and less then remaining space to the bottom of the page,
+     *               or 0 for disable this feature. This feature works only when $ishtml=false.
+     * 
+     */
+    
+    static function alterMailingLabelParams( &$args ) {
+        return self::singleton( )->invoke( 1, $args,
+                                           self::$_nullObject, self::$_nullObject,
+                                           self::$_nullObject, self::$_nullObject,
+                                           'civicrm_alterMailingLabelParams' );
+    }
+
 }

@@ -36,7 +36,7 @@
     <strong>{ts}Example{/ts}</strong><br />
     {ts 1=http://www.example.com/}If your site's home url is %1 ... then your CiviCRM Resource URL would be:{/ts} 
     <div class="font-italic description">
-    {if $config->userFramework EQ 'Drupal'}
+    {if $config->userSystem->is_drupal EQ '1'}
      &nbsp;&nbsp; http://www.example.com/sites/all/modules/civicrm/
     {elseif $config->userFramework EQ 'Joomla'}
      &nbsp;&nbsp; http://www.example.com/administrator/components/com_civicrm/civicrm/

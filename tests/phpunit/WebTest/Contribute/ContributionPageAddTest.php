@@ -43,7 +43,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, 'Dummy', 
                                                      null, true, true, 'required' );
 
-        $this->open($this->sboxPath . 'civicrm/admin/contribute&reset=1');
+        $this->open($this->sboxPath . 'civicrm/admin/contribute?reset=1');
         $this->waitForPageToLoad();        
 
         // search for the new contrib page and go to its test version
@@ -93,10 +93,10 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         
         // create contribution page with randomized title, default params and separate payment for Membership and Contribution
         $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, 'Dummy', 
-                                                     null, true, true, 'required', true, false, true, true,
+                                                     null, true, true, 'required', true, false, true, null, true,
                                                      1, 7, true, true, true, false, false, true );
         
-        $this->open($this->sboxPath . 'civicrm/admin/contribute&reset=1');
+        $this->open($this->sboxPath . 'civicrm/admin/contribute?reset=1');
         $this->waitForPageToLoad();        
         
         // search for the new contrib page and go to its test version
@@ -143,10 +143,10 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         
         // create contribution page with randomized title, default params and separate payment for Membership and Contribution
         $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, 'Dummy', 
-                                                     null, true, true, false, false, false, true, false,
+                                                     null, true, true, false, false, false, true, null, false,
                                                      1, 0, false, false, false, false, false, true, false );
         
-        $this->open($this->sboxPath . 'civicrm/admin/contribute&reset=1');
+        $this->open($this->sboxPath . 'civicrm/admin/contribute?reset=1');
         $this->waitForPageToLoad();        
         
         // search for the new contrib page and go to its test version
@@ -157,7 +157,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         //get Url for Live Contribution Page
         $registerUrl = "civicrm/contribute/transact?reset=1&id=$pageId";
         //logout
-        $this->open( $this->sboxPath . 'civicrm/logout&reset=1' );
+        $this->open( $this->sboxPath . 'civicrm/logout?reset=1' );
         $this->waitForPageToLoad( '30000' );
         
         //Open Live Contribution Page
@@ -186,7 +186,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $this->webtestLogin( );
         
         //Find Contribution
-        $this->open( $this->sboxPath . 'civicrm/contribute/search&reset=1' );
+        $this->open( $this->sboxPath . 'civicrm/contribute/search?reset=1' );
         
         $this->waitForElementPresent( 'contribution_date_low' );
         
@@ -211,7 +211,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         
         
         //Find Member
-        $this->open( $this->sboxPath . 'civicrm/member/search&reset=1' );
+        $this->open( $this->sboxPath . 'civicrm/member/search?reset=1' );
         $this->waitForElementPresent( 'member_source' );
         $this->type( 'sort_name', "$firstName $lastName" );
         $this->click( '_qf_Search_refresh' );

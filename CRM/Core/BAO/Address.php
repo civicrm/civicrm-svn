@@ -159,7 +159,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
             $isEdit = false;
         }
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $address->copyValues($params);
 
         $address->save( );
@@ -345,17 +345,19 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
         
         $config = CRM_Core_Config::singleton( );
 
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $asp = CRM_Core_BAO_Preferences::value( 'address_standardization_provider' );
+        require_once 'CRM/Core/BAO/Setting.php';
+        $asp = CRM_Core_BAO_Setting::getItem(  CRM_Core_BAO_Setting::ADDRESS_STANDARDIZATION_PREFERENCES_NAME,
+                                               'address_standardization_provider' );
         // clean up the address via USPS web services if enabled
         if ($asp === 'USPS') {
             require_once 'CRM/Utils/Address/USPS.php';
             CRM_Utils_Address_USPS::checkAddress( $params );
 
             // do street parsing again if enabled, since street address might have changed
-            require_once 'CRM/Core/BAO/Preferences.php';
+            require_once 'CRM/Core/BAO/Setting.php';
             $parseStreetAddress = CRM_Utils_Array::value( 'street_address_parsing', 
-                                                          CRM_Core_BAO_Preferences::valueOptions( 'address_options' ), 
+                                                          CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                                              'address_options' ), 
                                                           false );
 
             if ( $parseStreetAddress && !empty( $params['street_address']) ) {
@@ -511,7 +513,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
 
             $count++;
         }
-        
+
         return $addresses;
     }
     
@@ -586,7 +588,7 @@ ORDER BY civicrm_address.is_primary DESC, address_id ASC";
         $params = array( 1 => array( $id, 'Integer' ) );
 
         $addresses = array( );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         $count = 1;
         while ( $dao->fetch( ) ) {
             if ( $updateBlankLocInfo ) {
@@ -628,7 +630,7 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
                
         $params = array( 1 => array( $entityId, 'Integer' ) );
         $addresses = array( );
-        $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
         $locationCount = 1;
         while ( $dao->fetch( ) ) {
             $addresses[$locationCount] = $dao->address_id;
@@ -842,8 +844,9 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
     {
         static $addressOptions = null;
         if ( !$addressOptions ) {
-            require_once 'CRM/Core/BAO/Preferences.php';
-            $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+            require_once 'CRM/Core/BAO/Setting.php';
+            $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                  'address_options', true, null, true );
         }
         
         if ( is_array( $fields ) && !empty ( $fields ) ) {

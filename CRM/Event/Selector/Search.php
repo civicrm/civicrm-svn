@@ -190,7 +190,8 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
 
         $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
                                                     CRM_Contact_BAO_Query::MODE_EVENT );
-        $this->_query->_distinctComponentClause = " DISTINCT(civicrm_participant.id)";
+        $this->_query->_distinctComponentClause = " civicrm_participant.id";
+        $this->_query->_groupByComponentClause  = " GROUP BY civicrm_participant.id ";
     }//end of constructor
 
     /**

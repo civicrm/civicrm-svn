@@ -298,11 +298,11 @@ class CRM_Core_SelectValues
         static $ufGroupType = null;
         if (!$ufGroupType) {
             $ufGroupType = array(
-                                  'Profile'           => ts('Profile'),
+                                  'Profile'           => ts('Standalone Form or Directory'),
                                   'Search Profile'    => ts('Search Results'),
                                   );
             $config = CRM_Core_Config::singleton( );
-            if ( $config->userFramework == 'Drupal' ) {
+            if ( $config->userSystem->supports_form_extensions ) {
                 $ufGroupType += array(
                                       'User Registration' => ts('Drupal User Registration'),
                                       'User Account'      => ts('View/Edit Drupal User Account') );
@@ -476,17 +476,47 @@ class CRM_Core_SelectValues
      * @return array $map array of map providers
      * @static
      */
-    static function &mapProvider()
+    static function mapProvider()
     {
         static $map = null;
-        if (!$map) {
-            $map = array(
-                         'Yahoo'  => ts('Yahoo'),
-                         'Google' => ts('Google')
-                         );
+		if (! $map ) {
+            return CRM_Utils_System::getPluginList( 'templates/CRM/Contact/Form/Task/Map', ".tpl" );
         }
         return $map;
     }
+
+    /**
+     * Function to get the Geocoding Providers from available plugins
+     * 
+     * @return array $geo array of geocoder providers
+     * @static
+     */
+    static function geoProvider()
+    {
+        static $geo = null;
+        if (! $geo ) {
+            return CRM_Utils_System::getPluginList( 'CRM/Utils/Geocode' );
+        }
+        return $geo;
+    }
+
+
+    /**
+     * Function to get the Address Standardization Providers from available
+     * plugins
+     * 
+     * @return array $addr array of address standardization providers
+     * @static
+     */
+    static function &addressProvider()
+    {
+        static $addr = null;
+        if (! $addr ) {
+            return CRM_Utils_System::getPluginList( 'CRM/Utils/Address' );
+        }
+        return $addr;
+    }
+
 
     /**
      * different type of Mailing Tokens
@@ -536,6 +566,38 @@ class CRM_Core_SelectValues
                             '{activity.subject}' => ts('Activity Subject'),
                             '{activity.details}' => ts('Activity Details'),
                             
+                          );
+        }
+        return $tokens;
+    }
+ 
+    /**
+     * different type of Event Tokens
+     *
+     * @static
+     * return array
+     */
+    static function &eventTokens( ) 
+    {
+        static $tokens = null;
+
+        if (! $tokens ) {
+            $tokens = array( 
+                            '{event.id}' => ts('Event ID'),
+                            '{event.title}' => ts('Event Title'),
+                            '{event.start_date}' => ts('Event Start Date'),
+                            '{event.end_date}' => ts('Event End Date'),
+                            '{event.type}' => ts('Event Type'),
+                            '{event.summary}' => ts('Event Summary'),
+                            '{event.description}' => ts('Event Description'),
+                            '{event.contact_email}' => ts('Event Contact Email'),
+                            '{event.contact_phone}' => ts('Event Contact Phone'),
+                            '{event.location}' => ts('Event Location'),
+                            '{event.description}' => ts('Event Description'),
+                            '{event.location}' => ts('Event Location'),
+                            '{event.fees}' => ts('Event Fees'),
+                            '{event.info_url}' => ts('Event Info URL'),
+                            '{event.registration_url}' => ts('Event Registration URL'),
                           );
         }
         return $tokens;

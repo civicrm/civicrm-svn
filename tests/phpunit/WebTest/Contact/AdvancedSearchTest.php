@@ -144,7 +144,7 @@ class WebTest_Contact_ContactAdvanceSearch extends CiviSeleniumTestCase {
       //-------------- advance search --------------
       
       // Go directly to the URL of the screen that you will be testing (Advance Search).
-      $this->open($this->sboxPath . "civicrm/contact/search/advanced&reset=1");
+      $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
       
       //also create a dummy name to test false
       $dummyName = substr(sha1(rand()), 0, 7);
@@ -406,7 +406,7 @@ class WebTest_Contact_ContactAdvanceSearch extends CiviSeleniumTestCase {
       // create contact type Individual with subtype
       // with most of values to required to search
       $Subtype = "Student";
-      $this->open( $this->sboxPath ."civicrm/contact/add&reset=1&ct=Individual");
+      $this->open( $this->sboxPath ."civicrm/contact/add?reset=1&ct=Individual");
       $this->waitForPageToLoad("30000");
       $this->waitForElementPresent("_qf_Contact_cancel");
       

@@ -120,7 +120,7 @@ SELECT module
    AND uf_group_id = %1
 ";
         $params = array( 1 => array( $this->_gid, 'Integer' ) );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         if ( ! $dao->fetch( ) ) {
             CRM_Core_Error::fatal( ts( 'The requested Profile (gid=%1) is not configured to be used for \'Profile\' edit and view forms in its Settings. Contact the site administrator if you need assistance.',
                                       array( 1 => $this->_gid )) );        
@@ -278,9 +278,11 @@ SELECT module
             $url = CRM_Utils_System::url( 'civicrm/profile/view', $urlParams );
         } else {
             // Replace tokens from post URL
-            $contactParams  = array( 'contact_id' => $this->_id );
-            require_once 'api/v2/Contact.php';
-            $contact =& civicrm_contact_get($contactParams);
+            $contactParams  = array( 'contact_id' => $this->_id,
+                                     'version'    => 3 );
+            require_once 'api/api.php';
+            $contact = civicrm_api( 'contact', 'get', $contactParams );
+            $contact = reset( $contact['values'] );
             
             require_once 'CRM/Mailing/BAO/Mailing.php';
             $dummyMail = new CRM_Mailing_BAO_Mailing(); 
@@ -288,7 +290,7 @@ SELECT module
             $tokens = $dummyMail->getTokens();
             
             require_once 'CRM/Utils/Token.php';
-            $url = CRM_Utils_Token::replaceContactTokens($this->_postURL, $contact[$this->_id], false, CRM_Utils_Array::value('text', $tokens));
+            $url = CRM_Utils_Token::replaceContactTokens($this->_postURL, $contact, false, CRM_Utils_Array::value('text', $tokens));
         }
 
         $session->replaceUserContext( $url );
@@ -317,9 +319,8 @@ SELECT module
                 $message .= '<p>';
             }
             
-            if ( function_exists( 'drupal_set_message' ) ) {
-                drupal_set_message( $message );
-            }
+            require_once 'CRM/Utils/System.php';
+            CRM_Utils_System::setUFMessage( $message );
             
             $message = urlencode( $message );
 

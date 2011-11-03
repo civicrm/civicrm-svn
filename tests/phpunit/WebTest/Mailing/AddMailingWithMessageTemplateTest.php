@@ -46,7 +46,7 @@ class WebTest_Mailing_AddMailingWithMessageTemplateTest extends CiviSeleniumTest
       WebTest_Mailing_AddMessageTemplateTest::testTemplateAdd( $useTokens, $msgTitle );
       
       // Go directly to the URL of the screen that you will be testing (New Group).
-      $this->open($this->sboxPath . "civicrm/group/add&reset=1");
+      $this->open($this->sboxPath . "civicrm/group/add?reset=1");
       $this->waitForElementPresent("_qf_Edit_upload");
       
       // create new mailing group
@@ -81,7 +81,7 @@ class WebTest_Mailing_AddMailingWithMessageTemplateTest extends CiviSeleniumTest
       $this->waitForPageToLoad("30000");
       
       // Go directly to Schedule and Send Mailing form
-      $this->open($this->sboxPath . "civicrm/mailing/send&reset=1");
+      $this->open($this->sboxPath . "civicrm/mailing/send?reset=1");
       $this->waitForElementPresent("_qf_Group_cancel");
       
       // fill mailing name
@@ -138,7 +138,7 @@ class WebTest_Mailing_AddMailingWithMessageTemplateTest extends CiviSeleniumTest
       //check redirected page to Scheduled and Sent Mailings and  verify for mailing name
       $this->assertTrue($this->isTextPresent("Scheduled and Sent Mailings"));
       $this->assertTrue($this->isTextPresent("Mailing $mailingName Webtest"));
-      $this->open($this->sboxPath . "civicrm/mailing/queue&reset=1");
+      $this->open($this->sboxPath . "civicrm/mailing/queue?reset=1");
       $this->waitForPageToLoad("300000");
       
       // verify status

@@ -108,10 +108,10 @@ class CRM_Admin_Page_Options extends CRM_Core_Page_Basic
                                        'url'   => CRM_Utils_System::url( 'civicrm/admin/access', 
                                                                          'reset=1' )) );
             CRM_Utils_System::appendBreadCrumb( $breadCrumb ); 
-       } else {
-            CRM_Utils_System::setTitle(ts('%1 Options', array(1 => self::$_GName)));
+        } else {
+            CRM_Utils_System::setTitle(ts("%1 Options", array(1 => self::$_GName)));
         }
-        if ( in_array( self::$_gName, array('from_email_address', 'email_greeting', 'postal_greeting', 'addressee', 'case_status', 'encounter_medium') ) ) {
+        if ( in_array( self::$_gName, array('from_email_address', 'email_greeting', 'postal_greeting', 'addressee', 'case_status', 'encounter_medium', 'case_type') ) ) {
             $this->assign( 'showIsDefault', true );
         }
         if ( self::$_gName == 'participant_status' ) {
@@ -124,7 +124,7 @@ class CRM_Admin_Page_Options extends CRM_Core_Page_Basic
         }
         require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton( );
-        if ( in_array("CiviCase", $config->enableComponents) && self::$_gName == 'activity_type' ) {
+        if ( self::$_gName == 'activity_type' ) {
             $this->assign( 'showComponent', true );
         }
             

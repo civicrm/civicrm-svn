@@ -3,9 +3,9 @@
 -- most common languages, according to http://en.wikipedia.org/wiki/List_of_languages_by_number_of_native_speakers enabled
 
 INSERT INTO `civicrm_option_group`
-  (`name`, {localize field='label'}`label`{/localize}, {localize field='description'}`description`{/localize}, `is_reserved`, `is_active`)
+  (`name`, {localize field='title'}`title`{/localize}, {localize field='description'}`description`{/localize}, `is_reserved`, `is_active`)
 VALUES
-  ('languages', {localize}'{ts escape="sql"}Languages{/ts}'{/localize}, {localize}'{ts escape="sql"}List of Languages{/ts}'{/localize}, 0, 1);
+  ('languages', {localize}'{ts escape="sql"}Languages{/ts}'{/localize}, {localize}'{ts escape="sql"}List of Languages{/ts}'{/localize}, 1, 1);
   
 SELECT @option_group_id_languages      := max(id) from civicrm_option_group where name = 'languages';
 
@@ -70,6 +70,7 @@ VALUES
   (@option_group_id_languages, 0, 0, 'gl_ES', 'gl', {localize}'{ts escape="sql"}Galician{/ts}'{/localize}, @counter := @counter + 1),
   (@option_group_id_languages, 0, 0, 'ka_GE', 'ka', {localize}'{ts escape="sql"}Georgian{/ts}'{/localize}, @counter := @counter + 1),
   (@option_group_id_languages, 0, 1, 'de_DE', 'de', {localize}'{ts escape="sql"}German{/ts}'{/localize}, @counter := @counter + 1),
+  (@option_group_id_languages, 0, 1, 'de_CH', 'de', {localize}'{ts escape="sql"}German (Swiss){/ts}'{/localize}, @counter := @counter + 1),
   (@option_group_id_languages, 0, 1, 'el_GR', 'el', {localize}'{ts escape="sql"}Greek, Modern{/ts}'{/localize}, @counter := @counter + 1),
   (@option_group_id_languages, 0, 0, 'gn_PY', 'gn', {localize}'{ts escape="sql"}Guaraní{/ts}'{/localize}, @counter := @counter + 1),
   (@option_group_id_languages, 0, 0, 'gu_IN', 'gu', {localize}'{ts escape="sql"}Gujarati{/ts}'{/localize}, @counter := @counter + 1),
@@ -143,7 +144,7 @@ VALUES
   (@option_group_id_languages, 0, 0, 'os_GE', 'os', {localize}'{ts escape="sql"}Ossetian, Ossetic{/ts}'{/localize}, @counter := @counter + 1),
   (@option_group_id_languages, 0, 0, 'pa_IN', 'pa', {localize}'{ts escape="sql"}Panjabi, Punjabi{/ts}'{/localize}, @counter := @counter + 1),
   (@option_group_id_languages, 0, 0, 'pi_KH', 'pi', {localize}'{ts escape="sql"}Pāli{/ts}'{/localize}, @counter := @counter + 1),
-  (@option_group_id_languages, 0, 0, 'fa_IR', 'fa', {localize}'{ts escape="sql"}Persian{/ts}'{/localize}, @counter := @counter + 1),
+  (@option_group_id_languages, 0, 0, 'fa_IR', 'fa', {localize}'{ts escape="sql"}Persian (Iran){/ts}'{/localize}, @counter := @counter + 1),
   (@option_group_id_languages, 0, 1, 'pl_PL', 'pl', {localize}'{ts escape="sql"}Polish{/ts}'{/localize}, @counter := @counter + 1),
   (@option_group_id_languages, 0, 0, 'ps_AF', 'ps', {localize}'{ts escape="sql"}Pashto, Pushto{/ts}'{/localize}, @counter := @counter + 1),
   (@option_group_id_languages, 0, 1, 'pt_BR', 'pt', {localize}'{ts escape="sql"}Portuguese (Brazil){/ts}'{/localize}, @counter := @counter + 1),
@@ -169,6 +170,7 @@ VALUES
   (@option_group_id_languages, 0, 0, 'st_ZA', 'st', {localize}'{ts escape="sql"}Southern Sotho{/ts}'{/localize}, @counter := @counter + 1),
   (@option_group_id_languages, 0, 1, 'es_ES', 'es', {localize}'{ts escape="sql"}Spanish; Castilian (Spain){/ts}'{/localize}, @counter := @counter + 1),
   (@option_group_id_languages, 0, 1, 'es_MX', 'es', {localize}'{ts escape="sql"}Spanish; Castilian (Mexico){/ts}'{/localize}, @counter := @counter + 1),
+  (@option_group_id_languages, 0, 1, 'es_PR', 'es', {localize}'{ts escape="sql"}Spanish; Castilian (Puerto Rico){/ts}'{/localize}, @counter := @counter + 1),
   (@option_group_id_languages, 0, 0, 'su_ID', 'su', {localize}'{ts escape="sql"}Sundanese{/ts}'{/localize}, @counter := @counter + 1),
   (@option_group_id_languages, 0, 0, 'sw_TZ', 'sw', {localize}'{ts escape="sql"}Swahili{/ts}'{/localize}, @counter := @counter + 1),
   (@option_group_id_languages, 0, 0, 'ss_ZA', 'ss', {localize}'{ts escape="sql"}Swati{/ts}'{/localize}, @counter := @counter + 1),

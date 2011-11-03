@@ -88,10 +88,10 @@ class CRM_Mailing_Event_BAO_Subscribe extends CRM_Mailing_Event_DAO_Subscribe {
    SELECT DISTINCT contact_a.id as contact_id 
      FROM civicrm_contact contact_a 
 LEFT JOIN civicrm_email      ON contact_a.id = civicrm_email.contact_id
-    WHERE civicrm_email.email = %1";
+    WHERE civicrm_email.email = %1 AND contact_a.is_deleted = 0";
             
             $params = array( 1 => array( $email, 'String' ) );
-            $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+            $dao = CRM_Core_DAO::executeQuery( $query, $params );
             $id = array( );
             // lets just use the first contact id we got
             if ( $dao->fetch( ) ) {
@@ -105,19 +105,20 @@ LEFT JOIN civicrm_email      ON contact_a.id = civicrm_email.contact_id
 
         if ( ! $contact_id ) {
             require_once 'CRM/Core/BAO/LocationType.php';
-            require_once 'api/v2/utils.v2.php';
+            civicrm_api_include( 'utils', false, 3 );
             /* If the contact does not exist, create one. */
-            $formatted = array('contact_type' => 'Individual');
+            $formatted = array( 'contact_type' => 'Individual',
+                                'version'      => 3 );
             $locationType = CRM_Core_BAO_LocationType::getDefault( );
             $value = array('email' => $email,
                            'location_type_id' => $locationType->id );
-            _civicrm_add_formatted_param($value, $formatted);
+            _civicrm_api3_add_formatted_param($value, $formatted);
             
             require_once 'CRM/Import/Parser.php';
             $formatted['onDuplicate'] = CRM_Import_Parser::DUPLICATE_SKIP;
             $formatted['fixAddress'] = true;
-            require_once 'api/v2/Contact.php';
-            $contact =& civicrm_contact_format_create($formatted);
+            require_once 'api/api.php';
+            $contact = civicrm_api( 'contact', 'create', $formatted );
             if ( civicrm_error( $contact ) ) {
                 return $success;
             }
@@ -200,7 +201,7 @@ SELECT     civicrm_email.id as email_id
         $config = CRM_Core_Config::singleton();
 
         require_once 'CRM/Core/BAO/Domain.php';
-        $domain =& CRM_Core_BAO_Domain::getDomain();
+        $domain = CRM_Core_BAO_Domain::getDomain();
         
         //get the default domain email address.
         list( $domainEmailName, $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( );
@@ -273,7 +274,7 @@ SELECT     civicrm_email.id as email_id
 
         $message->setHTMLBody($html);
         $message->setTxtBody($text);
-        $b =& CRM_Utils_Mail::setMimeParams( $message );
+        $b = CRM_Utils_Mail::setMimeParams( $message );
         $h =& $message->headers($headers);
         $mailer =& $config->getMailer();
 
@@ -302,23 +303,37 @@ SELECT     civicrm_email.id as email_id
      * Get the group details to which given email belongs
      * 
      * @param string $email     email of the contact
+     * @param int    $contactID contactID if we want an exact match
+     *
      * @return array $groups    array of group ids
      * @access public
      */
-    function getContactGroups($email) {
-        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
-        $email = $strtolower( $email );
-
-        $query = "
+    function getContactGroups($email, $contactID = null) {
+        if ( $contactID ) {
+            $query = "
                  SELECT DISTINCT group_a.group_id, group_a.status, civicrm_group.title 
                  FROM civicrm_group_contact group_a
                  LEFT JOIN civicrm_group ON civicrm_group.id = group_a.group_id
                  LEFT JOIN civicrm_contact ON ( group_a.contact_id = civicrm_contact.id )
+                 WHERE civicrm_contact.id = %1";
+        
+            $params = array( 1 => array( $contactID, 'Integer' ) );
+        } else {
+            $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+            $email = $strtolower( $email );
+
+            $query = "
+                 SELECT DISTINCT group_a.group_id, group_a.status, civicrm_group.title 
+                 FROM civicrm_group_contact group_a
+                 LEFT JOIN civicrm_group ON civicrm_group.id = group_a.group_id
+                 LEFT JOIN civicrm_contact ON ( group_a.contact_id = civicrm_contact.id ) AND civicrm_contact.is_deleted = 0
                  LEFT JOIN civicrm_email ON civicrm_contact.id = civicrm_email.contact_id
                  WHERE civicrm_email.email = %1";
         
-        $params = array( 1 => array( $email, 'String' ) );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+            $params = array( 1 => array( $email, 'String' ) );
+        }
+
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         $groups = array();
         while ( $dao->fetch( ) ) {
             $groups[$dao->group_id] = array(
@@ -342,14 +357,14 @@ SELECT     civicrm_email.id as email_id
      * @public
      * @return void
      */
- function commonSubscribe( &$groups, &$params, $contactId = null, $context = null) 
+    function commonSubscribe( &$groups, &$params, $contactId = null, $context = null) 
     {
-        $contactGroups = CRM_Mailing_Event_BAO_Subscribe::getContactGroups($params['email']);
+        $contactGroups = CRM_Mailing_Event_BAO_Subscribe::getContactGroups($params['email'], $contactId);
         $group = array( );
         $success = null;
         foreach ( $groups as $groupID ) {
             $title = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group', $groupID, 'title');
-            if ( array_key_exists( $groupID, $contactGroups ) ) {
+            if ( array_key_exists( $groupID, $contactGroups ) && $contactGroups[$groupID]['status'] != 'Removed' ) {
                 $group[$groupID]['title']  = $contactGroups[$groupID]['title'];
                 
                 $group[$groupID]['status'] = $contactGroups[$groupID]['status'];

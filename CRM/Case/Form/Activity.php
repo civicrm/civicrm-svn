@@ -206,7 +206,11 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
             }
         }
 
-        CRM_Utils_System::setTitle( $this->_activityTypeName );
+        if ( $this->_currentlyViewedContactId ) {
+            require_once 'CRM/Contact/Page/View.php';
+            CRM_Contact_Page_View::setTitle( $this->_currentlyViewedContactId );
+        }
+//        CRM_Utils_System::setTitle( $this->_activityTypeName );
 
         $session = CRM_Core_Session::singleton( );
         $session->pushUserContext( $url );
@@ -362,6 +366,9 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
      */
     public function postProcess() 
     {
+        require_once 'CRM/Core/Transaction.php';
+        $tx = new CRM_Core_Transaction();
+
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             $statusMsg = null;
           
@@ -628,8 +635,9 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         //check for notification settings for assignee contacts
         $selectedContacts = array( 'contact_check' );
         
-        $config   =& CRM_Core_Config::singleton( );
-        if ( $config->activityAssigneeNotification ) {
+        require_once 'CRM/Core/BAO/Setting.php';
+        if ( CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+                                            'activity_assignee_notification' ) ) {
             $selectedContacts[] = 'assignee_contact_id';  
         }
         

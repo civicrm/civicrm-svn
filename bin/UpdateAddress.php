@@ -100,9 +100,11 @@ function run( ) {
     }
     
     // do check for parse street address.
-    require_once 'CRM/Core/BAO/Preferences.php';
+    require_once 'CRM/Core/BAO/Setting.php';
     $parseAddress = CRM_Utils_Array::value( 'street_address_parsing',
-                                            CRM_Core_BAO_Preferences::valueOptions( 'address_options' ), false );
+                                            CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                           'address_options' ),
+                                            false );
     $parseStreetAddress = false;
     if ( !$parseAddress ) {
         if ( $parse == 'true' ) {
@@ -163,7 +165,7 @@ WHERE      {$whereClause}
    
     $totalGeocoded = $totalAddresses = $totalAddressParsed = 0;
     
-    $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+    $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
     
     if ( $processGeocode ) {
         require_once( str_replace('_', DIRECTORY_SEPARATOR, $config->geocodeMethod ) . '.php' );

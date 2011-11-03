@@ -59,7 +59,7 @@ class HTML_QuickForm_JoomlaEditor extends HTML_QuickForm_textarea
     function toHtml()
     {
         jimport( 'joomla.html.editor' );
-		$editor = &JFactory::getEditor();
+		$editor = JFactory::getEditor();
         
 		if ( $this->_flagFrozen ) {
             return $this->getFrozenHtml();

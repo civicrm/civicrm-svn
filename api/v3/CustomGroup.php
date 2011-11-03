@@ -36,10 +36,7 @@
  * @version $Id: CustomGroup.php 30879 2010-11-22 15:45:55Z shot $
  */
 
-/**
- * Files required for this package
- */
-require_once 'api/v3/utils.php';
+
 require_once 'CRM/Core/BAO/CustomGroup.php';
 /**
  * Most API functions take in associative arrays ( name => value pairs
@@ -60,7 +57,7 @@ require_once 'CRM/Core/BAO/CustomGroup.php';
  * $params['class_name'] is a required field, class being extended.
  *
  * @param $params     array   Associative array of property name/value pairs to insert in group.
- *
+ * {@getfields CustomGroup_create}
  *
  * @return   Newly create custom_group object
  * @todo $params['extends'] is array format - is that std compatible
@@ -70,11 +67,7 @@ require_once 'CRM/Core/BAO/CustomGroup.php';
 function civicrm_api3_custom_group_create( $params )
 {
  
-        civicrm_api3_verify_mandatory($params,null,array('extends','title'));  
-        if ( ! CRM_Utils_Array::value('style', $params)  ) {
-            $params['style'] = 'Inline';
-        }    
-                
+    
         if (is_string($params['extends'])){
             $extends = explode(",",$params['extends']);
             unset ($params['extends']);
@@ -101,7 +94,16 @@ function civicrm_api3_custom_group_create( $params )
 
 }   
 
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_custom_group_create_spec(&$params){
+  $params['extends']['api.required'] = 1;
+  $params['title']['api.required'] = 1;
+  $params['style']['api.default'] = 'Inline'; 
+}
 /**
  * Use this API to delete an existing group.
  *
@@ -109,13 +111,12 @@ function civicrm_api3_custom_group_create( $params )
  *
  * @return Null if success
  * @access public
+ * {@getfields CustomGroup_delete}
+ * @example CustomGroupDelete.php
  **/
 function civicrm_api3_custom_group_delete($params)
 {    
 
-        civicrm_api3_verify_mandatory($params,null,array('id'));
-        // convert params array into Object
-        require_once 'CRM/Core/DAO/CustomGroup.php';
         $values = new CRM_Core_DAO_CustomGroup( );
         $values->id = $params['id'];
         $values->find(true);
@@ -133,10 +134,10 @@ function civicrm_api3_custom_group_delete($params)
  * @param array $params Array to search on
  *
 * @access public
- * 
+ * {@getfields CustomGroup_get}
+ * @example CustomGroupGet.php
  **/
 function civicrm_api3_custom_group_get($params)
 {
-    civicrm_api3_verify_mandatory($params);
     return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
  }

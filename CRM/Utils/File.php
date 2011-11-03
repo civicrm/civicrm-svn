@@ -236,7 +236,7 @@ class CRM_Utils_File {
     function sourceSQLFile( $dsn, $fileName, $prefix = null, $isQueryString = false, $dieOnErrors = true ) {
         require_once 'DB.php';
 
-        $db  =& DB::connect( $dsn );
+        $db  = DB::connect( $dsn );
         if ( PEAR::isError( $db ) ) {
             die( "Cannot open $dsn: " . $db->getMessage( ) );
         }
@@ -291,6 +291,22 @@ class CRM_Utils_File {
         }
         //support lower and uppercase file extensions
         return isset( $extensions[strtolower( $ext )] ) ? true : false;
+    }
+    
+    /**
+     * Determine whether a given file is listed in the PHP include path
+     *
+     * @param string $name name of file
+     * @return boolean  whether the file can be include()d or require()d
+     */
+    static function isIncludable( $name ) {
+        $x = @fopen($name, 'r', TRUE);
+        if ($x) {
+            fclose($x);
+            return TRUE;
+        } else {
+            return FALSE;
+        }
     }
 
     /**
@@ -366,7 +382,7 @@ HTACCESS;
         static $_path = null;
         if ( ! $_path ) {
             if ( $templateCompileDir == null ) {
-                $config =& CRM_Core_Config::singleton( );
+                $config = CRM_Core_Config::singleton( );
                 $templateCompileDir = $config->templateCompileDir;
             }
             

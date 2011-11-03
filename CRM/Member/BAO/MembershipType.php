@@ -128,7 +128,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
      * @static
      */
     
-    static function del($membershipTypeId) 
+    static function del($membershipTypeId ,  $skipRedirect = false) 
     {
         //check dependencies
         $check  = false;
@@ -149,7 +149,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
         }
         if ($check) {
 
-            $session = CRM_Core_Session::singleton();
+
             $cnt = 1;
             $message = ts('This membership type cannot be deleted due to following reason(s):' ); 
             if ( in_array( 'Membership', $status) ) {
@@ -162,9 +162,17 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
                 $deleteURL = CRM_Utils_System::url('civicrm/admin/contribute', 'reset=1');
                 $message .= '<br/>' . ts('%2. This Membership Type is being link to <a href=\'%1\'>Online Contribution page</a>. Please change/delete it in order to delete this Membership Type.', array(1 => $deleteURL, 2 => $cnt));
             }
-            CRM_Core_Session::setStatus($message);
-
-            return CRM_Utils_System::redirect( CRM_Utils_System::url('civicrm/admin/member/membershipType', 'reset=1&action=browse'));
+            if ( ! $skipRedirect  ) {
+              $session = CRM_Core_Session::singleton();
+              CRM_Core_Session::setStatus($message);
+              return CRM_Utils_System::redirect( CRM_Utils_System::url('civicrm/admin/member/membershipType', 'reset=1&action=browse'));
+            }else{
+             $error = array( );
+             $error['is_error'] = 1;
+             //don't translate as api error message are not translated
+             $error['error_message'] = $message ;
+             return $error;
+            }
         }
         
         //delete from membership Type table
@@ -273,11 +281,12 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
      * @param int  $membershipTypeId membership type id
      * @param date $joinDate member since ( in mysql date format ) 
      * @param date $startDate start date ( in mysql date format ) 
+     * @param int  $numRenewTerms    how many membership terms are being added to end date (default is 1)
      *
      * @return array associated array with  start date, end date and join date for the membership
      * @static
      */
-    function getDatesForMembershipType( $membershipTypeId, $joinDate = null, $startDate = null, $endDate = null ) 
+    function getDatesForMembershipType( $membershipTypeId, $joinDate = null, $startDate = null, $endDate = null, $numRenewTerms = 1 ) 
     {
         $membershipTypeDetails = self::getMembershipTypeDetails( $membershipTypeId );
         
@@ -348,7 +357,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
                 $fixedEndDate = date('Y-m-d',mktime( 0, 0, 0, 
                                                      $dateParts[1], 
                                                      $dateParts[2] - 1, 
-                                                     $dateParts[0] + $membershipTypeDetails['duration_interval'] ) );
+                                                     $dateParts[0] + ( $numRenewTerms * $membershipTypeDetails['duration_interval'] ) ) );
                 
                 //make sure rollover window should be 
                 //subset of membership period window.
@@ -389,15 +398,15 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             switch ( $membershipTypeDetails['duration_unit'] ) {
                 
             case 'year' :
-                $year  = $year + $membershipTypeDetails['duration_interval'];
+                $year  = $year + ( $numRenewTerms * $membershipTypeDetails['duration_interval'] );
                 //extend membership date by duration interval.
                 if ( $fixed_period_rollover ) {
-                    $year += $membershipTypeDetails['duration_interval'];
+                    $year += 1;
                 }
                 
                 break;
             case 'month':
-                $month = $month + $membershipTypeDetails['duration_interval'];
+                $month = $month + ( $numRenewTerms * $membershipTypeDetails['duration_interval'] );
                 
                 if ( $fixed_period_rollover ) {
                     //Fix Me: Currently we don't allow rollover if
@@ -406,7 +415,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
                 
                 break;
             case 'day':
-                $day   = $day + $membershipTypeDetails['duration_interval'];
+                $day   = $day + ( $numRenewTerms * $membershipTypeDetails['duration_interval'] );
                 
                 if ( $fixed_period_rollover ) {
                     //Fix Me: Currently we don't allow rollover if
@@ -458,12 +467,13 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
      * @param int $membershipId 
      * @param $changeToday 
      * @param int $membershipTypeID - if provided, overrides the membership type of the $membershipID membership
+     * @param int  $numRenewTerms    how many membership terms are being added to end date (default is 1)
      *
      * CRM-7297 Membership Upsell - Added $membershipTypeID param to facilitate calculations of dates when membership type changes
      * @return Array array fo the start date, end date and join date of the membership
      * @static
      */
-    function getRenewalDatesForMembershipType( $membershipId, $changeToday = null, $membershipTypeID = null ) 
+    function getRenewalDatesForMembershipType( $membershipId, $changeToday = null, $membershipTypeID = null, $numRenewTerms = 1 ) 
     {
         require_once 'CRM/Member/BAO/Membership.php';
         require_once 'CRM/Member/BAO/MembershipStatus.php';
@@ -500,13 +510,13 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             
             switch ( $membershipTypeDetails['duration_unit'] ) {
             case 'year' :
-                $year  = $year   + $membershipTypeDetails['duration_interval'];
+                $year  = $year   + ( $numRenewTerms * $membershipTypeDetails['duration_interval'] );
                 break;
             case 'month':
-                $month = $month  + $membershipTypeDetails['duration_interval'];
+                $month = $month  + ( $numRenewTerms * $membershipTypeDetails['duration_interval'] );
                 break;
             case 'day':
-                $day   = $day    + $membershipTypeDetails['duration_interval'];
+                $day   = $day    + ( $numRenewTerms * $membershipTypeDetails['duration_interval'] );
                 break;
             }
             if ( $membershipTypeDetails['duration_unit'] =='lifetime') {
@@ -543,7 +553,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             } 
             // Calculate new start/end/reminder dates when join date is today
             $renewalDates = self::getDatesForMembershipType( $membershipTypeDetails['id'],
-                                                             $today );
+                                                             $today, null, null, $numRenewTerms );
             $membershipDates = array();
             $membershipDates['today']      = CRM_Utils_Date::customFormat($today,'%Y%m%d' );
             $membershipDates['start_date'] = $renewalDates['start_date'];
@@ -577,6 +587,28 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             CRM_Core_DAO::storeValues( $dao, $membershipTypes[$dao->id] ); 
         } 
         return $membershipTypes;
+    }
+
+    /**
+     * Function to retrieve all Membership Types with Member of Contact id
+     * 
+     * @param array membership types
+     *
+     * @return Array array of the details of membership types with Member of Contact id
+     * @static
+     */    
+    static function getMemberOfContactByMemTypes( $membershipTypes ) {
+        $memTypeOrgs = array( );
+        if ( empty($membershipTypes) ) {
+            return $memTypeOrgs;
+        }
+
+        $result = CRM_Core_DAO::executeQuery("SELECT id, member_of_contact_id FROM civicrm_membership_type WHERE id IN (". implode(',', $membershipTypes) .")");
+        while( $result->fetch( ) ) {
+            $memTypeOrgs[$result->id] = $result->member_of_contact_id;
+        }
+        
+        return $memTypeOrgs;
     }
 }
 

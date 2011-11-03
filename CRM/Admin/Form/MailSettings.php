@@ -94,7 +94,38 @@ class CRM_Admin_Form_MailSettings extends CRM_Admin_Form
                           );
         $this->add('select', 'is_default', ts('Used For?'), $usedfor); 
     }
+
+    /**
+     * Add local and global form rules
+     *
+     * @access protected
+     * @return void
+     */
+    function addRules( ) 
+    {
+        $this->addFormRule( array( 'CRM_Admin_Form_MailSettings', 'formRule' ) );
+    }
     
+    /**
+     * global validation rules for the form
+     *
+     * @param array $fields posted values of the form
+     *
+     * @return array list of errors to be posted back to the form
+     * @static
+     * @access public
+     */
+    static function formRule( $fields ) 
+    {
+        $errors = array( );
+        // Check for default from email address and organization (domain) name. Force them to change it.
+        if ( $fields['domain'] == 'FIXME.ORG' ){
+            $errors['domain'] = ts( 'Please enter a valid domain for this mailbox account (the part after @).');
+        }
+
+        return empty($errors) ? true : $errors;
+    }
+
     /** 
      * Function to process the form 
      * 

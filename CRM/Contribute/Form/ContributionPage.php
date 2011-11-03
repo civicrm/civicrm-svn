@@ -96,7 +96,7 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
     {
         // current contribution page id
         $this->_id = CRM_Utils_Request::retrieve('id', 'Positive',
-                                                 $this, false, 0);
+                                                 $this, false, null, 'REQUEST');
         $this->assign( 'contributionPageID', $this->_id );
         
         // get the requested action
@@ -146,7 +146,7 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
     {
         $this->applyFilter('__ALL__', 'trim');
 
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $this->_cancelURL = CRM_Utils_Array::value( 'cancelURL', $_POST );
         
         if ( !$this->_cancelURL ) {
@@ -166,8 +166,12 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
                                             'isDefault' => true   ),
                                     array ( 'type'      => 'upload',
                                             'name'      => ts('Save and Done'),
-                                            'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                                            'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
                                             'subName'   => 'done'   ),
+                                    array ( 'type'      => 'submit',
+                                            'name'      => ts('Save and Next'),
+                                            'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                                            'subName'   => 'savenext' ),
                                     array ( 'type'      => 'cancel',
                                             'name'      => ts('Cancel') ),
                                     )
@@ -248,9 +252,11 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
                 $defaults['goal_amount'] = CRM_Utils_Money::format($defaults['goal_amount'], null, '%a');
             }
             
-            // get price set id.
+            // get price set of type contributions
             require_once 'CRM/Price/BAO/Set.php';
-            $this->_priceSetID = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $this->_id );
+            //this is the value for stored in db if price set extends contribution
+            $usedFor = 2;
+            $this->_priceSetID = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $this->_id, $usedFor );
             if ( $this->_priceSetID ) $defaults['price_set_id'] = $this->_priceSetID;
             
             if ( CRM_Utils_Array::value( 'end_date', $defaults ) ) {
@@ -309,27 +315,54 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
 
     function endPostProcess( )
     {
-        // make submit buttons keep the current working tab opened.
+        // make submit buttons keep the current working tab opened, or save and next tab
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             $className = CRM_Utils_String::getClassName( $this->_name );
-            if ( $className == 'ThankYou' ) {
-                $subPage = 'thankYou';
-            } else if ( $className == 'Contribute' ) {
-                $subPage = 'friend';
+            
+            //retrieve list of pages from StateMachine and find next page
+            //this is quite painful because StateMachine is full of protected variables
+            //so we have to retrieve all pages, find current page, and then retrieve next
+            require_once 'CRM/Contribute/StateMachine/ContributionPage.php';
+            $stateMachine = new CRM_Contribute_StateMachine_ContributionPage( $this );
+            $states       = $stateMachine->getStates();
+            $statesList   = array_keys($states);
+            $currKey      = array_search($className, $statesList);
+            $nextPage     = ( array_key_exists($currKey + 1, $statesList) ) ? $statesList[$currKey + 1] : '';
+            
+            //unfortunately, some classes don't map to subpage names, so we alter the exceptions
+            if ( $className == 'Amount' ) {
+                $subPage  = 'amount';
+                $nextPage = 'membership';
             } else if ( $className == 'MembershipBlock' ) {
-                $subPage = 'membership';
+                $subPage  = 'membership';
+                $nextPage = 'thankYou';
+            } elseif ( $className == 'ThankYou' ) {
+                $subPage  = 'thankYou';
+                $nextPage = 'friend';
+            } else if ( $className == 'Contribute' ) {
+                $subPage  = 'friend';
+                $nextPage = 'custom';
             } else {
-                $subPage = strtolower( $className );
+                $subPage  = strtolower( $className );
+                $nextPage = strtolower( $nextPage );
             }
-                        
+
             CRM_Core_Session::setStatus( ts("'%1' information has been saved.", 
                                             array( 1 => ( $subPage == 'friend' ) ? 'Friend' : $className ) ) );
 
             $this->postProcessHook( );
-            
+
             if ( $this->controller->getButtonName('submit') == "_qf_{$className}_next" ) {
                 CRM_Utils_System::redirect( CRM_Utils_System::url( "civicrm/admin/contribute/{$subPage}",
                                                                    "action=update&reset=1&id={$this->_id}" ) );
+            } elseif ( $this->controller->getButtonName('submit') == "_qf_{$className}_submit_savenext" ) {
+                if ( $nextPage ) {
+                    CRM_Utils_System::redirect( CRM_Utils_System::url( "civicrm/admin/contribute/{$nextPage}",
+                                                                       "action=update&reset=1&id={$this->_id}" ) );
+                } else {
+                    CRM_Utils_System::redirect( CRM_Utils_System::url( "civicrm/admin/contribute",
+                                                                       "reset=1" ) );
+                }
             } else {
                 CRM_Utils_System::redirect( CRM_Utils_System::url( "civicrm/admin/contribute", 'reset=1' ) );
             }
@@ -347,6 +380,7 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
             return 'CRM/Contribute/Form/ContributionPage/Tab.tpl';
         }
     }
+
 }
 
 

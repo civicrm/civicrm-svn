@@ -77,7 +77,7 @@ SELECT acl_id
             $query .= " OR contact_id IS NULL";
         }
 
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
 
         $cache = array( );
         while ( $dao->fetch( ) ) {
@@ -111,7 +111,7 @@ DELETE FROM civicrm_acl_cache
 WHERE contact_id = %1
 ";
         $params = array( 1 => array( $id, 'Integer' ) );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
     }
 
     static function updateEntry( $id ) {
@@ -130,7 +130,7 @@ WHERE contact_id = %1
         self::$_cache = null;
 
         // reset any db caching
-        $config  =& CRM_Core_Config::singleton( );
+        $config  = CRM_Core_Config::singleton( );
         $smartGroupCacheTimeout = 
             isset( $config->smartGroupCacheTimeout ) && 
             is_numeric(  $config->smartGroupCacheTimeout ) ? $config->smartGroupCacheTimeout : 0;

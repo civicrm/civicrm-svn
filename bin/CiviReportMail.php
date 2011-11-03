@@ -56,7 +56,9 @@ class CiviReportMail {
             if (!ini_get('safe_mode')) set_time_limit(0);
         
             // if there are named sets of settings, use them - otherwise use the default (null)
-            $this->processReport();
+            require_once 'CRM/Report/Utils/Report.php';
+            $result = CRM_Report_Utils_Report::processReport( );
+            echo $result['messages'];
          } else {
             throw new Exception('Could not acquire lock, another CiviReportMail process is running');
          }
@@ -64,41 +66,6 @@ class CiviReportMail {
         $lock->release();
     }
 
-    function processReport( ) {
-        require_once 'CRM/Report/Page/Instance.php';
-        require_once 'CRM/Utils/Wrapper.php';
-
-        $sendmail     = CRM_Utils_Request::retrieve( 'sendmail', 'Boolean', 
-                                                     CRM_Core_DAO::$_nullObject, true, null, 'REQUEST' );
-        $instanceId   = CRM_Utils_Request::retrieve( 'instanceId', 'Positive', 
-                                                     CRM_Core_DAO::$_nullObject, true, null, 'REQUEST' );
-        $resetVal     = CRM_Utils_Request::retrieve( 'reset', 'Positive',
-                                                     CRM_Core_DAO::$_nullObject, true, null, 'REQUEST' );
-              
-        $optionVal    = CRM_Report_Utils_Report::getValueFromUrl( $instanceId );
-        
-        echo "Report Mail Triggered...<br />";
-        require_once 'CRM/Core/OptionGroup.php';
-        $templateInfo = CRM_Core_OptionGroup::getRowValues( 'report_template', $optionVal, 'value' );
-        $obj = new CRM_Report_Page_Instance();            
-        if ( strstr($templateInfo['name'], '_Form') ) {
-            $instanceInfo = array( );
-            CRM_Report_BAO_Instance::retrieve( array('id' => $instanceId), $instanceInfo );
-            
-            if ( ! empty($instanceInfo['title']) ) {
-                $obj->assign( 'reportTitle', $instanceInfo['title'] );
-            } else {
-                $obj->assign( 'reportTitle', $templateInfo['label'] );
-            }
-            
-            $wrapper = new CRM_Utils_Wrapper( );
-            $arguments['urlToSession'] = array( array( 'urlVar'     => 'instanceId',
-                                                       'type'       => 'Positive',
-                                                       'sessionVar' => 'instanceId',
-                                                       'default'    => 'null' ) );
-            return $wrapper->run( $templateInfo['name'], null, $arguments );
-        }
-    }
 }
 
 session_start();

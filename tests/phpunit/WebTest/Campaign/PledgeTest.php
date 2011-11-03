@@ -72,15 +72,15 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
         }
         
         // add the required Drupal permission
-        $this->open("{$this->sboxPath}admin/user/permissions");
+        $this->changeAdminLinks();
         $this->waitForElementPresent('edit-submit');
-        $this->check('edit-2-access-CiviPledge');
+        $this->check('edit-2-access-civipledge');
         $this->check('edit-2-edit-pledges');
         $this->click('edit-submit');
         $this->waitForPageToLoad();
         $this->assertTrue($this->isTextPresent('The changes have been saved.'));
         
-        $this->open($this->sboxPath . "civicrm/logout&reset=1");
+        $this->open($this->sboxPath . "civicrm/logout?reset=1");
         $this->waitForPageToLoad('30000');          
 
         // Log in as demo user
@@ -120,7 +120,7 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad("30000");
         
         // Go directly to the URL of the screen that you will be testing
-        $this->open($this->sboxPath . "civicrm/campaign/add&reset=1");
+        $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
         
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.

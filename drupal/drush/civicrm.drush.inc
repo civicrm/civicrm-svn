@@ -66,6 +66,18 @@ function civicrm_drush_command() {
     $items = array();
 
     // the key in the $items array is the name of the command.
+    $items['civicrm-api'] = 
+        array('callback'    => 'drush_civicrm_api',
+              'description' => 'CLI access to CiviCRM APIs. It can return pretty-printor json formatted data.', 
+              'examples'    => 
+              array('drush civicrm-api contact.create first_name=John last_name=Doe contact_type=Individual' => 'Create a new contact named John Doe',
+                    'drush civicrm-api contact.create id=1 --out=json' =>  'Find/display a contact in JSON format',
+                    ),
+              'options'     =>  array(
+                  '--in' => 'Input type: "args" (command-line), "json" (STDIN)',
+                  '--out' => 'Output type: "pretty" (STDOUT), "json" (STDOUT)',
+                  ),
+              );
     $items['civicrm-install'] = 
         array('callback'    => 'civicrm_pkg_install',
               'description' => "Install a new instance of CiviCRM.",
@@ -76,6 +88,10 @@ function civicrm_drush_command() {
                       '--dbname'      => 'MySQL database name of your Drupal/CiviCRM database.',
                       '--tarfile'     => 'Path to your CiviCRM tar.gz file.',
                       '--destination' => 'Destination modules path to extract CiviCRM (eg : sites/all/modules ).',
+                      '--lang'        => 'Default language to use for installation.',
+                      '--langtarfile' => 'Path to your l10n tar.gz file.',
+                      '--site_url'     => 'Base Url for your drupal/CiviCRM website without http (e.g. mysite.com)',
+                      '--ssl'         => 'Using ssl for your drupal/CiviCRM website if set to on (e.g. --ssl=on)'
                       ),
               );
     $items['civicrm-upgrade-db']  = 
@@ -169,12 +185,12 @@ function civicrm_drush_command() {
         array('callback'    => 'civicrm_sql_cli',
               'description' => "Open a SQL command-line interface using CiviCRM's credentials.",
               );
-    $items['civicrm-civimail'] = 
-        array('callback'    => 'drush_civicrm_civimail_cron',
-              'description' => "Run the CiviMail cron.",
+    $items['civicrm-process-mail-queue'] = 
+        array('callback'    => 'drush_civicrm_process_mail_queue',
+              'description' => "Process pending CiviMail mailing jobs.",
               'examples'    => 
-              array('drush --uri=http://example.com civicrm-civimail -u admin -p admin -s 12345678912345678912345678' => 
-                    'Run CiviMail cron with admin credentials and site key.',
+              array('drush civicrm-process-mail-queue -u admin' => 
+                    'Process CiviMail queue with admin credentials.',
                     ),
               );
     $items['civicrm-member-records'] = 
@@ -201,6 +217,7 @@ function civicrm_pkg_install( ) {
     $crmpath = _civicrm_get_crmpath( );
     $drupalRoot = drush_get_context('DRUSH_DRUPAL_ROOT');
     $modPath    = "$drupalRoot/$crmpath";
+    $lang = drush_get_option('lang', '');
     
     if ( !is_dir( "$modPath/civicrm" ) ) {
         // extract tarfile at right place
@@ -212,12 +229,16 @@ function civicrm_pkg_install( ) {
             drush_die(dt("Tarfile could not be unpacked OR CiviCRM installer helper file is missing."));
         }
         drush_log(dt("Tarfile unpacked."), 'ok');
+
+        if ($lang != '') {
+            _civicrm_extract_tarfile( $modPath, "langtarfile");
+        }
         
         // setup all required files/civicrm/* directories
         _civicrm_create_files_dirs( $civicrmInstallerHelper, $modPath );
         
         // install database
-        _civicrm_install_db( $dbuser, $dbpass, $dbhost, $dbname, $modPath );
+        _civicrm_install_db( $dbuser, $dbpass, $dbhost, $dbname, $modPath, $lang );
         
         // generate civicrm.settings.php file
         _civicrm_generate_settings_file( $dbuser, $dbpass, $dbhost, $dbname, $modPath );
@@ -241,7 +262,8 @@ function _civicrm_extract_tarfile( $destinationPath, $option = 'tarfile' ) {
     drush_shell_exec("tar -xf $tarpath -C \"$destinationPath\"");
 }
 
-function _civicrm_install_db( $dbuser, $dbpass, $dbhost, $dbname, $modPath ) {
+function _civicrm_install_db( $dbuser, $dbpass, $dbhost, $dbname, 
+                                                 $modPath, $lang) {
     $drupalRoot = drush_get_context('DRUSH_DRUPAL_ROOT');
     $siteRoot   = drush_get_context('DRUSH_DRUPAL_SITE_ROOT', FALSE);
     
@@ -257,8 +279,23 @@ function _civicrm_install_db( $dbuser, $dbpass, $dbhost, $dbname, $modPath ) {
     drush_print(dt("Loading CiviCRM database structure .."));
     civicrm_source($dsn, $sqlPath . '/civicrm.mysql'   );
     drush_print(dt("Loading CiviCRM database with required data .."));
-    civicrm_source($dsn, $sqlPath . '/civicrm_data.mysql');
-    civicrm_source($dsn, $sqlPath . '/civicrm_acl.mysql' );
+    // testing the translated sql files availability
+    $data_file = $sqlPath . '/civicrm_data.mysql';
+    $acl_file = $sqlPath . '/civicrm_acl.mysql';
+    if ($lang != ''){
+        if (file_exists($sqlPath . '/civicrm_data.' . $lang . '.mysql')
+            and file_exists($sqlPath . '/civicrm_acl.' . $lang . '.mysql')
+            and $lang != ''){
+                $data_file = $sqlPath . '/civicrm_data.' . $lang . '.mysql';
+                $acl_file = $sqlPath . '/civicrm_acl.'. $lang . '.mysql';
+        }else{
+            drush_print(dt("No sql files could be retrieved for \"" . $lang . 
+                                              "\", using default language."));
+        }
+    }
+    civicrm_source($dsn, $data_file);
+    civicrm_source($dsn, $acl_file);
+
     drush_log(dt("CiviCRM database loaded successfully."), 'ok');
 }
 
@@ -290,8 +327,16 @@ function _civicrm_generate_settings_file( $dbuser, $dbpass, $dbhost, $dbname, $m
     }
 
     drush_print(dt("Generating civicrm settings file .."));
-    $baseUrl = drush_get_option('site_url', false);
-    $baseUrl = !$baseUrl ? ($GLOBALS['base_url']) : ('http://' . $baseUrl);
+    if ( $baseUrl = drush_get_option('site_url', false )){
+        $ssl = drush_get_option('ssl', false);
+        if ($ssl == 'on'){
+            $protocol = 'https';
+        }else{
+            $protocol = 'http';
+        }
+    }
+
+    $baseUrl = !$baseUrl ? ($GLOBALS['base_url']) : ($protocol . '://' . $baseUrl);
     
     $db_spec = _drush_sql_get_db_spec();
     $params  = array(
@@ -382,7 +427,7 @@ function civicrm_upgrade_db() {
     $_GET['q'] = 'civicrm/upgrade';
     require_once 'CRM/Core/Config.php';
     require_once 'CRM/Core/Smarty.php';
-    $template =& CRM_Core_Smarty::singleton( );
+    $template = CRM_Core_Smarty::singleton( );
 
     require_once 'CRM/Utils/System.php';
     require_once 'CRM/Core/BAO/Domain.php';
@@ -428,8 +473,8 @@ function civicrm_config_update() {
     }
 
     require_once 'CRM/Core/I18n.php';
-    require_once 'CRM/Core/BAO/Setting.php';
-    $result = CRM_Core_BAO_Setting::doSiteMove( $defaultValues );
+    require_once 'CRM/Core/BAO/ConfigSetting.php';
+    $result = CRM_Core_BAO_ConfigSetting::doSiteMove( $defaultValues );
 
     if ( $result )
         drush_log(dt('Config successfully updated.'), 'completed');
@@ -447,11 +492,11 @@ function civicrm_cache_clear() {
     $config->clearDBCache( );
 
     // also cleanup the templates_c directory
-    $config =& CRM_Core_Config::singleton( );
+    $config = CRM_Core_Config::singleton( );
     $config->cleanup( 1 , false );
 
     // also cleanup the session object
-    $session =& CRM_Core_Session::singleton( );
+    $session = CRM_Core_Session::singleton( );
     $session->reset(1);
 
     drush_log(dt('Cache cleared.'), 'ok');
@@ -642,9 +687,7 @@ function civicrm_restore() {
 }
 
 function drush_civicrm_civimail_cron() {
-    $_GET['q'] = 'civicrm/mailing/queue';
-    $_GET['reset'] = '1';
-    menu_execute_active_handler();
+    civicrm_api('Mailing','Process',array('version' => 3));
 }
 
 function drush_civicrm_updatemembershiprecord_cron() {
@@ -688,7 +731,7 @@ function civicrm_rest() {
     $rest = new CRM_Utils_REST();
 
     require_once 'CRM/Core/Config.php';
-    $config =& CRM_Core_Config::singleton();
+    $config = CRM_Core_Config::singleton();
 
     global $civicrm_root;
     // adding dummy script, since based on this api file path is computed.
@@ -748,12 +791,24 @@ function _civicrm_dsn_init( $reset = false ) {
 
     _civicrm_init();
 
-    if ( !$globalDbUrl && CIVICRM_DSN ) {
-        if ( array_key_exists('db_url', $GLOBALS) ) {
-            $globalDbUrl = $GLOBALS['db_url']; // keep a copy so that we can put it back.
+    // check if we're using the old-style $GLOBALS['db_url']
+    // or the new style ( > drupal 7 )
+    if (drush_drupal_major_version() >= 7) {
+      $database = drush_get_option('database', 'default');
+      $target = drush_get_option('target', 'default');
+      if ( !$globalDbUrl && CIVICRM_DSN ) {
+        if ( isset($GLOBALS['databases'][$database][$target]) ) {
+            $globalDbUrl = $GLOBALS['database'][$database][$target]; // keep a copy so that we can put it back.
         }
-        // now modify $GLOBALS['db_url'] so that drush works on CIVICRM_DSN instead of drupal's
-        $GLOBALS['db_url'] = CIVICRM_DSN;
+        // now modify $GLOBALS so that drush works on CIVICRM_DSN instead of drupal's
+        $GLOBALS['databases'][$database][$target] = drush_convert_db_from_db_url(CIVICRM_DSN);
+      }
+    } else {
+      if ( !$globalDbUrl && CIVICRM_DSN ) {
+            $globalDbUrl = $GLOBALS['db_url']; // keep a copy so that we can put it back.
+      }
+      // now modify $GLOBALS so that drush works on CIVICRM_DSN instead of drupal's
+      $GLOBALS['db_url'] = CIVICRM_DSN;
     }
     $dbUrl = $globalDbUrl;
     $globalDbUrl = $reset ? null : $globalDbUrl;
@@ -764,7 +819,13 @@ function _civicrm_dsn_init( $reset = false ) {
 function _civicrm_dsn_close( ) {
     $globalDbUrl = _civicrm_dsn_init( true );
     if ( $globalDbUrl ) {
-        $GLOBALS['db_url'] = $globalDbUrl;
+        if (drush_drupal_major_version() >= 7) {
+            $database = drush_get_option('database', 'default');
+            $target = drush_get_option('target', 'default');
+            $GLOBALS['databases'][$database][$target] = $globalDbUrl;
+        } else {
+            $GLOBALS['db_url'] = $globalDbUrl;
+        }
     }
 }
 
@@ -793,7 +854,7 @@ function _civicrm_init( ) {
 
     // also initialize config object
     require_once 'CRM/Core/Config.php';
-    $config =& CRM_Core_Config::singleton( );
+    $config = CRM_Core_Config::singleton( );
 
     $init = true;
     return $init;
@@ -808,4 +869,52 @@ function _civicrm_get_crmpath( ) {
         }
     }
     return $crmpath;        
+}
+
+/**
+ * (Drush callback)
+ */
+function drush_civicrm_api() {
+  $DEFAULTS = array('version' => 3);
+
+  $args = func_get_args();
+  list ($entity,$action) = explode('.', $args[0]);
+  array_shift($args);
+
+  // Parse $params
+  switch (drush_get_option('in', 'args')) {
+    case 'args':
+      $params = $DEFAULTS;
+      foreach ($args as $arg) {
+        preg_match('/^([^=]+)=(.*)$/', $arg, $matches);
+        $params[ $matches[1] ] = $matches[2];
+      }
+      break;
+    case 'json':
+      $json = stream_get_contents(STDIN);
+      if (empty($json)) {
+        $params = $DEFAULTS;
+      } else {
+        $params = array_merge($DEFAULTS, json_decode($json, TRUE));
+      }
+      break;
+    default:
+      drush_set_error(dt('Unknown format: @format', array('@format' => $format)));
+      break;
+  }
+  
+  civicrm_initialize();
+  $result = civicrm_api($entity, $action, $params);
+
+  switch (drush_get_option('out', 'pretty')) {
+    case 'pretty':
+      drush_print_r($result);
+      break;
+    case 'json':
+      drush_print(json_encode($result));
+      break;
+    default:
+      drush_set_error(dt('Unknown format: @format', array('@format' => $format)));
+      break;
+  }
 }

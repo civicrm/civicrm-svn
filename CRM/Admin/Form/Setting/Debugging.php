@@ -54,7 +54,7 @@ class CRM_Admin_Form_Setting_Debugging extends CRM_Admin_Form_Setting
         $config = CRM_Core_Config::singleton( );
 
         $this->addYesNo( 'debug', ts( 'Enable Debugging' ));
-        if ($config->userFramework == 'Drupal') {
+        if ( $config->userSystem->is_drupal == '1') {
             $this->addYesNo( 'userFrameworkLogging', ts( 'Enable Drupal Watchdog Logging' ));
         }
         $this->addYesNo( 'backtrace', ts( 'Display Backtrace' ));

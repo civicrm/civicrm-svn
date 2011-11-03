@@ -138,13 +138,6 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         }
         
         if ( CRM_Utils_Array::value(1, $fields['extends']) ) {
-            if ( !$self->_isGroupEmpty ) {
-                $updates = array_diff($self->_subtypes, array_intersect($self->_subtypes, $fields['extends'][1]));
-                if ( ! empty($updates) ) {
-                    $errors['extends'] = ts("Removing any existing subtypes is not allowed at this moment. However you can add more subtypes.");
-                } 
-            }
-            
             if( in_array('', $fields['extends'][1]) && count($fields['extends'][1]) > 1) {
                 $errors['extends'] = ts("Cannot combine other option with 'Any'.");
             }  
@@ -333,10 +326,8 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             //allow to edit settings if custom set is empty CRM-5258
             $this->_isGroupEmpty = CRM_Core_BAO_CustomGroup::isGroupEmpty( $this->_id );
             if ( !$this->_isGroupEmpty ) {
-                if ( !empty($this->_subtypes) &&
-                     (count(array_intersect($this->_subtypes, $sel2[$this->_defaults['extends']])) < 
-                      count($sel2[$this->_defaults['extends']])) ) {
-                    // we want to allow adding subtypes for this case, 
+                if ( !empty($this->_subtypes) ) {
+                    // we want to allow adding / updating subtypes for this case, 
                     // and therefore freeze the first selector only.
                     $sel->_elements[0]->freeze();
                 } else {
@@ -344,6 +335,8 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
                     $sel->freeze();
                 }
             }
+            $this->assign('isCustomGroupEmpty', $this->_isGroupEmpty);
+            $this->assign('defaultSubtypes', json_encode($this->_subtypes));
             $this->assign('gid', $this->_id);
         }
         
@@ -390,16 +383,19 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
 
         $this->assign( 'showStyle', false );
         $this->assign( 'showMultiple', false );
-        $this->addButtons(array(
-                                array ( 'type'      => 'next',
-                                        'name'      => ts('Save'),
-                                        'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-                                        'isDefault' => true   ),
-                                array ( 'type'      => 'cancel',
-                                        'name'      => ts('Cancel') ),
-                                )
-                          );
-        
+        $buttons = array(
+                         array ( 'type'      => 'next',
+                                 'name'      => ts('Save'),
+                                 'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                                 'isDefault' => true   ),
+                         array ( 'type'      => 'cancel',
+                                 'name'      => ts('Cancel') ),
+                         );
+        if ( !$this->_isGroupEmpty && !empty($this->_subtypes) ) {
+            $buttons[0]['js'] = array( 'onclick' => "return warnDataLoss()" );
+        }
+        $this->addButtons($buttons);
+
         // views are implemented as frozen form
         if ($this->_action & CRM_Core_Action::VIEW) {
             $this->freeze();
@@ -477,6 +473,11 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             if ($this->_defaults['extends'][0] != $params['extends'][0]) {
                 $params['overrideFKConstraint'] = 1;
             }
+
+            if ( !empty($this->_subtypes) ) {
+                $subtypesToBeRemoved = array_diff($this->_subtypes, array_intersect($this->_subtypes, $params['extends'][1]));
+                CRM_Contact_BAO_ContactType::deleteCustomRowsOfSubtype( $this->_id, $subtypesToBeRemoved );
+            }
         } elseif ($this->_action & CRM_Core_Action::ADD) {
             //new custom set , so lets set the created_id
             $session = CRM_Core_Session::singleton( );
@@ -502,7 +503,8 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         
         // prompt Drupal Views users to update $db_prefix in settings.php, if necessary
         global $db_prefix;
-        if ( is_array($db_prefix) && CIVICRM_UF == 'Drupal' && module_exists('views') ) {
+        $config = CRM_Core_Config::singleton( );
+        if ( is_array($db_prefix) && $config->userSystem->is_drupal && module_exists('views') ) {
             // get table_name for each custom group
             $tables = array( );
             $sql = "SELECT table_name FROM civicrm_custom_group WHERE is_active = 1";

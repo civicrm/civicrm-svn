@@ -173,10 +173,18 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
 
         $this->assertEquals($result['values'][$result['id']]['add_to_group_id'],         $this->params['add_contact_to_group'],'in line ' . __LINE__);
         $this->assertEquals($result['values'][$result['id']]['limit_listings_group_id'], $this->params['group'],'in line ' . __LINE__);
+        $this->params['created_date'] = date('YmdHis', strtotime($this->params['created_date']));
         foreach ($this->params as $key => $value) {
             if ($key == 'add_contact_to_group' or $key == 'group' or $key == 'version') continue;
-            $this->assertEquals($result['values'][$result['id']][$key], $this->params[$key]);
+            $expected = $this->params[$key];
+            $received = $result['values'][$result['id']][$key];
+            // group names are renamed to name_id by BAO
+            if ( $key == 'name' ) {
+              $expected = $this->params[$key] . '_' . $result['id'];
+            }
+            $this->assertEquals($expected, $received, "The string '$received' does not equal '$expected' for key '$key' in line " . __LINE__ );
         }
+
     
     }
 
@@ -184,6 +192,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
     {
         $result = civicrm_api('uf_group', 'create', array());
         $this->assertEquals($result['is_error'], 1);
+        $this->assertEquals('Mandatory key(s) missing from params array: version', $result['error_message']);
     }
 
     function testUFGroupCreateWithWrongParams()
@@ -222,6 +231,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
         );
         $result = civicrm_api('uf_group', 'create', $params);
         unset($params['version']);
+        $params['created_date'] = date('YmdHis', strtotime($params['created_date']));
         foreach ($params as $key => $value) {
             if ($key == 'add_contact_to_group' or $key == 'group') continue;
             $this->assertEquals($result['values'][$result['id']][$key], $params[$key],$key . " doesn't match  " . $value);
@@ -245,7 +255,13 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
         foreach ($this->params as $key => $value) {
           // skip created date because it doesn't seem to be working properly & fixing date handling is for another day
             if ($key == 'add_contact_to_group' or $key == 'group' or $key == 'version' or $key == 'created_date') continue;
-            $this->assertEquals($this->params[$key],$result['values'][$result['id']][$key], 'in line ' . __LINE__);
+            $expected = $this->params[$key];
+            $received = $result['values'][$result['id']][$key];
+            // group names are renamed to name_id by BAO
+            if ( $key == 'name' ) {
+              $expected = $this->params[$key] . '_' . $result['id'];
+            }
+            $this->assertEquals($expected, $received, "The string '$received' does not equal '$expected' for key '$key' in line " . __LINE__ );
         }
     
     }
@@ -261,5 +277,16 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
         $this->assertEquals($result['is_error'], 1);
         $result = civicrm_api('uf_group', 'create', array('title' => 'Title'), 'a string');
         $this->assertEquals($result['is_error'], 1);
+    }
+    function testUFGroupDelete()
+    {
+
+        $ufGroup = civicrm_api('uf_group', 'create', $this->params);
+        $params = array('version' => $this->_apiversion, 'id' => $ufGroup['id']);
+        $this->assertEquals(1 , civicrm_api('uf_group', 'getcount', $params), "in line ". __LINE__);
+        $result = civicrm_api('uf_group', 'delete', $params, "in line ". __LINE__);
+        $this->documentMe($this->params,$result,__FUNCTION__,__FILE__);
+        $this->assertEquals(0 , civicrm_api('uf_group', 'getcount', $params), "in line ". __LINE__);
+        $this->assertAPISuccess($result, "in line ". __LINE__);
     }
 }

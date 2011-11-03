@@ -129,30 +129,22 @@ AND    $operationClause
         require_once 'CRM/Contact/BAO/Query.php';
         $from       = CRM_Contact_BAO_Query::fromClause( $whereTables );
 
-        $query = "
-SELECT DISTINCT(contact_a.id) as id
-       $from
-WHERE $permission
-ORDER BY contact_a.id
-";
+        require_once 'CRM/Core/DAO.php';
+        CRM_Core_DAO::executeQuery( "
+INSERT INTO civicrm_acl_contact_cache ( user_id, contact_id, operation )
+SELECT      $userID as user_id, contact_a.id as contact_id, '$operation' as operation
+         $from
+WHERE    $permission
+GROUP BY contact_a.id
+ON DUPLICATE KEY UPDATE
+         user_id=VALUES(user_id),
+         contact_id=VALUES(contact_id),
+         operation=VALUES(operation)"
+        );
 
-        $values = array( );
-        $dao = CRM_Core_DAO::executeQuery( $query );
-        while ( $dao->fetch( ) ) {
-            $values[] = "( {$userID}, {$dao->id}, '{$operation}' )";
-        }
-
-        // now store this in the table
-        while ( ! empty( $values ) ) {
-            $processed = true;
-            $input = array_splice( $values, 0, CRM_Core_DAO::BULK_INSERT_COUNT );
-            $str   = implode( ',', $input );
-            $sql = "REPLACE INTO civicrm_acl_contact_cache ( user_id, contact_id, operation ) VALUES $str;";
-            CRM_Core_DAO::executeQuery( $sql );
-        }
         CRM_Core_DAO::executeQuery('DELETE FROM civicrm_acl_contact_cache WHERE contact_id IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)');
-
         $_processed[$userID] = 1;
+
         return;
     }
 
@@ -294,6 +286,11 @@ WHERE  (( contact_id_a = %1 AND contact_id_b = %2 AND is_permission_a_b = 1 ) OR
             }
             return false;
         }
+
+        // so here the contact is posing as $contactID, lets set the logging contact ID variable
+        // CRM-8965
+        CRM_Core_DAO::executeQuery( 'SET @civicrm_user_id = %1',
+                                    array( 1 => array( $contactID, 'Integer' ) ) );
         return true;
     }
 

@@ -325,7 +325,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
      * @static
      */
     static function debug( $name, $variable = null, $log = true, $html = true ) {
-        $error =& self::singleton( );
+        $error = self::singleton( );
 
         if ( $variable === null ) {
             $variable = $name;
@@ -450,7 +450,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         $file_log->close( );
 
         if ($config->userFrameworkLogging) {
-            if ($config->userFramework == 'Drupal' and function_exists('watchdog')) {
+            if ($config->userSystem->is_drupal and function_exists('watchdog')) {
                 watchdog('civicrm', $message, NULL, WATCHDOG_DEBUG);
             }
         }
@@ -479,7 +479,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     }
 
     static function createError( $message, $code = 8000, $level = 'Fatal', $params = null ) {
-        $error =& CRM_Core_Error::singleton( );
+        $error = CRM_Core_Error::singleton( );
         $error->push( $code, $level, array( $params ), $message );
         return $error;
     }
@@ -509,7 +509,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
      */
     public static function reset( ) 
     {
-        $error =& self::singleton( );
+        $error = self::singleton( );
         $error->_errors = array( ) ;
         $error->_errorsByLevel = array( ) ;
     }

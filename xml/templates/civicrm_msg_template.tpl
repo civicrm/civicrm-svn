@@ -81,9 +81,9 @@
 {/php}
 
 INSERT INTO civicrm_option_group
-  (name,                         {localize field='label'}label{/localize},            {localize field='description'}description{/localize},      is_reserved, is_active) VALUES
+  (name,                         {localize field='title'}title{/localize},            {localize field='description'}description{/localize},      is_reserved, is_active) VALUES
 {foreach from=$ogNames key=name item=description name=for_groups}
-    ('msg_tpl_workflow_{$name}', {localize}'{$description}'{/localize},               {localize}'{$description}'{/localize},                     0,           1) {if $smarty.foreach.for_groups.last};{else},{/if}
+    ('msg_tpl_workflow_{$name}', {localize}'{$description}'{/localize},               {localize}'{$description}'{/localize},                     1,           1) {if $smarty.foreach.for_groups.last};{else},{/if}
 {/foreach}
 
 {foreach from=$ogNames key=name item=description}

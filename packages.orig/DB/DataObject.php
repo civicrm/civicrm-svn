@@ -43,7 +43,7 @@
  *
  * //Start and initialize...................... - dont forget the &
  * $config = parse_ini_file('example.ini',true);
- * $options = &PEAR::getStaticProperty('DB_DataObject','options');
+ * $options = PEAR::getStaticProperty('DB_DataObject','options');
  * $options = $config['DB_DataObject'];
  *
  * // example of a class (that does not use the 'auto generated tables data')
@@ -2255,9 +2255,9 @@ class DB_DataObject extends DB_DataObject_Overload
             $db_options = PEAR::getStaticProperty('DB','options');
             require_once 'DB.php';
             if ($db_options) {
-                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = &DB::connect($dsn,$db_options);
+                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn,$db_options);
             } else {
-                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = &DB::connect($dsn);
+                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn);
             }
             
         } else {
@@ -2268,7 +2268,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $db_options = is_array($db_options) ? $db_options : array();
             $db_options['portability'] = isset($db_options['portability'] )
                 ? $db_options['portability']  : MDB2_PORTABILITY_ALL ^ MDB2_PORTABILITY_FIX_CASE;
-            $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = &MDB2::connect($dsn,$db_options);
+            $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = MDB2::connect($dsn,$db_options);
             
         }
         
@@ -4095,7 +4095,7 @@ class DB_DataObject extends DB_DataObject_Overload
     /**
      * Last Error that has occured
      * - use $this->_lastError or
-     * $last_error = &PEAR::getStaticProperty('DB_DataObject','lastError');
+     * $last_error = PEAR::getStaticProperty('DB_DataObject','lastError');
      *
      * @access  public
      * @var     object PEAR_Error (or false)
@@ -4120,7 +4120,7 @@ class DB_DataObject extends DB_DataObject_Overload
         if ($behaviour == PEAR_ERROR_DIE && !empty($_DB_DATAOBJECT['CONFIG']['dont_die'])) {
             $behaviour = null;
         }
-        $error = &PEAR::getStaticProperty('DB_DataObject','lastError');
+        $error = PEAR::getStaticProperty('DB_DataObject','lastError');
         
         // this will never work totally with PHP's object model.
         // as this is passed on static calls (like staticGet in our case)
@@ -4162,7 +4162,7 @@ class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
 
-        $_DB_DATAOBJECT['CONFIG'] = &PEAR::getStaticProperty('DB_DataObject','options');
+        $_DB_DATAOBJECT['CONFIG'] = PEAR::getStaticProperty('DB_DataObject','options');
 
 
     }

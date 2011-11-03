@@ -31,7 +31,16 @@
     </div>
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
   <table class="form-layout-compressed">
-     <tr class="crm-dedupe-rules-form-block-label">
+     <tr class="crm-dedupe-rules-form-block-title">
+        <td class="label">{$form.title.label}</td>
+        <td>
+            {$form.title.html}
+            <div class="description">
+                {ts}Enter descriptive name for this matching rule.{/ts}
+            </div>
+        </td>
+    </tr>
+    <tr class="crm-dedupe-rules-form-block-name">
         <td class="label">{$form.name.label}</td>
         <td>
             {$form.name.html}
@@ -47,6 +56,10 @@
      <tr class="crm-dedupe-rules-form-block-is_default">
         <td class="label">{$form.is_default.label}</td>
         <td>{$form.is_default.html}</td>
+     </tr>
+     <tr class="crm-dedupe-rules-form-block-is_reserved">
+        <td class="label">{$form.is_reserved.label}</td>
+        <td>{$form.is_reserved.html}</td>
      </tr>
   </table>
   <table style="width: auto;">

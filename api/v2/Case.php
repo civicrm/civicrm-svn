@@ -89,7 +89,7 @@ function civicrm_case_create( &$params )
                         'subject'       => $params['subject']
                         );
     
-    $case =& CRM_Case_BAO_Case::create( $newParams );
+    $case = CRM_Case_BAO_Case::create( $newParams );
     
     if ( !$case ) {
         return civicrm_create_error( ts('Case not created. Please check your input params.') );
@@ -237,7 +237,7 @@ SELECT DISTINCT case_id
  WHERE (contact_id_a = $contact 
     OR contact_id_b = $contact) 
    AND case_id IS NOT NULL";
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
         
         $cases = array( );
         

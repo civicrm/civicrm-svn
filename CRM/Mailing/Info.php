@@ -58,17 +58,26 @@ class CRM_Mailing_Info extends CRM_Core_Component_Info
 
 
     static function workflowEnabled( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
+        
+        // early exit, since not true for most
+        if ( $config->userSystem->is_drupal && ! module_exists( 'rules' ) ) {
+            return false;
+        }
 
-        $enableWorkflow = defined( 'CIVICRM_CIVIMAIL_WORKFLOW' ) ? (bool) CIVICRM_CIVIMAIL_WORKFLOW : false;
-
+        require_once 'CRM/Core/BAO/Setting.php';
+        $enableWorkflow = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+                                                         'civimail_workflow',
+                                                         null,
+                                                         false );
+        
         return ( $enableWorkflow &&
-                 $config->userFramework == 'Drupal' &&
-                 module_exists( 'rules' ) ) ?
+                 $config->userSystem->is_drupal ) ?
             true :
             false;
              
     }
+
     // docs inherited from interface
     public function getPermissions()
     {

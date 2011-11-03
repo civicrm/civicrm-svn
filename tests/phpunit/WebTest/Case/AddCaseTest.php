@@ -63,19 +63,19 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
     }
 
     // let's give full CiviCase permissions to demo user (registered user).
-    $this->open( $this->sboxPath ."admin/user/permissions");
+    $this->changeAdminLinks( );
     $this->waitForElementPresent("edit-submit");
     $this->check("edit-2-access-all-cases-and-activities");
     $this->check("edit-2-access-my-cases-and-activities");
-    $this->check("edit-2-administer-CiviCase");
-    $this->check("edit-2-delete-in-CiviCase");
+    $this->check("edit-2-administer-civicase");
+    $this->check("edit-2-delete-in-civicase");
 
     // save permissions
     $this->click("edit-submit");
     $this->waitForPageToLoad("30000");
     $this->assertTrue($this->isTextPresent("The changes have been saved."));
 
-    $this->open($this->sboxPath . "civicrm/logout&reset=1");
+    $this->open($this->sboxPath . "civicrm/logout?reset=1");
     $this->waitForPageToLoad('30000');          
 
     // Log in as demo user
@@ -83,7 +83,7 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
     $this->webtestLogin( );
 
     // Go to reserved New Individual Profile to set value for logged in user's contact name (we'll need that later)
-    $this->open($this->sboxPath . "civicrm/profile/edit&reset=1&gid=4");
+    $this->open($this->sboxPath . "civicrm/profile/edit?reset=1&gid=4");
     $testUserFirstName = "Testuserfirst";
     $testUserLastName = "Testuserlast";
     $this->waitForPageToLoad('30000');
@@ -98,7 +98,7 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
     $this->assertTextPresent("Thank you. Your information has been saved.", "Save successful status message didn't show up after saving profile to update testUserName!");
  
     // Go directly to the URL of the screen that you will be testing (New Case-standalone).
-    $this->open($this->sboxPath . "civicrm/case/add&reset=1&action=add&atype=13&context=standalone");
+    $this->open($this->sboxPath . "civicrm/case/add?reset=1&action=add&atype=13&context=standalone");
 
     // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
     // button at the end of this page to show up, to make sure it's fully loaded.

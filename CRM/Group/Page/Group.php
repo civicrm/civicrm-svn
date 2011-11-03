@@ -259,8 +259,8 @@ class CRM_Group_Page_Group extends CRM_Core_Page_Basic
         
         list( $offset, $rowCount ) = $this->_pager->getOffsetAndRowCount( );
         $select = $from = $where = "";
-        if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE && 
-             CRM_Core_Permission::check( 'administer Multiple Organizations' ) ) {
+        if ( CRM_Core_Permission::check( 'administer Multiple Organizations' ) &&
+             CRM_Core_Permission::isMultisiteEnabled( ) ) {
             $select = ", contact.display_name as orgName, contact.id as orgID";
             $from   = " LEFT JOIN civicrm_group_organization gOrg
                                ON gOrg.group_id = groups.id 
@@ -337,7 +337,7 @@ class CRM_Group_Page_Group extends CRM_Core_Page_Basic
                                            substr( $values[$object->id]['group_type'], 1, -1 ) );
                     $types = array( );
                     foreach ( $groupTypes as $type ) {
-                        $types[] = $allTypes[$type];
+                        $types[] = CRM_Utils_Array::value( $type, $allTypes );
                     }
                     $values[$object->id]['group_type'] = implode( ', ', $types );
                 }

@@ -126,10 +126,21 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase
         $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
         $this->waitForElementPresent('_qf_MembershipView_cancel-bottom');
 
+        $joinDate  = date('Y-m-d'); 
+        $startDate = date('Y-m-d');
+        $endDate   = date('Y-m-d', mktime( 0, 0, 0, date('m'), date('d')-1, date('Y')+1 ) );
+        $configVars = new CRM_Core_Config_Variables( );        
+        foreach ( array( 'joinDate', 'startDate', 'endDate' ) as $date ) {
+            $$date = CRM_Utils_Date::customFormat( $$date, $configVars->dateformatFull ); 
+        }
+
         $this->webtestVerifyTabularData( 
                                         array( 'Membership Type' => "Membership Type $title",
                                                'Status'          => 'New',
                                                'Source'          => $sourceText,
+                                               'Member Since'    => $joinDate,
+                                               'Start date'      => $startDate,
+                                               'End date'        => $endDate
                                                )
                                          );
 
@@ -167,11 +178,28 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase
       
         // click through to the membership view screen
         $this->click( 'css=li#tab_member a' );
-        $this->waitForElementPresent('css=div#memberships');    
-      
+        $this->waitForElementPresent('css=div#memberships');
+ 
+        // click through to the membership view screen
+        $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
+        $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
+        
+        $this->webtestVerifyTabularData( 
+                                        array( 'Membership Type' => "Membership Type $title",
+                                               'Status'          => 'New',
+                                               'Source'          => $sourceText,
+                                               'Member Since'    => $joinDate,
+                                               'Start date'      => $startDate,
+                                               'End date'        => $endDate
+                                               )
+                                         );
+        $this->click("_qf_MembershipView_cancel-bottom");
+        $this->waitForElementPresent('css=div#memberships');
+
         //1. change relationship status on form
         $this->click('css=li#tab_rel a');
         $this->waitForElementPresent('css=div.action-link');
+
         $this->click("//li[@id='tab_rel']/a");
         $this->click("//div[@id='squeeze']/div/div");
         $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='Edit']");

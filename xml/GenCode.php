@@ -3,6 +3,8 @@
 ini_set( 'include_path', '.' . PATH_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'packages' . PATH_SEPARATOR . '..' );
 ini_set( 'memory_limit', '512M' );
 
+define( 'CIVICRM_UF', 'Drupal' );
+
 $versionFile = "version.xml";
 $versionXML  =& parseInput( $versionFile );
 $db_version  = $versionXML->version_no;
@@ -28,7 +30,7 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
 
 // default cms is 'drupal', if not specified 
 $cms = isset($argv[3]) ? strtolower($argv[3]) : 'drupal';
-if ( !in_array($cms, array('drupal', 'standalone', 'joomla')) ) {
+if ( !in_array($cms, array('drupal', 'joomla')) ) {
     echo "Config file for '{$cms}' not known.";
     exit();
 } else if ( $cms !== 'joomla' ) {
@@ -37,8 +39,6 @@ if ( !in_array($cms, array('drupal', 'standalone', 'joomla')) ) {
 
 require_once 'Smarty/Smarty.class.php';
 require_once 'PHP/Beautifier.php';
-
-require_once '../civicrm.config.php';
 
 require_once 'CRM/Core/Config.php';
 require_once 'CRM/Core/I18n.php';
@@ -60,13 +60,13 @@ $smarty->plugins_dir  = array( '../packages/Smarty/plugins', '../CRM/Core/Smarty
      $tempDir = '/tmp';
  }
 
-$compileDir = $tempDir . '/templates_c';
+$compileDir =
+     $tempDir .
+     '/templates_c_' .
+     rand( 1, 10000 );
 
 if (file_exists($compileDir)) {
-    $oldTemplates = preg_grep('/tpl\.php$/', scandir($compileDir));
-    foreach ($oldTemplates as $templateFile) {
-        unlink($compileDir . '/' . $templateFile);
-    }
+    rmemoveDirectory($compileDir);
 }
 $smarty->compile_dir = $compileDir;
 
@@ -151,7 +151,7 @@ file_put_contents($sqlCodePath . "civicrm_navigation.mysql", $smarty->fetch( 'ci
 $smarty->clear_all_assign();
 $smarty->assign('build_version',$build_version);
 
-$config =& CRM_Core_Config::singleton(false);
+$config = CRM_Core_Config::singleton(false);
 $locales = array( );
 if (substr($config->gettextResourceDir, 0, 1) === '/') {
     $localeDir = $config->gettextResourceDir;
@@ -284,11 +284,7 @@ $smarty->assign('db_version',$db_version);
 $smarty->assign('cms',ucwords($cms));
 file_put_contents( $phpCodePath . "civicrm-version.php", $smarty->fetch( 'civicrm_version.tpl' ));
 
-// unlink the templates_c directory
-foreach(glob($tempDir . '/templates_c/*') as $tempFile) {
-  unlink($tempFile);
-}
-rmdir($tempDir . '/templates_c');
+removeDirectory($compileDir);
 
 function &parseInput( $file ) {
     $dom = new DomDocument( );
@@ -418,7 +414,7 @@ function getTable( $tableXML, &$database, &$tables ) {
                     'localizable'=> $localizable,
                     'log'        => value( 'log', $tableXML, 'false' ) );
     
-    $config  =& CRM_Core_Config::singleton(false);
+    $config  = CRM_Core_Config::singleton(false);
     $fields  = array( );
     foreach ( $tableXML->field as $fieldXML ) {
         if ( value( 'drop', $fieldXML, 0 ) > 0 and value( 'drop', $fieldXML, 0 ) <= $build_version) {
@@ -445,7 +441,7 @@ function getTable( $tableXML, &$database, &$tables ) {
         getPrimaryKey( $tableXML->primaryKey, $fields, $table );
     }
 
-    $config  =& CRM_Core_Config::singleton(false);
+    $config  = CRM_Core_Config::singleton(false);
     if ( value( 'index', $tableXML ) ) {
         $index   = array( );
         foreach ( $tableXML->index as $indexXML ) {
@@ -677,8 +673,8 @@ function getIndex(&$indexXML, &$fields, &$indices)
         if (!array_key_exists($fieldName, $fields)) {
             echo "Table does not contain $fieldName\n";
             print_r( $fields );
+            removeDirectory($compileDir);
             exit( );
-            return;
         }
     }
     $indices[$indexName] =& $index;
@@ -783,5 +779,10 @@ function getSize( $maxLength ) {
     return 'CRM_Utils_Type::HUGE';
 }
 
-
+function removeDirectory( $dir ) {
+    foreach(glob("$dir/*") as $tempFile) {
+        unlink($tempFile);
+    }
+    rmdir($dir);
+}
 

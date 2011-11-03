@@ -57,9 +57,9 @@ function buildContactActivities{/literal}{$context}{literal}( filterSearch ) {
     var columns = '';
     var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/contactactivity" h=0 q="snippet=4&context=$context&cid=$contactId"}'{literal};
 
-    var ZeroRecordText = {/literal}{ts}'No matches found'{/ts}{literal};
+    var ZeroRecordText = {/literal}'{ts escape="js"}No matches found{/ts}'{literal};
     if ( cj('.crm-activity-selector-'+ context +' select#activity_type_filter_id').val( ) ) {
-      ZeroRecordText += {/literal}{ts}' for Activity Type = "'{/ts}{literal} +  cj('.crm-activity-selector-'+ context +' select#activity_type_filter_id :selected').text( ) + '"';
+      ZeroRecordText += {/literal}'{ts escape="js"} for Activity Type = "{/ts}'{literal} +  cj('.crm-activity-selector-'+ context +' select#activity_type_filter_id :selected').text( ) + '"';
     } else {
       ZeroRecordText += '.';
     }
@@ -86,7 +86,20 @@ function buildContactActivities{/literal}{$context}{literal}( filterSearch ) {
         "bJQueryUI": true,
         "sAjaxSource": sourceUrl,
         "iDisplayLength": 25,
-        "oLanguage": { "sZeroRecords":  ZeroRecordText },
+        "oLanguage": { "sZeroRecords":  ZeroRecordText,                         
+                       "sProcessing":   {/literal}"{ts escape='js'}Processing...{/ts}"{literal},   
+                       "sLengthMenu":   {/literal}"{ts escape='js'}Show _MENU_ entries{/ts}"{literal},
+                       "sInfo":         {/literal}"{ts escape='js'}Showing _START_ to _END_ of _TOTAL_ entries{/ts}"{literal},
+                       "sInfoEmpty":    {/literal}"{ts escape='js'}Showing 0 to 0 of 0 entries{/ts}"{literal},
+                       "sInfoFiltered": {/literal}"{ts escape='js'}(filtered from _MAX_ total entries){/ts}"{literal},
+                       "sSearch":       {/literal}"{ts escape='js'}Search:{/ts}"{literal},      
+                       "oPaginate": {                                           
+                            "sFirst":    {/literal}"{ts escape='js'}First{/ts}"{literal},          
+                            "sPrevious": {/literal}"{ts escape='js'}Previous{/ts}"{literal},       
+                            "sNext":     {/literal}"{ts escape='js'}Next{/ts}"{literal},           
+                            "sLast":     {/literal}"{ts escape='js'}Last{/ts}"{literal}            
+                        }                                                       
+                    },
         "fnDrawCallback": function() { setSelectorClass{/literal}{$context}{literal}( context ); },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
             aoData.push( {name:'contact_id', value: {/literal}{$contactId}{literal}},

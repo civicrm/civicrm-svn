@@ -97,7 +97,6 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         }
         
         //get the contact read only fields to display.
-        require_once 'CRM/Core/BAO/Preferences.php';
         $readOnlyFields = array_merge( array( 'contact_type' => '', 
                                               'sort_name'    => ts( 'Name' ) ) );
         

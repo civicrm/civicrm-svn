@@ -186,8 +186,8 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
         $this->_action = $action;
         $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
                                                    CRM_Contact_BAO_Query::MODE_ACTIVITY );
-        $this->_query->_distinctComponentClause = 'DISTINCT ( civicrm_activity.id )';
-    
+        $this->_query->_distinctComponentClause = '( civicrm_activity.id )';
+        $this->_query->_groupByComponentClause  = " GROUP BY civicrm_activity.id ";
     	//CRM_Core_Error::debug( $this->_query ); exit();
     }//end of constructor
     
@@ -243,7 +243,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
          $rows = array( );
          require_once 'CRM/Mailing/BAO/Mailing.php';
          require_once 'CRM/Mailing/Info.php';
-         $mailingIDs =& CRM_Mailing_BAO_Mailing::mailingACLIDs( );
+         $mailingIDs = CRM_Mailing_BAO_Mailing::mailingACLIDs( );
          $accessCiviMail = CRM_Core_Permission::check( 'access CiviMail' );
          
          //get all campaigns.

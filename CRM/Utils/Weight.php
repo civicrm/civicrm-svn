@@ -44,7 +44,7 @@ class CRM_Utils_Weight {
         $selectField = "MIN(id) AS dupeId, count(id) as dupeCount, $weightField as dupeWeight";
         $groupBy     = "$weightField having dupeCount>1";
         
-        $minDupeID =& CRM_Utils_Weight::query( 'SELECT', $daoName, $fieldValues, $selectField, null, null, $groupBy );
+        $minDupeID = CRM_Utils_Weight::query( 'SELECT', $daoName, $fieldValues, $selectField, null, null, $groupBy );
 
         // return early if query returned empty
         // CRM-8043
@@ -181,7 +181,7 @@ class CRM_Utils_Weight {
     static function getNewWeight( $daoName, $fieldValues = null, $weightField = 'weight' )
     {
         $selectField = "id AS fieldID, $weightField AS weight";
-        $field =& CRM_Utils_Weight::query( 'SELECT', $daoName, $fieldValues, $selectField );
+        $field = CRM_Utils_Weight::query( 'SELECT', $daoName, $fieldValues, $selectField );
         $sameWeightCount = 0;
         $weights = array( );
         while ( $field->fetch( ) ) {
@@ -219,7 +219,7 @@ class CRM_Utils_Weight {
     static function getMax($daoName, $fieldValues = null, $weightField = 'weight')
     {
         $selectField = "MAX(ROUND($weightField)) AS max_weight";
-        $weightDAO =& CRM_Utils_Weight::query( 'SELECT', $daoName, $fieldValues, $selectField );
+        $weightDAO = CRM_Utils_Weight::query( 'SELECT', $daoName, $fieldValues, $selectField );
         $weightDAO->fetch();
         if ( $weightDAO->max_weight ) {
             return $weightDAO->max_weight;

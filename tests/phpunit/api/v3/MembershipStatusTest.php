@@ -104,9 +104,23 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
          $this->documentMe($params,$result,__FUNCTION__,__FILE__);            
          $this->assertEquals( $result['values'][$this->_membershipStatusID]['name'], "test status", "In line " . __LINE__ );
      }
-     function testMembershipStatusesGet()
+     
+        /**
+     *  Test civicrm_membership_status_get. Success expected.
+     */
+     function testGetLimit()
      {
-         $this->assertTrue( function_exists(civicrm_membership_status_get) );
+         $params = array( 'version'			=>  $this->_apiversion,);
+         $result =& civicrm_api('membership_status','getcount',$params);        
+         $this->assertGreaterThan(1, $result, "Check more than one exists In line " . __LINE__ );
+         $params['option.limit'] = 1;
+         $result =& civicrm_api('membership_status','getcount',$params);    
+         $this->assertEquals(1, $result, "Check only 1 retrieved " . __LINE__ );
+ 
+     }
+      
+    function testMembershipStatusesGet()
+     {
          $params = 'wrong type';
          $result = civicrm_api('membership_status','get', $params );
          $this->assertEquals( 1, $result['is_error'],
@@ -228,11 +242,8 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
         $membershipStatusID = $this->membershipStatusCreate( );
         
         $this->_contactID           = $this->individualCreate( ) ;
-     
-        require_once 'CRM/Member/PseudoConstant.php';
-
-
-        
+    
+       
         $this->_entity = 'membership';
         $params = array(
                         'contact_id'         => $this->_contactID,  

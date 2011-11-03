@@ -39,7 +39,7 @@ WHERE on_hold = 1 AND hold_date is not null AND contact_id in (". implode(", ", 
             $status = ts( 'Please select one or more contact for this action' ); 
         }
         
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         CRM_Core_Session::setStatus( $status ); 
         
     }

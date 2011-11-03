@@ -54,22 +54,11 @@ require_once 'CRM/Core/BAO/Note.php';
  * @return array note id if note is created otherwise is_error = 1
  * @access public
  * @example NoteCreate.php
+ * {@getfields note_create}
  * {@example NoteCreate.php
  */
 function civicrm_api3_note_create($params) {
-
-		if (! isset ( $params ['entity_table'] )) {
-			$params ['entity_table'] = "civicrm_contact";
-		}
-		
-		civicrm_api3_verify_mandatory ( $params, null, array ('note','entity_id', ) );
-		
-		$contactID = CRM_Utils_Array::value ( 'contact_id', $params );
-		
-		if (! isset ( $params ['modified_date'] )) {
-			$params ['modified_date'] = date ( "Ymd" );
-		}
-		
+	
 		$ids = array ();
 		$ids = array ('id' => CRM_Utils_Array::value ( 'id', $params ) );
 		$noteBAO = CRM_Core_BAO_Note::add ( $params, $ids );
@@ -86,21 +75,31 @@ function civicrm_api3_note_create($params) {
 		return civicrm_api3_create_success ( $note, $params );
 
 }
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_note_create_spec(&$params){
+  $params['entity_table']['api.default'] = "civicrm_contact";
+  $params['modified_date']['api.default'] = "now";
+  $params['note']['api.required'] =1;
+  $params['entity_id']['api.required'] =1;
+}
 
 /**
  * Deletes an existing note
  *
  * This API is used for deleting a note
  *
- * @param  Int  $noteID   Id of the note to be deleted
- *
+ * @params  array  $noteID   array including id of the note to be deleted
+ * {@getfields note_delete}
  * @return null
  * @access public
  */
 function civicrm_api3_note_delete($params) {
-
-		civicrm_api3_verify_mandatory ( $params, null, array ('id' ) );
-		
+	
 		$result = new CRM_Core_BAO_Note ();
 		return $result->del ( $params ['id'] ) ? civicrm_api3_create_success () : civicrm_api3_create_error ( 'Error while deleting Note' );
 
@@ -113,21 +112,24 @@ function civicrm_api3_note_delete($params) {
  *
  * @return array (reference ) array of properties,
  * if error an array with an error id and error message
- *
+ * {@getfields note_get}
  * @static void
  * @access public
  */
 
 function civicrm_api3_note_get($params) {
 
-		
-		if (empty ( $params ['entity_table'] )) {
-			$params ['entity_table'] = "civicrm_contact";
-		}
-		
-		civicrm_api3_verify_mandatory ( $params );
     return _civicrm_api3_basic_get('CRM_Core_BAO_Note', $params);		
 	
+}
+/*
+ * Adjust Metadata for Get action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_note_get_spec(&$params){
+  $params['entity_table']['api.default'] = "civicrm_contact";
 }
 
 /**

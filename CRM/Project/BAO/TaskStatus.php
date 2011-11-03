@@ -56,7 +56,7 @@ class CRM_Project_BAO_TaskStatus {
         if ( ! $taskStatusID ) {
             // cache the status
             require_once 'CRM/Core/OptionGroup.php';
-            $status =& CRM_Core_OptionGroup::values( 'task_status', true );
+            $status = CRM_Core_OptionGroup::values( 'task_status', true );
 
             // get the task status object, if not there create one
             require_once 'CRM/Project/DAO/TaskStatus.php';
@@ -100,7 +100,7 @@ class CRM_Project_BAO_TaskStatus {
             CRM_Core_Error::fatal( "The task status table is inconsistent" );
         }
         
-        $status =& CRM_Core_OptionGroup::values( 'task_status', true );
+        $status = CRM_Core_OptionGroup::values( 'task_status', true );
         if ( $form->controller->isApplicationComplete( ) ) {
             $dao->status_id = $status['Completed'];
             $form->set( $prefix, 'Completed' );
@@ -134,7 +134,7 @@ class CRM_Project_BAO_TaskStatus {
             CRM_Core_Error::fatal( "The task status table is inconsistent" );
         }
         
-        $status =& CRM_Core_OptionGroup::values( 'task_status', true );
+        $status = CRM_Core_OptionGroup::values( 'task_status', true );
         $dao->status_id = $status[$value];
         $form->set( $prefix, $value );
 

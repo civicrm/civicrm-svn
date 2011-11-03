@@ -60,7 +60,7 @@ eval('tableId =[' + tableId + ']');
     var id = -1; var count = 0; var columns=''; var sortColumn = '';
     //build columns array for sorting or not sorting
     cj(tabId + ' th').each( function( ) {
-        var option = cj(this).attr('id').split("_");
+        var option = cj(this).prop('id').split("_");
         option  = ( option.length > 1 ) ? option[1] : option[0];
         stype   = 'numeric';
         switch( option ) { 
@@ -115,7 +115,9 @@ eval('tableId =[' + tableId + ']');
     	        }
   	    }
 	}
-	
+
+    var noRecordFoundMsg  = {/literal}{ts}'There are no records.'{/ts}{literal};
+ 
     oTable = null;
     if ( useAjax ) {
       oTable = cj(tabId).dataTable({
@@ -129,30 +131,35 @@ eval('tableId =[' + tableId + ']');
               "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
               "bServerSide": true,
               "sAjaxSource": sourceUrl,
+        	  "oLanguage":{"sEmptyTable"  : noRecordFoundMsg,
+		                   "sZeroRecords" : noRecordFoundMsg },
 
-		{/literal}{if !empty($callBack)}{literal}
-		"fnDrawCallback": function() { checkSelected(); },
-		{/literal}{/if}{literal}
+              {/literal}{if !empty($callBack)}{literal}
+              "fnDrawCallback": function() { checkSelected(); },
+              {/literal}{/if}{literal}
 
-		"fnServerData": function ( sSource, aoData, fnCallback ) {
-			cj.ajax( {
-				"dataType": 'json', 
-				"type": "POST", 
-				"url": sSource, 
-				"data": aoData, 
-				"success": fnCallback
-			} ); }
+              "fnServerData": function ( sSource, aoData, fnCallback ) {
+                cj.ajax( {
+                  "dataType": 'json', 
+                  "type": "POST", 
+                  "url": sSource, 
+                  "data": aoData, 
+                  "success": fnCallback
+                }); 
+              }
      		}); 
     } else {
       oTable = cj(tabId).dataTable({
-			"aaSorting"    : sortColumn,
-             	        "bPaginate"    : false,
-                	"bLengthChange": true,
-                	"bFilter"      : false,
-                	"bInfo"        : false,
-                	"bAutoWidth"   : false,
-               		"aoColumns"   : columns
-    			 }); 
+                "aaSorting"    : sortColumn,
+                "bPaginate"    : false,
+                "bLengthChange": true,
+                "bFilter"      : false,
+                "bInfo"        : false,
+                "bAutoWidth"   : false,
+                "aoColumns"   : columns,
+        		"oLanguage":{"sEmptyTable"  : noRecordFoundMsg,
+		                     "sZeroRecords" : noRecordFoundMsg }
+              }); 
     }
     var object;
 

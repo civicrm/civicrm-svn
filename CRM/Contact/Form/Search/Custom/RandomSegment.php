@@ -80,7 +80,7 @@ class CRM_Contact_Form_Search_Custom_RandomSegment
                     ts( 'Segment Size' ),
                     true );   
         
-        $groups         =& CRM_Core_PseudoConstant::group( );
+        $groups         = CRM_Core_PseudoConstant::group( );
         $inG =& $form->addElement('advmultiselect', 'includeGroups', 
                                   ts('Include Group(s)') . ' ', $groups,
                                   array('size'  => 5,

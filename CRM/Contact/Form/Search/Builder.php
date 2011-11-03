@@ -138,7 +138,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
         $fields = CRM_Contact_BAO_Contact::exportableFields( 'All', false, true );
         
         require_once 'CRM/Core/Component.php';
-        $compomentFields =& CRM_Core_Component::getQueryFields( );
+        $compomentFields = CRM_Core_Component::getQueryFields( );
         require_once 'CRM/Activity/BAO/Activity.php';
         $activityFields = CRM_Activity_BAO_Activity::exportableFields( );
         $compomentFields = array_merge( $compomentFields, $activityFields );
@@ -231,11 +231,11 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
                             $inVal = trim( $v[2] );
                             //checking for format to avoid db errors
                             if ( $type == 'Int' ) {
-                                if (!preg_match( '/^[(]([A-Za-z0-9\,]+)[)]$/', $inVal) ) {
+                                if (! preg_match( '/^[(]([A-Za-z0-9\,]+)[)]$/', $inVal) ) {
                                     $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter correct Data ( in valid format ).");
                                 }
                             } else {
-                                if (!preg_match( '/^[(][\']([A-Za-z0-9\'\,\s]+)[\'][)]$/', $inVal) ) {
+                                if (! preg_match( '/^[(]([A-Za-z0-9åäöÅÄÖüÜœŒæÆøØ\,\s]+)[)]$/', $inVal) ) {
                                     $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter correct Data ( in valid format ).");
                                 }
                             }
@@ -245,6 +245,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
                                 $parenValues = array();
                                 $parenValues = explode ( ',', trim( $inVal, "(..)" ) );
                                 foreach ( $parenValues as $val ) {
+                                    $val = trim( $val );
                                     if ( !$val && $val !='0' ) {
                                         $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter the values correctly.");
                                     }

@@ -80,13 +80,18 @@
         <td>{$form.entity.html}</td>
     </tr>
 
-    <tr class="crm-scheduleReminder-form-block-description">
+    <tr class="crm-scheduleReminder-form-block-when">
         <td class="right">{$form.start_action_offset.label}</td>
-	<td colspan="3">{$form.start_action_offset.html}&nbsp;&nbsp;&nbsp;{$form.start_action_unit.html}&nbsp;&nbsp;&nbsp;
-			{$form.start_action_condition.html}&nbsp;&nbsp;&nbsp;{$form.start_action_date.html}
+	<td colspan="3">{include file="CRM/common/jcalendar.tpl" elementName=absolute_date} <strong>{ts}OR{/ts}</strong><br />  
 	</td>
     </tr>
-    <tr class="crm-scheduleReminder-form-block-is_repeat"><td class="label" width="20%">{$form.is_repeat.label}</td>
+
+   <tr id="relativeDate" class="crm-scheduleReminder-form-block-description">
+        <td class="right"></td>
+	<td colspan="3">{$form.start_action_offset.html}&nbsp;&nbsp;&nbsp;{$form.start_action_unit.html}&nbsp;&nbsp;&nbsp;{$form.start_action_condition.html}&nbsp;&nbsp;&nbsp;{$form.start_action_date.html}
+	</td>
+    </tr>
+    <tr id="relativeDateRepeat" class="crm-scheduleReminder-form-block-is_repeat"><td class="label" width="20%">{$form.is_repeat.label}</td>
         <td>{$form.is_repeat.html}&nbsp;&nbsp;<span class="description">{ts}Enable repetition.{/ts}</span></td>
     </tr>
     <tr id="repeatFields" class="crm-scheduleReminder-form-block-repeatFields"><td></td><td>
@@ -105,12 +110,16 @@
     <tr class="crm-scheduleReminder-form-block-recipient">
         <td class="right">{$form.recipient.label}</td><td colspan="3">{$form.recipient.html}</td>
     </tr>
+    <tr id="recipientList" class="crm-scheduleReminder-form-block-recipientListing">
+        <td class="right">{$form.recipient_listing.label}</td><td colspan="3">{$form.recipient_listing.html}</td>
+    </tr>
     <tr id="recipientManual" class="crm-scheduleReminder-form-block-recipient_manual_id">
     	<td class="label">{$form.recipient_manual_id.label}</td>
         <td>{$form.recipient_manual_id.html}
 	    {edit}<span class="description">{ts}You can manually sent out the reminders to these recipients.{/ts}</span>{/edit}
         </td>
     </tr>
+
     <tr id="recipientGroup" class="crm-scheduleReminder-form-block-recipient_group_id">
     	<td class="label">{$form.group_id.label}</td>
         <td>{$form.group_id.html}
@@ -171,13 +180,53 @@
 
  {literal}
  <script type='text/javascript'>
-     cj(function() {
+
+      cj('#absolute_date_display').click( function( ) {
+	 if(cj('#absolute_date_display').val()) {
+	     cj('#relativeDate').hide();
+	     cj('#relativeDateRepeat').hide();
+	     cj('#repeatFields').hide();
+	   } else {
+	     cj('#relativeDate').show();
+	     cj('#relativeDateRepeat').show();
+	   }
+      }); 
+
+      cj(function() {
          cj('#entity\\[0\\]').click( function( ) {
               buildSelect("start_action_date");
 	      buildSelect("end_date");
 	      buildSelect1("recipient");
-         });    
+         }); 
      });
+
+    cj(function() {
+       populateRecipient();
+       cj('#recipient').click( function( ) {
+           populateRecipient();
+       });
+     });
+
+     function populateRecipient( ) {
+     	  var recipient = cj("#recipient option:selected").text();    
+	  var postUrl = "{/literal}{crmURL p='civicrm/ajax/populateRecipient' h=0}{literal}";
+	  if(recipient == 'Participant Status' || recipient == 'Participant Role'){
+   	  var elementID = '#recipient_listing';
+          cj( elementID ).html('');
+	    cj.post(postUrl, {recipient: recipient},
+	    	function ( response ) {
+  		response = eval( response );
+  		for (i = 0; i < response.length; i++) {
+                     cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
+                 }
+                
+		}	    
+	    );
+	    cj("#recipientList").show();	     
+	  } else {
+	    cj("#recipientList").hide();
+	  }
+     }
      function buildSelect( selectID ) {
          var elementID = '#' +  selectID;
          cj( elementID ).html('');

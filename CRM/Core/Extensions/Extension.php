@@ -68,7 +68,7 @@ class CRM_Core_Extensions_Extension
         $this->file = $file;
         $this->is_active = $is_active;
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $this->path = $config->extensionsDir . DIRECTORY_SEPARATOR . $key . DIRECTORY_SEPARATOR;
     }
 
@@ -192,14 +192,14 @@ class CRM_Core_Extensions_Extension
     public function removeFiles() {
         require_once 'CRM/Utils/File.php';
         require_once 'CRM/Core/Config.php';
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         CRM_Utils_File::cleanDir( $config->extensionsDir . DIRECTORY_SEPARATOR . $this->key, true );
     }
     
     public function installFiles() {
         require_once 'CRM/Utils/File.php';
         require_once 'CRM/Core/Config.php';
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $zip = new ZipArchive;
         $res = $zip->open( $this->tmpFile );
@@ -228,7 +228,7 @@ class CRM_Core_Extensions_Extension
     
     public function download( ) {
         require_once 'CRM/Core/Config.php';
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';
         $filename = $path . DIRECTORY_SEPARATOR . $this->key . '.zip';

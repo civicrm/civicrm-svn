@@ -26,14 +26,14 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Pledge/BAO/Payment.php';
+require_once 'CRM/Pledge/BAO/PledgePayment.php';
 require_once 'CRM/Pledge/BAO/Pledge.php';
 /**
- * Test class for CRM_Pledge_BAO_Payment BAO
+ * Test class for CRM_Pledge_BAO_PledgePayment BAO
  *
  *  @package   CiviCRM
  */
-class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase 
+class CRM_Pledge_BAO_PledgePaymentTest extends CiviUnitTestCase 
 {
 
     /**
@@ -72,7 +72,7 @@ class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase
                          'status_id'        => 1 );
         
         //do test for normal add.
-        $payment = CRM_Pledge_BAO_Payment::add( $params );
+        $payment = CRM_Pledge_BAO_PledgePayment::add( $params );
         foreach ( $params as $param => $value ) {
             $this->assertEquals( $value, $payment->$param );
         }
@@ -87,7 +87,7 @@ class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase
                          'reminder_count'   => 10,
                          'status_id'        => 2 );
         
-        $payment = CRM_Pledge_BAO_Payment::add( $params );
+        $payment = CRM_Pledge_BAO_PledgePayment::add( $params );
         foreach ( $params as $param => $value ) {
             $this->assertEquals( $value, $payment->$param );
         }
@@ -99,10 +99,10 @@ class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase
      */
 	function testRetrieveZeroPledeID( ) 
     {
-		$payment = CRM_Core_DAO::createTestObject('CRM_Pledge_BAO_Payment');
+		$payment = CRM_Core_DAO::createTestObject('CRM_Pledge_BAO_PledgePayment');
 		$params = 	array('pledge_id' => 0 );
 		$defaults = array();
-		$paymentid = CRM_Pledge_BAO_Payment::retrieve($params,$defaults);
+		$paymentid = CRM_Pledge_BAO_PledgePayment::retrieve($params,$defaults);
 		
 		$this->assertEquals(count($paymentid),0,"Pledge Id must be greater than 0");
                $result = CRM_Pledge_BAO_Pledge::deletePledge( $payment->pledge_id );
@@ -113,10 +113,10 @@ class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase
      */
     function testRetrieveStringPledgeID( ) 
     {
-		$payment = CRM_Core_DAO::createTestObject('CRM_Pledge_BAO_Payment');
+		$payment = CRM_Core_DAO::createTestObject('CRM_Pledge_BAO_PledgePayment');
 		$params = 	array('pledge_id' => 'Test' );
 		$defaults = array();
-		$paymentid = CRM_Pledge_BAO_Payment::retrieve($params,$defaults);
+		$paymentid = CRM_Pledge_BAO_PledgePayment::retrieve($params,$defaults);
 		
 		$this->assertEquals(count($paymentid),0,"Pledge Id cannot be a string");
                $result = CRM_Pledge_BAO_Pledge::deletePledge( $payment->pledge_id );
@@ -127,11 +127,11 @@ class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase
      */
     function testRetrieveKnownPledgeID( ) 
     {
-		$payment = CRM_Core_DAO::createTestObject('CRM_Pledge_BAO_Payment');
+		$payment = CRM_Core_DAO::createTestObject('CRM_Pledge_BAO_PledgePayment');
                $pledgeId = $payment->pledge_id;
 		$params = 	array('pledge_id' => $pledgeId );
 		$defaults = array();
-		$paymentid = CRM_Pledge_BAO_Payment::retrieve($params,$defaults);
+		$paymentid = CRM_Pledge_BAO_PledgePayment::retrieve($params,$defaults);
 		
 		$this->assertEquals(count($paymentid),1,"Pledge was retrieved");
                $result = CRM_Pledge_BAO_Pledge::deletePledge( $pledgeId );
@@ -140,10 +140,10 @@ class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase
     /**
      *  Delete Payments payments for one pledge
      */
-	function testDeletePaymentsNormal( ) 
+	function testDeletePledgePaymentsNormal( ) 
     {
-		$payment = CRM_Core_DAO::createTestObject('CRM_Pledge_BAO_Payment');
-		$paymentid = CRM_Pledge_BAO_Payment::deletePayments($payment->pledge_id);
+		$payment = CRM_Core_DAO::createTestObject('CRM_Pledge_BAO_PledgePayment');
+		$paymentid = CRM_Pledge_BAO_PledgePayment::deletePayments($payment->pledge_id);
 		$this->assertEquals(count($paymentid),1,"Deleted one payment");
                $result = CRM_Pledge_BAO_Pledge::deletePledge( $payment->pledge_id );
 	}
@@ -151,10 +151,10 @@ class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase
     /**
      *  Pass Null Id for a payment deletion for one pledge
      */
-	function testDeletePaymentsNullId( ) 
+	function testDeletePledgePaymentsNullId( ) 
     {
-		$payment = CRM_Core_DAO::createTestObject('CRM_Pledge_BAO_Payment');
-		$paymentid = CRM_Pledge_BAO_Payment::deletePayments(Null);
+		$payment = CRM_Core_DAO::createTestObject('CRM_Pledge_BAO_PledgePayment');
+		$paymentid = CRM_Pledge_BAO_PledgePayment::deletePayments(Null);
 		$this->assertEquals(count($paymentid),1,"No payments deleted");
                $result = CRM_Pledge_BAO_Pledge::deletePledge( $payment->pledge_id );
 	}
@@ -164,8 +164,8 @@ class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase
      */	
 	function testDeletePaymentsZeroId( ) 
     {
-		$payment = CRM_Core_DAO::createTestObject('CRM_Pledge_BAO_Payment');
-		$paymentid = CRM_Pledge_BAO_Payment::deletePayments( 0 );
+		$payment = CRM_Core_DAO::createTestObject('CRM_Pledge_BAO_PledgePayment');
+		$paymentid = CRM_Pledge_BAO_PledgePayment::deletePayments( 0 );
                $result = CRM_Pledge_BAO_Pledge::deletePledge( $payment->pledge_id );
     }
 
@@ -180,7 +180,7 @@ class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase
     										 'frequency_interval' => 2
       );
 
-		$date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+		$date = CRM_Pledge_BAO_PledgePayment::calculateBaseScheduleDate($params);
 		$this->assertEquals('20110515000000',$date);
 
     }
@@ -196,7 +196,7 @@ class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase
     										 'frequency_interval' => 2
       );
 
-		$date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+		$date = CRM_Pledge_BAO_PledgePayment::calculateBaseScheduleDate($params);
 		$this->assertEquals('20110510000000',$date);
     }
     
@@ -212,25 +212,25 @@ class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase
     										 'frequency_interval' => 2
       );
 
-		$date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+		$date = CRM_Pledge_BAO_PledgePayment::calculateBaseScheduleDate($params);
 		$this->assertEquals('20110509000000',$date);
 		$params['frequency_day'] =2;
-	  $date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+	  $date = CRM_Pledge_BAO_PledgePayment::calculateBaseScheduleDate($params);
 		$this->assertEquals('20110510000000',$date);
 		$params['frequency_day'] =3;
-	  $date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+	  $date = CRM_Pledge_BAO_PledgePayment::calculateBaseScheduleDate($params);
 		$this->assertEquals('20110511000000',$date);
 		$params['frequency_day'] =4;
-	  $date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+	  $date = CRM_Pledge_BAO_PledgePayment::calculateBaseScheduleDate($params);
 		$this->assertEquals('20110512000000',$date);
 		$params['frequency_day'] =5;
-	  $date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+	  $date = CRM_Pledge_BAO_PledgePayment::calculateBaseScheduleDate($params);
 		$this->assertEquals('20110513000000',$date);
 		$params['frequency_day'] =6;
-	  $date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+	  $date = CRM_Pledge_BAO_PledgePayment::calculateBaseScheduleDate($params);
 		$this->assertEquals('20110514000000',$date);
 	  $params['frequency_day'] =7;
-	  $date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+	  $date = CRM_Pledge_BAO_PledgePayment::calculateBaseScheduleDate($params);
 		$this->assertEquals('20110515000000',$date);
 
     }
@@ -245,7 +245,7 @@ class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase
     										 'frequency_interval' => 2
       );
 
-		$date = CRM_Pledge_BAO_Payment::calculateBaseScheduleDate($params);
+		$date = CRM_Pledge_BAO_PledgePayment::calculateBaseScheduleDate($params);
 		$this->assertEquals('20110510000000',$date);
     }
     
@@ -260,7 +260,7 @@ class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase
     										 'frequency_interval' => 2
       );
 
-		$date = CRM_Pledge_BAO_Payment::calculateNextScheduledDate($params,1);
+		$date = CRM_Pledge_BAO_PledgePayment::calculateNextScheduledDate($params,1);
 		$this->assertEquals('20130510000000',$date);
     }
     
@@ -275,7 +275,7 @@ class CRM_Pledge_BAO_PaymentTest extends CiviUnitTestCase
     										 'frequency_interval' => 2
       );
 
-		$date = CRM_Pledge_BAO_Payment::calculateNextScheduledDate($params,3,'20080510');
+		$date = CRM_Pledge_BAO_PledgePayment::calculateNextScheduledDate($params,3,'20080510');
 		$this->assertEquals('20140510000000',$date);
     }
 }

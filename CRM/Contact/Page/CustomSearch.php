@@ -82,7 +82,7 @@ ORDER By  v.weight
      */
     function browse()
     {
-        $rows =& self::info( );
+        $rows = self::info( );
         $this->assign('rows', $rows);
         return parent::run();
     }

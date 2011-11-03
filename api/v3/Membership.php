@@ -40,43 +40,47 @@
 /**
  * Files required for this package
  */
-require_once 'api/v3/utils.php';
+
 require_once 'CRM/Utils/Rule.php';
 require_once 'CRM/Utils/Array.php';
-
+require_once "CRM/Member/DAO/Membership.php";
+require_once "CRM/Member/PseudoConstant.php";
 /**
  * Deletes an existing contact membership
  *
  * This API is used for deleting a contact membership
  *
- * @param  $params array  array holding membership_id - Id of the contact membership to be deleted
- * @todo should this really return null if successful - should be array
- * @return null if successfull, object of CRM_Core_Error otherwise
+ * @param  $params array  array holding id - Id of the contact membership to be deleted
+ * 
+ * @return array api result
+ * {@getfields membership_delete}
  * @access public
  */
 function civicrm_api3_membership_delete($params)
 {
-   
-    civicrm_api3_verify_one_mandatory($params,null,array('id','membership_id'));
-    $membershipID = empty($params['id']) ?$params['membership_id'] :$params['id'];
-
-
+    
     // membershipID should be numeric
-    if ( ! is_numeric( $membershipID) ) {
+    if ( ! is_numeric( $params['id']) ) {
       return civicrm_api3_create_error( 'Input parameter should be numeric' );
     }
 
     require_once 'CRM/Member/BAO/Membership.php';
-    CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipID );
+    CRM_Member_BAO_Membership::deleteRelatedMemberships( $params['id'] );
 
     $membership = new CRM_Member_BAO_Membership();
-    $result = $membership->deleteMembership($membershipID);
+    $result = $membership->deleteMembership($params['id']);
 
     return $result ? civicrm_api3_create_success( ) : civicrm_api3_create_error('Error while deleting Membership');
 
 }
 
-
+/*
+ * modify metadata
+ */
+function _civicrm_api3_membership_delete_spec( &$params ) {
+  $params['id']['api.required'] =1;// set as not required as membership_id also acceptable & no either/or std yet
+  $params['id']['api.aliases'] = array('membership_id');
+}
 
 /**
  * Create a Contact Membership
@@ -87,12 +91,11 @@ function civicrm_api3_membership_delete($params)
  * @param   array  $params     an associative array of name/value property values of civicrm_membership
  *
  * @return array of newly created membership property values.
+ * {@getfields membership_create}
  * @access public
  */
 function civicrm_api3_membership_create($params)
 {
-
-
 
     $error = _civicrm_api3_membership_check_params( $params );
     if ( civicrm_api3_error( $error ) ) {
@@ -151,27 +154,28 @@ function civicrm_api3_membership_create($params)
  * @return  Array of all found membership property values.
  * @access public
  * @todo needs some love - basically only a get for a given contact right now
+ * {@getfields membership_get}
  */
 function civicrm_api3_membership_get($params)
 {
-
-    civicrm_api3_verify_mandatory($params);
-
     $contactID = $activeOnly = $membershipTypeId = $membershipType = null;
    
-      $contactID        = CRM_Utils_Array::value( 'contact_id', $params );
-      $activeOnly       = CRM_Utils_Array::value( 'active_only', $params, false );
-      $membershipTypeId = CRM_Utils_Array::value( 'membership_type_id', $params );
-      if ( !$membershipTypeId ) {
+    $contactID        = CRM_Utils_Array::value( 'contact_id', $params );
+    if( is_array( CRM_Utils_Array::value( 'filters', $params ) ) && !empty($params['filters']) ) {
+        $activeOnly   = CRM_Utils_Array::value( 'is_current', $params['filters'], false );
+    }
+    $activeOnly       = CRM_Utils_Array::value( 'active_only', $params, $activeOnly );
+
+    $membershipTypeId = CRM_Utils_Array::value( 'membership_type_id', $params );
+    if ( !$membershipTypeId ) {
         $membershipType = CRM_Utils_Array::value( 'membership_type', $params );
         if ( $membershipType ) {
-          require_once 'CRM/Member/DAO/MembershipType.php';
-          $membershipTypeId =
-          CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType',
-          $membershipType, 'id', 'name' );
+            require_once 'CRM/Member/DAO/MembershipType.php';
+            $membershipTypeId =
+                CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType',
+                                             $membershipType, 'id', 'name' );
         }
-      }
-
+    }
 
     // get the membership for the given contact ID
     require_once 'CRM/Member/BAO/Membership.php';
@@ -260,9 +264,8 @@ function civicrm_api3_membership_get($params)
  */
 function _civicrm_api3_membership_format_params( $params, &$values, $create=false)
 {
-  require_once "CRM/Member/DAO/Membership.php";
-  require_once "CRM/Member/PseudoConstant.php";
-  $fields =& CRM_Member_DAO_Membership::fields( );
+
+  $fields = CRM_Member_DAO_Membership::fields( );
   _civicrm_api3_store_values( $fields, $params, $values );
 
   foreach ($params as $key => $value) {

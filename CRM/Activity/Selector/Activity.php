@@ -93,8 +93,9 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
         $this->_activityTypeIDs = $activityTypeIDs;
 
         // get all enabled view componentc (check if case is enabled)
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $this->_viewOptions = CRM_Core_BAO_Preferences::valueOptions( 'contact_view_options', true, null, true );
+        require_once 'CRM/Core/BAO/Setting.php';
+        $this->_viewOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                  'contact_view_options', true, null, true );
     }
 
     /**
@@ -109,12 +110,12 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
      * @access public
      *
      */
-    public function actionLinks( $activityTypeId, 
-                                 $sourceRecordId = null, 
-                                 $accessMailingReport = false, 
-                                 $activityId = null, 
-                                 $key = null,
-                                 $compContext = null ) 
+    public static function actionLinks( $activityTypeId, 
+                                        $sourceRecordId = null, 
+                                        $accessMailingReport = false, 
+                                        $activityId = null, 
+                                        $key = null,
+                                        $compContext = null ) 
     {
         static $activityActTypes   = null;
 
@@ -360,7 +361,7 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
                         'sort'             => $sort,
                         );
         $config = CRM_Core_Config::singleton();
-        $rows =& CRM_Activity_BAO_Activity::getActivities( $params );
+        $rows = CRM_Activity_BAO_Activity::getActivities( $params );
         
         if ( empty( $rows ) ) {
             return $rows;

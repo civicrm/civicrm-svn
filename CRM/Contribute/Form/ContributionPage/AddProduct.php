@@ -102,7 +102,7 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
                         
             $sql = 'SELECT max( weight ) as max_weight FROM civicrm_premiums_product WHERE premiums_id = %1';
             $params = array( 1 => array( $premiumID, 'Integer' ));
-            $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
+            $dao = CRM_Core_DAO::executeQuery( $sql, $params );
             $dao->fetch();
             $defaults['weight'] = $dao->max_weight + 1 ;
         }

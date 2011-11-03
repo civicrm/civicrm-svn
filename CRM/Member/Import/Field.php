@@ -156,7 +156,7 @@ class CRM_Member_Import_Field {
         case 'membership_type':
             static $membershipTypes = null;
             if (!$membershipTypes) {
-                $membershipTypes =& CRM_Member_PseudoConstant::membershipType();
+                $membershipTypes = CRM_Member_PseudoConstant::membershipType();
             }
             if (in_array($this->_value, $membershipTypes)) {
                 return true;
@@ -167,7 +167,7 @@ class CRM_Member_Import_Field {
         case 'payment_instrument':
             static $paymentInstruments = null;
             if (!$paymentInstruments) {
-                $paymentInstruments =& CRM_Member_PseudoConstant::paymentInstrument();
+                $paymentInstruments = CRM_Member_PseudoConstant::paymentInstrument();
             }
             if (in_array($this->_value, $paymentInstruments)) {
                 return true;
@@ -184,7 +184,7 @@ class CRM_Member_Import_Field {
         if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($this->_name)) {
             static $customFields = null;
             if (!$customFields) {
-                $customFields =& CRM_Core_BAO_CustomField::getFields('Membership');
+                $customFields = CRM_Core_BAO_CustomField::getFields('Membership');
             }
             if (!array_key_exists($customFieldID, $customFields)) {
                 return false;

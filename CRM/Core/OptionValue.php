@@ -288,25 +288,45 @@ class CRM_Core_OptionValue
             $nameTitle = array( );
             if ( $mode == 'contribute' ) {
                 $nameTitle = array('payment_instrument' => array('name' =>'payment_instrument',
-                                                                 'title'=> 'Payment Instrument',
+                                                                 'title'=> ts('Payment Instrument'),
                                                                  'headerPattern' => '/^payment|(p(ayment\s)?instrument)$/i'
-                                                                 )
+                                                                  ),
+                                   'honor_contact_name'    => array('name' => 'honor_contact_name',
+                                                                  'title'=> 'Honor Contact Name',
+                                                                  'headerPattern' => '/^honor_contact_name$/i',
+                                                                  'where' => 'civicrm_contact_c.display_name'
+                                                                  ),
+                                    'honor_contact_email'    => array('name' => 'honor_contact_email',
+                                                                  'title'=> 'Honor Contact Email',
+                                                                  'headerPattern' => '/^honor_contact_email$/i',
+                                                                  'where' => 'honor_email.email'
+                                                                  ),
+                                    'honor_contact_id'    => array('name' => 'honor_contact_id',
+                                                                  'title'=> 'Honor Contact ID',
+                                                                  'headerPattern' => '/^honor_contact_id$/i',
+                                                                  'where' => 'civicrm_contribution.honor_contact_id'
+                                                                  ),
+                                    'honor_type_label'    => array('name' => 'honor_type_label',
+                                                                  'title'=> 'Honor Type Label',
+                                                                  'headerPattern' => '/^honor_type_label$/i',
+                                                                  'where' => 'honor_type.label'
+                                                                  ),
                                    );
             } else if ( $mode == '' ) {  
                 //the fields email greeting and postal greeting are meant only for Individual and Household
                 //the field addressee is meant for all contact types, CRM-4575
                 if ( in_array($contactType, array('Individual', 'Household', 'Organization', 'All') ) ) {
                     $nameTitle = array( 'addressee'     => array('name' => 'addressee',
-                                                                 'title'=> 'Addressee',
+                                                                 'title'=> ts('Addressee'),
                                                                  'headerPattern' => '/^addressee$/i'
                                                                  ),
                                         );
                     $title = array( 'email_greeting'    => array('name' => 'email_greeting',
-                                                                 'title'=> 'Email Greeting',
+                                                                 'title'=> ts('Email Greeting'),
                                                                  'headerPattern' => '/^email_greeting$/i'
                                                                  ),  
                                     'postal_greeting'   => array('name' => 'postal_greeting',
-                                                                 'title'=> 'Postal Greeting',
+                                                                 'title'=> ts('Postal Greeting'),
                                                                  'headerPattern' => '/^postal_greeting$/i'
                                                                  ),
                                     );
@@ -315,15 +335,15 @@ class CRM_Core_OptionValue
 
                 if ( $contactType == 'Individual' || $contactType == 'All') {
                     $title = array( 'gender'            => array('name' => 'gender',
-                                                                 'title'=> 'Gender',
+                                                                 'title'=> ts('Gender'),
                                                                  'headerPattern' => '/^gender$/i'
                                                                  ),
                                     'individual_prefix' => array('name' => 'individual_prefix',
-                                                                 'title'=> 'Individual Prefix',
+                                                                 'title'=> ts('Individual Prefix'),
                                                                  'headerPattern' => '/^(prefix|title)/i'
                                                                  ),
                                     'individual_suffix' => array('name' => 'individual_suffix',
-                                                                 'title'=> 'Individual Suffix',
+                                                                 'title'=> ts('Individual Suffix'),
                                                                  'headerPattern' => '/^suffix$/i'
                                                                  ),
                                     );
@@ -358,7 +378,7 @@ class CRM_Core_OptionValue
     static function select( &$query ) 
     {
         if ( ! empty( $query->_params ) || ! empty( $query->_returnProperties ) ) {
-            $field =& self::getFields();
+            $field = self::getFields();
             foreach ( $field as $name => $title ) {
                 list( $tableName, $fieldName ) = explode( '.', $title['where'] ); 
                 if ( CRM_Utils_Array::value( $name, $query->_returnProperties ) ) {
@@ -440,7 +460,7 @@ FROM
         
         $query = $select . $from . $where . $order;
         
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         
         while( $dao->fetch( ) ) {
             $values[$dao->id] = array( 'id'          => $dao->id, 

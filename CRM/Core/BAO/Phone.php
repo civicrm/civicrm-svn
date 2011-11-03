@@ -70,7 +70,7 @@ class CRM_Core_BAO_Phone extends CRM_Core_DAO_Phone
      */
     static function &getValues( $entityBlock ) 
     {
-        $getValues =& CRM_Core_BAO_Block::getValues('phone', $entityBlock );
+        $getValues = CRM_Core_BAO_Block::getValues('phone', $entityBlock );
         return $getValues;
     }
 
@@ -111,7 +111,7 @@ ORDER BY civicrm_phone.is_primary DESC,  phone_id ASC ";
         $params = array( 1 => array( $id, 'Integer' ) );
         
         $numbers = $values = array( );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         $count = 1;
         while ( $dao->fetch( ) ) {
             $values = array( 'locationType'   => $dao->locationType,
@@ -169,7 +169,7 @@ ORDER BY ph.is_primary DESC, phone_id ASC ";
        
         $params = array( 1 => array( $entityId, 'Integer' ) );
         $numbers = array( );
-        $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
         while ( $dao->fetch( ) ) {
             $numbers[$dao->phone_id] = array( 'locationType'   => $dao->locationType,
                                               'is_primary'     => $dao->is_primary,

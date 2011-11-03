@@ -90,19 +90,30 @@ function civicrm_user_update( &$edit, &$user, $category )
     if ( ! civicrm_initialize( ) ) {
         return;
     }
-    // this always comes in via user hook, so udpate email only if it has changed
+    // this always comes in via user hook
+    // in D7 we dont know if the email has changed, so we go ahead and update
     if ( isset( $edit['mail'] ) &&
-         trim( $edit['mail'] ) != trim( $user->mail ) ) {
+         ! empty( $edit['mail'] ) ) {
         require_once 'CRM/Core/BAO/UFMatch.php';
         $contactID = CRM_Core_BAO_UFMatch::getContactId( $user->uid );
-
         // cant find the contactID, so lets skip
         if ( ! $contactID ) {
             return;
         }
         CRM_Core_BAO_UFMatch::updateContactEmail( $contactID,
                                                   trim( $edit['mail'] ) );
+
+        // reset navigation on user role change
+        $editRoles     = array_keys(CRM_Utils_Array::value('roles', $edit, array()));
+        $orginRoles    = array_keys($user->original->roles);
+        $editRoleDiff  = array_diff($editRoles, $orginRoles);
+        $orginRoleDiff = array_diff($orginRoles, $editRoles);
+        if ( !empty($editRoleDiff) || !empty($orginRoleDiff) ) {
+            require_once 'CRM/Core/BAO/Navigation.php';
+            CRM_Core_BAO_Navigation::resetNavigation( $contactID );
+        }
     }
+    
 }
 
 /**
@@ -130,7 +141,7 @@ function civicrm_user_categories()
     require_once 'CRM/Core/BAO/UFGroup.php';
     require_once 'CRM/Core/BAO/UFField.php';
 
-    $allUFGroups =& CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account');
+    $allUFGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account');
     $ufGroups = array( );
 
     $weight = 100;
@@ -170,7 +181,7 @@ function civicrm_user_view( $user, $view_mode ){
         if ( CRM_Core_Permission::check( 'access CiviCRM' ) &&
              CRM_Contact_BAO_Contact_Permission::allow( $userID ) ) {
             $url = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid=$userID" );
-            $contactURL = '<a href="' .$url. '">&raquo; ' .t("View Contact Record") . '</a>';
+            $contactURL = '<a href="' .$url. '">&raquo; ' .ts("View Contact Record") . '</a>';
         }
 
         if ( CRM_Core_Permission::check( 'access Contact Dashboard' ) ) {
@@ -178,7 +189,7 @@ function civicrm_user_view( $user, $view_mode ){
             if ( ! empty( $contactURL ) ) {
                 $contactURL .= '<br/>';
             }
-            $contactURL .= '<a href="' .$url. '">&raquo; ' .t("View Contact Dashboard") . '</a>';
+            $contactURL .= '<a href="' .$url. '">&raquo; ' .ts("View Contact Dashboard") . '</a>';
         }
 
         require_once 'CRM/Profile/Page/Dynamic.php';
@@ -187,7 +198,7 @@ function civicrm_user_view( $user, $view_mode ){
 
         $ctype = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $userID, 'contact_type' );
 
-        $ufGroups =& CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account', 0, false);
+        $ufGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account', 0, false);
         $weight   = 100;
         foreach ( $ufGroups as $id => $title ) {
             
@@ -203,7 +214,7 @@ function civicrm_user_view( $user, $view_mode ){
 
             // CRM-3537: profile edit link
             if ( user_edit_access($user) ) {
-                $editURL = '&raquo; ' . l( t("Edit '!1'", array('!1' => $title['title'])),
+                $editURL = '&raquo; ' . l( ts("Edit '!1'", array('!1' => $title['title'])),
                                            "user/{$user->uid}/edit/{$title['title']}");
             }
 

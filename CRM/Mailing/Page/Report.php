@@ -94,7 +94,7 @@ class CRM_Mailing_Page_Report extends CRM_Core_Page_Basic
         CRM_Mailing_BAO_Mailing::checkPermission( $this->_mailing_id );
         
         require_once 'CRM/Mailing/BAO/Mailing.php';
-        $report =& CRM_Mailing_BAO_Mailing::report( $this->_mailing_id );
+        $report = CRM_Mailing_BAO_Mailing::report( $this->_mailing_id );
 	
         //get contents of mailing
         CRM_Mailing_BAO_Mailing::getMailingContent( $report, $this ); 

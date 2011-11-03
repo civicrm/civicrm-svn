@@ -277,11 +277,12 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task
         $addressFldKey = 'street_address';
         if ( !isset( $parseAddress ) ) {
             $parseAddress = false;
+            require_once 'CRM/Core/BAO/Setting.php';
             foreach ( $this->_fields as $key => $fld ) {
                 if ( strpos( $key, $addressFldKey ) !== false ) {
-                    require_once 'CRM/Core/BAO/Preferences.php';
                     $parseAddress = CRM_Utils_Array::value('street_address_parsing', 
-                                                           CRM_Core_BAO_Preferences::valueOptions('address_options'), 
+                                                           CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                                               'address_options' ), 
                                                            false );
                     break;
                 }

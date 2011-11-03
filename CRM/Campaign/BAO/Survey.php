@@ -412,8 +412,9 @@ SELECT  survey.id    as id,
         }
         
         if ( empty( $returnProperties ) ) {
-            require_once 'CRM/Core/BAO/Preferences.php';
-            $autocompleteContactSearch = CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options' );
+            require_once 'CRM/Core/BAO/Setting.php';
+            $autocompleteContactSearch = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                             'contact_autocomplete_options' );
             $returnProperties = array_fill_keys( array_merge( array( 'contact_type',
                                                                      'contact_sub_type',
                                                                      'sort_name'), 

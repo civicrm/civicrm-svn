@@ -701,7 +701,7 @@ function _civicrm_format_params_v2_to_v3( &$params, $locationTypeId = null ) {
         $locationTypeId = CRM_Utils_Array::value( 'location_type_id', $params );
         if ( !$locationTypeId && array_key_exists('location_type', $params ) ) {
             require_once 'CRM/Core/PseudoConstant.php';
-            $locTypes =& CRM_Core_PseudoConstant::locationType( );
+            $locTypes = CRM_Core_PseudoConstant::locationType( );
             
             $locType = $params['location_type'];
             if ( is_array( $params['location_type'] ) ) {
@@ -786,7 +786,7 @@ function _civicrm_format_params_v2_to_v3( &$params, $locationTypeId = null ) {
         if ( array_key_exists( $id, $params ) ) {
             if ( !$addressTaken ) {
                 require_once 'CRM/Core/DAO/Address.php';
-                $fields =& CRM_Core_DAO_Address::fields( );
+                $fields = CRM_Core_DAO_Address::fields( );
                 _civicrm_store_values( $fields, $params, $params['address'][$addressCount] );
                 $addressTaken = true;
             }

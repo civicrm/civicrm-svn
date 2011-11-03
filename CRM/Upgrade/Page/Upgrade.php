@@ -81,13 +81,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         if ( $currentVer == '2.1.6' ) {
             $config = CRM_Core_Config::singleton( );
             // also cleanup the templates_c directory
-            $config->cleanup( 1 , false);
-            
-            if ( $config->userFramework !== 'Standalone' ) {
-                // clean the session
-                $session = CRM_Core_Session::singleton( );
-                $session->reset( 2 );
-            }
+            $config->cleanupCaches( );
         }
         // end of hack
         
@@ -181,6 +175,15 @@ SELECT  count( id ) as statusCount
                 $config = CRM_Core_Config::singleton( );
                 $preUpgradeMessage .= '<br />' . ts( "As per <a href='%1'>the related blog post</a>, we are making contact names, addresses and mailings monolingual; the values entered for the default locale (%2) will be preserved and values for other locales removed.", array( 1 => 'http://civicrm.org/blogs/shot/multilingual-civicrm-3440-making-some-fields-monolingual', 2 => $config->lcMessages ) );
             }
+
+            if ( version_compare( $currentVer, '3.4.6' ) == -1 &&
+                 version_compare( $latestVer,  '3.4.6' ) >= 0 ) {
+                $googleProcessorExists = CRM_Core_DAO::singleValueQuery( "SELECT id FROM civicrm_payment_processor WHERE payment_processor_type = 'Google_Checkout' AND is_active = 1 LIMIT 1;" );
+
+                if ( $googleProcessorExists ) {
+                    $preUpgradeMessage .= '<br />' . ts( 'To continue using Google Checkout Payment Processor with latest version of CiviCRM, requires updating merchant account settings. Please refer "Set API callback URL and other settings" section of <a href="%1" target="_blank"><strong>Google Checkout Configuration</strong></a> doc.', array( 1 => 'http://wiki.civicrm.org/confluence/x/zAJTAg' ) );
+                }
+            }
             
             $template->assign( 'currentVersion',  $currentVer);
             $template->assign( 'newVersion',      $latestVer );
@@ -247,22 +250,9 @@ SELECT  count( id ) as statusCount
                 $upgrade->setVersion( $latestVer );
                 $template->assign( 'upgraded', true );
                 
-                // also cleanup the templates_c directory
+                // cleanup caches CRM-8739
                 $config = CRM_Core_Config::singleton( );
-                $config->cleanup( 1 , false );
-
-                // clear db caching
-                $config->clearDBCache( );
-
-                // clear temporary tables
-                $config->clearTempTables( );
-
-                // clean the session. Note: In case of standalone this makes the user logout. 
-                // So skip this step for standalone. 
-                if ( $config->userFramework !== 'Standalone' ) {
-                    $session = CRM_Core_Session::singleton( );
-                    $session->reset( 2 );
-                }
+                $config->cleanupCaches( 1 , false );
             }
         }
         
@@ -436,8 +426,8 @@ SELECT  count( id ) as statusCount
                     $defaults['enableComponents'][]   = 'CiviReport';
                     $defaults['enableComponentIDs'][] = $compId;
 
-                    require_once "CRM/Core/BAO/Setting.php";
-                    CRM_Core_BAO_Setting::add($defaults);            
+                    require_once "CRM/Core/BAO/ConfigSetting.php";
+                    CRM_Core_BAO_ConfigSetting::add($defaults);            
                 }
             }
         }
@@ -480,8 +470,8 @@ SELECT  count( id ) as statusCount
     {
         // upgrade all roles who have 'access CiviEvent' permission, to also have 
         // newly added permission 'edit_all_events', CRM-5472
-        $config =& CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Drupal' ) {
+        $config = CRM_Core_Config::singleton( );
+        if ( $config->userSystem->is_drupal ) {
             $roles = user_roles(false, 'access CiviEvent');
             if ( !empty($roles) ) {
                 // CRM-7896
@@ -492,7 +482,7 @@ SELECT  count( id ) as statusCount
         }
 
         //make sure 'Deceased' membership status present in db,CRM-5636
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         
         $addDeceasedStatus = false;
         $sql = "SELECT max(id) FROM civicrm_membership_status where name = 'Deceased'"; 

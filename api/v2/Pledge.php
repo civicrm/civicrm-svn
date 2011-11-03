@@ -189,7 +189,7 @@ function &civicrm_pledge_get( &$params ) {
         $returnProperties['pledge_id']=1; 
     }
     
-    $newParams =& CRM_Contact_BAO_Query::convertFormValues( $inputParams );
+    $newParams = CRM_Contact_BAO_Query::convertFormValues( $inputParams );
 
     $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null );
     list( $select, $from, $where ) = $query->query( );
@@ -201,7 +201,7 @@ function &civicrm_pledge_get( &$params ) {
         $sql .= " ORDER BY $sort ";
     }
     $sql .= " LIMIT $offset, $rowCount ";
-    $dao =& CRM_Core_DAO::executeQuery( $sql );
+    $dao = CRM_Core_DAO::executeQuery( $sql );
 
 
     
@@ -317,7 +317,7 @@ function _civicrm_pledge_format_params( &$params, &$values, $create=false ) {
     // perhaps we should just copy $params across rather than run it through the 'filter'?
     // but at least the filter forces anomalies into the open. In several cases it turned out the unique names wouldn't work
     // even though they are 'generally' what is returned in the GET - implying they should
-    $fields =& CRM_Pledge_DAO_Pledge::fields( );
+    $fields = CRM_Pledge_DAO_Pledge::fields( );
     _civicrm_store_values( $fields, $params, $values );
 
 

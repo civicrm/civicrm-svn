@@ -74,13 +74,14 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
 
       // Now we're filling the "Assigned To" field.
       // Typing contact's name into the field (using typeKeys(), not type()!)...
-      $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", $firstName1);
+      $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
 
       // ...waiting for drop down with results to show up...
-      $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
-      
-      // ...clicking first result (which is a li element), selenium picks first matching element so we don't need to specify that...
-      $this->click("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
+      $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
+      $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
+
+      // ...need to use mouseDownAt on first result (which is a li element), click does not work
+      $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
 
       // ...again, waiting for the box with contact name to show up...
       $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
@@ -89,7 +90,7 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("Summerson, " . $firstName1), "Contact not found in line " . __LINE__ );
       
       // Since we're here, let's check if screen help is being displayed properly
-      $this->assertTrue($this->isTextPresent("A copy of this activity will be emailed to each Assignee"));
+      $this->assertTrue($this->isTextPresent("You can optionally assign this activity to someone"), "Help text is missing.");
 
       // Putting the contents into subject field - assigning the text to variable, it'll come in handy later
       $subject = "This is subject of test activity being added through activity tab of contact summary screen.";
@@ -121,8 +122,7 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
       // Scheduling follow-up.
       $this->click( "css=.crm-activity-form-block-schedule_followup div.crm-accordion-header" );
       $this->select( "followup_activity_type_id", "value=1" );
-      $this->type( "interval", "1" );
-      $this->select( "interval_unit","value=day" ); 
+      $this->webtestFillDateTime('followup_date','+2 months 10:00AM');
       $this->type( "followup_activity_subject","This is subject of schedule follow-up activity" );
 
       // Clicking save.

@@ -85,7 +85,11 @@ class CRM_Report_Page_InstanceList extends CRM_Core_Page
             if ( !( $enabled && CRM_Report_Utils_Report::isInstancePermissioned( $dao->id ) ) ) {
                 continue;
             }  
-
+            //filter report listing by group/role
+            if ( !( $enabled && CRM_Report_Utils_Report::isInstanceGroupRoleAllowed( $dao->id ) ) ) {
+                continue;
+            }
+            
             if ( trim( $dao->title ) ) {
                 if ( $ovID ) {
                     $title = ts("Report(s) created from the template: %1", array( 1 => $dao->label ) );
@@ -112,7 +116,7 @@ class CRM_Report_Page_InstanceList extends CRM_Core_Page
         //option value ID of the Report
         $ovID = $title = null;
         $ovID = CRM_Utils_Request::retrieve( 'ovid', 'Positive', $this );
-        $rows =& self::info( $ovID, $title );
+        $rows = self::info( $ovID, $title );
         
         $this->assign('list', $rows);
         if ( $ovID ) {

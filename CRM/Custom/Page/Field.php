@@ -108,6 +108,12 @@ class CRM_Custom_Page_Field extends CRM_Core_Page
                                                                           'ref'   => 'enable-action',
                                                                           'title' => ts('Enable Custom Field'),
                                                                           ),
+                                        CRM_Core_Action::EXPORT  => array(
+                                                                          'name'  => ts('Move'),
+                                                                          'url'   => 'civicrm/admin/custom/group/field/move',
+                                                                          'qs'    => 'reset=1&fid=%%id%%',
+                                                                          'title' => ts('Move Custom Field'),
+                                                                          ),
                                         CRM_Core_Action::DELETE  => array(
                                                                           'name'  => ts('Delete'),
                                                                           'url'   => 'civicrm/admin/custom/group/field',
@@ -239,7 +245,7 @@ class CRM_Custom_Page_Field extends CRM_Core_Page
        
         if ($action & CRM_Core_Action::DELETE) {
             
-            $session = & CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/custom/group/field', 'reset=1&action=browse&gid=' . $this->_gid));
             $controller = new CRM_Core_Controller_Simple( 'CRM_Custom_Form_DeleteField',"Delete Custom Field", '' );
             $id = CRM_Utils_Request::retrieve('id', 'Positive',

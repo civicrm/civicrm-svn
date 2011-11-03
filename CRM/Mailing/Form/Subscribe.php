@@ -151,7 +151,7 @@ ORDER BY title";
         if ( $addCaptcha ) {
             // add captcha
             require_once 'CRM/Utils/ReCAPTCHA.php';
-            $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
+            $captcha = CRM_Utils_ReCAPTCHA::singleton( );
             $captcha->add( $this );
         }
         
@@ -167,13 +167,9 @@ ORDER BY title";
     }
     
     static function formRule( $fields ) {
-        if ( $errors ) {
-            return $errors;
-        } else {
-            foreach ( $fields as $name => $dontCare ) {
-                if ( substr( $name, 0, CRM_Core_Form::CB_PREFIX_LEN ) == CRM_Core_Form::CB_PREFIX ) {
-                    return true;
-                }
+        foreach ( $fields as $name => $dontCare ) {
+            if ( substr( $name, 0, CRM_Core_Form::CB_PREFIX_LEN ) == CRM_Core_Form::CB_PREFIX ) {
+                return true;
             }
         }
         return array( '_qf_default' => 'Please select one or more mailing lists.' );

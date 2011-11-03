@@ -232,10 +232,10 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
    */
   function testPaymentDeleteWithEmptyParams()
   {
-    $params = array();
+    $params = array('version' => $this->_apiversion);
     $deletePayment = & civicrm_api('participant_payment', 'delete',  $params );
-    $this->assertEquals( $deletePayment['is_error'], 1 );
-    $this->assertEquals( $deletePayment['error_message'], 'Mandatory key(s) missing from params array: id, version' );
+    $this->assertEquals( 1, $deletePayment['is_error']);
+    $this->assertEquals( 'Mandatory key(s) missing from params array: id', $deletePayment['error_message']);
   }
 
   /**

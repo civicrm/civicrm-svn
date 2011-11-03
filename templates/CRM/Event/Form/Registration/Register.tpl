@@ -54,6 +54,12 @@
     </div>
 {/if}
 
+{if $pcpSupporterText}
+    <div class="crm-section pcpSupporterText-section">
+        <div class="content">{$pcpSupporterText}</div>
+    </div>
+{/if}
+
 {if $form.additional_participants.html}
     <div class="crm-section additional_participants-section" id="noOfparticipants">
         <div class="label">{$form.additional_participants.label}</div>
@@ -67,7 +73,7 @@
 
 {if $priceSet}
     <fieldset id="priceset" class="crm-group priceset-group"><legend>{$event.fee_label}</legend>
-        {include file="CRM/Price/Form/PriceSet.tpl"}
+        {include file="CRM/Price/Form/PriceSet.tpl" extends="Event"}
 	{include file="CRM/Price/Form/ParticipantCount.tpl"}
     </fieldset>
     {if $form.is_pay_later}
@@ -93,6 +99,41 @@
             </div>
         {/if}
     {/if}
+{/if}
+
+{if $pcp}
+    <fieldset class="crm-group pcp-group">
+        <div class="crm-section pcp-section">
+            <div class="crm-section display_in_roll-section">
+                <div class="content">
+                    {$form.pcp_display_in_roll.html} &nbsp;
+                    {$form.pcp_display_in_roll.label}
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div id="nameID" class="crm-section is_anonymous-section">
+                <div class="content">
+                    {$form.pcp_is_anonymous.html}
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div id="nickID" class="crm-section pcp_roll_nickname-section">
+                <div class="label">{$form.pcp_roll_nickname.label}</div>
+                <div class="content">{$form.pcp_roll_nickname.html}
+                <div class="description">{ts}Enter the name you want listed with this contribution. You can use a nick name like 'The Jones Family' or 'Sarah and Sam'.{/ts}</div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div id="personalNoteID" class="crm-section pcp_personal_note-section">
+                <div class="label">{$form.pcp_personal_note.label}</div>
+                <div class="content">
+                    {$form.pcp_personal_note.html}
+                    <div class="description">{ts}Enter a message to accompany this contribution.{/ts}</div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </fieldset>
 {/if}
 
 {assign var=n value=email-$bltID}

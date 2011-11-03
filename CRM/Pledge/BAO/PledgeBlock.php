@@ -216,7 +216,7 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock
             //get all payments required details.
             $allPayments = array( );
             $returnProperties = array( 'status_id', 'scheduled_date', 'scheduled_amount' );
-            CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_Payment', 'pledge_id', 
+            CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'pledge_id', 
                                              $form->_values['pledge_id'], $allPayments, $returnProperties );
             //get all status
             require_once 'CRM/Contribute/PseudoConstant.php';

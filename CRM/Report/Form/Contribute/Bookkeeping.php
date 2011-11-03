@@ -119,6 +119,11 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
                                            'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                            'options'      => CRM_Contribute_PseudoConstant::contributionType( )
                                          ),
+                                 'payment_instrument_id'   =>
+                                    array( 'title'        => ts( 'Paid By' ), 
+                                           'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                           'options'      => CRM_Contribute_PseudoConstant::paymentInstrument( )
+                                         ),
                                 'contribution_status_id' => 
                                     array( 'title'        => ts( 'Contribution Status' ), 
                                         'operatorType' => CRM_Report_Form::OP_MULTISELECT,

@@ -65,6 +65,7 @@ class CRM_Contribute_StateMachine_ContributionPage extends CRM_Core_StateMachine
                               'CRM_Member_Form_MembershipBlock'               => null,
                               'CRM_Contribute_Form_ContributionPage_ThankYou' => null,
                               'CRM_Friend_Form_Contribute'                    => null,
+                              'CRM_PCP_Form_Contribute'                       => null,
                               'CRM_Contribute_Form_ContributionPage_Custom'   => null,
                               'CRM_Contribute_Form_ContributionPage_Premium'  => null,
                               'CRM_Contribute_Form_ContributionPage_Widget'   => null,

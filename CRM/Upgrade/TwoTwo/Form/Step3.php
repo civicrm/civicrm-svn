@@ -139,7 +139,7 @@ SELECT id
         if ( $fmaGroupId ) {
             //get domain from email address and name as default value.
             require_once 'CRM/Core/BAO/Domain.php';
-            $domain =& CRM_Core_BAO_Domain::getDomain( );
+            $domain = CRM_Core_BAO_Domain::getDomain( );
             $domain->selectAdd( );
             $domain->selectAdd( 'email_name', 'email_address' );
             $domain->find(true);

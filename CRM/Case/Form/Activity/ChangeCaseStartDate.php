@@ -84,6 +84,9 @@ class CRM_Case_Form_Activity_ChangeCaseStartDate
 
     static function buildQuickForm( &$form ) 
     { 
+    	$form->removeElement('status_id');
+        $form->removeElement('priority_id');
+    	
         $currentStartDate = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case', $form->_caseId, 'start_date' );
         $form->assign('current_start_date',  $currentStartDate );
         $form->addDate( 'start_date', ts('New Start Date'), false, array( 'formatType' => 'activityDateTime' ) );   
@@ -151,7 +154,12 @@ WHERE civicrm_case.id=  %1";
             CRM_Core_Error::fatal('Required parameter missing for ChangeCaseType - end post processing');
         }
         
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
+        
+        $params['status_id'] = CRM_Core_OptionGroup::getValue('activity_status', 'Completed', 'name' );
+        $activity->status_id = $params['status_id'];
+        $params['priority_id'] = CRM_Core_OptionGroup::getValue('priority', 'Normal', 'name' );
+        $activity->priority_id = $params['priority_id'];
         
         // 1. save activity subject with new start date
         $currentStartDate = CRM_Utils_Date::customFormat( CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case',
@@ -187,9 +195,9 @@ WHERE civicrm_case.id=  %1";
         	$oldActivity = $abao->retrieve( $oldParams, $oldActivityDefaults );
 
             // save the old values
-            civicrm_api_include('utils', false, 2);
+            civicrm_api_include( 'utils', false, 3 );
         	$openCaseParams = array();
-        	_civicrm_object_to_array($oldActivity, $openCaseParams);
+        	_civicrm_api3_object_to_array( $oldActivity, $openCaseParams );
 
         	// update existing revision 
             $oldParams = array( 'id' => $form->openCaseActivityId,
@@ -205,7 +213,7 @@ WHERE civicrm_case.id=  %1";
             $openCaseParams['activity_date_time'] = $params['start_date'];
             $openCaseParams['target_contact_id'] = $oldActivityDefaults['target_contact'];
             $openCaseParams['assignee_contact_id'] = $oldActivityDefaults['assignee_contact'];
-            $session = & CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $openCaseParams['source_contact_id'] = $session->get( 'userID' );
             
             // original_id always refers to the first activity, so only update if null (i.e. this is the second revision)
@@ -222,6 +230,11 @@ WHERE civicrm_case.id=  %1";
                 
                 require_once "CRM/Case/BAO/Case.php";
                 CRM_Case_BAO_Case::processCaseActivity( $caseActivityParams );
+
+                $caseActivityParams = array( 'activityID' => $form->openCaseActivityId,
+                                             'mainActivityId' => $newActivity->id,
+                                            );
+                CRM_Activity_BAO_Activity::copyExtendedActivityData( $caseActivityParams );
             }
         }
                                

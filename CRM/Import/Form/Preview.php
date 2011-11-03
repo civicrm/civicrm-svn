@@ -74,10 +74,10 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
 
         $this->assign( 'rowDisplayCount', 2 );
         
-        $groups =& CRM_Core_PseudoConstant::group();
+        $groups = CRM_Core_PseudoConstant::group();
         $this->set('groups', $groups);
         
-        $tag =& CRM_Core_PseudoConstant::tag();
+        $tag = CRM_Core_PseudoConstant::tag();
         if ($tag) {
             $this->set('tag', $tag);
         }
@@ -274,7 +274,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
                
         // If ACL applies to the current user, update cache before running the import.
         if ( ! CRM_Core_Permission::check( 'view all contacts' ) ) {
-          $session =& CRM_Core_Session::singleton( );
+          $session = CRM_Core_Session::singleton( );
           $userID  = $session->get( 'userID' );
           require_once 'CRM/ACL/BAO/Cache.php';
           CRM_ACL_BAO_Cache::updateEntry( $userID );
@@ -296,7 +296,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
         $importJob->setFormVariables( $this );
         
         // check if there is any error occured
-        $errorStack =& CRM_Core_Error::singleton();
+        $errorStack = CRM_Core_Error::singleton();
         $errors     = $errorStack->getErrors();
         
         $errorMessage = array();
@@ -473,16 +473,16 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
                              'description'   => $newGroupDesc,
                              'is_active'     => true,
                              );
-            $group =& CRM_Contact_BAO_Group::create($gParams);
+            $group = CRM_Contact_BAO_Group::create($gParams);
             $groups[] = $newGroupId = $group->id;
         }
         
         if(is_array($groups)) {
             $groupAdditions = array();
             foreach ($groups as $groupId) {
-                $addCount =& CRM_Contact_BAO_GroupContact::addContactsToGroup($contactIds, $groupId);
+                $addCount = CRM_Contact_BAO_GroupContact::addContactsToGroup($contactIds, $groupId);
                 if ( !empty($relatedContactIds) ) {
-                    $addRelCount =& CRM_Contact_BAO_GroupContact::addContactsToGroup($relatedContactIds, $groupId);
+                    $addRelCount = CRM_Contact_BAO_GroupContact::addContactsToGroup($relatedContactIds, $groupId);
                 }
                 $totalCount = $addCount[1] + $addRelCount[1];
                 if ($groupId == $newGroupId) {
@@ -515,7 +515,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
                                );
             require_once 'CRM/Core/BAO/Tag.php';
             $id = array();
-            $addedTag =& CRM_Core_BAO_Tag::add($tagParams,$id);
+            $addedTag = CRM_Core_BAO_Tag::add($tagParams,$id);
             $tag[$addedTag->id] = 1;            
         }
         //add Tag to Import   
@@ -525,9 +525,9 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
             $tagAdditions = array();
             require_once "CRM/Core/BAO/EntityTag.php";
             foreach ($tag as $tagId =>$val) {
-                $addTagCount =& CRM_Core_BAO_EntityTag::addContactsToTag( $contactIds, $tagId );
+                $addTagCount = CRM_Core_BAO_EntityTag::addContactsToTag( $contactIds, $tagId );
                 if ( !empty($relatedContactIds) ) {
-                    $addRelTagCount =& CRM_Core_BAO_EntityTag::addContactsToTag( $relatedContactIds, $tagId );
+                    $addRelTagCount = CRM_Core_BAO_EntityTag::addContactsToTag( $relatedContactIds, $tagId );
                 }
                 $totalTagCount = $addTagCount[1] + $addRelTagCount[1];
                 if ($tagId == $addedTag->id) {
@@ -554,7 +554,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
         
         // check if there is any error occured
         
-        $errorStack =& CRM_Core_Error::singleton();
+        $errorStack = CRM_Core_Error::singleton();
         $errors     = $errorStack->getErrors();
         
         $errorMessage = array();

@@ -91,7 +91,7 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
     function preProcess( ) 
     {
         $config = CRM_Core_Config::singleton( );
-        if ( in_array("CiviEvent", $config->enableComponents) ) {
+        if ( in_array('CiviEvent', $config->enableComponents) ) {
             $this->assign('CiviEvent', true );
         }
         
@@ -103,7 +103,9 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
         
         if ( $this->_id ) {
             $this->assign( 'eventId', $this->_id );
-            $this->add( 'hidden', 'id', $this->_id );
+            if ( empty($this->_addProfileBottom) && empty($this->_addProfileBottomAdd) ) {
+                $this->add( 'hidden', 'id', $this->_id );
+            }
             $this->_single = true;
             
             $params = array( 'id' => $this->_id );
@@ -158,14 +160,17 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
             }
             $this->assign( 'title', $title );
         }
-        
-        require_once 'CRM/Event/PseudoConstant.php';
-        $statusTypes        = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 1');
-        $statusTypesPending = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 0');
-        $findParticipants['statusCounted'] = implode( ', ', array_values( $statusTypes ) );
-        $findParticipants['statusNotCounted'] = implode( ', ', array_values( $statusTypesPending ) );
-        $this->assign('findParticipants', $findParticipants);
-                
+
+        if ( CRM_Core_Permission::check( 'view event participants' ) &&
+             CRM_Core_Permission::check( 'view all contacts' ) ) {  
+            require_once 'CRM/Event/PseudoConstant.php';
+            $statusTypes        = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 1', 'label' );
+            $statusTypesPending = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 0', 'label' );
+            $findParticipants['statusCounted'] = implode( ', ', array_values( $statusTypes ) );
+            $findParticipants['statusNotCounted'] = implode( ', ', array_values( $statusTypesPending ) );
+            $this->assign('findParticipants', $findParticipants);
+        }
+
         $this->_templateId = (int) CRM_Utils_Request::retrieve('template_id', 'Integer', $this);
 
         // also set up tabs
@@ -231,7 +236,7 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
     public function buildQuickForm( )  
     { 
         $className = CRM_Utils_System::getClassName($this);
-        $session = & CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         
         $this->_cancelURL = CRM_Utils_Array::value( 'cancelURL', $_POST );
         
@@ -292,15 +297,19 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
         // make submit buttons keep the current working tab opened.
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             $className = CRM_Utils_String::getClassName( $this->_name );
+            
             if ( $className == 'EventInfo' ) {
-                $subPage = 'eventInfo';
+                $subPage = 'settings';
             } elseif ( $className == 'Event' ) {
                 $subPage = 'friend';
+            } elseif ( $className == 'ScheduleReminders' ) {
+                $subPage = 'reminder';
             } else {
                 $subPage = strtolower( $className );
             }
             
-            CRM_Core_Session::setStatus( ts("'%1' information has been saved.", array(1 => ( $subPage == 'friend' )?'Friend':$className ) ) );
+            CRM_Core_Session::setStatus( ts("'%1' information has been saved.", 
+                                            array(1 => ( $subPage == 'friend' )?'Friend':$className ) ) );
             
             $this->postProcessHook( );
             

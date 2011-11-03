@@ -30,10 +30,6 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
 
  
 class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
-
-  protected $captureScreenshotOnFailure = TRUE;
-  protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
-  protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
     
   protected function setUp()
   {
@@ -77,30 +73,31 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       // We're filling in ajaxiefied  "With Contact" field:
       // We can not use id as selector for these input widgets. Use css selector, starting with the table row containing this field (which will have a unique class)
       // Typing contact's name into the field (using typeKeys(), not type()!)...
-      $this->typeKeys("css=tr.crm-activity-form-block-target_contact_id input.token-input-box", "$firstName1");
+      $this->typeKeys("css=tr.crm-activity-form-block-target_contact_id input#token-input-target_contact_id", "$firstName1");
       
       // ...waiting for drop down with results to show up...
-      $this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td div ul li");
+      $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
+      $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
       
-      //token-input-dropdown-facebook
-      // ...clicking first result...
-      $this->click("css=tr.crm-activity-form-block-target_contact_id td div ul li");
+      // ...need to use mouseDownAt on first result (which is a li element), click does not work
+      $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
 
       // ...again, waiting for the box with contact name to show up (span with delete token class indicates that it's present)...
       $this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td ul li span.token-input-delete-token-facebook");
       
-      // ...and verifying if the page contains properly formatted display name for chosen contact.
+      //..and verifying if the page contains properly formatted display name for chosen contact.
       $this->assertTrue($this->isTextPresent("Anderson, $firstName1"), "Contact not found in line " . __LINE__ );
 
       // Now we're doing the same for "Assigned To" field.
       // Typing contact's name into the field (using typeKeys(), not type()!)...
-      $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", "$firstName2");
-      
+      $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", "$firstName2");
+
       // ...waiting for drop down with results to show up...
-      $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
-      
-      // ...clicking first result (which is an li element), selenium picks first matching element so we don't need to specify that...
-      $this->click("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
+      $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
+      $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
+
+      //..need to use mouseDownAt on first result (which is a li element), click does not work
+      $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
 
       // ...again, waiting for the box with contact name to show up...
       $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
@@ -109,7 +106,7 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("Summerson, $firstName2"), "Contact not found in line " . __LINE__ );
       
       // Since we're here, let's check of screen help is being displayed properly
-      $this->assertTrue($this->isTextPresent("A copy of this activity will be emailed to each Assignee"));
+      $this->assertTrue($this->isTextPresent("You can optionally assign this activity to someone"), "Help text is missing.");
 
       // Putting the contents into subject field - assigning the text to variable, it'll come in handy later
       $subject = "This is subject of test activity being added through standalone screen.";
@@ -145,8 +142,7 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       // Scheduling follow-up.
       $this->click( "css=.crm-activity-form-block-schedule_followup div.crm-accordion-header" );
       $this->select( "followup_activity_type_id", "value=1" );
-      $this->type( "interval", "1" );
-      $this->select( "interval_unit","value=day" ); 
+      $this->webtestFillDateTime('followup_date','+2 months 10:00AM');
       $this->type( "followup_activity_subject","This is subject of schedule follow-up activity");
 
       // Clicking save.

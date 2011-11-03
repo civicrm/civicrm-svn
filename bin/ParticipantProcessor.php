@@ -74,16 +74,20 @@ class CRM_ParticipantProcessor
            participant.registered_by_id,
            participant.event_id,
            event.title as eventTitle,
+           event.registration_start_date,
+           event.registration_end_date,
+           event.end_date,
            event.expiration_time,
            event.requires_approval
      FROM  civicrm_participant participant
 LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
     WHERE  participant.status_id IN {$statusIds}
+     AND   (event.end_date > now() OR event.end_date IS NULL)
+     AND   event.is_active = 1 
  ORDER BY  participant.register_date, participant.id 
 ";
-        $dao =& CRM_Core_DAO::executeQuery( $query );
+        $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
-            
             $participantDetails[$dao->id] = array( 'id'               => $dao->id,
                                                    'event_id'         => $dao->event_id,
                                                    'status_id'        => $dao->status_id,
@@ -91,6 +95,9 @@ LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
                                                    'register_date'    => $dao->register_date,
                                                    'registered_by_id' => $dao->registered_by_id,
                                                    'eventTitle'       => $dao->eventTitle,
+                                                   'registration_start_date' => $dao->registration_start_date,
+                                                   'registration_end_date' => $dao->registration_end_date,
+                                                   'end_date' => $dao->end_date,
                                                    'expiration_time'  => $dao->expiration_time,
                                                    'requires_approval'=> $dao->requires_approval
                                                    );
@@ -155,7 +162,8 @@ LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
                 if ( array_key_exists( $values['status_id'], $waitingStatuses ) && 
                      !array_key_exists( $values['event_id'], $fullEvents ) ) {
                     
-                    if ( $waitingStatuses[$values['status_id']] == 'On waitlist' ) {
+                    if ( $waitingStatuses[$values['status_id']] == 'On waitlist' &&
+                         CRM_Event_BAO_Event::validRegistrationDate( $values ) ) {
                         
                         //check the target event having space.
                         require_once 'CRM/Event/BAO/Participant.php';

@@ -35,7 +35,7 @@
  */
 
 require_once 'CRM/Core/Form.php';
-civicrm_api_include('mailer', false, 2);
+civicrm_api_include( 'Mailing', false, 3 );
 
 class CRM_Mailing_Form_ForwardMailing extends CRM_Core_Form
 {
@@ -49,7 +49,7 @@ class CRM_Mailing_Form_ForwardMailing extends CRM_Core_Form
         $hash       = CRM_Utils_Request::retrieve('h', 'String',
                                                   $this, null);
 
-        $q =& CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
+        $q = CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
 
         if ($q == null) {
             /** ERROR **/
@@ -71,17 +71,6 @@ class CRM_Mailing_Form_ForwardMailing extends CRM_Core_Form
         $this->set('queue_id'   ,   $queue_id);
         $this->set('job_id'     ,   $job_id);
         $this->set('hash'       ,   $hash);
-    }
-
-    /**
-     * This function sets the default values for the form. Note that in edit/view mode
-     * the default values are retrieved from the database
-     * 
-     * @access public
-     * @return None
-     */
-    function &setDefaultValues( ) 
-    {
     }
 
     /**
@@ -123,7 +112,8 @@ class CRM_Mailing_Form_ForwardMailing extends CRM_Core_Form
         $queue_id   = $this->get('queue_id');
         $job_id     = $this->get('job_id');
         $hash       = $this->get('hash');
-
+        $timeStamp  = date('YmdHis');
+        
         $formValues    = $this->controller->exportValues( $this->_name );
         $params= array();
         $params['body_text'] = $formValues['forward_comment'];
@@ -140,14 +130,16 @@ class CRM_Mailing_Form_ForwardMailing extends CRM_Core_Form
         
         $forwarded = null;
         foreach ($emails as $email) {
-            $params = array ( 'job_id'         => $job_id,
+            $params = array ( 'version' => 3,
+                              'job_id'         => $job_id,
                               'event_queue_id' => $queue_id,
                               'hash'           => $hash,
                               'email'          => $email,
+                              'time_stamp'     => $timeStamp,
                               'fromEmail'      => $this->_fromEmail,
                               'params'         => $params
                               );
-            $result = civicrm_mailer_event_forward( $params );
+            $result = civicrm_api('Mailing', 'event_forward', $params);
             if ( !civicrm_error($result) ) {
                 $forwarded++;
             }

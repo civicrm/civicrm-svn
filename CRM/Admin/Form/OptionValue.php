@@ -68,9 +68,11 @@ class CRM_Admin_Form_OptionValue extends CRM_Admin_Form
         if( !empty( $this->_gid ) ) {
             $this->_gName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $this->_gid, 'name');
         }
+        require_once 'CRM/Core/Session.php';
         $session = CRM_Core_Session::singleton();
         $url = CRM_Utils_System::url('civicrm/admin/optionValue', 'reset=1&action=browse&gid='.$this->_gid); 
-        $session->pushUserContext( $url );
+        $session->replaceUserContext( $url );
+
         $this->assign('id', $this->_id);
 
         require_once 'CRM/Core/OptionGroup.php';
@@ -145,27 +147,45 @@ class CRM_Admin_Form_OptionValue extends CRM_Admin_Form
                                                                                              'Closed' => ts('Closed') ) );
             if ( $isReserved ) $grouping->freeze( );
         } else {
-            $this->add('text', 'grouping', ts('Option Grouping Name'), CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue', 'grouping' ) );
+            $this->add('text', 'grouping', ts('Grouping'), CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue', 'grouping' ) );
         }
         
         $this->add('text', 'weight', ts('Weight'), CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue', 'weight' ),true );
         $this->add('checkbox', 'is_active', ts('Enabled?'));
         $this->add('checkbox', 'is_default', ts('Default Option?') );
-        $this->add('checkbox', 'is_optgroup',ts('Option Group?'));
+        $this->add('checkbox', 'is_optgroup',ts('Is OptGroup?'));
         
         if ($this->_action & CRM_Core_Action::UPDATE && $isReserved ) { 
             $this->freeze(array('name', 'description', 'is_active' ));
         }
         //get contact type for which user want to create a new greeting/addressee type, CRM-4575
         if ( in_array( $this->_gName, array( 'email_greeting', 'postal_greeting', 'addressee' ) ) && ! $isReserved ) {
-            $values = array( 1 => ts('Individual'), 2 => ts('Household') );
-            if ( $this->_gName == 'addressee' ) {
-                $values[] =  ts('Organization'); 
-            }
+            $values = array( 1 => ts('Individual'), 
+                            2 => ts('Household'), 
+                            3 => ts('Organization'),
+                            4 => ts('Multiple Contact Merge') );
+
             $this->add( 'select', 'contactOptions', ts('Contact Type'),array('' => '-select-' ) + $values, true );
         } 
         
         $this->addFormRule( array( 'CRM_Admin_Form_OptionValue', 'formRule' ), $this ); 
+        $cancelURL = CRM_Utils_System::url('civicrm/admin/optionValue', "gid={$this->_gid}&reset=1");
+        $cancelURL = str_replace('&amp;', '&', $cancelURL);
+        $this->addButtons(
+            array(
+                array(
+                    'type'      => 'next',
+                    'name'      => ts('Save'),
+                    'isDefault' => true,
+                ),
+                array(
+                    'type'      => 'cancel',
+                    'name'      => ts('Cancel'),
+                    'js'        => array('onclick' => "location.href='{$cancelURL}'; return false;"),
+                ),
+            )
+        );
+
     }
     
     /**  

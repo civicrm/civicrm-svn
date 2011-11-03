@@ -51,7 +51,7 @@ function civicrm_init( ) {
 function plugin_init( ) {
     //invoke plugins.
     JPluginHelper::importPlugin( 'civicrm' );
-    $app =& JFactory::getApplication( );
+    $app = JFactory::getApplication( );
     $app->triggerEvent( 'onCiviLoad' ); 
 }
 

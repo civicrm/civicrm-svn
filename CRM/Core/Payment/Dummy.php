@@ -109,7 +109,7 @@ class CRM_Core_Payment_Dummy extends CRM_Core_Payment {
     }
 
     function &error ( $errorCode = null, $errorMessage = null ) {
-        $e =& CRM_Core_Error::singleton( );
+        $e = CRM_Core_Error::singleton( );
         if ( $errorCode ) {
             $e->push( $errorCode, 0, null, $errorMessage );
         }

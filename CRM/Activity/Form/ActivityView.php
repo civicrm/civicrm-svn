@@ -64,7 +64,7 @@ class CRM_Activity_Form_ActivityView extends CRM_Core_Form
         }
         
         $session = CRM_Core_Session::singleton();
-        if ( $context != 'home' ) {
+        if ( !in_array( $context, array( 'home', 'dashlet', 'dashletFullscreen' ) ) ) {
             $url = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid={$cid}&selectedChild=activity");
         } else {
             $url = CRM_Utils_System::url('civicrm/dashboard', 'reset=1');
@@ -85,7 +85,7 @@ class CRM_Activity_Form_ActivityView extends CRM_Core_Form
         if (  CRM_Utils_Array::value('mailingId', $defaults) ) {
             $this->_mailing_id = CRM_Utils_Array::value( 'source_record_id', $defaults );
             require_once 'CRM/Mailing/BAO/Mailing.php';
-            $mailingReport =& CRM_Mailing_BAO_Mailing::report( $this->_mailing_id, true );
+            $mailingReport = CRM_Mailing_BAO_Mailing::report( $this->_mailing_id, true );
             CRM_Mailing_BAO_Mailing::getMailingContent( $mailingReport, $this ); 
             $this->assign( 'mailingReport', $mailingReport );
         }

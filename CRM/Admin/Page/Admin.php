@@ -94,7 +94,7 @@ class CRM_Admin_Page_Admin extends CRM_Core_Page
         }
 
         require_once 'CRM/Core/Menu.php';
-        $values =& CRM_Core_Menu::getAdminLinks( );
+        $values = CRM_Core_Menu::getAdminLinks( );
         
         require_once 'CRM/Core/ShowHideBlocks.php';
         $this->_showHide = new CRM_Core_ShowHideBlocks( );
@@ -108,7 +108,7 @@ class CRM_Admin_Page_Admin extends CRM_Core_Page
             $adminPanel[$group]['title'] = $title;
         }
         require_once 'CRM/Utils/VersionCheck.php';
-        $versionCheck =& CRM_Utils_VersionCheck::singleton();
+        $versionCheck = CRM_Utils_VersionCheck::singleton();
         $this->assign('newVersion',   $versionCheck->newerVersion());
         $this->assign('localVersion', $versionCheck->localVersion);
         $this->assign('adminPanel', $adminPanel);

@@ -187,7 +187,11 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
 
             //CRM-5734
             require_once 'CRM/Utils/Hook.php';
-            CRM_Utils_Hook::tokenValues( $contact, $contactId );
+            
+            $contactArray = array( $contactId => $contact );
+            CRM_Utils_Hook::tokenValues( $contactArray,
+                                         array( $contactId ) );
+                
             
             CRM_Utils_Hook::tokens( $hookTokens );
             $categories = array_keys( $hookTokens );
@@ -213,7 +217,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             
             require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
-            $smarty =& CRM_Core_Smarty::singleton( );
+            $smarty = CRM_Core_Smarty::singleton( );
             foreach( array( 'text', 'html') as $elem) {
                 $$elem = $smarty->fetch("string:{$$elem}");
             }
@@ -359,7 +363,9 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         );
         $params = array_merge($defaults, $params);
                 
-        if ((!$params['groupName'] or !$params['valueName']) and !$params['messageTemplateID']) {
+        if ( ( ! $params['groupName'] ||
+               ! $params['valueName'] ) &&
+             ! $params['messageTemplateID'] ) {
             CRM_Core_Error::fatal(ts("Message template's option group and/or option value or ID missing."));
         }
 
@@ -425,8 +431,10 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         CRM_Utils_Hook::tokens( $hookTokens );
         $categories = array_keys( $hookTokens );
         
-        if ($params['contactId']) {
-            $contactParams = array('contact_id' => $params['contactId']);
+        $contactID = CRM_Utils_Array::value( 'contactId', $params );
+
+        if ( $contactID ) {
+            $contactParams = array('contact_id' => $contactID );
             $returnProperties = array( );
 
             if ( isset( $tokens['text']['contact'] ) ) {
@@ -440,18 +448,35 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
                     $returnProperties[$name] = 1;
                 }
             }
-            list( $contact ) = $mailing->getDetails($contactParams, $returnProperties, false );
-            $contact = $contact[$params['contactId']];
+            require_once 'CRM/Utils/Token.php';
+            list( $contact ) = CRM_Utils_Token::getTokenDetails($contactParams,
+                                                                $returnProperties,
+                                                                false, false, null,
+                                                                CRM_Utils_Token::flattenTokens( $tokens ),
+                                                                // we should consider adding groupName and valueName here
+                                                                'CRM_Core_BAO_MessageTemplate' );
+            $contact = $contact[$contactID];
         }
 
         $subject = CRM_Utils_Token::replaceDomainTokens($subject, $domain, true, $tokens['text'], true);
         $text    = CRM_Utils_Token::replaceDomainTokens($text,    $domain, true, $tokens['text'], true);
         $html    = CRM_Utils_Token::replaceDomainTokens($html,    $domain, true, $tokens['html'], true);
-        if ($params['contactId']) {
+
+        if ( $contactID ) {
             $subject = CRM_Utils_Token::replaceContactTokens($subject, $contact, false, $tokens['text'], false, true);
             $text    = CRM_Utils_Token::replaceContactTokens($text,    $contact, false, $tokens['text'], false, true);
             $html    = CRM_Utils_Token::replaceContactTokens($html,    $contact, false, $tokens['html'], false, true);
-            CRM_Utils_Hook::tokenValues( $contact, $params['contactId']);
+
+
+            $contactArray = array( $contactID => $contact );
+            CRM_Utils_Hook::tokenValues( $contactArray, 
+                                         array( $contactID ),
+                                         null,
+                                         CRM_Utils_Token::flattenTokens( $tokens ),
+                                         // we should consider adding groupName and valueName here
+                                         'CRM_Core_BAO_MessageTemplate' );
+            $contact = $contactArray[$contactID];
+
             $subject = CRM_Utils_Token::replaceHookTokens ( $subject, $contact , $categories, true );
             $text = CRM_Utils_Token::replaceHookTokens ( $text, $contact , $categories, true );
             $html = CRM_Utils_Token::replaceHookTokens ( $html, $contact, $categories, true );
@@ -464,7 +489,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         // parse the three elements with Smarty
         require_once 'CRM/Core/Smarty/resources/String.php';
         civicrm_smarty_register_string_resource();
-        $smarty =& CRM_Core_Smarty::singleton();
+        $smarty = CRM_Core_Smarty::singleton();
         foreach ($params['tplParams'] as $name => $value) {
             $smarty->assign($name, $value);
         }

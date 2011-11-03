@@ -126,11 +126,12 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
         $dashboardElements = array( );
         $config = CRM_Core_Config::singleton( );
 
-        require_once 'CRM/Core/BAO/Preferences.php';
-        $this->_userOptions  = CRM_Core_BAO_Preferences::valueOptions( 'user_dashboard_options' );
+        require_once 'CRM/Core/BAO/Setting.php';
+        $this->_userOptions  = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                   'user_dashboard_options' );
 
         $components = CRM_Core_Component::getEnabledComponents();
-
+        $this->assign('contactId',$this->_contactId);
         foreach( $components as $name => $component ) {
             $elem = $component->getUserDashboardElement();
             if ( ! $elem ) {
@@ -149,13 +150,12 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
             }
         }
 
-        $sectionName = 'Permissioned Orgs';
-        if ( $this->_userOptions[ $sectionName ] ) {
+        if ( CRM_Utils_Array::value('Permissioned Orgs', $this->_userOptions ) ) {
             $dashboardElements[] = array( 'templatePath' => 'CRM/Contact/Page/View/Relationship.tpl',
                                           'sectionTitle' => ts( 'Your Contacts / Organizations' ),
                                           'weight'       => 40 );
          
-            $links =& self::links( );
+            $links = self::links( );
             $currentRelationships = CRM_Contact_BAO_Relationship::getRelationship($this->_contactId,
                                                                                   CRM_Contact_BAO_Relationship::CURRENT,
                                                                                   0, 0, 0,
@@ -163,7 +163,7 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
             $this->assign( 'currentRelationships',  $currentRelationships  );
         }
 
-        if ( $this->_userOptions['PCP'] ) {
+        if ( CRM_Utils_Array::value('PCP', $this->_userOptions ) ) {
             require_once 'CRM/Contribute/BAO/PCP.php';
             $dashboardElements[] = array( 'templatePath' => 'CRM/Contribute/Page/PcpUserDashboard.tpl',
                                           'sectionTitle' => ts( 'Personal Campaign Pages' ),
@@ -173,11 +173,21 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
             $this->assign( 'pcpInfo', $pcpInfo );
         }
 
+        if ( CRM_Utils_Array::value('Assigned Activities', $this->_userOptions ) ) {
+            // Assigned Activities section
+            $dashboardElements[] = array( 'templatePath' => 'CRM/Activity/Page/UserDashboard.tpl',
+                                          'sectionTitle' => ts( 'Your Assigned Activities' ),
+                                          'weight'       => 5 );
+            require_once 'CRM/Activity/Page/UserDashboard.php';
+            $userDashboard = new CRM_Activity_Page_UserDashboard;
+            $userDashboard->run();
+        }
+
         require_once 'CRM/Utils/Sort.php';
         usort( $dashboardElements, array( 'CRM_Utils_Sort', 'cmpFunc' ) );
         $this->assign ( 'dashboardElements', $dashboardElements );
 
-        if ( $this->_userOptions['Groups'] ) {
+        if ( CRM_Utils_Array::value('Groups', $this->_userOptions ) ) {
             $this->assign( 'showGroup', true );
             //build group selector
             require_once "CRM/Contact/Page/View/UserDashBoard/GroupContact.php";
@@ -212,9 +222,7 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
     static function &links( )
     {
         if (!(self::$_links)) {
-            $deleteExtra = ts('Are you sure you want to delete this relationship?');
             $disableExtra = ts('Are you sure you want to disable this relationship?');
-            $enableExtra = ts('Are you sure you want to re-enable this relationship?');
 
             self::$_links = array(
                                   CRM_Core_Action::UPDATE  => array(

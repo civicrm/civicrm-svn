@@ -100,12 +100,14 @@ class api_v3_ContactTest extends CiviUnitTestCase
                         
                         );
 
-                        $contact =& civicrm_api('contact','create',$params);
+                        $contact = civicrm_api('contact','create',$params);
                         $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__ );
                         $this->assertEquals( 1, $contact['id'], "In line " . __LINE__ );
-                        $getContact = civicrm_api('Contact','Get',array('version' =>3));
-                        // delete the contact
-                        civicrm_api('contact', 'delete' , $contact );
+
+                        unset( $params['version'] );
+                        $this->assertDBState( 'CRM_Contact_DAO_Contact',
+                                              $contact['id'],
+                                              $params );
   }
 
   /**
@@ -939,6 +941,43 @@ class api_v3_ContactTest extends CiviUnitTestCase
   }
 
   /**
+   *  Test civicrm_contact_quicksearch() with empty name param
+   */
+  public function testContactQuickSearchEmpty()
+  {
+    $params = array( 
+                          'version'   => $this->_apiversion);
+    $result = civicrm_api('contact', 'quicksearch', $params );
+    $this->assertTrue( is_array( $result ),'in line '. __LINE__ );
+    $this->assertEquals( 1, $result['is_error'] ,'in line '. __LINE__);
+  }
+
+  /**
+   *  Test civicrm_contact_quicksearch() with empty name param
+   */
+  public function testContactQuickSearch()
+  {
+    //  Insert a row in civicrm_contact creating individual contact
+    $op = new PHPUnit_Extensions_Database_Operation_Insert( );
+    $op->execute( $this->_dbconn,
+    new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
+    dirname(__FILE__)
+    . '/dataset/contact_17.xml') );
+    $op->execute( $this->_dbconn,
+    new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
+    dirname(__FILE__)
+    . '/dataset/email_contact_17.xml') );
+    $params = array( 
+      'name' => "T",
+      'version'   => $this->_apiversion);
+    
+    $result = civicrm_api('contact', 'quicksearch', $params );
+    $this->assertTrue( is_array( $result ),'in line '. __LINE__ );
+    $this->assertEquals( 0, $result['is_error'] ,'in line '. __LINE__);
+    $this->assertEquals( 17, $result['values'][0]['id'] ,'in line '. __LINE__);
+  }
+
+  /**
    *  Test civicrm_contact_get) with empty params
    */
   public function testContactGetEmptyParams()
@@ -992,8 +1031,8 @@ class api_v3_ContactTest extends CiviUnitTestCase
     //  Insert a row in civicrm_contact creating contact 17
     $op = new PHPUnit_Extensions_Database_Operation_Insert( );
     $op->execute( $this->_dbconn,
-    new PHPUnit_Extensions_Database_DataSet_XMLDataSet( dirname(__FILE__)
-    . '/dataset/contact_17.xml') );
+                  new PHPUnit_Extensions_Database_DataSet_XMLDataSet( dirname(__FILE__)
+                                                                      . '/dataset/contact_17.xml') );
 
     $params = array( 'first_name' => 'Test',
                       'version' 	=> $this->_apiversion );
@@ -1203,9 +1242,24 @@ class api_v3_ContactTest extends CiviUnitTestCase
     $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
     . " error message: " . CRM_Utils_Array::value('error_message', $result) );
     $this->assertEquals( 1, $result['id'], "In line " . __LINE__ );
+    $this->assertEquals(2,$result['values'][$result['id']]['api.Contribution.getCount'], "In line " . __LINE__); 
     $this->assertEquals(0,$result['values'][$result['id']]['api.Note.get']['is_error'], "In line " . __LINE__);
     $this->assertEquals("http://civicrm.org",$result['values'][$result['id']]['api.website.getValue'], "In line " . __LINE__);
     // delete the contact
+    
+    $params = array('id' => $result['id'], 'version' => 3, 
+    								'api_Contribution_get' => array(  
+                      ),
+                      'sequential' => 1,
+                      'format.smarty' => 'api/v3/exampleLetter.tpl' );
+     $subfile = 'smartyExample';
+     $description = "demonstrates use of smarty as output";
+     $result = civicrm_api('Contact','Get',$params); 
+   //  $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile); 
+  //   $this->assertContains('USD', $result);
+   //  $this->assertContains('Dear', $result);
+  //   $this->assertContains('Friday', $result);
+     
     civicrm_api('contact', 'delete' , $result );
     $this->customGroupDelete($ids['custom_group_id']);
     $this->customGroupDelete($moreids['custom_group_id']);
@@ -1342,7 +1396,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
   /*
    * test Single Entity format
    */
-  function testContactGetFormatsingle_entity_array(){
+  function testContactGetSingle_entity_array(){
     $this->createContactFromXML();
     $description = "This demonstrates use of the 'format.single_entity_array' param. 
     /* This param causes the only contact to be returned as an array without the other levels.
@@ -1453,3 +1507,4 @@ class api_v3_ContactTest extends CiviUnitTestCase
 // c-hanging-comment-ender-p: nil
 // indent-tabs-mode: nil
 // End:
+

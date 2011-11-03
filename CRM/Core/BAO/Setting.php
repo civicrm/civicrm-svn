@@ -28,594 +28,430 @@
 
 /**
  *
- *
  * @package CRM
  * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
 
+require_once 'CRM/Core/DAO/Setting.php';
+
 /**
- * file contains functions used in civicrm configuration
- * 
+ * BAO object for civicrm_setting table. This table is used to store civicrm settings that are not used
+ * very frequently (i.e. not on every page load)
+ *
+ * The group column is used for grouping together all settings that logically belong to the same set.
+ * Thus all settings in the same group are retrieved with one DB call and then cached for future needs.
+ *
  */
-class CRM_Core_BAO_Setting 
+
+class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
 {
     /**
-     * Function to add civicrm settings
-     *
-     * @params array $params associated array of civicrm variables
-     *
-     * @return null
-     * @static
+     * various predefined settings that have been migrated to the setting table
      */
-    static function add(&$params) 
-    {
-        CRM_Core_BAO_Setting::fixParams($params);
+    const 
+        ADDRESS_STANDARDIZATION_PREFERENCES_NAME = 'Address Standardization Preferences',
+        CONFIGURATION_PREFERENCES_NAME           = 'Configuration Preferences',
+        DIRECTORY_PREFERENCES_NAME               = 'Directory Preferences',
+        MAILING_PREFERENCES_NAME                 = 'Mailing Preferences',
+        MULTISITE_PREFERENCES_NAME               = 'Multi Site Preferences',
+        NAVIGATION_NAME                          = 'Navigation Menu',
+        SYSTEM_PREFERENCES_NAME                  = 'CiviCRM Preferences',
+        URL_PREFERENCES_NAME                     = 'URL Preferences';
 
-        // also set a template url so js files can use this
-        // CRM-6194
-        $params['civiRelativeURL'] = CRM_Utils_System::url( 'CIVI_BASE_TEMPLATE' );
-        $params['civiRelativeURL'] = str_replace( 'CIVI_BASE_TEMPLATE', 
-                                                  '',
-                                                  $params['civiRelativeURL'] );
-
-        require_once "CRM/Core/DAO/Domain.php";
-        $domain = new CRM_Core_DAO_Domain();
-        $domain->id = CRM_Core_Config::domainID( );
-        $domain->find(true);
-        if ($domain->config_backend) {
-            $values = unserialize($domain->config_backend);
-            CRM_Core_BAO_Setting::formatParams($params, $values);
-        }
-
-        // CRM-6151
-        if ( isset( $params['localeCustomStrings'] ) &&
-             is_array( $params['localeCustomStrings'] ) ) {
-            $domain->locale_custom_strings = serialize( $params['localeCustomStrings'] );
-        }
-            
-        // unset any of the variables we read from file that should not be stored in the database
-        // the username and certpath are stored flat with _test and _live
-        // check CRM-1470
-        $skipVars = array( 'dsn', 'templateCompileDir',
-                           'userFrameworkDSN', 
-                           'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
-                           'userPermissionClass', 'userFrameworkURLVar', 'userFrameworkVersion',
-                           'newBaseURL', 'newBaseDir', 'newSiteName', 'configAndLogDir',
-                           'qfKey', 'gettextResourceDir', 'cleanURL',
-                           'locale_custom_strings', 'localeCustomStrings' );
-        foreach ( $skipVars as $var ) {
-            unset( $params[$var] );
-        }
-
-        require_once 'CRM/Core/BAO/Preferences.php';
-        CRM_Core_BAO_Preferences::fixAndStoreDirAndURL( $params );
-
-        // also skip all Dir Params, we dont need to store those in the DB!
-        foreach ( $params as $name => $val ) {
-            if ( substr( $name, -3 ) == 'Dir' ) {
-                unset( $params[$name] );
-            }
-        }
-        
-        //keep user preferred language upto date, CRM-7746
-        $session = CRM_Core_Session::singleton( );
-        $lcMessages = CRM_Utils_Array::value( 'lcMessages', $params );
-        if ( $lcMessages && $session->get('userID') ) {
-            $languageLimit = CRM_Utils_Array::value( 'languageLimit', $params );
-            if ( is_array( $languageLimit ) &&
-                 !in_array( $lcMessages, array_keys( $languageLimit ) ) ) {
-                $lcMessages = $session->get( 'lcMessages' );
-            }
-            
-            require_once 'CRM/Core/DAO/UFMatch.php';
-            $ufm = new CRM_Core_DAO_UFMatch();
-            $ufm->contact_id = $session->get('userID');
-            if ( $lcMessages && $ufm->find( true ) ) {
-                $ufm->language = $lcMessages;
-                $ufm->save( );
-                $session->set( 'lcMessages', $lcMessages );
-                $params['lcMessages'] = $lcMessages;
-            }
-        }
-        
-        $domain->config_backend = serialize($params);
-        $domain->save();
-    }
+    static $_cache = null;
 
     /**
-     * Function to fix civicrm setting variables
+     * Checks whether an item is present in the in-memory cache table
      *
-     * @params array $params associated array of civicrm variables
+     * @param string $group (required) The group name of the item
+     * @param string $name  (required) The name of the setting
+     * @param int    $componentID The optional component ID (so componenets can share the same name space)
+     * @param int    $contactID    If set, this is a contactID specific setting, else its a global setting
+     * @param int    $load  if true, load from local cache (typically memcache)
      *
-     * @return null
+     * @return boolean true if item is already in cache
      * @static
+     * @access public
      */
-    static function fixParams(&$params) 
-    {
-        // in our old civicrm.settings.php we were using ISO code for country and
-        // province limit, now we have changed it to use ids
+    static function inCache( $group,
+                             $name,
+                             $componentID = null,
+                             $contactID = null,
+                             $load = false ) {
+        if ( ! isset( self::$_cache ) ) {
+            self::$_cache = array( );
+        }
 
-        $countryIsoCodes = CRM_Core_PseudoConstant::countryIsoCode( );
-        
-        $specialArray = array('countryLimit', 'provinceLimit');
-        
-        foreach($params as $key => $value) {
-            if ( in_array($key, $specialArray) && is_array($value) ) {
-                foreach( $value as $k => $val ) {
-                    if ( !is_numeric($val) ) {
-                        $params[$key][$k] = array_search($val, $countryIsoCodes); 
-                    }
-                }
-            } else if ( $key == 'defaultContactCountry' ) {
-                if ( !is_numeric($value) ) {
-                    $params[$key] =  array_search($value, $countryIsoCodes); 
-                }
+        $cacheKey = "CRM_Setting_{$group}_{$componentID}_{$contactID}";
+        if ( $load &&
+             ! isset( self::$_cache[$cacheKey] ) ) {
+            // check in civi cache if present (typically memcache)
+            require_once 'CRM/Utils/Cache.php';
+            $globalCache = CRM_Utils_Cache::singleton( );
+            $result = $globalCache->get( $cacheKey );
+            if ( $result ) {
+                self::$_cache[$cacheKey] = $result;
             }
         }
+
+        return isset( self::$_cache[$cacheKey] ) ? $cacheKey : null;
     }
 
-    /**
-     * Function to format the array containing before inserting in db
-     *
-     * @param  array $params associated array of civicrm variables(submitted)
-     * @param  array $values associated array of civicrm variables stored in db
-     *
-     * @return null
-     * @static
-     */
-    static function formatParams(&$params, &$values) 
-    {
-        if ( empty( $params ) ||
-             ! is_array( $params ) ) {
-            $params = $values;
+    static function setCache( $values,
+                              $group,
+                              $componentID = null,
+                              $contactID = null ) {
+        if ( ! isset( self::$_cache ) ) {
+            self::$_cache = array( );
+        }
+
+        $cacheKey = "CRM_Setting_{$group}_{$componentID}_{$contactID}";
+
+        self::$_cache[$cacheKey] = $values; 
+
+        require_once 'CRM/Utils/Cache.php';
+        $globalCache = CRM_Utils_Cache::singleton( );
+        $result = $globalCache->set( $cacheKey, $values );
+
+        return $cacheKey;
+    }
+
+    static function dao( $group, 
+                         $name = null,
+                         $componentID = null,
+                         $contactID = null ) {
+        $dao = new CRM_Core_DAO_Setting( );
+
+        $dao->group_name   = $group;
+        $dao->name         = $name;
+        $dao->component_id = $componentID;
+        $dao->domain_id    = CRM_Core_Config::domainID( );
+        
+        if ( $contactID ) {
+            $dao->contact_id = $contactID;
+            $dao->is_domain  = 0;
         } else {
-            foreach ($params as $key => $val) {
-                if ( array_key_exists($key, $values)) {
-                    unset($values[$key]);
-                }
-            }
-            $params = array_merge($params, $values);
+            $dao->is_domain  = 1;
         }
+
+        return $dao;
     }
 
     /**
-     * Function to retrieve the settings values from db
+     * Retrieve the value of a setting from the DB table
      *
-     * @return array $defaults  
+     * @param string $group (required) The group name of the item
+     * @param string $name  (required) The name under which this item is stored
+     * @param int    $componentID The optional component ID (so componenets can share the same name space)
+     * @param string $defaultValue The default value to return for this setting if not present in DB
+     * @param int    $contactID    If set, this is a contactID specific setting, else its a global setting
+
+     * @return object The data if present in the setting table, else null
      * @static
+     * @access public
      */
-    static function retrieve(&$defaults) 
-    {
-        require_once "CRM/Core/DAO/Domain.php";
-        $domain = new CRM_Core_DAO_Domain();
+    static function getItem( $group,
+                             $name = null,
+                             $componentID = null,
+                             $defaultValue = null,
+                             $contactID   = null ) {
         
-        //we are initializing config, really can't use, CRM-7863
-        $urlVar = 'q';
-        if ( defined( 'CIVICRM_UF' ) && CIVICRM_UF == 'Joomla' ) {
-            $urlVar = 'task';
+        // if both group and name are defined, check if over-ridden by the admin
+        if ( $group &&
+             $name  &&
+             defined( "{$group}.{$name}" ) ) {
+            return constant( "{$group}.{$name}" );
         }
 
-        if ( CRM_Utils_Array::value( $urlVar, $_GET ) == 'civicrm/upgrade' || defined('CIVICRM_UPGRADE_ACTIVE') ) {
-            $domain->selectAdd( 'config_backend' );
-        } else if ( CRM_Utils_Array::value( $urlVar, $_GET ) == 'admin/modules/list/confirm' ) {
-            $domain->selectAdd( 'config_backend', 'locales' );
-        } else {
-            $domain->selectAdd( 'config_backend, locales, locale_custom_strings' );
-        }
-        
-        $domain->id = CRM_Core_Config::domainID( );
-        $domain->find(true);
-        if ($domain->config_backend) {
-            $defaults = unserialize($domain->config_backend);
-            if ( $defaults === false ||
-                 ! is_array( $defaults ) ) {
-                $defaults = array( );
-                return;
-            }
-
-            $skipVars = array( 'dsn', 'templateCompileDir',
-                               'userFrameworkDSN', 
-                               'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
-                              'userPermissionClass', 'userFrameworkURLVar', 'userFrameworkVersion',
-                               'newBaseURL', 'newBaseDir', 'newSiteName', 'configAndLogDir',
-                               'qfKey', 'gettextResourceDir', 'cleanURL',
-                               'locale_custom_strings', 'localeCustomStrings' );
-            foreach ( $skipVars as $skip ) {
-                if ( array_key_exists( $skip, $defaults ) ) {
-                    unset( $defaults[$skip] );
-                }
-            }
-
-            // since language field won't be present before upgrade.
-            if ( CRM_Utils_Array::value( 'q', $_GET ) == 'civicrm/upgrade' ) {
-                return;
-            }
-
-
-            // check if there are any locale strings
-            if ( $domain->locale_custom_strings ) {
-                $defaults['localeCustomStrings'] = unserialize($domain->locale_custom_strings);
-            } else {
-                $defaults['localeCustomStrings'] = null;
-            }
-
-            // are we in a multi-language setup?
-            $multiLang = $domain->locales ? true : false;
-
-            // set the current language
-            $lcMessages = null;
-
-            $session = CRM_Core_Session::singleton();
-
-            // for logging purposes, pass the userID to the db
-            if ($session->get('userID')) {
-                CRM_Core_DAO::executeQuery('SET @civicrm_user_id = %1', array(1 => array($session->get('userID'), 'Integer')));
-            }
-
-            // on multi-lang sites based on request and civicrm_uf_match
-            if ($multiLang) {
-                require_once 'CRM/Utils/Request.php';
-                $lcMessagesRequest = CRM_Utils_Request::retrieve('lcMessages', 'String', $this);
-                $languageLimit = array( ); 
-                if ( array_key_exists( 'languageLimit', $defaults ) && is_array( $defaults['languageLimit'] ) ) {
-                    $languageLimit = $defaults['languageLimit'];
-                }
+        $cacheKey = self::inCache( $group, $name, $componentID, $contactID, true );
+        if ( ! $cacheKey ) {
+            $dao = self::dao( $group, null, $componentID, $contactID );
+            $dao->find( );
                 
-                if ( in_array($lcMessagesRequest, array_keys( $languageLimit ) ) ) {
-                    $lcMessages = $lcMessagesRequest;
+            $values = array( );
+            while ( $dao->fetch( ) ) {
+                if ( $dao->value ) {
+                    $values[$dao->name] = unserialize( $dao->value );
                 } else {
-                    $lcMessagesRequest = null;
-                }
-
-                if (!$lcMessagesRequest) {
-                    $lcMessagesSession = $session->get('lcMessages');
-                    if ( in_array( $lcMessagesSession, array_keys( $languageLimit ) ) ) {
-                        $lcMessages = $lcMessagesSession;
-                    } else {
-                        $lcMessagesSession = null;
-                    }
-                }
-
-                if ($lcMessagesRequest) {
-                    require_once 'CRM/Core/DAO/UFMatch.php';
-                    $ufm = new CRM_Core_DAO_UFMatch();
-                    $ufm->contact_id = $session->get('userID');
-                    if ($ufm->find(true)) {
-                        $ufm->language = $lcMessages;
-                        $ufm->save();
-                    }
-                    $session->set('lcMessages', $lcMessages);
-                }
-                
-                if (!$lcMessages and $session->get('userID')) {
-                    require_once 'CRM/Core/DAO/UFMatch.php';
-                    $ufm = new CRM_Core_DAO_UFMatch();
-                    $ufm->contact_id = $session->get('userID');
-                    if ( $ufm->find( true ) && 
-                         in_array( $ufm->language, array_keys( $languageLimit ) ) ) {
-                        $lcMessages = $ufm->language;
-                    }
-                    $session->set('lcMessages', $lcMessages);
+                    $values[$dao->name] = null;
                 }
             }
-            global $dbLocale;
+            $dao->free( );
 
-            // if unset and the install is so configured, try to inherit the language from the hosting CMS
-            if ($lcMessages === null and CRM_Utils_Array::value( 'inheritLocale', $defaults ) ) {
-                // FIXME: On multilanguage installs, CRM_Utils_System::getUFLocale() in many cases returns nothing if $dbLocale is not set
-                $dbLocale = $multiLang ? "_{$defaults['lcMessages']}" : '';
-                require_once 'CRM/Utils/System.php';
-                $lcMessages = CRM_Utils_System::getUFLocale();
-                require_once 'CRM/Core/BAO/CustomOption.php';
-                if ($domain->locales and !in_array($lcMessages, explode(CRM_Core_DAO::VALUE_SEPARATOR,
-                                                                        $domain->locales))) {
-                    $lcMessages = null;
-                }
-            }
-            
-            if ( $lcMessages ) {
-                // update config lcMessages - CRM-5027 fixed.
-                $defaults['lcMessages'] = $lcMessages;
-            } else {
-                // if a single-lang site or the above didn't yield a result, use default
-                $lcMessages = $defaults['lcMessages'];
-            }
-            
-            // set suffix for table names - use views if more than one language
-            $dbLocale = $multiLang ? "_{$lcMessages}" : '';
-
-            // FIXME: an ugly hack to fix CRM-4041
-            global $tsLocale;
-            $tsLocale = $lcMessages;
-
-            // FIXME: as bad aplace as any to fix CRM-5428 
-            // (to be moved to a sane location along with the above)
-            if (function_exists('mb_internal_encoding')) mb_internal_encoding('UTF-8');
+            $cacheKey = self::setCache( $values, $group, $componentID, $contactID );
         }
 
-        // dont add if its empty
-        if ( ! empty( $defaults ) ) {
-            // retrieve directory and url preferences also
-            require_once 'CRM/Core/BAO/Preferences.php';
-            CRM_Core_BAO_Preferences::retrieveDirectoryAndURLPreferences( $defaults );
-        }
+        return 
+            $name ? 
+            CRM_Utils_Array::value( $name, self::$_cache[$cacheKey], $defaultValue ) :
+            self::$_cache[$cacheKey];
     }
 
-
-    static function getConfigSettings( ) {
-        $config =& CRM_Core_Config::singleton( );
-
-        $url = $dir = $siteName = $siteRoot = null;
-        if ( $config->userFramework == 'Joomla' ) {
-            $url = preg_replace( '|administrator/components/com_civicrm/civicrm/|',
-                                 '',
-                                 $config->userFrameworkResourceURL );
-
-            // lets use imageUploadDir since we dont mess around with its values
-            // in the config object, lets kep it a bit generic since folks
-            // might have different values etc
-            $dir = preg_replace( '|civicrm/templates_c/.*$|',
-                                 '',
-                                 $config->templateCompileDir );
-            $siteRoot =  preg_replace( '|/media/civicrm/.*$|',
-                                       '',
-                                       $config->imageUploadDir );
-        } else {
-            $url = preg_replace( '|sites/[\w\.\-\_]+/modules/civicrm/|',
-                                 '',
-                                 $config->userFrameworkResourceURL );
-            
-            // lets use imageUploadDir since we dont mess around with its values
-            // in the config object, lets kep it a bit generic since folks
-            // might have different values etc
-            $dir =  preg_replace( '|/files/civicrm/.*$|',
-                                  '/files/',
-                                  $config->imageUploadDir );
-
-            $matches = array( );
-            if ( preg_match( '|/sites/([\w\.\-\_]+)/|',
-                             $config->imageUploadDir,
-                             $matches ) ) {
-                $siteName = $matches[1];
-                if ( $siteName ) {
-                    $siteName = "/sites/$siteName/";
-                    $siteNamePos = strpos($dir, $siteName);
-                    if ( $siteNamePos !== false ) {
-                        $siteRoot = substr($dir, 0, $siteNamePos);
-                    }
-                }
-            }
-        }
-
-
-        return array( $url, $dir, $siteName, $siteRoot );
-    }
-
-    static function getBestGuessSettings( ) {
-        $config =& CRM_Core_Config::singleton( );
-
-        $url = $config->userFrameworkBaseURL;
-        $siteName = $siteRoot = null;
-        if ( $config->userFramework == 'Joomla' ) {
-            $url = preg_replace( '|/administrator|',
-                                 '',
-                                 $config->userFrameworkBaseURL );
-            $siteRoot =  preg_replace( '|/media/civicrm/.*$|',
-                                       '',
-                                       $config->imageUploadDir );
-        }
-        $dir = preg_replace( '|civicrm/templates_c/.*$|',
-                             '',
-                             $config->templateCompileDir );
-
-        if ( $config->userFramework != 'Joomla' ) {
-            $matches = array( );
-            if ( preg_match( '|/sites/([\w\.\-\_]+)/|',
-                             $config->templateCompileDir,
-                             $matches ) ) {
-                $siteName = $matches[1];
-                if ( $siteName ) {
-                    $siteName = "/sites/$siteName/";
-                    $siteNamePos = strpos($dir, $siteName);
-                    if ( $siteNamePos !== false ) {
-                        $siteRoot = substr($dir, 0, $siteNamePos);
-                    }
-                }
-            }
-        }
-        
-        return array( $url, $dir, $siteName, $siteRoot );
-    }
-
-    static function doSiteMove( $defaultValues = array( ) ) {
-        $moveStatus = ts('Beginning site move process...') . '<br />';
-        // get the current and guessed values
-        list( $oldURL, $oldDir, $oldSiteName, $oldSiteRoot ) = self::getConfigSettings( );
-        list( $newURL, $newDir, $newSiteName, $newSiteRoot ) = self::getBestGuessSettings( );
-    
-        require_once 'CRM/Utils/Request.php';
-
-        // retrieve these values from the argument list 
-        $variables = array( 'URL', 'Dir', 'SiteName', 'SiteRoot', 'Val_1', 'Val_2', 'Val_3' );
-        $states     = array( 'old', 'new' );
-        foreach ( $variables as $varSuffix ) {
-            foreach ( $states as $state ) {
-                $var = "{$state}{$varSuffix}";
-                if ( ! isset( $$var ) ) {
-                    if ( isset( $defaultValues[$var] ) ) {
-                        $$var = $defaultValues[$var];
-                    } else {
-                        $$var = null;
-                    }
-                }
-                $$var = CRM_Utils_Request::retrieve( $var,
-                                                     'String',
-                                                     CRM_Core_DAO::$_nullArray,
-                                                     false,
-                                                     $$var,
-                                                     'REQUEST' );
-            }
-        }
-
-        $from = $to = array( );
-        foreach ( $variables as $varSuffix ) {
-            $oldVar = "old{$varSuffix}";
-            $newVar = "new{$varSuffix}";
-            //skip it if either is empty or both are exactly the same
-            if ( $$oldVar &&
-                 $$newVar &&
-                 $$oldVar != $$newVar ) {
-                $from[]  = $$oldVar;
-                $to[]    = $$newVar;
-            }
-        }
-
-        $sql = "
-SELECT config_backend
-FROM   civicrm_domain
-WHERE  id = %1
-";
-        $params = array( 1 => array( CRM_Core_Config::domainID( ), 'Integer' ) );
-        $configBackend = CRM_Core_DAO::singleValueQuery( $sql, $params );
-        if ( ! $configBackend ) {
-            CRM_Core_Error::fatal( ts('Returning early due to unexpected error - civicrm_domain.config_backend column value is NULL. Try visiting CiviCRM Home page.') );
-        }
-        $configBackend = unserialize( $configBackend );
-
-        $configBackend = str_replace( $from,
-                                      $to  ,
-                                      $configBackend );
-
-        $configBackend = serialize( $configBackend );
-        $sql = "
-UPDATE civicrm_domain
-SET    config_backend = %2
-WHERE  id = %1
-";
-        $params[2] = array( $configBackend, 'String' );
-        CRM_Core_DAO::executeQuery( $sql, $params );
-
-        // Apply the changes to civicrm_option_values
-        $optionGroups = array('url_preferences', 'directory_preferences');
-        foreach ($optionGroups as $option) {
-            foreach ( $variables as $varSuffix ) {
-                $oldVar = "old{$varSuffix}";
-                $newVar = "new{$varSuffix}";
-
-                $from = $$oldVar;
-                $to   = $$newVar;
-
-                if ($from && $to && $from != $to) {
-                    $sql = '
-UPDATE civicrm_option_value 
-SET    value = REPLACE(value, %1, %2) 
-WHERE  option_group_id = ( 
-  SELECT id 
-  FROM   civicrm_option_group 
-  WHERE  name = %3 )
-';
-                    $params = array( 1 => array ( $from, 'String' ),
-                                     2 => array ($to, 'String'),
-                                     3 => array($option, 'String') );
-                    CRM_Core_DAO::executeQuery( $sql, $params );
-                }
-            }
-        }
-        
-        $moveStatus .= 
-            ts('Directory and Resource URLs have been updated in the moved database to reflect current site location.') .
-            '<br />';
-
-        $config =& CRM_Core_Config::singleton( );
-
-        // clear the template_c and upload directory also
-        $config->cleanup( 3, true );
-        $moveStatus .= ts('Template cache and upload directory have been cleared.') . '<br />';
-    
-        // clear all caches
-        CRM_Core_Config::clearDBCache( );
-        $moveStatus .= ts('Database cache tables cleared.') . '<br />';
-
-        $resetSessionTable = CRM_Utils_Request::retrieve( 'resetSessionTable',
-                                                          'Boolean',
-                                                          CRM_Core_DAO::$_nullArray,
-                                                          false,
-                                                          false,
-                                                          'REQUEST' );
-        if ( $config->userFramework == 'Drupal' &&
-             $resetSessionTable ) {
-            db_query("DELETE FROM {sessions} WHERE 1");
-            $moveStatus .= ts('Drupal session table cleared.') . '<br />';
-        } else {
-            $session =& CRM_Core_Session::singleton( );
-            $session->reset( 2 );
-            $moveStatus .= ts('Session has been reset.') . '<br />';
-        }
-
-        return $moveStatus;
-
-    }
-    
     /**
-     * takes a componentName and enables it in the config
-     * Primarily used during unit testing
+     * Store an item in the setting table
      *
-     * @param string $componentName name of the component to be enabled, needs to be valid
+     * @param object $value (required) The value that will be serialized and stored
+     * @param string $group (required) The group name of the item
+     * @param string $name  (required) The name of the setting
+     * @param int    $componentID The optional component ID (so componenets can share the same name space)
+     * @param int    $createdID   An optional ID to assign the creator to. If not set, retrieved from session
      *
-     * @return boolean - true if valid component name and enabling succeeds, else false
+     * @return void
      * @static
+     * @access public
      */
-    static function enableComponent( $componentName ) {
-        $config =& CRM_Core_Config::singleton( );
-        if ( in_array( $componentName, $config->enableComponents ) ) {
-            // component is already enabled
-            return true;
+    static function setItem( $value,
+                             $group,
+                             $name,
+                             $componentID = null,
+                             $contactID   = null,
+                             $createdID   = null ) {
+
+        $dao = self::dao( $group, $name, $componentID, $contactID );
+        $dao->find( true );
+
+        if ( $value ) {
+            $dao->value = serialize( $value );
+        } else {
+            $dao->value = 'null';
         }
-        require_once 'CRM/Core/Component.php';
-        $components = CRM_Core_Component::getComponents();
 
-        // return if component does not exist
-        if ( ! array_key_exists( $componentName, $components ) ) {
-            return false;
+        $dao->created_date = date( 'Ymdhis' );
+
+        if ( $createdID ) {
+            $dao->created_id = $createdID;
+        } else {
+            $session = CRM_Core_Session::singleton( );
+            $createdID = $session->get( 'userID' );
+
+            if ( $createdID ) {    
+                // ensure that this is a valid contact id (for session inconsistency rules)
+                $cid = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                                                    $createdID,
+                                                    'id',
+                                                    'id' );
+                if ( $cid ) {
+                    $dao->created_id   = $session->get( 'userID' );
+                }
+            }
         }
 
-        // get config_backend value
-        $sql = "
-SELECT config_backend
-FROM   civicrm_domain
-WHERE  id = %1
-";
-        $params = array( 1 => array( CRM_Core_Config::domainID( ), 'Integer' ) );
-        $configBackend = CRM_Core_DAO::singleValueQuery( $sql, $params );
+        $dao->save( );
+        $dao->free( );
 
-        if ( ! $configBackend ) {
-            CRM_Core_Error::fatal( ts('Returning early due to unexpected error - civicrm_domain.config_backend column value is NULL. Try visiting CiviCRM Home page.') );
+        // also save in cache if needed
+        $cacheKey = self::inCache( $group, $name, $componentID, $contactID, false );
+        if ( $cacheKey ) {
+            self::$_cache[$cacheKey][$name] = $value;
         }
-        $configBackend = unserialize( $configBackend );
-        
-        $configBackend['enableComponents'][] = $componentName;
-        $configBackend['enableComponentIDs'][] = $components[$componentName]->componentID;
-
-        // fix the config object
-        $config->enableComponents   =  $configBackend['enableComponents'];
-        $config->enableComponentIDs =  $configBackend['enableComponentIDs'];
-
-        // also force reset of component array
-        CRM_Core_Component::getEnabledComponents( true );
-
-        // check if component is already there, is so return
-        $configBackend = serialize( $configBackend );
-        $sql = "
-UPDATE civicrm_domain
-SET    config_backend = %2
-WHERE  id = %1
-";
-        $params[2] = array( $configBackend, 'String' );
-        CRM_Core_DAO::executeQuery( $sql, $params );
-
-        return true;
     }
+
+    /**
+     * Delete some or all of the items in the settings table
+     *
+     * @param string $group The group name of the entries to be deleted
+     * @param string $name  The name of the setting to be deleted
+     * @param int    $componentID The optional component ID (so componenets can share the same name space)
+     * 
+     * @return void
+     * @static
+     * @access public
+     */
+    static function deleteItem( $group, $name = null, $componentID = null, $contactID = null ) {
+        $dao = self::dao( $group, $name, $componentID, $contactID );
+        $dao->delete( );
+
+        // also reset memory cache if any
+        CRM_Utils_System::flushCache( );
+
+        $cacheKey = self::inCache( $group, $name, $componentID, $contactID, false );
+        if ( $cacheKey ) {
+            if ( $name ) {
+                unset( self::$_cache[$cacheKey][$name] );
+            } else {
+                unset( self::$_cache[$cacheKey] );
+            }
+        }
+    }
+
+    static function valueOptions( $group,
+                                  $name,
+                                  $system = true,
+                                  $userID = null,
+                                  $localize = false,
+                                  $returnField = 'name',
+                                  $returnNameANDLabels = false,
+                                  $condition = null ) {
+        $optionValue = self::getItem( $group, $name );
+
+        require_once 'CRM/Core/OptionGroup.php';
+        $groupValues = CRM_Core_OptionGroup::values( $name, false, false, $localize, $condition, $returnField );
+
+        //enabled name => label require for new contact edit form, CRM-4605
+        if ( $returnNameANDLabels ) {
+            $names = $labels = $nameAndLabels = array( );
+            if ( $returnField == 'name' ) {
+                $names  = $groupValues;
+                $labels = CRM_Core_OptionGroup::values( $name, false, false, $localize, $condition, 'label' );
+            } else {
+                $labels = $groupValues;
+                $names  = CRM_Core_OptionGroup::values( $name, false, false, $localize, $condition, 'name' );
+            }
+        }
+        
+        $returnValues = array( );
+        foreach ( $groupValues as $gn => $gv ) {
+            $returnValues[$gv] = 0;
+        }
+        
+        if ( $optionValue && !empty( $groupValues ) ) {
+            require_once 'CRM/Core/BAO/CustomOption.php';
+            $dbValues = explode( CRM_Core_DAO::VALUE_SEPARATOR,
+                                 substr( $optionValue, 1, -1 ) ); 
+            
+            if ( !empty( $dbValues ) ) { 
+                foreach ( $groupValues as $key => $val ) { 
+                    if ( in_array( $key, $dbValues ) ) {
+                        $returnValues[$val] = 1;
+                        if ( $returnNameANDLabels ) {
+                            $nameAndLabels[$names[$key]] = $labels[$key]; 
+                        }
+                    }
+                }
+            }
+        }
+        
+        return ( $returnNameANDLabels ) ? $nameAndLabels : $returnValues;
+    }
+
+    static function setValueOption( $group,
+                                    $name, 
+                                    $value, 
+                                    $system = true, 
+                                    $userID = null, 
+                                    $keyField = 'name' ) {
+        if ( empty( $value ) ) {
+            $optionValue = null;
+        } else if ( is_array( $value ) ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            $groupValues = CRM_Core_OptionGroup::values( $name, false, false, false, null, $keyField );
+            
+            $cbValues = array( );
+            foreach ( $groupValues as $key => $val ) {
+                if ( CRM_Utils_Array::value( $val, $value ) ) {
+                    $cbValues[$key] = 1;
+                }
+            }
+
+            if ( ! empty( $cbValues ) ) {
+                $optionValue = 
+                    CRM_Core_DAO::VALUE_SEPARATOR .
+                    implode( CRM_Core_DAO::VALUE_SEPARATOR,
+                             array_keys( $cbValues ) ) .
+                    CRM_Core_DAO::VALUE_SEPARATOR;
+            } else {
+                $optionValue = null;
+            }
+        } else {
+            $optionValue = $value;
+        }
+
+        self::setItem( $optionValue,
+                       $group,
+                       $name );
+    }
+
+    static function fixAndStoreDirAndURL( &$params ) {
+        $sql = "
+SELECT name, group_name 
+FROM   civicrm_setting
+WHERE  ( group_name = %1
+OR       group_name = %2 )
+";
+        $sqlParams = array( 1 => array( self::DIRECTORY_PREFERENCES_NAME, 'String' ),
+                            2 => array( self::URL_PREFERENCES_NAME      , 'String' ) );
+
+        $dirParams = array( );
+        $urlParams = array( );
+        $dao    = CRM_Core_DAO::executeQuery( $sql, $sqlParams );
+        while ( $dao->fetch( ) ) {
+            if ( ! isset( $params[$dao->name] ) ) {
+                continue;
+            }
+            if ( $dao->group_name == self::DIRECTORY_PREFERENCES_NAME ) {
+                $dirParams[$dao->name] = CRM_Utils_Array::value( $dao->name, $params, '' );
+            } else {
+                $urlParams[$dao->name] = CRM_Utils_Array::value( $dao->name, $params, '' );
+            }
+            unset( $params[$dao->name] );
+        }
+
+        if ( ! empty( $dirParams ) ) {
+            self::storeDirectoryOrURLPreferences( $dirParams,
+                                                  self::DIRECTORY_PREFERENCES_NAME );
+        }
+
+        if ( ! empty( $urlParams ) ) {
+            self::storeDirectoryOrURLPreferences( $urlParams,
+                                                  self::URL_PREFERENCES_NAME );
+        }
+    }
+
+    static function storeDirectoryOrURLPreferences( &$params, $group ) {
+        require_once 'CRM/Utils/File.php';
+        foreach ( $params as $name => $value ) {
+            // always try to store relative directory or url from CMS root
+            $value = 
+                ( $group == self::DIRECTORY_PREFERENCES_NAME ) ?
+                CRM_Utils_File::relativeDirectory( $value ) :
+                CRM_Utils_System::relativeURL( $value );
+
+            self::setItem( $value,
+                           $group,
+                           $name );
+        }
+    }
+
+    static function retrieveDirectoryAndURLPreferences( &$params, $setInConfig = false ) {
+        if ( $setInConfig ) {
+            $config = CRM_Core_Config::singleton( );
+        }
+
+        $sql = "
+SELECT name, group_name, value
+FROM   civicrm_setting
+WHERE  ( group_name = %1
+OR       group_name = %2 )
+";
+        $sqlParams = array( 1 => array( self::DIRECTORY_PREFERENCES_NAME, 'String' ),
+                            2 => array( self::URL_PREFERENCES_NAME      , 'String' ) );
+
+        $dao    = CRM_Core_DAO::executeQuery( $sql, $sqlParams );
+
+        require_once 'CRM/Utils/File.php';
+        while ( $dao->fetch( ) ) {
+            $value = null;
+            // overwrite value from settings file
+            if ( defined( "{$dao->group_name}.{$dao->name}" ) ) {
+                $value = constant( "{$dao->group_name}.{$dao->name}" );
+            } else if ( $dao->value ) {
+                $value = unserialize( $dao->value );
+                if ( $dao->group_name == self::DIRECTORY_PREFERENCES_NAME ) {
+                    $value = CRM_Utils_File::absoluteDirectory( $value );
+                } else {
+                    // CRM-7622: we need to remove the language part
+                    $value = CRM_Utils_System::absoluteURL($value, true);
+                }
+            }
+            $params[$dao->name] = $value;
+
+            if ( $setInConfig ) {
+                $config->{$dao->name} = $value;
+            }
+        }
+    }
+
 
 }

@@ -43,8 +43,8 @@
 /**
  * Files required for this package
  */
-require_once 'api/v3/utils.php';
 require_once 'CRM/Core/DAO/File.php';
+require_once 'CRM/Core/BAO/File.php';
 /**
  * Create a file
  *
@@ -79,7 +79,7 @@ function civicrm_api3_file_create( $params )
     $file = array();
     _civicrm_api3_object_to_array($fileDAO, $file);
 
-    return civicrm_create_success($file,$params,'file','create',$fileDAO);
+    return civicrm_api3_create_success($file,$params,'file','create',$fileDAO);
 
 }
 
@@ -96,10 +96,8 @@ function civicrm_api3_file_create( $params )
  */
 function civicrm_api3_file_get($params)
 {
-
     civicrm_api3_verify_one_mandatory($params);
-    return _civicrm_api3_basic_get('CRM_Contact_DAO_GroupOrganization', $params);
-
+    return _civicrm_api3_basic_get( _civicrm_api3_get_BAO( __FUNCTION__ ), $params );
 }
 
 /**
@@ -114,9 +112,6 @@ function civicrm_api3_file_get($params)
  * @access public
  */
 function &civicrm_api3_file_update( $params ) {
-  if ( !is_array( $params ) ) {
-    return civicrm_api3_create_error( 'Input variable `params` is not an array' );
-  }
 
   if ( !isset($params['id']) ) {
     return civicrm_api3_create_error( 'Required parameter missing' );
@@ -200,7 +195,7 @@ function civicrm_api3_entity_file_create( $params )
   $entityFile = array();
   _civicrm_api3_object_to_array( $entityFileDAO, $entityFile );
 
-  return civicrm_create_success($entityFile,$params,'entity_file','create',$entityFileDAO);
+  return civicrm_api3_create_success($entityFile,$params,'entity_file','create',$entityFileDAO);
 
 }
 

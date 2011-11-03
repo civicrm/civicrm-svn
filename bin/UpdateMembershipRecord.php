@@ -77,11 +77,11 @@ class CRM_UpdateMembershipRecord {
         require_once 'CRM/Member/BAO/MembershipType.php';
         require_once 'CRM/Utils/Date.php';
         require_once 'CRM/Utils/System.php';
-        civicrm_api_include('membership', false, 2);
         require_once 'CRM/Member/PseudoConstant.php';
         require_once 'CRM/Contact/BAO/Contact.php';
         require_once 'CRM/Activity/BAO/Activity.php';
         require_once 'CRM/Contribute/PseudoConstant.php';
+        require_once 'api/api.php';
 
         //get all active statuses of membership, CRM-3984
         $allStatus     = CRM_Member_PseudoConstant::membershipStatus( );
@@ -108,13 +108,13 @@ INNER JOIN civicrm_contact ON ( civicrm_membership.contact_id = civicrm_contact.
 WHERE      civicrm_membership.is_test = 0";
 
         $params = array( );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
         
         $today = date( "Y-m-d" );
         $count = 0;
 
         require_once 'CRM/Core/Smarty.php';
-        $smarty =& CRM_Core_Smarty::singleton();
+        $smarty = CRM_Core_Smarty::singleton();
         
         require_once 'CRM/Core/BAO/Domain.php';
         $domainValues     = CRM_Core_BAO_Domain::getNameAndEmail( );
@@ -170,13 +170,14 @@ WHERE      civicrm_membership.is_test = 0";
                     $deceasedMembership =  $memberParams;
                     $deceasedMembership['status_id'] = $deceaseStatusId; 
                     $deceasedMembership['createActivity'] = true;
+                    $deceasedMembership['version'] = 3;
                     
                     //since there is change in status.
                     $statusChange = array( 'status_id' => $deceaseStatusId );
                     $smarty->append_by_ref('memberParams', $statusChange, true );
                     
                     //process membership record.
-                    civicrm_contact_membership_create( $deceasedMembership );
+                    civicrm_api( 'membership', 'create', $deceasedMembership );
                 }
                 continue;
             }
@@ -195,7 +196,8 @@ WHERE      civicrm_membership.is_test = 0";
                 
                 // CRM-7248: added excludeIsAdmin param to the following fn call to prevent moving to admin statuses
                 //get the membership status as per id.
-                $newStatus = civicrm_membership_status_calc( array( 'membership_id' => $dao->membership_id ), true );
+                $newStatus = civicrm_api( 'membership_status', 'calc',
+                                          array( 'membership_id' => $dao->membership_id, 'version' => 3 ), true );
                 $statusId  = CRM_Utils_Array::value( 'id', $newStatus );
                 
                 //process only when status change.
@@ -205,13 +207,14 @@ WHERE      civicrm_membership.is_test = 0";
                     $memParams = $memberParams;
                     $memParams['status_id']      = $statusId;
                     $memParams['createActivity'] = true; 
-                    
+                    $memParams['version']        = 3;
+                                        
                     //since there is change in status.
                     $statusChange = array( 'status_id' => $statusId );
                     $smarty->append_by_ref('memberParams', $statusChange, true );
                     
                     //process member record.
-                    civicrm_contact_membership_create( $memParams );
+                    civicrm_api( 'membership', 'create', $memParams );
                 }
             }
             
@@ -261,7 +264,7 @@ WHERE      civicrm_membership.is_test = 0";
                             ", End Date - " . CRM_Utils_Date::customFormat(CRM_Utils_Date::isoToMysql($dao->end_date), $config->dateformatFull);
                         $activityParams['source_record_id']   = $dao->membership_id;
 
-                        $session = & CRM_Core_Session::singleton();
+                        $session = CRM_Core_Session::singleton();
                         $activityParams['source_contact_id']   = $session->get('userID') ? $session->get('userID') : $dao->contact_id;
                         $activityParams['assignee_contact_id'] = $dao->contact_id;
 

@@ -113,7 +113,7 @@ class CRM_Contact_BAO_SavedSearch extends CRM_Contact_DAO_SavedSearch
     }
 
     static function getSearchParams( $id ) {
-        $fv =& self::getFormValues( $id );
+        $fv = self::getFormValues( $id );
         //check if the saved seach has mapping id
         if ( CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch', $id, 'mapping_id' ) ) {
             require_once 'CRM/Core/BAO/Mapping.php';
@@ -138,7 +138,7 @@ class CRM_Contact_BAO_SavedSearch extends CRM_Contact_DAO_SavedSearch
      * @static
      */
     static function whereClause( $id, &$tables,&$whereTables ) {
-        $params =& self::getSearchParams( $id );
+        $params = self::getSearchParams( $id );
         if ( $params ) {
             return CRM_Contact_BAO_Query::getWhereClause( $params, null, $tables, $whereTables );
         }
@@ -146,7 +146,7 @@ class CRM_Contact_BAO_SavedSearch extends CRM_Contact_DAO_SavedSearch
     }
 
     static function contactIDsSQL( $id ) {
-        $params =& self::getSearchParams( $id );
+        $params = self::getSearchParams( $id );
         if ( $params &&
              CRM_Utils_Array::value( 'customSearchID', $params ) ) {
             require_once 'CRM/Contact/BAO/SearchCustom.php';
@@ -166,7 +166,7 @@ WHERE  $where";
     }
 
     static function fromWhereEmail( $id ) {
-        $params =& self::getSearchParams( $id );
+        $params = self::getSearchParams( $id );
 
         if ( $params ) {
             if ( CRM_Utils_Array::value( 'customSearchID', $params ) ) {

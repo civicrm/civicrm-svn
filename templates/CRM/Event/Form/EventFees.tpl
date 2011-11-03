@@ -44,7 +44,7 @@
     	<fieldset id="priceset" class="crm-group priceset-group">
             <tr class="crm-event-eventfees-form-block-price_set_amount">  
             <td class="label" style="padding-top: 10px;">{$form.amount.label}</td>
-	    <td class="view-value"><table class="form-layout">{include file="CRM/Price/Form/PriceSet.tpl"}</td>
+	    <td class="view-value"><table class="form-layout">{include file="CRM/Price/Form/PriceSet.tpl" extends="Event"}</td>
      	</fieldset>
         {else}
 	    {assign var=isRecordPayment value=0 }
@@ -199,7 +199,7 @@
 }
 {/if}
 
-{if ($action eq 1 or ( $action eq 2 and !$hasPayment) ) and !$participantMode} 
+{if $paid and ($action eq 1 or ( $action eq 2 and !$hasPayment) ) and !$participantMode} 
 {include file="CRM/common/showHideByFieldValue.tpl" 
     trigger_field_id    ="payment_instrument_id"
     trigger_value       = '4'
@@ -264,9 +264,7 @@ function checkEmail( ) {
        cj("#send_confirmation_receipt").hide( );
 
        // set receive data to null.
-       document.getElementById("receive_date[M]").value = null;
-       document.getElementById("receive_date[d]").value = null;
-       document.getElementById("receive_date[Y]").value = null;
+       clearDateTime( 'receive_date' );
     } else {
        cj("#send_confirmation_receipt").show( );
     }	

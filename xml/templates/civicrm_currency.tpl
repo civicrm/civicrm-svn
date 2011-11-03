@@ -83,7 +83,6 @@ INSERT INTO civicrm_currency (id, name, symbol, numeric_code, full_name) VALUES
 ( 58, "DKK", "kr", "208", "Danish Krone"),
 ( 59, "DOP","RD$", "214", "Dominican Peso"),
 ( 60, "DZD", NULL, "012", "Algerian Dinar"),
-( 61, "EEK", "kr", "233", "Estonian Kroon"),
 ( 62, "EGP",  "£", "818", "Egyptian Pound"),
 ( 63, "ERN", NULL, "232", "Eritrean Nakfa"),
 ( 64, "ETB", NULL, "230", "Ethiopian Birr"),

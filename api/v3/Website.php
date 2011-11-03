@@ -36,26 +36,20 @@
  * @version $Id: Website.php 2011-03-16 ErikHommel $
  */
 
-/**
- * Include utility functions
- */
-require_once 'api/v3/utils.php';
+require_once 'CRM/Core/BAO/Website.php';
 
 /**
  *  Add an Website for a contact
  * 
  * Allowed @params array keys are:
- * {@schema Core/Website.xml}
+ * {@getfields website_create}
+ * @example WebsiteCreate.php
  * {@example WebsiteCreate.php}
  * @return array of newly created website property values.
  * @access public
  */
 function civicrm_api3_website_create( $params ) 
 {
-    civicrm_api3_verify_one_mandatory ($params, null, array ('contact_id', 'id'));
-    
-    require_once 'CRM/Core/BAO/Website.php';
-
     $websiteBAO = CRM_Core_BAO_Website::add($params);
     
 	 if ( is_a( $websiteBAO, 'CRM_Core_Error' )) {
@@ -67,20 +61,28 @@ function civicrm_api3_website_create( $params )
 	 }
 
 }
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_website_create_spec( &$params ) {
+  $params['contact_id']['api.required'] =1;
+}
 /**
  * Deletes an existing Website
  *
  * @param  array  $params
- *
- * {@schema Core/Website.xml}
+ * @example WebsiteDelete.php Std Delete Example
  * {@example WebsiteDelete.php 0}
+ * {@getfields website_delete}
+ * 
  * @return boolean | error  true if successfull, error otherwise
  * @access public
  */
 function civicrm_api3_website_delete( $params ) 
 {
-
-    civicrm_api3_verify_mandatory ($params,null,array ('id'));
     $websiteID = CRM_Utils_Array::value( 'id', $params );
 
     require_once 'CRM/Core/DAO/Website.php';
@@ -102,20 +104,17 @@ function civicrm_api3_website_delete( $params )
  *
  * @param  mixed[]  (reference ) input parameters
  * 
- * {@schema Core/Website.xml}
- * {@example WebsiteDelete.php 0}
+ *  * {@example WebsiteGet.php 0}
+ * @example WebsiteGet.php
  * @param  array $params  an associative array of name/value pairs.
  *
- * @return  array details of found websites else error
+ * @return  array details of found websites 
+ * {@getfields website_get}
  * @access public
  */
 
 function civicrm_api3_website_get( $params ) 
 {   
-
-    civicrm_api3_verify_mandatory($params );
-	
-    require_once 'CRM/Core/BAO/Website.php';
     $websiteBAO = new CRM_Core_BAO_Website();
     $fields = array_keys($websiteBAO->fields());
 

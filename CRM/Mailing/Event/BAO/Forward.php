@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Mailing/Event/DAO/Forward.php';
+require_once 'CRM/Core/BAO/Domain.php';
 
 class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
 
@@ -50,7 +51,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
      * Create a new forward event, create a new contact if necessary
      */
     static function &forward($job_id, $queue_id, $hash, $forward_email, $fromEmail = null, $comment = null ) {
-        $q =& CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
+        $q = CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
         
         $successfulForward = false;
         $contact_id = null;
@@ -67,7 +68,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
         $mailing    =   CRM_Mailing_BAO_Mailing::getTableName();
         $forward    =   self::getTableName();
        
-        $domain     =& CRM_Core_BAO_Domain::getDomain( );
+        $domain     = CRM_Core_BAO_Domain::getDomain( );
        
         $dao = new CRM_Core_Dao();
         $dao->query("
@@ -99,23 +100,25 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
             return $successfulForward;
         }
 
-        civicrm_api_include('contact', false, 2);
+        require_once 'api/api.php';
+        $contactParams = array( 'email'   => $forward_email,
+                                'version' => 3 );
+        $contactValues = civicrm_api( 'contact', 'get', $contactParams );
+        $count         = $contactValues['count'];
         
-        $contact_params = array('email' => $forward_email);
-        $count = civicrm_contact_search_count($contact_params);
-
         if ($count == 0) {
             require_once 'CRM/Core/BAO/LocationType.php';
             /* If the contact does not exist, create one. */
-            $formatted = array('contact_type' => 'Individual');
+            $formatted = array( 'contact_type' => 'Individual',
+                                'version'      => 3 );
             $locationType = CRM_Core_BAO_LocationType::getDefault( );
             $value = array('email' => $forward_email,
                            'location_type_id' => $locationType->id );
-            _civicrm_add_formatted_param($value, $formatted);
+            _civicrm_api3_add_formatted_param($value, $formatted);
             require_once 'CRM/Import/Parser.php';
             $formatted['onDuplicate'] = CRM_Import_Parser::DUPLICATE_SKIP;
             $formatted['fixAddress'] = true;
-            $contact =& civicrm_contact_format_create($formatted);
+            $contact = civicrm_api( 'contact', 'create', $formatted );
             if ( civicrm_error( $contact ) ) {
                 return $successfulForward;
             }
@@ -136,7 +139,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
             'job_id' => $job_id,
         );
         
-        $queue =& CRM_Mailing_Event_BAO_Queue::create($queue_params);
+        $queue = CRM_Mailing_Event_BAO_Queue::create($queue_params);
         
         $forward = new CRM_Mailing_Event_BAO_Forward();
         $forward->time_stamp = date('YmdHis');
@@ -163,7 +166,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
                                           $queue->contact_id, $forward_email, $recipient, false, null, $attachments, true, $fromEmail );
         //append comment if added while forwarding.
         if ( count($comment) ) {
-            $message->_txtbody   = $comment['body_text'].$message->_txtbody;
+            $message->_txtbody   = CRM_Utils_Array::value( 'body_text', $comment ) . $message->_txtbody;
             if( CRM_Utils_Array::value('body_html', $comment) ) {
                 $message->_htmlbody  = $comment['body_html'].'<br />---------------Original message---------------------<br />'.$message->_htmlbody;
             }

@@ -99,7 +99,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
         $defaults = array();
         require_once "CRM/Core/BAO/LabelFormat.php";
         $format = CRM_Core_BAO_LabelFormat::getDefaultValues();
-        $defaults['label_name'] = $format['name'];
+        $defaults['label_name'] = CRM_Utils_Array::value( 'name', $format );
         $defaults['do_not_mail'] = 1;
         
         return $defaults;
@@ -117,9 +117,13 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
         $config = CRM_Core_Config::singleton();
         $locName = null;
         //get the address format sequence from the config file
-        require_once 'CRM/Core/BAO/Preferences.php';
-       
-        $sequence = CRM_Core_BAO_Preferences::value( 'mailing_sequence' );                
+        require_once 'CRM/Core/BAO/Setting.php';
+        $mailingFormat = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                        'mailing_format' );
+        
+        require_once 'CRM/Utils/Address.php';
+        $sequence = CRM_Utils_Address::sequence( $mailingFormat );
+
         foreach ($sequence as $v) {
             $address[$v] = 1;
         }
@@ -130,8 +134,10 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
         
         //build the returnproperties
         $returnProperties = array ('display_name' => 1, 'contact_type' => 1 );
-        $mailingFormat = CRM_Core_BAO_Preferences::value( 'mailing_format' );
-            
+        require_once 'CRM/Core/BAO/Setting.php';
+        $mailingFormat = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                        'mailing_format' );
+
         $mailingFormatProperties = array();
         if ( $mailingFormat ) {
             $mailingFormatProperties = self::getReturnProperties( $mailingFormat );
@@ -197,7 +203,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
                 $custom[] = $cfID;
             }
         }
-                           
+
         //get the total number of contacts to fetch from database.
         $numberofContacts = count( $this->_contactIds );
         require_once 'CRM/Contact/BAO/Query.php';      
@@ -212,7 +218,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
         CRM_Utils_Hook::tokens( $tokens );
         $tokenFields = array( );
         foreach ( $tokens as $category => $catTokens ) {
-            foreach ( $catTokens as $token ) {
+            foreach ( $catTokens as $token => $tokenName ) {
                 $tokenFields[] = $token;
             }
         }

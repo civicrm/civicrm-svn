@@ -271,7 +271,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
         $annual = CRM_Contribute_BAO_Contribution::annual( $contactId );
         require_once 'CRM/Core/DAO.php';
         
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $currencySymbol = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Currency',$config->defaultCurrency,'symbol','name') ;
         $this->assertDBCompareValue('CRM_Contribute_DAO_Contribution',  $id, 'total_amount', 
                                     'id', ltrim( $annual[2], $currencySymbol ), 'Check DB for total amount of the contribution'); 

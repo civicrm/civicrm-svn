@@ -28,6 +28,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     {
         $this->_apiversion = 3;
         parent::setUp();
+        
     }
     
     function tearDown() 
@@ -90,7 +91,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     /*
      * check contact activity profile without activity id
      */
-    function testContactActvityGetWithoutActivityId( )
+    function testContactActivityGetWithoutActivityId( )
     {        
         list($params, $expected) = $this->_createContactWithActivity( );
         
@@ -107,7 +108,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     /*
      * check contact activity profile wrong activity id
      */
-    function testContactActvityGetWrongActivityId( )
+    function testContactActivityGetWrongActivityId( )
     {        
         list($params, $expected) = $this->_createContactWithActivity( );
         
@@ -124,8 +125,11 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     /*
      * check contact activity profile with wrong activity type
      */
-    function testContactActvityGetWrongActivityType( )
-    {        
+    function testContactActivityGetWrongActivityType( )
+    {     
+        //flush cache by calling with reset
+        $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name', true );
+     
         $sourceContactId = $this->householdCreate( );
 
         $activityparams = array( 'source_contact_id'  => $sourceContactId,
@@ -160,7 +164,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     /*
      * check contact activity profile with success
      */
-    function testContactActvityGetSuccess( )
+    function testContactActivityGetSuccess( )
     {        
         list($params, $expected) = $this->_createContactWithActivity( );
         
@@ -284,7 +288,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     /*
      * check contact activity profile without activity id
      */
-    function testContactActvitySetWithoutActivityId( )
+    function testContactActivitySetWithoutActivityId( )
     {        
         list($params, $expected) = $this->_createContactWithActivity( );
         
@@ -302,7 +306,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     /*
      * check contact activity profile wrong activity id
      */
-    function testContactActvitySetWrongActivityId( )
+    function testContactActivitySetWrongActivityId( )
     {        
         list($params, $expected) = $this->_createContactWithActivity( );
         
@@ -320,8 +324,11 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     /*
      * check contact activity profile with wrong activity type
      */
-    function testContactActvitySetWrongActivityType( )
-    {        
+    function testContactActivitySetWrongActivityType( )
+    {    
+        //flush cache by calling with reset
+        $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name', true );
+ 
         $sourceContactId = $this->householdCreate( );
 
         $activityparams = array( 'source_contact_id'  => $sourceContactId,
@@ -357,7 +364,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
     /*
      * check contact activity profile with success
      */
-    function testContactActvitySetSuccess( )
+    function testContactActivitySetSuccess( )
     {        
         list($params, $expected) = $this->_createContactWithActivity( );
         
@@ -368,7 +375,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase
                                 'activity_details'        => 'a test activity details',
                                 'activity_duration'       => '100',
                                 'activity_date_time'      => '03/08/2010',
-                                'activity_status_id'      => '2'
+                                'activity_status_id'      => '2',
                           );
         $profileParams = array_merge($params, $updateParams);
         $profile = civicrm_api('profile','set',  $profileParams );
@@ -380,8 +387,14 @@ class api_v3_ProfileTest extends CiviUnitTestCase
             $this->assertEquals( $value, CRM_Utils_Array::value($profileField, $result['values']), "In line " . __LINE__
                                  . " error message: " . "missing/mismatching value for {$profileField}" ); 
         }
-        
-        $this->quickCleanup( array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact') );   
+
+        $this->quickCleanup( array('civicrm_uf_field', 
+                                   'civicrm_uf_join',
+                                   'civicrm_uf_group',
+                                   'civicrm_custom_field',
+                                   'civicrm_custom_group',
+                                   'civicrm_contact'),
+                             true );   
         
     }
 

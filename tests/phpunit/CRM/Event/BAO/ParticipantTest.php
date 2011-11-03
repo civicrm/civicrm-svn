@@ -152,23 +152,25 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
     /**
      * eventFull() method (checking the event for full )
      */
-    function testeventFull()
+    function testEventFull()
     {
-	require_once 'CRM/Event/BAO/Event.php';
-	CRM_Event_BAO_Event::add(
+        require_once 'CRM/Event/BAO/Event.php';
+        CRM_Event_BAO_Event::add(
                                  $eventParams = array( 'max_participants' => 1 , 
-						       'id'               => $this->_eventId 
-						       ));
+                                                       'id'               => $this->_eventId 
+                                                       )
+                                 );
 	
         $participantId = Participant::create( $this->_contactId, $this->_eventId);
         $eventFull = CRM_Event_BAO_Participant::eventFull( $this->_eventId );
         
-        $this->assertNotEquals( $eventFull, 'This event is full !!!', 'Checking if Event is full.' );
-
+        $this->assertEquals( $eventFull, 'This event is full !!!', 'Checking if Event is full.' );
+    
         Participant::delete( $participantId );
         Contact::delete( $this->_contactId );
         Event::delete ( $this->_eventId );
     }
+
     /**
      * importableFields() method ( Checking the Event's Importable Fields )
      */
@@ -315,7 +317,7 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
                                     'source_contact_id', $participant->id, 'Check DB for activity added for the participant');
         
         //Checking for Note added in the table for relative participant.
-        $session = & CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $id = $session->get('userID');
         if ( !$id ) {
             $id = $this->_contactId;
