@@ -90,7 +90,6 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
                                           'civicrm_api3_verify_one_mandatory',
                                           'civicrm_api3_verify_mandatory',
                                           'civicrm_api3_get_dao', 
-                                          'civicrm_api3_verify_type',
                                           'civicrm_api3_create_success',
                                           'civicrm_api3_create_error',
                                           'civicrm_api3_duplicate',
