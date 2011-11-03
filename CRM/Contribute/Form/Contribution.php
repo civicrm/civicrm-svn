@@ -1202,8 +1202,8 @@ WHERE  contribution_id = {$this->_id}
                 CRM_Core_PseudoConstant::countryIsoCode( $this->_params["billing_country_id-{$this->_bltID}"] );
             
             if ( $this->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_CREDIT_CARD ) {
-                $this->_params['year'      ]     = $this->_params['credit_card_exp_date']['Y'];
-                $this->_params['month'     ]     = $this->_params['credit_card_exp_date']['M'];
+                $this->_params['year'      ]     = CRM_Core_Payment_Form::getCreditCardExpirationYear( $this->_params );
+                $this->_params['month'     ]     = CRM_Core_Payment_Form::getCreditCardExpirationMonth( $this->_params );
             }
             $this->_params['ip_address']     = CRM_Utils_System::ipAddress( );
             $this->_params['amount'        ] = $this->_params['total_amount'];

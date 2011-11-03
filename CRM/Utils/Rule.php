@@ -186,6 +186,11 @@ class CRM_Utils_Rule
             return true; 
         } 
 
+        // CRM-9017 CiviContribute/CiviMember form with expiration date format 'm Y'
+        if (! $m && CRM_Utils_Array::value( 'm', $date )) {
+            $m = CRM_Utils_Array::value( 'm', $date );
+        }
+
         $day = $mon = 1; 
         $year = 0; 
         if ( $d ) $day  = $d;

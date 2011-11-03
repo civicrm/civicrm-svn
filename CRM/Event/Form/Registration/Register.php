@@ -984,8 +984,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     CRM_Core_PseudoConstant::countryIsoCode( $params["country_id-{$this->_bltID}"] ); 
             }
             if ( isset( $params['credit_card_exp_date'] ) ) {
-                $params['year'   ]        = $params['credit_card_exp_date']['Y'];  
-                $params['month'  ]        = $params['credit_card_exp_date']['M'];  
+                $params['year'   ]        = CRM_Core_Payment_Form::getCreditCardExpirationYear( $params );
+                $params['month'  ]        = CRM_Core_Payment_Form::getCreditCardExpirationMonth( $params );
             }
             if ( $this->_values['event']['is_monetary'] ) {
                 $params['ip_address']     = CRM_Utils_System::ipAddress( );

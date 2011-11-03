@@ -544,8 +544,8 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $this->_params["country-{$this->_bltID}"] = $this->_params["billing_country-{$this->_bltID}"] =
                 CRM_Core_PseudoConstant::countryIsoCode( $this->_params["billing_country_id-{$this->_bltID}"] );
             
-            $this->_params['year'      ]     = $this->_params['credit_card_exp_date']['Y'];
-            $this->_params['month'     ]     = $this->_params['credit_card_exp_date']['M'];
+            $this->_params['year'      ]     = CRM_Core_Payment_Form::getCreditCardExpirationYear( $this->_params );
+            $this->_params['month'     ]     = CRM_Core_Payment_Form::getCreditCardExpirationMonth( $this->_params );
             $this->_params['ip_address']     = CRM_Utils_System::ipAddress( );
             $this->_params['amount'        ] = $formValues['total_amount'];
             $this->_params['currencyID'    ] = $config->defaultCurrency;

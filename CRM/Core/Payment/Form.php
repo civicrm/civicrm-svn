@@ -334,6 +334,34 @@ class CRM_Core_Payment_Form {
             }
         }
     }
+
+    /**
+     * function to get the credit card expiration month
+     * The date format for this field should typically be "M Y" (ex: Feb 2011) or "m Y" (02 2011)
+     * See CRM-9017
+     *
+     * @return int
+     * @static
+     */
+    static function getCreditCardExpirationMonth( $src ) {
+        if ($month = CRM_Utils_Array::value( 'M' , $src['credit_card_exp_date'] ) ) {
+              return $month;
+        }
+
+        return CRM_Utils_Array::value( 'm' , $src['credit_card_exp_date'] );
+    }
+
+    /**
+     * function to get the credit card expiration year
+     * The date format for this field should typically be "M Y" (ex: Feb 2011) or "m Y" (02 2011)
+     * This function exists only to make it consistant with getCreditCardExpirationMonth
+     *
+     * @return int
+     * @static
+     */
+    static function getCreditCardExpirationYear( $src ) {
+        return CRM_Utils_Array::value( 'Y' , $src['credit_card_exp_date'] );
+    }
     
     /**
      * function to return state/province is_required = true/false 
