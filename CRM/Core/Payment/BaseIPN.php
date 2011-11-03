@@ -507,6 +507,7 @@ LIMIT 1;";
 
             if ( $values['event']['is_email_confirm'] ) {
                 $contribution->receipt_date = self::$_now;
+                $values['is_email_receipt'] = 1;
             }
 
             $participant->status_id = 1;
@@ -596,6 +597,9 @@ LIMIT 1;";
        
         CRM_Core_Error::debug_log_message( "Contribution record updated successfully" );
         $transaction->commit( );
+        
+        // CRM-9132 legacy behaviour was that receipts were sent out in all instances. Still sending
+        // when array_key 'is_email_receipt doesn't exist in case some instances where is needs setting haven't been set 
         if(!array_key_exists('is_email_receipt', $params) ||  $params['is_email_receipt'] ==1 ){
           self::sendMail( $input, $ids, $objects, $values, $recur, false );
         }
