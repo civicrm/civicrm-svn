@@ -433,7 +433,7 @@ class CRM_Contribute_BAO_Query
         case 'contribution_pcp_display_in_roll':
             $query->_where[$grouping][] = " civicrm_contribution_soft.pcp_display_in_roll $op '$value'";
             if ( $value ) {
-                $query->_qill[$grouping][] = ts( "Display in Roll" );
+                $query->_qill[$grouping][] = ts( "Personal Campaign Page Honor Roll" );
             }
             $query->_tables['civicrm_contribution_soft'] = $query->_whereTables['civicrm_contribution_soft'] = 1;
             return;
@@ -716,7 +716,7 @@ class CRM_Contribute_BAO_Query
         $form->addElement('text', 'contribution_check_number', ts('Check Number') );
         
         //add field for pcp display in roll search
-        $form->addYesNo( 'contribution_pcp_display_in_roll', ts('Display In Roll ?') );
+        $form->addYesNo( 'contribution_pcp_display_in_roll', ts('Personal Campaign Page Honor Roll?') );
         
         // add all the custom  searchable fields
         require_once 'CRM/Core/BAO/CustomGroup.php';
