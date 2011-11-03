@@ -117,26 +117,39 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
                            'Strict' => ts('Strict')
                            );
         $ruleLevel = $this->add('select', 'level', ts('Level'), $levelType);
-
-        $this->add('checkbox', 'is_reserved', ts('Reserved?') );
         
         $default = $this->add('checkbox', 'is_default', ts('Default?') );
         if ( CRM_Utils_Array::value( 'is_default', $this->_defaults ) ) {
             $default->freeze();
             $ruleLevel->freeze();
         }
-        
+
+        $disabled = array(); 
+        $reserved = $this->add('checkbox', 'is_reserved', ts('Reserved?') );
+        if ( CRM_Utils_Array::value( 'is_reserved', $this->_defaults ) ) {
+            $reserved->freeze();
+            $ruleLevel->freeze();
+            $disabled = array( 'disabled' => true );
+        }
+
+        $attributes = array('class' => 'two');
+        if ( !empty( $disabled ) ) {
+            $attributes = array_merge( $attributes, $disabled );
+        }
+
         for ($count = 0; $count < self::RULES_COUNT; $count++) {
-            $this->add('select', "where_$count", ts('Field'), array(null => ts('- none -')) + $this->_fields);
-            $this->add('text', "length_$count", ts('Length'), array('class' => 'two', 'style' => 'text-align: right'));
-            $this->add('text', "weight_$count", ts('Weight'), array('class' => 'two', 'style' => 'text-align: right'));
+            $this->add('select', "where_$count", ts('Field'), 
+                        array(null => ts('- none -')) + $this->_fields, false, $disabled );
+            $this->add('text', "length_$count", ts('Length'), $attributes );
+            $this->add('text', "weight_$count", ts('Weight'), $attributes );
         }
         
-        $this->add('text', 'threshold', ts("Weight Threshold to Consider Contacts 'Matching':"), array('class' => 'two', 'style' => 'text-align: right'));
+        $this->add('text', 'threshold', ts("Weight Threshold to Consider Contacts 'Matching':"), $attributes );
         $this->addButtons(array(
                                 array('type' => 'next',   'name' => ts('Save'), 'isDefault' => true),
                                 array('type' => 'cancel', 'name' => ts('Cancel')),
                                 ));
+        
         $this->assign('contact_type', $this->_contactType);
 
         $this->addFormRule( array( 'CRM_Contact_Form_DedupeRules', 'formRule' ), $this );
@@ -154,6 +167,10 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
     static function formRule( $fields, $files, $self ) 
     {
         $errors = array( );
+        if ( CRM_Utils_Array::value( 'is_reserved', $fields ) ) {
+            return true;
+        }
+
         $fieldSelected = false;
         for ($count = 0; $count < self::RULES_COUNT; $count++) {
             if ( CRM_Utils_Array::value( "where_$count", $fields ) ) {
@@ -183,6 +200,7 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
     public function postProcess() 
     {
         $values = $this->exportValues();
+        
         $isDefault = CRM_Utils_Array::value( 'is_default', $values, false );
         // reset defaults
         if ( $isDefault ) {
@@ -201,12 +219,12 @@ UPDATE civicrm_dedupe_rule_group
             $rgDao->id           = $this->_rgid;
         }
         
-        $rgDao->threshold    = $values['threshold'];
         $rgDao->title        = $values['title'];
-        $rgDao->level        = $values['level'];
-        $rgDao->contact_type = $this->_contactType;
         $rgDao->is_reserved  = CRM_Utils_Array::value( 'is_reserved', $values, false );
         $rgDao->is_default   = $isDefault;
+        $rgDao->level        = $values['level'];
+        $rgDao->contact_type = $this->_contactType;
+        $rgDao->threshold    = $values['threshold'];
         $rgDao->save();
         
         // make sure name is set only during insert
@@ -215,6 +233,12 @@ UPDATE civicrm_dedupe_rule_group
             require_once 'CRM/Utils/String.php';
             $rgDao->name = CRM_Utils_String::titleToVar( $values['title'] ) . "_{$rgDao->id}";
             $rgDao->save();
+        }
+        
+        // lets skip updating of fields for reserved dedupe group
+        if ( $rgDao->is_reserved ) {
+            CRM_Core_Session::setStatus( ts('The rule \'%1\' has been saved.', array(1 => $rgDao->title) ) ); 
+            return;
         }
 
         $ruleDao = new CRM_Dedupe_DAO_Rule();
@@ -266,9 +290,7 @@ UPDATE civicrm_dedupe_rule_group
         
         require_once 'CRM/Core/BAO/PrevNextCache.php';
         CRM_Core_BAO_PrevNextCache::deleteItem( null, $cacheKey );
-                
+
+        CRM_Core_Session::setStatus( ts('The rule \'%1\' has been saved.', array(1 => $rgDao->title) ) ); 
     }
-    
 }
-
-
