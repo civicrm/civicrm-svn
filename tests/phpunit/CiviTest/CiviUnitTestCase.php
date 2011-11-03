@@ -900,7 +900,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'pledge_create_date'    => date('Ymd'),
                         'start_date'    => date('Ymd'),
                         'scheduled_date'    => date('Ymd'),   
-                        'pledge_amount'         => 100.00,
+                        'amount'         => 100.00,
                         'pledge_status_id'         => '2',
                         'contribution_type_id'  => '1',
                         'pledge_original_installment_amount' => 20,
