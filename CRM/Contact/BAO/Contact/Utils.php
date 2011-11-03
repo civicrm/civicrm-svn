@@ -1025,6 +1025,8 @@ UPDATE civicrm_contact
             // now update cache field
             CRM_Core_DAO::executeQuery( $cacheFieldQuery );
         }
+
+
     }    
 
 

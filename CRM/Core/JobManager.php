@@ -155,9 +155,8 @@ class CRM_Core_JobManager
 
     private function _apiResultToMessage( $apiResult ) {
         $status = $apiResult['is_error'] ? ts('Failure') : ts('Success');
-        $message =  $apiResult['is_error'] ?  $apiResult['error_message'] : '';
-        $msg = $status . ( $apiResult['is_error'] ? ', Error message: ' . $apiResult['error_message'] : '');
-        return $msg;
+        $message =  $apiResult['is_error'] ? ', Error message: ' . $apiResult['error_message'] : "\n\r" . $apiResult['values'];
+        return $status . $message;
     }
 
  
