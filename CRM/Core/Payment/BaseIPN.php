@@ -596,7 +596,7 @@ LIMIT 1;";
        
         CRM_Core_Error::debug_log_message( "Contribution record updated successfully" );
         $transaction->commit( );
-        if(CRM_Utils_Array::value('is_email_receipt', $params)){
+        if(!array_key_exists('is_email_receipt', $params) ||  $params['is_email_receipt'] ==1 ){
           self::sendMail( $input, $ids, $objects, $values, $recur, false );
         }
 
