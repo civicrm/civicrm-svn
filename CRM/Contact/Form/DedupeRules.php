@@ -77,6 +77,7 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
             $this->_defaults['title']       = $rgDao->title;
             $this->_defaults['is_default']  = $rgDao->is_default;
             $this->_defaults['is_reserved'] = $rgDao->is_reserved;
+            $this->assign( 'isReserved', $rgDao->is_reserved );
             $ruleDao = new CRM_Dedupe_DAO_Rule();
             $ruleDao->dedupe_rule_group_id = $this->_rgid;
             $ruleDao->find();
@@ -216,7 +217,7 @@ UPDATE civicrm_dedupe_rule_group
 
         $rgDao            = new CRM_Dedupe_DAO_RuleGroup();
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
-            $rgDao->id           = $this->_rgid;
+            $rgDao->id    = $this->_rgid;
         }
         
         $rgDao->title        = $values['title'];
