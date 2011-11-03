@@ -83,60 +83,6 @@ class CRM_Upgrade_Incremental_php_FourOne {
          // also reset navigation
         require_once 'CRM/Core/BAO/Navigation.php';
         CRM_Core_BAO_Navigation::resetNavigation( );
-        
-        require_once 'CRM/Dedupe/DAO/Rule.php';
-        require_once 'CRM/Dedupe/BAO/RuleGroup.php';
-       
-        $rgBao = new CRM_Dedupe_BAO_RuleGroup();
-        $rgBao->contact_type = 'Individual';
-        $rgBao->level = 'Strict';
-        $rgBao->is_default = 1;
-        $rgBao->threshold = 10;
-        if (!$rgBao->find(true)) {
-            return;
-        }
-        $ruleDao = new CRM_Dedupe_DAO_Rule();
-        $ruleDao->dedupe_rule_group_id = $rgBao->id;
-        
-        $ruleDao->find();
-        $count = 0;
-        $IndividualStrictFields = array( );
-        while ($ruleDao->fetch()) {
-            $IndividualStrictFields["where_$count"]  = "{$ruleDao->rule_table}.{$ruleDao->rule_field}";
-            $IndividualStrictFields["length_$count"] = $ruleDao->rule_length;
-            $IndividualStrictFields["weight_$count"] = $ruleDao->rule_weight;
-            $count++;
-        }
-         
-        if( $count > 1 || ( $count == 1 && CRM_Utils_Array::value( 'where_0', $IndividualStrictFields ) != 'civicrm_email.email' && CRM_Utils_Array::value( 'weight_0', $IndividualStrictFields ) != 10 ) ){
-            
-            $valuesArr = array( );
-            $valuesArr['is_default'] = 0;
-            $valuesArr['threshold'] = 15;
-            $valuesArr['level'] = 'Strict';
-            $valuesArr['name'] = 'IndividualComplete';
-            $valuesArr['title'] = 'Individual-Complete';
-            $valuesArr['is_reserved'] = 1;
-            $valuesArr['where_0'] = 'civicrm_contact.first_name';
-            $valuesArr['weight_0'] = 5;
-            $valuesArr['where_1'] = 'civicrm_contact.last_name';
-            $valuesArr['weight_1'] = 5;
-            $valuesArr['where_2'] = 'civicrm_address.street_address';
-            $valuesArr['weight_2'] = 5;
-            $valuesArr['where_3'] = 'civicrm_contact.middle_name';
-            $valuesArr['weight_3'] = 1;
-            $valuesArr['where_4'] = 'civicrm_contact.suffix_id' ;
-            $valuesArr['weight_4'] = 1;
-
-            self::dedupeRuleAdd( $valuesArr );
-        }
-        else if( $count == 1 && CRM_Utils_Array::value( 'where_0', $IndividualStrictFields ) == 'civicrm_email.email' && CRM_Utils_Array::value( 'weight_0', $IndividualStrictFields ) == 10 ){
-            
-            $rgBaoForInsertion = new CRM_Dedupe_BAO_RuleGroup();
-            $rgBaoForInsertion->id = $rgBao->id;
-            $rgBaoForInsertion->is_reserved = 1;
-            $rgBaoForInsertion->save();
-        }         
     }
     
     function transferPreferencesToSettings( ) {

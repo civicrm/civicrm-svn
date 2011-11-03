@@ -330,25 +330,41 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
             $nextPage     = ( array_key_exists($currKey + 1, $statesList) ) ? $statesList[$currKey + 1] : '';
             
             //unfortunately, some classes don't map to subpage names, so we alter the exceptions
-            if ( $className == 'Amount' ) {
-                $subPage  = 'amount';
-                $nextPage = 'membership';
-            } else if ( $className == 'MembershipBlock' ) {
-                $subPage  = 'membership';
-                $nextPage = 'thankYou';
-            } elseif ( $className == 'ThankYou' ) {
-                $subPage  = 'thankYou';
-                $nextPage = 'friend';
-            } else if ( $className == 'Contribute' ) {
-                $subPage  = 'friend';
-                $nextPage = 'custom';
-            } else {
-                $subPage  = strtolower( $className );
+                        
+            switch( $className ) {
+            case 'Contribute':
+                $attributes = $this->getVar( '_attributes' );
+                $subPage = strtolower(basename( CRM_Utils_Array::value('action', $attributes) ));
+                $subPageName = ucFirst($subPage);
+                if ( $subPage == 'friend' ) {
+                    $nextPage = 'custom';
+                } else {
+                    $nextPage = 'settings';
+                }
+                break;
+
+            case 'MembershipBlock':
+                $subPage = 'membership';
+                $subPageName = 'Membership';
+                $nextPage = 'thankyou';
+                break;
+
+            default:
+                $subPage = strtolower($className);
+                $subPageName = $className;
                 $nextPage = strtolower( $nextPage );
+
+                if ( $subPage == 'amount' ) {
+                    $nextPage = 'membership';
+                } else if ( $subPage == 'thankyou' ) {
+                    $nextPage = 'friend';
+                }
+                
+                break;
             }
 
             CRM_Core_Session::setStatus( ts("'%1' information has been saved.", 
-                                            array( 1 => ( $subPage == 'friend' ) ? 'Friend' : $className ) ) );
+                                            array( 1 => $subPageName ) ) );
 
             $this->postProcessHook( );
 

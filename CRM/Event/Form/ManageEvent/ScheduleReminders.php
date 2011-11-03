@@ -70,8 +70,10 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
                         $action += CRM_Core_Action::ENABLE;
                     }
                     require_once 'CRM/Admin/Page/ScheduleReminders.php';
+                    $links = CRM_Admin_Page_ScheduleReminders::links();
+                    $links[CRM_Core_Action::DELETE]['qs'] .= "&context=event&eventId={$this->_id}";
                     $format['action'] = CRM_Core_Action::formLink(
-                                                                  CRM_Admin_Page_ScheduleReminders::links(), 
+                                                                  $links, 
                                                                   $action, 
                                                                   array('id' => $format['id']));
                 }

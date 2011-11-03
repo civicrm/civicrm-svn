@@ -163,7 +163,7 @@ function _civicrm_api3_entity_tag_delete_spec( &$params ) {
  * @return <type> 
  */
 function _civicrm_api3_entity_tag_common( $params, $op = 'add' ) {
-    civicrm_api3_verify_mandatory($params);
+
     $entityIDs    = array( );
     $tagsIDs      = array( );
     $entityTable  = 'civicrm_contact';

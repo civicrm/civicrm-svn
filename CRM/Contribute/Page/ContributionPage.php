@@ -151,9 +151,9 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
                                                  CRM_Core_Action::EXPORT   => array( 
                                                                                     'name'  => ts('Thank-you and Receipting'),
                                                                                     'title' => ts('Thank-you and Receipting'),
-                                                                                    'url'   => $urlString.'thankYou',
+                                                                                    'url'   => $urlString.'thankyou',
                                                                                     'qs'    => $urlParams,
-                                                                                    'uniqueName' => 'thankYou'
+                                                                                    'uniqueName' => 'thankyou'
                                                                                      ),
                                                  CRM_Core_Action::BASIC    => array( 
                                                                                     'name'  => ts('Tell a Friend'),

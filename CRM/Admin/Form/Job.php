@@ -107,6 +107,16 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
 
         $errors = array( );
 
+        require_once 'api/api.php';
+
+        // FIXME: hackish, need better way maybe
+        $pcs = split( '_', $fields['command']);
+        civicrm_api_include( $pcs[2] );
+        
+        if( ! function_exists( $fields['command'] ) ) {
+            $errors['command'] = ts( 'Given API command is not defined.' );
+        }
+
         if ( ! empty( $errors ) ) {
             return $errors;
         }

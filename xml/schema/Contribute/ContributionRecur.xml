@@ -243,4 +243,11 @@
     <key>id</key>
     <onDelete>SET NULL</onDelete>
   </foreignKey>
+    <field> 
+       <name>is_email_receipt</name> 
+       <type>boolean</type> 
+       <comment>if true, receipt is automatically emailed to contact on each successful payment</comment> 
+       <default>1</default>
+       <add>4.1</add> 
+  </field> 
 </table>

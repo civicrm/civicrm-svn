@@ -375,7 +375,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
                 $values['amount'] = $recurContrib->amount;
                 $values['contribution_type_id'] = $objects['contributionType']->id;
                 $values['title'] = $source = ts( 'Offline Recurring Contribution' );
-                $values['is_email_receipt'] = true;
+                $values['is_email_receipt'] = $recurContrib->is_email_receipt;
                 require_once 'CRM/Core/BAO/Domain.php';
                 $domainValues = CRM_Core_BAO_Domain::getNameAndEmail( );
                 $values['receipt_from_name'] = $domainValues[0];
@@ -507,6 +507,7 @@ LIMIT 1;";
 
             if ( $values['event']['is_email_confirm'] ) {
                 $contribution->receipt_date = self::$_now;
+                $values['is_email_receipt'] = 1;
             }
 
             $participant->status_id = 1;
@@ -597,7 +598,11 @@ LIMIT 1;";
         CRM_Core_Error::debug_log_message( "Contribution record updated successfully" );
         $transaction->commit( );
         
-        self::sendMail( $input, $ids, $objects, $values, $recur, false );
+        // CRM-9132 legacy behaviour was that receipts were sent out in all instances. Still sending
+        // when array_key 'is_email_receipt doesn't exist in case some instances where is needs setting haven't been set 
+        if(!array_key_exists('is_email_receipt', $params) ||  $params['is_email_receipt'] ==1 ){
+          self::sendMail( $input, $ids, $objects, $values, $recur, false );
+        }
 
         CRM_Core_Error::debug_log_message( "Success: Database updated and mail sent" );
     }

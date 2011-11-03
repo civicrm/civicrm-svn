@@ -68,7 +68,7 @@ class CRM_Utils_Geocode_MassGeocode
             if ( $this->geocoding == 'true' ) {
                 $this->returnMessages[] = ts( 'Error: You need to set a mapping provider under Global Settings' );
                 $this->returnError = 1;
-                break; 
+                $this->returnResult();
             }
         } else {
             $processGeocode = true;
@@ -90,7 +90,7 @@ class CRM_Utils_Geocode_MassGeocode
             if ( $this->parse == 'true' ) {
                 $this->returnMessages[] = ts( 'Error: You need to enable Street Address Parsing under Global Settings >> Address Settings.' );
                 $this->returnError = 1;
-                break; 
+                return $this->returnResult();
             }
         } else {
             $parseStreetAddress = true;
@@ -104,11 +104,10 @@ class CRM_Utils_Geocode_MassGeocode
         if ( !$parseStreetAddress && !$processGeocode ) {
             $this->returnMessages[] = ts( 'Error: Both Geocode mapping as well as Street Address Parsing are disabled. You must configure one or both options to use this script.' );
             $this->returnError = 1;
-            break; 
+            return $this->returnResult();
         }
-    
+
         // do check for parse street address.
-        // we have an exclusive lock - run the mail queue
         return $this->processContacts( $config, $processGeocode, $parseStreetAddress );
     }
 
@@ -245,11 +244,17 @@ class CRM_Utils_Geocode_MassGeocode
                 }
             }
         }
+
+        return $this->returnResult();
+
+    }
+    
+    function returnResult( ) {
         $this->returnError = 1;
         $result = array();
         $result['is_error'] = $this->returnError;
         $result['messages'] = implode( "", $this->returnMessages);
-        return $result;
+        return $result;        
     }
 
 }

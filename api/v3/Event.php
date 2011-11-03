@@ -139,7 +139,8 @@ function civicrm_api3_event_get( $params )
     require_once 'CRM/Core/BAO/CustomGroup.php';
     require_once 'CRM/Event/BAO/Event.php';
     $eventDAO = new CRM_Event_BAO_Event( );
-    $eventDAO->copyValues( $inputParams );
+     _civicrm_api3_dao_set_filter($eventDAO, $inputParams);
+
 
     $event = array();
     if ( !empty( $returnProperties ) ) {
