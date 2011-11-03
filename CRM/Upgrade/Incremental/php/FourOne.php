@@ -83,6 +83,10 @@ class CRM_Upgrade_Incremental_php_FourOne {
          // also reset navigation
         require_once 'CRM/Core/BAO/Navigation.php';
         CRM_Core_BAO_Navigation::resetNavigation( );
+        
+        // CRM-8358 - special upgrade warning
+        $template->assign('upgradeWarning', 'WARNING! CiviCRM 4.1 introduces new way of handling cron jobs which is backwards incompatible. <strong>All CiviCRM related cron jobs that you have configured will cease to work and they need to be configured again manually.</strong> Please refer to <a href="http://wiki.civicrm.org/confluence/display/CRMDOC41/Managing+Scheduled+Jobs">appropriate documentation page</a> for detailed instructions.');
+        
     }
     
     function transferPreferencesToSettings( ) {
@@ -335,6 +339,10 @@ UPDATE civicrm_dedupe_rule_group
         require_once 'CRM/Core/BAO/SchemaHandler.php';
         CRM_Core_BAO_SchemaHandler::createIndexes( $tables, 'dedupe_index', $substrLenghts );
                   
+    }
+
+    function getTemplateMessage( ) {
+        return "Blah";
     }
     
   }
