@@ -214,6 +214,20 @@ ORDER BY start_date desc
         //get all campaigns.
         $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
 
+        // get the list of active event pcps
+        $eventPCPS = array();
+
+        require_once "CRM/PCP/DAO/PCPBlock.php";
+        $pcpDao = new CRM_PCP_DAO_PCPBlock;
+        $pcpDao->entity_table = 'civicrm_event';
+        $pcpDao->find();
+        
+        while ($pcpDao->fetch()){
+             $eventPCPS[$pcpDao->entity_id] = $pcpDao->entity_id;
+        }
+
+        crm_core_error::debug( $eventPCPS );
+
         while ($dao->fetch()) {
             if ( in_array( $dao->id, $permissions[CRM_Core_Permission::VIEW] ) ) {
                 $manageEvent[$dao->id] = array();
@@ -263,6 +277,8 @@ ORDER BY start_date desc
                 $manageEvent[$dao->id]['campaign'] = CRM_Utils_Array::value( $dao->campaign_id, $allCampaigns );
                 require_once 'CRM/Core/BAO/ActionSchedule.php';
                 $manageEvent[$dao->id]['reminder'] = CRM_Core_BAO_ActionSchedule::isConfigured( $dao->id, 3 );
+
+                $manageEvent[$dao->id]['is_pcp_enabled'] = CRM_Utils_Array::value( $dao->id, $eventPCPS );
             }
         }
         $this->assign('rows', $manageEvent);
