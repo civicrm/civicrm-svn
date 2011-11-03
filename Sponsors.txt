@@ -1,4 +1,13 @@
 ************************************************
+Sponsors and key contributors for 4.1
+************************************************
+The following people and organizations sponsored and/or contributed new and improved features for the 4.1 release.
+
+Tom Kirkpatrick - Personal Campaign Pages - System Seed: http://www.systemseed.com/
+Adam Wight - Add to Cart Event Registration - Giant Rabbit: http://giantrabbit.com/
+Progressive Technology Project - CiviCampaign - http://progressivetech.org/
+
+************************************************
 Sponsors for 3.4 / 4.0 Make-it-Happen Projects
 ************************************************
 The following people and organizations sponsored new and improved features for the 3.4 / 4.0 release.
