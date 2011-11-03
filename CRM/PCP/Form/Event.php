@@ -179,34 +179,34 @@ class CRM_PCP_Form_Event extends CRM_Event_Form_ManageEvent
      */
     public function postProcess() 
     {
-      // get the submitted form values.
-      $params = $this->controller->exportValues( $this->_name );
+        // get the submitted form values.
+        $params = $this->controller->exportValues( $this->_name );
 
-      // Source
-      $params['entity_table'] = 'civicrm_event';
-      $params['entity_id'] = $this->_id;
+        // Source
+        $params['entity_table'] = 'civicrm_event';
+        $params['entity_id'] = $this->_id;
 
-      // Target
-      $params['target_entity_type'] = CRM_Utils_Array::value( 'target_entity_type', $params, 'event' );
-      if ($params['target_entity_type'] == 'event') {
-        $params['target_entity_id'] = $this->_id;
-      } else {
-        $params['target_entity_id'] = CRM_Utils_Array::value( 'target_entity_id', $params, $this->_id );
-      }
+        // Target
+        $params['target_entity_type'] = CRM_Utils_Array::value( 'target_entity_type', $params, 'event' );
+        if ($params['target_entity_type'] == 'event') {
+            $params['target_entity_id'] = $this->_id;
+        } else {
+            $params['target_entity_id'] = CRM_Utils_Array::value( 'target_entity_id', $params, $this->_id );
+        }
       
-      $dao = new CRM_PCP_DAO_PCPBlock();
-      $dao->entity_table = $params['entity_table'];
-      $dao->entity_id = $this->_id; 
-      $dao->find(true);
-      $params['id'] = $dao->id;
-      $params['is_active']             =  CRM_Utils_Array::value( 'pcp_active', $params, false );
-      $params['is_approval_needed']    =  CRM_Utils_Array::value( 'is_approval_needed', $params, false );
-      $params['is_tellfriend_enabled'] =  CRM_Utils_Array::value( 'is_tellfriend_enabled', $params, false );
+        $dao = new CRM_PCP_DAO_PCPBlock();
+        $dao->entity_table = $params['entity_table'];
+        $dao->entity_id = $this->_id; 
+        $dao->find(true);
+        $params['id'] = $dao->id;
+        $params['is_active']             =  CRM_Utils_Array::value( 'pcp_active', $params, false );
+        $params['is_approval_needed']    =  CRM_Utils_Array::value( 'is_approval_needed', $params, false );
+        $params['is_tellfriend_enabled'] =  CRM_Utils_Array::value( 'is_tellfriend_enabled', $params, false );
 
-      require_once 'CRM/PCP/BAO/PCP.php';
-      $dao = CRM_PCP_BAO_PCP::add( $params );
+        require_once 'CRM/PCP/BAO/PCP.php';
+        $dao = CRM_PCP_BAO_PCP::add( $params );
 
-      parent::endPostProcess( );
+        parent::endPostProcess( );
     }
     
      /** 

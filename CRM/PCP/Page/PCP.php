@@ -169,7 +169,6 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
      */
     function browse( $action = null )
     {  
-        require_once 'CRM/Contact/BAO/GroupNesting.php';
         $this->_sortByCharacter = CRM_Utils_Request::retrieve( 'sortByCharacter',
                                                                'String',
                                                                $this );        
@@ -236,7 +235,9 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
         }
 
         // get all event pages
-        $query = "SELECT id, title, start_date, end_date FROM civicrm_event";
+        $query = "SELECT id, title, start_date, end_date 
+                  FROM civicrm_event 
+                  WHERE is_template IS NULL OR is_template != 1";
         $epages = CRM_Core_DAO::executeQuery( $query );
         while ( $epages->fetch() ) {
             $pages['event'][$epages->id]['id']         = $epages->id;
@@ -300,24 +301,28 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
             } else {
                 $title = $pages[$page_type][$page_id]['title'];
             }
-
-             
-            $pcpSummary[$pcp->id] = array( 'id' => $pcp->id,
-                'start_date' => $pcp->start_date,
-                'end_date' => $pcp->end_date,
-                'supporter' => $contact['0'],
+            
+            if ( $pcp->page_type == 'contribute' ) {
+                $pageUrl   = CRM_Utils_System::url('civicrm/' . $page_type . '/transact', 'reset=1&id=' . $pcp->page_id);
+            } else {
+                $pageUrl   = CRM_Utils_System::url('civicrm/' . $page_type . '/register', 'reset=1&id=' . $pcp->page_id);
+            }
+            
+            $pcpSummary[$pcp->id] = array( 
+                'id'           => $pcp->id,
+                'start_date'   => $pages[$page_type][$page_id]['start_date'],
+                'end_date'     => $pages[$page_type][$page_id]['end_date'],
+                'supporter'    => $contact['0'],
                 'supporter_id' => $pcp->contact_id,
-                'status_id' => $status[$pcp->status_id],
-                'page_id' => $page_id,
-                'page_title' => $title,
-                'page_url' => CRM_Utils_System::url('civicrm/' . $page_type . '/transact', 'reset=1&id=' . $pcp->page_id),
-                'action' => CRM_Core_Action::formLink(self::links(), $action,
+                'status_id'    => $status[$pcp->status_id],
+                'page_id'      => $page_id,
+                'page_title'   => $title,
+                'page_url'     => $pageUrl,
+                'action'       => CRM_Core_Action::formLink(self::links(), $action,
                                                     array('id' => $pcp->id)),
-                'title' => $pcp->title,
-                'class' => $class
+                'title'        => $pcp->title,
+                'class'        => $class
             );
-
-            //CRM_Core_DAO::storeValues( $pcp, $pcpSummary[$pcp->id] );
         }
 
         $this->search( );   
@@ -379,17 +384,17 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
     //@TODO this function changed, debug this at runtime
     function pagerAtoZ( $whereClause, $whereParams ) {
         require_once 'CRM/Utils/PagerAToZ.php';
-        
+        $where = '';    
         if ($whereClause){
-          if (strpos($whereClause, ' AND') == 0){
-            $whereClause = substr($whereClause, 4);
-          }
-          $where = 'WHERE ' . $whereClause;
+            if (strpos($whereClause, ' AND') == 0){
+                $whereClause = substr($whereClause, 4);
+            }
+            $where = 'WHERE ' . $whereClause;
         }
         
         $query = "
  SELECT UPPER(LEFT(cp.title, 1)) as sort_name
-     FROM civicrm_pcp cp
+ FROM civicrm_pcp cp
    " . $where . "
  ORDER BY LEFT(cp.title, 1);
         ";

@@ -107,7 +107,7 @@ class CRM_PCP_Page_PCPInfo extends CRM_Core_Page
             $anonMessage = ts('Once you\'ve received your new account welcome email, you can <a href=%1>click here</a> to login and promote your campaign page.', array( 1 => $loginUrl) );
             CRM_Core_Session::setStatus( $anonMessage );
         } else {
-           $statusMessage = ts( 'The personal campaign page you requested is currently unavailable. However you can still support the campaign by making a contribution here.' ); 
+            $statusMessage = ts( 'The personal campaign page you requested is currently unavailable. However you can still support the campaign by making a contribution here.' ); 
         }
         
         $pcpBlock = new CRM_PCP_DAO_PCPBlock();
@@ -117,10 +117,9 @@ class CRM_PCP_Page_PCPInfo extends CRM_Core_Page
         
         // Redirect back to source page in case of error.
         if ($pcpInfo['page_type'] == 'contribute'){
-          $urlBase = 'civicrm/contribute/transact';
-        }
-        else if ($pcpInfo['page_type'] == 'event'){
-          $urlBase = 'civicrm/event/register';
+            $urlBase = 'civicrm/contribute/transact';
+        } else if ($pcpInfo['page_type'] == 'event'){
+            $urlBase = 'civicrm/event/register';
         }
                                  
         if ( $pcpInfo['status_id'] != $approvedId  || ! $pcpInfo['is_active'] ) {
@@ -141,28 +140,26 @@ class CRM_PCP_Page_PCPInfo extends CRM_Core_Page
 
         $default = array();
 
-        if ($pcpBlock->target_entity_type == 'contribute'){
-          $urlBase = 'civicrm/contribute/transact';
+        if ( $pcpBlock->target_entity_type == 'contribute' ) {
+            $urlBase = 'civicrm/contribute/transact';
+        } else if ( $pcpBlock->target_entity_type == 'event' ) {
+            $urlBase = 'civicrm/event/register';
         }
-        else if ($pcpBlock->target_entity_type == 'event'){
-          $urlBase = 'civicrm/event/register';
-        }
-        
-        if ($pcpBlock->entity_table == 'civicrm_event'){
-          $page_class = 'CRM_Event_DAO_Event';
-          require_once "CRM/Event/PseudoConstant.php";
-          $this->assign( 'pageName', CRM_Event_PseudoConstant::event( $pcpInfo['page_id'] ) );
-        }
-        else if ($pcpBlock->entity_table == 'civicrm_contribution_page'){
-          $page_class = 'CRM_Contribute_DAO_ContributionPage';
-          require_once "CRM/Contribute/PseudoConstant.php";
-          $this->assign( 'pageName', CRM_Contribute_PseudoConstant::contributionPage( $pcpInfo['page_id'], true ) );
+
+        if ( $pcpBlock->entity_table == 'civicrm_event' ) {
+            $page_class = 'CRM_Event_DAO_Event';
+            require_once "CRM/Event/PseudoConstant.php";
+            $this->assign( 'pageName', CRM_Event_PseudoConstant::event( $pcpInfo['page_id'] ) );
+        } else if ($pcpBlock->entity_table == 'civicrm_contribution_page'){
+            $page_class = 'CRM_Contribute_DAO_ContributionPage';
+            require_once "CRM/Contribute/PseudoConstant.php";
+            $this->assign( 'pageName', CRM_Contribute_PseudoConstant::contributionPage( $pcpInfo['page_id'], true ) );
         }
 
         CRM_Core_DAO::commonRetrieveAll( $page_class, 'id',
                                          $pcpInfo['page_id'], $default, array( 'start_date', 'end_date' ) );
 
-        if( $pcpInfo['contact_id'] == $session->get( 'userID' ) ) {
+        if ( $pcpInfo['contact_id'] == $session->get( 'userID' ) ) {
             $owner = $default[$pcpInfo['page_id']];
             $owner['status'] = CRM_Utils_Array::value( $pcpInfo['status_id'], $pcpStatus );
             $this->assign('owner', $owner );
@@ -215,7 +212,7 @@ class CRM_PCP_Page_PCPInfo extends CRM_Core_Page
         $achieved    = round($totalAmount/$pcpInfo['goal_amount'] *100, 2);
         
 
-        if ( $pcpBlock->status_id == 1 ) {
+        if ( $pcpBlock->is_active == 1 ) {
             $linkTextUrl = CRM_Utils_System::url( 'civicrm/contribute/campaign',
                                                                       "action=add&reset=1&pageId={$pcpInfo['page_id']}&component={$pcpInfo['page_type']}",
                                                                       true, null, true,
