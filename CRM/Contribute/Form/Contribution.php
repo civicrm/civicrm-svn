@@ -1256,6 +1256,10 @@ WHERE  contribution_id = {$this->_id}
             $paymentParams['contributionPageID']                   = null;
             if ( CRM_Utils_Array::value( 'is_email_receipt', $this->_params ) ) {
                 $paymentParams['email'] = $this->userEmail;
+                $paymentParams['is_email_receipt']    =1;
+            }else{
+                $paymentParams['is_email_receipt'] = 0;
+                $this->_params['is_email_receipt'] =0;
             }
 
             if ( CRM_Utils_Array::value( 'receive_date', $this->_params ) ) {

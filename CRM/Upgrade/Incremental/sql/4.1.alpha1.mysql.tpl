@@ -350,6 +350,10 @@ VALUES
     ( @domainID, 'Hourly' , NULL, 'Mailings scheduler', 'Sends out scheduled mailings', 'civicrm_v3_mailing_process', 'user=USERNAME\r\npassword=PASSWORD\r\nkey=SITE_KEY', 0);
 
 
+//CRM 9135
+ALTER TABLE civicrm_contribution_recur
+ ADD is_email_receipt TINYINT (4) COMMENT 'if true, receipt is automatically emailed to contact on each successful payment' AFTER payment_processor_id;
+
 
 #Other tasks
 # 1) Change the civicrm/admin/pcp?reset=1 navigation item to civicrm/admin/pcp?reset=1&context=contribute
