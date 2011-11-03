@@ -65,6 +65,10 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         if ( $this->_action & (CRM_Core_Action::DELETE ) ) { 
             $reminderName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_ActionSchedule', 
                                                          $this->_id, 'title' );
+            $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this ); 
+            if ( $this->_context == 'event') {
+                $this->_eventId = CRM_Utils_Request::retrieve( 'eventId', 'Integer', $this );
+            }
             $this->assign('reminderName', $reminderName);
             return;
         } elseif ( $this->_action & (CRM_Core_Action::UPDATE ) ) { 
@@ -273,6 +277,12 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             // delete reminder
             CRM_Core_BAO_ActionSchedule::del( $this->_id );
             CRM_Core_Session::setStatus( ts('Selected Reminder has been deleted.') );
+            if ( $this->_context == 'event' && $this->_eventId ) {
+                $url = CRM_Utils_System::url( 'civicrm/event/manage/reminder', 
+                                              "reset=1&action=update&id={$this->_eventId}" );
+                $session = CRM_Core_Session::singleton( ); 
+                $session->pushUserContext( $url );
+            }
             return;
         }
         $values = $this->controller->exportValues( $this->getName() );
