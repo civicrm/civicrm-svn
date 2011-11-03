@@ -121,6 +121,8 @@ class civicrm_Cli {
         $_SERVER['REMOTE_ADDR'] = "127.0.0.1";
         // SCRIPT_FILENAME needed by CRM_Utils_System::cmsRootPath
         $_SERVER['SCRIPT_FILENAME'] = __FILE__;
+        // CRM-8917 - check if script name starts with /, if not - prepend it.
+        if (ord($_SERVER['SCRIPT_NAME']) != 47) $_SERVER['SCRIPT_NAME'] = '/'. $_SERVER['SCRIPT_NAME']; 
 
         $civicrm_root = dirname(__DIR__);
         chdir( $civicrm_root );
