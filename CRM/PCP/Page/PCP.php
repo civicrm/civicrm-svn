@@ -225,29 +225,27 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
         require_once 'CRM/Core/Permission.php'; 
         $allowToDelete = CRM_Core_Permission::check( 'delete in CiviContribute' );
 
-        $pages = array();
-        
         // get all contribution pages
-        $query = "SELECT * FROM civicrm_contribution_page";
-        $cpages = CRM_Core_DAO::executeQuery($query, $params = array());
-        while($cpages->fetch()){
-          $pages['contribute'][$cpages->id]['id']         = $cpages->id;
-          $pages['contribute'][$cpages->id]['title']      = $cpages->title;
-          $pages['contribute'][$cpages->id]['start_date'] = $cpages->start_date;
-          $pages['contribute'][$cpages->id]['end_date']   = $cpages->end_date;
+        $query = "SELECT id, title, start_date, end_date FROM civicrm_contribution_page";
+        $cpages = CRM_Core_DAO::executeQuery( $query );
+        while ( $cpages->fetch() ) {
+            $pages['contribute'][$cpages->id]['id']         = $cpages->id;
+            $pages['contribute'][$cpages->id]['title']      = $cpages->title;
+            $pages['contribute'][$cpages->id]['start_date'] = $cpages->start_date;
+            $pages['contribute'][$cpages->id]['end_date']   = $cpages->end_date;
         }
 
         // get all event pages
-        $query = "SELECT * FROM civicrm_event";
-        $epages = CRM_Core_DAO::executeQuery($query, $params = array());
-        while($epages->fetch()){
-          $pages['event'][$epages->id]['id']         = $epages->id;
-          $pages['event'][$epages->id]['title']      = $epages->title;
-          $pages['event'][$epages->id]['start_date'] = $epages->start_date;
-          $pages['event'][$epages->id]['end_date']   = $epages->end_date;
+        $query = "SELECT id, title, start_date, end_date FROM civicrm_event";
+        $epages = CRM_Core_DAO::executeQuery( $query );
+        while ( $epages->fetch() ) {
+            $pages['event'][$epages->id]['id']         = $epages->id;
+            $pages['event'][$epages->id]['title']      = $epages->title;
+            $pages['event'][$epages->id]['start_date'] = $epages->start_date;
+            $pages['event'][$epages->id]['end_date']   = $epages->end_date;
         }
         
-        $params = $this->get('params') ? $this->get('params') : array();
+        $params      = $this->get('params') ? $this->get('params') : array();
         $title       = ' cp.title LIKE %6';
         $params['6'] = array( $this->_sortByCharacter . '%', 'String' );        
 
@@ -298,25 +296,25 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
             $page_type = $pcp->page_type;
             $page_id = (int) $pcp->page_id;
             if ($pages[$page_type][$page_id]['title'] == '' || $pages[$page_type][$page_id]['title'] == NULL){
-              $title = '(no title found for ' . $page_type . ' id ' . $page_id . ')';
+                $title = '(no title found for ' . $page_type . ' id ' . $page_id . ')';
             } else {
-              $title = $pages[$page_type][$page_id]['title'];
+                $title = $pages[$page_type][$page_id]['title'];
             }
-            
-            $pcpSummary[$pcp->id] = array(
-              'id' => $pcp->id,
-              'start_date' => $pcp->start_date,
-              'end_date' => $pcp->end_date,
-              'supporter' => $contact['0'],
-              'supporter_id' => $pcp->contact_id,
-              'status_id' => $status[$pcp->status_id],
-              'page_id' => $page_id,
-              'page_title' => $title,
-              'page_url' => CRM_Utils_System::url('civicrm/' . $page_type . '/transact', 'reset=1&id=' . $pcp->page_id),
-              'action' => CRM_Core_Action::formLink(self::links(), $action,
+
+             
+            $pcpSummary[$pcp->id] = array( 'id' => $pcp->id,
+                'start_date' => $pcp->start_date,
+                'end_date' => $pcp->end_date,
+                'supporter' => $contact['0'],
+                'supporter_id' => $pcp->contact_id,
+                'status_id' => $status[$pcp->status_id],
+                'page_id' => $page_id,
+                'page_title' => $title,
+                'page_url' => CRM_Utils_System::url('civicrm/' . $page_type . '/transact', 'reset=1&id=' . $pcp->page_id),
+                'action' => CRM_Core_Action::formLink(self::links(), $action,
                                                     array('id' => $pcp->id)),
-              'title' => $pcp->title,
-              'class' => $class
+                'title' => $pcp->title,
+                'class' => $class
             );
 
             //CRM_Core_DAO::storeValues( $pcp, $pcpSummary[$pcp->id] );
