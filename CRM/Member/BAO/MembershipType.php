@@ -510,7 +510,11 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             
             switch ( $membershipTypeDetails['duration_unit'] ) {
             case 'year' :
-                $year  = $year   + ( $numRenewTerms * $membershipTypeDetails['duration_interval'] );
+                $year = $year   + ( $numRenewTerms * $membershipTypeDetails['duration_interval'] );
+                if  ( $membershipTypeDetails['period_type'] == 'fixed' ) {
+                    $month = substr( $membershipTypeDetails['fixed_period_rollover_day'], 0, strlen($membershipTypeDetails['fixed_period_rollover_day']) - 2 );
+                    $day = substr( $membershipTypeDetails['fixed_period_rollover_day'],-2)+1;
+                }
                 break;
             case 'month':
                 $month = $month  + ( $numRenewTerms * $membershipTypeDetails['duration_interval'] );
