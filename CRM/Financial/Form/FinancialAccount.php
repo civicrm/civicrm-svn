@@ -74,7 +74,7 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form
         $this->add('hidden', 'parent_id', '', array( 'id' => 'parent_id') );
         $this->add('text', 'tax_rate', ts('Tax Rate'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'tax_rate' ) );
         
-        $this->add('checkbox', 'is_deductible', ts('Tax-deductible?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'is_deductible' ) );
+        $this->add('checkbox', 'is_deductible', ts('Tax-Deductible?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'is_deductible' ) );
         $this->add('checkbox', 'is_active', ts('Enabled?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'is_active' ) );
         $this->add('checkbox', 'is_header_account', ts('Header-Account?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'is_header_account' ) );
         $this->add('checkbox', 'is_tax', ts('Is Tax?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'is_tax' ) );
@@ -103,9 +103,10 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form
     static function formRule( $values, $files, $self ) 
     {
         $errorMsg = array( );
-        if ( $values['tax_rate'] <= 0 || $values['tax_rate'] > 100 ){
-            $errorMsg['tax_rate'] = ts( 'Tax Rate Should be between 0 - 100' );
-        }
+        if( !empty( $values['tax_rate'] )  )
+            if ( $values['tax_rate'] <= 0 || $values['tax_rate'] > 100 ){
+                $errorMsg['tax_rate'] = ts( 'Tax Rate Should be between 0 - 100' );
+            }
         return CRM_Utils_Array::crmIsEmptyArray( $errorMsg ) ? true : $errorMsg;
     }
        

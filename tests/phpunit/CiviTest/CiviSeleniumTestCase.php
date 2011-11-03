@@ -189,6 +189,16 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->click("css=div.ac_results-inner li");
         $this->assertContains($sortName, $this->getValue('contact_1'), "autocomplete expected $sortName but didn’t find it in " . $this->getValue('contact_1'));
     }
+     /**
+     */
+    function webtestOrganisationAutocomplete( $sortName ) {
+        $this->type('organisation_name', $sortName);
+        $this->click('organisation_name');
+        $this->waitForElementPresent("css=div.ac_results-inner li");
+        $this->click("css=div.ac_results-inner li");
+        //$this->assertContains($sortName, $this->getValue('contact_1'), "autocomplete expected $sortName but didn’t find it in " . $this->getValue('contact_1'));
+    }
+    
 
     /*
      * 1. By default, when no strtotime arg is specified, sets date to "now + 1 month"

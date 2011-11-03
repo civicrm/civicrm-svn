@@ -48,20 +48,20 @@
        	      <span class="description">{ts}Use this field to flag contributions of this type with the corresponding code used in your accounting system. This code will be included when you export contribution data to your accounting package.{/ts}</span>
 	  </td>
        </tr>
-       <tr>
+       <tr class="crm-contribution-form-block-organisation_name">
 	  <td class="label"> {$form.organisation_name.label}&nbsp;{help id="id-current-employer" file="CRM/Contact/Form/Contact.hlp"}
 	  </td>
 	  <td class="html-adjust">{$form.organisation_name.html|crmReplace:class:twenty}
           </td>
        </tr>
 
-       <tr>
+       <tr class="crm-contribution-form-block-parent_financial_account">
 	  <td class="label">{$form.parent_financial_account.label}
 	  </td>
 	  <td class="html-adjust">{$form.parent_financial_account.html|crmReplace:class:twenty}
           </td>
        </tr>
-       <tr>
+       <tr class="crm-contribution-form-block-financial_account_type_id">
 	  <td class="label">{$form.financial_account_type_id.label}
 	  </td>
 	  <td class="html-adjust">{$form.financial_account_type_id.html|crmReplace:class:twenty}
@@ -87,7 +87,7 @@
     	  <td class="label">{$form.is_tax.label}</td>
 	  <td class="html-adjust">{$form.is_tax.html}</td>
        </tr>
-        <tr class="crm-contribution-form-block-is_tax">	 
+        <tr class="crm-contribution-form-block-tax_rate">	 
     	  <td class="label">{$form.tax_rate.label}</td>
 	  <td class="html-adjust">{$form.tax_rate.html}</td>
        </tr>
