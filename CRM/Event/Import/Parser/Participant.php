@@ -312,7 +312,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
         }
 
         if ( !( CRM_Utils_Array::value( 'participant_role_id', $params ) || CRM_Utils_Array::value( 'participant_role', $params ) ) ) {
-            if ( $params['event_id'] ) {
+            if ( CRM_Utils_Array::value('event_id', $params) ) {
                 $params['participant_role_id'] = 
                     CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Event", $params['event_id'] , 'default_role_id' );
             } else {
@@ -395,9 +395,10 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             
             //retrieve contact id using contact dedupe rule
             $formatValues['contact_type'] = $this->_contactType;
+            $formatValues['version'] = 3;
             $error = civicrm_api('CheckContact', 'Dedupe', $formatValues);
           
-            if ( civicrm_api3_duplicate( $error ) ) {
+            if ( CRM_Core_Error::isAPIError( $error, CRM_Core_ERROR::DUPLICATE_CONTACT ) ) {
                 $matchedIDs = explode(',',$error['error_message']['params'][0]);
                 if ( count( $matchedIDs) >= 1 ) {
                     foreach($matchedIDs as $contactId) {

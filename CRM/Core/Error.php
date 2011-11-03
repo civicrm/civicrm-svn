@@ -603,6 +603,16 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         CRM_Core_Transaction::forceRollbackIfEnabled( );
         CRM_Utils_System::civiExit( $code );
     }
+
+    public static function isAPIError($error, $type = CRM_Core_Error::FATAL_ERROR) {
+        if ( is_array( $error ) && CRM_Utils_Array::value( 'is_error', $error ) ) {
+            $code = $error['error_message']['code'];
+            if ($code == $type) {
+                return true ;
+            }
+        }
+        return false;        
+    }
 }
 
 PEAR_ErrorStack::singleton('CRM', false, null, 'CRM_Core_Error');

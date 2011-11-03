@@ -410,9 +410,10 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
             
             //retrieve contact id using contact dedupe rule
             $formatValues['contact_type'] = $this->_contactType;
+            $formatValues['version'] = 3;
             $error = civicrm_api('CheckContact', 'Dedupe', $formatValues);
             
-            if ( civicrm_api3_duplicate( $error ) ) { 
+            if ( CRM_Core_Error::isAPIError( $error, CRM_Core_ERROR::DUPLICATE_CONTACT ) ) { 
                 $matchedIDs = explode(',',$error['error_message']['params'][0]);
                 if (count( $matchedIDs) >1) {                   
                     array_unshift($values,"Multiple matching contact records detected for this row. The membership was not imported");

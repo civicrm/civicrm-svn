@@ -285,9 +285,10 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
             //retrieve contact id using contact dedupe rule.
             //since we are support only individual's activity import.
             $params['contact_type'] = 'Individual';
+            $params['version'] = 3;
             $error = civicrm_api('CheckContact',  'Dedupe', $params);
             
-            if ( civicrm_api3_duplicate( $error ) ) {
+            if ( CRM_Core_Error::isAPIError( $error, CRM_Core_ERROR::DUPLICATE_CONTACT ) ) {
                 $matchedIDs = explode(',',$error['error_message']['params'][0]);
                 if (count( $matchedIDs) > 1) {
                     array_unshift($values,"Multiple matching contact records detected for this row. The activity was not imported");

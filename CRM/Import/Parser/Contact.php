@@ -534,7 +534,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     unset( $dedupeParams['external_identifier'] );
                     
                     $checkDedupe = _civicrm_api3_duplicate_formatted_contact( $dedupeParams );
-                    if ( civicrm_api3_duplicate( $checkDedupe ) ) {
+                    if ( CRM_Core_Error::isAPIError( $checkDedupe, CRM_Core_ERROR::DUPLICATE_CONTACT ) ) {
                         $matchingContactIds = explode( ',', $checkDedupe['error_message']['params'][0] );
                         if ( count( $matchingContactIds ) == 1 ) {
                             $params['id'] = array_pop( $matchingContactIds );
@@ -550,7 +550,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             }
             
             $error = _civicrm_api3_duplicate_formatted_contact( $formatted );
-            if ( civicrm_api3_duplicate($error) ) { 
+            if ( CRM_Core_Error::isAPIError( $error, CRM_Core_ERROR::DUPLICATE_CONTACT ) ) { 
                 $matchedIDs = explode( ',', $error['error_message']['params'][0] );
                 if ( count( $matchedIDs) >= 1 ) {
                     $updateflag = true;
@@ -692,7 +692,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             if ( $this->_updateWithId ) {
                 $this->_retCode = CRM_Import_Parser::VALID;
             }
-        } else if ( civicrm_api3_duplicate( $newContact ) ) {
+        } else if ( CRM_Core_Error::isAPIError( $newContact, CRM_Core_ERROR::DUPLICATE_CONTACT ) ) {
             // if duplicate, no need of further processing
             if ( $onDuplicate == CRM_Import_Parser::DUPLICATE_SKIP ) {
                 $errorMessage = "Skipping duplicate record";
@@ -728,7 +728,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
 
         if ( $relationship ) {
             $primaryContactId = null;
-            if ( civicrm_api3_duplicate($newContact) ) {
+            if ( CRM_Core_Error::isAPIError( $newContact, CRM_Core_ERROR::DUPLICATE_CONTACT ) ) {
                 if ( CRM_Utils_Rule::integer( $newContact['error_message']['params'][0] ) ) {
                     $primaryContactId = $newContact['error_message']['params'][0];
                 }
@@ -736,7 +736,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 $primaryContactId = $newContact->id;
             }
             
-            if ( ( civicrm_api3_duplicate($newContact)  || is_a( $newContact, 'CRM_Contact_BAO_Contact' ) ) 
+            if ( ( CRM_Core_Error::isAPIError( $newContact, CRM_Core_ERROR::DUPLICATE_CONTACT ) || is_a( $newContact, 'CRM_Contact_BAO_Contact' ) ) 
                  && $primaryContactId ) {
                 
                 //relationship contact insert
@@ -842,7 +842,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     // To update/fill contact, get the matching contact Ids if duplicate contact found 
                     // otherwise get contact Id from object of related contact
                     if ( is_array( $relatedNewContact ) && civicrm_error( $relatedNewContact ) ) {
-                        if ( civicrm_api3_duplicate($relatedNewContact) ) {
+                        if ( CRM_Core_Error::isAPIError( $relatedNewContact, CRM_Core_ERROR::DUPLICATE_CONTACT ) ) {
                             $matchedIDs = explode(',',$relatedNewContact['error_message']['params'][0]);
                         } else {
                             $errorMessage = $relatedNewContact['error_message'];
@@ -876,7 +876,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         }
                     } 
                     static $relativeContact = array( ) ;
-                    if ( civicrm_api3_duplicate( $relatedNewContact ) ) {
+                    if ( CRM_Core_Error::isAPIError( $relatedNewContact, CRM_Core_ERROR::DUPLICATE_CONTACT ) ) {
                         if ( count( $matchedIDs ) >= 1 ) {
                             $relContactId = $matchedIDs[0];
                             //add relative contact to count during update & fill mode.
@@ -896,7 +896,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         $this->_newRelatedContacts[] = $relativeContact[] = $relContactId;
                     }
                     
-                    if ( civicrm_api3_duplicate( $relatedNewContact ) ||
+                    if ( CRM_Core_Error::isAPIError( $relatedNewContact, CRM_Core_ERROR::DUPLICATE_CONTACT ) ||
                          ( $relatedNewContact instanceof CRM_Contact_BAO_Contact ) ) {
                         //fix for CRM-1993.Checks for duplicate related contacts
                         if ( count( $matchedIDs ) >= 1 ) {
