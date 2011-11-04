@@ -394,6 +394,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
 SELECT     civicrm_event.id as id, civicrm_event.title as event_title, civicrm_event.is_public as is_public,
            civicrm_event.max_participants as max_participants, civicrm_event.start_date as start_date,
            civicrm_event.end_date as end_date, civicrm_event.is_online_registration, civicrm_event.is_monetary, civicrm_event.is_show_location,civicrm_event.is_map as is_map, civicrm_option_value.label as event_type, civicrm_tell_friend.is_active as is_friend_active,
+           civicrm_event.slot_label_id,
            civicrm_event.summary as summary
 FROM       civicrm_event
 LEFT JOIN  civicrm_option_value ON (
@@ -520,6 +521,7 @@ LIMIT      0, 10
             $eventSummary['events'][$dao->id]['is_monetary'] = $dao->is_monetary;
             $eventSummary['events'][$dao->id]['is_online_registration'] = $dao->is_online_registration;
             $eventSummary['events'][$dao->id]['is_show_location'] = $dao->is_show_location;
+            $eventSummary['events'][$dao->id]['is_subevent'] = $dao->slot_label_id;
 
             $statusTypes = CRM_Event_PseudoConstant::participantStatus( );
             foreach ( $statusValues as $statusId => $statusValue ) {

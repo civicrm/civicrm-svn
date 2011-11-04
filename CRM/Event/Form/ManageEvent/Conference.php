@@ -50,21 +50,6 @@ class CRM_Event_Form_ManageEvent_Conference extends CRM_Event_Form_ManageEvent
     public $_action;
 
     /**
-     * in Date
-     */
-    private $_inDate;
-    /** 
-     * Function to set variables up before form is built 
-     *                                                           
-     * @return void 
-     * @access public 
-     */ 
-    function preProcess( ) 
-    {
-        parent::preProcess( );
-    }
-
-    /**
      * This function sets the default values for the form. For edit/view mode
      * the default values are retrieved from the database
      *
@@ -94,9 +79,7 @@ class CRM_Event_Form_ManageEvent_Conference extends CRM_Event_Form_ManageEvent
 
         $defaults = array_merge( $defaults, $parentDefaults );
         $defaults['id'] = $eventId;
-        
-        //$this->assign('inDate', $this->_inDate );
-       
+
         return $defaults;
     }
     
