@@ -832,8 +832,8 @@ function civicrm_api3_contact_geocode( $params )
     // available params:
     // 'start=', 'end=', 'geocoding=', 'parse=', 'throttle='
 
-    require_once 'CRM/Utils/Geocode/MassGeocode.php';
-    $gc = new CRM_Utils_Geocode_MassGeocode( $params );
+    require_once 'CRM/Utils/Adress/BatchUpdate.php';
+    $gc = new CRM_Utils_Address_BatchUpdate( $params );
 
     
     $result = $gc->run();

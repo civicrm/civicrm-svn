@@ -36,7 +36,7 @@ require_once 'CRM/Core/ScheduledJob.php';
  *
  */
 
-class CRM_Utils_Geocode_MassGeocode
+class CRM_Utils_Address_BatchUpdate
 {
 
     var $start = null;
