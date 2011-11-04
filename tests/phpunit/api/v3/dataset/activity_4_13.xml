@@ -75,6 +75,7 @@
       <null />   <!--  is_deleted  -->
       <null />   <!--  campaign_id  -->
       <null />   <!--  engagement_level  --> 
+      <null />   <!--  weight  --> 
     </row>
   </table>
 </dataset>

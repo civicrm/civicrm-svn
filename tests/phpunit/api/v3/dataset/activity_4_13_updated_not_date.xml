@@ -26,6 +26,7 @@
     <column>is_deleted</column>
     <column>campaign_id</column>
     <column>engagement_level</column>
+    <column>weight</column>
     <row>
       <value>4</value>                      <!--  id  -->
       <value>17</value>                      <!--  source_contact_id  -->
@@ -76,6 +77,7 @@
       <null />   <!--  is_deleted  -->
       <null />   <!--  campaign_id -->
       <null />   <!--  engagement_level  --> 
+      <null />   <!--  weight  --> 
     </row>
   </table>
 </dataset>
