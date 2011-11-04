@@ -508,7 +508,7 @@ class CRM_Core_SelectValues
      * @return array $addr array of address standardization providers
      * @static
      */
-    static function &addressProvider()
+    static function addressProvider()
     {
         static $addr = null;
         if (! $addr ) {

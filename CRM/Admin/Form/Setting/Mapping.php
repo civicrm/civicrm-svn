@@ -66,7 +66,7 @@ class CRM_Admin_Form_Setting_Mapping extends CRM_Admin_Form_Setting
      * global form rule
      *
      * @param array $fields  the input form values
-
+     *
      * @return true if no errors, else array of errors
      * @access public
      * @static

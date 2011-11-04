@@ -25,7 +25,7 @@
 *}
 <div class="crm-block crm-form-block crm-map-form-block">
 <div id="help">
-    {ts}CiviCRM includes plugins for Google and Yahoo geocoding and mapping services which allow your users to geocode addresses and display contact addresses on a map. If you are using Yahoo you must obtain a 'key' for your site and enter it here. Most organizations will use the same service for both geocoding and mapping.{/ts} {help id='map-key'}
+    {ts}CiviCRM includes plugins for several geocoding and mapping services which allow your users to geocode addresses and display contact and event location addresses on a map.{/ts} {help id='map-intro-id'}
 </div>
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     <table class="form-layout-compressed">
@@ -37,7 +37,7 @@
          <tr class="crm-map-form-block-mapAPIKey">
              <td>{$form.mapAPIKey.label}</td>
              <td>{$form.mapAPIKey.html|crmReplace:class:huge}<br />
-             <span class="description">{ts}Enter your Google API Key OR your Yahoo Application ID.{/ts} {help id='map-key2'}</span></td>
+             <span class="description">{ts}Enter your Yahoo Application ID.{/ts} {help id='map-key'}</span></td>
          </tr>
          <tr class="crm-map-form-block-geoProvider">
              <td>{$form.geoProvider.label}</td>
@@ -47,7 +47,7 @@
          <tr class="crm-map-form-block-geoAPIKey">
              <td>{$form.geoAPIKey.label}</td>
              <td>{$form.geoAPIKey.html|crmReplace:class:huge}<br />
-             <span class="description">{ts}Enter the API key associated with your geocoding provider.{/ts} {help id='map-key2'}</span></td>
+             <span class="description">{ts}Enter the API key associated with your geocoding provider.{/ts} {help id='geo-key'}</span></td>
          </tr>
     </table>
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
@@ -57,10 +57,10 @@
 showHideMapAPIkey( cj('#mapProvider').val( ) );
 
 function showHideMapAPIkey( mapProvider ) {
-  if ( mapProvider && mapProvider == 'Google' ) {
-    cj('#Mapping tr.crm-map-form-block-mapAPIKey').hide( );
-  } else {
+  if ( mapProvider && mapProvider == 'Yahoo' ) {
     cj('#Mapping tr.crm-map-form-block-mapAPIKey').show( );
+  } else {
+    cj('#Mapping tr.crm-map-form-block-mapAPIKey').hide( );
   }
 }
 </script>

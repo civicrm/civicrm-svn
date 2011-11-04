@@ -59,25 +59,28 @@
         <table class="form-layout">
              <tr class="crm-preferences-address-form-block-description">
                 <td colspan="2">
-    	            <span class="description">{ts 1=https://www.usps.com/business/webtools-address-information.htm}CiviCRM includes an optional plugin for interfacing the the United States Postal Services (USPS) Address Standardization web service. You must register to use the USPS service at <a href='%1' target='_blank'>%1</a>. If you are approved, they will provide you with a User ID and the URL for the service.{/ts}</span>
+    	            <span class="description">
+    	                {ts 1=https://www.usps.com/business/webtools-address-information.htm}CiviCRM includes an optional plugin for interfacing with the United States Postal Services (USPS) Address Standardization web service. You must register to use the USPS service at <a href='%1' target='_blank'>%1</a>. If you are approved, they will provide you with a User ID and the URL for the service.{/ts}
+    	                {ts}Plugins for other address standardization services may be available from 3rd party developers. If installed, they will be included in the drop-down below.{/ts}
+    	            </span>
     	        </td>
             </tr>
             <tr class="crm-preferences-address-form-block-address_standardization_provider">
             	<td class="label">{$form.address_standardization_provider.label}</td>
             	<td>{$form.address_standardization_provider.html}<br />
-            	<span class="description">{ts}Address Standardization Provider. Currently, only 'USPS' is supported.{/ts}</span>
+            	<span class="description">{ts}Address Standardization Provider.{/ts}</span>
                 </td>
             </tr>
             <tr class="crm-preferences-address-form-block-address_standardization_userid">
             	<td class="label">{$form.address_standardization_userid.label}
             	<td>{$form.address_standardization_userid.html}<br />
-            	<span class="description">{ts}USPS-provided User ID.{/ts}</span>
+            	<span class="description">{ts}Web service user ID.{/ts}</span>
                 </td>
             </tr>
             <tr class="crm-preferences-address-form-block-address_standardization_url">
             	<td class="label">{$form.address_standardization_url.label}
             	<td>{$form.address_standardization_url.html}<br />
-            	<span class="description">{ts}USPS-provided web service URL.{/ts}</span>
+            	<span class="description">{ts}Web service URL.{/ts}</span>
             	</td>
             </tr>
         </table>
