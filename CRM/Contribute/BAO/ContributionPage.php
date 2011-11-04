@@ -232,8 +232,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
             }
 
             require_once "CRM/Contribute/PseudoConstant.php";
-            $contribution_page = CRM_Contribute_PseudoConstant::contributionPage($values['contribution_page_id']);
-            $title = isset($values['title']) ? $values['title'] : $contribution_page;
+            $title = isset($values['title']) ? $values['title'] : CRM_Contribute_PseudoConstant::contributionPage($values['contribution_page_id']);
 
             // set email in the template here
             $tplParams = array(
