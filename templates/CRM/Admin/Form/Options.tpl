@@ -38,7 +38,7 @@
            <tr class="crm-admin-options-form-block-custom_search_path">
              <td class="label">{ts}Custom Search Path{/ts}</td>
              <td>{$form.label.html}<br />
-                <span class="description">{ts}Enter the "class path" for this custom search here.{/ts} {docURL page="Custom Search Components"}
+                <span class="description">{ts}Enter the "class path" for this custom search here.{/ts} {docURL page="Creating A Custom Search Extension"}
              </td>
            </tr>
         {elseif $gName eq 'from_email_address'} 
