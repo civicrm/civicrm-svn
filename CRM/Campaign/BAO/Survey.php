@@ -663,10 +663,10 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
      */
     static function getResultSets(  ) {
         $resultSets = array( );
-        $query = "SELECT id, label FROM civicrm_option_group WHERE name LIKE 'civicrm_survey_%' AND is_active=1";
+        $query = "SELECT id, title FROM civicrm_option_group WHERE name LIKE 'civicrm_survey_%' AND is_active=1";
         $dao   = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
-            $resultSets[$dao->id] = $dao->label;
+            $resultSets[$dao->id] = $dao->title;
         }
         
         return $resultSets;
