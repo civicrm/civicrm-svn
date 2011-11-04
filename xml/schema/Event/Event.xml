@@ -538,4 +538,25 @@
       <comment>Can people share the event through social media?</comment> 
       <add>4.1</add> 
   </field>
+  <field>
+      <name>parent_event_id</name>
+      <type>int unsigned</type>
+      <default>NULL</default>
+      <comment>Implicit FK to civicrm_event: parent event</comment>
+      <add>4.1</add>
+  </field>
+  <index>
+      <name>index_parent_event_id</name>
+      <fieldName>parent_event_id</fieldName>
+      <add>4.1</add>
+  </index>
+  <field>
+      <name>slot_label_id</name>
+      <type>int unsigned</type> 
+      <uniqueName>event_type_id</uniqueName>
+      <title>Subevent Slot Label ID</title>  
+      <default>NULL</default>
+      <comment>Subevent slot label. Implicit FK to civicrm_option_value where option_group = conference_slot.</comment> 
+      <add>4.1</add>
+  </field>
 </table>

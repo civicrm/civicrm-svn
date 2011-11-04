@@ -239,30 +239,29 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         $allowRegistration = false;
         if ( CRM_Utils_Array::value( 'is_online_registration', $values['event'] ) ) {
             if ( CRM_Event_BAO_Event::validRegistrationRequest( $values['event'], $this->_id ) ) {
+                // we always generate urls for the front end in joomla
+                $action_query = $action === CRM_Core_Action::PREVIEW ? "&action=$action" : '';
+                $url    = CRM_Utils_System::url( 'civicrm/event/register',
+                                                 "id={$this->_id}&reset=1{$action_query}",
+                                                 true, null, true,
+                                                 true );
                 if ( !$eventFullMessage || $hasWaitingList ) {
                     $registerText = ts('Register Now');
                     if ( CRM_Utils_Array::value('registration_link_text', $values['event'] ) ) {
                         $registerText = $values['event']['registration_link_text'];
                     }
+                    if ($config->enable_cart)
+                    {
+                        require_once('CRM/Event/Cart/BAO/EventInCart.php');
+                        $link = CRM_Event_Cart_BAO_EventInCart::get_registration_link($this->_id);
+                        $registerText = $link['label'];
+
+                        $url = CRM_Utils_System::url( $link['path'], $link['query'].$action_query, true, null, true, true);
+                    }
                     //Fixed for CRM-4855
                     $allowRegistration = CRM_Event_BAO_Event::showHideRegistrationLink( $values );
                     
                     $this->assign( 'registerText', $registerText );
-                }
-                
-                // we always generate urls for the front end in joomla
-                if ( $action ==  CRM_Core_Action::PREVIEW ) {
-                    $url    = CRM_Utils_System::url( 'civicrm/event/register',
-                                                     "id={$this->_id}&reset=1&action=preview",
-                                                     true, null, true,
-                                                     true );
-                } else {
-                    $url = CRM_Utils_System::url( 'civicrm/event/register',
-                                                  "id={$this->_id}&reset=1",
-                                                  true, null, true,
-                                                  true );
-                }
-                if ( !$eventFullMessage || $hasWaitingList ) {
                     $this->assign( 'registerURL', $url    );
                 }
             } else if ( CRM_Core_Permission::check( 'register for events' ) ) {

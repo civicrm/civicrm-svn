@@ -58,6 +58,15 @@
      <weight>0</weight>
   </item>
   <item>
+     <path>civicrm/admin/event_settings</path>
+     <title>Configure CiviEvent Settings</title>
+     <page_callback>CRM_Admin_Form_Setting_Event</page_callback>
+     <desc>Configure global event settings.</desc>
+     <access_arguments>access CiviEvent,administer CiviCRM</access_arguments>
+     <adminGroup>CiviEvent</adminGroup>
+     <weight>360</weight>
+  </item>
+  <item>
      <path>civicrm/admin/event</path>
      <title>Manage Events</title>
      <page_callback>CRM_Event_Page_ManageEvent</page_callback>
@@ -109,6 +118,16 @@
      <icon>admin/small/parti_role.png</icon>
      <weight>395</weight>
   </item>
+  <item>
+     <path>civicrm/admin/conference_slots</path>
+     <title>Conference Slot Labels</title>
+     <page_callback>CRM_Admin_Page_Options</page_callback>
+     <desc>Define conference slots and labels.</desc>
+     <path_arguments>group=conference_slot</path_arguments>
+     <access_arguments>administer CiviCRM,access CiviEvent</access_arguments>
+     <adminGroup>CiviEvent</adminGroup>
+     <weight>415</weight>
+  </item>  
   <item>
      <path>civicrm/event/search</path>
      <title>Find Participants</title>
@@ -181,6 +200,14 @@
      <weight>950</weight>
   </item>
   <item>
+     <path>civicrm/event/manage/conference</path>
+     <title>Conference Slots</title>
+     <page_callback>CRM_Event_Form_ManageEvent_Conference</page_callback>
+     <access_arguments>access CiviEvent</access_arguments>
+     <is_ssl>true</is_ssl>
+     <weight>950</weight>
+  </item>
+  <item>
      <path>civicrm/event/add</path>
      <path_arguments>action=add</path_arguments>
      <title>New Event</title>
@@ -241,5 +268,42 @@
      <path>civicrm/ajax/eventlist</path>
      <page_callback>CRM_Event_Page_AJAX::eventList</page_callback>
      <access_arguments>access CiviCRM,access CiviEvent</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/ajax/event/add_participant_to_cart</path>
+    <page_callback>CRM_Event_Cart_Page_CheckoutAJAX::add_participant_to_cart</page_callback>
+    <access_callback>1</access_callback>
+  </item>
+  <item>
+    <path>civicrm/event/add_to_cart</path>
+    <title>Add Event To Cart</title>
+    <page_callback>CRM_Event_Cart_Page_AddToCart</page_callback>
+    <access_callback>1</access_callback>
+    <is_public>true</is_public>
+    <is_ssl>false</is_ssl>
+  </item>
+  <item>
+    <path>civicrm/event/cart_checkout</path>
+    <title>Cart Checkout</title>
+    <page_callback>CRM_Event_Cart_Controller_Checkout</page_callback>
+    <access_callback>1</access_callback>
+    <is_public>true</is_public>
+    <is_ssl>true</is_ssl>
+  </item>
+  <item>
+    <path>civicrm/event/remove_from_cart</path>
+    <title>Remove From Cart</title>
+    <page_callback>CRM_Event_Cart_Page_RemoveFromCart</page_callback>
+    <access_callback>1</access_callback>
+    <is_public>true</is_public>
+    <is_ssl>false</is_ssl>
+  </item>
+  <item>
+    <path>civicrm/event/view_cart</path>
+    <title>View Cart</title>
+    <page_callback>CRM_Event_Cart_Page_ViewCart</page_callback>
+    <access_callback>1</access_callback>
+    <is_public>true</is_public>
+    <is_ssl>false</is_ssl>
   </item>
 </menu>

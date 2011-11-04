@@ -217,4 +217,28 @@
       <key>id</key> 
       <onDelete>SET NULL</onDelete>
   </foreignKey>
+  <field>
+      <name>discount_amount</name>
+      <type>int unsigned</type>
+      <comment>Discount Amount</comment>
+      <add>4.1</add>
+  </field>
+  <field>
+      <name>cart_id</name>
+      <type>int unsigned</type>
+      <comment>FK to civicrm_event_carts</comment>
+      <add>4.1</add>
+  </field>
+  <foreignKey>
+      <name>cart_id</name>
+      <table>civicrm_event_carts</table>
+      <key>id</key>
+      <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+      <name>must_wait</name>
+      <type>int</type>
+      <comment>On Waiting List</comment>
+      <add>4.1</add>
+  </field>
 </table>

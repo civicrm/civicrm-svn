@@ -110,6 +110,7 @@
         		    <li><a title="Location" class="action-item-wrap {if NOT $values.is_show_location} disabled{/if}" href="{crmURL p='civicrm/event/manage/location' q="reset=1&action=update&id=`$id`"}">{ts}Location{/ts}</a></li>
         		    <li><a title="Fees" class="action-item {if NOT $values.is_monetary} disabled{/if}" href="{crmURL p='civicrm/event/manage/fee' q="reset=1&action=update&id=`$id`"}">{ts}Fees{/ts}</a></li>
         		    <li><a title="Online Registration" class="action-item-wrap {if NOT $values.is_online_registration} disabled{/if}" href="{crmURL p='civicrm/event/manage/registration' q="reset=1&action=update&id=`$id`"}">{ts}Online Registration{/ts}</a></li>
+        		    <li><a title="Conference Slots" class="action-item-wrap {if NOT $values.is_subevent} disabled{/if}" href="{crmURL p='civicrm/event/manage/conference' q="reset=1&action=update&id=`$id`"}">{ts}Conference Slots{/ts}</a></li>
         		    <li><a title="Tell a Friend" class="action-item-wrap {if NOT $values.friend} disabled{/if}" href="{crmURL p='civicrm/event/manage/friend' q="reset=1&action=update&id=`$id`"}">{ts}Tell a Friend{/ts}</a></li>
         	 </span>
         	 </div>

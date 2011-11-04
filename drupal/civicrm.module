@@ -978,3 +978,26 @@ function civicrm_civicrm_postProcess ( $formName, $form ) {
         }
     }    
 }
+
+// XXX hack for Event/Cart to display civicrm messages to anonymous users
+function civicrm_init( ) {
+    if ( ! civicrm_initialize( ) ) {
+        return;
+    }
+  if ( arg(0) != 'civicrm' ) {
+    require_once 'CRM/Core/Session.php';
+    $session = CRM_Core_Session::singleton( );
+    if ( $session->getStatus( false ) ) {
+      $status = $session->getStatus( true );
+      if ( is_array( $status ) ) {
+        foreach ( $status as $key => $value )  {
+          drupal_set_message ( $value, $key );
+        }
+      }
+      else
+      {
+        drupal_set_message( $status, 'status' );
+      }
+    }
+  }
+}

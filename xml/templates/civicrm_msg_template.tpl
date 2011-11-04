@@ -50,6 +50,7 @@
     'event' => array(
       'event_offline_receipt' => ts('Events - Registration Confirmation and Receipt (off-line)', array('escape' => 'sql')),
       'event_online_receipt'  => ts('Events - Registration Confirmation and Receipt (on-line)',  array('escape' => 'sql')),
+      'event_registration_receipt'  => ts('Events - Receipt only',                               array('escape' => 'sql')),
       'participant_cancelled' => ts('Events - Registration Cancellation Notice',                 array('escape' => 'sql')),
       'participant_confirm'   => ts('Events - Registration Confirmation Invite',                 array('escape' => 'sql')),
       'participant_expired'   => ts('Events - Pending Registration Expiration Notice',           array('escape' => 'sql')),

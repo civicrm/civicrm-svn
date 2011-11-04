@@ -78,6 +78,9 @@ class CRM_Event_Page_ICalendar extends CRM_Core_Page
         } else if ( $gData ) {
             $calendar = $template->fetch( 'CRM/Core/Calendar/GData.tpl' );
         } else if ( $html ) {
+            if ($config->enable_cart) {
+                $this->assign( 'registration_links', true );
+            }
             return parent::run( );
         } else {
             $calendar = $template->fetch( 'CRM/Core/Calendar/ICal.tpl' );

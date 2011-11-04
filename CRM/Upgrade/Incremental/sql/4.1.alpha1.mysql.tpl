@@ -402,3 +402,68 @@ ALTER TABLE civicrm_contribution_recur
 #TODO
 # 1) Need to get the default filtes to apply on the Manage Personal Contribution Pages forms (taken frrom the contect argument)
 # 2) Lots of testing!
+
+-- /*****   Civicrm Multi-Event Registration   ***********/ 
+
+CREATE TABLE civicrm_event_carts (
+     id int unsigned NOT NULL AUTO_INCREMENT  COMMENT 'Cart Id',
+     user_id int unsigned    COMMENT 'FK to civicrm_contact who created this cart',
+     coupon_code varchar(255) DEFAULT NULL,
+     completed tinyint   DEFAULT 0,
+     PRIMARY KEY ( id ),
+     CONSTRAINT FK_civicrm_event_carts_user_id FOREIGN KEY (user_id)
+REFERENCES civicrm_contact(id) ON DELETE SET NULL
+)  ENGINE=InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci  ;
+
+CREATE TABLE civicrm_events_in_carts (
+     id int unsigned NOT NULL AUTO_INCREMENT  COMMENT 'Event In Cart Id',
+     event_id int unsigned    COMMENT 'FK to Event ID',
+     event_cart_id int unsigned    COMMENT 'FK to Event Cart ID',
+    PRIMARY KEY ( id ),
+     CONSTRAINT FK_civicrm_events_in_carts_event_id FOREIGN KEY (event_id)
+REFERENCES civicrm_event(id) ON DELETE CASCADE,
+     CONSTRAINT FK_civicrm_events_in_carts_event_cart_id FOREIGN KEY
+(event_cart_id) REFERENCES civicrm_event_carts(id) ON DELETE CASCADE
+)  ENGINE=InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci  ;
+
+
+ALTER TABLE civicrm_participant
+    ADD discount_amount int unsigned DEFAULT 0 COMMENT 'Discount Amount';
+ALTER TABLE civicrm_participant
+    ADD cart_id int unsigned DEFAULT NULL COMMENT 'FK to civicrm_event_carts';
+ALTER TABLE civicrm_participant
+    ADD CONSTRAINT FK_civicrm_participant_cart_id FOREIGN KEY (cart_id)
+        REFERENCES civicrm_event_carts(id) ON DELETE SET NULL;
+
+-- XXX a hint to the payment form.  Can someone make this go away?
+ALTER TABLE civicrm_participant
+    ADD must_wait TINYINT   DEFAULT 0 COMMENT 'On Waiting List';
+
+
+SELECT @pending_id                 := MAX(id) + 1 FROM civicrm_participant_status_type;
+INSERT INTO civicrm_participant_status_type
+  (id,          name,                         label,                                                       class,      is_reserved, is_active, is_counted, weight,      visibility_id)
+VALUES
+  (@pending_id, 'Pending in cart',            '{ts escape="sql"}Pending in cart{/ts}',                     'Pending',  1,           1,         0,          @pending_id, 2            );
+
+
+ALTER TABLE civicrm_event
+    ADD parent_event_id int unsigned DEFAULT NULL COMMENT 'Implicit FK to civicrm_event: parent event';
+ALTER TABLE civicrm_event
+    ADD slot_label_id int unsigned DEFAULT NULL COMMENT 'Subevent slot label. Implicit FK to civicrm_option_value where option_group = conference_slot.';
+
+INSERT INTO 
+   `civicrm_option_group` (`name`, `description`, `is_reserved`, `is_active`)
+VALUES 
+   ('conference_slot'               , '{ts escape="sql"}Conference Slot{/ts}'                    , 0, 1);
+
+SELECT @msg_tpl_workflow_event := MAX(id)     FROM civicrm_option_group WHERE name = 'msg_tpl_workflow_event';
+SELECT @weight                 := MAX(weight) + 1 FROM civicrm_option_value WHERE option_group_id = @msg_tpl_workflow_event;
+
+INSERT INTO civicrm_option_value
+  (option_group_id,         name,                         label,                                         value,   weight)
+VALUES
+  (@msg_tpl_workflow_event, 'event_registration_receipt', '{ts escape="sql"}Events - Receipt only{/ts}', @weight, @weight);
+
+{* SELECT @tpl_ovid_$vName := MAX(id) FROM civicrm_option_value WHERE option_group_id = @tpl_ogid_$gName AND name = '$vName'; *}
+{* INSERT INTO civicrm_msg_template *}

@@ -716,6 +716,10 @@ div.spacer,
 #crm-container ul.indented {
     padding-left: 3em;
 }
+#crm-container tr.subevent td.event-title {
+    padding-left: 3em;
+}
+
 
 /*
 ** CSS for links from Drupal Blocks.

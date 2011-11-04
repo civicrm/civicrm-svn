@@ -394,6 +394,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
 SELECT     civicrm_event.id as id, civicrm_event.title as event_title, civicrm_event.is_public as is_public,
            civicrm_event.max_participants as max_participants, civicrm_event.start_date as start_date,
            civicrm_event.end_date as end_date, civicrm_event.is_online_registration, civicrm_event.is_monetary, civicrm_event.is_show_location,civicrm_event.is_map as is_map, civicrm_option_value.label as event_type, civicrm_tell_friend.is_active as is_friend_active,
+           civicrm_event.slot_label_id,
            civicrm_event.summary as summary
 FROM       civicrm_event
 LEFT JOIN  civicrm_option_value ON (
@@ -520,6 +521,7 @@ LIMIT      0, 10
             $eventSummary['events'][$dao->id]['is_monetary'] = $dao->is_monetary;
             $eventSummary['events'][$dao->id]['is_online_registration'] = $dao->is_online_registration;
             $eventSummary['events'][$dao->id]['is_show_location'] = $dao->is_show_location;
+            $eventSummary['events'][$dao->id]['is_subevent'] = $dao->slot_label_id;
 
             $statusTypes = CRM_Event_PseudoConstant::participantStatus( );
             foreach ( $statusValues as $statusId => $statusValue ) {
@@ -794,6 +796,9 @@ WHERE civicrm_event.is_active = 1
         $permissions = CRM_Core_Permission::event( CRM_Core_Permission::VIEW );
 
         require_once 'CRM/Utils/String.php';
+        if ($config->enable_cart) {
+            require_once 'CRM/Event/Cart/BAO/EventInCart.php';
+        }
         while ( $dao->fetch( ) ) {
             if ( in_array($dao->event_id, $permissions) ) {
                 $info                     = array( );
@@ -833,6 +838,12 @@ WHERE civicrm_event.is_active = 1
                                           CRM_Utils_Address::format($addrFields) );
                 $info['location'     ] = $address;
                 $info['url'          ] = CRM_Utils_System::url( 'civicrm/event/info', 'reset=1&id=' . $dao->event_id, true, null, false );
+
+                if ($config->enable_cart) {
+                    $reg = CRM_Event_Cart_BAO_EventInCart::get_registration_link($dao->event_id);
+                    $info['registration_link'] = CRM_Utils_System::url($reg['path'], $reg['query'], true);
+                    $info['registration_link_text'] = $reg['label'];
+                }
                 
                 $all[] = $info;
             }
@@ -1926,4 +1937,11 @@ LEFT  JOIN  civicrm_price_field_value value ON ( value.id = lineItem.price_field
         $defaults = array_diff_key($defaults,array_flip($fieldsToExclude));     
         return $defaults;
     }
+    static function get_sub_events($event_id)
+    {
+        $params = array('parent_event_id' => $event_id);
+        $defaults = array();
+        return CRM_Event_BAO_Event::retrieve($params, $defaults);
+    }
+
 }
