@@ -62,6 +62,8 @@ class CRM_Core_Invoke
         require_once 'CRM/Core/Component.php';
         require_once 'CRM/Core/Permission.php';
 
+        $config = CRM_Core_Config::singleton( );
+
         if ( isset($args[1]) and $args[1] == 'menu' and 
              isset($args[2]) and $args[2] == 'rebuild' ) {
             // ensure that the user has a good privilege level
@@ -72,14 +74,15 @@ class CRM_Core_Invoke
                 // also reset navigation
                 require_once 'CRM/Core/BAO/Navigation.php';
                 CRM_Core_BAO_Navigation::resetNavigation( );
-            
+
+                // also cleanup all caches
+                $config->cleanupCaches( );
+
                 return CRM_Utils_System::redirect( );
             } else {
                 CRM_Core_Error::fatal( 'You do not have permission to execute this url' );
             }
         }
-
-        $config = CRM_Core_Config::singleton( );
 
         // first fire up IDS and check for bad stuff
         if ($config->useIDS) {
