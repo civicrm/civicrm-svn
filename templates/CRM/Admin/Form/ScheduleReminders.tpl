@@ -178,21 +178,31 @@
     invert              = 0
 }
 
- {literal}
- <script type='text/javascript'>
+{literal}
+<script type='text/javascript'>
+    cj('#absolute_date_display').change( function() {
+        if(cj('#absolute_date_display').val()) {
+            cj('#relativeDate').hide();
+            cj('#relativeDateRepeat').hide();
+            cj('#repeatFields').hide();
+        } else {
+            cj('#relativeDate').show();
+            cj('#relativeDateRepeat').show();
+        }
+    });
+    
+    cj('#absolute_date_display').parent( ).children('.crm-clear-link').children('a').click( function() {
+        cj('#relativeDate').show();
+        cj('#relativeDateRepeat').show();
+    });
 
-      cj('#absolute_date_display').click( function( ) {
-	 if(cj('#absolute_date_display').val()) {
-	     cj('#relativeDate').hide();
-	     cj('#relativeDateRepeat').hide();
-	     cj('#repeatFields').hide();
-	   } else {
-	     cj('#relativeDate').show();
-	     cj('#relativeDateRepeat').show();
-	   }
-      }); 
+    cj(function() {
+        if (cj('#absolute_date_display').val()) {
+            cj('#relativeDate').hide();
+            cj('#relativeDateRepeat').hide();
+            cj('#repeatFields').hide();
+         }
 
-      cj(function() {
          cj('#entity\\[0\\]').click( function( ) {
               buildSelect("start_action_date");
 	      buildSelect("end_date");
