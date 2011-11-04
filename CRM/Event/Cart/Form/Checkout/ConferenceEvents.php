@@ -27,9 +27,9 @@ class CRM_Event_Cart_Form_Checkout_ConferenceEvents extends CRM_Event_Cart_Form_
           FROM
                civicrm_event
           JOIN
-                civicrm_option_value slot ON civicrm_event.slot_label_id = slot.id
+                civicrm_option_value slot ON civicrm_event.slot_label_id = slot.value
           JOIN
-                civicrm_option_group og ON civicrm_option_value.option_group_id = og.id
+                civicrm_option_group og ON slot.option_group_id = og.id
 	  WHERE
 		parent_event_id = {$this->conference_event->id}
                 AND civicrm_event.is_active = 1
