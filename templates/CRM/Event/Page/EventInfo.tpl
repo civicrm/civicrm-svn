@@ -125,11 +125,7 @@
 	        <div class="crm-section event_map-section">
 	            <div class="content">
                     {assign var=showDirectly value="1"}
-                    {if $mapProvider eq 'Google'}
-                        {include file="CRM/Contact/Form/Task/Map/Google.tpl" fields=$showDirectly}
-                    {elseif $mapProvider eq 'Yahoo'}
-                        {include file="CRM/Contact/Form/Task/Map/Yahoo.tpl"  fields=$showDirectly}
-                    {/if}
+                    {include file="CRM/Contact/Form/Task/Map/`$config->mapProvider`.tpl" fields=$showDirectly}
                     <br /><a href="{$mapURL}" title="{ts}Show large map{/ts}">{ts}Show large map{/ts}</a>
 	            </div>
 	            <div class="clear"></div>

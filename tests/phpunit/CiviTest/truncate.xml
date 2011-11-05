@@ -91,6 +91,8 @@
 
   <civicrm_participant_status_type />
 
+  <civicrm_event_carts />
+
   <civicrm_dedupe_rule_group />
 
   <civicrm_dedupe_rule />
@@ -276,6 +278,8 @@
   <civicrm_participant />
 
   <civicrm_participant_payment />
+
+  <civicrm_events_in_carts />
 
   <civicrm_pledge_payment />
 </dataset>

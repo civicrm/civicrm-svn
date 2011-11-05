@@ -55,7 +55,7 @@ class CRM_Admin_Form_Setting_Mapping extends CRM_Admin_Form_Setting
         $geo = CRM_Core_SelectValues::geoProvider();
         $this->addElement('select','mapProvider', ts('Mapping Provider'),array('' => '- select -') + $map, array('onChange' => 'showHideMapAPIkey( this.value );'));  
         $this->add('text','mapAPIKey', ts('Map Provider Key'), null);  
-        $this->addElement('select','geoProvider', ts('Geocoding Provider'),array('' => '- select -') + $geo, array('onChange' => 'showHideMapAPIkey( this.value );'));  
+        $this->addElement('select','geoProvider', ts('Geocoding Provider'),array('' => '- select -') + $geo, array('onChange' => 'showHideGeoAPIkey( this.value );'));  
         $this->add('text','geoAPIKey', ts('Geo Provider Key'), null);  
     
         parent::buildQuickForm();
@@ -78,8 +78,12 @@ class CRM_Admin_Form_Setting_Mapping extends CRM_Admin_Form_Setting
             $errors['_qf_default'] = ts( 'Mapping features require PHP version 5 or greater' );
         }
 
-        if ( !$fields['mapAPIKey'] && ( $fields['mapProvider'] != '' && $fields['mapProvider'] != 'Google' )) {
-            $errors['mapAPIKey'] = "API key is a required field";
+        if ( !$fields['mapAPIKey'] && ( $fields['mapProvider'] != '' && $fields['mapProvider'] == 'Yahoo' )) {
+            $errors['mapAPIKey'] = "Map Provider key is a required field.";
+        } 
+
+        if ( $fields['mapProvider'] == 'OpenStreetMaps' && $fields['geoProvider'] == '' ) {
+            $errors['geoProvider'] = "Please select a Geocoding Provider - Open Street Maps does not provide geocoding.";
         } 
 
         return $errors;

@@ -152,7 +152,7 @@ class CRM_Contact_Form_Task_Map  extends CRM_Contact_Form_Task
             $imageUrlOnly = false;
             
             // google needs image url, CRM-6564
-            if ( $config->mapProvider == 'Google' ) {
+            if ( $config->mapProvider == 'Google' || $config->mapProvider == 'OpenStreetMaps' ) {
                 $imageUrlOnly = true;
             }
             $locations = CRM_Contact_BAO_Contact_Location::getMapInfo( $ids, $locationId, $imageUrlOnly );

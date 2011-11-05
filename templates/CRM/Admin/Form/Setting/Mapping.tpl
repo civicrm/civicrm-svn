@@ -25,7 +25,7 @@
 *}
 <div class="crm-block crm-form-block crm-map-form-block">
 <div id="help">
-    {ts}CiviCRM includes plugins for several geocoding and mapping services which allow your users to geocode addresses and display contact and event location addresses on a map.{/ts} {help id='map-intro-id'}
+    {ts}CiviCRM includes plugins for several mapping and geocoding web services. These services allow your users to display contact and event location addresses on a map.{/ts} {help id='map-intro-id'}
 </div>
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     <table class="form-layout-compressed">
@@ -37,17 +37,17 @@
          <tr class="crm-map-form-block-mapAPIKey">
              <td>{$form.mapAPIKey.label}</td>
              <td>{$form.mapAPIKey.html|crmReplace:class:huge}<br />
-             <span class="description">{ts}Enter your Yahoo Application ID.{/ts} {help id='map-key'}</span></td>
+             <span class="description">{ts}Enter your API Key or Application ID.{/ts}</span></td>
          </tr>
          <tr class="crm-map-form-block-geoProvider">
              <td>{$form.geoProvider.label}</td>
              <td>{$form.geoProvider.html}<br />
-             <span class="description">{ts}Choose the geocoding provider that has the best coverage for the majority of your contact addresses.{/ts}</span></td>
+             <span class="description">{ts}You may choose a different webservice for geocoding. This is required if there is no geo-coding plugin for your selected mapping provider. You can leave the Geocoding fields blank if you are using Google as your mapping provider.{/ts}</span></td>
          </tr>
          <tr class="crm-map-form-block-geoAPIKey">
              <td>{$form.geoAPIKey.label}</td>
              <td>{$form.geoAPIKey.html|crmReplace:class:huge}<br />
-             <span class="description">{ts}Enter the API key associated with your geocoding provider.{/ts} {help id='geo-key'}</span></td>
+             <span class="description">{ts}Enter the API key or Application ID associated with your geocoding provider.{/ts}</span></td>
          </tr>
     </table>
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
@@ -55,12 +55,21 @@
 {literal}
 <script type="text/javascript">
 showHideMapAPIkey( cj('#mapProvider').val( ) );
+showHideGeoAPIkey( cj('#geoProvider').val( ) );
 
 function showHideMapAPIkey( mapProvider ) {
-  if ( mapProvider && mapProvider == 'Yahoo' ) {
-    cj('#Mapping tr.crm-map-form-block-mapAPIKey').show( );
-  } else {
+  if ( mapProvider && ( mapProvider == 'Google' ||  mapProvider == 'OpenStreetMaps' ) ) {
     cj('#Mapping tr.crm-map-form-block-mapAPIKey').hide( );
+  } else {
+    cj('#Mapping tr.crm-map-form-block-mapAPIKey').show( );
+  }
+}
+
+function showHideGeoAPIkey( geoProvider ) {
+  if ( geoProvider && geoProvider == 'Google' ) {
+    cj('#Mapping tr.crm-map-form-block-geoAPIKey').hide( );
+  } else {
+    cj('#Mapping tr.crm-map-form-block-geoAPIKey').show( );
   }
 }
 </script>
