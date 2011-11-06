@@ -143,28 +143,25 @@ class api_v3_AddressTest extends CiviUnitTestCase
                          'version' => $this->_apiversion  );
         $result = civicrm_api('Address', 'Get', ($params));
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);
+        civicrm_api('Address', 'delete', array('version' => 3, 'id' => $result['id']));
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( $address['values'][$address['id']]['location_type_id'], $result['values'][$tag['id']]['location_type_id'], 'In line ' . __LINE__ );
         $this->assertEquals( $address['values'][$address['id']]['address_type_id'], $result['values'][$tag['id']]['address_type_id'], 'In line ' . __LINE__ );
         $this->assertEquals( $address['values'][$address['id']]['is_primary'], $result['values'][$tag['id']]['is_primary'], 'In line ' . __LINE__ );
         $this->assertEquals( $address['values'][$address['id']]['address'], $result['values'][$tag['id']]['address'], 'In line ' . __LINE__ );
+    
     } 
       /**
      * Test civicrm_address_get - success expected.
      */
     public function testGetSingleAddress()
     {  
-        $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
-       
-        $params = array( 'contact_id' => $address['id'],
-                         'address' => $address['values'][$address['id']]['address'],
+        civicrm_api('address', 'create', $this->params);
+        $params = array( 'contact_id' => $this->_contactID,
                          'version' => $this->_apiversion  );
-        $result = civicrm_api('Address', 'getsingle', ($params));
-        $this->assertAPISuccess($result, 'In line ' . __LINE__ );
-        $this->assertEquals( $address['location_type_id'], $result['values'][$tag['id']]['location_type_id'], 'In line ' . __LINE__ );
-        $this->assertEquals( $address['values'][$address['id']]['address_type_id'], $result['values'][$tag['id']]['address_type_id'], 'In line ' . __LINE__ );
-        $this->assertEquals( $address['values'][$address['id']]['is_primary'], $result['values'][$tag['id']]['is_primary'], 'In line ' . __LINE__ );
-        $this->assertEquals( $address['values'][$address['id']]['address'], $result['values'][$tag['id']]['address'], 'In line ' . __LINE__ );
+        $address = civicrm_api('Address', 'getsingle', ($params));
+        $this->assertEquals( $address['location_type_id'], $this->params['location_type_id'], 'In line ' . __LINE__ );
+        civicrm_api('address','delete', $address);
     }   
     /**
      * Test civicrm_address_get with sort option- success expected.
