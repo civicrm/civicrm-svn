@@ -84,6 +84,7 @@
  *    <li>wysiwygEditor</li>
  *  </ul>
  *  @example ConstantGet.php
+ *  {@getfields constant_get}
  */
 function civicrm_api3_constant_get($params)
 {
@@ -109,10 +110,11 @@ function civicrm_api3_constant_get($params)
 
 
 
-function civicrm_api3_constant_getfields($params) {
+function _civicrm_api3_constant_create_spec(&$params) {
 
-  return civicrm_api3_create_success (array ('name' => array('api.required' => 1,
-  'options' =>
+  $params =  (array 
+  ('name' => array('api.required' => 1,
+   'options' =>
    'activityStatus',
    'activityType',
    'addressee',
@@ -152,7 +154,6 @@ function civicrm_api3_constant_getfields($params) {
    'ufGroup',
    'visibility',
    'worldRegion',
-   'wysiwygEditor')),
-   $params);
+   'wysiwygEditor')));
 } 
 
