@@ -371,11 +371,21 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
         }
     }
 
-
+    $acceptedSQLOperators = array('IN', ' NOT IN', '=', '<=', '>=', '>', '<', 'BETWEEN', 'LIKE');
     if (!$fields)
         return;
     foreach ($fields as $field) {
+      if(is_array($params[$field])){
+        //array is the syntax for SQL clause
+        foreach ($params[$field] as $operator => $criteria){
+          if(in_array($operator,$acceptedSQLOperators)){
+            $dao->whereAdd($field . " " . $operator . " " . $criteria);
+          }
+          
+        } 
+      }else{
         $dao->$field = $params [$field];
+      }
     }
     if(!empty($params['return']) && is_array($params['return'])){
       $dao->selectAdd( );
@@ -1976,7 +1986,7 @@ function _civicrm_api3_generic_replace($entity, $params) {
 function _civicrm_api_get_fields($entity){
     $dao = _civicrm_api3_get_DAO ($entity);
     if (empty($dao)) {
-        return civicrm_api3_create_error("API for $entity does not exist (join the API team and implement $function" );
+        return array();
     }
     $file = str_replace ('_','/',$dao).".php";
     require_once ($file);

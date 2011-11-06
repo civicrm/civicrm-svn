@@ -149,7 +149,23 @@ class api_v3_AddressTest extends CiviUnitTestCase
         $this->assertEquals( $address['values'][$address['id']]['is_primary'], $result['values'][$tag['id']]['is_primary'], 'In line ' . __LINE__ );
         $this->assertEquals( $address['values'][$address['id']]['address'], $result['values'][$tag['id']]['address'], 'In line ' . __LINE__ );
     } 
-    
+      /**
+     * Test civicrm_address_get - success expected.
+     */
+    public function testGetSingleAddress()
+    {  
+        $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
+       
+        $params = array( 'contact_id' => $address['id'],
+                         'address' => $address['values'][$address['id']]['address'],
+                         'version' => $this->_apiversion  );
+        $result = civicrm_api('Address', 'getsingle', ($params));
+        $this->assertAPISuccess($result, 'In line ' . __LINE__ );
+        $this->assertEquals( $address['location_type_id'], $result['values'][$tag['id']]['location_type_id'], 'In line ' . __LINE__ );
+        $this->assertEquals( $address['values'][$address['id']]['address_type_id'], $result['values'][$tag['id']]['address_type_id'], 'In line ' . __LINE__ );
+        $this->assertEquals( $address['values'][$address['id']]['is_primary'], $result['values'][$tag['id']]['is_primary'], 'In line ' . __LINE__ );
+        $this->assertEquals( $address['values'][$address['id']]['address'], $result['values'][$tag['id']]['address'], 'In line ' . __LINE__ );
+    }   
     /**
      * Test civicrm_address_get with sort option- success expected.
      */
@@ -168,5 +184,40 @@ class api_v3_AddressTest extends CiviUnitTestCase
         $this->assertEquals( 2, $result['count'], 'In line ' . __LINE__ );
         $this->assertEquals( 'Ambachtstraat 23',$result['values'][0]['street_address'], 'In line ' . __LINE__ );
    } 
+   
+    /**
+     * Test civicrm_address_get with sort option- success expected.
+     */
+    public function testGetAddressLikeSuccess()
+    {  
+        civicrm_api('address','create',$this->params);
+        $subfile = "AddressLike";
+        $description = "Demonstrates Use of Like";
+        $params = array( 'street_address' => array('LIKE' => "'%mb%'"),
+                         'version' => $this->_apiversion  ,
+                         'sequential' => 1,
+                          );
+        $result = civicrm_api('Address', 'Get', ($params));
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__, $description,$subfile);
+        $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
+        $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Ambachtstraat 23',$result['values'][0]['street_address'], 'In line ' . __LINE__ );
+   }
+    /**
+     * Test civicrm_address_get with sort option- success expected.
+     */
+    public function testGetAddressLikeFail()
+    {  
+        civicrm_api('address','create',$this->params);
+        $subfile = "AddressLike";
+        $description = "Demonstrates Use of Like";
+        $params = array( 'street_address' => array('LIKE' => '%xy%'),
+                         'version' => $this->_apiversion  ,
+                         'sequential' => 1,
+                          );
+        $result = civicrm_api('Address', 'Get', ($params));
+        $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
+        $this->assertEquals( 0, $result['count'], 'In line ' . __LINE__ );
+  }
     
 }
