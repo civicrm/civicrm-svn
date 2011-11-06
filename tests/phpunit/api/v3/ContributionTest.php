@@ -177,7 +177,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
       $params = array('version' => $this->_apiversion );
         $contribution = civicrm_api('contribution', 'create', $params);
         $this->assertEquals( $contribution['is_error'], 1 ,'In line ' . __LINE__ );
-        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contact_id, total_amount, one of (contribution_type_id, contribution_type)', 'In line ' . __LINE__  );
+        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contact_id, total_amount', 'In line ' . __LINE__  );
     }
     
 
