@@ -622,10 +622,12 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
 
             $select = $join = $where = array( );
 
-            $value  = explode( CRM_Core_DAO::VALUE_SEPARATOR, $actionSchedule->entity_value  );
+            $value  = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                               trim($actionSchedule->entity_value, CRM_Core_DAO::VALUE_SEPARATOR) );
             $value  = implode( ',', $value );
 
-            $status = explode( CRM_Core_DAO::VALUE_SEPARATOR, $actionSchedule->entity_status );
+            $status = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                               trim($actionSchedule->entity_status, CRM_Core_DAO::VALUE_SEPARATOR) );
             $status = implode( ',', $status );
         
             require_once 'CRM/Core/OptionGroup.php';
@@ -667,6 +669,41 @@ reminder.action_schedule_id = %1";
                 }
                 $where[] = " e.is_current_revision = 1 ";
                 $where[] = " e.is_deleted = 0 ";
+                
+                $join[] = "INNER JOIN civicrm_contact c ON c.id = {$contactField}";
+                $where[] = "c.is_deleted = 0";
+
+                $startEvent = ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
+                    "(e.activity_date_time, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
+            }
+
+            if ( $mapping->entity == 'civicrm_participant' ) {
+                switch ( $recipientOptions[$actionSchedule->recipient] ) {
+                case 'Participant Status':
+                    $join[] = "INNER JOIN civicrm_event r ON  e.event_id = r.id";
+                    break;
+                case 'Participant Role':
+                    //$contactField = "e.source_contact_id";
+                    break;
+                default:
+                    break;
+                }
+                $select[] = "{$contactField} as contact_id";
+                $select[] = "e.id as entity_id";
+                $select[] = "'{$mapping->entity}' as entity_table";
+                $select[] = "{$actionSchedule->id} as action_schedule_id";
+                $reminderJoinClause   = "civicrm_action_log reminder ON reminder.contact_id = {$contactField} AND 
+reminder.entity_id    = e.id AND 
+reminder.entity_table = 'civicrm_participant' AND
+reminder.action_schedule_id = %1";
+
+                // build where clause
+                if ( !empty($value) ) {
+                    $where[]  = "r.event_type_id IN ({$value})";
+                }
+                if ( !empty($status) ) {
+                    $where[]  = "e.status_id IN ({$status})";
+                }
                 
                 $join[] = "INNER JOIN civicrm_contact c ON c.id = {$contactField}";
                 $where[] = "c.is_deleted = 0";
@@ -744,7 +781,7 @@ WHERE  action_date_time IS NULL AND action_schedule_id = %1";
         $mappings = self::getMapping( );
 
         foreach ( $mappings as $mappingID => $mapping ) {
-            self::buildRecipientContacts( $mappingID, $this->_now );
+            self::buildRecipientContacts( $mappingID, $now );
 
             self::sendMailings( $mappingID );
         }
