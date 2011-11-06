@@ -48,7 +48,7 @@ require_once 'CRM/Contribute/PseudoConstant.php';
  *
  * @param  array   $params           (reference ) input parameters
  *
- * @return array (reference )        contribution_id of created or updated record
+ * @return array  Api result array
  * @static void
  * @access public
  * @example ContributionCreate.php
@@ -117,9 +117,7 @@ function _civicrm_api3_contribution_create_spec(&$params){
  */
 function civicrm_api3_contribution_delete($params) {
 
-		civicrm_api3_verify_one_mandatory ( $params, null, array ('contribution_id','id' ) );
 		$contributionID = CRM_Utils_Array::value ( 'contribution_id', $params )? $params['contribution_id']:$params['id'];
-		require_once 'CRM/Contribute/BAO/Contribution.php';
 		if (CRM_Contribute_BAO_Contribution::deleteContribution ( $contributionID )) {
 			return civicrm_api3_create_success ( array ($contributionID => 1 ) );
 		} else {

@@ -53,7 +53,7 @@ require_once 'CRM/Contact/BAO/Group.php';
  *
  * @return array   returns id of the group created if success,
  *                 error message otherwise
-  *@example GroupCreate.php
+ *@example GroupCreate.php
  *{@getfields group_create}
  * @access public
  */
@@ -89,9 +89,9 @@ function _civicrm_api3_group_create_spec(&$params){
  *                       property_name=>value pairs. If $params is set
  *                       as null, all groups will be returned
  *
- * @return array  (referance) Array of matching groups
+ * @return array  Array of matching groups
  * @example GroupGet.php
- *{@getfields group_get}
+ * {@getfields group_get}
  * @access public
  */
 function civicrm_api3_group_get( $params )

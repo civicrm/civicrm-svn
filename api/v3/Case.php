@@ -36,7 +36,7 @@
  *
  */
 
-require_once 'api/v3/utils.php';
+
 require_once 'CRM/Case/BAO/Case.php';
 require_once 'CRM/Case/PseudoConstant.php';
 
@@ -61,7 +61,7 @@ require_once 'CRM/Case/PseudoConstant.php';
  * @return sucessfully opened case
  *
  * @access public
- *
+ * {@getfields case_create}
  * @todo Erik Hommel 16 dec 2010 check if function processes update as per standard
  */
 function civicrm_api3_case_create($params) {
@@ -69,7 +69,6 @@ function civicrm_api3_case_create($params) {
     require_once 'CRM/Core/Transaction.php';
     $tx = new CRM_Core_Transaction();
 
-        civicrm_api3_verify_mandatory($params);
         if (! CRM_Utils_Array::value('status_id', $params ))
             $params['status_id'] = 1; // ongoing
         if ( ! array_key_exists ('creator_id', $params )) {
@@ -133,7 +132,7 @@ function civicrm_api3_case_create($params) {
  * 'activity_id' => returns the case containing a specific activity
  * 'contact_id'  => finds all cases associated with a contact (in any role, not just client)
  *
- *
+ * {@getfields case_get}
  * @return (get mode, case_id provided): Array with case details, case roles, case activity ids, (search mode, case_id not provided): Array of cases found
  * @access public
  * @todo Eileen McNaughton 13 Oct 2011 No unit test
@@ -141,7 +140,6 @@ function civicrm_api3_case_create($params) {
  */
 function civicrm_api3_case_get($params) {
 
-        civicrm_api3_verify_mandatory($params);
         //get mode
         if(CRM_Utils_Array::value('id',$params)){
             $caseId = $params['id'];
@@ -383,7 +381,7 @@ function civicrm_api3_case_update($params) {
  * 'move_to_trash'     => bool (defaults to false)
  *
  * @return boolean: true if success, else false
- *
+ * {@getfields case_delete}
  * @access public
  * @todo Eileen McNaughton 13 Oct 2011 No unit test
  * @todo Erik Hommel 16 dec 2010 use utils function civicrm_verify_mandatory to check for required params

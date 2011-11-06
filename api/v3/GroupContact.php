@@ -44,7 +44,7 @@
  * to fetch the records
  *
  * @param  array $params  name value pair of contact information
- *
+ * {@getfields GroupContact_get}
  * @return  array  list of groups, given contact subsribed to
  */
 function civicrm_api3_group_contact_get($params) {
@@ -98,7 +98,7 @@ function civicrm_api3_group_contact_get($params) {
  *   'error_message' = string,
  *   'error_data' = mixed or undefined
  * )</code>
- * 
+ * {@getfields GroupContact_create}
  */
 function civicrm_api3_group_contact_create($params) {
 

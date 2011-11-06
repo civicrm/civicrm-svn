@@ -43,7 +43,7 @@ require_once 'CRM/Contact/BAO/GroupNesting.php';
  * Provides group nesting record(s) given parent and/or child id.
  *
  * @param array $params  an array containing at least child_group_id or parent_group_id
- *
+ * {@getfields GroupNesting_get}
  * @return  array  list of group nesting records
  */
 function civicrm_api3_group_nesting_get( $params )
@@ -91,7 +91,7 @@ function _civicrm_api3_group_nesting_create_spec(&$params){
  * {@getfields GroupNesting_delete}
  *
  * @return array API Success or fail array
- *
+ * 
  * @todo Work out the return value.
  */
 function civicrm_api3_group_nesting_delete( $params )
