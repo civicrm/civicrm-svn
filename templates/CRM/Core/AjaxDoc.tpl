@@ -6,6 +6,8 @@
 #selector a {margin-right:10px;}
 .required {font-weight:bold;}
 .helpmsg {background:yellow;}
+#explorer label {display:inline;}
+
 {/literal}
 </style>
 <script>
@@ -14,17 +16,18 @@ if (!jQuery) {ldelim}
    var head= document.getElementsByTagName('head')[0];
    var script= document.createElement('script');
    script.type= 'text/javascript';
-   script.src= resourceBase + '/packages/jquery/jquery.js';
+   script.src= resourceBase + '/packages/jquery/jquery.min.js';
    head.appendChild(script);
 {rdelim} 
+
 restURL = '{crmURL p="civicrm/ajax/rest"}';
 if (restURL.indexOf('?') == -1 )
   restURL = restURL + '?';
 else 
   restURL = restURL + '&';
 {literal}
-if (!$) {
-  $ = jQuery;
+if (typeof $ == "undefined") {
+  $ = cj;
 } 
 
 function toggleField (name,label,type) {
