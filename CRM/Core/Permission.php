@@ -457,6 +457,7 @@ class CRM_Core_Permission {
                    'administer dedupe rules'           => $prefix . ts( 'administer dedupe rules' ),
                    'merge duplicate contacts'          => $prefix . ts( 'merge duplicate contacts' ),
                    'view all notes'                    => $prefix . ts( 'view all notes' ),
+                   'access AJAX API'                   => $prefix . ts( 'access AJAX API' ),
                );
        
         return $permissions;
