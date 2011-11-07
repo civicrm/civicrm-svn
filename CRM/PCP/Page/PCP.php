@@ -173,7 +173,7 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
                                                                'String',
                                                                $this );        
         if ( $this->_sortByCharacter == 1 ||
-             ! empty( $_POST ) ) {
+             !empty( $_REQUEST ) ) {
             $this->_sortByCharacter = '';
         }
 
@@ -188,28 +188,31 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
         $pcpSummary = $params = array();
         $whereClause = null;
 
-        if ( ! empty ($_POST) ) {
-            if ( $_POST['status_id'] != 0 ) {           
+        if ( !empty ($_REQUEST) ) {
+            if ( CRM_Utils_Array::value( 'status_id', $_POST ) ) {           
                 $whereClause  = ' AND cp.status_id = %1';
                 $params['1']  = array( $_POST['status_id'] , 'Integer' );
             }                
 
-            if ( $_POST['page_type'] != '' ) {           
+            if ( CRM_Utils_Array::value( 'page_type', $_POST ) ) {           
                 $whereClause  = ' AND cp.page_type = %2';
                 $params['2']  = array( $_POST['page_type'] , 'String' );
+            } elseif ( CRM_Utils_Array::value( 'context', $_GET ) ) {
+                $whereClause  = ' AND cp.page_type = %2';
+                $params['2']  = array( $_GET['context'] , 'String' );
             }
             
-            if ( $_POST['page_id'] != 0 ){  
+            if ( CRM_Utils_Array::value( 'page_id', $_POST ) ) {           
                 $whereClause .=  ' AND cp.page_id = %4 AND cp.page_type = "contribute"';
                 $params['4']  = array( $_POST['page_id'] , 'Integer' );
             }
 
-            if ( $_POST['event_id'] != 0 ){
+            if ( CRM_Utils_Array::value( 'event_id', $_POST ) ) {           
                 $whereClause .=  ' AND cp.page_id = %5 AND cp.page_type = "event"';
                 $params['5']  = array( $_POST['event_id'] , 'Integer' );
             }
             
-            if ( $whereClause ){
+            if ( $whereClause ) {
                 $this->set( 'whereClause', $whereClause );
                 $this->set( 'params', $params );
             } else {
