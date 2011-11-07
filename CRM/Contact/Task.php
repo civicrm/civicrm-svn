@@ -170,10 +170,11 @@ class CRM_Contact_Task
                 unset( self::$_tasks[8] );
             }
             
-            //show map action only if map provider and key is set
+            //show map action only if map provider and geoprovider are set (Google doesn't need geoprovider)
+            // should fix this to be more flexible as providers are added ??
             $config = CRM_Core_Config::singleton( );
 
-            if ( $config->mapProvider && ($config->mapProvider == 'Google' || $config->mapProvider == 'OpenStreetMaps' || $config->mapAPIKey) ) {
+            if ( $config->mapProvider && ($config->mapProvider == 'Google' || (  $config->mapProvider == 'OpenStreetMaps' || $config->geoProvider == 'Google') ) ) {
                 self::$_tasks[12] = array( 'title'  => ts( 'Map Contacts'),
                                            'class'  => 'CRM_Contact_Form_Task_Map',
                                            'result' => false );
