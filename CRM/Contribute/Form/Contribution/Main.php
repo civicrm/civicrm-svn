@@ -52,6 +52,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
     public $_relatedOrganizationFound;
 
+    public $_onBehalfRequired = 0;
+    public $_onbehalf = 0;
+
     protected $_defaults;
 
     public $_membershipTypeValues;
@@ -100,11 +103,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $urlParams = "&id={$this->_id}&qfKey={$this->controller->_key}";
             $this->assign( 'urlParams', $urlParams );
             $this->_onbehalf = CRM_Utils_Array::value( 'onbehalf', $_GET );
-            
+
             require_once 'CRM/Contribute/Form/Contribution/OnBehalfOf.php';
             CRM_Contribute_Form_Contribution_OnBehalfOf::preProcess( $this );
             if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $_POST ) &&
-                 CRM_Utils_Array::value( 'is_for_organization', $_POST ) ) {
+                 ( CRM_Utils_Array::value( 'is_for_organization', $_POST ) ||
+                   $this->_values['is_for_organization'] == 2 ) ) {
                 CRM_Contribute_Form_Contribution_OnBehalfOf::buildQuickForm( $this );
             }
         }
@@ -352,6 +356,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $config = CRM_Core_Config::singleton( );
         if ( $this->_values['is_for_organization'] == 2 ) {
             $this->assign( 'onBehalfRequired', true );
+            $this->_onBehalfRequired = 1;
         }
         if ( $this->_onbehalf ) {
             $this->assign( 'onbehalf', true );
@@ -644,6 +649,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                                null, array( 'onclick' => "showOnBehalf( );" ) );
         } else {
             $this->assign( 'onBehalfRequired', true );
+            $this->_onBehalfRequired = 1;
         }
 
         $this->assign( 'is_for_organization', true );
@@ -1088,7 +1094,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
         // get the submitted form values. 
         $params = $this->controller->exportValues( $this->_name );
-        
+
         //carry campaign from profile.
         if ( array_key_exists( 'contribution_campaign_id', $params ) ) {
             $params['campaign_id'] = $params['contribution_campaign_id'];
