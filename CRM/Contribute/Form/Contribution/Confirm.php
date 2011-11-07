@@ -1482,12 +1482,13 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     static function processPcpSoft( &$params, &$contribution ) {
         //add soft contribution due to pcp or Submit Credit / Debit Card Contribution by admin.
         if ( CRM_Utils_Array::value( 'soft_credit_to', $params ) ) {
-            foreach ( array ( 'soft_credit_to', 'pcp_display_in_roll', 'pcp_roll_nickname', 'pcp_personal_note', 'amount' ) as $val ) {
+            foreach ( array ( 'pcp_display_in_roll', 'pcp_roll_nickname', 'pcp_personal_note', 'amount' ) as $val ) {
                 if ( CRM_Utils_Array::value( $val, $params ) ) {
                     $contribSoftParams[$val] = $params[$val];
                 }
             }
 
+            $contribSoftParams['contact_id'] = $params['soft_credit_to'];
             // add contribution id
             $contribSoftParams['contribution_id'] = $contribution->id;
                        
