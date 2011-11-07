@@ -206,7 +206,7 @@ class CRM_Contact_Page_AJAX
         $name   = CRM_Utils_Type::escape( $name, 'String' );
         $limit  = '10';
 
-        $where = ' AND pcp.contribution_page_id = cp.id AND pcp.contact_id = cc.id';
+        $where = ' AND pcp.page_id = cp.id AND pcp.contact_id = cc.id';
         
         $config = CRM_Core_Config::singleton( );
         if ( $config->includeWildCardInName ) {
