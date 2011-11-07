@@ -48,10 +48,11 @@ class PCPBlock extends PHPUnit_Framework_Testcase
                                       'is_active'        => 1 )
                                );
         
-        civicrm_api_include('uf_field');
+        
         foreach( $fieldsParams as $value ){
             $api_version = civicrm_get_api_version();
             if ($api_version === 2) {
+                require_once('api/v2/UFGroup.php');
                 $ufField = civicrm_uf_field_create($profileId , $value );
             }
             else {
@@ -99,7 +100,7 @@ class PCPBlock extends PHPUnit_Framework_Testcase
     {
         $api_version = civicrm_get_api_version();
         if ($api_version === 2) {
-            civicrm_api_include('uf_group');
+            require_once('api/v2/UFGroup.php');
             $resulProfile = civicrm_uf_group_delete($params['profileId']);
         }
         else {

@@ -92,11 +92,10 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
                                           'civicrm_api3_get_dao', 
                                           'civicrm_api3_create_success',
                                           'civicrm_api3_create_error',
-                                          'civicrm_api3_duplicate',
                                           'civicrm_api3_error',
                                           'civicrm_api3_check_contact_dedupe',
                                           'civicrm_api3_api_check_permission',
-                                          'civicrm_api3_update_get_existing', );
+                                           );
     }
   
     /*

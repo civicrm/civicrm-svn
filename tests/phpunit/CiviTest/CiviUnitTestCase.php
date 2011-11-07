@@ -726,7 +726,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    
         $result = civicrm_api( 'relationship_type','create',$params );
 
-        if ( civicrm_api3_error( $params ) || CRM_Utils_Array::value( 'is_error', $result ) ) {
+        if ( civicrm_error( $params ) || CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Could not create relationship type' );
         }
 
@@ -747,7 +747,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $params['version'] = API_LATEST_VERSION;
         $result = civicrm_api( 'relationship_type', 'delete', $params );
 
-        if (civicrm_api3_error( $params ) ) {
+        if (civicrm_error( $params ) ) {
             throw new Exception( 'Could not delete relationship type' );
         }
         
@@ -1153,9 +1153,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                          'location_type'          => 'New Location Type',
                          );
     
-        $result = civicrm_api_legacy( 'civicrm_location_create','Location',$params );       
+        $result = civicrm_api('Location','create',$params );       
 
-        if ( civicrm_api3_error( $result ) ) {
+        if ( civicrm_error( $result ) ) {
             throw new Exception( "Could not create location: {$result['error_message']}" );
         }
         
@@ -1169,9 +1169,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */    
     function locationDelete( $params ) {
         $params['version'] = 2;
-        $result = civicrm_api_legacy( 'civicrm_location_delete', 'Location', $params ); 
-        
-        if ( civicrm_api3_error( $result ) ) {
+
+        $result = civicrm_api('Location','delete',$params );     
+        if ( civicrm_error( $result ) ) {
             throw new Exception( "Could not delete location: {$result['error_message']}" );
         }
         
@@ -1591,7 +1591,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
           return $result;          
         }
 
-        if ( civicrm_api3_error( $result ) 
+        if ( civicrm_error( $result ) 
              || !( CRM_Utils_Array::value( 'customFieldId' , $result['result'] ) ) ) {
             throw new Exception( 'Could not create Custom Field'  );
         }
@@ -1611,7 +1611,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
         $result = civicrm_api( 'custom_field', 'delete', $params );
         
-        if ( civicrm_api3_error( $result ) ) {
+        if ( civicrm_error( $result ) ) {
             throw new Exception( 'Could not delete custom field' );
         }
         return;
@@ -1815,7 +1815,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         if ($result['is_error'] ==0 && isset($result['id'])){
             return $result;
         }
-        if ( civicrm_api3_error( $result ) 
+        if ( civicrm_error( $result ) 
              || !( CRM_Utils_Array::value( 'customFieldId', $result['result'] ) ) ) {
             throw new Exception( 'Could not create Custom Field' );
         }
