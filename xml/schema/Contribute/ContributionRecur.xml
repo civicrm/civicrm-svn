@@ -202,16 +202,16 @@
        <onDelete>SET NULL</onDelete>
   </foreignKey>
   <field>
-      <name>contribution_type_id</name>
-      <title>Contribution Type</title>
+      <name>financial_account_id</name>
+      <title>Financial Account</title>
       <export>false</export>
       <type>int unsigned</type>
-      <comment>FK to Contribution Type</comment>
+      <comment>FK to Financial Account</comment>
       <add>4.1</add>
   </field>
   <foreignKey>
-       <name>contribution_type_id</name>
-       <table>civicrm_contribution_type</table>
+       <name>financial_account_id</name>
+       <table>civicrm_financial_account</table>
        <key>id</key>
        <add>4.1</add>
        <onDelete>SET NULL</onDelete>
