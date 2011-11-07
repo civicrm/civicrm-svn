@@ -173,7 +173,7 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
                                                                'String',
                                                                $this );        
         if ( $this->_sortByCharacter == 1 ||
-             !empty( $_REQUEST ) ) {
+             !empty( $_POST ) ) {
             $this->_sortByCharacter = '';
         }
 
@@ -181,24 +181,24 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
         require_once 'CRM/Contribute/PseudoConstant.php';
         require_once 'CRM/Event/PseudoConstant.php';
         
-        $status             = CRM_PCP_PseudoConstant::pcpstatus( );
-        $cpages             = CRM_Contribute_PseudoConstant::contributionPage( );
-        $epages             = CRM_Event_PseudoConstant::event( );
+        $status  = CRM_PCP_PseudoConstant::pcpstatus( );
+        $cpages  = CRM_Contribute_PseudoConstant::contributionPage( );
+        $epages  = CRM_Event_PseudoConstant::event( );
         
         $pcpSummary = $params = array();
         $whereClause = null;
-
-        if ( !empty ($_REQUEST) ) {
-            if ( CRM_Utils_Array::value( 'status_id', $_POST ) ) {           
+        
+        if ( !empty ( $_POST ) || !empty( $_GET['context'] ) ) {
+            if ( CRM_Utils_Array::value( 'status_id', $_POST ) ) {
                 $whereClause  = ' AND cp.status_id = %1';
                 $params['1']  = array( $_POST['status_id'] , 'Integer' );
             }                
 
             if ( CRM_Utils_Array::value( 'page_type', $_POST ) ) {           
-                $whereClause  = ' AND cp.page_type = %2';
+                $whereClause  .= ' AND cp.page_type = %2';
                 $params['2']  = array( $_POST['page_type'] , 'String' );
             } elseif ( CRM_Utils_Array::value( 'context', $_GET ) ) {
-                $whereClause  = ' AND cp.page_type = %2';
+                $whereClause  .= ' AND cp.page_type = %2';
                 $params['2']  = array( $_GET['context'] , 'String' );
             }
             
@@ -254,10 +254,10 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
         $params['6'] = array( $this->_sortByCharacter . '%', 'String' );        
 
         $query = "
-        SELECT cp.id, cp.contact_id , status_id, cp.title, cp.is_active, cp.page_type, cp.page_id
+        SELECT cp.id, cp.contact_id , cp.status_id, cp.title, cp.is_active, cp.page_type, cp.page_id
         FROM civicrm_pcp cp
         WHERE $title". $this->get('whereClause') .
-        " ORDER BY status_id";
+        " ORDER BY cp.status_id";
 
         $pcp = CRM_Core_DAO::executeQuery($query, $params);
 
@@ -330,9 +330,9 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
 
         $this->search( );   
         $this->pagerAToZ( $this->get('whereClause'), $params );
-        if ( $pcpSummary ){ 
-            $this->assign('rows', $pcpSummary);
-        }
+        
+        $this->assign('rows', $pcpSummary);
+        
         // Let template know if user has run a search or not
         if ( $this->get('whereClause') ) {
             $this->assign('isSearch', 1);
