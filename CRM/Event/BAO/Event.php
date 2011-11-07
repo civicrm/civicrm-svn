@@ -297,12 +297,14 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
     /**
      * Function to get current/future Events 
      *
-     * @param $all boolean true if events all are required else returns current and future events
-     * @param $id  int     id of a specific event to return
+     * @param $all              boolean true if events all are required else returns current and future events
+     * @param $id               int     id of a specific event to return
+     * @param $isActive         boolean true if you need only active events
+     * @param $checkPermission  boolean if you need to check permission
      *
      * @static
      */
-    static function getEvents( $all = false, $id = false, $isActive = true ) 
+    static function getEvents( $all = false, $id = false, $isActive = true, $checkPermission = true ) 
     {
         $query = "SELECT `id`, `title`, `start_date` FROM `civicrm_event` WHERE ( civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0 )";
         
@@ -322,6 +324,8 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
             if ( CRM_Event_BAO_Event::checkPermission( $dao->id ) && $dao->title ) { 
+                $events[$dao->id] = $dao->title . ' - '.CRM_Utils_Date::customFormat($dao->start_date);
+            } elseif ( !$checkPermission ) {
                 $events[$dao->id] = $dao->title . ' - '.CRM_Utils_Date::customFormat($dao->start_date);
             }
         }

@@ -1634,8 +1634,8 @@ SELECT  display_name
 
         } else if ( $activity->__table == 'civicrm_participant' ) {
             require_once "CRM/Event/BAO/Event.php";
-            $event = CRM_Event_BAO_Event::getEvents( true, $activity->event_id );
-            
+            $event = CRM_Event_BAO_Event::getEvents( true, $activity->event_id, true, false );
+
             require_once "CRM/Event/PseudoConstant.php";
             $roles  = CRM_Event_PseudoConstant::participantRole( );
             $status = CRM_Event_PseudoConstant::participantStatus( );
