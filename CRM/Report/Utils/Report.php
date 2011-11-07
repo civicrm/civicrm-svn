@@ -166,7 +166,8 @@ WHERE  inst.report_id = %1";
         header('Content-Type: text/csv');
 
         //Force a download and name the file using the current timestamp.
-        header('Content-Disposition: attachment; filename=Report_' . $_SERVER['REQUEST_TIME'] . '.csv');
+        $datetime = date('Ymd-Gi', $_SERVER['REQUEST_TIME']);
+        header('Content-Disposition: attachment; filename=Report_' . $datetime . '.csv');
         echo self::makeCsv( $form, $rows );
         CRM_Utils_System::civiExit( );
     }
@@ -190,7 +191,7 @@ WHERE  inst.report_id = %1";
             }
         }
         // Add the headers.
-        $csv .= implode(',', $headers) . "\n";
+        $csv .= implode(',', $headers) . "\r\n";
 
         $displayRows = array();
         $value       = null;
@@ -219,7 +220,7 @@ WHERE  inst.report_id = %1";
                 }  
             }
             // Add the data row.
-            $csv .= implode(',', $displayRows) . "\n";
+            $csv .= implode(',', $displayRows) . "\r\n";
         }
 
         return $csv;
