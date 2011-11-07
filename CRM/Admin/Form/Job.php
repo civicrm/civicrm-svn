@@ -109,9 +109,14 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
 
         require_once 'api/api.php';
 
-        // FIXME: hackish, need better way maybe
+        // FIXME: hackish, bad and evil: need better way
+        // FIXME: civicrm_api_include bails out silently
+        // FIXME: if not found, so we're repeating whole thing
+        // FIXME: few times in case enitity name is two or more words
         $pcs = split( '_', $fields['command']);
-        civicrm_api_include( $pcs[2] );
+        civicrm_api_include( $pcs[2] ) ;
+        if( !empty( $pcs[3] ) ) civicrm_api_include( $pcs[2] . '_' .  $pcs[3] );
+        if( !empty( $pcs[3] ) && !empty( $pcs[4] ) ) civicrm_api_include( $pcs[2] . '_' .  $pcs[3] .  '_' . $pcs[4] );
         
         if( ! function_exists( $fields['command'] ) ) {
             $errors['command'] = ts( 'Given API command is not defined.' );

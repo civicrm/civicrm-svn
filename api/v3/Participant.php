@@ -177,7 +177,26 @@ function &civicrm_api3_participant_delete( $params )
 
 }
 
+/**
+ * Process participant statuses
+ *
+ * @param  array   $params           (reference ) input parameters
+ *
+ * @return array (reference )        array of properties, if error an array with an error id and error message
+ * @access public
+ */
+function civicrm_api3_participant_process( $params )
+{
+        require_once 'CRM/Event/BAO/ParticipantStatusType.php';
+        $result = CRM_Event_BAO_ParticipantStatusType::process( $params );
 
+        if ( !$result['is_error'] ) {
+            return  civicrm_api3_create_success( implode( "\r\r", $result['messages'] ) );
+        } else {
+            return  civicrm_api3_create_error('Error while processing participant statuses');
+        }
+
+}
 
 
 /**
