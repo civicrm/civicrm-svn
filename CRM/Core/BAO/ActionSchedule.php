@@ -509,7 +509,7 @@ WHERE   cas.entity_value = $id AND
         return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_ActionSchedule', $id, 'is_active', $is_active );
     }
 
-    static function sendMailings( $mappingID ) {
+    static function sendMailings( $mappingID, $now ) {
         require_once 'CRM/Activity/BAO/Activity.php';
         require_once 'CRM/Contact/BAO/Contact.php';
         require_once 'CRM/Core/BAO/ActionLog.php';
@@ -545,7 +545,7 @@ WHERE   cas.entity_value = $id AND
                 $extraSelect = ", ov.label as activity_type, e.id as activity_id";
                 $extraJoin   = "INNER JOIN civicrm_option_group og ON og.name = 'activity_type'
 INNER JOIN civicrm_option_value ov ON e.activity_type_id = ov.value AND ov.option_group_id = og.id";
-                $extraWhere = "AND e.is_current_revision = 1 AND e.is_deleted = 0";
+                $extraWhere  = "AND e.is_current_revision = 1 AND e.is_deleted = 0";
             }
 
             $query = "
@@ -649,17 +649,9 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
                     $join[] = "INNER JOIN civicrm_activity_target r ON  r.activity_id = e.id";
                     break;
                 default:
+                    CRM_Core_Error::fatal( ts('Unsupported recipient option.') );
                     break;
                 }
-                $select[] = "{$contactField} as contact_id";
-                $select[] = "e.id as entity_id";
-                $select[] = "'{$mapping->entity}' as entity_table";
-                $select[] = "{$actionSchedule->id} as action_schedule_id";
-                $reminderJoinClause   = "civicrm_action_log reminder ON reminder.contact_id = {$contactField} AND 
-reminder.entity_id    = e.id AND 
-reminder.entity_table = 'civicrm_activity' AND
-reminder.action_schedule_id = %1";
-
                 // build where clause
                 if ( !empty($value) ) {
                     $where[]  = "e.activity_type_id IN ({$value})";
@@ -669,15 +661,12 @@ reminder.action_schedule_id = %1";
                 }
                 $where[] = " e.is_current_revision = 1 ";
                 $where[] = " e.is_deleted = 0 ";
-                
-                $join[] = "INNER JOIN civicrm_contact c ON c.id = {$contactField}";
-                $where[] = "c.is_deleted = 0";
-
-                $startEvent = ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
-                    "(e.activity_date_time, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
+            
+                $dateField = 'e.activity_date_time';
             }
 
             if ( $mapping->entity == 'civicrm_participant' ) {
+                $contactField = "e.contact_id";
                 switch ( $recipientOptions[$actionSchedule->recipient] ) {
                 case 'Participant Status':
                     $join[] = "INNER JOIN civicrm_event r ON  e.event_id = r.id";
@@ -686,16 +675,9 @@ reminder.action_schedule_id = %1";
                     //$contactField = "e.source_contact_id";
                     break;
                 default:
+                    CRM_Core_Error::fatal( ts('Unsupported recipient option.') );
                     break;
                 }
-                $select[] = "{$contactField} as contact_id";
-                $select[] = "e.id as entity_id";
-                $select[] = "'{$mapping->entity}' as entity_table";
-                $select[] = "{$actionSchedule->id} as action_schedule_id";
-                $reminderJoinClause   = "civicrm_action_log reminder ON reminder.contact_id = {$contactField} AND 
-reminder.entity_id    = e.id AND 
-reminder.entity_table = 'civicrm_participant' AND
-reminder.action_schedule_id = %1";
 
                 // build where clause
                 if ( !empty($value) ) {
@@ -705,17 +687,27 @@ reminder.action_schedule_id = %1";
                     $where[]  = "e.status_id IN ({$status})";
                 }
                 
-                $join[] = "INNER JOIN civicrm_contact c ON c.id = {$contactField}";
-                $where[] = "c.is_deleted = 0";
-
-                $startEvent = ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
-                    "(e.activity_date_time, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
+                $dateField = str_replace('event_', 'r.', $actionSchedule->start_action_date);
             }
 
+            $select[] = "{$contactField} as contact_id";
+            $select[] = "e.id as entity_id";
+            $select[] = "'{$mapping->entity}' as entity_table";
+            $select[] = "{$actionSchedule->id} as action_schedule_id";
+            $reminderJoinClause = "civicrm_action_log reminder ON reminder.contact_id = {$contactField} AND 
+reminder.entity_id          = e.id AND 
+reminder.entity_table       = '{$mapping->entity}' AND
+reminder.action_schedule_id = %1";
+
+            $join[]  = "INNER JOIN civicrm_contact c ON c.id = {$contactField}";
+            $where[] = "c.is_deleted = 0";
+
+            $startEvent = ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
+                "({$dateField}, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
             // ( now >= date_built_from_start_time )
             $startEventClause = "reminder.id IS NULL AND '{$now}' >= {$startEvent}";
 
-            // build final query
+            // start composing query
             $selectClause = "SELECT " . implode( ', ', $select );
             $fromClause   = "FROM $from";
             $joinClause   = !empty( $join ) ? implode( ' ', $join ) : '';
@@ -732,10 +724,8 @@ LEFT JOIN {$reminderJoinClause}
 
             // if repeat is turned ON:
             if ( $actionSchedule->is_repeat ) {
-                if ( $mapping->entity == 'civicrm_activity' ) {
-                    $repeatEvent = ( $actionSchedule->end_action == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
-                        "(e.activity_date_time, INTERVAL {$actionSchedule->end_frequency_interval} {$actionSchedule->end_frequency_unit})";
-                }
+                $repeatEvent = ( $actionSchedule->end_action == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
+                        "({$dateField}, INTERVAL {$actionSchedule->end_frequency_interval} {$actionSchedule->end_frequency_unit})";
 
                 if ( $actionSchedule->repetition_frequency_unit == 'day' ) {
                     $hrs = 24 * $actionSchedule->repetition_frequency_interval;
@@ -783,7 +773,7 @@ WHERE  action_date_time IS NULL AND action_schedule_id = %1";
         foreach ( $mappings as $mappingID => $mapping ) {
             self::buildRecipientContacts( $mappingID, $now );
 
-            self::sendMailings( $mappingID );
+            self::sendMailings( $mappingID, $now );
         }
 
         $result = array(
