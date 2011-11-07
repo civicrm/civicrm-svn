@@ -59,7 +59,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
     public function buildQuickForm( ) 
     {
         parent::buildQuickForm( );
-        $this->_mappingID = null;
+        $this->_mappingID = $mappingID = null;
 
         require_once 'CRM/Core/BAO/ActionSchedule.php';
         if ( $this->_action & (CRM_Core_Action::DELETE ) ) { 
@@ -76,10 +76,16 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
                                                              $this->_id, 'mapping_id' );
         }
         
+        if ( !empty($_POST) && CRM_Utils_Array::value('entity', $_POST) ) {
+            $mappingID = $_POST['entity'][0];
+        } else if ( $this->_mappingID ) {
+            $mappingID = $this->_mappingID; 
+        }
+
         $this->add( 'text', 'title', ts( 'Title' ), 
                     array( 'size'=> 45,'maxlength' => 128 ), true );
 
-        list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection( $this->_mappingID ) ;
+        list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection( $mappingID );
         
         $sel =& $this->add('hierselect',
                            'entity',
@@ -107,7 +113,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->_freqUnits = array( 'hour' => 'hour' ) + CRM_Core_OptionGroup::values('recur_frequency_units');
         
         //pass the mapping ID in UPDATE mode
-        $mappings = CRM_Core_BAO_ActionSchedule::getMapping( $this->_mappingID );
+        $mappings = CRM_Core_BAO_ActionSchedule::getMapping( $mappingID );
 
         $numericOptions = array( 0 => ts('0'), 1 => ts('1'), 2 => ts('2'), 3 => ts('3'), 4 => ts('4'), 5 => ts('5' ),
                                  6 => ts('6'), 7 => ts('7'), 8 => ts('8'), 9 => ts('9'), 10 => ts('10') );
@@ -142,18 +148,27 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->add( 'select', 'end_date', ts( 'Date Field' ), $sel4, true );
 
         $recipient = 'activity_contacts';
-        if ( $this->_action & CRM_Core_Action::UPDATE ) {
+        $recipientListingOptions = array();
+
+        if ( $mappingID ) {
             $recipient = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_ActionMapping',
-                                                      $this->_values['mapping_id'],
+                                                      $mappingID,
                                                       'entity_recipient' );
         }
 
         $this->add( 'select', 'recipient', ts( 'Recipient(s)' ), $sel5[$recipient],
                     false, array( 'onClick' => "showHideByValue('recipient','manual','recipientManual','table-row','select',false); showHideByValue('recipient','group','recipientGroup','table-row','select',false);") 
                     );
-        $recipientListing = $this->add( 'select', 'recipient_listing', ts('Recipient Listing'), 
-                                         $sel4);
+
+        if ( CRM_Utils_Array::value('is_recipient_listing', $_POST) ) {
+            $recipientListingOptions = CRM_Core_BAO_ActionSchedule::getRecipientListing($_POST['entity'][0], $_POST['recipient'] );
+        } else if ( CRM_Utils_Array::value('recipient_listing', $this->_values) ) {
+            $recipientListingOptions = CRM_Core_BAO_ActionSchedule::getRecipientListing($this->_values['mapping_id'], $this->_values['recipient'] );
+        }
+        $recipientListing = $this->add( 'select', 'recipient_listing', ts('Recipient Listing'), $recipientListingOptions);
         $recipientListing->setMultiple( true ); 
+        $this->add('hidden', 'is_recipient_listing', empty($recipientListingOptions)? false : true, array('id' => 'is_recipient_listing') );
+        
         //autocomplete url
         $dataUrl = CRM_Utils_System::url( 'civicrm/ajax/rest',
                                           'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=activity&reset=1',
@@ -204,10 +219,9 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
             $errors['subject'] = ts('Subject is a required field.');
         }
         
-        if ( ( CRM_Utils_Array::value( 'recipient', $fields ) == 1 ||
-               CRM_Utils_Array::value( 'recipient', $fields ) == 2 ) && 
-             CRM_Utils_Array::value( 'recipient_listing', $fields ) &&
-             ( $fields['entity'][0] == 2 || $fields['entity'][0] == 3 )){
+        $listingOptions = CRM_Core_BAO_ActionSchedule::getRecipientListing($fields['entity'][0], CRM_Utils_Array::value('recipient', $fields));
+        $listingOptionsSelected = CRM_Utils_Array::value( 'recipient_listing', $fields );
+        if ( !empty($listingOptions) && empty($listingOptionsSelected) ) {
             $errors['recipient_listing'] = ts('Recipient Listing is a required field.');
         }
 

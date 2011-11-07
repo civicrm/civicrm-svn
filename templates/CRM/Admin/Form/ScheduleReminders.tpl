@@ -203,7 +203,7 @@
             cj('#repeatFields').hide();
          }
 
-         cj('#entity\\[0\\]').click( function( ) {
+         cj('#entity\\[0\\]').change( function( ) {
               buildSelect("start_action_date");
 	      buildSelect("end_date");
 	      buildSelect1("recipient");
@@ -211,8 +211,12 @@
      });
 
     cj(function() {
-       populateRecipient();
-       cj('#recipient').click( function( ) {
+       if ( cj('#is_recipient_listing').val( ) ) {
+           cj('#recipientList').show();
+       } else {
+           cj('#recipientList').hide();
+       }
+       cj('#recipient').change( function( ) {
            populateRecipient();
        });
      });
@@ -232,9 +236,11 @@
                 
 		}	    
 	    );
-	    cj("#recipientList").show();	     
+	    cj("#recipientList").show();
+            cj('#is_recipient_listing').val(1);	     
 	  } else {
 	    cj("#recipientList").hide();
+	    cj('#is_recipient_listing').val('');
 	  }
      }
      function buildSelect( selectID ) {
@@ -259,12 +265,14 @@
 	 var mappingID = cj('#entity\\[0\\]').val();
          var postUrl1 = "{/literal}{crmURL p='civicrm/ajax/mapping1' h=0}{literal}";
 
+	 cj('#is_recipient_listing').val('');
          cj.post( postUrl1, { mappingID: mappingID},
              function ( response ) {
                  response = eval( response );
                  for (i = 0; i < response.length; i++) {
                      cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
                  }
+		 populateRecipient();
              }
          );
      }

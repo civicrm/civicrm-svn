@@ -46,6 +46,12 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
 
     static function getMapping( $id = null ) 
     {
+        static $_action_mapping;
+        
+        if ( $id && !is_null($_action_mapping) && isset($_action_mapping[$id]) ) {
+            return $_action_mapping[$id];
+        }
+
         $dao = new CRM_Core_DAO_ActionMapping( );
         if ($id) {
             $dao->id = $id;
@@ -57,13 +63,15 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
             CRM_Core_DAO::storeValues( $dao, $defaults );
             $mapping[$dao->id] = $defaults;
         }
+        $_action_mapping = $mapping;
+
         return $mapping;
     }
 
 
     static function getSelection( $id = null  ) 
     {
-        $mapping  = self::getMapping( $id );
+        $mapping  = self::getMapping( );
 
         require_once 'CRM/Core/PseudoConstant.php';
         require_once 'CRM/Event/PseudoConstant.php';
@@ -80,6 +88,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
         $options = array( 'manual' => ts('Choose Recipient(s)'), 
                           'group'  => ts('Select a Group')  );
 
+        if ( !$id ) $id = 1;
         foreach ( $mapping as $value ) {
             $entityValue  = CRM_Utils_Array::value('entity_value', $value );
             $entityStatus = CRM_Utils_Array::value('entity_status', $value );
@@ -115,33 +124,34 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
                 break;
             }
 
-            switch ($entityDateStart) {
-            case 'activity_date_time':
-                $sel4[$entityDateStart] = ts('Activity Date Time');
-                break;
-
-            case 'event_start_date':
-                $sel4[$entityDateStart] = ts('Event Start Date');
-                break;
-            }
-
-            switch ($entityDateEnd) {
-            case 'event_end_date':
-                $sel4[$entityDateEnd] = ts('Event End Date');
-                break;
-            }
-
-            switch ($entityRecipient) {
-            case 'activity_contacts':
-                $sel5[$entityRecipient] = $activityContacts + $options;
-                break;
+            if ( $key == $id ) {
+                switch ($entityDateStart) {
+                case 'activity_date_time':
+                    $sel4[$entityDateStart] = ts('Activity Date Time');
+                    break;
+                    
+                case 'event_start_date':
+                    $sel4[$entityDateStart] = ts('Event Start Date');
+                    break;
+                }
                 
-            case 'event_contacts':
-                $sel5[$entityRecipient] = $eventContacts + $options;
-                break;
-
+                switch ($entityDateEnd) {
+                case 'event_end_date':
+                    $sel4[$entityDateEnd] = ts('Event End Date');
+                    break;
+                }
+                
+                switch ($entityRecipient) {
+                case 'activity_contacts':
+                    $sel5[$entityRecipient] = $activityContacts + $options;
+                    break;
+                    
+                case 'event_contacts':
+                    $sel5[$entityRecipient] = $eventContacts + $options;
+                    break;
+                    
+                }    
             }
-            
         }
         $sel3 = $sel2;
 
@@ -784,7 +794,7 @@ WHERE  action_date_time IS NULL AND action_schedule_id = %1";
 
     static function isConfigured( $id, $mappingID )
     {
-	 $queryString = "SELECT count(id) FROM civicrm_action_schedule
+	    $queryString = "SELECT count(id) FROM civicrm_action_schedule
                         WHERE  mapping_id = %1 AND 
                                entity_value = %2";
 
@@ -794,4 +804,29 @@ WHERE  action_date_time IS NULL AND action_schedule_id = %1";
        
     }
 
+    static function getRecipientListing( $mappingID, $recipientType )
+    {
+        $options = array( );
+        if ( !$mappingID || !$recipientType) {
+            return $options;
+        }
+
+        $mapping = self::getMapping( $mappingID );
+
+        switch( $mapping['entity'] ) {
+            case 'civicrm_participant':
+                 $eventContacts = CRM_Core_PseudoConstant::eventContacts( 'name' );
+                 if ( !CRM_Utils_Array::value($recipientType, $eventContacts) ) {
+                     return $options;
+                 }
+                 if ( $eventContacts[$recipientType] == 'Participant Status' ) {
+                     $options = CRM_Event_PseudoConstant::participantStatus();
+                 } else if ( $eventContacts[$recipientType] == 'Participant Role' ) {
+                     $options = CRM_Event_PseudoConstant::participantRole();
+                 }
+            break;
+        }
+       
+       return $options;
+    }
 }
