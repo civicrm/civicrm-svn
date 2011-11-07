@@ -2310,8 +2310,13 @@ WHERE  civicrm_mailing_job.id = %1
 
             $lockArray = range( 1, $config->mailerJobsMax );
             shuffle( $lockArray );
+
+            // check if we are using global locks
+            require_once 'CRM/Core/BAO/Setting.php';
+            $serverWideLock = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+                                                             'civimail_server_wide_lock' );
             foreach ( $lockArray as $lockID ) {
-                $cronLock = new CRM_Core_Lock( "civimail.cronjob.{$lockID}" );
+                $cronLock = new CRM_Core_Lock( "civimail.cronjob.{$lockID}", null, $serverWideLock );
                 if ( $cronLock->isAcquired( ) ) {
                     $gotCronLock = true;
                     break;
@@ -2325,6 +2330,7 @@ WHERE  civicrm_mailing_job.id = %1
             }
         }
 
+
         // load bootstrap to call hooks
         require_once 'CRM/Mailing/BAO/Job.php';
 
@@ -2332,6 +2338,8 @@ WHERE  civicrm_mailing_job.id = %1
         CRM_Mailing_BAO_Job::runJobs_pre($config->mailerJobSize);
         CRM_Mailing_BAO_Job::runJobs();
         CRM_Mailing_BAO_Job::runJobs_post();
+
+        sleep( 100 );
 
         // lets release the global cron lock if we do have one
         if ( $gotCronLock ) {

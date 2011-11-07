@@ -187,6 +187,7 @@ VALUES
                           array( 'track_civimail_replies', 0 ),
                           array( 'activity_assignee_notification', 1 ),
                           array( 'civimail_workflow', 0 ),
+                          array( 'civimail_server_wide_lock', 0 ),
                           ),
                    CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME =>
                    array( array( 'is_enabled', 0 ),

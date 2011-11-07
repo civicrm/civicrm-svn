@@ -50,6 +50,7 @@ class CRM_Admin_Form_Preferences_Misc extends CRM_Admin_Form_Preferences
                                  'profile_add_to_group_double_optin'  => ts( 'Enable Double opt-in for groups in Add to Group(s) in Profiles' ),
                                  'track_civimail_replies'             => ts( 'Track CiviMail replies using VERP in Reply-To header' ),
                                  'civimail_workflow'                  => ts( 'Enable workflow support for CiviMail' ),
+                                 'civimail_server_wide_lock'          => ts( 'Enable global server wide lock for CiviMail' ),
                                  'activity_assignee_notification'     => ts( 'Enable email notifications to Activity Assignees' ),
                                  'contact_ajax_check_similar'         => ts( 'Enable ajax check if similar contacts exist when creating a new contact' ),
                                  'is_enabled'                         => ts( 'Enable Multi Site' ),
@@ -69,6 +70,7 @@ class CRM_Admin_Form_Preferences_Misc extends CRM_Admin_Form_Preferences
                                                                                          'track_civimail_replies',
                                                                                          'activity_assignee_notification',
                                                                                          'civimail_workflow',
+                                                                                         'civimail_server_wide_lock',
                                                                                            ),
                                   CRM_Core_BAO_Setting::CONFIGURATION_PREFERENCES_NAME => array(
                                                                                                 'contact_ajax_check_similar',

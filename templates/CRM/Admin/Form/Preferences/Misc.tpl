@@ -43,6 +43,10 @@
     		    <td class="label">{$form.civimail_workflow.label}</td>
     		    <td>{$form.civimail_workflow.html}</td>
     		</tr>
+    		<tr class="crm-preferences-misc-form-block-civimail-server-wide-lock">
+    		    <td class="label">{$form.civimail_server_wide_lock.label}</td>
+    		    <td>{$form.civimail_server_wide_lock.html}</td>
+    		</tr>
     		<tr class="crm-preferences-misc-form-block-ativity-assignee-notification">
     		    <td class="label">{$form.activity_assignee_notification.label}</td>
     		    <td>{$form.activity_assignee_notification.html}</td>

@@ -64,6 +64,7 @@ VALUES
   ( @domainID, NULL, 1, 'Mailing Preferences', 'track_civimail_replies', '{serialize}0{/serialize}' ),
   ( @domainID, NULL, 1, 'Mailing Preferences', 'activity_assignee_notification', '{serialize}1{/serialize}' ),
   ( @domainID, NULL, 1, 'Mailing Preferences', 'civimail_workflow', '{serialize}0{/serialize}' ),
+  ( @domainID, NULL, 1, 'Mailing Preferences', 'civimail_server_wide_lock', '{serialize}0{/serialize}' ),
   ( @domainID, NULL, 1, 'Multi Site Preferences', 'is_enabled', '{serialize}0{/serialize}' ),
   ( @domainID, NULL, 1, 'Multi Site Preferences', 'uniq_email_per_site', '{serialize}0{/serialize}' ),
   ( @domainID, NULL, 1, 'Multi Site Preferences', 'domain_group_id', '{serialize}0{/serialize}' ),

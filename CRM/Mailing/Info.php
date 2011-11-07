@@ -61,7 +61,12 @@ class CRM_Mailing_Info extends CRM_Core_Component_Info
         $config = CRM_Core_Config::singleton( );
         
         // early exit, since not true for most
-        if ( $config->userSystem->is_drupal && ! module_exists( 'rules' ) ) {
+        if ( ! $config->userSystem->is_drupal ||
+             ! function_exists( 'module_exists' ) ) {
+            return false;
+        }
+        
+        if ( ! module_exists( 'rules' ) ) {
             return false;
         }
 
