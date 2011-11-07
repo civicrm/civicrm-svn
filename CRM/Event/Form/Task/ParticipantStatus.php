@@ -52,8 +52,8 @@ class CRM_Event_Form_Task_ParticipantStatus extends CRM_Event_Form_Task_Batch
         $statuses = CRM_Event_PseudoConstant::participantStatus(null, null, 'label');
         asort($statuses, SORT_STRING);
         $this->add('select', 'status_change', ts('Change All Statuses'),  
-                   array( '' => ts('- select status -')) + $statuses, null,
-                   array('onchange' => "if (this.value) setStatusesTo(this.value);") );
+                    array( '' => ts('- select status -')) + $statuses );
+
         $this->assign('context', 'statusChange');
 
         # CRM-4321: display info on users being notified if any of the below statuses is enabled

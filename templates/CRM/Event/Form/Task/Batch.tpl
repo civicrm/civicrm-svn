@@ -83,5 +83,23 @@
 </fieldset>
 </div>
 
+{if $context EQ 'statusChange'} {* Update Participant Status task *}
+{literal}
+<script type="text/javascript">
+/**
+ * Function to update participant status 
+ */
+cj( function(){
+   cj('#status_change').change( function() {
+      if ( cj(this).val() ) {
+        cj('.crm-copy-fields [name^="field["][name*="[participant_status]"]').val( cj(this).val() ); 
+      }
+   }); 
+
+});
+</script>
+{/literal}
+{/if}
+
 {*include batch copy js js file*}
 {include file="CRM/common/batchCopy.tpl"}

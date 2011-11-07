@@ -145,17 +145,5 @@ function copyValuesDate(fname) {
     timeElement.val( timeElement.eq(0).val() );
 }
 
-function setStatusesTo( statusId ) {
-    var cId = new Array();
-    var i = 0;
-    {/literal}
-    {foreach from=$componentIds item=field}
-    {literal}cId[i++]{/literal} = {$field}
-    {/foreach}
-    {literal}
-    for (k = 0; k < cId.length; k++) {
-        document.getElementById("field_"+cId[k]+"_participant_status").value = statusId;
-    }
-}
 </script>
 {/literal}
