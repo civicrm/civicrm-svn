@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
 
 <table>
-  <base>CRM/Contribute</base>
+  <base>CRM/PCP</base>
   <class>PCPBlock</class>
   <name>civicrm_pcp_block</name>
   <comment>A Personal Campaign Page Block stores admin configurable status options and rules</comment>

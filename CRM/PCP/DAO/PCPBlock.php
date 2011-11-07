@@ -1,7 +1,7 @@
 <?php
 /*
 +--------------------------------------------------------------------+
-| CiviCRM version 3.4                                                |
+| CiviCRM version 4.0                                                |
 +--------------------------------------------------------------------+
 | Copyright CiviCRM LLC (c) 2004-2011                                |
 +--------------------------------------------------------------------+
@@ -92,12 +92,13 @@ class CRM_PCP_DAO_PCPBlock extends CRM_Core_DAO
      */
     public $entity_table;
     /**
-     * The entity that provides this pcp
+     * FK to civicrm_contribution_page.id OR civicrm_event.id
      *
      * @var int unsigned
      */
     public $entity_id;
     /**
+     * The type of entity that this pcp targets
      *
      * @var string
      */
@@ -170,7 +171,6 @@ class CRM_PCP_DAO_PCPBlock extends CRM_Core_DAO
     {
         if (!(self::$_links)) {
             self::$_links = array(
-                'entity_id' => 'civicrm_contribution_page:id',
                 'supporter_profile_id' => 'civicrm_uf_group:id',
             );
         }
@@ -206,9 +206,11 @@ class CRM_PCP_DAO_PCPBlock extends CRM_Core_DAO
                 'target_entity_type' => array(
                     'name' => 'target_entity_type',
                     'type' => CRM_Utils_Type::T_STRING,
-                    'title' => ts('Entity Table') ,
-                    'maxlength' => 64,
-                    'size' => CRM_Utils_Type::BIG,
+                    'title' => ts('Target Entity Type') ,
+                    'required' => true,
+                    'maxlength' => 255,
+                    'size' => CRM_Utils_Type::HUGE,
+                    'default' => 'contribute',
                 ) ,
                 'target_entity_id' => array(
                     'name' => 'target_entity_id',
@@ -292,7 +294,7 @@ class CRM_PCP_DAO_PCPBlock extends CRM_Core_DAO
     {
         if (!(self::$_import)) {
             self::$_import = array();
-            $fields = & self::fields();
+            $fields = self::fields();
             foreach($fields as $name => $field) {
                 if (CRM_Utils_Array::value('import', $field)) {
                     if ($prefix) {
@@ -315,7 +317,7 @@ class CRM_PCP_DAO_PCPBlock extends CRM_Core_DAO
     {
         if (!(self::$_export)) {
             self::$_export = array();
-            $fields = & self::fields();
+            $fields = self::fields();
             foreach($fields as $name => $field) {
                 if (CRM_Utils_Array::value('export', $field)) {
                     if ($prefix) {

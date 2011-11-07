@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1" ?> 
  
 <table> 
-  <base>CRM/Contribute</base> 
+  <base>CRM/PCP</base> 
   <class>PCP</class> 
   <name>civicrm_pcp</name> 
   <add>2.2</add> 

@@ -1,7 +1,7 @@
 <?php
 /*
 +--------------------------------------------------------------------+
-| CiviCRM version 3.4                                                |
+| CiviCRM version 4.0                                                |
 +--------------------------------------------------------------------+
 | Copyright CiviCRM LLC (c) 2004-2011                                |
 +--------------------------------------------------------------------+
@@ -118,12 +118,13 @@ class CRM_PCP_DAO_PCP extends CRM_Core_DAO
      */
     public $donate_link_text;
     /**
-     * The Contribution Page which triggered this pcp
+     * The Contribution or Event Page which triggered this pcp
      *
      * @var int unsigned
      */
     public $page_id;
     /**
+     * The type of PCP this is: contribute or event
      *
      * @var string
      */
@@ -131,7 +132,7 @@ class CRM_PCP_DAO_PCP extends CRM_Core_DAO
     /**
      * The pcp block that this pcp page was created from
      *
-     * @var string
+     * @var int unsigned
      */
     public $pcp_block_id;
     /**
@@ -246,19 +247,22 @@ class CRM_PCP_DAO_PCP extends CRM_Core_DAO
                 ) ,
                 'page_id' => array(
                     'name' => 'page_id',
-                     'type' => CRM_Utils_Type::T_INT,
-                     'required' => true,
+                    'type' => CRM_Utils_Type::T_INT,
+                    'required' => true,
                 ) ,
                 'page_type' => array(
                     'name' => 'page_type',
                     'type' => CRM_Utils_Type::T_STRING,
+                    'title' => ts('PCP Page Type') ,
+                    'maxlength' => 64,
+                    'size' => CRM_Utils_Type::BIG,
+                    'default' => 'contribute',
+                ) ,
+                'pcp_block_id' => array(
+                    'name' => 'pcp_block_id',
+                    'type' => CRM_Utils_Type::T_INT,
                     'required' => true,
-                 ) ,
-               'pcp_block_id' => array(
-                     'name' => 'pcp_block_id',
-                     'type' => CRM_Utils_Type::T_INT,
-                     'required' => true,
-                 ) ,
+                ) ,
                 'is_thermometer' => array(
                     'name' => 'is_thermometer',
                     'type' => CRM_Utils_Type::T_INT,
@@ -318,7 +322,7 @@ class CRM_PCP_DAO_PCP extends CRM_Core_DAO
     {
         if (!(self::$_import)) {
             self::$_import = array();
-            $fields = & self::fields();
+            $fields = self::fields();
             foreach($fields as $name => $field) {
                 if (CRM_Utils_Array::value('import', $field)) {
                     if ($prefix) {
@@ -341,7 +345,7 @@ class CRM_PCP_DAO_PCP extends CRM_Core_DAO
     {
         if (!(self::$_export)) {
             self::$_export = array();
-            $fields = & self::fields();
+            $fields = self::fields();
             foreach($fields as $name => $field) {
                 if (CRM_Utils_Array::value('export', $field)) {
                     if ($prefix) {
