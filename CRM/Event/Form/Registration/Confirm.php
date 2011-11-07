@@ -189,7 +189,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             CRM_Utils_System::setTitle($this->_values['event']['confirm_title']);
         }
 
-        if ($this->_pcpId){
+        if ( $this->_pcpId ) {
           require_once "CRM/Contribute/Form/Contribution/Confirm.php";
           $params = CRM_Contribute_Form_Contribution_Confirm::processPcp($this, $this->_params[0]);
           $this->_params[0] = $params;
@@ -887,10 +887,32 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         if ( $form->_contributeMode != 'notify' && !CRM_Utils_Array::value('is_pay_later', $params) ) {  
             $contribParams['address_id']  = CRM_Contribute_BAO_Contribution::createAddress( $params, $form->_bltID );
         }
-        
+
+        // Prepare soft contribution due to pcp or Submit Credit / Debit Card Contribution by admin.
+        if ( CRM_Utils_Array::value( 'pcp_made_through_id', $params ) ||
+             CRM_Utils_Array::value( 'soft_credit_to', $params ) ) { 
+
+            // if its due to pcp
+            if ( CRM_Utils_Array::value( 'pcp_made_through_id', $params ) ) {
+                $contribSoftContactId = CRM_Core_DAO::getFieldValue( 'CRM_PCP_DAO_PCP', 
+                                                                     $params['pcp_made_through_id'], 
+                                                                     'contact_id' );
+            } else {
+                $contribSoftContactId = CRM_Utils_Array::value( 'soft_credit_to', $params );
+            }
+
+            // Pass these details onto with the contribution to make them
+            // available at hook_post_process, CRM-8908
+            $contribParams['soft_credit_to'] = $params['soft_credit_to'] = $contribSoftContactId;
+        }
+
 		// create contribution record
         $contribution = CRM_Contribute_BAO_Contribution::add( $contribParams, $ids );
-        
+
+        // process soft credit / pcp pages
+        require_once 'CRM/Contribute/Form/Contribution/Confirm.php';
+        CRM_Contribute_Form_Contribution_Confirm::processPcpSoft( $params, $contribution );
+
         // return if pending
         if ( $pending || ($contribution->total_amount == 0) ) {
             $transaction->commit( );
