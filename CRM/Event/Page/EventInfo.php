@@ -250,14 +250,14 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                     if ( CRM_Utils_Array::value('registration_link_text', $values['event'] ) ) {
                         $registerText = $values['event']['registration_link_text'];
                     }
-                    if ($config->enable_cart)
-                    {
+                    if ( $config->enable_cart ) {
                         require_once('CRM/Event/Cart/BAO/EventInCart.php');
                         $link = CRM_Event_Cart_BAO_EventInCart::get_registration_link($this->_id);
                         $registerText = $link['label'];
 
                         $url = CRM_Utils_System::url( $link['path'], $link['query'].$action_query, true, null, true, true);
                     }
+                    
                     //Fixed for CRM-4855
                     $allowRegistration = CRM_Event_BAO_Event::showHideRegistrationLink( $values );
                     

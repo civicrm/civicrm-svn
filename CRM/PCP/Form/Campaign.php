@@ -263,24 +263,21 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
             $this->assign( 'supporterName', $supporterName );
            
 
-            if ($this->_component == 'contribute'){
-            $pageUrl   = CRM_Utils_System::url( "civicrm/contribute/transact",
-                                                       "reset=1&id={$pcpBlock->entity_id}",
-                                                       true, null, false,
-                                                       true );
-            $contribPageTitle = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $pcpBlock->entity_id, 'title' );
-            }
-            else if ($this->_component == 'event'){
-            $pageUrl   = CRM_Utils_System::url( "civicrm/event",
-                                                       "reset=1&id={$pcpBlock->entity_id}",
-                                                        true, null, false,
-                                                        true );
-            $contribPageTitle = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $pcpBlock->entity_id, 'title' );
+            if ( $this->_component == 'contribute' ) {
+                $pageUrl   = CRM_Utils_System::url( "civicrm/contribute/transact",
+                                                    "reset=1&id={$pcpBlock->entity_id}",
+                                                    true, null, false,
+                                                    true );
+                $contribPageTitle = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $pcpBlock->entity_id, 'title' );
+            } else if ( $this->_component == 'event' ) {
+                $pageUrl   = CRM_Utils_System::url( "civicrm/event",
+                                                    "reset=1&id={$pcpBlock->entity_id}",
+                                                    true, null, false,
+                                                    true );
+                $contribPageTitle = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $pcpBlock->entity_id, 'title' );
             }
 
             $this->assign( 'contribPageUrl', $pageUrl );
-
-            $this->assign( 'contribPageUrl', $contribPageUrl );
             $this->assign( 'contribPageTitle', $contribPageTitle );
             
             $managePCPUrl =  CRM_Utils_System::url( "civicrm/admin/pcp",

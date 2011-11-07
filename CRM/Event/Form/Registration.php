@@ -173,6 +173,8 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
     
     public $_action;
 
+    public $_pcpId;
+
     /* Is event already full.
      *
      * @var boolean
@@ -503,8 +505,8 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             $this->_pcpInfo  = $pcp['pcpInfo'];
         }
         
-        if ($pcp['pcpInfo']['intro_text']){
-          $this->_values['event']['intro_text'] = $pcp['pcpInfo']['intro_text'];
+        if ( CRM_Utils_Array::value( 'intro_text', $this->_pcpInfo ) ) {
+            $this->_values['event']['intro_text'] = $this->_pcpInfo['intro_text'];
         }
 
         // assign all event properties so wizard templates can display event info.
@@ -514,7 +516,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         $isShowLocation = CRM_Utils_Array::value('is_show_location',$this->_values['event'])  ;
         $this->assign( 'isShowLocation',$isShowLocation );
         require_once('CRM/PCP/BAO/PCP.php');
-        if ( $this->_pcpId && $pcpSupporter = CRM_PCP_BAO_PCP::displayName( $this->_pcpId ) ) {
+        if ( $pcpId && $pcpSupporter = CRM_PCP_BAO_PCP::displayName( $pcpId ) ) {
             $this->assign( 'pcpSupporterText' , ts('This event registration is being made thanks to effort of <strong>%1</strong>, who supports our campaign. You can support it as well - once you complete the registration, you will be able to create your own Personal Campaign Page!', array(1 => $pcpSupporter ) ) );
         }
 
