@@ -75,7 +75,7 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
      * Should we bypass permissions
      *
      * @var boolean
-     * @access prootected
+     * @access protected
      */
     protected $_skipPermission;
 
