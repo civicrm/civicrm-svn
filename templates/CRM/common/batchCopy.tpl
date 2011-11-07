@@ -73,7 +73,7 @@ function copyFieldValues( fname ) {
         var firstEntityId = firstElement.parent().parent().attr('entity_id');
        
         // lets uncheck all the checkbox except first one
-        cj('#Batch [type=checkbox]:not([name^="field['+ firstEntityId +']['+ fname +']["])').removeProp('checked');
+        cj('#Batch [type=checkbox][name^="field["][name*="[' + fname +']"][type=checkbox]:not([name^="field['+ firstEntityId +']['+ fname +']["])').removeProp('checked');
         
         //here for each checkbox for first row, check if it is checked and set remaining checkboxes
         cj('#Batch [type=checkbox][name^="field['+ firstEntityId +']['+ fname +']"][type!=hidden]').each(function() {
