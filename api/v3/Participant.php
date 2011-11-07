@@ -57,7 +57,7 @@
 function civicrm_api3_participant_create($params)
 {
         $errors= _civicrm_api3_participant_check_params( $params );
-        if ( civicrm_api3_error( $errors ) ) {
+        if ( civicrm_error( $errors ) ) {
             return $errors;
         }
         $value = array();
@@ -192,7 +192,7 @@ function _civicrm_api3_create_participant_formatted( $params , $onDuplicate )
     if ( $onDuplicate != CRM_Event_Import_Parser::DUPLICATE_NOCHECK) {
         CRM_Core_Error::reset( );
         $error = _civicrm_api3_participant_check_params( $params ,true );
-        if ( civicrm_api3_error( $error ) ) {
+        if ( civicrm_error( $error ) ) {
             return $error;
         }
     }

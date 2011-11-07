@@ -98,13 +98,13 @@ function civicrm_api3_membership_create($params)
 {
 
     $error = _civicrm_api3_membership_check_params( $params );
-    if ( civicrm_api3_error( $error ) ) {
+    if ( civicrm_error( $error ) ) {
       return $error;
     }
 
     $values  = array( );
     $error = _civicrm_api3_membership_format_params( $params, $values );
-    if ( civicrm_api3_error( $error ) ) {
+    if ( civicrm_error( $error ) ) {
       return $error;
     }
 
@@ -140,7 +140,15 @@ function civicrm_api3_membership_create($params)
     return civicrm_api3_create_success($membership , $params,'membership','create', $membershipBAO);
 
 }
-
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_membership_create_spec(){
+  //need to move all the cruft about handling unique fields into here - but which do we primarily support?
+}
 /**
  * Get contact membership record.
  *

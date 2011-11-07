@@ -59,7 +59,7 @@ function civicrm_api3_relationship_create( $params ) {
         require_once 'CRM/Contact/BAO/Relationship.php';
         $error = _civicrm_api3_relationship_format_params( $params, $values );
 
-        if ( civicrm_api3_error( $error ) ) {
+        if ( civicrm_error( $error ) ) {
             return $error;
         }
 

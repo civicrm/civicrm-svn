@@ -107,7 +107,7 @@ function civicrm_api3_contact_create( $params )
     }
     
     $error = _civicrm_api3_greeting_format_params( $params );
-    if ( civicrm_api3_error( $error ) ) {
+    if ( civicrm_error( $error ) ) {
         return $error;
     }
     

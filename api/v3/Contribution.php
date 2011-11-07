@@ -58,14 +58,14 @@ function civicrm_api3_contribution_create($params) {
 		civicrm_api3_verify_one_mandatory ( $params, null,  array ('contribution_type_id', 'contribution_type'  ) );
 		
 		$error = _civicrm_api3_contribute_check_params ( $params );
-		if (civicrm_api3_error ( $error )) {
+		if (civicrm_error ( $error )) {
 			return $error;
 		}
 		
 		$values = array ();
 		
 		$error = _civicrm_api3_contribute_format_params ( $params, $values );
-		if (civicrm_api3_error ( $error )) {
+		if (civicrm_error ( $error )) {
 			return $error;
 		}
 		
@@ -389,7 +389,7 @@ function civicrm_api3_contribution_transact($params) {
 		
 		require_once 'CRM/Contribute/BAO/Contribution.php';
 		$error = _civicrm_api3_contribute_format_params ( $params, $values );
-		if (civicrm_api3_error ( $error )) {
+		if (civicrm_error ( $error )) {
 			return $error;
 		}
 		
@@ -421,18 +421,18 @@ function civicrm_api3_contribution_transact($params) {
 		
 		require_once 'CRM/Core/BAO/PaymentProcessor.php';
 		$paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment ( $params ['payment_processor_id'], $params ['payment_processor_mode'] );
-		if (civicrm_api3_error ( $paymentProcessor )) {
+		if (civicrm_error ( $paymentProcessor )) {
 			return $paymentProcessor;
 		}
 		
 		require_once 'CRM/Core/Payment.php';
 		$payment = & CRM_Core_Payment::singleton ( $params ['payment_processor_mode'], $paymentProcessor );
-		if (civicrm_api3_error ( $payment )) {
+		if (civicrm_error ( $payment )) {
 			return $payment;
 		}
 		
 		$transaction = $payment->doDirectPayment ( $params );
-		if (civicrm_api3_error ( $transaction )) {
+		if (civicrm_error ( $transaction )) {
 			return $transaction;
 		}
 		

@@ -11,26 +11,6 @@
  */
 
 /*
- * 
-@deprecated - code was part of our first, wrong, approach to phasing in api v3 - should go, has
-never been suppored as an api usage but there is one call to it in test suite
- */
-function civicrm_api_legacy($function, $class, $params) {
-    $version = civicrm_get_api_version($params);
-    require_once 'CRM/Utils/String.php';
-    // clean up. they should be alphanumeric and _ only
-    $class = CRM_Utils_String::munge( $class );
-    $function = CRM_Utils_String::munge( $function );
-    if ($version ==3){
-        $function = str_replace( 'civicrm', 'civicrm_api3',$function);
-    }
-    require_once 'api/v' . $version . '/' . $class .'.php';
-    $result = $function($params);
-    return $result;
-}
-
-
-/*
  * @param string $entity
  *   type of entities to deal with
  * @param string $action
@@ -56,7 +36,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     $apiRequest += _civicrm_api_resolve($apiRequest);    // look up function, file, is_generic
     
     $errorFnName = ( $apiRequest['version'] == 2 ) ? 'civicrm_create_error' : 'civicrm_api3_create_error';
-    if ($apiRequest['version'] > 2) civicrm_api3_api_check_permission($apiRequest['entity'], $apiRequest['action'], $apiRequest['params']);
+    if ($apiRequest['version'] > 2) _civicrm_api3_api_check_permission($apiRequest['entity'], $apiRequest['action'], $apiRequest['params']);
     if(strtolower($action) != 'getfields'){
       _civicrm_api3_swap_out_aliases($apiRequest );// we do this before we 
       if(!CRM_Utils_Array::value('id',$params) ){

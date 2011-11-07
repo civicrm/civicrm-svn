@@ -58,7 +58,7 @@ function civicrm_api3_pledge_create( $params ) {
     $values  = array( );
     //check that fields are in appropriate format. Dates will be formatted (within reason) by this function
     $error = _civicrm_api3_pledge_format_params( $params, $values,TRUE ); 
-    if ( civicrm_api3_error( $error ) ) {
+    if ( civicrm_error( $error ) ) {
         return $error;
     } 
     //format the custom fields
