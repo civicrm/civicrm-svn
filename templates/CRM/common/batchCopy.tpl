@@ -138,9 +138,9 @@ function copyValuesDate(fname) {
     var fnameDisplay = fname + '_display';
     var fnameTime    = fname + '_time';
     
-    var displayElement = cj('[name^="field_"][name$="_' + fnameDisplay +'"]');
-    var timeElement    = cj('[name^="field_"][name$="_' + fnameTime +'"]');
-  
+    var displayElement = cj('.crm-copy-fields [name^="field_"][name$="_' + fnameDisplay +'"][type!=hidden]');
+    var timeElement    = cj('.crm-copy-fields [name^="field["][name*="[' + fnameTime +']"][type!=hidden]');
+
     displayElement.val( displayElement.eq(0).val() );
     timeElement.val( timeElement.eq(0).val() );
 }
