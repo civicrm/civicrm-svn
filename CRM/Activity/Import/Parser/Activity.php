@@ -267,8 +267,8 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
             }
         }
         //date-Format part ends
-        civicrm_api_include( 'utils', false, 3 );
-        $formatError = _civicrm_api3_activity_formatted_param( $params, $params, true );
+        require_once 'api/v3/DeprecatedUtils.php';
+        $formatError = _civicrm_api3_deprecated_activity_formatted_param( $params, $params, true );
                 
         if ( $formatError ) {
             array_unshift( $values, $formatError['error_message'] );

@@ -114,7 +114,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
             $locationType = CRM_Core_BAO_LocationType::getDefault( );
             $value = array('email' => $forward_email,
                            'location_type_id' => $locationType->id );
-            _civicrm_api3_add_formatted_param($value, $formatted);
+            _civicrm_api3_deprecated_add_formatted_param($value, $formatted);
             require_once 'CRM/Import/Parser.php';
             $formatted['onDuplicate'] = CRM_Import_Parser::DUPLICATE_SKIP;
             $formatted['fixAddress'] = true;

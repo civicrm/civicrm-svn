@@ -328,8 +328,8 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
         if ( CRM_Utils_Array::value( 'pledge_payment', $paramValues ) ) {
             $paramValues['onDuplicate'] = $onDuplicate;
         }
-        
-        $formatError = _civicrm_api3_contribute_formatted_param( $paramValues, $formatted, true);
+        require_once 'api/v3/DeprecatedUtils.php';
+        $formatError = _civicrm_api3_deprecated_formatted_param( $paramValues, $formatted, true);
         
         if ( $formatError ) {
             array_unshift($values, $formatError['error_message']);

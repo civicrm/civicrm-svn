@@ -532,8 +532,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     //special case to check dedupe if external id present.
                     //if we send external id dedupe will stop.
                     unset( $dedupeParams['external_identifier'] );
-                    
-                    $checkDedupe = _civicrm_api3_duplicate_formatted_contact( $dedupeParams );
+                    require_once 'api/DeprecatedUtils.php';
+                                       $checkDedupe = _civicrm_api3_deprecated_duplicate_formatted_contact( $dedupeParams );
                     if ( CRM_Core_Error::isAPIError( $checkDedupe, CRM_Core_ERROR::DUPLICATE_CONTACT ) ) {
                         $matchingContactIds = explode( ',', $checkDedupe['error_message']['params'][0] );
                         if ( count( $matchingContactIds ) == 1 ) {
@@ -549,7 +549,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 }
             }
             
-            $error = _civicrm_api3_duplicate_formatted_contact( $formatted );
+            $error = _civicrm_api3_deprecated_duplicate_formatted_contact( $formatted );
             if ( CRM_Core_Error::isAPIError( $error, CRM_Core_ERROR::DUPLICATE_CONTACT ) ) { 
                 $matchedIDs = explode( ',', $error['error_message']['params'][0] );
                 if ( count( $matchedIDs) >= 1 ) {
@@ -1601,10 +1601,12 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         $error = _civicrm_api3_contact_check_params( $formatted,
                                                      $dupeCheck,
                                                      true,
-                                                     false );
+        require_once 'api/DeprecatedUtils.php';
+                                                false );
         if ( ( is_null( $error )                                                ) && 
-             ( civicrm_error( _civicrm_api3_validate_formatted_contact($formatted) ) ) ) {
-            $error = _civicrm_api3_validate_formatted_contact($formatted);
+             ( civicrm_error( _civicrm_api3_deprecated_validate_formatted_contact($formatted) ) ) ) {
+                               
+             $error = _civicrm_api3_deprecated_validate_formatted_contact($formatted);
         }
         
         $newContact = $error;
@@ -1848,8 +1850,9 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         $break = true;
                     }
                     
-                    if ( !$break ) {  
-                        _civicrm_api3_add_formatted_param( $value, $formatted );
+                    if ( !$break ) { 
+                        require_once 'api/DeprecatedUtils.php';
+                        _civicrm_api3_deprecated_add_formatted_param( $value, $formatted );
                     }
                 }
                 if ( !$isAddressCustomField ) {
@@ -1870,8 +1873,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             if ( $key == 'id' && isset( $field ) ) {
                 $formatted[$key] = $field;
             }
-            
-            _civicrm_api3_add_formatted_param( $formatValues, $formatted );
+            require_once 'api/DeprecatedUtils.php';
+            _civicrm_api3_deprecated_add_formatted_param( $formatValues, $formatted );
          
             //Handling Custom Data
             if ( ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $key ) ) 

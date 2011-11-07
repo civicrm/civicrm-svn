@@ -341,9 +341,8 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             $formatValues[$key] = $field;
         }
         
-        civicrm_api_include( 'participant', false, 3 );
-        civicrm_api_include( 'utils', false, 3 );
-        $formatError = _civicrm_api3_participant_formatted_param( $formatValues, $formatted, true );
+        require_once 'api/DeprecatedUtils.php';
+        $formatError = _civicrm_api3_deprecated_participant_formatted_param( $formatValues, $formatted, true );
         
         if ( $formatError ) {
             array_unshift($values, $formatError['error_message']);
