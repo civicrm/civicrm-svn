@@ -30,7 +30,7 @@
 </div>	       
     <legend>{$profileTitle}</legend>
     <div class="crm-submit-buttons">{if $fields}{$form._qf_Batch_refresh.html}{/if}{include file="CRM/common/formButtons.tpl" location="bottom"}</div> 
-         <table>
+    <table class="crm-copy-fields">
 	  <thead class="sticky">
             <tr class="columnheader">
              {foreach from=$readOnlyFields item=fTitle key=fName}

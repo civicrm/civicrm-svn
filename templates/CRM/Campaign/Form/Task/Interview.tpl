@@ -53,7 +53,7 @@
     {/if}
 </div>
 
-<table id="voterRecords" class="display">
+<table id="voterRecords" class="display crm-copy-fields">
     <thead>
        <tr class="columnheader">
              {foreach from=$readOnlyFields item=fTitle key=fName}

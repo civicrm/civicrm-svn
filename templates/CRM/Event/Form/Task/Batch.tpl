@@ -40,7 +40,7 @@
     <p>{ts}Click <strong>Update Participant(s)</strong> below to save all your changes.{/ts}</p>
 </div>
     <legend>{$profileTitle}</legend>
-         <table>
+        <table class="crm-copy-fields">
 	     <thead class="sticky">
             <tr class="columnheader">
              {foreach from=$readOnlyFields item=fTitle key=fName}

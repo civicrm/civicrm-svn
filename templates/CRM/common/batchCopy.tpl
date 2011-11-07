@@ -42,7 +42,7 @@ function copyFieldValues( fname ) {
     // this is the most common pattern for elements, so first check if it exits
     // this check field starting with "field[" and contains [fname] and is not
     // hidden ( for checkbox hidden element is created )
-    var elementId    = cj('#Batch [name^="field["][name*="[' + fname +']"][type!=hidden]');
+    var elementId    = cj('.crm-copy-fields [name^="field["][name*="[' + fname +']"][type!=hidden]');
     
     // get the first element and it's value
     var firstElement = elementId.eq(0);
@@ -73,15 +73,15 @@ function copyFieldValues( fname ) {
         var firstEntityId = firstElement.parent().parent().attr('entity_id');
        
         // lets uncheck all the checkbox except first one
-        cj('#Batch [type=checkbox][name^="field["][name*="[' + fname +']"][type=checkbox]:not([name^="field['+ firstEntityId +']['+ fname +']["])').removeProp('checked');
+        cj('.crm-copy-fields [type=checkbox][name^="field["][name*="[' + fname +']"][type=checkbox]:not([name^="field['+ firstEntityId +']['+ fname +']["])').removeProp('checked');
         
         //here for each checkbox for first row, check if it is checked and set remaining checkboxes
-        cj('#Batch [type=checkbox][name^="field['+ firstEntityId +']['+ fname +']"][type!=hidden]').each(function() {
+        cj('.crm-copy-fields [type=checkbox][name^="field['+ firstEntityId +']['+ fname +']"][type!=hidden]').each(function() {
             if (cj(this).prop('checked') ) {
                 var elementName = cj(this).attr('name');
                 var correctIndex = elementName.split('field['+ firstEntityId +']['+ fname +'][');
                 correctIndexValue = correctIndex[1].replace(']', '');
-                cj('#Batch [type=checkbox][name^="field["][name*="['+ fname +']['+ correctIndexValue+']"][type!=hidden]').prop('checked',true);
+                cj('.crm-copy-fields [type=checkbox][name^="field["][name*="['+ fname +']['+ correctIndexValue+']"][type!=hidden]').prop('checked',true);
             }
         });
     } else if ( editor ) {
