@@ -146,7 +146,7 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
                                                                $this );
 
 
-        if ( $this->_sortByCharacter == 1 ||
+        if ( strtolower( $this->_sortByCharacter ) == 'all' ||
              ! empty( $_POST ) ) {
             $this->_sortByCharacter = '';
             $this->set( 'sortByCharacter', '' );
@@ -224,12 +224,12 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
         $selector->setParent( $this );
         
         $controller = new CRM_Core_Selector_Controller(
-                                                        $selector ,
-                                                        $this->get( CRM_Utils_Pager::PAGE_ID ),
-                                                        $this->get( CRM_Utils_Sort::SORT_ID ).$this->get(CRM_Utils_Sort::SORT_DIRECTION),
-                                                        CRM_Core_Action::VIEW, 
-                                                        $this, 
-                                                        CRM_Core_Selector_Controller::TEMPLATE );
+                                                       $selector ,
+                                                       $this->get( CRM_Utils_Pager::PAGE_ID ),
+                                                       $this->get( CRM_Utils_Sort::SORT_ID ).$this->get(CRM_Utils_Sort::SORT_DIRECTION),
+                                                       CRM_Core_Action::VIEW, 
+                                                       $this, 
+                                                       CRM_Core_Selector_Controller::TEMPLATE );
         
         $controller->setEmbedded( true );
         $controller->run( );
@@ -315,7 +315,8 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
         }
 
         if ( $sortBy &&
-             $this->_sortByCharacter ) {
+             $this->_sortByCharacter !== null ||
+             $this->_sortByCharacter !== '' ) {
             $clauses[] = 'name LIKE %2';
             $params[2] = array( $this->_sortByCharacter . '%', 'String' );
         }

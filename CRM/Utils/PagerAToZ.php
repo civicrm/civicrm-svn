@@ -132,7 +132,7 @@ class CRM_Utils_PagerAToZ
         
         $aToZBar = array( );
         foreach ( $AToZBar as $key => $link ) {
-            if ( ! $link ) {
+            if ( $link === null ) {
                 continue;
             }
 
@@ -158,7 +158,7 @@ class CRM_Utils_PagerAToZ
         }
         
         $url = sprintf('<a href="%s">%s</a>',
-                       CRM_Utils_System::url( $path, "force=1&qfKey=$qfKey&sortByCharacter=1" ),
+                       CRM_Utils_System::url( $path, "force=1&qfKey=$qfKey&sortByCharacter=all" ),
                        'All' );
         $aToZBar[] = array( 'item' => $url );
         return $aToZBar;

@@ -170,7 +170,7 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
                                                                'String',
                                                                $this );
         $createdId = CRM_Utils_Request::retrieve('cid', 'Positive', $this, false, 0);
-        if ( $this->_sortByCharacter == 1 ||
+        if ( strtolower( $this->_sortByCharacter ) == 'all' || 
              ! empty( $_POST ) ) {
             $this->_sortByCharacter = '';
             $this->set( 'sortByCharacter', '' );
@@ -391,7 +391,7 @@ ORDER BY start_date desc
         }
 
         if ( $sortBy &&
-             $this->_sortByCharacter ) {
+             $this->_sortByCharacter !== null ) {
             $clauses[] = 'title LIKE %6';
             $params[6] = array( $this->_sortByCharacter . '%', 'String' );
         }

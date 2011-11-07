@@ -218,8 +218,9 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
         // we dont want to store the sortByCharacter in the formValue, it is more like 
         // a filter on the result set
         // this filter is reset if we click on the search button
-        if ( $this->_sortByCharacter && empty( $_POST ) ) {
-            if ( $this->_sortByCharacter == 1 ) {
+        if ( $this->_sortByCharacter !== null
+             && empty( $_POST ) ) {
+            if ( strtolower( $this->_sortByCharacter ) == 'all' ) {
                 $this->_formValues['sortByCharacter'] = null;
             } else {
                 $this->_formValues['sortByCharacter'] = $this->_sortByCharacter;

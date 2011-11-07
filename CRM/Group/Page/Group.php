@@ -235,7 +235,7 @@ class CRM_Group_Page_Group extends CRM_Core_Page_Basic
         $this->_sortByCharacter = CRM_Utils_Request::retrieve( 'sortByCharacter',
                                                                'String',
                                                                $this );
-        if ( $this->_sortByCharacter == 1 ||
+        if ( strtolower( $this->_sortByCharacter ) == 'all' || 
              ! empty( $_POST ) ) {
             $this->_sortByCharacter = '';
             $this->set( 'sortByCharacter', '' );
@@ -426,7 +426,7 @@ class CRM_Group_Page_Group extends CRM_Core_Page_Basic
         }
         
         if ( $sortBy &&
-             $this->_sortByCharacter ) {
+             $this->_sortByCharacter !== null ) {
             $clauses[] = 'groups.title LIKE %6';
             $params[6] = array( $this->_sortByCharacter . '%', 'String' );
         }

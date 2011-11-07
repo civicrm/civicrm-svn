@@ -504,7 +504,7 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
         }
             
         if ( $sortBy &&
-             $this->_parent->_sortByCharacter ) {
+             $this->_parent->_sortByCharacter !== null ) {
             $clauses[] = 'name LIKE %3';
             $params[3] = array( $this->_parent->_sortByCharacter . '%', 'String' );
         }
