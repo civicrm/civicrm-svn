@@ -231,7 +231,7 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
                     $value = CRM_Utils_Array::value( $settingName, $this->_params );
                     if ( $value ) {
                         $value = trim( $value );
-                        $value = str_replace(array("\r\n", "\r"), "\n", $this->_params[$f] );
+                        $value = str_replace(array("\r\n", "\r"), "\n", $value );
                     }
                     $this->_config->$settingName = $value;
                     break;
