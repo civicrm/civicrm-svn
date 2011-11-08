@@ -857,7 +857,7 @@ function civicrm_api3_contact_geocode( $params )
  * @access public
  *
  */
-function civicrm_api3_contact_scheduledReminder( $params )
+function civicrm_api3_contact_send_reminder( $params )
 {
     require_once 'CRM/Core/BAO/ActionSchedule.php';
     $result = CRM_Core_BAO_ActionSchedule::processQueue( CRM_Utils_Array::value( 'now', $params) );
