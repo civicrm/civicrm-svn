@@ -43,51 +43,31 @@ require_once 'CRM/Admin/Form/Preferences.php';
 class CRM_Admin_Form_Preferences_Misc extends CRM_Admin_Form_Preferences
 {
     function preProcess( ) {
-        CRM_Utils_System::setTitle(ts('Settings - Site Preferences'));
-        // add all the checkboxes
-        $this->_checkbox = array(
-                                 'profile_double_optin'               => ts( 'Enable Double opt-in for Profiles' ),
-                                 'profile_add_to_group_double_optin'  => ts( 'Enable Double opt-in for groups in Add to Group(s) in Profiles' ),
-                                 'track_civimail_replies'             => ts( 'Track CiviMail replies using VERP in Reply-To header' ),
-                                 'civimail_workflow'                  => ts( 'Enable workflow support for CiviMail' ),
-                                 'civimail_server_wide_lock'          => ts( 'Enable global server wide lock for CiviMail' ),
-                                 'activity_assignee_notification'     => ts( 'Enable email notifications to Activity Assignees' ),
-                                 'contact_ajax_check_similar'         => ts( 'Enable ajax check if similar contacts exist when creating a new contact' ),
-                                 'is_enabled'                         => ts( 'Enable Multi Site' ),
-                                 'uniq_email_per_site'                => ts( 'Ensure multi sites have a unique email per site' ),
-                                 'domain_group_id'                    => ts( 'The parent group for this domain' ),
-                                 'event_price_set_domain_id'          => ts( 'Should events respect domain' ),
-                                 );
-
-        $this->_text = array(
-                             'tag_unconfirmed'   => ts( 'Tag Name' ),
-                             'petition_contacts' => ts( 'Group Name' ),
-                             );
-        
-        $this->_varNames = array( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME => array( 
-                                                                                         'profile_double_optin',
-                                                                                         'profile_add_to_group_double_optin',
-                                                                                         'track_civimail_replies',
-                                                                                         'activity_assignee_notification',
-                                                                                         'civimail_workflow',
-                                                                                         'civimail_server_wide_lock',
-                                                                                           ),
-                                  CRM_Core_BAO_Setting::CONFIGURATION_PREFERENCES_NAME => array(
-                                                                                                'contact_ajax_check_similar',
-                                                                                                'tag_unconfirmed',
-                                                                                                'petition_contacts',
-                                                                                                ),
-                                                                                        
-                                  );
-
-
-        $config = CRM_Core_Config::singleton( );
-        if ( ! in_array( 'CiviMail', $config->enableComponents ) ) {
-            unset( $this->_checkbox['profile_double_optin'] );
-            unset( $this->_checkbox['profile_add_to_group_double_optin'] );
-            unset( $this->_checkbox['track_civimail_replies'] );
-            unset( $this->_checkbox['civimail_workflow'] );
-        }
+        CRM_Utils_System::setTitle(ts('CiviMail Settings'));
+        $this->_varNames = array( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME =>
+            array( 
+                'profile_double_optin'               => array( 'html_type'    => 'checkbox',
+                                                                'title'        => ts( 'Enable Double opt-in for Profiles' ),
+                                                                'description'  => ts( 'When CiviMail is enabled, if a profile includes a Groups checkbox the user will receive a confirmation email which they must respond to before they are added to a group.'),
+                                                             ),
+                'profile_add_to_group_double_optin'  => array( 'html_type'    => 'checkbox',
+                                                                'title'        => ts( 'Enable Double opt-in for Profiles which have automatic Add Contact to Group setting' ),
+                                                                'description'  => ts( 'When CiviMail is enabled and a profile uses the "Add to Group" setting, the user will receive a confirmation email which they must respond to before they are added to the group.'),
+                                                             ),
+                'track_civimail_replies'             => array( 'html_type'    => 'checkbox',
+                                                                'title'        => ts( 'Track CiviMail replies using VERP in Reply-To header' ),
+                                                                'description'  => ts( ''),
+                                                             ),
+                'civimail_workflow'                  => array( 'html_type'    => 'checkbox',
+                                                                'title'        => ts( 'Enable workflow support for CiviMail' ),
+                                                                'description'  => ts( 'Drupal-only. Rules module must be enabled (beta feature - use with caution).' ),
+                                                             ),
+                'civimail_server_wide_lock'          => array( 'html_type'    => 'checkbox',
+                                                                      'title'        => ts( 'Enable global server wide lock for CiviMail' ),
+                                                                      'description'  => ts( '' ),
+                                                             ),
+            )
+        );
 
         parent::preProcess( );
     }
@@ -95,8 +75,8 @@ class CRM_Admin_Form_Preferences_Misc extends CRM_Admin_Form_Preferences
     function setDefaultValues( ) {
         $defaults = array( );
 
-        foreach ( $this->_varNames as $groupName => $settingNames ) {
-            foreach ( $settingNames as $settingName ) {
+        foreach ( $this->_varNames as $groupName => $settings ) {
+            foreach ( $settings as $settingName => $dontcare ) {
                 $defaults[$settingName] = 
                     isset( $this->_config->$settingName ) ?
                     $this->_config->$settingName :

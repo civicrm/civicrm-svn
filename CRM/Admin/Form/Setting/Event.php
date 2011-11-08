@@ -40,7 +40,7 @@ class CRM_Admin_Form_Setting_Event extends CRM_Admin_Form_Setting
 {
     public function buildQuickForm( ) 
     {
-        CRM_Utils_System::setTitle(ts('Settings - CiviEvent'));
+        CRM_Utils_System::setTitle(ts('CiviEvent Settings'));
         $this->addElement( 'advcheckbox', 'enable_cart', ts( 'Enable Cart Checkout' ) );
         $check = true;
         
