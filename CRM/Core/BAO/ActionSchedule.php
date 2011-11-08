@@ -551,11 +551,22 @@ WHERE   cas.entity_value = $id AND
             }
 
             if ( $mapping->entity == 'civicrm_activity' ) {
+                $tokenEntity = 'activity';
                 $tokenFields = array( 'activity_id', 'activity_type', 'subject', 'details', 'activity_date_time' );
                 $extraSelect = ", ov.label as activity_type, e.id as activity_id";
                 $extraJoin   = "INNER JOIN civicrm_option_group og ON og.name = 'activity_type'
 INNER JOIN civicrm_option_value ov ON e.activity_type_id = ov.value AND ov.option_group_id = og.id";
                 $extraWhere  = "AND e.is_current_revision = 1 AND e.is_deleted = 0";
+            }
+
+            if ( $mapping->entity == 'civicrm_participant' ) {
+                $tokenEntity = 'event';
+                $tokenFields = array( 'event_type', 'title', 'event_id', 'start_date', 'end_date', 'summary', 'description' );
+                $extraSelect = ", ov.label as event_type, ev.title, ev.id as event_id, ev.start_date, ev.end_date, ev.summary, ev.description";
+                $extraJoin   = "
+INNER JOIN civicrm_event ev ON e.event_id = ev.id
+INNER JOIN civicrm_option_group og ON og.name = 'event_type'
+INNER JOIN civicrm_option_value ov ON ev.event_type_id = ov.value AND ov.option_group_id = og.id";
             }
 
             $query = "
@@ -571,7 +582,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
             while ( $dao->fetch() ) {
                 $entityTokenParams = array();
                 foreach ( $tokenFields as $field ) {
-                    $entityTokenParams['activity.' . $field] = $dao->$field;
+                    $entityTokenParams["{$tokenEntity}." . $field] = $dao->$field;
                 }
 
                 $isError = 0; $errorMsg = '';
@@ -659,7 +670,6 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
                     $join[] = "INNER JOIN civicrm_activity_target r ON  r.activity_id = e.id";
                     break;
                 default:
-                    CRM_Core_Error::fatal( ts('Unsupported recipient option.') );
                     break;
                 }
                 // build where clause
@@ -677,18 +687,24 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
 
             if ( $mapping->entity == 'civicrm_participant' ) {
                 $contactField = "e.contact_id";
-                switch ( $recipientOptions[$actionSchedule->recipient] ) {
-                case 'Participant Status':
-                    $join[] = "INNER JOIN civicrm_event r ON  e.event_id = r.id";
-                    break;
-                case 'Participant Role':
-                    //$contactField = "e.source_contact_id";
-                    break;
-                default:
-                    CRM_Core_Error::fatal( ts('Unsupported recipient option.') );
-                    break;
-                }
+                $join[] = "INNER JOIN civicrm_event r ON e.event_id = r.id";
 
+                if ( $actionSchedule->recipient_listing ) {
+                    $rList = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                      trim($actionSchedule->recipient_listing, CRM_Core_DAO::VALUE_SEPARATOR) );
+                    $rList = implode( ',', $rList );
+
+                    switch ( $recipientOptions[$actionSchedule->recipient] ) {
+                    case 'Participant Status':
+                        $where[]  = "e.status_id IN ({$rList})";
+                        break;
+                    case 'Participant Role':
+                        $where[]  = "e.role_id IN ({$rList})";
+                        break;
+                    default:
+                        break;
+                    }
+                }
                 // build where clause
                 if ( !empty($value) ) {
                     $where[]  = "r.event_type_id IN ({$value})";
@@ -698,6 +714,14 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
                 }
                 
                 $dateField = str_replace('event_', 'r.', $actionSchedule->start_action_date);
+            }
+            
+            if ( $actionSchedule->group_id ) {
+                $join[]  = "INNER JOIN civicrm_group_contact grp ON {$contactField} = grp.contact_id AND grp.status = 'Added'";
+                $where[] = "grp.group_id IN ({$actionSchedule->group_id})";
+            } else if ( !empty($actionSchedule->recipient_manual) ) {
+                $rList   = CRM_Utils_Type::escape($actionSchedule->recipient_manual, 'String');
+                $where[] = "{$contactField} IN ({$rList})";
             }
 
             $select[] = "{$contactField} as contact_id";
