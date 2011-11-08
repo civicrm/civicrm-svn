@@ -106,6 +106,7 @@ LEFT JOIN civicrm_email      ON contact_a.id = civicrm_email.contact_id
         if ( ! $contact_id ) {
             require_once 'CRM/Core/BAO/LocationType.php';
             civicrm_api_include( 'utils', false, 3 );
+            civicrm_api_include( 'DeprecatedUtils', false, 3 );
             /* If the contact does not exist, create one. */
             $formatted = array( 'contact_type' => 'Individual',
                                 'version'      => 3 );
