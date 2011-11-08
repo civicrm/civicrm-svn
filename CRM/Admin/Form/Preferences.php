@@ -163,6 +163,32 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
             }
         }
 
+        if ( ! empty( $this->_varNames ) ) {
+            foreach ( $this->_varNames as $groupName => $groupValues ) {
+                foreach ( $groupValues as $fieldName => $fieldValue ) {
+                    if ( $fieldValue['html_type'] == 'text' ) {
+                        $this->addElement( 'text',
+                                           $fieldName,
+                                           $fieldValue['title'],
+                                           array( 'maxlength' => 64,
+                                                  'size'      => 32 ) );
+                    }
+
+                    if ( $fieldValue['html_type'] == 'textarea' ) {
+                        $this->addElement( 'textarea',
+                                           $fieldName,
+                                           $fieldValue['title'] );
+                    }
+
+                    if ( $fieldValue['html_type'] == 'checkbox' ) {
+                        $this->addElement( 'checkbox',
+                                           $fieldName,
+                                           $fieldValue['title'] );
+                    }
+                }
+            }
+        }
+
         $this->addButtons( array(
                                  array ( 'type'      => 'next',
                                          'name'      => ts('Save'),
@@ -213,8 +239,8 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
             }
         }
 
-        foreach ( $this->_varNames as $groupName => $settingNames ) {
-            foreach ( $settingNames as $settingName ) {
+        foreach ( $this->_varNames as $groupName => $groupValues ) {
+            foreach ( $groupValues as $settingName => $fieldValues ) {
                 $settingValue = isset( $this->_config->$settingName ) ? $this->_config->$settingName : null;
                 CRM_Core_BAO_Setting::setItem( $settingValue,
                                                $groupName,

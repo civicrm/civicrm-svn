@@ -52,16 +52,18 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
                             'user_dashboard_options'  => ts( 'Contact Dashboard' )
                             );
 
-        $this->_varNames = array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME => array( 
-                                                                                         'contact_view_options',
-                                                                                         'contact_edit_options',
-                                                                                         'advanced_search_options',
-                                                                                         'user_dashboard_options',
-                                                                                         'display_name_format',
-                                                                                         'sort_name_format',
-                                                                                         'editor_id',
-                                                                                          ),
-                                  );
+        $this->_varNames =
+            array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME =>
+                   array( 
+                         'contact_view_options' => array( 'html_type' => null ),
+                         'contact_edit_options' => array( 'html_type' => null ),
+                         'advanced_search_options' => array( 'html_type' => null ),
+                         'user_dashboard_options' => array( 'html_type' => null ),
+                         'display_name_format' => array( 'html_type' => null ),
+                         'sort_name_format' => array( 'html_type' => null ),
+                         'editor_id' => array( 'html_type' => null ),
+                          ),
+                   );
 
 
         parent::preProcess( );

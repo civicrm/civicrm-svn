@@ -44,30 +44,31 @@ class CRM_Admin_Form_Preferences_Misc extends CRM_Admin_Form_Preferences
 {
     function preProcess( ) {
         CRM_Utils_System::setTitle(ts('CiviMail Settings'));
-        $this->_varNames = array( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME =>
-            array( 
-                'profile_double_optin'               => array( 'html_type'    => 'checkbox',
-                                                                'title'        => ts( 'Enable Double opt-in for Profiles' ),
-                                                                'description'  => ts( 'When CiviMail is enabled, if a profile includes a Groups checkbox the user will receive a confirmation email which they must respond to before they are added to a group.'),
-                                                             ),
-                'profile_add_to_group_double_optin'  => array( 'html_type'    => 'checkbox',
-                                                                'title'        => ts( 'Enable Double opt-in for Profiles which have automatic Add Contact to Group setting' ),
-                                                                'description'  => ts( 'When CiviMail is enabled and a profile uses the "Add to Group" setting, the user will receive a confirmation email which they must respond to before they are added to the group.'),
-                                                             ),
-                'track_civimail_replies'             => array( 'html_type'    => 'checkbox',
-                                                                'title'        => ts( 'Track CiviMail replies using VERP in Reply-To header' ),
-                                                                'description'  => ts( ''),
-                                                             ),
-                'civimail_workflow'                  => array( 'html_type'    => 'checkbox',
-                                                                'title'        => ts( 'Enable workflow support for CiviMail' ),
-                                                                'description'  => ts( 'Drupal-only. Rules module must be enabled (beta feature - use with caution).' ),
-                                                             ),
-                'civimail_server_wide_lock'          => array( 'html_type'    => 'checkbox',
-                                                                      'title'        => ts( 'Enable global server wide lock for CiviMail' ),
-                                                                      'description'  => ts( '' ),
-                                                             ),
-            )
-        );
+        $this->_varNames = 
+            array( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME =>
+                   array( 
+                         'profile_double_optin'               => array( 'html_type'    => 'checkbox',
+                                                                        'title'        => ts( 'Enable Double opt-in for Profiles' ),
+                                                                        'description'  => ts( 'When CiviMail is enabled, if a profile includes a Groups checkbox the user will receive a confirmation email which they must respond to before they are added to a group.'),
+                                                                        ),
+                         'profile_add_to_group_double_optin'  => array( 'html_type'    => 'checkbox',
+                                                                        'title'        => ts( 'Enable Double opt-in for Profiles which have automatic Add Contact to Group setting' ),
+                                                                        'description'  => ts( 'When CiviMail is enabled and a profile uses the "Add to Group" setting, the user will receive a confirmation email which they must respond to before they are added to the group.'),
+                                                                        ),
+                         'track_civimail_replies'             => array( 'html_type'    => 'checkbox',
+                                                                        'title'        => ts( 'Track CiviMail replies using VERP in Reply-To header' ),
+                                                                        'description'  => null,
+                                                                        ),
+                         'civimail_workflow'                  => array( 'html_type'    => 'checkbox',
+                                                                        'title'        => ts( 'Enable workflow support for CiviMail' ),
+                                                                        'description'  => ts( 'Drupal-only. Rules module must be enabled (beta feature - use with caution).' ),
+                                                                        ),
+                         'civimail_server_wide_lock'          => array( 'html_type'    => 'checkbox',
+                                                                        'title'        => ts( 'Enable global server wide lock for CiviMail' ),
+                                                                        'description'  => null,
+                                                                        ),
+                          )
+                   );
 
         parent::preProcess( );
     }

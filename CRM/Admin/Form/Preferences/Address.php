@@ -52,17 +52,29 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
 
         require_once 'CRM/Core/BAO/Setting.php';
 
-        $this->_varNames = array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME => array( 
-                                                                                           'address_options',
-                                                                                           'address_format',
-                                                                                           'mailing_format',
-                                                                                            ),
-                                  CRM_Core_BAO_Setting::ADDRESS_STANDARDIZATION_PREFERENCES_NAME => array(
-                                                                                                          'address_standardization_provider',
-                                                                                                          'address_standardization_userid',
-                                                                                                          'address_standardization_url',
-                                                                                                            ),
-                                  );
+        $this->_varNames =
+            array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME => 
+                   array( 
+                         'address_options' => array( 'html_type' => null ),
+                         'address_format'  => array( 'html_type' => 'textarea',
+                                                     'title' => ts( 'Display Format' ),
+                                                     'description' => null ),
+                         'mailing_format'  => array( 'html_type' => 'textarea',
+                                                     'title' => ts( 'Mailing Label Format' ),
+                                                     'description' => null ),
+                          ),
+                   
+                   CRM_Core_BAO_Setting::ADDRESS_STANDARDIZATION_PREFERENCES_NAME =>
+                   array(
+                         'address_standardization_provider' => array( 'html_type' => null ),
+                         'address_standardization_userid' => array( 'html_type' => 'text',
+                                                                    'title' => ts( 'User ID' ),
+                                                                    'description' => null ),
+                         'address_standardization_url' => array( 'html_type' => 'text',
+                                                                 'title' => ts( 'Web Service URL' ),
+                                                                 'description' => null ),
+                         ),
+                   );
 
         parent::preProcess( );
     }
@@ -116,15 +128,10 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
     public function buildQuickForm( ) 
     {
         $this->applyFilter('__ALL__', 'trim');
-        // address formatting options
-        $this->addElement('textarea','mailing_format', ts('Mailing Label Format'));  
-        $this->addElement('textarea','address_format', ts('Display Format'));  
 
         // Address Standardization
         $addrProviders = CRM_Core_SelectValues::addressProvider();
         $this->addElement('select', 'address_standardization_provider', ts('Address Provider'), array('' => '- select -') + $addrProviders);
-        $this->addElement('text', 'address_standardization_userid', ts('User ID'));
-        $this->addElement('text', 'address_standardization_url', ts('Web Service URL'));
 
         $this->addFormRule( array( 'CRM_Admin_Form_Preferences_Address', 'formRule' ) );
 
