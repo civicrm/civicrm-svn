@@ -302,9 +302,9 @@ VALUES
 INSERT INTO civicrm_option_group
       (name, {localize field='description'}description{/localize}, is_reserved, is_active)
 VALUES
-      ('event_recipients', {localize}'{ts escape="sql"}Event Recipients{/ts}'{/localize}, 0, 1);
+      ('event_contacts', {localize}'{ts escape="sql"}Event Recipients{/ts}'{/localize}, 0, 1);
 
-SELECT @option_group_id_ere := max(id) from civicrm_option_group where name = 'event_recipients';
+SELECT @option_group_id_ere := max(id) from civicrm_option_group where name = 'event_contacts';
 
 INSERT INTO civicrm_option_value 
    (option_group_id, {localize field='label'}label{/localize}, value, name,  filter,  weight, is_active ) 

@@ -204,7 +204,7 @@ VALUES
    ('pdf_format'                    , '{ts escape="sql"}PDF Page Format{/ts}'                    , 1, 1),
    ('label_format'                  , '{ts escape="sql"}Mailing Label Format{/ts}'               , 1, 1),
    ('activity_contacts'             , '{ts escape="sql"}Activity Contacts{/ts}'                  , 1, 1),
-   ('event_recipients '             , '{ts escape="sql"}Event Recipients{/ts}'                   , 1, 1),
+   ('event_contacts'                , '{ts escape="sql"}Event Recipients{/ts}'                   , 1, 1),
    ('conference_slot'               , '{ts escape="sql"}Conference Slot{/ts}'                    , 1, 1);
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
@@ -268,7 +268,7 @@ SELECT @option_group_id_cgeo           := max(id) from civicrm_option_group wher
 SELECT @option_group_id_paperSize      := max(id) from civicrm_option_group where name = 'paper_size';
 SELECT @option_group_id_label          := max(id) from civicrm_option_group where name = 'label_format';
 SELECT @option_group_id_aco            := max(id) from civicrm_option_group where name = 'activity_contacts';
-SELECT @option_group_id_ere            := max(id) from civicrm_option_group where name = 'event_recipients';
+SELECT @option_group_id_ere            := max(id) from civicrm_option_group where name = 'event_contacts';
 SELECT @option_group_id_conference_slot := max(id) from civicrm_option_group where name = 'conference_slot';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
@@ -769,7 +769,7 @@ VALUES
    (@option_group_id_aco, '{ts escape="sql"}Activity Source{/ts}', 2, 'Activity Source', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_aco, '{ts escape="sql"}Activity Targets{/ts}', 3, 'Activity Targets', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
 
--- event_recipients 
+-- event_contacts 
    (@option_group_id_ere, '{ts escape="sql"}Participant Status{/ts}', 1, 'civicrm_participant_status_type', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_ere, '{ts escape="sql"}Participant Role{/ts}', 2, 'participant_role', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
 
