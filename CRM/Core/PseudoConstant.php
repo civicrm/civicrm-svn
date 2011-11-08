@@ -1744,11 +1744,11 @@ ORDER BY name";
      * @return array - array reference of all  activity Contacts
      *
      */
-    public static function &activityContacts( )
+    public static function &activityContacts( $column = 'label' )
     {
         if ( ! self::$activityContacts ) {
             require_once 'CRM/Core/OptionGroup.php';
-            self::$activityContacts = CRM_Core_OptionGroup::values('activity_contacts');
+            self::$activityContacts = CRM_Core_OptionGroup::values('activity_contacts', false, false, false, null, $column);
         }
         return self::$activityContacts;
     }
@@ -1766,11 +1766,11 @@ ORDER BY name";
      * @return array - array reference of all  event Contacts
      *
      */
-    public static function &eventContacts( )
+    public static function &eventContacts( $column = 'label' )
     {
         if ( ! self::$eventContacts ) {
             require_once 'CRM/Core/OptionGroup.php';
-            self::$eventContacts = CRM_Core_OptionGroup::values('event_recipients');
+            self::$eventContacts = CRM_Core_OptionGroup::values('event_contacts', false, false, false, null, $column);
         }
         return self::$eventContacts;
     }
