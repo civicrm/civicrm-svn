@@ -45,17 +45,13 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
 
         CRM_Utils_System::setTitle(ts('Settings - Addresses'));
 
-        // add all the checkboxes
-        $this->_cbs = array(
-                            'address_options'    => ts( 'Address Fields'   ),
-                            );
-
         require_once 'CRM/Core/BAO/Setting.php';
 
         $this->_varNames =
             array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME => 
                    array( 
-                         'address_options' => array( 'html_type' => null ),
+                         'address_options' => array( 'html_type' => 'checkboxes',
+                                                     'title' => ts( 'Address Fields' ), ),
                          'address_format'  => array( 'html_type' => 'textarea',
                                                      'title' => ts( 'Display Format' ),
                                                      'description' => null ),
@@ -131,7 +127,10 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
 
         // Address Standardization
         $addrProviders = CRM_Core_SelectValues::addressProvider();
-        $this->addElement('select', 'address_standardization_provider', ts('Address Provider'), array('' => '- select -') + $addrProviders);
+        $this->addElement('select',
+                          'address_standardization_provider',
+                          ts('Address Provider'),
+                          array('' => '- select -') + $addrProviders);
 
         $this->addFormRule( array( 'CRM_Admin_Form_Preferences_Address', 'formRule' ) );
 
@@ -174,19 +173,6 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
 
         $this->_params = $this->controller->exportValues( $this->_name );
 
-        // trim the format and unify line endings to LF
-        $format = array( 'address_format', 'mailing_format' );
-        foreach ( $format as $f ) {
-            if ( ! empty( $this->_params[$f] ) ) {
-                $this->_params[$f] = trim( $this->_params[$f] );
-                $this->_params[$f] = str_replace(array("\r\n", "\r"), "\n", $this->_params[$f] );
-            }
-        }
-
-
-        foreach ( $this->_params as $name => $value ) {
-            $this->_config->$name = $value;
-        }
 
         // check if county option has been set
         $options = CRM_Core_OptionGroup::values( 'address_options', false, false, true );

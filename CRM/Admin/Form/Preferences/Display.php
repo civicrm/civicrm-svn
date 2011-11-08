@@ -44,23 +44,22 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
 {
     function preProcess( ) {
         CRM_Utils_System::setTitle(ts('Settings - Site Preferences'));
-        // add all the checkboxes
-        $this->_cbs = array(
-                            'contact_view_options'    => ts( 'Viewing Contacts'  ),
-                            'contact_edit_options'    => ts( 'Editing Contacts'  ),
-                            'advanced_search_options' => ts( 'Contact Search'    ),
-                            'user_dashboard_options'  => ts( 'Contact Dashboard' )
-                            );
 
         $this->_varNames =
             array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME =>
                    array( 
-                         'contact_view_options' => array( 'html_type' => null ),
-                         'contact_edit_options' => array( 'html_type' => null ),
-                         'advanced_search_options' => array( 'html_type' => null ),
-                         'user_dashboard_options' => array( 'html_type' => null ),
-                         'display_name_format' => array( 'html_type' => null ),
-                         'sort_name_format' => array( 'html_type' => null ),
+                         'contact_view_options' => array( 'html_type' => 'checkboxes',
+                                                          'title'     => ts( 'Viewing Contacts'    ), ),
+                         'contact_edit_options' => array( 'html_type' => 'checkboxes',
+                                                          'title'     => ts( 'Editing Contacts'    ), ),
+                         'advanced_search_options' => array( 'html_type' => 'checkboxes',
+                                                             'title'     => ts( 'Contact Search'   ), ),
+                         'user_dashboard_options' => array( 'html_type' => 'checkboxes',
+                                                            'title'     => ts( 'Contact Dashboard' ), ),
+                         'display_name_format' => array( 'html_type' => 'textarea',
+                                                         'title' => ts('Individual Display Name Format') ),
+                         'sort_name_format' => array( 'html_type' => 'textarea',
+                                                      'title' => ts('Individual Sort Name Format') ),
                          'editor_id' => array( 'html_type' => null ),
                           ),
                    );
@@ -132,10 +131,6 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
         if ($drupal_wysiwyg) {
           $this->addElement( 'select', 'wysiwyg_input_format', ts('Input Format'), $format_options, null);
         }
- 
-        $this->addElement('textarea','display_name_format', ts('Individual Display Name Format'));  
-        $this->addElement('textarea','sort_name_format',    ts('Individual Sort Name Format'));
-                
         require_once 'CRM/Core/OptionGroup.php';
         $editOptions = CRM_Core_OptionGroup::values( 'contact_edit_options', false, false, false, 'AND v.filter = 0' );
         $this->assign( 'editOptions', $editOptions );
@@ -182,8 +177,6 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
         }
         
         $this->_config->editor_id = $this->_params['editor_id'];
-        $this->_config->display_name_format = $this->_params['display_name_format'];
-        $this->_config->sort_name_format    = $this->_params['sort_name_format'];
 
         // set default editor to session if changed
         $session = CRM_Core_Session::singleton();
