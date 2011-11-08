@@ -60,7 +60,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
     }
 
     public static function toBeSkipped_get ($sequential = false) {
-      $entitiesWithoutGet = array ('Mailing','MailingGroup','Location');
+      $entitiesWithoutGet = array ('Mailing','MailingGroup','Location','DeprecatedUtils');
       if ($sequential === true) {
         return $entitiesWithoutGet;
       }
@@ -73,7 +73,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
 
 
     public static function toBeSkipped_create ($sequential = false) {
-        $entitiesWithoutCreate = array ('Mailing','MailingGroup','Constant','Entity','Location', 'Profile');
+        $entitiesWithoutCreate = array ('Mailing','MailingGroup','Constant','Entity','Location', 'Profile','DeprecatedUtils');
       if ($sequential === true) {
         return $entitiesWithoutCreate;
       }
@@ -85,7 +85,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
     }
 
     public static function toBeSkipped_delete ($sequential = false) {
-        $entitiesWithout = array ('Mailing','MailingGroup','Constant','Entity','Location','Domain', 'Profile', 'CustomValue');
+        $entitiesWithout = array ('Mailing','MailingGroup','Constant','Entity','Location','Domain', 'Profile', 'CustomValue','DeprecatedUtils');
       if ($sequential === true) {
         return $entitiesWithout;
       }
