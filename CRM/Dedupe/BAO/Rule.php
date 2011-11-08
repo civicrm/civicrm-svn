@@ -213,9 +213,7 @@ class CRM_Dedupe_BAO_Rule extends CRM_Dedupe_DAO_Rule
             $exception->contact_id2 = $cid;
         }
         
-        if ( $exception->find( true ) ) {
-            CRM_Core_Error::fatal( ts( 'Oops, these contacts seems to be marked as non duplicates.' ) );
-        }
+        return $exception->find( true ) ? false : true;
     }
     
 }

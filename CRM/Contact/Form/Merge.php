@@ -78,7 +78,9 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $this->_mergeId      = CRM_Utils_Request::retrieve( 'mergeId', 'Positive', $this, false );
 
         require_once 'CRM/Dedupe/BAO/Rule.php';
-        CRM_Dedupe_BAO_Rule::validateContacts( $cid, $oid );
+        if ( ! CRM_Dedupe_BAO_Rule::validateContacts( $cid, $oid ) ) {
+            CRM_Core_Error::statusBounce( ts( 'The pair of contacts are marked as non duplicates. If these records should be merged, you can remove this exception on the <a href=\'%1\'>Dedupe Exceptions</a> page.', array( 1 => CRM_Utils_System::url('civicrm/dedupe/exception', 'reset=1') ) ) );
+        }
 
         //load cache mechanism 
         require_once 'CRM/Core/BAO/PrevNextCache.php';
