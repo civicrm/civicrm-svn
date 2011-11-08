@@ -275,6 +275,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
      */
     function import( $onDuplicate, &$values )
     {
+        civicrm_api_include( 'Participant', false, 3 );
         // first make sure this is a valid line
         $response = $this->summary( $values );
         if ( $response != CRM_Event_Import_Parser::VALID ) {
@@ -341,7 +342,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             $formatValues[$key] = $field;
         }
         
-        require_once 'api/DeprecatedUtils.php';
+        require_once 'api/v3/DeprecatedUtils.php';
         $formatError = _civicrm_api3_deprecated_participant_formatted_param( $formatValues, $formatted, true );
         
         if ( $formatError ) {
@@ -450,7 +451,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
                 }
             }
             
-            $newParticipant = _civicrm_api3_create_participant_formatted($formatted, $onDuplicate);
+            $newParticipant = _civicrm_api3_create_participant_formatted( $formatted, $onDuplicate );
         }
         
         if ( is_array( $newParticipant ) && civicrm_error( $newParticipant ) ) {

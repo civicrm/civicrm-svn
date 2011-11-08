@@ -532,7 +532,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     //special case to check dedupe if external id present.
                     //if we send external id dedupe will stop.
                     unset( $dedupeParams['external_identifier'] );
-                    require_once 'api/DeprecatedUtils.php';
+                    require_once 'api/v3/DeprecatedUtils.php';
                                        $checkDedupe = _civicrm_api3_deprecated_duplicate_formatted_contact( $dedupeParams );
                     if ( CRM_Core_Error::isAPIError( $checkDedupe, CRM_Core_ERROR::DUPLICATE_CONTACT ) ) {
                         $matchingContactIds = explode( ',', $checkDedupe['error_message']['params'][0] );
@@ -1601,8 +1601,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         $error = _civicrm_api3_contact_check_params( $formatted,
                                                      $dupeCheck,
                                                      true,
-        require_once 'api/DeprecatedUtils.php';
-                                                false );
+                                                     false );
+        require_once 'api/v3/DeprecatedUtils.php';
         if ( ( is_null( $error )                                                ) && 
              ( civicrm_error( _civicrm_api3_deprecated_validate_formatted_contact($formatted) ) ) ) {
                                
@@ -1851,7 +1851,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     }
                     
                     if ( !$break ) { 
-                        require_once 'api/DeprecatedUtils.php';
+                        require_once 'api/v3/DeprecatedUtils.php';
                         _civicrm_api3_deprecated_add_formatted_param( $value, $formatted );
                     }
                 }
@@ -1873,7 +1873,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             if ( $key == 'id' && isset( $field ) ) {
                 $formatted[$key] = $field;
             }
-            require_once 'api/DeprecatedUtils.php';
+            require_once 'api/v3/DeprecatedUtils.php';
             _civicrm_api3_deprecated_add_formatted_param( $formatValues, $formatted );
          
             //Handling Custom Data
