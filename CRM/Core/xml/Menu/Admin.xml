@@ -118,8 +118,8 @@
   </item>
   <item>
      <path>civicrm/admin/setting</path>
-     <title>Global Settings</title>
-     <desc>Configure Global Settings for your site, including: Enabled Components, Site Preferences for screens and forms, Directory Paths and Resource URLs, Address formats, Localization, Payment Processor, Outbound Email, Mapping, and Debugging.</desc>
+     <title>System Settings</title>
+     <desc>Configure Settings for your site, including: Enabled Components, Directory Paths and Resource URLs, Payment Processors, Outbound Email, Mapping, and Debugging.</desc>
      <page_callback>CRM_Admin_Page_Setting</page_callback>
      <return_url>civicrm/admin/setting</return_url>
      <adminGroup>Configure</adminGroup>
@@ -133,7 +133,7 @@
   </item>
   <item>
      <path>civicrm/admin/setting/preferences/display</path>
-     <title>System Preferences</title>
+     <title>Display Preferences</title>
      <page_callback>CRM_Admin_Form_Preferences_Display</page_callback>
   </item>
   <item>
@@ -142,13 +142,13 @@
      <page_callback>CRM_Admin_Form_Preferences_Address</page_callback>
   </item>
   <item>
-     <path>civicrm/admin/setting/preferences/misc</path>
-     <title>Other CiviCRM Settings</title>
-     <page_callback>CRM_Admin_Form_Preferences_Misc</page_callback>
+     <path>civicrm/admin/setting/preferences/mailing</path>
+     <title>CiviMail Settings</title>
+     <page_callback>CRM_Admin_Form_Preferences_Mailing</page_callback>
   </item>
   <item>
      <path>civicrm/admin/setting/preferences/date</path>
-     <title>View Date Prefences</title>
+     <title>View Date Preferences</title>
      <page_callback>CRM_Admin_Page_PreferencesDate</page_callback>
   </item>
   <item>
@@ -163,12 +163,12 @@
   </item>
   <item>
      <path>civicrm/admin/setting/smtp</path>
-     <title>Smtp Server</title>
+     <title>Outbound Email Settings</title>
      <page_callback>CRM_Admin_Form_Setting_Smtp</page_callback>
   </item>
   <item>
      <path>civicrm/admin/setting/uf</path>
-     <title>User Framework Settings</title>
+     <title>CMS Integration Settings</title>
      <page_callback>CRM_Admin_Form_Setting_UF</page_callback>
   </item>
   <item>
@@ -188,18 +188,23 @@
   </item>
   <item>
      <path>civicrm/admin/setting/search</path>
-     <title>Search</title>
+     <title>Search Settings</title>
      <page_callback>CRM_Admin_Form_Setting_Search</page_callback>
   </item>
   <item>
-     <path>civicrm/admin/setting/misc</path>
-     <title>Miscellaneous</title>
-     <page_callback>CRM_Admin_Form_Setting_Miscellaneous</page_callback>
+     <path>civicrm/admin/setting/core</path>
+     <title>General Settings</title>
+     <page_callback>CRM_Admin_Form_Setting_Core</page_callback>
   </item>
   <item>
      <path>civicrm/admin/setting/debug</path>
      <title>Debugging</title>
      <page_callback>CRM_Admin_Form_Setting_Debugging</page_callback>
+  </item>
+  <item>
+     <path>civicrm/admin/setting/core</path>
+     <title>General Settings</title>
+     <page_callback>CRM_Admin_Form_Setting_Core</page_callback>
   </item>
   <item>
      <path>civicrm/admin/mapping</path>

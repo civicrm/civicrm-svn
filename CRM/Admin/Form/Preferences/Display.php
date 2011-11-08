@@ -43,7 +43,7 @@ require_once 'CRM/Admin/Form/Preferences.php';
 class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
 {
     function preProcess( ) {
-        CRM_Utils_System::setTitle(ts('Settings - Site Preferences'));
+        CRM_Utils_System::setTitle(ts('Settings - Display Preferences'));
 
         $this->_varNames =
             array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME =>

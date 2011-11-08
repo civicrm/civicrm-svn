@@ -131,10 +131,16 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
         parent::buildQuickForm( );
 
         require_once 'CRM/Core/OptionGroup.php';
-
+        require_once 'CRM/Utils/String.php';
+        
         if ( ! empty( $this->_varNames ) ) {
             foreach ( $this->_varNames as $groupName => $groupValues ) {
+                $formName = CRM_Utils_String::titleToVar( $groupName );
+                $this->assign('formName', $formName);
+                $fields = array();
                 foreach ( $groupValues as $fieldName => $fieldValue ) {
+                    $fields[$fieldName] = $fieldValue;
+
                     switch ( $fieldValue['html_type'] ) {
                     case 'text':
                         $this->addElement( 'text',
@@ -170,6 +176,7 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
                         break;
                     }
                 }
+                $this->assign( 'fields', $fields);
             }
         }
 

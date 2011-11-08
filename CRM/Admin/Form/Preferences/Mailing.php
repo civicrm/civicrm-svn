@@ -40,10 +40,10 @@ require_once 'CRM/Admin/Form/Preferences.php';
  * This class generates form components for the display preferences
  * 
  */
-class CRM_Admin_Form_Preferences_Misc extends CRM_Admin_Form_Preferences
+class CRM_Admin_Form_Preferences_Mailing extends CRM_Admin_Form_Preferences
 {
     function preProcess( ) {
-        CRM_Utils_System::setTitle(ts('CiviMail Settings'));
+        CRM_Utils_System::setTitle(ts('CiviMail Component Settings'));
         $this->_varNames = 
             array( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME =>
                    array( 
