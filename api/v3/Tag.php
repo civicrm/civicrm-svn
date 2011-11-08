@@ -94,12 +94,6 @@ function civicrm_api3_tag_delete( $params )
 {
     return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
-/*
- * modify metadata. This causes 'tag_id' to be acceptable
- */
-function _civicrm_api3_tag_delete_spec( &$params ) {
-  $params['id']['api.aliases']= array('tag_id');
-}
 
 /**
  * Get a Tag.

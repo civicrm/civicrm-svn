@@ -266,7 +266,29 @@ class api_v3_EventTest extends CiviUnitTestCase
         civicrm_api($this->_entity,'Delete',array('version' => 3 , 'id' => $result['id'])) ;    
         
     }
-
+    /*
+     * Test that passing in Unique field names works
+     */
+    function testCreateEventSuccessUniqueFieldNames( )
+    {   $this->_params['event_start_date'] = $this->_params['start_date'];
+        unset($this->_params['start_date']);
+        $this->_params['event_title'] = $this->_params['title'];
+        unset($this->_params['title']);
+        $result = civicrm_api('Event','Create', $this->_params );
+        $this->assertAPISuccess($result, 'In line ' . __LINE__ );
+        $this->assertArrayHasKey( 'id', $result['values'][$result['id']], 'In line ' . __LINE__  );
+        $result = civicrm_api($this->_entity,'Get',array('version' => 3 , 'id' => $result['id'])) ; 
+        civicrm_api($this->_entity,'Delete',array('version' => 3 , 'id' => $result['id'])) ;    
+        
+        $this->assertEquals('2008-10-21 00:00:00',$result['values'][$result['id']]['start_date'],'start date is not set in line ' . __LINE__);
+        $this->assertEquals('2008-10-23 00:00:00',$result['values'][$result['id']]['end_date'],'end date is not set in line ' . __LINE__);
+        $this->assertEquals('2008-06-01 00:00:00',$result['values'][$result['id']]['registration_start_date'],'start date is not set in line ' . __LINE__);
+        $this->assertEquals('2008-10-15 00:00:00',$result['values'][$result['id']]['registration_end_date'],'end date is not set in line ' . __LINE__); 
+        $this->assertEquals($this->_params['event_title'],$result['values'][$result['id']]['title'],'end date is not set in line ' . __LINE__); 
+  
+        civicrm_api($this->_entity,'Delete',array('version' => 3 , 'id' => $result['id'])) ;    
+        
+    }
     
     function testUpdateEvent( )
     {
@@ -311,14 +333,14 @@ class api_v3_EventTest extends CiviUnitTestCase
         $this->assertNotEquals($result['is_error'], 1);
     }
     /*
-     * event id still supported for delete
+     * check event_id still supported for delete
      */
     function testDeleteWithEventId( )
     {
         $params = array('event_id' => $this->_eventId,
                         'version'				=>$this->_apiversion,);
-        $result =& civicrm_api('Event','Delete',$params);
-        $this->assertNotEquals($result['is_error'], 1);
+        $result =& civicrm_api('Event','Delete',$params);       
+        $this->assertAPISuccess($result, 'in line ' . __LINE__);
     }   
     /*
      * Trying to delete an event with participants should return error
@@ -434,5 +456,17 @@ class api_v3_EventTest extends CiviUnitTestCase
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviEvent', 'edit all events', 'access CiviCRM');
         $result = civicrm_api('event', 'create', $params);
         $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to create an event');
+    }
+    function testgetfields(){
+      $description = "demonstrate use of getfields to interogate api";
+      $params = array('version' => 3, 'action' => 'create');
+      $result = civicrm_api('event', 'getfields',$params);
+      $this->assertEquals(1, $result['values']['event_title']['api.required']);
+    }
+    function testgetfieldsDelete(){
+      $description = "demonstrate use of getfields to interogate api";
+      $params = array('version' => 3, 'action' => 'delete');
+      $result = civicrm_api('event', 'getfields',$params);
+      $this->assertEquals(1, $result['values']['id']['api.required']);
     }
 }

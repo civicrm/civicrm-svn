@@ -13,23 +13,28 @@ function civicrm_api3_generic_getfields($apiRequest) {
         if (empty($apiRequest['params']['action'])) { 
                 return civicrm_api3_create_success(_civicrm_api_get_fields($apiRequest['entity']));
         }
-
+        $entity = strtolower($apiRequest['entity']);// should this be passed in already lower?
         // defaults based on data model and API policy
-        switch ($apiRequest['params']['action']) {
+        switch (strtolower($apiRequest['params']['action'])) {
                 case 'create':
                 case 'update':
                 case 'replace':
                 case 'get':
                         $metadata = _civicrm_api_get_fields($apiRequest['entity']);
+                        if(empty($metadata['id']) && !empty($metadata[$apiRequest['entity'] . '_id'])){
+                          $metadata['id'] = $metadata[$entity . '_id'];
+                          $metadata['id']['api.aliases'] = array($entity . '_id');
+                          unset ($metadata[$entity . '_id']);
+                        }
                         break;
                 case 'delete':
                         $metadata = array('id' => array('title' => 'Unique Identifier',
-                                                        'api.required' => 1));
+                                                        'api.required' => 1,
+                                                        'api.aliases' => array($entity . '_id')));
                         break;
                 default:
                         $metadata = array(); // oddballs are on their own
         }
-         
         // find any supplemental information
         $hypApiRequest = array('entity' => $apiRequest['entity'], 'action' => $apiRequest['params']['action'], 'version' => $apiRequest['version']);
         $hypApiRequest +=_civicrm_api_resolve($hypApiRequest);

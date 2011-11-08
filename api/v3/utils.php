@@ -939,6 +939,9 @@ function _civicrm_api3_swap_out_aliases(&$apiRequest ) {
              unset($apiRequest['params'][$alias]);
            }
         }
+        }elseif(empty($apiRequest['params'][$field]) && CRM_Utils_Array::value('name', $values) && $field != $values['name']){
+          $apiRequest['params'][$field] = $apiRequest['params'][$values['name']];
+          // note that it would make sense to unset the original field here but tests need to be in place first
         }
     }
 }

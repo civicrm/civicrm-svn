@@ -86,8 +86,8 @@ function civicrm_api3_event_create( $params )
  */
 function _civicrm_api3_event_create_spec(&$params){
   $params['event_type_id']['api.required'] =1;;
-  $params['start_date']['api.required'] =1;
-  $params['title']['api.required'] =1;
+  $params['event_start_date']['api.required'] =1;
+  $params['event_title']['api.required'] =1;
 }
 
 /**
@@ -193,11 +193,7 @@ function civicrm_api3_event_delete( $params )
 
 }
 /*
- * modify metadata. This causes 'tag_id' to be acceptable
- */
-function _civicrm_api3_event_delete_spec( &$params ) {
-  $params['id']['api.aliases']= array('event_id');
-}
+
 /*
  * Function to add 'is_full' & 'available_seats' to the return array. (this might be better in the BAO)
  * Default BAO function returns a string if full rather than a Bool - which is more appropriate to a form

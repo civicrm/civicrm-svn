@@ -98,11 +98,11 @@ function _civicrm_api3_pledge_delete_spec( &$params ) {
  */
 function _civicrm_api3_pledge_get_spec(&$params){
   $params['next_pay_date'] = array(
-          'name' => 'next_pay_date',
-      		'type' => 12,
-      		'title' => 'Pledge Made',
-          'api.filter' => 0,
-          'api.return' => 1,
+            'name' => 'next_pay_date',
+      		  'type' => 12,
+      		  'title' => 'Pledge Made',
+            'api.filter' => 0,
+            'api.return' => 1,
 
   );
 }
@@ -133,13 +133,12 @@ function _civicrm_api3_pledge_create_spec(&$params){
  */
 function civicrm_api3_pledge_get( $params ) {
 
-    if(!empty($params['id'])  && empty($params['pledge_id'])){
+    if(!empty($params['id'])  ){
       //if you pass in 'id' it will be treated by the query as contact_id
       $params['pledge_id'] = $params['id'];
       unset ($params['id']);
     }
     $options = _civicrm_api3_get_options_from_params($params);
-
     require_once 'CRM/Pledge/BAO/Query.php';
     require_once 'CRM/Contact/BAO/Query.php';
     if ( empty($options['return'] ) ) {
