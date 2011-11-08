@@ -4,7 +4,7 @@ define('CIVICRM_UF', 'UnitTests');
 
 if ( !empty( $GLOBALS['mysql_user'] ) ) {
     $dbName = ! empty( $GLOBALS['mysql_db'] ) ? $GLOBALS['mysql_db'] : 'civicrm_tests_dev';
-    define( 'CIVICRM_DSN'          , "mysql://{$GLOBALS['mysql_user']}:{$GLOBALS['mysql_pass']}@{$GLOBALS['mysql_host']}/civicrm_tests_dev?new_link=true" );
+    define( 'CIVICRM_DSN'          , "mysql://{$GLOBALS['mysql_user']}:{$GLOBALS['mysql_pass']}@{$GLOBALS['mysql_host']}/{$dbName}?new_link=true" );
 }
 
 global $civicrm_root;
