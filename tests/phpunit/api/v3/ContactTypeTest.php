@@ -102,7 +102,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
         $this->assertEquals( $result['values'][$contact['id']]['first_name'], $contactParams['first_name'], "In line " . __LINE__ );
         $this->assertEquals( $result['values'][$contact['id']]['last_name'], $contactParams['last_name'], "In line " . __LINE__ );
         $this->assertEquals( $result['values'][$contact['id']]['contact_type'], $contactParams['contact_type'], "In line " . __LINE__ );
-        $this->assertEquals( $result['values'][$contact['id']]['contact_sub_type'], $contactParams['contact_sub_type'], "In line " . __LINE__ );
+        $this->assertEquals( end($result['values'][$contact['id']]['contact_sub_type']), $contactParams['contact_sub_type'], "In line " . __LINE__ );
         civicrm_api('contact', 'delete' ,  $params );
 
         // check for Type:Organization Subtype:sub_organization
@@ -121,7 +121,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
         $result      = $getContacts['values'][$contact['id']];
         $this->assertEquals( $result['organization_name'], $contactParams['organization_name'], "In line " . __LINE__ );
         $this->assertEquals( $result['contact_type'], $contactParams['contact_type'], "In line " . __LINE__ );
-        $this->assertEquals( $result['contact_sub_type'], $contactParams['contact_sub_type'], "In line " . __LINE__ ); 
+        $this->assertEquals( end($result['contact_sub_type']), $contactParams['contact_sub_type'], "In line " . __LINE__ ); 
         civicrm_api('contact', 'delete' ,  $params ); 
   }
 
@@ -191,7 +191,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
         $this->assertEquals( $result['first_name'], $updateParams['first_name'], "In line " . __LINE__ );
         $this->assertEquals( $result['last_name'], $updateParams['last_name'], "In line " . __LINE__ );
         $this->assertEquals( $result['contact_type'], $updateParams['contact_type'], "In line " . __LINE__ );
-        $this->assertEquals( $result['contact_sub_type'], $updateParams['contact_sub_type'], "In line " . __LINE__ );
+        $this->assertEquals( end($result['contact_sub_type']), $updateParams['contact_sub_type'], "In line " . __LINE__ );
         civicrm_api('contact', 'delete' ,  $params ); 
 
         // check for Type:Organization
@@ -222,7 +222,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
         
         $this->assertEquals( $result['organization_name'], $updateParams['organization_name'], "In line " . __LINE__ );
         $this->assertEquals( $result['contact_type'], $updateParams['contact_type'], "In line " . __LINE__ );
-        $this->assertEquals( $result['contact_sub_type'], $updateParams['contact_sub_type'], "In line " . __LINE__ );
+        $this->assertEquals( end($result['contact_sub_type']), $updateParams['contact_sub_type'], "In line " . __LINE__ );
         civicrm_api('contact', 'delete' ,  $params ); 
     }
 
@@ -328,7 +328,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
         $this->assertEquals( $result['first_name'], $updateParams['first_name'], "In line " . __LINE__ );
         $this->assertEquals( $result['last_name'], $updateParams['last_name'], "In line " . __LINE__ );
         $this->assertEquals( $result['contact_type'], $updateParams['contact_type'], "In line " . __LINE__ );
-        $this->assertEquals( $result['contact_sub_type'], $updateParams['contact_sub_type'], "In line " . __LINE__ );
+        $this->assertEquals( end($result['contact_sub_type']), $updateParams['contact_sub_type'], "In line " . __LINE__ );
         civicrm_api('contact', 'delete' ,  $params ); 
 
 
@@ -369,7 +369,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
         
         $this->assertEquals( $result['organization_name'], $updateParams['organization_name'], "In line " . __LINE__ );
         $this->assertEquals( $result['contact_type'], $updateParams['contact_type'], "In line " . __LINE__ );
-        $this->assertEquals( $result['contact_sub_type'], $updateParams['contact_sub_type'], "In line " . __LINE__ );
+        $this->assertEquals( end($result['contact_sub_type']), $updateParams['contact_sub_type'], "In line " . __LINE__ );
         civicrm_api('contact', 'delete' ,  $params ); 
     }
   
