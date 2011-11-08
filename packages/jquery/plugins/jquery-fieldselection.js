@@ -98,20 +98,6 @@
                     // replace below code with the equivalent once method is available 
                     var startPosition = e.value.length;
                     var endPosition = startPosition + text.length;
-
-		    // alert( startPosition );
-		    e1 = document.getElementById('msg_text');
-		    
-		    var CaretPos = 0;	// IE Support
-		    if (document.selection) {
-			e1.focus ();
-			var Sel = document.selection.createRange ();
-			alert( e1.value.length );
-			Sel.moveStart ('character', -e1.value.length);
-			CaretPos = Sel.text.length;
-			alert(CaretPos);
-		    }
-
 		    
                     // set the value
                     e.value = e.value.substr(0, startPosition) + text + e.value.substr( endPosition, e.value.length);
