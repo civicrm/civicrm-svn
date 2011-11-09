@@ -240,7 +240,7 @@ SELECT  petition.id                         as id,
 
         // remove 'Unconfirmed' tag for this contact
         require_once 'CRM/Core/BAO/Setting.php';
-        $tag_name = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CONFIGURATION_PREFERENCES_NAME,
+        $tag_name = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CAMPAIGN_PREFERENCES_NAME,
                                                    'tag_unconfirmed',
                                                    null,
                                                    'Unconfirmed' );

@@ -142,9 +142,24 @@
      <page_callback>CRM_Admin_Form_Preferences_Address</page_callback>
   </item>
   <item>
+     <path>civicrm/admin/setting/preferences/campaign</path>
+     <title>CiviCampaign Component Settings</title>
+     <page_callback>CRM_Admin_Form_Preferences_Campaign</page_callback>
+  </item>
+  <item>
+     <path>civicrm/admin/setting/preferences/event</path>
+     <title>CiviEvent Component Settings</title>
+     <page_callback>CRM_Admin_Form_Preferences_Event</page_callback>
+  </item>
+  <item>
      <path>civicrm/admin/setting/preferences/mailing</path>
-     <title>CiviMail Settings</title>
+     <title>CiviMail Component Settings</title>
      <page_callback>CRM_Admin_Form_Preferences_Mailing</page_callback>
+  </item>
+  <item>
+     <path>civicrm/admin/setting/preferences/member</path>
+     <title>CiviMember Component Settings</title>
+     <page_callback>CRM_Admin_Form_Preferences_Member</page_callback>
   </item>
   <item>
      <path>civicrm/admin/setting/preferences/date</path>
@@ -192,19 +207,9 @@
      <page_callback>CRM_Admin_Form_Setting_Search</page_callback>
   </item>
   <item>
-     <path>civicrm/admin/setting/core</path>
-     <title>General Settings</title>
-     <page_callback>CRM_Admin_Form_Setting_Core</page_callback>
-  </item>
-  <item>
      <path>civicrm/admin/setting/debug</path>
      <title>Debugging</title>
      <page_callback>CRM_Admin_Form_Setting_Debugging</page_callback>
-  </item>
-  <item>
-     <path>civicrm/admin/setting/core</path>
-     <title>General Settings</title>
-     <page_callback>CRM_Admin_Form_Setting_Core</page_callback>
   </item>
   <item>
      <path>civicrm/admin/mapping</path>

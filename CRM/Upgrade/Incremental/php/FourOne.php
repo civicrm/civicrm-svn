@@ -176,7 +176,7 @@ VALUES
 
     function createNewSettings( ) {
         $domainColumns = 
-            array( CRM_Core_BAO_Setting::CONFIGURATION_PREFERENCES_NAME =>
+            array( CRM_Core_BAO_Setting::CAMPAIGN_PREFERENCES_NAME =>
                    array( array( 'contact_ajax_check_similar', 1 ),
                           array( 'tag_unconfirmed', 'Unconfirmed' ),
                           array( 'petition_contacts', 'Petition Contacts' ),

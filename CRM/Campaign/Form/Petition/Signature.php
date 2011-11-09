@@ -328,7 +328,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     public function postProcess() 
     {		
         require_once 'CRM/Core/BAO/Setting.php';
-        $tag_name = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CONFIGURATION_PREFERENCES_NAME,
+        $tag_name = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CAMPAIGN_PREFERENCES_NAME,
                                                    'tag_unconfirmed' );
 
        
