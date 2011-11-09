@@ -824,6 +824,7 @@ LIMIT    0, {$limit}
  * @return boolean        true if success, else false
  * @static void
  * @access public
+ * {@getfields contact_geocode}
  *
  */
 function civicrm_api3_contact_geocode( $params )
@@ -844,7 +845,13 @@ function civicrm_api3_contact_geocode( $params )
         return civicrm_api3_create_error( $result['messages'] );
     }
 }
-
+/*
+ * First check on Code documentation
+ */
+function _civicrm_api3_contact_geocode_spec( &$params ){
+  $params['start'] = array('title' => 'Start Date');
+  
+}
 /**
  * Send the scheduled reminders for all contacts (either for activities or events)
  *
