@@ -409,12 +409,20 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             }
         }
 
+        if ( $customDataSubType && !is_array( $customDataSubType ) ) {
+            $customDataSubType = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                          trim($customDataSubType, CRM_Core_DAO::VALUE_SEPARATOR) );
+        } else {
+            $customDataSubType = array( );
+        }
+
         if ( is_array( $customDataType ) ) {
             $cacheKey = implode( '_', $customDataType );
         } else {
             $cacheKey = $customDataType;
         }
-        $cacheKey .= $customDataSubType ? "{$customDataSubType}_" : '_0';
+        
+        $cacheKey .= !empty($customDataSubType) ? ( '_' . implode( '_', $customDataSubType ) ) : '_0';
 		$cacheKey .= $customDataSubName ? "{$customDataSubName}_" : '_0';
         $cacheKey .= $showAll ? '_1' : '_0';
         $cacheKey .= $inline  ? '_1_' : '_0_';
@@ -503,14 +511,16 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                 
                 //get the custom fields for specific type in
                 //combination with fields those support any type.
-                if ( $customDataSubType ) {
-                    $customDataSubType = 
-                        CRM_Core_DAO::VALUE_SEPARATOR . $customDataSubType . CRM_Core_DAO::VALUE_SEPARATOR;
-                    $query .= " AND ( $cgTable.extends_entity_column_value LIKE '%$customDataSubType%'";
-                    if ( !$onlySubType ) {
-                        $query .= " OR $cgTable.extends_entity_column_value IS NULL";
+                if ( !empty($customDataSubType) ) {
+                    $subtypeClause = array( );
+                    foreach ( $customDataSubType as $subtype ) {
+                        $subtype = CRM_Core_DAO::VALUE_SEPARATOR . $subtype . CRM_Core_DAO::VALUE_SEPARATOR;
+                        $subtypeClause[] = "$cgTable.extends_entity_column_value LIKE '%{$subtype}%'";
                     }
-                    $query .= ' )';
+                    if ( !$onlySubType ) {
+                        $subtypeClause[] = "$cgTable.extends_entity_column_value IS NULL";
+                    }
+                    $query .= " AND ( " . implode( ' OR ', $subtypeClause ) . " )";
                 }
                 
                 if ( $customDataSubName ) {

@@ -917,9 +917,14 @@ SELECT $select
             require_once 'CRM/Contact/BAO/Contact.php';
             $csType = is_numeric($entityID) ? CRM_Contact_BAO_Contact::getContactSubType($entityID) : false;
 
-            if ( $csType ) {
-                $csType = CRM_Core_DAO::VALUE_SEPARATOR . $csType . CRM_Core_DAO::VALUE_SEPARATOR;
-                $customGroupDAO->whereAdd("( extends_entity_column_value LIKE '%{$csType}%' OR extends_entity_column_value IS NULL )");
+            if ( !empty($csType) ) {
+                $subtypeClause = array( );
+                foreach ( $csType as $subtype ) {
+                    $subtype = CRM_Core_DAO::VALUE_SEPARATOR . $subtype . CRM_Core_DAO::VALUE_SEPARATOR;
+                    $subtypeClause[] = "extends_entity_column_value LIKE '%{$subtype}%'";
+                }
+                $subtypeClause[] = "extends_entity_column_value IS NULL";
+                $customGroupDAO->whereAdd("( " . implode( ' OR ', $subtypeClause ) . " )");
             } else {
                 $customGroupDAO->whereAdd("extends_entity_column_value IS NULL");
             }

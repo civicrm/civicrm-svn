@@ -969,9 +969,15 @@ WHERE id={$id}; ";
      * @static
      *
      */
-    public static function getContactSubType($id)
+    public static function getContactSubType( $id, $implodeDelimiter = null )
     {
-        return CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $id, 'contact_sub_type' );
+        $subtype = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $id, 'contact_sub_type' );
+        $subtype = explode( CRM_Core_DAO::VALUE_SEPARATOR, trim($subtype, CRM_Core_DAO::VALUE_SEPARATOR) );
+
+        if ( $implodeDelimiter ) {
+            $subtype = implode( $implodeDelimiter, $subtype );
+        }
+        return $subtype;
     }
 
     /**

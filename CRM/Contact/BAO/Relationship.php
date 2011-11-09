@@ -554,8 +554,10 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
 
             if ( ( ( ! $relationshipType->contact_type_a )     || ( $relationshipType->contact_type_a == $contact_type_a ) )         &&
                  ( ( ! $relationshipType->contact_type_b )     || ( $relationshipType->contact_type_b == $contact_type_b ) )         &&
-                 ( ( ! $relationshipType->contact_sub_type_a ) || ( $relationshipType->contact_sub_type_a == $contact_sub_type_a ) ) && 
-                 ( ( ! $relationshipType->contact_sub_type_b ) || ( $relationshipType->contact_sub_type_b == $contact_sub_type_b ) )   ) {
+                 ( ( ! $relationshipType->contact_sub_type_a ) || ( in_array( $relationshipType->contact_sub_type_a, 
+                                                                              $contact_sub_type_a ) ) ) && 
+                 ( ( ! $relationshipType->contact_sub_type_b ) || ( in_array( $relationshipType->contact_sub_type_b, 
+                                                                              $contact_sub_type_b ) ) )  ) {
                 return true;
             } else {
                 return false;
