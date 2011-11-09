@@ -161,13 +161,13 @@ function _civicrm_api3_contact_create_spec(&$params){
 /**
  * Retrieve one or more contacts, given a set of search params
  *
- * @param  mixed[]  (reference ) input parameters
+ * @param  array  (reference ) input parameters
  *
- * @return array (reference )        array of properties, if error an array with an error id and error message
+ * @return array API Result Array
  * @static void
  * @access public
- *
- * {@example ContactGet.php 0}
+ * (@getfields contact_get}
+ * @example ContactGet.php Standard GET example
  * 
  * @todo EM 7 Jan 11 - does this return the number of contacts if required (replacement for deprecated contact_search_count function - if so is this tested?
  */
@@ -175,9 +175,6 @@ function _civicrm_api3_contact_create_spec(&$params){
 function civicrm_api3_contact_get( $params )
 {
 
-    civicrm_api3_verify_mandatory($params);
-        // fix for CRM-7384 cater for soft deleted contacts
-    $params['contact_is_deleted'] = 0;
     if (isset($params['showAll'])) {
         if (strtolower($params['showAll']) == "active") {
             $params['contact_is_deleted'] = 0;
@@ -261,18 +258,25 @@ function civicrm_api3_contact_get( $params )
     return civicrm_api3_create_success($returnContacts, $params,'contact');
 
 }
-
+/*
+ * Adjust Metadata for Get action
+ * 
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_contact_get_spec(&$params){
+  $params['contact_is_deleted']['api.default'] = 0;
+}
 
 /**
  * Delete a contact with given contact id
  *
  * @param  array   	  $params (reference ) input parameters, contact_id element required
  *
- * @return boolean        true if success, else false
- * @static void
+ * @return array API Result Array
  * @access public
  *
  * @example ContactDelete.php
+ * {@getfields contact_delete}
  */
 function civicrm_api3_contact_delete( $params )
 {
@@ -821,7 +825,7 @@ LIMIT    0, {$limit}
  *
  * @param  array   	  $params (reference ) input parameters
  *
- * @return boolean        true if success, else false
+ * @return array API Result Array
  * @static void
  * @access public
  * {@getfields contact_geocode}
