@@ -74,7 +74,7 @@ class CRM_Contact_Form_Edit_Email
 
             //Bulkmail checkbox
             $js = array( 'id' => "Email_".$blockId."_IsBulkmail", 'onClick' => 'singleSelect( this.id );');
-            $form->addElement('advcheckbox', "email[$blockId][is_bulkmail]", null, '', $js);
+            $form->addElement('radio', "email[$blockId][is_bulkmail]", '', '', '1', $js );
 
             //is_Primary radio
             $js = array( 'id' => "Email_".$blockId."_IsPrimary", 'onClick' => 'singleSelect( this.id );');
