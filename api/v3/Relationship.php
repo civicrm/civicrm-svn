@@ -134,11 +134,13 @@ function civicrm_api3_relationship_delete( $params ) {
 /**
  * Function to get the relationship
  *
- * @param array   $params          (reference ) input parameters.
- * @todo  function in not a search - just returns all relationships for 'contact_id'
- * 
- * @return        Array of all relevant relationships.
- * {getfields relationship_get}
+ * @param array   $params input parameters.
+ * @todo  Result is inconsistent depending on whether contact_id is passed in :
+ * -  if you pass in contact_id - it just returns all relationships for 'contact_id'
+ * -  if you don't pass in contact_id then it does a filter on the relationship table (DAO based search) 
+ * @return  Array API Result Array
+ * {@getfields relationship_get}
+ * @example RelationshipGet.php
  * @access  public
  */
 function civicrm_api3_relationship_get($params) 
