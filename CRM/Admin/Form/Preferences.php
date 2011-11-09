@@ -97,6 +97,21 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
         $session->pushUserContext( CRM_Utils_System::url('civicrm/admin/setting', 'reset=1') );
     }
 
+    function setDefaultValues( ) {
+        $defaults = array( );
+
+        foreach ( $this->_varNames as $groupName => $settings ) {
+            foreach ( $settings as $settingName => $dontcare ) {
+                $defaults[$settingName] = 
+                    isset( $this->_config->$settingName ) ?
+                    $this->_config->$settingName :
+                    null;
+            }
+        }
+
+        return $defaults;
+    }
+
     function cbsDefaultValues( &$defaults ) {
         require_once 'CRM/Core/BAO/CustomOption.php';
 
@@ -197,6 +212,7 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
        
     }
 
+
     /**
      * Function to process the form
      *
@@ -204,6 +220,25 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
      * @return None
      */
     public function postProcess() 
+    {
+        $config = CRM_Core_Config::singleton();
+        if ( $this->_action == CRM_Core_Action::VIEW ) {
+            return;
+        }
+
+        $this->_params = $this->controller->exportValues( $this->_name );
+        
+        $this->postProcessCommon( );
+    }//end of function
+
+
+    /**
+     * Function to process the form
+     *
+     * @access public
+     * @return None
+     */
+    public function postProcessCommon() 
     {
         foreach ( $this->_varNames as $groupName => $groupValues ) {
             foreach ( $groupValues as $settingName => $fieldValue ) {

@@ -182,7 +182,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
         $session = CRM_Core_Session::singleton();
         $session->set( 'defaultWysiwygEditor', $this->_params['editor_id'] );
         
-        parent::postProcess( );
+        $this->postProcessCommon( );
     }//end of function
 
 }

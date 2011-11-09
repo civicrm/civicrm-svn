@@ -202,7 +202,7 @@ FROM   civicrm_county
             }
         }
 
-        parent::postProcess( );
+        $this->postProcessCommon( );
     } //end of function
 
 }

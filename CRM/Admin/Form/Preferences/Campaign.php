@@ -63,51 +63,6 @@ class CRM_Admin_Form_Preferences_Campaign extends CRM_Admin_Form_Preferences
         parent::preProcess( );
     }
 
-    function setDefaultValues( ) {
-        $defaults = array( );
-
-        foreach ( $this->_varNames as $groupName => $settings ) {
-            foreach ( $settings as $settingName => $dontcare ) {
-                $defaults[$settingName] = 
-                    isset( $this->_config->$settingName ) ?
-                    $this->_config->$settingName :
-                    null;
-            }
-        }
-
-        return $defaults;
-    }
-
-    /**
-     * Function to build the form
-     *
-     * @return None
-     * @access public
-     */
-    public function buildQuickForm( ) 
-    {
-        parent::buildQuickForm( );
-    }
-
-       
-    /**
-     * Function to process the form
-     *
-     * @access public
-     * @return None
-     */
-    public function postProcess() 
-    {
-        $config = CRM_Core_Config::singleton();
-        if ( $this->_action == CRM_Core_Action::VIEW ) {
-            return;
-        }
-
-        $this->_params = $this->controller->exportValues( $this->_name );
-        
-        parent::postProcess( );
-    }//end of function
-
 }
 
 
