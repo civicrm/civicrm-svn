@@ -179,6 +179,12 @@ class CRM_Core_Selector_Controller {
      */
     public static $_properties = array( 'columnHeaders', 'rows', 'rowsEmpty' );
 
+    /**
+     * Should we compute actions dynamically (since they are quite verbose)
+     *
+     * @var boolean
+     */
+    protected $_dynamicAction = false;
 
     /**
      * Class constructor
@@ -340,6 +346,9 @@ class CRM_Core_Selector_Controller {
             // if we need to store in session, lets update session
             if ($this->_output & self::SESSION) {
                 $this->_store->set( "{$this->_prefix}columnHeaders", $columnHeaders );
+                if ( $this->_dynamicAction ) {
+                    $this->_object->removeActions( $rows );
+                }
                 $this->_store->set( "{$this->_prefix}rows"         , $rows          );
                 $this->_store->set( "{$this->_prefix}rowCount"     , $this->_total  );
                 $this->_store->set( "{$this->_prefix}rowsEmpty"    , $rowsEmpty     );
@@ -431,13 +440,17 @@ class CRM_Core_Selector_Controller {
      * @return void
      * @access public
      */
-    function moveFromSessionToTemplate()
+    function moveFromSessionToTemplate( )
     {
         self::$_template->assign_by_ref( "{$this->_prefix}pager"  , $this->_pager   );
 
         $rows = $this->_store->get( "{$this->_prefix}rows" );
 
         if ( $rows ) {
+            if ( $this->_dynamicAction ) {
+                $this->_object->addActions( $rows );
+            }
+
             self::$_template->assign( "{$this->_prefix}aToZ"  ,
                                       $this->_store->get( "{$this->_prefix}AToZBar" ) );
         }
@@ -512,4 +525,11 @@ class CRM_Core_Selector_Controller {
         return $this->_print;
     }
 
+    function setDynamicAction( $value ) {
+        $this->_dynamicAction = $value;
+    }
+
+    function getDynamicAction( ) {
+        return $this->_dynamicAction;
+    }
 }

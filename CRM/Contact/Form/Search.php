@@ -699,7 +699,9 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                      $this->_returnProperties,
                      $this->_action,
                      false, true,
-                     $this->_context );' );
+                     $this->_context,
+                     $this->_contextMenu );' );
+            
         } else {
             eval( '$selector = new ' . $this->_selectorName . 
                   '( $this->_params,
@@ -714,6 +716,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                                                            $this,
                                                            CRM_Core_Selector_Controller::TRANSFER );
         $controller->setEmbedded( true );
+        $controller->setDynamicAction( true );
         
         if ( $this->_force ) {
 
@@ -733,6 +736,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                                                                $sortID,
                                                                CRM_Core_Action::VIEW, $this, CRM_Core_Selector_Controller::TRANSFER );
             $controller->setEmbedded( true );
+            $controller->setDynamicAction( true );
         }
         
         $controller->moveFromSessionToTemplate();
@@ -852,6 +856,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                                                                $this,
                                                                $output );
             $controller->setEmbedded( true );
+            $controller->setDynamicAction( true );
             $controller->run();
         }
     }
