@@ -386,35 +386,28 @@ WHERE   cas.entity_value = $id AND
             require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
             $smarty = CRM_Core_Smarty::singleton( );
-
-            // $tokenParams is flat (i.e. keys include dots); these are hard to access in Smarty
-            require_once 'CRM/Utils/Array.php';
-            foreach (CRM_Utils_Array::unflatten('.', $tokenParams) as $key => $value) {
-                $smarty->assign($key, $value);
-            }
-            
             foreach( array( 'text', 'html') as $elem) {
                 $$elem = $smarty->fetch("string:{$$elem}");
             }
             
-            $mailParams = array();
-
+            $message = new Mail_mime("\n");
+            
             /* Do contact-specific token replacement in text mode, and add to the
              * message if necessary */
             if ( !$html || $contact['preferred_mail_format'] == 'Text' ||
                  $contact['preferred_mail_format'] == 'Both') {
                 // render the &amp; entities in text mode, so that the links work
                 $text = str_replace('&amp;', '&', $text);
-                $mailParams['text'] = $text;
+                $message->setTxtBody($text);
+                
                 unset( $text );
             }
             
-            if ( $html && ( $contact['preferred_mail_format'] == 'HTML' ||
-                            $contact['preferred_mail_format'] == 'Both') ) {
-                $mailParams['html'] = $html;
+            if ($html && ( $contact['preferred_mail_format'] == 'HTML' ||
+                           $contact['preferred_mail_format'] == 'Both')) {
+                $message->setHTMLBody($html);
                 unset( $html );
             }
-
             $recipient = "\"{$contact['display_name']}\" <$email>";
             
             $matches = array();
@@ -443,11 +436,31 @@ WHERE   cas.entity_value = $id AND
           
             $messageSubject = $smarty->fetch("string:{$messageSubject}");
 
-            $mailParams['from']     = $from;
-            $mailParams['subject']  = $messageSubject;
-            $mailParams['toEmail']  = $recipient;
+            $headers = array(
+                             'From'      => $from,
+                             'Subject'   => $messageSubject,
+                             );
+            $headers['To'] = $recipient;
+            
+            $mailMimeParams = array(
+                                    'text_encoding' => '8bit',
+                                    'html_encoding' => '8bit',
+                                    'head_charset'  => 'utf-8',
+                                    'text_charset'  => 'utf-8',
+                                    'html_charset'  => 'utf-8',
+                                    );
+            $message->get($mailMimeParams);
+            $message->headers($headers);
 
-            $result = CRM_Utils_Mail::send( $mailParams );
+            $config = CRM_Core_Config::singleton();
+            $mailer =& $config->getMailer();
+            
+            $body = $message->get();
+            $headers = $message->headers();
+            
+            CRM_Core_Error::ignoreException( );
+            $result = $mailer->send($recipient, $headers, $body);
+            CRM_Core_Error::setCallback();
         }
         $schedule->free( );
         
