@@ -23,4 +23,4 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{include file="CRM/Admin/Form/Preferences/formBasic.tpl"}
+{include file="CRM/Form/basicForm.tpl"}

@@ -119,7 +119,6 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
         }
     }
 
-
     /**
      * Function to build the form
      *
@@ -132,6 +131,7 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
 
         require_once 'CRM/Core/OptionGroup.php';
         require_once 'CRM/Utils/String.php';
+        require_once 'CRM/Utils/Array.php';
         
         if ( ! empty( $this->_varNames ) ) {
             foreach ( $this->_varNames as $groupName => $groupValues ) {
@@ -176,6 +176,8 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
                         break;
                     }
                 }
+                
+                $fields = CRM_Utils_Array::crmArraySortByField($fields, 'weight');
                 $this->assign( 'fields', $fields);
             }
         }

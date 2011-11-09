@@ -390,6 +390,21 @@ class CRM_Utils_Array {
 		}
 		return $max;
 	}
+	
+    /**
+     * Function to sort an associative array of arrays by an attribute using natural string compare
+     * @param array $array Array to be sorted
+     * @param string $field Name of the attribute you want to sort by
+     * 
+     * @return array $array Sorted array
+     * @static
+     */
+	static function crmArraySortByField($array, $field) {
+        $code = "return strnatcmp(\$a['$field'], \$b['$field']);";
+        usort($array, create_function('$a,$b', $code));
+        return $array;
+    }
+    
 }
 
 
