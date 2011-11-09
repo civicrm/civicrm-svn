@@ -47,7 +47,10 @@ class CRM_Export_Form_Select extends CRM_Core_Form
      */
     const
         EXPORT_ALL      = 1,
-        EXPORT_SELECTED = 2;
+        EXPORT_SELECTED = 2,
+        EXPORT_MERGE_DO_NOT_MERGE = 0,
+        EXPORT_MERGE_SAME_ADDRESS = 1,
+        EXPORT_MERGE_HOUSEHOLD    = 2;
 
     /**
      * export modes
@@ -212,7 +215,7 @@ FROM   {$this->_componentTable}
     public function buildQuickForm( ) 
     {
         //export option
-        $exportOptions = $mergeHousehold = $mergeAddress = $postalMailing = array();        
+        $exportOptions = $mergeOptions = $postalMailing = array();        
         $exportOptions[] = HTML_QuickForm::createElement('radio',
                                                          null, null,
                                                          ts('Export PRIMARY fields'),
@@ -224,15 +227,22 @@ FROM   {$this->_componentTable}
                                                          self::EXPORT_SELECTED,
                                                          array( 'onClick' => 'showMappingOption( );' ));
 
-        $mergeAddress[] = HTML_QuickForm::createElement( 'advcheckbox', 
-                                                         'merge_same_address', 
-                                                         null, 
-                                                         ts('Merge Contacts with the Same Address'),
+        $mergeOptions[] = HTML_QuickForm::createElement( 'radio', 
+                                                         null, null,
+                                                         ts('Do not merge'),
+                                                         self::EXPORT_MERGE_DO_NOT_MERGE,
                                                          array( 'onclick' => 'showGreetingOptions( );' ) );
-        $mergeHousehold[] = HTML_QuickForm::createElement( 'advcheckbox', 
-                                                           'merge_same_household', 
-                                                           null, 
-                                                           ts('Merge Household Members into their Households'));
+        $mergeOptions[] = HTML_QuickForm::createElement( 'radio', 
+                                                         null, null,
+                                                         ts('Merge All Contacts with the Same Address'),
+                                                         self::EXPORT_MERGE_SAME_ADDRESS,
+                                                         array( 'onclick' => 'showGreetingOptions( );' ) );
+        $mergeOptions[] = HTML_QuickForm::createElement( 'radio', 
+                                                         null, null,
+                                                         ts('Merge Household Members into their Households'),
+                                                         self::EXPORT_MERGE_HOUSEHOLD,
+                                                         array( 'onclick' => 'showGreetingOptions( );' ) );
+
         $postalMailing[]  = HTML_QuickForm::createElement( 'advcheckbox',
                                                            'postal_mailing_export', 
                                                            null, 
@@ -252,8 +262,7 @@ FROM   {$this->_componentTable}
         }
 
         if ( $this->_exportMode == self::CONTACT_EXPORT ) {
-            $this->addGroup( $mergeAddress, 'merge_same_address', ts('Merge Same Address'), '<br/>');
-            $this->addGroup( $mergeHousehold, 'merge_same_household', ts('Merge Same Household'), '<br/>');
+            $this->addGroup( $mergeOptions , 'mergeOption', ts('Merge Options'), '<br/>' );
             $this->addGroup( $postalMailing,  'postal_mailing_export', ts('Postal Mailing Export'), '<br/>');
 
             $this->addElement( 'select', 'additional_group', ts( 'Additional Group for Export' ), 
@@ -262,7 +271,8 @@ FROM   {$this->_componentTable}
         
         $this->buildMapping( );
 
-        $this->setDefaults(array('exportOption' => self::EXPORT_ALL ));
+        $this->setDefaults(array('exportOption' => self::EXPORT_ALL,
+                                 'mergeOption'  => self::EXPORT_MERGE_DO_NOT_MERGE ));
 
         $this->addButtons( array(
                                  array ( 'type'      => 'next',
@@ -290,7 +300,7 @@ FROM   {$this->_componentTable}
     {
         $errors = array( );
                 
-        if ( CRM_Utils_Array::value( 'merge_same_address', $params['merge_same_address'] ) && 
+        if ( CRM_Utils_Array::value( 'mergeOption', $params ) == self::EXPORT_MERGE_SAME_ADDRESS &&
              $self->_matchingContacts ) {
             $greetings = array( 'postal_greeting' => 'postal_greeting_other',
                                 'addressee'       => 'addressee_other' );
@@ -319,8 +329,10 @@ FROM   {$this->_componentTable}
     public function postProcess( ) 
     {
         $exportOption = $this->controller->exportValue( $this->_name, 'exportOption' );
-        $merge_same_address   = $this->controller->exportValue( $this->_name, 'merge_same_address' );
-        $merge_same_household = $this->controller->exportValue( $this->_name, 'merge_same_household' );
+        $mergeSameAddress   = CRM_Utils_Array::value( 'mergeOption', $params ) == self::EXPORT_MERGE_SAME_ADDRESS ? 1 : 0;
+        $mergeSameHousehold = CRM_Utils_Array::value( 'mergeOption', $params ) == self::EXPORT_MERGE_HOUSEHOLD ? 1 : 0;
+        $this->set('mergeSameAddress', $mergeSameAddress );
+        $this->set('mergeSameHousehold', $mergeSameHousehold );
 
         // instead of increasing the number of arguments to exportComponents function, we 
         // will send $exportParams as another argument, which is an array and suppose to contain 
@@ -346,16 +358,6 @@ FROM   {$this->_componentTable}
             $this->set('mappingId', null);
         }
         
-        $mergeSameAddress = $mergeSameHousehold = false;
-        if ( $merge_same_address['merge_same_address'] == 1 ) {
-            $mergeSameAddress = true;
-        }
-        $this->set('mergeSameAddress', $mergeSameAddress );
-        
-        if ( $merge_same_household['merge_same_household'] == 1 ) {
-            $mergeSameHousehold = true;
-        }
-        $this->set('mergeSameHousehold', $mergeSameHousehold );
 
         if ( $exportOption == self::EXPORT_ALL ) {
             require_once 'CRM/Export/BAO/Export.php';
