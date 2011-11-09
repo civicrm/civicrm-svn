@@ -43,34 +43,32 @@ require_once 'CRM/Admin/Form/Preferences.php';
 class CRM_Admin_Form_Preferences_Multisite extends CRM_Admin_Form_Preferences
 {
     function preProcess( ) {
-        CRM_Utils_System::setTitle(ts('CiviCampaign Component Settings'));
+        require_once 'CRM/Utils/System.php';
+        $msDoc = CRM_Utils_System::docURL2( 'Multi Site Installation' );
+        CRM_Utils_System::setTitle(ts('Multi Site Settings'));
         $this->_varNames = 
             array( CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME =>
                    array( 
-                       'is_enabled'                         => ts( 'Enable Multi Site' ),
-                       'uniq_email_per_site'                => ts( 'Ensure multi sites have a unique email per site' ),
-                       'domain_group_id'                    => ts( 'The parent group for this domain' ),
-                       'event_price_set_domain_id'          => ts( 'Should events respect domain' ),
                        'is_enabled'                         => array( 'html_type'    => 'checkbox',
-                                                                      'title'        => ts( 'Enable Multi-site' ),
+                                                                      'title'        => ts( 'Enable Multi Site Configuration' ),
                                                                       'weight'       => 1,
-                                                                      'description'  => ts( ''),
+                                                                      'description'  => ts('Multi Site provides support for sharing a single CiviCRM database among multiple sites.') . ' ' . $msDoc,
                                                                       ),
-                      'is_enabled'                         => array( 'html_type'    => 'checkbox',
-                                                                     'title'        => ts( 'Enable Multi-site' ),
-                                                                     'weight'       => 1,
-                                                                     'description'  => ts( ''),
+                       'uniq_email_per_site'                => array( 'html_type'    => 'checkbox',
+                                                                      'title'        => ts( 'Ensure multi sites have a unique email per site' ),
+                                                                      'weight'       => 2,
+                                                                      'description'  => null,
                                                                      ),
-                         'tag_unconfirmed'      => array( 'html_type'    => 'text',
-                                                                        'title'        => ts( 'Tag for Unconfirmed Petition Signers' ),
-                                                                        'weight'       => 1,
-                                                                        'description'  => ts( 'If set, new contacts that are created when signing a petition are assigned a tag of this name.')
-                                                                        ),
-                         'petition_contacts'  => array( 'html_type'    => 'text',
-                                                                        'title'        => ts( 'Petition Signers Group' ),
-                                                                        'weight'       => 2,
-                                                                        'description'  => ts( 'All contacts that have signed a CiviCampaign petition will be added to this group. The group will be created if it does not exist (it is required for email verification).'),
-                                                                        ),
+                       'domain_group_id'                    => array( 'html_type'    => 'text',
+                                                                      'title'        => ts( 'Parent group for this domain' ),
+                                                                      'weight'       => 3,
+                                                                      'description'  => ts( 'Enter the group ID (civicrm_group.id).')
+                                                                    ),
+                       'event_price_set_domain_id'          => array( 'html_type'    => 'text',
+                                                                       'title'        => ts( 'Domain for event price sets' ),
+                                                                       'weight'       => 4,
+                                                                       'description'  => null,
+                                                                     ),
                           )
                    );
 

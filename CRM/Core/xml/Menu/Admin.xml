@@ -162,6 +162,11 @@
      <page_callback>CRM_Admin_Form_Preferences_Member</page_callback>
   </item>
   <item>
+     <path>civicrm/admin/setting/preferences/multisite</path>
+     <title>Multi Site Settings</title>
+     <page_callback>CRM_Admin_Form_Preferences_Multisite</page_callback>
+  </item>
+  <item>
      <path>civicrm/admin/setting/preferences/date</path>
      <title>View Date Preferences</title>
      <page_callback>CRM_Admin_Page_PreferencesDate</page_callback>
