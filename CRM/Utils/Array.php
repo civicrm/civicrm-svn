@@ -401,7 +401,7 @@ class CRM_Utils_Array {
      */
 	static function crmArraySortByField($array, $field) {
         $code = "return strnatcmp(\$a['$field'], \$b['$field']);";
-        usort($array, create_function('$a,$b', $code));
+        uasort($array, create_function('$a,$b', $code));
         return $array;
     }
     
