@@ -40,19 +40,20 @@
 /**
  * Include common API util functions
  */
-require_once 'api/v3/utils.php';
+
 require_once 'CRM/Contact/BAO/Contact.php';
 /**
- *
- * @param  array   $params           (reference ) input parameters
+ * Create or update a contact (note you should always call this via civicrm_api() & never directly)
+ * 
+ * @param  array   $params   input parameters
  *
  * Allowed @params array keys are:
  * {@getfields contact_create}
- * {@schema Core/Address.xml}}
  * 
- * {@example ContactCreate.php 0}
  * 
- * @return array (reference )        contact_id of created or updated contact
+ * @example ContactCreate.php Example of Create Call
+ * 
+ * @return array  API Result Array
  *
  * @static void
  * @access public
@@ -161,12 +162,13 @@ function _civicrm_api3_contact_create_spec(&$params){
 /**
  * Retrieve one or more contacts, given a set of search params
  *
- * @param  array  (reference ) input parameters
+ * @param  array  input parameters
  *
  * @return array API Result Array
+ * (@getfields contact_get}
  * @static void
  * @access public
- * (@getfields contact_get}
+ * 
  * @example ContactGet.php Standard GET example
  * 
  * @todo EM 7 Jan 11 - does this return the number of contacts if required (replacement for deprecated contact_search_count function - if so is this tested?
@@ -826,9 +828,11 @@ LIMIT    0, {$limit}
  * @param  array   	  $params (reference ) input parameters
  *
  * @return array API Result Array
+ * {@getfields contact_geocode}
+ * 
  * @static void
  * @access public
- * {@getfields contact_geocode}
+ * 
  *
  */
 function civicrm_api3_contact_geocode( $params )
