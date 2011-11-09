@@ -2497,6 +2497,9 @@ WHERE  id IN ( $groupIDs )
     function tagSearch( &$values ) {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
         
+        $op    = "LIKE";
+        $value = "%{$value}%";
+
         $etTable = "`civicrm_entity_tag-" . $value ."`";
         $tTable = "`civicrm_tag-" . $value ."`";
         $this->_tables[$etTable] = $this->_whereTables[$etTable] =
@@ -2504,7 +2507,7 @@ WHERE  id IN ( $groupIDs )
     {$etTable}.entity_table = 'civicrm_contact' )
               LEFT JOIN civicrm_tag {$tTable} ON ( {$etTable}.tag_id = {$tTable}.id  ) ";
        
-        $this->_where[$grouping][] = "{$tTable}.name like '%". $value . "%'";
+        $this->_where[$grouping][] = "{$tTable}.name {$op} '". $value . "'";
         $this->_qill[$grouping][]  = ts('Tagged %1', array( 1 => $op ) ). ' ' . $value;
     }
 
