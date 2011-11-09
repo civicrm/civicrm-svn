@@ -45,11 +45,12 @@ require_once 'CRM/Contact/BAO/RelationshipType.php';
  *
  * @param  array   $params  input parameters
  * 
- * @example RelationshipCreate.php
+ * @example RelationshipCreate.php Std Create example
  * @return array API Result Array
+ * {@getfields relationship_create}
  * @static void
  * @access public
- * {@getfields relationship_create}
+ * 
  */
 function civicrm_api3_relationship_create( $params ) {
 
@@ -108,6 +109,7 @@ function _civicrm_api3_relationship_create_spec(&$params){
  * 
  * @return boolean  true if success, else false
  * @example RelationshipDelete.php Delete Example
+ * 
  * {@getfields relationship_delete}
  * @static void
  * @access public
