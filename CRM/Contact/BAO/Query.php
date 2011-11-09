@@ -346,6 +346,9 @@ class CRM_Contact_BAO_Query
      * List of location specific fields
      */
     static $_locationSpecificFields = array ( 'street_address',
+                                              'street_number',
+                                              'street_name',
+                                              'street_unit',
                                               'supplemental_address_1',
                                               'supplemental_address_2',
                                               'city',
@@ -1330,6 +1333,10 @@ class CRM_Contact_BAO_Query
 
         case 'street_address':
             $this->street_address( $values );
+            return;
+
+        case 'street_number':
+            $this->street_number( $values );
             return;
 
         case 'sortByCharacter':
@@ -2758,6 +2765,43 @@ WHERE  id IN ( $groupIDs )
         } else {
             $this->_where[$grouping][] = " (civicrm_address.street_address $op $value )";
             $this->_qill[$grouping][]  = ts( 'Street' ) . " $op ";
+        }
+
+        $this->_tables['civicrm_address'] = $this->_whereTables['civicrm_address'] = 1; 
+    }
+
+
+    /**
+     * where / qill clause for street_unit
+     *
+     * @return void
+     * @access public
+     */
+    function street_number( &$values ) 
+    {
+        list( $name, $op, $value, $grouping, $wildcard ) = $values;
+        
+        if ( ! $op ) {
+            $op = '=';
+        }
+        
+        $n = trim( $value ); 
+        
+        if ( strtolower( $n ) == 'odd' ) {
+            $this->_where[$grouping][] = " ( civicrm_address.street_number % 2 = 1 )";
+            $this->_qill[$grouping][]  = ts( 'Street Number is odd' );
+        } else if ( strtolower( $n ) == 'even' ) {
+            $this->_where[$grouping][] = " ( civicrm_address.street_number % 2 = 0 )";
+            $this->_qill[$grouping][]  = ts( 'Street Number is even' );
+        } else {
+            $value = strtolower(CRM_Core_DAO::escapeString($n));
+            if ( strpos( $value, '%' ) !== false ) {
+                $value = "'$value'";
+            } else {
+                $value = "'$value%";
+            }
+            $this->_where[$grouping][] = " ( LOWER(civicrm_address.street_number) $op $value )";
+            $this->_qill[$grouping][]  = ts( 'Street Number' ) . " $op '$n'";
         }
 
         $this->_tables['civicrm_address'] = $this->_whereTables['civicrm_address'] = 1; 

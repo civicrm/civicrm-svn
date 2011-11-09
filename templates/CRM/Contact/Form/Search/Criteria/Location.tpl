@@ -35,7 +35,17 @@
            </div> 
         </td>
         <td colspan="2">{$form.street_address.label}<br />
-            {$form.street_address.html|crmReplace:class:big}<br />
+          <span id="streetAddress">
+            {$form.street_address.html|crmReplace:class:big}
+{if $parseStreetAddress}
+            &nbsp;&nbsp;<a href="#" title="{ts}Use Address Elements{/ts}" onClick="processAddressFields( 'addressElements' , 1 );return false;">{ts}Use Address Elements{/ts}</a>
+          </span>
+          <span id="addressElements" class=hiddenElement>
+	    {$form.street_number.html}&nbsp;{$form.street_name.html}&nbsp;{$form.street_unit.html}
+            <a href="#" title="{ts}Use Street Address{/ts}" onClick="processAddressFields( 'streetAddress', 1 );return false;">{ts}Use Street Address{/ts}</a>
+          </span>
+{/if}
+            <br />
             {$form.city.label}<br />
             {$form.city.html}
   	</td>	   
@@ -98,5 +108,42 @@
     {/if}
     </table>
 </div>
+
+{if $parseStreetAddress eq 1}
+{literal}
+<script type="text/javascript">
+function processAddressFields( name, loadData ) {
+
+        if ( name == 'addressElements' ) {
+             if ( loadData ) {
+	          streetAddress = '';
+	     }
+	     
+             showBlockName = 'addressElements';
+	     hideBlockName = 'streetAddress';
+	} else {
+             if ( loadData ) {
+                  streetNumber = streetName = streetUnit = ''; 
+             }
+
+             showBlockName = 'streetAddress';
+             hideBlockName = 'addressElements';
+       }
+
+       show( showBlockName );
+       hide( hideBlockName );
+
+       // set the values.
+       if ( loadData ) {
+          cj( '#street_name'    ).val( streetName    );   
+          cj( '#street_unit'    ).val( streetUnit    );
+          cj( '#street_number'  ).val( streetNumber  );
+          cj( '#street_address' ).val( streetAddress );
+       }
+}
+
+</script>
+{/literal}
+{/if}
 
 

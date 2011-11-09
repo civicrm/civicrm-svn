@@ -221,11 +221,22 @@ class CRM_Contact_Form_Search_Criteria {
                           'state_province'         => array( ts('State / Province')  ,  $attributes['state_province_id'], 'stateProvince', true ),
                           'country'                => array( ts('Country')           ,  $attributes['country_id'], 'country', false ), 
                           'address_name'           => array( ts('Address Name')      ,  $attributes['address_name'], null, null ), 
+                          'street_number'          => array( ts('Street Number')       , $attributes['street_number'], null, null ),
+                          'street_name'            => array( ts('Street Name')         , $attributes['street_name'], null, null ),
+                          'street_unit'            => array( ts('Apt/Unit/Suite')         , $attributes['street_unit'], null, null ),
                            );
+
+        $parseStreetAddress = CRM_Utils_Array::value( 'street_address_parsing', $addressOptions, 0 );
+        $form->assign( 'parseStreetAddress', 1 );
         foreach ( $elements as $name => $v ) {
             list( $title, $attributes, $select, $multiSelect ) = $v;
-            
-            if ( ! $addressOptions[$name] ) {
+
+            if ( in_array( $name,
+                           array('street_number', 'street_name', 'street_unit' ) ) ) {
+                if ( ! $parseStreetAddress ) {
+                    continue;
+                }
+            } else if ( ! $addressOptions[$name] ) {
                 continue;
             }
  
