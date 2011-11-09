@@ -224,13 +224,13 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         $this->assignToTemplate( );
         if( $this->_params[0]['amount'] || $this->_params[0]['amount'] == 0 ) {
             $this->_amount = array();
-
+            
             foreach( $this->_params as $k => $v ) {
                 if ( is_array( $v ) ) {
                     foreach (array ('first_name', 'last_name') as $name) {
-                        if(isset($v['billing_'.$name])) {
+                        if( isset($v['billing_'.$name]) &&
+                            ! isset($v[$name] ) ) {
                             $v[$name] = $v['billing_'.$name];
-                            
                         }
                     }
                     if ( CRM_Utils_Array::value( "email-{$this->_bltID}", $v ) ) {
