@@ -154,5 +154,15 @@
                 {if $form.deleted_contacts}<br />{$form.deleted_contacts.html} {$form.deleted_contacts.label}{else}&nbsp;{/if}
             </td>
         </tr>
+        <tr>
+            <td>
+                {$form.tag_search.label}<br />
+                {$form.tag_search.html|crmReplace:class:medium}
+            </td>
+            <td>
+            </td>
+            <td colspan="3">
+            </td>
+        </tr>
         <tr><td colspan="5">{include file="CRM/common/Tag.tpl"}</td></tr>
     </table>

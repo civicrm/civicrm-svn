@@ -1306,7 +1306,10 @@ class CRM_Contact_BAO_Query
             $this->group( $values );
             return;
 
-            // case tag comes from find contacts
+        // case tag comes from find contacts
+        case 'tag_search':
+            $this->tagSearch( $values );
+            return;
         case 'tag':
         case 'contact_tags':
             $this->tag( $values );
@@ -2482,6 +2485,27 @@ WHERE  id IN ( $groupIDs )
             $this->_where[$grouping][] = " civicrm_uf_match.contact_id IS NULL";
             $this->_qill[$grouping][]  = ts( 'Not a CMS User' );
         }
+    }
+
+
+    /**
+     * all tag search specific
+     *
+     * @return void
+     * @access public
+     */
+    function tagSearch( &$values ) {
+        list( $name, $op, $value, $grouping, $wildcard ) = $values;
+        
+        $etTable = "`civicrm_entity_tag-" . $value ."`";
+        $tTable = "`civicrm_tag-" . $value ."`";
+        $this->_tables[$etTable] = $this->_whereTables[$etTable] =
+            " LEFT JOIN civicrm_entity_tag {$etTable} ON ( {$etTable}.entity_id = contact_a.id  AND 
+    {$etTable}.entity_table = 'civicrm_contact' )
+              LEFT JOIN civicrm_tag {$tTable} ON ( {$etTable}.tag_id = {$tTable}.id  ) ";
+       
+        $this->_where[$grouping][] = "{$tTable}.name like '%". $value . "%'";
+        $this->_qill[$grouping][]  = ts('Tagged %1', array( 1 => $op ) ). ' ' . $value;
     }
 
     /**
