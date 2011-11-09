@@ -113,17 +113,18 @@
 {literal}
 <script type="text/javascript">
 function processAddressFields( name, loadData ) {
-
         if ( name == 'addressElements' ) {
              if ( loadData ) {
-	          streetAddress = '';
+		  cj( '#street_address' ).val( '' );
 	     }
 	     
              showBlockName = 'addressElements';
 	     hideBlockName = 'streetAddress';
 	} else {
              if ( loadData ) {
-                  streetNumber = streetName = streetUnit = ''; 
+                 cj( '#street_name'   ).val( '' );   
+                 cj( '#street_unit'   ).val( '' );
+                 cj( '#street_number' ).val( '' );
              }
 
              showBlockName = 'streetAddress';
@@ -132,15 +133,16 @@ function processAddressFields( name, loadData ) {
 
        show( showBlockName );
        hide( hideBlockName );
-
-       // set the values.
-       if ( loadData ) {
-          cj( '#street_name'    ).val( streetName    );   
-          cj( '#street_unit'    ).val( streetUnit    );
-          cj( '#street_number'  ).val( streetNumber  );
-          cj( '#street_address' ).val( streetAddress );
-       }
 }
+
+cj(function( ) {
+  if (  cj('#street_name').val( ).length > 0 ||
+        cj('#street_unit').val( ).length > 0 ||
+        cj('#street_number').val( ).length > 0 ) {
+    processAddressFields( 'addressElements', 1 );
+  }
+}
+);
 
 </script>
 {/literal}
