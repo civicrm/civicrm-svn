@@ -213,6 +213,7 @@ class CRM_Contact_Form_Search_Custom_Group
         $this->_tableName = "civicrm_temp_custom_{$randomNum}";
 
         //block for Group search
+        $iGroups = $xGroups = null;
         $smartGroup = array( );
         if ( $this->_groups || $this->_allSearch ) { 
             require_once 'CRM/Contact/DAO/Group.php';
@@ -351,6 +352,7 @@ class CRM_Contact_Form_Search_Custom_Group
             }
         }//group contact search end here;
 
+        $iTags = $xTags = null;
         //block for Tags search
         if ( $this->_tags || $this->_allSearch ) {
             //find all tags 

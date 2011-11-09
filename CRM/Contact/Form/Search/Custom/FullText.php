@@ -123,12 +123,21 @@ class CRM_Contact_Form_Search_Custom_FullText
             $this->_limitRowClause = " LIMIT $rowCount";
         }
 
-        $this->buildTempTable( );
-
-        $this->fillTable( );
     }
 
     function __destruct( ) {
+    }
+
+    function initialize( ) {
+        static $initialized = false;
+
+        if ( ! $initialized ) {
+            $initialized = true;
+
+            $this->buildTempTable( );
+
+            $this->fillTable( );
+        }
     }
 
     function buildTempTable( ) {
@@ -700,6 +709,8 @@ WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text
     }
     
     function summary( ) {
+        $this->initialize( );
+
         $summary = array( 'Contact'      => array( ),
                           'Activity'     => array( ),
                           'Case'         => array( ),
@@ -753,6 +764,8 @@ WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text
     }
 
     function count( ) {
+        $this->initialize( );
+
         if ( $this->_table ) {
             return $this->_foundRows[$this->_table];
         } else {
@@ -761,11 +774,15 @@ WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text
     }
 
     function contactIDs( $offset = 0, $rowcount = 0, $sort = null) {
+        $this->initialize( );
+
         return CRM_Core_DAO::singleValueQuery( "SELECT contact_id FROM {$this->_tableName}" );
     }
 
     function all( $offset = 0, $rowcount = 0, $sort = null,
                   $includeContactIDs = false ) {
+        $this->initialize( );
+
         $sql = "
 SELECT 
   contact_a.contact_id   as contact_id  ,
