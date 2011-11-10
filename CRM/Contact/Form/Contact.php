@@ -690,7 +690,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                                                       CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                                                           'address_options' ) );
         if ( $parseStreetAddress ) {
-            if ( is_array( $fields['address'] ) ) {  
+            if ( isset( $fields['address'] ) &&
+                 is_array( $fields['address'] ) ) {  
                 $invalidStreetNumbers = array( );
                 foreach ( $fields['address'] as $cnt => $address ) {
                     if ( $streetNumber = CRM_Utils_Array::value( 'street_number', $address ) ) {
