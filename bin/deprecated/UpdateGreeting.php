@@ -59,7 +59,7 @@ class CRM_UpdateGreeting {
 
     function initialize( ) 
     {
-        require_once '../civicrm.config.php';
+        require_once '../../civicrm.config.php';
         require_once 'CRM/Core/Config.php';
     }
     
@@ -105,8 +105,8 @@ class CRM_UpdateGreeting {
         }
         
         // build return properties based on tokens
-        require_once 'CRM/Activity/BAO/Activity.php';
-        $greetingTokens = CRM_Activity_BAO_Activity::getTokens( $greetingString );
+        require_once 'CRM/Utils/Token.php';
+        $greetingTokens = CRM_Utils_Token::getTokens( $greetingString );
         $tokens = CRM_Utils_Array::value( 'contact', $greetingTokens );
         $greetingsReturnProperties = array( );
         if ( is_array( $tokens ) ) {
@@ -153,6 +153,11 @@ SELECT DISTINCT id, $idFldName
                 $filterContactFldIds[] = 0;
             }
         }
+
+        if ( empty( $filterContactFldIds ) ) {
+            return;
+        }
+
         // retrieve only required contact information
         require_once 'CRM/Utils/Token.php';
         $extraParams[] = array( 'contact_type', '=', $contactType, 0, 0 );
