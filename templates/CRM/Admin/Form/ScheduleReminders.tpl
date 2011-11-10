@@ -108,7 +108,7 @@
         </td>
     </tr>
     <tr class="crm-scheduleReminder-form-block-recipient">
-        <td class="right">{$form.recipient.label}</td><td colspan="3">{$form.recipient.html}</td>
+        <td id="recipientLabel" class="right">{$form.recipient.label}</td><td colspan="3">{$form.recipient.html}</td>
     </tr>
     <tr id="recipientList" class="crm-scheduleReminder-form-block-recipientListing">
         <td class="right">{$form.recipient_listing.label}</td><td colspan="3">{$form.recipient_listing.html}</td>
@@ -223,24 +223,29 @@
 
      function populateRecipient( ) {
      	  var recipient = cj("#recipient option:selected").text();    
+	  var entity = cj("#entity\\[0\\] option:selected").text();  
 	  var postUrl = "{/literal}{crmURL p='civicrm/ajax/populateRecipient' h=0}{literal}";
-	  if(recipient == 'Participant Status' || recipient == 'Participant Role'){
-   	  var elementID = '#recipient_listing';
-          cj( elementID ).html('');
-	    cj.post(postUrl, {recipient: recipient},
-	    	function ( response ) {
-  		response = eval( response );
-  		for (i = 0; i < response.length; i++) {
-                     cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
-                 }
-                
-		}	    
-	    );
-	    cj("#recipientList").show();
-            cj('#is_recipient_listing').val(1);	     
+	  if(recipient == 'Participant Status' || recipient == 'Participant Role') {
+   	     var elementID = '#recipient_listing';
+             cj( elementID ).html('');
+	        cj.post(postUrl, {recipient: recipient},
+	    	    function ( response ) {
+  		    response = eval( response );
+  		    for (i = 0; i < response.length; i++) {
+                         cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
+                    }
+		});
+	        cj("#recipientList").show();
+                cj('#is_recipient_listing').val(1);	     
 	  } else {
-	    cj("#recipientList").hide();
-	    cj('#is_recipient_listing').val('');
+	     cj("#recipientList").hide();
+	     cj('#is_recipient_listing').val('');
+	  }
+	  
+	  if (entity == 'Event Name' || entity == 'Event Type') {
+	     cj("#recipientLabel").text("Additional Recipient(s)");
+	  } else {
+ 	     cj("#recipientLabel").text("Recipient(s)");
 	  }
      }
      function buildSelect( selectID ) {

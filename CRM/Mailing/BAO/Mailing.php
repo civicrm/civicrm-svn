@@ -2076,6 +2076,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
             $tokens = array_merge( CRM_Core_SelectValues::mailingTokens( ), $tokens );
         } elseif ( $className == 'CRM_Admin_Form_ScheduleReminders' ) {
             $tokens = array_merge( CRM_Core_SelectValues::activityTokens( ), $tokens );
+            $tokens = array_merge( CRM_Core_SelectValues::eventTokens( ), $tokens );
         } elseif ( $className == 'CRM_Event_Form_ManageEvent_ScheduleReminders' ) {
             $tokens = array_merge( CRM_Core_SelectValues::eventTokens( ), $tokens );
         }
