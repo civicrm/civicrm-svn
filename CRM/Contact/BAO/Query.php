@@ -3624,11 +3624,17 @@ civicrm_relationship.start_date > {$today}
                         if ( $sortOrder ) {
                             $order .= " $sortOrder";
                         }
+
+                        // always add contact_a.id to the ORDER clause
+                        // so the order is deterministic
+                        if ( strpos( 'contact_a.id', $order ) === false ) {
+                            $order .= ", contact_a.id";
+                        }
                     }
                 } else if ($sortByChar) { 
                     $orderBy = " ORDER BY LEFT(contact_a.sort_name, 1) asc";
                 } else {
-                    $orderBy = " ORDER BY contact_a.sort_name asc";
+                    $orderBy = " ORDER BY contact_a.sort_name asc, contact_a.id";
                 }
             }
 
@@ -3647,6 +3653,7 @@ civicrm_relationship.start_date > {$today}
                 }
 
                 $doOpt = true;
+
                 // hack for order clause
                 // i have no idea what the below code does and how -- Lobo
                 // seems like the explode wont work nicely in many a case
