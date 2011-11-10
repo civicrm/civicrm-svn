@@ -37,7 +37,7 @@
 require_once 'CRM/Admin/Form/Preferences.php';
 
 /**
- * This class generates form components for the display preferences
+ * This class generates form components for multi site preferences
  * 
  */
 class CRM_Admin_Form_Preferences_Multisite extends CRM_Admin_Form_Preferences
