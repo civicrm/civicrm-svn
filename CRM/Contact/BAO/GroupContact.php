@@ -144,60 +144,13 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
         
         CRM_Utils_Hook::pre( 'create', 'GroupContact', $groupId, $contactIds ); 
         
-        $numContactsAdded    = 0;
-        $numContactsNotAdded = 0;
-
-        if ( count( $contactIds ) > 10 ) {
-            // switch to bulk mode
-            list( $numContactsAdded,
-                  $numContactsNotAdded ) = 
-                self::bulkAddContactsToGroup( $contactIds,
-                                              $groupId,
-                                              $method,
-                                              $status,
-                                              $tracking );
-        } else {
-            $date = date('YmdHis');
-            foreach ( $contactIds as $contactId ) {
-                $groupContact = new CRM_Contact_DAO_GroupContact( );
-                $groupContact->group_id   = $groupId;
-                $groupContact->contact_id = $contactId;
-                // check if the selected contact id already a member
-                // if not a member add to groupContact else keep the count of contacts that are not added
-                if (  ! $groupContact->find( true )) {
-                    // add the contact to group
-                    $historyParams = array(
-                                           'contact_id' => $contactId, 
-                                           'group_id' => $groupId, 
-                                           'method' => $method,
-                                           'status' => $status,
-                                           'date' => $date,
-                                           'tracking' => $tracking,
-                                           );
-                    CRM_Contact_BAO_SubscriptionHistory::create($historyParams);
-                    $groupContact->status    = $status;
-                    $groupContact->save( );
-                    $numContactsAdded++;
-                } else {
-                    if ($groupContact->status == $status) {
-                        $numContactsNotAdded++;
-                    } else {
-                        $historyParams = array(
-                                               'contact_id' => $contactId, 
-                                               'group_id' => $groupId, 
-                                               'method' => $method,
-                                               'status' => $status,
-                                               'date' => $date,
-                                               'tracking' => $tracking,
-                                               );
-                        CRM_Contact_BAO_SubscriptionHistory::create($historyParams);
-                        $groupContact->status    = $status;
-                        $groupContact->save( );
-                        $numContactsAdded++;
-                    }
-                }
-            }
-        }
+        list( $numContactsAdded,
+              $numContactsNotAdded ) = 
+            self::bulkAddContactsToGroup( $contactIds,
+                                          $groupId,
+                                          $method,
+                                          $status,
+                                          $tracking );
 
         // also reset the acl cache
         $config = CRM_Core_Config::singleton( );
