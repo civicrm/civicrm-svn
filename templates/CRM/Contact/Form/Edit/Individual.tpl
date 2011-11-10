@@ -38,7 +38,7 @@ var checkSimilar =  {$checkSimilar};
      }
 
      if (!isNaN(cid) || ! checkSimilar)
-       return;//no dupe check if this is a modif or if checkSimilar is disabled (CIVICRM_CONTACT_AJAX_CHECK_SIMILAR in civicrm_setting)
+       return;//no dupe check if this is a modif or if checkSimilar is disabled (contact_ajax_check_similar in civicrm_setting table)
 
 	     cj('#last_name').blur(function () {
          cj('#lastname_msg').remove();

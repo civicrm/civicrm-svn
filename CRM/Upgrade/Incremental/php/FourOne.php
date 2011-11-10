@@ -176,18 +176,26 @@ VALUES
 
     function createNewSettings( ) {
         $domainColumns = 
-            array( CRM_Core_BAO_Setting::CAMPAIGN_PREFERENCES_NAME =>
-                   array( array( 'contact_ajax_check_similar', 1 ),
-                          array( 'tag_unconfirmed', 'Unconfirmed' ),
+            array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME =>
+                    array( array( 'contact_ajax_check_similar', 1 ),
+                           array( 'activity_assignee_notification', 1 ),
+                           ),
+                   CRM_Core_BAO_Setting::CAMPAIGN_PREFERENCES_NAME =>
+                   array( array( 'tag_unconfirmed', 'Unconfirmed' ),
                           array( 'petition_contacts', 'Petition Contacts' ),
+                          ),
+                   CRM_Core_BAO_Setting::EVENT_PREFERENCES_NAME =>
+                          array( array( 'enable_cart', 0 ),
                           ),
                    CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME =>
                    array( array( 'profile_double_optin', 1 ),
                           array( 'profile_add_to_group_double_optin', 0 ),
                           array( 'track_civimail_replies', 0 ),
-                          array( 'activity_assignee_notification', 1 ),
                           array( 'civimail_workflow', 0 ),
                           array( 'civimail_server_wide_lock', 0 ),
+                          ),
+                   CRM_Core_BAO_Setting::MEMBER_PREFERENCES_NAME =>
+                   array( array( 'default_renewal_contribution_page', null ),
                           ),
                    CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME =>
                    array( array( 'is_enabled', 0 ),

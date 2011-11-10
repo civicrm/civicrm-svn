@@ -78,7 +78,11 @@ class CRM_Event_Page_ICalendar extends CRM_Core_Page
         } else if ( $gData ) {
             $calendar = $template->fetch( 'CRM/Core/Calendar/GData.tpl' );
         } else if ( $html ) {
-            if ($config->enable_cart) {
+            // check if we're in shopping cart mode for events
+            require_once 'CRM/Core/BAO/Setting.php';
+            $enable_cart = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::EVENT_PREFERENCES_NAME,
+                                                       'enable_cart' );
+            if ($enable_cart) {
                 $this->assign( 'registration_links', true );
             }
             return parent::run( );

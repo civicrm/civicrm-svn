@@ -49,18 +49,31 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
             array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME =>
                    array( 
                          'contact_view_options' => array( 'html_type' => 'checkboxes',
-                                                          'title'     => ts( 'Viewing Contacts'    ), ),
+                                                          'title'     => ts( 'Viewing Contacts'    ),
+                                                          'weight'    => 1 ),
                          'contact_edit_options' => array( 'html_type' => 'checkboxes',
-                                                          'title'     => ts( 'Editing Contacts'    ), ),
+                                                          'title'     => ts( 'Editing Contacts'    ),
+                                                          'weight'    => 2 ),
                          'advanced_search_options' => array( 'html_type' => 'checkboxes',
-                                                             'title'     => ts( 'Contact Search'   ), ),
+                                                             'title'     => ts( 'Contact Search'   ),
+                                                             'weight'    => 3 ),
+                         'activity_assignee_notification' => array( 'html_type' => 'checkbox',
+                                                                    'title'     => ts( 'Notify Activity Assignees'   ),
+                                                                    'weight'    => 5 ),
+                         'contact_ajax_check_similar' => array( 'html_type' => 'checkbox',
+                                                                'title'     => ts( 'Check for Similar Contacts'   ),
+                                                                'weight'    => 5 ),
                          'user_dashboard_options' => array( 'html_type' => 'checkboxes',
-                                                            'title'     => ts( 'Contact Dashboard' ), ),
+                                                            'title'     => ts( 'Contact Dashboard' ),
+                                                            'weight'    => 6 ),
                          'display_name_format' => array( 'html_type' => 'textarea',
-                                                         'title' => ts('Individual Display Name Format') ),
+                                                         'title' => ts('Individual Display Name Format'),
+                                                         'weight'    => 7 ),
                          'sort_name_format' => array( 'html_type' => 'textarea',
-                                                      'title' => ts('Individual Sort Name Format') ),
-                         'editor_id' => array( 'html_type' => null ),
+                                                      'title' => ts('Individual Sort Name Format'), 
+                                                      'weight'    => 8 ),
+                         'editor_id' => array( 'html_type' => null,                               
+                                               'weight'    => 9 ),
                           ),
                    );
 
@@ -69,9 +82,9 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
     }
 
     function setDefaultValues( ) {
-        $defaults = array( );
-
+        $defaults = parent::setDefaultValues();
         parent::cbsDefaultValues( $defaults );
+
         if ( $this->_config->editor_id ) {
             $defaults['editor_id'] = $this->_config->editor_id ;
         }
