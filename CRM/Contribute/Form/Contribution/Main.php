@@ -50,6 +50,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      */
     public $_defaultMemTypeId;
 
+    public $_onBehalfRequired = 0;
+    public $_onbehalf = 0;
+
     protected $_defaults;
 
     public $_membershipTypeValues;
@@ -98,7 +101,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             require_once 'CRM/Contribute/Form/Contribution/OnBehalfOf.php';
             CRM_Contribute_Form_Contribution_OnBehalfOf::preProcess( $this );
             if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $_POST ) &&
-                 CRM_Utils_Array::value( 'is_for_organization', $_POST ) ) {
+                 ( CRM_Utils_Array::value( 'is_for_organization', $_POST ) ||
+                   $this->_values['is_for_organization'] == 2 ) ) {
                 CRM_Contribute_Form_Contribution_OnBehalfOf::buildQuickForm( $this );
             }
         }
@@ -331,6 +335,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $config = CRM_Core_Config::singleton( );
         if ( $this->_values['is_for_organization'] == 2 ) {
             $this->assign( 'onBehalfRequired', true );
+            $this->_onBehalfRequired = 1;
         }
         if ( $this->_onbehalf ) {
             $this->assign( 'onbehalf', true );
@@ -611,6 +616,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                                null, array( 'onclick' => "showOnBehalf( );" ) );
         } else {
             $this->assign( 'onBehalfRequired', true );
+            $this->_onBehalfRequired = 1;
         }
 
         $this->assign( 'is_for_organization', true );
