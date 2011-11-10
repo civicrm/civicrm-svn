@@ -50,6 +50,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      */
     public $_defaultMemTypeId;
 
+    public $_relatedOrganizationFound;
+
     public $_onBehalfRequired = 0;
     public $_onbehalf = 0;
 
