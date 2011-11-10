@@ -309,8 +309,7 @@ SELECT @option_group_id_ere := max(id) from civicrm_option_group where name = 'e
 INSERT INTO civicrm_option_value 
    (option_group_id, {localize field='label'}label{/localize}, value, name,  filter,  weight, is_active ) 
 VALUES
-   (@option_group_id_ere, {localize}'{ts escape="sql"}Participant Status{/ts}'{/localize}, 1, 'civicrm_participant_status_type', 0, 1, 1 ),
-   (@option_group_id_ere, {localize}'{ts escape="sql"}Participant Role{/ts}'{/localize}, 2, 'participant_role', 0,  2, 1 );
+   (@option_group_id_ere, {localize}'{ts escape="sql"}Participant Role{/ts}'{/localize}, 1, 'participant_role', 0,  1, 1 );
 
 ALTER TABLE civicrm_action_schedule ADD `absolute_date` date DEFAULT NULL COMMENT 'Date on which the reminder be sent.';
 ALTER TABLE civicrm_action_schedule ADD `recipient_listing` varchar(128) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'listing based on recipient field.';
