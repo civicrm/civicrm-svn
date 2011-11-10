@@ -412,8 +412,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
         if ( $customDataSubType && !is_array( $customDataSubType ) ) {
             $customDataSubType = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                                           trim($customDataSubType, CRM_Core_DAO::VALUE_SEPARATOR) );
-        } else {
-            $customDataSubType = array( );
         }
 
         if ( is_array( $customDataType ) ) {

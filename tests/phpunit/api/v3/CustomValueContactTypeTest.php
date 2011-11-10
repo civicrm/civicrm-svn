@@ -90,7 +90,7 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
 		//refresh php cached variables
 		CRM_Core_PseudoConstant::flush ( 'customGroup' );
 		CRM_Core_BAO_CustomField::getTableColumnGroup ( $this->IndividualField ['id'], True );
-		CRM_Core_BAO_CustomField::getTableColumnGroup ( $this->IndiStudentField[id], True );
+		CRM_Core_BAO_CustomField::getTableColumnGroup ( $this->IndiStudentField['id'], True );
 		
   }
 
@@ -164,7 +164,7 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
 
     $contact =& civicrm_api('contact','create',  $params );
 
-    $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Organization or Mismatched SubType: Sponsor.', 'In line '. __LINE__  );
+    $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Organization or Mismatched SubType: Sponsor', 'In line '. __LINE__  );
   }
 
   /**
@@ -219,7 +219,7 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
     );
 
     $contact =& civicrm_api('contact','create',  $params );
-    $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Individual or Mismatched SubType: Parent.' );
+    $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Individual or Mismatched SubType: Parent' );
   }
 
 
