@@ -492,7 +492,6 @@ function civicrm_cache_clear() {
     $config->clearDBCache( );
 
     // also cleanup the templates_c directory
-    $config = CRM_Core_Config::singleton( );
     $config->cleanup( 1 , false );
 
     // also cleanup the session object
