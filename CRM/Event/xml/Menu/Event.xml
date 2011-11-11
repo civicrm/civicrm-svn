@@ -58,15 +58,6 @@
      <weight>0</weight>
   </item>
   <item>
-     <path>civicrm/admin/event_settings</path>
-     <title>Configure CiviEvent Settings</title>
-     <page_callback>CRM_Admin_Form_Setting_Event</page_callback>
-     <desc>Configure global event settings.</desc>
-     <access_arguments>access CiviEvent,administer CiviCRM</access_arguments>
-     <adminGroup>CiviEvent</adminGroup>
-     <weight>360</weight>
-  </item>
-  <item>
      <path>civicrm/admin/event</path>
      <title>Manage Events</title>
      <page_callback>CRM_Event_Page_ManageEvent</page_callback>
@@ -119,6 +110,25 @@
      <weight>395</weight>
   </item>
   <item>
+     <path>civicrm/admin/options/participant_listing</path>
+     <title>Participant Listing Templates</title>
+     <desc>Template to control participant listing display.</desc>
+     <path_arguments>group=participant_listing</path_arguments>
+     <page_callback>CRM_Admin_Page_Options</page_callback>
+     <adminGroup>CiviEvent</adminGroup>
+     <icon>admin/small/01.png</icon>
+     <weight>398</weight>
+  </item>
+  <item>
+     <path>civicrm/admin/options/event_badge</path>
+     <title>Event Name Badge Templates</title>
+     <desc>Template to control event name badge format.</desc>
+     <path_arguments>group=event_badge</path_arguments>
+     <page_callback>CRM_Admin_Page_Options</page_callback>
+     <adminGroup>CiviEvent</adminGroup>
+     <weight>399</weight>
+  </item>
+  <item>
      <path>civicrm/admin/conference_slots</path>
      <title>Conference Slot Labels</title>
      <page_callback>CRM_Admin_Page_Options</page_callback>
@@ -128,6 +138,15 @@
      <adminGroup>CiviEvent</adminGroup>
      <weight>415</weight>
   </item>  
+  <item>
+     <path>civicrm/admin/setting/preferences/event</path>
+     <title>CiviEvent Component Settings</title>
+     <page_callback>CRM_Admin_Form_Preferences_Event</page_callback>
+     <desc>Configure global CiviEvent behaviors.</desc>
+     <access_arguments>access CiviEvent,administer CiviCRM</access_arguments>
+     <adminGroup>CiviEvent</adminGroup>
+     <weight>420</weight>
+  </item>
   <item>
      <path>civicrm/event/search</path>
      <title>Find Participants</title>

@@ -218,7 +218,7 @@ SET @systemSettingslastID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
-    ( @domainID, 'civicrm/admin/setting/component&reset=1', '{ts escape="sql" skip="true"}Enable CiviCRM Components{/ts}', 'Enable Components',                                 'administer CiviCRM', '', @systemSettingslastID, '1', NULL, 1 ), 
+    ( @domainID, 'civicrm/admin/setting/component&reset=1',             '{ts escape="sql" skip="true"}Enable CiviCRM Components{/ts}', 'Enable Components',                     'administer CiviCRM', '', @systemSettingslastID, '1', NULL, 1 ), 
     ( @domainID, 'civicrm/admin/setting/smtp&reset=1',                  '{ts escape="sql" skip="true"}Outbound Email (SMTP/Sendmail){/ts}', 'Outbound Email',                   'administer CiviCRM', '', @systemSettingslastID, '1', NULL, 2 ), 
     ( @domainID, 'civicrm/admin/paymentProcessor&reset=1',              '{ts escape="sql" skip="true"}Payment Processors{/ts}', 'Payment Processors',                           'administer CiviCRM', '', @systemSettingslastID, '1', NULL, 3 ), 
     ( @domainID, 'civicrm/admin/setting/mapping&reset=1',               '{ts escape="sql" skip="true"}Mapping and Geocoding{/ts}', 'Mapping and Geocoding',                     'administer CiviCRM', '', @systemSettingslastID, '1', NULL, 4 ), 
@@ -230,7 +230,22 @@ VALUES
     ( @domainID, 'civicrm/admin/options/safe_file_extension&group=safe_file_extension&reset=1', '{ts escape="sql" skip="true"}Safe File Extensions{/ts}', 'Safe File Extensions','administer CiviCRM', '',@systemSettingslastID, '1', NULL, 10 ), 
     ( @domainID, 'civicrm/admin/options?reset=1',                       '{ts escape="sql" skip="true"}Option Groups{/ts}', 'Option Groups',                                     'administer CiviCRM', '', @systemSettingslastID, '1', NULL, 11 ), 
     ( @domainID, 'civicrm/admin/mapping&reset=1',                       '{ts escape="sql" skip="true"}Import/Export Mappings{/ts}', 'Import/Export Mappings',                   'administer CiviCRM', '', @systemSettingslastID, '1', NULL, 12 ), 
-    ( @domainID, 'civicrm/admin/setting/debug&reset=1',                 '{ts escape="sql" skip="true"}Debugging and Error Handling{/ts}','Debugging and Error Handling',        'administer CiviCRM', '', @systemSettingslastID, '1', NULL, 13 );
+    ( @domainID, 'civicrm/admin/setting/debug&reset=1',                 '{ts escape="sql" skip="true"}Debugging and Error Handling{/ts}','Debugging and Error Handling',        'administer CiviCRM', '', @systemSettingslastID, '1', NULL, 13 ),
+    ( @domainID, 'civicrm/admin/setting/preferences/multisite&reset=1', '{ts escape="sql" skip="true"}Multi Site Settings{/ts}', 'Multi Site Settings',                         'administer CiviCRM', '', @systemSettingslastID, '1', NULL, 14 ); 
+
+SELECT @campaignAdminID := id   FROM civicrm_navigation where name = 'CiviCampaign' AND parent_id = @adminlastID;
+SELECT @eventAdminID := id      FROM civicrm_navigation where name = 'CiviEvent'    AND parent_id = @adminlastID;
+SELECT @mailAdminID := id       FROM civicrm_navigation where name = 'CiviMail'      AND parent_id = @adminlastID;
+SELECT @memberAdminID := id     FROM civicrm_navigation where name = 'CiviMember' AND parent_id = @adminlastID;
+
+INSERT INTO civicrm_navigation
+    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+VALUES
+    ( @domainID, 'civicrm/admin/setting/preferences/campaign&reset=1',  '{ts escape="sql" skip="true"}CiviCampaign Component Settings{/ts}', 'CiviCampaign Component Settings','administer CiviCampaign', '', @campaignAdminID, '1', NULL, 5 ),
+    ( @domainID, 'civicrm/admin/setting/preferences/event&reset=1',     '{ts escape="sql" skip="true"}CiviEvent Component Settings{/ts}', 'CiviEvent Component Settings','access CiviEvent,administer CiviCRM', 'AND', @eventAdminID, '1', NULL, 13 ), 
+    ( @domainID, 'civicrm/admin/setting/preferences/mailing&reset=1',   '{ts escape="sql" skip="true"}CiviMail Component Settings{/ts}', 'CiviMail Component Settings','access CiviMail,administer CiviCRM', 'AND', @mailAdminID, '1', NULL, 6 ), 
+    ( @domainID, 'civicrm/admin/setting/preferences/member&reset=1',    '{ts escape="sql" skip="true"}CiviMember Component Settings{/ts}', 'CiviMember Component Settings','access CiviMember,administer CiviCRM', 'AND', @memberAdminID, '1', NULL, 5 ), 
+    ( @domainID, 'civicrm/admin/options/event_badge&group=event_badge&reset=1', '{ts escape="sql" skip="true"}Event Badge Formats{/ts}', 'Event Badge Formats', 'access CiviEvent,administer CiviCRM', 'AND', @eventAdminID, '1', NULL, 11 ); 
 
 -- CRM-9113
 ALTER TABLE `civicrm_report_instance` ADD `grouprole` VARCHAR( 1024 ) NULL AFTER `permission`;

@@ -553,7 +553,6 @@
   <field>
       <name>slot_label_id</name>
       <type>int unsigned</type> 
-      <uniqueName>event_type_id</uniqueName>
       <title>Subevent Slot Label ID</title>  
       <default>NULL</default>
       <comment>Subevent slot label. Implicit FK to civicrm_option_value where option_group = conference_slot.</comment> 

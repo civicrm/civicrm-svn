@@ -494,25 +494,6 @@
      <weight>395</weight>
   </item>
   <item>
-     <path>civicrm/admin/options/participant_listing</path>
-     <title>Participant Listing Templates</title>
-     <desc>Template to control participant listing display.</desc>
-     <path_arguments>group=participant_listing</path_arguments>
-     <page_callback>CRM_Admin_Page_Options</page_callback>
-     <adminGroup>Option Lists</adminGroup>
-     <icon>admin/small/01.png</icon>
-     <weight>398</weight>
-  </item>
-  <item>
-     <path>civicrm/admin/options/event_badge</path>
-     <title>Event Name Badge Templates</title>
-     <desc>Template to control event name badge format.</desc>
-     <path_arguments>group=event_badge</path_arguments>
-     <page_callback>CRM_Admin_Page_Options</page_callback>
-     <adminGroup>Option Lists</adminGroup>
-     <weight>399</weight>
-  </item>
-  <item>
      <path>civicrm/admin/options/email_greeting</path>
      <title>Email Greetings</title>
      <desc>Options for assigning email greetings to individual and household contacts.</desc>
