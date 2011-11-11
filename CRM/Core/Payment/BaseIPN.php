@@ -565,21 +565,7 @@ LIMIT 1;";
             $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
         }
         
-        //update corresponding pledge payment record
-        require_once 'CRM/Core/DAO.php';
-        $returnProperties = array( 'id', 'pledge_id' );
-        if ( CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'contribution_id', $contribution->id, 
-                                              $paymentDetails, $returnProperties ) ) {
-            $paymentIDs = array( );
-            foreach ( $paymentDetails as $key => $value ) {
-                $paymentIDs[] = $value['id'];
-                $pledgeId     = $value['pledge_id'];
-            }
-            
-            // update pledge and corresponding payment statuses
-            require_once 'CRM/Pledge/BAO/PledgePayment.php';
-            CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $pledgeId, $paymentIDs, $contribution->contribution_status_id );
-        }
+        self::updateRecurLinkedPledge( $contribution);
 
         // create an activity record
         require_once "CRM/Activity/BAO/Activity.php";
@@ -1060,6 +1046,66 @@ LIMIT 1;";
         
         return $statusId;
     }
+    
+    /* 
+     * Update pledge associated with a recurring contribution
+     * 
+     * If the contribution has a pledge_payment record pledge, then update the pledge_payment record & pledge based on that linkage.
+     * 
+     * If a previous contribution in the recurring contribution sequence is linked with a pledge then we assume this contribution
+     * should be  linked with the same pledge also. Currently only back-office users can apply a recurring payment to a pledge & it should be assumed they
+     * do so with the intention that all payments will be linked
+     * 
+     * The pledge payment record should already exist & will need to be updated with the new contribution ID.
+     * If not the contribution will also need to be linked to the pledge
+     */
+    function updateRecurLinkedPledge( &$contribution){
+
+        $returnProperties = array( 'id', 'pledge_id' );
+        $paymentDetails = array();
+        $paymentIDs = array( );
+        require_once 'CRM/Core/DAO.php';
+        require_once 'CRM/Pledge/BAO/PledgePayment.php';
+        if(CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'contribution_id', $contribution->id, 
+                                              $paymentDetails, $returnProperties )) {
+           foreach ( $paymentDetails as $key => $value ) {
+               $paymentIDs[] = $value['id'];
+               $pledgeId     = $value['pledge_id'];  
+          } 
+                                                
+        }else{
+          //payment is not already linked - if it is linked with a pledge we need to create a link.
+          require_once 'CRM/Contribute/DAO/Contribution.php';
+          $relatedContributions = new CRM_Contribute_DAO_Contribution( );
+          $relatedContributions->contribution_recur_id = $contribution->contribution_recur_id ;
+          $relatedContributions->find(  ) ;
+          require_once 'CRM/Core/DAO.php';
+          while($relatedContributions->fetch()){
+             CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'contribution_id', $relatedContributions->id, 
+                                              $paymentDetails, $returnProperties ) ;
+            
+           }
+          if(empty($paymentDetails)){
+           return; // payment is not linked with a pledge and neither are any other contributions on this
+          }
+          foreach ( $paymentDetails as $key => $value ) {
+            $pledgeId     = $value['pledge_id'];  
+          }    
+          // we have a pledge now we need to get the oldest unpaid payment
+                   
+          $paymentDetails = CRM_Pledge_BAO_PledgePayment::getOldestPledgePayment( $pledgeId);        
+          $paymentDetails['contribution_id'] = $contribution->id;
+
+          require_once 'CRM/Pledge/BAO/PledgePayment.php';// put contribution against it
+          $payment = CRM_Pledge_BAO_PledgePayment::add($paymentDetails);
+          $paymentIDs[] = $payment->id;                              
+       }
+
+       // update pledge and corresponding payment statuses
+
+       CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $pledgeId, $paymentIDs, $contribution->contribution_status_id ,null,$contribution->total_amount);
+     }
+    
 }
 
 
