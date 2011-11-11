@@ -94,7 +94,7 @@ class CRM_Contact_Form_Edit_Individual {
         $form->addElement('text', 'contact_source', ts('Source'));
 
         require_once 'CRM/Core/BAO/Setting.php';
-        $checkSimilar = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CIVICRM_PREFERENCES_NAME,
+        $checkSimilar = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                        'contact_ajax_check_similar',
                                                        null,
                                                        true );
