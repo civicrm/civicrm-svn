@@ -78,10 +78,7 @@ function civicrm_group_roles_user_login( &$edit, $account ) {
     
     //find the contact record
     $contact = CRM_Core_BAO_UFMatch::getContactId( $account->uid );
-    if ( ! $contact ) {
-        return;
-    }
-
+    
     $params  = array( 'contact_id' => $contact,
                       'version'    => 3 );
     //find the groups for contact
