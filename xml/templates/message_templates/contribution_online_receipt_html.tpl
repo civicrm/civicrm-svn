@@ -219,6 +219,15 @@
       {/foreach}
      {/if}
 
+     {if $isShare}
+      <tr>
+        <td colspan="2" {$valueStyle}>
+            {capture assign=contributionUrl}{crmURL p='civicrm/contribute/transact' q="reset=1&id=`$contributionPageID`" a=true fe=1 h=1}{/capture}
+            {include file="CRM/common/SocialNetwork.tpl" emailMode=True url=$contributionUrl title=$title pageURL=$contributionUrl}
+        </td>
+      </tr>
+     {/if}
+
      {if ! ($contributeMode eq 'notify' OR $contributeMode eq 'directIPN') and $is_monetary}
       {if $is_pay_later}
        <tr>
