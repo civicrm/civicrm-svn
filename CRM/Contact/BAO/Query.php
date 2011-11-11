@@ -2822,11 +2822,8 @@ WHERE  id IN ( $groupIDs )
             $this->_qill[$grouping][]  = ts( 'Street Number is even' );
         } else {
             $value = strtolower(CRM_Core_DAO::escapeString($n));
-            if ( strpos( $value, '%' ) !== false ) {
-                $value = "'$value'";
-            } else {
-                $value = "'$value%";
-            }
+            $value = "'$value'";
+
             $this->_where[$grouping][] = " ( LOWER(civicrm_address.street_number) $op $value )";
             $this->_qill[$grouping][]  = ts( 'Street Number' ) . " $op '$n'";
         }
