@@ -49,13 +49,9 @@ class WebTest_Admin_CustomAddTest extends CiviSeleniumTestCase {
         $this->webtestLogin( );
         
         // Go directly to the URL of the screen that you will be testing (Custom data for contacts).
-        $this->open( $this->sboxPath . "civicrm/admin/custom/group?reset=1" );
-        
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1" );
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
-        
-        //add new custom data
-        $this->click( 'newCustomDataGroup' );
         $this->waitForPageToLoad( "30000" );
 
         //fill custom group title
