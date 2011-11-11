@@ -113,7 +113,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         $mappingID = 3;
         list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection( $mappingID ) ;
         
-        $entity = $this->add( 'select', 'entity', ts('Entity'), $sel3[$mappingID][0], true );
+        $entity = $this->add( 'select', 'entity', ts('Recipient(s)'), $sel3[$mappingID][0], true );
         $entity->setMultiple( true ); 
 
         //get the frequency units.
@@ -157,7 +157,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         $this->add( 'select', 'end_date', ts( 'Date Field' ), $sel4, true );
 
         $recipient = 'event_contacts';
-        $this->add( 'select', 'recipient', ts( 'Recipient(s)' ), $sel5[$recipient],
+        $this->add( 'select', 'recipient', ts( 'Additional Recipient(s)' ), $sel5[$recipient],
                     false, array( 'onClick' => "showHideByValue('recipient','manual','recipientManual','table-row','select',false); showHideByValue('recipient','group','recipientGroup','table-row','select',false);") 
                     );
         $recipientListing = $this->add( 'select', 'recipient_listing', ts('Recipient Listing'), 
