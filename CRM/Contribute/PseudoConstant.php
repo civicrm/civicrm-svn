@@ -274,17 +274,19 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant
      * @return array - array reference of all pcp if any
      * @static
      */
-    public static function &pcPage($id = null)
+    public static function &pcPage( $pageType = 'contribute', $id = null)
     {
-        if ( ! self::$pcPage ) {
-            CRM_Core_PseudoConstant::populate( self::$pcPage,
+        if ( ! isset( self::$pcPage[$pageType] ) ) {
+            CRM_Core_PseudoConstant::populate( self::$pcPage[$pageType],
                                                'CRM_PCP_DAO_PCP',
-                                               false, 'title' );
+                                               false, 'title', 'is_active', "page_type='{$pageType}'" );
         }
+        $result = self::$pcPage[$pageType];
         if ( $id ) {
-            return CRM_Utils_Array::value( $id, self::$pcPage );
+            return $result = CRM_Utils_Array::value( $id, $result );
         }
-        return self::$pcPage;
+
+        return $result;
     }
 
 }
