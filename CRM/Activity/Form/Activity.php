@@ -1044,7 +1044,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         require_once 'CRM/Core/BAO/Setting.php';
 
         if ( ! CRM_Utils_Array::crmIsEmptyArray($params['assignee_contact_id']) &&
-             CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CIVICRM_PREFERENCES_NAME,
+             CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                             'activity_assignee_notification' ) ) {
             $mailToContacts = array( );
             $assigneeContacts = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $activity->id, true, false );

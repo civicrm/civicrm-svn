@@ -636,7 +636,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         $selectedContacts = array( 'contact_check' );
         
         require_once 'CRM/Core/BAO/Setting.php';
-        if ( CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CIVICRM_PREFERENCES_NAME,
+        if ( CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                             'activity_assignee_notification' ) ) {
             $selectedContacts[] = 'assignee_contact_id';  
         }
