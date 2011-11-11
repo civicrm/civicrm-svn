@@ -1,3 +1,5 @@
+{include file='../CRM/Upgrade/4.1.alpha1.msg_template/civicrm_msg_template.tpl'}
+
 -- get domain id 
 SELECT  @domainID := min(id) FROM civicrm_domain;
 
