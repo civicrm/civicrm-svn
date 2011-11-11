@@ -81,12 +81,13 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
         $activityType = CRM_Core_PseudoConstant::activityType(false) + CRM_Core_PseudoConstant::activityType(false, true);
         asort($activityType);
         $eventType = CRM_Event_PseudoConstant::eventType();
-        $activityContacts = CRM_Core_PseudoConstant::activityContacts();
-        $eventContacts = CRM_Core_PseudoConstant::eventContacts();
 
         $sel1 = $sel2 = $sel3 = $sel4 = $sel5 = array();
         $options = array( 'manual' => ts('Choose Recipient(s)'), 
                           'group'  => ts('Select a Group')  );
+
+        $entityMapping = array( );
+        $recipientMapping = array_combine(array_keys($options), array_keys($options));
 
         if ( !$id ) $id = 1;
         foreach ( $mapping as $value ) {
@@ -95,18 +96,19 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
             $entityDateStart = CRM_Utils_Array::value('entity_date_start', $value );
             $entityDateEnd = CRM_Utils_Array::value('entity_date_end', $value );
             $entityRecipient = CRM_Utils_Array::value('entity_recipient', $value );
-            $valueLabel = array('- '. strtolower( CRM_Utils_Array::value('entity_value_label', $value) ) .' -');            
-
+            $valueLabel = ts(array('- '. strtolower( CRM_Utils_Array::value('entity_value_label', $value) ) .' -'));
             $key = $value['id'];
+            $entityMapping[$key] = $value['entity'];
+                            
             if( $entityValue == 'activity_type' &&
                 $value['entity'] == 'civicrm_activity' ) {
-                $val = 'Activity';
+                $val = ts('Activity');
             } elseif( $entityValue == 'event_type' &&
                 $value['entity'] == 'civicrm_participant') {
-                $val ='Event Type';
+                $val = ts('Event Type');
             } elseif( $entityValue == 'civicrm_event' &&
                 $value['entity'] == 'civicrm_participant' ) {
-                $val = 'Event Name';
+                $val = ts('Event Name');
             }
             $sel1[$key] = $val;
             
@@ -143,11 +145,15 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
                 
                 switch ($entityRecipient) {
                 case 'activity_contacts':
+                    $activityContacts = CRM_Core_PseudoConstant::activityContacts();
                     $sel5[$entityRecipient] = $activityContacts + $options;
+                    $recipientMapping += CRM_Core_PseudoConstant::activityContacts('name');
                     break;
                     
                 case 'event_contacts':
+                    $eventContacts = CRM_Core_PseudoConstant::eventContacts();
                     $sel5[$entityRecipient] = $eventContacts + $options;
+                    $recipientMapping += CRM_Core_PseudoConstant::eventContacts('name');
                     break;
                     
                 }    
@@ -157,7 +163,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
 
         foreach ( $mapping as $value ) {
             $entityStatus = $value['entity_status'];
-            $statusLabel = array('- '. strtolower( CRM_Utils_Array::value('entity_status_label', $value) ) .' -');            
+            $statusLabel = ts(array('- '. strtolower( CRM_Utils_Array::value('entity_status_label', $value) ) .' -'));
             $id = $value['id'];
                       
             switch ($entityStatus) {
@@ -176,7 +182,14 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
             }
         }
        
-        return array( $sel1 , $sel2, $sel3, $sel4, $sel5 );
+        return array('sel1'             => $sel1,
+                     'sel2'             => $sel2,
+                     'sel3'             => $sel3,
+                     'sel4'             => $sel4,
+                     'sel5'             => $sel5,
+                     'entityMapping'    => $entityMapping,
+                     'recipientMapping' => $recipientMapping
+                     ); 
     }
 
 
@@ -188,10 +201,12 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
         require_once 'CRM/Core/PseudoConstant.php';
         require_once 'CRM/Event/PseudoConstant.php';
         $participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
-        $activityContacts = CRM_Core_PseudoConstant::activityContacts();
-        $eventContacts = CRM_Core_PseudoConstant::eventContacts();
         $sel4 = $sel5 = array();
-
+        $options = array( 'manual' => ts('Choose Recipient(s)'), 
+                          'group'  => ts('Select a Group')  );
+        
+        $recipientMapping = array_combine(array_keys($options), array_keys($options));
+        
         foreach ( $mapping as $value ) {
 
             $entityDateStart = $value['entity_date_start'];
@@ -217,18 +232,24 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
 
             switch ($entityRecipient) {
             case 'activity_contacts':
-                $sel5[$id] = $activityContacts + array( 'manual' => ts('Manual'), 'group' => ts('CiviCRM Group')  );
+                $activityContacts = CRM_Core_PseudoConstant::activityContacts();
+                $sel5[$id] = $activityContacts + $options;
+                $recipientMapping += CRM_Core_PseudoConstant::activityContacts('name');
                 break;
 
             case 'event_contacts':
-                $sel5[$id] = $eventContacts + array( 'manual' => ts('Manual'), 'group' => ts('CiviCRM Group')  );
+                $eventContacts = CRM_Core_PseudoConstant::eventContacts();
+                $sel5[$id] = $eventContacts + $options;
+                $recipientMapping += CRM_Core_PseudoConstant::eventContacts('name');
                 break;
                 
             }
             
         }
        
-        return array( $sel4, $sel5[$id] );
+        return array( 'sel4' => $sel4,
+                      'sel5' => $sel5[$id],
+                      'recipientMapping' => $recipientMapping );
 
     }
 

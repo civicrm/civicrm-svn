@@ -85,8 +85,12 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->add( 'text', 'title', ts( 'Title' ), 
                     array( 'size'=> 45,'maxlength' => 128 ), true );
 
-        list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection( $mappingID );
+        $selectionOptions = CRM_Core_BAO_ActionSchedule::getSelection( $mappingID );
+        extract( $selectionOptions );
         
+        $this->assign('entityMapping', json_encode($entityMapping));
+        $this->assign('recipientMapping', json_encode($recipientMapping));
+
         $sel =& $this->add('hierselect',
                            'entity',
                            ts('Entity'),

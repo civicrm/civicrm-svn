@@ -180,6 +180,9 @@
 
 {literal}
 <script type='text/javascript'>
+    var entityMapping = eval({/literal}{$entityMapping}{literal});
+    var recipientMapping = eval({/literal}{$recipientMapping}{literal});
+
     cj('#absolute_date_display').change( function() {
         if(cj('#absolute_date_display').val()) {
             cj('#relativeDate').hide();
@@ -222,13 +225,13 @@
      });
 
      function populateRecipient( ) {
-     	  var recipient = cj("#recipient option:selected").text();    
-	  var entity = cj("#entity\\[0\\] option:selected").text();  
+     	  var recipient = cj("#recipient option:selected").val();    
+	  var entity = cj("#entity\\[0\\] option:selected").val();
 	  var postUrl = "{/literal}{crmURL p='civicrm/ajax/populateRecipient' h=0}{literal}";
-	  if(recipient == 'Participant Status' || recipient == 'Participant Role') {
+	  if(recipientMapping[recipient] == 'Participant Status' || recipientMapping[recipient] == 'Participant Role') {
    	     var elementID = '#recipient_listing';
              cj( elementID ).html('');
-	        cj.post(postUrl, {recipient: recipient},
+	        cj.post(postUrl, {recipient: recipientMapping[recipient]},
 	    	    function ( response ) {
   		    response = eval( response );
   		    for (i = 0; i < response.length; i++) {
@@ -242,7 +245,7 @@
 	     cj('#is_recipient_listing').val('');
 	  }
 	  
-	  if (entity == 'Event Name' || entity == 'Event Type') {
+	  if (entityMapping[entity] == 'civicrm_participant') {
 	     cj("#recipientLabel").text("Additional Recipient(s)");
 	  } else {
  	     cj("#recipientLabel").text("Recipient(s)");
@@ -272,8 +275,10 @@
 
 	 cj('#is_recipient_listing').val('');
          cj.post( postUrl1, { mappingID: mappingID},
-             function ( response ) {
-                 response = eval( response );
+             function ( result ) {
+                 var responseResult = cj.parseJSON(result);
+                 var response       = eval(responseResult.sel5);
+                 recipientMapping   = eval(responseResult.recipientMapping);
                  for (i = 0; i < response.length; i++) {
                      cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
                  }
