@@ -9,12 +9,11 @@
         {if $title}: <span class="bold">{$title}</span>{else}.{/if}
     </div>
     <div class="crm-fb-tweet-buttons">
-        {if $emailMode eq 'True'}
+        {if $emailMode eq true}
             {*use images for email*}
             <a href="http://twitter.com/share?url={$url}&amp;text={$title}" id="crm_tweet">
                 <img title="Twitter Tweet Button" src="{$config->userFrameworkResourceURL}/i/tweet.png" width="55px" height="20px"  alt="Tweet Button">
             </a>
-
             <a href="http://www.facebook.com/plugins/like.php?href={$url}" target="_blank">
                 <img title="Facebook Like Button" src="{$config->userFrameworkResourceURL}/i/fblike.png" alt="Facbook Button" />
             </a>
@@ -36,7 +35,10 @@
         {/if}
     </div>
     {if $pageURL}
-        <br/><br/>
+        {if $emailMode neq true}
+        <br/>
+        {/if}
+        <br/>
         <div class="clear"></div>
         <div>
             <span class="bold">{ts}You can also share the below link in an email or on your website.{/ts}</span>

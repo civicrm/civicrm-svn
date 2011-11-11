@@ -244,6 +244,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 'lineItem'         => CRM_Utils_Array::value('lineItem',      $values), // CRM-5095
                 'priceSetID'       => CRM_Utils_Array::value('priceSetID',    $values), // CRM-5095
                 'title'            => $title,
+                'isShare'          => CRM_Utils_Array::value('is_share',    $values)
             );
 
             if ( $contributionTypeId = CRM_Utils_Array::value('contribution_type_id', $values ) ) {
@@ -311,7 +312,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                               'to'      => $displayName,
                               'html'    => $html );
             }
-            
+
             if ( $values['is_email_receipt'] ) {
                 $sendTemplateParams['from']    = CRM_Utils_Array::value('receipt_from_name',$values) .' <'. $values['receipt_from_email']. '>';
                 $sendTemplateParams['toName']  = $displayName;
@@ -320,7 +321,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 $sendTemplateParams['bcc']     = CRM_Utils_Array::value('bcc_receipt', $values);
                 list ($sent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate($sendTemplateParams);
             }
-
+            
             // send duplicate alert, if dupe match found during on-behalf-of processing.
             if ( CRM_Utils_Array::value( 'onbehalf_dupe_alert', $values ) ) {
                 $sendTemplateParams['groupName']                   = 'msg_tpl_workflow_contribution';

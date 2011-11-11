@@ -222,8 +222,8 @@
      {if $isShare}
       <tr>
         <td colspan="2" {$valueStyle}>
-            {capture assign=contributionUrl}{crmURL p='civicrm/contribute/transact' q="reset=1&id=`$contributionPageID`" a=true fe=1 h=1}{/capture}
-            {include file="CRM/common/SocialNetwork.tpl" emailMode=True url=$contributionUrl title=$title pageURL=$contributionUrl}
+            {capture assign=contributionUrl}{crmURL p='civicrm/contribute/transact' q="reset=1&id=`$contributionPageId`" a=true fe=1 h=1}{/capture}
+            {include file="CRM/common/SocialNetwork.tpl" emailMode=true url=$contributionUrl title=$title pageURL=$contributionUrl}
         </td>
       </tr>
      {/if}

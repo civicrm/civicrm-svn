@@ -168,7 +168,7 @@ registration process.{/ts}</p>
         <tr>
             <td colspan="2" {$valueStyle}>
                 {capture assign=eventUrl}{crmURL p='civicrm/event/info' q="id=`$event.id`&reset=1" a=true fe=1 h=1}{/capture}
-                {include file="CRM/common/SocialNetwork.tpl" emailMode=True url=$eventUrl title=$event.title pageURL=$eventUrl}
+                {include file="CRM/common/SocialNetwork.tpl" emailMode=true url=$eventUrl title=$event.title pageURL=$eventUrl}
             </td>
         </tr>
      {/if}
