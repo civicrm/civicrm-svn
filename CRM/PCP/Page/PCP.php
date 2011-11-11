@@ -188,7 +188,7 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
         $pcpSummary = $params = array();
         $whereClause = null;
         
-        if ( !empty ( $_POST ) || !empty( $_GET['context'] ) ) {
+        if ( !empty ( $_POST ) || !empty( $_GET['page_type'] ) ) {
             if ( CRM_Utils_Array::value( 'status_id', $_POST ) ) {
                 $whereClause  = ' AND cp.status_id = %1';
                 $params['1']  = array( $_POST['status_id'] , 'Integer' );
@@ -197,9 +197,9 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
             if ( CRM_Utils_Array::value( 'page_type', $_POST ) ) {           
                 $whereClause  .= ' AND cp.page_type = %2';
                 $params['2']  = array( $_POST['page_type'] , 'String' );
-            } elseif ( CRM_Utils_Array::value( 'context', $_GET ) ) {
+            } elseif ( CRM_Utils_Array::value( 'page_type', $_GET ) ) {
                 $whereClause  .= ' AND cp.page_type = %2';
-                $params['2']  = array( $_GET['context'] , 'String' );
+                $params['2']  = array( $_GET['page_type'] , 'String' );
             }
             
             if ( CRM_Utils_Array::value( 'page_id', $_POST ) ) {           

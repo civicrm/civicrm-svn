@@ -357,7 +357,7 @@ UPDATE `civicrm_pcp_block`
 
 ALTER TABLE `civicrm_pcp` DROP COLUMN `referer`;
 
-UPDATE civicrm_navigation SET url = 'civicrm/admin/pcp?reset=1&context=contribute' WHERE url = 'civicrm/admin/pcp&reset=1';
+UPDATE civicrm_navigation SET url = 'civicrm/admin/pcp?reset=1&page_type=contribute' WHERE url = 'civicrm/admin/pcp&reset=1';
 
 SELECT @lastEventId        := MAX(id) FROM civicrm_navigation where name = 'Events';
 SELECT @adminEventId       := MAX(id) FROM civicrm_navigation where name = 'CiviEvent';
@@ -367,8 +367,8 @@ SELECT @adminEventIdWeight := MAX(weight)+1 FROM civicrm_navigation where parent
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES    
-    ( @domainID, 'civicrm/admin/pcp?reset=1&context=event',            '{ts escape="sql" skip="true"}Personal Campaign Pages{/ts}',   'Personal Campaign Pages',   'access CiviEvent,administer CiviCRM', 'AND', @lastEventId, '1', 1, @lastEventIdWeight ),
-    ( @domainID, 'civicrm/admin/pcp?reset=1&context=event',            '{ts escape="sql" skip="true"}Personal Campaign Pages{/ts}',   'Personal Campaign Pages',   'access CiviEvent,administer CiviCRM', 'AND', @adminEventId, '1', 1, @adminEventIdWeight );
+    ( @domainID, 'civicrm/admin/pcp?reset=1&page_type=event',            '{ts escape="sql" skip="true"}Personal Campaign Pages{/ts}',   'Personal Campaign Pages',   'access CiviEvent,administer CiviCRM', 'AND', @lastEventId, '1', 1, @lastEventIdWeight ),
+    ( @domainID, 'civicrm/admin/pcp?reset=1&page_type=event',            '{ts escape="sql" skip="true"}Personal Campaign Pages{/ts}',   'Personal Campaign Pages',   'access CiviEvent,administer CiviCRM', 'AND', @adminEventId, '1', 1, @adminEventIdWeight );
 
 -- CRM-8358 - consolidated cron jobs
 
