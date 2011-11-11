@@ -60,7 +60,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     public $_membershipTypeValues;
     
     public $_useForMember;
-    
+        
     /** 
      * Function to set variables up before form is built 
      *                                                           
@@ -352,7 +352,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      * @access public
      */
     public function buildQuickForm( ) 
-    {   
+    {  
         $config = CRM_Core_Config::singleton( );
         if ( $this->_values['is_for_organization'] == 2 ) {
             $this->assign( 'onBehalfRequired', true );
@@ -764,7 +764,22 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     { 
         $errors = array( );
         $amount = self::computeAmount( $fields, $self );
-        
+
+        if ( (CRM_Utils_Array::value('selectMembership', $fields) && 
+              $fields['selectMembership'] != 'no_thanks') || 
+             (CRM_Utils_Array::value( 'priceSetId', $fields ) && 
+              $self->_useForMember) ) {
+            $lifeMember = CRM_Member_BAO_Membership::getAllContactMembership( $self->_userID , false, true );
+            
+            require_once 'CRM/Member/BAO/MembershipType.php';
+            $membershipOrgDetails = CRM_Member_BAO_MembershipType::getMembershipTypeOrganization( );
+            
+            $unallowedOrgs = array( ); 
+            foreach ( array_keys($lifeMember) as $memTypeId ) {
+                $unallowedOrgs[] = $membershipOrgDetails[$memTypeId];
+            }
+        }
+
         //check for atleast one pricefields should be selected
         if ( CRM_Utils_Array::value( 'priceSetId', $fields ) ) {
             $priceField = new CRM_Price_DAO_Field( );
@@ -791,6 +806,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             if ( $self->_useForMember == 1 && !empty($check) ) {
                 $priceFieldIDS = array();
                 $priceFieldMemTypes = array();
+
                 foreach ($self->_priceSet['fields'] as $priceId => $value ) {
                     if (!empty($fields['price_'.$priceId])){
                         if (is_array($fields['price_'.$priceId])) {
@@ -807,12 +823,23 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                             foreach ( $value['options'] as $val ) {
                                 if ( CRM_Utils_Array::value( 'membership_type_id', $val ) ) {
                                     $priceFieldMemTypes[] = $val['membership_type_id'];
+                                    
                                 }
                             }
                         }     
                     }
                 }
-                
+
+                if ( !empty($lifeMember) ) {
+                    foreach ($priceFieldIDS as $priceFieldId) {
+                        if ( ($id = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_FieldValue', $priceFieldId, 'membership_type_id') ) &&
+                             in_array($membershipOrgDetails[$id], $unallowedOrgs) ) {
+                            $errors['_qf_default'] = ts('You already have lifetime membership of this organization.');
+                            break;
+                        }
+                    }
+                }
+
                 $ids = implode (',', $priceFieldIDS);
                 $priceFieldIDS['id'] = $fields['priceSetId'];
                 $self->set( 'memberPriceFieldIDS', $priceFieldIDS );
@@ -835,7 +862,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             }
             $amount = $fields['amount'];
         }
-        
+
         if ( isset( $fields['selectProduct'] ) &&
              $fields['selectProduct'] != 'no_thanks' &&
              $self->_values['amount_block_is_active'] ) {
@@ -905,6 +932,11 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             } else {
                 $memTypeDetails = CRM_Member_BAO_Membership::buildMembershipTypeValues( $self,
                                                                                         $fields['selectMembership'] );
+            }
+            if( $memTypeDetails ) {
+                if( in_array($membershipOrgDetails[$memTypeDetails['id']], $unallowedOrgs) ) {
+                    $errors['_qf_default'] = ts('You already have lifetime membership of this organization.');
+                }
             }
             if ( $self->_values['amount_block_is_active'] &&
                  ! CRM_Utils_Array::value( 'is_separate_payment', $self->_membershipBlock ) ) {

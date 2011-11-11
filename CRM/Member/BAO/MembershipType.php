@@ -614,6 +614,30 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
         
         return $memTypeOrgs;
     }
+    
+    /** The function returns all the Organization for  all membershiptypes . 
+     *  @param  array      $allmembershipTypes       array of allMembershipTypes
+     *  with organization id Key - value pairs. 
+     * 
+     */ 
+    
+    static function getMembershipTypeOrganization( $membershipTypeId = null ) {
+        $allmembershipTypes = array( );
+        
+        require_once 'CRM/Member/DAO/MembershipType.php';
+        $membershipType = new CRM_Member_DAO_MembershipType( );
+        $membershipType->find();
+        
+        if ( $membershiptypeid ) {
+            $membershipType->id = $membershipTypeId;
+        }
+        
+        while($membershipType->fetch()) {
+            $allmembershipTypes[$membershipType->id] = $membershipType->member_of_contact_id;
+        }
+        return $allmembershipTypes;
+    } 
+    
 }
 
 

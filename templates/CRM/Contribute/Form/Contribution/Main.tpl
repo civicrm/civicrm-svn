@@ -64,15 +64,17 @@ function clearAmountOther() {
     <div id="intro_text" class="crm-section intro_text-section">
         {$intro_text}
     </div>
-
+{if $islifetime or $ispricelifetime }
+<div id="help">You have a current Lifetime Membership which does not need top be renewed.</div> 
+{/if}
 {if $priceSet && empty($useForMember)}
-    <div id="priceset">
+    <div id="priceset"> 
         <fieldset>
             <legend>{ts}Contribution{/ts}</legend>
             {include file="CRM/Price/Form/PriceSet.tpl" extends="Contribution"}
         </fieldset>
     </div>
-{else}
+{else}  
         {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="makeContribution"}
 
 	{if $form.amount}

@@ -754,6 +754,11 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
                             $membership->orderBy( 'end_date DESC' );
                             
                             if ( $membership->find(true) ) {
+                                if ( ! $membership->end_date ) {
+                                    unset($radio[$memType['id']]);
+                                    $form->assign( 'islifetime', true );
+                                    continue;
+                                }
                                 $form->assign('renewal_mode', true );
                                 $form->_currentMemberships[$membership->membership_type_id] = $membership->membership_type_id;
                                 $memType['current_membership'] = $membership->end_date;
@@ -862,7 +867,6 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
     static function getContactMembership( $contactID , $memType, $isTest, $membershipId = null, $onlySameParentOrg = false ) 
     {
         $dao = new CRM_Member_DAO_Membership( );
-        
         if ( $membershipId ) {
             $dao->id = $membershipId;
         }
@@ -2519,4 +2523,44 @@ Message: {$msgTpl[$memType->renewal_msg_id]['details']}
             // CRM_Core_Error::debug( 'fEnd', count( $GLOBALS['_DB_DATAOBJECT']['RESULTS'] ) );
         }
     }
+    
+    /** The function returns the membershiptypes for a particular contact
+     * who has lifetime membership without end date.
+     * @param  array      $contactMembershipType       array of allMembershipTypes Key - value pairs 
+     * 
+     */ 
+    
+    static function getAllContactMembership( $contactID, $isTest = false, $onlyLifeTime = false ) {
+        $contactMembershipType = array();
+        if( !$contactID ) {
+            return $contactMembershipType;
+        }
+
+        $dao = new CRM_Member_DAO_Membership( );
+        $dao->contact_id         = $contactID;
+        require_once 'CRM/Member/PseudoConstant.php';        
+        $pendingStatusId = array_search( 'Pending', CRM_Member_PseudoConstant::membershipStatus( ) );
+        $dao->whereAdd( "status_id != $pendingStatusId" );
+        
+        if ( $isTest ) {
+            $dao->is_test = $isTest;
+        } else {
+            $dao->whereAdd( 'is_test IS NULL OR is_test = 0' );
+        }
+        
+        if ( $onlyLifeTime ) {
+            $dao->whereAdd( 'end_date IS NULL' );
+        }
+        
+        $dao->find();
+        while( $dao->fetch( ) ) {
+            $membership = array( );
+            CRM_Core_DAO::storeValues( $dao, $membership );
+            $contactMembershipType[$dao->membership_type_id] = $membership;
+        }
+        return $contactMembershipType;
+        
+        
+    }
+    
 }

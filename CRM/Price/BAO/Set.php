@@ -456,7 +456,6 @@ AND ( expire_on IS NULL OR expire_on >= {$currentTime} )
         $dao = CRM_Core_DAO::executeQuery( $sql, $params );
 
         $visibility = CRM_Core_PseudoConstant::visibility( 'name' );
-        
         while ( $dao->fetch() ) {
             $fieldID = $dao->id;
 
@@ -475,7 +474,7 @@ AND ( expire_on IS NULL OR expire_on >= {$currentTime} )
             }
             $setTree[$setID]['fields'][$fieldID]['options'] = CRM_Price_BAO_Field::getOptions( $fieldID, false );
         }
-
+       
         // also get the pre and post help from this price set
         $sql = "
 SELECT extends, contribution_type_id, help_pre, help_post
@@ -488,7 +487,6 @@ WHERE  id = %1";
             $setTree[$setID]['help_pre']             = $dao->help_pre;
             $setTree[$setID]['help_post']            = $dao->help_post;
         }
-
         return $setTree;
     }
 
@@ -691,10 +689,9 @@ WHERE  id = %1";
     static function buildPriceSet( &$form )  
     {
         $priceSetId = $form->get( 'priceSetId' );
-        
+        $userid = $form->getVar('_userID' );
         if ( !$priceSetId ) return;
         
-          
         $validFieldsOnly = true;
         $className = CRM_Utils_System::getClassName( $form );
         if ( in_array($className, array('CRM_Contribute_Form_Contribution', 'CRM_Member_Form_Membership') ) ) {
@@ -719,7 +716,7 @@ WHERE  id = %1";
         } else {
             $feeBlock =& $form->_priceSet['fields'];
         }
-        
+       
         // call the hook.
         require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::buildAmount( $component, $form, $feeBlock );
@@ -727,10 +724,12 @@ WHERE  id = %1";
         foreach ( $feeBlock as $field ) {
             if ( CRM_Utils_Array::value( 'visibility', $field ) == 'public' || 
                  !$validFieldsOnly ) {
-                
                 $options = CRM_Utils_Array::value( 'options', $field );
+                $checklifetime = self::checkCurrentMembership( &$options, $userid );
+                if( $checklifetime ) {
+                    $form->assign( 'ispricelifetime', true );
+                } 
                 if ( !is_array( $options ) ) continue; 
-                
                 CRM_Price_BAO_Field::addQuickFormElement( $form, 
                                                           'price_'.$field['id'], 
                                                           $field['id'], 
@@ -741,6 +740,39 @@ WHERE  id = %1";
             }
         }
     }
+    
+    
+    
+    /**
+     * Function to check the current Membership
+     * having end date null.
+     */
+    static function checkCurrentMembership( &$options, $userid ) {
+        if ( !$userid || empty($options) ) {
+            return;
+        }
+        static $_contact_memberships = array();
+        $checklifetime = false;
+        require_once 'CRM/Member/BAO/Membership.php';
+        foreach( $options as $key => $value ) {
+            if ( CRM_Utils_Array::value('membership_type_id', $value) ) {
+                if ( !isset($_contact_memberships[$userid][$value['membership_type_id']]) ) {
+                    $_contact_memberships[$userid][$value['membership_type_id']] = CRM_Member_BAO_Membership::getContactMembership( $userid, $value['membership_type_id'],false );
+                }
+                $currentMembership = $_contact_memberships[$userid][$value['membership_type_id']];
+                if ( !empty($currentMembership) && !CRM_Utils_Array::value('end_date', $currentMembership ) ) {
+                    unset($options[$key]);
+                    $checklifetime = true;
+                } 
+            }
+        }      
+        if( $checklifetime ) {
+            return true;   
+        } else {
+            return false;
+        }
+    }
+    
     
     /** 
      * Function to set daefult the price set fields.
