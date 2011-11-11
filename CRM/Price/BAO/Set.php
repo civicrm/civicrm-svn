@@ -973,7 +973,7 @@ GROUP BY     mt.member_of_contact_id";
 
     static function eventPriceSetDomainID( ) {
         require_once 'CRM/Core/BAO/Setting.php';
-        return CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CONFIGURATION_PREFERENCES_NAME,
+        return CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
                                               'event_price_set_domain_id',
                                               null, false );
     }
