@@ -193,17 +193,17 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
     static function formRule( $fields ) 
     {
         if ($fields['outBound_option'] == 0) {
-            if ( !$fields['smtpServer'] ) {
+            if ( ! CRM_Utils_Array::value( 'smtpServer', $fields ) ) {
                 $errors['smtpServer'] = 'SMTP Server name is a required field.';
             } 
-            if ( !$fields['smtpPort'] ) {
+            if ( ! CRM_Utils_Array::value( 'smtpPort', $fields ) ) {
                 $errors['smtpPort'] = 'SMTP Port is a required field.';
             }
-            if ( $fields['smtpAuth'] ) {
-                if (!$fields['smtpUsername']){
+            if ( CRM_Utils_Array::value( 'smtpAuth', $fields ) ) {
+                if (! CRM_Utils_Array::value( 'smtpUsername', $fields ) ) {
                     $errors['smtpUsername'] = 'If your SMTP server requires authentication please provide a valid user name.';
                 }
-                if (!$fields['smtpPassword']) {
+                if (! CRM_Utils_Array::value( 'smtpPassword', $fields ) ) {
                     $errors['smtpPassword'] = 'If your SMTP server requires authentication, please provide a password.';
                 }
             }

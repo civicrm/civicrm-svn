@@ -929,19 +929,19 @@ function _civicrm_api3_swap_out_aliases(&$apiRequest ) {
                           array('version' => 3,
                                 'action' => $apiRequest['action']));
 
-    foreach ($result['values'] as $field => $values){
+    foreach ($result['values'] as $field => $values) {
         if (CRM_Utils_Array::value('api.aliases',$values)){
-          if (!CRM_Utils_Array::value($field,$apiRequest['params'])){ // aliased field is empty so we try to use field alias
-            foreach ($values['api.aliases'] as $alias) {
-             $apiRequest['params'][$field] = CRM_Utils_Array::value($alias,$apiRequest['params']);
-             //unset original field  nb - need to be careful with this as it may bring inconsistencies
-             // out of the woodwork but will be implementing only as _spec function extended
-             unset($apiRequest['params'][$alias]);
-           }
-        }
+            if (!CRM_Utils_Array::value($field,$apiRequest['params'])){ // aliased field is empty so we try to use field alias
+                foreach ($values['api.aliases'] as $alias) {
+                    $apiRequest['params'][$field] = CRM_Utils_Array::value($alias,$apiRequest['params']);
+                    //unset original field  nb - need to be careful with this as it may bring inconsistencies
+                    // out of the woodwork but will be implementing only as _spec function extended
+                    unset($apiRequest['params'][$alias]);
+                }
+            }
         }elseif(empty($apiRequest['params'][$field]) && CRM_Utils_Array::value('name', $values) && $field != $values['name']){
-          $apiRequest['params'][$field] = CRM_Utils_Array::value($values['name'],$apiRequest['params']);
-          // note that it would make sense to unset the original field here but tests need to be in place first
+            $apiRequest['params'][$field] = CRM_Utils_Array::value($values['name'],$apiRequest['params']);
+            // note that it would make sense to unset the original field here but tests need to be in place first
         }
     }
 }
