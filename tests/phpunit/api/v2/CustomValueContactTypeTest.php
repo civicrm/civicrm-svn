@@ -178,7 +178,7 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
                         );
         
         $contact =& civicrm_contact_add( $params );
-        $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Organization or Mismatched SubType: Sponsor.' );
+        $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Organization or Mismatched SubType: Sponsor' );
     }
     
     /**
@@ -230,7 +230,7 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
                         );
         
         $contact =& civicrm_contact_add( $params );
-        $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Individual or Mismatched SubType: Parent.' );
+        $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Individual or Mismatched SubType: Parent' );
     }
     
     
