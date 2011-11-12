@@ -741,7 +741,8 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
                 }
                 // build where clause
                 if ( !empty($value) ) {
-                    $where[]  = "r.event_type_id IN ({$value})";
+                    $where[]  = ($mapping->entity_value == 'event_type') ? 
+                        "r.event_type_id IN ({$value})" : "r.id IN ({$value})";
                 }
                 if ( !empty($status) ) {
                     $where[]  = "e.status_id IN ({$status})";
@@ -770,10 +771,16 @@ reminder.action_schedule_id = %1";
             $join[]  = "INNER JOIN civicrm_contact c ON c.id = {$contactField}";
             $where[] = "c.is_deleted = 0";
 
-            $startEvent = ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
-                "({$dateField}, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
-            // ( now >= date_built_from_start_time )
-            $startEventClause = "reminder.id IS NULL AND '{$now}' >= {$startEvent}";
+            if ( $actionSchedule->start_action_date ) {
+                $startEvent = ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
+                    "({$dateField}, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
+                $startEvent = "'{$now}' >= {$startEvent}";
+            } else if ( $actionSchedule->absolute_date ) {
+                $startEvent = "DATEDIFF(DATE('{$now}'),'{$actionSchedule->absolute_date}') = 0";
+            }
+
+            // ( now >= date_built_from_start_time ) OR ( now = absolute_date )
+            $startEventClause = "reminder.id IS NULL AND {$startEvent}";
 
             // start composing query
             $selectClause = "SELECT " . implode( ', ', $select );
