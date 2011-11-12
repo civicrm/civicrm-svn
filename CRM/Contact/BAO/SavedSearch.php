@@ -109,6 +109,30 @@ class CRM_Contact_BAO_SavedSearch extends CRM_Contact_DAO_SavedSearch
             // make sure u unserialize - since it's stored in serialized form
             $result = unserialize( $fv );
         }
+
+        // check to see if we need to convert the old privacy array
+        // CRM-9180
+        if ( isset( $result['privacy'] ) ) {
+            if ( is_array( $result['privacy'] ) ) {
+                $result['privacy_operator'] = 'AND';
+                $result['privacy_toggle']   = 1;
+                if ( isset( $result['privacy']['do_not_toggle'] ) ) {
+                    if ( $result['privacy']['do_not_toggle'] ) {
+                        $result['privacy_toggle'] = 2;
+                    }
+                    unset( $result['privacy']['do_not_toggle'] );
+                }
+
+                $result['privacy_options'] = array( );
+                foreach ( $result['privacy'] as $name => $value ) {
+                    if ( $value ) {
+                        $result['privacy_options'][] = $name;
+                    }
+                }
+            }
+            unset( $result['privacy'] );
+        }
+
         return $result;
     }
 

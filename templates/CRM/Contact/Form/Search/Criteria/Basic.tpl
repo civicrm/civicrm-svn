@@ -131,8 +131,18 @@
         </tr>
         <tr>
             <td colspan="2">
-                {$form.privacy.label}<br />
-                {$form.privacy.html} {help id="id-privacy"}
+                {$form.privacy_toggle.html}<br />
+                {$form.privacy_options.html}&nbsp;{$form.privacy_operator.html} {help id="id-privacy"}
+                {literal}
+                  <script type="text/javascript">
+                    cj("select#privacy_options").crmasmSelect({
+                     addItemTarget: 'bottom',
+                     animate: false,
+                     highlight: true,
+                     sortable: true,
+                    });
+                  </script>
+                {/literal}
             </td>
             <td colspan="3">
                 {$form.preferred_communication_method.label}<br />

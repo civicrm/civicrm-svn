@@ -192,7 +192,6 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
      * @return array the default array reference
      */
     function &setDefaultValues() {
-        
         $defaults = $this->_formValues;
         $this->normalizeDefaultValues( $defaults );
         
@@ -202,7 +201,7 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
             $defaults['task'] = CRM_Contact_Task::PRINT_CONTACTS;
         }
 
-       return $defaults;
+        return $defaults;
     }
 
     /**

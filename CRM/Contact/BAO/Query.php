@@ -1409,6 +1409,15 @@ class CRM_Contact_BAO_Query
         case 'is_opt_out':
             $this->privacy( $values );
             return;
+
+        case 'privacy_options':
+            $this->privacyOptions( $values );
+            return;
+
+        case 'privacy_operator':
+        case 'privacy_toggle':
+            // these are handled by privacy options
+            return;
             
         case 'preferred_communication_method':
             $this->preferredCommunication( $values );
@@ -3137,6 +3146,42 @@ WHERE  id IN ( $groupIDs )
         $field = CRM_Utils_Array::value( $name, $this->_fields );
         $title = $field ? $field['title'] : $name;
         $this->_qill[$grouping][]  = "$title $op $value";
+    }
+
+    function privacyOptions( $values ) {
+        list( $name, $op, $value, $grouping, $wildcard ) = $values;
+
+        if ( empty( $value ) ||
+             ! is_array( $value ) ) {
+            continue;
+        }
+
+        // get the operator and toggle values
+        $opValues =  $this->getWhereValues( 'privacy_operator', $grouping );
+        $operator = 'OR';
+        if ( $opValues &&
+             strtolower( $opValues[2] == 'AND' ) ) {
+            $operator = 'AND';
+        }
+
+        $toggleValues =  $this->getWhereValues( 'privacy_toggle', $grouping );
+        $compareOP = '!=';
+        if ( $toggleValues &&
+             $toggleValues[2] == 2 ) {
+            $compareOP = '=';
+        }
+
+        $clauses = array( );
+        $qill    = array( );
+        foreach ( $value as $dontCare => $pOption ) {
+            $clauses[] = " ( contact_a.{$pOption} $compareOP 1 ) ";
+            $field = CRM_Utils_Array::value( $pOption, $this->_fields );
+            $title = $field ? $field['title'] : $pOption;
+            $qill[] = " $title $compareOP 1 ";
+        }
+
+        $this->_where[$grouping][] = '( ' . implode( $operator, $clauses ) . ' )';
+        $this->_qill[$grouping][] = implode( $operator, $qill );
     }
 
     function preferredCommunication( &$values ) 
