@@ -344,11 +344,14 @@ INNER JOIN civicrm_contact {$this->_aliases['civicrm_contact']} ON {$this->_alia
 
         $contriParams1 = $contriParams2 = '';
         foreach (array('contribution_status_id', 'contribution_type_id') as $field) {
-          $ingroup =  implode("," , $this->_params[$field . '_value']);
-          $IN = $this->_params[$field . '_op'] != 'in' ? 'NOT IN' : 'IN';
-          $contriParams1 .= $ingroup ? " AND contribution1.$field $IN ( $ingroup )" : '';
-          $contriParams2 .= $ingroup ? " AND contribution2.$field $IN ( $ingroup )" : '';
+            if ( isset( $this->_params[$field . '_value'] ) ) {
+                $ingroup =  implode("," , $this->_params[$field . '_value']);
+                $IN = $this->_params[$field . '_op'] != 'in' ? 'NOT IN' : 'IN';
+                $contriParams1 .= $ingroup ? " AND contribution1.$field $IN ( $ingroup )" : '';
+                $contriParams2 .= $ingroup ? " AND contribution2.$field $IN ( $ingroup )" : '';
+            }
         }
+
         $this->_from = "
 FROM $from
 
