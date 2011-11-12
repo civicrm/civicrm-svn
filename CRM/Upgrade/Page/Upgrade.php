@@ -106,13 +106,13 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                            array( 1 => $currentVer, 2 => $latestVer, 3 => $dbToolsLink ) );
             CRM_Core_Error::fatal( $error );
         } else if ( version_compare($currentVer, $latestVer) == 0 ) {
-            $message = ts( 'Your database has already been upgraded to CiviCRM %1',
-                           array( 1 => $latestVer ) );
+            $postUpgradeMessage = ts( 'Your database has already been upgraded to CiviCRM %1',
+                                      array( 1 => $latestVer ) );
             $template->assign( 'upgraded', true );
         } else {
-            $message   = ts('CiviCRM upgrade was successful.');
+            $postUpgradeMessage   = ts('CiviCRM upgrade was successful.');
             if ( $latestVer == '3.2.alpha1' ) {
-                $message .= '<br />' . ts("We have reset the COUNTED flag to false for the event participant status 'Pending from incomplete transaction'. This change ensures that people who have a problem during registration can try again.");
+                $postUpgradeMessage .= '<br />' . ts("We have reset the COUNTED flag to false for the event participant status 'Pending from incomplete transaction'. This change ensures that people who have a problem during registration can try again.");
             } else if ( $latestVer == '3.2.beta3' && ( version_compare($currentVer, '3.1.alpha1') >= 0 ) ) {
                 require_once 'CRM/Contact/BAO/ContactType.php';
                 $subTypes = CRM_Contact_BAO_ContactType::subTypes( );
@@ -141,7 +141,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                                         
                     if ( !empty( $subTypeTemplates ) ) {
                         $subTypeTemplates = implode( ',', $subTypeTemplates );
-                        $message .= '<br />' . ts('You are using custom template for contact subtypes: %1.', array(1 => $subTypeTemplates)) . '<br />' . ts('You need to move these subtype templates to the SubType directory in %1 and %2 respectively.', array(1 => 'CRM/Contact/Form/Edit', 2 => 'CRM/Contact/Page/View'));
+                        $postUpgradeMessage .= '<br />' . ts('You are using custom template for contact subtypes: %1.', array(1 => $subTypeTemplates)) . '<br />' . ts('You need to move these subtype templates to the SubType directory in %1 and %2 respectively.', array(1 => 'CRM/Contact/Form/Edit', 2 => 'CRM/Contact/Page/View'));
                     }
                 }
             } else if ( $latestVer == '3.2.beta4' ) {
@@ -152,7 +152,7 @@ SELECT  count( id ) as statusCount
  WHERE  name IN ( '" . implode( "' , '", $statuses )  .  "' ) ";
                 $count = CRM_Core_DAO::singleValueQuery( $sql );
                 if ( $count < count( $statuses ) ) {
-                    $message .= '<br />' . ts( "One or more Membership Status Rules was disabled during the upgrade because it did not match a recognized status name. if custom membership status rules were added to this site - review the disabled statuses and re-enable any that are still needed (Administer > CiviMember > Membership Status Rules)." );
+                    $postUpgradeMessage .= '<br />' . ts( "One or more Membership Status Rules was disabled during the upgrade because it did not match a recognized status name. if custom membership status rules were added to this site - review the disabled statuses and re-enable any that are still needed (Administer > CiviMember > Membership Status Rules)." );
                 }
             } else if ( $latestVer == '3.4.alpha1' ) {
                 $renamedBinScripts = array( 'ParticipantProcessor.php',
@@ -160,7 +160,7 @@ SELECT  count( id ) as statusCount
                                             'UpdateGreeting.php',
                                             'UpdateMembershipRecord.php',
                                             'UpdatePledgeRecord.php ' );
-                $message .= '<br />' . ts( 'The following files have been renamed to have a ".php" extension instead of a ".php.txt" extension' ) . ': ' . implode( ', ', $renamedBinScripts );
+                $postUpgradeMessage .= '<br />' . ts( 'The following files have been renamed to have a ".php" extension instead of a ".php.txt" extension' ) . ': ' . implode( ', ', $renamedBinScripts );
             }
 
             // set pre-upgrade warnings if any -
@@ -182,6 +182,20 @@ SELECT  count( id ) as statusCount
 
                 if ( $googleProcessorExists ) {
                     $preUpgradeMessage .= '<br />' . ts( 'To continue using Google Checkout Payment Processor with latest version of CiviCRM, requires updating merchant account settings. Please refer "Set API callback URL and other settings" section of <a href="%1" target="_blank"><strong>Google Checkout Configuration</strong></a> doc.', array( 1 => 'http://wiki.civicrm.org/confluence/x/zAJTAg' ) );
+                }
+            }
+
+            // Scan through all php files and see if any file is interested in setting pre-upgrade-message
+            // based on $currentVer, $latestVer. 
+            // Please note, at this point upgrade hasn't started executing queries.
+            $revisions = $upgrade->getRevisionSequence();
+            foreach ( $revisions as $rev ) {
+                if ( version_compare($currentVer, $rev) < 0     && 
+                     version_compare( $rev , '3.2.alpha1' ) > 0 ) {
+                    $versionObject = $upgrade->incrementalPhpObject( $rev );
+                    if ( is_callable(array($versionObject, 'setPreUpgradeMessage')) ) {
+                        $versionObject->setPreUpgradeMessage( $preUpgradeMessage, $currentVer, $latestVer );
+                    }
                 }
             }
             
@@ -221,7 +235,7 @@ SELECT  count( id ) as statusCount
                             // 3.2.alpha1 
                             $versionObject = $upgrade->incrementalPhpObject( $rev );
                             
-                            // predb check for major release.
+                            // pre-db check for major release.
                             if ( $upgrade->checkVersionRelease( $rev, 'alpha1' ) ) {
                                 if ( !(is_callable(array($versionObject, 'verifyPreDBstate'))) ) {
                                     CRM_Core_Error::fatal("verifyPreDBstate method was not found for $rev");
@@ -234,6 +248,9 @@ SELECT  count( id ) as statusCount
                                     }
                                     CRM_Core_Error::fatal( $error );
                                 }
+
+                                // set post-upgrade-message if any
+                                $versionObject->setPostUpgradeMessage( $postUpgradeMessage, $currentVer, $latestVer );
                             }
                             
                             if ( is_callable(array($versionObject, $phpFunctionName)) ) {
@@ -257,7 +274,7 @@ SELECT  count( id ) as statusCount
         }
         
         $template->assign( 'preUpgradeMessage', $preUpgradeMessage );
-        $template->assign( 'message', $message );
+        $template->assign( 'message', $postUpgradeMessage );
         $content = $template->fetch( 'CRM/common/success.tpl' );
         echo CRM_Utils_System::theme( 'page', $content, true, $this->_print, false, true );
     }
