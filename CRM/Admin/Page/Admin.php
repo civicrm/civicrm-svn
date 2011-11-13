@@ -59,10 +59,12 @@ class CRM_Admin_Page_Admin extends CRM_Core_Page
             CRM_Core_Session::setStatus( $errorMessage );
         }
 
-        $groups = array( 'Customize'    => ts( 'Customize' ),
-                         'Configure'    => ts( 'Configure' ),
-                         'Manage'       => ts( 'Manage'    ),
-                         'Option Lists' => ts( 'Option Lists' ) );
+        $groups = array( 'Customize Data and Screens'    => ts( 'Customize Data and Screens' ),
+                         'Communications'    => ts( 'Communications' ),
+                         'Localization'      => ts( 'Localizaton' ),
+                         'Users and Permissions' => ts( 'Users and Permissions' ),
+                         'System Settings'       => ts( 'System Settings' ),
+                          );
 
         $config = CRM_Core_Config::singleton( );
         if ( in_array('CiviContribute', $config->enableComponents) ) {

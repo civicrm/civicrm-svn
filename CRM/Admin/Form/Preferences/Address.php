@@ -51,24 +51,30 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
             array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME => 
                    array( 
                          'address_options' => array( 'html_type' => 'checkboxes',
-                                                     'title' => ts( 'Address Fields' ), ),
+                                                     'title' => ts( 'Address Fields' ),
+                                                     'weight' => 1 ),
                          'address_format'  => array( 'html_type' => 'textarea',
                                                      'title' => ts( 'Display Format' ),
-                                                     'description' => null ),
+                                                     'description' => null,
+                                                     'weight' => 2 ),
                          'mailing_format'  => array( 'html_type' => 'textarea',
                                                      'title' => ts( 'Mailing Label Format' ),
-                                                     'description' => null ),
+                                                     'description' => null,
+                                                     'weight' => 3 ),
                           ),
                    
                    CRM_Core_BAO_Setting::ADDRESS_STANDARDIZATION_PREFERENCES_NAME =>
                    array(
-                         'address_standardization_provider' => array( 'html_type' => null ),
+                         'address_standardization_provider' => array( 'html_type' => null,
+                                                                      'weight' => 4 ),
                          'address_standardization_userid' => array( 'html_type' => 'text',
                                                                     'title' => ts( 'User ID' ),
-                                                                    'description' => null ),
+                                                                    'description' => null,
+                                                                    'weight' => 5 ),
                          'address_standardization_url' => array( 'html_type' => 'text',
                                                                  'title' => ts( 'Web Service URL' ),
-                                                                 'description' => null ),
+                                                                 'description' => null,
+                                                                 'weight' => 6 ),
                          ),
                    );
 

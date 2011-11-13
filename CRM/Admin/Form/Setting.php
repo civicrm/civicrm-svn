@@ -95,6 +95,8 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
      */
     public function buildQuickForm( $check = false ) 
     {
+        $session = CRM_Core_Session::singleton();
+        $session->pushUserContext( CRM_Utils_System::url( 'civicrm/admin', 'reset=1') );
         $this->addButtons( array(
                                  array ( 'type'      => 'next',
                                          'name'      => ts('Save'),

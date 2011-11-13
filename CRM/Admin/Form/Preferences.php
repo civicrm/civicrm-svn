@@ -94,7 +94,7 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
                 $this->_config->$name = $value;
             }
         }
-        $session->pushUserContext( CRM_Utils_System::url('civicrm/admin/setting', 'reset=1') );
+        $session->pushUserContext( CRM_Utils_System::url('civicrm/admin', 'reset=1') );
     }
 
     function setDefaultValues( ) {
