@@ -57,10 +57,6 @@ require_once 'CRM/Contribute/PseudoConstant.php';
 function civicrm_api3_contribution_create($params) {
 		civicrm_api3_verify_one_mandatory ( $params, null,  array ('contribution_type_id', 'contribution_type'  ) );
 		
-		$error = _civicrm_api3_contribute_check_params ( $params );
-		if (civicrm_error ( $error )) {
-			return $error;
-		}
 		
 		$values = array ();
 		
@@ -208,35 +204,6 @@ function civicrm_api3_contribution_get($params) {
  */
 function _civicrm_api3_contribution_get_spec(&$params){
   $params['contribution_test']['api.default'] =0;
-}
-
-/**
- * This function ensures that we have the right input contribution parameters
- *
- * We also need to make sure we run all the form rules on the params list
- * to ensure that the params are valid
- *
- * @param array  $params       Associative array of property name/value
- * pairs to insert in new contribution.
- *
- * @return bool|CRM_Utils_Error
- * @access private
- */
-function _civicrm_api3_contribute_check_params($params) {
-	
-	// check params for contribution id during update
-	if (CRM_Utils_Array::value ( 'id', $params )) {
-		require_once 'CRM/Contribute/BAO/Contribution.php';
-		$contributor = new CRM_Contribute_BAO_Contribution ();
-		$contributor->id = $params ['id'];
-		if (! $contributor->find ( true )) {
-			return civicrm_api3_create_error ( 'Contribution id is not valid' );
-		}
-		// do not check other field during update
-		return array ();
-	}
-	
-	return array ();
 }
 
 /**
