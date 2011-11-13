@@ -159,6 +159,28 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 		$this->forceEmailConfirmed['email'] = ''; 
 	}
 	
+    function getContactID( ) {
+        $tempID = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
+        
+        // force to ignore the authenticated user
+        if ( $tempID === '0' ) {
+            return $tempID;
+        }
+        
+        //check if this is a checksum authentication
+        $userChecksum = CRM_Utils_Request::retrieve( 'cs', 'String', $this );
+        if ( $userChecksum ) {
+            //check for anonymous user.
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
+            $validUser = CRM_Contact_BAO_Contact_Utils::validChecksum( $tempID, $userChecksum );
+            if ( $validUser ) return  $tempID;
+        }
+        
+        // check if the user is registered and we have a contact ID
+        $session = CRM_Core_Session::singleton( );
+        return $session->get( 'userID' ); 
+    }
+	
     public function preProcess()
     {
       $this->bao = new CRM_Campaign_BAO_Petition();
@@ -188,7 +210,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
       $session = CRM_Core_Session::singleton( );   
     
 	    //get the contact id for this user if logged in
-      $this->_contactId =  $session->get( 'userID' );
+      $this->_contactId =  $this->getContactId();
       if (isset($this->_contactId)) {
 	        $this->_loggedIn = TRUE;
     	}
