@@ -167,7 +167,9 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         
         //get the context
         $context = $this->get( 'context' );
-        if ( $this->_searchBasedMailing ) $context = 'search'; 
+        if ( $this->_searchBasedMailing ) {
+            $context = 'search'; 
+        }
         $this->assign( 'context', $context );
         
         $this->add( 'text', 'name', ts('Name Your Mailing'),

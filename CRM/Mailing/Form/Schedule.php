@@ -119,22 +119,23 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
          } else {
              //FIXME : currently we are hiding save an continue later when
              //search base mailing, we should handle it when we fix CRM-3876
-             $buttons = array( array(  'type'  => 'back',
-                                       'name'  => ts('<< Previous') ),
-                               array(  'type'  => 'next',
-                                       'name'  => ts('Submit Mailing'),
-                                       'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
-                                       'isDefault' => true),
-                               array(  'type'  => 'cancel',
-                                       'name'  => ts('Continue Later') ),
-                               );
-             if ( $this->_searchBasedMailing && $this->get( 'ssID' ) ) {
+             if ( $this->_searchBasedMailing ) {
                  $buttons = array( array(  'type'  => 'back',
                                            'name'  => ts('<< Previous') ),
                                    array(  'type'  => 'next',
                                            'name'  => ts('Submit Mailing'),
                                            'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
                                            'isDefault' => true),
+                                   );
+             } else {
+                 $buttons = array( array(  'type'  => 'back',
+                                           'name'  => ts('<< Previous') ),
+                                   array(  'type'  => 'next',
+                                           'name'  => ts('Submit Mailing'),
+                                           'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
+                                           'isDefault' => true),
+                                   array(  'type'  => 'cancel',
+                                           'name'  => ts('Continue Later') ),
                                    );
              }
          }
