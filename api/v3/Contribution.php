@@ -206,27 +206,6 @@ function _civicrm_api3_contribution_get_spec(&$params){
   $params['contribution_test']['api.default'] =0;
 }
 
-/**
- * Check if there is a contribution with the same trxn_id or invoice_id
- *
- * @param array  $params       Associative array of property name/value
- * pairs to insert in new contribution.
- *
- * @return array|CRM_Error
- * @access private
- */
-function _civicrm_api3_contribute_duplicate_check($params) {
-	require_once 'CRM/Contribute/BAO/Contribution.php';
-	$duplicates = array ();
-	$result = CRM_Contribute_BAO_Contribution::checkDuplicate ( $params, $duplicates );
-	if ($result) {
-		$d = implode ( ', ', $duplicates );
-		$error = CRM_Core_Error::createError ( "Duplicate error - existing contribution record(s) have a matching Transaction ID or Invoice ID. Contribution record ID(s) are: $d", CRM_Core_Error::DUPLICATE_CONTRIBUTION, 'Fatal', $d );
-		return civicrm_api3_create_error ( $error->pop (), $d );
-	} else {
-		return array ();
-	}
-}
 
 /**
  * take the input parameter list as specified in the data model and 
