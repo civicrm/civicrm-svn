@@ -1188,7 +1188,7 @@ SELECT contact_id
         // card characters and could come in via sortByCharacter
         // note that mysql does not escape these characters
         if ( in_array( $string,
-                       array( '%', '_', '%%', '_%' ) );
+                       array( '%', '_', '%%', '_%' ) ) ) {
             return '\\' . $string;
         }
 
