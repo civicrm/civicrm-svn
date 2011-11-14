@@ -490,3 +490,6 @@ VALUES
 
 {* SELECT @tpl_ovid_$vName := MAX(id) FROM civicrm_option_value WHERE option_group_id = @tpl_ogid_$gName AND name = '$vName'; *}
 {* INSERT INTO civicrm_msg_template *}
+
+-- CRM-8532
+UPDATE `civicrm_dashboard` SET url = REPLACE( url, 'snippet=4', 'snippet=5' ), fullscreen_url = REPLACE( fullscreen_url, 'snippet=4', 'snippet=5' );
