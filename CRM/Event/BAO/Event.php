@@ -1066,12 +1066,12 @@ WHERE civicrm_event.is_active = 1
             
             //send email only when email is present
             if ( isset( $email ) || $returnMessageText ) {
-                $preProfileID  = $values['custom_pre_id'];
-                $postProfileID = $values['custom_post_id'];
+                $preProfileID  = CRM_Utils_Array::value( 'custom_pre_id', $values );
+                $postProfileID = CRM_Utils_Array::value( 'custom_post_id', $values );
                 
                 if ( CRM_Utils_Array::value( 'additionalParticipant', $values['params'] ) ) {
-                    $preProfileID  = $values['additional_custom_pre_id'];
-                    $postProfileID = $values['additional_custom_post_id'];
+                    $preProfileID = CRM_Utils_Array::value( 'additional_custom_pre_id', $values );
+                    $postProfileID = CRM_Utils_Array::value( 'additional_custom_post_id', $values );
                 }
                 
                 self::buildCustomDisplay( $preProfileID, 
@@ -1127,8 +1127,10 @@ WHERE civicrm_event.is_active = 1
                     $sendTemplateParams['toName']  = $displayName;
                     $sendTemplateParams['toEmail'] = $email;
                     $sendTemplateParams['autoSubmitted'] = true;
-                    $sendTemplateParams['cc']      = CRM_Utils_Array::value('cc_confirm',  $values['event']);
-                    $sendTemplateParams['bcc']     = CRM_Utils_Array::value('bcc_confirm', $values['event']);
+                    $sendTemplateParams['cc'] = CRM_Utils_Array::value( 'cc_confirm',  
+                                                                        $values['event']);
+                    $sendTemplateParams['bcc'] = CRM_Utils_Array::value( 'bcc_confirm', 
+                                                                         $values['event']);
                     CRM_Core_BAO_MessageTemplates::sendTemplate($sendTemplateParams);
                 }
             }
@@ -1581,9 +1583,12 @@ WHERE  id = $cfID
             return $additionalIDs;
         }
         
+        $preProfileID = CRM_Utils_Array::value( 'additional_custom_pre_id', $values );
+        $postProfileID = CRM_Utils_Array::value( 'additional_custom_post_id', $values );
+        
         //else build array of Additional participant's information. 
         if ( count($additionalIDs) ) { 
-            if ( $values['additional_custom_pre_id'] || $values['additional_custom_post_id'] ) {
+            if ( $preProfileID || $postProfileID ) {
                 $template = CRM_Core_Smarty::singleton( );
                 $isCustomProfile = true;
                 $i = 1;
@@ -1592,14 +1597,14 @@ WHERE  id = $cfID
                     //get the params submitted by participant.
                     $participantParams = CRM_Utils_Array::value( $pId, $values['params'], array( ) );
                     
-                    list( $profilePre, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_pre_id'], 
-                                                                                   'additionalCustomPre', 
-                                                                                   $cId, 
-                                                                                   $template, 
-                                                                                   $pId, 
-                                                                                   $isTest, 
-                                                                                   $isCustomProfile,
-                                                                                   $participantParams );
+                    list( $profilePre, $groupTitles ) = self::buildCustomDisplay($preProfileID, 
+                                                                                 'additionalCustomPre', 
+                                                                                 $cId, 
+                                                                                 $template, 
+                                                                                 $pId, 
+                                                                                 $isTest, 
+                                                                                 $isCustomProfile,
+                                                                                 $participantParams );
                    
                     if ( $profilePre ) {
                         $profile =  $profilePre;
@@ -1609,7 +1614,7 @@ WHERE  id = $cfID
                         }
                     }
                     
-                    list( $profilePost, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_post_id'], 
+                    list( $profilePost, $groupTitles ) =  self::buildCustomDisplay( $postProfileID, 
                                                                                     'additionalCustomPost',
                                                                                     $cId, 
                                                                                     $template, 
