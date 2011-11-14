@@ -250,8 +250,12 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
         }
         
         $params      = $this->get('params') ? $this->get('params') : array();
-        $title       = ' cp.title LIKE %6';
-        $params['6'] = array( $this->_sortByCharacter . '%', 'String' );        
+
+        $title = '1';
+        if ( $this->_sortByCharacter ) {
+            $title       = ' cp.title LIKE %6';
+            $params['6'] = array( $this->_sortByCharacter . '%', 'String' );        
+        }
 
         $query = "
         SELECT cp.id, cp.contact_id , cp.status_id, cp.title, cp.is_active, cp.page_type, cp.page_id
@@ -260,10 +264,8 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
         " ORDER BY cp.status_id";
 
         $pcp = CRM_Core_DAO::executeQuery($query, $params);
-
         while ( $pcp->fetch( ) ) {
             $action = array_sum(array_keys($this->links()));
-
             require_once 'CRM/Contact/BAO/Contact.php';
             $contact = CRM_Contact_BAO_Contact::getDisplayAndImage( $pcp->contact_id);
             
