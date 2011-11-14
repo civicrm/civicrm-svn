@@ -720,7 +720,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
                                 $membership->membership_type_id = $memType['id'];
                                 if ( $membership->find(true) ) {
                                     $form->assign('renewal_mode', true );
-                                    $mem['current_membership'] =  $membership->end_date;
+                                    $memType['current_membership'] =  $membership->end_date;
                                     $form->_currentMemberships[$membership->membership_type_id] = $membership->membership_type_id;
                                 }
                             }
@@ -742,9 +742,9 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
                             $membership->contact_id         = $cid;
                             $membership->membership_type_id = $memType['id'];
 
-                            //show current membership, skip pending membership record,
+                            //show current membership, skip pending and cancelled membership records,
                             //because we take first membership record id for renewal 
-                            $membership->whereAdd( 'status_id != 5' );
+                            $membership->whereAdd( 'status_id != 5 AND status_id !=6' );
                                 
                             if ( ! is_null( $isTest ) ) {
                                 $membership->is_test        = $isTest;
@@ -1290,6 +1290,8 @@ AND civicrm_membership.is_test = %2";
                                 CRM_Utils_Date::customFormat($membershipOb->start_date, '%d%f %b, %Y') : '-';
                             $priceFieldOp['end_date'] = $membershipOb->end_date ?
                                 CRM_Utils_Date::customFormat($membershipOb->end_date, '%d%f %b, %Y') : '-';
+                        } else {
+                            $priceFieldOp['start_date'] = $priceFieldOp['end_date'] = 'N/A';
                         }
                     }
                     $form->_values['lineItem'] = $form->_lineItem;

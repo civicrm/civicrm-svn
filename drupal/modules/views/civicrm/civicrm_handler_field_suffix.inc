@@ -1,10 +1,7 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.0                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -25,56 +22,33 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
-
-/**
+/*
+ * Heavily based on anonymous code contribution. No claim.
  *
- * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
- * $Id$
+ * Displays Prefix after grabbing the label from the database
  *
  */
+class civicrm_handler_field_suffix extends views_handler_field {
+    static $_individualSuffix;
 
-function civicrm_install( ) {
-}
-
-/**
- * Implementation of hook_uninstall( )
- */
-function civicrm_uninstall( ) {
-    require_once 'civicrm.module';
-
-    if ( ! civicrm_initialize( ) ) {
-        return;
+    function construct( ) {
+        if ( ! self::$_individualSuffix ) {
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
+            require_once 'CRM/Core/PseudoConstant.php';
+            self::$_individualSuffix = CRM_Core_PseudoConstant::individualSuffix( );
+        }
     }
 
-    require_once 'CRM/Core/Config.php';
-    $config = CRM_Core_Config::singleton();
+    function render( $values ) {
+        $lid = $values->{$this->field_alias};
+        if ( empty( $lid ) ||
+             (int ) $lid <= 0 ) {
+            return null;
+        }
 
-    require_once 'CRM/Core/DAO.php';
-    CRM_Core_DAO::dropAllTables( );
-}
-
-function civicrm_requirements($phase) {
-    $settings = glob('sites/*/civicrm.settings.php');
-    $problems = array( );
-    if ( empty($settings) && 
-         $phase == 'install' ) {
-        $problems[] = array(
-                            'title' => t('CiviCRM settings does not extist'),
-                            'description' => t('CiviCRM settings file does not extist. It should be created by CiviCRM <a href="!link">install</a>', array('!link' => substr(dirname(dirname(__FILE__)), strlen(getcwd())).'/install/index.php')),
-                            'severity' => REQUIREMENT_ERROR,
-                            );
-    }
-
-    if ( ! empty($problems) ) {
-        return $problems;
+        return self::$_individualSuffix[$values->{$this->field_alias}];
     }
 }
-
-/**
- * Update CiviCRM module weight
- */
-function civicrm_update_7400(&$sandbox) {
-    db_query("UPDATE {system} SET weight = 100 WHERE name = 'civicrm'");
-}
-
+?>

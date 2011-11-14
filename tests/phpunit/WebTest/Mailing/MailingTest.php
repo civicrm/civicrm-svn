@@ -257,6 +257,51 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
       // verify email
       $this->assertTrue($this->isTextPresent("mailino$firstName@mailson.co.in"));
 
+      require_once 'CRM/Mailing/Event/DAO/Queue.php';
+      $eventQueue = new CRM_Mailing_Event_DAO_Queue( );
+      $eventQueue->contact_id = $contactId;
+      $eventQueue->find(true);
+
+      $this->open($this ->sboxPath . "admin/user/permissions" );
+      if ( !$this->isChecked( "edit-1-access-CiviMail-subscribe/unsubscribe-pages" ) ) {
+          $this->click( "edit-1-access-CiviMail-subscribe/unsubscribe-pages" );
+      }
+      $this->click( "edit-submit" );
+      $this->waitForPageToLoad( "30000" );
+      $this->open($this->sboxPath . "civicrm/logout&reset=1");
+      $this->waitForPageToLoad('30000');
+      $this->open( $this->sboxPath );
+      $this->waitForPageToLoad('30000');
+
+      // build forward url
+      $forwardUrl = "civicrm/mailing/forward?reset=1&jid={$eventQueue->job_id}&qid={$eventQueue->id}&h={$eventQueue->hash}";
+      $this->open($this->sboxPath . $forwardUrl);
+      $this->waitForPageToLoad('30000'); 
+      
+      $this->type("email_0", substr(sha1(rand()), 0, 7) . '@example.com');
+      $this->type("email_1", substr(sha1(rand()), 0, 7) . '@example.com');
+
+      $this->click("comment_show");
+      $this->type("forward_comment", "Test Message");
+
+      $this->click("_qf_ForwardMailing_next-bottom");
+      $this->waitForPageToLoad('30000'); 
+
+      $this->assertTrue($this->isTextPresent('Mailing is forwarded successfully to 2 email addresses'));
+      $this->open( $this->sboxPath );
+      $this->waitForPageToLoad('30000');
+      $this->webtestLogin();
+
+      $this->open($this->sboxPath . "civicrm/mailing/browse/scheduled?reset=1&scheduled=true");
+      
+      //click report link of created mailing
+      $this->click("xpath=//table//tbody/tr[td[1]/text()='Mailing $mailingName Webtest']/descendant::a[text()='Report']");
+      $this->waitForPageToLoad("30000");
+      
+      // verify successful forwards
+      $this->verifyText("xpath=//table//tr[td/a[text()='Forwards']]/descendant::td[2]", "2");
+
+      // Mailing is forwarded successfully to 2 email addresses.
       //------end delivery verification---------
     
       // //------ check with unsubscribe -------

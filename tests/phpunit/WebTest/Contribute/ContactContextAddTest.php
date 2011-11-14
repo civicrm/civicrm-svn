@@ -35,7 +35,7 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
   }
 
   function testContactContextAdd()
-  {
+  {       
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
       // class attributes.
@@ -53,6 +53,11 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
       // We're using Quick Add block on the main page for this.
       $firstName = substr(sha1(rand()), 0, 7);
       $this->webtestAddContact( $firstName, "Anderson", true );
+      
+      // Get the contact id of the new contact
+      $contactUrl = $this->parseURL( );
+      $cid = $contactUrl['queryString']['cid'];
+      $this->assertType( 'numeric', $cid );
       
       // go to contribution tab and add contribution.
       $this->click("css=li#tab_contribute a");
@@ -88,6 +93,7 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->click("css=div.ac_results-inner li");
 
       //Custom Data
+      $this->waitForElementPresent('CIVICRM_QFID_3_6');
       $this->click('CIVICRM_QFID_3_6');
 
       //Additional Detail section
@@ -144,7 +150,18 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
       foreach ( $verifyData as $label => $value ) {
           $this->verifyText( "xpath=//form[@id='ContributionView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
                              preg_quote( $value ) );   
-      }                          
+      }
+      
+      // check values of contribution record in the DB
+      $viewUrl = $this->parseURL( );
+      $id = $viewUrl['queryString']['id'];
+      $this->assertType( 'numeric', $id );
+      
+      $searchParams  = array( 'id'              => $id );
+      $compareParams = array( 'contact_id'      => $cid,
+                              'total_amount'    => '100.00', );
+      $this->assertDBCompareValues( 'CRM_Contribute_DAO_Contribution', $searchParams, $compareParams );
+
       
       // go to soft creditor contact view page
       $this->click( "xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[16]/td[2]/a[text()='{$softCreditFname} {$softCreditLname}']" );

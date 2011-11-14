@@ -131,7 +131,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         //  create test database
         self::$utils = new Utils( $GLOBALS['mysql_host'],
                                   $GLOBALS['mysql_user'],
-                                  $GLOBALS['mysql_pass'] );        
+                                  $GLOBALS['mysql_pass'] );
 
     }
 
@@ -139,6 +139,10 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         return $this->DBResetRequired; 
     }
 
+    static function getDBName( ) {
+        $dbName = ! empty( $GLOBALS['mysql_db'] ) ? $GLOBALS['mysql_db'] : 'civicrm_tests_dev';
+        return $dbName;
+    }
 
     /**
      *  Create database connection for this instance
@@ -151,6 +155,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     {
         $dbName = self::$_dbName;
         if ( !self::$dbInit ) {
+            $dbName = self::getDBName();
 
             //  install test database
             echo PHP_EOL
@@ -183,9 +188,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         self::$populateOnce = null;
 
+        $dbName = self::getDBName();
         $pdo = self::$utils->pdo;
-        $dbName = self::$_dbName;
-        $tables = $pdo->query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '$dbName'");
+        $tables = $pdo->query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{$dbName}'");
 
         $truncates = array();
         $drops = array();
@@ -197,7 +202,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             }
         }
 
-        $dbName = self::$_dbName;
         $queries = array( "USE {$dbName};",
                           "SET foreign_key_checks = 0",
                           // SQL mode needs to be strict, that's our standard
@@ -336,8 +340,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         self::$utils = new Utils( $GLOBALS['mysql_host'],
                                   $GLOBALS['mysql_user'],
                                   $GLOBALS['mysql_pass'] );        
-
-        $dbName = self::$_dbName;    
+        $dbName = self::getDBName();
         $query = "USE {$dbName};"
             . "SET foreign_key_checks = 1";
         if ( self::$utils->do_query($query) === false ) {
@@ -1846,7 +1849,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
 
         if ( $dropCustomValueTables ) {
-            $dbName = self::$_dbName;
+            $dbName = self::getDBName();
             $query = "
 SELECT TABLE_NAME as tableName
 FROM   INFORMATION_SCHEMA.TABLES

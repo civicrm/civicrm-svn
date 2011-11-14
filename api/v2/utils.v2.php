@@ -506,10 +506,12 @@ function _civicrm_required_formatted_contact(&$params)
 
 /**
  *
- * @param <type> $params
- * @return <type>
+ * @param array $params
+ * @param int   $dedupeRuleGroupID - the dedupe rule ID to use if present
+ *
  */
-function _civicrm_duplicate_formatted_contact(&$params) 
+function _civicrm_duplicate_formatted_contact( &$params,
+                                               $dedupeRuleGroupID = null ) 
 {
     $id = CRM_Utils_Array::value( 'id', $params );
     $externalId = CRM_Utils_Array::value( 'external_identifier', $params );
@@ -532,7 +534,11 @@ function _civicrm_duplicate_formatted_contact(&$params)
     } else {
         require_once 'CRM/Dedupe/Finder.php';
         $dedupeParams = CRM_Dedupe_Finder::formatParams($params, $params['contact_type']);
-        $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type'], 'Strict');
+        $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams,
+                                                $params['contact_type'],
+                                                'Strict',
+                                                array( ),
+                                                $dedupeRuleGroupID );
             
         if ( !empty($ids) ) {
             $ids = implode( ',', $ids );

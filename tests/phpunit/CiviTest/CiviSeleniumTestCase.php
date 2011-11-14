@@ -289,7 +289,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         foreach ( $options as $oIndex => $oValue ) {
             $validateStrings[] = $oValue['label'];
             $validateStrings[] = $oValue['amount'];
-            if ( $oValue['membership_type_id'] ) {
+            if ( CRM_Utils_Array::value( 'membership_type_id', $oValue ) ) {
                 $this->select( "membership_type_id_{$oIndex}", "value={$oValue['membership_type_id']}" );
             }
             $this->type("option_label_{$oIndex}", $oValue['label'] ); 
@@ -671,7 +671,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                 $this->click( 'member_price_set_id' );
                 $this->select( 'member_price_set_id', "value={$memPriceSetId}" );
             } else {
-                //$membershipTypes = array( array( 'id' => 2 ) );
                 if ( $membershipTypes === true ) {
                     $membershipTypes = array( array( 'id' => 2 ) );
                 }
@@ -1133,7 +1132,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             return;
         }
 
-        return CiviDBAssert::assertDBCompareValues( $daoName, $searchParams, $expectedValues );
+        return CiviDBAssert::assertDBCompareValues( $this, $daoName, $searchParams, $expectedValues );
     }
 
 

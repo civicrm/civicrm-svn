@@ -86,6 +86,7 @@ class civicrm_api3  {
     //TODO check if it's a valid entity
     $this->currentEntity = $entity;
     return $this;
+
   }
 
   public function __call($action, $params) {
@@ -141,17 +142,21 @@ class civicrm_api3  {
       $this->lastResult= $this->remoteCall ($entity,$action,$params);
     } else {
       $this->ping ();// necessary only when the caller runs a long time (eg a bot)
-      $this->lastResult= civicrm_api ($entity,$action,$params);
+      // easiest to convert a multi-dimentional array into an object
+      $this->lastResult= json_decode ( json_encode (civicrm_api ($entity,$action,$params) ));
     }
 /*    if ($this->lastResult->count == 1 && count($this->lastResult->values)== 1) {
       $this->lastResult->values = array_shift($this->lastResult->values);
 }
  */
     $this->input=array();//reset the input to be ready for a new call
-    return (!$this->lastResult->is_error);
+    if (property_exists ($this->lastResult,'is_error'))
+      return !$this->lastResult->is_error;
+    return true;// getsingle doesn't have is_error
   }
 
   function ping () {
+return;
     global $_DB_DATAOBJECT;
     foreach ($_DB_DATAOBJECT['CONNECTIONS'] as &$c) {
       if (!$c->connection->ping()) {
@@ -179,10 +184,18 @@ class civicrm_api3  {
 
   public function attr ($name,$value = null) {
     if ($value === null) {
-      return $this->lastResult->$name;
+      if (property_exists ($this->lastResult,$name))
+        return $this->lastResult->$name;
     } else {
       $this->input[$name] = $value;
     }
+  }
+
+  public function is_error() {
+    return (property_exists ($this->lastResult,'is_error') && $this->lastResult->is_error);
+  }
+  public function is_set($name) {
+    return (isset ($this->lastResult->$name));
   }
 
   public function values () {

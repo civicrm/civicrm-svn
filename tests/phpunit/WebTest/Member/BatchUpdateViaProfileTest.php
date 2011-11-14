@@ -144,7 +144,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
         // Verify End date
         $verifyData = array(
                             'Membership Type' => $memTypeParams['membership_type'],
-                            'Status'          => 'Current',
+                            'Status'          => 'Grace',
                             'End date'        => $endDate
                             );
         foreach ( $verifyData as $label => $value ) {
@@ -162,7 +162,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
         // Verify End date
         $verifyData = array(
                             'Membership Type' => $memTypeParams['membership_type'],
-                            'Status'          => 'Grace',
+                            'Status'          => 'Current',
                             'End date'        => $endDate
                             );
         foreach ( $verifyData as $label => $value ) {

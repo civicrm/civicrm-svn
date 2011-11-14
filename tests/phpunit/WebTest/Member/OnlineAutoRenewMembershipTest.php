@@ -153,6 +153,7 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
           $hash = substr(sha1(rand()), 0, 7);
           $rand = 2 * rand(2, 50);
           $processorName = "Webtest Auto Renew AuthNet" . $hash;
+          //$this->webtestAddPaymentProcessor( $processorName, 'AuthNet' );
           
           // -- start updating membership types 
           $this->open($this->sboxPath . "civicrm/admin/member/membershipType?action=update&id=1&reset=1");

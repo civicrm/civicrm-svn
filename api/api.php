@@ -80,7 +80,11 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     if(CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1){
       return 0;
     }
-    return civicrm_api3_create_error( $e->getMessage(),null,$apiRequest['params'] );
+    $err= civicrm_api3_create_error( $e->getMessage(),null,$apiRequest['params'] );
+    if ($apiRequest['params']['debug']) {
+      $err['trace'] = $e->getTraceSafe();
+    }
+    return $err;
   } catch (Exception $e) {
     if(CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1){
       return 0;

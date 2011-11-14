@@ -101,9 +101,16 @@ resolveForeignKeys( $tables, $classNames );
 $tables = orderTables( $tables );
 
 $allDAO = "<?php\n\$dao = array ();";
+$dao = array();
+
 foreach ($tables as $table) {
-   $base  = $table['base']  . $table['objectName'];
-   $allDAO  .= "\n\$dao['".$table['objectName']."'] = '". str_replace( '/', '_', $base ) ."';"; 
+  $base  = $table['base']  . $table['objectName'];
+  if (!array_key_exists($table['objectName'],$dao)) {
+    $dao[$table['objectName']] = str_replace( '/', '_', $base );
+    $allDAO  .= "\n\$dao['".$table['objectName']."'] = '". str_replace( '/', '_', $base ) ."';"; 
+  } else {
+    $allDAO .= "\n//NAMESPACE ERROR: ".$table['objectName']. " already used . ". str_replace( '/', '_', $base ) . " ignored.";
+  }
 //
 }
 

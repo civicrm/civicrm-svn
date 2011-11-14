@@ -465,6 +465,8 @@ class api_v3_ContactTest extends CiviUnitTestCase
    */
   function testCreateIndividualWithContributionDottedSyntax()
   {
+    $description = "test demonstrates the syntax to create 2 chained entities";
+    $subfile = "ChainTwoWebsites";
     $params = array(
                         'first_name'   => 'abc3',
                         'last_name'    => 'xyz3',
@@ -493,12 +495,14 @@ class api_v3_ContactTest extends CiviUnitTestCase
     );
 
     $result =civicrm_api('Contact','create',$params);
-    $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__, $description,$subfile); 
     $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
     . " error message: " . CRM_Utils_Array::value('error_message', $result) );
     $this->assertEquals( 1, $result['id'], "In line " . __LINE__ );
     $this->assertEquals(0,$result['values'][$result['id']]['api.website.create']['is_error'], "In line " . __LINE__);
     $this->assertEquals("http://chained.org",$result['values'][$result['id']]['api.website.create.2']['values'][0]['url'], "In line " . __LINE__);
+    $this->assertEquals("http://civicrm.org",$result['values'][$result['id']]['api.website.create']['values'][0]['url'], "In line " . __LINE__);
+ 
     // delete the contact
     civicrm_api('contact', 'delete' , $result );
   }
@@ -537,14 +541,17 @@ class api_v3_ContactTest extends CiviUnitTestCase
                                 'website_type_id' => 2),
                              )
     );
-
+    $description = "demonstrates creating two websites as an array";
+    $subfile = "ChainTwoWebsitesSyntax2";
     $result =civicrm_api('Contact','create',$params);
-    $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__, $description,$subfile); 
     $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
     . " error message: " . CRM_Utils_Array::value('error_message', $result) );
     $this->assertEquals( 1, $result['id'], "In line " . __LINE__ );
     $this->assertEquals(0,$result['values'][$result['id']]['api.website.create'][0]['is_error'], "In line " . __LINE__);
     $this->assertEquals("http://chained.org",$result['values'][$result['id']]['api.website.create'][1]['values'][0]['url'], "In line " . __LINE__);
+    $this->assertEquals("http://civicrm.org",$result['values'][$result['id']]['api.website.create'][0]['values'][0]['url'], "In line " . __LINE__);
+ 
     // delete the contact
     civicrm_api('contact', 'delete' , $result );
   }

@@ -557,9 +557,8 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad( "30000" );
       // wait for Access Keys div to appear at bottom of page - since this page may take a while
       $this->waitForElementPresent('access');
-      $this->assertTrue( $this->isTextPresent( "Reservation has been added for 2 Contact(s)." ),
-                         "Status message didn't show up after reserving respondents!");
-
+      $this->assertTrue( $this->isTextPresent( "Reservation has been added for 2 Contact(s)." ) );
+                         
       $this->open( $this->sboxPath . "civicrm/report/survey/detail?reset=1" );
       $this->waitForElementPresent( '_qf_SurveyDetails_submit' );
       
@@ -604,7 +603,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->click( "xpath=//table[@id='voterRecords']/tbody//tr[@id='row_{$id1}']/td[4]/input[6]/../label[text()='$label2']" );
       $this->select( "field_{$id1}_result", $optionLabel1 );
       $this->click( "interview_voter_button_{$id1}" );
-
+      sleep(5);
       // Survey Report
       $this->open( $this->sboxPath . "civicrm/report/survey/detail?reset=1" );
       $this->waitForElementPresent( '_qf_SurveyDetails_submit' );

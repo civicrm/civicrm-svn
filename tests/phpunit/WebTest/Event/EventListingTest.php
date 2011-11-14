@@ -16,7 +16,7 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
       $this->open( $this->sboxPath );
       
       // Log in using webtestLogin() method
-      $this->webtestLogin();
+      $this->webtestLogin( true );
       
       //Closed Event
       $eventTitle1 ='My Conference - '.substr(sha1(rand()), 0, 7);
@@ -93,7 +93,7 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad('30000');
       $this->waitForTextPresent("The block settings have been updated.");
   }
-  
+
   function _testCreateEvent( $eventTitle, $startdate, $enddate )
   {
       // Go directly to the URL of the screen that you will be testing (New Event).

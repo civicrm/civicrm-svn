@@ -135,7 +135,6 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
           $hash = substr(sha1(rand()), 0, 7);
           $rand = 2 * rand(2, 50);
           $processorName = "Webtest Auto Renew Google Checkout" . $hash;
-          
           // -- start updating membership types 
           $this->open($this->sboxPath . "civicrm/admin/member/membershipType?action=update&id=1&reset=1");
           $this->waitForPageToLoad("30000");
@@ -147,7 +146,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
           $this->select("duration_unit", "label=year");
           
           $this->click("_qf_MembershipType_upload-bottom");
-          $this->waitForPageToLoad("30000");
+          sleep(5);
           
           $this->open($this->sboxPath . "civicrm/admin/member/membershipType?action=update&id=2&reset=1");
           $this->waitForPageToLoad("30000");
@@ -159,8 +158,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
           $this->select("duration_unit", "label=year");
           
           $this->click("_qf_MembershipType_upload-bottom");
-          $this->waitForPageToLoad("30000");
-          
+          sleep(5);
           
           // create contribution page with randomized title and default params
           $amountSection = false;

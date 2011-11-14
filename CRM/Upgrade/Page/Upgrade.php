@@ -169,6 +169,10 @@ SELECT  count( id ) as statusCount
             //turning some tables to monolingual during 3.4.beta3, CRM-7869
             $upgradeTo   = str_replace( '4.0.', '3.4.', $latestVer  );
             $upgradeFrom = str_replace( '4.0.', '3.4.', $currentVer );
+            
+            // check for changed message templates
+            self::checkMessageTemplate( &$template, &$preUpgradeMessage, $upgradeTo, $upgradeFrom );
+
             if ( $upgrade->multilingual && 
                  version_compare( $upgradeFrom, '3.4.beta3'  ) == -1 &&
                  version_compare( $upgradeTo,   '3.4.beta3'  ) >=  0  ) {
@@ -252,7 +256,7 @@ SELECT  count( id ) as statusCount
                                 // set post-upgrade-message if any
                                 $versionObject->setPostUpgradeMessage( $postUpgradeMessage, $currentVer, $latestVer );
                             }
-                            
+
                             if ( is_callable(array($versionObject, $phpFunctionName)) ) {
                                 $versionObject->$phpFunctionName( $rev );
                             } else {
@@ -272,9 +276,10 @@ SELECT  count( id ) as statusCount
                 $config->cleanupCaches( 1 , false );
             }
         }
-        
+
         $template->assign( 'preUpgradeMessage', $preUpgradeMessage );
         $template->assign( 'message', $postUpgradeMessage );
+
         $content = $template->fetch( 'CRM/common/success.tpl' );
         echo CRM_Utils_System::theme( 'page', $content, true, $this->_print, false, true );
     }
@@ -548,4 +553,67 @@ SELECT  id
             }
         }
     }
+    function checkMessageTemplate( &$template, &$message, $latestVer, $currentVer ) 
+    {
+        if ( version_compare($currentVer, '3.1.alpha1') < 0 ) {
+            return;
+        }
+        
+        $sql =
+            "SELECT orig.workflow_id as workflow_id,
+             orig.msg_title as title
+            FROM civicrm_msg_template diverted JOIN civicrm_msg_template orig ON (
+                diverted.workflow_id = orig.workflow_id AND
+                orig.is_reserved = 1                    AND (
+                    diverted.msg_subject != orig.msg_subject OR
+                    diverted.msg_text    != orig.msg_text    OR
+                    diverted.msg_html    != orig.msg_html
+                )
+            )";
+        
+        $dao =& CRM_Core_DAO::executeQuery($sql);
+        while ($dao->fetch()) {
+            $workflows[$dao->workflow_id] = $dao->title;
+        }
+
+        if( empty( $workflows ) ) {
+            return;
+        }
+
+        $pathName = dirname( dirname( __FILE__ ) );
+        $flag = false;
+        foreach( $workflows as $workflow => $title) {
+            $name = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue',
+                                                 $workflow,
+                                                 'name',
+                                                 'id' ) ;  
+            
+            // check if file exists locally
+            $textFileName = implode( DIRECTORY_SEPARATOR,
+                                 array($pathName,
+                                       "{$latestVer}.msg_template",
+                                       'message_templates',
+                                       "{$name}_text.tpl" ) );
+
+            $htmlFileName = implode( DIRECTORY_SEPARATOR,
+                                     array($pathName,
+                                           "{$latestVer}.msg_template",
+                                           'message_templates',
+                                           "{$name}_html.tpl" ) );
+            
+            if ( file_exists( $textFileName ) || 
+                 file_exists( $htmlFileName ) ) {
+                $flag = true;
+                $html .= "<li>{$title}</li>";
+            }
+            
+        }
+        if ( $flag == true ) {
+            $html = "<ul>". $html."<ul>";
+           
+            $message .= '<br />' . ts("The default copies of the message templates listed below will be updated to handle new features. Your installation has customized versions of these message templates, and you will need to apply the updates manually after running this upgrade. <a href='%1' style='color:white; text-decoration:underline; font-weight:bold;' target='_blank'>Click here</a> for detailed instructions. %2", array( 1 => 'http://wiki.civicrm.org/confluence/display/CRMDOC40/Message+Templates#MessageTemplates-UpgradesandCustomizedSystemWorkflowTemplates', 2 => $html));
+           
+        }
+    }
+
 }

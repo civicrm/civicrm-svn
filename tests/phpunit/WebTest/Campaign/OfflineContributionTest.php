@@ -210,10 +210,7 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         $this->fireEvent("soft_credit_to", "focus");
         $this->waitForElementPresent("css=div.ac_results-inner li");
         $this->click("css=div.ac_results-inner li");
-        
-        //Custom Data
-        $this->click('CIVICRM_QFID_3_6');
-        
+                
         //Additional Detail section
         $this->click("AdditionalDetail");
         $this->waitForElementPresent("thankyou_date");

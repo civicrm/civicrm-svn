@@ -213,7 +213,8 @@ function _civicrm_api3_activity_create_spec(&$params){
 /**
  * Gets a CiviCRM activity according to parameters
  * 
- * @param array $params
+ * @param array  $params       Associative array of property name/value
+ *                             pairs for the activity.
  * @return array
  * 
  * {@getfields activity_get}
