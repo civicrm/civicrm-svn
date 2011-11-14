@@ -137,7 +137,10 @@ class CRM_PCP_Form_PCP extends CRM_Core_Form
     function setDefaultValues()
     {
         $defaults = array();
-        $defaults['page_type'] = !empty($this->_context)? $this->_context : '';
+
+        $pageType = CRM_Utils_Request::retrieve( 'page_type', 'String', $this );
+        $defaults['page_type'] = !empty($pageType)? $pageType : '';
+        
         return $defaults;
     }
  
