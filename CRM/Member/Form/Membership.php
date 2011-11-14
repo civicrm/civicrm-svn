@@ -1057,9 +1057,14 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $params['contribution_source'] = ts('%1 Membership: Offline signup (by %2)',
                                                     array( 1 => $membershipType, 2 => $userName ));
             }
-            if( CRM_Utils_Array::value( 'contribution_status_id',$params ) == 2){
-              $params['is_pay_later'] = 1;
-              $this->assign('is_pay_later',1);
+            
+            if ( !CRM_Utils_Array::value('is_override', $params) &&
+                 CRM_Utils_Array::value('contribution_status_id', $params) == array_search('Pending', CRM_Contribute_PseudoConstant::contributionStatus(null, 'name') ) ) {
+                $allStatus = CRM_Member_PseudoConstant::membershipStatus( );
+                $params['status_id']     = array_search( 'Pending', $allStatus );
+                $params['skipStatusCal'] = true;
+                $params['is_pay_later']  = 1;
+                $this->assign('is_pay_later', 1);
             }
             if ( CRM_Utils_Array::value( 'send_receipt', $formValues ) ) {
                 $params['receipt_date'] = CRM_Utils_Array::value('receive_date',  $params);
