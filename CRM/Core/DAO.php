@@ -1187,7 +1187,7 @@ SELECT contact_id
         // ensure we escape the single characters % and _ which are mysql wild
         // card characters and could come in via sortByCharacter
         // note that mysql does not escape these characters
-        if ( in_array( $string,
+        if ( $string && in_array( $string,
                        array( '%', '_', '%%', '_%' ) ) ) {
             return '\\' . $string;
         }
