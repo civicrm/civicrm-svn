@@ -834,7 +834,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     foreach ($priceFieldIDS as $priceFieldId) {
                         if ( ($id = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_FieldValue', $priceFieldId, 'membership_type_id') ) &&
                              in_array($membershipOrgDetails[$id], $unallowedOrgs) ) {
-                            $errors['_qf_default'] = ts('You already have lifetime membership of this organization.');
+                            $errors['_qf_default'] = ts('You already have a lifetime membership and cannot select a membership with a shorter term.');
                             break;
                         }
                     }
@@ -935,7 +935,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             }
             if( $memTypeDetails ) {
                 if( in_array($membershipOrgDetails[$memTypeDetails['id']], $unallowedOrgs) ) {
-                    $errors['_qf_default'] = ts('You already have lifetime membership of this organization.');
+                    $errors['_qf_default'] = ts('You already have a lifetime membership and cannot select a membership with a shorter term.');
                 }
             }
             if ( $self->_values['amount_block_is_active'] &&
