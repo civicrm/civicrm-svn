@@ -271,7 +271,7 @@ function civicrm_api3_create_success( $values = 1,$params=array(), $entity = nul
 
         if ( $result['count'] == 1 ) {
             list($result['id']) = array_keys($values);
-        } elseif ( ! empty($values['id'] ) ) {
+        } elseif ( ! empty($values['id']) && is_int ($values['id']) ) {
             $result['id']= $values['id'];
         }
     } else {
@@ -1429,6 +1429,7 @@ function _civicrm_api3_generic_replace($entity, $params) {
  * returns fields allowable by api
  */
 function _civicrm_api_get_fields($entity){
+    $unsetIfEmpty= array ('dataPattern','headerPattern','default','export','import');
     $dao = _civicrm_api3_get_DAO ($entity);
     if (empty($dao)) {
         return civicrm_api3_create_error("API for $entity does not exist (join the API team and implement $function" );
@@ -1436,7 +1437,26 @@ function _civicrm_api_get_fields($entity){
     $file = str_replace ('_','/',$dao).".php";
     require_once ($file); 
     $d = new $dao();
-    $fields = $d->fields() + _civicrm_api_get_custom_fields($entity) ;
+    $fields= $d->fields();
+    // replace uniqueNames by the normal names as the key
+    foreach ($fields as $name => &$field) {
+      //getting rid of unused attributes
+      foreach ($unsetIfEmpty as $attr) {
+        if (empty($field[$attr])) { 
+          unset($field[$attr]);
+        }
+      }
+      if ($name == $field['name']) 
+        continue;
+      if (array_key_exists ($field['name'],$fields)) {
+        $field['error']='name conflict';
+        continue;// it should never happen, but better safe than sorry
+      }
+      $fields[$field['name']] = $field;
+      $fields[$field['name']]['uniqueName'] = $name;
+      unset ($fields[$name]);
+    }
+    $fields += _civicrm_api_get_custom_fields($entity) ;
     return $fields;
 }
 
