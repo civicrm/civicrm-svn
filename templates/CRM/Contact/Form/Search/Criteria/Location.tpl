@@ -34,16 +34,22 @@
              {ts}To search by specific location types (e.g. Home, Work...), check one or more boxes above.{/ts}
            </div> 
         </td>
-        <td colspan="2">{$form.street_address.label}<br />
-          <span id="streetAddress">
+        <td colspan="2">
+          <div id="streetAddress">
+            {$form.street_address.label}<br />
             {$form.street_address.html|crmReplace:class:big}
 {if $parseStreetAddress}
             &nbsp;&nbsp;<a href="#" title="{ts}Use Address Elements{/ts}" onClick="processAddressFields( 'addressElements' , 1 );return false;">{ts}Use Address Elements{/ts}</a>
-          </span>
-          <span id="addressElements" class=hiddenElement>
-	    {$form.street_number.html}&nbsp;{$form.street_name.html}&nbsp;{$form.street_unit.html}
-            <a href="#" title="{ts}Use Street Address{/ts}" onClick="processAddressFields( 'streetAddress', 1 );return false;">{ts}Use Street Address{/ts}</a>
-          </span>
+          </div>
+          <div id="addressElements" class=hiddenElement>
+            <table class="crm-block crm-form-block advanced-search-address-elements">
+	        <tr><td>{$form.street_number.label}<br />{$form.street_number.html}<br /><span class="description nowrap">{ts}or ODD / EVEN{/ts}</td>
+	            <td>{$form.street_name.label}<br />{$form.street_name.html}</td>
+	            <td>{$form.street_unit.label}<br />{$form.street_unit.html|crmReplace:class:four}
+                <a href="#" title="{ts}Use Complete Address{/ts}" onClick="processAddressFields( 'streetAddress', 1 );return false;">{ts}Use Street Address{/ts}</a></td>
+            </tr>
+            </table>
+          </div>
 {/if}
             <br />
             {$form.city.label}<br />
@@ -113,22 +119,22 @@
 {literal}
 <script type="text/javascript">
 function processAddressFields( name, loadData ) {
-        if ( name == 'addressElements' ) {
-             if ( loadData ) {
+    if ( name == 'addressElements' ) {
+        if ( loadData ) {
 		  cj( '#street_address' ).val( '' );
-	     }
+	    }
 	     
-             showBlockName = 'addressElements';
-	     hideBlockName = 'streetAddress';
+        showBlockName = 'addressElements';
+	    hideBlockName = 'streetAddress';
 	} else {
-             if ( loadData ) {
-                 cj( '#street_name'   ).val( '' );   
-                 cj( '#street_unit'   ).val( '' );
-                 cj( '#street_number' ).val( '' );
-             }
+        if ( loadData ) {
+             cj( '#street_name'   ).val( '' );   
+             cj( '#street_unit'   ).val( '' );
+             cj( '#street_number' ).val( '' );
+        }
 
-             showBlockName = 'streetAddress';
-             hideBlockName = 'addressElements';
+        showBlockName = 'streetAddress';
+        hideBlockName = 'addressElements';
        }
 
        show( showBlockName );
