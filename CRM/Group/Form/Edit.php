@@ -369,10 +369,15 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
 SELECT count(*)
 FROM   civicrm_group 
 WHERE  title = %1
-AND    id <> %2
 ";
-            $grpCnt = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $title, 'String' ),
-                                                                     2 => array( (int)$self->_id, 'Integer' ) ) );
+            $params = array( 1 => array( $title, 'String' ) );
+
+            if ( $self->_id ) {
+                $query .= "AND id <> %2";
+                $params[2] = array( $self->_id, 'Integer' );
+            }
+
+            $grpCnt = CRM_Core_DAO::singleValueQuery( $query, $params );
             if ( $grpCnt ) {
                 $errors['title'] = ts( 'Group \'%1\' already exists.', array( 1 => $fields['title']) );
             }
