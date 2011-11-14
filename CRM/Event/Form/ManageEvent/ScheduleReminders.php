@@ -111,8 +111,9 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
                     array( 'size'=> 45,'maxlength' => 128 ), true );
         
         $mappingID = 3;
-        list( $sel1, $sel2, $sel3, $sel4, $sel5 ) = CRM_Core_BAO_ActionSchedule::getSelection( $mappingID ) ;
-        
+        $selectionOptions = CRM_Core_BAO_ActionSchedule::getSelection( $mappingID );
+        extract( $selectionOptions );
+
         $entity = $this->add( 'select', 'entity', ts('Recipient(s)'), $sel3[$mappingID][0], true );
         $entity->setMultiple( true ); 
 
@@ -121,8 +122,6 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         $this->_freqUnits = array( 'hour' => 'hour' ) + 
             CRM_Core_OptionGroup::values('recur_frequency_units');
         
-        $mappings = CRM_Core_BAO_ActionSchedule::getMapping(  );
-
         $numericOptions = array( 0 => ts('0'), 1 => ts('1'), 2 => ts('2'), 3 => ts('3'), 4 => ts('4'), 5 => ts('5' ),
                                  6 => ts('6'), 7 => ts('7'), 8 => ts('8'), 9 => ts('9'), 10 => ts('10') );
         //reminder_interval

@@ -71,7 +71,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
 
     static function getSelection( $id = null  ) 
     {
-        $mapping  = self::getMapping( );
+        $mapping  = self::getMapping( $id );
 
         require_once 'CRM/Core/PseudoConstant.php';
         require_once 'CRM/Event/PseudoConstant.php';
@@ -90,6 +90,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
         $recipientMapping = array_combine(array_keys($options), array_keys($options));
 
         if ( !$id ) $id = 1;
+
         foreach ( $mapping as $value ) {
             $entityValue  = CRM_Utils_Array::value('entity_value', $value );
             $entityStatus = CRM_Utils_Array::value('entity_status', $value );
