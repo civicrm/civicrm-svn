@@ -174,10 +174,11 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
         $params = array(
                         'contact_id'           => $this->organizationSponsor ,
                         'contact_type'      => 'Organization',
-                        "custom_{$this->IndividualField[id]}"  => 'Test String',  
+                        "custom_{$this->IndividualField[id]}"  => 'Test String',
+                        'version'		=>$this->_apiversion,
                         );
         
-        $contact =& civicrm_contact_add( $params );
+        $contact =& civicrm_api('contact','create',  $params );
         $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Organization or Mismatched SubType: Sponsor' );
     }
     
@@ -190,11 +191,12 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
                         'contact_id'           => $this->individualStudent ,
                         'contact_type' => 'Individual',
                         "custom_{$this->IndiStudentField[id]}" => 'Test String',
+                        'version'		=>$this->_apiversion,
                         );
         
-        $contact =& civicrm_contact_add( $params );
+        $contact = & civicrm_api('contact','create',  $params );
         
-        $this->assertNotNull( $contact['contact_id'] , 'In line '. __LINE__ );
+        $this->assertNotNull( $contact['id'] , 'In line '. __LINE__ );
         $entityValues =  CRM_Core_BAO_CustomValueTable::getEntityValues( $this->individualStudent);
         $elements["custom_{$this->IndiStudentField[id]}"] = $entityValues["{$this->IndiStudentField[id]}"];
         
@@ -227,9 +229,10 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
                         'contact_id'           => $this->individualParent ,
                         'contact_type' => 'Individual',
                         "custom_{$this->IndiStudentField[id]}" => 'Test String',
+                        'version'		=>$this->_apiversion,
                         );
         
-        $contact =& civicrm_contact_add( $params );
+        $contact =& civicrm_api('contact','create',  $params );
         $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Individual or Mismatched SubType: Parent' );
     }
     

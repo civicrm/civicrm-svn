@@ -747,7 +747,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
                          'return_first_name' => true,
                          'sort'              => 'first_name' );
         $result = civicrm_contact_search( $params );
-        $this->assertEquals( 2, count( $result[17] ) );
+        $this->assertEquals( 3, count( $result[17] ) );
         $this->assertEquals( 17, $result[17]['contact_id'] );
         $this->assertEquals( 'Test', $result[17]['first_name'] );
     }
