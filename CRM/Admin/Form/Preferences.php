@@ -261,6 +261,7 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
                     break;
 
                 case 'text':
+                case 'select':
                     $this->_config->$settingName = CRM_Utils_Array::value( $settingName, $this->_params );
                     break;
 
