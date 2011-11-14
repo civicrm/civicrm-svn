@@ -1585,11 +1585,11 @@ WHERE  id = $cfID
         
         $preProfileID = CRM_Utils_Array::value( 'additional_custom_pre_id', $values );
         $postProfileID = CRM_Utils_Array::value( 'additional_custom_post_id', $values );
-        
         //else build array of Additional participant's information. 
         if ( count($additionalIDs) ) { 
             if ( $preProfileID || $postProfileID ) {
                 $template = CRM_Core_Smarty::singleton( );
+
                 $isCustomProfile = true;
                 $i = 1;
                 $title = $groupTitles = array( );
@@ -1642,13 +1642,12 @@ WHERE  id = $cfID
                     $profiles[] = $profile;
                     $i++;
                 }
+                $customProfile['title'] = $title;
+                $customProfile['profile'] = $profiles;
             }
-            $customProfile['title'] = $title;
-            $customProfile['profile'] = $profiles;
         }
 
         return $customProfile;
-
     }
     
     /* Function to retrieve all events those having location block set.
