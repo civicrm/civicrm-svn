@@ -39,13 +39,13 @@
             {$form.street_address.label}<br />
             {$form.street_address.html|crmReplace:class:big}
 {if $parseStreetAddress}
-            &nbsp;&nbsp;<a href="#" title="{ts}Use Address Elements{/ts}" onClick="processAddressFields( 'addressElements' , 1 );return false;">{ts}Use Address Elements{/ts}</a>
+            <br /><a href="#" title="{ts}Use Address Elements{/ts}" onClick="processAddressFields( 'addressElements' , 1 );return false;">{ts}Use Address Elements{/ts}</a>
           </div>
           <div id="addressElements" class=hiddenElement>
             <table class="crm-block crm-form-block advanced-search-address-elements">
 	        <tr><td>{$form.street_number.label}<br />{$form.street_number.html}<br /><span class="description nowrap">{ts}or ODD / EVEN{/ts}</td>
 	            <td>{$form.street_name.label}<br />{$form.street_name.html}</td>
-	            <td>{$form.street_unit.label}<br />{$form.street_unit.html|crmReplace:class:four}
+	            <td>{$form.street_unit.label}<br />{$form.street_unit.html|crmReplace:class:four}<br />
                 <a href="#" title="{ts}Use Complete Address{/ts}" onClick="processAddressFields( 'streetAddress', 1 );return false;">{ts}Use Street Address{/ts}</a></td>
             </tr>
             </table>
