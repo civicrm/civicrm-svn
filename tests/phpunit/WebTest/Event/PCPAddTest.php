@@ -458,12 +458,12 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
 
   function _testParticipantSearchEventName( $eventName, $lastNameDonar, $firstNameDonar, $firstNameCreator, $lastNameCreator, $amount ) 
   {   
-      $sortName = $firstNameDonar . ', ' .$lastNameDonar;
+      $sortName = $lastNameDonar . ', ' .$firstNameDonar;
       $this->open($this->sboxPath . "civicrm/event/search?reset=1");
       $this->waitForPageToLoad("30000");
       
-      $this->typeKeys("event_name", $eventName);
-      $this->fireEvent("event_name");
+      $this->type("event_name", $eventName);
+      $this->click("event_name");
       $this->waitForElementPresent("css=div.ac_results-inner li");
       $this->click("css=div.ac_results-inner li");        
         
