@@ -157,8 +157,6 @@ class CRM_Utils_Mail_EmailProcessor {
             CRM_Core_Error::fatal( $message );
         }
 
-        civicrm_api_include( 'Mailing', false, 3 );
-        civicrm_api_include( 'MailingGroup', false, 3 );
         require_once 'CRM/Utils/Hook.php';
 
         // process fifty at a time, CRM-4002
