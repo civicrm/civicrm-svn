@@ -580,6 +580,7 @@ SELECT  id
             return;
         }
 
+        $html = null;
         $pathName = dirname( dirname( __FILE__ ) );
         $flag = false;
         foreach( $workflows as $workflow => $title) {
@@ -606,8 +607,8 @@ SELECT  id
                 $flag = true;
                 $html .= "<li>{$title}</li>";
             }
-            
         }
+
         if ( $flag == true ) {
             $html = "<ul>". $html."<ul>";
            
