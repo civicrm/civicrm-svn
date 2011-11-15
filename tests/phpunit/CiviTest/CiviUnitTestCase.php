@@ -1241,7 +1241,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         
         $result = civicrm_api( 'Group','create',$params );
-        return $result['id'];
+        if ( CRM_Utils_Array::value('id', $result ) ) {
+            return $result['id'];
+        } else {
+            return $result['result']->id;
+        }
     }    
     /** 
      * Function to delete a Group
