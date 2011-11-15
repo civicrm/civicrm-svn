@@ -319,7 +319,6 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       $this->assertStringsPresent( $thankStrings );
       
       //pcp creation via different user
-      //$this->waitForElementPresent( "xpath=//[div@class='create_pcp_link-section']/a" );
       $this->open( $this->sboxPath . "civicrm/contribute/campaign?action=add&reset=1&pageId=".$pageId."&component=event" );
       $this->waitForElementPresent( "_qf_PCPAccount_next-bottom" );
       
@@ -328,9 +327,6 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       $this->type( "cms_name",  $cmsUserName);
       $this->click( "checkavailability" );
       $this->waitForTextPresent( 'This username is currently available' ); 
-//       $this->type( 'cms_pass', $cmsUserName );
-//       $this->type( 'cms_confirm_pass', $cmsUserName );
-      // $this->assertTrue( $this->isTextPresent( 'This username is currently available' ), 'Missing text: ' . $text );
       $this->type( "first_name", $firstName );
       $this->type( "last_name", $lastName );  
       $this->type( "email-Primary", $email ); 
@@ -342,10 +338,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       $this->type( "intro_text", "Welcome Text $hash" );
       $this->type( "goal_amount", $contributionAmount );
       $this->click( "_qf_Campaign_upload-bottom" );
-      $this->waitForPageToLoad("30000");
-      
-//       $this->open($this->sboxPath . 'user/logout');
-//       $this->waitForPageToLoad("30000");    
+      $this->waitForPageToLoad("30000"); 
                 
       //admin pcp approval
       //login to check contribution
@@ -369,7 +362,6 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       // Wait for Login button to indicate we've logged out.
       $this->waitForElementPresent( 'edit-submit' );
       
-      //   $this->waitForPageToLoad("30000");
       $this->open( $this->sboxPath . $pcpUrl );
       $this->waitForElementPresent( "xpath=//div[@class='pcp-donate']/a" );
       $this->click( "xpath=//div[@class='pcp-donate']/a" );
@@ -426,7 +418,6 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
           $this->_testParticipantSearchEventName( $eventTitle, $lastNameDonar, $firstNameDonar, $firstName, $lastName, $contributionAmount ); 
       }
       elseif( $campaignType == 'contribute' ){    
-          //$this->_testSearchTest( 'Andrew1577ff6', 'Roger46788c7', 'Ma13da', 'An4508a2b', '600.00' );
           $this->_testSearchTest( $firstNameDonar, $lastNameDonar, $firstName, $lastName, $contributionAmount );
       }
   }
