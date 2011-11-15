@@ -323,11 +323,13 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
      *
      * $access public
      */
-    static function &getContactGroup( $contactId, $status = null,
-                                      $numGroupContact = null,
-                                      $count = false,
+    static function &getContactGroup( $contactId,
+                                      $status           = null,
+                                      $numGroupContact  = null,
+                                      $count            = false,
                                       $ignorePermission = false,
-                                      $onlyPublicGroups = false ) {
+                                      $onlyPublicGroups = false,
+                                      $excludeHidden    = true ) {
         if ( $count ) {
             $select = 'SELECT count(DISTINCT civicrm_group_contact.id)';
         } else {
@@ -343,6 +345,10 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
         }
 
         $where  = " WHERE contact_a.id = %1 AND civicrm_group.is_active = 1 ";
+
+        if ( $excludeHidden ) {
+            $where .= " AND civicrm_group.is_hidden = 0 ";
+        }
 
         $params = array( 1 => array( $contactId, 'Integer' ) );
         if ( ! empty( $status ) ) {
