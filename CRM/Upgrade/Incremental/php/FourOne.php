@@ -55,7 +55,7 @@ class CRM_Upgrade_Incremental_php_FourOne {
         }
     }
 
-    function upgrade_5_1_alpha1( $rev ) {
+    function upgrade_4_1_alpha1( $rev ) {
     	$config = CRM_Core_Config::singleton( );
         if ( in_array( 'CiviCase', $config->enableComponents ) ) {
             require_once 'CRM/Case/BAO/Case.php';
@@ -93,7 +93,8 @@ class CRM_Upgrade_Incremental_php_FourOne {
         CRM_Core_BAO_Navigation::resetNavigation( );
         
         // CRM-8358 - special upgrade warning
-        $template->assign('upgradeWarning', 'WARNING! CiviCRM 4.1 introduces new way of handling cron jobs which is backwards incompatible. <strong>All CiviCRM related cron jobs that you have configured will cease to work and they need to be configured again manually.</strong> Please refer to <a href="http://wiki.civicrm.org/confluence/display/CRMDOC41/Managing+Scheduled+Jobs">appropriate documentation page</a> for detailed instructions.');
+        // DEEPAK - FIX ME WITH NEW MESSAGE SYSTEM
+        // $template->assign('upgradeWarning', 'WARNING! CiviCRM 4.1 introduces new way of handling cron jobs which is backwards incompatible. <strong>All CiviCRM related cron jobs that you have configured will cease to work and they need to be configured again manually.</strong> Please refer to <a href="http://wiki.civicrm.org/confluence/display/CRMDOC41/Managing+Scheduled+Jobs">appropriate documentation page</a> for detailed instructions.');
         
     }
     
@@ -137,8 +138,6 @@ WHERE  domain_id = %1
 
         $domainID    = CRM_Core_Config::domainID( );
         $createdDate = date( 'YmdHis' );
-        $session     = CRM_Core_Session::singleton( );
-        $createdID   = $session->get( 'userID' );
 
         while ( $dao->fetch( ) ) {
             if ( $dao->is_domain ) {
@@ -151,7 +150,7 @@ WHERE  domain_id = %1
                             $value = addslashes($value);
                         }
                         $value =  $value ? "'{$value}'" : 'null';
-                        $values[] =  "('{$groupName}','{$settingName}', {$value}, {$domainID}, null, 1, '{$createdDate}', {$createdID})" ;
+                        $values[] =  " ('{$groupName}','{$settingName}', {$value}, {$domainID}, null, 1, '{$createdDate}', null )";
                     }
                 }
             } else {
@@ -164,7 +163,7 @@ WHERE  domain_id = %1
                             $value = addslashes($value);
                         }
                         $value = $value ? "'{$value}'" : 'null';
-                        $values[] = "('{$groupName}', '{$settingName}', {$value}, {$domainID}, {$dao->contact_id}, 0, '{$createdDate}', {$createdID})" ;
+                        $values[] = " ('{$groupName}', '{$settingName}', {$value}, {$domainID}, {$dao->contact_id}, 0, '{$createdDate}', null )" ;
                     }
                 }
             }
@@ -227,8 +226,6 @@ VALUES
 
         $domainID    = CRM_Core_Config::domainID( );
         $createdDate = date( 'YmdHis' );
-        $session     = CRM_Core_Session::singleton( );
-        $createdID = $contactID = $session->get( 'userID' );
 
         $dbSettings = array( );
         self::retrieveDirectoryAndURLPaths( $dbSettings );
@@ -247,8 +244,7 @@ VALUES
                 }
                 
                 $value = $value ? "'{$value}'" : 'null';
-                $values[] = "('{$groupName}', '{$setting[0]}', {$value}, {$domainID}, {$contactID}, 0, '{$createdDate}', {$createdID})" ;
-        
+                $values[] = "( '{$groupName}', '{$setting[0]}', {$value}, {$domainID}, null, 0, '{$createdDate}', null )" ;
             }
         }
         $sql = "
