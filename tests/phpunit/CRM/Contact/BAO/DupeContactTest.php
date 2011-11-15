@@ -99,76 +99,16 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase
         $dao->is_default   = 1;
         $dao->find( true );
 
-        // ******** threshold = 20 ************ //
-        $dao->threshold = 20;
-        $dao->save();
         $foundDupes = CRM_Dedupe_Finder::dupesInGroup($dao->id, $groupId);
+
         // -------------------------------------------------------------------------
-        // threshold = 20 => (First + Last + Email) Matches ( 1 pair )
+        // default dedupe rule: threshold = 20 => (First + Last + Email) Matches ( 1 pair )
         // --------------------------------------------------------------------------
         // will   - dale - will@example.com
         // will   - dale - will@example.com
         // so 1 pair for - first + last + mail
-        $this->assertEquals( count($foundDupes), 1, 'Check for dupe counts for threshold=20.' );
-
-        // ******** threshold = 17 ************ //
-        $dao->threshold = 17;
-        $dao->save();
-        $foundDupes = CRM_Dedupe_Finder::dupesInGroup($dao->id, $groupId);
-        // -------------------------------------------------------------------------
-        // threshold = 17 => (Last + Email) Matches ( 2 pairs )
-        // --------------------------------------------------------------------------
-        // little - dale - dale@example.com
-        // will   - dale - dale@example.com
-        // will   - dale - will@example.com
-        // will   - dale - will@example.com
-        // so 2 pairs for - last + email
-        $this->assertEquals( count($foundDupes), 2, 'Check for dupe counts for threshold=17.' );
-
-        // ******** threshold = 15 ************ //
-        $dao->threshold = 15;
-        $dao->save();
-        $foundDupes = CRM_Dedupe_Finder::dupesInGroup($dao->id, $groupId);
-        // -------------------------------------------------------------------------
-        // threshold = 15 => (First + Email) OR (Last + Email) Matches ( 3 pairs )
-        // --------------------------------------------------------------------------
-        // robin  - hood - robin@example.com
-        // robin  - dale - robin@example.com
-        // little - dale - dale@example.com
-        // will   - dale - dale@example.com
-        // will   - dale - will@example.com
-        // will   - dale - will@example.com
-        // so 3 pairs for - first / last + email
-        $this->assertEquals( count($foundDupes), 3, 'Check for dupe counts for threshold=15.' );
-
-        // ******** threshold = 10 ************ //
-        $dao->threshold = 10;
-        $dao->save();
-        $foundDupes = CRM_Dedupe_Finder::dupesInGroup($dao->id, $groupId);
-        // ------------------------------------------------------------------------------------------------------
-        // threshold = 10 => (Email) OR (First + Email) OR (Last + Email) OR (First + Last) Matches ( 6 pairs )
-        // ------------------------------------------------------------------------------------------------------
-        // so 6 pairs for - first / last + email
-        $this->assertEquals( count($foundDupes), 6, 'Check for dupe counts for threshold=10.' );
-
-        // ******** threshold = 7 ************ //
-        $dao->threshold = 7;
-        $dao->save();
-        $foundDupes = CRM_Dedupe_Finder::dupesInGroup($dao->id, $groupId);
-        // ----------------------------------------------------------
-        // threshold = 7 => All matches except first name (12 pairs)
-        // ----------------------------------------------------------
-        $this->assertEquals( count($foundDupes), 12, 'Check for dupe counts for threshold=7.' );
-
-        // ******** threshold = 5 ************ //
-        $dao->threshold = 5;
-        $dao->save();
-        $foundDupes = CRM_Dedupe_Finder::dupesInGroup($dao->id, $groupId);
-        // ----------------------------------------------------------
-        // threshold = 5 => All matches except first name (13 pairs)
-        // ----------------------------------------------------------
-        $this->assertEquals( count($foundDupes), 13, 'Check for dupe counts for threshold=5.' );
-
+        $this->assertEquals( count($foundDupes), 1, 'Check Individual-Fuzzy dupe rule for dupesInGroup().' );
+  
         // delete all created contacts
         foreach ( $contactIds as $contactId ) {
             Contact::delete( $contactId );
@@ -249,58 +189,14 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase
         $dao->is_default   = 1;
         $dao->find( true );
 
-        // ******** threshold = 20 ************ //
-        $dao->threshold = 20;
-        $dao->save();
         $fields = array( 'first_name' => 'robin',
                          'last_name'  => 'hood', 
                          'email'      => 'hood@example.com' );
         $dedupeParams = CRM_Dedupe_Finder::formatParams($fields, 'Individual');
         $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual', 'Fuzzy' );
-        // threshold 20 can only find full match
-        $this->assertEquals( count($ids), 1, 'Check for dupe counts for threshold=20.' );
 
-        // ******** threshold = 17 ************ //
-        $dao->threshold = 17;
-        $dao->save();
-        $fields = array( 'last_name'  => 'dale', 
-                         'email'      => 'dale@example.com' );
-        $dedupeParams = CRM_Dedupe_Finder::formatParams($fields, 'Individual');
-        $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual', 'Fuzzy' );
-        $this->assertEquals( count($ids), 2, 'Check for dupe counts for threshold=17.' );
-
-        // ******** threshold = 15 ************ //
-        $dao->threshold = 15;
-        $dao->save();
-        $fields = array( 'first_name' => 'will', 
-                         'email'      => 'will@example.com' );
-        $dedupeParams = CRM_Dedupe_Finder::formatParams($fields, 'Individual');
-        $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual', 'Fuzzy' );
-        $this->assertEquals( count($ids), 2, 'Check for dupe counts for threshold=15.' );
-
-        // ******** threshold = 12 ************ //
-        $dao->threshold = 12;
-        $dao->save();
-        $fields = array( 'email'  => 'dale@example.com' );
-        $dedupeParams = CRM_Dedupe_Finder::formatParams($fields, 'Individual');
-        $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual', 'Fuzzy' );
-        $this->assertEquals( count($ids), 0, 'Check for dupe counts for threshold=12.' );
-
-        // ******** threshold = 10 ************ //
-        $dao->threshold = 10;
-        $dao->save();
-        $fields = array( 'email'  => 'dale@example.com' );
-        $dedupeParams = CRM_Dedupe_Finder::formatParams($fields, 'Individual');
-        $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual', 'Fuzzy' );
-        $this->assertEquals( count($ids), 2, 'Check for dupe counts for threshold=10.' );
-
-        // ******** threshold = 7 ************ //
-        $dao->threshold = 7;
-        $dao->save();
-        $fields = array( 'last_name'  => 'dale' );
-        $dedupeParams = CRM_Dedupe_Finder::formatParams($fields, 'Individual');
-        $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual', 'Fuzzy' );
-        $this->assertEquals( count($ids), 5, 'Check for dupe counts for threshold=7.' );
+        // Check with default Individual-Fizzy rule
+        $this->assertEquals( count($ids), 1, 'Check Individual-Fizzy rule for dupesByParams().' );
 
         // delete all created contacts
         foreach ( $contactIds as $contactId ) {
