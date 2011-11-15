@@ -263,27 +263,18 @@ function civicrm_api3_activity_get( $params ) {
 /**
  * Delete a specified Activity.
  * @param array $params array holding 'id' of activity to be deleted
- *
+ * {@getfields activity_delete}
  * @return void|CRM_Core_Error  An error if 'activityName or ID' is invalid,
  *                         permissions are insufficient, etc. or CiviCRM success array
  *
- * @access public
  *
- * {@getfields activity_delete}
- * @example ActivityDelete.php
- * {@example ActivityDelete.php 0}
+ * 
+ * @example ActivityDelete.php Standard Delete Example
+ * 
  * 
  */
 function civicrm_api3_activity_delete( $params )
 {
-        $errors = array( );
-
-        //check for various error and required conditions
-        $errors = _civicrm_api3_activity_check_params( $params ) ;
-
-        if ( !empty( $errors ) ) {
-            return $errors;
-        }
 
         if ( CRM_Activity_BAO_Activity::deleteActivity( $params ) ) {
             return civicrm_api3_create_success(1,$params,'activity','delete' );
