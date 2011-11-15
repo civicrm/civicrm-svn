@@ -3701,13 +3701,16 @@ civicrm_relationship.start_date > {$today}
                 // seems like the explode wont work nicely in many a case
                 // if we are the orderBy variable having the "ORDER BY" string
                 if ( $orderBy ) {
-                    $fieldOrder = explode( ' ', $orderBy );
+                    $fieldStr = trim( str_replace( 'ORDER BY', '', $orderBy ) );
+                    $fieldOrder = explode( ' ', $fieldStr );
                     $field = $fieldOrder[0];
-                    $dir   = CRM_Utils_Array::value( 1, $fieldOrder );
                     
                     if ( $field ) {
                         switch ( $field ) {
                         case 'sort_name':
+                        case 'id':
+                        case 'contact_a.sort_name':
+                        case 'contact_a.id':
                             break;
 
                         case 'city':
