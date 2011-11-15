@@ -626,13 +626,13 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
         
         require_once 'CRM/Member/DAO/MembershipType.php';
         $membershipType = new CRM_Member_DAO_MembershipType( );
-        $membershipType->find();
         
         if ( $membershiptypeid ) {
             $membershipType->id = $membershipTypeId;
         }
+        $membershipType->find( );
         
-        while($membershipType->fetch()) {
+        while ($membershipType->fetch( ) ) {
             $allmembershipTypes[$membershipType->id] = $membershipType->member_of_contact_id;
         }
         return $allmembershipTypes;

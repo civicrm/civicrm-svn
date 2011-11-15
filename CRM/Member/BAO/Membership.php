@@ -2534,7 +2534,7 @@ Message: {$msgTpl[$memType->renewal_msg_id]['details']}
     
     static function getAllContactMembership( $contactID, $isTest = false, $onlyLifeTime = false ) {
         $contactMembershipType = array();
-        if( !$contactID ) {
+        if ( !$contactID ) {
             return $contactMembershipType;
         }
 
@@ -2554,15 +2554,13 @@ Message: {$msgTpl[$memType->renewal_msg_id]['details']}
             $dao->whereAdd( 'end_date IS NULL' );
         }
         
-        $dao->find();
-        while( $dao->fetch( ) ) {
+        $dao->find( );
+        while ( $dao->fetch( ) ) {
             $membership = array( );
             CRM_Core_DAO::storeValues( $dao, $membership );
             $contactMembershipType[$dao->membership_type_id] = $membership;
         }
         return $contactMembershipType;
-        
-        
     }
     
 }

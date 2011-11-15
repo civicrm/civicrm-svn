@@ -726,9 +726,11 @@ WHERE  id = %1";
                  !$validFieldsOnly ) {
                 $options = CRM_Utils_Array::value( 'options', $field );
                 $checklifetime = self::checkCurrentMembership( &$options, $userid );
-                if( $checklifetime ) {
-                    $form->assign( 'ispricelifetime', true );
-                } 
+                if ( $className == 'CRM_Contribute_Form_Contribution_Main' && $component = 'membership' ) {
+                    if ( $checklifetime ) {
+                        $form->assign( 'ispricelifetime', true );
+                    } 
+                }
                 if ( !is_array( $options ) ) continue; 
                 CRM_Price_BAO_Field::addQuickFormElement( $form, 
                                                           'price_'.$field['id'], 
@@ -755,18 +757,18 @@ WHERE  id = %1";
         $checklifetime = false;
         require_once 'CRM/Member/BAO/Membership.php';
         foreach( $options as $key => $value ) {
-            if ( CRM_Utils_Array::value('membership_type_id', $value) ) {
+            if ( CRM_Utils_Array::value( 'membership_type_id', $value ) ) {
                 if ( !isset($_contact_memberships[$userid][$value['membership_type_id']]) ) {
                     $_contact_memberships[$userid][$value['membership_type_id']] = CRM_Member_BAO_Membership::getContactMembership( $userid, $value['membership_type_id'],false );
                 }
                 $currentMembership = $_contact_memberships[$userid][$value['membership_type_id']];
-                if ( !empty($currentMembership) && !CRM_Utils_Array::value('end_date', $currentMembership ) ) {
+                if ( !empty($currentMembership ) && !CRM_Utils_Array::value( 'end_date', $currentMembership ) ) {
                     unset($options[$key]);
                     $checklifetime = true;
                 } 
             }
         }      
-        if( $checklifetime ) {
+        if ( $checklifetime ) {
             return true;   
         } else {
             return false;

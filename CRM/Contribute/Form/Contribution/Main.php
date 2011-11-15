@@ -765,17 +765,17 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $errors = array( );
         $amount = self::computeAmount( $fields, $self );
 
-        if ( (CRM_Utils_Array::value('selectMembership', $fields) && 
+        if ( ( CRM_Utils_Array::value( 'selectMembership', $fields ) && 
               $fields['selectMembership'] != 'no_thanks') || 
-             (CRM_Utils_Array::value( 'priceSetId', $fields ) && 
-              $self->_useForMember) ) {
+             ( CRM_Utils_Array::value( 'priceSetId', $fields ) && 
+              $self->_useForMember ) ) {
             $lifeMember = CRM_Member_BAO_Membership::getAllContactMembership( $self->_userID , false, true );
             
             require_once 'CRM/Member/BAO/MembershipType.php';
             $membershipOrgDetails = CRM_Member_BAO_MembershipType::getMembershipTypeOrganization( );
             
             $unallowedOrgs = array( ); 
-            foreach ( array_keys($lifeMember) as $memTypeId ) {
+            foreach ( array_keys($lifeMember ) as $memTypeId ) {
                 $unallowedOrgs[] = $membershipOrgDetails[$memTypeId];
             }
         }
@@ -830,9 +830,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     }
                 }
 
-                if ( !empty($lifeMember) ) {
-                    foreach ($priceFieldIDS as $priceFieldId) {
-                        if ( ($id = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_FieldValue', $priceFieldId, 'membership_type_id') ) &&
+                if ( !empty($lifeMember ) ) {
+                    foreach ( $priceFieldIDS as $priceFieldId ) {
+                        if ( ( $id = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_FieldValue', $priceFieldId, 'membership_type_id' ) ) &&
                              in_array($membershipOrgDetails[$id], $unallowedOrgs) ) {
                             $errors['_qf_default'] = ts('You already have a lifetime membership and cannot select a membership with a shorter term.');
                             break;
@@ -933,8 +933,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 $memTypeDetails = CRM_Member_BAO_Membership::buildMembershipTypeValues( $self,
                                                                                         $fields['selectMembership'] );
             }
-            if( $memTypeDetails ) {
-                if( in_array($membershipOrgDetails[$memTypeDetails['id']], $unallowedOrgs) ) {
+            if ( $memTypeDetails ) {
+                if ( in_array($membershipOrgDetails[$memTypeDetails['id']], $unallowedOrgs) ) {
                     $errors['_qf_default'] = ts('You already have a lifetime membership and cannot select a membership with a shorter term.');
                 }
             }
