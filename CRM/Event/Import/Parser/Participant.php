@@ -275,7 +275,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
      */
     function import( $onDuplicate, &$values )
     {
-        civicrm_api_include( 'Participant', false, 3 );
+        require_once 'api/v3/Participant.php';
         // first make sure this is a valid line
         $response = $this->summary( $values );
         if ( $response != CRM_Event_Import_Parser::VALID ) {
@@ -375,6 +375,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
                                  'userId'      => $session->get('userID')
                                  );
                     $participantValues = array( );
+                    //@todo calling api functions directly is not supported
                     $newParticipant = _civicrm_api3_participant_check_params( $formatted, $participantValues, false );
                     if ( $newParticipant['error_message'] ) {
                         array_unshift( $values, $newParticipant['error_message'] ); 
