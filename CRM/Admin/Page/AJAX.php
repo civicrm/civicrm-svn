@@ -380,10 +380,11 @@ LIMIT $limit";
         }
 
         require_once 'CRM/Core/BAO/ActionSchedule.php';
-        list( $sel1, $sel2 ) = CRM_Core_BAO_ActionSchedule::getSelection1( $mappingID );
+        $selectionOptions = CRM_Core_BAO_ActionSchedule::getSelection1( $mappingID );
+        extract($selectionOptions);
 
         $elements = array( );
-        foreach ( $sel1 as $id => $name ) {
+        foreach ( $sel4 as $id => $name ) {
             $elements[] = array( 'name'  => $name,
                                  'value' => $id );
         }
