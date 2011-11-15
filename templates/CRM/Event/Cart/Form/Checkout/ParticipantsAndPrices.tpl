@@ -4,6 +4,7 @@
 
 {foreach from=$events_in_carts key=index item=event_in_cart}
  {if !$event_in_cart.main_conference_event_id}
+  {assign var=event_id value=$event_in_cart->event_id}
   <h3 class="event-title">
     {$event_in_cart->event->title} ({$event_in_cart->event->start_date|date_format:"%m/%d/%Y %l:%M%p"})
   </h3>
@@ -12,11 +13,10 @@
       {foreach from=$event_in_cart->participants item=participant}
 	{include file="CRM/Event/Cart/Form/Checkout/Participant.tpl"}
       {/foreach}
-      <a class="link-add" href="#" onclick="add_participant({$event_in_cart->event_cart->id}, {$event_in_cart->event_id});">Add Another Participant</a>
+      <a class="link-add" href="#" onclick="add_participant({$event_in_cart->event_cart->id}, {$event_in_cart->event_id}); return false;">Add Another Participant</a>
     </div>
     {if $event_in_cart->event->is_monetary }
       <div class="price_choices crm-section">
-	{assign var=event_id value=$event_in_cart->event_id}
 	{foreach from=$price_fields_for_event.$event_id key=price_index item=price_field_name}
 	  <div class="label">
 	    {$form.$price_field_name.label}
@@ -66,10 +66,14 @@ function add_participant( cart_id, event_id ) {
   );
 }
 
-function delete_participant( event_id, participant_id ) {
+function delete_participant( event_id, participant_id )
+{
   cj('#event_' + event_id + '_participant_' + participant_id).remove();
+  cj.get("/civicrm/ajax/event/remove_participant_from_cart?&id=" + participant_id);
 }
 
+
+//XXX missing
 cj('#ajax_error').ajaxError(
   function( e, xrh, settings, exception ) {
     cj(this).append('<div class="error">Error adding a participant at ' + settings.url + ': ' + exception);

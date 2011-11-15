@@ -19,10 +19,11 @@ class CRM_Event_Cart_Page_CheckoutAJAX
     ) );
     $participant->save( );
 
+    require_once 'CRM/Event/Cart/Form/MerParticipant.php';
     require_once 'CRM/Core/Form.php';
-    $form = new CRM_Core_Form( );
-    $participant_form = $participant->get_form();
-    $participant_form->load_fields($form);
+    $form = new CRM_Core_Form();
+    $pform = new CRM_Event_Cart_Form_MerParticipant($participant);
+    $pform->buildQuickForm($form);
     $renderer = $form->getRenderer();
     $form->accept($renderer);
     $template = CRM_Core_Smarty::singleton ();
@@ -32,5 +33,13 @@ class CRM_Event_Cart_Page_CheckoutAJAX
     echo $output;
     CRM_Utils_System::civiExit( );
   }
-}
 
+  function remove_participant_from_cart( )
+  {
+    require_once 'CRM/Event/Cart/BAO/MerParticipant.php';
+    $participant = CRM_Event_Cart_BAO_MerParticipant::get_by_id($_GET['id']);
+    $participant->delete();
+
+    CRM_Utils_System::civiExit( );
+  }
+}

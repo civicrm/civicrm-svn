@@ -4,7 +4,7 @@ require_once 'CRM/Core/DAO/FinancialTrxn.php';
 require_once 'CRM/Contact/BAO/Contact.php';
 require_once 'CRM/Event/BAO/Participant.php';
 
-class CRM_Event_Cart_Form_Checkout_ThankYou extends CRM_Event_Cart_Form_Checkout
+class CRM_Event_Cart_Form_Checkout_ThankYou extends CRM_Event_Cart_Form_Cart
 {
   public $line_items = null;
   public $sub_total = 0;

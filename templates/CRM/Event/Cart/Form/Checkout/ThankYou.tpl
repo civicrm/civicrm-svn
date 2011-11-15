@@ -57,9 +57,10 @@
     <tbody>
       {foreach from=$line_items item=line_item}
       <tr class="event-line-item">
-		<td class="event-title">
-		  {$line_item.event->title} ({$line_item.event->start_date|date_format:"%D"})<br />
+		<td class="event-info">
+		  <div class="event-title"><strong>{$line_item.event->title}</strong></div>
 		  {if $line_item.event->is_show_location}
+		    <div class="event-location">
 			{if $line_item.location.address.1.name}
 			  {$line_item.location.address.1.name}
 			{/if}
@@ -75,9 +76,12 @@
 			{if $line_item.location.address.1.city}
 			  {$line_item.location.address.1.city} {$line_item.location.address.1.postal_code}
 			{/if}
-		  {/if}{*End of isShowLocation condition*}<br /><br />
-		  {$line_item.event->start_date|date_format:"%D %I:%M %p"} -
-		  {$line_item.event->end_date|date_format:"%I:%M %p"}
+		    </div>
+		  {/if}{*End of isShowLocation condition*}
+		  <div class="event-data">
+		    {$line_item.event->start_date|date_format:"%D %I:%M %p"} -
+		    {$line_item.event->end_date|date_format:"%I:%M %p"}
+		  </div>
 		</td>
 		<td class="participants-column">
 		  {$line_item.num_participants}<br />

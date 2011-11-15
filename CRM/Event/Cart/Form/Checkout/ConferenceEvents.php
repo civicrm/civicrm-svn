@@ -1,6 +1,6 @@
 <?php
 
-class CRM_Event_Cart_Form_Checkout_ConferenceEvents extends CRM_Event_Cart_Form_Checkout
+class CRM_Event_Cart_Form_Checkout_ConferenceEvents extends CRM_Event_Cart_Form_Cart
 {
   public $conference_event = null;
   public $events_by_slot = array();
@@ -58,7 +58,7 @@ EOS;
 	$slot_fields = array( );
 	$session_options = array( );
 	$defaults = array( );
-	$previous_event_choices = $this->cart->get_events_by_contact_id($this->contact_id);
+	$previous_event_choices = $this->cart->get_subparticipants($this->main_participant);
 	foreach ( $this->events_by_slot as $slot_name => $events ) {
 	  $slot_index++;
 	  $slot_buttons = array( );
@@ -78,7 +78,7 @@ EOS;
 		'event_id' => $event->id
 	    );
 	    foreach ( $previous_event_choices as $choice ) {
-		if ($choice->id == $event->id) {
+		if ($choice->event_id == $event->id) {
 		    $defaults[$group_name] = $event->id;
 		}
 	    }
@@ -139,6 +139,7 @@ EOS;
 	  $values['event_id'] = $event_in_cart->event_id;
 	  require_once 'CRM/Event/Cart/BAO/MerParticipant.php';
 	  $participant = CRM_Event_Cart_BAO_MerParticipant::create( $values );
+          $participant->save();
           $event_in_cart->add_participant( $participant );
 	}
 	$this->cart->save( );

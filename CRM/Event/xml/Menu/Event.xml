@@ -294,6 +294,11 @@
     <access_callback>1</access_callback>
   </item>
   <item>
+    <path>civicrm/ajax/event/remove_participant_from_cart</path>
+    <page_callback>CRM_Event_Cart_Page_CheckoutAJAX::remove_participant_from_cart</page_callback>
+    <access_callback>1</access_callback>
+  </item>
+  <item>
     <path>civicrm/event/add_to_cart</path>
     <title>Add Event To Cart</title>
     <page_callback>CRM_Event_Cart_Page_AddToCart</page_callback>

@@ -10,7 +10,6 @@ class CRM_Event_Cart_Page_ViewCart extends CRM_Core_Page
     $cart->load_associations( );
     $this->assign_by_ref( 'events_in_carts', $cart->get_main_events_in_carts() );
     $this->assign( 'events_count', count($cart->get_main_events_in_carts()) );
-    $this->assign( 'checkout_url', CRM_Utils_System::url('civicrm/event/cart_checkout', 'reset=1', true, null, true, true ) );
     return parent::run();
   }
 }

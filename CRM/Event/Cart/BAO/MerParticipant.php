@@ -14,6 +14,10 @@ class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant
     parent::__construct();
     $a = (array)$participant;
     $this->copyValues($a);
+
+    $this->email = CRM_Utils_Array::value('email', $participant);
+    $this->first_name = CRM_Utils_Array::value('first_name', $participant);
+    $this->last_name = CRM_Utils_Array::value('last_name', $participant);
   }
 
   public static function create( $params )
@@ -38,10 +42,6 @@ class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant
 	}
 
 	$mer_participant = new CRM_Event_Cart_BAO_MerParticipant($participant);
-        //XXX okay this is a problem, we are trying to avoid creating a contact before the participant has confirmed.
-        $mer_participant->email = CRM_Utils_Array::value('email', $params);
-        $mer_participant->first_name = CRM_Utils_Array::value('first_name', $params);
-        $mer_participant->last_name = CRM_Utils_Array::value('last_name', $params);
 
         return $mer_participant;
   }
@@ -85,33 +85,25 @@ class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant
         return $result;
   }
 
-
-  function load_associations( )
+  public static function get_by_id($id)
   {
-      //XXX
-      $this->load_temporary_contact();
-      require_once('CRM/Event/Cart/Form/Cart.php');
-      if ($this->contact_id && empty($this->email) && !CRM_Event_Cart_Form_Cart::is_administrator())
-      {
-	  require_once 'CRM/Contact/BAO/Contact.php';
-	  $defaults = array( );
-	  $params = array( 'id' => $this->contact_id );
-	  $contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults );
-	  $this->email = self::primary_email_from_contact( $contact );
-	  $this->first_name = $contact->first_name;
-	  $this->last_name = $contact->last_name;
-      }
+    $results = self::find_all_by_params(array('id' => $id));
+    return array_pop($results);
   }
 
-  static function primary_email_from_contact( $contact )
+  function load_associations()
   {
-	foreach ( $contact->email as $email ) {
-	  if ( $email['is_primary'] ) {
-		return $email['email'];
-	  }
-	}
+      $this->load_temporary_name();
+  }
 
-	return null;
+  function get_participant_index( )
+  {
+    if (!$this->cart) {
+        $this->cart = CRM_Event_Cart_BAO_Cart::find_by_id($this->cart_id);
+        $this->cart->load_associations();
+    }
+    $index = $this->cart->get_participant_index_from_id($this->id);
+    return $index + 1;
   }
 
   static function billing_address_from_contact( $contact )
@@ -125,31 +117,20 @@ class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant
         return null;
   }
 
-  function custom_data_assign( $custom_id, $value )
-  {
-    $custom_params = array
-    (
-      'entityID' => $this->id,
-      'custom_'.$custom_id => $value,
-    );
-    require_once 'CRM/Core/BAO/CustomValueTable.php';
-    CRM_Core_BAO_CustomValueTable::setValues( $custom_params );
-  }
-
   function get_form()
   {
     require_once('CRM/Event/Cart/Form/MerParticipant.php');
     return new CRM_Event_Cart_Form_MerParticipant($this);
   }
 
-//TODO figure out a solution for provisional contacts
-  function store_temporary_contact()
+//TODO figure out a better solution
+  function store_temporary_name()
   {
     $session = CRM_Core_Session::singleton( );
     $cart_contacts = $session->get('cart_contacts');
     if (!isset($cart_contacts)) $cart_contacts = array();
 
-    $cart_contacts[$this->id] = array(
+    $cart_contacts[$this->contact_id] = array(
         'email' => $this->email,
         'first_name' => $this->first_name,
         'last_name' => $this->last_name,
@@ -157,13 +138,13 @@ class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant
     $session->set('cart_contacts', $cart_contacts);
   }
 
-  function load_temporary_contact()
+  function load_temporary_name()
   {
     $session = CRM_Core_Session::singleton( );
     $cart_contacts = $session->get('cart_contacts');
-    if (isset($cart_contacts) && isset($cart_contacts[$this->id]))
+    if (isset($cart_contacts) && isset($cart_contacts[$this->contact_id]))
     {
-      $saved = $cart_contacts[$this->id];
+      $saved = $cart_contacts[$this->contact_id];
       $this->email = $saved['email'];
       $this->first_name = $saved['first_name'];
       $this->last_name = $saved['last_name'];

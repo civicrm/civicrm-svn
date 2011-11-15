@@ -3,7 +3,7 @@
 require_once 'CRM/Core/Form.php';
 require_once 'CRM/Event/Cart/BAO/Cart.php';
 
-class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Checkout
+class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 {
   public $contribution_type_id;
   public $description;
@@ -19,14 +19,6 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Checkout
   {
 	require_once 'CRM/Core/Transaction.php';
 	$transaction = new CRM_Core_Transaction( );
-
-	require_once 'CRM/Contact/BAO/Contact.php';
-	$contact = CRM_Contact_BAO_Contact::matchContactOnEmail( $participant->email );
-	if ($contact == null)
-	{
-	  $contact = $this->createNewContact( $participant );
-	}
-	$participant->contact_id = $contact->contact_id;
 
 	// handle register date CRM-4320
 	$registerDate = date( 'YmdHis' );
@@ -148,14 +140,16 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Checkout
 	  'type' => 'next',
 	);
 
-  	if (self::is_administrator() && $this->payment_required) {
+  	if (self::is_administrator()) {
 		$this->add('text', 'billing_contact_email', 'Billing Email','', true );
   	}
 	$this->addButtons( $buttons );
 
 	$this->addFormRule( array( 'CRM_Event_Cart_Form_Checkout_Payment', 'formRule' ), $this );
 
-        $this->buildPaymentFields( );
+        if ($this->payment_required) {
+          $this->buildPaymentFields( );
+        }
   }
   
   function process_event_line_item(&$event_in_cart, $class = null)
@@ -184,7 +178,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Checkout
             $amount_level = $event_price_values['amount_level'];
       }
       
-      // iterate over each paticipant in event
+      // iterate over each participant in event
       foreach ($event_in_cart->participants as &$participant) {
             $participant->cost = $cost;
             $participant->fee_level = $amount_level;
@@ -215,36 +209,6 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Checkout
       );
       
       $this->sub_total += $amount;
-  }
-
-  function createNewContact( $mer_participant )
-  {
-	require_once 'CRM/Contact/BAO/Group.php';
-
-	$params = array( 'name' => 'RegisteredByOther' );
-	$values = array( );
-	$group = CRM_Contact_BAO_Group::retrieve( $params, $values );
-	$add_to_groups = array( );
-	if ( $group != null ) {
-	  $add_to_groups[] = $group->id;
-	}
-
-	$defaults = array( );
-	// add the employer id of the signed in user  //???
-	$params = array( );
-	$params = array( 'id' => $this->getContactID() );
-	$registering_contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults );
-	$params = array( );
-	if ($registering_contact->employer_id) {
-	  $params['current_employer_id'] = $registering_contact->employer_id;
-	}
-	$params['email-Primary'] = $mer_participant->email;
-	$params['first_name'] = $mer_participant->first_name;
-	$params['last_name'] = $mer_participant->last_name;
-	$fields = array( );
-	$contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, null, $add_to_groups );
-	$contact = CRM_Contact_BAO_Contact::matchContactOnEmail( $mer_participant->email );
-	return $contact;
   }
 
   function getDefaultFrom( )
@@ -373,7 +337,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Checkout
 		'name' => $contact_details[0],
 		'trxn' => $trxn,
 	  ),
-	  'valueName' => 'participant_confirm',
+	  'valueName' => 'event_registration_receipt',
 	);
 	$template_params_to_copy = array
 	(
@@ -458,24 +422,24 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Checkout
 	  $event_titles[] = $event_in_cart->event->title;
         }
 	$this->description = "Online payment for " . implode( ", ", $event_titles ) . ".";
-        if (self::is_administrator()) {
-            $this->description .= " (by administrator)";
+        if (self::is_administrator()) { $this->description .= " (by administrator)";
         }
 
 	$transaction = new CRM_Core_Transaction( );
 	$trxn = null;
 	$params = $this->_submitValues;
 	$contribution_statuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
-	if ( $params['billing_contact_email'] ) {
+	if (self::is_administrator()) {
 	  $contact_details = CRM_Contact_BAO_Contact::matchContactOnEmail( $params['billing_contact_email'] );
           if ($contact_details == null)
           {
-            $payer = (object) array('email' => $params['billing_contact_email']);
-            $contact_details = $this->createNewContact($payer);
+            array('email-Primary' => $params['billing_contact_email']);
+            CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, null, $add_to_groups );
+            $contact_details = CRM_Contact_BAO_Contact::matchContactOnEmail( $params['billing_contact_email'] );
           }
 	  $this->payer_contact_id = $contact_details->contact_id;
 	} else {
-	  $this->payer_contact_id = parent::getContactID( );
+	  $this->payer_contact_id = self::getContactID( );
 	}
 	$now = date( 'YmdHis' );
 	$params['invoiceID'] = md5(uniqid(rand(), true));
@@ -622,7 +586,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Checkout
 	$defaults = array( );
 	$defaults = parent::setDefaultValues();
 
-        $params = array( 'id' => parent::getContactID() );
+        $params = array( 'id' => self::getContactID() );
         $contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults );
 
 	$billing_address = CRM_Event_Cart_BAO_MerParticipant::billing_address_from_contact($contact);

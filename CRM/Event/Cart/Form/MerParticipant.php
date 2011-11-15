@@ -1,80 +1,64 @@
 <?php
-class CRM_Event_Cart_Form_MerParticipant
+class CRM_Event_Cart_Form_MerParticipant extends CRM_Core_Form
 {
   public $participant = null;
 
-  public $input_fields = array( );
-
   function __construct($participant)
   {
+    parent::__construct();
     //XXX
     $this->participant = $participant;
   }
 
-  function get_fields()
+  function buildQuickForm(&$form)
   {
-        $this->input_fields = array();
+    $textarea_size = array('size' => 30, 'maxlength' => 60);
+    $form->add('text', $this->email_field_name(), ts('Email Address'), $textarea_size, true);
+    $form->add('text', $this->html_field_name('first_name'), ts('First Name'), $textarea_size, true);
+    $form->add('text', $this->html_field_name('last_name'), ts('Last Name'), $textarea_size, true);
 
-	$this->input_fields[] = array(
-            'html_type' => 'text',
-            'name' => $this->email_field_name(),
-            'label' => ts('Email Address'),
-            'required' => true,
-        );
-	$this->input_fields[] = array(
-            'html_type' => 'text',
-            'name' => $this->html_field_name( 'first_name' ),
-            'label' => ts('First Name'),
-            'required' => true,
-        );
-	$this->input_fields[] = array(
-            'html_type' => 'text',
-            'name' => $this->html_field_name( 'last_name' ),
-            'label' => ts('Last Name'),
-            'required' => true,
-        );
+    list(
+      $custom_fields_pre,
+      $custom_fields_post
+    ) = $this->get_participant_custom_data_fields($this->participant->event_id);
 
-        $custom_fields = self::get_participant_custom_data_fields($this->participant->event_id);
-        foreach ($custom_fields as $custom_id => $field)
-        {
-            $this->input_fields[] = array(
-                'html_type' => $field['html_type'],
-                'name' => $this->html_field_name( $custom_id ),
-                'label' => $field['label'],
-                'required' => false
-            );
-        }
+    require_once('CRM/Profile/Form.php');
+    foreach ($custom_fields_pre as $key => $field)
+    {
+      CRM_Core_BAO_UFGroup::buildProfile( $form, $field, CRM_Profile_Form::MODE_CREATE, $this->participant->id);
+    }
+    foreach ($custom_fields_post as $key => $field)
+    {
+      CRM_Core_BAO_UFGroup::buildProfile( $form, $field, CRM_Profile_Form::MODE_CREATE, $this->participant->id);
+    }
+    $custom = CRM_Utils_Array::value('custom', $form->getTemplate()->_tpl_vars, array());
+    $form->assign('custom', array_merge($custom, array(
+      $this->html_field_name('customPre') => $custom_fields_pre,
+      $this->html_field_name('customPost') => $custom_fields_post,
 
-        return $this->input_fields;
+      $this->html_field_name('number') => $this->name(),
+    )));
   }
 
-  // XXX rename form_add_fields
-  function load_fields( $form )
+  function get_participant_custom_data_fields()
   {
-        $fields = $this->get_fields();
-        foreach ($fields as $field)
-        {
-            $form->add($field['html_type'], $field['name'], $field['label'], array( 'size' => 30, 'maxlength' => 60 ), $field['required']);
-        }
-  }
-    
-  static function get_participant_custom_data_fields($event_id)
-  {
-    require_once 'CRM/Core/OptionGroup.php';
-    require_once 'CRM/Core/BAO/CustomField.php';
+    require_once 'CRM/Core/BAO/UFJoin.php'; 
+    $ufJoinParams = array( 'entity_table' => 'civicrm_event',   
+                           'module'       => 'CiviEvent',
+                           'entity_id'    => $this->participant->event_id );
+    list( $custom_pre_id, $custom_post_id ) =
+        CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams ); 
 
-    $params = array('id' => $event_id);
-    $event_values = array( );
-    $event = CRM_Event_BAO_Event::retrieve($params, $event_values);
+    require_once 'CRM/Core/BAO/UFGroup.php'; 
+    $pre_fields = $post_fields = array();
+    if ( $custom_pre_id && CRM_Core_BAO_UFGroup::filterUFGroups($custom_pre_id, $this->participant->contact_id)  ) {
+      $pre_fields = CRM_Core_BAO_UFGroup::getFields($custom_pre_id, false, CRM_Core_Action::ADD);
+    }
+    if ( $custom_post_id && CRM_Core_BAO_UFGroup::filterUFGroups($custom_post_id, $this->participant->contact_id)  ) {
+      $post_fields = CRM_Core_BAO_UFGroup::getFields($custom_post_id, false, CRM_Core_Action::ADD);
+    }
 
-    $_eventTypeCustomDataTypeID = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantEventType', 'name' );
-    $customFieldsForEventType = CRM_Core_BAO_CustomField::getFields(
-        'Participant',
-        false,
-        false,
-        $event->event_type_id,
-        $_eventTypeCustomDataTypeID );
-    return $customFieldsForEventType;
+    return array($pre_fields, $post_fields);
   }
 
   function email_field_name( )
@@ -84,7 +68,7 @@ class CRM_Event_Cart_Form_MerParticipant
 
   static function full_field_name( $event_id, $participant_id, $field_name )
   {
-	return "event_{$event_id}_participant_{$participant_id}_$field_name";
+        return "event[$event_id][participant][$participant_id][$field_name]";
   }
 
   function html_field_name( $field_name )
@@ -94,16 +78,7 @@ class CRM_Event_Cart_Form_MerParticipant
 
   function name( )
   {
-	return "Participant {$this->number()}";
-  }
-
-  function number( )
-  {
-        //XXX
-        $cart = CRM_Event_Cart_BAO_Cart::find_by_id($this->participant->cart_id);
-        $cart->load_associations();
-        $index = $cart->get_participant_index_from_id($this->participant->id);
-	return $index + 1;
+	return "Participant {$this->participant->get_participant_index()}";
   }
 
   //XXX poor name
@@ -112,27 +87,14 @@ class CRM_Event_Cart_Form_MerParticipant
     return new CRM_Event_Cart_Form_MerParticipant($participant);
   }
 
-  static function load_form_values($participant_params, $form_data)
+  function setDefaultValues()
   {
-    $participant = new CRM_Event_Cart_BAO_MerParticipant($participant_params);
-    $form = self::get_form($participant);
-
-    $safe_field_names = array( 'email', 'first_name', 'last_name' );
-    foreach ($safe_field_names as $key) {
-        $value = CRM_Utils_Array::value( $form->html_field_name($key), $form_data );
-        $form->participant->$key = $value;
-    }
-    //XXX
-    $form->participant->store_temporary_contact();
-
-    $custom_fields = self::get_participant_custom_data_fields($form->participant->event_id);
-    foreach ($custom_fields as $custom_id => $field) {
-        $value = CRM_Utils_Array::value( $form->html_field_name($custom_id), $form_data );
-        if ($value) {
-            $form->participant->custom_data_assign($custom_id, $value);
-        }
-    }
-    $form->participant->save();
-    return $form->participant;
+     $this->participant->load_temporary_name();
+    $defaults = array(
+      $this->html_field_name('email') => $this->participant->email,
+      $this->html_field_name('first_name') => $this->participant->first_name,
+      $this->html_field_name('last_name') => $this->participant->last_name,
+    );
+    return $defaults;
   }
 }

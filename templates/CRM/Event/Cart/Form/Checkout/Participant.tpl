@@ -1,22 +1,44 @@
-{assign var=form_participant value=$participant->get_form()}
-  <fieldset class="participant" id="event_{$participant->event_id}_participant_{$participant->id}">
+  {assign var=event_id value=$participant->event_id}
+  {assign var=participant_id value=$participant->id}
+  <fieldset class="participant" id="event_{$event_id}_participant_{$participant_id}">
     <legend>
-      {$form_participant->name()}
+      {assign var=name value="event[`$event_id`][participant][`$participant_id`][number]"}
+      {$custom.$name}
     </legend>
 	<div class="clearfix">
-	  {assign var=fields value=$form_participant->get_fields()}
-	  {foreach from=$fields item=field}
-		{assign var=field_name value=$field.name}
+          {assign var=pre value="event[`$event_id`][participant][`$participant_id`][customPre]"}
+          {include file="CRM/UF/Form/Block.tpl" fields=$custom.$pre form=$form.field.$participant_id}
+
 	  <div class="participant-info crm-section form-item">
 	    <div class="label">
-		{$form.$field_name.label}
+              {$form.event.$event_id.participant.$participant_id.email.label}
 	    </div>
 	    <div class="edit-value content">
-		{$form.$field_name.html}
+              {$form.event.$event_id.participant.$participant_id.email.html}
 	    </div>
 	  </div>
-	  {/foreach}
+
+	  <div class="participant-info crm-section form-item">
+	    <div class="label">
+              {$form.event.$event_id.participant.$participant_id.first_name.label}
+	    </div>
+	    <div class="edit-value content">
+              {$form.event.$event_id.participant.$participant_id.first_name.html}
+	    </div>
+	  </div>
+
+	  <div class="participant-info crm-section form-item">
+	    <div class="label">
+              {$form.event.$event_id.participant.$participant_id.last_name.label}
+	    </div>
+	    <div class="edit-value content">
+              {$form.event.$event_id.participant.$participant_id.last_name.html}
+	    </div>
+	  </div>
+
+          {assign var=post value="event[`$event_id`][participant][`$participant_id`][customPost]"}
+          {include file="CRM/UF/Form/Block.tpl" fields=$custom.$post form=$form.field.$participant_id}
 	</div>
     <!--if $form_participant->participant_index > 0-->
-    <a class="link-delete" href="#" onclick="delete_participant({$participant->event_id}, {$participant->id})">Delete {$form_participant->name()}</a>
+    <a class="link-delete" href="#" onclick="delete_participant({$event_id}, {$participant_id}); return false;">Delete {$form->name}</a>
   </fieldset>

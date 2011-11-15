@@ -61,7 +61,7 @@ class CRM_Event_Cart_BAO_EventInCart extends CRM_Event_Cart_DAO_EventInCart impl
 	$result = array();
 	if ( $event_in_cart->find( ) ) {
 	  while ( $event_in_cart->fetch( ) ) {
-		$result[$event_in_cart->id] = clone( $event_in_cart );
+		$result[$event_in_cart->event_id] = clone( $event_in_cart );
 	  }
 	}
 	return $result;
@@ -219,8 +219,11 @@ class CRM_Event_Cart_BAO_EventInCart extends CRM_Event_Cart_DAO_EventInCart impl
     return (null !== (CRM_Event_BAO_Event::get_sub_events($this->event_id)));
   }
 
-  function is_child_event()
+  function is_child_event($parent_event_id = null)
   {
-    return $this->event->parent_event_id;
+    if ($parent_event_id == null)
+        return $this->event->parent_event_id;
+    else
+        return $this->event->parent_event_id == $parent_event_id;
   }
 }

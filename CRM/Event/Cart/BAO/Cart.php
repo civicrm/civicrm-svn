@@ -35,8 +35,8 @@ class CRM_Event_Cart_BAO_Cart extends CRM_Event_Cart_DAO_Cart
 	);
 	$event_in_cart = CRM_Event_Cart_BAO_EventInCart::create( $params );
 	$event_in_cart->load_associations($this);
-	$this->events_in_carts[$event_in_cart->id] = $event_in_cart;
-	return $this->events_in_carts[$event_in_cart->id];
+	$this->events_in_carts[$event_in_cart->event_id] = $event_in_cart;
+	return $this->events_in_carts[$event_in_cart->event_id];
   }
   
   function add_participant_to_cart($participant)
@@ -155,33 +155,47 @@ class CRM_Event_Cart_BAO_Cart extends CRM_Event_Cart_DAO_Cart
 	return ($date_1 < $date_2) ? -1 : 1;
   }
 
-  public function get_events_by_contact_id( $contact_id )
+  public function get_subparticipants($main_participant)
   {
-	$person_sessions = array( );
-	foreach ( $this->events_in_carts as $event_in_cart ) {
-	    foreach ( $event_in_cart->participants as $participant ) {
-		if ($participant->contact_id == $contact_id) {
-		    $person_sessions[] = $event_in_cart->event;
-		    continue;
-		}
-	    }
-	}
-	return $person_sessions;
+    $subparticipants = array();
+    foreach ($this->events_in_carts as $event_in_cart)
+    {
+      if ($event_in_cart->is_child_event($main_participant->event_id))
+      {
+        foreach ( $event_in_cart->participants as $participant ) {
+            if ($participant->contact_id == $main_participant->contact_id) {
+                $subparticipants[] = $participant;
+                continue;
+            }
+        }
+      }
+    }
+    return $subparticipants;
   }
 
   public function get_event_in_cart_by_event_id( $event_id )
   {
-	foreach ( $this->events_in_carts as $event_in_cart ) {
-	  if ( $event_in_cart->event_id == $event_id ) {
+        return CRM_Utils_Array::value( $event_id, $this->events_in_carts );
+  }
+
+  public function &get_event_in_cart_by_id( $event_in_cart_id )
+  {
+        foreach ($this->events_in_carts as $event_in_cart ) {
+	  if ( $event_in_cart->id == $event_in_cart_id ) {
 		return $event_in_cart;
 	  }
 	}
         return null;
   }
 
-  public function &get_event_in_cart_by_id( $event_in_cart_id )
+  public function get_main_event_participants()
   {
-        return CRM_Utils_Array::value( $event_in_cart_id, $this->events_in_carts );
+    return array_values(array_reduce($this->get_main_events_in_carts(), function &($sum, $event_in_cart) {
+      //XXX list of references
+      return $sum += $event_in_cart->participants;
+    },
+    array()
+    ));
   }
 
   public function load_associations( )
@@ -205,7 +219,7 @@ class CRM_Event_Cart_BAO_Cart extends CRM_Event_Cart_DAO_Cart
             foreach ($sessions_to_remove as $session) {
                 $this->remove_event_in_cart( $session->id );
             }
-            unset($this->events_in_carts[$event_in_cart->id]);
+            unset($this->events_in_carts[$event_in_cart->event_id]);
             $event_in_cart->delete( );
         }
 	return $event_in_cart;

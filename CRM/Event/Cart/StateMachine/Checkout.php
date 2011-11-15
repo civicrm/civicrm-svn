@@ -41,5 +41,3 @@ class CRM_Event_Cart_StateMachine_Checkout extends CRM_Core_StateMachine
     $this->addSequentialPages( $pages, $action );
   }
 }
-
-?>
