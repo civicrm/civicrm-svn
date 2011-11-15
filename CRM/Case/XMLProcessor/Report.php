@@ -531,6 +531,7 @@ AND    cg.extends = 'Activity'";
             } else {
                 $query .= "AND cg.extends_entity_column_value IS NULL";
             }
+            $query .= "ORDER BY cf.weight";
             $params = array( 1 => array( $activityTypeID,
                                          'Integer' ) );
             $dao = CRM_Core_DAO::executeQuery( $query, $params );
