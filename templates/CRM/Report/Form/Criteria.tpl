@@ -224,8 +224,9 @@
         {foreach from=$filters item=table key=tableName}
             {foreach from=$table item=field key=fieldName}
 		{literal}var val = "dnc";{/literal}
-		{if !($field.operatorType == 4) && !$field.no_display} 
-                    {literal}var val = document.getElementById("{/literal}{$fieldName}_op{literal}").value;{/literal}
+                {assign var=fieldOp     value=$fieldName|cat:"_op"}
+                {if !($field.operatorType & 4) && !$field.no_display && $form.$fieldOp.html}
+                    {literal}var val = document.getElementById("{/literal}{$fieldOp}{literal}").value;{/literal}
 		{/if}
                 {literal}showHideMaxMinVal( "{/literal}{$fieldName}{literal}", val );{/literal}
             {/foreach}
