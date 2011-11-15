@@ -43,8 +43,7 @@
  * $Id$
  *
  */
-civicrm_api_include( 'Mailing', false, 3 );
-civicrm_api_include( 'MailingGroup', false, 3 );
+
 class CRM_Utils_SoapServer
 {
     /**
