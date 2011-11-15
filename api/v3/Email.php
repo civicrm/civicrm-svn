@@ -42,8 +42,8 @@ require_once 'CRM/Core/BAO/Email.php';
  * 
  * Allowed @params array keys are:
  * 
- * {@example EmailCreate.php}
- * @return array of newly created email property values.
+ * @example EmailCreate.php Standard Create Example
+ * @return array API result array
  * {@getfields email_create}
  * @access public
  */
@@ -77,8 +77,8 @@ function _civicrm_api3_email_create_spec(&$params){
  *
  * @param  array  $params
  *
- * @example EmailDelete.php
- * {@example EmailDelete.php 0}
+ * @example EmailDelete.php Standard Delete Example
+ * 
  * @return boolean | error  true if successfull, error otherwise
  * {@getfields email_delete}
  * @access public
@@ -106,23 +106,21 @@ function civicrm_api3_email_delete( $params )
 /**
  * Retrieve one or more emails 
  *
- * @param  mixed[]  (reference ) input parameters
+ * @param  array input parameters
  * 
  * 
- * @example EmailGet.php
- * {@example EmailGet.php 0}
+ * @example EmailGet.php Standard Get Example
+ * 
  * @param  array $params  an associative array of name/value pairs.
  *
- * @return  array api result
+ * @return  array api result array
  * {@getfields email_get}
  * @access public
  */
 
 function civicrm_api3_email_get($params) 
 {   
-    civicrm_api3_verify_one_mandatory($params);
 
-    require_once 'CRM/Core/BAO/Email.php';
     return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 
 }
