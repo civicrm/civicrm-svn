@@ -35,8 +35,8 @@
  */
 
 require_once 'CRM/Import/Parser.php';
-
-civicrm_api_include( 'utils' );
+//@todo calling api functions directly is not supported
+ require_once 'api/v3/utils.php';
 
 /**
  * class to parse contact csv files
@@ -1595,7 +1595,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         //get the prefix id etc if exists
         CRM_Contact_BAO_Contact::resolveDefaults($formatted, true);
         
-        civicrm_api_include( 'contact' );
+        require_once 'api/v3/Contact.php';
+        //@todo direct call to API function not supported. 
         // setting required check to false, CRM-2839
         // plus we do our own required check in import
         $error = _civicrm_api3_contact_check_params( $formatted,
@@ -1881,6 +1882,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                  && array_key_exists( $customFieldID, $customFields ) ) {
                 
                 $extends = CRM_Utils_Array::value( 'extends', $customFields[$customFieldID] );
+                //@todo calling api functions directly is not supported
                 _civicrm_api3_custom_format_params( $params, $formatted, $extends );
             }
         }
