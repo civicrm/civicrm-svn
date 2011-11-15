@@ -258,8 +258,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
      */
     function import( $onDuplicate, &$values) 
     {
-        civicrm_api_include( 'membership', false, 3 );
-        civicrm_api_include( 'utils', false, 3 );
+
         
         // first make sure this is a valid line
         $response = $this->summary( $values );
@@ -345,7 +344,8 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
             
             $formatValues[$key] = $field;
         }
-        
+        require_once 'api/v3/Membership.php'; 
+        //TODO calling API function directly is unsupported. 
         $formatError = _civicrm_api3_membership_format_params( $formatValues, $formatted, true);
                 
         if ( $formatError ) {
