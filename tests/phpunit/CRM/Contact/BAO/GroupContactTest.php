@@ -127,31 +127,25 @@ class CRM_Contact_BAO_GroupContactTest extends CiviUnitTestCase
         $parentContactParams = array(
                                      'first_name'     => 'Parent1 Fname',
                                      'last_name'      => 'Parent1 Lname',
-                                     'group'          =>  array (
-                                                                 $parentGroup->id => 1 
-                                                                 )
-                                     );
+                                     'group'          =>  array( $parentGroup->id => 1 )
+                                 );
         $parentContact = Contact::createIndividual( $parentContactParams );
         
         // create a contact within child dgroup
         $childContactParams = array(
                                     'first_name'     => 'Child1 Fname',
                                     'last_name'      => 'Child2 Lname',
-                                    'group'          =>  array (
-                                                                $childGroup->id => 1 
-                                                                )
-                                    );
+                                    'group'          =>  array( $childGroup->id => 1 )
+                                );
         $childContact = Contact::createIndividual( $childContactParams );
         
         // Check if searching by parent group  returns both parent and child group contacts
-        $searchParams   = array( 
-				'group' => array (
-						   $parentGroup->id => 1 
-                                                 ),
-				'version' => 3 
-			       );
+        $searchParams = array( 
+				            'group' => array ( $parentGroup->id => 1 ),
+                            'version' => 3 
+                        );
         $result = civicrm_api('contact', 'get', $searchParams );
-	$validContactIds = array( $parentContact, $childContact );
+        $validContactIds = array( $parentContact, $childContact );
         $resultContactIds = array( );
         foreach ( $result['values'] as $k => $v ) {
             $resultContactIds[] =  $v['contact_id'];
@@ -159,14 +153,11 @@ class CRM_Contact_BAO_GroupContactTest extends CiviUnitTestCase
         $this->assertEquals( 2, count( $resultContactIds ), 'Check the count of returned values' );
         $this->assertEquals( array( ), array_diff( $validContactIds, $resultContactIds ), 'Check that the difference between two arrays should be blank array' );
         
-        
         // Check if searching by child group returns just child group contacts
         $searchParams   = array( 
-                                'group' => array (
-                                                  $childGroup->id => 1 
-                                                  ),
-				'version' => 3 
-                                 );
+                                'group' => array ( $childGroup->id => 1 ),
+                                'version' => 3 
+                            );
         $result = civicrm_api('contact', 'get', $searchParams );
         $validChildContactIds = array( $childContact );
         $resultChildContactIds = array( );

@@ -93,7 +93,6 @@ class CRM_PCP_BAO_PCPTest extends CiviUnitTestCase
         $this->assertEquals( $params['intro_text'], $pcp->intro_text, 'Check for intro_text.' );
         $this->assertEquals( $params['page_text'], $pcp->page_text, 'Check for page_text.' );
         $this->assertEquals( $params['donate_link_text'], $pcp->donate_link_text, 'Check for donate_link_text.' );
-        $this->assertEquals( $params['contribution_page_id'], $pcp->contribution_page_id, 'Check for contribution_page_id.' );
         $this->assertEquals( $params['is_thermometer'], $pcp->is_thermometer, 'Check for is_thermometer.' );
         $this->assertEquals( $params['is_honor_roll'], $pcp->is_honor_roll, 'Check for is_honor_roll.' );
         $this->assertEquals( $params['goal_amount'], $pcp->goal_amount, 'Check for goal_amount.' );
@@ -123,7 +122,6 @@ class CRM_PCP_BAO_PCPTest extends CiviUnitTestCase
         $this->assertEquals( $params['intro_text'], $pcp->intro_text, 'Check for intro_text.' );
         $this->assertEquals( $params['page_text'], $pcp->page_text, 'Check for page_text.' );
         $this->assertEquals( $params['donate_link_text'], $pcp->donate_link_text, 'Check for donate_link_text.' );
-        $this->assertEquals( $params['contribution_page_id'], $pcp->contribution_page_id, 'Check for contribution_page_id.' );
         $this->assertEquals( $params['is_thermometer'], $pcp->is_thermometer, 'Check for is_thermometer.' );
         $this->assertEquals( $params['is_honor_roll'], $pcp->is_honor_roll, 'Check for is_honor_roll.' );
         $this->assertEquals( $params['goal_amount'], $pcp->goal_amount, 'Check for goal_amount.' );
