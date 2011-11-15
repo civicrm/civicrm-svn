@@ -171,8 +171,8 @@ function initTagTree() {
        <div class="form-item unobstructive">{$form.buttons.html}</div>
        </fieldset>
     {/if}
-
-    {include file="CRM/common/Tag.tpl"}
+    <br />
+    {include file="CRM/common/Tag.tpl" context="contactTab"}
 </div>
 
 {if $action eq 1 or $action eq 2 }

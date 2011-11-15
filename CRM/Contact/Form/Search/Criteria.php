@@ -91,14 +91,14 @@ class CRM_Contact_Form_Search_Criteria {
 
         $config = CRM_Core_Config::singleton();
         if (CRM_Core_Permission::check('access deleted contacts') and $config->contactUndelete) {
-            $form->add('checkbox', 'deleted_contacts', ts('Search in Trash (deleted contacts)'));
+            $form->add( 'checkbox', 'deleted_contacts', ts('Search in Trash') . '<br />' . ts('(deleted contacts)') );
         }
 
         // add checkbox for cms users only
         $form->addYesNo( 'uf_user', ts( 'CMS User?' ) );
 
         // tag all search  
-        $form->add('text', 'tag_search', ts('All tag search') ); 
+        $form->add('text', 'tag_search', ts('All Tags') ); 
  
         // add search profiles
         require_once 'CRM/Core/BAO/UFGroup.php';
@@ -194,7 +194,7 @@ class CRM_Contact_Form_Search_Criteria {
 
         $toggleChoice = array( );
         $toggleChoice[] = $form->createElement('radio', null, '', ' ' . ts('Exclude'), '1' );
-        $toggleChoice[] = $form->createElement('radio', null, '', ' ' . ts('Include Privacy Options'), '2' );
+        $toggleChoice[] = $form->createElement('radio', null, '', ' ' . ts('Include by Privacy Option(s)'), '2' );
         $form->addGroup( $toggleChoice, 'privacy_toggle', 'Privacy Options' );
 
         // preferred communication method 
